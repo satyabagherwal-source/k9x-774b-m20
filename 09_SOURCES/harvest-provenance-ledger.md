@@ -6825,3 +6825,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-02T15:15:27.626Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `1d1ab074` | Multi-dimensional audit evidence | 2026-11-02T15:15:29.076Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `5a3176fc` | Multi-dimensional audit evidence | 2026-11-02T15:15:31.453Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `bcddf276` | Multi-dimensional audit evidence | 2026-11-02T15:22:21.158Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `c2f17694` | Multi-dimensional audit evidence | 2026-11-02T15:22:25.144Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `ea169d03` | Multi-dimensional audit evidence | 2026-11-02T15:22:29.567Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `57ca6e1e` | Multi-dimensional audit evidence | 2026-11-02T15:22:30.383Z |

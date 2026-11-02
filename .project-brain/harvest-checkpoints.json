@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:15:31.462Z",
+  "last_updated": "2026-11-02T15:22:30.392Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
-      "verified_at": "2026-10-31T20:23:15.536Z",
+      "content_hash": "573005542acce425695c5e0df433ed0b26a8cb86db8c4c5273c41ebcd8dcd8ae",
+      "verified_at": "2026-11-02T15:22:30.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:23:15.536Z"
+      "last_updated": "2026-11-02T15:22:30.392Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
-      "verified_at": "2026-10-31T13:14:06.221Z",
+      "content_hash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
+      "verified_at": "2026-11-02T15:22:29.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:14:06.221Z"
+      "last_updated": "2026-11-02T15:22:29.574Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
-      "verified_at": "2026-10-31T08:13:59.705Z",
+      "content_hash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
+      "verified_at": "2026-11-02T15:22:21.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:13:59.705Z"
+      "last_updated": "2026-11-02T15:22:21.166Z"
     },
     "react/metro": {
       "repository": "react/metro",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
-      "verified_at": "2026-10-30T05:39:20.811Z",
+      "content_hash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
+      "verified_at": "2026-11-02T15:22:25.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:39:20.811Z"
+      "last_updated": "2026-11-02T15:22:25.152Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",

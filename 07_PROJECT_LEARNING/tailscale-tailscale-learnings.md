@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `49aa9c85`  
+> **Source Version**: `57ca6e1e`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:23:14.821Z  
+> **Timestamp**: 2026-11-02T15:22:29.770Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:23:14.814Z  
+> **Harvest Timestamp**: 2026-11-02T15:22:29.463Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38427 stars
+- **Stars / Engagement**: 38525 stars
 
 ---
 
@@ -821,655 +821,365 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49aa9c85` (2026-09-22)
-**Commit Message**: feature/conn25: store tokens from DNS response and pass them back in
-TransitIPRequest to connector
+### Incident Patch 1: `57ca6e1e` (2026-10-14)
+**Commit Message**: cmd/k8s-operator/e2e: test that cleanup finds devices by machine key
 
-Parse the tokens from the HTTP headers in the response. Determine which
-node responded to the DNS request from the RequestURL passed in as
-metadata to (*extension).mapDNSResponse. Store the token and connector
-node alongside the TransitIP in the addrs struct. Then populate the new
-Token field in TransitIPRequest with the stored token.
+Adds an e2e test for proxy cleanup when the state Secret has no
+device_id, as the unit tests use a fake client and can't show that
+control honours the machineKey filter. It fills the tailnet with other
+devices, checks the filter returns only the proxy's device, then removes
+device_id from the state Secret and unexposes the Service. It checks
+that the proxy's device is deleted and the other devices are left alone.
 
-Updates tailscale/corp#46169
+Updates #18922
 
-Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
+Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
-**File**: `feature/conn25/addrAssignments.go` (modified, +3/-3)
+**File**: `cmd/k8s-operator/e2e/svc_test.go` (modified, +143/-0)
 ```diff
-@@ -66,12 +66,12 @@ func (a *addrAssignments) insertWithExpiry(as *addrs, d time.Duration) error {
- 	if _, ok := a.byDomainDst[ddst]; ok {
- 		return errors.New("byDomainDst key exists")
- 	}
--	if _, ok := a.byTransitIP[as.transit]; ok {
-+	if _, ok := a.byTransitIP[as.connectorAddr.transit]; ok {
- 		return errors.New("byTransitIP key exists")
- 	}
- 	as.expiresAt = now.Add(d)
- 	mak.Set(&a.byMagicIP, as.magic, as)
--	mak.Set(&a.byTransitIP, as.transit, as)
-+	mak.Set(&a.byTransitIP, as.connectorAddr.transit, as)
- 	mak.Set(&a.byDomainDst, ddst, as)
- 	heap.Push(&a.byExpiresAt, as)
- 	return nil
-@@ -146,7 +146,7 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
- 		heap.Push(&a.byExpiresAt, candidate)
- 	}
- 	delete(a.byMagicIP, v.magic)
--	delete(a.byTransitIP, v.transit)
-+	delete(a.byTransitIP, v.connectorAddr.transit)
- 	dd := domainDst{domain: v.domain, dst: v.dst}
- 	delete(a.byDomainDst, dd)
- 	return v
-```
-
-**File**: `feature/conn25/addrAssignments_test.go` (modified, +17/-16)
-```diff
-@@ -18,11 +18,11 @@ func TestAssignmentsExpire(t *testing.T) {
- 	clock := tstest.NewClock(tstest.ClockOpts{Start: time.Now()})
- 	assignments := addrAssignments{clock: clock}
- 	as := &addrs{
--		dst:     netip.MustParseAddr("0.0.0.1"),
--		magic:   netip.MustParseAddr("0.0.0.2"),
--		transit: netip.MustParseAddr("0.0.0.3"),
--		app:     "a",
--		domain:  "example.com.",
-+		dst:           netip.MustParseAddr("0.0.0.1"),
-+		magic:         netip.MustParseAddr("0.0.0.2"),
-+		connectorAddr: connectorAddr{transit: netip.MustParseAddr("0.0.0.3")},
-+		app:           "a",
-+		domain:        "example.com.",
- 	}
- 	err := assignments.insert(as)
- 	if err != nil {
-@@ -55,11 +55,11 @@ func TestPopExpired(t *testing.T) {
- 	makeAndAddAddrs := func(n int) *addrs {
- 		t.Helper()
- 		as := &addrs{
--			dst:     netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
--			magic:   netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
--			transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n)),
--			app:     "a",
--			domain:  "example.com.",
-+			dst:           netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
-+			magic:         netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
-+			connectorAddr: connectorAddr{transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n))},
-+			app:           "a",
-+			domain:        "example.com.",
- 		}
- 		err := assignments.insert(as)
- 		if err != nil {
-@@ -73,9 +73,10 @@ func TestPopExpired(t *testing.T) {
- 		return cmp.Diff(
- 			want,
- 			got,
--			cmp.AllowUnexported(addrs{}),
-+			cmp.AllowUnexported(addrs{}, connectorAddr{}),
- 			cmpopts.EquateComparable(netip.Addr{}),
- 			cmpopts.IgnoreFields(addrs{}, "expiresAt"),
-+			nodeViewComparer,
- 		)
- 	}
- 	testAddrs := []*addrs{}
-@@ -131,11 +132,11 @@ func TestPopExpiredHandlesExpiresAtChanges(t *testing.T) {
- 	makeAndAddAddrs := func(n int) *addrs {
- 		t.Helper()
- 		as := &addrs{
--			dst:     netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
--			magic:   netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
--			transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n)),
--			app:     "a",
--			domain:  "example.com.",
-+			dst:           netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
-+			magic:         netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
-+			connectorAddr: connectorAddr{transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n))},
-+			app:           "a",
-+			domain:        "example.com.",
- 		}
- 		err := assignments.insertWithExpiry(as, expiryInterval)
- 		if err != nil {
-```
-
-**File**: `feature/conn25/api.go` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ func (c *client) getActiveState() appctype.Conn25ClientState {
- 			ActiveFlowCount: assignment.activeFlowCount,
- 			DestinationIP:   assignment.dst.String(),
- 			MagicIP:         assignment.magic.String(),
--			TransitIP:       assignment.transit.String(),
-+			TransitIP:       assignment.connectorAddr.transit.String(),
- 			ExpiresAt:       assignment.expiresAt,
- 		})
+@@ -5,17 +5,23 @@ package e2e
  
-```
-
-**File**: `feature/conn25/api_test.go` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ func TestGetActiveState(t *testing.T) {
- 				domain:          mustFQDN(domain),
- 				dst:             netip.MustParseAddr(dst),
- 				magic:           netip.MustParseAddr(magic),
--				transit:         netip.MustParseAddr(transit),
-+				connectorAddr:   connectorAddr{transit: netip.MustParseAddr(transit)},
- 				activeFlowCount: flows,
- 				expiresAt:       expires,
- 			}
-```
-
-**File**: `feature/conn25/client.go` (modified, +43/-11)
-```diff
-@@ -47,7 +47,7 @@ func (c *client) transitIPForMagicIP(magicIP netip.Addr) (netip.Addr, bool) {
- 	defer c.mu.Unlock()
- 	v, ok := c.assignments.lookupByMagicIP(magicIP)
- 	if ok {
--		return v.transit, true
-+		return v.connectorAddr.transit, true
- 	}
- 	return netip.Addr{}, false
- }
-@@ -105,13 +105,38 @@ func (c *client) reset() {
- // the app name refers to a configured app.
- // It checks that this domain should be routed and that this client is not itself a connector for the domain
- // and generally if it is valid to make the assignment.
--func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip.Addr, ttl time.Duration) (*addrs, error) {
-+func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip.Addr, ttl time.Duration, connectorNode tailcfg.NodeView, token string) (*addrs, error) {
- 	if !dst.IsValid() {
- 		return nil, errors.New("dst is not valid")
- 	}
-+	if !connectorNode.Valid() {
-+		return nil, errors.New("connector node is not valid")
-+	}
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
- 	if existing, ok := c.assignments.lookupByDomainDst(domain, dst); ok {
-+		// We have the domain/dst, but it's possible this came from another connector
-+		// and the original connector is dead, in which case we currently don't
-+		// call enqueueAddressAssignment and register the TransitIP with the other
-+		// connector. And we don't install the new connector's node key in WireGuard.
-+		//
-+		// The correct action would be to allocate a new TransitIP associated
-+		// with that new connector, and then register the TransitIP address, and
-+		// install the node key.
-+		// But as of 2026-10-01, the data model doesn't support multiple TransitIPs
-+		// per domain/dst/magic.
-+		//
-+		// For now, try to use the old connector, even if this new DNS request came from
-+		// a new connector.
-+		//
-+		// Token management. If it came from the old connector, token should be updated,
-+		// because it is what the connector will expect. If it came from a different
-+		// connector, don't modify the token for the original connector.
-+		//
-+		// TODO(tailscale/corp#50318): support multiple TransitIPs/connectors per domain/dst/magic.
-+		if existing.connectorAddr.node.ID() == connectorNode.ID() {
-+			existing.connectorAddr.token = token
-+		}
- 		c.assignments.updateFromTTL(existing, ttl)
- 		return existing, nil
- 	}
-@@ -129,10 +154,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		}
- 		if a.is4() {
- 			c.v4MagicIPPool.returnAddr(a.magic)
--			c.v4TransitIPPool.returnAddr(a.transit)
-+			c.v4TransitIPPool.returnAddr(a.connectorAddr.transit)
- 		} else if a.is6() {
- 			c.v6MagicIPPool.returnAddr(a.magic)
--			c.v6TransitIPPool.returnAddr(a.transit)
-+			c.v6TransitIPPool.returnAddr(a.connectorAddr.transit)
- 		} else {
- 			return nil, errors.New("unexpected neither 4 nor 6")
- 		}
-@@ -160,11 +185,15 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		return nil, err
- 	}
- 	as := &addrs{
--		dst:     dst,
--		magic:   mip,
--		transit: tip,
--		app:     appName,
--		domain:  domain,
-+		dst:   dst,
-+		magic: mip,
-+		connectorAddr: connectorAddr{
-+			transit: tip,
-+			node:    connectorNode,
-+			token:   token,
-+		},
-+		app:    appName,
-+		domain: domain,
- 	}
- 	if err := c.assignments.insertFromTTL(as, ttl); err != nil {
- 		magicPool.returnAddr(mip)
-@@ -179,6 +208,9 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- }
+ import (
+ 	"fmt"
++	"slices"
+ 	"strings"
+ 	"testing"
+ 	"time"
  
- func (c *client) addTransitIPForConnector(tip netip.Addr, conn tailcfg.NodeView) error {
-+	if !conn.Valid() {
-+		return fmt.Errorf("unexpectedly received invalid connector node")
-+	}
- 	if conn.Key().IsZero() {
- 		return fmt.Errorf("node with stable ID %q does not have a key", conn.StableID())
- 	}
-@@ -249,7 +281,7 @@ func (c *client) rewriteDNSResponse(appName string, hdr dnsmessage.Header, quest
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
  
- 	// make an answer for each rewrite
- 	for _, rw := range answers {
--		as, err := c.reserveAddresses(appName, rw.domain, rw.dst, time.Duration(rw.ttlSeconds)*time.Second)
-+		as, err := c.reserveAddresses(appName, rw.domain, rw.dst, time.Duration(rw.ttlSeconds)*time.Second, rw.connectorNode, rw.token)
- 		if err != nil {
- 			return nil, err
- 		}
-@@ -286,7 +318,7 @@ func (c *client) rewriteDNSResponse(appName string, hdr dnsmessage.Header, quest
- type addrs struct {
- 	dst             netip.Addr
- 	magic           netip.Addr
--	transit         netip.Addr
-+	connectorAddr   connectorAddr
- 	domain          dnsname.FQDN
- 	app             string
- 	expiresAt       time.Time
-```
-
-**File**: `feature/conn25/client_test.go` (modified, +44/-33)
-```diff
-@@ -64,7 +64,7 @@ func TestReserveIPs(t *testing.T) {
- 		},
- 	} {
- 		t.Run(tt.name, func(t *testing.T) {
--			addrs, err := c.client.reserveAddresses(appName, domain, tt.dst, 10)
-+			addrs, err := c.client.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
- 			if err != nil {
- 				t.Fatal(err)
- 			}
-@@ -74,8 +74,8 @@ func TestReserveIPs(t *testing.T) {
- 			if tt.wantMagic != addrs.magic {
- 				t.Errorf("want %v, got %v", tt.wantMagic, addrs.magic)
- 			}
--			if tt.wantTransit != addrs.transit {
--				t.Errorf("want %v, got %v", tt.wantTransit, addrs.transit)
-+			if tt.wantTransit != addrs.connectorAddr.transit {
-+				t.Errorf("want %v, got %v", tt.wantTransit, addrs.connectorAddr.transit)
- 			}
- 			if appName != addrs.app {
- 				t.Errorf("want %s, got %s", appName, addrs.app)
-@@ -110,12 +110,12 @@ func TestReserveAddressesDeduplicated(t *testing.T) {
- 			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
- 			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
- 
--			first, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10)
-+			first, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10, testConnectorPeer, "")
- 			if err != nil {
- 				t.Fatal(err)
- 			}
- 
--			second, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10)
-+			second, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10, testConnectorPeer, "")
- 			if err != nil {
- 				t.Fatal(err)
- 			}
-@@ -193,7 +193,7 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
- 					dst = netip.MustParseAddr(fmt.Sprintf("::%d", i+1))
- 				}
- 				domain := must.Get(dnsname.ToFQDN(fmt.Sprintf("e%d.example.com.", i)))
--				if _, err := c.reserveAddresses(appName, domain, dst, 10); err != nil {
-+				if _, err := c.reserveAddresses(appName, domain, dst, 10, testConnectorPeer, ""); err != nil {
- 					gotErr = err
- 				} else {
- 					reserved++
-@@ -216,11 +216,11 @@ func TestTransitIPConnMapping(t *testing.T) {
- 	conn25 := newConn25(t.Logf)
- 
- 	as := &addrs{
--		dst:     netip.MustParseAddr("1.2.3.1"),
--		magic:   netip.MustParseAddr("100.64.0.1"),
--		transit: netip.MustParseAddr("169.254.0.1"),
--		domain:  "woo.example.com.",
--		app:     "app1",
-+		dst:           netip.MustParseAddr("1.2.3.1"),
-+		magic:         netip.MustParseAddr("100.64.0.1"),
-+		connectorAddr: connectorAddr{transit: netip.MustParseAddr("169.254.0.1")},
-+		domain:        "woo.example.com.",
-+		app:           "app1",
- 	}
- 
- 	connectorPeers := []tailcfg.NodeView{
-@@ -239,24 +239,24 @@ func TestTransitIPConnMapping(t *testing.T) {
- 	}
- 
- 	// Adding a transit IP that isn't known should fail
--	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err == nil {
-+	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err == nil {
- 		t.Error("adding an unknown transit IP should fail")
- 	}
- 
- 	// Insert the address assignments
- 	conn25.client.assignments.insert(as)
- 
- 	// Adding a transit IP for a node with an unset key should fail
--	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[0]); err == nil {
-+	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[0]); err == nil {
- 		t.Error("adding an transit IP mapping for a connector with a zero key should fail")
- 	}
- 	// Adding a transit IP that is known should succeed
--	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err != nil {
-+	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err != nil {
- 		t.Errorf("unexpected error for first time add: %v", err)
- 	}
- 	// And doing it again shouldn't fail (this is done when resending mappings
- 	// to a restarted connector)
--	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err != nil {
-+	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err != nil {
- 		t.Errorf("error adding duplicate transitIP for a connector: %v", err)
- 	}
- }
-@@ -267,7 +267,9 @@ func TestIsKnownTransitIP(t *testing.T) {
- 
- 	c := newConn25(t.Logf)
- 	err := c.client.assignments.insert(&addrs{
--		transit: knownTip,
-+		connectorAddr: connectorAddr{
-+			transit: knownTip,
-+		},
- 	})
- 	if err != nil {
- 		t.Errorf("error inserting address assignment: %v", err)
-@@ -287,7 +289,9 @@ func TestLinkLocalAllow(t *testing.T) {
- 
- 	c := newConn25(t.Logf)
- 	err := c.client.assignments.insert(&addrs{
--		transit: knownTip,
-+		connectorAddr: connectorAddr{
-+			transit: knownTip,
-+		},
- 	})
- 	if err != nil {
- 		t.Fatalf("error inserting address assignment: %v", err)
-@@ -351,18 +355,18 @@ func TestReconfigDoesNotReissueInUseAddresses(t *testing.T) {
- 				conn25: c,
- 			}
- 
--			_, err := c.client.reserveAddresses(appName, domain, tt.dstOne, 10)
-+			_, err := c.client.reserveAddresses(appName, domain, tt.dstOne, 10, testConnectorPeer, "")
- 			if !errors.Is(err, errUninitializedIPPool) {
- 				t.
-```
-
-**File**: `feature/conn25/conn25.go` (modified, +135/-32)
-```diff
-@@ -185,7 +185,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 		if !ok {
- 			return "", errors.New("no app found for app name")
- 		}
--		_, urlBase := e.pickConnectorURLBase(app)
-+		urlBase := e.pickConnectorURLBase(app)
- 		if urlBase == "" {
- 			return "", nil
- 		}
-@@ -200,7 +200,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 		if !e.conn25.isConfigured() {
- 			return res.Bs
- 		}
--		return e.conn25.mapDNSResponse(res)
-+		return e.mapDNSResponse(res)
- 	})
- 
- 	// Intercept packets from the tun device and from WireGuard
-@@ -315,6 +315,10 @@ func (c *Conn25) ClientTransitIPForMagicIP(m netip.Addr) (netip.Addr, error) {
- 	if !cfg.ipSets.v4Magic.Contains(m) && !cfg.ipSets.v6Magic.Contains(m) {
- 		return netip.Addr{}, nil
- 	}
-+	// TODO(tailscale/corp#50405): Just because there is a TransitIP associated with the MagicIP,
-+	// that doesn't mean the TransitIP is ready to use. We should also make sure that the TransitIP
-+	// is installed in WireGuard for the correct node, which happens after it is registered with the
-+	// connector. Perhaps a different error message to represent that.
- 	return netip.Addr{}, ErrUnmappedMagicIP
- }
- 
-@@ -664,6 +668,12 @@ type TransitIPRequest struct {
- 	// App is the name of the connector application from the tailnet
- 	// configuration.
- 	App string `json:"app,omitzero"`
-+
-+	// Token is supplied by the connector in its PeerAPI DoH response. It should
-+	// not be modified, and shouldn't need to be inspected. It should be
-+	// sent back to the connector in this request for the DestinationIP
-+	// and App for which it was originally received.
-+	Token string `json:"token,omitzero"`
- }
- 
- // ConnectorTransitIPRequest is the request body for a PeerAPI request to
-@@ -887,11 +897,11 @@ func (e *extension) sendLoop(ctx context.Context) {
- }
- 
- func (e *extension) handleAddressAssignment(ctx context.Context, as addrs) error {
--	conn, err := e.sendAddressAssignment(ctx, as)
-+	err := e.sendAddressAssignment(ctx, as)
- 	if err != nil {
- 		return err
- 	}
--	err = e.conn25.client.addTransitIPForConnector(as.transit, conn)
-+	err = e.conn25.client.addTransitIPForConnector(as.connectorAddr.transit, as.connectorAddr.node)
- 	if err != nil {
- 		return err
- 	}
-@@ -905,9 +915,10 @@ func makePeerAPIReq(ctx context.Context, httpClient *http.Client, urlBase string
- 
- 	reqBody := ConnectorTransitIPRequest{
- 		TransitIPs: []TransitIPRequest{{
--			TransitIP:     as.transit,
-+			TransitIP:     as.connectorAddr.transit,
- 			DestinationIP: as.dst,
- 			App:           as.app,
-+			Token:         as.connectorAddr.token,
- 		}},
- 	}
- 	bs, err := json.Marshal(reqBody)
-@@ -941,43 +952,34 @@ func makePeerAPIReq(ctx context.Context, httpClient *http.Client, urlBase string
- 	return nil
- }
- 
--func (e *extension) pickConnectorURLBase(app appctype.Conn25Attr) (tailcfg.NodeView, string) {
-+func (e *extension) pickConnectorURLBase(app appctype.Conn25Attr) string {
- 	nb := e.host.NodeBackend()
- 	peers := pickConnector(nb, app)
--	var urlBase string
--	var conn tailcfg.NodeView
- 	for _, p := range peers {
--		urlBase = nb.PeerAPIBase(p)
--		if urlBase != "" {
--			conn = p
--			break
-+		if urlBase := nb.PeerAPIBase(p); urlBase != "" {
-+			return urlBase
- 		}
- 	}
--	return conn, urlBase
-+	return ""
- }
- 
--func (e *extension) sendAddressAssignment(ctx context.Context, as addrs) (tailcfg.NodeView, error) {
--	cfg, ok := e.conn25.getConfig()
--	if !ok {
--		return tailcfg.NodeView{}, errors.New("not configured")
--	}
--	app, ok := cfg.appsByName[as.app]
--	if !ok {
--		e.conn25.client.logf("App not found for app: %s (domain: %s)", as.app, as.domain)
--		return tailcfg.NodeView{}, errors.New("app not found")
--	}
--	conn, urlBase := e.pickConnectorURLBase(app)
-+// sendAddressAssignment registers the TransitIP in as with the connector in as,
-+// which is the connector that sent the DNS response with the destination IP in as.
-+func (e *extension) sendAddressAssignment(ctx context.Context, as addrs) error {
-+	urlBase := e.host.NodeBackend().PeerAPIBase(as.connectorAddr.node)
- 	if urlBase == "" {
--		return tailcfg.NodeView{}, errors.New("no connector peer found to handle address assignment")
-+		return fmt.Errorf("no PeerAPI URL base found for node stable ID %q", as.connectorAddr.node.StableID())
- 	}
- 	client := e.backend.Sys().Dialer.Get().PeerAPIHTTPClient()
--	return conn, makePeerAPIReq(ctx, client, urlBase, as)
-+	return makePeerAPIReq(ctx, client, urlBase, as)
- }
- 
- type dnsResponseRewrite struct {
--	domain     dnsname.FQDN
--	dst        netip.Addr
--	ttlSeconds uint32
-+	domain        dnsname.FQDN
-+	dst           netip.Addr
-+	ttlSeconds    uint32
-+	connectorNode tailcfg.NodeView
-+	token         string
- }
- 
- func makeServFail(logf logger.Logf, h dnsmessage.Header, q dnsmessage.Question) []byte {
-@@ -1036,12 +1038,32 @@ var passThroughQuestionTypes = set.Of(
- 	dnsmessage.Type(35), // NAPTR
+ 	"tailscale.com/client/tailscale/v2"
++	"tailscale.com/ipn"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tstest"
++	"tailscale.com/types/key"
++	"tailscale.com/util/set"
  )
  
-+// connectorAddr is everything an [addrs] needs in order to register itself
-+// with a connector: the transit address allocated fo
+ // TestHAServiceCleanupOnAnnotationRemoved checks that removing the
+@@ -131,3 +137,140 @@ func isServicePGFinalizerE2E(f string) bool {
+ 	_, name, ok := strings.Cut(f, "/")
+ 	return ok && name == "service-pg-finalizer"
+ }
++
++// TestServiceCleanupUnreportedDevice checks that cleaning up a proxy that
++// registered with control but never reported its device ID deletes its device,
++// found by machine key, and leaves every other device in the tailnet alone.
++func TestServiceCleanupUnreportedDevice(t *testing.T) {
++	if tsClient == nil {
++		t.Skip("TestServiceCleanupUnreportedDevice requires a working tailnet client")
++	}
++	t.Parallel()
++
++	// Fill the tailnet, so that if control ignored the machine key filter the
++	// lookup would return many devices instead of one.
++	const otherDevices = 25
++	var otherIDs []string
++	for range otherDevices {
++		srv := newTailnetNode(t, tsClient, generateName("other"))
++		lc, err := srv.LocalClient()
++		if err != nil {
++			t.Fatalf("getting local client: %v", err)
++		}
++		st, err := lc.StatusWithoutPeers(t.Context())
++		if err != nil {
++			t.Fatalf("getting status: %v", err)
++		}
++		otherIDs = append(otherIDs, string(st.Self.ID))
++	}
++
++	// The proxy only needs to register, so the Service needs no backends.
++	svc := &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      generateName("test-cleanup"),
++			Namespace: ns,
++			Annotations: map[string]string{
++				"tailscale.com/expose": "true",
++			},
++		},
++		Spec: corev1.ServiceSpec{
++			Selector: map[string]string{
++				"app.kubernetes.io/name": "none",
++			},
++			Ports: []corev1.ServicePort{
++				{Name: "http", Protocol: "TCP", Port: 80},
++			},
++		},
++	}
++	createAndCleanup(t, kubeClient, svc)
++
++	var sec corev1.Secret
++	if err := tstest.WaitFor(5*time.Minute, func() error {
++		var secrets corev1.SecretList
++		if err := kubeClient.List(t.Context(), &secrets,
++			client.InNamespace("tailscale"),
++			client.MatchingLabels{
++				"tailscale.com/parent-resource":      svc.Name,
++				"tailscale.com/parent-resource-ns":   ns,
++				"tailscale.com/parent-resource-type": "svc",
++			},
++		); err != nil {
++			return err
++		}
++		if len(secrets.Items) == 0 {
++			return fmt.Errorf("no state Secret for Service %s yet", svc.Name)
++		}
++		sec = secrets.Items[0]
++		if len(sec.Data[kubetypes.KeyDeviceID]) == 0 {
++			return fmt.Errorf("state Secret %s has no device_id yet", sec.Name)
++		}
++		return nil
++	}); err != nil {
++		t.Fatalf("waiting for the proxy to register: %v", err)
++	}
++	deviceID := string(sec.Data[kubetypes.KeyDeviceID])
++
++	var mk key.MachinePrivate
++	if err := mk.UnmarshalText(sec.Data[string(ipn.MachineKeyStateKey)]); err != nil {
++		t.Fatalf("parsing machine key in state Secret %s: %v", sec.Name, err)
++	}
++	devices, err := tsClient.Devices().List(t.Context(), tailscale.WithFilter("machineKey", []string{mk.Public().String()}))
++	if err != nil {
++		t.Fatalf("listing devices by machine key: %v", err)
++	}
++	if len(devices) != 1 || devices[0].NodeID != deviceID {
++		var ids []string
++		for _, d := range devices {
++			ids = append(ids, d.NodeID)
++		}
++		t.Fatalf("devices with the proxy's machine key = %v, want [%s]", ids, deviceID)
++	}
++
++	// Mimic a proxy that was shut down before its first netmap. containerboot
++	// only writes device_id when it changes, so the running proxy won't
++	// restore it.
++	secPatch := client.RawPatch(types.MergePatchType, []byte(`{"data":{"device_id":null,"device_fqdn":null,"device_ips":null}}`))
++	if err := kubeClient.Patch(t.Context(), &sec, secPatch); err != nil {
++		t.Fatalf("removing device_id from state Secret %s: %v", sec.Name, err)
++	}
++	svcPatch := client.RawPatch(types.MergePatchType, []byte(`{"metadata":{"annotations":{"tailscale.com/expose":null}}}`))
++	if err := kubeClient.Patch(t.Context(), svc, svcPatch); err != nil {
++		t.Fatalf("removing expose annotation: %v", err)
++	}
++
++	if err := tstest.WaitFor(5*time.Minute, func() error {
++		cur := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
++		if err := get(t.Context(), kubeClient, cur); err != nil {
++			return err
++		}
++		if slices.Contains(cur.Finalizers, "tailscale.com/finalizer") {
++			return fmt.Errorf("Service %s cleanup not finished yet", svc.Name)
++		}
++		return nil
++	}); err != nil {
++		t.Fatalf("waiting for Service cleanup: %v", err)
++	}
++
++	_, err = tsClient.Devices().Get(t.Context(), deviceID)
++	switch {
++	case tailscale.IsNotFound(err):
++	case err != nil:
++		t.Fatalf("getting device %s: %v", deviceID, err)
++	default:
++		t.Fatalf("device %s is 
 ```
 
-**File**: `feature/conn25/conn25_test.go` (modified, +502/-104)
+---
+
+### Incident Patch 2: `afb8baf0` (2026-10-16)
+**Commit Message**: cmd/k8s-operator,k8s-operator: test cleanup of HA devices with no device ID
+
+Adds tests that ProxyGroup scale-down and cleanup, Recorder cleanup and
+PeerRelay cleanup delete the device matching the machine key in a state
+Secret that has no device ID. The Recorder test puts that Secret on
+replica 0, so it also checks that cleanup carries on to the other
+replicas.
+
+Updates #18922
+
+Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+
+**File**: `cmd/k8s-operator/proxygroup_test.go` (modified, +3/-1)
 ```diff
-@@ -1168,7 +1168,44 @@ func makeDNSResponseForAllSections(
- 	if err != nil {
- 		t.Fatal(err)
- 	}
--	return &resolver.Response{Bs: outbs}
-+	return &resolver.Response{Bs: outbs, DoHMeta: testPeerAPIDoHMeta(t, testConnectorAddr, testAppName, nil)}
-+}
-+
-+const testAppName = "app1"
-+
-+var testConnectorAddr = netip.MustParseAddr("100.64.1.99")
-+
-+var testConnectorPeer = (&tailcfg.Node{
-+	ID:        tailcfg.NodeID(99),
-+	StableID:  tailcfg.StableNodeID("testConnectorStableID"),
-+	Addresses: []netip.Prefix{netip.PrefixFrom(testConnectorAddr, testConnectorAddr.BitLen())},
-+	Hostinfo:  (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
-+	Online:    new(true),
-+}).View()
-+
-+var nodeViewComparer = cmp.Comparer(func(a, b tailcfg.NodeView) bool {
-+	if a.Valid() != b.Valid() {
-+		return false
-+	}
-+	return !a.Valid() || a.StableID() == b.StableID()
-+})
-+
-+func testPeerAPIDoHMeta(t *testing.T, connectorAddr netip.Addr, appName string, tokens map[netip.Addr]string) *resolver.DoHMetadata {
+@@ -1051,6 +1051,7 @@ func TestProxyGroup(t *testing.T) {
+ 	})
+ 
+ 	t.Run("scale_down_to_1", func(t *testing.T) {
++		setUnreportedDevice(t, fc, tsClient, pgStateSecretName(pg.Name, 2), "unreported-2")
+ 		pg.Spec.Replicas = new(int32(1))
+ 		mustUpdate(t, fc, "", pg.Name, func(p *tsapi.ProxyGroup) {
+ 			p.Spec = pg.Spec
+@@ -1086,6 +1087,7 @@ func TestProxyGroup(t *testing.T) {
+ 	})
+ 
+ 	t.Run("delete_and_cleanup", func(t *testing.T) {
++		setUnreportedDevice(t, fc, tsClient, pgStateSecretName(pg.Name, 0), "unreported-0")
+ 		if err := fc.Delete(t.Context(), pg); err != nil {
+ 			t.Fatal(err)
+ 		}
+@@ -1098,7 +1100,7 @@ func TestProxyGroup(t *testing.T) {
+ 		}
+ 		// 2 nodes should get deleted as part of the scale down, and then finally
+ 		// the first node gets deleted with the ProxyGroup cleanup.
+-		if diff := cmp.Diff(tsClient.deleted, []string{"nodeid-1", "nodeid-2", "nodeid-0"}); diff != "" {
++		if diff := cmp.Diff(tsClient.deleted, []string{"nodeid-1", "unreported-2", "unreported-0"}); diff != "" {
+ 			t.Fatalf("unexpected deleted devices (-got +want):\n%s", diff)
+ 		}
+ 		expectMissing[corev1.Service](t, reconciler, "tailscale", metricsResourceName(pg.Name))
+```
+
+**File**: `cmd/k8s-operator/testutils_test.go` (modified, +16/-0)
+```diff
+@@ -39,6 +39,7 @@ import (
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/kubetypes"
++	"tailscale.com/types/key"
+ 	"tailscale.com/util/mak"
+ )
+ 
+@@ -948,6 +949,21 @@ func (m *fakeDevices) Get(_ context.Context, id string) (*tailscale.Device, erro
+ 	return nil, tailscale.APIError{Status: http.StatusNotFound}
+ }
+ 
++// setUnreportedDevice leaves only a machine key in state Secret name and registers a device with that key, as if
++// tailscaled registered with control but never reported its device ID.
++func setUnreportedDevice(t *testing.T, cl client.Client, tsClient *fakeTSClient, name, nodeID string) {
 +	t.Helper()
-+	u, err := url.Parse(fmt.Sprintf(
-+		"http://%s/dns-query?app=%s",
-+		netip.AddrPortFrom(connectorAddr, 1234),
-+		url.QueryEscape(appName),
-+	),
-+	)
++	mk := key.NewMachine()
++	mkText, err := mk.MarshalText()
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	hdr := http.Header{}
-+	for addr, token := range tokens {
-+		hdr.Add(TokenHeader, addr.String()+" "+token)
-+	}
-+	return &resolver.DoHMetadata{RequestURL: u, ResponseHeader: hdr}
++	mustUpdate(t, cl, tsNamespace, name, func(s *corev1.Secret) {
++		s.Data = map[string][]byte{string(ipn.MachineKeyStateKey): mkText}
++	})
++	tsClient.devices = append(tsClient.devices, tailscale.Device{NodeID: nodeID, MachineKey: mk.Public().String()})
++}
++
+ func (c *fakeTSClient) Keys() tsclient.KeyResource {
+ 	return &fakeKeys{
+ 		keyRequests: &c.keyRequests,
+```
+
+**File**: `cmd/k8s-operator/tsrecorder_test.go` (modified, +3/-1)
+```diff
+@@ -261,6 +261,8 @@ func TestRecorder(t *testing.T) {
+ 	})
+ 
+ 	t.Run("delete_the_Recorder_and_observe_cleanup", func(t *testing.T) {
++		// Replica 0 comes first, so an unreported device there must not end cleanup early.
++		setUnreportedDevice(t, fc, tsClient, "test-0", "unreported-0")
+ 		if err := fc.Delete(context.Background(), tsr); err != nil {
+ 			t.Fatal(err)
+ 		}
+@@ -271,7 +273,7 @@ func TestRecorder(t *testing.T) {
+ 		if expected := 0; reconciler.recorders.Len() != expected {
+ 			t.Fatalf("expected %d recorders, got %d", expected, reconciler.recorders.Len())
+ 		}
+-		if diff := cmp.Diff(tsClient.deleted, []string{"node-0", "node-1", "node-2"}); diff != "" {
++		if diff := cmp.Diff(tsClient.deleted, []string{"unreported-0", "node-1", "node-2"}); diff != "" {
+ 			t.Fatalf("unexpected deleted devices (-got +want):\n%s", diff)
+ 		}
+ 		// The fake client does not clean up objects whose owner has been
+```
+
+**File**: `k8s-operator/reconciler/peerrelay/peerrelay_test.go` (modified, +25/-5)
+```diff
+@@ -35,6 +35,7 @@ import (
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
+ 	"tailscale.com/k8s-operator/reconciler/peerrelay"
+ 	"tailscale.com/k8s-operator/tsclient"
++	"tailscale.com/types/key"
+ )
+ 
+ const (
+@@ -1572,6 +1573,7 @@ type fakeTSClient struct {
+ 	mu            sync.Mutex
+ 	keyCalls      []tailscaleclient.CreateKeyRequest
+ 	deviceDeletes []string
++	devices       []tailscaleclient.Device
+ 	nextKey       []string
  }
  
- // buildResource writes r into whichever section b is currently building.
-@@ -1243,11 +1280,11 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
- 			// these are 'expected' because they are the beginning of the provided pools
- 			wantByMagicIP: map[netip.Addr]*addrs{
- 				netip.MustParseAddr("100.64.0.0"): {
--					domain:  "example.com.",
--					dst:     netip.MustParseAddr("1.0.0.0"),
--					magic:   netip.MustParseAddr("100.64.0.0"),
--					transit: netip.MustParseAddr("100.64.0.40"),
--					app:     "app1",
-+					domain:        "example.com.",
-+					dst:           netip.MustParseAddr("1.0.0.0"),
-+					magic:         netip.MustParseAddr("100.64.0.0"),
-+					connectorAddr: connectorAddr{transit: netip.MustParseAddr("100.64.0.40"), node: testConnectorPeer},
-+					app:           "app1",
- 				},
+@@ -1621,7 +1623,10 @@ func (d *fakeDevices) Delete(_ context.Context, id string) error {
+ }
+ 
+ func (d *fakeDevices) List(_ context.Context, _ ...tailscaleclient.ListDevicesOptions) ([]tailscaleclient.Device, error) {
+-	return nil, nil
++	c := (*fakeTSClient)(d)
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	return slices.Clone(c.devices), nil
+ }
+ 
+ func (d *fakeDevices) Get(_ context.Context, _ string) (*tailscaleclient.Device, error) {
+@@ -1784,8 +1789,17 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
+ 				Finalizers:        []string{"tailscale.com/finalizer"},
+ 				DeletionTimestamp: new(metav1.Now()),
  			},
- 		},
-@@ -1261,18 +1298,18 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
- 			},
- 			wantByMagicIP: map[netip.Addr]*addrs{
- 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::"): {
--					domain:  "example.com.",
--					dst:     netip.MustParseAddr("::1"),
--					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
--					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"),
--					app:     "app1",
-+					domain:        "example.com.",
-+					dst:           netip.MustParseAddr("::1"),
-+					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
-+					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"), node: testConnectorPeer},
-+					app:           "app1",
- 				},
- 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::1"): {
--					domain:  "example.com.",
--					dst:     netip.MustParseAddr("::2"),
--					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::1"),
--					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::1"),
--					app:     "app1",
-+					domain:        "example.com.",
-+					dst:           netip.MustParseAddr("::2"),
-+					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::1"),
-+					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::1"), node: testConnectorPeer},
-+					app:           "app1",
- 				},
- 			},
- 		},
-@@ -1286,11 +1323,11 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
- 			},
- 			wantByMagicIP: map[netip.Addr]*addrs{
- 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::"): {
--					domain:  "example.com.",
--					dst:     netip.MustParseAddr("::1"),
--					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
--					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"),
--					app:     "app1",
-+					domain:        "example.com.",
-+					dst:           netip.MustParseAddr("::1"),
-+					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
-+					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"), node: testConnectorPeer},
-+					app:           "app1",
- 				},
- 			},
- 		},
-@@ -1304,18 +1341,18 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
- 			},
- 			wantByMagicIP: map[netip.Addr]*addrs{
- 				netip.MustParseAddr("100.64.0.0"): {
--					domain:  "example.com.",
--					dst:     netip.MustParseAddr("1.0.0.0"),
--					magic:   netip.MustParseAddr("100.64.0.0"),
--					transit: netip.MustParseAddr("100.64.0.40"),
--					app:     "app1",
-+					domain:        "example.com.",
-+					dst:           netip.MustParseAddr("1.0.0.0"),
-+					magic:         netip.MustParseAddr("100.64.0.0"),
-+					connectorAddr: connectorAddr{transit: netip.MustParseAddr("100.64.0.40"), node: testConnectorPeer},
-+					app:           "app1",
- 				},
- 				netip.MustParseAddr("100.64.0.1"): {
--					domain:  "example.com.",
--					dst:     netip.Mus
+-			Spec: tsapi.PeerRelaySpec{Replicas: new(int32(2))},
++			Spec: tsapi.PeerRelaySpec{Replicas: new(int32(3))},
++		}
++
++		// Replica 2 registered with control but never reported its device ID.
++		mk := key.NewMachine()
++		mkText, err := mk.MarshalText()
++		if err != nil {
++			t.Fatal(err)
+ 		}
++		unreported := stateSecret("test", "peerrelay-test-2", 2, "")
++		unreported.Data = map[string][]byte{string(ipn.MachineKeyStateKey): mkText}
+ 
+ 		fc := fake.NewClientBuilder().WithInterceptorFuncs(applyPatchInterceptor()).
+ 			WithScheme(tsapi.GlobalScheme).
+@@ -1794,11 +1808,15 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
+ 				pr,
+ 				stateSecret("test", "peerrelay-test-0", 0, "device-aaa"),
+ 				stateSecret("test", "peerrelay-test-1", 1, ""), // pod never registered , no device_id
++				unreported,
+ 				stateSecret("other", "peerrelay-other-0", 0, "device-should-not-touch"),
+ 			).
+ 			Build()
+ 
+-		tsc := &fakeTSClient{}
++		tsc := &fakeTSClient{devices: []tailscaleclient.Device{
++			{NodeID: "device-bbb", MachineKey: mk.Public().String()},
++			{NodeID: "device-other", MachineKey: key.NewMachine().Public().String()},
++		}}
+ 		r := peerrelay.NewReconciler(peerrelay.ReconcilerOptions{
+ 			Client:             fc,
+ 			TailscaleNamespace: tailscaleNamespace,
+@@ -1813,12 +1831,14 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
+ 			t.Fatal(err)
+ 		}
+ 
+-		if got, want := tsc.DeviceDeletes(), []string{"device-aaa"}; !slices.Equal(got, want) {
++		got := tsc.DeviceDeletes()
++		slices.Sort(got)
++		if want := []string{"device-aaa", "device-bbb"}; !slices.Equal(got, want) {
+ 			t.Errorf("expected Devices().Delete calls %v, got %v", want, got)
+ 		}
+ 
+ 		// Our state Secrets should be gone; the unrelated PeerRelay's state Secret should still be present.
+-		for _, name := range []string{"peerrelay-test-0", "peerrelay-test-1"} {
++		for _, name := range []string{"peerrelay-test-0", "peerrelay-test-1", "peerrelay-test-2"} {
+ 			var s corev1.Secret
+ 			if err = fc.Get(t.Context(), types.NamespacedName{Namespace: tailscaleNamespace, Name: name}, &s); !apierrors.IsNotFound(err) {
+ 				t.Errorf("expected state Secret %q gone, got err=%v", name, err)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22124** (closed): cmd/pgproxy: support GSSENC, CancelRequest and direct TLS negotiation (@PaarthShah)
+- **PR #22110** (closed): cmd/k8s-operator: gate ProxyGroup ready on rollout (@manuaudio)
 - **PR #22100** (closed): wgengine/magicsock: handle UDP read errors instead of dying (@illotum)
 - **PR #22092** (2026-10-30): wgengine/netstack: disable RACK again (@raggi)
 - **PR #22088** (2026-10-30): ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (@cmol)
 - **PR #22077** (2026-10-30): ssh/tailssh: stop killing session processes on graceful disconnects (@raggi)
-- **PR #22073** (2026-10-30): feature/conn25: block private destinations (@mazdakn)
-- **PR #22071** (2026-10-30): tstest/natlab: add a new portmapper VM test (@fmarier)
 
 ---
 
@@ -1489,32 +1199,63 @@ Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feature/conn25: store tokens from DNS response and pass them back in
+## X. cmd/k8s-operator/e2e: test that cleanup finds devices by machine key
 
 **RULE**:
-When implementing operations in `feature/conn25/addrAssignments.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/e2e/svc_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49aa9c85`: feature/conn25: store tokens from DNS response and pass them back in. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `57ca6e1e`: cmd/k8s-operator/e2e: test that cleanup finds devices by machine key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/addrAssignments.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/e2e/svc_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if _, ok := a.byTransitIP[as.connectorAddr.transit]; ok {
-	mak.Set(&a.byTransitIP, as.connectorAddr.transit, as)
-	delete(a.byTransitIP, v.connectorAddr.transit)
+	"slices"
+	"k8s.io/apimachinery/pkg/types"
+	"tailscale.com/ipn"
+	"tailscale.com/kube/kubetypes"
+	"tailscale.com/types/key"
+	"tailscale.com/util/set"
+
+// TestServiceCleanupUnreportedDevice checks that cleaning up a proxy that
+// registered with control but never reported its device ID deletes its device,
+// found by machine key, and leaves every other device in the tailnet alone.
+func TestServiceCleanupUnreportedDevice(t *testing.T) {
+	if tsClient == nil {
+		t.Skip("TestServiceCleanupUnreportedDevice requires a working tailnet client")
+	}
+	t.Parallel()
+
+	// Fill the tailnet, so that if control ignored the machine key filter the
+	// lookup would return many devices instead of one.
+	const otherDevices = 25
+	var otherIDs []string
+	for range otherDevices {
+		srv := newTailnetNode(t, tsClient, generateName("other"))
+		lc, err := srv.LocalClient()
+		if err != nil {
+			t.Fatalf("getting local client: %v", err)
+		}
+		st, err := lc.StatusWithoutPeers(t.Context())
+		if err != nil {
+			t.Fatalf("getting status: %v", err)
+		}
+		otherIDs = append(otherIDs, string(st.Self.ID))
+	}
+
+	// The proxy only needs to register, so the Service needs no backends.
+	svc := &corev1.Service{
+		ObjectMeta: metav1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if _, ok := a.byTransitIP[as.transit]; ok {
-	mak.Set(&a.byTransitIP, as.transit, as)
-	delete(a.byTransitIP, v.transit)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49aa9c85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `57ca6e1e` are properly handled with clean fallback behavior.

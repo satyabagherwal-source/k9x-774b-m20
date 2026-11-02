@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:15:31.458Z",
-  "total_cycles_completed": 6793,
-  "total_learnings_persisted": 6793,
-  "total_rules_promoted": 6440,
+  "last_updated": "2026-11-02T15:22:30.388Z",
+  "total_cycles_completed": 6797,
+  "total_learnings_persisted": 6797,
+  "total_rules_promoted": 6443,
   "history": [
-    {
-      "timestamp": "2026-10-31T15:36:23.737Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:36:29.225Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:36:32.884Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:42:40.878Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T15:42:43.273Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-02T15:15:31.458Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:22:21.163Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:22:25.149Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:22:29.571Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:22:30.388Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

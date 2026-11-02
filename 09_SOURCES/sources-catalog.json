@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "49aa9c85",
+    "sourceVersion": "57ca6e1e",
     "license": "BSD-3-Clause",
-    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
-    "lastHarvestedAt": "2026-10-31T20:23:15.527Z",
+    "contentHash": "573005542acce425695c5e0df433ed0b26a8cb86db8c4c5273c41ebcd8dcd8ae",
+    "lastHarvestedAt": "2026-11-02T15:22:30.383Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "dd74aad1",
+    "sourceVersion": "ea169d03",
     "license": "Apache-2.0",
-    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
-    "lastHarvestedAt": "2026-10-31T13:14:06.213Z",
+    "contentHash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
+    "lastHarvestedAt": "2026-11-02T15:22:29.567Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "80808bad",
+    "sourceVersion": "bcddf276",
     "license": "Apache-2.0",
-    "contentHash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
-    "lastHarvestedAt": "2026-10-31T08:13:59.696Z",
+    "contentHash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
+    "lastHarvestedAt": "2026-11-02T15:22:21.158Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "744cf88f",
+    "sourceVersion": "c2f17694",
     "license": "Apache-2.0",
-    "contentHash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
-    "lastHarvestedAt": "2026-10-30T05:39:20.802Z",
+    "contentHash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
+    "lastHarvestedAt": "2026-11-02T15:22:25.144Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

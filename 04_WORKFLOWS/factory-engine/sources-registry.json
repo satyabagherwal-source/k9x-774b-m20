@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T15:15:34.013Z",
-    "lastVerified": "2026-11-02T15:15:34.013Z",
+    "lastChecked": "2026-11-02T15:22:32.922Z",
+    "lastVerified": "2026-11-02T15:22:32.922Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -349,9 +349,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-02T14:53:48.151Z",
+    "lastChecked": "2026-11-02T15:22:29.556Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-02T14:53:48.151Z"
+    "lastVerified": "2026-11-02T15:22:29.556Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2173,22 +2173,21 @@
     "lastVerified": "2026-10-31T21:37:35.908Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T00:02:56.640Z",
-    "lastVerified": "2026-11-01T00:02:56.640Z",
+    "lastChecked": "2026-11-02T15:22:29.463Z",
+    "lastVerified": "2026-11-02T15:22:29.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
+    "contentHash": "573005542acce425695c5e0df433ed0b26a8cb86db8c4c5273c41ebcd8dcd8ae",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "49aa9c85"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3399,9 +3398,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-10-31T12:29:47.503Z",
+    "lastChecked": "2026-11-02T15:22:27.013Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-10-31T12:29:47.503Z"
+    "lastVerified": "2026-11-02T15:22:27.013Z"
   },
   "sigoden-aichat": {
     "name": "aichat",
@@ -4925,14 +4924,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:14:05.465Z",
-    "lastVerified": "2026-10-31T13:14:05.465Z",
+    "lastChecked": "2026-11-02T15:22:28.333Z",
+    "lastVerified": "2026-11-02T15:22:28.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
+    "contentHash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5014,14 +5013,14 @@
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T08:13:41.534Z",
-    "lastVerified": "2026-10-31T08:13:41.534Z",
+    "lastChecked": "2026-11-02T15:22:18.937Z",
+    "lastVerified": "2026-11-02T15:22:18.937Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
+    "contentHash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8921,9 +8920,9 @@
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
     "officialUrl": "https://github.com/davo20019/seo-analysis",
-    "lastChecked": "2026-10-29T10:58:55.579Z",
+    "lastChecked": "2026-11-02T15:22:17.016Z",
     "revisionIdentifier": "902c09fd",
-    "lastVerified": "2026-10-29T10:58:55.579Z"
+    "lastVerified": "2026-11-02T15:22:17.016Z"
   },
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
@@ -9835,14 +9834,14 @@
     "officialUrl": "https://github.com/prof18/feed-flow",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-30T05:39:19.464Z",
-    "lastVerified": "2026-10-30T05:39:19.464Z",
+    "lastChecked": "2026-11-02T15:22:24.610Z",
+    "lastVerified": "2026-11-02T15:22:24.610Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

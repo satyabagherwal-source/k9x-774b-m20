@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `744cf88f`  
+> **Source Version**: `c2f17694`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:39:20.167Z  
+> **Timestamp**: 2026-11-02T15:22:24.884Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:39:19.464Z  
+> **Harvest Timestamp**: 2026-11-02T15:22:24.610Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1293 stars
+- **Stars / Engagement**: 1306 stars
 
 ---
 
@@ -585,351 +585,333 @@ fun ComponentActivity.isSystemInDarkTheme() = callbackFlow {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7bfc7b4` (2026-10-29)
-**Commit Message**: Show and save the real error when the desktop app crashes during startup
+### Incident Patch 1: `fe494bb6` (2026-11-01)
+**Commit Message**: Generate the desktop licenses JSON at build time instead of committing it
 
-**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/Main.kt` (modified, +36/-2)
+Every desktop build rewrote the committed aboutlibraries.json from the
+resolved dependencies, so it showed up modified after each dependency
+update. Export it to build/generated and add that folder to the jvmMain
+resources, and drop the release workflow steps that passed an export
+path the plugin no longer reads.
+
+**File**: `.github/workflows/linux-release.yml` (modified, +0/-3)
 ```diff
-@@ -40,6 +40,7 @@ import com.prof18.feedflow.desktop.startup.InstanceActivation
- import com.prof18.feedflow.desktop.startup.SingleInstanceLock
- import com.prof18.feedflow.desktop.startup.StartupState
- import com.prof18.feedflow.desktop.startup.bringToFront
-+import com.prof18.feedflow.desktop.startup.handleStartupCrash
- import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
- import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
- import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
-@@ -55,6 +56,8 @@ import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
- import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
- import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
- import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
-+import io.sentry.Sentry
-+import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.channels.BufferOverflow
- import kotlinx.coroutines.delay
-@@ -66,14 +69,26 @@ import java.awt.Toolkit
- import java.io.File
- import java.io.InputStream
- import java.util.Properties
-+import kotlin.system.exitProcess
- import kotlin.time.Duration.Companion.milliseconds
+@@ -50,9 +50,6 @@ jobs:
+           echo "version=$VERSION" >> $GITHUB_OUTPUT
+           echo "VERSION=$VERSION" >> $GITHUB_ENV
  
--@OptIn(ExperimentalComposeUiApi::class)
- fun main() {
-+    var appConfig: DesktopConfig? = null
-+    try {
-+        runDesktopApp(onConfigReady = { appConfig = it })
-+    } catch (e: Throwable) {
-+        reportStartupCrash(e, appConfig)
-+        exitProcess(1)
-+    }
-+}
+-      - name: Update Licenses file
+-        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+-
+       - name: Create path variables
+         id: path_variables
+         run: |
+```
+
+**File**: `.github/workflows/macos-release.yml` (modified, +0/-3)
+```diff
+@@ -63,9 +63,6 @@ jobs:
+           echo "version=$VERSION" >> $GITHUB_OUTPUT
+           echo "VERSION=$VERSION" >> $GITHUB_ENV
+ 
+-      - name: Update Licenses file
+-        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+-
+       - name: Create path variables
+         id: path_variables
+         run: |
+```
+
+**File**: `.github/workflows/macos-testflight-release.yml` (modified, +0/-3)
+```diff
+@@ -80,9 +80,6 @@ jobs:
+         env:
+           RUNTIME_PROVISION: ${{ secrets.RUNTIME_PROVISION }}
+ 
+-      - name: Update Licenses file
+-        run: ./gradlew :desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+-
+       - name: Read version from properties
+         id: version
+         run: |
+```
+
+**File**: `.github/workflows/windows-release.yml` (modified, +0/-3)
+```diff
+@@ -60,9 +60,6 @@ jobs:
+           "version=$VERSION" >> $env:GITHUB_OUTPUT
+           "VERSION=$VERSION" >> $env:GITHUB_ENV
+ 
+-      - name: Update Licenses file
+-        run: ./gradlew :desktopApp:exportLibraryDefinitions "-PaboutLibraries.exportPath=src/main/resources/"
+-
+       - name: Create path variables
+         id: path_variables
+         shell: pwsh
+```
+
+**File**: `desktopApp/build.gradle.kts` (modified, +5/-1)
+```diff
+@@ -48,12 +48,15 @@ val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+ val isLinux = System.getProperty("os.name").lowercase().contains("linux")
+ val isWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+ 
++// Generated on every build from the resolved dependencies, so it stays out of the source tree.
++val generatedLicensesDir = layout.buildDirectory.dir("generated/aboutlibraries")
 +
-+@OptIn(ExperimentalComposeUiApi::class)
-+private fun runDesktopApp(onConfigReady: (DesktopConfig) -> Unit) {
-     integrateAppImageIfNeeded()
-     setupSandboxEnvironment()
- 
-     val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
-+    onConfigReady(appConfig)
-     val dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment))
-     val lockResult = singleInstanceLock.acquire(dataFolder)
-     DatabaseFailureReporterConfig.singleInstanceLockState = singleInstanceLock.state
-@@ -121,7 +136,14 @@ fun main() {
-             delay(100.milliseconds)
-             initProgress = 0.2f
-             launch(Dispatchers.IO) {
--                startupCoordinator.start()
-+                try {
-+                    startupCoordinator.start()
-+                } catch (e: CancellationException) {
-+                    throw e
-+                } catch (e: Throwable) {
-+                    reportStartupCrash(e, appConfig)
-+                    exitProcess(1)
-+                }
-             }
-         }
- 
-@@ -209,6 +231,18 @@ fun main() {
+ aboutLibraries {
+     collect {
+         configPath.set(file("config/aboutlibraries"))
+     }
+     export {
+-        outputFile.set(file("src/jvmMain/resources/aboutlibraries.json"))
++        outputFile.set(generatedLicensesDir.map { it.file("aboutlibraries.json") })
      }
  }
  
-+private fun reportStartupCrash(error: Throwable, appConfig: DesktopConfig?) {
-+    val dataFolder = appConfig?.let { File(AppDataPathBuilder.getAppDataPath(it.appEnvironment)) }
-+    handleStartupCrash(error = error, appVersion = appConfig?.version, dataFolder = dataFolder)
-+    // Only reaches Sentry when startup got far enough to read the crash reporting preference.
-+    runCatching {
-+        Sentry.captureException(error)
-+        Sentry.flush(SENTRY_FLUSH_TIMEOUT_MILLIS)
-+    }
-+}
-+
-+private const val SENTRY_FLUSH_TIMEOUT_MILLIS = 2_000L
-+
- // Held for the whole process lifetime so the OS keeps the lock until FeedFlow exits.
- private val singleInstanceLock = SingleInstanceLock()
- private val instanceActivation = InstanceActivation()
+@@ -93,6 +96,7 @@ kotlin {
+     sourceSets {
+         jvmMain {
+             kotlin.srcDir(generateDesktopBuildInfo)
++            resources.srcDir(tasks.named("exportLibraryDefinitions").map { generatedLicensesDir.get() })
+             dependencies {
+                 implementation(libs.jewel.int.ui.standalone)
+                 implementation(libs.jewel.platform.icons)
 ```
 
-**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/startup/StartupCrashReport.kt` (added, +140/-0)
+---
+
+### Incident Patch 2: `12b3e69c` (2026-11-01)
+**Commit Message**: Weekly agent-instructions audit: drop sharedUI paths, single desktop Settings window, Flathub manifest location, gplay in translation audit
+
+**File**: `.ai/skills/translation-release-audit/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,140 @@
-+package com.prof18.feedflow.desktop.startup
-+
-+import com.prof18.feedflow.i18n.EnFeedFlowStrings
-+import com.prof18.feedflow.i18n.FeedFlowStrings
-+import com.prof18.feedflow.i18n.feedFlowStrings
-+import java.awt.Dimension
-+import java.awt.GraphicsEnvironment
-+import java.io.File
-+import java.time.Instant
-+import java.util.Locale
-+import java.util.Properties
-+import javax.swing.JOptionPane
-+import javax.swing.JScrollPane
-+import javax.swing.JTextArea
-+import javax.swing.SwingUtilities
-+import javax.swing.UIManager
-+
-+internal const val STARTUP_CRASH_LOG_FILE_NAME = "startup-error.log"
-+
-+private const val DETAILS_WIDTH = 560
-+private const val DETAILS_HEIGHT = 260
-+
-+/**
-+ * Records a crash that stops FeedFlow before its window opens. Without this the packaged launcher only
-+ * shows a generic "Failed to launch JVM" dialog and the cause is lost.
-+ */
-+internal fun handleStartupCrash(
-+    error: Throwable,
-+    appVersion: String?,
-+    dataFolder: File?,
-+) {
-+    val report = startupCrashReportText(error = error, appVersion = appVersion)
-+    System.err.println(report)
-+    val logFile = writeStartupCrashReport(
-+        report = report,
-+        folders = listOfNotNull(dataFolder, File(System.getProperty("java.io.tmpdir"))),
-+    )
-+    showStartupCrashDialog(strings = startupStrings(Locale.getDefault()), logFile = logFile, report = report)
-+}
-+
-+internal fun startupCrashReportText(
-+    error: Throwable,
-+    appVersion: String?,
-+    systemProperties: Properties = System.getProperties(),
-+    now: Instant = Instant.now(),
-+): String {
-+    val home = systemProperties.getProperty("user.home")
-+    fun property(name: String): String = systemProperties.getProperty(name) ?: "unknown"
-+
-+    val report = buildString {
-+        appendLine("FeedFlow startup error")
-+        appendLine("Time: $now")
-+        appendLine("Version: ${appVersion ?: "unknown"}")
-+        appendLine("OS: ${property("os.name")} ${property("os.version")} (${property("os.arch")})")
-+        appendLine("Java: ${property("java.runtime.version")} (${property("java.vendor")})")
-+        appendLine("Java home: ${property("java.home")}")
-+        appendLine("Working directory: ${property("user.dir")}")
-+        appendLine()
-+        append(error.stackTraceToString())
-+    }
-+    // Reports get pasted into public issues; keep the user's account name out of them.
-+    return if (home.isNullOrBlank()) report else report.replace(home, "~")
-+}
-+
-+/** Writes [report] into the first folder that accepts it. Never throws. */
-+internal fun writeStartupCrashReport(report: String, folders: List<File>): File? {
-+    for (folder in folders) {
-+        try {
-+            folder.mkdirs()
-+            val file = File(folder, STARTUP_CRASH_LOG_FILE_NAME)
-+            file.writeText(report)
-+            return file
-+        } catch (_: Exception) {
-+            // Try the next folder.
-+        }
-+    }
-+    return null
-+}
-+
-+internal fun startupStrings(locale: Locale): FeedFlowStrings {
-+    val country = locale.country.takeIf { it.isNotBlank() }
-+    val candidates = listOfNotNull(
-+        country?.let { "${locale.language}_$it" },
-+        locale.language,
-+    )
-+    return candidates.firstNotNullOfOrNull { feedFlowStrings[it] } ?: EnFeedFlowStrings
-+}
-+
-+// Plain Swing on purpose: the crash may come from Compose or its native renderer, so the dialog
-+// can't depend on them.
-+private fun showStartupCrashDialog(strings: FeedFlowStrings, logFile: File?, report: String) {
-+    if (GraphicsEnvironment.isHeadless()) return
-+
-+    val show: () -> Unit = {
-+        try {
-+            val message = if (logFile != null) {
-+                strings.desktopStartupCrash(logFile.absolutePath)
-+            } else {
-+                strings.desktopStartupCrashNoLog
-+            }
-+            // A wrapping, read-only text area keeps a long log path from stretching the dialog.
-+            val messageArea = JTextArea(message).apply {
-+                isEditable = false
-+                isOpaque = false
-+                lineWrap = true
-+                wrapStyleWord = true
-+                font = UIManager.getFont("OptionPane.messageFont") ?: font
-+                setSize(DETAILS_WIDTH, Short.MAX_VALUE.toInt())
-+            }
-+            val details = JTextArea(report).apply {
-+                isEditable = false
-+                caretPosition = 0
-+            }
-+            val scrollPane = JScrollPane(details).apply {
-+                preferredSize = Dimension(DETAILS_WIDTH, DETAILS_HEIGHT)
-+            }
-+            JOptionPane.showOptionDialog(
-+                null,
-+                arrayOf<Any>(messageArea, scrollPane),
-+                strings.appName,
-+                JOptionPane.DEFAULT_OPTION,
-+                JOptionPane.ERROR_MESSAGE,
-+                null,
-+                arrayOf(strings.databaseQuit),
-+                strings.databaseQuit,
-+            )
-+        } catch (_: Exception) {
-+            // The report is already on stderr and,
+@@ -54,7 +54,7 @@ Optional live-store checks:
+    - Store listing screenshot images changed: store screenshots may need upload.
+    - Website screenshot assets changed: website screenshot gallery/hero may need deploy.
+ 6. If live store checking is requested or this is the weekly automation, compare against current store state when credentials are available.
+-   - Google Play: read live state with `.scripts/pull-google-play-listing.py` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If the script's config is unavailable, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
++   - Google Play: read live state with `gplay metadata pull` (see Live Store Checks), never with Gradle Play Publisher bootstrap. If gplay is not installed or not logged in, report the live check as unavailable and continue with checked-in listing output/source-copy checks.
+    - App Store: pull metadata/screenshots into a temp directory and compare against FeedFlow's source store/screenshot copy where mapping is clear.
+    - Microsoft Store: read the live listing with `pcenter listing show` and compare against `assets/storecopy/<locale>/`.
+ 7. Add follow-up TODOs to the FeedFlow native Obsidian Base when the audit finds actionable store release work.
 ```
 
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/startup/StartupCrashReportTest.kt` (added, +100/-0)
+**File**: `AGENTS.md` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,100 @@
-+package com.prof18.feedflow.desktop.startup
-+
-+import com.prof18.feedflow.i18n.EnFeedFlowStrings
-+import com.prof18.feedflow.i18n.feedFlowStrings
-+import java.io.File
-+import java.nio.file.Files
-+import java.time.Instant
-+import java.util.Locale
-+import java.util.Properties
-+import kotlin.test.AfterTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertNull
-+import kotlin.test.assertSame
-+import kotlin.test.assertTrue
-+
-+class StartupCrashReportTest {
-+
-+    private val tempDir: File = Files.createTempDirectory("startup-crash").toFile()
-+
-+    @AfterTest
-+    fun tearDown() {
-+        tempDir.deleteRecursively()
-+    }
-+
-+    private val properties = Properties().apply {
-+        setProperty("user.home", "C:\\Users\\Jürgen")
-+        setProperty("user.dir", "C:\\Users\\Jürgen\\AppData\\Local\\FeedFlow")
-+        setProperty("os.name", "Windows 11")
-+        setProperty("os.version", "10.0")
-+        setProperty("os.arch", "amd64")
-+        setProperty("java.home", "C:\\Program Files\\WindowsApps\\FeedFlow\\runtime")
-+    }
-+
-+    @Test
-+    fun `the report carries the environment and the stack trace`() {
-+        val report = startupCrashReportText(
-+            error = IllegalStateException("settings unreadable"),
-+            appVersion = "1.19.0",
-+            systemProperties = properties,
-+            now = Instant.parse("2026-10-28T10:00:00Z"),
-+        )
-+
-+        assertTrue(report.contains("Version: 1.19.0"))
-+        assertTrue(report.contains("OS: Windows 11 10.0 (amd64)"))
-+        assertTrue(report.contains("Java home: C:\\Program Files\\WindowsApps\\FeedFlow\\runtime"))
-+        assertTrue(report.contains("Time: 2026-10-28T10:00:00Z"))
-+        assertTrue(report.contains("java.lang.IllegalStateException: settings unreadable"))
-+    }
-+
-+    @Test
-+    fun `the report replaces the home folder so the account name stays private`() {
-+        val report = startupCrashReportText(
-+            error = IllegalStateException("cannot read C:\\Users\\Jürgen\\AppData\\Roaming\\FeedFlow"),
-+            appVersion = null,
-+            systemProperties = properties,
-+        )
-+
-+        assertFalse(report.contains("Jürgen"))
-+        assertTrue(report.contains("Working directory: ~\\AppData\\Local\\FeedFlow"))
-+        assertTrue(report.contains("Version: unknown"))
-+    }
-+
-+    @Test
-+    fun `the report is written to the first folder`() {
-+        val logFile = writeStartupCrashReport("boom", listOf(tempDir))
-+
-+        assertEquals(File(tempDir, STARTUP_CRASH_LOG_FILE_NAME), logFile)
-+        assertEquals("boom", logFile?.readText())
-+    }
-+
-+    @Test
-+    fun `an unusable folder falls back to the next one`() {
-+        val notAFolder = File(tempDir, "file").apply { writeText("") }
-+        val fallback = File(tempDir, "fallback")
-+
-+        val logFile = writeStartupCrashReport("boom", listOf(notAFolder, fallback))
-+
-+        assertEquals(File(fallback, STARTUP_CRASH_LOG_FILE_NAME), logFile)
-+    }
-+
-+    @Test
-+    fun `no file is returned when no folder can be written`() {
-+        val notAFolder = File(tempDir, "file").apply { writeText("") }
-+
-+        assertNull(writeStartupCrashReport("boom", listOf(notAFolder)))
-+    }
-+
-+    @Test
-+    fun `strings follow the system language`() {
-+        assertSame(feedFlowStrings.getValue("it"), startupStrings(Locale.ITALY))
-+        assertSame(feedFlowStrings.getValue("zh_TW"), startupStrings(Locale.TAIWAN))
-+    }
-+
-+    @Test
-+    fun `an unknown language falls back to English`() {
-+        assertSame(EnFeedFlowStrings, startupStrings(Locale.forLanguageTag("xx-YY")))
-+    }
-+}
+@@ -209,9 +209,9 @@ Generic patterns (Screen/ScreenContent split, ViewModel shape, events, SwiftUI f
+ 
+ - **ViewModel:** `shared/src/commonMain/kotlin/com/prof18/feedflow/shared/presentation/`. Register it with `viewModel { }` in `shared/src/commonMain/.../shared/di/Koin.kt` (iOS-only ViewModels go in `shared/src/iosMain/.../shared/di/KoinIOS.kt`).
+ - **iOS access:** add `fun getXxxViewModel()` to `object Deps` in `shared/src/iosMain/.../shared/di/KoinIOS.kt`.
+-- **Shared Compose UI:** `XxxScreenContent` goes in `sharedUI/src/commonMain/kotlin/com/prof18/feedflow/shared/ui/<feature>/` when Android and Desktop both use it. Reuse preview data from `sharedUI/.../ui/preview/PreviewItems.kt` and the `@PreviewPhone`/`@PreviewFoldable`/`@PreviewTablet` annotations (`sharedUI/src/androidMain/.../ui/preview/FeedFlowPreview.kt`).
++- **Compose UI:** there is no shared UI module; Android and Desktop each own their UI. Android `XxxScreenContent` goes in the feature package under `androidApp/src/main/kotlin/com/prof18/feedflow/android/<feature>/`; Desktop Jewel UI goes under `desktopApp/.../desktop/<feature>/` (see `docs/DESKTOP_UI.md`). Android previews reuse `androidApp/.../android/ui/preview/PreviewItems.kt` and the `@PreviewPhone`/`@PreviewFoldable`/`@PreviewTablet` annotations in `androidApp/.../android/ui/preview/FeedFlowPreview.kt`.
+ - **Android:** wrapper `androidApp/.../android/<feature>/XxxScreen.android.kt`, route (`@Serializable ... : NavKey`) in `androidApp/.../android/Screen.kt`, `entry<Route>` in `MainActivity.FeedFlowNavigation()`. Go back with `popBackStackOrFinish(backStack)` (the `navigateBack` lambda).
+-- **Desktop:** wrapper `desktopApp/.../desktop/<feature>/XxxScreen.desktop.kt`. In-window pages get a `NavKey` in `desktopApp/.../desktop/Screen.kt` and an `entry<Route>` in `screens()` in `desktop/main/MainWindow.kt`. Settings/detail pages are dialog windows instead (see "Desktop screens/windows").
++- **Desktop:** wrapper `desktopApp/.../desktop/<feature>/XxxScreen.desktop.kt`. In-window pages get a `NavKey` in `desktopApp/.../desktop/Screen.kt` and an `entry<Route>` in `screens()` in `desktop/main/MainWindow.kt`. Preferences go in the Settings window and other detail pages are dialog windows instead (see "Desktop screens/windows").
+ - **ViewModel scope:** no Navigation 3 ViewModel entry decorator is installed, so `koinViewModel()` inside an entry is scoped to the Activity/window. The ViewModel outlives the screen and is reused next time; reset per-screen state explicitly (as `SearchScreen` does with `resetSearch()`).
+ - **iOS:** `iosApp/Source/<Feature>/XxxScreen.swift` + `XxxScreenContent.swift`. Add a case to `CommonViewRoute` (`iosApp/Source/App/Model/CommonViewRoute.swift`) and handle it in the `.navigationDestination(for: CommonViewRoute.self)` of **both** `RegularView.swift` and `CompactView.swift`. Navigate with `appState.navigate(route:)`. Surface errors via `appState.snackbarQueue` + `.snackbar(messageQueue:)`.
+ - **Strings:** `LocalFeedFlowStrings.current` in Compose, `feedFlowStrings` in Swift.
+@@ -246,13 +246,14 @@ For Miniflux/GReader sync failures, compare FeedFlow's exact requests and header
+ - Prefer keeping data classes and other simple model types at the bottom of a file, or in a dedicated model file when they are shared by multiple classes.
+ - Android app modules use AGP 9's built-in Kotlin support; do not re-add `org.jetbrains.kotlin.android`. Android and Desktop app version values come from the `com.feedflow.versioning` convention plugin, not `versioning.gradle.kts`.
+ - Detekt is on Detekt 2 (`dev.detekt`, ktlint via `detekt-rules-ktlint-wrapper`). Bump `io.nlopez.compose.rules:detekt` only to a release whose dependency matrix matches the repo's Detekt and Kotlin versions. `config/detekt/detekt.yml` holds only overrides on top of the defaults (`buildUponDefaultConfig`); add a rule there only to change it.
+-- `detekt` also runs the type-resolved tasks (`detektMainJvm` in KMP modules, `detektGooglePlayDebug`/`detektFdroidDebug` in `androidApp`), which compile the code first; rules such as compose-rules' `UnnecessaryLaunchedEffect` and `MissingReadOnlyComposable` only run there. For a quick source-only pass use a light task like `:sharedUI:detektCommonMainSourceSet`. Generated sources under `build/` are excluded. "Compiler errors found during analysis" on KMP modules comes from Detekt flattening expect/actual into one module; `-Pfeedflow.detektDebug=true` prints them.
++- `detekt` also runs the type-resolved tasks (`detektMainJvm` in KMP modules, `detektGooglePlayDebug`/`detektFdroidDebug` in `androidApp`), which compile the code first; rules such as compose-rules' `UnnecessaryLaunchedEffect` and `MissingReadOnlyComposable` only run there. For a quick source-only pass use a light task like `:shared:detektCommonMainSourceSet`. Generated sources under `build/` are excluded. "Compiler errors found during analysis" on KMP modules comes from Detekt flattening expect/actual into one module
 ```
 
-**File**: `i18n/src/commonMain/resources/locale/values/strings.xml` (modified, +2/-0)
+---
+
+### Incident Patch 3: `3bf4fa7d` (2026-11-01)
+**Commit Message**: Fix compiler and Gradle deprecation warnings
+
+**File**: `androidApp/build.gradle.kts` (modified, +4/-2)
 ```diff
-@@ -54,6 +54,8 @@
-     <string name="database_open_data_folder">Open data folder</string>
-     <string name="database_quit">Quit</string>
-     <string name="desktop_already_running">FeedFlow is already running.</string>
-+    <string name="desktop_startup_crash">FeedFlow couldn\'t start. The details below were saved to %s. Attach that file when you report the problem.</string>
-+    <string name="desktop_startup_crash_no_log">FeedFlow couldn\'t start. Copy the details below and include them when you report the problem.</string>
-     <string name="trigger_feed_sync">Upload changes</string>
-     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
-     <string name="invalid_rss_url_with_retry_hint">Couldn&#39;t validate this feed. It might not be a valid RSS feed, or the server could be temporarily unavailable.</string>
+@@ -14,8 +14,10 @@ plugins {
+     alias(libs.plugins.kotlin.serialization)
+ }
+ 
+-val appVersionCode: () -> Int by extra
+-val appVersionName: () -> String by extra
++@Suppress("UNCHECKED_CAST")
++val appVersionCode = extra["appVersionCode"] as () -> Int
++@Suppress("UNCHECKED_CAST")
++val appVersionName = extra["appVersionName"] as () -> String
+ 
+ val local = Properties()
+ val localProperties: File = rootProject.file("keystore.properties")
+```
+
+**File**: `androidApp/src/test/kotlin/com/prof18/feedflow/android/audio/AndroidSpeechAudioGeneratorTest.kt` (modified, +2/-0)
+```diff
+@@ -9,6 +9,7 @@ import kotlinx.coroutines.CompletableDeferred
+ import kotlinx.coroutines.CoroutineDispatcher
+ import kotlinx.coroutines.CoroutineStart
+ import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.ExperimentalCoroutinesApi
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.async
+ import kotlinx.coroutines.cancelAndJoin
+@@ -32,6 +33,7 @@ import org.robolectric.shadows.ShadowTextToSpeech
+ import java.io.File
+ import java.io.RandomAccessFile
+ 
++@OptIn(ExperimentalCoroutinesApi::class)
+ @RunWith(RobolectricTestRunner::class)
+ @Config(manifest = Config.NONE, application = Application::class, sdk = [Build.VERSION_CODES.O])
+ class AndroidSpeechAudioGeneratorTest {
+```
+
+**File**: `core/build.gradle.kts` (modified, +2/-1)
+```diff
+@@ -3,8 +3,9 @@ plugins {
+ }
+ 
+ kotlin {
+-    androidLibrary {
++    android {
+         namespace = "com.prof18.feedflow.core"
++        withHostTest {}
+     }
+ 
+     compilerOptions {
+```
+
+**File**: `core/src/commonMain/kotlin/com/prof18/feedflow/core/model/SuggestedFeedCategory.kt` (modified, +6/-0)
+```diff
+@@ -1,15 +1,21 @@
+ package com.prof18.feedflow.core.model
+ 
++import kotlin.experimental.ExperimentalObjCName
++import kotlin.native.ObjCName
++
+ data class SuggestedFeedCategory(
+     val id: String,
+     val name: String,
+     val icon: String,
+     val feeds: List<SuggestedFeed>,
+ )
+ 
++@OptIn(ExperimentalObjCName::class)
+ data class SuggestedFeed(
+     val name: String,
+     val url: String,
++    // `description` collides with NSObject.description in Swift.
++    @ObjCName("feedDescription")
+     val description: String,
+     val logoUrl: String? = null,
+ )
+```
+
+**File**: `database/build.gradle.kts` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ plugins {
+ }
+ 
+ kotlin {
+-    androidLibrary {
++    android {
+         namespace = "com.prof18.feedflow.database"
+     }
+ 
+```
+
+**File**: `desktopApp/build.gradle.kts` (modified, +10/-1)
+```diff
+@@ -20,7 +20,7 @@ val appVersionName = extra["appVersionName"] as () -> String
+ @Suppress("UNCHECKED_CAST")
+ val appVersionCode = extra["appVersionCode"] as () -> Int
+ 
+-val generateDesktopBuildInfo by tasks.registering {
++val generateDesktopBuildInfo = tasks.register("generateDesktopBuildInfo") {
+     val versionName = appVersionName()
+     inputs.property("versionName", versionName)
+     val outputDirectory = layout.buildDirectory.dir("generated/desktop-build-info/kotlin")
+@@ -159,6 +159,15 @@ kotlin {
+     }
+ }
+ 
++dependencies {
++    constraints {
++        // Jewel markdown images pins older Coil JVM artifacts, which drag in an incompatible Skiko.
++        val coilVersion = libs.versions.io.coil.get()
++        add("jvmMainImplementation", "io.coil-kt.coil3:coil-svg-jvm:$coilVersion")
++        add("jvmMainImplementation", "io.coil-kt.coil3:coil-network-ktor3-jvm:$coilVersion")
++    }
++}
++
+ tasks.withType<Test>().configureEach {
+     javaLauncher.set(javaToolchains.launcherFor {
+         languageVersion = JavaLanguageVersion.of(25)
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/about/LicensesScreen.desktop.kt` (modified, +5/-4)
+```diff
+@@ -28,7 +28,6 @@ import androidx.compose.ui.focus.FocusRequester
+ import androidx.compose.ui.focus.focusRequester
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.platform.testTag
+-import androidx.compose.ui.res.useResource
+ import androidx.compose.ui.semantics.contentDescription
+ import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.semantics.semantics
+@@ -46,7 +45,6 @@ import kotlinx.coroutines.withContext
+ import org.jetbrains.jewel.foundation.theme.JewelTheme
+ import org.jetbrains.jewel.ui.component.CircularProgressIndicator
+ import org.jetbrains.jewel.ui.component.DefaultButton
+-import org.jetbrains.jewel.ui.component.ListItemState
+ import org.jetbrains.jewel.ui.component.SimpleListItem
+ import org.jetbrains.jewel.ui.component.Text
+ import org.jetbrains.jewel.ui.component.Tooltip
+@@ -57,7 +55,9 @@ fun LicensesScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
+     val report by produceState<Result<Libs>?>(initialValue = null) {
+         value = withContext(dispatchers.default) {
+             runCatching {
+-                val json = useResource("aboutlibraries.json") { it.bufferedReader().readText() }
++                val json = requireNotNull(DI::class.java.classLoader?.getResourceAsStream("aboutlibraries.json"))
++                    .bufferedReader()
++                    .use { it.readText() }
+                 Libs.Builder().withJson(json).build()
+             }
+         }
+@@ -121,7 +121,8 @@ internal fun LicensesContent(
+                             Tooltip(tooltip = { Text(accessibleLabel) }) {
+                                 SimpleListItem(
+                                     text = label,
+-                                    state = ListItemState(isSelected = selectedId == library.uniqueId, isActive = true),
++                                    selected = selectedId == library.uniqueId,
++                                    active = true,
+                                     modifier = Modifier
+                                         .fillMaxWidth()
+                                         .focusRequester(focus)
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/accounts/CredentialsForm.kt` (modified, +2/-0)
+```diff
+@@ -38,6 +38,7 @@ import com.prof18.feedflow.desktop.testing.AccountE2eIds
+ import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+ import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+ import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
++import org.jetbrains.jewel.foundation.ExperimentalJewelApi
+ import org.jetbrains.jewel.ui.Outline
+ import org.jetbrains.jewel.ui.component.DefaultButton
+ import org.jetbrains.jewel.ui.component.Icon
+@@ -192,6 +193,7 @@ private fun CredentialFields(
+ }
+ 
+ @Composable
++@OptIn(ExperimentalJewelApi::class)
+ private fun CredentialField(
+     label: String,
+     value: TextFieldValue,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1574** (2026-10-30): Handle desktop database and startup failures without losing data (@prof18)
-- **PR #1573** (2026-10-29): Add per-feed keep unread when scrolling setting (@prof18)
-- **PR #1571** (2026-10-29): Hold refresh results behind a new articles pill on mobile (@prof18)
-- **PR #1569** (2026-10-27): Keep the Android feed logo fallback icon visible in dark mode (@prof18)
-- **PR #1568** (2026-10-29): Merge localization into main (@github-actions[bot])
-- **PR #1567** (2026-10-26): Lay out right-to-left articles right-to-left in the desktop reader (@prof18)
+- **PR #1610** (2026-11-01): Remove the iOS widget refresh button (@prof18)
+- **PR #1609** (2026-11-01): Fix compiler and Gradle deprecation warnings (@prof18)
+- **PR #1608** (2026-11-01): Wait for X11 window bounds to settle in the desktop window size test (@prof18)
+- **PR #1607** (2026-11-01): Merge localization into main (@github-actions[bot])
+- **PR #1606** (2026-10-31): Split collapsed desktop sidebar sections across preference keys to stay under the value size limit (@prof18)
+- **PR #1605** (2026-10-31): Re-inject the audio playback controller at the iOS split view and navigation boundaries (@prof18)
 
 ---
 
@@ -943,64 +925,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Show and save the real error when the desktop app crashes during startup
-
-**RULE**:
-When implementing operations in `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/Main.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c7bfc7b4`: Show and save the real error when the desktop app crashes during startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/Main.kt`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```kotlin
-// Verified production-grade fix pattern:
-import com.prof18.feedflow.desktop.startup.handleStartupCrash
-import io.sentry.Sentry
-import kotlinx.coroutines.CancellationException
-import kotlin.system.exitProcess
-    var appConfig: DesktopConfig? = null
-    try {
-        runDesktopApp(onConfigReady = { appConfig = it })
-    } catch (e: Throwable) {
-        reportStartupCrash(e, appConfig)
-        exitProcess(1)
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-private fun runDesktopApp(onConfigReady: (DesktopConfig) -> Unit) {
-    onConfigReady(appConfig)
-                try {
-                    startupCoordinator.start()
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Throwable) {
-                    reportStartupCrash(e, appConfig)
-                    exitProcess(1)
-                }
-private fun reportStartupCrash(error: Throwable, appConfig: DesktopConfig?) {
-    val dataFolder = appConfig?.let { File(AppDataPathBuilder.getAppDataPath(it.appEnvironment)) }
-    handleStartupCrash(error = error, appVersion = appConfig?.version, dataFolder = dataFolder)
-    // Only reaches Sentry when startup got far enough to read the crash reporting preference.
-    runCatching {
-  
-```
-
-**NEGATIVE CONSTRAINT**:
-```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-@OptIn(ExperimentalComposeUiApi::class)
-                startupCoordinator.start()
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7bfc7b4` are properly handled with clean fallback behavior.

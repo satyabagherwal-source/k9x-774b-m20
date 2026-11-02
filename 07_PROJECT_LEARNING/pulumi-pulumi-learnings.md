@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `dd74aad1`  
+> **Source Version**: `ea169d03`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:14:05.474Z  
+> **Timestamp**: 2026-11-02T15:22:28.931Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:14:05.465Z  
+> **Harvest Timestamp**: 2026-11-02T15:22:28.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25836 stars
+- **Stars / Engagement**: 25841 stars
 
 ---
 
@@ -1695,15 +1695,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #25494** (2026-11-02): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-02T06:10:19.000Z](https://github.com/pulumi/pulumi/actions/runs/41394244480)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-02T10:32:04.000Z](https://github.com/pulumi/pulumi/actions/runs/41394244480)
+
 - **Issue #25482** (2026-10-31): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+5 more)**
   *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-30T17:44:03.000Z](https://github.com/pulumi/pulumi/actions/runs/41097229872)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247714):     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247740):     - ❌ Step: Package (null)     - ❌ Step: Check Windows binaries are signed (null)     - ❌ Step: Run ./.github/actions/retry (null)     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247882):     - ❌ Step: Package (null)     - ❌ Step: Check Windows binaries are signed (null)     - ❌ Step: Run ./.github/actions/retry (null)     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pu
   **Post-Mortem & Fix Analysis**:
   > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-31T00:02:49.000Z](https://github.com/pulumi/pulumi/actions/runs/41146192514)
-
-- **Issue #25457** (2026-10-29): **Workflow failure: On Push at dev-release / sign / sign**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-29T20:18:04.000Z](https://github.com/pulumi/pulumi/actions/runs/40945407823)   - ❌ [dev-release / sign / sign](https://github.com/pulumi/pulumi/actions/runs/40945407823/job/123706965287): Sign binaries and checksums (failure)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-29T20:21:45.000Z](https://github.com/pulumi/pulumi/actions/runs/40946125063)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1720,829 +1720,36 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd74aad1` (2026-10-31)
-**Commit Message**: Defer default backend client source initialization (#25285)
+### Incident Patch 1: `ea169d03` (2026-11-02)
+**Commit Message**: Fix renovate changelog generation (#25502)
 
-Create the default login manager's client source on first use so the
-diagnostic sink honors `--color` instead of capturing its settings
-during package initialization. Defer client lookup from secrets
-providers too, since commands construct them before parsing flags.
+Renovate’s changelog script invokes mise exec without selecting a tool,
+causing Mise to install all configured tools. This fails during Java
+metadata resolution for linux-arm64-musl and prevents changelog
+generation.
 
-**File**: `pkg/cmd/pulumi/backend/login_manager.go` (modified, +22/-7)
+Explicitly select Changie so Mise only installs the tool needed to
+generate changelog entries, using the version configured in .mise.toml.
+
+**File**: `scripts/renovate-changelog.py` (modified, +1/-0)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"fmt"
- 	"io"
- 	"strings"
-+	"sync"
- 
- 	pkgauth "github.com/pulumi/pulumi/pkg/v3/auth"
- 	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
-@@ -94,8 +95,9 @@ func WithoutNewProjectHint() LoginOption {
- 	}
- }
- 
--var DefaultLoginManager = NewLoginManager(
--	cmdutil.Diag(), credentialhelper.NewSession(helperDiagnosticWriter{sink: cmdutil.Diag}))
-+var DefaultLoginManager LoginManager = &lm{
-+	session: credentialhelper.NewSession(helperDiagnosticWriter{sink: cmdutil.Diag}),
-+}
- 
- type helperDiagnosticWriter struct {
- 	sink func() diag.Sink
-@@ -107,8 +109,9 @@ func (w helperDiagnosticWriter) Write(p []byte) (int, error) {
- }
- 
- type lm struct {
--	session *credentialhelper.Session
--	clients *httpstate.ClientSource
-+	session     *credentialhelper.Session
-+	clientsOnce sync.Once
-+	clients     *httpstate.ClientSource
- }
- 
- // NewLoginManager shares backend clients and helper credentials for one command.
-@@ -120,11 +123,23 @@ func NewLoginManager(sink diag.Sink, session *credentialhelper.Session) LoginMan
- }
- 
- // ClientSource returns the command's authenticated backend clients.
--func (f *lm) ClientSource() *httpstate.ClientSource { return f.clients }
-+func (f *lm) ClientSource() *httpstate.ClientSource {
-+	f.clientsOnce.Do(func() {
-+		if f.clients == nil {
-+			// The default manager is created during package initialization, before --color is parsed.
-+			// cmdutil.Diag caches its color settings on first use, so defer creating the client
-+			// source until a command needs it, after flags have been applied.
-+			f.clients = httpstate.NewClientSource(f.session, cmdutil.Diag())
-+		}
-+	})
-+	return f.clients
-+}
- 
- // SecretsProvider constructs standard secrets managers using the login manager's clients.
- func SecretsProvider(lm LoginManager) secrets.Provider {
--	return backendsecrets.NewProvider(lm.ClientSource().ClientForURL)
-+	return backendsecrets.NewProvider(func(ctx context.Context, url string, insecure bool) (*client.Client, error) {
-+		return lm.ClientSource().ClientForURL(ctx, url, insecure)
-+	})
- }
- 
- // CredentialHelperSession returns the helper session explicitly owned by this manager.
-@@ -328,7 +343,7 @@ func (f *lm) openHTTPBackend(
- 	ctx context.Context, sink diag.Sink, raw string, project *workspace.Project,
- 	insecure, setCurrent bool, helper *credentialhelper.Result,
- ) (backend.Backend, error) {
--	be, err := httpstate.New(ctx, sink, raw, project, insecure, f.clients)
-+	be, err := httpstate.New(ctx, sink, raw, project, insecure, f.ClientSource())
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `pkg/cmd/pulumi/backend/login_manager_test.go` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package backend
-+
-+import (
-+	"os"
-+	"os/exec"
-+	"testing"
-+
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/util/cmdutil"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestDefaultLoginManagerDiagnosticColor(t *testing.T) {
-+	t.Parallel()
-+
-+	const colorEnv = "PULUMI_TEST_LOGIN_MANAGER_DIAGNOSTIC_COLOR"
-+	if color := os.Getenv(colorEnv); color != "" {
-+		// Stack and policy commands construct their secrets providers before flags are parsed.
-+		require.NotNil(t, SecretsProvider(DefaultLoginManager))
-+		require.NoError(t, cmdutil.SetGlobalColorization(color))
-+		require.NotNil(t, DefaultLoginManager.ClientSource())
-+		cmdutil.Diag().Warningf(diag.Message("", "diagnostic color test"))
-+		return
-+	}
-+
-+	// os.Executable returns this test binary. Run just this test in a fresh process
-+	// so package initialization happens before we set the requested color mode,
-+	// as it does when the CLI parses --color.
-+	executable, err := os.Executable()
-+	require.NoError(t, err)
-+	for _, color := range []string{"always", "never"} {
-+		t.Run(color, func(t *testing.T) {
-+			t.Parallel()
-+			cmd := exec.CommandContext(t.Context(), executable, "-test.run=^TestDefaultLoginManagerDiagnosticColor$")
-+			cmd.Env = append(os.Environ(), colorEnv+"="+color)
-+			output, err := cmd.CombinedOutput()
-+			require.NoError(t, err, "%s", output)
-+			assert.Contains(t, string(output), "diagnostic color test")
-+			if color == "always" {
-+				assert.Contains(t, string(output), "\x1b[")
-+			} else {
-+				assert.NotContains(t, string(output), "\x1b[")
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `772a7837` (2026-10-31)
-**Commit Message**: Add credentials helpers (#25260)
-
-```
-LoginManager
-  ├── Session
-  │     └── Results per backend URL (credentials, refresh)
-  └── ClientSource (references Session to retrieve Results)
-        └── API clients per backend URL
-              └── HTTP transport
-```
-
-`credentialhelper.Session` manages the helper. It selects and runs the
-executable, handles its JSON protocol, caches results, refreshes
-credentials, and forwards diagnostics. `Resolve(ctx, url)` looks up
-credentials without changing the selected backend, and `SelectBackend`
-explicitly records that selection.
-
-`httpstate.ClientSource` turns credentials into shared clients. The
-login manager owns it alongside the session. It caches clients by
-backend URL and TLS setting, using helper credentials when supplied and
-normal account credentials otherwise.
-
-The HTTP credential source handles authentication over time. REST and
-ESC share refreshable credentials. It refreshes near expiry or after a
-401, coordinates concurrent refreshes, and limits where helper
-credentials can be sent.
-
-Fixes https://github.com/pulumi/pulumi/issues/9246
-
-**File**: `changelog/pending/20261015--cli--credentials-helper.yaml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+component: cli
-+kind: improvement
-+body: Add credentials helpers for backend selection, HTTP authentication, and cloud credentials
-```
-
-**File**: `pkg/auth/credentialhelper/helper.go` (modified, +19/-15)
-```diff
-@@ -30,9 +30,10 @@
- //	{"version":1,"accessToken":"my-token","headers":{"X-Session":["my-session"]}}
- //
- // Only initial responses may supply backendUrl or env, and backendUrl is allowed
--// only when no backend was selected. Refresh responses must supply HTTP credentials
--// and preserve whether an access token is supplied. Unknown fields, invalid JSON,
--// unsupported versions, and nonzero exit codes are errors.
-+// when no backend was selected or it matches the selected URL, ignoring a trailing slash.
-+// Refresh responses must supply HTTP credentials and preserve whether an access
-+// token is supplied. Unknown fields, invalid JSON, unsupported versions, and
-+// nonzero exit codes are errors.
- package credentialhelper
- 
- import (
-@@ -113,10 +114,6 @@ func resolve(path string, args []string) (*workspace.CredentialHelper, error) {
- 	if err != nil {
- 		return nil, err
- 	}
--	p, err = filepath.EvalSymlinks(p)
--	if err != nil {
--		return nil, err
--	}
- 	return &workspace.CredentialHelper{Path: p, Args: args}, nil
- }
- 
-@@ -266,7 +263,7 @@ func (s *Session) Current() *Result {
- }
- 
- // Resolve invokes the helper for backendURL and caches the result.
--// If backendURL is empty, the helper may supply a backend URL.
-+// If backendURL is empty, the helper must supply a backend URL when returning HTTP credentials.
- func (s *Session) Resolve(ctx context.Context, backendURL string) (*Result, error) {
- 	s.mu.Lock()
- 	defer s.mu.Unlock()
-@@ -284,18 +281,25 @@ func (s *Session) Resolve(ctx context.Context, backendURL string) (*Result, erro
- 			return nil, err
- 		}
- 		if resp.BackendURL != nil {
--			if backendURL != "" {
--				return nil, errors.New("credentials helper cannot return backendUrl when a backend is selected")
--			}
- 			if err := validateURL(*resp.BackendURL); err != nil {
- 				return nil, err
- 			}
--			r.url = *resp.BackendURL
--			r.selectedBackend = true
-+			if backendURL == "" {
-+				r.url = *resp.BackendURL
-+				r.selectedBackend = true
-+			} else if strings.TrimSuffix(backendURL, "/") != strings.TrimSuffix(*resp.BackendURL, "/") {
-+				return nil, errors.New("credentials helper cannot return backendUrl different from the selected backend")
-+			}
- 			logging.AddGlobalSecretFilter(httputil.URLSecrets(r.url), "[credential]")
- 		}
--		if (resp.AccessToken != "" || len(resp.Headers) > 0) && r.url != "" && !isHTTP(r.url) {
--			return nil, errors.New("credentials helper HTTP credentials require an HTTP backend")
-+		if resp.AccessToken != "" || len(resp.Headers) > 0 {
-+			if r.url == "" {
-+				return nil, errors.New(
-+					"credentials helper must return backendUrl with HTTP credentials when no backend is selected")
-+			}
-+			if !isHTTP(r.url) {
-+				return nil, errors.New("credentials helper HTTP credentials require an HTTP backend")
-+			}
- 		}
- 		for k, v := range resp.Env {
- 			if old, ok := s.applied[environmentKey(k)]; ok && old != v {
-```
-
-**File**: `pkg/auth/credentialhelper/helper_test.go` (modified, +111/-3)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
-+	"runtime"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-@@ -222,6 +223,43 @@ func TestBackendSelectionAndCaching(t *testing.T) {
- 	assert.True(t, r.SelectedBackend())
- }
- 
-+func TestHTTPHelperCredentialsRequireBackend(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, test := range []struct {
-+		name, response string
-+		valid          bool
-+	}{
-+		{"token without backend", `{"version":1,"accessToken":"secret"}`, false},
-+		{"headers without backend", `{"version":1,"headers":{"X-Session":["secret"]}}`, false},
-+		{
-+			"token with backend",
-+			`{"version":1,"backendUrl":"https://api.example.com","accessToken":"secret"}`,
-+			true,
-+		},
-+		{
-+			"headers with backend",
-+			`{"version":1,"backendUrl":"https://api.example.com","headers":{"X-Session":["secret"]}}`,
-+			true,
-+		},
-+		{"decline", `{"version":1}`, true},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx, s, _ := testSession(t, map[string]string{"initial": test.response})
-+			r, err := s.Resolve(ctx, "")
-+			if test.valid {
-+				require.NoError(t, err)
-+				require.NoError(t, s.SelectBackend(r, "https://api.example.com"))
-+			} else {
-+				require.ErrorContains(t, err, "must return backendUrl")
-+				assert.NotContains(t, err.Error(), "secret")
-+				assert.Nil(t, s.Lookup(""))
-+			}
-+		})
-+	}
-+}
-+
- func TestHelperCannotOverrideSelectedBackend(t *testing.T) {
- 	t.Parallel()
- 
-@@ -232,6 +270,28 @@ func TestHelperCannotOverrideSelectedBackend(t *testing.T) {
- 	require.ErrorContains(t, err, "cannot return backendUrl")
- }
- 
-+func TestHelperCanConfirmSelectedBackend(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, test := range []struct{ name, selected, returned string }{
-+		{"same URL", "https://api.example.com", "https://api.example.com"},
-+		{"selected trailing slash", "https://api.example.com/", "https://api.example.com"},
-+		{"returned trailing slash", "https://api.example.com", "https://api.example.com/"},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx, session, _ := testSession(t, map[string]string{
-+				"initial": `{"version":1,"backendUrl":"` + test.returned + `","accessToken":"secret"}`,
-+			})
-+			result, err := session.Resolve(ctx, test.selected)
-+			require.NoError(t, err)
-+			assert.Equal(t, test.selected, result.BackendURL())
-+			assert.False(t, result.SelectedBackend())
-+			assert.Equal(t, "secret", result.Token())
-+		})
-+	}
-+}
-+
- func TestResolvePreservesSelectedBackend(t *testing.T) {
- 	t.Parallel()
- 
-@@ -272,8 +332,9 @@ func TestEnvironmentMerge(t *testing.T) {
- 	ctx, s, _ := testSession(t, map[string]string{
- 		"initial": `{"version":1,"env":{"PULUMI_HELPER_TEST_INHERITED":"replacement","PULUMI_HELPER_TEST_APPLIED":"first"}}`,
- 	})
--	_, err := s.Resolve(ctx, "s3://bucket-one")
-+	r, err := s.Resolve(ctx, "")
- 	require.NoError(t, err)
-+	require.NoError(t, s.SelectBackend(r, "s3://bucket-one"))
- 	assert.Equal(t, "original", os.Getenv(inherited))
- 	assert.Equal(t, "first", os.Getenv(applied))
- 	c, _ := helperConfig(t, map[string]string{"initial": `{"version":1,"env":{"PULUMI_HELPER_TEST_APPLIED":"second"}}`})
-@@ -522,7 +583,7 @@ func TestConcurrentResolutionAndSelection(t *testing.T) {
- 	var wg sync.WaitGroup
- 	for range 8 {
- 		wg.Go(func() {
--			r, err := s.Resolve(ctx, "")
-+			r, err := s.Resolve(ctx, "https://api.example.com")
- 			if err != nil {
- 				t.Errorf("resolving helper: %v", err)
- 				return
-@@ -606,6 +667,53 @@ func TestPersistenceDoesNotSaveToken(t *testing.T) {
- 	assert.Nil(t, creds.CredentialHelper)
- }
- 
-+func TestPersistencePreservesHelperSymlink(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("requires symlink support")
-+	}
-+	ptesting.IsolateCredentials(t)
-+	t.Setenv("PULUMI_CREDENTIAL_STORE", "plaintext")
-+	t.Setenv("PULUMI_CREDENTIAL_HELPER", "")
-+
-+	config, _ := helperConfig(t, map[string]string{"initial": `{"version":1,"accessToken":"secret"}`})
-+	executable := config.Path
-+
-+	// Copy the test executable to helper-v1, then create a symlink named helper pointing to that copy.
-+	dir := t.TempDir()
-+	helperLink := filepath.Join(dir, "helper")
-+	helperV1 := filepath.Join(dir, "helper-v1")
-+	contents, err := os.ReadFile(executable)
-+	require.NoError(t, err)
-+	require.NoError(t, os.WriteFile(helperV1, contents, 0o600))
-+	require.NoError(t, os.Chmod(helperV1, 0o700))
-+	require.NoError(t, os.Symlink(helperV1, helperLink))
-+
-+	// Configure the session with the symlink's path and verify that the helper runs.
-+	session := NewSession(io.Discard)
-+	require.NoError(t, session.Configure(helperLink, config.Args))
-+	result, err := session.Resolve(t.Context(), "https://api.example.com")
-+	require.NoError(t, err)
-+	assert.Equal(t, "secret", result.Token())
-+
-+	// Save the configuration and check that it records helper, rather than its target helper-v1.
-+	require.NoError(t, session.SaveConfiguration())
-+	creds, err := workspace.GetStoredCredentials()
-+	require.NoError(t, err)
-+	require.NotNil(t, creds.CredentialHelper)
-+	assert.
-```
-
-**File**: `pkg/auth/credentialhelper/http_test.go` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package credentialhelper_test
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"sync/atomic"
-+	"testing"
-+
-+	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
-+	"github.com/pulumi/pulumi/pkg/v3/backend/httpstate/client"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRefreshFailureSurvivesHTTPRetries(t *testing.T) {
-+	t.Parallel()
-+	for _, test := range []struct {
-+		reason          string
-+		initialResponse string
-+		backendRequests int32
-+	}{
-+		{
-+			reason:          "expired",
-+			initialResponse: `{"version":1,"accessToken":"stale","expiresAt":"2000-01-01T00:00:00Z"}`,
-+			backendRequests: 0,
-+		},
-+		{
-+			reason:          "rejected",
-+			initialResponse: `{"version":1,"accessToken":"stale"}`,
-+			backendRequests: 1,
-+		},
-+	} {
-+		t.Run(test.reason, func(t *testing.T) {
-+			t.Parallel()
-+			var requests atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				requests.Add(1)
-+				assert.Equal(t, "token stale", r.Header.Get("Authorization"))
-+				if test.reason == "rejected" {
-+					w.WriteHeader(http.StatusUnauthorized)
-+					return
-+				}
-+				// Accept requests in the expiry case to expose any fallback to stale credentials.
-+				_, _ = fmt.Fprint(w, `{"githubLogin":"alice"}`)
-+			}))
-+			defer server.Close()
-+			responses, err := json.Marshal(map[string]string{
-+				"initial": test.initialResponse,
-+				// Both refresh responses are invalid: the helper supplied an initial token,
-+				// so refresh must supply a token too.
-+				"expired":  `{"version":1}`,
-+				"rejected": `{"version":1}`,
-+			})
-+			require.NoError(t, err)
-+			executable, err := os.Executable()
-+			require.NoError(t, err)
-+			log := filepath.Join(t.TempDir(), "requests.jsonl")
-+			session := credentialhelper.NewSession(io.Discard)
-+			require.NoError(t, session.Configure(executable,
-+				[]string{"--", "-credential-helper-test", log, string(responses)}))
-+			credentials, err := session.Resolve(t.Context(), server.URL)
-+			require.NoError(t, err)
-+			c := client.NewClientWithCredentials(credentials, false, nil)
-+			_, _, _, err = c.GetPulumiAccountDetails(t.Context())
-+			require.ErrorContains(t, err, "credentials helper refresh requires HTTP credentials")
-+			assert.Equal(t, test.backendRequests, requests.Load(), "no additional backend requests after token refresh fails")
-+			calls, err := os.ReadFile(log)
-+			require.NoError(t, err)
-+			assert.Equal(t, 2, strings.Count(string(calls), "\n"), "one initial helper call and one failed refresh")
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/backend/httpstate/backend.go` (modified, +30/-3)
-```diff
-@@ -39,6 +39,7 @@ import (
- 	fxs "github.com/pgavlin/fx/v2/slices"
- 	"github.com/pkg/browser"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
- 	"github.com/pulumi/pulumi/pkg/v3/backend"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
-@@ -225,6 +226,7 @@ type cachedUpdateData struct {
- }
- 
- type cloudBackend struct {
-+	helper       *credentialhelper.Result
- 	d            diag.Sink
- 	url          string
- 	client       *client.Client
-@@ -259,9 +261,9 @@ func New(ctx context.Context, d diag.Sink,
- 	if err != nil {
- 		return nil, err
- 	}
--	account, apiClient := resolved.account, resolved.client
-+	account, helper, apiClient := resolved.account, resolved.helper, resolved.client
- 	apiToken := account.AccessToken
--	escClient := esc_client.New(client.UserAgent(), cloudURL, apiToken, insecure)
-+	escClient := esc_client.NewWithCredentials(client.UserAgent(), cloudURL, apiToken, insecure, helper)
- 
- 	org := env.DefaultOrg.Value()
- 	if org == "" {
-@@ -293,6 +295,7 @@ func New(ctx context.Context, d diag.Sink,
- 	}
- 
- 	return &cloudBackend{
-+		helper:         helper,
- 		d:              d,
- 		url:            cloudURL,
- 		client:         apiClient,
-@@ -494,7 +497,15 @@ var newLoginManager = func() LoginManager {
- 	return defaultLoginManager{}
- }
- 
--type defaultLoginManager struct{}
-+type defaultLoginManager struct{ helper *credentialhelper.Result }
-+
-+// NewLoginManagerWithCredentials uses the supplied helper credentials instead of stored tokens.
-+func NewLoginManagerWithCredentials(helper *credentialhelper.Result) LoginManager {
-+	if !helper.HasHTTP() {
-+		return NewLoginManager()
-+	}
-+	return defaultLoginManager{helper: helper}
-+}
- 
- // validateStoredAccount checks whether a stored account can still authenticate, refreshing cached
- // user and token metadata when needed. An account that carries a refresh token but a stale (or
-@@ -570,6 +581,16 @@ func (m defaultLoginManager) Current(
- 	setCurrent bool,
- ) (*workspace.Account, error) {
- 	cloudURL = ValueOrDefaultURL(pkgWorkspace.Instance, cloudURL)
-+	if helper := m.helper; helper != nil && helper.HasHTTP() {
-+		c := client.NewClientWithCredentials(helper, insecure, cmdutil.Diag())
-+		username, orgs, info, err := c.GetPulumiAccountDetails(ctx)
-+		if err != nil {
-+			return nil, err
-+		}
-+		return &workspace.Account{
-+			AccessToken: helper.Token(), Username: username, Organizations: orgs, TokenInformation: info, Insecure: insecure,
-+		}, nil
-+	}
- 
- 	// We intentionally don't accept command-line args for the user's access token. Having it in
- 	// .bash_history is not great, and specifying it via flag isn't of much use.
-@@ -2147,6 +2168,9 @@ func (b *cloudBackend) runEngineAction(
- 	callerEventsOpt chan<- engine.Event, dryRun bool, journalVersion int64,
- ) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
- 	contract.Assertf(token != "", "persisted actions require a token")
-+	if b.helper != nil && b.helper.HasHTTP() {
-+		op.Opts.Engine.CloudCredentialEnv = b.helper.PluginEnv()
-+	}
- 
- 	// Send synchronously before anything can fail, so the caller always gets it and the send
- 	// can't outlive the caller's channel. Not sent to the display: it would land in the event log.
-@@ -3027,6 +3051,8 @@ func (b *cloudBackend) showDeploymentEvents(ctx context.Context, stackID client.
- 
- 	events := make(chan engine.Event) // Note: unbuffered, but we assume it won't matter in practice.
- 	done := make(chan bool)
-+	stopHelperDiagnostics := b.routeHelperDiagnostics(events, done, opts)
-+	defer stopHelperDiagnostics()
- 
- 	// Timings do not display correctly when rendering remote events, so suppress showing them.
- 	opts.SuppressTimings = true
-@@ -3067,6 +3093,7 @@ func (b *cloudBackend) showDeploymentEvents(ctx context.Context, stackID client.
- 				events <- engine.NewCancelEvent()
- 			}
- 
-+			stopHelperDiagnostics()
- 			close(events)
- 			<-done
- 			switch opResult {
-```
-
-**File**: `pkg/backend/httpstate/backend_test.go` (modified, +13/-12)
-```diff
-@@ -38,6 +38,7 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
- 	"github.com/pulumi/pulumi/pkg/v3/backend"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
-@@ -103,7 +104,7 @@ func TestEnabledFullyQualifiedStackNames(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), client.PulumiCloudURL, &workspace.Project{Name: "testproj"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -144,7 +145,7 @@ func TestDisabledFullyQualifiedStackNames(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), client.PulumiCloudURL, &workspace.Project{Name: "testproj"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -438,7 +439,7 @@ func TestNewDefaultOrgResolution(t *testing.T) {
- 			}
- 
- 			b, err := New(ctx, diagtest.LogSink(t), server.URL, nil, false,
--				NewClientSource(diagtest.LogSink(t)),
-+				NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 			)
- 			require.NoError(t, err)
- 
-@@ -485,7 +486,7 @@ func TestParseStackReferenceExplicitOrgBeatsEnvVar(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), server.URL, &workspace.Project{Name: "proj"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -516,7 +517,7 @@ func TestDisableIntegrityChecking(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), client.PulumiCloudURL, &workspace.Project{Name: "testproj"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -673,7 +674,7 @@ func TestListStackNames(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), client.PulumiCloudURL, &workspace.Project{Name: "testproj-list-stacks"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -790,7 +791,7 @@ func TestListStackNamesVsListStacks(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	b, err := New(ctx, diagtest.LogSink(t), client.PulumiCloudURL, &workspace.Project{Name: "testproj-list-stacks"}, false,
--		NewClientSource(diagtest.LogSink(t)),
-+		NewClientSource(credentialhelper.NewSession(io.Discard), diagtest.LogSink(t)),
- 	)
- 	require.NoError(t, err)
- 
-@@ -978,7 +979,7 @@ func TestCreateStackDeploymentSchemaVersion(t *testing.T) {
- 	defer server.Client()
- 
- 	sink := diag.DefaultSink(io.Discard, io.Discard, diag.FormatOptions{Color: colors.Never})
--	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(sink))
-+	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(credentialhelper.NewSession(io.Discard), sink))
- 	require.NoError(t, err)
- 
- 	ref, err := b.ParseStackReference("owner/project/stack")
-@@ -1012,7 +1013,7 @@ func TestCreateStackDeploymentSchemaVersion(t *testing.T) {
- 	// Test 3: v4 supported: send v3 expect v3.
- 
- 	v4 = true
--	b, err = New(ctx, sink, server.URL, nil, false, NewClientSource(sink))
-+	b, err = New(ctx, sink, server.URL, nil, false, NewClientSource(credentialhelper.NewSession(io.Discard), sink))
- 	require.NoError(t, err)
- 
- 	_, err = b.CreateStack(ctx, ref, "", &apitype.UntypedDeployment{
-@@ -1083,7 +1084,7 @@ func TestCreateStackDisplaysBackendMessages(t *testing.T) {
- 	t.Cleanup(server.Close)
- 
- 	sink := diag.DefaultSink(io.Discard, io.Discard, diag.FormatOptions{Color: colors.Never})
--	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(sink))
-+	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(credentialhelper.NewSession(io.Discard), sink))
- 	require.NoError(t, err)
- 
- 	ref, err := b.ParseStackReference("owner/project/stack")
-@@ -1187,7 +1188,7 @@ func TestImportDeploymentSchemaVersion(t *testing.T) {
- 	defer server.Client()
- 
- 	sink := diag.DefaultSink(io.Discard, io.Discard, diag.FormatOptions{Color: colors.Never})
--	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(sink))
-+	b, err := New(ctx, sink, server.URL, nil, false, NewClientSource(credentialhelper.NewSession(io.Discard), sink))
- 	require.NoError(t, err)
- 
- 	ref, err := b.ParseStackReference("owner/project/stack")
-@@ -1224,7 +1225,7 @@ func TestImportDeploymentSchemaVersion(t *testing.T) {
- 	// Test 3: v4 supported: send v3 expect v3.
- 
- 	v4 = true
--	b, err = New(ctx, sink, server.URL, nil, false, NewClientSource(sink))
-+	b, err = New(ctx, sink, server.URL, nil, false, NewClientSource(credentialhelper.NewSession(io.Discard), 
-```
-
-**File**: `pkg/backend/httpstate/client/api.go` (modified, +3/-1)
-```diff
-@@ -37,6 +37,7 @@ import (
- 	"go.opentelemetry.io/otel/propagation"
- 	"go.opentelemetry.io/otel/trace"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
- 	"github.com/pulumi/pulumi/pkg/v3/util/tracing"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-@@ -399,8 +400,9 @@ type defaultHTTPClient struct {
- }
- 
- func (c *defaultHTTPClient) Do(req *http.Request, policy retryPolicy) (*http.Response, error) {
-+	ctx := credentialhelper.WithOperation(req.Context())
- 	requestSpan, ctx := opentracing.StartSpanFromContext(
--		req.Context(),
-+		ctx,
- 		"HTTP request",
- 		opentracing.Tag{Key: "method", Value: req.Method},
- 		opentracing.Tag{Key: "url", Value: req.URL},
-```
-
-**File**: `pkg/backend/httpstate/client/client.go` (modified, +25/-8)
-```diff
-@@ -35,12 +35,14 @@ import (
- 	"regexp"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/blang/semver"
- 	"github.com/opentracing/opentracing-go"
- 	"go.opentelemetry.io/otel"
- 
-+	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
- 	"github.com/pulumi/pulumi/pkg/v3/engine"
- 	"github.com/pulumi/pulumi/pkg/v3/registry"
- 	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
-@@ -229,6 +231,7 @@ type PublishTemplateVersionCompleteResponse struct{}
- 
- // Client provides a slim wrapper around the Pulumi HTTP/REST API.
- type Client struct {
-+	userInfoMu sync.Mutex
- 	apiURL     string
- 	apiToken   accessToken
- 	apiUser    string
-@@ -266,6 +269,21 @@ func NewClient(apiURL, apiToken string, insecure bool, d diag.Sink) *Client {
- 	}
- }
- 
-+// NewClientWithCredentials creates a client for the backend URL using in-memory helper credentials.
-+func NewClientWithCredentials(r *credentialhelper.Result, insecure bool, d diag.Sink) *Client {
-+	contract.Requiref(r != nil, "r", "expected credential helper credentials")
-+	contract.Requiref(r.BackendURL() != "", "r", "expected a backend URL")
-+	contract.Requiref(r.HasHTTP(), "r", "expected HTTP credentials")
-+	c := NewClient(r.BackendURL(), "", insecure, d)
-+	base := &http.Client{}
-+	if insecure {
-+		//nolint:gosec // The user explicitly requested insecure server connections.
-+		base.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-+	}
-+	c.WithHTTPClient(r.HTTPClient(base))
-+	return c
-+}
-+
- // Returns true if this client is insecure (i.e. has TLS disabled).
- func (pc *Client) Insecure() bool {
- 	return pc.insecure
-@@ -701,6 +719,9 @@ func (pc *Client) RefreshAccessToken(
- 
- // GetPulumiAccountDetails returns the user implied by the API token associated with this client.
- func (pc *Client) GetPulumiAccountDetails(ctx context.Context) (string, []string, *workspace.TokenInformation, error) {
-+	pc.userInfoMu.Lock()
-+	defer pc.userInfoMu.Unlock()
-+
- 	if pc.apiUser == "" {
- 		resp := serviceUser{}
- 		if err := pc.restCall(ctx, "GET", "/api/user", nil, nil, &resp); err != nil {
-@@ -3399,15 +3420,11 @@ func (pc *Client) GetTemplate(
- 	return resp, err
- }
- 
--// DownloadTemplate takes a downloadURL, which is a full URL (not a path). The URL can be
--// one of two situations:
--//
--// - An URL for the client: `api.pulumi.com/api/orgs/{org}/template/download?name={template-name}`
--// - A foreign URL: `api.github.com/blobs/4328791917840`
-+// DownloadTemplate downloads a template from a full URL.
- //
--// We want to use the full method receiver with configured credentials if and only if we
--// are targeting the correct URL. If we are targeting another URL, we should use a fresh
--// client without tokens.
-+// Requests to the backend use the normal client with configured credentials.
-+// Requests to other destinations use a fresh client omitting credentials.
-+// Presigned URLs bypass REST request processing to preserve their signatures.
- func (pc *Client) DownloadTemplate(ctx context.Context, downloadURL string) (io.ReadCloser, error) {
- 	// Presigned URLs need to be handled differently to avoid signature mismatches due to e.g. headers.
- 	// See https://docs.aws.amazon.com/prescriptive-guidance/latest/presigned-url-best-practices/identifying-requests.html
+@@ -38,6 +38,7 @@
+     "mise",
+     "exec",
+     "--yes",
++    "changie",
+     "--",
+     "changie",
+     "new",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25475** (2026-10-30): Handshake once with conformance providers loaded from a path (@iwahbe)
-- **PR #25472** (2026-10-30): Stop folding per-property deps into Dependencies after transforms (@Frassle)
-- **PR #25470** (2026-10-30): Use property.Map at the importer-side of State.Inputs/Outputs (@Frassle)
-- **PR #25462** (2026-10-30): Add hidden `pulumi new --esc-config` for stack-managed ESC environments (@rgharris)
-- **PR #25460** (2026-10-30): Encrypt config secrets with the managed ESC environment's key (@rgharris)
-- **PR #25456** (closed): Show the dedicated CLI command for an operation in pulumi api (@danbiwer)
+- **PR #25502** (2026-11-02): Fix renovate changelog generation (@julienp)
+- **PR #25495** (2026-11-02): Provide a clear error message when uv dependency discovery fails (@julienp)
+- **PR #25493** (2026-11-02): Match cty parse precision when converting schema float consts (@Frassle)
+- **PR #25489** (2026-11-01): Serve a package resolver from the conformance test host (@iwahbe)
+- **PR #25486** (2026-11-02): Keep stack-managed ESC flags out of the generated Automation API (@rgharris)
+- **PR #25483** (closed): Regenerate automation APIs (@pulumi-bot)
 
 ---
 
@@ -2562,55 +1769,28 @@ Fixes https://github.com/pulumi/pulumi/issues/9246
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Defer default backend client source initialization (#25285)
+## X. renovate changelog generation (#25502)
 
 **RULE**:
-When implementing operations in `pkg/cmd/pulumi/backend/login_manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/renovate-changelog.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd74aad1`: Defer default backend client source initialization (#25285). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea169d03`: renovate changelog generation (#25502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cmd/pulumi/backend/login_manager.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/renovate-changelog.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sync"
-var DefaultLoginManager LoginManager = &lm{
-	session: credentialhelper.NewSession(helperDiagnosticWriter{sink: cmdutil.Diag}),
-}
-	session     *credentialhelper.Session
-	clientsOnce sync.Once
-	clients     *httpstate.ClientSource
-func (f *lm) ClientSource() *httpstate.ClientSource {
-	f.clientsOnce.Do(func() {
-		if f.clients == nil {
-			// The default manager is created during package initialization, before --color is parsed.
-			// cmdutil.Diag caches its color settings on first use, so defer creating the client
-			// source until a command needs it, after flags have been applied.
-			f.clients = httpstate.NewClientSource(f.session, cmdutil.Diag())
-		}
-	})
-	return f.clients
-}
-	return backendsecrets.NewProvider(func(ctx context.Context, url string, insecure bool) (*client.Client, error) {
-		return lm.ClientSource().ClientForURL(ctx, url, insecure)
-	})
-	be, err := httpstate.New(ctx, sink, raw, project, insecure, f.ClientSource())
+    "changie",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-var DefaultLoginManager = NewLoginManager(
-	cmdutil.Diag(), credentialhelper.NewSession(helperDiagnosticWriter{sink: cmdutil.Diag}))
-	session *credentialhelper.Session
-	clients *httpstate.ClientSource
-func (f *lm) ClientSource() *httpstate.ClientSource { return f.clients }
-	return backendsecrets.NewProvider(lm.ClientSource().ClientForURL)
-	be, err := httpstate.New(ctx, sink, raw, project, insecure, f.clients)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd74aad1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea169d03` are properly handled with clean fallback behavior.

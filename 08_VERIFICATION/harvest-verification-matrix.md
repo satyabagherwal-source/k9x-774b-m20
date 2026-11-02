@@ -6816,3 +6816,7 @@
 | `CYCLE-20261102-HVR9` | `2026-11-02T15:15:27.621Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6426, Rule 6427, Rule 6428` | Yes (`b0a53c34...`) |
 | `CYCLE-20261102-HWVL` | `2026-11-02T15:15:29.073Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6429` | Yes (`1cb133f4...`) |
 | `CYCLE-20261102-HYPL` | `2026-11-02T15:15:31.449Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6430` | Yes (`91e906b2...`) |
+| `CYCLE-20261102-QQUB` | `2026-11-02T15:22:21.155Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6431` | Yes (`5bf6afe7...`) |
+| `CYCLE-20261102-QTX1` | `2026-11-02T15:22:25.141Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md` | Yes (`e0555e30...`) |
+| `CYCLE-20261102-QXBV` | `2026-11-02T15:22:29.563Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6432` | Yes (`361f6e60...`) |
+| `CYCLE-20261102-QXYK` | `2026-11-02T15:22:30.380Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6433` | Yes (`57300554...`) |
