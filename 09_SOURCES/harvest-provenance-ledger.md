@@ -6867,3 +6867,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `4fffec7d` | Multi-dimensional audit evidence | 2026-11-02T17:39:17.694Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `bacc207f` | Multi-dimensional audit evidence | 2026-11-02T17:39:19.477Z |
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `7c9025c4` | Multi-dimensional audit evidence | 2026-11-02T17:39:23.907Z |
+| `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `10ea2798` | Multi-dimensional audit evidence | 2026-11-02T17:46:46.597Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f7015b3d` | Multi-dimensional audit evidence | 2026-11-02T17:46:53.158Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0ceace07` | Multi-dimensional audit evidence | 2026-11-02T17:47:00.464Z |

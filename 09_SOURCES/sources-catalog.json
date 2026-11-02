@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ec8b1b9b",
+    "sourceVersion": "0ceace07",
     "license": "Apache-2.0",
-    "contentHash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
-    "lastHarvestedAt": "2026-11-02T17:12:23.489Z",
+    "contentHash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
+    "lastHarvestedAt": "2026-11-02T17:47:00.464Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "05238c02",
+    "sourceVersion": "f7015b3d",
     "license": "OSL-3.0",
-    "contentHash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
-    "lastHarvestedAt": "2026-10-30T22:27:36.457Z",
+    "contentHash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
+    "lastHarvestedAt": "2026-11-02T17:46:53.158Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -9033,10 +9033,10 @@
     "repository": "yattee/yattee",
     "platform": "github",
     "sourceUrl": "https://github.com/yattee/yattee",
-    "sourceVersion": "03599d33",
+    "sourceVersion": "10ea2798",
     "license": "AGPL-3.0",
-    "contentHash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
-    "lastHarvestedAt": "2026-10-30T08:20:08.960Z",
+    "contentHash": "41bc76a33a249cc0fc09086411cf3a73ab6f95fc9c4534aa2d1b9146ee9b1f7c",
+    "lastHarvestedAt": "2026-11-02T17:46:46.597Z",
     "learningId": "learn-github-yattee-yattee"
   },
   "shubham0812-swiftui-animations": {

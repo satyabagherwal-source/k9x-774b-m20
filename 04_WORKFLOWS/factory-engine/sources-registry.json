@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T17:39:26.458Z",
-    "lastVerified": "2026-11-02T17:39:26.458Z",
+    "lastChecked": "2026-11-02T17:47:03.014Z",
+    "lastVerified": "2026-11-02T17:47:03.014Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -430,14 +430,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:12:21.427Z",
-    "lastVerified": "2026-11-02T17:12:21.427Z",
+    "lastChecked": "2026-11-02T17:46:59.211Z",
+    "lastVerified": "2026-11-02T17:46:59.211Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
+    "contentHash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1319,8 +1319,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T02:16:00.426Z",
-    "lastVerified": "2026-11-01T02:16:00.426Z",
+    "lastChecked": "2026-11-02T17:46:45.276Z",
+    "lastVerified": "2026-11-02T17:46:45.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -4416,22 +4416,21 @@
     "revisionIdentifier": "8ae29a1f"
   },
   "trailbaseio-trailbase": {
-    "name": "trailbase",
+    "name": "trailbaseio/trailbase",
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:32:38.709Z",
-    "lastVerified": "2026-10-31T14:32:38.709Z",
+    "lastChecked": "2026-11-02T17:46:52.000Z",
+    "lastVerified": "2026-11-02T17:46:52.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
+    "contentHash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "05238c02"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -6041,9 +6040,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-10-31T15:29:44.553Z",
+    "lastChecked": "2026-11-02T17:46:42.770Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-10-31T15:29:44.553Z"
+    "lastVerified": "2026-11-02T17:46:42.771Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -6130,9 +6129,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-10-31T11:32:48.286Z",
+    "lastChecked": "2026-11-02T17:46:35.254Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-10-31T11:32:48.286Z"
+    "lastVerified": "2026-11-02T17:46:35.254Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -9268,9 +9267,9 @@
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
     "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
-    "lastChecked": "2026-10-29T17:35:28.108Z",
+    "lastChecked": "2026-11-02T17:46:37.771Z",
     "revisionIdentifier": "8300079044",
-    "lastVerified": "2026-10-29T17:35:28.108Z"
+    "lastVerified": "2026-11-02T17:46:37.771Z"
   },
   "maziyarpanahi-openmed": {
     "name": "maziyarpanahi/openmed",
@@ -10189,14 +10188,14 @@
     "officialUrl": "https://github.com/yattee/yattee",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T08:16:47.634Z",
-    "lastVerified": "2026-10-30T08:16:47.634Z",
+    "lastChecked": "2026-11-02T17:46:44.445Z",
+    "lastVerified": "2026-11-02T17:46:44.445Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yattee-yattee",
-    "contentHash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 5,
+    "contentHash": "41bc76a33a249cc0fc09086411cf3a73ab6f95fc9c4534aa2d1b9146ee9b1f7c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

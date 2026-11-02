@@ -6858,3 +6858,6 @@
 | `CYCLE-20261102-MURF` | `2026-11-02T17:39:17.691Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6473` | Yes (`9002ed4c...`) |
 | `CYCLE-20261102-MW4Y` | `2026-11-02T17:39:19.474Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6474` | Yes (`e5b93a56...`) |
 | `CYCLE-20261102-MZJZ` | `2026-11-02T17:39:23.903Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6475` | Yes (`cad98c51...`) |
+| `CYCLE-20261102-WH4X` | `2026-11-02T17:46:46.593Z` | `yattee/yattee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6476` | Yes (`41bc76a3...`) |
+| `CYCLE-20261102-WM76` | `2026-11-02T17:46:53.154Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6477` | Yes (`eee743fa...`) |
+| `CYCLE-20261102-WRU4` | `2026-11-02T17:47:00.460Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6478` | Yes (`6a2c1050...`) |

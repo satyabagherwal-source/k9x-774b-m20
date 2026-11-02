@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T17:39:23.818Z",
+  "last_updated": "2026-11-02T17:47:00.376Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43317,8 +43317,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ec8b1b9b",
-      "content_hash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
+      "source_version": "0ceace07",
+      "content_hash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43516,6 +43516,11 @@
           "number": 6467,
           "title": "NUC 1 NUC Purpose and Guidelines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6478,
+          "title": "NUC 57 Thin Arrows and Python-Style Lambdas",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43523,7 +43528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:12:23.404Z",
+      "verified_at": "2026-11-02T17:47:00.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56364,8 +56369,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "05238c02",
-      "content_hash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
+      "source_version": "f7015b3d",
+      "content_hash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -56398,6 +56403,11 @@
           "number": 5922,
           "title": "Don't mount \"main\" DB unless requested, fix `trailbase-extension-so` and simplif",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6477,
+          "title": "Update JavaScript dependencies. Addresses security advisories.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56405,7 +56415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:27:36.362Z",
+      "verified_at": "2026-11-02T17:46:53.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59843,8 +59853,8 @@
       "slug": "yattee-yattee",
       "platform": "github",
       "source_url": "https://github.com/yattee/yattee",
-      "source_version": "03599d33",
-      "content_hash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
+      "source_version": "10ea2798",
+      "content_hash": "41bc76a33a249cc0fc09086411cf3a73ab6f95fc9c4534aa2d1b9146ee9b1f7c",
       "dossier_path": "07_PROJECT_LEARNING/yattee-yattee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yattee-yattee-learnings.md",
       "promoted_rules": [
@@ -59877,6 +59887,11 @@
           "number": 5685,
           "title": "Tombstone Outbox-First Credential Purging Pattern",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6476,
+          "title": "Bump build number to 278",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59884,7 +59899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:20:08.834Z",
+      "verified_at": "2026-11-02T17:46:46.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167596,6 +167611,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T17:39:23.790Z"
+    },
+    "rule-6476": {
+      "learning_id": "rule-6476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6476,
+      "title": "Bump build number to 278",
+      "source_url": "https://github.com/yattee/yattee",
+      "source_version": "10ea2798",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:46:46.480Z"
+    },
+    "rule-6477": {
+      "learning_id": "rule-6477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6477,
+      "title": "Update JavaScript dependencies. Addresses security advisories.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "f7015b3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:46:53.040Z"
+    },
+    "rule-6478": {
+      "learning_id": "rule-6478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6478,
+      "title": "NUC 57 Thin Arrows and Python-Style Lambdas",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "0ceace07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:47:00.347Z"
     }
   },
   "aliases": {

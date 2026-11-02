@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T17:39:23.912Z",
-  "total_cycles_completed": 6835,
-  "total_learnings_persisted": 6835,
-  "total_rules_promoted": 6486,
+  "last_updated": "2026-11-02T17:47:00.469Z",
+  "total_cycles_completed": 6838,
+  "total_learnings_persisted": 6838,
+  "total_rules_promoted": 6489,
   "history": [
-    {
-      "timestamp": "2026-10-31T17:43:51.269Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:43:56.523Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:50:09.279Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T17:50:10.916Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-02T17:39:23.912Z",
       "repository": "yvgude/lean-ctx",
       "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:46:46.602Z",
+      "repository": "yattee/yattee",
+      "learningId": "learn-github-yattee-yattee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:46:53.163Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:47:00.469Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

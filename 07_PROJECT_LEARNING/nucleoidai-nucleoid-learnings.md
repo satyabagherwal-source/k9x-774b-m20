@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ec8b1b9b`  
+> **Source Version**: `0ceace07`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:12:22.865Z  
+> **Timestamp**: 2026-11-02T17:46:59.674Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:12:21.427Z  
+> **Harvest Timestamp**: 2026-11-02T17:46:59.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -966,405 +966,119 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec8b1b9b` (2026-11-02)
-**Commit Message**: NUC 1 NUC Purpose and Guidelines
+### Incident Patch 1: `0ceace07` (2026-11-02)
+**Commit Message**: NUC 57 Thin Arrows and Python-Style Lambdas
 
-Accepted: user-requested Language compatibility category/process revision.
-Register additive cross-language aliases as automatically selectable,
-currently one of five equally likely eligible categories. Skip their
-continuous token comparison without relaxing mandatory safeguards.
+Accepted: user-requested classification revision to Language compatibility,
+following the independently accepted NUC 1 registry revision.
+Preserve Standards Track, Accepted status, implemented behavior and all
+historical evaluations; synchronize both NUC indexes.
 
 Independent evaluation accepted the unchanged frozen candidate with no
-policy failures. Integrated hard criteria passed: all-target build,
-warning-denied Clippy, formatting, 2,157 tests, all 2,179 accepted test
-identities retained, three new tests passing, and 853 accepted replays.
-Runtime/parser, protected cases, versions and dependencies are unchanged.
+findings or blockers. Integrated hard criteria passed: all-target build,
+warning-denied Clippy, formatting, 2,157 tests, exact preservation of all
+2,182 test identities, and 853 accepted replays. No runtime, test,
+normative-case, export, dependency or version change.
 
-This single revision skipped token comparison as single_proposal.
-Advisory usefulness is unscored and strategy learning is not_configured.
-NUC 1 remains Active/Documentation. NUC 57's classification follows in
-its own separately prepared and independently evaluated revision.
+Single-mode token comparison was skipped as single_proposal.
+Advisory usefulness is unscored and learning is not_configured.
+All 72 proposal headers agree with both complete indexes.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `.claude/rules/project.instructions.md` (modified, +10/-3)
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -13,9 +13,16 @@ placeholders instead.
+@@ -52,7 +52,6 @@ Created: 31-Jul-2026
+ | [45](nuc-0045.md) | Colon-Led Assertion Statements | Accepted |
+ | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Accepted |
+ | [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Accepted |
+-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
+ | [64](nuc-0064.md) | Exponentiation Operator and Compound Exponentiation | Accepted |
+ | [67](nuc-0067.md) | Destructuring Declarations | Automatic-Accepted: independent evaluation rejected it because values copied into every target make nested destructurings render exponentially; a 1,013-byte block of 48-target destructurings nested four deep exceeded 1.5 GB despite the 128-target bound |
  
- ## Goals
- 
--Design a new grammar with minimum tokenized syntax — a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
--
--However, new syntax may be introduced where it is needed to achieve that goal. The superset is a starting point, not a hard constraint.
-+Design a minimal core grammar with minimum tokenized syntax, while aspiring to
-+be a superset of programming languages, including Python, JavaScript/TypeScript,
-+Kotlin, Go, Rust, Java, C# and C/C++. These are examples, not a fixed boundary.
-+This is a goal, not a claim of full compatibility with every language.
-+
-+Welcome additive cross-language aliases and equivalent familiar source forms,
-+such as the already accepted `this`/`self` and `=>`/`->`, under the Language
-+compatibility category. They need not reduce or preserve lexer-token counts;
-+new syntax and token kinds may be introduced when appropriate. Keep every
-+accepted form and meaning. The superset aspiration is not a hard constraint.
- 
- Build a Rust implementation of Nucleoid. The crate is at the repository root (`Cargo.toml`, `src/`), and `nucleoid.spec.md` defines the behaviour it must implement.
- 
-```
-
-**File**: `.claude/rules/proposals.instructions.md` (modified, +14/-2)
-```diff
-@@ -194,8 +194,18 @@ Only continuous cycles apply the
- - Runtime features: required for an existing comparable feature; skipped entirely
-   for a brand-new feature; skipped for a genuinely uncomparable existing feature
-   only with explicit reason and evidence.
-+- Language compatibility: skipped entirely; additive cross-language aliases and
-+  equivalent familiar forms may add lexer tokens or new token kinds.
- - Documentation: skipped.
- 
-+Language compatibility advances the language-superset aspiration, not a claim
-+of full compatibility with every language. Preserve every accepted form and
-+meaning. Its skip is not advisory token scoring, a zero-case comparison, or a
-+passing token gate; single mode still takes precedence. Every category/mode
-+retains valid immutable baselines, accepted-source replay, behavior/integrity,
-+syntax compatibility, the full `cargo test`, `cargo build --all-targets`,
-+warning-denied Clippy, and formatting.
-+
- Read the proposal's actual registered Category header. Runtime proposals require
- explicit new/existing-comparable/existing-uncomparable applicability, including
- in single mode; validate uncomparable reason/evidence independently.
-@@ -226,8 +236,10 @@ Follow the caller-owned
- [selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement).
- Unspecified enhancements use equal random selection across the registry's
- eligible categories, currently Syntax enhancement, Runtime features, Utility
--enhancement, and Reasoning enhancement. Documentation is classified but is
--not automatically selected for a language enhancement.
-+enhancement, Reasoning enhancement, and Language compatibility. Derive the
-+eligible set and count from the live registry; the current five categories
-+each have a 20% chance, not a hard-coded five-way draw. Documentation is
-+classified but is not automatically selected for a language enhancement.
- Explicit feature/category requests still take precedence.
- 
- ## Detailed proposal workflow
-```
-
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +10/-0)
-```diff
-@@ -128,8 +128,18 @@ Only continuous cycles apply the
- - Runtime features: required for an existing comparable feature; skipped
-   entirely for a brand-new feature; skipped for a genuinely uncomparable existing
-   feature with explicit reason and evidence.
-+- Language compatibility: skipped entirely; additive cross-language aliases and
-+  equivalent familiar forms may add lexer tokens or new token kinds while
-+  preserving every accepted form and meaning.
- - Documentation: skipped.
- 
-+Language compatibility advances a language-superset goal, not an assertion of
-+existing full compatibility. Its `language_compatibility` skip is not advisory
-+token scoring, a zero-case comparison, or a passing token gate. Single mode
-+still takes precedence with `single_proposal`, regardless of category.
-+Every category/mode retains accepted-source replay, the full `cargo test`,
-+build, warning-denied Clippy, formatting, and the other independent checks.
-+
- Every mode still requires valid immutable accepted-corpus inputs, behavior,
- case integrity, syntax compatibility, development checks, and outcome recording.
- When tokens are skipped, genuinely new behavior cases may lack accepted-syntax
-```
-
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +15/-1)
-```diff
-@@ -62,8 +62,16 @@ Only continuous cycles apply the
- - Runtime features: run for an existing comparable feature; do not run at all
-   for a brand-new feature; explicitly skip a genuinely uncomparable existing
-   feature with a reason and supporting evidence.
-+- Language compatibility: do not run; additive cross-language aliases and
-+  equivalent familiar source forms may add lexer tokens or new token kinds.
- - Documentation: do not run.
- 
-+Language compatibility is a categorical skip, not advisory token scoring,
-+a zero-case comparison, or a passing token gate. Single mode takes precedence
-+over every category's continuous policy. Every category/mode retains valid
-+immutable baselines, accepted-source replay, behavior/integrity, compatibility,
-+the full `cargo test`, build, warning-denied Clippy, and formatting checks.
-+
- Supply explicit runtime applicability for Runtime features even in single mode.
- The independent evaluator verifies any uncomparable rationale and evidence;
- missing comparison artifacts are not evidence of impossibility. No skip may
-@@ -78,6 +86,12 @@ including Draft, Accepted, Rejected, Active, and Superseded documents.
- Category describes the proposal's purpose; it does not replace `Type` or
- change its status.
- 
-+Language compatibility covers proposals primarily intended to add optional
-+cross-language aliases or equivalent familiar forms while preserving every
-+accepted form and meaning. The language-superset aspiration is a goal, not
-+existing full compatibility; familiar prior art alone does not reclassify
-+other grammar, runtime, utility, or reasoning proposals.
-+
- Use the user's explicit classification when supplied. Whenever a category is
- added, selected, or updated, the coordinating caller must ask the user for
- confirmation if anything is uncertain, including its meaning, automatic-selection
-@@ -98,7 +112,7 @@ do not invent categories or retain stale classifications without review.
- When asked to choose a language enhancement without a specific feature or
- category, the coordinating caller makes one unbiased random draw with equal
- probability across the registry's automatically selectable enhancement
--categories. The current four enhancement categories each have a 25% chance;
-+categories. The current five enhancement categories each have a 20% chance;
- `Documentation` is not part of this automatic language-enhancement draw.
- 
- Read the current registry before drawing; do not hard-code its size or retain
-```
-
-**File**: `CONTRIBUTING.md` (modified, +27/-6)
-```diff
-@@ -135,7 +135,18 @@ or proposal assignments are uncertain. Every category addition requires
- reviewing all existing proposals and updating those that fit the new category
- more accurately, with synchronized category and numerical indexes. Unspecified
- enhancements use an equal random draw across the currently eligible categories;
--Documentation is not part of that draw.
-+derive eligibility and count from the live registry, not a fixed list or size.
-+The current five eligible categories each have a 20% chance; Documentation is
-+not part of that draw.
-+
-+Language compatibility advances Nucleoid's aspiration to be a superset of
-+programming languages, not a claim of full compatibility with every language.
-+It welcomes additive aliases and equivalent familiar source forms, such as
-+the already accepted `this`/`self` and `=>`/`->`, without requiring reduced or
-+unchanged lexer-token counts. New token kinds are allowed when appropriate;
-+every accepted form and meaning remains protected. Classify by primary
-+purpose, not familiar prior art alone. NUC 1 remains Process/Active with
-+Category Documentation; registering this category adds no language behavior.
- 
- The **token non-regression gate** requires each compared case to use the same
- or fewer lexer tokens than its accepted baseline. `/nuc-proposal`
-@@ -152,11 +163,17 @@ Only continuous cycles use this matrix:
- | Runtime features | Required for existing comparable features; skipped for brand-new features or genuinely uncomparable existing features with explicit reason and evidence |
- | Utility enhancement | Required |
- | Reasoning enhancement | Required |
-+| Language compatibility | Skipped entirely; additive aliases and equivalent familiar forms may use more lexer tokens |
- | Documentation | Skipped |
- 
--All modes retain immutable accepted-corpus baselines, pre-existing case
--integrity, assertion execution/coverage, explicit return checks, backward
--syntax compatibility, development checks, and independent evaluation.
-+This categorical skip is not advisory token scoring or a passing/zero-case
-+token gate. Single mode still skips first for every category.
-+All categories and modes retain immutable accepted-corpus baselines,
-+accepted-source replay, pre-existing case integrity, assertion execution/coverage,
-+explicit return checks, backward
-+syntax compatibility, the full `cargo test`, `cargo build --all-targets`,
-+`cargo clippy --all-targets -- -D warnings`, `cargo fmt --check`, and independent
-+evaluation.
- An invalid baseline, bad input, or behavior/compatibility failure never becomes
- a successful skip. Missing comparisons still fail a required token gate;
- missing artifacts do not establish that a feature is uncomparable.
-@@ -217,6 +234,8 @@ applicability and rationale, behavior checks, and `token_check.status`.
- For `ran`, it includes the metric and each paired case's `before`, `after`,
- and token change. For `skipped`, it includes the skip reason, not measured cases
- or zero placeholder counts; this is not a passing token gate.
-+Language compatibility reports `language_compatibility` in continuous mode;
-+single mode reports `single_proposal` instead.
- The evaluator does not fix failures or regenerate exports. A repaired,
- substantively revised, or rebased candidate needs a fresh agent pair and report.
- 
-@@ -453,8 +472,10 @@ brackets describe values, not actual observations):
- }
- ```
- 
--All five registered categories and both modes are typed; strategy order is
--stable. Each category first explores unobserved arms in that order. Thereafter
-+All registered categories, including Language compatibility, and both modes
-+are typed; old policy histories retain their schema and category spellings.
-+Each category's history is isolated, and strategy order is stable. Each category
-+first explores unobserved arms in that order. Thereafter
- it maximizes `mean + sqrt(2 * ln(category_trials) / arm_trials)` with
- registry-order ties. Raw `r` in `[-1, 1]` is normalized to `(r + 1) / 2`.
- Neutral `0` is observed as `0.5`; missing evidence is never a zero observation.
-```
-
-**File**: `docs/nuc-0000.md` (modified, +5/-0)
-```diff
-@@ -113,6 +113,11 @@ Created: 31-Jul-2026
- | [62](nuc-0062.md) | Universal and Existential Quantifiers | Accepted |
- | [65](nuc-0065.md) | Hypothetical Suppose Blocks | Accepted |
- 
-+### Language compatibility
-+
-+| NUC | Title | Status |
-+| --- | --- | --- |
-+
- ### Documentation
+@@ -117,6 +116,7 @@ Created: 31-Jul-2026
  
  | NUC | Title | Status |
+ | --- | --- | --- |
++| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
+ 
+ ### Documentation
+ 
+@@ -184,7 +184,7 @@ Created: 31-Jul-2026
+ | [54](nuc-0054.md) | Literal Parameter Defaults | Standards Track | Runtime features | Accepted |
+ | [55](nuc-0055.md) | Class-Level State Version Anchors | Standards Track | Runtime features | Accepted |
+ | [56](nuc-0056.md) | Reactive Base Two Exponentiation | Standards Track | Utility enhancement | Accepted |
+-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Syntax enhancement | Accepted |
++| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Language compatibility | Accepted |
+ | [58](nuc-0058.md) | In-Place List Sorting | Standards Track | Utility enhancement | Accepted |
+ | [59](nuc-0059.md) | Conditional Expressions | Standards Track | Runtime features | Accepted |
+ | [60](nuc-0060.md) | Nullish Coalescing | Standards Track | Runtime features | Accepted |
 ```
 
-**File**: `docs/nuc-0001.md` (modified, +57/-1)
+**File**: `docs/nuc-0057.md` (modified, +47/-1)
 ```diff
-@@ -47,11 +47,16 @@ Created: 31-Jul-2026
- | Runtime features | Core execution, data modeling, scope, control flow, and transactions. | Yes |
- | Utility enhancement | Standard built-in helpers, including math, collections, and strings. | Yes |
- | Reasoning enhancement | Logic rules, inference, graph queries, and explanations. | Yes |
-+| Language compatibility | Additive cross-language aliases and equivalent familiar source forms, without a token-count constraint. | Yes |
- | Documentation | Indexes, guidelines, reference documentation, and development processes. | No |
+@@ -6,7 +6,7 @@ Title: Thin Arrows and Python-Style Lambdas
+ Author: Claude <noreply@anthropic.com>
+ Status: Accepted
+ Type: Standards Track
+-Category: Syntax enhancement
++Category: Language compatibility
+ Created: 28-Oct-2026
+ Requires: 8, 12, 18, 20, 27, 29, 32, 37, 44, 45, 54
+ ```
+@@ -423,6 +423,52 @@ assert(alias, 2)
+   `09de2a3dcc295236fea8ee7c7ccf530cf954bb97`; baseline, report and probe
+   artifacts remain in the session workspace, outside the repository.
  
- - Every existing and future NUC must have exactly one registered `Category` header, including Draft, Accepted, Rejected, Active, and Superseded proposals.
- - Classify the NUC's overall primary purpose, not merely its latest edit; a metadata-only revision does not make a language proposal Documentation.
- - NUC 0 and NUC 1 use Documentation.
-+- Language compatibility advances Nucleoid's aspiration to be a superset of programming languages; this is a goal, not a claim that full compatibility with every language already exists.
-+- Welcome optional aliases and equivalent familiar source forms, such as the already accepted `this`/`self` and `=>`/`->`, while preserving every accepted form and meaning. The category itself introduces no new aliases or runtime behavior.
-+- Language compatibility proposals need not reduce or preserve lexer-token counts and may introduce new token kinds when appropriate; a minimal core syntax remains a separate language goal.
-+- Classify by primary purpose: familiar prior art alone does not move a grammar, runtime, utility, or reasoning proposal into Language compatibility.
- - Only the user may add categories and specify their automatic-selection eligibility; keep this registry, affected proposal headers, and both category and numerical indexes synchronized.
- - Every category addition requires the coordinating caller to review all existing NUCs across every status and update proposals that fit the new category more accurately.
- - Each NUC changed by that review requires its own revision under the ordinary independent proposal/evaluation process; preserve unaffected categories and every proposal's `Type`, `Status`, and historical evaluation outcomes.
-@@ -64,7 +69,7 @@ Created: 31-Jul-2026
- - Explicit feature or category requests take precedence; documentation and process work are not randomly selected as language enhancements.
- - When no feature or category is specified for a language enhancement, the caller reads the current registry and makes one tool-backed, unbiased random draw with equal probability across all currently eligible categories.
- - Derive the eligible set and its size from the registry, without a hard-coded category count; future user-added eligible categories join the same uniform draw.
--- With the current four eligible categories, each has a 25% chance; do not retain the former 50/50 syntax/runtime split.
-+- With the current five eligible categories, each has a 20% chance; do not retain earlier fixed category sets or probabilities.
- - For example, populate `$categories` from the registry's Yes entries and select one index with `Get-Random -Minimum 0 -Maximum $categories.Count`.
- - Draw before recording baselines or delegating preparation, then choose one bounded enhancement within the selected category; do not redraw to favor a category or substitute deterministic alternation for randomness.
- - The caller supplies the selected category, requested change, and selection rationale to the proposal worker; the worker uses that selection without redrawing.
-@@ -94,8 +99,11 @@ Created: 31-Jul-2026
- | Runtime features | Skipped for a genuinely uncomparable existing feature, with an explicit reason and evidence. |
- | Utility enhancement | Required. |
- | Reasoning enhancement | Required. |
-+| Language compatibility | Skipped entirely; additive aliases and equivalent familiar forms may use more lexer tokens. |
- | Documentation | Skipped. |
- 
-+- The Language compatibility policy is a categorical skip, not advisory token scoring, a zero-case comparison, or a passing token gate; single mode still takes precedence with its single-proposal skip reason.
-+- In every category and mode, retain valid immutable accepted-corpus baselines, accepted-source replay, behavior/integrity, syntax compatibility, the full `cargo test`, `cargo build --all-targets`, `cargo clippy --all-targets -- -D warnings`, and `cargo fmt --check`.
- - Read the proposal's actual `Category` header and validate it against the registry; an unknown or missing category blocks evaluation, never selects a skip.
- - Runtime proposals require explicit applicability (`new_feature`, `existing_comparable`, or `existing_uncomparable`), including in single mode; uncomparable existing features require nonblank reason and evidence, independently verified by the evaluator.
- - A missing comparison artifact is not evidence that an existing feature is uncomparable; missing
-```
-
-**File**: `tests/proposals.rs` (modified, +104/-26)
-```diff
-@@ -46,6 +46,8 @@ enum Category {
-     Utility,
-     #[serde(rename = "Reasoning enhancement")]
-     Reasoning,
-+    #[serde(rename = "Language compatibility")]
-+    LanguageCompatibility,
-     Documentation,
- }
- 
-@@ -56,6 +58,7 @@ impl Category {
-             "Runtime features" => Ok(Self::Runtime),
-             "Utility enhancement" => Ok(Self::Utility),
-             "Reasoning enhancement" => Ok(Self::Reasoning),
-+            "Language compatibility" => Ok(Self::LanguageCompatibility),
-             "Documentation" => Ok(Self::Documentation),
-             _ => Err(GateError::Proposal(format!(
-                 "unsupported Category {label:?}; confirm its registry and policy before evaluation"
-@@ -144,6 +147,7 @@ impl EvaluationPolicy {
-             return Some(TokenSkipReason::SingleProposal);
-         }
-         match self.category {
-+            Category::LanguageCompatibility => Some(TokenSkipReason::LanguageCompatibility),
-             Category::Documentation => Some(TokenSkipReason::Documentation),
-             Category::Runtime => match self.runtime {
-                 RuntimeApplicability::NewFeature => Some(TokenSkipReason::NewRuntimeFeature),
-@@ -171,6 +175,7 @@ fn required_rationale(variable: &str, value: Option<&str>) -> Result<String, Gat
- #[serde(rename_all = "snake_case")]
- enum TokenSkipReason {
-     SingleProposal,
-+    LanguageCompatibility,
-     Documentation,
-     NewRuntimeFeature,
-     UncomparableRuntimeFeature,
-@@ -1850,6 +1855,11 @@ fn policy_matrix() -> Vec<(EvaluationPolicy, Option<TokenSkipReason>)> {
-         (Category::Syntax, None, None),
-         (Category::Utility, None, None),
-         (Category::Reasoning, None, None),
-+        (
-+            Category::LanguageCompatibility,
-+            None,
-+            Some(TokenSkipReason::LanguageCompatibility),
-+        ),
-         (
-             Category::Documentation,
-             None,
-@@ -1936,6 +1946,44 @@ fn complete_mode_category_matrix_enforces_required_token_increases() {
-     }
- }
- 
-+#[test]
-+fn language_compatibility_reports_a_skip_without_measurements_or_token_limits() {
-+    let before = [fixture("paired", "a = 1\nassert(a, 1)")];
-+    let after = [fixture("paired", "a = (1)\nassert(a, 1)")];
-+    assert!(count_tokens(&after[0]).unwrap() > count_tokens(&before[0]).unwrap());
-+    for (mode, reason) in [
-+        ("continuous", "language_compatibility"),
-+        ("single", "single_proposal"),
-+    ] {
-+        let policy = EvaluationPolicy::from_inputs(
-+            Category::LanguageCompatibility,
-+            PolicyInputs {
-+                mode: Some(mode),
-+                ..PolicyInputs::default()
-+            },
-+        )
-+        .unwrap();
-+        let report = verdict_with_policy(&before, &after, policy.clone());
-+        assert_eq!(report.decision, Decision::Accepted);
-+        assert!(report.issues.is_empty());
-+        assert_eq!(report.behavior.legacy_cases_passed, 1);
-+        assert_eq!(report.behavior.candidate_cases_passed, 1);
-+        let json = serde_json::to_value(&report).unwrap();
-+        assert_eq!(json["proposal"]["category"], "Language compatibility");
-+        assert_eq!(json["policy"]["category"], "Language compatibility");
-+        assert_eq!(json["policy"]["mode"], mode);
-+        assert_eq!(json["policy"]["runtime"]["kind"], "not_applicable");
-+        assert_eq!(
-+            serde_json::from_value::<EvaluationPolicy>(json["policy"].clone()).unwrap(),
-+            policy
-+        );
-+        let skipped = serde_json::json!({"status": "skipped", "reason": reason});
-+        assert_eq!(json["token_check"], skipped);
-+        let restored: TokenCheck = serde_json::from_value(skipped.clone()).unwrap();
-+        assert_eq!(serde_json::to_value(restored).unwrap(), skipped);
-+    }
-+}
++### Current classification revision
 +
- #[test]
- fn new_behavior_needs_a_comparison_only_when_the_matrix_requires_it() {
-     let before = [fixture("paired", "assert(1, 1)")];
-@@ -1995,41 +2043,30 @@ fn runtime_noncomparison_requires_validated_reason_and_evidence() {
++- Language compatibility describes this NUC's primary purpose: admitting
++  familiar thin-arrow and Python-style lambda equivalents of already
++  supported function forms, not token minimization or new runtime semantics.
++- This metadata-only revision preserves all implemented behavior and
++  historical evaluation evidence. The existing feature remains Accepted;
++  its Type remains Standards Track.
++- The classification revision is Accepted as a user-requested single-mode
++  revision against `ec8b1b9bc27f3b6faf5a0cffd950c0e3d3246dbc`. Its fresh
++  independent evaluator returned Accepted, with no findings or blockers.
++- The evaluated proposal's plain and raw Git blob was
++  `3b35addd52411dbbbdc0589f912d6c18cccfc374`, before this outcome metadata.
++  Both frozen paths were integrated byte-for-byte, including the matching
++  category and numerical index metadata.
++- This single-proposal revision skips token comparison as `single_proposal`.
++  Future continuous Language compatibility proposals skip as
++  `language_compatibility`; baseline, behavior/integrity, syntax-compatibility
++  and development safeguards still apply. No token measurements were made;
++  a skip is not a passing token gate.
++- Every hard criterion passed independently: all-target build,
++  warning-denied Clippy and formatting succeeded; the full `cargo test
++  --no-fail-fast` passed 2,157 tests with zero failures and the 25 existing
++  ignored tests. All 2,182 test identities and multiplicities are unchanged;
++  no tests were added, removed or weakened.
++- The deterministic evaluator passed all 853 accepted replays and all 853
++  candidate cases with their canonical assertions, explicit returns and
++  executed coverage. Production/parser/runtime, tests, diagnostics,
++  normative sources, exports, dependencies and versions remain unchanged,
++  preserving every accepted parse and behavior, including runtime failures.
++- No additional Rust improvement pass applies to this documentation-only
++  revision; the code-changing pass completed in the accepted NUC 1 revision.
++- The caller rechecked the integrated tree before committing: build, Clippy,
++  formatting, all 2,157 tests and the 853-case replay passed. All 2,182 test
++  identities are unchanged, and all 72 headers agree with both indexes.
++- Advisory usefulness is unscored (`missing_rubric`), not zero. Deterministic
++  evaluator work took 2.9990329 seconds, excluding compilation, external
++  checks, proposal/model time and report writing. Strategy learning was
++  `not_configured` and unattributed, with no update.
++- External core report `compat-nuc57-evaluation.json` has raw blob
++  `32f9178bf13eb0bc5bb42556de550385ba43fe13`; complete independent outcome
++  `compat-nuc57-independent-outcome.json` has raw blob
++  `da756bc26661733585fa6ff74bba734f90524b6d`. The immutable 853-case baseline
++  has raw blob `86556f9b955fe114d381ec8a96bbbf57d3b7dcfa`. These artifacts
++  remain outside the repository in the session workspace.
++
+ ## Copyright
  
- #[test]
- fn invalid_policy_inputs_never_select_a_skip() {
--    for mode in [
--        Some(""),
--        Some("Single"),
--        Some("ignore"),
--        Some(" continuous "),
--    ] {
--        assert!(
--            EvaluationPolicy::from_inputs(
--                Category::Documentation,
--                PolicyInputs {
--                    mode,
--                    ..PolicyInputs::default()
--                },
--            )
--            .is_err()
--        );
--    }
--    for mode in [None, Some("single")] {
--        for runtime in [None, Some(""), Some("new"), Some("not_applicable")] {
-+    for category in [Category::Documentation, Category::LanguageCompatibility] {
-+        for mode in [
-+            Some(""),
-+            Some("Single"),
-+            Some("ignore"),
-+            Some(" continuous "),
-+        ] {
-             assert!(
-                 EvaluationPolicy::from_inputs(
--                    Category::Runtime,
-+                    category,
-                     PolicyI
+ Copyright 2020 Nucleoid
 ```
 
 #### Recent Merged Pull Requests:
@@ -1393,39 +1107,30 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 1 NUC Purpose and Guidelines
+## X. NUC 57 Thin Arrows and Python-Style Lambdas
 
 **RULE**:
-When implementing operations in `.claude/rules/project.instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec8b1b9b`: NUC 1 NUC Purpose and Guidelines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ceace07`: NUC 57 Thin Arrows and Python-Style Lambdas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/project.instructions.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Design a minimal core grammar with minimum tokenized syntax, while aspiring to
-be a superset of programming languages, including Python, JavaScript/TypeScript,
-Kotlin, Go, Rust, Java, C# and C/C++. These are examples, not a fixed boundary.
-This is a goal, not a claim of full compatibility with every language.
-
-Welcome additive cross-language aliases and equivalent familiar source forms,
-such as the already accepted `this`/`self` and `=>`/`->`, under the Language
-compatibility category. They need not reduce or preserve lexer-token counts;
-new syntax and token kinds may be introduced when appropriate. Keep every
-accepted form and meaning. The superset aspiration is not a hard constraint.
+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Language compatibility | Accepted |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Design a new grammar with minimum tokenized syntax — a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
-
-However, new syntax may be introduced where it is needed to achieve that goal. The superset is a starting point, not a hard constraint.
+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Syntax enhancement | Accepted |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec8b1b9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ceace07` are properly handled with clean fallback behavior.

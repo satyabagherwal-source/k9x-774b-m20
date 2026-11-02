@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T17:39:23.916Z",
+  "last_updated": "2026-11-02T17:47:00.473Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
-      "verified_at": "2026-11-02T17:12:23.497Z",
+      "content_hash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
+      "verified_at": "2026-11-02T17:47:00.472Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:12:23.497Z"
+      "last_updated": "2026-11-02T17:47:00.472Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
-      "verified_at": "2026-10-30T22:27:36.465Z",
+      "content_hash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
+      "verified_at": "2026-11-02T17:46:53.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:27:36.465Z"
+      "last_updated": "2026-11-02T17:46:53.166Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -13596,14 +13596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yattee-yattee",
-      "content_hash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
-      "verified_at": "2026-10-30T08:20:08.968Z",
+      "content_hash": "41bc76a33a249cc0fc09086411cf3a73ab6f95fc9c4534aa2d1b9146ee9b1f7c",
+      "verified_at": "2026-11-02T17:46:46.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:20:08.968Z"
+      "last_updated": "2026-11-02T17:46:46.605Z"
     },
     "Shubham0812/SwiftUI-Animations": {
       "repository": "Shubham0812/SwiftUI-Animations",
