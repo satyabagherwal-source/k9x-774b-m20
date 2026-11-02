@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-M6BI",
-    "timestamp": "2026-10-30T23:51:40.158Z",
-    "repository": "meta/docusaurus",
-    "learningId": "learn-github-meta-docusaurus",
-    "contentHash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-M6FG",
     "timestamp": "2026-10-30T23:51:40.300Z",
     "repository": "laurent22/joplin",
@@ -7492,6 +7477,21 @@
     "contentHash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-MDA3",
+    "timestamp": "2026-11-02T21:22:51.963Z",
+    "repository": "pyannote/speaker-diarization-3.1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+    "contentHash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

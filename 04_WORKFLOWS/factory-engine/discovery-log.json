@@ -20089,5 +20089,17 @@
     "downloads": 1536,
     "qualityScore": 3226,
     "discoveredAt": "2026-11-02T15:13:01.681Z"
+  },
+  {
+    "name": "pyannote/speaker-diarization-3.1",
+    "fullName": "pyannote/speaker-diarization-3.1",
+    "url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: pyannote/speaker-diarization-3.1 (4845 likes, 6918404 downloads)",
+    "likes": 4845,
+    "downloads": 6918404,
+    "qualityScore": 50450,
+    "discoveredAt": "2026-11-02T21:20:36.746Z"
   }
 ]

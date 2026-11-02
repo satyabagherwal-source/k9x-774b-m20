@@ -4782,3 +4782,7 @@ https://huggingface.co/xiaomi-research/Xiaomi-OCR-0
 # --- Automatically Discovered by AI Scout Engine [2026-11-02T15:15:09.960Z] ---
 # [HUGGINGFACE-AI-MODELS] sensenova/SenseNova-Loop-9B-Preview (3226 score) - Verified Hugging Face Model: sensenova/SenseNova-Loop-9B-Preview (169 likes, 153
 https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-02T21:22:44.943Z] ---
+# [HUGGINGFACE-AI-MODELS] pyannote/speaker-diarization-3.1 (50450 score) - Verified Hugging Face Model: pyannote/speaker-diarization-3.1 (4845 likes, 69184
+https://huggingface.co/pyannote/speaker-diarization-3.1

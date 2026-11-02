@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T17:58:26.922Z",
-  "total_verified_learnings": 1193,
+  "last_updated": "2026-11-02T21:22:51.848Z",
+  "total_verified_learnings": 1194,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -167767,6 +167767,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T17:58:26.901Z"
+    },
+    "learn-huggingface-pyannote-speaker-diarization-3-1": {
+      "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "pyannote/speaker-diarization-3.1",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "slug": "hf-pyannote-speaker-diarization-3.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
+      "source_version": "hf-pyannote-speaker-diarization-3.1",
+      "content_hash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T21:22:51.823Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

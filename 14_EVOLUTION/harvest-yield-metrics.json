@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T17:58:27.017Z",
-  "total_cycles_completed": 6840,
-  "total_learnings_persisted": 6840,
+  "last_updated": "2026-11-02T21:22:51.972Z",
+  "total_cycles_completed": 6841,
+  "total_learnings_persisted": 6841,
   "total_rules_promoted": 6495,
   "history": [
-    {
-      "timestamp": "2026-10-31T18:01:39.404Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:01:42.413Z",
       "repository": "openai-community/gpt2",
@@ -1403,6 +1396,13 @@
       "repository": "Ataraxy-Labs/sem",
       "learningId": "learn-github-ataraxy-labs-sem",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T21:22:51.972Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

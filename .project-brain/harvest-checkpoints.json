@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T17:58:27.021Z",
+  "last_updated": "2026-11-02T21:22:51.976Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17684,6 +17684,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-02T15:15:27.635Z"
+    },
+    "pyannote/speaker-diarization-3.1": {
+      "repository": "pyannote/speaker-diarization-3.1",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "content_hash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
+      "verified_at": "2026-11-02T21:22:51.976Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T21:22:51.976Z"
     }
   },
   "repos": {
