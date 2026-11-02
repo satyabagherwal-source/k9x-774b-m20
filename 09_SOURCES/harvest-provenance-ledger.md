@@ -6803,3 +6803,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-01T02:22:44.560Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `53d5d706` | Multi-dimensional audit evidence | 2026-11-01T02:22:45.781Z |
 | `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `3dcb8e91` | Multi-dimensional audit evidence | 2026-11-01T02:22:50.684Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `d5f3406c` | Multi-dimensional audit evidence | 2026-11-02T14:24:45.208Z |

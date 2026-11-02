@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "14cf6a68",
+    "sourceVersion": "d5f3406c",
     "license": "Apache-2.0",
-    "contentHash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
-    "lastHarvestedAt": "2026-10-31T06:52:22.213Z",
+    "contentHash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
+    "lastHarvestedAt": "2026-11-02T14:24:45.208Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

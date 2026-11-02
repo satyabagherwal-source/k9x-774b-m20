@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T02:22:55.992Z",
-    "lastVerified": "2026-11-01T02:22:55.992Z",
+    "lastChecked": "2026-11-02T14:24:53.570Z",
+    "lastVerified": "2026-11-02T14:24:53.570Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -349,9 +349,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-01T02:00:55.134Z",
+    "lastChecked": "2026-11-02T14:24:53.560Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-01T02:00:55.134Z"
+    "lastVerified": "2026-11-02T14:24:53.560Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1488,9 +1488,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T23:02:06.964Z",
+    "lastChecked": "2026-11-02T14:24:48.748Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T23:02:06.965Z"
+    "lastVerified": "2026-11-02T14:24:48.748Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2943,9 +2943,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-10-31T11:33:00.847Z",
+    "lastChecked": "2026-11-02T14:24:51.143Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-10-31T11:33:00.847Z"
+    "lastVerified": "2026-11-02T14:24:51.143Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -4412,12 +4412,12 @@
     "lastVerified": "2026-10-31T08:03:06.688Z"
   },
   "zarf-dev-zarf": {
-    "name": "zarf-dev/zarf",
+    "name": "zarf",
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T12:15:49.384Z",
-    "lastVerified": "2026-10-31T12:15:49.384Z",
+    "lastChecked": "2026-11-02T14:24:46.187Z",
+    "lastVerified": "2026-11-02T14:24:46.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
@@ -4426,7 +4426,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8ae29a1f"
   },
   "trailbaseio-trailbase": {
     "name": "trailbase",
@@ -4693,14 +4694,14 @@
     "officialUrl": "https://github.com/embassy-rs/embassy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:52:21.370Z",
-    "lastVerified": "2026-10-31T06:52:21.370Z",
+    "lastChecked": "2026-11-02T14:24:43.765Z",
+    "lastVerified": "2026-11-02T14:24:43.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
+    "contentHash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8813,9 +8814,9 @@
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
     "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
-    "lastChecked": "2026-10-29T01:24:38.099Z",
+    "lastChecked": "2026-11-02T14:24:41.100Z",
     "revisionIdentifier": "7e5d3c5",
-    "lastVerified": "2026-10-29T01:24:38.099Z"
+    "lastVerified": "2026-11-02T14:24:41.100Z"
   },
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
@@ -9728,9 +9729,9 @@
   "rickclephas-kmp-nativecoroutines": {
     "name": "KMP-NativeCoroutines",
     "officialUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
-    "lastChecked": "2026-10-30T04:48:00.284Z",
+    "lastChecked": "2026-11-02T14:24:43.619Z",
     "revisionIdentifier": "54a45fbb",
-    "lastVerified": "2026-10-30T04:48:00.284Z"
+    "lastVerified": "2026-11-02T14:24:43.619Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",

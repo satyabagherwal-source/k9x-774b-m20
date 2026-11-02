@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T02:22:50.601Z",
+  "last_updated": "2026-11-02T14:24:45.153Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11533,8 +11533,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "14cf6a68",
-      "content_hash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
+      "source_version": "d5f3406c",
+      "content_hash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -11592,6 +11592,11 @@
           "number": 6111,
           "title": "Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6405,
+          "title": "[MCXA] tests: rtc_alarm: raise timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11599,7 +11604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:52:22.112Z",
+      "verified_at": "2026-11-02T14:24:45.139Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166053,6 +166058,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T02:22:50.574Z"
+    },
+    "rule-6405": {
+      "learning_id": "rule-6405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6405,
+      "title": "[MCXA] tests: rtc_alarm: raise timeout",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "d5f3406c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:24:45.139Z"
     }
   },
   "aliases": {

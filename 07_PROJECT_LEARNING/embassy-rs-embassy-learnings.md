@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `14cf6a68`  
+> **Source Version**: `d5f3406c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:52:21.538Z  
+> **Timestamp**: 2026-11-02T14:24:44.728Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:52:21.370Z  
+> **Harvest Timestamp**: 2026-11-02T14:24:43.765Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10054 stars
+- **Stars / Engagement**: 10058 stars
 
 ---
 
@@ -1435,11 +1435,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7398** (2026-10-30): **embassy-usb: generate config.rs in a deterministic order**
-  *Symptoms*: build.rs collected the config values in a HashMap and wrote config.rs by iterating it, so the constants came out in a different order on every build. The generated source, and with it the crate hash, changed from one build of the same sources to the next, which breaks reproducible builds and caches of dependent crates (e.g. Nix): a dependent built against one build of embassy-usb fails with E0463 against another.  Use a BTreeMap so config.rs is written sorted by name, as ekv (embassy-rs/ekv#27) and smoltcp do.
+- **Issue #7401** (2026-11-01): **embassy-net: BorrowMutError panics on preemptive executors (esp_rtos time-slicing) - proposal: preemption-safe spin-token access**
+  *Symptoms*: ### Background  When embassy-net 0.9.1 is used under **esp_rtos** (the preemptive RTOS introduced with esp-hal 1.2, time-slicing scheduler), calls into the stack can panic with:  ``` panicked at embassy-net/src/lib.rs:417:9: already borrowed: BorrowMutError    Inner::borrow_mut   Stack::with_mut   UdpSocket::poll_recv_from   <app task> ```  Decoded backtrace from ESP32-S3 (esp-hal 1.2.2, esp_rtos 0.4.0), reproduces probabilistically under media load.  ### Mechanism  `Stack::with` / `Stack::with_mut` hold a `RefCell` borrow for the duration of the closure. embassy-net assumes the executor is **cooperative** (tasks only yield at `await` points), so two borrows can never overlap.  esp_rtos schedules embassy tasks as preemptive round-robin tasks: a time-slice tick can switch tasks **mid-borrow**, and the next task's `borrow_mut` then panics. To our knowledge this scenario is new with esp_rtos, and distinct from #3904 (that one was about accessing the stack from interrupt/other executor contexts; here the stack is used from a single executor — the preemptive scheduler alone breaks the single-borrow assumption). Main's `WakeRunner` refactor narrows nothing in this regard: `with()` still holds a bare `borrow_mut()`.  ### Proposed fix: preemption-safe spin token (~37 lines)  Replace bare `RefCell` borrows with a token-guarded access — **no interrupts are masked and no critical-section dependency is added**:  ```rust pub(crate) struct SpinToken(core::sync::atomic::AtomicBool);  impl S
 
-- **Issue #7397** (2026-10-30): **examples/stm32h7: fix off-by-one flash size in qspi_mdma**
-  *Symptoms*: `MAX_ADDRESS` is the last byte but was used as the size, so reads could not include the last byte, and a write or erase running past the end wrapped to address 1 instead of 0 (which would both be erased because erase wrapped the same way, so the write succeeds).
+- **Issue #7399** (2026-11-02): **[MCXA] update to newest PAC**
+  *Symptoms*: No functional changes, just updating the PAC.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,221 +1456,30 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14cf6a68` (2026-10-30)
-**Commit Message**: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
+### Incident Patch 1: `4e105d66` (2026-11-02)
+**Commit Message**: [MCXA] tests: rtc_alarm: raise timeout
 
-examples/stm32h7: fix off-by-one flash size in qspi_mdma
+Test takes longer now.
 
-**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
+**File**: `tests/mcxa2xx/src/bin/rtc_alarm.rs` (modified, +1/-0)
 ```diff
-@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
- // Memory array specifications as defined in the datasheet.
- const SECTOR_SIZE: u32 = 4096;
- const PAGE_SIZE: u32 = 256;
--const MAX_ADDRESS: u32 = 0x7FFFFF;
-+const FLASH_SIZE: u32 = 8 * 1024 * 1024;
+@@ -2,6 +2,7 @@
+ #![no_main]
  
- // Max Sector Erase time is 300ms
- const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
-@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
-     }
+ teleprobe_meta::target!(b"frdm-mcx-a266");
++teleprobe_meta::timeout!(30);
  
-     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
--        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
- 
-         let transaction = TransferConfig {
-             iwidth: QspiWidth::SING,
-@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
-     }
- 
-     pub fn write(&mut self, mut address: u32, data: &[u8]) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(!data.is_empty());
-         self.erase(address, data.len() as u32);
- 
-@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
- 
-             // Jump to the next page.
-             address += page_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-     pub fn erase(&mut self, mut address: u32, mut length: u32) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(length > 0);
- 
-         loop {
-@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
- 
-             // Jump to the next sector.
-             address += sector_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
-     }
- 
-     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
--        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
- 
-         let transaction = TransferConfig {
-             iwidth: QspiWidth::SING,
-@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
-     }
- 
-     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(!data.is_empty());
-         self.erase_async(address, data.len() as u32).await;
-         let mut length = data.len() as u32;
-@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
- 
-             // Jump to the next page.
-             address += page_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(length > 0);
- 
-         loop {
-@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
- 
-             // Jump to the next sector.
-             address += sector_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 2: `701d808d` (2026-10-30)
-**Commit Message**: examples/stm32h7: fix off-by-one flash size in qspi_mdma
-
-MAX_ADDRESS is the last byte (0x7FFFFF) but was used as the size: reads
-could not include the last byte, and a write or erase running past the
-end wrapped to address 1 instead of 0. Use the 8 MiB size instead.
-
-**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
-```diff
-@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
- // Memory array specifications as defined in the datasheet.
- const SECTOR_SIZE: u32 = 4096;
- const PAGE_SIZE: u32 = 256;
--const MAX_ADDRESS: u32 = 0x7FFFFF;
-+const FLASH_SIZE: u32 = 8 * 1024 * 1024;
- 
- // Max Sector Erase time is 300ms
- const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
-@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
-     }
- 
-     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
--        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
- 
-         let transaction = TransferConfig {
-             iwidth: QspiWidth::SING,
-@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
-     }
- 
-     pub fn write(&mut self, mut address: u32, data: &[u8]) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(!data.is_empty());
-         self.erase(address, data.len() as u32);
- 
-@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
- 
-             // Jump to the next page.
-             address += page_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-     pub fn erase(&mut self, mut address: u32, mut length: u32) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(length > 0);
- 
-         loop {
-@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
- 
-             // Jump to the next sector.
-             address += sector_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
-     }
- 
-     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
--        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
- 
-         let transaction = TransferConfig {
-             iwidth: QspiWidth::SING,
-@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
-     }
- 
-     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(!data.is_empty());
-         self.erase_async(address, data.len() as u32).await;
-         let mut length = data.len() as u32;
-@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
- 
-             // Jump to the next page.
-             address += page_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
-     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
--        assert!(address <= MAX_ADDRESS);
-+        assert!(address < FLASH_SIZE);
-         assert!(length > 0);
- 
-         loop {
-@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
- 
-             // Jump to the next sector.
-             address += sector_remainder;
--            address %= MAX_ADDRESS;
-+            address %= FLASH_SIZE;
-         }
-     }
- 
+ use defmt_rtt as _;
+ use embassy_executor::Spawner;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7399** (2026-11-02): [MCXA] update to newest PAC (@felipebalbi)
 - **PR #7398** (2026-10-30): embassy-usb: generate config.rs in a deterministic order (@Sandvoxel)
 - **PR #7397** (2026-10-30): examples/stm32h7: fix off-by-one flash size in qspi_mdma (@Abrahamh08)
 - **PR #7395** (2026-10-30): Revert "stm32/eth: set v2 TX descriptor frame length" (@xoviat)
 - **PR #7394** (2026-10-30): [MCXA] use WAKETIMER for LPTMR time-driver alarms (@felipebalbi)
 - **PR #7391** (2026-10-30): nrf: enable i2s on the nrf91 family (@thijsc)
-- **PR #7390** (2026-10-29): fix: chacha counter wrap on 32 bit targets (@lulf)
 
 ---
 
@@ -1690,48 +1499,28 @@ end wrapped to address 1 instead of 0. Use the 8 MiB size instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
+## X. [MCXA] tests: rtc_alarm: raise timeout
 
 **RULE**:
-When implementing operations in `examples/stm32h7/src/bin/qspi_mdma.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/mcxa2xx/src/bin/rtc_alarm.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14cf6a68`: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e105d66`: [MCXA] tests: rtc_alarm: raise timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/stm32h7/src/bin/qspi_mdma.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/mcxa2xx/src/bin/rtc_alarm.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const FLASH_SIZE: u32 = 8 * 1024 * 1024;
-        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
-        assert!(address < FLASH_SIZE);
-            address %= FLASH_SIZE;
-        assert!(address < FLASH_SIZE);
-            address %= FLASH_SIZE;
-        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
-        assert!(address < FLASH_SIZE);
-            address %= FLASH_SIZE;
-        assert!(address < FLASH_SIZE);
-            address %= FLASH_SIZE;
+teleprobe_meta::timeout!(30);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-const MAX_ADDRESS: u32 = 0x7FFFFF;
-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-        assert!(address <= MAX_ADDRESS);
-            address %= MAX_ADDRESS;
-        assert!(address <= MAX_ADDRESS);
-            address %= MAX_ADDRESS;
-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
-        assert!(address <= MAX_ADDRESS);
-            address %= MAX_ADDRESS;
-        assert!(address <= MAX_ADDRESS);
-            address %= MAX_ADDRESS;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14cf6a68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e105d66` are properly handled with clean fallback behavior.

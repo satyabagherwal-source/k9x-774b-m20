@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-VSBK",
-    "timestamp": "2026-10-30T20:15:11.648Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-VUBL",
     "timestamp": "2026-10-30T20:15:14.241Z",
     "repository": "TypeWhisper/typewhisper-mac",
@@ -7490,6 +7475,21 @@
     "repository": "zoontek/react-native-bootsplash",
     "learningId": "learn-github-zoontek-react-native-bootsplash",
     "contentHash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-OO7P",
+    "timestamp": "2026-11-02T14:24:45.205Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

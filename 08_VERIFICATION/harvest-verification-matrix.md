@@ -6794,3 +6794,4 @@
 | `CYCLE-20261101-GB48` | `2026-11-01T02:22:44.552Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`861c20f0...`) |
 | `CYCLE-20261101-GC2A` | `2026-11-01T02:22:45.778Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6108` | Yes (`666756b7...`) |
 | `CYCLE-20261101-GFUH` | `2026-11-01T02:22:50.681Z` | `zoontek/react-native-bootsplash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6404` | Yes (`c45fd3a6...`) |
+| `CYCLE-20261102-OO7P` | `2026-11-02T14:24:45.205Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6405` | Yes (`361664f5...`) |

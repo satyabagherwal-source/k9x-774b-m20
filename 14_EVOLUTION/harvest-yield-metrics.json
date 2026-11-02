@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T02:22:50.689Z",
-  "total_cycles_completed": 6771,
-  "total_learnings_persisted": 6771,
-  "total_rules_promoted": 6414,
+  "last_updated": "2026-11-02T14:24:45.212Z",
+  "total_cycles_completed": 6772,
+  "total_learnings_persisted": 6772,
+  "total_rules_promoted": 6415,
   "history": [
-    {
-      "timestamp": "2026-10-31T14:01:19.858Z",
-      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T14:08:08.594Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-01T02:22:50.689Z",
       "repository": "zoontek/react-native-bootsplash",
       "learningId": "learn-github-zoontek-react-native-bootsplash",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:24:45.212Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
