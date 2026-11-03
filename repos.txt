@@ -4806,3 +4806,7 @@ https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-03T21:08:46.217Z] ---
 # [AI-AGENTS] kortix-ai/CompanyOS (11559 score) - Kortix CompanyOS – the open-source operating system for your company. Multiplaye
 https://github.com/kortix-ai/CompanyOS
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T22:06:22.802Z] ---
+# [HUGGINGFACE-AI-MODELS] divagr1925/Qwen3.5-4B-Qwenputer (2739 score) - Verified Hugging Face Model: divagr1925/Qwen3.5-4B-Qwenputer (151 likes, 1229 do
+https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer

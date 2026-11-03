@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "fce3dc25",
+    "sourceVersion": "0a744fdf",
     "license": "Apache-2.0",
-    "contentHash": "b2472b8b124c73a497eaa03de0c7e9c3790d89b5c5b383a6cf067a60b9732853",
-    "lastHarvestedAt": "2026-10-27T13:31:54.281Z",
+    "contentHash": "93b5452116af84df48f22267bee19c333f1367d7696146794d3b3f9d5936ead0",
+    "lastHarvestedAt": "2026-11-03T22:06:42.474Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "47446103",
+    "sourceVersion": "ab78e911",
     "license": "AGPL-3.0",
-    "contentHash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
-    "lastHarvestedAt": "2026-11-03T10:52:47.911Z",
+    "contentHash": "3ade3e62af0406b9943992b91d9650b873a2f07cb0b584952aad8ba94f24fb16",
+    "lastHarvestedAt": "2026-11-03T22:06:44.652Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "f7e474f7",
+    "sourceVersion": "0028d79e",
     "license": "NOASSERTION",
-    "contentHash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
-    "lastHarvestedAt": "2026-10-31T07:32:48.877Z",
+    "contentHash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
+    "lastHarvestedAt": "2026-11-03T22:06:46.863Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "8c8f8165",
+    "sourceVersion": "67528212",
     "license": "MIT",
-    "contentHash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
-    "lastHarvestedAt": "2026-10-30T21:55:55.265Z",
+    "contentHash": "17138543b15c2e9b9738209635e4218bd104fcc13efdf6096459c5d0fa2e72db",
+    "lastHarvestedAt": "2026-11-03T22:06:41.117Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "29d243b5",
+    "sourceVersion": "dcafeac3",
     "license": "MIT",
-    "contentHash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
-    "lastHarvestedAt": "2026-10-30T13:01:54.495Z",
+    "contentHash": "490e9fe6c7768f6c80a1fe49f8c76968aa7bff74e9b8c72bb9d6aed8d3bcf339",
+    "lastHarvestedAt": "2026-11-03T22:06:36.595Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {
@@ -11818,5 +11818,15 @@
     "contentHash": "49879416048d551b5eb01107f2f7d0f9ad5005a92fc07ab150113266b7f80edc",
     "lastHarvestedAt": "2026-11-03T21:08:53.237Z",
     "learningId": "learn-github-kortix-ai-companyos"
+  },
+  "hf-divagr1925-qwen3.5-4b-qwenputer": {
+    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
+    "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
+    "license": "Open-Source",
+    "contentHash": "1c37d312f0c7c4c45549e072ad38bbe1eb9693485c4b352b6db6c3f2eb38fa4d",
+    "lastHarvestedAt": "2026-11-03T22:06:37.199Z",
+    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   }
 }

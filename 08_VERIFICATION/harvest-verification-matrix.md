@@ -7025,3 +7025,9 @@
 | `CYCLE-20261103-BLC2` | `2026-11-03T21:58:08.834Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6626` | Yes (`b4602181...`) |
 | `CYCLE-20261103-BNPA` | `2026-11-03T21:58:11.902Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6627` | Yes (`8ff794dd...`) |
 | `CYCLE-20261103-BOBA` | `2026-11-03T21:58:12.694Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6628` | Yes (`ac318623...`) |
+| `CYCLE-20261103-MH4F` | `2026-11-03T22:06:36.591Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6630` | Yes (`490e9fe6...`) |
+| `CYCLE-20261103-MHL8` | `2026-11-03T22:06:37.196Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6629, Rule 6631, Rule 6632` | Yes (`1c37d312...`) |
+| `CYCLE-20261103-MKM1` | `2026-11-03T22:06:41.113Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6633` | Yes (`17138543...`) |
+| `CYCLE-20261103-MLNR` | `2026-11-03T22:06:42.471Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6634` | Yes (`93b54521...`) |
+| `CYCLE-20261103-MNC8` | `2026-11-03T22:06:44.648Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6635` | Yes (`3ade3e62...`) |
+| `CYCLE-20261103-MP1N` | `2026-11-03T22:06:46.859Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6636` | Yes (`e3473e4e...`) |

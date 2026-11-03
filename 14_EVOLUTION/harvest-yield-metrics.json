@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T21:58:12.707Z",
-  "total_cycles_completed": 7002,
-  "total_learnings_persisted": 7002,
-  "total_rules_promoted": 6647,
+  "last_updated": "2026-11-03T22:06:46.869Z",
+  "total_cycles_completed": 7008,
+  "total_learnings_persisted": 7008,
+  "total_rules_promoted": 6655,
   "history": [
-    {
-      "timestamp": "2026-11-02T15:36:49.396Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:36:53.070Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:50:58.596Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:57:17.298Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:57:21.185Z",
-      "repository": "JuulLabs/kable",
-      "learningId": "learn-github-juullabs-kable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:57:29.923Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T16:04:55.859Z",
       "repository": "crossplane/crossplane",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-03T21:58:12.707Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:36.601Z",
+      "repository": "fb55/htmlparser2",
+      "learningId": "learn-github-fb55-htmlparser2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:37.205Z",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:41.122Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:42.480Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:44.658Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T22:06:46.869Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

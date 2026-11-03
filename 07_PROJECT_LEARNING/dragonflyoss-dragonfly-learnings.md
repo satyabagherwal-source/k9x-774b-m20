@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
-> **Source Version**: `fce3dc25`  
+> **Source Version**: `0a744fdf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:31:53.844Z  
+> **Timestamp**: 2026-11-03T22:06:41.694Z  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:31:53.534Z  
+> **Harvest Timestamp**: 2026-11-03T22:06:41.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Delivers efficient, stable, and secure data distribution and acceleration powered by P2P technology, with an optional content‑addressable filesystem that accelerates OCI container launch.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3355 stars
+- **Stars / Engagement**: 3361 stars
 
 ---
 
@@ -1133,11 +1133,11 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5064** (2026-11-03): **Job Redis URL construction changes credentials containing spaces**
+  *Symptoms*: ### Bug report  `internal/job.New` uses `url.QueryEscape` when constructing Redis broker and result-backend URLs.  `QueryEscape` encodes a space as `+`, but URL userinfo parsing treats `+` as a literal character. Consequently, a configured password such as `a b` becomes `a+b` after parsing. This can cause authentication failures despite correct configured credentials.  Both the broker and result-backend URL construction paths use this logic.  ### How to reproduce  Run this minimal Go program using the same URL construction pattern:  ```go package main  import ( 	"fmt" 	"net/url" )  func main() { 	password := "a b" 	raw := fmt.Sprintf( 		"redis://worker:%s@127.0.0.1:6379/0", 		url.QueryEscape(password), 	)  	parsed, err := url.Parse(raw) 	if err != nil { 		panic(err) 	}  	decoded, _ := parsed.User.Password() 	fmt.Printf("configured: %q\nparsed:     %q\n", password, decoded) } ```  Actual result:  ```text configured: "a b" parsed:     "a+b" ```  No running Redis server is required to reproduce the encoding mismatch.  ### Expected behavior  Redis usernames and passwords should round-trip unchanged through URL construction and parsing.  URL userinfo should use userinfo encoding, such as `url.UserPassword`, rather than query-string encoding.  ### Environment  - Dragonfly: `main` at `0225491c12ac21f35ce242da4a3d7ee089e7b993` - Pinned Machinery dependency: v1.10.14 - Go: 1.26.0, Windows/amd64
+
 - **Issue #5016** (2026-09-21): **fix(rpc): exempt gRPC health checks from rate limiting**
   *Symptoms*:   <!--- Provide a general summary of your changes in the Title above -->  ## Description The scheduler and manager gRPC servers put the grpc_ratelimit interceptor first in the interceptor chain and register the standard health checking service on the same grpc.Server. Whenever business traffic exhausts the rate limiter, /grpc.health.v1.Health/Check is rejected with ResourceExhausted as well, so kubelet liveness/readiness probes fail and a merely busy pod is restarted or taken out of service.  Add rpc.RateLimitUnaryServerInterceptor and rpc.RateLimitStreamServerInterceptor, which wrap the upstream grpc_ratelimit interceptors and let requests whose full method starts with /grpc.health.v1.Health/ go straight to the handler. Switch the scheduler and manager servers to them.  Add table-driven unit tests for both interceptors and a bufconn based test for the scheduler server which verifies that health checks stay SERVING after the limiter is exhausted while business RPCs are rejected. <!--- Describe your changes in detail -->  ## Related Issue https://github.com/dragonflyoss/dragonfly/issues/5015 <!--- This project only accepts pull requests related to open issues --> <!--- If suggesting a new feature or change, please discuss it in an issue first --> <!--- If fixing a bug, there should be an issue describing it with steps to reproduce --> <!--- Please link to the issue here: -->  ## Motivation and Context  <!--- Why is this change required? What problem does 
-
-- **Issue #5015** (2026-09-22): **scheduler/manager: gRPC health checks are rejected by the request rate limiter, so kubelet restarts pods that are merely busy**
-  *Symptoms*:  ---  ### Bug report:  In the scheduler (and manager) gRPC server the `grpc_ratelimit` interceptor is the first interceptor of the chain and applies to **every** RPC of the server, while the standard gRPC health service is registered on the **same** `grpc.Server`:  - `pkg/rpc/scheduler/server/server.go` (`main` @ 109a393f): L57 `limiter := rpc.NewRateLimiterInterceptor(requestRateLimit, int64(requestRateLimit))`, L72 `grpc_ratelimit.UnaryServerInterceptor(limiter)`, L80 `grpc_ratelimit.StreamServerInterceptor(limiter)`, L96 `healthpb.RegisterHealthServer(grpcServer, health.NewServer())`. - `pkg/rpc/manager/server/server.go`: same structure (L57 / L72 / L79 / L94).  As a result, once business RPCs (`AnnouncePeer`, `AnnounceHost`, `StatTask`, ...) exhaust the token bucket configured by `server.requestRateLimit` (default 4000/s, burst = same value), `/grpc.health.v1.Health/Check` is rejected as well:  ``` rpc error: code = ResourceExhausted desc = /grpc.health.v1.Health/Check is rejected by grpc_ratelimit middleware, please retry later. ```  The Helm chart uses exactly this RPC for the startup/readiness/liveness probes (`charts/dragonfly/templates/scheduler/scheduler-statefulset.yaml`: `/bin/grpc_health_probe -addr=:<containerPort>`; the manager deployment does the same). So under load:  1. readiness fails -> the scheduler is removed from the Service / DNS -> the remaining schedulers receive even more traffic -> they hit the limiter too; 2. liveness fails `failureThreshold` time
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1154,107 +1154,966 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fce3dc25` (2026-10-27)
-**Commit Message**: chore(build): bump Alpine base image to 3.23.7 and update client submodule (#5090)
+### Incident Patch 1: `0615401c` (2026-11-03)
+**Commit Message**: fix(job): encode Redis credentials using URL userinfo (#5065)
 
-* chore(build): bump Alpine base image to 3.23.7 and update client submodule
+* fix(job): encode Redis credentials using URL userinfo
 
-Update the pinned Alpine base image from 3.23.4 to 3.23.7 across the
-manager, scheduler, and plugin-builder Dockerfiles so release images pick
-up the latest upstream patches. Also advance the client submodule to its
-latest commit.
+Build Redis broker and result-backend URLs with URL userinfo encoding instead of query escaping. Preserve credentials containing spaces and omit empty authentication.
+
+Add URL round-trip tests, including compatibility with the currently pinned standalone parser.
+
+Signed-off-by: donnykk <[REDACTED_EMAIL]>
+
+* refactor(redis): move job redis URL builder into shared pkg/redis.FormatURL
+
+Replace the job-local redisURL helper with an exported FormatURL in
+pkg/redis so other components can reuse the same credential-safe URL
+construction. Behavior is unchanged: credentials are still encoded as
+URL userinfo so parsers based on net/url decode reserved characters
+correctly.
+
+The job package now builds the machinery broker and result backend URLs
+via FormatURL, and the corresponding tests move to pkg/redis, including
+a round-trip check through go-redis ParseURL for credentials containing
+spaces and reserved characters.
+
+Also bumps the client submodule.
 
 Signed-off-by: Gaius <[REDACTED_EMAIL]>
-
-* ci(lint): set up Go from go.mod before running golangci-lint
-
-The lint job relied on the Go preinstalled on the runner image. When
-ubuntu-latest moved to ubuntu-26.04 the preinstalled Go became 1.26,
-which selects dependency files guarded by `//go:build go1.26` that the
-go1.25-built golangci-lint binary cannot type-check:
-
-    panic: file requires newer Go version go1.26 (application built with go1.25)
-
-Install Go from go.mod first, matching ci.yml and the
-golangci-lint-action README.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Gaius <[REDACTED_EMAIL]>
+Signed-off-by: donnykk <[REDACTED_EMAIL]>
+Signed-off-by: Gaius <[REDACTE
+
+**File**: `internal/job/job.go` (modified, +3/-19)
+```diff
+@@ -20,10 +20,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
+-	"fmt"
+-	"net/url"
+ 	"reflect"
+-	"strings"
+ 	"sync"
+ 	"time"
+ 
+@@ -36,6 +33,7 @@ import (
+ 	"golang.org/x/sync/errgroup"
+ 
+ 	logger "d7y.io/dragonfly/v2/internal/dflog"
++	pkgredis "d7y.io/dragonfly/v2/pkg/redis"
+ )
+ 
+ // tracer is a global tracer for job.
+@@ -74,24 +72,10 @@ func New(cfg *Config, queue Queue) (*Job, error) {
+ 		return nil, err
+ 	}
+ 
+-	var broker string
+-	if cfg.Username != "" {
+-		broker = fmt.Sprintf("redis://%s:%s@%s/%d", url.QueryEscape(cfg.Username), url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BrokerDB)
+-	} else {
+-		broker = fmt.Sprintf("redis://%s@%s/%d", url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BrokerDB)
+-	}
+-
+-	var backend string
+-	if cfg.Username != "" {
+-		backend = fmt.Sprintf("redis://%s:%s@%s/%d", url.QueryEscape(cfg.Username), url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BackendDB)
+-	} else {
+-		backend = fmt.Sprintf("redis://%s@%s/%d", url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BackendDB)
+-	}
+-
+ 	server, err := machinery.NewServer(&machineryv1config.Config{
+-		Broker:          broker,
++		Broker:          pkgredis.FormatURL(cfg.Addrs, cfg.Username, cfg.Password, cfg.BrokerDB),
+ 		DefaultQueue:    queue.String(),
+-		ResultBackend:   backend,
++		ResultBackend:   pkgredis.FormatURL(cfg.Addrs, cfg.Username, cfg.Password, cfg.BackendDB),
+ 		ResultsExpireIn: DefaultResultsExpireIn,
+ 		Redis: &machineryv1config.RedisConfig{
+ 			MasterName:             cfg.MasterName,
+```
+
+**File**: `pkg/redis/redis.go` (modified, +18/-0)
+```diff
+@@ -19,6 +19,9 @@ package redis
+ import (
+ 	"context"
+ 	"fmt"
++	"net/url"
++	"strconv"
++	"strings"
+ 
+ 	"github.com/redis/go-redis/v9"
+ 
+@@ -96,6 +99,21 @@ func NewRedis(cfg *redis.UniversalOptions) (redis.UniversalClient, error) {
+ 	return client, nil
+ }
+ 
++// FormatURL formats the redis connection URL, encoding credentials as URL
++// userinfo so that parsers built on net/url decode them.
++func FormatURL(addrs []string, username, password string, db int) string {
++	u := url.URL{
++		Scheme: "redis",
++		Host:   strings.Join(addrs, ","),
++		Path:   "/" + strconv.Itoa(db),
++	}
++	if username != "" || password != "" {
++		u.User = url.UserPassword(username, password)
++	}
++
++	return u.String()
++}
++
+ // IsEnabled check redis is enabled.
+ func IsEnabled(addrs []string) bool {
+ 	return len(addrs) != 0
+```
+
+**File**: `pkg/redis/redis_test.go` (modified, +76/-0)
+```diff
+@@ -19,9 +19,85 @@ package redis
+ import (
+ 	"testing"
+ 
++	"github.com/redis/go-redis/v9"
+ 	"github.com/stretchr/testify/assert"
+ )
+ 
++func Test_FormatURL(t *testing.T) {
++	tests := []struct {
++		name     string
++		addrs    []string
++		username string
++		password string
++		db       int
++		expect   func(t *testing.T, rawURL string)
++	}{
++		{
++			name:     "username and password",
++			addrs:    []string{"127.0.0.1:6379"},
++			username: "foo",
++			password: "bar",
++			db:       1,
++			expect: func(t *testing.T, rawURL string) {
++				assert := assert.New(t)
++				assert.Equal("redis://foo:bar@127.0.0.1:6379/1", rawURL)
++			},
++		},
++		{
++			name:     "password only",
++			addrs:    []string{"127.0.0.1:6379"},
++			password: "bar",
++			db:       1,
++			expect: func(t *testing.T, rawURL string) {
++				assert := assert.New(t)
++				assert.Equal("redis://:bar@127.0.0.1:6379/1", rawURL)
++			},
++		},
++		{
++			name:  "without credentials",
++			addrs: []string{"127.0.0.1:6379"},
++			db:    0,
++			expect: func(t *testing.T, rawURL string) {
++				assert := assert.New(t)
++				assert.Equal("redis://127.0.0.1:6379/0", rawURL)
++			},
++		},
++		{
++			name:     "multiple addresses",
++			addrs:    []string{"sentinel-1:26379", "sentinel-2:26379"},
++			username: "foo",
++			password: "bar",
++			db:       2,
++			expect: func(t *testing.T, rawURL string) {
++				assert := assert.New(t)
++				assert.Equal("redis://foo:bar@sentinel-1:26379,sentinel-2:26379/2", rawURL)
++			},
++		},
++		{
++			name:     "credentials with spaces and reserved characters round trip",
++			addrs:    []string{"127.0.0.1:6379"},
++			username: "worker +:@",
++			password: "test @:/%+",
++			db:       11,
++			expect: func(t *testing.T, rawURL string) {
++				assert := assert.New(t)
++				options, err := redis.ParseURL(rawURL)
++				assert.NoError(err)
++				assert.Equal("127.0.0.1:6379", options.Addr)
++				assert.Equal("worker +:@", options.Username)
++				assert.Equal("test @:/%+", options.Password)
++				assert.Equal(11, options.DB)
++			},
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			tc.expect(t, FormatURL(tc.addrs, tc.username, tc.password, tc.db))
++		})
++	}
++}
++
+ func Test_IsEnabled(t *testing.T) {
+ 	tests := []struct {
+ 		name   string
+```
+
+---
+
+### Incident Patch 2: `89333b3b` (2026-11-03)
+**Commit Message**: fix(scheduler): reclaim persistent hosts that can not be loaded and tolerate fields added in v2.5.0 (#5049)
+
+* fix(scheduler): reclaim persistent hosts that can not be loaded and tolerate fields added in v2.5.0
+
+Hosts stored by a scheduler older than v2.5.0 have no cpu_process_percent
+and memory_process_used_percent fields. Load required every field to parse,
+so after an upgrade those hosts could never be loaded again, and because
+RunGC went through LoadAll, which skips hosts that fail to load, they were
+never reclaimed either: the stale hashes stayed in redis without a TTL and
+GC logged "parsing cpu process percent failed" / "load host failed" for
+each of them on every run, forever.
+
+- Load: treat cpu_process_percent and memory_process_used_percent as zero
+  when absent instead of failing.
+- Split Load into load, which returns ErrHostNotFound when the hash is gone
+  and a wrapped ErrHostInvalid when a field can not be parsed; Load keeps
+  its (*Host, bool) signature.
+- RunGC: scan the hosts set directly and reclaim host ids whose hash is
+  missing or can not be parsed. Transient redis errors are still left for
+  the next run.
+
+Applies to both scheduler/resource/persistent and pers
+
+**File**: `scheduler/resource/persistent/host_manager.go` (modified, +122/-106)
+```diff
+@@ -20,6 +20,8 @@ package persistent
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"math/rand/v2"
+ 	"strconv"
+ 	"time"
+@@ -98,122 +100,124 @@ func (h *hostManager) Load(ctx context.Context, hostID string) (*Host, bool) {
+ 		return nil, false
+ 	}
+ 
++	host, err := h.parseHost(rawHost)
++	if err != nil {
++		log.Errorf("parsing host failed: %v", err)
++		return nil, false
++	}
++
++	return host, true
++}
++
++// parseHost parses host from the raw host fields stored in redis.
++func (h *hostManager) parseHost(rawHost map[string]string) (*Host, error) {
++	// HGetAll returns an empty hash if the host does not exist.
++	if len(rawHost) == 0 {
++		return nil, errors.New("host not found")
++	}
++
+ 	// Set integer fields from raw host.
+ 	port, err := strconv.ParseInt(rawHost["port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing port failed: %w", err)
+ 	}
+ 
+ 	downloadPort, err := strconv.ParseInt(rawHost["download_port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing download port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing download port failed: %w", err)
+ 	}
+ 
+ 	proxyPort, err := strconv.ParseInt(rawHost["proxy_port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing proxy port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing proxy port failed: %w", err)
+ 	}
+ 
+ 	// Set cpu fields from raw host.
+ 	schedulerClusterID, err := strconv.ParseUint(rawHost["scheduler_cluster_id"], 10, 64)
+ 	if err != nil {
+-		log.Errorf("parsing scheduler cluster id failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing scheduler cluster id failed: %w", err)
+ 	}
+ 
+ 	// Set boolean fields from raw host.
+ 	disableShared, err := strconv.ParseBool(rawHost["disable_shared"])
+ 	if err != nil {
+-		log.Errorf("parsing disable shared failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing disable shared failed: %w", err)
+ 	}
+ 
+ 	// Set cpu fields from raw host.
+ 	cpuLogicalCount, err := strconv.ParseUint(rawHost["cpu_logical_count"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing cpu logical count failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu logical count failed: %w", err)
+ 	}
+ 
+ 	cpuPhysicalCount, err := strconv.ParseUint(rawHost["cpu_physical_count"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing cpu physical count failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu physical count failed: %w", err)
+ 	}
+ 
+ 	cpuPercent, err := strconv.ParseFloat(rawHost["cpu_percent"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu percent failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu percent failed: %w", err)
+ 	}
+ 
+-	cpuProcessPercent, err := strconv.ParseFloat(rawHost["cpu_process_percent"], 64)
+-	if err != nil {
+-		log.Errorf("parsing cpu process percent failed: %v", err)
+-		return nil, false
++	// cpu_process_percent was introduced in v2.5.0, hosts stored by older schedulers do
++	// not have it yet.
++	var cpuProcessPercent float64
++	if raw := rawHost["cpu_process_percent"]; raw != "" {
++		cpuProcessPercent, err = strconv.ParseFloat(raw, 64)
++		if err != nil {
++			return nil, fmt.Errorf("parsing cpu process percent failed: %w", err)
++		}
+ 	}
+ 
+ 	cpuTimesUser, err := strconv.ParseFloat(rawHost["cpu_times_user"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times user failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times user failed: %w", err)
+ 	}
+ 
+ 	cpuTimesSystem, err := strconv.ParseFloat(rawHost["cpu_times_system"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times system failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times system failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIdle, err := strconv.ParseFloat(rawHost["cpu_times_idle"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times idle failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times idle failed: %w", err)
+ 	}
+ 
+ 	cpuTimesNice, err := strconv.ParseFloat(rawHost["cpu_times_nice"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times nice failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times nice failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIowait, err := strconv.ParseFloat(rawHost["cpu_times_iowait"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times iowait failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times iowait failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIrq, err := strconv.ParseFloat(rawHost["cpu_times_irq"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times irq failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times irq failed: %w", err)
+ 	}
+ 
+ 	cpuTimesSoftirq, err := strconv.ParseFloat(rawHost["cpu_times_softirq"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times softirq failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times softirq fail
+```
+
+**File**: `scheduler/resource/persistent/host_manager_test.go` (modified, +52/-0)
+```diff
+@@ -256,6 +256,21 @@ func TestHostManager_Load(t *testing.T) {
+ 				assert.Nil(host)
+ 			},
+ 		},
++		{
++			name: "missing cpu_process_percent and memory_process_used_percent default to zero",
++			mock: func(mock redismock.ClientMock) {
++				fields := mockRawHostFields(mockRawHost.ID)
++				delete(fields, "cpu_process_percent")
++				delete(fields, "memory_process_used_percent")
++				mock.ExpectHGetAll(pkgredis.MakePersistentHostKeyInScheduler(1, mockRawHost.ID)).SetVal(fields)
++			},
++			expect: func(t *testing.T, host *Host, loaded bool) {
++				assert := assert.New(t)
++				assert.True(loaded)
++				assert.Equal(float64(0), host.CPU.ProcessPercent)
++				assert.Equal(float64(0), host.Memory.ProcessUsedPercent)
++			},
++		},
+ 		{
+ 			name: "invalid port value",
+ 			mock: func(mock redismock.ClientMock) {
+@@ -1186,6 +1201,43 @@ func TestHostManager_RunGC(t *testing.T) {
+ 				assert.NoError(err)
+ 			},
+ 		},
++		{
++			name: "host that can not be parsed is reclaimed",
++			mock: func(mock redismock.ClientMock) {
++				fields := mockRawHostFields("host1")
++				fields["port"] = mockInvalidFieldValue
++				mock.ExpectSScan(pkgredis.MakePersistentHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentHostKeyInScheduler(1, "host1")).SetVal(fields)
++				mockDeleteHostScript(mock, "host1").SetVal(true)
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
++		{
++			name: "host id without host hash is reclaimed",
++			mock: func(mock redismock.ClientMock) {
++				mock.ExpectSScan(pkgredis.MakePersistentHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentHostKeyInScheduler(1, "host1")).SetVal(map[string]string{})
++				mockDeleteHostScript(mock, "host1").SetVal(true)
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
++		{
++			name: "host that fails to load because of a redis error is kept",
++			mock: func(mock redismock.ClientMock) {
++				mock.ExpectSScan(pkgredis.MakePersistentHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentHostKeyInScheduler(1, "host1")).SetErr(errors.New("redis error"))
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
+ 	}
+ 
+ 	for _, tc := range tests {
+```
+
+**File**: `scheduler/resource/persistentcache/host_manager.go` (modified, +122/-106)
+```diff
+@@ -20,6 +20,8 @@ package persistentcache
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"math/rand/v2"
+ 	"strconv"
+ 	"time"
+@@ -98,122 +100,124 @@ func (h *hostManager) Load(ctx context.Context, hostID string) (*Host, bool) {
+ 		return nil, false
+ 	}
+ 
++	host, err := h.parseHost(rawHost)
++	if err != nil {
++		log.Errorf("parsing host failed: %v", err)
++		return nil, false
++	}
++
++	return host, true
++}
++
++// parseHost parses host from the raw host fields stored in redis.
++func (h *hostManager) parseHost(rawHost map[string]string) (*Host, error) {
++	// HGetAll returns an empty hash if the host does not exist.
++	if len(rawHost) == 0 {
++		return nil, errors.New("host not found")
++	}
++
+ 	// Set integer fields from raw host.
+ 	port, err := strconv.ParseInt(rawHost["port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing port failed: %w", err)
+ 	}
+ 
+ 	downloadPort, err := strconv.ParseInt(rawHost["download_port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing download port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing download port failed: %w", err)
+ 	}
+ 
+ 	proxyPort, err := strconv.ParseInt(rawHost["proxy_port"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing proxy port failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing proxy port failed: %w", err)
+ 	}
+ 
+ 	// Set cpu fields from raw host.
+ 	schedulerClusterID, err := strconv.ParseUint(rawHost["scheduler_cluster_id"], 10, 64)
+ 	if err != nil {
+-		log.Errorf("parsing scheduler cluster id failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing scheduler cluster id failed: %w", err)
+ 	}
+ 
+ 	// Set boolean fields from raw host.
+ 	disableShared, err := strconv.ParseBool(rawHost["disable_shared"])
+ 	if err != nil {
+-		log.Errorf("parsing disable shared failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing disable shared failed: %w", err)
+ 	}
+ 
+ 	// Set cpu fields from raw host.
+ 	cpuLogicalCount, err := strconv.ParseUint(rawHost["cpu_logical_count"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing cpu logical count failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu logical count failed: %w", err)
+ 	}
+ 
+ 	cpuPhysicalCount, err := strconv.ParseUint(rawHost["cpu_physical_count"], 10, 32)
+ 	if err != nil {
+-		log.Errorf("parsing cpu physical count failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu physical count failed: %w", err)
+ 	}
+ 
+ 	cpuPercent, err := strconv.ParseFloat(rawHost["cpu_percent"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu percent failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu percent failed: %w", err)
+ 	}
+ 
+-	cpuProcessPercent, err := strconv.ParseFloat(rawHost["cpu_process_percent"], 64)
+-	if err != nil {
+-		log.Errorf("parsing cpu process percent failed: %v", err)
+-		return nil, false
++	// cpu_process_percent was introduced in v2.5.0, hosts stored by older schedulers do
++	// not have it yet.
++	var cpuProcessPercent float64
++	if raw := rawHost["cpu_process_percent"]; raw != "" {
++		cpuProcessPercent, err = strconv.ParseFloat(raw, 64)
++		if err != nil {
++			return nil, fmt.Errorf("parsing cpu process percent failed: %w", err)
++		}
+ 	}
+ 
+ 	cpuTimesUser, err := strconv.ParseFloat(rawHost["cpu_times_user"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times user failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times user failed: %w", err)
+ 	}
+ 
+ 	cpuTimesSystem, err := strconv.ParseFloat(rawHost["cpu_times_system"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times system failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times system failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIdle, err := strconv.ParseFloat(rawHost["cpu_times_idle"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times idle failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times idle failed: %w", err)
+ 	}
+ 
+ 	cpuTimesNice, err := strconv.ParseFloat(rawHost["cpu_times_nice"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times nice failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times nice failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIowait, err := strconv.ParseFloat(rawHost["cpu_times_iowait"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times iowait failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times iowait failed: %w", err)
+ 	}
+ 
+ 	cpuTimesIrq, err := strconv.ParseFloat(rawHost["cpu_times_irq"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times irq failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times irq failed: %w", err)
+ 	}
+ 
+ 	cpuTimesSoftirq, err := strconv.ParseFloat(rawHost["cpu_times_softirq"], 64)
+ 	if err != nil {
+-		log.Errorf("parsing cpu times softirq failed: %v", err)
+-		return nil, false
++		return nil, fmt.Errorf("parsing cpu times softirq
+```
+
+**File**: `scheduler/resource/persistentcache/host_manager_test.go` (modified, +52/-0)
+```diff
+@@ -256,6 +256,21 @@ func TestHostManager_Load(t *testing.T) {
+ 				assert.Nil(host)
+ 			},
+ 		},
++		{
++			name: "missing cpu_process_percent and memory_process_used_percent default to zero",
++			mock: func(mock redismock.ClientMock) {
++				fields := mockRawHostFields(mockRawHost.ID)
++				delete(fields, "cpu_process_percent")
++				delete(fields, "memory_process_used_percent")
++				mock.ExpectHGetAll(pkgredis.MakePersistentCacheHostKeyInScheduler(1, mockRawHost.ID)).SetVal(fields)
++			},
++			expect: func(t *testing.T, host *Host, loaded bool) {
++				assert := assert.New(t)
++				assert.True(loaded)
++				assert.Equal(float64(0), host.CPU.ProcessPercent)
++				assert.Equal(float64(0), host.Memory.ProcessUsedPercent)
++			},
++		},
+ 		{
+ 			name: "invalid port value",
+ 			mock: func(mock redismock.ClientMock) {
+@@ -1186,6 +1201,43 @@ func TestHostManager_RunGC(t *testing.T) {
+ 				assert.NoError(err)
+ 			},
+ 		},
++		{
++			name: "host that can not be parsed is reclaimed",
++			mock: func(mock redismock.ClientMock) {
++				fields := mockRawHostFields("host1")
++				fields["port"] = mockInvalidFieldValue
++				mock.ExpectSScan(pkgredis.MakePersistentCacheHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentCacheHostKeyInScheduler(1, "host1")).SetVal(fields)
++				mockDeleteHostScript(mock, "host1").SetVal(true)
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
++		{
++			name: "host id without host hash is reclaimed",
++			mock: func(mock redismock.ClientMock) {
++				mock.ExpectSScan(pkgredis.MakePersistentCacheHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentCacheHostKeyInScheduler(1, "host1")).SetVal(map[string]string{})
++				mockDeleteHostScript(mock, "host1").SetVal(true)
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
++		{
++			name: "host that fails to load because of a redis error is kept",
++			mock: func(mock redismock.ClientMock) {
++				mock.ExpectSScan(pkgredis.MakePersistentCacheHostsInScheduler(1), 0, "*", 10).SetVal([]string{"host1"}, 0)
++				mock.ExpectHGetAll(pkgredis.MakePersistentCacheHostKeyInScheduler(1, "host1")).SetErr(errors.New("redis error"))
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++			},
++		},
+ 	}
+ 
+ 	for _, tc := range tests {
+```
+
+---
+
+### Incident Patch 3: `0a744fdf` (2026-11-03)
+**Commit Message**: fix(e2e): poll seed client task content instead of sleeping one second (#5097)
+
+The e2e specs slept one second after a client download and then
+compared the sha256 of the task content on the seed clients. When the
+client exhausts scheduling retries and backs to source itself, the seed
+peer triggered by the scheduler may still be writing the last piece, so
+the sha256 mismatches. Replace the fixed sleep with Eventually so the
+check waits for the seed peer to finish.
+
 Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/lint.yml` (modified, +5/-0)
+**File**: `test/e2e/containerd_test.go` (modified, +3/-4)
 ```diff
-@@ -20,6 +20,11 @@ jobs:
-         with:
-           fetch-depth: '0'
+@@ -73,17 +73,16 @@ var _ = Describe("Containerd with CRI support", func() {
+ 				Expect(taskMetadata.Sha256).To(Equal(sha256sum))
+ 			}
  
-+      - name: Setup Go
-+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-+        with:
-+          go-version-file: go.mod
-+
-       - name: Golangci lint
-         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
-         with:
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err := util.CalculateSha256ByTaskID(seedClientPods, "99f960a3d990bc51293c661d50aa89af1467e4dbc17525812e3c85cc98a3ed46")
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect("99f960a3d990bc51293c661d50aa89af1467e4dbc17525812e3c85cc98a3ed46").To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, "99f960a3d990bc51293c661d50aa89af1467e4dbc17525812e3c85cc98a3ed46")
++			}, 60*time.Second, time.Second).Should(Equal("99f960a3d990bc51293c661d50aa89af1467e4dbc17525812e3c85cc98a3ed46"))
+ 		})
+ 
+ 		It("rmi should be ok", Label("containerd", "rmi"), func() {
 ```
 
-**File**: `build/images/manager/Dockerfile` (modified, +1/-1)
+**File**: `test/e2e/dfget_test.go` (modified, +15/-20)
 ```diff
-@@ -1,4 +1,4 @@
--ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
-+ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+@@ -97,17 +97,16 @@ var _ = Describe("Download Using Dfget", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
  
- FROM node:24-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd AS console-builder
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -145,17 +144,16 @@ var _ = Describe("Download Using Dfget", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -193,17 +191,16 @@ var _ = Describe("Download Using Dfget", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -241,17 +238,16 @@ var _ = Describe("Download Using Dfget", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -325,17 +321,16 @@ var _ = Describe("Download Using Dfget", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID())
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
  
 ```
 
-**File**: `build/images/scheduler/Dockerfile` (modified, +1/-1)
+**File**: `test/e2e/proxy_test.go` (modified, +33/-44)
 ```diff
-@@ -1,4 +1,4 @@
--ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
-+ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+@@ -99,17 +99,16 @@ var _ = Describe("Download Using Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
  
- FROM golang:1.25.5-alpine3.23@sha256:ac09a5f469f307e5da71e766b0bd59c9c49ea460a528cc3e6686513d64a6f1fb AS builder
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
  
-```
-
-**File**: `build/plugin-builder/images/manager/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
-+ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
  
- FROM ${BASE_IMAGE}
+@@ -148,17 +147,16 @@ var _ = Describe("Download Using Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
  
-```
-
-**File**: `build/plugin-builder/images/scheduler/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
-+ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
  
- FROM ${BASE_IMAGE}
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
  
-```
-
-**File**: `client` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit fd4dde4347be8a3334e688e5943851f0750746bf
-+Subproject commit 024c6e9c7d9ef6a67311ed15e645baf98b227f94
+@@ -197,17 +195,16 @@ var _ = Describe("Download Using Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -246,17 +243,16 @@ var _ = Describe("Download Using Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(testFile.GetSha256()).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+ 			seedClientPods := make([]*util.PodExec, 3)
+ 			for i := range 3 {
+ 				seedClientPods[i], err = util.SeedClientExec(i)
+ 				fmt.Println(err)
+ 				Expect(err).NotTo(HaveOccurred())
+ 			}
+ 
+-			sha256sum, err = util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID(seedClientPods, testFile.GetTaskID(util.WithTaskIDTag("proxy")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -753,10 +749,9 @@ var _ = Describe("Download Using Prefetch Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(got).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+-			sha256sum, err = util.CalculateSha256ByTaskID([]*util.PodExec{seedClientPod}, testFile.GetTaskID(util.WithTaskIDTag("prefetch-proxy-bytes-100")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID([]*util.PodExec{seedClientPod}, testFile.GetTaskID(util.WithTaskIDTag("prefetch-proxy-bytes-100")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -793,10 +788,9 @@ var _ = Describe("Download Using Prefetch Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(got).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+-			sha256sum, err = util.CalculateSha256ByTaskID([]*util.PodExec{seedClientPod}, testFile.GetTaskID(util.WithTaskIDTag("prefetch-proxy-bytes-0-100")))
+-			Expect(err).NotTo(HaveOccurred())
+-			Expect(testFile.GetSha256()).To(Equal(sha256sum))
++			Eventually(func() (string, error) {
++				return util.CalculateSha256ByTaskID([]*util.PodExec{seedClientPod}, testFile.GetTaskID(util.WithTaskIDTag("prefetch-proxy-bytes-0-100")))
++			}, 60*time.Second, time.Second).Should(Equal(testFile.GetSha256()))
+ 		})
+ 	})
+ 
+@@ -833,10 +827,9 @@ var _ = Describe("Download Using Prefetch Proxy", func() {
+ 			Expect(err).NotTo(HaveOccurred())
+ 			Expect(got).To(Equal(sha256sum))
+ 
+-			time.Sleep(1 * time.Second)
+-			sha256sum, err = util.CalculateSha256ByTaskID([]*util.PodExec{seedClientPod}, testFile.GetTaskID(ut
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5090** (2026-10-27): chore(build): bump Alpine base image to 3.23.7 and update client submodule (@gaius-qi)
-- **PR #5089** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.1 (@dependabot[bot])
-- **PR #5088** (2026-10-27): chore(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (@dependabot[bot])
-- **PR #5087** (closed): chore(deps): bump github/codeql-action/autobuild from 4.36.2 to 4.39.1 (@dependabot[bot])
-- **PR #5086** (closed): chore(deps): bump github/codeql-action/analyze from 4.36.2 to 4.39.1 (@dependabot[bot])
-- **PR #5085** (closed): chore(deps): bump github.com/docker/go-connections from 0.8.1 to 0.8.2 (@dependabot[bot])
+- **PR #5097** (2026-11-03): fix(e2e): poll seed client task content instead of sleeping one second (@gaius-qi)
+- **PR #5096** (2026-11-03): chore(deps): bump kentaro-m/auto-assign-action from c8e3c55d4a048066a8f4fca0070c2f2db65a20a5 to f0f2d0c11ed2677e95f2408d27493b215ddd57b0 (@dependabot[bot])
+- **PR #5095** (closed): chore(deps): bump golang.org/x/sys from 0.47.0 to 0.49.0 (@dependabot[bot])
+- **PR #5094** (closed): chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace from 1.46.0 to 1.47.0 (@dependabot[bot])
+- **PR #5093** (closed): chore(deps): bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.28.0 (@dependabot[bot])
+- **PR #5092** (closed): chore(deps): bump github.com/go-playground/validator/v10 from 10.30.3 to 10.30.6 (@dependabot[bot])
 
 ---
 
@@ -1274,32 +2133,48 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): bump Alpine base image to 3.23.7 and update client submodule (#5090)
+## X. job): encode Redis credentials using URL userinfo (#5065)
 
 **RULE**:
-When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/job/job.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fce3dc25`: build): bump Alpine base image to 3.23.7 and update client submodule (#5090). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0615401c`: job): encode Redis credentials using URL userinfo (#5065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/job/job.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Setup Go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-        with:
-          go-version-file: go.mod
-
+	pkgredis "d7y.io/dragonfly/v2/pkg/redis"
+		Broker:          pkgredis.FormatURL(cfg.Addrs, cfg.Username, cfg.Password, cfg.BrokerDB),
+		ResultBackend:   pkgredis.FormatURL(cfg.Addrs, cfg.Username, cfg.Password, cfg.BackendDB),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	"fmt"
+	"net/url"
+	"strings"
+	var broker string
+	if cfg.Username != "" {
+		broker = fmt.Sprintf("redis://%s:%s@%s/%d", url.QueryEscape(cfg.Username), url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BrokerDB)
+	} else {
+		broker = fmt.Sprintf("redis://%s@%s/%d", url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BrokerDB)
+	}
+
+	var backend string
+	if cfg.Username != "" {
+		backend = fmt.Sprintf("redis://%s:%s@%s/%d", url.QueryEscape(cfg.Username), url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BackendDB)
+	} else {
+		backend = fmt.Sprintf("redis://%s@%s/%d", url.QueryEscape(cfg.Password), strings.Join(cfg.Addrs, ","), cfg.BackendDB)
+	}
+
+		Broker:          broker,
+		ResultBackend:   backend,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fce3dc25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0615401c` are properly handled with clean fallback behavior.

@@ -7034,3 +7034,9 @@ Every entry in this ledger must capture:
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `c51f047e` | Multi-dimensional audit evidence | 2026-11-03T21:58:08.837Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `e2b40f1d` | Multi-dimensional audit evidence | 2026-11-03T21:58:11.906Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `46fbc92a` | Multi-dimensional audit evidence | 2026-11-03T21:58:12.699Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `dcafeac3` | Multi-dimensional audit evidence | 2026-11-03T22:06:36.595Z |
+| `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-03T22:06:37.199Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `67528212` | Multi-dimensional audit evidence | 2026-11-03T22:06:41.117Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `0a744fdf` | Multi-dimensional audit evidence | 2026-11-03T22:06:42.474Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ab78e911` | Multi-dimensional audit evidence | 2026-11-03T22:06:44.652Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0028d79e` | Multi-dimensional audit evidence | 2026-11-03T22:06:46.863Z |

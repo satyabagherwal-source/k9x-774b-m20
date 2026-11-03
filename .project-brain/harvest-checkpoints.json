@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:58:12.713Z",
+  "last_updated": "2026-11-03T22:06:46.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "b2472b8b124c73a497eaa03de0c7e9c3790d89b5c5b383a6cf067a60b9732853",
-      "verified_at": "2026-10-27T13:31:54.290Z",
+      "content_hash": "93b5452116af84df48f22267bee19c333f1367d7696146794d3b3f9d5936ead0",
+      "verified_at": "2026-11-03T22:06:42.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:31:54.290Z"
+      "last_updated": "2026-11-03T22:06:42.484Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
-      "verified_at": "2026-11-03T10:52:47.917Z",
+      "content_hash": "3ade3e62af0406b9943992b91d9650b873a2f07cb0b584952aad8ba94f24fb16",
+      "verified_at": "2026-11-03T22:06:44.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:52:47.917Z"
+      "last_updated": "2026-11-03T22:06:44.662Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
-      "verified_at": "2026-10-31T07:32:48.886Z",
+      "content_hash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
+      "verified_at": "2026-11-03T22:06:46.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T07:32:48.886Z"
+      "last_updated": "2026-11-03T22:06:46.873Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
-      "verified_at": "2026-10-30T21:55:55.274Z",
+      "content_hash": "17138543b15c2e9b9738209635e4218bd104fcc13efdf6096459c5d0fa2e72db",
+      "verified_at": "2026-11-03T22:06:41.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:55:55.274Z"
+      "last_updated": "2026-11-03T22:06:41.126Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
-      "verified_at": "2026-10-30T13:01:54.504Z",
+      "content_hash": "490e9fe6c7768f6c80a1fe49f8c76968aa7bff74e9b8c72bb9d6aed8d3bcf339",
+      "verified_at": "2026-11-03T22:06:36.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:01:54.504Z"
+      "last_updated": "2026-11-03T22:06:36.605Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",
@@ -17789,6 +17789,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-03T21:08:53.246Z"
+    },
+    "divagr1925/Qwen3.5-4B-Qwenputer": {
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "content_hash": "1c37d312f0c7c4c45549e072ad38bbe1eb9693485c4b352b6db6c3f2eb38fa4d",
+      "verified_at": "2026-11-03T22:06:37.209Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-03T22:06:37.209Z"
     }
   },
   "repos": {

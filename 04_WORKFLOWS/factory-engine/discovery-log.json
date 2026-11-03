@@ -20170,5 +20170,17 @@
     "qualityScore": 11559,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-03T21:05:00.716Z"
+  },
+  {
+    "name": "divagr1925/Qwen3.5-4B-Qwenputer",
+    "fullName": "divagr1925/Qwen3.5-4B-Qwenputer",
+    "url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: divagr1925/Qwen3.5-4B-Qwenputer (151 likes, 1229 downloads)",
+    "likes": 151,
+    "downloads": 1229,
+    "qualityScore": 2739,
+    "discoveredAt": "2026-11-03T22:04:14.508Z"
   }
 ]
