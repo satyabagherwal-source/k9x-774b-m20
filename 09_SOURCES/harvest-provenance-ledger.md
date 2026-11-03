@@ -7014,3 +7014,6 @@ Every entry in this ledger must capture:
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `66d3b69a` | Multi-dimensional audit evidence | 2026-11-03T21:00:07.776Z |
 | `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `374537fb` | Multi-dimensional audit evidence | 2026-11-03T21:00:09.286Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `646deeb6` | Multi-dimensional audit evidence | 2026-11-03T21:00:12.020Z |
+| `learn-github-kortix-ai-companyos` | `https://github.com/kortix-ai/CompanyOS` | `69e6b932` | Multi-dimensional audit evidence | 2026-11-03T21:08:53.237Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `da674c53` | Multi-dimensional audit evidence | 2026-11-03T21:09:02.467Z |
+| `learn-github-signerlabs-klee` | `https://github.com/signerlabs/Klee` | `ba09a7ac` | Multi-dimensional audit evidence | 2026-11-03T21:09:05.125Z |

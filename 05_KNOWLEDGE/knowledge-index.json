@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:00:11.934Z",
-  "total_verified_learnings": 1199,
+  "last_updated": "2026-11-03T21:09:05.038Z",
+  "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -51951,14 +51951,19 @@
       "slug": "signerlabs-klee",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/Klee",
-      "source_version": "64bce8db",
-      "content_hash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
+      "source_version": "ba09a7ac",
+      "content_hash": "b827284fd77378f21f01a4b4747c95f464fe2c76c09c13a40d9248019f1998b9",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
       "promoted_rules": [
         {
           "number": 3019,
           "title": "ChatView and HomeView: Remove legacy thinking and tool call rendering, introduce",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6613,
+          "title": "docs: fix the download instructions in the README",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -51967,7 +51972,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:19:36.689Z",
+      "verified_at": "2026-11-03T21:09:05.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73765,8 +73770,8 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "3aff4355",
-      "content_hash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
+      "source_version": "da674c53",
+      "content_hash": "728ec339525c09a499990df2bc0ef97ccfe2291472d760a976a75e5355b80ee3",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
@@ -73794,6 +73799,11 @@
           "number": 5729,
           "title": "Decoupled Asynchronous Feed Ingestion with Background Bounded Queue",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6612,
+          "title": "skipped pages reporting fix: (#1192)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73801,7 +73811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:32:10.178Z",
+      "verified_at": "2026-11-03T21:09:02.359Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170298,6 +170308,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:00:11.912Z"
+    },
+    "learn-github-kortix-ai-companyos": {
+      "learning_id": "learn-github-kortix-ai-companyos",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kortix-ai/CompanyOS",
+      "repository": "kortix-ai/CompanyOS",
+      "slug": "kortix-ai-companyos",
+      "platform": "github",
+      "source_url": "https://github.com/kortix-ai/CompanyOS",
+      "source_version": "69e6b932",
+      "content_hash": "49879416048d551b5eb01107f2f7d0f9ad5005a92fc07ab150113266b7f80edc",
+      "dossier_path": "07_PROJECT_LEARNING/kortix-ai-companyos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kortix-ai-companyos-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6611,
+          "title": "test(ui): cover incoming peer transcript messages (KRTX-4000) (#11619)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-03T21:08:53.129Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6611": {
+      "learning_id": "rule-6611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6611,
+      "title": "test(ui): cover incoming peer transcript messages (KRTX-4000) (#11619)",
+      "source_url": "https://github.com/kortix-ai/CompanyOS",
+      "source_version": "69e6b932",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:08:53.129Z"
+    },
+    "rule-6612": {
+      "learning_id": "rule-6612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6612,
+      "title": "skipped pages reporting fix: (#1192)",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "da674c53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:09:02.359Z"
+    },
+    "rule-6613": {
+      "learning_id": "rule-6613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6613,
+      "title": "docs: fix the download instructions in the README",
+      "source_url": "https://github.com/signerlabs/Klee",
+      "source_version": "ba09a7ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:09:05.013Z"
     }
   },
   "aliases": {

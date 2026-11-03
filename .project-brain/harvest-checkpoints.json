@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:00:12.030Z",
+  "last_updated": "2026-11-03T21:09:05.134Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13926,14 +13926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
-      "content_hash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
-      "verified_at": "2026-10-30T10:32:10.267Z",
+      "content_hash": "728ec339525c09a499990df2bc0ef97ccfe2291472d760a976a75e5355b80ee3",
+      "verified_at": "2026-11-03T21:09:02.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:32:10.267Z"
+      "last_updated": "2026-11-03T21:09:02.476Z"
     },
     "pointfreeco/isowords": {
       "repository": "pointfreeco/isowords",
@@ -15291,14 +15291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-signerlabs-klee",
-      "content_hash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
-      "verified_at": "2026-10-20T03:19:36.788Z",
+      "content_hash": "b827284fd77378f21f01a4b4747c95f464fe2c76c09c13a40d9248019f1998b9",
+      "verified_at": "2026-11-03T21:09:05.134Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:19:36.788Z"
+      "last_updated": "2026-11-03T21:09:05.134Z"
     },
     "testing-library/react-testing-library": {
       "repository": "testing-library/react-testing-library",
@@ -17774,6 +17774,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-03T19:14:57.319Z"
+    },
+    "kortix-ai/CompanyOS": {
+      "repository": "kortix-ai/CompanyOS",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kortix-ai-companyos",
+      "content_hash": "49879416048d551b5eb01107f2f7d0f9ad5005a92fc07ab150113266b7f80edc",
+      "verified_at": "2026-11-03T21:08:53.246Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-03T21:08:53.246Z"
     }
   },
   "repos": {

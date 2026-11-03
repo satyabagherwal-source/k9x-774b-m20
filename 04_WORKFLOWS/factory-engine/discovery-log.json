@@ -20155,5 +20155,20 @@
     "downloads": 596039,
     "qualityScore": 5240,
     "discoveredAt": "2026-11-03T19:12:31.996Z"
+  },
+  {
+    "name": "CompanyOS",
+    "fullName": "kortix-ai/CompanyOS",
+    "url": "https://github.com/kortix-ai/CompanyOS",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Kortix CompanyOS – the open-source operating system for your company. Multiplayer AI agents, your company as code, sovereign on your infrastructure or ours.",
+    "stars": 20364,
+    "forks": 3443,
+    "openIssues": 47,
+    "language": "TypeScript",
+    "qualityScore": 11559,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-03T21:05:00.716Z"
   }
 ]

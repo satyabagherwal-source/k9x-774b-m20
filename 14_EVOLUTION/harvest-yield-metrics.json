@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T21:00:12.026Z",
-  "total_cycles_completed": 6982,
-  "total_learnings_persisted": 6982,
-  "total_rules_promoted": 6628,
+  "last_updated": "2026-11-03T21:09:05.130Z",
+  "total_cycles_completed": 6985,
+  "total_learnings_persisted": 6985,
+  "total_rules_promoted": 6631,
   "history": [
-    {
-      "timestamp": "2026-11-02T14:53:41.084Z",
-      "repository": "FusionCow/Sulphur-3",
-      "learningId": "learn-huggingface-fusioncow-sulphur-3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T14:53:43.976Z",
-      "repository": "xiaomi-research/Xiaomi-OCR-0",
-      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T14:53:46.894Z",
-      "repository": "LiquidAI/d1-2B",
-      "learningId": "learn-huggingface-liquidai-d1-2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T15:00:56.199Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T21:00:12.026Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:08:53.243Z",
+      "repository": "kortix-ai/CompanyOS",
+      "learningId": "learn-github-kortix-ai-companyos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:09:02.473Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:09:05.130Z",
+      "repository": "signerlabs/Klee",
+      "learningId": "learn-github-signerlabs-klee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

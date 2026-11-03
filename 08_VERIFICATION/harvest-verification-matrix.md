@@ -7005,3 +7005,6 @@
 | `CYCLE-20261103-8ZBX` | `2026-11-03T21:00:07.773Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6608` | Yes (`967ae70b...`) |
 | `CYCLE-20261103-90HU` | `2026-11-03T21:00:09.282Z` | `taubyte/tau` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6609` | Yes (`3c66193e...`) |
 | `CYCLE-20261103-92LS` | `2026-11-03T21:00:12.016Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6610` | Yes (`440411bd...`) |
+| `CYCLE-20261103-K8S2` | `2026-11-03T21:08:53.234Z` | `kortix-ai/CompanyOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6611` | Yes (`49879416...`) |
+| `CYCLE-20261103-KFWG` | `2026-11-03T21:09:02.464Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6612` | Yes (`728ec339...`) |
+| `CYCLE-20261103-KHY9` | `2026-11-03T21:09:05.121Z` | `signerlabs/Klee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6613` | Yes (`b827284f...`) |
