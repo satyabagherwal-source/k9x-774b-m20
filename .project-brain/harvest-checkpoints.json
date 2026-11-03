@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T23:32:24.145Z",
+  "last_updated": "2026-11-03T23:39:18.963Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
-      "verified_at": "2026-10-31T20:59:36.841Z",
+      "content_hash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
+      "verified_at": "2026-11-03T23:39:18.368Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:59:36.841Z"
+      "last_updated": "2026-11-03T23:39:18.368Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -14406,14 +14406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nodejs-undici",
-      "content_hash": "872f1206bdb9b0d12cadbd62ae1dc5b1fc036b6c8044c84b487b2750c7777308",
-      "verified_at": "2026-10-30T15:08:21.949Z",
+      "content_hash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
+      "verified_at": "2026-11-03T23:39:18.962Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:08:21.949Z"
+      "last_updated": "2026-11-03T23:39:18.962Z"
     },
     "jordansinger/SwiftUI-Kit": {
       "repository": "jordansinger/SwiftUI-Kit",

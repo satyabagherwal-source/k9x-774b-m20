@@ -7069,3 +7069,5 @@ Every entry in this ledger must capture:
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `74462690` | Multi-dimensional audit evidence | 2026-11-03T23:32:19.769Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `1680298d` | Multi-dimensional audit evidence | 2026-11-03T23:32:21.837Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `28ba3499` | Multi-dimensional audit evidence | 2026-11-03T23:32:24.135Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `7cead47b` | Multi-dimensional audit evidence | 2026-11-03T23:39:18.358Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `39995739` | Multi-dimensional audit evidence | 2026-11-03T23:39:18.953Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:32:24.050Z",
+  "last_updated": "2026-11-03T23:39:18.861Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13108,8 +13108,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "500709f1",
-      "content_hash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
+      "source_version": "7cead47b",
+      "content_hash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -13172,6 +13172,11 @@
           "number": 6316,
           "title": "cloud): time limit on keychain calls and locked credentials file changes (#4042)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6661,
+          "title": "resolve): credit an uninstalled package for a Vite asset query import (#4181)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13179,7 +13184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:59:36.774Z",
+      "verified_at": "2026-11-03T23:39:18.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74737,8 +74742,8 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "1b7b18e5",
-      "content_hash": "872f1206bdb9b0d12cadbd62ae1dc5b1fc036b6c8044c84b487b2750c7777308",
+      "source_version": "39995739",
+      "content_hash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
@@ -74756,6 +74761,11 @@
           "number": 5781,
           "title": "fetch): avoid eager reads from async iterable bodies (#5990)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6662,
+          "title": "build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74763,7 +74773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:08:21.842Z",
+      "verified_at": "2026-11-03T23:39:18.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171304,6 +171314,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:32:24.029Z"
+    },
+    "rule-6661": {
+      "learning_id": "rule-6661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6661,
+      "title": "resolve): credit an uninstalled package for a Vite asset query import (#4181)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "7cead47b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:39:18.242Z"
+    },
+    "rule-6662": {
+      "learning_id": "rule-6662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6662,
+      "title": "build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "39995739",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:39:18.839Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source**: github ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
-> **Source Version**: `1b7b18e5`  
+> **Source Version**: `39995739`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:08:21.297Z  
+> **Timestamp**: 2026-11-03T23:39:18.205Z  
 > **Learning ID**: `learn-github-nodejs-undici`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:08:14.906Z  
+> **Harvest Timestamp**: 2026-11-03T23:39:17.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An HTTP/1.1 client, written from scratch for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7725 stars
+- **Stars / Engagement**: 7723 stars
 
 ---
 
@@ -703,407 +703,130 @@ await run()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `671acb3d` (2026-10-29)
-**Commit Message**: fix(fetch): avoid eager reads from async iterable bodies (#5990)
+### Incident Patch 1: `dfb38712` (2026-11-01)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)
 
-* fix(fetch): avoid eager reads from async iterable bodies
-
-Replace the eager pipeThrough conversion with a pull-driven stream whose high-water mark is zero. Keep byte conversion and empty-chunk filtering, and forward cancellation to the native iterator stream, including when a read is pending.
-
-Constructing a Request over an IncomingMessage no longer starts its async iterator, so Node can drain an unread body after an early response and reuse the keep-alive connection.
-
-* test(fetch): cover lazy iterable bodies and unread keep-alive requests
-
-Check that Request and Response do not pre-pull async iterable bodies, still convert and skip empty chunks, and close the iterator on cancellation. Reproduce an early 413 response without consuming IncomingMessage and verify the next request uses the same socket successfully.
-
-* test(fetch): drop iterable behavior tests after review
-
-**File**: `lib/web/fetch/body.js` (modified, +28/-8)
-```diff
-@@ -229,16 +229,36 @@ function extractBody (object, keepalive = false) {
-       )
-     }
- 
--    stream = webidl.is.ReadableStream(object)
--      ? object
--      : ReadableStream.from(object).pipeThrough(new TransformStream({
--        transform (chunk, controller) {
--          const bytes = isUint8Array(chunk) ? chunk : Buffer.from(chunk)
--          if (bytes.byteLength) {
--            controller.enqueue(bytes)
-+    if (webidl.is.ReadableStream(object)) {
-+      stream = object
-+    } else {
-+      const reader = ReadableStream.from(object).getReader()
-+      let cancelled = false
-+      // Do not pull from the iterable until the body is read.
-+      stream = new ReadableStream({
-+        async pull (controller) {
-+          while (true) {
-+            const { done, value } = await reader.read()
-+            if (cancelled) {
-+              return
-+            }
-+            if (done) {
-+              controller.close()
-+              return
-+            }
-+            const bytes = isUint8Array(value) ? value : Buffer.from(value)
-+            if (bytes.byteLength) {
-+              controller.enqueue(bytes)
-+              return
-+            }
-           }
-+        },
-+        cancel (reason) {
-+          cancelled = true
-+          return reader.cancel(reason)
-         }
--      }))
-+      }, { highWaterMark: 0 })
-+    }
-   }
- 
-   // 18. If source is a byte sequence, then set action to a
-```
+Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.21.1 to 2.22.3.
+- [Release notes](https://github.com/step-security/harden-runner/releases)
+- [Commits](https://github.com/step-security/harden-runner/compare/e14015d583714f6e62063499dc959a02595150a1...46b06cea07f9e64621fdf066ba77ac6915163d43)
 
 ---
+updated-dependencies:
+- dependency-name: step-security/harden-runner
+  dependency-version: 2.22.3
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `1b7b18e5` (2026-10-29)
-**Commit Message**: fix(h2): preserve accepted streams with deferred ids (#6090)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-authored-by: Prasit Tongpradit <[REDACTED_EMAIL]>
-
-**File**: `lib/dispatcher/client-h2.js` (modified, +3/-4)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -47,7 +47,6 @@ const {
- const { channels } = require('../core/diagnostics.js')
- 
- const kOpenStreams = Symbol('open streams')
--const kRequestStreamId = Symbol('request stream id')
- const kRequestStream = Symbol('request stream')
- const kRequestStreamCleanup = Symbol('request stream cleanup')
- const kRequestStreamState = Symbol('request stream state')
-@@ -136,7 +135,9 @@ function getGoAwayPendingIdx (client, lastStreamID) {
-       continue
-     }
- 
--    if (typeof request[kRequestStreamId] !== 'number' || request[kRequestStreamId] > maxAcceptedStreamID) {
-+    // A pending stream may not have had an ID when it was bound to the request.
-+    const streamId = request[kRequestStream]?.id
-+    if (typeof streamId !== 'number' || streamId > maxAcceptedStreamID) {
-       return i
-     }
-   }
-@@ -145,7 +146,6 @@ function getGoAwayPendingIdx (client, lastStreamID) {
- }
- 
- function detachRequestFromStream (request) {
--  request[kRequestStreamId] = null
-   request[kRequestStream] = null
-   request[kRequestStreamCleanup] = null
- }
-@@ -155,7 +155,6 @@ function bindRequestToStream (request, stream, cleanup) {
-   const previousStream = request[kRequestStream]
-   detachRequestFromStream(request)
-   previousCleanup?.(previousStream)
--  request[kRequestStreamId] = stream.id
-   request[kRequestStream] = stream
-   request[kRequestStreamCleanup] = cleanup
- }
-```
-
-**File**: `test/http2-dispatcher.js` (modified, +3/-11)
-```diff
-@@ -642,7 +642,7 @@ test('Should handle h2 request without body', async t => {
- })
- 
- test('Should clear h2 request stream references before completing a response', async t => {
--  t = tspl(t, { plan: 6 })
-+  t = tspl(t, { plan: 4 })
- 
-   const server = createSecureServer(await pem.generate({ opts: { keySize: 2048 } }))
- 
-@@ -671,7 +671,6 @@ test('Should clear h2 request stream references before completing a response', a
-     }
-   })
- 
--  let requestStreamIdSymbol = null
-   let requestStreamSymbol = null
-   let requestStreamCleanupSymbol = null
- 
-@@ -683,11 +682,9 @@ test('Should clear h2 request stream references before completing a response', a
-     onResponseStart () {
-       const request = client[kQueue][client[kRunningIdx]]
-       const symbols = Object.getOwnPropertySymbols(request)
--      requestStreamIdSymbol = symbols.find((symbol) => symbol.description === 'request stream id')
-       requestStreamSymbol = symbols.find((symbol) => symbol.description === 'request stream')
-       requestStreamCleanupSymbol = symbols.find((symbol) => symbol.description === 'request stream cleanup')
- 
--      t.ok(requestStreamIdSymbol)
-       t.ok(requestStreamSymbol)
-       t.ok(requestStreamCleanupSymbol)
-     },
-@@ -697,7 +694,6 @@ test('Should clear h2 request stream references before completing a response', a
-     onResponseEnd () {
-       const request = client[kQueue][client[kRunningIdx]]
- 
--      t.strictEqual(request[requestStreamIdSymbol], null)
-       t.strictEqual(request[requestStreamSymbol], null)
-       t.strictEqual(request[requestStreamCleanupSymbol], null)
-     },
-@@ -710,7 +706,7 @@ test('Should clear h2 request stream references before completing a response', a
- })
- 
- test('Should clear h2 request stream references after abort before response', async t => {
--  t = tspl(t, { plan: 5 })
-+  t = tspl(t, { plan: 4 })
- 
-   const server = createSecureServer(await pem.generate({ opts: { keySize: 2048 } }))
- 
-@@ -768,7 +764,6 @@ test('Should clear h2 request stream references after abort before response', as
- 
-   const {
-     request,
--    requestStreamIdSymbol,
-     requestStreamSymbol,
-     requestStreamCleanupSymbol
-   } = await waitFor(() => {
-@@ -778,17 +773,15 @@ test('Should clear h2 request stream references after abort before response', as
-     }
- 
-     const symbols = Object.getOwnPropertySymbols(request)
--    const requestStreamIdSymbol = symbols.find((symbol) => symbol.description === 'request stream id')
-     const requestStreamSymbol = symbols.find((symbol) => symbol.description === 'request stream')
-     const requestStreamCleanupSymbol = symbols.find((symbol) => symbol.description === 'request stream cleanup')
- 
--    if (requestStreamIdSymbol == null || requestStreamSymbol == null || requestStreamCleanupSymbol == null) {
-+    if (requestStreamSymbol == null || requestStreamCleanupSymbol == null) {
-       return null
-     }
- 
-     return {
-       request,
--      requestStreamIdSymbol,
-       requestStreamSymbol,
-       requestStreamCleanupSymbol
-     }
-@@ -801,7 +794,6 @@ test('Should clear h2 request stream references after abort before response', as
- 
-   const err = await responseError
-   t.strictEqual(err, abortReason)
--  t.strictEqual(request[requestStreamIdSymbol], null)
-   t.strictEqual(request[requestStreamSymbol], null)
-   t.strictEqual(request[requestStreamCleanupSymbol], null)
+@@ -18,7 +18,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
  
 ```
 
-**File**: `test/http2-goaway-retry-body.js` (modified, +3/-7)
+**File**: `.github/workflows/codeql.yml` (modified, +1/-1)
 ```diff
-@@ -25,7 +25,6 @@ module.exports.__test = {
-   onHttp2SessionGoAway,
-   kReceivedGoAway,
-   kRequestStream,
--  kRequestStreamId,
-   kRequestStreamCleanup
- }
- `
-@@ -42,7 +41,6 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
-     onHttp2SessionGoAway,
-     kReceivedGoAway,
-     kRequestStream,
--    kRequestStreamId,
-     kRequestStreamCleanup
-   } = loadClientH2Internals()
+@@ -41,7 +41,7 @@ jobs:
  
-@@ -61,10 +59,11 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
-   }
- 
-   const acceptedRequest = {
--    [kRequestStreamId]: 1
-+    [kRequestStream]: { id: 1 }
-   }
- 
-   const replayableStream = {
-+    id: 3,
-     destroyed: false,
-     closed: false,
-     closeCode: null,
-@@ -78,7 +77,6 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
-     body: Buffer.from('payload'),
-     aborted: false,
-     completed: false,
--    [kRequestStreamId]: 3,
-     [kRequestStream]: replayableStream,
-     [kRequestStreamCleanup]: () => {
-       replayableRequest.cleanupCalled = true
-@@ -87,6 +85,7 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
- 
-   const streamingBody = new PassThrough()
-   const streamingStream = {
-+    id: 5,
-     destroyed: false,
-     closed: false,
-     closeCode: null,
-@@ -101,7 +100,6 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
-     aborted: false,
-     completed: false,
-     error: null,
--    [kRequestStreamId]: 5,
-     [kRequestStream]: streamingStream,
-     [kRequestStreamCleanup]: () => {
-       streamingRequest.cleanupCalled = true
-@@ -139,11 +137,9 @@ test('h2: GOAWAY resets unaccepted streams and only requeues replayable requests
-   assert.strictEqual(streamingRequest.cleanupCalled, true)
- 
-   assert.strictEqual(replayableRequest[kRequestStream], null)
--  assert.strictEqual(replayableRequest[kRequestStreamId], null)
-   assert.strictEqual(replayableRequest[kRequestStreamCleanup], null)
- 
-   assert.strictEqual(streamingRequest[kRequestStream], null)
--  assert.strictEqual(streamingRequest[kRequestStreamId], null)
-   assert.strictEqual(streamingRequest[kRequestStreamCleanup], null)
-   assert.strictEqual(streamingRequest.aborted, true)
-   assert.strictEqual(streamingRequest.error.message, 'HTTP/2: "GOAWAY" frame received with code 0')
-```
-
-**File**: `test/http2-goaway.js` (modified, +67/-0)
-```diff
-@@ -4,11 +4,78 @@ const { tspl } = require('@matteo.collina/tspl')
- const { test, after } = require('node:test')
- const { constants, createSecureServer } = require('node:http2')
- const { once, EventEmitter } = require('node:events')
-+const { Readable } = require('node:stream')
- 
- const pem = require('@metcoder95/https-pem')
- 
- const { Agent, Client, Pool, fetch } = require('..')
- 
-+for (const method of ['GET', 'POST']) {
-+  test(`accepted ${method} survives GOAWAY after its stream ID is assigned`, { timeout: 10000 }, async (t) => {
-+    const http2 = require('node:http2')
-+    const connect = http2.connect
-+    t.mock.method(http2, 'connect', (...args) => {
-+      const session = connect(...args)
-+      const request = session.request
-+      session.request = function (...args) {
-+        const stream = request.apply(this, args)
-+        // A pending stream can receive its ID after request() returns.
-+        Object.defineProperty(stream, 'id', { configurable: true, value: undefined })
-+        queueMicrotask(() => { delete stream.id })
-+        return stream
-+      }
-+      return session
-+    })
-+
-+    const server = createSecureServer(await pem.generate({ opts: { keySize: 2048 } }))
-+    const sessions = new Set()
-+    let acceptedStream
-+    let acceptedRequests = 0
-+    server.on('session', session => sessions.add(session))
-+    server.on('stream', (stream, headers) => {
-+      stream.on('error', () => {})
-+      stream.resume()
-+      stream.respond({ ':status': 200 })
-+      if (headers[':path'] === '/accepted') {
-+        acceptedRequests++
-+        acceptedStream = stream
-+        stream.write('accepted')
-+      } else {
-+        stream.end('new connection')
-+      }
-+    })
-+    await once(server.listen(0, '127.0.0.1'), 'listening')
-+
-+    const client = new Client(`https://127.0.0.1:${server.address().port}`, {
-+      allowH2: true,
-+      connect: { rejectUnauthorized: false }
-+    })
-+    t.after(async () => {
-+      await client.destroy()
-+      for (const session of sessions) session.destroy()
-+      await new Promise(resolve => server.close(resolve))
-+    })
-+
-+    const response = await client.request({
-+      path: '/accepted',
-+      method,
-+      body: method === 'POST' ? Readable.from(['payload']) : null
-+    })
-+    const body = response.body.text()
-+    body.catch(() => {})
-+    const disconnected = once(client, 'disconnect')
-+    acceptedStream.session.goaway(constants.NGHTTP2_NO_ERROR, acceptedStream.id)
-+    await disconnected
-+    acceptedStream.end(' finished')
-+
-+    t.assert.strictEqual(await body, 'accepted finished')
-+    t.assert.strictEqual(acceptedRequests, 1)
-+    const next = await client.request({ path: '/next', method: 'GET' })
-+    t.assert.strictEqual(await next.body.text(), 'new connection')
-+    t.assert.strictEqual(sessions.size, 2)
-+  })
-+}
-+
- test('#3046 - GOAWAY Frame', async t => {
-   t = tspl(t, { plan: 8 })
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
  
 ```
 
 ---
 
-### Incident Patch 3: `609c6efc` (2026-10-27)
-**Commit Message**: fix(mock): expose aborted on the mock dispatch controller (#5964)
+### Incident Patch 2: `f0719c4d` (2026-11-02)
+**Commit Message**: build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 (#6134)
 
-Co-authored-by: Carlos Fuentes <[REDACTED_EMAIL]>
+Bumps [node-forge](https://github.com/digitalbazaar/forge) from 1.4.0 to 1.4.2.
+- [Changelog](https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/digitalbazaar/forge/compare/v1.4.0...v1.4.2)
 
-**File**: `lib/mock/mock-utils.js` (modified, +3/-0)
+---
+updated-dependencies:
+- dependency-name: node-forge
+  dependency-version: 1.4.2
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `package-lock.json` (modified, +3/-3)
 ```diff
-@@ -386,6 +386,9 @@ function dispatchMockReply (mockDispatches, mockDispatch, key, opts, handler, re
-     paused: false,
-     rawHeaders: null,
-     rawTrailers: null,
-+    get aborted () {
-+      return aborted
-+    },
-     pause () {
-       this.paused = true
+@@ -7195,9 +7195,9 @@
+       "license": "MIT"
      },
+     "node_modules/node-forge": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
+-      "integrity": "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==",
++      "version": "1.4.2",
++      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
++      "integrity": "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==",
+       "dev": true,
+       "license": "(BSD-3-Clause OR GPL-2.0)",
+       "engines": {
 ```
 
-**File**: `test/mock-agent.js` (modified, +18/-0)
+---
+
+### Incident Patch 3: `39995739` (2026-11-03)
+**Commit Message**: build(deps-dev): bump jsondiffpatch from 0.7.6 to 0.7.7 (#6140)
+
+Bumps [jsondiffpatch](https://github.com/benjamine/jsondiffpatch) from 0.7.6 to 0.7.7.
+- [Release notes](https://github.com/benjamine/jsondiffpatch/releases)
+- [Commits](https://github.com/benjamine/jsondiffpatch/commits)
+
+---
+updated-dependencies:
+- dependency-name: jsondiffpatch
+  dependency-version: 0.7.7
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `package-lock.json` (modified, +3/-3)
 ```diff
-@@ -3903,3 +3903,21 @@ describe('MockAgent - case-insensitive origin matching', () => {
-     t.assert.deepStrictEqual(jsonResponse, { secure: true })
-   })
- })
-+
-+test('MockAgent - fetch follows a redirect', async (t) => {
-+  t.plan(3)
-+
-+  const mockAgent = new MockAgent()
-+  mockAgent.disableNetConnect()
-+  t.after(() => mockAgent.close())
-+
-+  const mockPool = mockAgent.get('http://localhost')
-+  mockPool.intercept({ path: '/redirect', method: 'GET' }).reply(307, '', { headers: { location: 'http://localhost/final' } })
-+  mockPool.intercept({ path: '/final', method: 'GET' }).reply(200, 'ok')
-+
-+  const response = await fetch('http://localhost/redirect', { dispatcher: mockAgent })
-+
-+  t.assert.strictEqual(response.status, 200)
-+  t.assert.strictEqual(await response.text(), 'ok')
-+  t.assert.ok(response.redirected)
-+})
+@@ -6733,9 +6733,9 @@
+       }
+     },
+     "node_modules/jsondiffpatch": {
+-      "version": "0.7.6",
+-      "resolved": "https://registry.npmjs.org/jsondiffpatch/-/jsondiffpatch-0.7.6.tgz",
+-      "integrity": "sha512-zE9+AXFq+MkTolDor2Cw1nJzLC0aleqPkYf52Kb4Kn4mJcka/gFHpGI2JBVEJCfWOvBl0OoxZS+wuLdislQcqg==",
++      "version": "0.7.7",
++      "resolved": "https://registry.npmjs.org/jsondiffpatch/-/jsondiffpatch-0.7.7.tgz",
++      "integrity": "sha512-C3375q+xluwQYS6Je613YqXpZhW9uSi2YFRR+8QTJVYhdk0GZiDr7HD9bXNrdV9PJCpmwsCgJM9ZXXESSZPCzA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6140** (2026-11-03): build(deps-dev): bump jsondiffpatch from 0.7.6 to 0.7.7 (@dependabot[bot])
+- **PR #6134** (2026-11-02): build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 (@dependabot[bot])
+- **PR #6127** (2026-11-01): build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (@dependabot[bot])
+- **PR #6125** (2026-11-01): build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
 - **PR #6105** (closed): Backport 5926 v7.x (@subhaushsingh)
 - **PR #6103** (2026-10-26): build(deps-dev): bump undici from 6.29.0 to 6.29.1 (@dependabot[bot])
-- **PR #6102** (2026-10-26): build(deps-dev): bump @fastify/busboy from 3.2.3 to 3.2.4 (@dependabot[bot])
-- **PR #6098** (closed): fix(eventsource): stop dispatching events after close (@umtong)
-- **PR #6097** (closed): fix(cache): honor only-if-cached during revalidation (@umtong)
-- **PR #6093** (2026-10-29): [Backport v7.x] extractBody fixes 2 (@github-actions[bot])
 
 ---
 
@@ -1123,62 +846,28 @@ Co-authored-by: Carlos Fuentes <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fetch): avoid eager reads from async iterable bodies (#5990)
+## X. build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)
 
 **RULE**:
-When implementing operations in `lib/web/fetch/body.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `671acb3d`: fetch): avoid eager reads from async iterable bodies (#5990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfb38712`: build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/web/fetch/body.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    if (webidl.is.ReadableStream(object)) {
-      stream = object
-    } else {
-      const reader = ReadableStream.from(object).getReader()
-      let cancelled = false
-      // Do not pull from the iterable until the body is read.
-      stream = new ReadableStream({
-        async pull (controller) {
-          while (true) {
-            const { done, value } = await reader.read()
-            if (cancelled) {
-              return
-            }
-            if (done) {
-              controller.close()
-              return
-            }
-            const bytes = isUint8Array(value) ? value : Buffer.from(value)
-            if (bytes.byteLength) {
-              controller.enqueue(bytes)
-              return
-            }
-        },
-        cancel (reason) {
-          cancelled = true
-          return reader.cancel(reason)
-      }, { highWaterMark: 0 })
-    }
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    stream = webidl.is.ReadableStream(object)
-      ? object
-      : ReadableStream.from(object).pipeThrough(new TransformStream({
-        transform (chunk, controller) {
-          const bytes = isUint8Array(chunk) ? chunk : Buffer.from(chunk)
-          if (bytes.byteLength) {
-            controller.enqueue(bytes)
-      }))
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `671acb3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfb38712` are properly handled with clean fallback behavior.

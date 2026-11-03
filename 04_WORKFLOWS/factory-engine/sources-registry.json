@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T23:32:26.698Z",
-    "lastVerified": "2026-11-03T23:32:26.698Z",
+    "lastChecked": "2026-11-03T23:39:26.688Z",
+    "lastVerified": "2026-11-03T23:39:26.688Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -195,9 +195,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-10-30T23:21:51.541Z",
+    "lastChecked": "2026-11-03T23:39:16.632Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-10-30T23:21:51.541Z"
+    "lastVerified": "2026-11-03T23:39:16.632Z"
   },
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:06:16.172Z",
-    "lastVerified": "2026-11-03T23:06:16.172Z",
+    "lastChecked": "2026-11-03T23:39:26.676Z",
+    "lastVerified": "2026-11-03T23:39:26.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -708,9 +708,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-03T19:05:58.490Z",
+    "lastChecked": "2026-11-03T23:39:21.659Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-03T19:05:58.490Z"
+    "lastVerified": "2026-11-03T23:39:21.659Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2137,14 +2137,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:59:35.915Z",
-    "lastVerified": "2026-10-31T20:59:35.915Z",
+    "lastChecked": "2026-11-03T23:39:15.685Z",
+    "lastVerified": "2026-11-03T23:39:15.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
+    "contentHash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2200,9 +2200,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-01T01:05:16.797Z",
+    "lastChecked": "2026-11-03T23:39:24.135Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-01T01:05:16.797Z"
+    "lastVerified": "2026-11-03T23:39:24.135Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -4137,9 +4137,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-01T01:54:02.561Z",
+    "lastChecked": "2026-11-03T23:39:19.262Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-01T01:54:02.561Z"
+    "lastVerified": "2026-11-03T23:39:19.262Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -10810,14 +10810,14 @@
     "officialUrl": "https://github.com/nodejs/undici",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T15:08:14.906Z",
-    "lastVerified": "2026-10-30T15:08:14.906Z",
+    "lastChecked": "2026-11-03T23:39:17.688Z",
+    "lastVerified": "2026-11-03T23:39:17.688Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nodejs-undici",
-    "contentHash": "872f1206bdb9b0d12cadbd62ae1dc5b1fc036b6c8044c84b487b2750c7777308",
+    "contentHash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -7060,3 +7060,5 @@
 | `CYCLE-20261103-OPMD` | `2026-11-03T23:32:19.765Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6658` | Yes (`8b5a6c83...`) |
 | `CYCLE-20261103-OR7T` | `2026-11-03T23:32:21.833Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6659` | Yes (`93b372f4...`) |
 | `CYCLE-20261103-OSZO` | `2026-11-03T23:32:24.132Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6660` | Yes (`145b8cd4...`) |
+| `CYCLE-20261103-XOLV` | `2026-11-03T23:39:18.355Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6661` | Yes (`b5ae6b59...`) |
+| `CYCLE-20261103-XP2D` | `2026-11-03T23:39:18.949Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6662` | Yes (`f195e0d8...`) |
