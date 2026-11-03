@@ -6949,3 +6949,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `26d69186` | Multi-dimensional audit evidence | 2026-11-03T17:06:29.909Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `f4978e8f` | Multi-dimensional audit evidence | 2026-11-03T17:14:14.163Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `25f50f10` | Multi-dimensional audit evidence | 2026-11-03T17:14:22.863Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c94f694e` | Multi-dimensional audit evidence | 2026-11-03T17:22:45.278Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ca2c4da1` | Multi-dimensional audit evidence | 2026-11-03T17:22:46.485Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `bdf154a3` | Multi-dimensional audit evidence | 2026-11-03T17:22:51.115Z |

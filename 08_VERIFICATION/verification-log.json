@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-SKK5",
-    "timestamp": "2026-10-31T03:12:35.861Z",
-    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-    "contentHash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-19V3",
-    "timestamp": "2026-10-31T03:19:21.903Z",
-    "repository": "HuggingFaceBio/Carbon-X",
-    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-9W8Y",
-    "timestamp": "2026-10-31T03:26:04.162Z",
-    "repository": "Nanbeige/Nanbeige4.3-33B",
-    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-    "contentHash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-9WL7",
     "timestamp": "2026-10-31T03:26:04.603Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7490,6 +7445,51 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HFOA",
+    "timestamp": "2026-11-03T17:22:45.274Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "7568ce161436c9f612176d87642327d78d835133e12669f7eef90b49e879caba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HGLT",
+    "timestamp": "2026-11-03T17:22:46.481Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HK6F",
+    "timestamp": "2026-11-03T17:22:51.111Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

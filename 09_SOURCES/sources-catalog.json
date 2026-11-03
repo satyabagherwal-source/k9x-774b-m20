@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "4641beb5",
+    "sourceVersion": "bdf154a3",
     "license": "GPL-2.0",
-    "contentHash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
-    "lastHarvestedAt": "2026-10-31T19:49:55.304Z",
+    "contentHash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
+    "lastHarvestedAt": "2026-11-03T17:22:51.115Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "d163ae74",
+    "sourceVersion": "ca2c4da1",
     "license": "Apache-2.0",
-    "contentHash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
-    "lastHarvestedAt": "2026-10-31T05:07:18.919Z",
+    "contentHash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
+    "lastHarvestedAt": "2026-11-03T17:22:46.485Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "c3dc5575",
+    "sourceVersion": "c94f694e",
     "license": "Apache-2.0",
-    "contentHash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
-    "lastHarvestedAt": "2026-10-31T15:42:43.269Z",
+    "contentHash": "7568ce161436c9f612176d87642327d78d835133e12669f7eef90b49e879caba",
+    "lastHarvestedAt": "2026-11-03T17:22:45.278Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

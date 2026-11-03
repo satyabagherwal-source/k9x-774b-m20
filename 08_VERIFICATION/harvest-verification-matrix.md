@@ -6940,3 +6940,6 @@
 | `CYCLE-20261103-WJ2P` | `2026-11-03T17:06:29.905Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6548` | Yes (`268cd29a...`) |
 | `CYCLE-20261103-6HAN` | `2026-11-03T17:14:14.159Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6549` | Yes (`18b09878...`) |
 | `CYCLE-20261103-6O0B` | `2026-11-03T17:14:22.859Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6550` | Yes (`dcd924db...`) |
+| `CYCLE-20261103-HFOA` | `2026-11-03T17:22:45.274Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6551` | Yes (`7568ce16...`) |
+| `CYCLE-20261103-HGLT` | `2026-11-03T17:22:46.481Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6552` | Yes (`6c8976ec...`) |
+| `CYCLE-20261103-HK6F` | `2026-11-03T17:22:51.111Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6553` | Yes (`a4f8fe5d...`) |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T17:14:25.429Z",
-    "lastVerified": "2026-11-03T17:14:25.429Z",
+    "lastChecked": "2026-11-03T17:22:53.687Z",
+    "lastVerified": "2026-11-03T17:22:53.687Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T16:50:42.529Z",
-    "lastVerified": "2026-11-03T16:50:42.529Z",
+    "lastChecked": "2026-11-03T17:22:47.408Z",
+    "lastVerified": "2026-11-03T17:22:47.408Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1618,22 +1618,21 @@
     "lastVerified": "2026-10-31T01:39:54.979Z"
   },
   "nats-io-nats-server": {
-    "name": "nats-server",
+    "name": "nats-io/nats-server",
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T20:46:41.204Z",
-    "lastVerified": "2026-10-31T20:46:41.204Z",
+    "lastChecked": "2026-11-03T17:22:45.143Z",
+    "lastVerified": "2026-11-03T17:22:45.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
+    "contentHash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d163ae74"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
@@ -2085,12 +2084,12 @@
     "revisionIdentifier": "b9b06661"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T10:52:46.725Z",
-    "lastVerified": "2026-11-03T10:52:46.725Z",
+    "lastChecked": "2026-11-03T17:22:42.592Z",
+    "lastVerified": "2026-11-03T17:22:42.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2099,7 +2098,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "47446103"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -6760,12 +6760,12 @@
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T19:49:53.784Z",
-    "lastVerified": "2026-10-31T19:49:53.784Z",
+    "lastChecked": "2026-11-03T17:22:49.064Z",
+    "lastVerified": "2026-11-03T17:22:49.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
+    "contentHash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -7984,14 +7984,14 @@
     "officialUrl": "https://github.com/biomejs/biome",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:42:42.837Z",
-    "lastVerified": "2026-10-31T15:42:42.837Z",
+    "lastChecked": "2026-11-03T17:22:37.993Z",
+    "lastVerified": "2026-11-03T17:22:37.993Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-biomejs-biome",
-    "contentHash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
+    "contentHash": "7568ce161436c9f612176d87642327d78d835133e12669f7eef90b49e879caba",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9973,9 +9973,9 @@
   "ugolbck-seofordev": {
     "name": "seofordev",
     "officialUrl": "https://github.com/ugolbck/seofordev",
-    "lastChecked": "2026-10-30T06:10:13.515Z",
+    "lastChecked": "2026-11-03T17:22:34.592Z",
     "revisionIdentifier": "d791e6dd",
-    "lastVerified": "2026-10-30T06:10:13.515Z"
+    "lastVerified": "2026-11-03T17:22:34.592Z"
   },
   "juullabs-kable": {
     "name": "JuulLabs/kable",
@@ -11058,9 +11058,9 @@
   "kartiklabhshetwar-better-shot": {
     "name": "better-shot",
     "officialUrl": "https://github.com/KartikLabhshetwar/better-shot",
-    "lastChecked": "2026-10-30T17:40:29.441Z",
+    "lastChecked": "2026-11-03T17:22:37.540Z",
     "revisionIdentifier": "0e005e9c",
-    "lastVerified": "2026-10-30T17:40:29.441Z"
+    "lastVerified": "2026-11-03T17:22:37.540Z"
   },
   "goose3-goose3": {
     "name": "goose3",

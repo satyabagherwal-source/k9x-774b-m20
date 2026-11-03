@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:14:22.773Z",
+  "last_updated": "2026-11-03T17:22:51.029Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4864,8 +4864,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "c3dc5575",
-      "content_hash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
+      "source_version": "c94f694e",
+      "content_hash": "7568ce161436c9f612176d87642327d78d835133e12669f7eef90b49e879caba",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4928,6 +4928,11 @@
           "number": 6234,
           "title": "lint): add noMissingScssInterpolation (#12342)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6551,
+          "title": "parse/tailwind): handle long dashed base names when aribtrary values are involve",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4935,7 +4940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:42:43.209Z",
+      "verified_at": "2026-11-03T17:22:45.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38381,8 +38386,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "4641beb5",
-      "content_hash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
+      "source_version": "bdf154a3",
+      "content_hash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -38420,6 +38425,11 @@
           "number": 6299,
           "title": "MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6553,
+          "title": "sys_vars.tmp_disk_table_size_basic when no perfschema",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38427,7 +38437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:49:55.192Z",
+      "verified_at": "2026-11-03T17:22:51.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42204,8 +42214,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "d163ae74",
-      "content_hash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
+      "source_version": "ca2c4da1",
+      "content_hash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -42248,6 +42258,11 @@
           "number": 6078,
           "title": "[FIXED] Wildcard char inside a token matched as a wildcard (#8765)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6552,
+          "title": "flaky TestJetStreamClusterAccountUsageDrifts (#8837)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42255,7 +42270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:07:18.848Z",
+      "verified_at": "2026-11-03T17:22:46.372Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169148,6 +169163,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:14:22.751Z"
+    },
+    "rule-6551": {
+      "learning_id": "rule-6551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6551,
+      "title": "parse/tailwind): handle long dashed base names when aribtrary values are involve",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c94f694e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:22:45.167Z"
+    },
+    "rule-6552": {
+      "learning_id": "rule-6552",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6552,
+      "title": "flaky TestJetStreamClusterAccountUsageDrifts (#8837)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "ca2c4da1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:22:46.372Z"
+    },
+    "rule-6553": {
+      "learning_id": "rule-6553",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6553,
+      "title": "sys_vars.tmp_disk_table_size_basic when no perfschema",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "bdf154a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:22:51.006Z"
     }
   },
   "aliases": {

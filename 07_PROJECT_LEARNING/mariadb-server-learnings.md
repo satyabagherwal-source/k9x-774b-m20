@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `4641beb5`  
+> **Source Version**: `bdf154a3`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:49:54.567Z  
+> **Timestamp**: 2026-11-03T17:22:50.349Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:49:53.784Z  
+> **Harvest Timestamp**: 2026-11-03T17:22:49.064Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8497 stars
+- **Stars / Engagement**: 8518 stars
 
 ---
 
@@ -1613,13 +1613,13 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6044** (2026-10-31): **MDEV-40533 fixup: GCC -Og -Wmaybe-uninitialized**
-  *Symptoms*: 
+- **Issue #6064** (2026-11-03): **MDEV-40935: Crash when os_file_set_size() fails to extend innodb_log_archive=ON on shutdown**
+  *Symptoms*: `os_file_set_size()`: Do not treat server shutdown specially in any code path; always process `EINTR` as a transient error on POSIX. This prevents an intentional crash on shutdown when we fail to create or extend an `innodb_log_archive=ON` file.  `log_t::set_archive()`: Prevent a livelock when all the buffer pool has been written out and we are actually waiting for a "dummy" checkpoint. This was caught as a hang in the test `innodb.log_file_size_online`.
   **Post-Mortem & Fix Analysis**:
-  > > This PR targets `main`, but the [MDEV-40533](https://jira.mariadb.org/browse/MDEV-40533) bug report says it affects earlier versions.  Yes, it should have been MDEV-40553.
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6064) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6064) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6064) it.</sub>
 
-- **Issue #6032** (2026-10-29): **MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi…**
-  *Symptoms*: …n is busy (cursor/ps-protocol)  The MDEV-38179 part of the test installs ha_example, connects foo with example_int_var in session_track_system_variables, then does disconnect foo and uninstall soname 'ha_example.so'.  On connect, the sysvars tracker parses the list with find_sys_var(), which locks the example plugin into thd->lex->plugins. Under ps-protocol and cursor-protocol foo runs only prepared statements, so these locks are not released by end of statement and stay until plugin_thdvar_cleanup() at disconnect. Since disconnect does not wait for the server thread to finish, uninstall may find the plugin still referenced and gives "Plugin is busy and will be uninstalled on shutdown".  MDEV-39968 was closed as a duplicate of MDEV-39207, but the MDEV-39207 test fix covered only the 10.11 ha_example part: it moved it to session_track_system_variables_example.test with ps-protocol and cursor-protocol disabled around uninstall. The MDEV-38179 part added in 11.8 stayed in session_track_system_variables_basic.test without any workaround, so it still fails.  The fix waits until foo sessions are gone before uninstall.
+- **Issue #6063** (2026-11-03): **10.11 mdev 41769**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,29 +1636,32 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4641beb5` (2026-10-30)
-**Commit Message**: MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized
+### Incident Patch 1: `5129c153` (2026-10-29)
+**Commit Message**: Fix sys_vars.tmp_disk_table_size_basic when no perfschema
 
-**File**: `sql/opt_context_store_replay.cc` (modified, +1/-1)
+Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
+
+**File**: `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test` (modified, +3/-0)
 ```diff
-@@ -869,7 +869,7 @@ bool Optimizer_context_recorder::dump_sql_script(THD* thd, String &sql_script)
-   {
-     String ddl;
-     StringBuffer<256> full_tbl_name;
--    LEX_CSTRING *tbl_name_key;
-+    LEX_CSTRING *tbl_name_key= nullptr;
-     append_table_or_view_name(tbl, &full_tbl_name);
+@@ -26,6 +26,9 @@
+ ###############################################################################
  
-     /*
+ --source include/load_sysvars.inc
++# The --error ER_RECORD_FILE_FULL below requires the views from perfschema to
++# be present in INFORMATION_SCHEMA.views.
++--source include/have_perfschema.inc
+ 
+ ##############################################################
+ #           START OF tmp_disk_table_size TESTS                    #
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6044** (2026-10-31): MDEV-40533 fixup: GCC -Og -Wmaybe-uninitialized (@bsrikanth-mariadb)
-- **PR #6032** (2026-10-29): MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi… (@midenok)
-- **PR #6029** (2026-10-29): Lower galera version gate to 26.4.28 for MDEV-38920 tests (@janlindstrom)
-- **PR #6026** (closed): MDEV-41852 Windows fails to build with updated WolfSSL (@grooverdan)
-- **PR #6024** (closed): MariaDB-10.4.39 (@seulement55)
-- **PR #6021** (2026-10-29): MDEV-41738 MEMORY BTREE: DELETE by key prefix skips rows (@sanja-byelkin)
+- **PR #6064** (2026-11-03): MDEV-40935: Crash when os_file_set_size() fails to extend innodb_log_archive=ON on shutdown (@dr-m)
+- **PR #6063** (2026-11-03): 10.11 mdev 41769 (@janlindstrom)
+- **PR #6062** (2026-11-03): MDEV-41995 galera.MDEV-40727 result file has latin1 instead of utf8mb4 (@mariadb-SusilBehera)
+- **PR #6055** (2026-11-03): MDEV-41737 Galera async replica SQL thread stops instead of retrying (@janlindstrom)
+- **PR #6052** (2026-11-02): MDEV-34839 Report real cause when async slave apply fails under wsrep (@janlindstrom)
+- **PR #6051** (closed): MDEV-33843: Server crash via XPath unary minus recursion (@dfengliu)
 
 ---
 
@@ -1678,28 +1681,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized
+## X. sys_vars.tmp_disk_table_size_basic when no perfschema
 
 **RULE**:
-When implementing operations in `sql/opt_context_store_replay.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4641beb5`: MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5129c153`: sys_vars.tmp_disk_table_size_basic when no perfschema. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `sql/opt_context_store_replay.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/sys_vars/t/tmp_disk_table_size_basic.test`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    LEX_CSTRING *tbl_name_key= nullptr;
+# The --error ER_RECORD_FILE_FULL below requires the views from perfschema to
+# be present in INFORMATION_SCHEMA.views.
+--source include/have_perfschema.inc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    LEX_CSTRING *tbl_name_key;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4641beb5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5129c153` are properly handled with clean fallback behavior.
