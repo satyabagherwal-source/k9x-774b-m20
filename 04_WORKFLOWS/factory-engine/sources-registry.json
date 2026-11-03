@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T22:52:07.118Z",
-    "lastVerified": "2026-11-03T22:52:07.118Z",
+    "lastChecked": "2026-11-03T22:59:11.590Z",
+    "lastVerified": "2026-11-03T22:59:11.590Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T22:23:42.857Z",
-    "lastVerified": "2026-11-03T22:23:42.857Z",
+    "lastChecked": "2026-11-03T22:59:11.579Z",
+    "lastVerified": "2026-11-03T22:59:11.579Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -220,9 +220,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-03T18:11:19.878Z",
+    "lastChecked": "2026-11-03T22:59:06.491Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-03T18:11:19.878Z"
+    "lastVerified": "2026-11-03T22:59:06.491Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -1670,11 +1670,21 @@
     "revisionIdentifier": "c5dffaa1"
   },
   "watchexec-watchexec": {
-    "name": "watchexec",
+    "name": "watchexec/watchexec",
     "officialUrl": "https://github.com/watchexec/watchexec",
-    "lastChecked": "2026-10-31T20:22:59.997Z",
-    "revisionIdentifier": "a7170667",
-    "lastVerified": "2026-10-31T20:22:59.997Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-03T22:59:01.470Z",
+    "lastVerified": "2026-11-03T22:59:01.470Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-watchexec-watchexec",
+    "contentHash": "2960559587f5ba48ba15b35c9cd6dcd6d76770d50d5507846bd46f9f83552ce9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
     "name": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1738,9 +1748,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-01T00:30:04.979Z",
+    "lastChecked": "2026-11-03T22:59:08.992Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-01T00:30:04.979Z"
+    "lastVerified": "2026-11-03T22:59:08.992Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB",
@@ -3842,9 +3852,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-01T01:14:30.452Z",
+    "lastChecked": "2026-11-03T22:59:04.016Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-01T01:14:30.452Z"
+    "lastVerified": "2026-11-03T22:59:04.016Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -10698,9 +10708,9 @@
   "syntax-tree-hast-util-from-html": {
     "name": "hast-util-from-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
-    "lastChecked": "2026-10-30T13:53:12.534Z",
+    "lastChecked": "2026-11-03T22:59:00.198Z",
     "revisionIdentifier": "1ade8935",
-    "lastVerified": "2026-10-30T13:53:12.534Z"
+    "lastVerified": "2026-11-03T22:59:00.198Z"
   },
   "kitlangton-hex": {
     "name": "Hex",
@@ -11952,14 +11962,14 @@
     "officialUrl": "https://github.com/makecindy/cindy",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T22:40:59.260Z",
-    "lastVerified": "2026-10-30T22:40:59.260Z",
+    "lastChecked": "2026-11-03T22:59:07.339Z",
+    "lastVerified": "2026-11-03T22:59:07.339Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
+    "contentHash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

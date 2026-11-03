@@ -7056,3 +7056,5 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `d4951da8` | Multi-dimensional audit evidence | 2026-11-03T22:32:09.637Z |
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `36a1b9f1` | Multi-dimensional audit evidence | 2026-11-03T22:38:46.751Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `9655d320` | Multi-dimensional audit evidence | 2026-11-03T22:52:00.344Z |
+| `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `f71af3b1` | Multi-dimensional audit evidence | 2026-11-03T22:59:03.212Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `ac785430` | Multi-dimensional audit evidence | 2026-11-03T22:59:08.773Z |

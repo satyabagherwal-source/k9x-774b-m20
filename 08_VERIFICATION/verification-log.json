@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-X051",
-    "timestamp": "2026-10-31T11:39:55.765Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-5NJA",
-    "timestamp": "2026-10-31T11:46:39.334Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-5SXA",
     "timestamp": "2026-10-31T11:46:46.318Z",
     "repository": "callstack/agent-device",
@@ -7490,6 +7460,36 @@
     "repository": "cachix/devenv",
     "learningId": "learn-github-cachix-devenv",
     "contentHash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HX2H",
+    "timestamp": "2026-11-03T22:59:03.209Z",
+    "repository": "watchexec/watchexec",
+    "learningId": "learn-github-watchexec-watchexec",
+    "contentHash": "2960559587f5ba48ba15b35c9cd6dcd6d76770d50d5507846bd46f9f83552ce9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-I1CY",
+    "timestamp": "2026-11-03T22:59:08.770Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7047,3 +7047,5 @@
 | `CYCLE-20261103-JC0W` | `2026-11-03T22:32:09.632Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6646` | Yes (`092980e3...`) |
 | `CYCLE-20261103-RUFW` | `2026-11-03T22:38:46.748Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6647` | Yes (`4de3dcff...`) |
 | `CYCLE-20261103-8US4` | `2026-11-03T22:52:00.340Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6648` | Yes (`83cf89fc...`) |
+| `CYCLE-20261103-HX2H` | `2026-11-03T22:59:03.209Z` | `watchexec/watchexec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6649` | Yes (`29605595...`) |
+| `CYCLE-20261103-I1CY` | `2026-11-03T22:59:08.770Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6650` | Yes (`99cebca5...`) |
