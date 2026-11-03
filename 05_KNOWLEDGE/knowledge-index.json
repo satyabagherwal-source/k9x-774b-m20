@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:15:10.375Z",
+  "last_updated": "2026-11-03T11:22:20.333Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,8 +34,8 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "04c047f8",
-      "content_hash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
+      "source_version": "e2ada45d",
+      "content_hash": "107bdc29e16bc13589686509521f2b0dc9347be9088adb57ab689de587f2198e",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
@@ -63,6 +63,11 @@
           "number": 5758,
           "title": "Progressive Pipeline Lifecycle Preservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6506,
+          "title": "popup): let the background time native calls instead of cutting them at 3.5s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70,7 +75,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:13:34.804Z",
+      "verified_at": "2026-11-03T11:22:11.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10497,8 +10502,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "3105c762",
-      "content_hash": "028dbe4e9f118db11aac6dabe624a961b140fe412aa6a869c4b00293806e18ba",
+      "source_version": "a905ace6",
+      "content_hash": "48654398ecdd9f13ac09cdaad5ccec081b8dd034fe213611ae3194d879b38db6",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -10548,7 +10553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:54:13.655Z",
+      "verified_at": "2026-11-03T11:22:06.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37295,8 +37300,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "1408ae4a",
-      "content_hash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
+      "source_version": "8c85d41a",
+      "content_hash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -37329,6 +37334,11 @@
           "number": 6001,
           "title": "upgrade to network-validator 0.1.10 (#15757)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6507,
+          "title": "inject): inherit beta native sidecar annotation from namespace (#15734)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37336,7 +37346,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:53:50.574Z",
+      "verified_at": "2026-11-03T11:22:13.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50040,8 +50050,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "e61e01c7",
-      "content_hash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
+      "source_version": "c6aab998",
+      "content_hash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -50129,6 +50139,11 @@
           "number": 6444,
           "title": "File Creation Mode Sanitization for Key Material Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6508,
+          "title": "client: reject early data accepted under a different ALPN",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50136,7 +50151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:50:58.428Z",
+      "verified_at": "2026-11-03T11:22:17.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50972,8 +50987,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "6163eb14",
-      "content_hash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
+      "source_version": "c28cd7c3",
+      "content_hash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -51016,6 +51031,11 @@
           "number": 6245,
           "title": "Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6509,
+          "title": "build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51023,7 +51043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:27:22.311Z",
+      "verified_at": "2026-11-03T11:22:20.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168222,6 +168242,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:15:10.347Z"
+    },
+    "rule-6506": {
+      "learning_id": "rule-6506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6506,
+      "title": "popup): let the background time native calls instead of cutting them at 3.5s",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "e2ada45d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:22:11.451Z"
+    },
+    "rule-6507": {
+      "learning_id": "rule-6507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6507,
+      "title": "inject): inherit beta native sidecar annotation from namespace (#15734)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "8c85d41a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:22:13.403Z"
+    },
+    "rule-6508": {
+      "learning_id": "rule-6508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6508,
+      "title": "client: reject early data accepted under a different ALPN",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "c6aab998",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:22:17.097Z"
+    },
+    "rule-6509": {
+      "learning_id": "rule-6509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6509,
+      "title": "build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "c28cd7c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:22:20.313Z"
     }
   },
   "aliases": {

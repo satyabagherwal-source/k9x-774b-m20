@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T11:15:10.469Z",
+  "last_updated": "2026-11-03T11:22:20.427Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
-      "verified_at": "2026-11-02T15:50:58.599Z",
+      "content_hash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
+      "verified_at": "2026-11-03T11:22:17.213Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:50:58.599Z"
+      "last_updated": "2026-11-03T11:22:17.213Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
-      "verified_at": "2026-10-31T16:27:22.404Z",
+      "content_hash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
+      "verified_at": "2026-11-03T11:22:20.427Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:27:22.404Z"
+      "last_updated": "2026-11-03T11:22:20.427Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
-      "verified_at": "2026-10-31T01:53:50.697Z",
+      "content_hash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
+      "verified_at": "2026-11-03T11:22:13.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:53:50.697Z"
+      "last_updated": "2026-11-03T11:22:13.517Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "5dc9dfe7ea750b0b8a5bb2064be43046aad9ecc29004a82946a3445f12e43c62",
-      "verified_at": "2026-10-31T12:53:41.930Z",
+      "content_hash": "48654398ecdd9f13ac09cdaad5ccec081b8dd034fe213611ae3194d879b38db6",
+      "verified_at": "2026-11-03T11:22:07.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:53:41.930Z"
+      "last_updated": "2026-11-03T11:22:07.126Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
-      "verified_at": "2026-10-30T13:13:34.912Z",
+      "content_hash": "107bdc29e16bc13589686509521f2b0dc9347be9088adb57ab689de587f2198e",
+      "verified_at": "2026-11-03T11:22:11.565Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:13:34.912Z"
+      "last_updated": "2026-11-03T11:22:11.565Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",

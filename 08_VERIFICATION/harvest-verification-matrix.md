@@ -6887,3 +6887,8 @@
 | `CYCLE-20261103-3ELU` | `2026-11-03T11:07:55.698Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6503` | Yes (`c0d2cc6a...`) |
 | `CYCLE-20261103-CNIB` | `2026-11-03T11:15:07.139Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6504` | Yes (`c9c14454...`) |
 | `CYCLE-20261103-CQ2G` | `2026-11-03T11:15:10.456Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6505` | Yes (`13c255f6...`) |
+| `CYCLE-20261103-LNKA` | `2026-11-03T11:22:07.114Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md` | Yes (`48654398...`) |
+| `CYCLE-20261103-LQZK` | `2026-11-03T11:22:11.552Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6506` | Yes (`107bdc29...`) |
+| `CYCLE-20261103-LSHS` | `2026-11-03T11:22:13.504Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6507` | Yes (`e56e1456...`) |
+| `CYCLE-20261103-LVCG` | `2026-11-03T11:22:17.200Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6508` | Yes (`2ee238f1...`) |
+| `CYCLE-20261103-LXTQ` | `2026-11-03T11:22:20.414Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6509` | Yes (`6aae1fdd...`) |

@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "e61e01c7",
+    "sourceVersion": "c6aab998",
     "license": "NOASSERTION",
-    "contentHash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
-    "lastHarvestedAt": "2026-11-02T15:50:58.591Z",
+    "contentHash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
+    "lastHarvestedAt": "2026-11-03T11:22:17.204Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "6163eb14",
+    "sourceVersion": "c28cd7c3",
     "license": "MIT",
-    "contentHash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
-    "lastHarvestedAt": "2026-10-31T16:27:22.396Z",
+    "contentHash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
+    "lastHarvestedAt": "2026-11-03T11:22:20.418Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "1408ae4a",
+    "sourceVersion": "8c85d41a",
     "license": "Apache-2.0",
-    "contentHash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
-    "lastHarvestedAt": "2026-10-31T01:53:50.688Z",
+    "contentHash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
+    "lastHarvestedAt": "2026-11-03T11:22:13.508Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "c28fe6f3",
+    "sourceVersion": "a905ace6",
     "license": "Apache-2.0",
-    "contentHash": "5dc9dfe7ea750b0b8a5bb2064be43046aad9ecc29004a82946a3445f12e43c62",
-    "lastHarvestedAt": "2026-10-31T12:53:41.915Z",
+    "contentHash": "48654398ecdd9f13ac09cdaad5ccec081b8dd034fe213611ae3194d879b38db6",
+    "lastHarvestedAt": "2026-11-03T11:22:07.117Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "04c047f8",
+    "sourceVersion": "e2ada45d",
     "license": "GPL-3.0",
-    "contentHash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
-    "lastHarvestedAt": "2026-10-30T13:13:34.903Z",
+    "contentHash": "107bdc29e16bc13589686509521f2b0dc9347be9088adb57ab689de587f2198e",
+    "lastHarvestedAt": "2026-11-03T11:22:11.556Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {
