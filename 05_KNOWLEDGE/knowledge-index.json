@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:45:55.467Z",
+  "last_updated": "2026-11-03T17:53:54.644Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41131,8 +41131,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "c1cfdbd3",
-      "content_hash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
+      "source_version": "cbae181d",
+      "content_hash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -41175,6 +41175,11 @@
           "number": 5763,
           "title": "solver: fix race on merged edge secondary exporters",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6564,
+          "title": "source/git: fix daemon panic on resolver cache poisoning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41182,7 +41187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:28:41.730Z",
+      "verified_at": "2026-11-03T17:53:49.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49064,8 +49069,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "4be31bd5",
-      "content_hash": "33f6198d6c924ac5d2b53a3a2ef85dcc0123a06d481af3def5e1de64c5f0ec91",
+      "source_version": "6c452ddc",
+      "content_hash": "617eb25c95bd74fa584dedb77b4a88138bc6fd495da0afc57fc108523395f86d",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -49123,6 +49128,11 @@
           "number": 5658,
           "title": "Safe IEEE-754 Floating-Point to 64-Bit Integer Coercion Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6566,
+          "title": "[MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49130,7 +49140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:32:05.671Z",
+      "verified_at": "2026-11-03T17:53:54.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50210,8 +50220,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "c6aab998",
-      "content_hash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
+      "source_version": "a08e420b",
+      "content_hash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -50304,6 +50314,11 @@
           "number": 6508,
           "title": "client: reject early data accepted under a different ALPN",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6565,
+          "title": "Remove unreachable panic in WebPkiSupportedAlgorithms::new",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50311,7 +50326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:22:17.097Z",
+      "verified_at": "2026-11-03T17:53:52.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56251,8 +56266,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "b499257e",
-      "content_hash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
+      "source_version": "f6744498",
+      "content_hash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -56305,6 +56320,11 @@
           "number": 6243,
           "title": "tests: add missing items to async_send_sync test (#8617)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6562,
+          "title": "fs: use std::fs::exists in try_exists (#8651)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56312,7 +56332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:27:11.499Z",
+      "verified_at": "2026-11-03T17:53:43.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59623,8 +59643,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "920a38ca",
-      "content_hash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
+      "source_version": "c6b8a834",
+      "content_hash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -59642,6 +59662,11 @@
           "number": 5823,
           "title": "authorize retained data cleanup and update signature lock regression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6563,
+          "title": "resolve PR 102 conflicts with shared offline guards",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59649,7 +59674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:13:39.044Z",
+      "verified_at": "2026-11-03T17:53:46.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169357,6 +169382,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:45:55.455Z"
+    },
+    "rule-6562": {
+      "learning_id": "rule-6562",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6562,
+      "title": "fs: use std::fs::exists in try_exists (#8651)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "f6744498",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:53:43.469Z"
+    },
+    "rule-6563": {
+      "learning_id": "rule-6563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6563,
+      "title": "resolve PR 102 conflicts with shared offline guards",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "c6b8a834",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:53:46.735Z"
+    },
+    "rule-6564": {
+      "learning_id": "rule-6564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6564,
+      "title": "source/git: fix daemon panic on resolver cache poisoning",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "cbae181d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:53:49.816Z"
+    },
+    "rule-6565": {
+      "learning_id": "rule-6565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6565,
+      "title": "Remove unreachable panic in WebPkiSupportedAlgorithms::new",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "a08e420b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:53:52.912Z"
+    },
+    "rule-6566": {
+      "learning_id": "rule-6566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6566,
+      "title": "[MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "6c452ddc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:53:54.622Z"
     }
   },
   "aliases": {

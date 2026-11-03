@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "c1cfdbd3",
+    "sourceVersion": "cbae181d",
     "license": "Apache-2.0",
-    "contentHash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
-    "lastHarvestedAt": "2026-10-30T13:28:41.795Z",
+    "contentHash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
+    "lastHarvestedAt": "2026-11-03T17:53:49.930Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "c6aab998",
+    "sourceVersion": "a08e420b",
     "license": "NOASSERTION",
-    "contentHash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
-    "lastHarvestedAt": "2026-11-03T11:22:17.204Z",
+    "contentHash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
+    "lastHarvestedAt": "2026-11-03T17:53:53.024Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "4be31bd5",
+    "sourceVersion": "6c452ddc",
     "license": "NOASSERTION",
-    "contentHash": "33f6198d6c924ac5d2b53a3a2ef85dcc0123a06d481af3def5e1de64c5f0ec91",
-    "lastHarvestedAt": "2026-10-31T20:32:05.804Z",
+    "contentHash": "617eb25c95bd74fa584dedb77b4a88138bc6fd495da0afc57fc108523395f86d",
+    "lastHarvestedAt": "2026-11-03T17:53:54.733Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "b499257e",
+    "sourceVersion": "f6744498",
     "license": "MIT",
-    "contentHash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
-    "lastHarvestedAt": "2026-10-31T16:27:11.608Z",
+    "contentHash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
+    "lastHarvestedAt": "2026-11-03T17:53:43.578Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "920a38ca",
+    "sourceVersion": "c6b8a834",
     "license": "Apache-2.0",
-    "contentHash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
-    "lastHarvestedAt": "2026-10-30T18:13:39.110Z",
+    "contentHash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
+    "lastHarvestedAt": "2026-11-03T17:53:46.847Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

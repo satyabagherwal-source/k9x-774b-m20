@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
-> **Source Version**: `920a38ca`  
+> **Source Version**: `c6b8a834`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:13:38.650Z  
+> **Timestamp**: 2026-11-03T17:53:46.061Z  
 > **Learning ID**: `learn-github-wzh4869-appports`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:13:37.398Z  
+> **Harvest Timestamp**: 2026-11-03T17:53:45.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2191 stars
+- **Stars / Engagement**: 2197 stars
 
 ---
 
@@ -741,7 +741,7 @@ import Foundation
 /// )
 /// ```
 ///
-/// - Note: 使用 Actor 确保所有扫描操作在后台线程串行执行，不阻塞 UI
+/// - Note: Actor 串行维护应用身份信息；只读大小统计可在后台独立并发，不阻塞 UI。
 actor AppScanner {
     private var infoPlistCache: [URL: [String: Any]] = [:]
 
@@ -791,7 +791,7 @@ actor AppScanner {
         let version: String?
     }
 
-    enum AppSizeMode {
+    enum AppSizeMode: Sendable {
         /// 解析到真实 bundle 或目录后计算内容体积。
         case logicalContent
         /// 保留本地入口结构，仅统计 symlink 或 wrapper 自身占用。
@@ -817,7 +817,8 @@ actor AppScanner {
     /// - Note:
     ///   - 普通目录：跳过内部符号链接，避免重复计算
     ///   - `.app` 包：会尽量解析入口 symlink 或 `Contents` 深层链接，得到真实体积
-    func calculateDirectorySize(at url: URL, mode: AppSizeMode = .logicalContent) -> Int64 {
+    nonisolated func calculateDirectorySize(at url: URL, mode: AppSizeMode = .logicalContent) -> Int64 {
+        guard !Task.isCancelled else { return 0 }
         let fileManager = FileManager.default
         var size: Int64 = 0
         let scanURL: URL
@@ -860,6 +861,7 @@ actor AppScanner {
 
         // 累加所有文件大小
         for case let fileURL as URL in enumerator {
+            guard !Task.isCancelled else { return size }
             fileCount += 1
             if fileCount > maxFileCount {
                 AppLogger.shared.logContext(
@@ -884,7 +886,7 @@ actor AppScanner {
     /// 根据显示场景选择应用体积计算方式。
     ///
     /// 本地列表中的“已链接”应用应显示本地入口大小，避免看起来像在本地保留了一整份实体副本。
-    func calculateDisplayedSize(for app: AppItem, isLocalEntry: Bool) -> Int64 {
+    nonisolated func calculateDisplayedSize(for app: AppItem, isLocalEntry: Bool) -> Int64 {
         let mode: AppSizeMode = (isLocalEntry && app.status == AppStatus.linked) ? .localPortal : .logicalContent
         return calculateDirectorySize(at: app.path, mode: mode)
     }
@@ -979,11 +981,7 @@ actor AppScanner {
 
                     let hasRunning = appsInFolder.contains { bundleURL in
                         runningAppURLs.contains(bundleURL)
-                            || runningAppURLs.contains(itemURL.appendingPathComponent(bundleURL.lastPathComponent))
-                    }
-
-                    if appCount == 1, let bundleURL = appsInFolder.first {
-                        let status = statu
+                            || runningAppURLs.contains(itemURL.appendingPathComponent(bundleURL.lastPathCompo
 ```
 
 ### Core Architecture Module: `AppPorts/Utils/ApplicationLaunchGate.swift`
@@ -1070,385 +1068,180 @@ enum ApplicationLaunchGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a51a6191` (2026-10-28)
-**Commit Message**: fix: authorize retained data cleanup and update signature lock regression
+### Incident Patch 1: `1e2f3c1d` (2026-10-30)
+**Commit Message**: fix: resolve PR 102 conflicts with shared offline guards
 
-**File**: `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md` (modified, +2/-0)
+Merge main while retaining uniform read-only mount guards, legacy upgrades and offline size diagnostics. Preserve native size traversal with offline-directory exclusions, and update the render fixture for the existing cleanup-sheet interface.
+
+**File**: `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md` (modified, +1/-1)
 ```diff
-@@ -55,6 +55,8 @@ Status: implemented
+@@ -46,7 +46,7 @@ Status: implemented
+ - 显示层不提供执行授权，呈现规则见[容器归属、个人目录链接与大小显示](../feature/2026-10-01-container-ownership-presentation.md)。
+ - 专用卷真实所有权的已提交建卷理由见[专用 APFS 卷通过真实所有权保留源元数据](2026-10-01-apfs-owners-volume-creation.md)。
  
- 单卷暂停与现有链接确认接管见[保留单卷卸载意图并补齐旧软链接管](../bug-fix/2026-10-28-manual-unmount-and-link-adoption.md)；原事务切换、验证和副本清理要求继续成立。
+-2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
++当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
  
-+root 所有的数据旧副本只在用户指定记录重试时授权清理，见[旧数据副本授权清理](../bug-fix/2026-10-28-data-cleanup-administrator-authorization.md)；普通进程继续持锁和写账本。
-+
  ## Alternatives considered
  
- - **签名与数据合成父 workflow**：可集中串联步骤，但把独立签名及其恢复材料变成释放空间的前提，增加跨服务状态。
 ```
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-20-root应用迁移授权.md` (modified, +2/-0)
+**File**: `.agents/notes/implemented/architecture/2026-10-29-页面目录大小扫描优化.md` (modified, +2/-0)
 ```diff
-@@ -22,6 +22,8 @@ Xcode 的根目录属于 root、模式为 0755。用户能在 `/Applications` 
- - 部分重叠并保留：[位置变更统一清除旧版更新保护锁](2026-10-17-legacy-update-lock-adoption.md)。授权不接管额外标志，不改变无法恢复记录的收束规则。
- - 其余 ownership、容器挂载、签名修复和数据迁移相关笔记不涉及应用入口的 RENAME_SWAP 授权边界，不修改其决定。
+@@ -12,6 +12,8 @@ Status: implemented
  
-+数据目录旧副本的按需授权另见[旧数据副本授权清理](2026-10-28-data-cleanup-administrator-authorization.md)，复用请求运输与系统密码框，不扩大本篇应用交换请求的权限。
+ 应用大小计算与路径解析只读参数，不使用 actor 的 Info.plist 缓存，因此改为 nonisolated，界面最多四个任务并发统计。应用路径、Stub 与套件解析及原有隐藏文件统计口径不变。每完成一项就发布，发布前复核扫描请求；过期请求取消剩余子任务，等待已启动统计退出，不更新缓存或结束新请求。
+ 
++离线挂载点沿用[统一只读保护及容量未知规则](../bug-fix/2026-10-30-readable-offline-mount-guards.md)：上层保留不可用问题并交给原生遍历跳过相应子目录，祖先不将缺失数据当成完整大小，不写入展示缓存。
 +
+ ## Existing-note audit
+ 
+ - [大小缓存仅用于展示](../../implemented/feature/2026-10-21-目录大小缓存仅用于展示.md)部分重叠，沿用所有缓存身份、人工重测和执行独立读取边界。
+```
+
+**File**: `.agents/notes/implemented/bug-fix/2026-10-12-wechat-mount-recovery.md` (modified, +3/-1)
+```diff
+@@ -32,11 +32,13 @@ build 48 使用项目原有 Apple Development 身份通过 Release clean build
+ 
+ ## Related decisions
+ 
++- 当前离线保护模式由[允许路径查找的只读挂载点](2026-10-30-readable-offline-mount-guards.md)接续：新租约使用 500，本文事故发生时的 000 事实保持原样。
++
+ - 自身预留的未开始还原兼容基线见[旧容器重连保持原有所有权语义](../../implemented/bug-fix/2026-10-07-legacy-container-remount.md)。
+ - 跨阶段自动恢复及收尾的共同规则见[由持久化事务自动完成 APFS 恢复与清理](../architecture/2026-10-12-apfs-automatic-recovery.md)。
+ - 事故暴露的验证遗漏及实测层次见[隔离 APFS 验证与可比较的性能证据](../testing/2026-10-12-apfs-validation-evidence.md)。
+ 
+-2026-10-29 的[微信离线媒体入口只读保护](2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
++当前[统一离线挂载保护](2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
+ 
+ 后台注册准入与系统设置归属见[后台挂载代理启用与应用归属](2026-10-29-后台挂载代理启用与应用归属.md)；该规则不替代卷解锁、签名或完全磁盘访问检查。
+ 
+```
+
+**File**: `.agents/notes/implemented/bug-fix/2026-10-28-manual-unmount-and-link-adoption.md` (modified, +9/-0)
+```diff
+@@ -14,6 +14,10 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
+ 
+ 界面把实际挂载/在线状态与 `autoMountPaused` 分开表示。卸载失败而仍挂载时显示两种事实并提供“恢复自动挂载”；此入口验证现有挂载后清除暂停，不先卸载数据。卷离线时保留离线状态和暂停徽章，不承诺重新插盘后自动接回。拆分微信账号聚合成员暂停状态，列表的两种行展示共用同一事实。
+ 
++旧 `000` 暂停保护目录属于预期不可读；当前 [只读离线保护](2026-10-30-readable-offline-mount-guards.md)将新租约改为 `500`，其容量仍未知。扫描只把通过账本校验且属于当前应用的主动暂停路径传入大小测量；`DataDirReadIssue` 精确核对记录、真实目录、模式为 `000` 或 `500` 且未挂载后，生成或分类预期暂停问题。父目录、普通无权限目录、被换成软链的路径及仍挂载的目录不享有此分类，同路径真实非权限错误仍保留并需要处理。分类只影响错误引导和 readFailure 路径策略，不赋予迁移、认领或清理权限，不改账本格式。
++
++预期暂停仍保留在 `readIssues`，因此大小保持不完整、父项保留已读部分、快照缓存继续拒绝保存。页面只将 `requiresAttention` 的问题展示为读取失败及权限检查入口；纯暂停且无已读字节的行显示 `—`，复用已有暂停徽章和挂载/迁回操作。含暂停路径的大小测量绕过该路径及祖先的内存大小缓存，避免旧完整容量遮蔽不可读状态。
++
+ 后台仍静默跳过暂停的事务；手动指定 operationID 重试必须返回“本次未执行”的原因，任务中心显示需要处理，而不是完成。检查先于清理决定变化，包含已切换事务的直接清理路径。
+ 
+ ## Existing-note audit
+@@ -26,6 +30,9 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
+ 
  ## Alternatives considered
  
- - **递归 chown 本地应用**：可让普通进程完成移动与删除，但持久改变第三方应用所有权，并可能影响内部受保护组件；不采用。
++- 在页面直接隐藏所有权限错误：改动最少，但会掩盖同次扫描中的真实读取失败；因此在错误来源处分类，页面只过滤已确认的预期暂停。
++- 删除暂停产生的读取问题：可直接消除提示，但会使大小结果看似完整并进入缓存；因此保留问题，仅取消错误引导。
++
+ - 仅在当前进程暂停：状态简单，但代理和冷启动无法遵守。
+ - 复用整盘弹出暂停：已有跨进程准入，但会挡住同盘其他目录，且重新插盘会解除。
+ - 缺记录一律拒绝：保守且易实现，但无法完成用户明确要求的现有软链接管。改为核对当前链接、目标身份和冲突后建立新凭据，不推断历史归属。
+@@ -34,6 +41,8 @@ Issue #81 的日志显示单卷手动卸载后两秒即被代理挂回。已有
+ 
+ ## Testing
+ 
++暂停保护目录专项回归覆盖真实 POSIX `000` 目录、父项旧大小缓存、混合真实权限错误、大小与汇总不完整、快照不缓存、解除暂停后重新计量。分类边界覆盖暂停但仍挂载、缺少可信暂停记录、父目录错误、非权限错误、权限恢复及替换软链。2026-10-30 的 99 项专项测试全部通过（扫描 62、快照缓存 5、容量汇总 13、本地化 19）。另以独立 XCTest 宿主和自建 APFS 镜像完成真实迁移、主动卸载产生 `000` 保护目录、扫描与父项测量分类、明确重挂、最新数据迁回及删除测试卷；`manualPauseReadDiagnosticsVerified` 为 true，镜像和隔离材料已清理。Release arm64/x86_64 clean build、笔记校验和独立只读复查通过。本轮未跑全量测试，未替换安装版或进行安装版界面验收。证据位于 `build/Validation/paused-mount-diagnostics-20261030/REPORT.md`。
++
+ 隔离目录与假 diskutil 覆盖冷启动后暂停、未开始还原的后台恢复暂停、同盘其他卷不受影响、挂载失败保留暂停、成功解除、保存失败不卸载、卸载失败保留暂停。账本测试覆盖 schema 12 无暂停、schema 13 暂停、错误 UUID/路径和旧 schema 夹带暂停拒绝。规范路径接管后还原、冲突标记拒绝、容器旧链接恢复使用真实临时文件，不操作用户业务数据。
+ 
+ 相关串行回归通过 150 项 XCTest 与 190 项 Swift Testing，共 340 项，日志 `/tmp/AppPortsIssue81-followup-regression.log`。覆盖 ContainerVolumeMigrator、ContainerMountResume/Safety/Agent、ContainerRemountLoop、DataDirMover、DataTransferStore、DataDirScanner、WriterAdmission、DiskEjection、MigrationTaskCenter、OperationMaintenanceProgress，以及一个模拟浏览器界面测试。没有运行完整测试套件。
 ```
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-28-data-cleanup-administrator-authorization.md` (added, +50/-0)
+**File**: `.agents/notes/implemented/bug-fix/2026-10-29-微信离线媒体入口只读保护.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,50 @@
-+# Agent Note: 旧数据副本按需授权清理并显示当前数据位置
+@@ -8,6 +8,8 @@ Status: implemented
+ 
+ ## Decision
+ 
++本篇的微信专用权限策略由[统一离线挂载保护](2026-10-30-readable-offline-mount-guards.md)取代；下文保留原方案及现场验证依据。PR #102 合并主分支时移除专用策略与参数，所有受管入口沿用统一 0500。
++
+ `MountPointLease.Protection` 区分 inaccessible（000）和 readOnly（0500）。只对指定容器 `Library/Containers/<bundleIdentifier>/Data/Documents/xwechat_files/<account>/{msg,business}` 的精确入口采用 0500；账号排除 all_users、config、resource。相对用户主目录的路径与解析软链接后的路径必须相同，允许系统主目录自身解析，但拒绝媒体、账号或中间目录别名。整账号、数据库、其他目录和私有暂存入口继续采用 000。
+ 
+ 迁移、挂载、卸载、恢复、历史挂载选项回退传递当前记录或事务的 bundleIdentifier，多开容器不依赖默认微信标识。已有拆分记录在功能开关关闭时仍沿用规则，不改变持久化格式或迁移授权。
+```
+
+**File**: `.agents/notes/implemented/bug-fix/2026-10-30-readable-offline-mount-guards.md` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++# Agent Note: 离线挂载点允许路径查找并保持禁止本地写入
 +
 +Status: implemented
 +
 +## Problem
 +
-+截图中的 Dortania 迁移旧副本属于 root、权限为 0755，普通进程清理时调整目录权限会失败。账本只留下“操作不被允许”，界面仅显示最早的路径；该数据实际上已经还原到本地，旧迁移记录仍在等待清理，用户无法区分当前数据与旧副本。现有管理员入口只支持应用本体事务。
++用户提供的微信 4.1.15 / macOS 27.0.1 崩溃报告显示 weakly_canonical → filesystem_error → 未处理异常 → abort。原保护目录使用 000，卸载后应用访问子路径会被拒绝。本机隔离 C++ 实测确认 000 下不存在的子路径返回 EACCES（13），500 下相同查找不抛异常。报告没有携带实际失败路径和错误码，因此这证明触发机制，与崩溃高度吻合，不构成微信根因完全确诊或数据库损坏证据。用户批准实现“允许读取与路径访问、禁止写入”的方向。
++
++500 目录可枚举，断盘但未手动暂停时不能再依赖读取失败判断容量不完整，否则会显示完整的 0 字节，并将祖先的缺失汇总缓存为完整结果。
 +
 +## Decision
 +
-+复用现有系统密码框、临时请求文件和当前可执行文件的一次性入口，扩展数据副本清理请求。普通用户进程持有操作锁并写账本，管理员进程只调用既有严格清单清理器，不运行 GUI、不写账本、不改当前数据或所有者。仅用户指定记录主动重试，在普通清理实际返回 EPERM/EACCES、已记录清理检查点且旧副本属 root 时授权；后台与批量自动处理不弹密码框。取消授权保留旧副本和可重试检查点。
++MountPointLease 在核对目录身份和空内容后，将底层本地目录保护为 500。挂载层上的业务卷权限不变；卸载或断盘后本地入口允许当前用户读取和进入，新建文件与目录仍被拒绝。统一调整共享租约，避免迁移、主动卸载、重挂和恢复准备各自采用不同策略；不改变迁移账本、签名、版本或安装版。
 +
-+请求沿用应用授权的文件读取规则，包含原迁移记录和当前有效位置。管理员入口核对已完成切换、清理检查点、活动数据及旧副本/父目录身份，复用 removeVerifiedCopy 的原内容清单及断点删除；不另写 rm 或扩大为任意文件操作。界面明确管理员所有权、当前有效数据位置和保留副本位置，具体底层错误与阶段进入既有诊断日志。不增加 schema 或常驻特权服务。
++租约仍接受旧 000 目录，安全打开并核实为空后转为 500；持有描述符的后续验证精确检查 500，不因为兼容历史值而接受租约创建后的权限变化。恢复准备检查接受两种保护模式，核对同一 inode 与转换后的 500。非空目录、软链、替换目录和新开放写权限继续阻断。
++
++容量扫描对可信挂载记录精确匹配、未挂载、真实目录且为保护模式的入口生成预期不可用问题，不以是否手动暂停为条件。沿用 pausedMountDirectories 传递这些入口，手动暂停标记仍独立读取账本。500 可读不等于外盘业务数据为空；目录和祖先容量继续不完整、不写缓存、不引导用户补权限。旧 000 同样支持；普通权限错误、挂载中的错误、父目录错误和替换软链不享有豁免。沿用已有暂停提示，不新增文案。
++
++后台重挂检查在暂停和卷在线判断之前升级可信旧 000 空目录，保持暂停及账本不变。历史保留迁移的事务与祖先沿用正常重挂的 ownedIDs；未开始的恢复沿用兼容校验，已开始恢复则由原恢复路径负责，不新增背景修改。非空、重叠或不可访问目录保持阻断。仍挂载的业务卷不为升级主动卸载；它在新版正常卸载后转换，或盘离线后由后台检查转换。
++
++## PR #102 integration
++
++PR #102 与主分支的五个冲突文件均围绕离线保护：保留共享租约统一 0500、旧 000 升级、恢复准备兼容及历史事务归属，不保留按微信媒体路径选择权限的第二套策略。原[微信专用策略](2026-10-29-微信离线媒体入口只读保护.md)保留其独有的现场验证和备选依据，但权限选择由本篇接管；不增加存储格式或迁移模式。
++
++目录大小继续使用 PR 的原生遍历；上层将已核对的离线入口作为跳过集合，并将预期不可用问题合入结果。原生遍历跳过这些目录，祖先仍返回不完整大小且不缓存。权限错误、非目录替换等其他错误继续报告。PR 的映像、界面、任务及校验优化保留，不改变版本、安装版或发布状态。
++
++PR 原有截图测试仍给异常处理弹窗传递已删除的空 otherIssues 参数，测试包编译因此失败；删除该无效参数，沿用新接口的默认空集合，不改变测试场景或生产行为。
++
++合并版本的 arm64/x86_64 Release clean build 通过；独立命名 XCTest 宿主完成 24 个定向套件，442 项通过、0 失败、3 项显式性能测试按预期跳过（参数展开后的通过运行数为 703）。范围覆盖共享租约、旧 000 升级、挂载/恢复/重入、离线容量与祖先缓存、目录树/大小汇总、新原生遍历、文件散列及映像接口。独立只读审查未发现其他具体冲突回归。
++
++私有 APFS 实测 1 项通过，包含 14 组旧记录与中断恢复场景；正常迁移、卸载后 0500 可读且写入 EACCES、暂停大小未知、重挂与最新数据迁回、权限丢失后的保留与重试、旧 noowners 恢复与回滚均通过。专用数据卷已清理；协调器确认只剩原始私有卷后卸载映像，再核对夹具身份、无附加映像及无打开文件后移除临时夹具。结果位于 `build/Validation/v3-real-mount-20261030T072729Z-7fb7c101/summary.json`，专项与构建结果位于 `/tmp/AppPortsPR102Validation/`。
++
++本地化审计 19 项中 17 通过、2 项因原 PR 字符串目录的 stale 标记失败；目录与审计源码均未在本次冲突处理中修改，保留该独立问题。笔记树、格式、归档封印及差异空白检查通过。没有本机运行全量测试，没有验证真实微信缺盘登录或 NAS 映像应用迁移，也没有安装、发布或合并到 main。此前实机结果只证明当时主分支，不替代这些验证边界。
 +
 +## Existing-note audit
 +
-+- [应用本体授权](../../implemented/bug-fix/2026-10-20-root应用迁移授权.md)：部分重叠，复用授权运输和请求读取，不改变应用交换与签名规则。
-+- [持久化切换](../../implemented/architecture/2026-10-10-verified-transfer-lifecycle.md)：部分重叠，普通进程仍保管账本，数据切换成功不会因清理错误回滚。
-+- [操作受阻诊断](../../implemented/bug-fix/2026-10-28-operation-blockage-diagnostics.md)：部分重叠，扩展数据清理上下文，不推断未知错误原因。
-+- 未发现同范围的 proposed/rejected；已有记录保留，不归档。
++- [微信挂载恢复事故](2026-10-12-wechat-mount-recovery.md)：部分重叠，历史事实保留；本篇改变其历史 000 保护决定，卸载前的本地父目录和业务卷可用性校验继续有效。
++- [单卷暂停和旧链接恢复](2026-10-28-manual-unmount-and-link-adoption.md)：部分重叠，暂停记录仍独立，补充 500 下容量未知，不以目录可读判断业务数据完整。
++- [事件驱动重挂](2026-09-23-event-driven-container-remount.md)：部分重叠，不改变调度和重试策略。
++- proposed/rejected 中仅临时目录迁移策略及并行复制存在关键词重叠，与本次权限选择无关，不归档或改写它们。
 +
 +## Alternatives considered
 +
-+- 只改错误文本：可以解释 root 所有权，但用户点击重试仍不能完成本次实际清理，因此提供显式授权继续。
-+- 递归 chown 或以管理员启动 GUI：可以绕过权限，但改变第三方数据的所有权或扩大整个进程权限，沿用已有一次性受限执行方式。
-+- 新安装常驻特权服务：可持续处理权限操作，但本次只需前台单次清理，增加部署及维护成本。
++- 保留 000：保护最严格，但已实测路径解析因缺失进入权限返回 EACCES，不能解决当前故障。
++- 改为 700：应用可继续创建离线文件，但会形成外盘和本地两份数据，因此拒绝。
++- 只手工 chmod 微信目录：可验证现象，但新迁移和重挂会重新写回旧模式，不能作为实现；采用共享租约中的单一保护策略。
 +
-+## Testing
++## Verification
 +
-+`PrivilegedDataCleanupTests` 通过实际临时文件执行同一严格删除器，验证只删旧副本、当前目录身份/内容/元数据不变、旧迁移使用最新本地还原位置；有内容差异、缺少删除检查点、活动位置与旧副本重叠或活动对象被替换时保留文件。诊断测试确认记录 ID、路径、阶段和原始 POSIX 错误经过 NSError 桥接保留。未为这些测试增加 mock 删除器。
++PR #101 反馈修复的扫描器 65 项、容量汇总和目录树 36 项、展示 9 项全部通过，0 失败、0 跳过。新增回归使用真实临时目录，覆盖未手动暂停的断盘和待重挂、500 目录容量未知、祖先汇总不完整及不复用缓存。挂载和卷在线状态通过现有注入边界模拟；本轮未跑全量测试或真实外盘拔插。arm64/x86_64 Release clean build 通过。
 +
-+`DataDirMoverTests` 的真实迁移→规范化→还原流程验证所有历史记录均显示最新本地数据位置。两个生产入口（应用数据页、任务中心异常恢复）共用 completedLocation 解析，在后台加载路径映射。首轮数据/应用迁移、账本及维护回归165项通过；最终 UI 路径接线后数据和清理测试通过。应用迁移复跑曾有3项被测试宿主正常退出中断（退出码0，不是断言失败），单独完整复验76项通过；原因未确认，不修改退出逻辑，也不将这次中断隐藏为全程全绿。最终源码的专项合计165项通过。日志 `/tmp/AppPortsDataCleanup-regression.log`、`/tmp/AppPortsDataCleanup-final-regression.log`、`/tmp/AppPortsDataCleanup-app-transfer-retry.log`。
++专项 260 项通过，0 失败、0 跳过，覆盖挂载安全、迁移器、重挂恢复、代理、恢复准备、扫描、缓存、卷状态和弹盘。旧目录升级覆盖无事务/生产迁移保留事务 × 暂停/离线四种组合，以及非空目录拒绝升级并保留内容与模式。最终 arm64/x86_64 Release clean build 通过；生产 MountPointLease 与原生 C++ weakly_canonical 联合实测确认 EACCES → 正常返回。
 +
-+最终 arm64/x86_64 Release clean build 通过，日志 `/tmp/AppPortsDataCleanup-release.log`。新增5条文案覆盖22语言，br和zh-martian按现有约定生成。中英德波阿五种语言的亮/暗界面渲染通过，并检查中英阿恢复界面的当前数据及保留副本标签，输出 `/tmp/AppPortsDataCleanupUI/`。`LocalizationAuditTests` 仍为同样3项既有失败（stale条目及旧键缺失翻译），本次5条新文案没有新增审计失败；日志 `/tmp/AppPortsDataCleanup-localization-ui.log`。界面fixture不模拟已获得root权限。
++私有 APFS 真实测试 1 项通过，包含 14 组旧记录和中断恢复场景。实测正常迁移、主动卸载暴露 500 空目录、读取成功且文件创建 EACCES、暂停容量未知、重挂、最新数据重连和迁回、旧 noowners/中断继续/撤销/自动回滚及清理。测试卷已删除、镜像已卸载，核对归属和无打开文件后清除本轮夹具。结果和日志见本机 build/Validation/readable-mount-guards-20261030/REPORT.md，完整 xcresult 见 build/Validation/v3-real-mount-20261029T215722Z-543b71ae/。
 +
-+系统密码框、实际root提升及取消密码框未自动执行：当前没有可用的非交互sudo凭据，不以普通用户临时目录测试声称权限流程实机通过。完整套件未在本机运行。
-+
-+截图现场仅只读核对：本地当前目录身份与最新restore记录匹配，旧副本uid为0，文件摘要同时匹配原清单和当前本地文件。没有改动截图中的旧副本、当前数据或用户权限。
-+
-+## Local installation
-+
-+维护者明确要求构建最新工作区代码并替换原应用。此次签名版Release clean build通过，产物为工程当前版本2.0.0（50），arm64/x86_64双架构；没有修改工程版本号。沿用原安装的Apple Development证书、团队MQ7XG7WM3F及com.shimoko.AppPorts标识，designated requirement与原安装一致，替换后 `codesign --verify --deep --strict` 通过。原安装1.9.9（50）保留为 `~/Library/Application Support/AppPorts/backups/AppPorts-before-local-20261028-161840.app`，新包替换 `/Applications/AppPorts.app`，未自动打开GUI。安装日志 `/tmp/AppPortsLatest-install-result.json`，构建日志 `/tmp/AppPortsLatest-signed-release.log`。
-+
-+本次本地安装不是远端版本发布。管理员入口不具备root身份时从实际签名产物退出、没有进入GUI；该检查不代替真实密码框授权与root删除验收。
++独立只读审查发现的升级路径遗漏、历史事务归属遗漏及合成暂停遮蔽真实错误均已修正，最后复核无新增具体缺陷。未跑全量测试，真实微信缺盘登录未验证，不以隔离测试宣称登录可用。后续经用户授权，将当前源码以原 Apple Development 身份构建并替换本机安装版，strict 签名、现有完全磁盘访问代码要求、后台代理签名和四个原位挂载均核对通过，旧包保留备份；版本和生产迁移账本未改。
 +
 +## Consequences
 +
-+实际root旧副本可以在指定记录重试时调用系统授权继续清理，界面同时解释管理员所有权和两份数据的位置。代价是维护一个只支持symlink旧数据副本的管理员请求；它与应用授权共用临时请求格式和密码框运输，普通进程仍掌握日志、锁和账本。
-+
-+系统决定是否复用近期凭据，不保证每次都会重新输入密码。只有普通清理已经写出删除检查点的权限失败可以授权，不扩大挂载卷删除权限，也不扩展管理标记删除前即失败的分支。其他失败仍保留材料并报告具体错误；授权取消没有删除结果，不报告已完成。
++所有通过同一租约创建的 APFS 保护目录使用只读模式，允许应用把离线文件识别为不存在，仍禁止通过该目录生成本地业务数据。此策略消除已确认的路径解析权限触发条件；应用是否能处理后续缺文件或写入拒绝仍须实测。数据继续保存在外部专用卷；本地可读空目录不代表数据被删除或迁回。
 ```
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-28-operation-blockage-diagnostics.md` (modified, +4/-0)
+**File**: `.agents/notes/implemented/feature/2026-10-20-微信账号拆分迁移.md` (modified, +1/-1)
 ```diff
-@@ -19,6 +19,8 @@ OperationBlockage 通过 CustomNSError 携带稳定诊断码与字段。AppLogge
- - [后台任务](../../implemented/architecture/2026-10-21-后台迁移任务与异常处理.md)：部分重叠，丰富失败消息及诊断，不改变调度、重试与恢复权威来源。
- - 活跃 proposed/rejected 未发现相同方案；上述现行记录均保留，不归档。
+@@ -20,7 +20,7 @@ Status: implemented
+ - 与[微信挂载恢复](../bug-fix/2026-10-12-wechat-mount-recovery.md)部分重叠：成员沿用已有卸载、恢复和清理规则，不由聚合行取代真实记录。
+ - [临时目录迁移提案](../../proposed/feature/2026-10-01-temporary-directory-migration-policy.md)讨论 tmp 后代，与媒体成员无关，保留 proposed。
  
-+数据副本清理进一步记录具体路径、阶段和原始 NSError，并区分最新数据位置，见[旧数据副本授权清理](2026-10-28-data-cleanup-administrator-authorization.md)。
-+
- ## Alternatives considered
+-2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
++当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
  
- - 仅替换弹窗文字：变更小，但原因在抛错和字符串聚合时已经丢失，无法知道具体阻塞记录。
-@@ -31,6 +33,8 @@ OperationBlockage 通过 CustomNSError 携带稳定诊断码与字段。AppLogge
+ 新迁移的来源刷新时机由[应用数据迁移任务内核对来源](../bug-fix/2026-10-29-应用数据迁移任务内核对来源.md)接管，任务内准备完成后才进入复制；已有持久化恢复规则继续适用。
  
- Release 双架构 `xcodebuild clean build` 成功。功能日志 `/tmp/AppPortsIssue81-diagnostics-final-tests.log`，构建日志 `/tmp/AppPortsIssue81-diagnostics-final-release.log`。提示修正后补充回归 36 项通过（24 项 XCTest、12 项 Swift Testing，含上述 4 项跨进程测试）；本地化审计仍仅同样 3 项失败。补充日志见 `/tmp/AppPortsIssue81-diagnostics-guidance-tests.log`。本地化新增 7 条诊断文案均覆盖 22 种语言；全库审计仍有 3 项既有失败，分别涉及 stale 状态和旧键缺失翻译，未将它报告为全绿。完整测试套件未在本机运行，遵循一次性 runner 的仓库要求。
- 
-+签名锁错误的调用方断言包含 `SignatureBackupCleanupTests.respectsSignatureLock`：它持有真实文件锁，检查 `.signatureLockBusy` 并确认备份记录字节不变。合并后 CI 曾因该测试仍要求旧 `SigningError` 类型而失败；这是遗漏的测试契约更新，不通过放宽锁或删除备份不变断言修复。修正后完整运行 SignatureBackupCleanup、CodeSigner、SignatureOperation 与 OperationLock，共118项通过（13项XCTest、105项Swift Testing），日志 `/tmp/AppPortsLatest-signature-regression.log`；未将专项通过等同于远端全量CI已通过。
-+
- ## Consequences
- 
- 同一失败可从弹窗、任务历史和导出日志关联到已知记录，文件锁不可访问不再伪装成忙碌，成功后收尾失败也保留原始诊断。代价是维护稳定诊断码、NSError 桥接及全部语言的对应文案；这些信息属于时间点观察，不提供锁持有者证明。只有可验证的记录 ID 和应用身份进入关联字段，损坏文件中未经验证的路径单列为 recorded_application_path。
 ```
-
-**File**: `AppPorts/Localizable.xcstrings` (modified, +680/-0)
-```diff
-@@ -96348,6 +96348,686 @@
-         }
-       }
-     },
-+    "旧副本由管理员（root）拥有，需要授权后才能清理。当前数据未受影响。" : {
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "النسخة القديمة مملوكة للمسؤول (root). يلزم التفويض لتنظيفها. لم تتأثر البيانات الحالية."
-+          }
-+        },
-+        "br" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "⠠⠞⠓⠑ ⠕⠇⠙ ⠉⠕⠏⠽ ⠊⠎ ⠕⠺⠝⠑⠙ ⠃⠽ ⠞⠓⠑ ⠁⠙⠍⠊⠝⠊⠎⠞⠗⠁⠞⠕⠗ ⠶⠗⠕⠕⠞⠶⠲ ⠠⠁⠥⠞⠓⠕⠗⠊⠵⠁⠞⠊⠕⠝ ⠊⠎ ⠗⠑⠟⠥⠊⠗⠑⠙ ⠞⠕ ⠉⠇⠑⠁⠝ ⠊⠞ ⠥⠏⠲ ⠠⠉⠥⠗⠗⠑⠝⠞ ⠙⠁⠞⠁ ⠊⠎ ⠥⠝⠁⠋⠋⠑⠉⠞⠑⠙⠲"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Die alte Kopie gehört dem Administrator (root). Zum Bereinigen ist eine Autorisierung erforderlich. Die aktuellen Daten sind nicht betroffen."
-+          }
-+        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "The old copy is owned by the administrator (root). Authorization is required to clean it up. Current data is unaffected."
-+          }
-+        },
-+        "eo" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "La malnova kopio apartenas al la administranto (root). Rajtigo necesas por forigi ĝin. La nunaj datumoj restas netuŝitaj."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "La copia antigua pertenece al administrador (root). Se necesita autorización para eliminarla. Los datos actuales no se ven afectados."
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "L’ancienne copie appartient à l’administrateur (root). Une autorisation est nécessaire pour la supprimer. Les données actuelles ne sont pas affectées."
-+          }
-+        },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "पुरानी प्रति का स्वामी व्यवस्थापक (root) है। इसे साफ़ करने के लिए अनुमति चाहिए। मौजूदा डेटा अप्रभावित है।"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Salinan lama dimiliki administrator (root). Diperlukan otorisasi untuk membersihkannya. Data saat ini tidak terpengaruh."
-+          }
-+        },
-+        "it" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "La vecchia copia appartiene all’amministratore (root). Per eliminarla è necessaria l’autorizzazione. I dati attuali non sono interessati."
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "古いコピーは管理者（root）が所有しています。削除には認証が必要です。現在のデータには影響しません。"
-+          }
-+        },
-+        "ko" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "이전 사본은 관리자(root) 소유입니다. 정리하려면 승인이 필요합니다. 현재 데이터에는 영향이 없습니다."
-+          }
-+        },
-+        "nl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "De oude kopie is eigendom van de beheerder (root). Autorisatie is nodig om deze op te ruimen. De huidige gegevens blijven ongewijzigd."
-+          }
-+        },
-+        "pl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Stara kopia należy do administratora (root). Jej usunięcie wymaga autoryzacji. Bieżące dane pozostają bez zmian."
-+          }
-+        },
-+        "pt" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "A cópia antiga pertence ao administrador (root). É necessária autorização para limpá-la. Os dados atuais não são afetados."
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Старая копия принадлежит администратору (root). Для её удаления нужна авторизация. Текущие данные не затронуты."
-+          }
-+        },
-+        "th" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "สำเนาเก่าเป็นของผู้ดูแลระบบ (root) ต้องได้รับอนุญาตจึงจะล้างได้ ข้อมูลปัจจุบันไม่ได้รับผลกระทบ"
-+          }
-+        },
-+        "tr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Eski kopya yöneticiye (root) aittir. Temizlemek için yetkilendirme gerekir. Mevcut veriler etkilenmez."
-+          }
-+        },
-+        "vi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Bản sao cũ thuộc sở hữu của quản trị viên (root). Cần cấp quyền để dọn dẹp. Dữ liệu hiện tại không bị ảnh hưởng."
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "旧副本由管理员（root）拥有，需要授权后才能清理。当前数据未受影响。"
-+          }
-+        },
-+        "zh-Hant"
-```
-
-**File**: `AppPorts/Services/DataCleanupResolution.swift` (modified, +42/-0)
-```diff
-@@ -1,8 +1,23 @@
-+import Darwin
- import Foundation
- 
- /// User choices change the journal only. A retained copy is never called
- /// deleted, moved over live data, or silently included in later cleanup.
- enum DataCleanupResolution {
-+    static func currentDataPaths(for transfers: [DataTransferRecord], store: ContainerMountStore = .shared) -> [UUID: String] {
-+        Dictionary(uniqueKeysWithValues: transfers.compactMap { transfer in
-+            (try? store.completedLocation(after: transfer.operationID)).map { (transfer.operationID, $0.activePath) }
-+        })
-+    }
-+
-+    static func requiresAdministrator(_ transfer: DataTransferRecord) -> Bool {
-+        guard transfer.mode == .symlink, transfer.isDataSwitchComplete, geteuid() != 0,
-+              let path = transfer.backupPath,
-+              let actual = try? TreeCopySession.retainedRemovalURL(at: URL(fileURLWithPath: path), removalID: transfer.operationID) else { return false }
-+        var info = stat()
-+        return lstat(actual.path, &info) == 0 && info.st_uid == 0
-+    }
-+
-     static func decide(_ disposition: DataTransferRecord.CleanupDisposition,
-                        expected: DataTransferRecord) async throws {
-         let lock = OperationLock()
-@@ -53,3 +68,30 @@ enum DataCleanupResolution {
-         var errorDescription: String? { message }
-     }
- }
-+
-+struct DataCleanupFailure: LocalizedError, CustomNSError {
-+    let transfer: DataTransferRecord
-+    let stage: String
-+    let underlying: NSError
-+
-+    static var errorDomain: String { "AppPorts.DataCleanup" }
-+    var errorCode: Int { underlying.code }
-+    var errorDescription: String? {
-+        let detail = DataCleanupResolution.requiresAdministrator(transfer) && Self.isPermissionFailure(underlying)
-+            ? "旧副本由管理员（root）拥有，需要授权后才能清理。当前数据未受影响。".localized
-+            : underlying.localizedDescription
-+        return String(format: "清理旧副本失败：%@\n%@".localized, transfer.backupPath ?? transfer.originalPath, detail)
-+    }
-+    var errorUserInfo: [String: Any] {
-+        [NSLocalizedDescriptionKey: errorDescription ?? underlying.localizedDescription,
-+         NSUnderlyingErrorKey: underlying,
-+         OperationBlockage.diagnosticFieldsKey: ["diagnostic_code": "DATA-CLEANUP-FAILED",
-+            "blocking_operation_id": transfer.operationID.uuidString, "cleanup_stage": stage,
-+            "cleanup_path": transfer.backupPath ?? transfer.originalPath]]
-+    }
-+
-+    static func isPermissionFailure(_ error: Error) -> Bool {
-+        let native = error as NSError
-+        return native.domain == NSPOSIXErrorDomain && [Int(EPERM), Int(EACCES)].contains(native.code)
-+    }
-+}
-```
-
-**File**: `AppPorts/Services/OperationMaintenance.swift` (modified, +1/-1)
-```diff
-@@ -138,7 +138,7 @@ actor OperationMaintenance {
-                 guard let transfer = try store.transfer(operationID: retryOperationID) else { return [] }
-                 if transfer.isDataSwitchComplete {
-                     if transfer.mode == .mount { try await migrator.cleanupRetainedTransfer(operationID: retryOperationID) }
--                    else { try await DataDirMover().cleanupRetainedTransfer(operationID: retryOperationID) }
-+                    else { try await DataDirMover(allowsAdministratorPrompt: interactive).cleanupRetainedTransfer(operationID: retryOperationID) }
-                     return []
-                 }
-                 if transfer.mode == .symlink {
-```
-
-**File**: `AppPorts/Services/PrivilegedAppTransfer.swift` (modified, +21/-13)
-```diff
-@@ -39,6 +39,10 @@ enum PrivilegedAppTransfer {
-     }
- 
-     static func authorize(_ request: Request) throws {
-+        try authorize(request, argument: argument)
-+    }
-+
-+    static func authorize<T: Encodable>(_ request: T, argument: String) throws {
-         guard let executable = Bundle.main.executableURL else { throw CocoaError(.executableNotLoadable) }
-         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("AppPorts-authorization-" + UUID().uuidString)
-         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false,
-@@ -69,26 +73,29 @@ enum PrivilegedAppTransfer {
-         let args = CommandLine.arguments
-         guard args.dropFirst().first == argument else { return false }
-         do {
--            guard geteuid() == 0, args.count == 4, let owner = uid_t(args[3]), owner != 0 else {
--                throw POSIXError(.EPERM)
--            }
--            let fd = open(args[2], O_RDONLY | O_NOFOLLOW)
--            guard fd >= 0 else { throw POSIXError(.EACCES) }
--            let handle = FileHandle(fileDescriptor: fd, closeOnDealloc: true)
--            defer { try? handle.close() }
--            var info = stat()
--            guard fstat(fd, &info) == 0, info.st_mode & S_IFMT == S_IFREG,
--                  info.st_uid == owner, info.st_mode & 0o777 == 0o600, info.st_nlink == 1,
--                  info.st_size > 0, info.st_size <= 256 * 1024 * 1024 else { throw POSIXError(.EPERM) }
--            let request = try PropertyListDecoder().decode(Request.self, from: handle.readToEnd() ?? Data())
--            try perform(request)
-+            try perform(readRequest(Request.self, arguments: args))
-             return true
-         } catch {
-             FileHandle.standardError.write(Data((error.localizedDescription + "\n").utf8))
-             exit(1)
-         }
-     }
- 
-+    static func readRequest<T: Decodable>(_ type: T.Type, arguments: [String]) throws -> T {
-+        guard geteuid() == 0, arguments.count == 4, let owner = uid_t(arguments[3]), owner != 0 else {
-+            throw POSIXError(.EPERM)
-+        }
-+        let fd = open(arguments[2], O_RDONLY | O_NOFOLLOW)
-+        guard fd >= 0 else { throw POSIXError(.EACCES) }
-+        let handle = FileHandle(fileDescriptor: fd, closeOnDealloc: true)
-+        defer { try? handle.close() }
-+        var info = stat()
-+        guard fstat(fd, &info) == 0, info.st_mode & S_IFMT == S_IFREG,
-+              info.st_uid == owner, info.st_mode & 0o777 == 0o600, info.st_nlink == 1,
-+              info.st_size > 0, info.st_size <= 256 * 1024 * 1024 else { throw POSIXError(.EPERM) }
-+        return try PropertyListDecoder().decode(type, from: handle.readToEnd() ?? Data())
-+    }
-+
-     /// Internal for isolated fixtures. The command-line entry above always requires root.
-     static func perform(_ request: Request) throws {
-         let record = request.record
-@@ -245,6 +252,7 @@ enum PrivilegedAppTransfer {
- enum AppPortsEntryPoint {
-     static func main() {
-         if PrivilegedAppTransfer.runIfRequested() { return }
-+        if PrivilegedDataCleanup.runIfRequested() { return }
-         AppMoverApp.main()
-     }
- }
-```
-
----
-
-### Incident Patch 2: `ad3f9637` (2026-10-30)
-**Commit Message**: fix: label cleanup closure and bump version to 2.1.0 (51)
 
 **File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
@@ -1490,142 +1283,340 @@ Observed empirical fixes and code patches:
  				PROVISIONING_PROFILE_SPECIFIER = "";
 ```
 
-**File**: `AppPorts/Utils/ContainerVolumeMigrator.swift` (modified, +2/-2)
+---
+
+### Incident Patch 2: `c6b8a834` (2026-11-02)
+**Commit Message**: Merge pull request #103 from Souitou-iop/codex/quarantine-migration-fix
+
+fix: 兼容 macOS 27 受保护的 quarantine，修复带标记应用迁移失败
+
+**File**: `.agents/notes/implemented/bug-fix/2026-11-01-migration-replica-quarantine.md` (added, +76/-0)
 ```diff
-@@ -2322,7 +2322,7 @@ actor ContainerVolumeMigrator {
-                     }
-                     try store.recheckWriterAdmission()
-                     try TreeCopySession.removeVerifiedCopy(at: backup, against: baseline, allowPartialRemoval: deletionPreviouslyStarted,
--                        expectedVolumeUUID: expectedBackup.volumeUUID, removalID: operationID, requireSourceIdentity: true) {
-+                        expectedVolumeUUID: expectedBackup.volumeUUID, removalID: operationID, requireSourceIdentity: true, willRemove: {
-                         guard try self.store.transfer(operationID: operationID) == transfer,
-                               try DataPathIdentity.capture(parent).matchesFilesystemObject(parentIdentity),
-                               try DataPathIdentity.capture(retained).matchesFilesystemObject(expectedBackup) else {
-@@ -2344,7 +2344,7 @@ actor ContainerVolumeMigrator {
-                               self.isMountPoint(active) == (location.mode == .mount && location.direction == .migrate) else {
-                             throw DataOperationSafety.Failure.conflict(active.path)
-                         }
--                    }
-+                    })
-                 } else {
-                     guard transfer.cleanupParentIdentity != nil else { throw DataOperationSafety.Failure.inspection(backup.path) }
-                     try await requireActiveData(for: transfer, matching: location)
+@@ -0,0 +1,76 @@
++# Agent Note: 迁移副本不再回放或校验 quarantine
++
++Status: implemented
++
++## Problem
++
++2.1.0 (51) 在 macOS 27.2 上把带 quarantine 的应用迁往外置盘 100% 失败：
++复制完成后 verifying 阶段对副本文件报 `NSPOSIXErrorDomain 13`，重试全部命中
++同一路径。微信 4.2.0（Sparkle 更新，`0082;…;` 系统发起型）和 RedPot.app
++（Edge 下载，`01c1;…;` 尚未清除）都复现；历史成功副本（QQ、Edge、ChatGPT）
++的源文件在用户打开后已被系统清除 quarantine。
++
++排查确认三层事实：副本复制后由系统自动附加 quarantine（复制路径为
++pread/pwrite，代码未写入）；所有进程对该副本的 `removexattr` 均被
++macOS 27 拒绝（EACCES，含创建进程与 hardened 签名进程）；带 bundle 的
++hardened 进程对该副本的 open、pread、fgetxattr、
++`SecStaticCodeCheckValidity` 全部正常。因此失败点唯一：
++`AppTransferTransaction.prepareCandidate` 复制完成后的 quarantine 移除循环
++调用 `removexattr` 抛出 EACCES，整个迁移被一个无害元数据标记终止。
++
++## Decision
++
++- `TreeCopySession.systemManagedAttributes` 增加 `com.apple.quarantine`：
++  清单不记录、比较不参与、`applyMetadata` 不回放，也不主动删除目标上的标记。
++  这与该文件对 provenance/macl 的既有处理一致，适用于应用、普通数据和容器复制。
++- `prepareCandidate` 直接使用复制器返回的清单校验副本。清单已不含 quarantine，
++  因此删除标记的循环没有处理对象，`withoutQuarantine` 转换也无作用，两者均移除。
++  副本校验、原有签名校验、同步、记账、入口切换与恢复清理流程保持不变。
++
++## Alternatives considered
++
++- **验证失败走管理员授权重试**：PrivilegedAppTransfer 是动作级 helper，
++  覆盖不了树扫描内的单文件元数据调用，且重试仍会命中同一个系统拒绝。
++- **先清源再复制**：删除源的 quarantine 同样被系统拒绝，且会改动
++  用户正在使用的原始应用，超出迁移工具的边界。
++- **保留 throw，仅提示用户**：Sparkle 更新过的应用在 macOS 27.2 上
++  全部不可迁移，问题会随更新扩散到更多应用。
++
++## Consequences
++
++迁移副本可能携带系统附加的 quarantine 标记，AppPorts 不保证复制源标记，
++也不主动清除目标标记；是否允许打开仍由 macOS 判断。下列两款应用的实机结果
++由 PR 作者提供，不能据此断言任意来源、任意标记状态的文件均已获系统批准。
++旧版清单即使记录过 quarantine，比较时也通过 `portableAttributes` 过滤，
++不会仅因这个标记而报 extended_attributes 差异。其他要求保留的属性、内容、
++身份或权限发生差异时，既有校验仍会拒绝继续或保留待清理副本。
++
++## Verification
++
++### 本地清理验证
++
++- macOS 27.0.1、Xcode 27.0：arm64/x86_64 Release `xcodebuild clean build` 通过。
++- 独立测试宿主执行 `AppMigrationServiceTests` 61 项、`AppTransferTransactionTests` 76 项、
++  `ContainerVolumeMigratorTests` 93 项、`DataDirMoverTests` 50 项及 quarantine 回归 1 项，
++  共 281 项通过（含参数化用例共执行 325 次），没有失败或跳过。
++- `MigrationSigningIntegrationTests` 使用外置 APFS 卷上的独立 UUID 样本目录，3 项通过：
++  签名应用迁移和元数据保留、拒绝重签沙盒应用、应用及聊天数据库/附件往返；迁移后新增
++  数据库记录在迁回后仍存在。样本不使用已安装应用或真实聊天数据。
++- 本次未跑全量测试，未实测真实容器挂载/卸载，也未复现作者 macOS 27.2 的真实应用场景。
++  原始构建和测试结果位于 `/tmp/AppPorts-PR103-cleanup.QujOj8/`。
++
++### PR 作者提供的验证
++
++- `AppPortsTests/TreeCopySessionQuarantineTests.swift`：清单注入
++  quarantine 后 `verifyCopy` 通过，注入普通应用属性仍失败，防止修复
++  滑向"忽略全部属性差异"。
++- `FileCopierTests`、`AppTransferTransactionTests`、`DataPathPolicyTests`
++  共 101 项全部通过。
++- 本机（QBJ8 Apple Development 签名 + hardened runtime 的 Release 构建）
++  真实迁移 WeChat.app 1.53 GB：19:14:06 完成入口切换，本地 stub 指向
++  `/Volumes/SanDisk/Applications/AppPorts.noindex/WeChat.app`，两侧列表
++  均显示"已链接"，任务中心清空后无遗留。
++- 同一构建真实迁移 RedPot.app 137 MB：入口切换完成，两侧均显示"已链接"；
++  旧本地副本因归属复核未通过按既有策略保留在
++  `/Applications/.appports-entry-ED1CF64D-BD4F-4438-A71E-0E67BD7C0F78`，
++  不影响应用运行。
+```
+
+**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +1/-22)
+```diff
+@@ -490,19 +490,8 @@ final class AppTransferTransaction {
+                 try journal.save()
+             }, progressHandler: progress)
+         try checkpoint(.copied, journal)
+-        // Preserve the historical application-only quarantine removal. It is
+-        // the sole allowed metadata difference and never touches the source.
+         let candidate = journal.record.candidateURL
+-        if journal.record.direction == .migrate {
+-            for entry in snapshot.entries where entry.extendedAttributes["com.apple.quarantine"] != nil {
+-                let url = entry.path.isEmpty ? candidate : candidate.appendingPathComponent(entry.path)
+-                if removexattr(url.path, "com.apple.quarantine", XATTR_NOFOLLOW) != 0, errno != ENOATTR {
+-                    throw Self.posix(url)
+-                }
+-            }
+-        }
+-        let expected = journal.record.direction == .migrate ? withoutQuarantine(snapshot) : snapshot
+-        try TreeCopySession.verifyCopy(at: candidate, against: expected, profile: Self.copyProfile)
++        try TreeCopySession.verifyCopy(at: candidate, against: snapshot, profile: Self.copyProfile)
+         try verifySignatures(journal.record, root: candidate)
+         DataTransferSession.progress?.begin(.synchronizing,
+             detail: "应用文件和签名已检查，正在等待存储设备确认写入完成。".localized)
+@@ -1170,16 +1159,6 @@ final class AppTransferTransaction {
+         }
+     }
+ 
+-    private func withoutQuarantine(_ snapshot: TreeCopySnapshot) -> TreeCopySnapshot {
+-        TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership, ownershipCompatibility: snapshot.ownershipCompatibility,
+-            entries: snapshot.entries.map { item in
+-                .init(path: item.path, kind: item.kind, identity: item.identity, mode: item.mode, uid: item.uid, gid: item.gid,
+-                    flags: item.flags, birthTime: item.birthTime, modificationTime: item.modificationTime,
+-                    extendedAttributes: item.extendedAttributes.filter { $0.key != "com.apple.quarantine" }, resourceFork: item.resourceFork, acl: item.acl,
+-                    size: item.size, digest: item.digest, linkTarget: item.linkTarget, hardlinkGroup: item.hardlinkGroup)
+-            }, excludedRootEntries: snapshot.excludedRootEntries)
+-    }
+-
+     private func handle(_ error: Error, journal: Journal) throws -> AppTransferResult {
+         journal.record.recoverableReason = error.localizedDescription
+         if journal.record.isSwitchComplete || (try? observeActivation(journal.record)) == true {
+```
+
+**File**: `AppPorts/Utils/TreeCopySession.swift` (modified, +5/-1)
+```diff
+@@ -38,8 +38,12 @@ actor TreeCopySession {
+     // downloaded file is opened or renamed, including our deletion rename.
+     // Preserve those OS-managed tags in place; copying or comparing them as
+     // application metadata causes false conflicts and can replay stale grants.
++    // Quarantine additionally marks a copied bundle as a newly downloaded app,
++    // which makes macOS 27 gate reads of the staged copy on its app
++    // assessment; a migration replica is not a download, so never replay it.
+     // POSIX permissions, filesystem ACLs and application xattrs remain verified.
+-    nonisolated private static let systemManagedAttributes: Set<String> = ["com.apple.provenance", "com.apple.macl"]
++    nonisolated private static let systemManagedAttributes: Set<String> =
++        ["com.apple.provenance", "com.apple.macl", "com.apple.quarantine"]
+ 
+     // Finder display settings are disposable, not application data. Limit
+     // this exception to ordinary, unshared files; never hide a same-name
+```
+
+**File**: `AppPortsTests/TreeCopySessionQuarantineTests.swift` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++import Darwin
++import XCTest
++@testable import AppPorts
++
++final class TreeCopySessionQuarantineTests: XCTestCase {
++    func testVerificationIgnoresQuarantineButKeepsApplicationAttributes() throws {
++        let base = FileManager.default.temporaryDirectory
++        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
++        let root = base.appendingPathComponent("TreeCopyQuarantine-\(UUID().uuidString)", isDirectory: true)
++        let source = root.appendingPathComponent("Source", isDirectory: true)
++        try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
++        let file = source.appendingPathComponent("payload")
++        try Data("payload".utf8).write(to: file)
++        try FileManager.default.setAttributes([.posixPermissions: 0o444], ofItemAtPath: file.path)
++        defer { try? FileManager.default.removeItem(at: root) }
++
++        let snapshot = try TreeCopySession.snapshot(at: source, profile: .appBundle)
++        // Older manifests replayed the source quarantine into the ledger, so a
++        // recorded marker must not fail verification against a clean replica.
++        let quarantinedSnapshot = withInjectedAttribute(snapshot, key: "com.apple.quarantine",
++                                                        value: Data("0081;test;AppPorts;".utf8))
++
++        let replica = root.appendingPathComponent("Replica", isDirectory: true)
++        try FileManager.default.copyItem(at: source, to: replica)
++        XCTAssertNoThrow(try TreeCopySession.verifyCopy(at: replica, against: quarantinedSnapshot, profile: .appBundle),
++                         "a recorded quarantine must not fail verification of a clean replica")
++
++        let applicationSnapshot = withInjectedAttribute(snapshot, key: "com.appports.test",
++                                                        value: Data("keep".utf8))
++        XCTAssertThrowsError(try TreeCopySession.verifyCopy(at: replica, against: applicationSnapshot, profile: .appBundle),
++                             "application attributes must still participate in verification")
++    }
++
++    private func withInjectedAttribute(_ snapshot: TreeCopySnapshot, key: String, value: Data) -> TreeCopySnapshot {
++        var entries = snapshot.entries
++        for index in entries.indices where entries[index].path == "payload" {
++            var attributes = entries[index].extendedAttributes
++            attributes[key] = value
++            entries[index] = TreeCopySnapshot.Entry(path: entries[index].path, kind: entries[index].kind,
++                identity: entries[index].identity, mode: entries[index].mode, uid: entries[index].uid,
++                gid: entries[index].gid, flags: entries[index].flags, birthTime: entries[index].birthTime,
++                modificationTime: entries[index].modificationTime, extendedAttributes: attributes,
++                resourceFork: entries[index].resourceFork, acl: entries[index].acl, size: entries[index].size,
++                digest: entries[index].digest, linkTarget: entries[index].linkTarget,
++                hardlinkGroup: entries[index].hardlinkGroup)
++        }
++        return TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership,
++            ownershipCompatibility: snapshot.ownershipCompatibility, entries: entries,
++            excludedRootEntries: snapshot.excludedRootEntries)
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `5c75c03f` (2026-10-29)
-**Commit Message**: fix: keep offline mount sizes incomplete without manual pause
+### Incident Patch 3: `a2405213` (2026-11-02)
+**Commit Message**: fix: clean up quarantine migration checks and test fixture
 
-**File**: `.agents/notes/implemented/bug-fix/2026-10-30-readable-offline-mount-guards.md` (modified, +5/-1)
+**File**: `.agents/notes/implemented/bug-fix/2026-11-01-migration-replica-quarantine.md` (modified, +25/-11)
 ```diff
-@@ -6,13 +6,15 @@ Status: implemented
- 
- 用户提供的微信 4.1.15 / macOS 27.0.1 崩溃报告显示 weakly_canonical → filesystem_error → 未处理异常 → abort。原保护目录使用 000，卸载后应用访问子路径会被拒绝。本机隔离 C++ 实测确认 000 下不存在的子路径返回 EACCES（13），500 下相同查找不抛异常。报告没有携带实际失败路径和错误码，因此这证明触发机制，与崩溃高度吻合，不构成微信根因完全确诊或数据库损坏证据。用户批准实现“允许读取与路径访问、禁止写入”的方向。
- 
-+500 目录可枚举，断盘但未手动暂停时不能再依赖读取失败判断容量不完整，否则会显示完整的 0 字节，并将祖先的缺失汇总缓存为完整结果。
-+
+@@ -21,11 +21,11 @@ hardened 进程对该副本的 open、pread、fgetxattr、
  ## Decision
  
- MountPointLease 在核对目录身份和空内容后，将底层本地目录保护为 500。挂载层上的业务卷权限不变；卸载或断盘后本地入口允许当前用户读取和进入，新建文件与目录仍被拒绝。统一调整共享租约，避免迁移、主动卸载、重挂和恢复准备各自采用不同策略；不改变迁移账本、签名、版本或安装版。
+ - `TreeCopySession.systemManagedAttributes` 增加 `com.apple.quarantine`：
+-  清单不记录、比较不参与、`applyMetadata` 不回放。与该文件对
+-  provenance/macl 的既有处理及 FileCopier 的 `removeQuarantine` 语义对齐。
+-- `prepareCandidate` 的移除循环对 EACCES/EPERM 降级为 WARN 日志并继续，
+-  仅其他错误仍然失败。副本保留已获系统批准（0082）的 quarantine 标记
+-  不影响启动与签名验证，为此终止迁移得不偿失。
++  清单不记录、比较不参与、`applyMetadata` 不回放，也不主动删除目标上的标记。
++  这与该文件对 provenance/macl 的既有处理一致，适用于应用、普通数据和容器复制。
++- `prepareCandidate` 直接使用复制器返回的清单校验副本。清单已不含 quarantine，
++  因此删除标记的循环没有处理对象，`withoutQuarantine` 转换也无作用，两者均移除。
++  副本校验、原有签名校验、同步、记账、入口切换与恢复清理流程保持不变。
  
- 租约仍接受旧 000 目录，安全打开并核实为空后转为 500；持有描述符的后续验证精确检查 500，不因为兼容历史值而接受租约创建后的权限变化。恢复准备检查接受两种保护模式，核对同一 inode 与转换后的 500。非空目录、软链、替换目录和新开放写权限继续阻断。
+ ## Alternatives considered
  
--容量扫描只在可信暂停记录精确匹配、未挂载、真实目录且为保护模式时生成预期暂停问题。500 可读不等于外盘业务数据为空；目录和祖先容量继续不完整、不写缓存、不引导用户补权限。旧 000 同样支持；普通权限错误、挂载中的错误、父目录错误和替换软链不享有豁免。沿用已有暂停提示，不新增文案。
-+容量扫描对可信挂载记录精确匹配、未挂载、真实目录且为保护模式的入口生成预期不可用问题，不以是否手动暂停为条件。沿用 pausedMountDirectories 传递这些入口，手动暂停标记仍独立读取账本。500 可读不等于外盘业务数据为空；目录和祖先容量继续不完整、不写缓存、不引导用户补权限。旧 000 同样支持；普通权限错误、挂载中的错误、父目录错误和替换软链不享有豁免。沿用已有暂停提示，不新增文案。
+@@ -38,15 +38,29 @@ hardened 进程对该副本的 open、pread、fgetxattr、
  
- 后台重挂检查在暂停和卷在线判断之前升级可信旧 000 空目录，保持暂停及账本不变。历史保留迁移的事务与祖先沿用正常重挂的 ownedIDs；未开始的恢复沿用兼容校验，已开始恢复则由原恢复路径负责，不新增背景修改。非空、重叠或不可访问目录保持阻断。仍挂载的业务卷不为升级主动卸载；它在新版正常卸载后转换，或盘离线后由后台检查转换。
+ ## Consequences
  
-@@ -31,6 +33,8 @@ MountPointLease 在核对目录身份和空内容后，将底层本地目录保
+-外置盘上的迁移副本此后可能携带 quarantine 标记，与 QQ/Edge 等
+-历史副本的"无标记"状态不同。该标记记录的是源应用已被批准的来源，
+-Gatekeeper 对副本按已批准处理；若 macOS 未来对无管理授权进程读取
+-此类副本收紧，需要重新评估（当前同证书 hardened 探针实测读取正常）。
+-清理路径对旧版清单（记录过 quarantine）与过滤后扫描的比较仍会报
+-extended_attributes 差异并保留副本，属安全行为，由既有重试消化。
++迁移副本可能携带系统附加的 quarantine 标记，AppPorts 不保证复制源标记，
++也不主动清除目标标记；是否允许打开仍由 macOS 判断。下列两款应用的实机结果
++由 PR 作者提供，不能据此断言任意来源、任意标记状态的文件均已获系统批准。
++旧版清单即使记录过 quarantine，比较时也通过 `portableAttributes` 过滤，
++不会仅因这个标记而报 extended_attributes 差异。其他要求保留的属性、内容、
++身份或权限发生差异时，既有校验仍会拒绝继续或保留待清理副本。
  
  ## Verification
  
-+PR #101 反馈修复的扫描器 65 项、容量汇总和目录树 36 项、展示 9 项全部通过，0 失败、0 跳过。新增回归使用真实临时目录，覆盖未手动暂停的断盘和待重挂、500 目录容量未知、祖先汇总不完整及不复用缓存。挂载和卷在线状态通过现有注入边界模拟；本轮未跑全量测试或真实外盘拔插。arm64/x86_64 Release clean build 通过。
++### 本地清理验证
 +
- 专项 260 项通过，0 失败、0 跳过，覆盖挂载安全、迁移器、重挂恢复、代理、恢复准备、扫描、缓存、卷状态和弹盘。旧目录升级覆盖无事务/生产迁移保留事务 × 暂停/离线四种组合，以及非空目录拒绝升级并保留内容与模式。最终 arm64/x86_64 Release clean build 通过；生产 MountPointLease 与原生 C++ weakly_canonical 联合实测确认 EACCES → 正常返回。
- 
- 私有 APFS 真实测试 1 项通过，包含 14 组旧记录和中断恢复场景。实测正常迁移、主动卸载暴露 500 空目录、读取成功且文件创建 EACCES、暂停容量未知、重挂、最新数据重连和迁回、旧 noowners/中断继续/撤销/自动回滚及清理。测试卷已删除、镜像已卸载，核对归属和无打开文件后清除本轮夹具。结果和日志见本机 build/Validation/readable-mount-guards-20261030/REPORT.md，完整 xcresult 见 build/Validation/v3-real-mount-20261029T215722Z-543b71ae/。
++- macOS 27.0.1、Xcode 27.0：arm64/x86_64 Release `xcodebuild clean build` 通过。
++- 独立测试宿主执行 `AppMigrationServiceTests` 61 项、`AppTransferTransactionTests` 76 项、
++  `ContainerVolumeMigratorTests` 93 项、`DataDirMoverTests` 50 项及 quarantine 回归 1 项，
++  共 281 项通过（含参数化用例共执行 325 次），没有失败或跳过。
++- `MigrationSigningIntegrationTests` 使用外置 APFS 卷上的独立 UUID 样本目录，3 项通过：
++  签名应用迁移和元数据保留、拒绝重签沙盒应用、应用及聊天数据库/附件往返；迁移后新增
++  数据库记录在迁回后仍存在。样本不使用已安装应用或真实聊天数据。
++- 本次未跑全量测试，未实测真实容器挂载/卸载，也未复现作者 macOS 27.2 的真实应用场景。
++  原始构建和测试结果位于 `/tmp/AppPorts-PR103-cleanup.QujOj8/`。
++
++### PR 作者提供的验证
++
+ - `AppPortsTests/TreeCopySessionQuarantineTests.swift`：清单注入
+   quarantine 后 `verifyCopy` 通过，注入普通应用属性仍失败，防止修复
+   滑向"忽略全部属性差异"。
 ```
 
-**File**: `AppPorts/Utils/DataDirScanner.swift` (modified, +2/-1)
+**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +1/-28)
 ```diff
-@@ -904,8 +904,9 @@ actor DataDirScanner {
-             guard record.bundleIdentifier == bundleID || legacyIdentityMatches else { continue }
-             mountRecordsByPath[url.path] = record
-             mountRecordsByPath[path] = record
-+            // Offline guards hide external data even when automatic mounting is not paused.
-             if recoveryInspection?.validationError == nil,
--               (try? mountStore.isManuallyUnmounted(record)) == true {
-+               !isMountPoint(url) || (try? mountStore.isManuallyUnmounted(record)) == true {
-                 pausedMountDirectories.insert(url)
-                 // Foundation may report the /private/var spelling for a /var fixture.
-                 // Resolve only the parent so the leaf cannot become a symlink exemption.
-```
-
-**File**: `AppPortsTests/DataDirScannerTests.swift` (modified, +19/-5)
-```diff
-@@ -1565,7 +1565,16 @@ final class DataDirScannerTests: XCTestCase {
-         try await assertPausedGuardAndAncestorSizes(mode: 0o500)
+@@ -490,25 +490,8 @@ final class AppTransferTransaction {
+                 try journal.save()
+             }, progressHandler: progress)
+         try checkpoint(.copied, journal)
+-        // Preserve the historical application-only quarantine removal. It is
+-        // the sole allowed metadata difference and never touches the source.
+         let candidate = journal.record.candidateURL
+-        if journal.record.direction == .migrate {
+-            for entry in snapshot.entries where entry.extendedAttributes["com.apple.quarantine"] != nil {
+-                let url = entry.path.isEmpty ? candidate : candidate.appendingPathComponent(entry.path)
+-                if removexattr(url.path, "com.apple.quarantine", XATTR_NOFOLLOW) != 0, errno != ENOATTR {
+-                    // macOS 27 refuses quarantine removal even to the file's
+-                    // creator, so a Sparkle-updated source can leave the marker
+-                    // on the replica. The marker records an already-approved
+-                    // download; keeping it is safe, failing the migration is not.
+-                    guard errno == EACCES || errno == EPERM else { throw Self.posix(url) }
+-                    AppLogger.shared.logContext("副本 quarantine 由系统保留",
+-                        details: [("relative_path", entry.path), ("errno", String(errno))], level: "WARN")
+-                }
+-            }
+-        }
+-        let expected = journal.record.direction == .migrate ? withoutQuarantine(snapshot) : snapshot
+-        try TreeCopySession.verifyCopy(at: candidate, against: expected, profile: Self.copyProfile)
++        try TreeCopySession.verifyCopy(at: candidate, against: snapshot, profile: Self.copyProfile)
+         try verifySignatures(journal.record, root: candidate)
+         DataTransferSession.progress?.begin(.synchronizing,
+             detail: "应用文件和签名已检查，正在等待存储设备确认写入完成。".localized)
+@@ -1176,16 +1159,6 @@ final class AppTransferTransaction {
+         }
      }
  
--    private func assertPausedGuardAndAncestorSizes(mode: Int) async throws {
-+    func testReadableOfflineGuardWithoutManualPauseKeepsSizesIncomplete() async throws {
-+        try await assertPausedGuardAndAncestorSizes(mode: 0o500, manuallyPaused: false, volumeOnline: false)
-+    }
-+
-+    func testReadablePendingGuardWithoutManualPauseKeepsSizesIncomplete() async throws {
-+        try await assertPausedGuardAndAncestorSizes(mode: 0o500, manuallyPaused: false)
-+    }
-+
-+    private func assertPausedGuardAndAncestorSizes(mode: Int, manuallyPaused: Bool = true,
-+                                                  volumeOnline: Bool = true) async throws {
-         let workspace = try makeWorkspace()
-         defer { cleanupWorkspace(workspace.rootURL) }
-         let appURL = try createAppBundle(named: "Example.app", bundleID: "com.example.test", in: workspace.appsURL)
-@@ -1577,18 +1586,18 @@ final class DataDirScannerTests: XCTestCase {
-         let record = ContainerMountRecord(appName: "Example", bundleIdentifier: "com.example.test", dataDirType: DataDirType.containers.rawValue,
-             mountPointPath: source.path, volumeUUID: "PAUSED", volumeName: "Paused", externalRootPath: workspace.externalRootURL.path)
-         try store.upsert(record)
--        try store.setManuallyUnmounted(true, record: record)
-+        try store.setManuallyUnmounted(manuallyPaused, record: record)
-         // Prime the ancestor cache before the guard becomes unavailable.
-         XCTAssertTrue(measureDirectorySize(at: parent).isComplete)
-         try fileManager.setAttributes([.posixPermissions: mode], ofItemAtPath: source.path)
-         defer { try? fileManager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: source.path) }
-         guard mode != 0 || !fileManager.isReadableFile(atPath: source.path) else { throw XCTSkip("当前进程可绕过测试目录的文件权限") }
--        let scanner = DataDirScanner(homeDir: workspace.homeURL, mountStore: store, isVolumeOnline: { _ in true })
-+        let scanner = DataDirScanner(homeDir: workspace.homeURL, mountStore: store, isVolumeOnline: { _ in volumeOnline })
-         let app = AppItem(name: "Example.app", path: appURL, status: "本地")
-         let scan = await scanner.scanLibraryDirsWithDiagnostics(for: app)
-         var item = try XCTUnwrap(scan.items.first { $0.path.standardizedFileURL == source.standardizedFileURL })
--        XCTAssertTrue(item.autoMountPaused)
--        XCTAssertEqual(item.status, DataDirStatus.pendingMount)
-+        XCTAssertEqual(item.autoMountPaused, manuallyPaused)
-+        XCTAssertEqual(item.status, volumeOnline ? DataDirStatus.pendingMount : DataDirStatus.volumeMissing)
-         XCTAssertTrue(item.canRestore)
-         XCTAssertFalse(scan.readIssues.contains(where: \.requiresAttention))
-         let measured = measureDataDirectorySize(for: item, pausedMountDirectories: scan.pausedMountDirectories)
-@@ -1602,6 +1611,11 @@ final class DataDirScannerTests: XCTestCase {
-         XCTAssertEqual(ancestor.bytes, 7)
-         XCTAssertFalse(ancestor.isComplete)
-         XCTAssertFalse(ancestor.readIssues.contains(where: \.requiresAttention))
-+        let addedPayload = parent.appendingPathComponent("added-payload")
-+        try Data("new".utf8).write(to: addedPayload)
-+        let remeasured = measureDirectorySize(at: parent, pausedMountDirectories: scan.pausedMountDirectories)
-+        XCTAssertEqual(remeasured.bytes, 10, "Incomplete ancestor totals must not be cached")
-+        XCTAssertFalse(remeasured.isComplete)
-         let total = DataDirDisplaySizeSummary(items: [item], hasReadIssues: !measured.readIssues.isEmpty)
-         XCTAssertTrue(total.isIncomplete)
+-    private func withoutQuarantine(_ snapshot: TreeCopySnapshot) -> TreeCopySnapshot {
+-        TreeCopySnapshot(restoredRootOwnership: snapshot.restoredRootOwnership, ownershipCompatibility: snapshot.ownershipCompatibility,
+-            entries: snapshot.entries.map { item in
+-                .init(path: item.path, kind: item.kind, identity: item.identity, mode: item.mode, uid: item.uid, gid: item.gid,
+-                    flags: item.flags, birthTime: item.birthTime, modificationTime: item.modificationTime,
+-                    extendedAttributes: item.extendedAttributes.filter { $0.key != "com.apple.quarantine" }, resourceFork: item.resourceFork, acl: item.acl,
+-                    size: item.size, digest: item.digest, linkTarget: item.linkTarget, hardlinkGroup: item.hardlinkGroup)
+-            }, excludedRootEntries: snapshot.excludedRootEntries)
+-    }
+-
+     private func handle(_ error: Error, journal: Journal) throws -> AppTransferResult {
+         journal.record.recoverableReason = error.localizedDescription
+         if journal.record.isSwitchComplete || (try? observeActivation(journal.record)) == true {
+```
+
+**File**: `AppPortsTests/TreeCopySessionQuarantineTests.swift` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ import XCTest
  
+ final class TreeCopySessionQuarantineTests: XCTestCase {
+     func testVerificationIgnoresQuarantineButKeepsApplicationAttributes() throws {
+-        let base = URL(fileURLWithPath: "/Volumes/SanDisk/Projects/AppPorts/.tmp-diag")
++        let base = FileManager.default.temporaryDirectory
+         try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+         let root = base.appendingPathComponent("TreeCopyQuarantine-\(UUID().uuidString)", isDirectory: true)
+         let source = root.appendingPathComponent("Source", isDirectory: true)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #103** (2026-11-02): fix: 兼容 macOS 27 受保护的 quarantine，修复带标记应用迁移失败 (@Souitou-iop)
+- **PR #102** (2026-10-31): feat: 新增磁盘映像应用库并优化扫描与迁移 (@trah01)
 - **PR #101** (2026-10-29): fix: 离线挂载点改为只读访问并保留写入保护 (@wzh4869)
 - **PR #100** (2026-10-28): fix: 支持旧数据副本授权清理并修正签名锁回归测试 (@wzh4869)
 - **PR #99** (2026-10-28): fix: 保留手动卸载意图，补齐旧软链恢复和操作受阻诊断 (@wzh4869)
 - **PR #98** (2026-10-28): fix(admission): 自动回收已退出进程的登记文件 (@wzh4869)
-- **PR #97** (2026-10-28): feat: 支持国内应用内更新并修复更新窗口 (@wzh4869)
-- **PR #96** (2026-10-28): style: 统一应用列表与目录按钮样式，优化页面切换动画 (@trah01)
 
 ---
 
@@ -1645,29 +1636,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. authorize retained data cleanup and update signature lock regression
+## X. resolve PR 102 conflicts with shared offline guards
 
 **RULE**:
-When implementing operations in `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a51a6191`: authorize retained data cleanup and update signature lock regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e2f3c1d`: resolve PR 102 conflicts with shared offline guards. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/architecture/2026-10-01-data-path-copy-safety.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-root 所有的数据旧副本只在用户指定记录重试时授权清理，见[旧数据副本授权清理](../bug-fix/2026-10-28-data-cleanup-administrator-authorization.md)；普通进程继续持锁和写账本。
-
+当前[统一离线挂载保护](../bug-fix/2026-10-30-readable-offline-mount-guards.md)对所有受管空入口采用 0500，接管离线权限规则；原有身份、空目录和卸载前检查继续适用。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+2026-10-29 的[微信离线媒体入口只读保护](../bug-fix/2026-10-29-微信离线媒体入口只读保护.md)仅对精确 msg/business 成员采用 0500，接管这些入口的离线权限规则；原有身份、空目录和卸载前检查继续适用。
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a51a6191` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e2f3c1d` are properly handled with clean fallback behavior.

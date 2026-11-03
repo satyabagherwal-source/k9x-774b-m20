@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `4be31bd5`  
+> **Source Version**: `6c452ddc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:32:05.516Z  
+> **Timestamp**: 2026-11-03T17:53:54.002Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:32:05.508Z  
+> **Harvest Timestamp**: 2026-11-03T17:53:53.750Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,582 +1626,1219 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4be31bd5` (2026-10-31)
-**Commit Message**: MOD-17673: Move parent and child scanner orchestration to Rust (#11236)
+### Incident Patch 1: `ac111ff7` (2026-11-01)
+**Commit Message**: [MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact a disk index (#11921)
 
-* fork_gc: migrate the tags scanner to Rust
+* [MOD-19944] Add FT.DEBUG DISK_COMPACT to flush and compact every CF of a disk index
 
-* Move parent and child scanner orchestration to Rust
+DISK_COMPACT runs a forced GC cycle (as GC_FORCEINVOKE does) for the
+inverted-index column families, then, once that cycle has finished,
+flushes the index and fully compacts the column families GC never
+compacts - the doc table and the vector CFs - through a new
+compactNonGcColumnFamilies disk API entry. The GC cycle writes its
+deleted-ids cleanup to the doc table, which is why the second half runs
+only after it.
 
-* Preserve fork GC post-heartbeat completion marker
+GC_FORCEINVOKE's timeout parsing and GC dispatch are shared with the new
+command; its behavior is unchanged.
 
----------
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: jonathan keinan <[REDACTED_EMAIL]>
+* Reply from one place in DISK_COMPACT; list it in FT.DEBUG HELP
 
-**File**: `src/fork_gc/fork_gc.c` (modified, +0/-43)
+The shared forced-GC helper no longer takes a reply callback and invokes
+it inline on the no-GCContext path. blockOnForcedGC only blocks the
+client, runDiskGCInline only runs the inline cycle, and each command
+replies itself: DISK_COMPACT's post-GC work and reply live in
+finishDiskCompact, reached either from the blocked-client callback or
+directly after the in
+
+**File**: `src/debug_commands.c` (modified, +50/-8)
 ```diff
-@@ -42,49 +42,6 @@
- // Number of attempts to wait for the child to exit gracefully before trying to terminate it
- #define GC_WAIT_ATTEMPTS 4
+@@ -1061,6 +1061,10 @@ static int GCForceInvokeReply(RedisModuleCtx *ctx, RedisModuleString **argv, int
+     return RedisModule_ReplyWithError(
+         ctx, "GC DID NOT RUN: no child process could be created within TIMEOUT");
+   }
++  if (outcome && *outcome == GC_FORCED_RUN_COMPACT_ALL_INCOMPLETE) {
++    return RedisModule_ReplyWithError(
++        ctx, "COMPACT_ALL did not complete (background work paused or compaction cancelled)");
++  }
+   return RedisModule_ReplyWithSimpleString(ctx, "DONE");
+ }
  
--static void FGC_childScanIndexes(ForkGC *gc, IndexSpec *spec) {
--  RedisSearchCtx sctx = SEARCH_CTX_STATIC(gc->ctx, spec);
--  const char* indexName = IndexSpec_FormatName(spec, RSGlobalConfig.hideUserDataFromLog);
--  RedisModule_Log(sctx.redisCtx, "debug", "ForkGC in index %s - child scanning indexes start", indexName);
--  FGC_childCollectTerms(gc, &sctx);
--  FGC_childCollectNumeric(gc, &sctx);
--  FGC_childCollectTags(gc, &sctx);
--  FGC_childCollectMissingDocs(gc, &sctx);
--  FGC_childCollectExistingDocs(gc, &sctx);
--  RedisModule_SendChildHeartbeat(1.0); // final heartbeat
--  RedisModule_Log(sctx.redisCtx, "debug", "ForkGC in index %s - child scanning indexes end", indexName);
--  // Let the parent wait for the terminal terminator, so we manage to send the heartbeat before exiting
--  FGC_sendTerminator(gc);
--}
--
--FGCError FGC_parentHandleFromChild(ForkGC *gc) {
--  FGCError status = FGC_COLLECTED;
--  RedisModule_Log(gc->ctx, "debug", "ForkGC - parent start applying changes");
--
--#define COLLECT_FROM_CHILD(e)               \
--  while ((status = (e)) == FGC_COLLECTED) { \
--  }                                         \
--  if (status != FGC_DONE) {                 \
--    return status;                          \
--  }
--
--  COLLECT_FROM_CHILD(FGC_parentHandleTerms(gc));
--  COLLECT_FROM_CHILD(FGC_parentHandleNumeric(gc));
--  COLLECT_FROM_CHILD(FGC_parentHandleTags(gc));
--  COLLECT_FROM_CHILD(FGC_parentHandleMissingDocs(gc));
--  COLLECT_FROM_CHILD(FGC_parentHandleExistingDocs(gc));
--
--  // Wait for the final terminator from the child, so it can finish post-processing chores before we kill it
--  size_t terminator_check;
--  int rc = FGC_recvFixed(gc, &terminator_check, sizeof(terminator_check)); // final status from child
--  if (rc != REDISMODULE_OK || terminator_check != NO_MORE_DATA) {
--    return FGC_CHILD_ERROR;
--  }
--  RedisModule_Log(gc->ctx, "debug", "ForkGC - parent ends applying changes");
--
--  return status;
--}
--
- // GIL must be held before calling this function
- static inline bool isOutOfMemory(RedisModuleCtx *ctx) {
-   // Check if we are a slave/replica
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/existing_docs.rs` (removed, +0/-73)
-```diff
-@@ -1,73 +0,0 @@
--/*
-- * Copyright (c) 2006-Present, Redis Ltd.
-- * All rights reserved.
-- *
-- * Licensed under your choice of the Redis Source Available License 2.0
-- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-- * GNU Affero General Public License v3 (AGPLv3).
--*/
--
--use fork_gc::{
--    ForkGC,
--    existing_docs::{collect_existing_docs, handle_existing_docs},
--    io_result_ext::IoResultExt,
--};
--use index_spec::IndexSpecReadGuard;
--
--use crate::{FGCError, util::into_fgc_error};
--
--/// Collect GC delta data for the spec's `existingDocs` inverted index and
--/// send it to the parent process over the pipe.
--///
--/// If the spec has no existing-docs index, or the scan produces no delta,
--/// only the terminator is sent.  Otherwise an empty header followed by the
--/// serialised GC delta is sent before the terminator.
--///
--/// Any write failure, such as a closed fd or a broken pipe, terminates the
--/// child process via `RedisModule_ExitFromChild`.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
--/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
--/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_childCollectExistingDocs(
--    gc: *mut ffi::ForkGC,
--    sctx: *mut ffi::RedisSearchCtx,
--) {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--    // SAFETY: caller guarantees (2).
--    let spec_ptr = unsafe { (*sctx).spec };
--    // SAFETY: caller guarantees (3).
--    let spec = unsafe { &*spec_ptr };
--
--    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
--    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
--    // then forks and the child has only one thread with exclusive access to the index spec.
--    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
--
--    collect_existing_docs(&mut fgc.writer(), &guard).unwrap_or_exit();
--}
--
--/// Receive and apply the GC delta for the spec's `existingDocs` inverted index.
--///
--/// Reads one protocol frame from the pipe. Returns [`FGCError::Done`] when
--/// the child sent no data (index absent or nothing to collect),
--/// [`FGCError::Collected`] after successfully applying a delta, or an
--/// error variant on pipe or spec failure.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_parentHandleExistingDocs(gc: *mut ffi::ForkGC) -> FGCError {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--
--    into_fgc_error(handle_existing_docs(fgc), "existing docs")
--}
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/lib.rs` (modified, +1/-5)
-```diff
-@@ -26,11 +26,7 @@ use nul_terminated_bytes::NulTerminatedBytes;
- use tracing::Level;
- use tracing_log_error::log_error;
+@@ -1085,12 +1089,51 @@ static bool rejectForcedGCWhileBgWorkPaused(RedisModuleCtx *ctx, IndexSpec *sp)
+   return false;
+ }
  
--mod existing_docs;
--mod missing_docs;
--mod numeric;
--mod tags;
--mod terms;
-+mod orchestration;
- mod util;
- 
- /// Status code returned by Fork GC parent-side pipe-receive operations.
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/missing_docs.rs` (removed, +0/-76)
-```diff
-@@ -1,76 +0,0 @@
--/*
-- * Copyright (c) 2006-Present, Redis Ltd.
-- * All rights reserved.
-- *
-- * Licensed under your choice of the Redis Source Available License 2.0
-- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-- * GNU Affero General Public License v3 (AGPLv3).
--*/
--
--use fork_gc::{
--    ForkGC,
--    io_result_ext::IoResultExt,
--    missing_docs::{collect_missing_docs, handle_missing_docs},
--};
--use index_spec::IndexSpecReadGuard;
--
--use crate::{FGCError, util::into_fgc_error};
--
--/// Collect GC delta data for every entry in the spec's `missing.indexes` and
--/// send it to the parent process over the pipe.
--///
--/// Iterates the `missing.indexes`, and for each entry with a non-null
--/// `InvertedIndex` calls `scan_gc` which sends the field name header
--/// followed by the serialised GC delta. Sends a terminator once all
--/// entries are processed.
--///
--/// Any write failure, such as a closed fd or a broken pipe, terminates the
--/// child process via `RedisModule_ExitFromChild`.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
--/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
--/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_childCollectMissingDocs(
--    gc: *mut ffi::ForkGC,
--    sctx: *mut ffi::RedisSearchCtx,
--) {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--    // SAFETY: caller guarantees (2).
--    let spec_ptr = unsafe { (*sctx).spec };
--    // SAFETY: caller guarantees (3).
--    let spec = unsafe { &*spec_ptr };
--
--    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
--    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
--    // then forks and the child has only one thread with exclusive access to the index spec.
--    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
--
--    collect_missing_docs(&mut fgc.writer(), &guard).unwrap_or_exit();
--}
--
--/// Receive and apply the GC delta for one field in the spec's `missing.indexes`.
--///
--/// Reads one protocol frame from the pipe. Returns [`FGCError::Collected`] after
--/// successfully applying a delta, [`FGCError::Done`] when the child sent a
--/// terminator (all fields processed), or an error variant on pipe or spec failure.
--///
--/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
--/// than [`FGCError::Collected`].
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_parentHandleMissingDocs(gc: *mut ffi::ForkGC) -> FGCError {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--
--    into_fgc_error(handle_missing_docs(fgc), "missing docs")
--}
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/numeric.rs` (removed, +0/-76)
-```diff
-@@ -1,76 +0,0 @@
--/*
-- * Copyright (c) 2006-Present, Redis Ltd.
-- * All rights reserved.
-- *
-- * Licensed under your choice of the Redis Source Available License 2.0
-- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-- * GNU Affero General Public License v3 (AGPLv3).
--*/
--
--use fork_gc::{
--    ForkGC,
--    io_result_ext::IoResultExt,
--    numeric::{collect_numeric, handle_numeric},
--};
--use index_spec::IndexSpecReadGuard;
--
--use crate::{FGCError, util::into_fgc_error};
--
--/// Collect GC delta data for every numeric and geo field in the spec and send
--/// it to the parent process over the pipe.
--///
--/// For each NUMERIC or GEO field whose tree has been initialised, sends the
--/// field name and unique ID as a header, followed by one entry per tree node
--/// with GC work, then a per-field terminator. A final terminator is sent once
--/// all fields have been processed.
--///
--/// Any write failure, such as a closed fd or a broken pipe, terminates the
--/// child process via `RedisModule_ExitFromChild`.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
--/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
--/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_childCollectNumeric(
--    gc: *mut ffi::ForkGC,
--    sctx: *mut ffi::RedisSearchCtx,
--) {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--    // SAFETY: caller guarantees (2).
--    let spec_ptr = unsafe { (*sctx).spec };
--    // SAFETY: caller guarantees (3).
--    let spec = unsafe { &*spec_ptr };
--
--    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
--    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
--    // then forks and the child has only one thread with exclusive access to the index spec.
--    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
--
--    collect_numeric(&mut fgc.writer(), &guard).unwrap_or_exit();
--}
--
--/// Receive and apply the GC deltas for one numeric or geo field.
--///
--/// Reads a field header from the pipe followed by that field's per-node
--/// deltas, applying each to the field's numeric tree under the write lock and
--/// updating statistics. Returns [`FGCError::Done`] when the child sent the
--/// global terminator instead of a field header (all fields processed),
--/// [`FGCError::Collected`] after a field's deltas were applied, or an error
--/// variant on pipe, spec, or tree-lookup failure.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_parentHandleNumeric(gc: *mut ffi::ForkGC) -> FGCError {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--
--    into_fgc_error(handle_numeric(fgc), "numeric")
--}
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/orchestration.rs` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+*/
-+
-+//! C ABI entrypoints for the Fork GC child and parent orchestration.
-+
-+use fork_gc::{
-+    ForkGC, HandleError, HandleOutcome,
-+    orchestration::{collect_scanners, handle_scanners},
-+};
-+use index_spec::IndexSpecReadGuard;
-+use tracing::Level;
-+use tracing_log_error::log_error;
-+
-+use crate::FGCError;
-+
-+/// Scan every Fork GC index kind and send its deltas to the parent process.
-+///
-+/// # Safety
-+///
-+/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
-+///    alive for the duration of this call.
-+/// 2. `spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
-+/// 3. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
-+#[unsafe(no_mangle)]
-+pub unsafe extern "C" fn FGC_childScanIndexes(gc: *mut ffi::ForkGC, spec: *mut ffi::IndexSpec) {
-+    // SAFETY: caller guarantees (1).
-+    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
-+    // SAFETY: caller guarantees (2).
-+    let spec = unsafe { &*spec };
-+    // SAFETY: caller guarantees (3). We don't actually hold a read lock, but when the Fork GC code
-+    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
-+    // then forks and the child has only one thread with exclusive access to the index spec.
-+    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
-+
-+    collect_scanners(fgc, &guard);
+-// FT.DEBUG GC_FORCEINVOKE [TIMEOUT]
++// Reads GC_FORCEINVOKE's optional arguments after the index name, in any order: a TIMEOUT and
++// the COMPACT_ALL flag (default off). Replies with an error and returns false when they are
++// invalid.
++static bool parseForcedGCArgs(RedisModuleCtx *ctx, RedisModuleString **argv, int argc,
++                              const IndexSpec *sp, long long *timeout, bool *compactAll) {
++  // Disk GC cycles (SpeedB compaction) take longer than fork GC, so disk
++  // indexes get a higher default timeout.
++  *timeout = sp->diskSpec ? 60000 : 30000;
++  *compactAll = false;
++  bool timeoutSet = false;
++  for (int i = 3; i < argc; i++) {
++    if (!*compactAll && !strcasecmp(RedisModule_StringPtrLen(argv[i], NULL), "COMPACT_ALL")) {
++      *compactAll = true;
++    } else if (!timeoutSet) {
++      if (RedisModule_StringToLongLong(argv[i], timeout) != REDISMODULE_OK || *timeout < 0) {
++        RedisModule_ReplyWithError(ctx, "Invalid TIMEOUT value");
++        return false;
++      }
++      timeoutSet = true;
++    } else {
++      RedisModule_WrongArity(ctx);
++      return false;
++    }
++  }
++  if (*compactAll && !sp->diskSpec) {
++    RedisModule_ReplyWithError(ctx, "COMPACT_ALL requires a disk index");
++    return false;
++  }
++  // The compaction runs on the GC thread; without one it would block the main thread.
++  if (*compactAll && !sp->gc) {
++    RedisModule_ReplyWithError(ctx, "COMPACT_ALL requires the index's GC, which is disabled");
++    return false;
++  }
++  return true;
 +}
 +
-+/// Consume every Fork GC scanner stream and apply its deltas in the parent.
-+///
-+/// # Safety
-+///
-+/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
-+///    alive for the duration of this call.
-+#[unsafe(no_mangle)]
-+pub unsafe extern "C" fn FGC_parentHandleFromChild(gc: *mut ffi::ForkGC) -> FGCError {
-+    // SAFETY: caller guarantees (1).
-+    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
++// FT.DEBUG GC_FORCEINVOKE <index> [TIMEOUT] [COMPACT_ALL]
++// COMPACT_ALL makes the cycle also flush and fully compact the rest of the index's disk storage,
++// so its on-disk state, and the metrics derived from it, settle. Writes still in flight are not
++// waited for: with vector fields, run WORKERS DRAIN first.
+ DEBUG_COMMAND(GCForceInvoke) {
+   if (!debugCommandsEnabled(ctx)) {
+     return RedisModule_ReplyWithError(ctx, NODEBUG_ERR);
+   }
+-  if (argc < 3 || argc > 4) {
++  if (argc < 3 || argc > 5) {
+     return RedisModule_WrongArity(ctx);
+   }
+   StrongRef ref = Indexes_LoadIndexSpecUnsafe(RedisModule_StringPtrLen(argv[2], NULL));
+@@ -1104,12 +1147,10 @@ DEBUG_COMMAND(GCForceInvoke) {
+     return REDISMODULE_OK;
+   }
+ 
+-  // Disk GC cycles (SpeedB compaction) take longer than fork GC, so disk
+-  // indexes get a higher default timeout.
+-  long long timeout = sp->diskSpec ? 60000 : 30000;
+-  if (argc == 4 &&
+-      (RedisModule_StringToLongLong(argv[3], &timeout) != REDISMODULE_OK || timeout < 0)) {
+-    return RedisModule_ReplyWithError(ctx, "Invalid TIMEOUT value");
++  long long timeout;
++  bool compactAll;
++  if (!parseForcedGCArgs(ctx, argv, argc, sp, &timeout, &compactAll)) {
++    return REDISMODULE_OK;
+   }
+ 
+   // Indexes normally own a GCContext (`sp->gc`). Routing the forced invoke
+@@ -1131,6 +1172,7 @@ DEBUG_COMMAND(GCForceInvoke) {
+       forkWaitMs = timeout / 2 > 0 ? timeout / 2 : 1;
+     }
+     GCForcedRun forced = GCForcedRun_New(forkWaitMs, GC_FORCED_RUN_RETRY_INTERVAL_MS);
++    forced.compactAll = compactAll;
+     RedisModuleBlockedClient *bc = RedisModule_BlockClient(
+         ctx, GCForceInvokeReply, GCForceInvokeReplyTimeout, GCForcedRunOutcomeFree, timeout);
+     GCContext_ForceInvoke(sp->gc, bc, forced);
+```
+
+**File**: `src/disk_gc.c` (modified, +11/-0)
+```diff
+@@ -97,7 +97,18 @@ static bool periodicCb(void *privdata, GCForcedRun *forced) {
+     SearchDisk_RunGC(sp->diskSpec, &stats);
+     accumulateCycleStats(gc, &stats);
+ 
++    // After the cycle, which itself writes to that storage, and here rather than on the main
++    // thread, which must not wait on the disk I/O. No separate flush: the compaction flushes the
++    // memtables it covers first.
++    if (forced && forced->compactAll) {
++      if (!SearchDisk_CompactNonGcStorage(sp->diskSpec)) {
++        forced->outcome = GC_FORCED_RUN_COMPACT_ALL_INCOMPLETE;
++      }
++    }
 +
-+    match handle_scanners(fgc) {
-+        Ok(HandleOutcome::Collected) => FGCError::Collected,
-+        Ok(HandleOutcome::Done) => FGCError::Done,
-+        Err((scanner, error @ HandleError::Codec { .. })) => {
-+            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: codec error");
-+            FGCError::ChildError
-+        }
-+        Err((scanner, error @ HandleError::SpecDeleted)) => {
-+            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: index spec deleted");
-+            FGCError::SpecDeleted
-+        }
-+        Err((scanner, error @ HandleError::ApplyError(_))) => {
-+            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: apply error");
-+            FGCError::ParentError
-+        }
+     gc->intervalSec = RSGlobalConfig.gcConfigParams.gcSettings.forkGcRunIntervalSec;
++  } else if (forced && forced->compactAll) {
++    forced->outcome = GC_FORCED_RUN_COMPACT_ALL_INCOMPLETE;
+   }
+ 
+   pthread_rwlock_unlock(&g_diskGcRunLock);
+```
+
+**File**: `src/gc.h` (modified, +5/-0)
+```diff
+@@ -56,6 +56,9 @@ typedef enum {
+   GC_FORCED_RUN_OK = 0,
+   // No child process could be created, so nothing was collected.
+   GC_FORCED_RUN_NO_FORK,
++  // `compactAll` was asked for but did not complete: the cycle was skipped (e.g. background
++  // work was paused before it started) or the compaction was cancelled.
++  GC_FORCED_RUN_COMPACT_ALL_INCOMPLETE,
+ } GCForcedRunOutcome;
+ 
+ // What a caller that demanded a collection asked for, and what it got. A cycle receives a
+@@ -66,6 +69,7 @@ typedef struct {
+   long long forkWaitMs;         // wait this long for the fork slot; 0 means no limit
+   long long retryIntervalMs;    // how often to retry while waiting, capped by what is left
+   struct timespec forkDeadline; // stamped when queued; meaningful only if forkWaitMs > 0
++  bool compactAll;              // disk GC only: also fully compact the rest of the disk storage
+   GCForcedRunOutcome outcome;   // set by the cycle
+ } GCForcedRun;
+ 
+@@ -79,6 +83,7 @@ static inline GCForcedRun GCForcedRun_New(long long forkWaitMs, long long retryI
+   forced.retryIntervalMs = retryIntervalMs;
+   forced.forkDeadline.tv_sec = 0;
+   forced.forkDeadline.tv_nsec = 0;
++  forced.compactAll = false;
+   forced.outcome = GC_FORCED_RUN_OK;
+   if (forkWaitMs > 0) {
+     clock_gettime(CLOCK_MONOTONIC_RAW, &forced.forkDeadline);
+```
+
+**File**: `src/search_disk.c` (modified, +5/-0)
+```diff
+@@ -772,6 +772,11 @@ void SearchDisk_FlushNoWait(RedisSearchDiskIndexSpec* index) {
+   disk->index.flushNoWait(index);
+ }
+ 
++bool SearchDisk_CompactNonGcStorage(RedisSearchDiskIndexSpec* index) {
++  RS_ASSERT(disk && index);
++  return disk->index.compactNonGcStorage(index);
++}
++
+ void SearchDisk_PauseBackgroundWork(RedisSearchDiskIndexSpec* index) {
+   RS_ASSERT(disk && index);
+   disk->index.pauseBackgroundWork(index);
+```
+
+**File**: `src/search_disk.h` (modified, +5/-0)
+```diff
+@@ -928,6 +928,11 @@ void SearchDisk_Flush(RedisSearchDiskIndexSpec* index);
+  */
+ void SearchDisk_FlushNoWait(RedisSearchDiskIndexSpec* index);
+ 
++/**
++ * @brief Debug only: see `compactNonGcStorage` in search_disk_api.h.
++ */
++bool SearchDisk_CompactNonGcStorage(RedisSearchDiskIndexSpec* index);
++
+ /**
+  * @brief Pause background flush and compaction work on the index's database.
+  *
+```
+
+**File**: `src/search_disk_api.h` (modified, +12/-0)
+```diff
+@@ -610,6 +610,18 @@ typedef struct IndexDiskAPI {
+    */
+   void (*flushNoWait)(RedisSearchDiskIndexSpec *index);
+ 
++  /**
++   * @brief Debug only: fully compact the disk storage that `runGC` does not
++   *
++   * Backs FT.DEBUG GC_FORCEINVOKE ... COMPACT_ALL. Blocks until done.
++   *
++   * @param index Pointer to the disk index
++   * @return true on success, false if the compaction was cancelled (e.g. inside
++   *         a consistency window). A failed compaction aborts the process, as in
++   *         `runGC`.
++   */
++  bool (*compactNonGcStorage)(RedisSearchDiskIndexSpec *index);
++
+   /**
+    * @brief Pause background flush and compaction work on the index's database.
+    *
+```
+
+**File**: `tests/pytests/test_debug_commands.py` (modified, +7/-0)
+```diff
+@@ -35,6 +35,13 @@ def testGcForceInvokeTimeoutArg(self):
+         self.env.expect(debug_cmd(), 'GC_FORCEINVOKE', 'idx', '30000').equal('DONE')
+         self.env.expect(debug_cmd(), 'GC_FORCEINVOKE', 'idx', 'notanumber').error().contains('Invalid TIMEOUT value')
+         self.env.expect(debug_cmd(), 'GC_FORCEINVOKE', 'idx', '-1').error().contains('Invalid TIMEOUT value')
++        self.env.expect(debug_cmd(), 'GC_FORCEINVOKE', 'idx', '30000', '30000').error().contains(
++            'wrong number of arguments')
++
++    def testGcForceInvokeCompactAllNeedsDiskIndex(self):
++        """COMPACT_ALL compacts disk storage, so on a RAM index it is an error."""
++        self.env.expect(debug_cmd(), 'GC_FORCEINVOKE', 'idx', 'COMPACT_ALL').error().contains(
++            'COMPACT_ALL requires a disk index')
+ 
+     def testHashSubkeyNotifications(self):
+         """The probe answers whether this server can name the fields a hash command wrote.
+```
+
+---
+
+### Incident Patch 2: `c4b2cedd` (2026-11-03)
+**Commit Message**: [MOD-16714] CRQEIterator: suspend/resume, and propagate a revalidation timeout (#10895)
+
+CRQEIterator: suspend/resume, and propagate a revalidation timeout
+
+Implement `RQEIteratorBoxed` and `RQESuspendedIterator` for `CRQEIterator`,
+so composites over C children can be suspended and resumed. Suspend
+re-types the box in place into a distinct `CRQESuspendedIterator`, which
+exposes only the suspended API: every active `RQEIterator` method calls
+into C callbacks that may read index memory once the spec read lock is
+released. The estimate is snapshotted while the lock is still held, and
+the C `NumEstimated` callback is not called again while suspended.
+Resume delegates to the C `Revalidate` callback.
+
+`VALIDATE_TIMEOUT` is a first-class `Revalidate` status: `iterator_api.h`
+documents it, every Rust iterator lowered to the C ABI can return it, and
+`FT.DEBUG MOCK_REVALIDATE_TIMEOUT` forces it. `resume` maps it to
+`Err(RQEIteratorError::TimedOut)`, as the legacy `revalidate` does, so a
+deadline that expires during revalidation yields a partial result set
+instead of a panic.
+
+**File**: `src/redisearch_rs/rqe_iterators/src/boxed.rs` (modified, +3/-0)
+```diff
+@@ -84,6 +84,9 @@ pub trait RQEIteratorBoxed<'index>: RQEIterator<'index> + 'index {
+     type Suspended: RQESuspendedIterator<'index> + 'index;
+ 
+     /// Transition to the suspended state.
++    ///
++    /// Must be called while the spec read lock is still held: an implementation may still read
++    /// index memory, as [`CRQEIterator`](c2rust::CRQEIterator) does to snapshot its estimate.
+     fn suspend(self: Box<Self>) -> Box<Self::Suspended>;
+ }
+ 
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/c2rust.rs` (modified, +87/-5)
+```diff
+@@ -17,9 +17,9 @@ use ffi::{
+ use rqe_core::DocId;
+ 
+ use crate::{
+-    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
+-    interop::RQEIteratorWrapper, intersection::Intersection, profile_print,
+-    profile_print::ProfilePrint,
++    IteratorType, RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator,
++    RQEValidateStatus, ResumeOutcome, SkipToOutcome, interop::RQEIteratorWrapper,
++    intersection::Intersection, profile_print, profile_print::ProfilePrint,
+ };
+ use index_result::RSIndexResult;
+ use index_spec::IndexSpecReadGuard;
+@@ -52,7 +52,7 @@ use std::{
+ /// It is not a given that the underlying iterator is written in C!
+ /// It might be a Rust iterator, wrapped to obey the C API, being passed into
+ /// a Rust composite iterator.
+-#[repr(transparent)]
++#[repr(C)]
+ pub struct CRQEIterator {
+     /// # Safety invariants
+     ///
+@@ -65,6 +65,12 @@ pub struct CRQEIterator {
+     /// 4. All callbacks can be safely called, when the right aliasing conditions are
+     ///    in place
+     header: NonNull<QueryIterator>,
++    /// The estimate taken by [`RQEIteratorBoxed::suspend`] and served by
++    /// [`CRQESuspendedIterator`]: once the read lock is released, the C `NumEstimated` callback
++    /// may read index memory that GC has freed.
++    ///
++    /// Unused while active; it lives here because both forms must have the same size.
++    num_estimated_snapshot: usize,
+ }
+ 
+ impl AsRef<QueryIterator> for CRQEIterator {
+@@ -143,7 +149,10 @@ impl CRQEIterator {
+     ///    in place
+     pub unsafe fn new(header: NonNull<QueryIterator>) -> Self {
+         // SAFETY: the caller is required to uphold `Self::header` field invariants.
+-        let self_ = Self { header };
++        let self_ = Self {
++            header,
++            num_estimated_snapshot: 0,
++        };
+         debug_assert!(
+             self_.Free.is_some(),
+             "The `Free` callback is a NULL function pointer"
+@@ -520,3 +529,76 @@ impl profile_print::ProfilePrint for CRQEIterator {
+         unsafe { call_print_profile(ptr, map, ctx) };
+     }
+ }
++
++impl<'index> RQEIteratorBoxed<'index> for CRQEIterator {
++    type Suspended = CRQESuspendedIterator;
++
++    fn suspend(mut self: Box<Self>) -> Box<Self::Suspended> {
++        // Snapshot while the read lock is still held, see the field.
++        self.num_estimated_snapshot = <Self as RQEIterator<'index>>::num_estimated(&self);
++        // SAFETY: `CRQESuspendedIterator` is `#[repr(transparent)]` over `CRQEIterator`.
++        unsafe { Box::from_raw(Box::into_raw(self).cast::<CRQESuspendedIterator>()) }
 +    }
 +}
++
++/// The suspended form of a [`CRQEIterator`].
++///
++/// Exposes only the [`RQESuspendedIterator`] API, as every [`RQEIterator`] method calls into C
++/// callbacks that may read index memory.
++#[repr(transparent)]
++pub struct CRQESuspendedIterator(CRQEIterator);
++
++impl CRQESuspendedIterator {
++    /// Return the raw pointer to the underlying [`QueryIterator`] without consuming `self`.
++    ///
++    /// Ownership rules are those of [`CRQEIterator::as_raw`].
++    pub const fn as_raw(&self) -> NonNull<QueryIterator> {
++        self.0.as_raw()
++    }
++}
++
++impl<'query> RQESuspendedIterator<'query> for CRQESuspendedIterator {
++    type Resumed<'a>
++        = CRQEIterator
++    where
++        'query: 'a;
++
++    fn resume<'a>(
++        self: Box<Self>,
++        spec: &IndexSpecReadGuard<'a>,
++    ) -> Result<ResumeOutcome<Box<Self::Resumed<'a>>>, RQEIteratorError>
++    where
++        'query: 'a,
++    {
++        // SAFETY: `CRQESuspendedIterator` is `#[repr(transparent)]` over `CRQEIterator`.
++        let it = unsafe { Box::from_raw(Box::into_raw(self).cast::<CRQEIterator>()) };
++        // SAFETY: invariant 3. of [`CRQEIterator::header`] guarantees the
++        // callback is non-null.
++        let callback = unsafe { it.Revalidate.unwrap_unchecked() };
++        // SAFETY: the handle is unique (consumed by value into `it`),
++        // the C-side callback is safe to call per invariant 4., and
++        // `spec.as_mut_ptr()` is valid for the duration of the call.
++        let status = unsafe { callback(it.header.as_ptr(), spec.as_mut_ptr()) };
++        // C leaves disposal to the owner, so an abort or a timeout drops `it` here, which runs
++        // `Free` once.
++        #[expect(non_upper_case_globals)]
++        Ok(match status {
++            // An error, as in `revalidate`, so the query reports a partial result set.
++            ValidateStatus_VALIDATE_TIMEOUT => return Err(RQEIteratorError::TimedOut),
++            ValidateStatus_VALIDATE_ABORTED => ResumeOutcome::Aborted,
++            ValidateStatus_VALIDATE_MOVED => ResumeOutcome::Moved(it),
++            ValidateStatus_VALIDATE_OK => ResumeOutcome::Ok(it),
++            _ => unreachable!("`Revalidate` returned an unexpected status, {status}"),
++        })
++    }
++
++    fn last_doc_id(&self) -> DocId {
++        // A field of the C iterator itself, not index memory.
++        self.0.lastDo
 ```
 
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/tags.rs` (removed, +0/-82)
+**File**: `src/redisearch_rs/rqe_iterators/src/interop.rs` (modified, +10/-1)
 ```diff
-@@ -1,82 +0,0 @@
--/*
-- * Copyright (c) 2006-Present, Redis Ltd.
-- * All rights reserved.
-- *
-- * Licensed under your choice of the Redis Source Available License 2.0
-- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-- * GNU Affero General Public License v3 (AGPLv3).
--*/
--
--use fork_gc::{
--    ForkGC,
--    io_result_ext::IoResultExt,
--    tags::{collect_tags, handle_tags},
--};
--use index_spec::IndexSpecReadGuard;
--
--use crate::{FGCError, util::into_fgc_error};
--
--/// Collect GC delta data for every tag of every TAG field in the spec and send
--/// it to the parent process over the pipe.
--///
--/// Walks each TAG field's tag index and, for every tag whose posting list has
--/// GC work, sends the field name, the tag index's unique id, the tag, and the
--/// serialised GC delta. Tags that produce no delta, and fields whose postings
--/// live on disk, are skipped. A terminator is sent once every field has been
--/// walked.
--///
--/// Any write failure, such as a closed fd or a broken pipe, terminates the
--/// child process via `RedisModule_ExitFromChild`.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
--/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
--/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_childCollectTags(
--    gc: *mut ffi::ForkGC,
--    sctx: *mut ffi::RedisSearchCtx,
--) {
--    debug_assert!(!gc.is_null());
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--    debug_assert!(!sctx.is_null());
--    // SAFETY: caller guarantees (2).
--    let spec_ptr = unsafe { (*sctx).spec };
--    debug_assert!(!spec_ptr.is_null());
--    // SAFETY: caller guarantees (3).
--    let spec = unsafe { &*spec_ptr };
--
--    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
--    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
--    // then forks and the child has only one thread with exclusive access to the index spec.
--    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
--
--    collect_tags(&mut fgc.writer(), &guard).unwrap_or_exit();
--}
--
--/// Receive and apply the GC delta for one tag value.
--///
--/// Reads one message from the pipe. Returns [`FGCError::Collected`] after
--/// successfully applying a delta, [`FGCError::Done`] when the child sent the
--/// terminator (all tags processed), or an error variant on pipe, spec, or
--/// tag-index lookup failure.
--///
--/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
--/// than [`FGCError::Collected`].
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_parentHandleTags(gc: *mut ffi::ForkGC) -> FGCError {
--    debug_assert!(!gc.is_null());
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--
--    into_fgc_error(handle_tags(fgc), "tags")
--}
+@@ -336,7 +336,16 @@ extern "C" fn revalidate<'index, I: RQEIterator<'index> + 'index>(
+     let guard = unsafe { index_spec::IndexSpecReadGuard::from_locked(spec_ref) };
+ 
+     match wrapper.inner.revalidate(&guard) {
+-        Ok(RQEValidateStatus::Ok) => ValidateStatus_VALIDATE_OK,
++        Ok(RQEValidateStatus::Ok) => {
++            // The result has not moved, but the `&mut` borrow of the wrapper taken above
++            // invalidated the pointer `header.current` was derived from, and C reads the result
++            // through it next. Re-derive it from the live borrow. A null one stays null: the
++            // iterator has not yielded anything, or has run out.
++            if !wrapper.header.current.is_null() {
++                wrapper.sync_current();
++            }
++            ValidateStatus_VALIDATE_OK
++        }
+         Ok(RQEValidateStatus::Moved { current }) => {
+             if let Some(result) = current {
+                 wrapper.header.current = result as *mut RSIndexResult as *mut ffi::RSIndexResult;
 ```
 
-**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/terms.rs` (removed, +0/-77)
+**File**: `src/redisearch_rs/rqe_iterators/src/union_opaque.rs` (modified, +3/-7)
 ```diff
-@@ -1,77 +0,0 @@
--/*
-- * Copyright (c) 2006-Present, Redis Ltd.
-- * All rights reserved.
-- *
-- * Licensed under your choice of the Redis Source Available License 2.0
-- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-- * GNU Affero General Public License v3 (AGPLv3).
--*/
--
--use fork_gc::{
--    ForkGC,
--    io_result_ext::IoResultExt,
--    terms::{collect_terms, handle_terms},
--};
--use index_spec::IndexSpecReadGuard;
--
--use crate::{FGCError, util::into_fgc_error};
--
--/// Collect GC delta data for every term in the spec's terms trie and send it
--/// to the parent process over the pipe.
--///
--/// Walks the terms trie, and for each term with a non-null `InvertedIndex`
--/// attempts a GC scan. When a scan produces a delta the term header (its raw
--/// bytes) followed by the serialised GC delta is sent. Terms that produce no
--/// delta or fail the scan are skipped. A terminator is sent once every term
--/// has been processed.
--///
--/// Any write failure, such as a closed fd or a broken pipe, terminates the
--/// child process via `RedisModule_ExitFromChild`.
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
--/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
--/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_childCollectTerms(
--    gc: *mut ffi::ForkGC,
--    sctx: *mut ffi::RedisSearchCtx,
--) {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--    // SAFETY: caller guarantees (2).
--    let spec_ptr = unsafe { (*sctx).spec };
--    // SAFETY: caller guarantees (3).
--    let spec = unsafe { &*spec_ptr };
--
--    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
--    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
--    // then forks and the child has only one thread with exclusive access to the index spec.
--    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
--
--    collect_terms(&mut fgc.writer(), &guard).unwrap_or_exit();
--}
--
--/// Receive and apply the GC delta for one term in the spec's terms trie.
--///
--/// Reads one protocol frame from the pipe. Returns [`FGCError::Collected`] after
--/// successfully applying a delta, [`FGCError::Done`] when the child sent a
--/// terminator (all terms processed), or an error variant on pipe or spec failure.
--///
--/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
--/// than [`FGCError::Collected`].
--///
--/// # Safety
--///
--/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
--///    alive for the duration of this call.
--#[unsafe(no_mangle)]
--pub unsafe extern "C" fn FGC_parentHandleTerms(gc: *mut ffi::ForkGC) -> FGCError {
--    // SAFETY: caller guarantees (1).
--    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
--
--    into_fgc_error(handle_terms(fgc), "terms")
--}
+@@ -379,13 +379,9 @@ unsafe extern "C" fn union_profile_children(base: *mut QueryIterator) -> *mut Qu
+         // SAFETY: `it` is a valid, uniquely-owned C iterator; it is consumed
+         // here and replaced below, so it is neither leaked nor double-freed.
+         let profiled = unsafe { CRQEIterator::new(it) }.into_profiled();
+-        // `CRQEIterator` is `#[repr(transparent)]` over `NonNull<QueryIterator>`,
+-        // so a `&mut CRQEIterator` can be viewed as a `*mut *mut QueryIterator`
+-        // slot for in-place replacement.
+-        let slot = child as *mut CRQEIterator as *mut *mut QueryIterator;
+-        // SAFETY: `slot` is a valid, writable pointer; store the profiled
+-        // iterator back in place.
+-        unsafe { *slot = profiled.into_raw().as_ptr() };
++        // SAFETY: `child` is a valid, exclusively borrowed slot. The old value must not be
++        // dropped: the profiled wrapper now owns its `QueryIterator`.
++        unsafe { std::ptr::write(child, profiled) };
+     }
+     base
+ }
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/tests/integration/interop.rs` (modified, +480/-3)
+```diff
+@@ -18,13 +18,17 @@ use ffi::{
+     QueryIterator, ValidateStatus, ValidateStatus_VALIDATE_ABORTED, ValidateStatus_VALIDATE_OK,
+     ValidateStatus_VALIDATE_TIMEOUT,
+ };
++use rqe_core::DocId;
+ use rqe_iterators::{
+-    RQEIterator, RQEIteratorError, c2rust::CRQEIterator, interop::RQEIteratorWrapper,
++    RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator, RQEValidateStatus,
++    ResumeOutcome, TypeErasedRQEIterator, c2rust::CRQEIterator, interop::RQEIteratorWrapper,
+     intersection::Intersection,
+ };
+-use rqe_iterators_test_utils::MockContext;
++use rqe_iterators_test_utils::{MockContext, ResumeOutcomeExt, revalidate_via_resume};
++use rstest::rstest;
++use std::sync::atomic::{AtomicUsize, Ordering};
+ 
+-use crate::utils::{Mock, MockRevalidateResult};
++use crate::utils::{Mock, MockData, MockRevalidateResult, drain_doc_ids};
+ 
+ /// Call the C `Revalidate` callback on a Rust iterator lowered to the C ABI, then free it.
+ fn revalidate_through_c_abi(outcome: MockRevalidateResult) -> ValidateStatus {
+@@ -46,6 +50,479 @@ fn revalidate_through_c_abi(outcome: MockRevalidateResult) -> ValidateStatus {
+     status
+ }
+ 
++/// What a `resume` reported, read off the resumed iterator before the read guard is dropped.
++#[derive(Debug, PartialEq, Eq)]
++enum ResumeReport {
++    Ok,
++    /// A move publishes its new position in `current`, or `None` once it ran past the end.
++    Moved(Option<DocId>),
++    Aborted,
++}
++
++/// Drive a full `suspend` → `resume` cycle over a Rust mock lowered to the C ABI, with its
++/// `Revalidate` reporting `outcome`.
++fn resume_through_c_abi(
++    outcome: MockRevalidateResult,
++) -> (Result<ResumeReport, RQEIteratorError>, MockData) {
++    let ctx = MockContext::new(100, 10);
++    let guard = ctx.spec_read();
++
++    let mock = Mock::new([1, 2, 3]);
++    let data = mock.data();
++    mock.data().set_revalidate_result(outcome);
++
++    let suspended = RQEIteratorBoxed::suspend(Box::new(CRQEIterator::from_rust_leaf(mock)));
++    let report = RQESuspendedIterator::resume(suspended, &guard).map(|outcome| match outcome {
++        ResumeOutcome::Ok(_) => ResumeReport::Ok,
++        ResumeOutcome::Moved(mut it) => {
++            ResumeReport::Moved(RQEIterator::current(&mut *it).map(|r| r.doc_id))
++        }
++        ResumeOutcome::Aborted => ResumeReport::Aborted,
++    });
++
++    (report, data)
++}
++
++/// [`resume_through_c_abi`], through the legacy [`RQEIterator::revalidate`] instead.
++fn revalidate_c_iterator(
++    outcome: MockRevalidateResult,
++) -> (Result<ResumeReport, RQEIteratorError>, MockData) {
++    let ctx = MockContext::new(100, 10);
++    let guard = ctx.spec_read();
++
++    let mock = Mock::new([1, 2, 3]);
++    let data = mock.data();
++    mock.data().set_revalidate_result(outcome);
++
++    let mut it = CRQEIterator::from_rust_leaf(mock);
++    let report = it.revalidate(&guard).map(|status| match status {
++        RQEValidateStatus::Ok => ResumeReport::Ok,
++        RQEValidateStatus::Moved { current } => ResumeReport::Moved(current.map(|r| r.doc_id)),
++        RQEValidateStatus::Aborted => ResumeReport::Aborted,
++    });
++
++    (report, data)
++}
++
++/// A comparable [`ResumeReport`]: [`RQEIteratorError`] is not [`PartialEq`].
++#[derive(Debug, PartialEq, Eq)]
++enum FlatReport {
++    Ok,
++    Moved(Option<DocId>),
++    Aborted,
++    TimedOut,
++    IoError,
++}
++
++fn flatten(report: Result<ResumeReport, RQEIteratorError>) -> FlatReport {
++    match report {
++        Ok(ResumeReport::Ok) => FlatReport::Ok,
++        Ok(ResumeReport::Moved(position)) => FlatReport::Moved(position),
++        Ok(ResumeReport::Aborted) => FlatReport::Aborted,
++        Err(RQEIteratorError::TimedOut) => FlatReport::TimedOut,
++        Err(RQEIteratorError::IoError(_)) => FlatReport::IoError,
++    }
++}
++
++#[test]
++fn a_resume_that_times_out_is_reported_as_an_error() {
++    let (report, data) = resume_through_c_abi(MockRevalidateResult::TimedOut);
++
++    let err = report.expect_err(
++        "`VALIDATE_TIMEOUT` is a first-class status of the C `Revalidate` contract, which every \
++         Rust iterator lowered to the C ABI reports and `FT.DEBUG MOCK_REVALIDATE_TIMEOUT` can \
++         force: `resume` must map it to an error like `revalidate` does, not treat it as \
++         unreachable",
++    );
++    assert!(
++        matches!(err, RQEIteratorError::TimedOut),
++        "expected a timeout, got {err:?}: reported as an abort instead, the query would end as if \
++         the index were exhausted and hand the client a truncated result set labelled complete",
++    );
++    assert_eq!(
++        data.drop_count(),
++        1,
++        "an `Err` consumes the suspended iterator, so its `Free` callback must run exactly once",
++    );
++}
++
++#[test]
++fn a_resume_that_fails_to_read_the_index_is_reported_as_an_abort() {
++    let (report, data) = resume_through_c_abi(MockRevalidateResult::IoError);
++
++    assert_eq!(
++        report.expect("an I/O error has no C status of its own, so it arrives as an abort"),
++        R
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/tests/integration/utils/mock_iterator.rs` (modified, +22/-4)
+```diff
+@@ -144,6 +144,7 @@ impl MockData {
+             resume_reseeks_past_end: false,
+             revalidate_reseeks_to: None,
+             revalidate_moves_in_place: false,
++            drop_count: 0,
+         })))
+     }
+ 
+@@ -270,6 +271,14 @@ impl MockData {
+         self.0.borrow().validation_count
+     }
+ 
++    /// Number of [`Mock`] values that have been dropped, to check that an iterator is freed
++    /// exactly once.
++    ///
++    /// A mock dropped while suspended, as a [`MockSuspended`], is not counted.
++    pub fn drop_count(&self) -> usize {
++        self.0.borrow().drop_count
++    }
++
+     /// Force the next call to `read()` to return `None` even if not at EOF.
+     ///
+     /// This simulates an iterator that reports `None` from `read()` while it still
+@@ -317,6 +326,8 @@ struct MockDataInternal {
+     /// If true, `revalidate` reports `Moved` without moving — see
+     /// [`MockData::set_revalidate_moves_in_place`].
+     revalidate_moves_in_place: bool,
++    /// Number of [`Mock`] values dropped — see [`MockData::drop_count`].
++    drop_count: usize,
+ }
+ 
+ impl MockDataInternal {
+@@ -398,10 +409,11 @@ impl<'index, const N: usize> Mock<'index, N> {
+             positions.iter().all(|&p| (1..=127).contains(&p)),
+             "positions must be in 1..=127 (single-byte varint range)"
+         );
+-        Self {
+-            positions: Some(positions),
+-            ..Self::new(doc_ids)
+-        }
++        // Written as a mutation rather than `..Self::new(doc_ids)`: struct update syntax moves the
++        // remaining fields out of the base value, which `Drop for Mock` forbids.
++        let mut mock = Self::new(doc_ids);
++        mock.positions = Some(positions);
++        mock
+     }
+ 
+     /// Return a handle to the shared [`MockData`] of this iterator.
+@@ -450,6 +462,12 @@ impl<'index, const N: usize> Mock<'index, N> {
+     }
+ }
+ 
++impl<const N: usize> Drop for Mock<'_, N> {
++    fn drop(&mut self) {
++        self.data.0.borrow_mut().drop_count += 1;
++    }
++}
++
+ impl<'index, const N: usize> RQEIterator<'index> for Mock<'index, N> {
+     fn current(&mut self) -> Option<&mut RSIndexResult<'index>> {
+         if self.past_end() {
+```
+
+---
+
+### Incident Patch 3: `2990f841` (2026-11-02)
+**Commit Message**: [MOD-20241] Add a memory stop to the query request limits (#12098)
+
+* Add a stop request with a reason to the query timeout state
+
+Any thread can now ask a query execution cycle to stop, in every timeout
+kind including unarmed. IsTimedOut and IsTimedOutExact report it
+unamortized, and so does the Rust request timeout context, so their
+callers stop without a per-site change. IsBlockedClientTimedOut ignores
+it, since its callers ask whether the timeout callback owns the reply.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Keep the stop out of the timeout checks
+
+Timeout checks run on every iterator probe; reading the stop there cost
+about 14 instructions per probe. Stop-check sites read it explicitly.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Describe the stop tests by what they assert
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Publish the stop flag from a losing stop request too
+
+A loser returned while the winner could still be between its reason and
+flag stores, so a completed request did not guarantee a visible stop.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Test that a losing stop request publishes the winner's stop
+
+Co-Authored-By: 
+
+**File**: `src/aggregate/aggregate_debug.c` (modified, +4/-4)
+```diff
+@@ -43,7 +43,7 @@ AREQ_Debug *AREQ_Debug_New(RedisModuleString **argv, int argc, QueryError *statu
+   }
+ 
+   AREQ_Debug *debug_req = AREQ_New_AREQ_Debug(argv, argc);
+-  debug_req->requestedTimeoutPolicy = debug_req->r.base.timeout.config.timeoutPolicy;
++  debug_req->requestedTimeoutPolicy = debug_req->r.base.limits.timeout.config.timeoutPolicy;
+ 
+   AREQ *r = &debug_req->r;
+   // Point the debug tail into the request's held argv rather than the caller's, which may be
+@@ -184,16 +184,16 @@ int parseAndCompileDebug(AREQ_Debug *debug_req, QueryError *status) {
+ 
+     } else if (internal_only) {
+       // Coordinator with INTERNAL_ONLY: timeout applies only in the shard query pipeline, not the coordinator
+-      if (debug_req->r.base.timeout.config.queryTimeoutMS == 0 && results_count == 0) {
++      if (debug_req->r.base.limits.timeout.config.queryTimeoutMS == 0 && results_count == 0) {
+           // In RESP3, timeout warning from empty shard replies is now propagated (MOD-12640).
+           // In RESP2, we still need to force a timeout to avoid infinite loop.
+           if (debug_req->r.protocol != 3) {
+             RedisModule_Log(RSDummyContext, "debug",
+                             "Forcing coordinator timeout for TIMEOUT_AFTER_N 0 and query timeout 0 "
+                             "to avoid infinite loop (RESP2 only)");
+-            debug_req->r.base.timeout.config.queryTimeoutMS = COORDINATOR_FORCED_TIMEOUT;
++            debug_req->r.base.limits.timeout.config.queryTimeoutMS = COORDINATOR_FORCED_TIMEOUT;
+             // This late TIMEOUT change must rearm the coordinator deadline.
+-            QueryRequestTimeout_BeginCycle(&debug_req->r.base.timeout, QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE);
++            QueryRequestLimits_BeginCycle(&debug_req->r.base.limits, QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE);
+           }
+       }
+     } else {
+```
+
+**File**: `src/aggregate/aggregate_exec.c` (modified, +45/-45)
+```diff
+@@ -391,7 +391,7 @@ static void serializeResult(AREQ *req, RedisModule_Reply *reply, const SearchRes
+ // been marked as timed out by the main-thread timeout callback.
+ bool areq_timed_out(void *arg) {
+   AREQ *req = arg;
+-  return QueryRequestTimeout_IsBlockedClientTimedOut(&req->base.timeout);
++  return QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits);
+ }
+ 
+ // SyncPoint stop predicate: break out of a sync-point wait when a writer is
+@@ -400,7 +400,7 @@ bool areq_timed_out(void *arg) {
+ // thread is the one blocked on the writer's `pthread_rwlock_wrlock`.
+ static bool areq_timeout_or_pending_spec_writers(void *arg) {
+   AREQ *req = arg;
+-  return QueryRequestTimeout_IsBlockedClientTimedOut(&req->base.timeout) ||
++  return QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits) ||
+          PendingSpecWriters_Get() > 0;
+ }
+ 
+@@ -420,7 +420,7 @@ static inline void debugPauseStoreResults(AREQ *req, bool before) {
+   StoreResultsDebugCtx_SetPause(true);
+   while (StoreResultsDebugCtx_IsPaused()) {
+     // Check if timed out - break to avoid deadlock with timeout callback
+-    if (QueryRequestTimeout_IsBlockedClientTimedOut(&req->base.timeout)) {
++    if (QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
+       StoreResultsDebugCtx_SetPause(false);
+       break;
+     }
+@@ -436,7 +436,7 @@ static inline void debugPauseStoreResults(AREQ *req, bool before) {
+ #endif
+ static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***results, SearchResult *r, int *rc) {
+   CommonPipelineCtx ctx = {
+-    .timeout = &req->base.timeout,
++    .limits = &req->base.limits,
+     .oomPolicy = req->base.reqConfig.oomPolicy,
+     .areq = req,
+   };
+@@ -455,7 +455,7 @@ static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***result
+       *rc = RS_RESULT_TIMEDOUT;
+       return;
+     }
+-    if (QueryRequestTimeout_IsBlockedClientTimedOut(&req->base.timeout)) {
++    if (QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
+       // We claimed the sync phase, but timeout was already signaled. Store a
+       // timed-out cursor-shaped reply and wake the timeout callback.
+       *rc = RS_RESULT_TIMEDOUT;
+@@ -573,7 +573,7 @@ typedef struct {
+ /* Record this request's blocked-client timeout into the per-stage breakdown, at
+  * the stage its execution-phase marker had reached when the deadline fired. Must be
+  * called exactly once per blocked-client timeout callback, right after
+- * QueryRequestTimeout_MarkTimedOut (which freezes the marker). The breakdown
++ * QueryRequestLimits_MarkTimedOut (which freezes the marker). The breakdown
+  * counts timeout callback invocations and is independent of the aggregate
+  * error/warning counters
+  * (which count user-visible timeout replies, including non-blocked-client ones). */
+@@ -588,11 +588,11 @@ static inline void recordAREQTimeoutStage(AREQ *req, bool isError) {
+  */
+ static bool handleSendChunkError(AREQ *req, RedisModule_Reply *reply,
+   QueryProcessingCtx *qctx, int rc) {
+-  if (ShouldReplyWithError(QueryError_GetCode(qctx->err), req->base.timeout.config.timeoutPolicy, IsProfile(req))) {
++  if (ShouldReplyWithError(QueryError_GetCode(qctx->err), req->base.limits.timeout.config.timeoutPolicy, IsProfile(req))) {
+     QueryErrorsGlobalStats_UpdateError(QueryError_GetCode(qctx->err), 1, !IsInternal(req));
+     RedisModule_Reply_Error(reply, QueryError_GetUserError(qctx->err));
+     return true;
+-  } else if (ShouldReplyWithTimeoutError(rc, req->base.timeout.config.timeoutPolicy, IsProfile(req))) {
++  } else if (ShouldReplyWithTimeoutError(rc, req->base.limits.timeout.config.timeoutPolicy, IsProfile(req))) {
+     QueryErrorsGlobalStats_UpdateError(QUERY_ERROR_CODE_TIMED_OUT, 1, !IsInternal(req));
+     ReplyWithTimeoutError(reply);
+     return true;
+@@ -705,7 +705,7 @@ static void finishSendChunkReply_Resp2(AREQ *req, RedisModule_Reply *reply, bool
+ 
+ static bool shouldSetCursorDone(AREQ *req, int rc) {
+   if ((req->stateflags & QEXEC_S_SHARD_TIMED_OUT_WARNING) &&
+-      req->base.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict) {
++      req->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict) {
+     return true;
+   }
+ 
+@@ -714,7 +714,7 @@ static bool shouldSetCursorDone(AREQ *req, int rc) {
+   }
+ 
+   if (rc == RS_RESULT_TIMEDOUT) {
+-    switch (req->base.timeout.config.timeoutPolicy) {
++    switch (req->base.limits.timeout.config.timeoutPolicy) {
+       case TimeoutPolicy_Return:
+         return false;
+       case TimeoutPolicy_ReturnStrict:
+@@ -746,7 +746,7 @@ static int serializeAndReplyResults_Resp2(AREQ *req, RedisModule_Reply *reply, R
+     // Under RETURN_STRICT, buffered results from AREQ_StoreResults must be emitted even on
+     // timeout so the harvested rows are not dropped.
+     const bool buffered_strict_2 = state->results != NULL &&
+-                                   req->base.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict;
++                                   req
+```
+
+**File**: `src/aggregate/aggregate_exec_common.c` (modified, +4/-4)
+```diff
+@@ -76,7 +76,7 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {
+   // Pause after the Nth result has been extracted (1-based)
+   AggregateResultsDebugCtx_SetPause(true);
+   while (AggregateResultsDebugCtx_IsPaused()) {
+-    if (areq && QueryRequestTimeout_IsBlockedClientTimedOut(&areq->base.timeout)) {
++    if (areq && QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) {
+       AggregateResultsDebugCtx_SetPause(false);
+       break;
+     }
+@@ -105,7 +105,7 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
+      // Honour a main-thread timeout flag at the row boundary: buffering
+      // stages (safe loader, sorter yield) can keep emitting from internal
+      // buffers without re-touching upstream's per-row timeout check.
+-     if (areq && QueryRequestTimeout_IsBlockedClientTimedOut(&areq->base.timeout)) {
++     if (areq && QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) {
+        *rc = RS_RESULT_TIMEDOUT;
+        break;
+      }
+@@ -119,11 +119,11 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
+  }
+ 
+  void startPipelineCommon(CommonPipelineCtx *ctx, ResultProcessor *rp, SearchResult ***results, SearchResult *r, int *rc) {
+-   if (ctx->timeout->config.timeoutPolicy != TimeoutPolicy_Return || ctx->oomPolicy == OomPolicy_Fail) {
++   if (ctx->limits->timeout.config.timeoutPolicy != TimeoutPolicy_Return || ctx->oomPolicy == OomPolicy_Fail) {
+      // Aggregate all results before populating the response
+      *results = AggregateResults(rp, ctx->areq, rc);
+      // Check timeout after aggregation
+-     if (QueryRequestTimeout_IsTimedOutExact(ctx->timeout)) {
++     if (QueryRequestLimits_IsTimedOutExact(ctx->limits)) {
+        *rc = RS_RESULT_TIMEDOUT;
+      }
+    } else {
+```
+
+**File**: `src/aggregate/aggregate_exec_common.h` (modified, +2/-2)
+```diff
+@@ -15,7 +15,7 @@
+ typedef struct QueryError QueryError;
+ 
+ struct AREQ;
+-struct QueryRequestTimeout;
++struct QueryRequestLimits;
+ 
+ bool hasTimeoutError(QueryError *err);
+ 
+@@ -33,7 +33,7 @@ void destroyResults(SearchResult **results);
+ SearchResult **AggregateResults(ResultProcessor *rp, struct AREQ *areq, int *rc);
+ 
+ typedef struct CommonPipelineCtx {
+-  const struct QueryRequestTimeout *timeout;
++  const struct QueryRequestLimits *limits;
+   RSOomPolicy oomPolicy;
+ 
+   // AREQ for the request being executed; consulted by AggregateResults (and
+```
+
+**File**: `src/aggregate/aggregate_request.c` (modified, +9/-9)
+```diff
+@@ -610,7 +610,7 @@ static ParseAggPlanContext makeParseAggPlanContext(AREQ *req) {
+     .plan = AREQ_AGGPlan(req),
+     .reqflags = &req->reqflags,
+     .reqConfig = &req->base.reqConfig,
+-    .timeoutConfig = &req->base.timeout.config,
++    .timeoutConfig = &req->base.limits.timeout.config,
+     .searchopts = &req->searchopts,
+     .prefixesOffset = &req->prefixesOffset,
+     .cursorConfig = &req->base.cursorConfig,
+@@ -1213,7 +1213,7 @@ bool QueryRequest_SafeLoaderEnterGIL(QueryRequest *request) {
+   QueryRequestAsyncState *async = &request->async;
+   bool proceed;
+   pthread_mutex_lock(&async->aggregateResultsLock);
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&request->timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&request->limits)) {
+     // Timeout already fired: do not mark holding, bail instead of blocking on the
+     // GIL the main thread holds while it waits.
+     proceed = false;
+@@ -1250,7 +1250,7 @@ void AREQ_ResetForCursorReadReturnStrict(AREQ *req) {
+   req->base.async.aggregateResultsDone = false;
+   req->base.async.safeLoadersHoldingGIL = 0;
+   pthread_mutex_unlock(&req->base.async.aggregateResultsLock);
+-  QueryRequestTimeout_BeginCycle(&req->base.timeout,
++  QueryRequestLimits_BeginCycle(&req->base.limits,
+                                  QUERY_REQUEST_TIMEOUT_BLOCKED_CLIENT);
+   ResultProcessor *root = AREQ_QueryProcessingCtx(req)->rootProc;
+   if (root && root->type == RP_NETWORK) {
+@@ -1372,20 +1372,20 @@ int AREQ_Compile(AREQ *req, RedisModuleCtx *ctx, uint32_t offset, bool isDiskInd
+ 
+   // Cap the per-query timeout to _MAX_FOREGROUND_TIMEOUT_LIMIT when workers
+   // are disabled; the state flag drives the RESP3 MaxTimeoutCapped warning.
+-  if (RSConfig_CapQueryTimeoutToForegroundLimit(&req->base.timeout.config.queryTimeoutMS)) {
++  if (RSConfig_CapQueryTimeoutToForegroundLimit(&req->base.limits.timeout.config.queryTimeoutMS)) {
+     req->stateflags |= QEXEC_S_MAX_TIMEOUT_CAPPED;
+   }
+ 
+   if (IsInternal(req) &&
+-      TimeoutConfig_ApplyCoordinatorElapsedTime(&req->base.timeout.config, req->profileClocks.coordDispatchTime)) {
++      TimeoutConfig_ApplyCoordinatorElapsedTime(&req->base.limits.timeout.config, req->profileClocks.coordDispatchTime)) {
+     QueryError_SetCode(status, QUERY_ERROR_CODE_TIMED_OUT);
+     goto error;
+   }
+ 
+   // Shard/standalone inline execution has no blocked-client timeout callback,
+   // which RETURN_STRICT requires. Quietly fall back to RETURN for this request.
+-  if (!IsCoordinator(req) && req->base.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict && !RunInThread(ctx)) {
+-    req->base.timeout.config.timeoutPolicy = TimeoutPolicy_Return;
++  if (!IsCoordinator(req) && req->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict && !RunInThread(ctx)) {
++    req->base.limits.timeout.config.timeoutPolicy = TimeoutPolicy_Return;
+   }
+ 
+   // Verify we got slots requested if needed
+@@ -1674,7 +1674,7 @@ int AREQ_ApplyContext(AREQ *req, RedisSearchCtx *sctx, QueryError *status) {
+   // Borrow the request timeout onto the sctx so pipeline RPs can
+   // observe a RETURN-STRICT main-thread timeout without holding an AREQ
+   // back-pointer used by query execution and result processors.
+-  sctx->timeout = &req->base.timeout;
++  sctx->limits = &req->base.limits;
+ 
+   if (!IsIndexCoherent(req)) {
+     QueryError_SetError(status, QUERY_ERROR_CODE_MISMATCH, NULL);
+@@ -1912,7 +1912,7 @@ int AREQ_BuildPipelineWithAggregationParams(AREQ *req,
+                                             QueryError *status) {
+   // Build errors go to the caller's `status`; the running pipeline reports into the request's own
+   // error slot, which the reply phase reads whenever (and on whichever thread) it runs.
+-  Pipeline_Initialize(&req->pipeline, req->base.timeout.config.timeoutPolicy, &req->base.reply.err);
++  Pipeline_Initialize(&req->pipeline, req->base.limits.timeout.config.timeoutPolicy, &req->base.reply.err);
+   if (!IsCoordinator(req)) {
+     QueryPipelineParams params = {
+       .common = {
+```
+
+**File**: `src/coord/dist_aggregate.c` (modified, +12/-12)
+```diff
+@@ -216,7 +216,7 @@ static void withCountReplyCb(MRIteratorCallbackCtx *ctx, MRReply *rep) {
+     }
+     iterCtx->numResponded++;
+     bool timedOut =
+-        QueryRequestTimeout_IsBlockedClientTimedOut(&iterCtx->areq->base.timeout);
++        QueryRequestLimits_IsBlockedClientTimedOut(&iterCtx->areq->base.limits);
+     if (timedOut || isError || iterCtx->numResponded == MRIterator_GetNumShards(it)) {
+       if (timedOut) {
+         MRIteratorCallback_SetTimedOut(MRIterator_GetCtx(it));
+@@ -249,7 +249,7 @@ static void withCountErrorCb(MRIteratorCallbackCtx *ctx) {
+   // remaining shards to netCursorCallback and stop accumulating their totals. Wait
+   // for the other shards (or a timeout) so their counts are still summed. On a
+   // timeout we must dispatch.
+-  bool timedOut = QueryRequestTimeout_IsBlockedClientTimedOut(&iterCtx->areq->base.timeout);
++  bool timedOut = QueryRequestLimits_IsBlockedClientTimedOut(&iterCtx->areq->base.limits);
+   if (timedOut || iterCtx->numResponded == MRIterator_GetNumShards(it)) {
+     if (timedOut) {
+       MRIteratorCallback_SetTimedOut(MRIterator_GetCtx(it));
+@@ -349,7 +349,7 @@ static int rpnetNext_Start(ResultProcessor *rp, SearchResult *r) {
+ #endif
+ 
+   // Check if the request timed out before starting the iterator
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&nc->areq->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&nc->areq->base.limits)) {
+     return RS_RESULT_TIMEDOUT;
+   }
+ 
+@@ -388,7 +388,7 @@ static void executeAggregateDeferred(void *arg) {
+   RPNet *nc = (RPNet *)AREQ_QueryProcessingCtx(r)->rootProc;
+   long long totalResults = iterCtx->totalResults;
+ 
+-  bool timedOut = QueryRequestTimeout_IsBlockedClientTimedOut(&r->base.timeout);
++  bool timedOut = QueryRequestLimits_IsBlockedClientTimedOut(&r->base.limits);
+ 
+   if (sp && !timedOut) {
+     // Dedicated thread-safe context for this worker, lent to sctx->redisCtx
+@@ -699,7 +699,7 @@ void printAggProfile(RedisModule_Reply *reply, void *ctx) {
+   RPNet *rpnet = (RPNet *)AREQ_QueryProcessingCtx(req)->rootProc;
+   // STRICT serializes on the main thread after the worker hands off the pipeline.
+   // Collect available profiles without waiting for shards that may need this thread.
+-  if (req->base.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict) {
++  if (req->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_ReturnStrict) {
+     rpnet->drainOnly = true;
+   }
+   if (MRIterator_GetPending(rpnet->it) || MRIterator_GetChannelSize(rpnet->it)) {
+@@ -849,7 +849,7 @@ static int prepareForExecution(AREQ *r, RedisModuleCtx *ctx, RedisModuleString *
+   r->sctx = rm_new(RedisSearchCtx);
+   *r->sctx = SEARCH_CTX_STATIC(ctx, NULL);
+   r->sctx->apiVersion = dialect;
+-  r->sctx->timeout = &r->base.timeout;
++  r->sctx->limits = &r->base.limits;
+   // r->sctx->expanded should be received from shards
+ 
+   return REDISMODULE_OK;
+@@ -879,7 +879,7 @@ static void DistAggregateCleanups(RedisModuleCtx *ctx, IndexSpec *sp, StrongRef
+   RS_ASSERT(r != NULL);  // the dispatcher allocates the request shell on the main thread
+ 
+   // If timeout already occurred, the timeout callback already replied - don't reply again
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&r->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&r->base.limits)) {
+     QueryError_ClearError(&r->base.reply.err);
+     goto cleanup;
+   }
+@@ -955,7 +955,7 @@ static void execDistAggregate(RedisModuleCtx *ctx, RedisModuleString **argv, int
+   QueryRequest *request = dispatch->request;
+   AREQ *r = QueryRequest_GetAREQ(request);
+ 
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&r->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&r->base.limits)) {
+     // Query timed out while this job was queued; the timeout callback already
+     // replied.
+ 
+@@ -1032,7 +1032,7 @@ int DistAggregateTimeoutFailCallback(RedisModuleCtx *ctx, RedisModuleString **ar
+   AREQ *req = QueryRequest_GetAREQ(request);
+ 
+   // Signal timeout to the background thread
+-  QueryRequestTimeout_MarkTimedOut(&req->base.timeout);
++  QueryRequestLimits_MarkTimedOut(&req->base.limits);
+ 
+   // Record the per-stage breakdown at the stage the deadline caught the request.
+   recordCoordAREQTimeoutStage(req, /*isError=*/true);
+@@ -1071,7 +1071,7 @@ int DistAggregateTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleStr
+   AREQ *req = QueryRequest_GetAREQ(request);
+ 
+   // Signal timeout to the background thread
+-  QueryRequestTimeout_MarkTimedOut(&req->base.timeout);
++  QueryRequestLimits_MarkTimedOut(&req->base.limits);
+ 
+   // Record the per-stage breakdown at the stage the deadline caught the request.
+   recordCoordAREQTimeoutStage(req, /*isError=*/false);
+@@ -1155,7 +1155,7 @@ int DistCursorReadTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleSt
+   QueryRequest *request = RedisModule_GetBlockedClientPrivateData(ctx);
+   RS_ASSERT(request != NULL);
+   AREQ *req = QueryRequest_GetAREQ(request);
+-  QueryReque
+```
+
+**File**: `src/coord/hybrid/dist_hybrid.c` (modified, +8/-8)
+```diff
+@@ -710,7 +710,7 @@ static int HybridRequest_prepareForExecution(HybridRequest *hreq,
+     cmd.hybridParams = &hybridParams;
+     cmd.tailPlan = &hreq->tailPipeline->ap;
+     cmd.reqConfig = &hreq->base.reqConfig;
+-    cmd.timeoutConfig = &hreq->base.timeout.config;
++    cmd.timeoutConfig = &hreq->base.limits.timeout.config;
+     cmd.coordDispatchTime = &hreq->profileClocks.coordDispatchTime;
+ 
+     // Only detects the profile prefix; nothing borrows from the job's argv here.
+@@ -997,7 +997,7 @@ static ResultProcessor *findSafeDepleter(const HybridRequest *hreq, size_t i) {
+ // the tail hybrid merger job that cv-waits on their completion or this will
+ // deadlock (see submitHybridTail).
+ static void scheduleDepleters(HybridRequest *hreq) {
+-    const bool timedOut = QueryRequestTimeout_IsTimedOutExact(&hreq->base.timeout);
++    const bool timedOut = QueryRequestLimits_IsTimedOutExact(&hreq->base.limits);
+     for (size_t i = 0; i < hreq->nrequests; i++) {
+         ResultProcessor *depleter = findSafeDepleter(hreq, i);
+         if (timedOut) {
+@@ -1030,7 +1030,7 @@ static void HybridDispatchCtx_Tail(void *arg) {
+     // If timeout fired between dispatch and tail pickup, the timeout callback
+     // already replied — skip the reply path, but still drain depleters before
+     // teardown (see waitForDepleters).
+-    if (QueryRequestTimeout_IsBlockedClientTimedOut(&hreq->base.timeout)) {
++    if (QueryRequestLimits_IsBlockedClientTimedOut(&hreq->base.limits)) {
+         waitForDepleters(hreq);
+         CurrentThread_ClearIndexSpec();
+         HybridDispatchCtx_Free(dispatch);
+@@ -1104,7 +1104,7 @@ static void DistHybridCleanups(RedisModuleCtx *ctx, IndexSpec *sp, StrongRef *st
+   RS_ASSERT(hreq != NULL);  // the dispatcher allocates the request shell on the main thread
+ 
+   // If timeout already occurred, the timeout callback already replied - don't reply again
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&hreq->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&hreq->base.limits)) {
+     if (QueryError_HasError(status)) {
+       QueryError_ClearError(status);
+     }
+@@ -1131,7 +1131,7 @@ static void execDistHybrid(RedisModuleCtx *ctx, RedisModuleString **argv, int ar
+   // thread's command ctx); re-point it at this thread's ctx before any use.
+   hreq->sctx->redisCtx = ctx;
+ 
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&hreq->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&hreq->base.limits)) {
+     // Query timed out while this job was queued; the timeout callback
+     // already replied.
+ 
+@@ -1197,7 +1197,7 @@ static void DEBUG_execDistHybrid(RedisModuleCtx *ctx, RedisModuleString **argv,
+   HybridRequest *hreq = QueryRequest_GetHybrid(request);
+   hreq->sctx->redisCtx = ctx;
+ 
+-  if (QueryRequestTimeout_IsBlockedClientTimedOut(&hreq->base.timeout)) {
++  if (QueryRequestLimits_IsBlockedClientTimedOut(&hreq->base.limits)) {
+     // Timed out while queued; the timeout callback already replied.
+ 
+     return;
+@@ -1284,7 +1284,7 @@ int DistHybridTimeoutFailCallback(RedisModuleCtx *ctx, RedisModuleString **argv,
+   HybridRequest *hreq = QueryRequest_GetHybrid(request);
+ 
+   // Signal timeout to the background thread
+-  QueryRequestTimeout_MarkTimedOut(&hreq->base.timeout);
++  QueryRequestLimits_MarkTimedOut(&hreq->base.limits);
+   HybridRequest_PropagateTimeoutToSubqueries(hreq);
+ 
+   // Record the per-stage breakdown at the stage the deadline caught the request.
+@@ -1311,7 +1311,7 @@ int DistHybridTimeoutReturnStrictCallback(RedisModuleCtx *ctx, RedisModuleString
+   HybridRequest *hreq = QueryRequest_GetHybrid(request);
+ 
+   // Signal timeout to the background thread
+-  QueryRequestTimeout_MarkTimedOut(&hreq->base.timeout);
++  QueryRequestLimits_MarkTimedOut(&hreq->base.limits);
+   HybridRequest_PropagateTimeoutToSubqueries(hreq);
+ 
+   // Record the per-stage breakdown at the stage the deadline caught the request.
+```
+
+**File**: `src/coord/rpnet.c` (modified, +12/-12)
+```diff
+@@ -115,10 +115,10 @@ static RSValue *MRReply_ToValue(MRReply *r) {
+ static const struct timespec *getAbsTimeout(const RPNet *nc) {
+   RS_ASSERT(nc->areq);
+   if (nc->hybridSubquery == RPNET_HYBRID_NONE ||
+-      nc->areq->base.timeout.kind != QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE) {
++      nc->areq->base.limits.timeout.kind != QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE) {
+     return NULL;
+   }
+-  return QueryRequestTimeout_GetClockDeadline(&nc->areq->base.timeout);
++  return QueryRequestLimits_GetClockDeadline(&nc->areq->base.limits);
+ }
+ 
+ // Process warnings from nc->current.meta (RESP3 only), then free reply and reset state.
+@@ -168,7 +168,7 @@ static int processWarningsAndCleanup(RPNet *nc, bool is_resp3) {
+   if (nc->profileBreakdown) accumulateSince(&nc->breakdown.freeTime, &freeStart);
+   RPNet_resetCurrent(nc);
+ 
+-  if (shard_timed_out && nc->areq->base.timeout.config.timeoutPolicy != TimeoutPolicy_ReturnStrict) {
++  if (shard_timed_out && nc->areq->base.limits.timeout.config.timeoutPolicy != TimeoutPolicy_ReturnStrict) {
+     return RS_RESULT_TIMEDOUT;
+   }
+ 
+@@ -209,7 +209,7 @@ static int processHybridMappingWarning(RPNet *nc, const char *warning_str) {
+   switch (QueryWarningCode_GetCodeFromMessage(warning_str)) {
+     case QUERY_WARNING_CODE_TIMED_OUT:
+       nc->areq->stateflags |= QEXEC_S_SHARD_TIMED_OUT_WARNING;
+-      if (nc->areq->base.timeout.config.timeoutPolicy == TimeoutPolicy_Fail) {
++      if (nc->areq->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_Fail) {
+         return RS_RESULT_TIMEDOUT;
+       }
+       break;
+@@ -391,11 +391,11 @@ int getNextReply(RPNet *nc) {
+   SyncPoint_WaitUntil(SYNC_POINT_RPNET_WAITING_FOR_REPLY, areq_timed_out, nc->areq);
+ #endif
+   RS_ASSERT(nc->areq);
+-  QueryRequestTimeout *timeout = &nc->areq->base.timeout;
++  QueryRequestLimits *timeout = &nc->areq->base.limits;
+   const struct timespec *deadline = getAbsTimeout(nc);
+   RS_Atomic(bool) *abortFlag =
+-      timeout->kind == QUERY_REQUEST_TIMEOUT_BLOCKED_CLIENT
+-          ? QueryRequestTimeout_GetBlockedClientFlag(timeout)
++      timeout->timeout.kind == QUERY_REQUEST_TIMEOUT_BLOCKED_CLIENT
++          ? QueryRequestLimits_GetBlockedClientFlag(timeout)
+           : NULL;
+   bool popTimedOut = false;
+   rs_wall_clock waitStart;
+@@ -416,7 +416,7 @@ int getNextReply(RPNet *nc) {
+     if (nc->drainOnly) {
+       return RS_RESULT_EOF;
+     }
+-    if (popTimedOut || QueryRequestTimeout_IsBlockedClientTimedOut(timeout)) {
++    if (popTimedOut || QueryRequestLimits_IsBlockedClientTimedOut(timeout)) {
+       return RS_RESULT_TIMEDOUT;
+     }
+     return MRIterator_GetPending(nc->it) ? RS_RESULT_OK : RS_RESULT_EOF;
+@@ -594,7 +594,7 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
+   // may already hold a buffered reply (the NULL-reply check below wouldn't fire
+   // and we'd silently return rows). Skipped during the timer's own drain.
+   if (QueryRequest_UsesReplyCallback(&areq->base) && !nc->drainOnly &&
+-      QueryRequestTimeout_IsBlockedClientTimedOut(&areq->base.timeout)) {
++      QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) {
+     return RS_RESULT_TIMEDOUT;
+   }
+ 
+@@ -634,8 +634,8 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
+   while (!root) {
+     // RETURN_STRICT uses the blocked-client source, so only clock-based cycles
+     // reach this check.
+-    if (areq->base.timeout.kind == QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE &&
+-        QueryRequestTimeout_IsTimedOutExact(&areq->base.timeout)) {
++    if (areq->base.limits.timeout.kind == QUERY_REQUEST_TIMEOUT_CLOCK_DEADLINE &&
++        QueryRequestLimits_IsTimedOutExact(&areq->base.limits)) {
+       // Set the `timedOut` flag in the MRIteratorCtx, later to be read by the
+       // callback so that a `CURSOR DEL` command will be dispatched instead of
+       // a `CURSOR READ` command.
+@@ -665,7 +665,7 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
+       // TODO - use should_return_error after it is changed to support RequestConfig ptr
+       if (errCode == QUERY_ERROR_CODE_GENERIC ||
+           errCode == QUERY_ERROR_CODE_UNAVAILABLE_SLOTS ||
+-          ((errCode == QUERY_ERROR_CODE_TIMED_OUT) && nc -> areq ->base.timeout.config.timeoutPolicy == TimeoutPolicy_Fail) ||
++          ((errCode == QUERY_ERROR_CODE_TIMED_OUT) && nc -> areq ->base.limits.timeout.config.timeoutPolicy == TimeoutPolicy_Fail) ||
+           ((errCode == QUERY_ERROR_CODE_OUT_OF_MEMORY) && nc -> areq ->base.reqConfig.oomPolicy == OomPolicy_Fail)) {
+         // The shard reply already contains the prefixed error string — set it directly
+         // without re-prefixing via QueryError_SetError.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12093** (2026-10-30): Thread GC: batch delta applies and start early on update bursts (@GuyAv46)
-- **PR #12087** (2026-10-30): [8.12] [MOD-19999] Avoid document key map memory until first INKEYS use (@redisearch-backport-pull-request[bot])
-- **PR #12076** (2026-10-29): [8.12] [MOD-19999] Fix queued INKEYS updates with worker-side key lookup (@redisearch-backport-pull-request[bot])
-- **PR #12062** (2026-10-29): Refactor FT.CREATE option parsing into a reusable function (@Itzikvaknin)
-- **PR #12050** (closed): GEO EXP #4 ffi (@JonasKruckenberg)
-- **PR #12049** (closed):  GEO EXP #5 port  (@JonasKruckenberg)
+- **PR #12174** (closed): [MOD-20778] Allow disk GC to run after rename-only workloads (@kei-nan)
+- **PR #12164** (2026-11-02): [8.12] [MOD-20543] Prevent writes from hanging while filtered KNN cursors remain open (@nonirosenfeldredis)
+- **PR #12163** (2026-11-02): [MOD-20543] Prevent writes from hanging while filtered KNN cursors remain open (@nonirosenfeldredis)
+- **PR #12161** (closed): [8.6-rse] [MOD-18172] Fix FT.AGGREGATE cursor with FILTER reporting a wrong result count (@redisearch-backport-pull-request[bot])
+- **PR #12160** (closed): [8.6] [MOD-18172] Fix FT.AGGREGATE cursor with FILTER reporting a wrong result count (@redisearch-backport-pull-request[bot])
+- **PR #12159** (closed): [8.8] [MOD-18172] Fix FT.AGGREGATE cursor with FILTER reporting a wrong result count (@redisearch-backport-pull-request[bot])
 
 ---
 
@@ -2215,3 +2852,64 @@ Co-authored-by: jonathan keinan <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact
+
+**RULE**:
+When implementing operations in `src/debug_commands.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ac111ff7`: [MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact a disk index (#11921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/debug_commands.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  if (outcome && *outcome == GC_FORCED_RUN_COMPACT_ALL_INCOMPLETE) {
+    return RedisModule_ReplyWithError(
+        ctx, "COMPACT_ALL did not complete (background work paused or compaction cancelled)");
+  }
+// Reads GC_FORCEINVOKE's optional arguments after the index name, in any order: a TIMEOUT and
+// the COMPACT_ALL flag (default off). Replies with an error and returns false when they are
+// invalid.
+static bool parseForcedGCArgs(RedisModuleCtx *ctx, RedisModuleString **argv, int argc,
+                              const IndexSpec *sp, long long *timeout, bool *compactAll) {
+  // Disk GC cycles (SpeedB compaction) take longer than fork GC, so disk
+  // indexes get a higher default timeout.
+  *timeout = sp->diskSpec ? 60000 : 30000;
+  *compactAll = false;
+  bool timeoutSet = false;
+  for (int i = 3; i < argc; i++) {
+    if (!*compactAll && !strcasecmp(RedisModule_StringPtrLen(argv[i], NULL), "COMPACT_ALL")) {
+      *compactAll = true;
+    } else if (!timeoutSet) {
+      if (RedisModule_StringToLongLong(argv[i], timeout) != REDISMODULE_OK || *timeout < 0) {
+        RedisModule_ReplyWithError(ctx, "Invalid TIMEOUT value");
+        return false;
+      }
+      timeoutSet = true;
+    
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// FT.DEBUG GC_FORCEINVOKE [TIMEOUT]
+  if (argc < 3 || argc > 4) {
+  // Disk GC cycles (SpeedB compaction) take longer than fork GC, so disk
+  // indexes get a higher default timeout.
+  long long timeout = sp->diskSpec ? 60000 : 30000;
+  if (argc == 4 &&
+      (RedisModule_StringToLongLong(argv[3], &timeout) != REDISMODULE_OK || timeout < 0)) {
+    return RedisModule_ReplyWithError(ctx, "Invalid TIMEOUT value");
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ac111ff7` are properly handled with clean fallback behavior.

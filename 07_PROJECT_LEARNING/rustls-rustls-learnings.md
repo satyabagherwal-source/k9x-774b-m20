@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `c6aab998`  
+> **Source Version**: `a08e420b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:22:16.483Z  
+> **Timestamp**: 2026-11-03T17:53:52.276Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:22:16.475Z  
+> **Harvest Timestamp**: 2026-11-03T17:53:52.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1119,7 +1119,7 @@ impl CommonState {
         }
     }
 
-    /// Writes a `close_notify` warning alert to into the `tls` buffer.
+    /// Writes a `close_notify` warning alert into the `tls` buffer.
     ///
     /// This informs the peer that the connection is being closed. Does nothing if any
     /// `close_notify` or fatal alert was already sent.
@@ -1128,12 +1128,6 @@ impl CommonState {
     }
 
     /// Returns true if the connection is currently performing the TLS handshake.
-    ///
-    /// During this time plaintext written to the connection is buffered in memory. After
-    /// [`Connection::read_tls()`] has been called, this might start to return `false`
-    /// while the final handshake packets still need to be extracted from the connection's buffers.
-    ///
-    /// [`Connection::read_tls()`]: crate::Connection::read_tls
     pub fn is_handshaking(&self) -> bool {
         !(self.send.may_send_application_data && self.recv.may_receive_application_data)
     }
@@ -1223,7 +1217,8 @@ impl ConnectionOutputs {
     /// This function may return `None` depending on the state of the connection,
     /// the type of handshake, and the protocol version.
     ///
-    /// If [`CommonState::is_handshaking()`] is true this function will return `None`.
+    /// This function will return `None` if called prior to the key exchange group being determined.
+    ///
     /// Similarly, if the [`ConnectionOutputs::handshake_kind()`] is [`HandshakeKind::Resumed`]
     /// and the [`ConnectionOutputs::protocol_version()`] is TLS 1.2, then no key exchange will have
     /// occurred and this function will return `None`.
@@ -1356,7 +1351,20 @@ impl fmt::Debug for ConnectionOutputs {
 /// Send an alert via `output` if `error` specifies one.
 pub(crate) fn maybe_send_fatal_alert(
     send: &mut dyn SendOutput,
-    error: 
+    error: &Error,
+    tls: &mut Vec<u8>,
+) -> Result<(), Error> {
+    let Ok(alert) = AlertDescription::try_from(error) else {
+        return Ok(());
+    };
+    send.send_alert(AlertLevel::Fatal, alert, tls)
+}
+
+/// Describes which sort of handshake happened.
+#[derive(Debug, PartialEq, Clone, Copy)]
+#[non_exhaustive]
+pub enum HandshakeKind {
+    /
 ```
 
 ### Core Architecture Module: `admin/threads-seq.rs`
@@ -2243,17 +2251,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3411** (2026-11-03): **0.24 documentation pass**
+  *Symptoms*: There are actually a couple of semi-functional changes here, but as a result of the docs pointing out something wrong. Happy to extract those into a different PR if desired.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3411?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.67%. Comparing base ([`c6aab99`](https://app.codecov.io/gh/rustls/rustls/commit/c6aab99888d362800e9f2d853fef3341aec48941?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`53848d2`](https://app.codecov.io/gh/rustls/rustls/commit/53848d272fd45e7e94761c814246c03d1e2b79ce?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3411   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10383817 | 10449621 | [65804](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (0.63%) | 1.42% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10923365 | 10949938 | [26573](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.24%) | 1.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757472 | 8777427 | [19955](ht
+
 - **Issue #3410** (2026-11-02): **Make tests more concise**
   *Symptoms*: This set of changes aim to largely remove the repeated parts of tests, like:  ```rust         let mut client_output = Vec::new();         let mut server_output = Vec::new();         let mut client_input = VecInput::default();         let mut server_input = VecInput::default();         do_handshake(             &mut client_input,             &mut client_output,             &mut client,             &mut server_input,             &mut server_output,             &mut server,         ); ``` Which becomes `HandshakeIo::default().handshake(&mut client, &mut server);`
   **Post-Mortem & Fix Analysis**:
   >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2265833 | 2272320 | ⚠️ [6487](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10409190 | 10460499 | [51309](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegr
   > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3410?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.64%. Comparing base ([`8dca43e`](https://app.codecov.io/gh/rustls/rustls/commit/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`a663043`](https://app.codecov.io/gh/rustls/rustls/commit/a6630432068a1a832ccdd394c3bd7f698349229c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3410      +/-   ## ==================================
-
-- **Issue #3408** (2026-11-02): **Bring back support for no_std**
-  *Symptoms*: Reverts some of the changes from  - https://github.com/rustls/rustls/pull/2905 - https://github.com/rustls/rustls/pull/3180
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10406266 | 10443752 | [37486](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:89f073bfea7aa4f880c4afe3b0fb25c5e60ec978/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (0.36%) | 1.42% | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10930592 | 10901278 | [-29314](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:89f073bfea7aa4f880c4afe3b0fb25c5e60ec978/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (-0.27%) | 1.22% | | handshake_session_id_aws_lc_rs_1.3_rsa_chacha_client | 41918212 | 41853024 | [-65188](https://
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3408?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `86.66667%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 95.65%. Comparing base ([`8dca43e`](https://app.codecov.io/gh/rustls/rustls/commit/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`89f073b`](https://app.codecov.io/gh/rustls/rustls/commit/89f073bfea7aa4f880c4afe3b0fb25c5e60ec978?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 4 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3408?dropdown=coverage&src=pr&el=tree&utm_medium
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2270,484 +2278,73 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6aab998` (2026-10-29)
-**Commit Message**: client: reject early data accepted under a different ALPN
+### Incident Patch 1: `fe2d1c67` (2026-11-02)
+**Commit Message**: Remove unreachable panic in WebPkiSupportedAlgorithms::new
 
-RFC 9846 section 4.3.10 makes the parameters of 0-RTT data, including
-the ALPN protocol, those of the PSK being resumed. The client did not
-record which protocol a TLS1.3 session was negotiated under, so when it
-resumed with early data it accepted EncryptedExtensions that accepted
-the early data while selecting a different protocol, or none, and the
-early data written for the original protocol was reported as accepted.
-
-Store the negotiated protocol in Tls13Session alongside the QUIC
-transport parameters, and reject accepted early data whose selected
-protocol differs, as is already done for the cipher suite.
-
-**File**: `bogo/config.json.in` (modified, +2/-1)
+**File**: `rustls/src/crypto/mod.rs` (modified, +1/-3)
 ```diff
-@@ -59,7 +59,8 @@
-     "DuplicateCertCompressionExt*-TLS12": "RFC8879: if TLS 1.2 or earlier is negotiated, the peers MUST ignore this extension",
-     "ECDSAKeyUsage-*": "TODO: we don't do anything with key usages",
-     "EarlyData-*-Client-Reverify-*": "we do not reverify certificates on resumption, so this passes without exercising anything",
--    "EarlyData-*ALPN*-*": "no alpn change in resumed sessions",
-+    "EarlyData-*ALPN*-Server-*": "no alpn change in resumed sessions",
-+    "EarlyData-ALPNPreferenceChanged-TLS13": "no alpn change in resumed sessions",
-     "Ed25519DefaultDisable-NoAccept": "not implemented (ed25519 accepted by default)",
-     "Ed25519DefaultDisable-NoAdvertise": "not implemented (ed25519 advertised by default)",
-     "EmptyExtensions-ClientHello-TLS12": "we require signature algorithms ext",
-```
-
-**File**: `bogo/src/main.rs` (modified, +3/-0)
-```diff
-@@ -943,6 +943,9 @@ fn handle_err(opts: &Options, err: Error) -> ! {
-         Error::PeerMisbehaved(PeerMisbehaved::EarlyDataOfferedWithVariedCipherSuite) => {
-             quit(":CIPHER_MISMATCH_ON_EARLY_DATA:")
+@@ -362,8 +362,7 @@ pub struct WebPkiSupportedAlgorithms {
+ impl WebPkiSupportedAlgorithms {
+     /// Creating a `WebPkiSupportedAlgorithms` and checking its consistency.
+     ///
+-    /// This is intended to only be called in const context, so the panics are
+-    /// compile-time.
++    /// This is intended to only be called in const context.
+     pub const fn new(
+         all: &'static [&'static dyn SignatureVerificationAlgorithm],
+         mapping: &'static [(
+@@ -382,7 +381,6 @@ impl WebPkiSupportedAlgorithms {
+             if s.mapping[i].1.is_empty() {
+                 return Err(ApiMisuse::NoSignatureVerificationAlgorithms);
+             }
+-            assert!(!s.mapping[i].1.is_empty());
+             i += 1;
          }
-+        Error::PeerMisbehaved(PeerMisbehaved::EarlyDataAcceptedWithVariedApplicationProtocol) => {
-+            quit(":ALPN_MISMATCH_ON_EARLY_DATA:")
-+        }
-         Error::PeerMisbehaved(
-             PeerMisbehaved::ServerEchoedCompatibilitySessionId | PeerMisbehaved::UnmatchedSessionId,
-         ) => quit(":SERVER_ECHOED_INVALID_SESSION_ID:"),
-```
-
-**File**: `rustls/src/client/ech.rs` (modified, +1/-0)
-```diff
-@@ -1070,6 +1070,7 @@ mod tests {
-                         SubjectPublicKeyInfoDer::from(&b"spki"[..]),
-                     )),
-                     quic_params: None,
-+                    alpn: None,
-                 },
-                 &[0x55; 32],
-                 UnixTime::now(),
-```
-
-**File**: `rustls/src/client/handy.rs` (modified, +1/-0)
-```diff
-@@ -301,6 +301,7 @@ mod tests {
-                     intermediates: Vec::new(),
-                 })),
-                 quic_params: None,
-+                alpn: None,
-             },
-             &[],
-             now,
-```
-
-**File**: `rustls/src/client/mod.rs` (modified, +17/-1)
-```diff
-@@ -125,6 +125,7 @@ pub struct Tls13Session {
-     max_early_data_size: u32,
-     pub(crate) common: ClientSessionCommon,
-     quic_params: SizedPayload<'static, u16, MaybeEmpty>,
-+    alpn: Option<ApplicationProtocol<'static>>,
- }
  
- impl Tls13Session {
-@@ -146,6 +147,10 @@ impl Tls13Session {
-                 max_early_data_size: u32::read(reader)?,
-                 common: ClientSessionCommon::read(reader)?,
-                 quic_params: SizedPayload::<u16, MaybeEmpty>::read(reader)?.into_owned(),
-+                alpn: match u8::read(reader)? {
-+                    1 => Some(ApplicationProtocol::read(reader)?.to_owned()),
-+                    _ => None,
-+                },
-             })
-         })
-     }
-@@ -173,6 +178,7 @@ impl Tls13Session {
-             quic_params: input
-                 .quic_params
-                 .unwrap_or_else(|| SizedPayload::from(Payload::new(Vec::new()))),
-+            alpn: input.alpn,
-         }
-     }
- 
-@@ -188,6 +194,12 @@ impl Tls13Session {
-         buf.extend_from_slice(&self.max_early_data_size.to_be_bytes());
-         self.common.encode(buf);
-         self.quic_params.encode(buf);
-+        if let Some(alpn) = &self.alpn {
-+            1u8.encode(buf);
-+            alpn.encode(buf);
-+        } else {
-+            0u8.encode(buf);
-+        }
-     }
- 
-     /// Test only: CAS `max_early_data_size` from `expected` to `desired`
-@@ -224,13 +236,15 @@ impl fmt::Debug for Tls13Session {
-             max_early_data_size,
-             common,
-             quic_params,
-+            alpn,
-         } = self;
-         f.debug_struct("Tls13Session")
-             .field("suite", suite)
-             .field("age_add", age_add)
-             .field("max_early_data_size", max_early_data_size)
-             .field("common", common)
-             .field("quic_params", quic_params)
-+            .field("alpn", alpn)
-             .finish_non_exhaustive()
-     }
- }
-@@ -241,6 +255,7 @@ pub(crate) struct Tls13ClientSessionInput {
-     pub(crate) suite: Tls13ProtocolSuite,
-     pub(crate) peer_identity: VerifiedIdentity<'static>,
-     pub(crate) quic_params: Option<SizedPayload<'static, u16, MaybeEmpty>>,
-+    pub(crate) alpn: Option<ApplicationProtocol<'static>>,
- }
- 
- /// A stored TLS 1.2 client session value.
-@@ -527,13 +542,14 @@ mod tests {
-                     SubjectPublicKeyInfoDer::from(&b"spki"[..]),
-                 )),
-                 quic_params: None,
-+                alpn: None,
-             },
-             &[0xa5; 32],
-             UnixTime::since_unix_epoch(Duration::from_secs(1)),
-         );
-         assert_eq!(
-             format!("{tls13:?}"),
--            "Tls13Session { suite: Tcp(Tls13CipherSuite { suite: 0xff13, .. }), age_add: 3, max_early_data_size: 0, common: ClientSessionCommon { ticket: 05, epoch: 1, lifetime: 2s, peer_identity: VerifiedIdentity(RawPublicKey(SubjectPublicKeyInfoDer(0x73706b69))) }, quic_params: , .. }"
-+            "Tls13Session { suite: Tcp(Tls13CipherSuite { suite: 0xff13, .. }), age_add: 3, max_early_data_size: 0, common: ClientSessionCommon { ticket: 05, epoch: 1, lifetime: 2s, peer_identity: VerifiedIdentity(RawPublicKey(SubjectPublicKeyInfoDer(0x73706b69))) }, quic_params: , alpn: None, .. }"
-         );
-     }
- }
-```
-
-**File**: `rustls/src/client/test.rs` (modified, +136/-2)
-```diff
-@@ -23,7 +23,7 @@ use crate::crypto::{
-     CipherSuite, Credentials, CryptoProvider, Identity, SelectedCredential, SignatureScheme,
-     SingleCredential, TEST_PROVIDER, TLS13_TEST_SUITE, tls12_only, tls13_only, tls13_suite,
- };
--use crate::enums::{CertificateType, HandshakeType, ProtocolVersion};
-+use crate::enums::{ApplicationProtocol, CertificateType, HandshakeType, ProtocolVersion};
- use crate::error::{Error, PeerIncompatible, PeerMisbehaved};
- use crate::msgs::{
-     CertificateChain, ChangeCipherSpecPayload, ClientHelloPayload, Codec, Compression, ECCurveType,
-@@ -32,7 +32,7 @@ use crate::msgs::{
-     ListLength, MaybeEmpty, Message, MessagePayload, NewSessionTicketExtensions,
-     NewSessionTicketPayloadTls13, Random, Reader, ServerEcdhParams, ServerExtensions,
-     ServerHelloPayload, ServerKeyExchange, ServerKeyExchangeParams, ServerKeyExchangePayload,
--    SessionId, SizedPayload,
-+    SessionId, SingleProtocolName, SizedPayload,
- };
- use crate::pki_types::PrivateKeyDer;
- use crate::pki_types::pem::PemObject;
-@@ -112,6 +112,7 @@ fn tls13_client_session_value_roundtrip() {
-             quic_params: Some(SizedPayload::<u16, MaybeEmpty>::from(vec![
-                 0xaa, 0xbb, 0xcc, 0xdd,
-             ])),
-+            alpn: Some(ApplicationProtocol::Http2),
-         },
-         &[0x55; 48],
-         UnixTime::since_unix_epoch(Duration::from_secs(9999999)),
-@@ -129,6 +130,7 @@ fn tls13_client_session_value_roundtrip() {
-     assert_eq!(decoded.age_add, age_add);
-     assert_eq!(decoded.max_early_data_size, session.max_early_data_size);
-     assert_eq!(decoded.quic_params.bytes(), session.quic_params.bytes());
-+    assert_eq!(decoded.alpn, session.alpn);
-     assert_eq!(decoded.common.ticket(), session.common.ticket());
-     assert_eq!(decoded.common.epoch, session.common.epoch);
-     assert_eq!(*decoded.common.peer_identity(), peer_identity.into());
-@@ -433,6 +435,7 @@ fn test_client_rejects_tls12_server_hello_echoing_compatibility_session_id() {
-                     pki_types::SubjectPublicKeyInfoDer::from(&b"spki"[..]),
-                 )),
-                 quic_params: None,
-+                alpn: None,
-             },
-             &[0x55; 32],
-             UnixTime::now(),
-@@ -1089,6 +1092,137 @@ fn test_client_rejects_protected_change_cipher_spec() {
-     );
- }
- 
-+#[test]
-+fn test_client_rejects_early_data_accepted_with_varied_alpn() {
-+    assert_eq!(
-+        client_receives_ee_accepting_early_data(Some(ApplicationProtocol::Http11)),
-+        Err(PeerMisbehaved::EarlyDataAcceptedWithVariedApplicationProtocol.into())
-+    );
-+    assert_eq!(
-+        client_receives_ee_accepting_early_data(None),
-+        Err(PeerMisbehaved::EarlyDataAcceptedWithVariedApplicationProtocol.into())
-+    );
-+    assert_eq!(
-+        client_receives_ee_accepting_early_data(Some(ApplicationProtocol::Http2)),
-+        Ok(())
-+    );
-+}
-+
-+/// Resumes an h2 session with early data, offering h2 and http/1.1, and then
-+/// receives a ServerHello selecting the PSK and EncryptedExtensions accepting
-+/// early data with `selected_alpn`.
-+fn client_receives_ee_accepting_early_data(
-+    selected_alpn: Option<ApplicationProtocol<'static>>,
-+) -> Result<(), Error> {
-+    let provider = Arc::new(tls13_only(TEST_PROVIDER.clone()));
-+    let fake_server_crypto = Arc::new(FakeServerCrypto::new(provider.clone()));
-+    let store = Arc::new(ClientSessionMemoryCache::new(256));
-+    let mut config = ClientConfig::builder(provider)
-+        .with_root_certificates(roots())
-+        .with_no_client_auth()
-+        .unwrap();
-+    config.key_log = fake_server_crypto.clone();
-+    config.enable_early_data = true;
-+    config.resumption = Resumption::store(store.clone());
-+    let config = Arc::new(config);
-+
-+    let server_name = ServerName::try_from("localhost").unwrap();
-+    let mut ticket = NewSessionTicketPayloadTls13::new(
-+        Duration::from_secs(1800),
-+        0x1234_5678,
-+        [0u8; 32],
-+        b"ticket".to_vec(),
-+    );
-+    ticket.extensions.max_early_data_size = Some(1024);
-+    store.insert_tls13_ticket(
-+        ClientSessionKey {
-+            config_hash: config.config_hash(),
-+            server_name: server_name.clone(),
-+        },
-+        Tls13Session::new(
-+            &ticket,
-+            Tls13ClientSessionInput {
-+                suite: Tls13ProtocolSuite::Tcp(TLS13_TEST_SUITE),
-+                peer_identity: VerifiedIdentity::assertion(Identity::RawPublicKey(
-+                    pki_types::SubjectPublicKeyInfoDer::from(&b"spki"[..]),
-+                )),
-+                quic_params: None,
-+                alpn: Some(ApplicationProtocol::Http2),
-+            },
-+            &[0x55; 32],
-+            UnixTime::now(),
-+        ),
-+    );
-+
-+    let mut tls = Vec::new();
-+    let mut conn = config
-+        .connect(server_name)
-+        .with_alpn(vec![
-+            ApplicationProtocol::Http2,
-+            ApplicationProtocol::Http11,
-+        ])
-+        .build(&mut tls)
-+        .unwrap();
-+    let
-```
-
-**File**: `rustls/src/client/tls13.rs` (modified, +20/-2)
-```diff
-@@ -29,7 +29,9 @@ use crate::crypto::kx::{
-     ActiveKeyExchange, HybridKeyExchange, NamedGroup, SharedSecret, StartedKeyExchange,
- };
- use crate::crypto::{Identity, SelectedCredential, SignatureScheme, Signer, VerifiedIdentity};
--use crate::enums::{CertificateType, ContentType, HandshakeType, ProtocolVersion};
-+use crate::enums::{
-+    ApplicationProtocol, CertificateType, ContentType, HandshakeType, ProtocolVersion,
-+};
- use crate::error::{
-     ApiMisuse, Error, InvalidMessage, PeerIncompatible, PeerMisbehaved, RejectedEch,
- };
-@@ -290,6 +292,7 @@ impl ClientHandler<Tls13CipherSuite> for Handler {
-                 sent_status_request: hello
-                     .sent_extensions
-                     .contains(&ExtensionType::StatusRequest),
-+                alpn_protocol: None,
-             },
-             resuming_session,
-             suite,
-@@ -556,6 +559,7 @@ impl State<ClientSide> for ExpectEncryptedExtensions {
-             selected_alpn,
-             self.hs.config.check_selected_alpn,
-         )?;
-+        self.hs.alpn_protocol = selected_alpn.cloned();
- 
-         // RFC 9001 says: "While ALPN only specifies that servers use this alert, QUIC clients MUST
-         // use error 0x0178 to terminate a connection when ALPN negotiation fails." We judge that
-@@ -624,7 +628,17 @@ impl State<ClientSide> for ExpectEncryptedExtensions {
-             Some(resuming_session) => {
-                 if self.in_early_traffic {
-                     match exts.early_data_ack {
--                        Some(()) => output.emit(Event::EarlyData(EarlyDataEvent::Accepted)),
-+                        Some(()) => {
-+                            // RFC 9846 section 4.3.10: early data is sent under the
-+                            // ALPN protocol of the session being resumed.
-+                            if resuming_session.alpn.as_ref() != selected_alpn {
-+                                return Err(
-+                                    PeerMisbehaved::EarlyDataAcceptedWithVariedApplicationProtocol
-+                                        .into(),
-+                                );
-+                            }
-+                            output.emit(Event::EarlyData(EarlyDataEvent::Accepted));
-+                        }
-                         None => {
-                             output.emit(Event::EarlyData(EarlyDataEvent::Rejected));
-                             // If no early traffic, set the encryption key for handshakes
-@@ -649,6 +663,7 @@ impl State<ClientSide> for ExpectEncryptedExtensions {
-                         suite: self.suite,
-                         peer_identity,
-                         quic_params,
-+                        alpn: selected_alpn.cloned(),
-                     },
-                     client_auth: None,
-                     sig_verified,
-@@ -1250,12 +1265,14 @@ impl VerifySidePeerIdentity<ClientSide> for AwaitServerIdentityVerification {
-                 signature: &self.cert_verify,
-             })?;
- 
-+        let alpn = self.hs.alpn_protocol.clone();
-         Ok(Box::new(ExpectFinished {
-             hs: self.hs,
-             session_input: Tls13ClientSessionInput {
-                 suite: self.suite,
-                 peer_identity: peer_identity.into_owned(),
-                 quic_params: self.quic_params,
-+                alpn,
-             },
-             client_auth: self.client_auth,
-             sig_verified,
-@@ -1564,6 +1581,7 @@ struct HandshakeState {
-     key_schedule: KeyScheduleHandshake,
-     kx_group: NamedGroup,
-     sent_status_request: bool,
-+    alpn_protocol: Option<ApplicationProtocol<'static>>,
- }
- 
- // -- Traffic transit state (TLS1.3) --
-```
-
-**File**: `rustls/src/error/mod.rs` (modified, +1/-0)
-```diff
-@@ -1188,6 +1188,7 @@ pub enum PeerMisbehaved {
-     DuplicateNewSessionTicketExtensions,
-     DuplicateServerHelloExtensions,
-     DuplicateServerNameTypes,
-+    EarlyDataAcceptedWithVariedApplicationProtocol,
-     EarlyDataAttemptedInSecondClientHello,
-     EarlyDataExtensionWithoutResumption,
-     EarlyDataOfferedWithVariedCipherSuite,
 ```
 
 ---
 
-### Incident Patch 2: `f10706bf` (2026-11-02)
-**Commit Message**: Bring back support for no_std
+### Incident Patch 2: `ca2a6d1d` (2026-11-02)
+**Commit Message**: Fix logic error in front-page sample code
 
-**File**: `.github/workflows/build.yml` (modified, +1/-0)
+**File**: `rustls/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -160,6 +160,7 @@ jobs:
- 
-       - name: cargo test (debug; no default features; std)
-         run: |
-+          cargo test --locked -p rustls --no-default-features --features std
-           cargo test --locked -p rustls-ring --no-default-features --features std
-           cargo test --locked -p rustls-aws-lc-rs --no-default-features --features std --features aws-lc-sys
- 
+@@ -236,6 +236,7 @@
+ //!       .handle_all(&mut plaintext)
+ //!       .unwrap();
+ //!     io::stdout().write(&plaintext).unwrap();
++//!     plaintext.clear();
+ //!   }
+ //!
+ //!   if !sent_request && !client.is_handshaking() {
 ```
 
-**File**: `.github/workflows/docs.yml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ jobs:
- 
-       - name: cargo doc
-         # keep features in sync with Cargo.toml `[package.metadata.docs.rs]` section
--        run: cargo doc --locked --features brotli,tracing,zlib --no-deps --package rustls
-+        run: cargo doc --locked --features brotli,std,tracing,zlib --no-deps --package rustls
-         env:
-           RUSTDOCFLAGS: -Dwarnings --cfg=rustls_docsrs --html-after-content tag.html
- 
-```
+---
 
-**File**: `fuzz/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ cargo-fuzz = true
- 
- [dependencies]
- libfuzzer-sys = "0.4"
--rustls = { path = "../rustls", default-features = false }
-+rustls = { path = "../rustls", default-features = false, features = ["std"] }
- rustls-fuzzing-provider = { path = "../rustls-fuzzing-provider" }
- 
- # Prevent this from interfering with workspaces
-```
+### Incident Patch 3: `20e2d1c9` (2026-11-02)
+**Commit Message**: Fix link to `with_ech()`
 
-**File**: `rustls-aws-lc-rs/Cargo.toml` (modified, +1/-1)
+**File**: `rustls/src/client/config.rs` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,7 @@ autobenches = false
- default = ["aws-lc-sys", "std"]
- aws-lc-sys = ["aws-lc-rs/aws-lc-sys"]
- fips = ["aws-lc-rs/fips"]
--std = []
-+std = ["rustls/std"]
- 
- [dependencies]
- aws-lc-rs = { workspace = true, features = ["prebuilt-nasm"] }
-```
-
-**File**: `rustls-fuzzing-provider/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ publish = false
- rustls = { path = "../rustls", default-features = false, features = ["tracing", "webpki"] }
- 
- [dev-dependencies]
-+rustls = { path = "../rustls", default-features = false, features = ["std"] }
- tracing-subscriber = { workspace = true }
- 
- [lints]
-```
-
-**File**: `rustls-ring/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ autobenches = false
- 
- [features]
- default = ["std"]
--std = []
-+std = ["rustls/std"]
- 
- [dependencies]
- pki-types = { workspace = true }
-```
-
-**File**: `rustls-test/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ tracing = ["rustls/tracing", "rustls-util/tracing"]
- zlib = ["rustls/zlib"]
- 
- [dependencies]
--rustls = { path = "../rustls", default-features = false, features = ["webpki"] }
-+rustls = { path = "../rustls", default-features = false, features = ["std", "webpki"] }
- rustls-ring = { path = "../rustls-ring", optional = true }
- tracing = { workspace = true, features = ["std"] }
- 
-```
-
-**File**: `rustls-test/tests/api/client_cert_verifier.rs` (modified, +1/-0)
-```diff
-@@ -172,6 +172,7 @@ fn server_external_verifier_does_not_call_trait() {
-         server_output.clear();
- 
-         assert!(!client.is_handshaking());
-+        let server = server.split().unwrap();
-         assert!(server.outputs.peer_identity().is_some());
-     }
- }
+@@ -45,7 +45,7 @@ use crate::{DistinguishedName, DynHasher, KeyLog, compress};
+ /// These must be created via the [`ClientConfig::builder()`] or [`ClientConfig::builder_with_details()`]
+ /// function.
+ ///
+-/// Note that using [`ConfigBuilder<ClientConfig, WantsVersions>::with_ech()`] will produce a common
++/// Note that using [`ConfigBuilder<ClientConfig, WantsVerifier>::with_ech()`] will produce a common
+ /// configuration specific to the provided [`crate::client::EchConfig`] that may not be appropriate
+ /// for all connections made by the program. In this case the configuration should only be shared
+ /// by connections intended for domains that offer the provided [`crate::client::EchConfig`] in
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3411** (2026-11-03): 0.24 documentation pass (@ctz)
 - **PR #3410** (2026-11-02): Make tests more concise (@ctz)
 - **PR #3408** (2026-11-02): Bring back support for no_std (@djc)
 - **PR #3405** (closed): Pass the negotiated TLS version to signing keys (@loadingalias)
 - **PR #3404** (closed): Honor disabled TLS 1.2 resumption with a shared store (@loadingalias)
 - **PR #3402** (2026-10-31): Fix nightly clippy `redundant_clone` case (@ctz)
-- **PR #3401** (2026-10-30): Ensure rustls-ring crate is used by rustls-test (@ctz)
 
 ---
 
@@ -2767,29 +2364,30 @@ protocol differs, as is already done for the cipher suite.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client: reject early data accepted under a different ALPN
+## X. Remove unreachable panic in WebPkiSupportedAlgorithms::new
 
 **RULE**:
-When implementing operations in `bogo/config.json.in`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/crypto/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6aab998`: client: reject early data accepted under a different ALPN. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe2d1c67`: Remove unreachable panic in WebPkiSupportedAlgorithms::new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bogo/config.json.in`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/crypto/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "EarlyData-*ALPN*-Server-*": "no alpn change in resumed sessions",
-    "EarlyData-ALPNPreferenceChanged-TLS13": "no alpn change in resumed sessions",
+    /// This is intended to only be called in const context.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "EarlyData-*ALPN*-*": "no alpn change in resumed sessions",
+    /// This is intended to only be called in const context, so the panics are
+    /// compile-time.
+            assert!(!s.mapping[i].1.is_empty());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6aab998` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe2d1c67` are properly handled with clean fallback behavior.

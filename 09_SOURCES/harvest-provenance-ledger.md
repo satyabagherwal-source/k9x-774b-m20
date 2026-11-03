@@ -6962,3 +6962,8 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `5a85f9b0` | Multi-dimensional audit evidence | 2026-11-03T17:45:45.713Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9929d176` | Multi-dimensional audit evidence | 2026-11-03T17:45:51.281Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `d372a646` | Multi-dimensional audit evidence | 2026-11-03T17:45:55.518Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `f6744498` | Multi-dimensional audit evidence | 2026-11-03T17:53:43.578Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `c6b8a834` | Multi-dimensional audit evidence | 2026-11-03T17:53:46.847Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `cbae181d` | Multi-dimensional audit evidence | 2026-11-03T17:53:49.930Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `a08e420b` | Multi-dimensional audit evidence | 2026-11-03T17:53:53.024Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `6c452ddc` | Multi-dimensional audit evidence | 2026-11-03T17:53:54.733Z |

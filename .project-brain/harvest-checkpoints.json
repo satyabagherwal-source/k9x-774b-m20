@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T17:45:55.524Z",
+  "last_updated": "2026-11-03T17:53:54.743Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
-      "verified_at": "2026-10-30T13:28:41.801Z",
+      "content_hash": "cb66f1f004b6f55d02d93dc0828651eeeb2b0443bec00d27e1e13529f4365460",
+      "verified_at": "2026-11-03T17:53:49.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:28:41.801Z"
+      "last_updated": "2026-11-03T17:53:49.939Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "2ee238f18ce9852ab87651a4c2b21ae8d786a1947566fbc853e899ccfa4ee8c2",
-      "verified_at": "2026-11-03T11:22:17.213Z",
+      "content_hash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
+      "verified_at": "2026-11-03T17:53:53.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:22:17.213Z"
+      "last_updated": "2026-11-03T17:53:53.033Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "33f6198d6c924ac5d2b53a3a2ef85dcc0123a06d481af3def5e1de64c5f0ec91",
-      "verified_at": "2026-10-31T20:32:05.813Z",
+      "content_hash": "617eb25c95bd74fa584dedb77b4a88138bc6fd495da0afc57fc108523395f86d",
+      "verified_at": "2026-11-03T17:53:54.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:32:05.813Z"
+      "last_updated": "2026-11-03T17:53:54.742Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
-      "verified_at": "2026-10-31T16:27:11.614Z",
+      "content_hash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
+      "verified_at": "2026-11-03T17:53:43.587Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:27:11.614Z"
+      "last_updated": "2026-11-03T17:53:43.587Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
-      "verified_at": "2026-10-30T18:13:39.117Z",
+      "content_hash": "6dfb915d489dfad597f15939038bbd348fcc4dae6a024f837d22124c4689e984",
+      "verified_at": "2026-11-03T17:53:46.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:13:39.117Z"
+      "last_updated": "2026-11-03T17:53:46.856Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",
