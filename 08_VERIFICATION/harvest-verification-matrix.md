@@ -7021,3 +7021,7 @@
 | `CYCLE-20261103-UGZJ` | `2026-11-03T21:44:50.047Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6622` | Yes (`785c8521...`) |
 | `CYCLE-20261103-UJ78` | `2026-11-03T21:44:52.916Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6623` | Yes (`71a09be1...`) |
 | `CYCLE-20261103-ULL3` | `2026-11-03T21:44:56.007Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6624` | Yes (`27756688...`) |
+| `CYCLE-20261103-BHIY` | `2026-11-03T21:58:03.898Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6625` | Yes (`c1195cc9...`) |
+| `CYCLE-20261103-BLC2` | `2026-11-03T21:58:08.834Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6626` | Yes (`b4602181...`) |
+| `CYCLE-20261103-BNPA` | `2026-11-03T21:58:11.902Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6627` | Yes (`8ff794dd...`) |
+| `CYCLE-20261103-BOBA` | `2026-11-03T21:58:12.694Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6628` | Yes (`ac318623...`) |

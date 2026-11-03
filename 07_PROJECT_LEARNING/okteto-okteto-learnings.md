@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `bb9214a9`  
+> **Source Version**: `e2b40f1d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T17:51:39.575Z  
+> **Timestamp**: 2026-11-03T21:58:11.097Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T17:51:38.247Z  
+> **Harvest Timestamp**: 2026-11-03T21:58:10.830Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,158 +1502,349 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb9214a9` (2026-10-30)
-**Commit Message**: fix(compose): keep numbers and booleans from interpolated variables (#5217)
+### Incident Patch 1: `490d3c96` (2026-11-03)
+**Commit Message**: fix: update vulnerable dependencies (#5240)
 
-A plain scalar like ${REPLICAS} is resolved as a string before expansion, so the encoder wrote the expanded value back quoted and fields like replicas, scale or public failed to unmarshal. Keep the int, float or bool tag when the expanded plain value resolves to one.
+- Update kubectl from 1.35.9 to 1.35.10 (fixes CVE-2026-111943, CVE-2026-78667, CVE-2026-78669, CVE-2026-97031)
+- Update helm 3 from 3.22.0 to 3.22.1 (fixes CVE-2026-78667, CVE-2026-78669, CVE-2026-97031)
+- Update git from 2.42.0 to 2.56.0 (fixes CVE-2025-48384, CVE-2025-48385, CVE-2024-32002, CVE-2024-32004, CVE-2024-32465). Build it without Rust, drop the stage-level GIT_VERSION default that overrode the global ARG, and check the built version
+- Update golang.org/x/net from v0.59.0 to v0.62.0 (fixes CVE-2026-78669)
 
-Signed-off-by: Raphael Fakhri <[REDACTED_EMAIL]>
+Resolves 0 CRITICAL and 13 HIGH severity vulnerabilities reported by Trivy, plus the git CVEs Trivy does not detect.
 
-**File**: `pkg/model/stack_expander.go` (modified, +26/-0)
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Dockerfile` (modified, +8/-6)
 ```diff
-@@ -27,6 +27,14 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
- 		if err != nil {
- 			return node, err
- 		}
-+		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
-+			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
-+			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
-+			// replicas or public fail to unmarshal
-+			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
-+				node.Tag = tag
-+			}
-+		}
- 		node.Value = expandValue
- 		return node, nil
- 	}
-@@ -41,6 +49,24 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
- 	return node, nil
- }
+@@ -1,7 +1,7 @@
+ # Base image versions - Centralized version control for easier updates
+ # Kubernetes tools (kubectl, Helm 3, Helm 4, kustomize)
+-ARG KUBECTL_VERSION=1.35.9
+-ARG HELM3_VERSION=3.22.0
++ARG KUBECTL_VERSION=1.35.10
++ARG HELM3_VERSION=3.22.1
+ ARG HELM4_VERSION=4.2.4
+ ARG KUSTOMIZE_VERSION=5.8.2
+ # Okteto components
+@@ -15,7 +15,7 @@ ARG ALPINE_SHA=sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8
+ ARG BUSYBOX_VERSION=1.36.1
+ ARG BUSYBOX_SHA=sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+ ARG DEBIAN_BOOKWORM_SLIM_SHA=sha256:0104b334637a5f19aa9c983a91b54c89887c0984081f2068983107a6f6c21eeb
+-ARG GIT_VERSION=2.42.0
++ARG GIT_VERSION=2.56.0
+ # Minimum ca-certificates: 20261020-r0 drops the emSign roots behind the eMudhra compromise (CVE-2026-111943)
+ ARG CA_CERTIFICATES_MIN_VERSION=20261020-r0
  
-+// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
-+func resolveExpandedScalarTag(value string) string {
-+	doc := yaml3.Node{}
-+	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
-+		return ""
-+	}
-+	node := doc.Content[0]
-+	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
-+		return ""
-+	}
-+	switch tag := node.ShortTag(); tag {
-+	case "!!int", "!!float", "!!bool":
-+		return tag
-+	default:
-+		return ""
-+	}
-+}
-+
- // ExpandStackEnvs returns the stack manifest with expanded envs
- func ExpandStackEnvs(file []byte) ([]byte, error) {
- 	doc := yaml3.Node{}
+@@ -122,7 +122,7 @@ RUN curl -sLf --retry 3 -o helm.tar.gz \
+ # Stage 3.4: Download git (Version control system)
+ FROM debian:bookworm-slim@${DEBIAN_BOOKWORM_SLIM_SHA} AS git-builder
+ 
+-ARG GIT_VERSION="2.42.0"
++ARG GIT_VERSION
+ ENV CC=gcc
+ 
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+@@ -142,9 +142,11 @@ RUN make configure \
+  && ./configure --prefix=/usr \
+       CFLAGS="-static" LDFLAGS="-static" \
+       NO_GETTEXT=YesPlease NO_PYTHON=YesPlease \
+- && make -j"$(nproc)" \
+- && make install \
++ && make NO_RUST=YesPlease -j"$(nproc)" \
++ && make NO_RUST=YesPlease install \
+  && strip /usr/bin/git \
++ # Verify binary works
++ && /usr/bin/git --version | grep -qF "git version ${GIT_VERSION}" \
+  && rm -rf /usr/src/git
+ 
+ # Stage 4: Build the Okteto CLI
 ```
 
-**File**: `pkg/model/stack_test.go` (modified, +36/-0)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -361,6 +361,42 @@ services:
- 	assert.Equal(t, string(manifest), string(s.Manifest))
- }
- 
-+func Test_ReadStackComposeInterpolatedTypes(t *testing.T) {
-+	t.Setenv("REPLICAS", "3")
-+	t.Setenv("PUBLIC", "true")
-+	t.Setenv("SCALE", "2")
-+	t.Setenv("VERSION", "1.10")
-+	t.Setenv("ZIP", "0123")
-+	t.Setenv("ANSWER", "yes")
-+	manifest := []byte(`services:
-+  app:
-+    image: okteto/vote:1
-+    public: ${PUBLIC}
-+    deploy:
-+      replicas: ${REPLICAS}
-+    environment:
-+      VERSION: ${VERSION}
-+      ZIP: ${ZIP}
-+      ANSWER: ${ANSWER}
-+      QUOTED: "${REPLICAS}"
-+  worker:
-+    image: okteto/vote:1
-+    scale: ${SCALE}`)
-+	s, err := ReadStack(manifest, true)
-+	require.NoError(t, err)
-+
-+	app := s.Services["app"]
-+	assert.Equal(t, int32(3), app.Replicas)
-+	assert.True(t, app.Public)
-+	assert.Equal(t, env.Environment{
-+		{Name: "ANSWER", Value: "yes"},
-+		{Name: "QUOTED", Value: "3"},
-+		{Name: "VERSION", Value: "1.10"},
-+		{Name: "ZIP", Value: "0123"},
-+	}, app.Environment)
-+	assert.Equal(t, int32(2), s.Services["worker"].Replicas)
-+}
-+
- func TestStack_validate(t *testing.T) {
- 	tests := []struct {
- 		stack *Stack
+@@ -37,10 +37,10 @@ require (
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/src-d/enry/v2 v2.1.0
+ 	github.com/stern/stern v1.22.0
+-	golang.org/x/crypto v0.57.0
++	golang.org/x/crypto v0.58.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.24.0
+-	golang.org/x/term v0.46.0
++	golang.org/x/term v0.47.0
+ 	google.golang.org/grpc v1.84.0
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+ 	gopkg.in/yaml.v3 v3.0.1
+@@ -134,9 +134,9 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+-	golang.org/x/net v0.59.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+ 	google.golang.org/api v0.294.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
+```
+
+**File**: `go.sum` (modified, +12/-12)
+```diff
+@@ -680,8 +680,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -728,8 +728,8 @@ golang.org/x/net v0.0.0-20200202094626-16171245cfb2/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+ golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+@@ -773,22 +773,22 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20220909162455-aba9fc2a8ff2/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
+@@ -818,8 +818,8 @@ golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod h1:TB2adYChydJhpapK
+ golang.org/x/tools v0.0.0-20200207183749-b753a1ba74fa/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+ golang.org/x/tools v0.0.0-20200212150539-ea181f53ac56/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+ golang.org/x/tools v0.1.12/go.mo
 ```
 
 ---
 
-### Incident Patch 2: `ce177ed5` (2026-10-29)
-**Commit Message**: build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (#5227)
+### Incident Patch 2: `4d0c4d09` (2026-11-03)
+**Commit Message**: fix(compose): keep service resources when a deploy block is set (#5220)
 
-Bumps [github.com/go-jose/go-jose/v4](https://github.com/go-jose/go-jose) from 4.1.5 to 4.1.6.
-- [Release notes](https://github.com/go-jose/go-jose/releases)
-- [Commits](https://github.com/go-jose/go-jose/compare/v4.1.5...v4.1.6)
+* fix(compose): keep service resources when a deploy block is set
+
+Any deploy section, even one with only replicas, replaced the service's
+resources with deploy.resources, dropping CPU/memory limits and the
+storage size and class. Only override the values deploy.resources sets.
+
+Fixes #5219
+
+Signed-off-by: poojagosika <[REDACTED_EMAIL]>
+
+* test(compose): cover deploy reservations keeping existing requests
+
+Signed-off-by: poojagosika <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: poojagosika <[REDACTED_EMAIL]>
+
+**File**: `pkg/model/stack_serializer.go` (modified, +5/-5)
+```diff
+@@ -1127,8 +1127,8 @@ func unmarshalDeployResources(deployInfo *DeployInfoRaw, resources *StackResourc
+ 		resources = &StackResources{}
+ 	}
+ 	if deployInfo != nil {
+-		resources.Limits = deployInfo.Resources.Limits.toServiceResources()
+-		resources.Requests = deployInfo.Resources.Reservations.toServiceResources()
++		deployInfo.Resources.Limits.applyTo(&resources.Limits)
++		deployInfo.Resources.Reservations.applyTo(&resources.Requests)
+ 	}
+ 
+ 	if resources.Limits.CPU.Value.IsZero() && !cpuCount.Value.IsZero() {
+@@ -1163,15 +1163,15 @@ func unmarshalDeployReplicas(deployInfo *DeployInfoRaw, scale, replicas *int32)
+ 	return DefaultReplicasNumber
+ }
+ 
+-func (r DeployComposeResources) toServiceResources() ServiceResources {
+-	resources := ServiceResources{}
++// applyTo overrides only the values set under deploy.resources, so the service's own
++// resources (including storage) are kept
++func (r DeployComposeResources) applyTo(resources *ServiceResources) {
+ 	if !r.Cpus.Value.IsZero() {
+ 		resources.CPU = r.Cpus
+ 	}
+ 	if !r.Memory.Value.IsZero() {
+ 		resources.Memory = r.Memory
+ 	}
+-	return resources
+ }
+ 
+ func (endpoint *EndpointSpec) UnmarshalYAML(unmarshal func(interface{}) error) error {
+```
+
+**File**: `pkg/model/stack_serializer_test.go` (modified, +86/-0)
+```diff
+@@ -292,6 +292,92 @@ func Test_DeployResourcesUnmarshalling(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		{
++			name:      "deploy-without-resources-keeps-service-resources",
++			deployRaw: &DeployInfoRaw{},
++			resources: &StackResources{
++				Limits: ServiceResources{
++					CPU:    Quantity{resource.MustParse("2")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++				},
++				Requests: ServiceResources{
++					Storage: StorageResource{
++						Size:  Quantity{resource.MustParse("5Gi")},
++						Class: "fast",
++					},
++				},
++			},
++			expected: &StackResources{
++				Limits: ServiceResources{
++					CPU:    Quantity{resource.MustParse("2")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++				},
++				Requests: ServiceResources{
++					Storage: StorageResource{
++						Size:  Quantity{resource.MustParse("5Gi")},
++						Class: "fast",
++					},
++				},
++			},
++		},
++		{
++			name: "deploy-resources-override-only-the-values-they-set",
++			deployRaw: &DeployInfoRaw{Resources: ResourcesRaw{
++				Limits: DeployComposeResources{
++					Cpus: Quantity{resource.MustParse("1")},
++				},
++			}},
++			resources: &StackResources{
++				Limits: ServiceResources{
++					CPU:    Quantity{resource.MustParse("2")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++				},
++				Requests: ServiceResources{
++					Storage: StorageResource{
++						Size: Quantity{resource.MustParse("5Gi")},
++					},
++				},
++			},
++			expected: &StackResources{
++				Limits: ServiceResources{
++					CPU:    Quantity{resource.MustParse("1")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++				},
++				Requests: ServiceResources{
++					Storage: StorageResource{
++						Size: Quantity{resource.MustParse("5Gi")},
++					},
++				},
++			},
++		},
++		{
++			name: "deploy-reservations-override-only-the-requests-they-set",
++			deployRaw: &DeployInfoRaw{Resources: ResourcesRaw{
++				Reservations: DeployComposeResources{
++					Cpus: Quantity{resource.MustParse("250m")},
++				},
++			}},
++			resources: &StackResources{
++				Requests: ServiceResources{
++					CPU:    Quantity{resource.MustParse("500m")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++					Storage: StorageResource{
++						Size:  Quantity{resource.MustParse("5Gi")},
++						Class: "fast",
++					},
++				},
++			},
++			expected: &StackResources{
++				Requests: ServiceResources{
++					CPU:    Quantity{resource.MustParse("250m")},
++					Memory: Quantity{resource.MustParse("1Gi")},
++					Storage: StorageResource{
++						Size:  Quantity{resource.MustParse("5Gi")},
++						Class: "fast",
++					},
++				},
++			},
++		},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+```
+
+---
+
+### Incident Patch 3: `171a1a16` (2026-11-03)
+**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.9 to 46.3.11 (#5239)
+
+Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.9 to 46.3.11.
+- [Release notes](https://github.com/renovatebot/github-action/releases)
+- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.9...v46.3.11)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/go-jose/go-jose/v4
-  dependency-version: 4.1.6
-  dependency-type: indirect
+- dependency-name: renovatebot/github-action
+  dependency-version: 46.3.11
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
 ```diff
-@@ -212,7 +212,7 @@ require (
- 	github.com/fxamacker/cbor/v2 v2.9.4 // indirect
- 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
- 	github.com/go-git/go-billy/v6 v6.0.0-alpha.2 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-openapi/swag/cmdutils v0.28.0 // indirect
- 	github.com/go-openapi/swag/conv v0.28.0 // indirect
- 	github.com/go-openapi/swag/fileutils v0.28.0 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -261,8 +261,8 @@ github.com/go-git/go-git/v6 v6.0.0-alpha.5 h1:sE+OlkHgYWNMVmN1s9sR7uyFgsWLtxcNWs
- github.com/go-git/go-git/v6 v6.0.0-alpha.5/go.mod h1:3IjhiZnM+uBmUrOGSeqrJpsmi4Vd0H2NZO/uK2a7d0s=
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
--github.com/go-jose/go-jose/v4 v4.1.5 h1:RjgjO2LOtWOJKUC5wpwY9LR3B3vwVAz6JS2YHfYU6eA=
--github.com/go-jose/go-jose/v4 v4.1.5/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+@@ -18,7 +18,7 @@ jobs:
+         uses: actions/checkout@v7
+ 
+       - name: Run Renovate
+-        uses: renovatebot/github-action@v46.3.9
++        uses: renovatebot/github-action@v46.3.11
+         with:
+           configurationFile: .github/renovate.json
+           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5243** (2026-11-03): [Backport release-3.25] Upgrade buildkit dependency to v0.34.2-okteto1 (@github-actions[bot])
+- **PR #5242** (2026-11-03): Upgrade buildkit dependency to v0.34.2-okteto1 (@devin-ai-integration[bot])
+- **PR #5241** (2026-11-03): [Backport release-3.25] fix: update vulnerable dependencies (kubectl 1.35.10, helm 3.22.1, git 2.56.0, x/net v0.62.0) (@github-actions[bot])
+- **PR #5240** (2026-11-03): fix: update vulnerable dependencies (kubectl 1.35.10, helm 3.22.1, git 2.56.0, x/net v0.62.0) (@jLopezbarb)
+- **PR #5239** (2026-11-03): build(deps): bump renovatebot/github-action from 46.3.9 to 46.3.11 (@dependabot[bot])
 - **PR #5235** (2026-10-30): chore(deps): Update module github.com/posthog/posthog-go to v1.27.1 (@oktetobot)
-- **PR #5229** (closed): chore(deps): Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (@oktetobot)
-- **PR #5228** (2026-10-29): Added .claude/tasks.local to the gitignore file (@ifbyol)
-- **PR #5227** (2026-10-29): build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (@dependabot[bot])
-- **PR #5226** (2026-10-28): chore(deps): Update module golang.org/x/sync to v0.24.0 (@oktetobot)
-- **PR #5225** (2026-10-28): PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driver (@ifbyol)
 
 ---
 
@@ -1673,53 +1864,40 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compose): keep numbers and booleans from interpolated variables (#5217)
+## X. update vulnerable dependencies (#5240)
 
 **RULE**:
-When implementing operations in `pkg/model/stack_expander.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb9214a9`: compose): keep numbers and booleans from interpolated variables (#5217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `490d3c96`: update vulnerable dependencies (#5240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/model/stack_expander.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
-			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
-			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
-			// replicas or public fail to unmarshal
-			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
-				node.Tag = tag
-			}
-		}
-// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
-func resolveExpandedScalarTag(value string) string {
-	doc := yaml3.Node{}
-	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
-		return ""
-	}
-	node := doc.Content[0]
-	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
-		return ""
-	}
-	switch tag := node.ShortTag(); tag {
-	case "!!int", "!!float", "!!bool":
-		return tag
-	default:
-		return ""
-	}
-}
-
+ARG KUBECTL_VERSION=1.35.10
+ARG HELM3_VERSION=3.22.1
+ARG GIT_VERSION=2.56.0
+ARG GIT_VERSION
+ && make NO_RUST=YesPlease -j"$(nproc)" \
+ && make NO_RUST=YesPlease install \
+ # Verify binary works
+ && /usr/bin/git --version | grep -qF "git version ${GIT_VERSION}" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ARG KUBECTL_VERSION=1.35.9
+ARG HELM3_VERSION=3.22.0
+ARG GIT_VERSION=2.42.0
+ARG GIT_VERSION="2.42.0"
+ && make -j"$(nproc)" \
+ && make install \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb9214a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `490d3c96` are properly handled with clean fallback behavior.

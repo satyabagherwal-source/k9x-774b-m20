@@ -7030,3 +7030,7 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `5390e472` | Multi-dimensional audit evidence | 2026-11-03T21:44:50.051Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `2fa4ccf7` | Multi-dimensional audit evidence | 2026-11-03T21:44:52.920Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e9bd7c00` | Multi-dimensional audit evidence | 2026-11-03T21:44:56.011Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `41931bc4` | Multi-dimensional audit evidence | 2026-11-03T21:58:03.902Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `c51f047e` | Multi-dimensional audit evidence | 2026-11-03T21:58:08.837Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `e2b40f1d` | Multi-dimensional audit evidence | 2026-11-03T21:58:11.906Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `46fbc92a` | Multi-dimensional audit evidence | 2026-11-03T21:58:12.699Z |

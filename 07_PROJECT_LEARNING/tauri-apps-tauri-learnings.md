@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `548a3692`  
+> **Source Version**: `c51f047e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:46:13.107Z  
+> **Timestamp**: 2026-11-03T21:58:08.081Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:41:11.740Z  
+> **Harvest Timestamp**: 2026-11-03T21:58:07.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112345 stars
+- **Stars / Engagement**: 112473 stars
 
 ---
 
@@ -2262,13 +2262,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16421** (2026-10-28): **docs(tauri-build): keep Common Control v6 dependency in app_manifest example**
-  *Symptoms*: The `app_manifest` docs warn that a custom manifest needs the Common Control v6 dependency if you use the dialog APIs, but the `requireAdministrator` example right below leaves it out. Copying the example as-is into an app that uses the dialog plugin fails at startup with `TaskDialogIndirect could not be located`, as in #6926.  This adds the dependency block from `windows-app-manifest.xml` to the example so it matches the warning.  `cargo test -p tauri-build --doc` passes. 
+- **Issue #16447** (2026-11-03): **fix(utils): match file extensions case-insensitively in MimeType**
+  *Symptoms*: `MimeType::parse_from_uri_with_fallback` matched the extension case-sensitively, so a file like `app.JS` or `Style.CSS` got the fallback type, which is `text/html` for the `tauri://` and asset protocols. The webview then refuses to run `app.JS` as a module script. `parse_with_fallback` also only skipped `infer` for a lowercase `.svg`, so `Logo.SVG` came back as `text/html`, or `text/xml` if it starts with `<?xml`, and doesn't render in an `<img>`.  This lowercases the extension before matching and makes the `.svg` check case-insensitive. Added a test (`should_ignore_extension_case`) and a change file for `tauri-utils`.  I used Claude Code to write this change. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 0276b17ce08b99cd26234d1763c3f0ac8d4e56a2 There are 7 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </details>  [Add another change file through the GitHub 
+  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 4fd24c23f60bf12f5bb1f92a60def5ffbacb9e89 There are 7 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </details>  [Add another change file through the GitHub 
 
-- **Issue #16420** (2026-10-27): **chore(deps): update vulnerable Zstandard dependencies**
-  *Symptoms*: Fixes #16405, fixes #16406, fixes #16407, fixes #16408, fixes #16409, fixes #16410, fixes #16411, fixes #16412, fixes #16413, fixes #16414, fixes #16415, fixes #16416, fixes #16417, fixes #16418.  
+- **Issue #16444** (2026-11-03): **fix(utils): don't panic parsing a hex Color with non-ASCII characters**
+  *Symptoms*: `Color::from_str` checks the byte length and then slices at byte offsets, so a hex color string with a multi-byte character panics instead of returning an error:  ```rust "#€€".parse::<Color>() // panics: byte index 2 is not a char boundary ```  This parser handles `backgroundColor` in tauri.conf.json and the string form of `setBackgroundColor` from JS. The fix rejects anything that isn't a hex digit before slicing, which also stops `#+f+f+f` from being accepted (`from_str_radix` allows a sign). It also keeps the trimmed string when there's no leading `#`, so `" fff "` parses like `" #fff "`.  ### Testing  - Added cases to `config::test::parse_hex_color`. Without the fix it panics with "end byte index 2 is not a char boundary"; with it, all 43 `tauri-utils` lib tests pass. - `cargo clippy -p tauri-utils` and `rustfmt --check` on `config.rs` are clean. - Added `.changes/utils-color-parse-non-ascii.md` (`tauri-utils: patch:bug`).  I used Claude Code to write this change. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2285,45 +2285,243 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `548a3692` (2026-10-28)
-**Commit Message**: docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#16421)
+### Incident Patch 1: `219a6072` (2026-11-03)
+**Commit Message**: fix(utils): don't panic parsing a hex Color with non-ASCII characters (#16444)
 
-**File**: `crates/tauri-build/src/lib.rs` (modified, +13/-0)
+`Color::from_str` checked the byte length and then sliced the string at
+byte offsets 0..2, 2..4, ..., so a 3, 6 or 8 byte string with a
+multi-byte character such as "#€€" panicked with "byte index 2 is not a
+char boundary". Reject anything that isn't a hex digit before slicing,
+which also stops `u8::from_str_radix` from accepting a leading `+`.
+
+The trimmed string was also dropped when it had no leading `#`, so
+" fff " failed while " #fff " parsed.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changes/utils-color-parse-non-ascii.md` (added, +5/-0)
 ```diff
-@@ -424,11 +424,24 @@ impl WindowsAttributes {
-   ///
-   /// The following manifest will brand the exe as requesting administrator privileges.
-   /// Thus, every time it is executed, a Windows UAC dialog will appear.
-+  /// It also keeps the Common Control v6 dependency from the default manifest (see the warning above).
-   ///
-   /// ```rust,no_run
-   /// let mut windows = tauri_build::WindowsAttributes::new();
-   /// windows = windows.app_manifest(r#"
-   /// <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-+  ///   <dependency>
-+  ///       <dependentAssembly>
-+  ///           <assemblyIdentity
-+  ///               type="win32"
-+  ///               name="Microsoft.Windows.Common-Controls"
-+  ///               version="6.0.0.0"
-+  ///               processorArchitecture="*"
-+  ///               publicKeyToken="6595b64144ccf1df"
-+  ///               language="*"
-+  ///           />
-+  ///       </dependentAssembly>
-+  ///   </dependency>
-   ///   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
-   ///       <security>
-   ///           <requestedPrivileges>
+@@ -0,0 +1,5 @@
++---
++"tauri-utils": patch:bug
++---
++
++Fix parsing a hex `Color` string panicking when it contains non-ASCII characters, for example `#€€`; it now returns an error. Surrounding whitespace is also trimmed when the string has no leading `#`.
+```
+
+**File**: `crates/tauri-utils/src/config.rs` (modified, +11/-2)
+```diff
+@@ -1765,8 +1765,12 @@ impl From<[u8; 3]> for Color {
+ 
+ impl FromStr for Color {
+   type Err = String;
+-  fn from_str(mut color: &str) -> Result<Self, Self::Err> {
+-    color = color.trim().strip_prefix('#').unwrap_or(color);
++  fn from_str(color: &str) -> Result<Self, Self::Err> {
++    let color = color.trim();
++    let color = color.strip_prefix('#').unwrap_or(color);
++    if !color.bytes().all(|b| b.is_ascii_hexdigit()) {
++      return Err("Invalid hex color, must only contain hexadecimal digits, for example: #fff, #ffffff, or #ffffffff".into());
++    }
+     let color = match color.len() {
+       3 => color.chars()
+             .flat_map(|c| std::iter::repeat_n(c, 2))
+@@ -5242,6 +5246,11 @@ mod test {
+     assert_eq!(Color(0, 0, 0, 255), "#000000".parse().unwrap());
+     assert_eq!(Color(0, 0, 0, 255), "#000000ff".parse().unwrap());
+     assert_eq!(Color(0, 255, 0, 255), "#00ff00ff".parse().unwrap());
++
++    assert!("#€€".parse::<Color>().is_err());
++    assert!("#€".parse::<Color>().is_err());
++    assert!("#+f+f+f".parse::<Color>().is_err());
++    assert_eq!(Color(255, 255, 255, 255), " fff ".parse().unwrap());
+   }
+ 
+   #[test]
+```
+
+---
+
+### Incident Patch 2: `c51f047e` (2026-11-03)
+**Commit Message**: fix(utils): match file extensions case-insensitively in MimeType (#16447)
+
+`MimeType::parse_from_uri_with_fallback` compared the extension
+case-sensitively, so `app.JS` or `Style.CSS` fell through to the
+fallback (`text/html` for the `tauri://` and asset protocols), and
+`parse_with_fallback` only skipped `infer` for a lowercase `.svg`, so
+`Logo.SVG` was served as `text/html` or `text/xml`.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changes/utils-mime-type-extension-case.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"tauri-utils": patch:bug
++---
++
++Match file extensions case-insensitively when guessing a MIME type, so files such as `app.JS` or `Logo.SVG` no longer get the fallback type (`text/html` for the `tauri://` and `asset://` protocols).
+```
+
+**File**: `crates/tauri-utils/src/mime_type.rs` (modified, +26/-3)
+```diff
+@@ -53,8 +53,8 @@ impl MimeType {
+ 
+   /// parse a URI suffix to convert text/plain mimeType to their actual web compatible mimeType with specified fallback for unknown file extensions.
+   pub fn parse_from_uri_with_fallback(uri: &str, fallback: MimeType) -> MimeType {
+-    let suffix = uri.split('.').next_back();
+-    match suffix {
++    let suffix = uri.split('.').next_back().map(str::to_ascii_lowercase);
++    match suffix.as_deref() {
+       Some("bin") => Self::OctetStream,
+       Some("css" | "less" | "sass" | "styl") => Self::Css,
+       Some("csv") => Self::Csv,
+@@ -82,7 +82,7 @@ impl MimeType {
+   }
+   /// infer mimetype from content (or) URI if needed with specified fallback for unknown file extensions.
+   pub fn parse_with_fallback(content: &[u8], uri: &str, fallback: MimeType) -> String {
+-    let mime = if uri.ends_with(".svg") {
++    let mime = if uri.to_ascii_lowercase().ends_with(".svg") {
+       // when reading svg, we can't use `infer`
+       None
+     } else {
+@@ -151,4 +151,27 @@ mod tests {
+     let custom_scheme = MimeType::parse_from_uri("wry://tauri.app").to_string();
+     assert_eq!(custom_scheme, String::from("text/html"));
+   }
++
++  #[test]
++  fn should_ignore_extension_case() {
++    assert_eq!(
++      MimeType::parse_from_uri("assets/app.JS").to_string(),
++      "text/javascript"
++    );
++    assert_eq!(
++      MimeType::parse_from_uri("assets/Style.Css").to_string(),
++      "text/css"
++    );
++    assert_eq!(
++      MimeType::parse(
++        b"<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>",
++        "Logo.SVG"
++      ),
++      "image/svg+xml"
++    );
++    assert_eq!(
++      MimeType::parse(b"<?xml version=\"1.0\"?><svg></svg>", "Logo.SVG"),
++      "image/svg+xml"
++    );
++  }
+ }
+```
+
+---
+
+### Incident Patch 3: `31f29e19` (2026-10-31)
+**Commit Message**: fix(cli): percent-decode request paths in the builtin dev server (fix #12763) (#16436)
+
+**File**: `.changes/cli-dev-server-percent-decode.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"tauri-cli": patch:bug
++"@tauri-apps/cli": patch:bug
++---
++
++Fix the builtin dev server serving `index.html` instead of files whose names contain spaces or non-ASCII characters, such as `my font.woff2`.
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -8467,6 +8467,7 @@ dependencies = [
+  "oxc_ast",
+  "oxc_parser",
+  "oxc_span",
++ "percent-encoding",
+  "phf 0.14.0",
+  "plist",
+  "pretty_assertions",
+```
+
+**File**: `crates/tauri-cli/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -83,6 +83,7 @@ regex = "1"
+ heck = "0.5"
+ dialoguer = "0.12"
+ url = { version = "2", features = ["serde"] }
++percent-encoding = "2"
+ os_pipe = "1"
+ ignore = "0.4"
+ ctrlc = "3"
+```
+
+**File**: `crates/tauri-cli/src/dev/builtin_dev_server.rs` (modified, +43/-1)
+```diff
+@@ -85,7 +85,10 @@ async fn handler(uri: Uri, headers: HeaderMap, state: State<ServerState>) -> imp
+   }
+ 
+   // Frontend files should not contain query parameters. This seems to be how Vite handles it.
+-  let uri = uri.path();
++  // The path is percent-encoded, decode it like the `tauri://` protocol does so files with spaces
++  // or non-ASCII characters in their names are found.
++  let path = percent_encoding::percent_decode_str(uri.path()).decode_utf8_lossy();
++  let uri = path.as_ref();
+ 
+   let uri = if uri == "/" {
+     uri
+@@ -368,4 +371,43 @@ mod tests {
+     );
+     assert!(fs_read_scoped(inner.join("../secret.txt"), &inner).is_err());
+   }
++
++  #[tokio::test]
++  async fn serves_percent_encoded_paths() {
++    let temp = tempfile::tempdir().unwrap();
++    let temp = dunce::canonicalize(temp.path()).unwrap();
++    let dir = temp.join("dist");
++    std::fs::create_dir(&dir).unwrap();
++    std::fs::write(dir.join("index.html"), "<html></html>").unwrap();
++    std::fs::write(dir.join("my font.woff2"), "font").unwrap();
++    std::fs::write(dir.join("页面.css"), "css").unwrap();
++    std::fs::write(temp.join("secret.txt"), "secret").unwrap();
++
++    let state = ServerState {
++      dir,
++      address: "127.0.0.1:1430".parse().unwrap(),
++      tx: channel(1).0,
++    };
++    let get = |path: &str| {
++      let mut headers = HeaderMap::new();
++      headers.insert(header::HOST, HeaderValue::from_static("127.0.0.1:1430"));
++      let response = handler(path.parse().unwrap(), headers, State(state.clone()));
++      async move {
++        let response = response.await.into_response();
++        assert_eq!(response.status(), StatusCode::OK);
++        axum::body::to_bytes(response.into_body(), usize::MAX)
++          .await
++          .unwrap()
++      }
++    };
++
++    assert_eq!(get("/my%20font.woff2").await, "font");
++    assert_eq!(get("/%E9%A1%B5%E9%9D%A2.css").await, "css");
++    // decoded paths are still scoped to the served directory
++    assert_ne!(get("/%2E%2E/secret.txt").await, "secret");
++    assert_ne!(get("/..%2Fsecret.txt").await, "secret");
++    let secret = temp.join("secret.txt").display().to_string();
++    let secret = percent_encoding::utf8_percent_encode(&secret, percent_encoding::NON_ALPHANUMERIC);
++    assert_ne!(get(&format!("/{secret}")).await, "secret");
++  }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16447** (2026-11-03): fix(utils): match file extensions case-insensitively in MimeType (@b84330808)
+- **PR #16444** (2026-11-03): fix(utils): don't panic parsing a hex Color with non-ASCII characters (@b84330808)
+- **PR #16436** (2026-10-31): fix(cli): percent-decode request paths in the builtin dev server (fix #12763) (@b84330808)
 - **PR #16421** (2026-10-28): docs(tauri-build): keep Common Control v6 dependency in app_manifest example (@oyobbeb)
 - **PR #16420** (2026-10-27): chore(deps): update vulnerable Zstandard dependencies (@amrbashir)
 - **PR #16419** (closed): chore: close stale issues and pull requests automatically (@amrbashir)
-- **PR #16402** (2026-10-26): perf(tauri-utils): mark `parse_json` and `parse_json5` `#[inline]` (@johncarmack1984)
-- **PR #16392** (2026-10-24): chore(deps): update tokio (lockfile-only), closes #16390 (@FabianLars)
-- **PR #16382** (2026-10-26): chore(deps): update rust crate minisign to 0.10 (@renovate[bot])
 
 ---
 
@@ -2343,33 +2541,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#1
+## X. utils): don't panic parsing a hex Color with non-ASCII characters (#16444)
 
 **RULE**:
-When implementing operations in `crates/tauri-build/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/utils-color-parse-non-ascii.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `548a3692`: docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#16421). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `219a6072`: utils): don't panic parsing a hex Color with non-ASCII characters (#16444). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tauri-build/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/utils-color-parse-non-ascii.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  /// It also keeps the Common Control v6 dependency from the default manifest (see the warning above).
-  ///   <dependency>
-  ///       <dependentAssembly>
-  ///           <assemblyIdentity
-  ///               type="win32"
-  ///               name="Microsoft.Windows.Common-Controls"
-  ///               version="6.0.0.0"
-  ///               processorArchitecture="*"
-  ///               publicKeyToken="6595b64144ccf1df"
-  ///               language="*"
-  ///           />
-  ///       </dependentAssembly>
-  ///   </dependency>
+---
+"tauri-utils": patch:bug
+---
+
+Fix parsing a hex `Color` string panicking when it contains non-ASCII characters, for example `#€€`; it now returns an error. Surrounding whitespace is also trimmed when the string has no leading `#`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2379,4 +2569,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `548a3692` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `219a6072` are properly handled with clean fallback behavior.

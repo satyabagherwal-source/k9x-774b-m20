@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `25f50f10`  
+> **Source Version**: `46fbc92a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:14:22.126Z  
+> **Timestamp**: 2026-11-03T21:58:11.915Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:14:21.829Z  
+> **Harvest Timestamp**: 2026-11-03T21:58:11.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32562 stars
+- **Stars / Engagement**: 32570 stars
 
 ---
 
@@ -1446,642 +1446,219 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be40690a` (2026-11-03)
-**Commit Message**: fix(headless): fail requests whose URL net/url cannot parse
+### Incident Patch 1: `36d0adba` (2026-11-03)
+**Commit Message**: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
 
-With a request modification action (setheader, addheader, deleteheader,
-setmethod or setbody), routingRuleHandler replays every browser request
-through nuclei's Go HTTP client. go-rod builds that request with
-url.Parse and drops the error, so a URL that Chrome accepts but net/url
-rejects, such as a path ending in "100%.png", arrived with a nil URL.
-The cookie jar sync then panicked, or httputil.DumpRequestOut did when
-cookies were disabled, and the panic killed the whole scan.
+Read headless excludes under the dialer lock
 
-Check the URL once on entry and fail such requests in the browser. The
-Go client cannot send them, and continuing them in the browser would
-drop the template's modification rules and, with -cdp-endpoint, skip
-the dial-time address checks of nuclei's network policy.
-
-Fixes: #8015
-Reported-by: @l4rm4nd
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/protocols/headless/engine/page_actions_test.go` (modified, +71/-1)
+**File**: `pkg/protocols/common/protocolstate/exclude_race_test.go` (added, +46/-0)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"io"
- 	"math/rand"
-+	"net"
- 	"net/http"
- 	"net/http/cookiejar"
- 	"net/http/httptest"
-@@ -15,6 +16,7 @@ import (
- 	"strconv"
- 	"strings"
- 	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -319,6 +321,58 @@ func TestActionHeadersChange(t *testing.T) {
- 	})
- }
- 
-+// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
-+// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
-+// hands the modification-rules hijack handler a request with a nil URL (#8015).
-+//
-+//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
-+func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
-+	for _, disableCookie := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
-+			// Count connections, not requests: net/http rejects the request line
-+			// before any handler runs. TLS makes the headless proxy tunnel the
-+			// request with CONNECT instead of rejecting the unparsable path itself.
-+			var imageConns atomic.Int32
+@@ -0,0 +1,46 @@
++package protocolstate
 +
-+			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
-+			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
-+				if state == http.StateNew {
-+					imageConns.Add(1)
-+				}
++import (
++	"sync"
++	"testing"
++
++	"github.com/projectdiscovery/networkpolicy"
++	"github.com/stretchr/testify/require"
++)
++
++func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
++	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
++	require.NoError(t, err)
++
++	const executionID = "exclude-race"
++	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
++	err = dialers.Set(executionID, entry)
++	require.NoError(t, err)
++	t.Cleanup(func() { dialers.Delete(executionID) })
++
++	stop := make(chan struct{})
++	var wg sync.WaitGroup
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
++		i := 0
++		for {
++			select {
++			case <-stop:
++				return
++			default:
 +			}
-+
-+			imageServer.StartTLS()
-+			defer imageServer.Close()
-+
-+			actions := []*Action{
-+				{
-+					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
-+					Data:       map[string]string{"part": "request", "key": "Test", "value": "Hello"},
-+				},
-+				{ActionType: ActionTypeHolder{ActionType: ActionNavigate}, Data: map[string]string{"url": "{{BaseURL}}"}},
-+				{ActionType: ActionTypeHolder{ActionType: ActionWaitLoad}},
-+			}
-+			handler := func(w http.ResponseWriter, r *http.Request) {
-+				if r.Header.Get("Test") == "Hello" {
-+					_, _ = fmt.Fprintf(w, `<html><body>found<img src="%s/100%%.png"></body></html>`, imageServer.URL)
-+				}
-+			}
-+			options := &Options{Timeout: 20 * time.Second, DisableCookie: disableCookie}
-+
-+			testHeadlessWithOptions(t, actions, options, handler, func(page *Page, err error, _ ActionData) {
-+				require.NoError(t, err)
-+
-+				body := page.Page().MustElement("body").MustText()
-+				require.Equal(t, "found", strings.TrimSpace(body), "modification rules were not applied")
-+				require.Zero(t, imageConns.Load(), "unparsable request reached the image server")
-+
-+				imageDone := page.Page().MustEval(`() => document.querySelector("img").complete`).Bool()
-+				require.True(t, imageDone, "unparsable request is still paused")
-+			})
-+		})
-+	}
-+}
-+
- func TestActionScreenshot(t *testing.T) {
- 	response := `
- 		<html>
-@@ -1003,6 +1057,21 @@ func TestMain(m *testing.M) {
- func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handler func(w http.ResponseWriter, r *http.Request), assert func(page *Page, pageErr error, extractedData ActionData)) {
- 	t.Helper()
- 
-+	options := &Options{Timeout: timeout} //nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
-+	testHeadlessWithOptions(t, actions, options, handler, assert)
-+}
-+
-+// testHeadlessWithOptions is testHeadless with caller-chosen page options. It
-+// overwrites options.Options with the test scan options.
-+func testHeadlessWithOptions(
-+	t *testing.T,
-+	actions []*Action,
-+	options *Options,
-+	handler func(w http.ResponseWriter, r *http.Request),
-+	assert func(page *Page, pageErr error, extractedData ActionData),
-+) {
-+	t.Helper()
-+
- 	lfa := envutil.GetEnvOrDefault("LOCAL_FILE_ACCESS", true)
- 	rna := envutil.GetEnvOrDefault("RESTRICTED_LOCAL_NETWORK_ACCESS", false)
- 
-@@ -1027,7 +1096,8 @@ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handle
- 	input.CookieJar, err = cookiejar.New(nil)
- 	require.Nil(t, err)
- 
--	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
-+	options.Options = opts // allow file access in test
-+	extractedData, page, err := instance.Run(input, actions, nil, options)
- 	assert(page, err, extractedData)
- 
- 	if page != nil {
-```
-
-**File**: `pkg/protocols/headless/engine/rules.go` (modified, +24/-12)
-```diff
-@@ -15,8 +15,21 @@ import (
- // routingRuleHandler handles proxy rule for actions related to request/response modification
- func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack) {
- 	return func(ctx *rod.Hijack) {
-+		req := ctx.Request.Req()
-+		// go-rod discards url.Parse errors, so a URL that Chrome accepts but
-+		// net/url rejects, such as "/100%.png", arrives as nil. Fail the request:
-+		// the Go client cannot send it, and continuing it in the browser would
-+		// drop the modification rules and, with -cdp-endpoint (no headless
-+		// proxy), the network policy's dial-time address checks.
-+		if req.URL == nil {
-+			gologger.Verbose().Msgf("headless: failed %s request with a URL that net/url cannot parse", req.Method)
-+			ctx.Response.Fail(proto.NetworkErrorReasonFailed)
-+
-+			return
++			entry.Lock()
++			entry.ExcludeTargets = lists[i%2]
++			entry.Unlock()
++			i++
 +		}
++	}()
 +
- 		// usually browsers don't use chunked transfer encoding, so we set the content-length nevertheless
--		ctx.Request.Req().ContentLength = int64(len(ctx.Request.Body()))
-+		req.ContentLength = int64(len(ctx.Request.Body()))
- 		// snapshot the rules once: ExecuteActions may still be appending rules
- 		// from another goroutine while this hijack handler runs.
- 		rules := p.rulesSnapshot()
-@@ -28,39 +41,39 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
- 			switch rule.Action {
- 			case ActionSetMethod:
- 				rule.Do(func() {
--					ctx.Request.Req().Method = rule.Args["method"]
-+					req.Method = rule.Args["method"]
- 				})
- 			case ActionAddHeader:
--				ctx.Request.Req().Header.Add(rule.Args["key"], rule.Args["value"])
-+				req.Header.Add(rule.Args["key"], rule.Args["value"])
- 			case ActionSetHeader:
--				ctx.Request.Req().Header.Set(rule.Args["key"], rule.Args["value"])
-+				req.Header.Set(rule.Args["key"], rule.Args["value"])
- 			case ActionDeleteHeader:
--				ctx.Request.Req().Header.Del(rule.Args["key"])
-+				req.Header.Del(rule.Args["key"])
- 			case ActionSetBody:
- 				body := rule.Args["body"]
--				ctx.Request.Req().ContentLength = int64(len(body))
-+				req.ContentLength = int64(len(body))
- 				ctx.Request.SetBody(body)
- 			}
- 		}
- 
- 		// each http request is performed via the native go http client
- 		// we first inject the shared cookies
- 		if !p.options.DisableCookie {
--			if cookies := p.ctx.CookieJar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
--				httpClient.Jar.SetCookies(ctx.Request.URL(), cookies)
-+			if cookies := p.ctx.CookieJar.Cookies(req.URL); len(cookies) > 0 {
-+				httpClient.Jar.SetCookies(req.URL, cookies)
- 			}
- 		}
- 
- 		// perform the request
- 		if err := ctx.LoadResponse(httpClient, true); err != nil {
--			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", ctx.Request.URL(), err)
-+			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", req.URL, err)
- 		}
- 
- 		if !p.options.DisableCookie {
- 			// retrieve the updated cookies from the native http client and inject them into the shared cookie jar
- 			// keeps existing one if not present
--			if cookies := httpClient.Jar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
--				p.ctx.CookieJar.SetCookies(ctx.Request.URL(), cookies)
-+			if cookies := httpClient.Jar.Cookies(req.URL); len(cookies) > 0 {
-+				p.ctx.CookieJar.SetCookies(req.URL, cookies)
- 			}
- 		}
- 
-@@ -84,7 +97,6 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
- 		}
- 
- 		// store history
--		req := ctx.Request.Req()
- 		var rawReq string
- 		if raw, err := httputil.DumpRequestOut(req, true); err == nil {
- 			rawReq = string(raw)
++	for i := 0; i < 2000; i++ {
++		_ = IsHostAllowed(executionID, "http://192.0.2.1")
++	}
++	close(stop)
++	wg.Wait()
++}
 ```
 
----
-
-### Incident Patch 2: `22aedebe` (2026-11-03)
-**Commit Message**: fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982)
-
-Normalize hostnames and IPv4-mapped IPv6 addresses (e.g. ::ffff:127.0.0.1,
-::ffff:7f00:1, and bracketed variants) before validating against NetworkPolicy
-and ExcludeTargets in headless execution. Also expand CDP blocked patterns
-in SetupHeadlessNetworkPolicy to match mapped IPv6 representations.
-
-Signed-off-by: TassioSales <[REDACTED_EMAIL]>
-
-**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +57/-26)
+**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +5/-2)
 ```diff
-@@ -102,33 +102,24 @@ func isValidHost(options *types.Options, targetUrl string) bool {
- 	if !stringsutil.HasPrefixAny(normalized, "http:", "https:", "ws:", "wss:") {
- 		return true
- 	}
--
--	dialers, ok := dialers.Get(options.ExecutionId)
+@@ -138,11 +138,14 @@ func CanonicalizeHost(host string) string {
+ // IsHostAllowed checks if the host is allowed by network policy
+ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 	dialers, ok := dialers.Get(executionId)
 -	if !ok {
-+	if options == nil {
++	if !ok || dialers == nil {
  		return true
  	}
--
--	np := dialers.NetworkPolicy
--	if np == nil {
--		// no policy present: deny rather than allow.
--		return false
--	}
--
--	urlx, err := urlutil.Parse(targetUrl)
--	if err != nil {
--		// not a valid url
--		return false
--	}
--	targetUrl = urlx.Hostname()
--	_, ok = np.ValidateHost(targetUrl)
--	return ok
-+	return IsHostAllowed(options.ExecutionId, targetUrl)
- }
  
- // CanonicalizeHost normalizes a hostname or IP string:
- // - strips surrounding whitespace and brackets (e.g. "[::1]" -> "::1")
- // - maps IPv4-mapped IPv6 literals (e.g. "::ffff:127.0.0.1" or "0:0:0:0:0:ffff:127.0.0.1") to canonical IPv4 ("127.0.0.1")
- func CanonicalizeHost(host string) string {
- 	h := strings.TrimSpace(host)
-+	if strings.Contains(h, "://") {
-+		if parsed, err := urlutil.Parse(h); err == nil && parsed.Hostname() != "" {
-+			h = parsed.Hostname()
-+		}
-+	} else if sh, _, err := net.SplitHostPort(h); err == nil {
-+		h = sh
-+	}
- 	h = strings.TrimPrefix(h, "[")
- 	h = strings.TrimSuffix(h, "]")
- 	if ip := net.ParseIP(h); ip != nil {
-@@ -221,14 +212,35 @@ func SetupHeadlessNetworkPolicy(options *types.Options, page *rod.Page) error {
- 			target = parsed.Hostname()
- 		}
- 		if !strings.Contains(target, "/") {
--			blockedPatterns = append(blockedPatterns,
--				"*://"+target+"/*",
--				"*://"+target+":*/*",
--				"ws://"+target+"/*",
--				"ws://"+target+":*/*",
--				"wss://"+target+"/*",
--				"wss://"+target+":*/*",
--			)
-+			addPatterns := func(t string) {
-+				t = strings.TrimPrefix(strings.TrimSuffix(t, "]"), "[")
-+				blockedPatterns = append(blockedPatterns,
-+					"*://"+t+"/*",
-+					"*://"+t+":*/*",
-+					"ws://"+t+"/*",
-+					"ws://"+t+":*/*",
-+					"wss://"+t+"/*",
-+					"wss://"+t+":*/*",
-+				)
-+				if ip := net.ParseIP(t); ip != nil {
-+					if ipv4 := ip.To4(); ipv4 != nil {
-+						v6mapped := "[::ffff:" + ipv4.String() + "]"
-+						blockedPatterns = append(blockedPatterns,
-+							"*://"+v6mapped+"/*",
-+							"*://"+v6mapped+":*/*",
-+							"ws://"+v6mapped+"/*",
-+							"ws://"+v6mapped+":*/*",
-+							"wss://"+v6mapped+"/*",
-+							"wss://"+v6mapped+":*/*",
-+						)
-+					}
-+				}
-+			}
-+			addPatterns(target)
-+			canon := CanonicalizeHost(target)
-+			if canon != "" && canon != target {
-+				addPatterns(canon)
-+			}
- 		}
- 	}
++	dialers.Lock()
+ 	np := dialers.NetworkPolicy
++	excludedTargets := append([]string(nil), dialers.ExcludeTargets...)
++	dialers.Unlock()
+ 	if np == nil {
+ 		// no policy present: deny rather than allow.
+ 		return false
+@@ -174,7 +177,7 @@ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 	canonHost := CanonicalizeHost(host)
  
-@@ -255,13 +267,32 @@ func SetupHeadlessNetworkPolicy(options *types.Options, page *rod.Page) error {
- 			"wss://10.*/*", "wss://10.*:*/*",
- 			"wss://192.168.*/*", "wss://192.168.*:*/*",
- 			"wss://169.254.*/*", "wss://169.254.*:*/*",
-+			"*://[::ffff:127.*]/*", "*://[::ffff:127.*]:*/*",
-+			"*://[::ffff:0.0.0.0]/*", "*://[::ffff:0.0.0.0]:*/*",
-+			"*://[::ffff:10.*]/*", "*://[::ffff:10.*]:*/*",
-+			"*://[::ffff:192.168.*]/*", "*://[::ffff:192.168.*]:*/*",
-+			"*://[::ffff:169.254.*]/*", "*://[::ffff:169.254.*]:*/*",
-+			"ws://[::ffff:127.*]/*", "ws://[::ffff:127.*]:*/*",
-+			"ws://[::ffff:0.0.0.0]/*", "ws://[::ffff:0.0.0.0]:*/*",
-+			"ws://[::ffff:10.*]/*", "ws://[::ffff:10.*]:*/*",
-+			"ws://[::ffff:192.168.*]/*", "ws://[::ffff:192.168.*]:*/*",
-+			"ws://[::ffff:169.254.*]/*", "ws://[::ffff:169.254.*]:*/*",
-+			"wss://[::ffff:127.*]/*", "wss://[::ffff:127.*]:*/*",
-+			"wss://[::ffff:0.0.0.0]/*", "wss://[::ffff:0.0.0.0]:*/*",
-+			"wss://[::ffff:10.*]/*", "wss://[::ffff:10.*]:*/*",
-+			"wss://[::ffff:192.168.*]/*", "wss://[::ffff:192.168.*]:*/*",
-+			"wss://[::ffff:169.254.*]/*", "wss://[::ffff:169.254.*]:*/*",
- 		}
- 		for i := 16; i <= 31; i++ {
- 			prefix := fmt.Sprintf("172.%d.*", i)
-+			v6prefix := fmt.Sprintf("[::ffff:172.%d.*]", i)
- 			localPatterns = append(localPatterns,
- 				"*://"+prefix+"/*", "*://"+prefix+":*/*",
-+				"*://"+v6prefix+"/*", "*://"+v6prefix+":*/*",
- 				"ws://"+prefix+"/*", "ws://"+prefix+":*/*",
-+				"ws://"+v6prefix+"/*", "ws://"+v6prefix+":*/*",
- 				"wss://"+prefix+"/*", "wss://"+prefix+":*/*",
-+				"wss://"+v6prefix+"/*", "wss://"+v6prefix+":*/*",
- 			)
- 		}
- 		blockedPatterns = append(blockedPatterns, localPatterns...)
-```
-
-**File**: `pkg/protocols/common/protocolstate/headless_test.go` (modified, +43/-3)
-```diff
-@@ -19,7 +19,8 @@ func TestIsValidHost(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	d := &Dialers{
--		NetworkPolicy: np,
-+		NetworkPolicy:  np,
-+		ExcludeTargets: []string{"192.168.1.50"},
- 	}
- 	err = dialers.Set(opts.ExecutionId, d)
- 	require.NoError(t, err)
-@@ -31,18 +32,57 @@ func TestIsValidHost(t *testing.T) {
- 	require.True(t, isValidHost(opts, "ws://example.com:9999"))
- 	require.True(t, isValidHost(opts, "wss://example.com:9999"))
- 
--	// Blocked hosts (127.0.0.1)
-+	// Blocked hosts (127.0.0.1 in DenyList)
- 	require.False(t, isValidHost(opts, "http://127.0.0.1:8080"))
- 	require.False(t, isValidHost(opts, "https://127.0.0.1:8443"))
- 	require.False(t, isValidHost(opts, "ws://127.0.0.1:9999"))
- 	require.False(t, isValidHost(opts, "wss://127.0.0.1:9999"))
- 
-+	// Blocked IPv4-mapped IPv6 forms of 127.0.0.1
-+	require.False(t, isValidHost(opts, "http://[::ffff:127.0.0.1]:8080"))
-+	require.False(t, isValidHost(opts, "https://[::ffff:127.0.0.1]:8443"))
-+	require.False(t, isValidHost(opts, "http://[::ffff:7f00:1]:8080"))
-+	require.False(t, isValidHost(opts, "http://[0:0:0:0:0:ffff:127.0.0.1]:8080"))
-+	require.False(t, isValidHost(opts, "http://[0000:0000:0000:0000:0000:ffff:7f00:0001]:8080"))
-+	require.False(t, isValidHost(opts, "ws://[::ffff:127.0.0.1]:9999"))
-+
-+	// Blocked hosts via ExcludeTargets (IPv4 and IPv4-mapped IPv6)
-+	require.False(t, isValidHost(opts, "http://192.168.1.50:8080"))
-+	require.False(t, isValidHost(opts, "http://[::ffff:192.168.1.50]:8080"))
-+	require.False(t, isValidHost(opts, "http://[::ffff:c0a8:132]:8080"))
-+
- 	require.True(t, IsHostAllowed(opts.ExecutionId, "ws://example.com:9999"))
- 	require.False(t, IsHostAllowed(opts.ExecutionId, "ws://127.0.0.1:9999"))
-+	require.False(t, IsHostAllowed(opts.ExecutionId, "ws://[::ffff:127.0.0.1]:9999"))
-+	require.False(t, IsHostAllowed(opts.ExecutionId, "http://[::ffff:192.168.1.50]:8080"))
-+}
-+
-+func TestCanonicalizeHost_IPv4MappedIPv6(t *testing.T) {
-+	cases := map[string]string{
-+		"127.0.0.1":                                 "127.0.0.1",
-+		"127.0.0.1:8080":                            "127.0.0.1",
-+		"http://127.0.0.1:8080/path":                "127.0.0.1",
-+		"::ffff:127.0.0.1":                          "127.0.0.1",
-+		"[::ffff:127.0.0.1]":                        "127.0.0.1",
-+		"[::ffff:127.0.0.1]:8080":                   "127.0.0.1",
-+		"http://[::ffff:127.0.0.1]:8080/test":       "127.0.0.1",
-+		"::ffff:7f00:1":                             "127.0.0.1",
-+		"[::ffff:7f00:1]:8443":                      "127.0.0.1",
-+		"0:0:0:0:0:ffff:127.0.0.1":                  "127.0.0.1",
-+		"0000:0000:0000:0000:0000:ffff:7f00:0001":  "127.0.0.1",
-+		"example.com":                               "example.com",
-+		"example.com:443":                           "example.com",
-+		"https://example.com:443/foo":               "example.com",
-+		"::1":                                       "::1",
-+		"[::1]:8080":                                "::1",
-+	}
-+
-+	for input, expected := range cases {
-+		require.Equal(t, expected, CanonicalizeHost(input), "input: %s", input)
-+	}
- }
- 
- func TestSetupHeadlessNetworkPolicy_Nil(t *testing.T) {
- 	require.NoError(t, SetupHeadlessNetworkPolicy(nil, nil))
- 	require.NoError(t, SetupHeadlessNetworkPolicy(&types.Options{}, nil))
- }
--
+ 	// Check explicit ExcludeTargets against raw, host, and canonical host
+-	for _, excluded := range dialers.ExcludeTargets {
++	for _, excluded := range excludedTargets {
+ 		ex := CanonicalizeHost(strings.TrimSpace(excluded))
+ 		if ex != "" {
+ 			if strings.EqualFold(canonHost, ex) || strings.EqualFold(host, ex) || strings.EqualFold(rawTarget, ex) {
 ```
 
 ---
 
-### Incident Patch 3: `f9446e92` (2026-11-03)
-**Commit Message**: Merge pull request #8016 from projectdiscovery/dwisiswant0/fix/headless/fail-requests-whose-url-net-url-cannot-parse
+### Incident Patch 2: `46fbc92a` (2026-11-03)
+**Commit Message**: Merge pull request #8023 from projectdiscovery/fix/dns-resolver-client
 
-fix(headless): fail requests whose URL net/url cannot parse
+Give each scan its own DNS resolvers
 
-**File**: `pkg/protocols/headless/engine/page_actions_test.go` (modified, +71/-1)
+**File**: `pkg/protocols/dns/dnsclientpool/clientpool.go` (modified, +28/-19)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"io"
- 	"math/rand"
-+	"net"
- 	"net/http"
- 	"net/http/cookiejar"
- 	"net/http/httptest"
-@@ -15,6 +16,7 @@ import (
- 	"strconv"
- 	"strings"
- 	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -319,6 +321,58 @@ func TestActionHeadersChange(t *testing.T) {
- 	})
+@@ -26,33 +26,42 @@ var defaultResolvers = []string{
+ 	"8.8.4.4:53", // Google
  }
  
-+// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
-+// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
-+// hands the modification-rules hijack handler a request with a nil URL (#8015).
-+//
-+//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
-+func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
-+	for _, disableCookie := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
-+			// Count connections, not requests: net/http rejects the request line
-+			// before any handler runs. TLS makes the headless proxy tunnel the
-+			// request with CONNECT instead of rejecting the unparsable path itself.
-+			var imageConns atomic.Int32
-+
-+			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
-+			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
-+				if state == http.StateNew {
-+					imageConns.Add(1)
-+				}
-+			}
-+
-+			imageServer.StartTLS()
-+			defer imageServer.Close()
-+
-+			actions := []*Action{
-+				{
-+					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
-+					Data:       map[string]string{"part": "request", "key": "Test", "value": "Hello"},
-+				},
-+				{ActionType: ActionTypeHolder{ActionType: ActionNavigate}, Data: map[string]string{"url": "{{BaseURL}}"}},
-+				{ActionType: ActionTypeHolder{ActionType: ActionWaitLoad}},
-+			}
-+			handler := func(w http.ResponseWriter, r *http.Request) {
-+				if r.Header.Get("Test") == "Hello" {
-+					_, _ = fmt.Fprintf(w, `<html><body>found<img src="%s/100%%.png"></body></html>`, imageServer.URL)
-+				}
-+			}
-+			options := &Options{Timeout: 20 * time.Second, DisableCookie: disableCookie}
-+
-+			testHeadlessWithOptions(t, actions, options, handler, func(page *Page, err error, _ ActionData) {
-+				require.NoError(t, err)
-+
-+				body := page.Page().MustElement("body").MustText()
-+				require.Equal(t, "found", strings.TrimSpace(body), "modification rules were not applied")
-+				require.Zero(t, imageConns.Load(), "unparsable request reached the image server")
-+
-+				imageDone := page.Page().MustEval(`() => document.querySelector("img").complete`).Bool()
-+				require.True(t, imageDone, "unparsable request is still paused")
-+			})
-+		})
+-// Init initializes the client pool implementation
++// Init initializes the client pool implementation.
++// Each resolver list gets its own client, so a later scan is not stuck with the first scan's resolvers.
+ func Init(options *types.Options) error {
+-	m.Lock()
+-	defer m.Unlock()
+-
+-	// Don't create clients if already created in the past.
+-	if normalClient != nil {
+-		return nil
+-	}
+-	clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
+-
+-	resolvers := defaultResolvers
+-	if len(options.InternalResolversList) > 0 {
+-		resolvers = options.InternalResolversList
+-	}
+-	var err error
+-	normalClient, err = retryabledns.New(resolvers, 1)
++	client, err := cachedClient(resolversFor(options))
+ 	if err != nil {
+ 		return errors.Wrap(err, "could not create dns client")
+ 	}
++	m.Lock()
++	normalClient = client
++	m.Unlock()
+ 	return nil
+ }
+ 
+-func getNormalClient() *retryabledns.Client {
++func resolversFor(options *types.Options) []string {
++	if options != nil && len(options.InternalResolversList) > 0 {
++		return options.InternalResolversList
 +	}
++	return defaultResolvers
 +}
 +
- func TestActionScreenshot(t *testing.T) {
- 	response := `
- 		<html>
-@@ -1003,6 +1057,21 @@ func TestMain(m *testing.M) {
- func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handler func(w http.ResponseWriter, r *http.Request), assert func(page *Page, pageErr error, extractedData ActionData)) {
- 	t.Helper()
++func cachedClient(resolvers []string) (*retryabledns.Client, error) {
+ 	m.Lock()
+ 	defer m.Unlock()
+-	return normalClient
++	if clientPool == nil {
++		clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
++	}
++	key := strings.Join(resolvers, ",")
++	if client, ok := clientPool.Get(key); ok {
++		return client, nil
++	}
++	client, err := retryabledns.New(resolvers, 1)
++	if err != nil {
++		return nil, err
++	}
++	_ = clientPool.Set(key, client)
++	return client, nil
+ }
  
-+	options := &Options{Timeout: timeout} //nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
-+	testHeadlessWithOptions(t, actions, options, handler, assert)
-+}
-+
-+// testHeadlessWithOptions is testHeadless with caller-chosen page options. It
-+// overwrites options.Options with the test scan options.
-+func testHeadlessWithOptions(
-+	t *testing.T,
-+	actions []*Action,
-+	options *Options,
-+	handler func(w http.ResponseWriter, r *http.Request),
-+	assert func(page *Page, pageErr error, extractedData ActionData),
-+) {
-+	t.Helper()
-+
- 	lfa := envutil.GetEnvOrDefault("LOCAL_FILE_ACCESS", true)
- 	rna := envutil.GetEnvOrDefault("RESTRICTED_LOCAL_NETWORK_ACCESS", false)
- 
-@@ -1027,7 +1096,8 @@ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handle
- 	input.CookieJar, err = cookiejar.New(nil)
- 	require.Nil(t, err)
- 
--	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
-+	options.Options = opts // allow file access in test
-+	extractedData, page, err := instance.Run(input, actions, nil, options)
- 	assert(page, err, extractedData)
- 
- 	if page != nil {
+ // Configuration contains the custom configuration options for a client
+@@ -81,7 +90,7 @@ func (c *Configuration) Hash() string {
+ // Get creates or gets a client for the protocol based on custom configuration
+ func Get(options *types.Options, configuration *Configuration) (*retryabledns.Client, error) {
+ 	if (configuration.Retries <= 1) && len(configuration.Resolvers) == 0 {
+-		return getNormalClient(), nil
++		return cachedClient(resolversFor(options))
+ 	}
+ 	hash := configuration.Hash()
+ 	if client, ok := clientPool.Get(hash); ok {
 ```
 
-**File**: `pkg/protocols/headless/engine/rules.go` (modified, +24/-12)
+**File**: `pkg/protocols/dns/dnsclientpool/clientpool_test.go` (added, +35/-0)
 ```diff
-@@ -15,8 +15,21 @@ import (
- // routingRuleHandler handles proxy rule for actions related to request/response modification
- func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack) {
- 	return func(ctx *rod.Hijack) {
-+		req := ctx.Request.Req()
-+		// go-rod discards url.Parse errors, so a URL that Chrome accepts but
-+		// net/url rejects, such as "/100%.png", arrives as nil. Fail the request:
-+		// the Go client cannot send it, and continuing it in the browser would
-+		// drop the modification rules and, with -cdp-endpoint (no headless
-+		// proxy), the network policy's dial-time address checks.
-+		if req.URL == nil {
-+			gologger.Verbose().Msgf("headless: failed %s request with a URL that net/url cannot parse", req.Method)
-+			ctx.Response.Fail(proto.NetworkErrorReasonFailed)
+@@ -0,0 +1,35 @@
++package dnsclientpool
 +
-+			return
-+		}
++import (
++	"testing"
 +
- 		// usually browsers don't use chunked transfer encoding, so we set the content-length nevertheless
--		ctx.Request.Req().ContentLength = int64(len(ctx.Request.Body()))
-+		req.ContentLength = int64(len(ctx.Request.Body()))
- 		// snapshot the rules once: ExecuteActions may still be appending rules
- 		// from another goroutine while this hijack handler runs.
- 		rules := p.rulesSnapshot()
-@@ -28,39 +41,39 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
- 			switch rule.Action {
- 			case ActionSetMethod:
- 				rule.Do(func() {
--					ctx.Request.Req().Method = rule.Args["method"]
-+					req.Method = rule.Args["method"]
- 				})
- 			case ActionAddHeader:
--				ctx.Request.Req().Header.Add(rule.Args["key"], rule.Args["value"])
-+				req.Header.Add(rule.Args["key"], rule.Args["value"])
- 			case ActionSetHeader:
--				ctx.Request.Req().Header.Set(rule.Args["key"], rule.Args["value"])
-+				req.Header.Set(rule.Args["key"], rule.Args["value"])
- 			case ActionDeleteHeader:
--				ctx.Request.Req().Header.Del(rule.Args["key"])
-+				req.Header.Del(rule.Args["key"])
- 			case ActionSetBody:
- 				body := rule.Args["body"]
--				ctx.Request.Req().ContentLength = int64(len(body))
-+				req.ContentLength = int64(len(body))
- 				ctx.Request.SetBody(body)
- 			}
- 		}
- 
- 		// each http request is performed via the native go http client
- 		// we first inject the shared cookies
- 		if !p.options.DisableCookie {
--			if cookies := p.ctx.CookieJar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
--				httpClient.Jar.SetCookies(ctx.Request.URL(), cookies)
-+			if cookies := p.ctx.CookieJar.Cookies(req.URL); len(cookies) > 0 {
-+				httpClient.Jar.SetCookies(req.URL, cookies)
- 			}
- 		}
- 
- 		// perform the request
- 		if err := ctx.LoadResponse(httpClient, true); err != nil {
--			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", ctx.Request.URL(), err)
-+			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", req.URL, err)
- 		}
- 
- 		if !p.options.DisableCookie {
- 			// retrieve the updated cookies from the native http client and inject them into the shared cookie jar
- 			// keeps existing one if not present
--			if cookies := httpClient.Jar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
--				p.ctx.CookieJar.SetCookies(ctx.Request.URL(), cookies)
-+			if cookies := httpClient.Jar.Cookies(req.URL); len(cookies) > 0 {
-+				p.ctx.CookieJar.SetCookies(req.URL, cookies)
- 			}
- 		}
- 
-@@ -84,7 +97,6 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
- 		}
- 
- 		// store history
--		req := ctx.Request.Req()
- 		var rawReq string
- 		if raw, err := httputil.DumpRequestOut(req, true); err == nil {
- 			rawReq = string(raw)
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestClientsFollowResolverList(t *testing.T) {
++	previousClient := normalClient
++	previousPool := clientPool
++	t.Cleanup(func() {
++		normalClient = previousClient
++		clientPool = previousPool
++	})
++	normalClient = nil
++	clientPool = nil
++
++	firstOptions := &types.Options{InternalResolversList: []string{"192.0.2.1:53"}}
++	secondOptions := &types.Options{InternalResolversList: []string{"192.0.2.2:53"}}
++
++	require.NoError(t, Init(firstOptions))
++	require.NoError(t, Init(secondOptions))
++
++	first, err := Get(firstOptions, &Configuration{})
++	require.NoError(t, err)
++	second, err := Get(secondOptions, &Configuration{})
++	require.NoError(t, err)
++	require.NotSame(t, first, second)
++
++	again, err := Get(firstOptions, &Configuration{})
++	require.NoError(t, err)
++	require.Same(t, first, again)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8024** (2026-11-03): Read headless excludes under the dialer lock (@Mzack9999)
+- **PR #8023** (2026-11-03): Give each scan its own DNS resolvers (@Mzack9999)
 - **PR #8019** (closed): fix(headless): prevent nil pointer dereference on invalid URL in cookie jar (#8015) (@TassioSales)
+- **PR #8018** (2026-11-03): use jev for llm matchers when -llm-provider jev (@dogancanbakir)
 - **PR #8016** (2026-11-03): fix(headless): fail requests whose URL net/url cannot parse (@dwisiswant0)
 - **PR #8014** (2026-11-03): fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982) (@TassioSales)
-- **PR #8013** (2026-11-03): test(expressions): add regression case for govaluate concat bug (follow-up to #7998) (@0xABCD01)
-- **PR #8012** (2026-11-03): fix(flow): prevent global state leakage in shared JS runtime pool (#7986) (@TassioSales)
-- **PR #8010** (2026-11-02): websocket: negotiate Sec-WebSocket-Protocol via the dialer (@Ayham970)
 
 ---
 
@@ -2101,56 +1678,73 @@ fix(headless): fail requests whose URL net/url cannot parse
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. headless): fail requests whose URL net/url cannot parse
+## X. Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
 
 **RULE**:
-When implementing operations in `pkg/protocols/headless/engine/page_actions_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/common/protocolstate/exclude_race_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be40690a`: headless): fail requests whose URL net/url cannot parse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36d0adba`: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/headless/engine/page_actions_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/protocolstate/exclude_race_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"net"
-	"sync/atomic"
-// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
-// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
-// hands the modification-rules hijack handler a request with a nil URL (#8015).
-//
-//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
-func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
-	for _, disableCookie := range []bool{false, true} {
-		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
-			// Count connections, not requests: net/http rejects the request line
-			// before any handler runs. TLS makes the headless proxy tunnel the
-			// request with CONNECT instead of rejecting the unparsable path itself.
-			var imageConns atomic.Int32
+package protocolstate
 
-			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
-			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
-				if state == http.StateNew {
-					imageConns.Add(1)
-				}
+import (
+	"sync"
+	"testing"
+
+	"github.com/projectdiscovery/networkpolicy"
+	"github.com/stretchr/testify/require"
+)
+
+func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
+	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
+	require.NoError(t, err)
+
+	const executionID = "exclude-race"
+	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
+	err = dialers.Set(executionID, entry)
+	require.NoError(t, err)
+	t.Cleanup(func() { dialers.Delete(executionID) })
+
+	stop := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
+		i := 0
+		for {
+			select {
+			case <-stop:
+				return
+			default:
 			}
+			entry.Lock()
+			entry.ExcludeTargets = lists[i%2]
+			entry.Unlock()
+			i++
+		}
+	}()
 
-			imageServer.StartTLS()
-			defer imageServer.Close()
-
-			actions := []*Action{
-				{
-					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
-		
+	for i := 0; i < 2000; i++ {
+		_ = IsHostAllowed(executionID, "http://192.0.2.1")
+	}
+	close(stop)
+	wg.Wait()
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be40690a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36d0adba` are properly handled with clean fallback behavior.

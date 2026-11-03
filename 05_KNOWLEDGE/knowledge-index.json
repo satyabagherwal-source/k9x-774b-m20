@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:44:55.928Z",
+  "last_updated": "2026-11-03T21:58:12.586Z",
   "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44334,8 +44334,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "bb9214a9",
-      "content_hash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
+      "source_version": "e2b40f1d",
+      "content_hash": "8ff794dda9a02eda46381796fb26b1084a1063bb2358a27a6320f3b020dd6df8",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -44373,6 +44373,11 @@
           "number": 5819,
           "title": "compose): keep numbers and booleans from interpolated variables (#5217)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6627,
+          "title": "update vulnerable dependencies (#5240)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44380,7 +44385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:51:39.981Z",
+      "verified_at": "2026-11-03T21:58:11.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47573,8 +47578,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "25f50f10",
-      "content_hash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
+      "source_version": "46fbc92a",
+      "content_hash": "ac3186230c83c76d83a5eb89f053aa9e9b0817591266ed8360078a05cf41f22c",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -47682,6 +47687,11 @@
           "number": 6550,
           "title": "headless): fail requests whose URL net/url cannot parse",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6628,
+          "title": "Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47689,7 +47699,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:14:22.751Z",
+      "verified_at": "2026-11-03T21:58:12.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51491,8 +51501,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "8f5727ea",
-      "content_hash": "0dc9c2c2420efb66816fcb80c4771b338676c4127c7409dc46a9edbf7adb411d",
+      "source_version": "41931bc4",
+      "content_hash": "c1195cc9bfba85347ad48d56a444df2ca320fcdeefc55a291bcdc04473bc8fc0",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -51515,6 +51525,11 @@
           "number": 5939,
           "title": "Merge pull request #4068 from ump45nose/diag-list-bat-config-dir",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6625,
+          "title": "Merge pull request #3801 from xfocus3/fix/help-language-submodule-note",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51522,7 +51537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:35:08.424Z",
+      "verified_at": "2026-11-03T21:58:03.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55516,8 +55531,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "548a3692",
-      "content_hash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
+      "source_version": "c51f047e",
+      "content_hash": "b4602181e9a6822a8486919d91f878c41f0e17999a22d7ea764e484d3bacc51d",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -55540,6 +55555,11 @@
           "number": 5897,
           "title": "docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6626,
+          "title": "utils): don't panic parsing a hex Color with non-ASCII characters (#16444)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55547,7 +55567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:46:13.697Z",
+      "verified_at": "2026-11-03T21:58:08.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170592,6 +170612,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:44:55.905Z"
+    },
+    "rule-6625": {
+      "learning_id": "rule-6625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6625,
+      "title": "Merge pull request #3801 from xfocus3/fix/help-language-submodule-note",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "41931bc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:58:03.778Z"
+    },
+    "rule-6626": {
+      "learning_id": "rule-6626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6626,
+      "title": "utils): don't panic parsing a hex Color with non-ASCII characters (#16444)",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "c51f047e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:58:08.722Z"
+    },
+    "rule-6627": {
+      "learning_id": "rule-6627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6627,
+      "title": "update vulnerable dependencies (#5240)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "e2b40f1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:58:11.763Z"
+    },
+    "rule-6628": {
+      "learning_id": "rule-6628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6628,
+      "title": "Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "46fbc92a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:58:12.556Z"
     }
   },
   "aliases": {
