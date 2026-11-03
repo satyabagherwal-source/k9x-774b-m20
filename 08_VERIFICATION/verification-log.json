@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-W28I",
-    "timestamp": "2026-10-31T05:07:17.202Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-W3K5",
     "timestamp": "2026-10-31T05:07:18.917Z",
     "repository": "nats-io/nats-server",
@@ -7490,6 +7475,21 @@
     "repository": "pola-rs/polars",
     "learningId": "learn-github-pola-rs-polars",
     "contentHash": "bd0bb4ebdc541172d413fe47e436921064f5e834a3389475cd9e65e2d57ef453",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-W988",
+    "timestamp": "2026-11-03T18:30:15.992Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "b4a98b73",
+    "sourceVersion": "0ab78e2d",
     "license": "Apache-2.0",
-    "contentHash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
-    "lastHarvestedAt": "2026-10-31T17:03:45.618Z",
+    "contentHash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
+    "lastHarvestedAt": "2026-11-03T18:30:15.996Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

@@ -6968,3 +6968,4 @@
 | `CYCLE-20261103-MKGF` | `2026-11-03T18:22:43.983Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6573` | Yes (`5a37e45b...`) |
 | `CYCLE-20261103-MPMP` | `2026-11-03T18:22:50.689Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6574` | Yes (`2e3b48d6...`) |
 | `CYCLE-20261103-MV46` | `2026-11-03T18:22:57.798Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6575` | Yes (`bd0bb4eb...`) |
+| `CYCLE-20261103-W988` | `2026-11-03T18:30:15.992Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6576` | Yes (`f01722f4...`) |

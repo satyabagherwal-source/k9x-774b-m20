@@ -6977,3 +6977,4 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6b2e03f8` | Multi-dimensional audit evidence | 2026-11-03T18:22:43.987Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `18430ef4` | Multi-dimensional audit evidence | 2026-11-03T18:22:50.692Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `49e6d826` | Multi-dimensional audit evidence | 2026-11-03T18:22:57.802Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `0ab78e2d` | Multi-dimensional audit evidence | 2026-11-03T18:30:15.996Z |

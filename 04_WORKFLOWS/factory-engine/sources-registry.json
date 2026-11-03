@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T18:23:00.372Z",
-    "lastVerified": "2026-11-03T18:23:00.372Z",
+    "lastChecked": "2026-11-03T18:30:18.558Z",
+    "lastVerified": "2026-11-03T18:30:18.558Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T12:06:21.021Z",
-    "lastVerified": "2026-11-03T12:06:21.021Z",
+    "lastChecked": "2026-11-03T18:30:05.000Z",
+    "lastVerified": "2026-11-03T18:30:05.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -428,8 +428,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T17:53:51.710Z",
-    "lastVerified": "2026-11-03T17:53:51.710Z",
+    "lastChecked": "2026-11-03T18:30:10.004Z",
+    "lastVerified": "2026-11-03T18:30:10.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2305,8 +2305,8 @@
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T21:54:12.922Z",
-    "lastVerified": "2026-10-31T21:54:12.922Z",
+    "lastChecked": "2026-11-03T18:30:02.915Z",
+    "lastVerified": "2026-11-03T18:30:02.915Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -7318,9 +7318,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-10-31T20:59:40.871Z",
+    "lastChecked": "2026-11-03T18:30:07.707Z",
     "revisionIdentifier": "d8bc862d",
-    "lastVerified": "2026-10-31T20:59:40.871Z"
+    "lastVerified": "2026-11-03T18:30:07.707Z"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-ai/zvec-grep",
@@ -8315,14 +8315,14 @@
     "officialUrl": "https://github.com/apache/arrow",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T17:03:44.543Z",
-    "lastVerified": "2026-10-31T17:03:44.543Z",
+    "lastChecked": "2026-11-03T18:30:13.991Z",
+    "lastVerified": "2026-11-03T18:30:13.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-arrow",
-    "contentHash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
+    "contentHash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10128,9 +10128,9 @@
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",
     "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
-    "lastChecked": "2026-10-30T07:03:23.304Z",
+    "lastChecked": "2026-11-03T18:30:04.371Z",
     "revisionIdentifier": "a7fc287e",
-    "lastVerified": "2026-10-30T07:03:23.304Z"
+    "lastVerified": "2026-11-03T18:30:04.371Z"
   },
   "touchlab-kermit": {
     "name": "Kermit",
@@ -11233,9 +11233,9 @@
   "heckj-swiftui-notes": {
     "name": "swiftui-notes",
     "officialUrl": "https://github.com/heckj/swiftui-notes",
-    "lastChecked": "2026-10-30T18:58:26.637Z",
+    "lastChecked": "2026-11-03T18:30:10.516Z",
     "revisionIdentifier": "e7884cce",
-    "lastVerified": "2026-10-30T18:58:26.637Z"
+    "lastVerified": "2026-11-03T18:30:10.516Z"
   },
   "webpack-webpack": {
     "name": "webpack/webpack",

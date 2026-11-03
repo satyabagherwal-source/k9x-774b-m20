@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T18:22:57.716Z",
+  "last_updated": "2026-11-03T18:30:15.911Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2272,8 +2272,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "b4a98b73",
-      "content_hash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
+      "source_version": "0ab78e2d",
+      "content_hash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2316,6 +2316,11 @@
           "number": 6258,
           "title": "GH-55335: [CI][R] Run R nightly binary upload later (#55337)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6576,
+          "title": "GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2323,7 +2328,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:03:45.531Z",
+      "verified_at": "2026-11-03T18:30:15.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169623,6 +169628,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T18:22:57.695Z"
+    },
+    "rule-6576": {
+      "learning_id": "rule-6576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6576,
+      "title": "GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebr",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "0ab78e2d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:30:15.889Z"
     }
   },
   "aliases": {
