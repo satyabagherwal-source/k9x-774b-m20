@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T16:58:57.117Z",
+  "last_updated": "2026-11-03T17:06:29.918Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
-      "verified_at": "2026-11-03T10:37:13.363Z",
+      "content_hash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
+      "verified_at": "2026-11-03T17:06:29.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:37:13.363Z"
+      "last_updated": "2026-11-03T17:06:29.918Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
-      "verified_at": "2026-10-30T10:56:08.279Z",
+      "content_hash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
+      "verified_at": "2026-11-03T17:06:26.698Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:56:08.279Z"
+      "last_updated": "2026-11-03T17:06:26.698Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

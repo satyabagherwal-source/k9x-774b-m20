@@ -6936,3 +6936,5 @@
 | `CYCLE-20261103-C80P` | `2026-11-03T16:50:42.457Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6544` | Yes (`72004ae0...`) |
 | `CYCLE-20261103-CBNB` | `2026-11-03T16:50:47.159Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6545` | Yes (`88219c93...`) |
 | `CYCLE-20261103-MTOX` | `2026-11-03T16:58:57.105Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6546` | Yes (`88a8eed0...`) |
+| `CYCLE-20261103-WGLA` | `2026-11-03T17:06:26.686Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6547` | Yes (`399267ba...`) |
+| `CYCLE-20261103-WJ2P` | `2026-11-03T17:06:29.905Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6548` | Yes (`268cd29a...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-77VL",
-    "timestamp": "2026-10-31T02:55:59.649Z",
-    "repository": "KRAFTON/Raon-1-mini-preview",
-    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-FPT8",
-    "timestamp": "2026-10-31T03:02:36.140Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "c20e35831101aa5d2b71bdac9734a7f0e66763ec37b2bebc516be4c6eaca4951",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-FWP5",
     "timestamp": "2026-10-31T03:02:45.065Z",
     "repository": "ornith-ai/Ornith-1.5-122B",
@@ -7490,6 +7460,36 @@
     "repository": "zeromicro/go-zero",
     "learningId": "learn-github-zeromicro-go-zero",
     "contentHash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-WGLA",
+    "timestamp": "2026-11-03T17:06:26.686Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-WJ2P",
+    "timestamp": "2026-11-03T17:06:29.905Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

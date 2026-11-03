@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T16:58:57.113Z",
-  "total_cycles_completed": 6913,
-  "total_learnings_persisted": 6913,
-  "total_rules_promoted": 6562,
+  "last_updated": "2026-11-03T17:06:29.914Z",
+  "total_cycles_completed": 6915,
+  "total_learnings_persisted": 6915,
+  "total_rules_promoted": 6564,
   "history": [
-    {
-      "timestamp": "2026-10-31T22:31:27.878Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T22:31:27.909Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T22:33:05.507Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T16:58:57.113Z",
       "repository": "zeromicro/go-zero",
       "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:06:26.694Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:06:29.914Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

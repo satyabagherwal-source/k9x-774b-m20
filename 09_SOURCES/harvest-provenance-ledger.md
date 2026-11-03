@@ -6945,3 +6945,5 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `644e2d55` | Multi-dimensional audit evidence | 2026-11-03T16:50:42.461Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `303b4d91` | Multi-dimensional audit evidence | 2026-11-03T16:50:47.163Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f5663037` | Multi-dimensional audit evidence | 2026-11-03T16:58:57.108Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `189cf90a` | Multi-dimensional audit evidence | 2026-11-03T17:06:26.689Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `26d69186` | Multi-dimensional audit evidence | 2026-11-03T17:06:29.909Z |

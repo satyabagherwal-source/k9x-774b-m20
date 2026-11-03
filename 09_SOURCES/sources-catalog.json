@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "dfc8fb5e",
+    "sourceVersion": "26d69186",
     "license": "Apache-2.0",
-    "contentHash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
-    "lastHarvestedAt": "2026-11-03T10:37:13.354Z",
+    "contentHash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
+    "lastHarvestedAt": "2026-11-03T17:06:29.909Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "58d7d2f9",
+    "sourceVersion": "189cf90a",
     "license": "Apache-2.0",
-    "contentHash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
-    "lastHarvestedAt": "2026-10-30T10:56:08.270Z",
+    "contentHash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
+    "lastHarvestedAt": "2026-11-03T17:06:26.689Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {

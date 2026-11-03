@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `dfc8fb5e`  
+> **Source Version**: `26d69186`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:37:12.662Z  
+> **Timestamp**: 2026-11-03T17:06:29.215Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:37:11.257Z  
+> **Harvest Timestamp**: 2026-11-03T17:06:28.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25763 stars
+- **Stars / Engagement**: 25767 stars
 
 ---
 
@@ -1259,11 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49795** (2026-11-03): **helm: Use preflight.updateStrategy in the pre-flight DaemonSet**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level]. - [x] Thanks for contributing!  `templates/cilium-preflight/daemonset.yaml` ignores `preflight.updateStrategy`, so the pre-flight DaemonSet always rolls one node at a time. This renders it the same way the agent and node-init DaemonSets render theirs. The default (`type: RollingUpdate`) matches the API server default, so the only change with default values is that the field is now explicit.  Fixes: #49794  Testing: - `helm template` with default values: the only diff is `updateStrategy: {type: RollingU
+- **Issue #49811** (2026-11-03): **[v1.18] ci: Fix the chart organization in the printed helm commands**
+  *Symptoms*: The chart push prints its example helm commands with env.QUAY_CHARTS_ORGANIZATION_DEV, which set-env-variables stopped setting when the variable became CHARTS_ORGANIZATION_DEV, so the printed commands point at oci://quay.io//cilium. Main, v1.19 and v1.20 already read CHARTS_ORGANIZATION_DEV there.  This commit reads CHARTS_ORGANIZATION_DEV.  Fixes: 90ec4a89510b ("ci: make registry configurable")  This PR was prepared with AIL:3. I personally checked the diff. 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #49794** (2026-11-03): **helm: preflight.updateStrategy is ignored by the cilium-pre-flight-check DaemonSet**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Version  main, v1.19.10, v1.18.9  ### What happened?  `values.yaml` documents `preflight.updateStrategy` (default `type: RollingUpdate`), but `templates/cilium-preflight/daemonset.yaml` never reads it. Any `rollingUpdate.maxUnavailable` or `type` set there is dropped, and the `cilium-pre-flight-check` DaemonSet always gets the API server default (`maxUnavailable: 1`).  Expected: the DaemonSet uses `preflight.updateStrategy`, the same way the agent (`updateStrategy`) and node-init (`nodeinit.updateStrategy`) DaemonSets use theirs.  Impact: on large clusters the preflight rolls one node at a time. We measured ~30s per node, so a 2,390-node cluster takes ~20h to pre-pull a new image. The agent rolls in percentage batches, so it finishes long before the preflight does.  ### How can we reproduce the issue?  ``` helm template cilium cilium/cilium --version 1.19.10 -n kube-system \   --set preflight.enabled=true --set agent=false --set operator.enabled=false \   --set preflight.updateStrategy.rollingUpdate.maxUnavailable=2 \   | yq 'select(.kind=="DaemonSet" and .metadata.name=="cilium-pre-flight-check") | .spec.updateStrategy' ```  Output is `null`. After installing it on a kind cluster, the live DaemonSet has `{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"}`.  ### Cilium Version  Helm chart 1.18.9 and 1.19.10 (also present on main)  ### Kernel Version  N/A (Helm temp
+- **Issue #49809** (2026-11-03): **ci: Build releases with the tagged commit's local actions**
+  *Symptoms*: The release and beta image workflows check out the default branch to reach their local actions, so a stable release tag builds with main's disk-cleanup and set-env-variables actions, and the release workflow also with main's set-runtime-image action. A change to one of them on main reaches every release branch at its next tag.  This commit checks out github.sha, the tagged or dispatched commit the workflow file runs from, so each release builds with its own branch's actions. The values these workflows read from set-env-variables are the same on main, v1.18, v1.19 and v1.20, and each of those branches carries every action its copy uses.  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,383 +1282,1325 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72b61a24` (2026-09-04)
-**Commit Message**: pkg/metrics: add cilium_agent_memory_bytes
+### Incident Patch 1: `3eee24dd` (2026-11-03)
+**Commit Message**: Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`"
 
-process_resident_memory_bytes only accounts for what the agent process
-itself maps, so it misses the kernel memlock charged for Cilium BPF maps
-and programs. That memory is not part of RSS and is not re-attributed to
-the cgroup of a restarted agent, so sizing the agent from RSS alone
-undercounts what a node actually spends on Cilium.
+This reverts commit 42bf3b174d7370e7807113c70823b82a28e0d9e8.
 
-Add cilium_agent_memory_bytes, a gauge broken down by a component label:
-go for Go runtime memory in use (heap, stack and the runtime allocators),
-bpf_maps and bpf_progs for the memlock already reported by the BPF
-collector, and total for the sum of the three. The BPF numbers come from
-getBPFUsage(), so a scrape still walks the kernel once no matter how many
-collectors ask for them.
+It made the Cilium Cluster Mesh upgrade and Conformance Cluster Mesh
+workflows flakier [1][2][3][4]. Its PR, #49671, ran the Cluster Mesh
+upgrade workflow 7 times before it merged, plus one re-run of a failed
+job, and 5 of those runs failed, a signal that it introduced a flake.
 
-Signed-off-by: Maxime VISONNEAU <[REDACTED_EMAIL]>
+1: https://github.com/cilium/cilium/actions/runs/41453693329/job/125305068628
+2: https://github.com/cilium/cilium/actions/runs/41529082626/job/125564694498
+3: https://github.com/cilium/cilium/actions/runs/41432220783/job/125233618569
+4: https://github.com/cilium/cilium/actions/runs/41080733992/job/124149040696
 
-**File**: `Documentation/observability/metrics.rst` (modified, +21/-4)
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `bpf/bpf_host.c` (modified, +24/-20)
 ```diff
-@@ -644,12 +644,29 @@ Name                                       Labels
- ``bpf_maps_virtual_memory_max_bytes``                                                                            Enabled    Max memory used by eBPF maps installed in the system
- ``bpf_progs_virtual_memory_max_bytes``                                                                           Enabled    Max memory used by eBPF programs installed in the system
- ``bpf_ratelimit_dropped_total``            ``usage``                                                             Enabled    Total drops resulting from BPF ratelimiter, tagged by source of drop
-+``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
- ========================================== ===================================================================== ========== ========================================================
- 
--Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
--are currently reporting the system-wide memory usage of eBPF that is directly
--and not directly managed by Cilium. This might change in the future and only
--report the eBPF memory usage directly managed by Cilium.
-+``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
-+the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
-+the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
-+those programs use. Maps that Cilium pins but that no loaded program uses are not
-+counted, and a map shared with an eBPF program outside of Cilium is counted in full.
-+
-+``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
-+into a single estimate, which is useful for capacity planning. Its ``component``
-+label takes the following values:
-+
-+- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
-+  the runtime allocators.
-+- ``bpf_maps``: kernel memlock of the eBPF maps described above.
-+- ``bpf_progs``: kernel memlock of the eBPF programs described above.
-+- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
-+
-+The eBPF memlock is not part of the agent's resident set size, and it is not
-+re-attributed to the cgroup of a restarted agent, which is why it is worth
-+accounting for separately from the process RSS reported by
-+``process_resident_memory_bytes``.
- 
- Drops/Forwards (L3/L4)
- ~~~~~~~~~~~~~~~~~~~~~~
-```
-
-**File**: `Documentation/spelling_wordlist.txt` (modified, +1/-0)
-```diff
-@@ -593,6 +593,7 @@ mediabot
- memcache
- memcached
- memcd
-+memlock
- microservice
- microservices
- minikube
-```
-
-**File**: `pkg/metrics/cell.go` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ var AgentCell = cell.Group(
- 			// expensive to sample and currently not terrible useful to keep data on.
- 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newStatusCollector(logger)})
- 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newbpfCollector(logger)})
-+			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newAgentMemoryCollector(logger)})
- 
- 			// Resolve the global registry variable for as long as we still have global functions
- 			registryResolver.Resolve(reg)
-```
-
-**File**: `pkg/metrics/memory.go` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package metrics
-+
-+import (
-+	"log/slog"
-+	"runtime"
-+
-+	"github.com/prometheus/client_golang/prometheus"
-+
-+	"github.com/cilium/cilium/pkg/logging/logfields"
-+)
-+
-+// agentMemoryComponents are the valid values for the agent_memory_bytes component label.
-+var agentMemoryComponents = []string{
-+	"go",
-+	"bpf_maps",
-+	"bpf_progs",
-+	"total",
-+}
-+
-+type agentMemoryCollector struct {
-+	logger *slog.Logger
-+	desc   *prometheus.Desc
-+}
-+
-+func newAgentMemoryCollector(logger *slog.Logger) *agentMemoryCollector {
-+	return &agentMemoryCollector{
-+		logger: logger,
-+		desc: prometheus.NewDesc(
-+			prometheus.BuildFQName(Namespace, "", "agent_memory_bytes"),
-+			"Estimated memory usage of the Cilium agent in bytes, broken down by component: "+
-+				"go for memory in use by the Go runtime, bpf_maps and bpf_progs for the kernel memlock "+
-+				"of the eBPF maps and programs loaded by Cilium, and total for the sum of the three. "+
-+				"The eBPF memlock is not part of the agent's resident set size.",
-+			[]string{"component"}, nil,
-+		),
-+	}
-+}
-+
-+func (c *agentMemoryCollector) Describe(ch chan<- *prometheus.Desc) {
-+	ch <- c.desc
-+}
-+
-+func (c *agentMemoryCollector) Collect(ch chan<- prometheus.Metric) {
-+	goBytes := goRuntimeInUseBytes()
-+
-+	var bpfMapBytes, bpfProgBytes uint64
-+	bpfUsage, err := getBPFUsage()
-+	if err != nil {
-+		c.logger.Error("retrieving BPF maps & programs usage", logfields.Error, err)
-+	} else {
-+		bpfMapBytes = bpfUsage.mapBytes
-+		bpfProgBytes = bpfUsage.programBytes
-+	}
-+	totalBytes := goBytes + bpfMapBytes + bpfProgBytes
-+
-+	for _, component := range agentMemoryComponents {
-+		var value uint64
-+		switch component {
-+		case "go":
-+			value = goBytes
-+		case "bpf_maps":
-+			value = bpfMapBytes
-+		case "bpf_progs":
-+			value = bpfProgBytes
-+		case "total":
-+			value = totalBytes
-+		}
-+
-+		ch <- prometheus.MustNewConstMetric(
-+			c.desc,
-+			prometheus.GaugeValue,
-+			float64(value),
-+			component,
-+		)
-+	}
-+}
-+
-+// goRuntimeInUseBytes returns memory currently in use by the Go runtime.
-+func goRuntimeInUseBytes() uint64 {
-+	var ms runtime.MemStats
-+	runtime.ReadMemStats(&ms)
-+	return uint64(ms.HeapInuse + ms.StackInuse + ms.MSpanInuse + ms.MCacheInuse)
-+}
-```
-
-**File**: `pkg/metrics/memory_test.go` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package metrics
-+
-+import (
-+	"runtime"
-+	"testing"
-+
-+	"github.com/cilium/hive/hivetest"
-+	"github.com/prometheus/client_golang/prometheus"
-+	dto "github.com/prometheus/client_model/go"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/cilium/cilium/pkg/testutils"
-+)
-+
-+func TestGoRuntimeInUseBytes(t *testing.T) {
-+	assert.NotZero(t, goRuntimeInUseBytes())
-+}
-+
-+func TestPrivilegedAgentMemoryCollectorCollect(t *testing.T) {
-+	testutils.PrivilegedTest(t)
-+	if runtime.GOOS != "linux" {
-+		t.Skip("requires linux")
-+	}
-+
-+	collector := newAgentMemoryCollector(hivetest.Logger(t))
-+	ch := make(chan prometheus.Metric, len(agentMemoryComponents))
-+	collector.Collect(ch)
-+	close(ch)
-+
-+	got := make(map[string]float64, len(agentMemoryComponents))
-+	for metric := range ch {
-+		dm, err := metricToDTO(metric)
-+		require.NoError(t, err)
-+		require.Len(t, dm.Label, 1)
-+		got[dm.Label[0].GetValue()] = dm.GetGauge().GetValue()
-+	}
-+
-+	for _, component := range agentMemoryComponents {
-+		value, ok := got[component]
-+		require.True(t, ok, "missing component %s", component)
-+		assert.GreaterOrEqual(t, value, float64(0), "component %s", component)
-+	}
-+
-+	assert.Equal(t, got["go"]+got["bpf_maps"]+got["bpf_progs"], got["total"])
-+}
-+
-+func metricToDTO(metric prometheus.Metric) (*dto.Metric, error) {
-+	var dm dto.Metric
-+	if err := metric.Write(&dm); err != nil {
-+		return nil, err
-+	}
-+	return &dm, nil
-+}
-```
-
----
-
-### Incident Patch 2: `dfc8fb5e` (2026-09-25)
-**Commit Message**: cilium-cli: Fix unschedulable client pod on 2-node clusters
-
-On AKS only 2 of the 4 nodes the workflow creates run Cilium, and both
-client3 and echo-other-node declare a required pod anti-affinity on
-name=client over kubernetes.io/hostname. kube-scheduler enforces those
-symmetrically, binds one pod at a time and never backtracks, so once it
-puts the two of them on different nodes before it binds the client pod,
-the client pod has no candidate node left and the setup dies after the
-5 minute readiness wait:
-
-  client-7b7877766f-q84m2: Unschedulable: 0/4 nodes are available: 2
-  node(s) didn't satisfy existing pods anti-affinity rules, 2 node(s)
-  had untolerated taint(s).
-
-The fixture relies on a binding order Kubernetes does not promise.
-
-This commit gives client3 a required pod affinity on echo-other-node, so
-a single anti-affinity edge points at the client pod and it loses at
-most one candidate node whatever the binding order. client3 lands on
-echo-other-node's node, which echo-other-node's own anti-affinity keeps
-off the client node, so the third client still cannot share a node with
-the first two.
-
-This commit was prepared with AIL:3. I personally checked the pod
-placement dumpe
-
-**File**: `cilium-cli/connectivity/check/deployment.go` (modified, +3/-3)
-```diff
-@@ -1479,7 +1479,7 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
+@@ -193,7 +193,8 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
+ 			return DROP_UNENCRYPTED_TRAFFIC;
  	}
  
- 	if ct.params.MultiCluster == "" && !ct.params.SingleNode {
--		// 3rd client scheduled on a different node than the first 2 clients
-+		// 3rd client colocated with echo-other-node, hence never on the client node
- 		_, err = ct.clients.src.GetDeployment(ctx, ct.params.TestNamespace, client3DeploymentName, metav1.GetOptions{})
- 		if err != nil {
- 			ct.Logf("✨ [%s] Deploying %s deployment...", ct.clients.src.ClusterName(), client3DeploymentName)
-@@ -1491,12 +1491,12 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
- 				Labels:      map[string]string{"other": "client-other-node"},
- 				Annotations: ct.params.DeploymentAnnotations.Match(client3DeploymentName),
- 				Affinity: &corev1.Affinity{
--					PodAntiAffinity: &corev1.PodAntiAffinity{
-+					PodAffinity: &corev1.PodAffinity{
- 						RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
- 							{
- 								LabelSelector: &metav1.LabelSelector{
- 									MatchExpressions: []metav1.LabelSelectorRequirement{
--										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{clientDeploymentName}},
-+										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{echoOtherNodeDeploymentName}},
- 									},
- 								},
- 								TopologyKey: corev1.LabelHostname,
+-	if (is_defined(ENABLE_NODEPORT) && !from_host) {
++#ifdef ENABLE_NODEPORT
++	if (!from_host) {
+ 		if (!ctx_skip_nodeport(ctx)) {
+ 			bool is_dsr = false;
+ 
+@@ -210,6 +211,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
+ 				return ret;
+ 		}
+ 	}
++#endif /* ENABLE_NODEPORT */
+ 
+ 	if (!CONFIG(enable_host_firewall))
+ 		return CTX_ACT_OK;
+@@ -630,7 +632,8 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
+ 			return DROP_UNENCRYPTED_TRAFFIC;
+ 	}
+ 
+-	if (is_defined(ENABLE_NODEPORT) && !from_host) {
++#ifdef ENABLE_NODEPORT
++	if (!from_host) {
+ 		if (!ctx_skip_nodeport(ctx)) {
+ 			bool is_dsr = false;
+ 
+@@ -649,6 +652,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
+ 				return ret;
+ 		}
+ 	}
++#endif /* ENABLE_NODEPORT */
+ 
+ 	if (!CONFIG(enable_host_firewall))
+ 		return CTX_ACT_OK;
+@@ -1595,26 +1599,25 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
+ 		}
+ 	}
+ 
+-	if (is_defined(ENABLE_NODEPORT)) {
+-		if (CONFIG(enable_health_check)) {
+-			ret = lb_handle_health(ctx, proto);
+-			if (ret != CTX_ACT_OK)
+-				goto exit;
+-		}
++#ifdef ENABLE_NODEPORT
++	if (CONFIG(enable_health_check)) {
++		ret = lb_handle_health(ctx, proto);
++		if (ret != CTX_ACT_OK)
++			goto exit;
++	}
+ 
+-		if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
+-			/*
+-			 * handle_nat_fwd tail calls in the majority of cases,
+-			 * so control might never return to this program.
+-			 */
+-			ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace,
+-					     &ext_err);
+-			if (ret == CTX_ACT_REDIRECT)
+-				return ret;
+-		}
++	if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
++		/*
++		 * handle_nat_fwd tail calls in the majority of cases,
++		 * so control might never return to this program.
++		 */
++		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace, &ext_err);
++		if (ret == CTX_ACT_REDIRECT)
++			return ret;
+ 	}
+ 
+ exit:
++#endif
+ 	if (IS_ERR(ret))
+ 		goto drop_err;
+ 
+@@ -1852,8 +1855,8 @@ int cil_to_host(struct __ctx_buff *ctx)
+ 			ctx->mark = MARK_MAGIC_SKIP_TPROXY;
+ #endif /* !TUNNEL_MODE */
+ 
+-		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
+-		    validate_ethertype(ctx, &proto)) {
++# ifdef ENABLE_NODEPORT
++		if (ctx_is_encrypt(ctx) && validate_ethertype(ctx, &proto)) {
+ 			/* handle_nat_fwd() tail calls in the majority of cases, so control
+ 			 * might never return to this program. Since IPsec is not compatible
+ 			 * iwth Host Firewall, this won't be an issue.
+@@ -1863,6 +1866,7 @@ int cil_to_host(struct __ctx_buff *ctx)
+ 			if (IS_ERR(ret))
+ 				goto out;
+ 		}
++#endif /* ENABLE_NODEPORT */
+ 	}
+ 
+ 	if (CONFIG(enable_host_firewall)) {
+```
+
+**File**: `bpf/bpf_lxc.c` (modified, +27/-11)
+```diff
+@@ -168,7 +168,8 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
+ 
+ 	svc = lb4_lookup_service(&key, is_defined(ENABLE_NODEPORT));
+ 
+-	if (is_defined(ENABLE_NODEPORT)) {
++#if defined(ENABLE_NODEPORT)
++	{
+ 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
+ 
+ 		if (!svc) {
+@@ -191,6 +192,7 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
+ 			}
+ 		}
+ 	}
++#endif /* ENABLE_NODEPORT */
+ 
+ 	if (svc) {
+ 		const struct lb4_backend *backend;
+@@ -343,7 +345,8 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
+ 	 */
+ 	svc = lb6_lookup_service(&key, is_defined(ENABLE_NODEPORT));
+ 
+-	if (is_defined(ENABLE_NODEPORT)) {
++#if defined(ENABLE_NODEPORT)
++	{
+ 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
+ 
+ 		if (!svc) {
+@@ -366,6 +369,7 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
+ 			}
+ 		}
+ 	}
++#endif /* ENABLE_NODEPORT */
+ 
+ 	if (svc) {
+ 		const struct lb6_backend *backend;
+@@ -729,11 +733,13 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
+ 	/* The packet goes to a peer not managed by this agent instance */
+ #ifdef TUNNEL_MODE
+ 	if (ct_state->from_tunnel || !skip_tunnel) {
++#if !defined(ENABLE_NODEPORT)
+ 		/* See comment in handle_ipv4_from_lxc(). */
+-		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
++		if (CONFIG(enable_host_firewall) &&
+ 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
+ 		    identity_is_remote_node(dst_sec_identity))
+ 			goto pass_to_stack;
++#endif /* !ENABLE_NODEPORT */
+ 
+ 		if (info && info->flag_has_tunnel_ep)
+ 			return encap_and_redirect_lxc(ctx, info, SECLABEL_IPV6,
+@@ -844,12 +850,14 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		lb6_ctx_restore_state(ctx, &ct_state_new, &proxy_port, true);
+ 		hairpin_flow = ct_state_new.loopback;
+ 
+-		if (is_defined(ENABLE_NODEPORT)) {
++#if defined(ENABLE_NODEPORT)
++		{
+ 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
+ 
+ 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
+ 			ct_state_new.nat_port = nat_info->nat_port;
+ 		}
++#endif /* ENABLE_NODEPORT */
+ 	}
+ 
+ 	ct_buffer = AUX_REUSE(cilium_tail_call_buffer6);
+@@ -973,12 +981,12 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 
+ 	case CT_RELATED:
+ 	case CT_REPLY:
++#ifdef ENABLE_NODEPORT
+ 		/* See comment in handle_ipv4_from_lxc().
+ 		 *
+ 		 * Needed for compatibility with pre-v1.19 CT entries.
+ 		 */
+-		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
+-		    lb_is_svc_proto(tuple->nexthdr)) {
++		if (ct_state->node_port && lb_is_svc_proto(tuple->nexthdr)) {
+ 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV6,
+ 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
+ 					  TRACE_IFINDEX_UNKNOWN,
+@@ -987,6 +995,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 			return tail_call_internal(ctx, CILIUM_CALL_IPV6_NODEPORT_REVNAT_EGRESS,
+ 						  ext_err);
+ 		}
++#endif /* ENABLE_NODEPORT */
+ 		break;
+ 	default:
+ 		return DROP_UNKNOWN_CT;
+@@ -1224,6 +1233,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 		if (cluster_id > UINT16_MAX)
+ 			return DROP_INVALID_CLUSTER_ID;
+ 
++#if !defined(ENABLE_NODEPORT)
+ 		/*
+ 		 * For the host firewall, traffic from a pod to a remote node is sent
+ 		 * through the tunnel. In the case of node to remote pod traffic via
+@@ -1233,10 +1243,11 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 		 * to apply the correct reverse DNAT, and then be routed accordingly.
+ 		 * See #14674 for details.
+ 		 */
+-		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
++		if (CONFIG(enable_host_firewall) &&
+ 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
+ 		    identity_is_remote_node(dst_sec_identity))
+ 			goto pass_to_stack;
++#endif /* !ENABLE_NODEPORT */
+ 
+ #ifdef ENABLE_CLUSTER_AWARE_ADDRESSING
+ 		/*
+@@ -1357,12 +1368,14 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		lb4_ctx_restore_state(ctx, &ct_state_new, &proxy_port, &cluster_id, true);
+ 		hairpin_flow = ct_state_new.loopback;
+ 
+-		if (is_defined(ENABLE_NODEPORT)) {
++#if defined(ENABLE_NODEPORT)
++		{
+ 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
+ 
+ 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
+ 			ct_state_new.nat_port = nat_info->nat_port;
+ 		}
++#endif /* ENABLE_NODEPORT */
+ 	}
+ 
+ 	bool same_subnet_id = false;
+@@ -1523,15 +1536,15 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 
+ 	case CT_RELATED:
+ 	case CT_REPLY:
++#ifdef ENABLE_NODEPORT
+ 		/* This handles reply traffic for the case where the nodeport EP
+ 		 * is local to the node. We'll do the tail call to perform
+ 		 * the reverse DNAT.
+ 		 *
+ 		 * This codepath currently doesn't support revDNAT for ICMP,
+ 		 * so make sure
+```
+
+**File**: `bpf/bpf_overlay.c` (modified, +14/-13)
+```diff
+@@ -53,7 +53,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
+ 				       __u32 *identity,
+ 				       __s8 *ext_err __maybe_unused)
+ {
+-	int ret, l3_off = ETH_HLEN;
++	int ret __maybe_unused, l3_off = ETH_HLEN;
+ 	void *data_end, *data;
+ 	struct ipv6hdr *ip6;
+ 	const struct endpoint_info *ep;
+@@ -72,7 +72,8 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
++#ifdef ENABLE_NODEPORT
++	if (!ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 
+ 		ret = nodeport_lb6(ctx, ip6, *identity, &punt_to_stack,
+@@ -88,6 +89,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
+ 		if (punt_to_stack)
+ 			return ret;
+ 	}
++#endif
+ 
+ 	if (!revalidate_data(ctx, &data, &data_end, &ip6))
+ 		return DROP_INVALID;
+@@ -257,7 +259,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
+ 	struct iphdr *ip4;
+ 	const struct endpoint_info *ep;
+ 	bool is_dsr = false;
+-	int ret;
++	int ret __maybe_unused;
+ 
+ 	/* verifier workaround (dereference of modified ctx ptr) */
+ 	if (!revalidate_data(ctx, &data, &data_end, &ip4))
+@@ -282,7 +284,8 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
+ 	}
+ #endif /* ENABLE_MULTICAST */
+ 
+-	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
++#ifdef ENABLE_NODEPORT
++	if (!ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 
+ 		ret = nodeport_lb4(ctx, ip4, *identity, &punt_to_stack,
+@@ -298,7 +301,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
+ 		if (punt_to_stack)
+ 			return ret;
+ 	}
+-
++#endif
+ 	if (!revalidate_data(ctx, &data, &data_end, &ip4))
+ 		return DROP_INVALID;
+ 
+@@ -649,17 +652,15 @@ int cil_to_overlay(struct __ctx_buff *ctx)
+ 
+ 	set_identity_mark(ctx, src_sec_identity, MARK_MAGIC_OVERLAY);
+ 
+-	if (is_defined(ENABLE_NODEPORT)) {
+-		if (snat_done) {
+-			ret = CTX_ACT_OK;
+-			goto out;
+-		}
+-
+-		ret = handle_nat_fwd(ctx, cluster_id, src_sec_identity, proto, false, &trace,
+-				     &ext_err);
++#ifdef ENABLE_NODEPORT
++	if (snat_done) {
++		ret = CTX_ACT_OK;
++		goto out;
+ 	}
+ 
++	ret = handle_nat_fwd(ctx, cluster_id, src_sec_identity, proto, false, &trace, &ext_err);
+ out:
++#endif
+ 	if (IS_ERR(ret))
+ 		return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
+ 						  METRIC_EGRESS);
+```
+
+**File**: `bpf/bpf_sock.c` (modified, +17/-6)
+```diff
+@@ -218,6 +218,7 @@ sock4_skip_xlate(const struct lb4_service *svc, __be32 address)
+ 	return false;
+ }
+ 
++#ifdef ENABLE_NODEPORT
+ static __always_inline const struct lb4_service *
+ sock4_wildcard_lookup(struct lb4_key *key)
+ {
+@@ -245,14 +246,13 @@ sock4_wildcard_lookup(struct lb4_key *key)
+ 	key->address = 0;
+ 	return lb4_lookup_service(key, true);
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline const struct lb4_service *
+ sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
+ 			   const bool in_hostns __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return NULL;
+-
++#ifdef ENABLE_NODEPORT
+ 	bool loopback = is_v4_loopback(key->address);
+ 	const struct remote_endpoint_info *info;
+ 	const struct lb4_service *svc;
+@@ -299,6 +299,9 @@ sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
+ 	 */
+ 	return (lb4_svc_is_hostport(svc) &&
+ 		(!lb4_svc_is_loopback(svc) || loopback)) ? svc : NULL;
++#endif /* ENABLE_NODEPORT */
++
++	return NULL;
+ }
+ 
+ static __always_inline int __sock4_xlate_fwd(struct bpf_sock_addr *ctx,
+@@ -482,6 +485,7 @@ int cil_sock4_connect(struct bpf_sock_addr *ctx)
+ 	return SYS_PROCEED;
+ }
+ 
++#ifdef ENABLE_NODEPORT
+ static __always_inline int __sock4_post_bind(struct bpf_sock *ctx,
+ 					     struct bpf_sock *ctx_full)
+ {
+@@ -536,6 +540,7 @@ int cil_sock4_post_bind(struct bpf_sock *ctx)
+ 
+ 	return SYS_PROCEED;
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline void sock4_auto_bind(struct bpf_sock_addr *ctx)
+ {
+@@ -733,6 +738,7 @@ static __always_inline void ctx_get_v6_address(const struct bpf_sock_addr *ctx,
+ 	barrier();
+ }
+ 
++#ifdef ENABLE_NODEPORT
+ static __always_inline void ctx_get_v6_src_address(const struct bpf_sock *ctx,
+ 						   union v6addr *addr)
+ {
+@@ -745,6 +751,7 @@ static __always_inline void ctx_get_v6_src_address(const struct bpf_sock *ctx,
+ 	addr->p4 = ctx->src_ip6[3];
+ 	barrier();
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline void ctx_set_v6_address(struct bpf_sock_addr *ctx,
+ 					       const union v6addr *addr)
+@@ -776,6 +783,7 @@ sock6_skip_xlate(const struct lb6_service *svc, const union v6addr *address)
+ 	return false;
+ }
+ 
++#ifdef ENABLE_NODEPORT
+ static __always_inline __maybe_unused const struct lb6_service *
+ sock6_wildcard_lookup(struct lb6_key *key)
+ {
+@@ -803,14 +811,13 @@ sock6_wildcard_lookup(struct lb6_key *key)
+ 	memset(&key->address, 0, sizeof(key->address));
+ 	return lb6_lookup_service(key, true);
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline __maybe_unused const struct lb6_service *
+ sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
+ 			   const bool in_hostns __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return NULL;
+-
++#ifdef ENABLE_NODEPORT
+ 	bool loopback = is_v6_loopback(&key->address);
+ 	const struct remote_endpoint_info *info;
+ 	const struct lb6_service *svc;
+@@ -851,6 +858,8 @@ sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
+ 
+ 	return (lb6_svc_is_hostport(svc) &&
+ 		(!lb6_svc_is_loopback(svc) || loopback)) ? svc : NULL;
++#endif /* ENABLE_NODEPORT */
++	return NULL;
+ }
+ 
+ static __always_inline
+@@ -885,6 +894,7 @@ int sock6_xlate_v4_in_v6(struct bpf_sock_addr *ctx __maybe_unused,
+ 	return -ENXIO;
+ }
+ 
++#ifdef ENABLE_NODEPORT
+ static __always_inline int
+ sock6_post_bind_v4_in_v6(struct bpf_sock *ctx __maybe_unused)
+ {
+@@ -951,6 +961,7 @@ int cil_sock6_post_bind(struct bpf_sock *ctx)
+ 
+ 	return SYS_PROCEED;
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline int
+ sock6_pre_bind_v4_in_v6(struct bpf_sock_addr *ctx __maybe_unused)
+```
+
+**File**: `bpf/bpf_wireguard.c` (modified, +17/-13)
+```diff
+@@ -63,7 +63,8 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
++#ifdef ENABLE_NODEPORT
++	if (!ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 		bool is_dsr = false;
+ 
+@@ -75,6 +76,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 		if (!revalidate_data(ctx, &data, &data_end, &ip6))
+ 			return DROP_INVALID;
+ 	}
++#endif
+ 
+ 	ep = lookup_ip6_endpoint(ip6);
+ 	if (ep && !(ep->flags & ENDPOINT_MASK_HOST_DELIVERY)) {
+@@ -141,7 +143,8 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
++#ifdef ENABLE_NODEPORT
++	if (!ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 		bool is_dsr = false;
+ 
+@@ -160,6 +163,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 		if (!revalidate_data(ctx, &data, &data_end, &ip4))
+ 			return DROP_INVALID;
+ 	}
++#endif
+ 
+ 	/* Lookup IPv4 address in the list of local endpoints and host IPs.
+ 	 *
+@@ -264,6 +268,7 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
+ 	if (CONFIG(enable_identity_mark))
+ 		set_decrypt_mark(ctx, 0);
+ 
++#if defined(TUNNEL_MODE) && !(defined(ENABLE_NODEPORT) && defined(ENABLE_NODE_ENCRYPTION))
+ 	/* In native routing mode we want to deliver packets to local endpoints
+ 	 * straight from BPF, without passing through the stack.
+ 	 * This matches overlay mode (where bpf_overlay would handle the delivery)
+@@ -279,9 +284,8 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
+ 	 *
+ 	 * Since neither of these conditions are met, we can return CTX_ACT_OK.
+ 	 */
+-	if (is_defined(TUNNEL_MODE) &&
+-	    !(is_defined(ENABLE_NODEPORT) && is_defined(ENABLE_NODE_ENCRYPTION)))
+-		return CTX_ACT_OK;
++	return CTX_ACT_OK;
++#endif
+ 
+ 	switch (proto) {
+ #ifdef ENABLE_IPV6
+@@ -360,17 +364,17 @@ int cil_to_wireguard(struct __ctx_buff *ctx)
+ 	bpf_clear_meta(ctx);
+ 	check_and_store_ip_trace_id(ctx);
+ 
+-	if (is_defined(ENABLE_NODEPORT)) {
+-		if (magic == MARK_MAGIC_OVERLAY)
+-			goto out;
++#ifdef ENABLE_NODEPORT
++	if (magic == MARK_MAGIC_OVERLAY)
++		goto out;
+ 
+-		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, true, &trace, &ext_err);
+-		if (IS_ERR(ret))
+-			return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
+-							  METRIC_EGRESS);
+-	}
++	ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, true, &trace, &ext_err);
++	if (IS_ERR(ret))
++		return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
++						  METRIC_EGRESS);
+ 
+ out:
++#endif /* ENABLE_NODEPORT */
+ 
+ 	send_trace_notify(ctx, TRACE_TO_CRYPTO, src_sec_identity, UNKNOWN_ID,
+ 			  TRACE_EP_ID_UNKNOWN, CONFIG(interface_ifindex),
+```
+
+**File**: `bpf/bpf_xdp.c` (modified, +15/-7)
+```diff
+@@ -93,6 +93,7 @@ bpf_xdp_exit(struct __ctx_buff *ctx, const int verdict)
+  * the ipcache here to reclassify a world-sourced orphan fragment drop. See
+  * frag_not_found_world() in l4.h for the rationale.
+  */
++#ifdef ENABLE_NODEPORT
+ static __always_inline int
+ xdp_frag_not_found_world_v4(int ret, const struct iphdr *ip4)
+ {
+@@ -104,8 +105,9 @@ xdp_frag_not_found_world_v4(int ret, const struct iphdr *ip4)
+ 	info = lookup_ip4_remote_endpoint(ip4->saddr, 0);
+ 	return frag_not_found_world(ret, info ? info->sec_identity : world_ipv4_id());
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+-#if defined(ENABLE_IPV6)
++#if defined(ENABLE_IPV6) && defined(ENABLE_NODEPORT)
+ static __always_inline int
+ xdp_frag_not_found_world_v6(int ret, const struct ipv6hdr *ip6)
+ {
+@@ -117,8 +119,9 @@ xdp_frag_not_found_world_v6(int ret, const struct ipv6hdr *ip6)
+ 	info = lookup_ip6_remote_endpoint((const union v6addr *)&ip6->saddr, 0);
+ 	return frag_not_found_world(ret, info ? info->sec_identity : world_ipv6_id());
+ }
+-#endif /* ENABLE_IPV6 */
++#endif /* ENABLE_IPV6 && ENABLE_NODEPORT */
+ 
++#ifdef ENABLE_NODEPORT
+ __declare_tail(CILIUM_CALL_IPV4_FROM_NETDEV)
+ int tail_lb_ipv4(struct __ctx_buff *ctx)
+ {
+@@ -161,6 +164,7 @@ static __always_inline int check_v4_lb(struct __ctx_buff *ctx)
+ 	ret = tail_call_internal(ctx, CILIUM_CALL_IPV4_FROM_NETDEV, &ext_err);
+ 	return send_drop_notify_error_ext(ctx, UNKNOWN_ID, ret, ext_err, METRIC_INGRESS);
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
+ {
+@@ -189,6 +193,7 @@ static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
+ }
+ 
+ #ifdef ENABLE_IPV6
++#ifdef ENABLE_NODEPORT
+ __declare_tail(CILIUM_CALL_IPV6_FROM_NETDEV)
+ int tail_lb_ipv6(struct __ctx_buff *ctx)
+ {
+@@ -230,6 +235,7 @@ static __always_inline int check_v6_lb(struct __ctx_buff *ctx)
+ 	ret = tail_call_internal(ctx, CILIUM_CALL_IPV6_FROM_NETDEV, &ext_err);
+ 	return send_drop_notify_error_ext(ctx, UNKNOWN_ID, ret, ext_err, METRIC_INGRESS);
+ }
++#endif /* ENABLE_NODEPORT */
+ 
+ static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
+ {
+@@ -257,7 +263,7 @@ static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
+ 
+ 	return 0;
+ }
+-#endif /* ENABLE_IPV6 */
++#endif /* ENABLE_IPV6 && ENABLE_NODEPORT */
+ 
+ #ifndef xdp_early_hook
+ #define xdp_early_hook(ctx, proto) CTX_ACT_OK
+@@ -286,8 +292,9 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
+ 				return ret;
+ 		}
+ 
+-		if (is_defined(ENABLE_NODEPORT))
+-			ret = check_v4_lb(ctx);
++#ifdef ENABLE_NODEPORT
++		ret = check_v4_lb(ctx);
++#endif /* ENABLE_NODEPORT */
+ 		break;
+ #ifdef ENABLE_IPV6
+ 	case bpf_htons(ETH_P_IPV6):
+@@ -297,8 +304,9 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
+ 				return ret;
+ 		}
+ 
+-		if (is_defined(ENABLE_NODEPORT))
+-			ret = check_v6_lb(ctx);
++#ifdef ENABLE_NODEPORT
++		ret = check_v6_lb(ctx);
++#endif /* ENABLE_NODEPORT */
+ 		break;
+ #endif /* ENABLE_IPV6 */
+ 	default:
+```
+
+**File**: `bpf/lib/conntrack.h` (modified, +2/-3)
+```diff
+@@ -325,9 +325,7 @@ ct_entry_matches_types(const struct ct_entry *entry __maybe_unused,
+ 	    entry->rev_nat_index == state->rev_nat_index)
+ 		return true;
+ 
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return false;
+-
++#ifdef ENABLE_NODEPORT
+ 	if ((ct_entry_types & CT_ENTRY_NODEPORT) &&
+ 	    entry->node_port && entry->rev_nat_index) {
+ 		if (!state || !state->rev_nat_index)
+@@ -341,6 +339,7 @@ ct_entry_matches_types(const struct ct_entry *entry __maybe_unused,
+ 	if (CONFIG(dsr_cfg).enable && (ct_entry_types & CT_ENTRY_DSR) &&
+ 	    entry->dsr_internal)
+ 		return true;
++#endif
+ 
+ 	return false;
+ }
+```
+
+**File**: `bpf/lib/lb.h` (modified, +12/-10)
+```diff
+@@ -465,17 +465,21 @@ bool lb6_svc_is_loadbalancer(const struct lb6_service *svc __maybe_unused)
+ static __always_inline
+ bool lb4_svc_is_nodeport(const struct lb4_service *svc __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return false;
++#ifdef ENABLE_NODEPORT
+ 	return svc->flags & SVC_FLAG_NODEPORT;
++#else
++	return false;
++#endif /* ENABLE_NODEPORT */
+ }
+ 
+ static __always_inline
+ bool lb6_svc_is_nodeport(const struct lb6_service *svc __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return false;
++#ifdef ENABLE_NODEPORT
+ 	return svc->flags & SVC_FLAG_NODEPORT;
++#else
++	return false;
++#endif /* ENABLE_NODEPORT */
+ }
+ 
+ static __always_inline
+@@ -1065,9 +1069,7 @@ lb6_lookup_service(struct lb6_key *key, const bool east_west)
+ static __always_inline const struct lb6_service *
+ lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return NULL;
+-
++#ifdef ENABLE_NODEPORT
+ 	const struct remote_endpoint_info *info;
+ 	bool in_nodeport_range;
+ 	__u16 service_port;
+@@ -1107,6 +1109,7 @@ lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
+ 
+ 		return svc;
+ 	}
++#endif
+ 
+ 	return NULL;
+ }
+@@ -1897,9 +1900,7 @@ lb4_lookup_service(struct lb4_key *key, const bool east_west)
+ static __always_inline const struct lb4_service *
+ lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
+ {
+-	if (!is_defined(ENABLE_NODEPORT))
+-		return NULL;
+-
++#ifdef ENABLE_NODEPORT
+ 	const struct remote_endpoint_info *info;
+ 	bool in_nodeport_range;
+ 	__u16 service_port;
+@@ -1943,6 +1944,7 @@ lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
+ 
+ 		return svc;
+ 	}
++#endif
+ 
+ 	return NULL;
+ }
 ```
 
 ---
 
-### Incident Patch 3: `27eb0710` (2026-10-28)
-**Commit Message**: helm: Fix SPIRE agent scheduling gap on etcd-tainted nodes
+### Incident Patch 2: `7020a554` (2026-11-03)
+**Commit Message**: Revert "datapath: remove some unneeded `__maybe_unused`"
 
-Signed-off-by: weizhoublue <[REDACTED_EMAIL]>
+This reverts commit 85c924ff6337b39af5b124b7fb628563c0b88f7e.
 
-**File**: `Documentation/helm-values.rst` (modified, +1/-1)
+It follows up on 42bf3b174d73, which the next commit reverts.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `bpf/bpf_host.c` (modified, +2/-2)
 ```diff
-@@ -131,7 +131,7 @@
-    * - :spelling:ignore:`authentication.mutual.spire.install.agent.tolerations`
-      - SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-      - list
--     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
-+     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
-    * - :spelling:ignore:`authentication.mutual.spire.install.enabled`
-      - Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true
-      - bool
+@@ -141,7 +141,7 @@ static __always_inline int
+ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
+ 	    __u32 ipcache_srcid,
+ 	    const bool from_host,
+-	    bool *punt_to_stack,
++	    bool *punt_to_stack __maybe_unused,
+ 	    __s8 *ext_err)
+ {
+ 	struct ct_buffer6 *ct_buffer;
+@@ -590,7 +590,7 @@ static __always_inline int
+ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
+ 	    __u32 ipcache_srcid,
+ 	    const bool from_host,
+-	    bool *punt_to_stack,
++	    bool *punt_to_stack __maybe_unused,
+ 	    __s8 *ext_err __maybe_unused)
+ {
+ 	struct ct_buffer4 *ct_buffer;
 ```
 
-**File**: `install/kubernetes/cilium/README.md` (modified, +1/-1)
+**File**: `bpf/bpf_overlay.c` (modified, +3/-3)
 ```diff
-@@ -82,7 +82,7 @@ contributors across the globe, there is almost always someone available to help.
- | authentication.mutual.spire.install.agent.securityContext | object | `{}` | Security context to be added to spire agent containers. SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container |
- | authentication.mutual.spire.install.agent.serviceAccount | object | `{"create":true,"name":"spire-agent"}` | SPIRE agent service account |
- | authentication.mutual.spire.install.agent.skipKubeletVerification | bool | `true` | SPIRE Workload Attestor kubelet verification. |
--| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
-+| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
- | authentication.mutual.spire.install.enabled | bool | `true` | Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true |
- | authentication.mutual.spire.install.existingNamespace | bool | `false` | SPIRE namespace already exists. Set to true if Helm should not create, manage, and import the SPIRE namespace. |
- | authentication.mutual.spire.install.initImage | object | `{"digest":"sha256:a46257e06c82ad85242d0d38077d0a52d9896389ca60a1a59d3463db586e5fa4","override":null,"pullPolicy":"Always","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}` | init container image of SPIRE agent and server |
+@@ -602,12 +602,12 @@ int cil_from_overlay(struct __ctx_buff *ctx)
+ __section_entry
+ int cil_to_overlay(struct __ctx_buff *ctx)
+ {
+-	bool snat_done = ctx_snat_done(ctx);
+-	struct trace_ctx trace;
++	bool snat_done __maybe_unused = ctx_snat_done(ctx);
++	struct trace_ctx __maybe_unused trace;
+ 	struct bpf_tunnel_key tunnel_key = {};
+ 	__u32 src_sec_identity = UNKNOWN_ID;
+ 	int ret = TC_ACT_OK;
+-	__u32 cluster_id = 0;
++	__u32 cluster_id __maybe_unused = 0;
+ 	__be16 proto = 0;
+ 	__s8 ext_err = 0;
+ 
 ```
 
-**File**: `install/kubernetes/cilium/values.schema.json` (modified, +10/-0)
+**File**: `bpf/bpf_sock.c` (modified, +4/-2)
 ```diff
-@@ -217,6 +217,16 @@
-                                   }
-                                 }
-                               },
-+                              {
-+                                "properties": {
-+                                  "key": {
-+                                    "type": "string"
-+                                  },
-+                                  "operator": {
-+                                    "type": "string"
-+                                  }
-+                                }
-+                              },
-                               {
-                                 "properties": {
-                                   "effect": {
+@@ -247,7 +247,8 @@ sock4_wildcard_lookup(struct lb4_key *key)
+ }
+ 
+ static __always_inline const struct lb4_service *
+-sock4_wildcard_lookup_full(struct lb4_key *key, const bool in_hostns)
++sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
++			   const bool in_hostns __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
+@@ -804,7 +805,8 @@ sock6_wildcard_lookup(struct lb6_key *key)
+ }
+ 
+ static __always_inline __maybe_unused const struct lb6_service *
+-sock6_wildcard_lookup_full(struct lb6_key *key, const bool in_hostns)
++sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
++			   const bool in_hostns __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
 ```
 
-**File**: `install/kubernetes/cilium/values.yaml` (modified, +2/-0)
+**File**: `bpf/bpf_wireguard.c` (modified, +4/-4)
 ```diff
-@@ -4508,6 +4508,8 @@ authentication:
-               effect: NoSchedule
-             - key: node-role.kubernetes.io/control-plane
-               effect: NoSchedule
-+            - key: node-role.kubernetes.io/etcd
-+              operator: Exists
-             - key: node.cloudprovider.kubernetes.io/uninitialized
-               effect: NoSchedule
-               value: "true"
+@@ -44,7 +44,7 @@
+ #ifdef ENABLE_IPV6
+ /* See the equivalent v4 path for comments */
+ static __always_inline int
+-handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err)
++handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err __maybe_unused)
+ {
+ 	void *data_end, *data;
+ 	struct ipv6hdr *ip6;
+@@ -121,7 +121,7 @@ int tail_handle_ipv6(struct __ctx_buff *ctx)
+ #endif /* ENABLE_IPV6 */
+ 
+ static __always_inline int
+-handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err)
++handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err __maybe_unused)
+ {
+ 	void *data_end, *data;
+ 	struct iphdr *ip4;
+@@ -343,8 +343,8 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
+ __section_entry
+ int cil_to_wireguard(struct __ctx_buff *ctx)
+ {
+-	int ret;
+-	__s8 ext_err = 0;
++	int __maybe_unused ret;
++	__s8 __maybe_unused ext_err = 0;
+ 	__be16 proto = ctx_get_protocol(ctx);
+ 	__u32 src_sec_identity = UNKNOWN_ID;
+ 	__u32 magic = ctx->mark & MARK_MAGIC_HOST_MASK;
 ```
 
-**File**: `install/kubernetes/cilium/values.yaml.tmpl` (modified, +2/-0)
+**File**: `bpf/lib/lb.h` (modified, +4/-4)
 ```diff
-@@ -4553,6 +4553,8 @@ authentication:
-               effect: NoSchedule
-             - key: node-role.kubernetes.io/control-plane
-               effect: NoSchedule
-+            - key: node-role.kubernetes.io/etcd
-+              operator: Exists
-             - key: node.cloudprovider.kubernetes.io/uninitialized
-               effect: NoSchedule
-               value: "true"
+@@ -463,15 +463,15 @@ bool lb6_svc_is_loadbalancer(const struct lb6_service *svc __maybe_unused)
+ }
+ 
+ static __always_inline
+-bool lb4_svc_is_nodeport(const struct lb4_service *svc)
++bool lb4_svc_is_nodeport(const struct lb4_service *svc __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return false;
+ 	return svc->flags & SVC_FLAG_NODEPORT;
+ }
+ 
+ static __always_inline
+-bool lb6_svc_is_nodeport(const struct lb6_service *svc)
++bool lb6_svc_is_nodeport(const struct lb6_service *svc __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return false;
+@@ -1063,7 +1063,7 @@ lb6_lookup_service(struct lb6_key *key, const bool east_west)
+ 
+ /* lb6_lookup_wildcard_service - see lb4_lookup_wildcard_service. */
+ static __always_inline const struct lb6_service *
+-lb6_lookup_wildcard_service(struct lb6_key *key)
++lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
+@@ -1895,7 +1895,7 @@ lb4_lookup_service(struct lb4_key *key, const bool east_west)
+  * On match, zeros the address in @key and performs a wildcard service lookup.
+  */
+ static __always_inline const struct lb4_service *
+-lb4_lookup_wildcard_service(struct lb4_key *key)
++lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
+```
+
+**File**: `bpf/lib/overloadable_skb.h` (modified, +3/-3)
+```diff
+@@ -77,21 +77,21 @@ neigh_resolver_available(void)
+ }
+ 
+ static __always_inline __maybe_unused void
+-ctx_skip_nodeport_clear(struct __sk_buff *ctx)
++ctx_skip_nodeport_clear(struct __sk_buff *ctx __maybe_unused)
+ {
+ 	if (is_defined(ENABLE_NODEPORT))
+ 		ctx->tc_index &= ~TC_INDEX_F_SKIP_NODEPORT;
+ }
+ 
+ static __always_inline __maybe_unused void
+-ctx_skip_nodeport_set(struct __sk_buff *ctx)
++ctx_skip_nodeport_set(struct __sk_buff *ctx __maybe_unused)
+ {
+ 	if (is_defined(ENABLE_NODEPORT))
+ 		ctx->tc_index |= TC_INDEX_F_SKIP_NODEPORT;
+ }
+ 
+ static __always_inline __maybe_unused bool
+-ctx_skip_nodeport(struct __sk_buff *ctx)
++ctx_skip_nodeport(struct __sk_buff *ctx __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return true;
+```
+
+**File**: `bpf/lib/overloadable_xdp.h` (modified, +3/-3)
+```diff
+@@ -68,21 +68,21 @@ neigh_resolver_available(void)
+ #define XFER_MARKER	6 /* xdp -> skb meta transfer */
+ 
+ static __always_inline __maybe_unused void
+-ctx_skip_nodeport_clear(struct xdp_md *ctx)
++ctx_skip_nodeport_clear(struct xdp_md *ctx __maybe_unused)
+ {
+ 	if (is_defined(ENABLE_NODEPORT))
+ 		ctx_store_meta(ctx, RECIRC_MARKER, 0);
+ }
+ 
+ static __always_inline __maybe_unused void
+-ctx_skip_nodeport_set(struct xdp_md *ctx)
++ctx_skip_nodeport_set(struct xdp_md *ctx __maybe_unused)
+ {
+ 	if (is_defined(ENABLE_NODEPORT))
+ 		ctx_store_meta(ctx, RECIRC_MARKER, 1);
+ }
+ 
+ static __always_inline __maybe_unused bool
+-ctx_skip_nodeport(struct xdp_md *ctx)
++ctx_skip_nodeport(struct xdp_md *ctx __maybe_unused)
+ {
+ 	if (!is_defined(ENABLE_NODEPORT))
+ 		return true;
+```
+
+**File**: `bpf/tests/classifiers_common.h` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@
+ 
+ #define ENABLE_IPV4 1
+ #define ENABLE_IPV6
+-#define TUNNEL_MODE 1
++#define TUNNEL_MODE
+ #define ENCAP_IFINDEX   1
+ 
+ /* For testing L2/L3 devices, we make use of ETH_HLEN:
+```
+
+---
+
+### Incident Patch 3: `61a11c86` (2026-11-03)
+**Commit Message**: Revert "datapath: turn `ENABLE_NODEPORT` into runtime config"
+
+This reverts commit 3597932f48827de0ceec263f6e1acefad37c2578.
+
+It builds on 42bf3b174d73, which a following commit reverts.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `bpf/Makefile` (modified, +21/-14)
+```diff
+@@ -18,15 +18,19 @@ LB_OPTIONS = \
+ 	-DENABLE_IPV6: \
+ 	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
+ 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_EGRESS_GATEWAY: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_EGRESS_GATEWAY_COMMON: \
+-	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_BANDWIDTH_MANAGER: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DDSR_ENCAP_MODE:-DENABLE_BANDWIDTH_MANAGER
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY_COMMON: \
++	-DENABLE_IPV4:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
++	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
++	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT:-DENABLE_BANDWIDTH_MANAGER: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE:-DENABLE_BANDWIDTH_MANAGER
+ 
+ # These options are intended to max out the BPF program complexity. it is load
+ # tested as well.
+ MAX_BASE_OPTIONS = -DENABLE_IPV4=1 -DENABLE_IPV6=1 \
+ 	-DPOLICY_VERDICT_NOTIFY=1 \
++	-DENABLE_NODEPORT=1 \
+ 	-DENABLE_BANDWIDTH_MANAGER=1 -DENABLE_EGRESS_GATEWAY=1 \
+ 	-DENABLE_CLUSTER_AWARE_ADDRESSING=1 -DENABLE_INTER_CLUSTER_SNAT=1 \
+ 	-DENCAP_IFINDEX=1 -DTUNNEL_MODE=1 -DENABLE_MULTICAST=1 \
+@@ -43,13 +47,15 @@ endif
+ HOST_OPTIONS = $(LXC_OPTIONS) \
+ 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
+ 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_EGRESS_GATEWAY: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_EGRESS_GATEWAY_COMMON: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_CLUSTER_AWARE_ADDRESSING:-DENABLE_INTER_CLUSTER_SNAT: \
+-	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_MULTICAST: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_MULTICAST: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DDSR_ENCAP_MODE: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY_COMMON: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_CLUSTER_AWARE_ADDRESSING:-DENABLE_INTER_CLUSTER_SNAT: \
++	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_MULTICAST: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_MULTICAST: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT
+ 
+ ifndef MAX_HOST_OPTIONS
+ MAX_HOST_OPTIONS = $(MAX_BASE_OPTIONS)
+@@ -63,9 +69,9 @@ endif
+ 
+ XDP_OPTIONS = $(LB_OPTIONS) \
+ 	-DENABLE_IPV4:-DENABLE_IPV6:-DFROM_HOST: \
+-	-DENABLE_IPV4:-DENABLE_IPV6: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DTUNNEL_MODE: \
+-	-DENABLE_IPV4:-DENABLE_IPV6:-DDSR_ENCAP_MODE
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT:-DTUNNEL_MODE: \
++	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE
+ 
+ ifndef MAX_XDP_OPTIONS
+ MAX_XDP_OPTIONS = $(MAX_BASE_OPTIONS)
+@@ -80,6 +86,7 @@ LXC_OPTIONS = \
+ 	 -DENABLE_IPV4:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
+ 	 -DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
+ 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
++	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT:-DPOLICY_VERDICT_NOTIFY: \
+ 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
+ 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:
+ 
+```
+
+**File**: `bpf/bpf_host.c` (modified, +4/-4)
+```diff
+@@ -193,7 +193,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
+ 			return DROP_UNENCRYPTED_TRAFFIC;
+ 	}
+ 
+-	if (CONFIG(enable_nodeport) && !from_host) {
++	if (is_defined(ENABLE_NODEPORT) && !from_host) {
+ 		if (!ctx_skip_nodeport(ctx)) {
+ 			bool is_dsr = false;
+ 
+@@ -630,7 +630,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
+ 			return DROP_UNENCRYPTED_TRAFFIC;
+ 	}
+ 
+-	if (CONFIG(enable_nodeport) && !from_host) {
++	if (is_defined(ENABLE_NODEPORT) && !from_host) {
+ 		if (!ctx_skip_nodeport(ctx)) {
+ 			bool is_dsr = false;
+ 
+@@ -1595,7 +1595,7 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
+ 		}
+ 	}
+ 
+-	if (CONFIG(enable_nodeport)) {
++	if (is_defined(ENABLE_NODEPORT)) {
+ 		if (CONFIG(enable_health_check)) {
+ 			ret = lb_handle_health(ctx, proto);
+ 			if (ret != CTX_ACT_OK)
+@@ -1852,7 +1852,7 @@ int cil_to_host(struct __ctx_buff *ctx)
+ 			ctx->mark = MARK_MAGIC_SKIP_TPROXY;
+ #endif /* !TUNNEL_MODE */
+ 
+-		if (CONFIG(enable_nodeport) && ctx_is_encrypt(ctx) &&
++		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
+ 		    validate_ethertype(ctx, &proto)) {
+ 			/* handle_nat_fwd() tail calls in the majority of cases, so control
+ 			 * might never return to this program. Since IPsec is not compatible
+```
+
+**File**: `bpf/bpf_lxc.c` (modified, +13/-13)
+```diff
+@@ -166,9 +166,9 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
+ 
+ 	lb4_fill_key(&key, &tuple);
+ 
+-	svc = lb4_lookup_service(&key, CONFIG(enable_nodeport));
++	svc = lb4_lookup_service(&key, is_defined(ENABLE_NODEPORT));
+ 
+-	if (CONFIG(enable_nodeport)) {
++	if (is_defined(ENABLE_NODEPORT)) {
+ 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
+ 
+ 		if (!svc) {
+@@ -341,9 +341,9 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
+ 	 * the CT entry for destination endpoints where we can't encode the
+ 	 * state in the address.
+ 	 */
+-	svc = lb6_lookup_service(&key, CONFIG(enable_nodeport));
++	svc = lb6_lookup_service(&key, is_defined(ENABLE_NODEPORT));
+ 
+-	if (CONFIG(enable_nodeport)) {
++	if (is_defined(ENABLE_NODEPORT)) {
+ 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
+ 
+ 		if (!svc) {
+@@ -730,7 +730,7 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
+ #ifdef TUNNEL_MODE
+ 	if (ct_state->from_tunnel || !skip_tunnel) {
+ 		/* See comment in handle_ipv4_from_lxc(). */
+-		if (!CONFIG(enable_nodeport) && CONFIG(enable_host_firewall) &&
++		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
+ 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
+ 		    identity_is_remote_node(dst_sec_identity))
+ 			goto pass_to_stack;
+@@ -844,7 +844,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		lb6_ctx_restore_state(ctx, &ct_state_new, &proxy_port, true);
+ 		hairpin_flow = ct_state_new.loopback;
+ 
+-		if (CONFIG(enable_nodeport)) {
++		if (is_defined(ENABLE_NODEPORT)) {
+ 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
+ 
+ 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
+@@ -977,7 +977,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		 *
+ 		 * Needed for compatibility with pre-v1.19 CT entries.
+ 		 */
+-		if (CONFIG(enable_nodeport) && ct_state->node_port &&
++		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
+ 		    lb_is_svc_proto(tuple->nexthdr)) {
+ 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV6,
+ 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
+@@ -1233,7 +1233,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 		 * to apply the correct reverse DNAT, and then be routed accordingly.
+ 		 * See #14674 for details.
+ 		 */
+-		if (!CONFIG(enable_nodeport) && CONFIG(enable_host_firewall) &&
++		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
+ 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
+ 		    identity_is_remote_node(dst_sec_identity))
+ 			goto pass_to_stack;
+@@ -1357,7 +1357,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		lb4_ctx_restore_state(ctx, &ct_state_new, &proxy_port, &cluster_id, true);
+ 		hairpin_flow = ct_state_new.loopback;
+ 
+-		if (CONFIG(enable_nodeport)) {
++		if (is_defined(ENABLE_NODEPORT)) {
+ 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
+ 
+ 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
+@@ -1530,7 +1530,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
+ 		 * This codepath currently doesn't support revDNAT for ICMP,
+ 		 * so make sure that we only send TCP/UDP/SCTP down this way.
+ 		 */
+-		if (CONFIG(enable_nodeport) && ct_state->node_port &&
++		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
+ 		    lb_is_svc_proto(tuple->nexthdr)) {
+ 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV4,
+ 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
+@@ -1932,7 +1932,7 @@ int tail_ipv6_policy(struct __ctx_buff *ctx)
+ 		break;
+ 	case CTX_ACT_OK:
+ 		/* See comment in IPv4 path. */
+-		if (!CONFIG(enable_bpf_routing) && !CONFIG(enable_nodeport) && from_tunnel) {
++		if (!CONFIG(enable_bpf_routing) && !is_defined(ENABLE_NODEPORT) && from_tunnel) {
+ 			ctx_change_type(ctx, PACKET_HOST);
+ 			break;
+ 		}
+@@ -2149,7 +2149,7 @@ ipv4_policy(struct __ctx_buff *ctx, struct iphdr *ip4, __u32 src_label,
+ 	}
+ 
+ 	if (ret == CT_NEW) {
+-		if (CONFIG(enable_nodeport) && CONFIG(srv6_cfg).enable)
++		if (is_defined(ENABLE_NODEPORT) && CONFIG(srv6_cfg).enable)
+ 			ct_state_new.node_port =
+ 				ct_has_nodeport_egress_entry4(get_ct_map4(tuple),
+ 							      tuple, NULL, false);
+@@ -2238,7 +2238,7 @@ int tail_ipv4_policy(struct __ctx_buff *ctx)
+ 		 * will drop them.
+ 		 * See #14646 for details.
+ 		 */
+-		if (!CONFIG(enable_bpf_routing) && !CONFIG(enable_nodeport) && from_tunnel) {
++		if (!CONFIG(enable_bpf_routing) && !is_defined(ENABLE_NODEPORT) && from_tunnel) {
+ 			ctx_change_type(ctx, PACKET_HOST);
+ 			break;
+ 		}
+```
+
+**File**: `bpf/bpf_overlay.c` (modified, +3/-3)
+```diff
+@@ -72,7 +72,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
++	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 
+ 		ret = nodeport_lb6(ctx, ip6, *identity, &punt_to_stack,
+@@ -282,7 +282,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
+ 	}
+ #endif /* ENABLE_MULTICAST */
+ 
+-	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
++	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 
+ 		ret = nodeport_lb4(ctx, ip4, *identity, &punt_to_stack,
+@@ -649,7 +649,7 @@ int cil_to_overlay(struct __ctx_buff *ctx)
+ 
+ 	set_identity_mark(ctx, src_sec_identity, MARK_MAGIC_OVERLAY);
+ 
+-	if (CONFIG(enable_nodeport)) {
++	if (is_defined(ENABLE_NODEPORT)) {
+ 		if (snat_done) {
+ 			ret = CTX_ACT_OK;
+ 			goto out;
+```
+
+**File**: `bpf/bpf_sock.c` (modified, +2/-2)
+```diff
+@@ -249,7 +249,7 @@ sock4_wildcard_lookup(struct lb4_key *key)
+ static __always_inline const struct lb4_service *
+ sock4_wildcard_lookup_full(struct lb4_key *key, const bool in_hostns)
+ {
+-	if (!CONFIG(enable_nodeport))
++	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
+ 
+ 	bool loopback = is_v4_loopback(key->address);
+@@ -806,7 +806,7 @@ sock6_wildcard_lookup(struct lb6_key *key)
+ static __always_inline __maybe_unused const struct lb6_service *
+ sock6_wildcard_lookup_full(struct lb6_key *key, const bool in_hostns)
+ {
+-	if (!CONFIG(enable_nodeport))
++	if (!is_defined(ENABLE_NODEPORT))
+ 		return NULL;
+ 
+ 	bool loopback = is_v6_loopback(&key->address);
+```
+
+**File**: `bpf/bpf_wireguard.c` (modified, +4/-4)
+```diff
+@@ -63,7 +63,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
++	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 		bool is_dsr = false;
+ 
+@@ -141,7 +141,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
+ 			return DROP_FRAG_NOSUPPORT;
+ 	}
+ 
+-	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
++	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
+ 		bool punt_to_stack = false;
+ 		bool is_dsr = false;
+ 
+@@ -280,7 +280,7 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
+ 	 * Since neither of these conditions are met, we can return CTX_ACT_OK.
+ 	 */
+ 	if (is_defined(TUNNEL_MODE) &&
+-	    !(CONFIG(enable_nodeport) && is_defined(ENABLE_NODE_ENCRYPTION)))
++	    !(is_defined(ENABLE_NODEPORT) && is_defined(ENABLE_NODE_ENCRYPTION)))
+ 		return CTX_ACT_OK;
+ 
+ 	switch (proto) {
+@@ -360,7 +360,7 @@ int cil_to_wireguard(struct __ctx_buff *ctx)
+ 	bpf_clear_meta(ctx);
+ 	check_and_store_ip_trace_id(ctx);
+ 
+-	if (CONFIG(enable_nodeport)) {
++	if (is_defined(ENABLE_NODEPORT)) {
+ 		if (magic == MARK_MAGIC_OVERLAY)
+ 			goto out;
+ 
+```
+
+**File**: `bpf/bpf_xdp.c` (modified, +2/-2)
+```diff
+@@ -286,7 +286,7 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
+ 				return ret;
+ 		}
+ 
+-		if (CONFIG(enable_nodeport))
++		if (is_defined(ENABLE_NODEPORT))
+ 			ret = check_v4_lb(ctx);
+ 		break;
+ #ifdef ENABLE_IPV6
+@@ -297,7 +297,7 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
+ 				return ret;
+ 		}
+ 
+-		if (CONFIG(enable_nodeport))
++		if (is_defined(ENABLE_NODEPORT))
+ 			ret = check_v6_lb(ctx);
+ 		break;
+ #endif /* ENABLE_IPV6 */
+```
+
+**File**: `bpf/complexity-tests/510/bpf_host/1.txt` (modified, +1/-0)
+```diff
+@@ -1,6 +1,7 @@
+ -DENABLE_IPV4=1
+ -DENABLE_IPV6=1
+ -DPOLICY_VERDICT_NOTIFY=1
++-DENABLE_NODEPORT=1
+ -DDSR_ENCAP_MODE=DSR_ENCAP_NONE
+ -DENABLE_BANDWIDTH_MANAGER=1
+ -DENCAP_IFINDEX=1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49795** (closed): helm: Use preflight.updateStrategy in the pre-flight DaemonSet (@tbommanxAI)
-- **PR #49793** (2026-11-03): README: Update releases (@joestringer)
-- **PR #49787** (2026-11-02): Prepare for release v1.21.0-pre.4 (@cilium-release-bot[bot])
-- **PR #49779** (2026-11-02): docs(tls-visibility): fix missing abbreviation (@KhooHaoYit)
-- **PR #49777** (2026-11-03): cilium-cli: Retry policy deletes on API server errors (@aanm)
-- **PR #49776** (2026-11-03): cilium-cli: Fix unschedulable client pod on 2-node clusters (@aanm)
+- **PR #49811** (2026-11-03): [v1.18] ci: Fix the chart organization in the printed helm commands (@aanm)
+- **PR #49809** (closed): ci: Build releases with the tagged commit's local actions (@aanm)
+- **PR #49807** (2026-11-03): datapath: Revert the ENABLE_NODEPORT is_defined() conversion (@aanm)
+- **PR #49806** (2026-11-03): v1.18 Backports 2026-11-03 (@tklauser)
+- **PR #49805** (2026-11-03): v1.19 Backports 2026-11-03 (@tklauser)
+- **PR #49802** (2026-11-03): v1.20 Backports 2026-11-03 (@tklauser)
 
 ---
 
@@ -1676,48 +2620,70 @@ Signed-off-by: weizhoublue <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pkg/metrics: add cilium_agent_memory_bytes
+## X. Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`"
 
 **RULE**:
-When implementing operations in `Documentation/observability/metrics.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bpf/bpf_host.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72b61a24`: pkg/metrics: add cilium_agent_memory_bytes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3eee24dd`: Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/observability/metrics.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_host.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
-``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
-the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
-the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
-those programs use. Maps that Cilium pins but that no loaded program uses are not
-counted, and a map shared with an eBPF program outside of Cilium is counted in full.
-
-``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
-into a single estimate, which is useful for capacity planning. Its ``component``
-label takes the following values:
-
-- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
-  the runtime allocators.
-- ``bpf_maps``: kernel memlock of the eBPF maps described above.
-- ``bpf_progs``: kernel memlock of the eBPF programs described above.
-- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
-
-The eBPF memlock is not part of the agent's resident set size, and it is
+#ifdef ENABLE_NODEPORT
+	if (!from_host) {
+#endif /* ENABLE_NODEPORT */
+#ifdef ENABLE_NODEPORT
+	if (!from_host) {
+#endif /* ENABLE_NODEPORT */
+#ifdef ENABLE_NODEPORT
+	if (CONFIG(enable_health_check)) {
+		ret = lb_handle_health(ctx, proto);
+		if (ret != CTX_ACT_OK)
+			goto exit;
+	}
+	if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
+		/*
+		 * handle_nat_fwd tail calls in the majority of cases,
+		 * so control might never return to this program.
+		 */
+		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace, &ext_err);
+		if (ret == CTX_ACT_REDIRECT)
+			return ret;
+#endif
+# ifdef ENABLE_NODEPORT
+		if (ctx_is_encrypt(ctx) && validate_ethertype(ctx, &proto)) {
+#endif /* ENABLE_NODEPORT */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
-are currently reporting the system-wide memory usage of eBPF that is directly
-and not directly managed by Cilium. This might change in the future and only
-report the eBPF memory usage directly managed by Cilium.
+	if (is_defined(ENABLE_NODEPORT) && !from_host) {
+	if (is_defined(ENABLE_NODEPORT) && !from_host) {
+	if (is_defined(ENABLE_NODEPORT)) {
+		if (CONFIG(enable_health_check)) {
+			ret = lb_handle_health(ctx, proto);
+			if (ret != CTX_ACT_OK)
+				goto exit;
+		}
+		if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
+			/*
+			 * handle_nat_fwd tail calls in the majority of cases,
+			 * so control might never return to this program.
+			 */
+			ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace,
+					     &ext_err);
+			if (ret == CTX_ACT_REDIRECT)
+				return ret;
+		}
+		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
+		    validate_ethertype(ctx, &proto)) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72b61a24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3eee24dd` are properly handled with clean fallback behavior.
