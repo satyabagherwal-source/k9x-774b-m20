@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:13:19.155Z",
+  "last_updated": "2026-11-03T23:20:18.840Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39764,8 +39764,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "c4bb0e3d",
-      "content_hash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
+      "source_version": "fbe27c3e",
+      "content_hash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -39818,6 +39818,11 @@
           "number": 6311,
           "title": "Merge pull request #5181 from metalbear-co/appleutil-v10",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6654,
+          "title": "up custom modes branching: let built-in modes' queues follow incoming",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39825,7 +39830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:46:38.415Z",
+      "verified_at": "2026-11-03T23:20:13.059Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146457,8 +146462,8 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "43032b5a",
-      "content_hash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+      "source_version": "7bcadd29",
+      "content_hash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
@@ -146471,6 +146476,11 @@
           "number": 5932,
           "title": "prevent first-drag overscroll with Android `contentInsets` (#1728)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6655,
+          "title": "refresh iOS selection geometry after input layout changes (#1736)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -146478,7 +146488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:05:21.198Z",
+      "verified_at": "2026-11-03T23:20:18.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171171,6 +171181,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:13:19.136Z"
+    },
+    "rule-6654": {
+      "learning_id": "rule-6654",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6654,
+      "title": "up custom modes branching: let built-in modes' queues follow incoming",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "fbe27c3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:20:13.059Z"
+    },
+    "rule-6655": {
+      "learning_id": "rule-6655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6655,
+      "title": "refresh iOS selection geometry after input layout changes (#1736)",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "7bcadd29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:20:18.819Z"
     }
   },
   "aliases": {

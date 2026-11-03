@@ -7062,3 +7062,5 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `499eab89` | Multi-dimensional audit evidence | 2026-11-03T23:06:19.741Z |
 | `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `fc792f3a` | Multi-dimensional audit evidence | 2026-11-03T23:13:08.327Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `28f8ba4a` | Multi-dimensional audit evidence | 2026-11-03T23:13:19.226Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `fbe27c3e` | Multi-dimensional audit evidence | 2026-11-03T23:20:13.167Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `7bcadd29` | Multi-dimensional audit evidence | 2026-11-03T23:20:18.925Z |

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T23:13:21.779Z",
-    "lastVerified": "2026-11-03T23:13:21.779Z",
+    "lastChecked": "2026-11-03T23:20:22.103Z",
+    "lastVerified": "2026-11-03T23:20:22.103Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -438,8 +438,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T22:52:07.108Z",
-    "lastVerified": "2026-11-03T22:52:07.108Z",
+    "lastChecked": "2026-11-03T23:20:22.092Z",
+    "lastVerified": "2026-11-03T23:20:22.092Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -511,12 +511,12 @@
     "revisionIdentifier": "745586f6"
   },
   "smallstep-cli": {
-    "name": "smallstep/cli",
+    "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:47:50.456Z",
-    "lastVerified": "2026-11-03T18:47:50.456Z",
+    "lastChecked": "2026-11-03T23:20:16.912Z",
+    "lastVerified": "2026-11-03T23:20:16.912Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -525,7 +525,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "72da9dc9"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -1942,14 +1943,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:46:37.791Z",
-    "lastVerified": "2026-10-31T20:46:37.791Z",
+    "lastChecked": "2026-11-03T23:20:10.913Z",
+    "lastVerified": "2026-11-03T23:20:10.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
+    "contentHash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2025,9 +2026,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-01T00:49:35.551Z",
+    "lastChecked": "2026-11-03T23:20:19.404Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-01T00:49:35.551Z"
+    "lastVerified": "2026-11-03T23:20:19.404Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -3992,12 +3993,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "argoproj-argo-events": {
-    "name": "argoproj/argo-events",
+    "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T01:40:29.799Z",
-    "lastVerified": "2026-11-01T01:40:29.799Z",
+    "lastChecked": "2026-11-03T23:20:14.468Z",
+    "lastVerified": "2026-11-03T23:20:14.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-events",
@@ -4006,7 +4007,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7265166e"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -10758,9 +10760,9 @@
   "wooorm-parse-entities": {
     "name": "parse-entities",
     "officialUrl": "https://github.com/wooorm/parse-entities",
-    "lastChecked": "2026-10-30T14:33:21.117Z",
+    "lastChecked": "2026-11-03T23:20:09.348Z",
     "revisionIdentifier": "07f0abed",
-    "lastVerified": "2026-10-30T14:33:21.117Z"
+    "lastVerified": "2026-11-03T23:20:09.349Z"
   },
   "sparrowcode-alertkit": {
     "name": "sparrowcode/AlertKit",
@@ -12022,14 +12024,14 @@
     "officialUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T23:05:19.854Z",
-    "lastVerified": "2026-10-30T23:05:19.854Z",
+    "lastChecked": "2026-11-03T23:20:17.835Z",
+    "lastVerified": "2026-11-03T23:20:17.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+    "contentHash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

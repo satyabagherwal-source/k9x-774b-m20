@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-YCTF",
-    "timestamp": "2026-10-31T12:08:58.467Z",
-    "repository": "gkd-kit/gkd",
-    "learningId": "learn-github-gkd-kit-gkd",
-    "contentHash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-YESC",
-    "timestamp": "2026-10-31T12:09:01.020Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-7354",
     "timestamp": "2026-10-31T12:15:45.832Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7460,36 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-94YZ",
+    "timestamp": "2026-11-03T23:20:13.163Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-99EX",
+    "timestamp": "2026-11-03T23:20:18.921Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

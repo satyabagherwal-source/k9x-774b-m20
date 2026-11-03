@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "c4bb0e3d",
+    "sourceVersion": "fbe27c3e",
     "license": "MIT",
-    "contentHash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
-    "lastHarvestedAt": "2026-10-31T20:46:38.518Z",
+    "contentHash": "a72ea04a9b9ad201f83ad6f0c99dfad4902b84eb051335d83a814d4bbd644301",
+    "lastHarvestedAt": "2026-11-03T23:20:13.167Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "43032b5a",
+    "sourceVersion": "7bcadd29",
     "license": "MIT",
-    "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
-    "lastHarvestedAt": "2026-10-30T23:05:21.302Z",
+    "contentHash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
+    "lastHarvestedAt": "2026-11-03T23:20:18.925Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {
