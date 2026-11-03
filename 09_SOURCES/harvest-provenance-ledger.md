@@ -6879,3 +6879,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `eca2269a` | Multi-dimensional audit evidence | 2026-11-02T21:43:42.109Z |
 | `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `25e3c312` | Multi-dimensional audit evidence | 2026-11-02T21:48:31.293Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c1ca386c` | Multi-dimensional audit evidence | 2026-11-03T10:29:44.429Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `c719b3e7` | Multi-dimensional audit evidence | 2026-11-03T10:37:08.334Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dfc8fb5e` | Multi-dimensional audit evidence | 2026-11-03T10:37:13.354Z |

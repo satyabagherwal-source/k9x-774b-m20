@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T10:29:46.976Z",
-    "lastVerified": "2026-11-03T10:29:46.976Z",
+    "lastChecked": "2026-11-03T10:37:15.917Z",
+    "lastVerified": "2026-11-03T10:37:15.917Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-02T21:30:12.681Z",
+    "lastChecked": "2026-11-03T10:37:09.920Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-02T21:30:12.681Z"
+    "lastVerified": "2026-11-03T10:37:09.920Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1894,14 +1894,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T15:00:54.597Z",
-    "lastVerified": "2026-11-02T15:00:54.597Z",
+    "lastChecked": "2026-11-03T10:37:11.257Z",
+    "lastVerified": "2026-11-03T10:37:11.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
+    "contentHash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4876,9 +4876,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-10-31T15:36:32.602Z",
+    "lastChecked": "2026-11-03T10:37:07.342Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-10-31T15:36:32.602Z"
+    "lastVerified": "2026-11-03T10:37:07.342Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -6404,9 +6404,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-10-31T12:08:47.640Z",
+    "lastChecked": "2026-11-03T10:36:54.853Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-10-31T12:08:47.640Z"
+    "lastVerified": "2026-11-03T10:36:54.853Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -6443,22 +6443,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "argoproj-argo-workflows": {
-    "name": "argo-workflows",
+    "name": "argoproj/argo-workflows",
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T16:27:13.020Z",
-    "lastVerified": "2026-10-31T16:27:13.020Z",
+    "lastChecked": "2026-11-03T10:37:07.618Z",
+    "lastVerified": "2026-11-03T10:37:07.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
+    "contentHash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c42dc08b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ytsaurus-ytsaurus": {
     "name": "ytsaurus/ytsaurus",
@@ -9414,9 +9413,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-10-29T23:28:26.515Z",
+    "lastChecked": "2026-11-03T10:36:57.370Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-10-29T23:28:26.515Z"
+    "lastVerified": "2026-11-03T10:36:57.370Z"
   },
   "emergetools-pow": {
     "name": "Pow",
@@ -10320,12 +10319,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "duongductrong-snapzy": {
-    "name": "duongductrong/Snapzy",
+    "name": "Snapzy",
     "officialUrl": "https://github.com/duongductrong/Snapzy",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T10:23:51.146Z",
-    "lastVerified": "2026-10-30T10:23:51.146Z",
+    "lastChecked": "2026-11-03T10:36:59.849Z",
+    "lastVerified": "2026-11-03T10:36:59.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duongductrong-snapzy",
@@ -10334,7 +10333,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "77d3d3fe"
   },
   "archivebox-archivebox": {
     "name": "ArchiveBox/ArchiveBox",

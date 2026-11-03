@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-464X",
-    "timestamp": "2026-10-31T00:05:39.729Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-NBPC",
-    "timestamp": "2026-10-31T00:20:33.408Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "5eff67aaea5eeff3fe989c37a873c28786cb12c6a1ac375f2c0a97292fb7b415",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-NF87",
     "timestamp": "2026-10-31T00:20:37.975Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "2b3f90a8673ccd4ff83e10fdc78300c770827bf1cbff798a8777ad846afdb0d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-ZT62",
+    "timestamp": "2026-11-03T10:37:08.330Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-ZX1I",
+    "timestamp": "2026-11-03T10:37:13.350Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

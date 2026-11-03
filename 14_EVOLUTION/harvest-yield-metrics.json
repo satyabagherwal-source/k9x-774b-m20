@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T10:29:44.434Z",
-  "total_cycles_completed": 6847,
-  "total_learnings_persisted": 6847,
-  "total_rules_promoted": 6501,
+  "last_updated": "2026-11-03T10:37:13.359Z",
+  "total_cycles_completed": 6849,
+  "total_learnings_persisted": 6849,
+  "total_rules_promoted": 6503,
   "history": [
-    {
-      "timestamp": "2026-10-31T18:22:09.321Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T18:22:24.354Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:22:26.463Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T10:29:44.434Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T10:37:08.340Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T10:37:13.359Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

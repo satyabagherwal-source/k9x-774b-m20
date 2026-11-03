@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `9b0aad96`  
+> **Source Version**: `dfc8fb5e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:00:55.423Z  
+> **Timestamp**: 2026-11-03T10:37:12.662Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:00:54.597Z  
+> **Harvest Timestamp**: 2026-11-03T10:37:11.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25759 stars
+- **Stars / Engagement**: 25763 stars
 
 ---
 
@@ -1259,13 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49771** (2026-11-02): **[Test, do not merge] Verify concurrent ready-PR limit [skip ci]**
-  *Symptoms*: Temporary verification of the repository's concurrent open-PR limit, requested by lexfrei. This PR is not intended for review or merge and will be closed immediately if creation succeeds.  AI disclosure: the test branch and this PR were prepared by an AI assistant under my explicit instruction.  No functional change.
-  **Post-Mortem & Fix Analysis**:
-  > Failed to retrieve pull request: pull request is not open
+- **Issue #49795** (2026-11-03): **helm: Use preflight.updateStrategy in the pre-flight DaemonSet**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level]. - [x] Thanks for contributing!  `templates/cilium-preflight/daemonset.yaml` ignores `preflight.updateStrategy`, so the pre-flight DaemonSet always rolls one node at a time. This renders it the same way the agent and node-init DaemonSets render theirs. The default (`type: RollingUpdate`) matches the API server default, so the only change with default values is that the field is now explicit.  Fixes: #49794  Testing: - `helm template` with default values: the only diff is `updateStrategy: {type: RollingU
 
-- **Issue #49770** (2026-11-02): **renovate: Hold the docs-builder Python minor version**
-  *Symptoms*: The docs-builder image runs the Python release that Read the Docs uses to build the documentation, cf. Documentation/.readthedocs.yaml. Since the Dockerfile moved under images/, Renovate tracks its Python base image and bumped it to 3.15 in #49744 [1], while Read the Docs still lists 3.14 as its newest Python. Renovate puts that bump in the auto-merge-trusted-deps group, which merges on its own once the checks pass.  This commit disables major and minor updates of that image. Digest updates still flow, and we bump Python by hand together with .readthedocs.yaml and Documentation/runtime.txt.  This PR was prepared with AIL:3. I personally checked a Renovate lookup dry run before and after the change.  Fixes: 76cc4f5dec09 ("images: Move docs-builder into images/ directory") 1: https://github.com/cilium/cilium/pull/49744 
+- **Issue #49794** (2026-11-03): **helm: preflight.updateStrategy is ignored by the cilium-pre-flight-check DaemonSet**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Version  main, v1.19.10, v1.18.9  ### What happened?  `values.yaml` documents `preflight.updateStrategy` (default `type: RollingUpdate`), but `templates/cilium-preflight/daemonset.yaml` never reads it. Any `rollingUpdate.maxUnavailable` or `type` set there is dropped, and the `cilium-pre-flight-check` DaemonSet always gets the API server default (`maxUnavailable: 1`).  Expected: the DaemonSet uses `preflight.updateStrategy`, the same way the agent (`updateStrategy`) and node-init (`nodeinit.updateStrategy`) DaemonSets use theirs.  Impact: on large clusters the preflight rolls one node at a time. We measured ~30s per node, so a 2,390-node cluster takes ~20h to pre-pull a new image. The agent rolls in percentage batches, so it finishes long before the preflight does.  ### How can we reproduce the issue?  ``` helm template cilium cilium/cilium --version 1.19.10 -n kube-system \   --set preflight.enabled=true --set agent=false --set operator.enabled=false \   --set preflight.updateStrategy.rollingUpdate.maxUnavailable=2 \   | yq 'select(.kind=="DaemonSet" and .metadata.name=="cilium-pre-flight-check") | .spec.updateStrategy' ```  Output is `null`. After installing it on a kind cluster, the live DaemonSet has `{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"}`.  ### Cilium Version  Helm chart 1.18.9 and 1.19.10 (also present on main)  ### Kernel Version  N/A (Helm temp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,1113 +1280,383 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9cf8713` (2026-11-02)
-**Commit Message**: docs-builder: Find the versionwarning directory at build time
+### Incident Patch 1: `72b61a24` (2026-09-04)
+**Commit Message**: pkg/metrics: add cilium_agent_memory_bytes
 
-The sphinx-version-warning extension writes its data file into its own
-package directory when Sphinx loads the configuration, so the Dockerfile
-makes that directory writable for the non-root docs containers. The
-path names the Python minor version, so the bump to Python 3.15 left it
-at python3.14 and the docs check failed at update-redirects:
+process_resident_memory_bytes only accounts for what the agent process
+itself maps, so it misses the kernel memlock charged for Cilium BPF maps
+and programs. That memory is not part of RSS and is not re-attributed to
+the cgroup of a restarted agent, so sizing the agent from RSS alone
+undercounts what a node actually spends on Cilium.
 
-  sphinx.errors.ExtensionError: Handler <function generate_versionwarning_data_json at 0x707586a3ceb0> for event 'config-inited' threw an exception (exception: [Errno 13] Permission denied: '/usr/local/lib/python3.15/site-packages/versionwarning/_static/data')
+Add cilium_agent_memory_bytes, a gauge broken down by a component label:
+go for Go runtime memory in use (heap, stack and the runtime allocators),
+bpf_maps and bpf_progs for the memlock already reported by the BPF
+collector, and total for the sum of the three. The BPF numbers come from
+getBPFUsage(), so a scrape still walks the kernel once no matter how many
+collectors ask for them.
 
-This commit takes the directory from the installed versionwarning
-package, so a Python bump only has to change the FROM line.
+Signed-off-by: Maxime VISONNEAU <[REDACTED_EMAIL]>
 
-This commit was prepared with AIL:3. I personally checked
-update-redirects against docs-builder images built on Python 3.14 and
-3.15.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `images/docs-builder/Dockerfile` (modified, +2/-1)
+**File**: `Documentation/observability/metrics.rst` (modified, +21/-4)
 ```diff
-@@ -35,4 +35,5 @@ ENV MAKE_GIT_REPO_SAFE=1
- ## Workaround odd behaviour of sphinx versionwarning extension. It wants to
- ## write runtime data inside a system directory.
- ## We do rely on this extension, so we cannot just drop it.
--RUN install -m 0777 -d /usr/local/lib/python3.14/site-packages/versionwarning/_static/data
-+RUN dir="$(python3 -c 'import versionwarning; print(versionwarning.__path__[0])')" \
-+    && install -m 0777 -d "${dir}/_static/data"
-```
-
----
-
-### Incident Patch 2: `9b0aad96` (2026-11-02)
-**Commit Message**: Revert "routing/reconciler: Add script-based tests"
-
-This reverts commit db4c861c34bba61b9b6cca48d0228a358745f4e3.
-
-Since these script tests merged on 2026-10-29, Runtime Test
-(privileged) has failed in 22 jobs, 5 of them among the 43 push and
-scheduled runs on main. In each failure, link/set gives the dummy ENI
-link the MAC 02:ca:fe:00:00:01 but link/list later shows
-da:75:58:ec:cf:a7, the same address every time. The ENI device
-configurator never finds the link, the scenario waits 636 s for its
-address, and the cleanup leaves the link behind for the next scenario:
-
-  refusing to delete link "cilium-rr-test" with unexpected MAC da:75:58:ec:cf:a7
-
-This commit reverts the tests until the dummy link keeps its MAC. The
-unit tests of the routing package still cover the individual netlink
-operations and reconciler transitions in the meantime.
-
-This commit was prepared with AIL:3. I personally checked the logs of
-the failing CI jobs.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `pkg/datapath/linux/routing/reconciler/script_test.go` (removed, +0/-543)
-```diff
-@@ -1,543 +0,0 @@
--// SPDX-License-Identifier: Apache-2.0
--// Copyright Authors of Cilium
--
--package reconciler_test
--
--import (
--	"context"
--	"errors"
--	"fmt"
--	"log/slog"
--	"maps"
--	"net/netip"
--	"os"
--	"strings"
--	"testing"
--
--	"github.com/cilium/hive/cell"
--	"github.com/cilium/hive/hivetest"
--	"github.com/cilium/hive/script"
--	"github.com/cilium/hive/script/scripttest"
--	"github.com/cilium/statedb"
--	"github.com/spf13/pflag"
--	"github.com/stretchr/testify/assert"
--	"github.com/stretchr/testify/require"
--	"github.com/vishvananda/netlink"
--	"golang.org/x/sys/unix"
--
--	"github.com/cilium/cilium/api/v1/models"
--	agentK8s "github.com/cilium/cilium/daemon/k8s"
--	awsAgent "github.com/cilium/cilium/pkg/aws/agent"
--	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
--	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
--	linuxrouting "github.com/cilium/cilium/pkg/datapath/linux/routing"
--	routingReconciler "github.com/cilium/cilium/pkg/datapath/linux/routing/reconciler"
--	"github.com/cilium/cilium/pkg/datapath/linux/safenetlink"
--	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
--	sysctlFake "github.com/cilium/cilium/pkg/datapath/linux/sysctl/fake"
--	fakeloader "github.com/cilium/cilium/pkg/datapath/loader/fake"
--	datapathTables "github.com/cilium/cilium/pkg/datapath/tables"
--	"github.com/cilium/cilium/pkg/endpoint"
--	fakeendpoint "github.com/cilium/cilium/pkg/endpoint/fake"
--	"github.com/cilium/cilium/pkg/endpointmanager"
--	"github.com/cilium/cilium/pkg/endpointstate"
--	fqdnRules "github.com/cilium/cilium/pkg/fqdn/rules"
--	"github.com/cilium/cilium/pkg/hive"
--	"github.com/cilium/cilium/pkg/identity/identitymanager"
--	"github.com/cilium/cilium/pkg/ipam"
--	ipamcell "github.com/cilium/cilium/pkg/ipam/cell"
--	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
--	"github.com/cilium/cilium/pkg/ipmasq"
--	k8sClientTest "github.com/cilium/cilium/pkg/k8s/client/testutils"
--	k8sTables "github.com/cilium/cilium/pkg/k8s/tables"
--	"github.com/cilium/cilium/pkg/k8s/watchers"
--	"github.com/cilium/cilium/pkg/maps/ctmap"
--	"github.com/cilium/cilium/pkg/maps/lxcmap"
--	"github.com/cilium/cilium/pkg/metrics"
--	monitorAgent "github.com/cilium/cilium/pkg/monitor/agent"
--	"github.com/cilium/cilium/pkg/mtu"
--	mtuFake "github.com/cilium/cilium/pkg/mtu/fake"
--	"github.com/cilium/cilium/pkg/node"
--	nodeFake "github.com/cilium/cilium/pkg/node/fake"
--	nodeTypes "github.com/cilium/cilium/pkg/node/types"
--	"github.com/cilium/cilium/pkg/nodediscovery"
--	"github.com/cilium/cilium/pkg/option"
--	"github.com/cilium/cilium/pkg/policy"
--	"github.com/cilium/cilium/pkg/promise"
--	"github.com/cilium/cilium/pkg/testutils"
--	testidentity "github.com/cilium/cilium/pkg/testutils/identity"
--	testmonitor "github.com/cilium/cilium/pkg/testutils/monitor"
--	testpolicy "github.com/cilium/cilium/pkg/testutils/policy"
--	"github.com/cilium/cilium/pkg/testutils/scriptnet"
--	"github.com/cilium/cilium/pkg/time"
--	fakewireguard "github.com/cilium/cilium/pkg/wireguard/fake"
--)
--
--const (
--	testENILinkName = "cilium-rr-test"
--	testENILinkMAC  = "02:ca:fe:00:00:01"
--)
--
--func TestPrivilegedScript(t *testing.T) {
--	testutils.PrivilegedTest(t)
--
--	defer testutils.GoleakVerifyNone(t,
--		// Endpoint-manager policy-map pressure triggers live for the process lifetime.
--		// Disable them to avoid a false negative from Goleak.
--		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/trigger.(*Trigger).waiter"),
--		// ENI setup workers are not managed by Hive via Jobs and can still be
--		// sleeping between device lookups when the test ends.
--		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/aws/agent.setupENIDevices"),
--	)
--
--	nodeTypes.SetName("test-node")
--
--	scripttest.Test(t,
--		t.Context(),
--		func(t testing.TB, args []string) *script.Engine {
--			daemonCfg := daemonConfig(t, args)
--			daemonCfg.StateDir = t.TempDir()
--
--			nsManager, err := scriptnet.NewNSManager(t)
--			require.NoError(t, err, "NewNSManager")
--
--			// Keep the test in the process network namespace so asynchronous ENI
--			// provider jobs operate on the links created by the script.
--			require.NoError(t, nsManager.LockThreadAndInitialize(t, false), "LockThreadAndInitialize")
--
--			// Remove state left by an interrupted prior run, and register the same
--			// cleanup in case this scenario fails before removing its state.
--			registerTestCleanup(t)
--
--			restorerResolver, restorerPromise := promise.New[endpointstate.Restorer]()
--			restorerResolver.Resolve(fakeRestorer{})
--
--			var (
--				initializer   *ipamcell.IPAMInitializer
--				ipamManager   *ipam.IPAM
--				epManager     endpointmanager.EndpointManager
--				routingWaiter endpointmanager.EndpointRoutingWaiter
--			)
--
--			h := hive.New(
--				k8sClientTest.FakeClientCell(),
--				agentK8s.ResourcesCell,
--				k8sTables.TablesCell,
--				datapathTables.DirectRoutingDeviceCell,
--				endpointmanager.TestCell,
--
--				// Exercise the production ENI pool accessor, device configurator,
--				// native-routing-CIDR ob
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (removed, +0/-88)
-```diff
-@@ -1,88 +0,0 @@
--#! --family=ipv4 --family=ipv6
--
--# Configure one dual-stack ENI as the operator would report it to the agent.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Endpoint creation waits for both address families to be reconciled.
--endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
--stdout --count=1 '^192[.]0[.]2[.]10$'
--stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
--
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
--
--rule/list --family=ipv6 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
--
--rule/list --family=ipv6 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
--
--route/list --table=11
--stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
--stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
--stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
--stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
--
--# Endpoint deletion removes both rule families but leaves the shared routes.
--endpoint/del pod-a
--
--# Wait for asynchronous rule deletion without replaying endpoint/del.
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv6 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv6 --priority=111 --protocol=kernel
--* empty stdout
--
--route/list --table=11
--stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
--stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
--stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
--stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        addresses:
--        - 192.0.2.10
--        ipv6-prefixes:
--        - 2001:db8:1::/80
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (removed, +0/-69)
-```diff
-@@ -1,69 +0,0 @@
--#! --family=ipv4
--
--# Configure one ENI as the operator would report it to the agent.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Endpoint creation installs both endpoint rules and the shared ENI routes.
--endpoint/add pod-a 192.0.2.10
--stdout '^192.0.2.10$'
--
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
--
--route/list --table=11
--stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
--stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
--
--# Endpoint deletion removes its rules but leaves routes shared by the ENI.
--endpoint/del pod-a
--
--# Wait for asynchronous rule deletion without replaying endpoint/del.
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--* empty stdout
--
--route/list --table=11
--stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
--stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        addresses:
--        - 192.0.2.10
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (removed, +0/-70)
-```diff
-@@ -1,70 +0,0 @@
--#! --family=ipv6
--
--# Configure one ENI with an IPv6 delegated prefix as the operator would report it.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Endpoint creation installs IPv6 endpoint rules and routes through the AWS
--# link-local gateway.
--endpoint/add pod-a 2001:db8:1::/80
--stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
--
--rule/list --family=ipv6 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
--
--rule/list --family=ipv6 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
--
--route/list --table=11
--stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
--stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
--
--# Endpoint deletion removes its rules but leaves routes shared by the ENI.
--endpoint/del pod-a
--
--# Wait for asynchronous rule deletion without replaying endpoint/del.
--rule/list --family=ipv6 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv6 --priority=111 --protocol=kernel
--* empty stdout
--
--route/list --table=11
--stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
--stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        ipv6-prefixes:
--        - 2001:db8:1::/80
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (removed, +0/-53)
-```diff
-@@ -1,53 +0,0 @@
--#! --family=ipv4
--
--# Configure one ENI as the operator would report it to the agent.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Losing the parent ENI keeps reconciliation failing. Bound the simulated
--# request and assert its routing error without expiring the script context,
--# so the following commands can still verify endpoint cleanup.
--link/del cilium-rr-test
--endpoint/add --timeout=5s --expect-error='interface with MAC 02:ca:fe:00:00:01 not found' pod-a 192.0.2.10
--
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--empty stdout
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--empty stdout
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        addresses:
--        - 192.0.2.10
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (removed, +0/-66)
-```diff
-@@ -1,66 +0,0 @@
--#! --family=ipv4
--
--# Configure one ENI as the operator would report it to the agent.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Simulate an upgrade with an old destination-scoped egress rule. Endpoint
--# creation replaces it with the desired unconditional rule.
--rule/add --family=ipv4 --from=192.0.2.10/32 --to=192.0.2.0/24 --priority=111 --table=11 --protocol=kernel
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to 192[.]0[.]2[.]0/24 table 11 protocol kernel$'
--
--endpoint/add pod-a 192.0.2.10
--stdout '^192.0.2.10$'
--
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
--
--endpoint/del pod-a
--
--# Wait for asynchronous rule deletion without replaying endpoint/del.
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--* empty stdout
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        addresses:
--        - 192.0.2.10
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (removed, +0/-58)
-```diff
-@@ -1,58 +0,0 @@
--#! --family=ipv4
--
--# Configure one ENI as the operator would report it to the agent.
--k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
--
--# Seed orphan rules before starting the reconciler.
--rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
--rule/add --family=ipv4 --from=192.0.2.99/32 --priority=111 --table=11 --protocol=kernel
--
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]99/32 table main protocol kernel$'
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--stdout --count=1 '^priority 111 from 192[.]0[.]2[.]99/32 to all table 11 protocol kernel$'
--
--hive start
--ipam/start
--
--# Wait for the production ENI device configurator before reconciling routing.
--link/list
--* stdout 'addr: 192[.]0[.]2[.]5/24'
--stdout 'cilium-rr-test dummy <up[|>]'
--stdout 'mtu: 1500'
--
--# Wait for the initial reconciler prune without replaying the rule additions.
--rule/list --family=ipv4 --priority=20 --protocol=kernel
--* empty stdout
--
--rule/list --family=ipv4 --priority=111 --protocol=kernel
--* empty stdout
--
--hive stop
--
---- cilium-node.yaml --
--apiVersion: cilium.io/v2
--kind: CiliumNode
--metadata:
--  name: test-node
--spec:
--  eni: {}
--status:
--  eni:
--    enis:
--      eni-1:
--        id: eni-1
--        ip: 192.0.2.5
--        mac: 02:ca:fe:00:00:01
--        number: 1
--        addresses:
--        - 192.0.2.10
--        subnet:
--          id: subnet-1
--          cidr: 192.0.2.0/24
--        vpc:
--          id: vpc-1
--          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +0/-330)
-```diff
-@@ -123,9 +123,6 @@ func (nsm *NetNSManager) Commands() map[string]script.Cmd {
- 		"route/add":     routeAddCmd(nsm),
- 		"route/replace": routeReplaceCmd(nsm),
- 		"route/del":     routeDelCmd(nsm),
--		"rule/list":     ruleListCmd(nsm),
--		"rule/add":      ruleAddCmd(nsm),
--		"rule/del":      ruleDelCmd(nsm),
- 		"sysctl/get":    sysctlGetCmd(nsm),
- 		"sysctl/set":    sysctlSetCmd(nsm),
- 	}
-@@ -593,333 +590,6 @@ func addAddCmd(nsm *NetNSManager) script.Cmd {
- 	)
- }
+@@ -644,12 +644,29 @@ Name                                       Labels
+ ``bpf_maps_virtual_memory_max_bytes``                                                                            Enabled    Max memory used by eBPF maps installed in the system
+ ``bpf_progs_virtual_memory_max_bytes``                                                                           Enabled    Max memory used by eBPF programs installed in the system
+ ``bpf_ratelimit_dropped_total``            ``usage``                                                             Enabled    Total drops resulting from BPF ratelimiter, tagged by source of drop
++``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
+ ========================================== ===================================================================== ========== ========================================================
  
--func ruleFamily(value string, allowAll bool) (int, error) {
--	switch value {
--	case "ipv4":
--		return netlink.FAMILY_V4, nil
--	case "ipv6":
--		return netlink.FAMILY_V6, nil
--	case "all":
--		if allowAll {
--			return netlink.FAMILY_ALL, nil
--		}
--	}
--	valid := "'ipv4', 'ipv6'"
--	if allowAll {
--		valid += ", 'all'"
--	}
--	return 0, fmt.Errorf("invalid family %q: must be one of %s", value, valid)
--}
--
--func ruleTable(value string, allowAll bool) (int, error) {
--	switch value {
--	case "main":
--		return unix.RT_TABLE_MAIN, nil
--	case "local":
--		return unix.RT_TABLE_LOCAL, nil
--	case "default":
--		return unix.RT_TABLE_DEFAULT, nil
--	case "all":
--		if allowAll {
--			return unix.RT_TABLE_UNSPEC, nil
--		}
--	}
--
--	table, err := strconv.Atoi(value)
--	if err != nil {
--		valid := "'main', 'local', 'default'"
--		if allowAll {
--			valid += ", 'all'"
--		}
--		return 0, fmt.Errorf("invalid table %q: must be an integer or one of %s", value, valid)
--	}
--	return table, nil
--}
--
--func ruleProtocol(value string) (uint8, error) {
--	switch value {
--	case "kernel":
--		return unix.RTPROT_KERNEL, nil
--	case "static":
--		return unix.RTPROT_STATIC, nil
--	case "unspec":
--		return unix.RTPROT_UNSPEC, nil
--	}
--
--	protocol, err := strconv.ParseUint(value, 10, 8)
--	if err != nil {
--		return 0, fmt.Errorf("invalid protocol %q: must be an integer or one of 'kernel', 'static', 'unspec'", value)
--	}
--	return uint8(protocol), nil
--}
--
--func rulePrefix(value string) (*net.IPNet, error) {
--	if value == "all" {
--		return nil, nil
--	}
--
--	prefix, err := netlink.ParseIPNet(value)
--	if err != nil {
--		return nil, fmt.Errorf("invalid rule prefix %q: %w", value, err)
--	}
--	return prefix, nil
--}
--
--func ruleFlags(fs *pflag.FlagSet, family, table string) {
--	fs.String("netns", "", "Execute in the specified network namespace")
--	fs.String("family", family, "Address family: ipv4, ipv6, or all")
--	fs.String("from", "all", "Source prefix")
--	fs.String("to", "all", "Destination prefix")
--	fs.Int("priority", -1, "Rule priority")
--	fs.String("table", table, "Routing table")
--	fs.String("protocol", "unspec", "Rule protocol")
--}
--
--func ruleFromFlags(fs *pflag.FlagSet, allowAll bool) (*netlink.Rule, error) {
--	rule := netlink.NewRule()
--
--	family, err := fs.GetString("family")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get family flag: %w", err)
--	}
--	rule.Family, err = ruleFamily(family, allowAll)
--	if err != nil {
--		return nil, err
--	}
--
--	from, err := fs.GetString("from")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get from flag: %w", err)
--	}
--	rule.Src, err = rulePrefix(from)
--	if err != nil {
--		return nil, err
--	}
--
--	to, err := fs.GetString("to")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get to flag: %w", err)
--	}
--	rule.Dst, err = rulePrefix(to)
--	if err != nil {
--		return nil, err
--	}
--
--	rule.Priority, err = fs.GetInt("priority")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get priority flag: %w", err)
--	}
--
--	table, err := fs.GetString("table")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get table flag: %w", err)
--	}
--	rule.Table, err = ruleTable(table, allowAll)
--	if err != nil {
--		return nil, err
--	}
--
--	protocol, err := fs.GetString("protocol")
--	if err != nil {
--		return nil, fmt.Errorf("failed to get protocol flag: %w", err)
--	}
--	rule.Protocol, err = ruleProtocol(protocol)
--	if err != nil {
--		return nil, err
--	}
--
--	return rule, nil
--}
--
--func ruleAddCmd(nsm *NetNSManager) script.Cmd {
--	return script.Command(
--		script.CmdUsage{
--			Summary: "Add a policy routing rule",
--			Args:    "",
--			Flags: func(fs *pflag.FlagSet) {
--				ruleFlags(fs, "ipv4", "main")
--			},
--		},
--		func(s *script.State, args ...string) (script.WaitFunc, error) {
--			if len(args) != 0 {
--				return nil, script.ErrUsage
--			}
--
--			rule, err := ruleFromFlags(s.Flags, false)
--			if err != nil {
--				return nil, err
--			}
--
--			nsName, err := s.Flags.GetString("netns")
--			if err != nil {
--				return nil, fmt.Errorf("failed to get netns flag: %w", err)
--			}
--			if nsName == "" {
--				nsName = nsm.currentNamespaceName()
--			}
--
--			err = nsm.exec(nsName, func() error {
--				if err := netlink.RuleAdd(rule); err != nil {
--					return fmt.Errorf("failed to add rule: %w", err)
--				}
--				return nil
--			})
--			return nil, err
--		},
--	)
--}
--
--func ruleDelCmd(nsm *NetNSManager) script.Cmd {
--	return script.Command(
--		script.CmdUsage{
--			Summary: "Delete a policy routing rule",
--			Args:    "",
--			Flags: func(fs *pflag.FlagSet) {
--				ruleFlags(fs, "ipv4", "ma
+-Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
+-are currently reporting the system-wide memory usage of eBPF that is directly
+-and not directly managed by Cilium. This might change in the future and only
+-report the eBPF memory usage directly managed by Cilium.
++``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
++the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
++the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
++those programs use. Maps that Cilium pins but that no loaded program uses are not
++counted, and a map shared with an eBPF program outside of Cilium is counted in full.
++
++``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
++into a single estimate, which is useful for capacity planning. Its ``component``
++label takes the following values:
++
++- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
++  the runtime allocators.
++- ``bpf_maps``: kernel memlock of the eBPF maps described above.
++- ``bpf_progs``: kernel memlock of the eBPF programs described above.
++- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
++
++The eBPF memlock is not part of the agent's resident set size, and it is not
++re-attributed to the cgroup of a restarted agent, which is why it is worth
++accounting for separately from the process RSS reported by
++``process_resident_memory_bytes``.
+ 
+ Drops/Forwards (L3/L4)
+ ~~~~~~~~~~~~~~~~~~~~~~
 ```
 
----
-
-### Incident Patch 3: `f8d6e37e` (2026-11-02)
-**Commit Message**: fix(deps): update module golang.org/x/net to v0.62.0 [security]
-
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `Documentation/spelling_wordlist.txt` (modified, +1/-0)
 ```diff
-@@ -116,7 +116,7 @@ require (
- 	golang.org/x/crypto v0.58.0
- 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
- 	golang.org/x/mod v0.42.0
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/sync v0.24.0
- 	golang.org/x/sys v0.49.0
- 	golang.org/x/term v0.47.0
+@@ -593,6 +593,7 @@ mediabot
+ memcache
+ memcached
+ memcd
++memlock
+ microservice
+ microservices
+ minikube
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `pkg/metrics/cell.go` (modified, +1/-0)
 ```diff
-@@ -867,8 +867,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.8.0/go.mod h1:QVkue5JL9kW//ek3r6jTKnTFis1tRmNAW2P1shuFdJc=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+@@ -52,6 +52,7 @@ var AgentCell = cell.Group(
+ 			// expensive to sample and currently not terrible useful to keep data on.
+ 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newStatusCollector(logger)})
+ 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newbpfCollector(logger)})
++			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newAgentMemoryCollector(logger)})
+ 
+ 			// Resolve the global registry variable for as long as we still have global functions
+ 			registryResolver.Resolve(reg)
 ```
 
-**File**: `vendor/golang.org/x/net/html/parse.go` (modified, +21/-2)
+**File**: `pkg/metrics/memory.go` (added, +86/-0)
 ```diff
-@@ -51,6 +51,9 @@ type parser struct {
- 	// context is the context element when parsing an HTML fragment
- 	// (section 12.4).
- 	context *Node
-+	// textNodes holds buffers for TextNodes that have had multiple text
-+	// tokens coalesced into them.
-+	textNodes map[*Node][]byte
- }
- 
- func (p *parser) top() *Node {
-@@ -292,7 +295,7 @@ func (p *parser) fosterParent(n *Node) {
- 		prev = parent.LastChild
- 	}
- 	if prev != nil && prev.Type == TextNode && n.Type == TextNode {
--		prev.Data += n.Data
-+		p.appendText(prev, n.Data)
- 		return
- 	}
- 
-@@ -316,7 +319,7 @@ func (p *parser) addText(text string) {
- 
- 	t := p.top()
- 	if n := t.LastChild; n != nil && n.Type == TextNode {
--		n.Data += text
-+		p.appendText(n, text)
- 		return
- 	}
- 	p.addChild(&Node{
-@@ -325,6 +328,18 @@ func (p *parser) addText(text string) {
- 	})
- }
- 
-+func (p *parser) appendText(n *Node, text string) {
-+	if p.textNodes == nil {
-+		p.textNodes = make(map[*Node][]byte)
-+	}
-+	b, ok := p.textNodes[n]
-+	if !ok {
-+		b = []byte(n.Data)
-+		n.Data = ""
-+	}
-+	p.textNodes[n] = append(b, text...)
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package metrics
++
++import (
++	"log/slog"
++	"runtime"
++
++	"github.com/prometheus/client_golang/prometheus"
++
++	"github.com/cilium/cilium/pkg/logging/logfields"
++)
++
++// agentMemoryComponents are the valid values for the agent_memory_bytes component label.
++var agentMemoryComponents = []string{
++	"go",
++	"bpf_maps",
++	"bpf_progs",
++	"total",
 +}
 +
- func attrCompare(a, b Attribute) int {
- 	return cmp.Or(
- 		cmp.Compare(a.Namespace, b.Namespace),
-@@ -2242,6 +2257,10 @@ func (p *parser) parse() (err error) {
- 		}
- 		p.parseCurrentToken()
- 	}
-+	for n, b := range p.textNodes {
-+		n.Data = string(b)
++type agentMemoryCollector struct {
++	logger *slog.Logger
++	desc   *prometheus.Desc
++}
++
++func newAgentMemoryCollector(logger *slog.Logger) *agentMemoryCollector {
++	return &agentMemoryCollector{
++		logger: logger,
++		desc: prometheus.NewDesc(
++			prometheus.BuildFQName(Namespace, "", "agent_memory_bytes"),
++			"Estimated memory usage of the Cilium agent in bytes, broken down by component: "+
++				"go for memory in use by the Go runtime, bpf_maps and bpf_progs for the kernel memlock "+
++				"of the eBPF maps and programs loaded by Cilium, and total for the sum of the three. "+
++				"The eBPF memlock is not part of the agent's resident set size.",
++			[]string{"component"}, nil,
++		),
 +	}
-+	p.textNodes = nil
- 	return nil
- }
- 
++}
++
++func (c *agentMemoryCollector) Describe(ch chan<- *prometheus.Desc) {
++	ch <- c.desc
++}
++
++func (c *agentMemoryCollector) Collect(ch chan<- prometheus.Metric) {
++	goBytes := goRuntimeInUseBytes()
++
++	var bpfMapBytes, bpfProgBytes uint64
++	bpfUsage, err := getBPFUsage()
++	if err != nil {
++		c.logger.Error("retrieving BPF maps & programs usage", logfields.Error, err)
++	} else {
++		bpfMapBytes = bpfUsage.mapBytes
++		bpfProgBytes = bpfUsage.programBytes
++	}
++	totalBytes := goBytes + bpfMapBytes + bpfProgBytes
++
++	for _, component := range agentMemoryComponents {
++		var value uint64
++		switch component {
++		case "go":
++			value = goBytes
++		case "bpf_maps":
++			value = bpfMapBytes
++		case "bpf_progs":
++			value = bpfProgBytes
++		case "total":
++			value = totalBytes
++		}
++
++		ch <- prometheus.MustNewConstMetric(
++			c.desc,
++			prometheus.GaugeValue,
++			float64(value),
++			component,
++		)
++	}
++}
++
++// goRuntimeInUseBytes returns memory currently in use by the Go runtime.
++func goRuntimeInUseBytes() uint64 {
++	var ms runtime.MemStats
++	runtime.ReadMemStats(&ms)
++	return uint64(ms.HeapInuse + ms.StackInuse + ms.MSpanInuse + ms.MCacheInuse)
++}
 ```
 
-**File**: `vendor/golang.org/x/net/html/render.go` (modified, +11/-12)
+**File**: `pkg/metrics/memory_test.go` (added, +57/-0)
 ```diff
-@@ -246,18 +246,17 @@ func childTextNodesAreLiteral(n *Node) bool {
- 
- 	switch n.Data {
- 	case "iframe", "noembed", "noframes", "noscript", "plaintext", "script", "style", "xmp":
--		// We need to check if n is a node that was fostered from a HTML namespace
--		// into a non-HTML namespace (in which case, different rules apply to it).
--		// We do this by walking up the tree until we find a node with a non-empty
--		// namespace. If we find such a node, we also have to check if it's
--		// an HTML integration point. If it isn't, then the node we're currently
--		// looking at is foster-parented and we should return false.
--		for p := n.Parent; p != nil; p = p.Parent {
--			if p.Namespace != "" {
--				if !htmlIntegrationPoint(p) {
--					return false
--				}
--				break
-+		// n's text is literal only if the parser would keep n in the HTML
-+		// namespace when the output is re-parsed. An ancestor may have been
-+		// fostered under a foreign element (such as an HTML <mglyph> under
-+		// <mtext>) where the parser would instead create it, and its
-+		// descendants, in that element's namespace. We walk up the whole tree
-+		// and check that every transition out of a non-HTML namespace happens
-+		// at an HTML integration point. This is stricter than the parser, so
-+		// some text that would be safe literally is escaped.
-+		for c, p := n, n.Parent; p != nil; c, p = p, p.Parent {
-+			if p.Namespace != "" && p.Namespace != c.Namespace && !htmlIntegrationPoint(p) {
-+				return false
- 			}
- 		}
- 
-```
-
-**File**: `vendor/golang.org/x/net/internal/socket/socket.go` (modified, +7/-3)
-```diff
-@@ -129,7 +129,8 @@ func (m ControlMessage) Next(dataLen int) ControlMessage {
- // MarshalHeader marshals the header fields of the control message at
- // the head on m.
- func (m ControlMessage) MarshalHeader(lvl, typ, dataLen int) error {
--	if len(m) < controlHeaderLen() {
-+	l := controlHeaderLen()
-+	if l <= 0 || len(m) < l {
- 		return errors.New("short message")
- 	}
- 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
-@@ -141,7 +142,7 @@ func (m ControlMessage) MarshalHeader(lvl, typ, dataLen int) error {
- // message at the head on m.
- func (m ControlMessage) ParseHeader() (lvl, typ, dataLen int, err error) {
- 	l := controlHeaderLen()
--	if len(m) < l {
-+	if l <= 0 || len(m) < l {
- 		return 0, 0, 0, errors.New("short message")
- 	}
- 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
-@@ -152,7 +153,7 @@ func (m ControlMessage) ParseHeader() (lvl, typ, dataLen int, err error) {
- // the next control message.
- func (m ControlMessage) Marshal(lvl, typ int, data []byte) (ControlMessage, error) {
- 	l := len(data)
--	if len(m) < ControlMessageSpace(l) {
-+	if controlHeaderLen() <= 0 || len(m) < ControlMessageSpace(l) {
- 		return nil, errors.New("short message")
- 	}
- 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
-@@ -167,6 +168,9 @@ func (m ControlMessage) Marshal(lvl, typ int, data []byte) (ControlMessage, erro
- //
- // Parse works for both standard and compatible messages.
- func (m ControlMessage) Parse() ([]ControlMessage, error) {
-+	if controlHeaderLen() <= 0 {
-+		return nil, nil
-+	}
- 	var ms []ControlMessage
- 	for len(m) >= controlHeaderLen() {
- 		h := (*cmsghdr)(unsafe.Pointer(&m[0]))
-```
-
-**File**: `vendor/golang.org/x/net/ipv4/batch.go` (modified, +12/-0)
-```diff
-@@ -75,6 +75,9 @@ func (c *payloadHandler) ReadBatch(ms []Message, flags int) (int, error) {
- 	if !c.ok() {
- 		return 0, errInvalidConn
- 	}
-+	if len(ms) == 0 {
-+		return 0, nil
-+	}
- 	switch runtime.GOOS {
- 	case "linux":
- 		n, err := c.RecvMsgs([]socket.Message(ms), flags)
-@@ -109,6 +112,9 @@ func (c *payloadHandler) WriteBatch(ms []Message, flags int) (int, error) {
- 	if !c.ok() {
- 		return 0, errInvalidConn
- 	}
-+	if len(ms) == 0 {
-+		return 0, nil
-+	}
- 	switch runtime.GOOS {
- 	case "linux":
- 		n, err := c.SendMsgs([]socket.Message(ms), flags)
-@@ -141,6 +147,9 @@ func (c *packetHandler) ReadBatch(ms []Message, flags int) (int, error) {
- 	if !c.ok() {
- 		return 0, errInvalidConn
- 	}
-+	if len(ms) == 0 {
-+		return 0, nil
-+	}
- 	switch runtime.GOOS {
- 	case "linux":
- 		n, err := c.RecvMsgs([]socket.Message(ms), flags)
-@@ -175,6 +184,9 @@ func (c *packetHandler) WriteBatch(ms []Message, flags int) (int, error) {
- 	if !c.ok() {
- 		return 0, errInvalidConn
- 	}
-+	if len(ms) == 0 {
-+		return 0, nil
-+	}
- 	switch runtime.GOOS {
- 	case "linux":
- 		n, err := c.SendMsgs([]socket.Message(ms), flags)
-```
-
-**File**: `vendor/golang.org/x/net/ipv4/control.go` (modified, +4/-4)
-```diff
-@@ -84,13 +84,13 @@ func (cm *ControlMessage) Parse(b []byte) error {
- 			continue
- 		}
- 		switch {
--		case typ == ctlOpts[ctlTTL].name && l >= ctlOpts[ctlTTL].length:
-+		case ctlOpts[ctlTTL].name > 0 && typ == ctlOpts[ctlTTL].name && l >= ctlOpts[ctlTTL].length:
- 			ctlOpts[ctlTTL].parse(cm, m.Data(l))
--		case typ == ctlOpts[ctlDst].name && l >= ctlOpts[ctlDst].length:
-+		case ctlOpts[ctlDst].name > 0 && typ == ctlOpts[ctlDst].name && l >= ctlOpts[ctlDst].length:
- 			ctlOpts[ctlDst].parse(cm, m.Data(l))
--		case typ == ctlOpts[ctlInterface].name && l >= ctlOpts[ctlInterface].length:
-+		case ctlOpts[ctlInterface].name > 0 && typ == ctlOpts[ctlInterface].name && l >= ctlOpts[ctlInterface].length:
- 			ctlOpts[ctlInterface].parse(cm, m.Data(l))
--		case typ == ctlOpts[ctlPacketInfo].name && l >= ctlOpts[ctlPacketInfo].length:
-+		case ctlOpts[ctlPacketInfo].name > 0 && typ == ctlOpts[ctlPacketInfo].name && l >= ctlOpts[ctlPacketInfo].length:
- 			ctlOpts[ctlPacketInfo].parse(cm, m.Data(l))
- 		}
- 	}
-```
-
-**File**: `vendor/golang.org/x/net/ipv4/control_unix.go` (modified, +11/-2)
-```diff
-@@ -7,7 +7,8 @@
- package ipv4
- 
- import (
--	"unsafe"
-+	"encoding/binary"
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package metrics
++
++import (
 +	"runtime"
- 
- 	"golang.org/x/net/internal/iana"
- 	"golang.org/x/net/internal/socket"
-@@ -66,10 +67,18 @@ func setControlMessage(c *socket.Conn, opt *rawOpt, cf ControlFlags, on bool) er
- 
- func marshalTTL(b []byte, cm *ControlMessage) []byte {
- 	m := socket.ControlMessage(b)
-+	if runtime.GOOS == "linux" {
-+		m.MarshalHeader(iana.ProtocolIP, unix.IP_TTL, 4)
-+		return m.Next(4)
++	"testing"
++
++	"github.com/cilium/hive/hivetest"
++	"github.com/prometheus/client_golang/prometheus"
++	dto "github.com/prometheus/client_model/go"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/cilium/cilium/pkg/testutils"
++)
++
++func TestGoRuntimeInUseBytes(t *testing.T) {
++	assert.NotZero(t, goRuntimeInUseBytes())
++}
++
++func TestPrivilegedAgentMemoryCollectorCollect(t *testing.T) {
++	testutils.PrivilegedTest(t)
++	if runtime.GOOS != "linux" {
++		t.Skip("requires linux")
 +	}
- 	m.MarshalHeader(iana.ProtocolIP, unix.IP_RECVTTL, 1)
- 	return m.Next(1)
- }
- 
- func parseTTL(cm *ControlMessage, b []byte) {
--	cm.TTL = int(*(*byte)(unsafe.Pointer(&b[:1][0])))
-+	if runtime.GOOS == "linux" {
-+		cm.TTL = int(binary.NativeEndian.Uint32(b[:4]))
-+		return
++
++	collector := newAgentMemoryCollector(hivetest.Logger(t))
++	ch := make(chan prometheus.Metric, len(agentMemoryComponents))
++	collector.Collect(ch)
++	close(ch)
++
++	got := make(map[string]float64, len(agentMemoryComponents))
++	for metric := range ch {
++		dm, err := metricToDTO(metric)
++		require.NoError(t, err)
++		require.Len(t, dm.Label, 1)
++		got[dm.Label[0].GetValue()] = dm.GetGauge().GetValue()
 +	}
-+	cm.TTL = int(b[0])
- }
++
++	for _, component := range agentMemoryComponents {
++		value, ok := got[component]
++		require.True(t, ok, "missing component %s", component)
++		assert.GreaterOrEqual(t, value, float64(0), "component %s", component)
++	}
++
++	assert.Equal(t, got["go"]+got["bpf_maps"]+got["bpf_progs"], got["total"])
++}
++
++func metricToDTO(metric prometheus.Metric) (*dto.Metric, error) {
++	var dm dto.Metric
++	if err := metric.Write(&dm); err != nil {
++		return nil, err
++	}
++	return &dm, nil
++}
+```
+
+---
+
+### Incident Patch 2: `dfc8fb5e` (2026-09-25)
+**Commit Message**: cilium-cli: Fix unschedulable client pod on 2-node clusters
+
+On AKS only 2 of the 4 nodes the workflow creates run Cilium, and both
+client3 and echo-other-node declare a required pod anti-affinity on
+name=client over kubernetes.io/hostname. kube-scheduler enforces those
+symmetrically, binds one pod at a time and never backtracks, so once it
+puts the two of them on different nodes before it binds the client pod,
+the client pod has no candidate node left and the setup dies after the
+5 minute readiness wait:
+
+  client-7b7877766f-q84m2: Unschedulable: 0/4 nodes are available: 2
+  node(s) didn't satisfy existing pods anti-affinity rules, 2 node(s)
+  had untolerated taint(s).
+
+The fixture relies on a binding order Kubernetes does not promise.
+
+This commit gives client3 a required pod affinity on echo-other-node, so
+a single anti-affinity edge points at the client pod and it loses at
+most one candidate node whatever the binding order. client3 lands on
+echo-other-node's node, which echo-other-node's own anti-affinity keeps
+off the client node, so the third client still cannot share a node with
+the first two.
+
+This commit was prepared with AIL:3. I personally checked the pod
+placement dumpe
+
+**File**: `cilium-cli/connectivity/check/deployment.go` (modified, +3/-3)
+```diff
+@@ -1479,7 +1479,7 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
+ 	}
+ 
+ 	if ct.params.MultiCluster == "" && !ct.params.SingleNode {
+-		// 3rd client scheduled on a different node than the first 2 clients
++		// 3rd client colocated with echo-other-node, hence never on the client node
+ 		_, err = ct.clients.src.GetDeployment(ctx, ct.params.TestNamespace, client3DeploymentName, metav1.GetOptions{})
+ 		if err != nil {
+ 			ct.Logf("✨ [%s] Deploying %s deployment...", ct.clients.src.ClusterName(), client3DeploymentName)
+@@ -1491,12 +1491,12 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
+ 				Labels:      map[string]string{"other": "client-other-node"},
+ 				Annotations: ct.params.DeploymentAnnotations.Match(client3DeploymentName),
+ 				Affinity: &corev1.Affinity{
+-					PodAntiAffinity: &corev1.PodAntiAffinity{
++					PodAffinity: &corev1.PodAffinity{
+ 						RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+ 							{
+ 								LabelSelector: &metav1.LabelSelector{
+ 									MatchExpressions: []metav1.LabelSelectorRequirement{
+-										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{clientDeploymentName}},
++										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{echoOtherNodeDeploymentName}},
+ 									},
+ 								},
+ 								TopologyKey: corev1.LabelHostname,
+```
+
+---
+
+### Incident Patch 3: `27eb0710` (2026-10-28)
+**Commit Message**: helm: Fix SPIRE agent scheduling gap on etcd-tainted nodes
+
+Signed-off-by: weizhoublue <[REDACTED_EMAIL]>
+
+**File**: `Documentation/helm-values.rst` (modified, +1/-1)
+```diff
+@@ -131,7 +131,7 @@
+    * - :spelling:ignore:`authentication.mutual.spire.install.agent.tolerations`
+      - SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+      - list
+-     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
++     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
+    * - :spelling:ignore:`authentication.mutual.spire.install.enabled`
+      - Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true
+      - bool
+```
+
+**File**: `install/kubernetes/cilium/README.md` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ contributors across the globe, there is almost always someone available to help.
+ | authentication.mutual.spire.install.agent.securityContext | object | `{}` | Security context to be added to spire agent containers. SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container |
+ | authentication.mutual.spire.install.agent.serviceAccount | object | `{"create":true,"name":"spire-agent"}` | SPIRE agent service account |
+ | authentication.mutual.spire.install.agent.skipKubeletVerification | bool | `true` | SPIRE Workload Attestor kubelet verification. |
+-| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
++| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
+ | authentication.mutual.spire.install.enabled | bool | `true` | Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true |
+ | authentication.mutual.spire.install.existingNamespace | bool | `false` | SPIRE namespace already exists. Set to true if Helm should not create, manage, and import the SPIRE namespace. |
+ | authentication.mutual.spire.install.initImage | object | `{"digest":"sha256:a46257e06c82ad85242d0d38077d0a52d9896389ca60a1a59d3463db586e5fa4","override":null,"pullPolicy":"Always","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}` | init container image of SPIRE agent and server |
+```
+
+**File**: `install/kubernetes/cilium/values.schema.json` (modified, +10/-0)
+```diff
+@@ -217,6 +217,16 @@
+                                   }
+                                 }
+                               },
++                              {
++                                "properties": {
++                                  "key": {
++                                    "type": "string"
++                                  },
++                                  "operator": {
++                                    "type": "string"
++                                  }
++                                }
++                              },
+                               {
+                                 "properties": {
+                                   "effect": {
+```
+
+**File**: `install/kubernetes/cilium/values.yaml` (modified, +2/-0)
+```diff
+@@ -4508,6 +4508,8 @@ authentication:
+               effect: NoSchedule
+             - key: node-role.kubernetes.io/control-plane
+               effect: NoSchedule
++            - key: node-role.kubernetes.io/etcd
++              operator: Exists
+             - key: node.cloudprovider.kubernetes.io/uninitialized
+               effect: NoSchedule
+               value: "true"
+```
+
+**File**: `install/kubernetes/cilium/values.yaml.tmpl` (modified, +2/-0)
+```diff
+@@ -4553,6 +4553,8 @@ authentication:
+               effect: NoSchedule
+             - key: node-role.kubernetes.io/control-plane
+               effect: NoSchedule
++            - key: node-role.kubernetes.io/etcd
++              operator: Exists
+             - key: node.cloudprovider.kubernetes.io/uninitialized
+               effect: NoSchedule
+               value: "true"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49771** (closed): [Test, do not merge] Verify concurrent ready-PR limit [skip ci] (@lexfrei)
-- **PR #49770** (2026-11-02): renovate: Hold the docs-builder Python minor version (@aanm)
-- **PR #49765** (2026-11-02): Revert "routing/reconciler: Add script-based tests" (@aanm)
-- **PR #49760** (2026-11-02): fix(deps): update module k8s.io/apimachinery to v0.35.10 (v1.19) (@cilium-renovate[bot])
-- **PR #49759** (2026-11-02): chore(deps): update quay.io/cilium/image-tester docker tag to v1793531520 (v1.20) (@cilium-renovate[bot])
-- **PR #49758** (2026-11-02): fix(deps): update module google.golang.org/grpc to v1.85.0 (main) (@cilium-renovate[bot])
+- **PR #49795** (closed): helm: Use preflight.updateStrategy in the pre-flight DaemonSet (@tbommanxAI)
+- **PR #49793** (2026-11-03): README: Update releases (@joestringer)
+- **PR #49787** (2026-11-02): Prepare for release v1.21.0-pre.4 (@cilium-release-bot[bot])
+- **PR #49779** (2026-11-02): docs(tls-visibility): fix missing abbreviation (@KhooHaoYit)
+- **PR #49777** (2026-11-03): cilium-cli: Retry policy deletes on API server errors (@aanm)
+- **PR #49776** (2026-11-03): cilium-cli: Fix unschedulable client pod on 2-node clusters (@aanm)
 
 ---
 
@@ -2408,29 +1676,48 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs-builder: Find the versionwarning directory at build time
+## X. pkg/metrics: add cilium_agent_memory_bytes
 
 **RULE**:
-When implementing operations in `images/docs-builder/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/observability/metrics.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9cf8713`: docs-builder: Find the versionwarning directory at build time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72b61a24`: pkg/metrics: add cilium_agent_memory_bytes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `images/docs-builder/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/observability/metrics.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-RUN dir="$(python3 -c 'import versionwarning; print(versionwarning.__path__[0])')" \
-    && install -m 0777 -d "${dir}/_static/data"
+``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
+``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
+the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
+the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
+those programs use. Maps that Cilium pins but that no loaded program uses are not
+counted, and a map shared with an eBPF program outside of Cilium is counted in full.
+
+``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
+into a single estimate, which is useful for capacity planning. Its ``component``
+label takes the following values:
+
+- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
+  the runtime allocators.
+- ``bpf_maps``: kernel memlock of the eBPF maps described above.
+- ``bpf_progs``: kernel memlock of the eBPF programs described above.
+- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
+
+The eBPF memlock is not part of the agent's resident set size, and it is
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-RUN install -m 0777 -d /usr/local/lib/python3.14/site-packages/versionwarning/_static/data
+Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
+are currently reporting the system-wide memory usage of eBPF that is directly
+and not directly managed by Cilium. This might change in the future and only
+report the eBPF memory usage directly managed by Cilium.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9cf8713` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72b61a24` are properly handled with clean fallback behavior.

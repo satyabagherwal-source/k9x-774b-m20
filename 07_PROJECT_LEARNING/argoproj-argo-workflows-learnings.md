@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `c42dc08b`  
+> **Source Version**: `c719b3e7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:04:55.583Z  
+> **Timestamp**: 2026-11-03T10:37:07.621Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:04:55.573Z  
+> **Harvest Timestamp**: 2026-11-03T10:37:07.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17071 stars
+- **Stars / Engagement**: 17079 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17372** (2026-10-30): **chore(deps): update dependency sass to v1.107.0 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [sass](https://redirect.github.com/sass/dart-sass) | [`1.105.0` → `1.107.0`](https://renovatebot.com/diffs/npm/sass/1.105.0/1.107.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/sass/1.107.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/sass/1.107.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/sass/1.105.0/1.107.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/sass/1.105.0/1.107.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>sass/dart-sass (sass)</summary>  ### [`v1.107.0`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11070)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.106.1...1.107.0)  ##### Command-Line Interface  - The `--fatal-deprecation` flag can now exclude deprecations that would   otherwise be included by passing a version number. To exclude a deprecation,   add `-` before its name. For example, `--fatal-deprecation=1.107.0,-import`   incl
+- **Issue #17386** (2026-11-02): **test(cron): load scheduledWf from testdata in the workflow defaults tests**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  `main` does not compile `workflow/cron`'s tests, so Lint fails on `main` and on every open PR:  ```text workflow/cron/operator_test.go:557:32: undefined: scheduledWf workflow/cron/operator_test.go:589:32: undefined: scheduledWf (typecheck) ```  #17108 moved the cron test fixtures into `testdata/` and removed the `scheduledWf` constant. #17069, written before that, added `TestCronWorkflowDefaultsResolvedPerNamespace` and `TestCronWorkflowDefaultsErrorSurfacesOnValidate`, which still use the constant. Each PR passed CI alone, but `main` broke once both had merged.  ### Modifications  Those two tests now load the fixture with `v1alpha1.MustUnmarshal("@testdata/scheduled-wf.yaml", &cronWf)`, as #17108 changed the other tests to do.  ### Verification  - `KUBECONFIG=/dev/null go test ./workflow/cron/...`: pass. - `
 
-- **Issue #17371** (2026-10-30): **chore(deps): update dependency python to 3.15 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [python](https://redirect.github.com/actions/python-versions) | uses-with | minor | `3.14` → `3.15` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>actions/python-versions (python)</summary>  ### [`v3.15.2`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.2-40340363276): 3.15.2  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.15.1-39619321210...3.15.2-40340363276)  Python 3.15.2  ### [`v3.15.1`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.1-39619321210): 3.15.1  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.15.0-38076878863...3.15.1-39619321210)  Python 3.15.1  ### [`v3.15.0`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.0-38076878863): 3.15.0  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.14.10-40336797752...3.15.0-38076878863)  Python 3.15.0  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox. 
+- **Issue #17383** (2026-11-02): **chore(deps): update dependency minimatch to v11 [security] (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [minimatch](https://redirect.github.com/isaacs/minimatch) | [`^9.0.7` → `^11.0.0`](https://renovatebot.com/diffs/npm/minimatch/9.0.9/11.0.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/minimatch/11.0.1?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/minimatch/11.0.1?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/minimatch/9.0.9/11.0.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/minimatch/9.0.9/11.0.1?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### minimatch has potential denial of service via globparts amplification [CVE-2026-118764](https://nvd.nist.gov/vuln/detail/CVE-2026-118764) / [GHSA-g3hv-75wg-m249](https://redirect.github.com/advisories/GHSA-g3hv-75wg-m249)  <details> <summary>More information</summary>  #### Details minimatch 10.2.6 contains an attacker-controlled pattern amplification in firstPhasePreProcess() when optimizationLevel >= 2.  researcher: Reid Downing (b1nv0id) files:   - src/index.ts: 690-770 - src/index.ts
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,433 +788,448 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5b27daf` (2026-10-30)
-**Commit Message**: chore(deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)
+### Incident Patch 1: `7a300e06` (2026-11-02)
+**Commit Message**: chore(deps): update dependency minimatch to v11 [security] (main) (#17383)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/changelog.yaml` (modified, +1/-1)
+**File**: `ui/package.json` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
+@@ -104,6 +104,6 @@
+         "@tootallnate/once": "^2.0.1",
+         "braces": "^3.0.3",
+         "decode-uri-component": "^0.5.0",
+-        "**/@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
++        "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.0"
+     }
+ }
 ```
 
-**File**: `.github/workflows/cherry-pick-single.yml` (modified, +1/-1)
+**File**: `ui/yarn.lock` (modified, +21/-10)
 ```diff
-@@ -47,7 +47,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+@@ -1119,6 +1119,11 @@
+     "@babel/types" "^7.26.0"
+     semver "^7.5.2"
  
-```
-
-**File**: `.github/workflows/cherry-pick.yml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
++"@isaacs/nonrecursive-glob-match@^1.0.3":
++  version "1.0.3"
++  resolved "https://registry.yarnpkg.com/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz#7f6724fd8a6ca315d6bb7f63f0e4d079060da246"
++  integrity sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==
++
+ "@istanbuljs/load-nyc-config@^1.0.0":
+   version "1.1.0"
+   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
+@@ -2986,6 +2991,11 @@ balanced-match@^1.0.0:
+   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
+   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
  
-```
-
-**File**: `.github/workflows/ci-build.yaml` (modified, +9/-9)
-```diff
-@@ -35,7 +35,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
++balanced-match@^4.0.2:
++  version "4.0.4"
++  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-4.0.4.tgz#bfb10662feed8196a2c62e7c68e17720c274179a"
++  integrity sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==
++
+ base@^0.11.1:
+   version "0.11.2"
+   resolved "https://registry.yarnpkg.com/base/-/base-0.11.2.tgz#7bde5ced145b6d551a90db87f83c558b4eb48a8f"
+@@ -3058,12 +3068,12 @@ brace-expansion@^1.1.7:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
  
-@@ -148,7 +148,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+-brace-expansion@^2.0.2:
+-  version "2.1.4"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.4.tgz#589dab11c0018d0366be64cd8bf12c8dbecc8326"
+-  integrity sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==
++brace-expansion@^5.0.12:
++  version "5.0.12"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz#995fbb4750a77c4d16a7dc942ff2ca6ef8e675ec"
++  integrity sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==
+   dependencies:
+-    balanced-match "^1.0.0"
++    balanced-match "^4.0.2"
  
-@@ -218,7 +218,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+ braces@^2.3.1, braces@^3.0.3, braces@~3.0.2:
+   version "3.0.3"
+@@ -6966,12 +6976,13 @@ minimalistic-assert@^1.0.0:
+   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
+   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
  
-@@ -363,7 +363,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+-minimatch@9.0.3, minimatch@^9.0.7:
+-  version "9.0.9"
+-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.9.tgz#9b0cb9fcb78087f6fd7eababe2511c4d3d60574e"
+-  integrity sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==
++minimatch@9.0.3, minimatch@^11.0.0:
++  version "11.0.4"
++  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-11.0.4.tgz#3ed156790c2754647ee94dab305a3f93cd16481e"
++  integrity sha512-/UJ1dEoVQTjPNDh6SGlUo+ueLMmoHTas4q+8yaAR/5t6nLAIiBDJtoYUh20IYleix7ehiQkgczb84PE3uzHkxg==
+   dependencies:
+-    brace-expansion "^2.0.2"
++    "@isaacs/nonrecursive-glob-match" "^1.0.3"
++    brace-expansion "^5.0.12"
  
-@@ -464,7 +464,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-@@ -494,7 +494,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-@@ -537,7 +537,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-@@ -567,7 +567,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-@@ -614,7 +614,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/dependabot-reviewer.yml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/devcontainer.yaml` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/pr-feature.yaml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
+ minimatch@^3.0.4, minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
+   version "3.1.5"
 ```
 
 ---
 
-### Incident Patch 2: `8ddad2a3` (2026-10-30)
-**Commit Message**: chore(deps): update dependency decode-uri-component to v0.5.1 [security] (main) (#17357)
+### Incident Patch 2: `819756fc` (2026-11-02)
+**Commit Message**: fix(controller): recreate a Failed agent pod instead of erroring its nodes (#17308)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `ui/yarn.lock` (modified, +3/-3)
+**File**: `docs/http-template.md` (modified, +12/-0)
 ```diff
-@@ -3688,9 +3688,9 @@ decode-named-character-reference@^1.0.0:
-     character-entities "^2.0.0"
+@@ -49,6 +49,18 @@ The Agent and the Workflow Controller communicate through the `WorkflowTaskSet`
+ In order to use the Argo Agent, you will need to ensure that you have added the appropriate [workflow RBAC](workflow-rbac.md) to add an agent role with to Argo Workflows.
+ An example agent role can be found in [the quick-start manifests](https://github.com/argoproj/argo-workflows/tree/main/manifests/quick-start/base/agent-role.yaml).
  
- decode-uri-component@^0.2.0, decode-uri-component@^0.5.0:
--  version "0.5.0"
--  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.5.0.tgz#4592fa1e1d640ec5e2760e2e168ad2ab5f2c9da1"
--  integrity sha512-1BiQVoK8C9gUbQU6NzAtO/tkz2qOFpEObMWpcFvhx4fYnj4Oc5yzaJN/LD36ihkVUdXyh5ZekzX+yM+ty/SrPg==
-+  version "0.5.1"
-+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.5.1.tgz#7f66b25bf435df723f9af55713dcf860a1c297d2"
-+  integrity sha512-vWHQkXgg2cE3BB4rR0c+PYw9BCQzLoNIRMI7AunIkZst74tw/vpPp7VLoYtsR/cy1f55g3XDWUslfeCZjiZJyA==
++## Argo Agent Pod Failures
++
++Each Workflow that uses the Agent runs it in one pod.
++If the Agent's container exits with an error, the kubelet restarts it, and the restarted Agent runs again every HTTP or Plugin task that has no result yet.
++If the pod itself fails, for example because the node evicts it, the controller deletes the pod and creates a replacement, which also runs every task that has no result yet.
++A request or plugin call can therefore run more than once, so make it safe to repeat.
++
++The controller replaces a failed pod no sooner than one minute after that pod was created, and records an `AgentPodFailed` Warning event on the Workflow, with the reason the pod failed, each time it does.
++There is no limit on the number of replacements: as with a crashing container, a task that never gets a result fails by the Workflow's `activeDeadlineSeconds`, or by its template `timeout` unless its plugin has reported it `Running`.
++Without either setting, the task can run until the Workflow stops for another reason.
++When the Workflow is stopping, terminating, or past its `activeDeadlineSeconds`, the controller errors the nodes of the tasks that have no result instead.
++
+ ## WorkflowTaskSet Size Limit
  
- deep-diff@^0.3.5:
-   version "0.3.8"
+ The WorkflowTaskSet holds the full template of every HTTP and Plugin node that is pending or running in a Workflow, so a wide fan-out of these templates can exceed the Kubernetes object size limit (about 1.5 MiB with the default etcd configuration).
 ```
 
----
-
-### Incident Patch 3: `439434a1` (2026-10-30)
-**Commit Message**: fix(executor): allow archive root dir entry in untar path-traversal check (#17064)
-
-Signed-off-by: Vilmos Nagy <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 5 <[REDACTED_EMAIL]>
-
-**File**: `workflow/executor/executor.go` (modified, +10/-4)
+**File**: `workflow/controller/agent.go` (modified, +56/-2)
 ```diff
-@@ -494,7 +494,7 @@ func (we *WorkflowExecutor) unarchiveArtifact(ctx context.Context, art wfv1.Arti
+@@ -6,6 +6,7 @@ import (
+ 	"fmt"
+ 	"os"
+ 	"slices"
++	"time"
  
- 	switch {
- 	case isTar:
--		err = untar(tempArtPath, artPath)
-+		err = untar(unarchiveCtx, tempArtPath, artPath)
- 		_ = os.Remove(tempArtPath)
- 	case isZip:
- 		err = unzip(unarchiveCtx, tempArtPath, artPath)
-@@ -751,7 +751,7 @@ func (we *WorkflowExecutor) stageArchiveFile(ctx context.Context, containerName
- 	// localArtPath now points to a .tgz file, and the archive strategy is *not* tar. We need to untar it
- 	logger.WithField("path", localArtPath).Info(ctx, "Untarring archive before upload")
- 	unarchivedArtPath := path.Join(filepath.Dir(localArtPath), art.Name)
--	err = untar(localArtPath, unarchivedArtPath)
-+	err = untar(ctx, localArtPath, unarchivedArtPath)
- 	if err != nil {
- 		return "", "", err
+ 	apiv1 "k8s.io/api/core/v1"
+ 	apierr "k8s.io/apimachinery/pkg/api/errors"
+@@ -23,6 +24,11 @@ import (
+ 	"github.com/argoproj/argo-workflows/v4/workflow/util"
+ )
+ 
++// agentPodRecreationDelay is how long after a Failed agent pod was created the
++// controller replaces it, so an agent pod that keeps failing is replaced at
++// most this often.
++const agentPodRecreationDelay = time.Minute
++
+ func (woc *wfOperationCtx) getAgentPodName() string {
+ 	return woc.wf.NodeID("agent") + "-agent"
+ }
+@@ -50,9 +56,57 @@ func (woc *wfOperationCtx) reconcileAgentPod(ctx context.Context) error {
+ func (woc *wfOperationCtx) updateAgentPodStatus(ctx context.Context, pod *apiv1.Pod) {
+ 	woc.log.Info(ctx, "updateAgentPodStatus")
+ 	newPhase, message := assessAgentPodStatus(ctx, pod)
+-	if newPhase == wfv1.NodeFailed || newPhase == wfv1.NodeError {
+-		woc.markTaskSetNodesError(ctx, fmt.Errorf(`agent pod failed with reason:"%s"`, message))
++	if newPhase != wfv1.NodeFailed && newPhase != wfv1.NodeError {
++		return
++	}
++	err := fmt.Errorf(`agent pod failed with reason:"%s"`, message)
++	if newPhase == wfv1.NodeFailed && woc.canRecreateAgentPod() {
++		woc.recreateAgentPod(ctx, pod, err)
++		return
++	}
++	woc.markTaskSetNodesError(ctx, err)
++}
++
++// canRecreateAgentPod reports whether a Failed agent pod may be replaced: the
++// controller creates the agent pods, and the workflow is not ending, so the
++// replacement would still have work to do.
++func (woc *wfOperationCtx) canRecreateAgentPod() bool {
++	return !woc.controller.Config.DisableAgentPodCreation &&
++		!woc.wf.Status.Fulfilled() &&
++		!woc.GetShutdownStrategy().Enabled() &&
++		(woc.workflowDeadline == nil || time.Now().UTC().Before(*woc.workflowDeadline))
++}
++
++// recreateAgentPod deletes a Failed agent pod, once agentPodRecreationDelay
++// has passed since it was created, so that reconcileAgentPod creates a
++// replacement. Like an agent container the kubelet restarts, the replacement
++// runs every task that has no result yet. There is no limit: as with a
++// crash-looping container, a task that never gets a result fails by its own
++// deadline or timeout. Each replacement is recorded as a Warning event on the
++// workflow, with the reason the pod failed.
++func (woc *wfOperationCtx) recreateAgentPod(ctx context.Context, pod *apiv1.Pod, cause error) {
++	log := woc.log.WithField("podName", pod.Name)
++	if wait := time.Until(woc.agentPodRecheckTime(pod)); wait > 0 {
++		log.WithField("wait", wait).Info(ctx, "Agent pod failed, waiting before recreating it")
++		woc.requeueAfter(wait)
++		return
++	}
++	log.Info(ctx, "Agent pod failed, recreating it")
++	woc.eventRecorder.Event(woc.wf, apiv1.EventTypeWarning, "AgentPodFailed", fmt.Sprintf("%v; recreating it", cause))
++	// By UID, so that a replacement that already exists is never deleted.
++	woc.controller.PodController.DeletePodByUID(ctx, pod.Namespace, pod.Name, string(pod.UID))
++	woc.requeue()
++}
++
++// agentPodRecheckTime is when to look at a Failed agent pod again:
++// agentPodRecreationDelay after it was created, or the workflow deadline if that
++// is sooner, so the deadline errors its tasks on time.
++func (woc *wfOperationCtx) agentPodRecheckTime(pod *apiv1.Pod) time.Time {
++	recheckAt := pod.CreationTimestamp.Add(agentPodRecreationDelay)
++	if woc.workflowDeadline != nil && woc.workflowDeadline.Before(recheckAt) {
++		return *woc.workflowDeadline
  	}
-@@ -1227,7 +1227,8 @@ func isTarball(ctx context.Context, filePath string) (bool, error) {
++	return recheckAt
+ }
  
- // untar extracts a tarball to a temporary directory,
- // renaming it to the desired location
--func untar(tarPath string, destPath string) error {
-+func untar(ctx context.Context, tarPath string, destPath string) error {
-+	logger := logging.RequireLoggerFromContext(ctx)
- 	decompressor := func(src string, dest string) error {
- 		f, err := os.Open(src)
- 		if err != nil {
-@@ -1251,7 +1252,12 @@ func untar(tarPath string, destPath string) error {
- 				continue
+ func assessAgentPodStatus(ctx context.Context, pod *apiv1.Pod) (wfv1.NodePhase, string) {
+```
+
+**File**: `workflow/controller/operator_agent_test.go` (modified, +203/-7)
+```diff
+@@ -1,6 +1,8 @@
+ package controller
+ 
+ import (
++	"context"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+@@ -9,7 +11,9 @@ import (
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	v1 "k8s.io/api/core/v1"
++	apierr "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	kwait "k8s.io/apimachinery/pkg/util/wait"
+ 
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+ )
+@@ -45,7 +49,7 @@ func TestHTTPTemplate(t *testing.T) {
+ 		assert.NotNil(t, ts)
+ 		assert.Len(t, ts.Spec.Tasks, 1)
+ 
+-		// simulate agent pod failure scenario
++		// simulate agent pod failure scenario: the pod is replaced, and its task kept
+ 		pod.Status.Phase = v1.PodFailed
+ 		pod.Status.Message = "manual termination"
+ 		pod, err = controller.kubeclientset.CoreV1().Pods(woc.wf.Namespace).UpdateStatus(ctx, pod, metav1.UpdateOptions{})
+@@ -54,19 +58,34 @@ func TestHTTPTemplate(t *testing.T) {
+ 		// sleep 1 second to wait for informer getting pod info
+ 		time.Sleep(time.Second)
+ 		woc.operate(ctx)
+-		assert.Equal(t, wfv1.WorkflowError, woc.wf.Status.Phase)
+-		assert.Equal(t, `agent pod failed with reason:"manual termination"`, woc.wf.Status.Message)
++		assert.Equal(t, wfv1.WorkflowRunning, woc.wf.Status.Phase)
+ 		assert.Len(t, woc.wf.Status.Nodes, 1)
+-		assert.Equal(t, wfv1.NodeError, woc.wf.Status.Nodes["hello-world"].Phase)
+-		assert.Equal(t, `agent pod failed with reason:"manual termination"`, woc.wf.Status.Nodes["hello-world"].Message)
++		assert.False(t, woc.wf.Status.Nodes["hello-world"].Fulfilled())
++		assert.Contains(t, agentPodFailedEvents(controller), `Warning AgentPodFailed agent pod failed with reason:"manual termination"; recreating it`)
+ 		ts, err = controller.wfclientset.ArgoprojV1alpha1().WorkflowTaskSets(wf.Namespace).Get(ctx, "hello-world", metav1.GetOptions{})
+ 		require.NoError(t, err)
+ 		assert.NotNil(t, ts)
+-		assert.Empty(t, ts.Spec.Tasks)
+-		assert.Empty(t, ts.Status.Nodes)
++		assert.Len(t, ts.Spec.Tasks, 1)
+ 	})
+ }
+ 
++// agentPodFailedEvents drains the events the controller has recorded and
++// returns the AgentPodFailed ones.
++func agentPodFailedEvents(controller *WorkflowController) []string {
++	recorder := controller.eventRecorderManager.(*testEventRecorderManager).eventRecorder
++	var events []string
++	for {
++		select {
++		case event := <-recorder.Events:
++			if strings.Contains(event, "AgentPodFailed") {
++				events = append(events, event)
++			}
++		default:
++			return events
++		}
++	}
++}
++
+ func TestHTTPTemplateWithoutServiceAccount(t *testing.T) {
+ 	wf := wfv1.MustUnmarshalWorkflow(httpwf)
+ 	ctx := logging.TestContext(t.Context())
+@@ -90,3 +109,180 @@ func TestHTTPTemplateWithoutServiceAccount(t *testing.T) {
+ 		assert.Equal(t, `create agent pod failed with reason:"failed to get token volumes: serviceaccounts "default" not found"`, woc.wf.Status.Nodes["hello-world"].Message)
+ 	})
+ }
++
++// failAgentPod makes the workflow's agent pod Failed, as an eviction does, and
++// waits for the pod informer to see it.
++func failAgentPod(ctx context.Context, t *testing.T, woc *wfOperationCtx, mutate func(pod *v1.Pod)) *v1.Pod {
++	t.Helper()
++	pods := woc.controller.kubeclientset.CoreV1().Pods(woc.wf.Namespace)
++	pod, err := pods.Get(ctx, woc.getAgentPodName(), metav1.GetOptions{})
++	require.NoError(t, err)
++	pod.Status.Phase = v1.PodFailed
++	pod.Status.Reason = "Evicted"
++	pod.Status.Message = "The node was low on resource: memory."
++	if mutate != nil {
++		mutate(pod)
++	}
++	pod, err = pods.Update(ctx, pod, metav1.UpdateOptions{})
++	require.NoError(t, err)
++	waitForInformer(ctx, woc.controller.PodController.TestingPodInformer(), pod, func(obj any) bool {
++		return obj.(*v1.Pod).Status.Phase == v1.PodFailed
++	})
++	return pod
++}
++
++// A Failed agent pod is replaced, as a crashed agent container is restarted,
++// rather than erroring the agent's nodes and leaving every later HTTP or
++// plugin node to be errored against the same Failed pod.
++func TestAgentPodRecreatedWhenFailed(t *testing.T) {
++	wf := wfv1.MustUnmarshalWorkflow(httpwf)
++	ctx := logging.TestContext(t.Context())
++	cancel, controller := newController(ctx, wf, defaultServiceAccount)
++	defer cancel()
++
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++	failed := failAgentPod(ctx, t, woc, nil)
++
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++	require.Equal(t, wfv1.WorkflowRunning, woc.wf.Status.Phase)
++	require.False(t, woc.wf.Status.Nodes["hello-world"].Fulfilled(), "the agent's node must not be errored")
++
++	// the controller deletes the Failed pod, by its UID
++	require.True(t, controller.PodController.TestingProcessNextItem(ctx))
++	pods := controller.kubeclientset.CoreV1().Pods(wf.Namespace)
++	_, err := pods.Get(ctx, failed.Name, metav1.GetOptions{})
++	require.True(t, apierr.IsNotFound(err), "the Failed agent pod must be deleted")
++	waitForPodGone(ctx, t, woc, failed.Name)
++
++	// and the next reconciliation creates its replacement
++	woc = newWorkfl
+```
+
+**File**: `workflow/controller/taskset.go` (modified, +5/-0)
+```diff
+@@ -212,6 +212,11 @@ func (woc *wfOperationCtx) reconcileTaskSet(ctx context.Context) error {
+ 				woc.log.WithField("nodeID", nodeID).Error(ctx, "was unable to obtain node for nodeID")
+ 				return err
  			}
- 			target := filepath.Join(dest, filepath.Clean(header.Name))
--			if !strings.HasPrefix(target, filepath.Clean(dest)+string(os.PathSeparator)) {
-+			cleanDest := filepath.Clean(dest)
-+			if target == cleanDest && header.Typeflag == tar.TypeDir {
-+				logger.WithFields(logging.Fields{"target": target, "typeflag": header.Typeflag}).Debug(ctx, "extracted archive root directory entry matches destination, skipping")
++			// A node already finished, e.g. errored because the agent pod
++			// failed, must not be overwritten by a stale result.
++			if node.Fulfilled() {
 +				continue
 +			}
-+			if !strings.HasPrefix(target, cleanDest+string(os.PathSeparator)) {
- 				return fmt.Errorf("illegal file path: %s", header.Name)
- 			}
- 			switch header.Typeflag {
+ 
+ 			node.Outputs = taskResult.Outputs.DeepCopy()
+ 			node.Phase = taskResult.Phase
 ```
 
-**File**: `workflow/executor/executor_test.go` (modified, +176/-2)
+**File**: `workflow/controller/taskset_test.go` (modified, +26/-0)
 ```diff
-@@ -408,14 +408,15 @@ func TestUnzip(t *testing.T) {
+@@ -269,3 +269,29 @@ func TestTaskSetRequestEntityTooLarge(t *testing.T) {
+ 		assert.Equal(t, wfv1.NodePending, woc.wf.Status.Nodes[newID].Phase, "nothing is errored until the taskset can be read")
+ 	})
  }
- 
- func TestUntar(t *testing.T) {
++
++// A node that has already finished, such as one errored because its agent
++// pod failed, keeps its phase and message when the task set still holds a
++// stale result for it (#14200).
++func TestReconcileTaskSetKeepsFinishedNode(t *testing.T) {
++	const nodeID = "http-template-fqgsf-2338098285"
++	const message = `agent pod failed with reason:"The node was low on resource: ephemeral-storage."`
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/taskset/reconcile-task-set-with-memoization-workflow.yaml")
++	node := wf.Status.Nodes[nodeID]
++	node.Phase = wfv1.NodeError
++	node.Message = message
++	wf.Status.Nodes[nodeID] = node
++	var ts wfv1.WorkflowTaskSet
++	wfv1.MustUnmarshal("@testdata/taskset/reconcile-task-set-with-memoization-taskset.yaml", &ts)
++	ts.Status.Nodes[nodeID] = wfv1.NodeResult{Phase: wfv1.NodePending, Message: "Queuing"}
 +	ctx := logging.TestContext(t.Context())
- 	tarPath := "testdata/file.tar.gz"
- 	destPath := "testdata/untarredDir"
- 	filePath := "testdata/untarredDir/file"
- 	linkPath := "testdata/untarredDir/link"
- 	emptyDirPath := "testdata/untarredDir/empty-dir"
- 
- 	// test
--	err := untar(tarPath, destPath)
-+	err := untar(ctx, tarPath, destPath)
- 	require.NoError(t, err)
- 
- 	// check untarred contents
-@@ -447,6 +448,178 @@ func TestUntar(t *testing.T) {
- 	require.NoError(t, err)
- }
- 
-+func buildTarGz(t *testing.T, path string, entries []struct {
-+	header  tar.Header
-+	content string
-+},
-+) {
-+	t.Helper()
-+	f, err := os.Create(path)
++	cancel, controller := newController(ctx, wf, ts)
++	defer cancel()
++	_, err := controller.wfclientset.ArgoprojV1alpha1().WorkflowTaskSets("default").Create(ctx, &ts, v1.CreateOptions{})
 +	require.NoError(t, err)
-+	defer f.Close()
-+	gw := gzip.NewWriter(f)
-+	tw := tar.NewWriter(gw)
-+	for _, e := range entries {
-+		h := e.header
-+		if e.content != "" {
-+			h.Size = int64(len(e.content))
-+		}
-+		require.NoError(t, tw.WriteHeader(&h))
-+		if e.content != "" {
-+			_, err := tw.Write([]byte(e.content))
-+			require.NoError(t, err)
-+		}
-+	}
-+	require.NoError(t, tw.Close())
-+	require.NoError(t, gw.Close())
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	time.Sleep(1 * time.Second)
++	require.NoError(t, woc.reconcileTaskSet(ctx))
++	assert.Equal(t, wfv1.NodeError, woc.wf.Status.Nodes[nodeID].Phase)
++	assert.Equal(t, message, woc.wf.Status.Nodes[nodeID].Message)
 +}
-+
-+func TestUntarRootDirEntryIsNoOp(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+
-+	// rootDirEntryNames are the spellings tar writers use for the archive root:
-+	// GNU/BSD `tar -C <dir> .` writes "./", Python's tarfile.add(".") writes ".".
-+	var rootDirEntryNames = []string{"./", "."}
-+
-+	for _, rootName := range rootDirEntryNames {
-+		t.Run(rootName, func(t *testing.T) {
-+			tmpDir := t.TempDir()
-+			tarPath := filepath.Join(tmpDir, "dataset.tar.gz")
-+			destDir := filepath.Join(tmpDir, "dest")
-+
-+			buildTarGz(t, tarPath, []struct {
-+				header  tar.Header
-+				content string
-+			}{
-+				{header: tar.Header{Name: rootName, Typeflag: tar.TypeDir, Mode: 0o755}},
-+				{header: tar.Header{Name: "./file.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "hello"},
-+				{header: tar.Header{Name: "./subdir/", Typeflag: tar.TypeDir, Mode: 0o755}},
-+				{header: tar.Header{Name: "./subdir/nested.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "nested"},
-+			})
-+
-+			err := untar(ctx, tarPath, destDir)
-+			require.NoError(t, err)
-+
-+			// The root entry must not add anything: dest holds exactly the archive's children.
-+			entries, err := os.ReadDir(destDir)
-+			require.NoError(t, err)
-+			names := make([]string, 0, len(entries))
-+			for _, e := range entries {
-+				names = append(names, e.Name())
-+			}
-+			assert.Equal(t, []string{"file.txt", "subdir"}, names)
-+
-+			content, err := os.ReadFile(filepath.Join(destDir, "file.txt"))
-+			require.NoError(t, err)
-+			assert.Equal(t, "hello", string(content))
-+
-+			content, err = os.ReadFile(filepath.Join(destDir, "subdir", "nested.txt"))
-+			require.NoError(t, err)
-+			assert.Equal(t, "nested", string(content))
-+		})
-+	}
-+}
-+
-+// A `tar -C <dir> .` archive of a directory holding a single file goes through
-+// unpack()'s single-entry branch, which renames that entry to destPath. This
-+// pins the existing behaviour: dest becomes the file, not a directory holding it.
-+func TestUntarRootDirEntrySingleChild(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+
-+	// rootDirEntryNames are the spellings tar writers use for the archive root:
-+	// GNU/BSD `tar -C <dir> .` writes "./", Python's tarfile.add(".") writes ".".
-+	var rootDirEntryNames = []string{"./", "."}
-+
-+	for _, rootName := range rootDirEntryNames {
-+		t.Run(rootName, func(t *testing.T) {
-+			tmpDir := t.TempDir()
-+			tarPath := filepath.Join(tmpDir, "dataset.tar.gz")
-+			destDir := filepath.Join(tmpDir, "dest")
-+
-+			buildTarGz(t, tarPath, []struct {
-+				header  tar.Header
-+				content string
-+			}{
-+				{header: tar.Header{Name: rootName, Typeflag: tar.TypeDir, Mode: 0o755}},
-+				{header: tar.Header{Name: "./file.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "hello"},
-+			})
-+
-+			err := untar(ctx, tarPath, destDir)
-+			require.NoError(t, err)
-+
-+			fi, err := os.Stat(destDir)
-+			require.NoError(t, err)
-+			assert.True(t, fi.Mode().IsRegular(), "dest should be the single extracted file")
-+
-+			content, err := os.ReadFile(destDir)
-+			require.NoError(t, err)
-+			assert.Equal(t, "hello", string(content))
-+		})
-+	}
-+}
-+
-+func TestUntarRootEntryNonDirRejected(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+
-+	tests := []struct {
-+		name    string
-+		header  tar.Header
-+		content string // tar disallows body data on non-regular entries (e.g. symlinks)
-+		wantErr string
-+	}{
-+		{
-+			name:    "regular file at root",
-+			header:  tar.Header{Name: ".", Typeflag: tar.TypeReg, Mode: 0o644},
-+			content: "pwned",
-+			wantErr: "illegal file path: .",
-+		},
-+		{
-+			name:    "symlink at root",
-+			header:  tar.Header{Name: ".", Typeflag: tar.TypeSymlink, Linkname: "/etc/passwd", Mode: 0o777},
-+			wantErr: "illegal file path: .",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			tmpDir := t.TempDir()
-+			tarPath := filepath.Join(tmp
+```
+
+**File**: `workflow/controller/testdata/taskset/reconcile-task-set-with-memoization-workflow.yaml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ status:
+         - name: result
+           value: |
+             { demo }
+-      phase: Succeeded
++      phase: Pending
+       templateName: http
+       type: HTTP
+   phase: Running
+```
+
+---
+
+### Incident Patch 3: `c719b3e7` (2026-11-03)
+**Commit Message**: chore: fix renovate.json
+
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+
+**File**: `renovate.json` (modified, +11/-13)
+```diff
+@@ -12,19 +12,6 @@
+   "nix": {
+     "enabled": true
+   },
+-  "customManagers": [
+-    {
+-      "description": "Update tool versions annotated with `# renovate:` in hack/k8s-versions.sh",
+-      "customType": "regex",
+-      "managerFilePatterns": [
+-        "/(^|/)hack/k8s-versions.sh$/"
+-      ],
+-      "matchStrings": [
+-        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\s+\\w+\\s*\\??=\\s*\"?(?<currentValue>[^\\s\"]+)\"?"
+-      ],
+-      "extractVersionTemplate": "^v(?<version>.+)$"
+-    }
+-  ],
+   "packageRules": [
+     {
+       "description": "Group k8s.io code-generator, proto vendor, and OpenAPI spec versions",
+@@ -105,6 +92,17 @@
+     "gomodUpdateImportPaths"
+   ],
+   "customManagers": [
++    {
++      "description": "Update tool versions annotated with `# renovate:` in hack/k8s-versions.sh",
++      "customType": "regex",
++      "managerFilePatterns": [
++        "/(^|/)hack/k8s-versions.sh$/"
++      ],
++      "matchStrings": [
++        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\s+\\w+\\s*\\??=\\s*\"?(?<currentValue>[^\\s\"]+)\"?"
++      ],
++      "extractVersionTemplate": "^v(?<version>.+)$"
++    },
+     {
+       "description": "k8s.io/code-generator go install in Makefile",
+       "customType": "regex",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17386** (2026-11-02): test(cron): load scheduledWf from testdata in the workflow defaults tests (@Joibel)
+- **PR #17383** (2026-11-02): chore(deps): update dependency minimatch to v11 [security] (main) (@renovate[bot])
 - **PR #17372** (2026-10-30): chore(deps): update dependency sass to v1.107.0 (main) (@renovate[bot])
 - **PR #17371** (2026-10-30): chore(deps): update dependency python to 3.15 (main) (@renovate[bot])
 - **PR #17370** (2026-10-30): chore(deps): update dependency markdownlint-cli to v0.50.0 (main) (@renovate[bot])
 - **PR #17369** (2026-10-30): chore(deps): update module github.com/klauspost/compress to v1.20.3 (main) (@renovate[bot])
-- **PR #17368** (2026-10-30): chore(deps): update module github.com/aws/aws-sdk-go-v2/config to v1.33.12 (main) (@renovate[bot])
-- **PR #17367** (2026-10-30): chore(deps): update dependency eslint-plugin-prettier to v5.5.7 (main) (@renovate[bot])
 
 ---
 
@@ -1234,28 +1249,28 @@ Co-authored-by: Claude Sonnet 5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)
+## X. deps): update dependency minimatch to v11 [security] (main) (#17383)
 
 **RULE**:
-When implementing operations in `.github/workflows/changelog.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5b27daf`: deps): update step-security/harden-runner action to v2.22.3 (main) (#17347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a300e06`: deps): update dependency minimatch to v11 [security] (main) (#17383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changelog.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        "**/@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5b27daf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a300e06` are properly handled with clean fallback behavior.

@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "9b0aad96",
+    "sourceVersion": "dfc8fb5e",
     "license": "Apache-2.0",
-    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
-    "lastHarvestedAt": "2026-11-02T15:00:56.194Z",
+    "contentHash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
+    "lastHarvestedAt": "2026-11-03T10:37:13.354Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "c42dc08b",
+    "sourceVersion": "c719b3e7",
     "license": "Apache-2.0",
-    "contentHash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
-    "lastHarvestedAt": "2026-10-31T01:04:56.275Z",
+    "contentHash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
+    "lastHarvestedAt": "2026-11-03T10:37:08.334Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

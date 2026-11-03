@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T10:29:44.347Z",
+  "last_updated": "2026-11-03T10:37:13.270Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3244,8 +3244,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "c42dc08b",
-      "content_hash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
+      "source_version": "c719b3e7",
+      "content_hash": "f9c7126a6722425b2b417e6701c103ef2cc3d64e7930ae29bb137cd4ec71b873",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3298,6 +3298,11 @@
           "number": 5977,
           "title": "deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6491,
+          "title": "deps): update dependency minimatch to v11 [security] (main) (#17383)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3305,7 +3310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:04:56.172Z",
+      "verified_at": "2026-11-03T10:37:08.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6929,8 +6934,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "9b0aad96",
-      "content_hash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
+      "source_version": "dfc8fb5e",
+      "content_hash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7123,6 +7128,11 @@
           "number": 6423,
           "title": "docs-builder: Find the versionwarning directory at build time",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6492,
+          "title": "pkg/metrics: add cilium_agent_memory_bytes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7130,7 +7140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:00:56.072Z",
+      "verified_at": "2026-11-03T10:37:13.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167936,6 +167946,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T10:29:44.316Z"
+    },
+    "rule-6491": {
+      "learning_id": "rule-6491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6491,
+      "title": "deps): update dependency minimatch to v11 [security] (main) (#17383)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "c719b3e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:37:08.229Z"
+    },
+    "rule-6492": {
+      "learning_id": "rule-6492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6492,
+      "title": "pkg/metrics: add cilium_agent_memory_bytes",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "dfc8fb5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:37:13.249Z"
     }
   },
   "aliases": {
