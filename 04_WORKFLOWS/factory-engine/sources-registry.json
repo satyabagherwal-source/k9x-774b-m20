@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:50:49.730Z",
-    "lastVerified": "2026-11-03T16:50:49.730Z",
+    "lastChecked": "2026-11-03T16:58:59.664Z",
+    "lastVerified": "2026-11-03T16:58:59.664Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T16:25:27.339Z",
-    "lastVerified": "2026-11-03T16:25:27.339Z",
+    "lastChecked": "2026-11-03T16:58:48.498Z",
+    "lastVerified": "2026-11-03T16:58:48.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1393,12 +1393,12 @@
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T20:23:13.456Z",
-    "lastVerified": "2026-10-31T20:23:13.456Z",
+    "lastChecked": "2026-11-03T16:58:48.904Z",
+    "lastVerified": "2026-11-03T16:58:48.904Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
+    "contentHash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -1796,9 +1796,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-03T10:29:30.671Z",
+    "lastChecked": "2026-11-03T16:58:42.950Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-11-03T10:29:30.671Z"
+    "lastVerified": "2026-11-03T16:58:42.950Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -6573,9 +6573,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-10-31T19:23:51.422Z",
+    "lastChecked": "2026-11-03T16:58:45.080Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-10-31T19:23:51.422Z"
+    "lastVerified": "2026-11-03T16:58:45.080Z"
   },
   "dalance-procs": {
     "name": "dalance/procs",
@@ -7860,9 +7860,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-10-31T15:14:27.557Z",
+    "lastChecked": "2026-11-03T16:58:32.409Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-10-31T15:14:27.557Z"
+    "lastVerified": "2026-11-03T16:58:32.409Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -9922,9 +9922,9 @@
   "tmolavi-siteprobe": {
     "name": "siteprobe",
     "officialUrl": "https://github.com/tmolavi/siteprobe",
-    "lastChecked": "2026-10-30T05:45:50.631Z",
+    "lastChecked": "2026-11-03T16:58:34.844Z",
     "revisionIdentifier": "c27bffc3",
-    "lastVerified": "2026-10-30T05:45:50.631Z"
+    "lastVerified": "2026-11-03T16:58:34.844Z"
   },
   "yshrsmz-buildkonfig": {
     "name": "yshrsmz/BuildKonfig",
@@ -10989,9 +10989,9 @@
   "iplug2-iplug2": {
     "name": "iPlug2",
     "officialUrl": "https://github.com/iPlug2/iPlug2",
-    "lastChecked": "2026-10-30T17:05:53.441Z",
+    "lastChecked": "2026-11-03T16:58:37.562Z",
     "revisionIdentifier": "d82b2e99",
-    "lastVerified": "2026-10-30T17:05:53.441Z"
+    "lastVerified": "2026-11-03T16:58:37.562Z"
   },
   "digitalbazaar-pyld": {
     "name": "pyld",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T16:50:47.168Z",
-  "total_cycles_completed": 6912,
-  "total_learnings_persisted": 6912,
-  "total_rules_promoted": 6561,
+  "last_updated": "2026-11-03T16:58:57.113Z",
+  "total_cycles_completed": 6913,
+  "total_learnings_persisted": 6913,
+  "total_rules_promoted": 6562,
   "history": [
-    {
-      "timestamp": "2026-10-31T22:23:54.115Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T22:31:27.878Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-03T16:50:47.168Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T16:58:57.113Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

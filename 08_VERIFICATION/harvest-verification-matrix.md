@@ -6935,3 +6935,4 @@
 | `CYCLE-20261103-ZCJD` | `2026-11-03T16:40:41.785Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6542, Rule 6543` | Yes (`a63c5e5d...`) |
 | `CYCLE-20261103-C80P` | `2026-11-03T16:50:42.457Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6544` | Yes (`72004ae0...`) |
 | `CYCLE-20261103-CBNB` | `2026-11-03T16:50:47.159Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6545` | Yes (`88219c93...`) |
+| `CYCLE-20261103-MTOX` | `2026-11-03T16:58:57.105Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6546` | Yes (`88a8eed0...`) |

@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "f3be7b00",
+    "sourceVersion": "f5663037",
     "license": "MIT",
-    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
-    "lastHarvestedAt": "2026-10-31T20:23:14.282Z",
+    "contentHash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
+    "lastHarvestedAt": "2026-11-03T16:58:57.108Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

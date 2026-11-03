@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T16:50:47.079Z",
+  "last_updated": "2026-11-03T16:58:57.035Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61147,8 +61147,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "f3be7b00",
-      "content_hash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
+      "source_version": "f5663037",
+      "content_hash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -61191,6 +61191,11 @@
           "number": 6309,
           "title": "rest): avoid unbounded gzip body dump on JWT auth failure (#5865)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6546,
+          "title": "security): zrpc Authenticator fails open: unknown app or any Redis error authent",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61198,7 +61203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:23:14.177Z",
+      "verified_at": "2026-11-03T16:58:57.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169053,6 +169058,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T16:50:47.058Z"
+    },
+    "rule-6546": {
+      "learning_id": "rule-6546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6546,
+      "title": "security): zrpc Authenticator fails open: unknown app or any Redis error authent",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "f5663037",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:58:57.017Z"
     }
   },
   "aliases": {
