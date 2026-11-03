@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T12:51:52.094Z",
+  "last_updated": "2026-11-03T13:05:13.512Z",
   "total_verified_learnings": 1197,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2461,8 +2461,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "858c8d77",
-      "content_hash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
+      "source_version": "66f1aaa3",
+      "content_hash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -2485,6 +2485,11 @@
           "number": 4720,
           "title": "ZOOKEEPER-5103: Address memory leaks in the C client",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6528,
+          "title": "Update website for new releases 3.9.7 and 3.8.8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2492,7 +2497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:49:41.047Z",
+      "verified_at": "2026-11-03T13:05:13.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42807,8 +42812,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "efa71e3f",
-      "content_hash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
+      "source_version": "289622a5",
+      "content_hash": "e84efc2b83afe16957c128a4a28b408ba56b29f77c544f2c0086829025787547",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -42866,6 +42871,11 @@
           "number": 5655,
           "title": "Controller Status Echo Loop Elimination Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6527,
+          "title": "generateLocation() and call sites (#11296)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42873,7 +42883,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:32:41.447Z",
+      "verified_at": "2026-11-03T13:05:09.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168664,6 +168674,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T12:51:52.078Z"
+    },
+    "rule-6527": {
+      "learning_id": "rule-6527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6527,
+      "title": "generateLocation() and call sites (#11296)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "289622a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T13:05:09.433Z"
+    },
+    "rule-6528": {
+      "learning_id": "rule-6528",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6528,
+      "title": "Update website for new releases 3.9.7 and 3.8.8",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "66f1aaa3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T13:05:13.495Z"
     }
   },
   "aliases": {

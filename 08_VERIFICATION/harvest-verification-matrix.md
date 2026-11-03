@@ -6915,3 +6915,5 @@
 | `CYCLE-20261103-SPG8` | `2026-11-03T12:51:35.000Z` | `nduckmink/arkon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6524` | Yes (`fac3a4f8...`) |
 | `CYCLE-20261103-SVLZ` | `2026-11-03T12:51:42.983Z` | `sparrowcode/AlertKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6525` | Yes (`0014c0bc...`) |
 | `CYCLE-20261103-T2OM` | `2026-11-03T12:51:52.150Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6526` | Yes (`a6f86025...`) |
+| `CYCLE-20261103-A5XQ` | `2026-11-03T13:05:09.518Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6527` | Yes (`e84efc2b...`) |
+| `CYCLE-20261103-A92J` | `2026-11-03T13:05:13.579Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6528` | Yes (`022104b3...`) |

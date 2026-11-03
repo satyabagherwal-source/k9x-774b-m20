@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:51:52.157Z",
-  "total_cycles_completed": 6892,
-  "total_learnings_persisted": 6892,
-  "total_rules_promoted": 6540,
+  "last_updated": "2026-11-03T13:05:13.588Z",
+  "total_cycles_completed": 6894,
+  "total_learnings_persisted": 6894,
+  "total_rules_promoted": 6542,
   "history": [
-    {
-      "timestamp": "2026-10-31T20:59:36.839Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T20:59:38.515Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T20:59:40.855Z",
       "repository": "loft-sh/vcluster",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T12:51:52.157Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T13:05:09.526Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T13:05:13.588Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

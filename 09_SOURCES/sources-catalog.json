@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "858c8d77",
+    "sourceVersion": "66f1aaa3",
     "license": "Apache-2.0",
-    "contentHash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
-    "lastHarvestedAt": "2026-10-27T11:49:41.105Z",
+    "contentHash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
+    "lastHarvestedAt": "2026-11-03T13:05:13.583Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "efa71e3f",
+    "sourceVersion": "289622a5",
     "license": "Apache-2.0",
-    "contentHash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
-    "lastHarvestedAt": "2026-10-30T07:32:41.549Z",
+    "contentHash": "e84efc2b83afe16957c128a4a28b408ba56b29f77c544f2c0086829025787547",
+    "lastHarvestedAt": "2026-11-03T13:05:09.521Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

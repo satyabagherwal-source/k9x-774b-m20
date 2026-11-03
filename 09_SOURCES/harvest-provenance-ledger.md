@@ -6924,3 +6924,5 @@ Every entry in this ledger must capture:
 | `learn-github-nduckmink-arkon` | `https://github.com/nduckmink/arkon` | `5e4069df` | Multi-dimensional audit evidence | 2026-11-03T12:51:35.003Z |
 | `learn-github-sparrowcode-alertkit` | `https://github.com/sparrowcode/AlertKit` | `b8f3dff0` | Multi-dimensional audit evidence | 2026-11-03T12:51:42.986Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `a1e7e9ed` | Multi-dimensional audit evidence | 2026-11-03T12:51:52.153Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `289622a5` | Multi-dimensional audit evidence | 2026-11-03T13:05:09.521Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `66f1aaa3` | Multi-dimensional audit evidence | 2026-11-03T13:05:13.583Z |
