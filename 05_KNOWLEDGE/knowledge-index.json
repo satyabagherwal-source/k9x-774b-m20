@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:52:09.889Z",
+  "last_updated": "2026-11-03T11:59:20.175Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12021,8 +12021,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "4ab32131",
-      "content_hash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
+      "source_version": "4edefad7",
+      "content_hash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -12075,6 +12075,11 @@
           "number": 6012,
           "title": "test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6517,
+          "title": "router: fix crash in addDownstreamSetCookie when no downstream connection (#4598",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12082,7 +12087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:14:28.056Z",
+      "verified_at": "2026-11-03T11:59:19.210Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39831,8 +39836,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "d1d0ccea",
-      "content_hash": "313d7976d81e4ba6821593cf00272f260dc73b65d23be437c098ec2df005b738",
+      "source_version": "4aa6ac3d",
+      "content_hash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -39952,7 +39957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:19:31.374Z",
+      "verified_at": "2026-11-03T11:59:20.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49156,8 +49161,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "c30b4bce",
-      "content_hash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
+      "source_version": "195e0b01",
+      "content_hash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -49220,6 +49225,11 @@
           "number": 6206,
           "title": "Use GitHub App tokens for Homebrew tap and web UI updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6516,
+          "title": "Run CI for hotfixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49227,7 +49237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:13:57.658Z",
+      "verified_at": "2026-11-03T11:59:11.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168417,6 +168427,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:52:09.868Z"
+    },
+    "rule-6516": {
+      "learning_id": "rule-6516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6516,
+      "title": "Run CI for hotfixes",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "195e0b01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:59:11.656Z"
+    },
+    "rule-6517": {
+      "learning_id": "rule-6517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6517,
+      "title": "router: fix crash in addDownstreamSetCookie when no downstream connection (#4598",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "4edefad7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:59:19.210Z"
     }
   },
   "aliases": {

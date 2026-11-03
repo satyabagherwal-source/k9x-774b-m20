@@ -6909,3 +6909,6 @@ Every entry in this ledger must capture:
 | `learn-github-mazzzystar-queryable` | `https://github.com/mazzzystar/Queryable` | `19825faa` | Multi-dimensional audit evidence | 2026-11-03T11:52:01.975Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `8fcaa51f` | Multi-dimensional audit evidence | 2026-11-03T11:52:06.011Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `4b0b7450` | Multi-dimensional audit evidence | 2026-11-03T11:52:09.977Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `195e0b01` | Multi-dimensional audit evidence | 2026-11-03T11:59:11.780Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `4edefad7` | Multi-dimensional audit evidence | 2026-11-03T11:59:19.333Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4aa6ac3d` | Multi-dimensional audit evidence | 2026-11-03T11:59:20.294Z |

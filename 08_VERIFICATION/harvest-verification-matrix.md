@@ -6900,3 +6900,6 @@
 | `CYCLE-20261103-O4HF` | `2026-11-03T11:52:01.971Z` | `mazzzystar/Queryable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`f9954b47...`) |
 | `CYCLE-20261103-O7LJ` | `2026-11-03T11:52:06.007Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6514` | Yes (`40eb3af8...`) |
 | `CYCLE-20261103-OANP` | `2026-11-03T11:52:09.973Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6515` | Yes (`0b020a13...`) |
+| `CYCLE-20261103-XC4F` | `2026-11-03T11:59:11.775Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6516` | Yes (`9e0b05c7...`) |
+| `CYCLE-20261103-XHY8` | `2026-11-03T11:59:19.328Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6517` | Yes (`156281a0...`) |
+| `CYCLE-20261103-XIOS` | `2026-11-03T11:59:20.284Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md` | Yes (`8d589159...`) |

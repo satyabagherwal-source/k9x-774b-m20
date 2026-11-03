@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `c30b4bce`  
+> **Source Version**: `195e0b01`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:13:57.015Z  
+> **Timestamp**: 2026-11-03T11:59:10.954Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:13:57.007Z  
+> **Harvest Timestamp**: 2026-11-03T11:59:10.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4631 stars
+- **Stars / Engagement**: 4649 stars
 
 ---
 
@@ -1607,14 +1607,17 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5666** (2026-11-03): **[snapshots] Snapshot downloads don't respect partition processor manager cancellation signal**
+  *Symptoms*: When a partition is stopped (e.g. during replicaset changes) while it's downloading a snapshot, the cancellation signal is ignored until the snapshot download and import is complete. On clusters with large snapshots and slow disks, this can take minutes wasting precious IO for a partition that won't even run on this node.  Example logs:  ``` # restate-1 (N2) is no longer part of the replicaset of P0 {"timestamp":"2026-10-28T09:39:17.246265Z","level":"INFO","fields":{"message":"Partition configuration transitions: [P0(v24 [N2, N3] -> v25 [N1, N3]), P1(v25 [N2, N3] -> v26 [N1, N2]), P3(v25 [N2, N3] -> v26 [N1, N2]), P4(v25 [N2, N3] -> v26 [N1, N3]), P8(v24 [N2, N3] -> v25 [N1, N3]), P9(v24 [N2, N3] -> v25 [N1, N2]), P11(v25 [N2, N3] -> v26 [N1, N3]), P12(v24 [N2, N3] -> v25 [N1, N3]), P13(v24 [N2, N3] -> v25 [N1, N3]), P14(v25 [N2, N3] -> v26 [N1, N3])]"},"target":"restate_admin::cluster_controller::service::scheduler"}  # We start stopping at 09:39:17 {"timestamp":"2026-10-28T09:39:17.246349Z","level":"INFO","fields":{"message":"Reconciling partition processors: starts=[] stops=[P0(v25 [N1, N3]), P4(v26 [N1, N3]), P8(v25 [N1, N3]), P11(v26 [N1, N3]), P12(v25 [N1, N3]), P13(v25 [N1, N3]), P14(v26 [N1, N3])]"},"target":"restate_worker::partition_processor_manager"}  # At 10:07, P0 reported that it's downloaded its snapshot, then noticed the cancellation and stopped {"timestamp":"2026-10-28T10:07:48.862396Z","level":"INFO","fields":{"message":"Downloaded partition snapshot","snap
+  **Post-Mortem & Fix Analysis**:
+  > ### Duplicate check I found no duplicate. #4305 covers leaked directories when **snapshot creation** is cancelled. That is the upload path, not this download path.  ### Root cause - In `spawn_processor_task.rs:118-131`, the processor task deliberately awaits `PartitionStoreManager::open` to completion. Only after that does it check `cancellation.is_cancelled()`. The comment there says this is to drain RocksDB work running on the storage pool. - `open` (`partition_store_manager.rs:284-313`) calls `download_latest_snapshot`, then goes straight into `cell.import_cf`. No cancellation token is passed down either path. - `SnapshotRepository::get_latest_inner` (`repository.rs:854-875`) waits on the download `JoinSet` and never checks for cancellation. - In the logs, this cost about 28 minutes of download and then about 1 minute of `import_cf` (10:07:48 → 10:08:47). Both can be skipped. Only the RocksDB `import_cf` call itself (`partition_db.rs:409-412`) must not be abandoned once it starts.  
+  > Oh oh. I started working on this issue without claiming.  And then #5692 is here, my bad.
+
 - **Issue #5597** (2026-10-19): **[VQueues] Keep the scheduler alive when a running count has no rows**
   *Symptoms*: Stacked on #5596 (diagnostics); review that one first.  With the diagnostics from #5596 in place, the panic in `Queue::try_advance` only destroys information: it takes the partition runtime down, which becomes a `task_center` runtime panic, a 60 s shutdown timeout and a process exit that fails over every partition the node leads. This change treats the running count as what it always was in practice, a hint:  - When the running stage is empty although the metadata counts running entries, the queue logs a warning (the error with the full description was already emitted by the probe) and continues with the inbox stage. - When the running stage ends before the count is exhausted, it logs a warning instead of tripping the `debug_assert`s. - Unit test with the stub running reader, and a RocksDB-backed scheduler test that deletes a running-stage row behind the metadata's back, starts a scheduler on it and checks that it still schedules the next inbox entry. - Release note.  Verified end to end on a local 3-node cluster: with the inconsistent state injected into a follower's partition store and leadership pinned to that node, unpatched `main` panics exactly as in production (followed by `assertion failed: self.received_feedback` in `self_proposer_scheduler.rs:221` during unwinding), while this stack logs the description and the warning, keeps leading, and serves the next invocation.  Checked with `cargo nextest run -p restate-partition-store -p restate-vqueues`, `cargo fmt --check` 
   **Post-Mortem & Fix Analysis**:
   > ## Test Results   8 files  ±0    8 suites  ±0   5m 18s ⏱️ ±0s  61 tests ±0   61 ✅ ±0  0 💤 ±0  0 ❌ ±0  268 runs  ±0  268 ✅ ±0  0 💤 ±0  0 ❌ ±0   Results for commit f92b93fd. ± Comparison against base commit 9b7bbe36.  [test-results]:data:application/gzip;base64,H4sIAK+Y1GoC/12MSwrDIBQArxJcd+Ef7WWKUR9Ik1iMrkLvXg1JarucGZgNQZj8iu6Dug1oLSFf4EoyOcSlIiNN1JRblOSEx1qs/TPP8KoGXwJMmH6ETymmw6SytCOV6oDz2JvvceduuHP/s3GeQ66AQNNRM3BsFJQTxSlwB9IZzwTWILGQwmFsAL0/gTjgEwMBAAA=  :recycle: This comment has been updated with latest results.
   > The running count in the metadata is not a hint. It needs to be in sync with the underlying data. If the information goes astray, then this indicates a programming bug that needs to be fixed.
-
-- **Issue #5595** (2026-10-19): **Keep watching the config file across symlink swaps**
-  *Symptoms*: Kubernetes updates a mounted ConfigMap by writing a new timestamped directory, re-pointing the `..data` symlink and deleting the old directory; `config.toml` itself is a symlink through `..data`. Two things in the server broke on that:  - `restate-server` canonicalized `--config-file` at startup, so the loader's path was the timestamped directory. After the swap that directory is gone and the reload failed with `No such file or directory`. - On the remove event the loader re-armed the watch on the event's path, the same dead directory, so nothing was watched afterwards and later updates went unnoticed.  The path is now kept as given (`std::path::absolute`, so it still survives the base-dir chdir) and the configured path is re-watched after a remove. The regression test reproduces the kubelet swap twice; it is Linux-only because FSEvents on macOS delivers no event for this pattern.  Observed on kind before the fix: first update → `Error updating configuration, config was not updated: No such file or directory ... in config/..2026_10_16_18_05_22.2867132780/config.toml`, second update never detected. After the fix: both updates applied, pod untouched. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1631,90 +1634,28 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `784c9a8a` (2026-10-30)
-**Commit Message**: Use GitHub App tokens for Homebrew tap and web UI updates
+### Incident Patch 1: `6f8e3ef1` (2026-11-02)
+**Commit Message**: Run CI for hotfixes
 
-Publishing the Homebrew formula used the HOMEBREW_TAP_TOKEN personal
-access token, which is subject to the org's 90-day maximum PAT
-lifetime. Mint a short-lived token of a GitHub App installed only on
-restatedev/homebrew-tap instead (HOMEBREW_APP_CLIENT_ID variable,
-HOMEBREW_APP_PRIVATE_KEY secret).
-
-The web UI repositories will open their update PRs through the
-restatedev-web-ui GitHub App, so allowlist its bot in the CLA check.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/actions.lock` (modified, +1/-0)
+**File**: `.github/workflows/ci.yml` (modified, +1/-0)
 ```diff
-@@ -67,6 +67,7 @@ workflows:
-         - 'appany/helm-oci-chart-releaser@v0.4.2'
-     '.github/workflows/homebrew.yml':
-         - 'actions/checkout@v4.4.0'
-+        - 'actions/create-github-app-token@v3.3.0'
-         - 'actions/download-artifact@v8.0.2'
-     '.github/workflows/notarize.yml':
-         - 'actions/checkout@v4.4.0'
-```
-
-**File**: `.github/workflows/cla.yml` (modified, +1/-1)
-```diff
-@@ -42,4 +42,4 @@ jobs:
-           branch: 'main'
-           remote-organization-name: 'restatedev'
-           remote-repository-name: 'cla-signatures'
--          allowlist: github-actions[bot],dependabot[bot],claude,pullfrog[bot]
-\ No newline at end of file
-+          allowlist: github-actions[bot],dependabot[bot],claude,pullfrog[bot],restatedev-web-ui[bot]
-\ No newline at end of file
-```
-
-**File**: `.github/workflows/homebrew.yml` (modified, +11/-1)
-```diff
-@@ -21,10 +21,20 @@ jobs:
-       GITHUB_USER: "Restate bot"
-       GITHUB_EMAIL: "code+bot@restate.dev"
-     steps:
-+      # Short-lived token of the Homebrew GitHub App, which is installed only on restatedev/homebrew-tap
-+      - name: Generate token for homebrew-tap
-+        id: app-token
-+        uses: actions/create-github-app-token@v3.3.0
-+        with:
-+          client-id: ${{ vars.HOMEBREW_APP_CLIENT_ID }}
-+          private-key: ${{ secrets.HOMEBREW_APP_PRIVATE_KEY }}
-+          owner: restatedev
-+          repositories: homebrew-tap
-+          permission-contents: write
-       - uses: actions/checkout@v4.4.0
-         with:
-           repository: "restatedev/homebrew-tap"
--          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-+          token: ${{ steps.app-token.outputs.token }}
-       - uses: actions/checkout@v4.4.0
-         with:
-           path: restate
-```
-
-**File**: `docs/dev/build-and-ci.md` (modified, +1/-1)
-```diff
-@@ -352,7 +352,7 @@ Release Docker images have debug symbols uploaded to [Polar Signals](https://www
- | `NOTARY_APPLE_ID` | Apple ID for notarization |
- | `NOTARY_APP_SPECIFIC_PASSWORD` | App-specific password |
- | `NPM_TOKEN` | npm publish token |
--| `HOMEBREW_TAP_TOKEN` | PAT for pushing to homebrew-tap |
-+| `HOMEBREW_APP_PRIVATE_KEY` | Private key of the GitHub App for pushing to homebrew-tap (its Client ID is the `HOMEBREW_APP_CLIENT_ID` variable) |
- | `PARCA_TOKEN` | Polar Signals API token |
- | `DOCKER_USERNAME` | Docker Hub username |
- | `DOCKER_PASSWORD` | Docker Hub password/token |
+@@ -13,6 +13,7 @@ on:
+     branches:
+       - main
+       - release/*
++      - hotfix/*
+       # Keep CI on existing maintenance branches during the naming transition.
+       - release-*
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5710** (2026-10-30): [CI] Use $/ for is-latest-release in homebrew workflow (@tillrohrmann)
-- **PR #5705** (2026-10-30): Grant packages: write to workflows that push to ghcr.io (@tillrohrmann)
-- **PR #5704** (2026-10-30): [PartitionStore] Take read snapshots of a partition (@AhmedSoliman)
-- **PR #5703** (2026-10-30): [RocksDb] Add read snapshots and scoped reads (@AhmedSoliman)
-- **PR #5702** (2026-10-30): Use GitHub App tokens for Homebrew tap and web UI updates (@tillrohrmann)
-- **PR #5701** (closed): Remove the unused partition-table CF name override (@AhmedSoliman)
+- **PR #5733** (2026-11-03): [util] Add restate-util-cache-padded and use it in Bifrost (@AhmedSoliman)
+- **PR #5731** (2026-11-03): [Bifrost] Hotfix trim-point panic on the service-protocol-v8-stats build (@pcholakov)
+- **PR #5730** (2026-11-02): [Config] Rename storage-lifecycle-threads to storage-lifecycle-bg-threads (@AhmedSoliman)
+- **PR #5729** (2026-11-02): [RocksDb] Submit database maintenance from the caller, and remove the async helpers (@AhmedSoliman)
+- **PR #5728** (2026-11-02): [RocksDb] Prepare database maintenance as storage operations (@AhmedSoliman)
+- **PR #5727** (2026-11-02): [RocksDb] Remove run_background_read_op (@AhmedSoliman)
 
 ---
 
@@ -1734,21 +1675,21 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use GitHub App tokens for Homebrew tap and web UI updates
+## X. Run CI for hotfixes
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `784c9a8a`: Use GitHub App tokens for Homebrew tap and web UI updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f8e3ef1`: Run CI for hotfixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'actions/create-github-app-token@v3.3.0'
+      - hotfix/*
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1758,4 +1699,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `784c9a8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f8e3ef1` are properly handled with clean fallback behavior.

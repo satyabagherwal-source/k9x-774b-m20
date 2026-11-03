@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T11:52:12.542Z",
-    "lastVerified": "2026-11-03T11:52:12.542Z",
+    "lastChecked": "2026-11-03T11:59:22.834Z",
+    "lastVerified": "2026-11-03T11:59:22.834Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -321,22 +321,21 @@
     "lastVerified": "2026-10-31T18:22:13.226Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-02T16:11:38.651Z",
-    "lastVerified": "2026-11-02T16:11:38.651Z",
+    "lastChecked": "2026-11-03T11:59:19.817Z",
+    "lastVerified": "2026-11-03T11:59:19.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "313d7976d81e4ba6821593cf00272f260dc73b65d23be437c098ec2df005b738",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d1d0ccea"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -427,12 +426,12 @@
     "lastVerified": "2026-10-31T22:23:52.482Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T11:15:09.200Z",
-    "lastVerified": "2026-11-03T11:15:09.200Z",
+    "lastChecked": "2026-11-03T11:59:20.512Z",
+    "lastVerified": "2026-11-03T11:59:20.512Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -441,7 +440,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "12382609"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -5445,9 +5445,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-10-31T16:57:18.656Z",
+    "lastChecked": "2026-11-03T11:59:18.333Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-10-31T16:57:18.656Z"
+    "lastVerified": "2026-11-03T11:59:18.333Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7043,12 +7043,12 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T13:13:57.007Z",
-    "lastVerified": "2026-10-31T13:13:57.007Z",
+    "lastChecked": "2026-11-03T11:59:10.084Z",
+    "lastVerified": "2026-11-03T11:59:10.084Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
+    "contentHash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -7080,22 +7080,21 @@
     "lastVerified": "2026-10-31T14:01:15.304Z"
   },
   "envoyproxy-envoy": {
-    "name": "envoy",
+    "name": "envoyproxy/envoy",
     "officialUrl": "https://github.com/envoyproxy/envoy",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T17:43:55.014Z",
-    "lastVerified": "2026-10-31T17:43:55.014Z",
+    "lastChecked": "2026-11-03T11:59:18.355Z",
+    "lastVerified": "2026-11-03T11:59:18.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
+    "contentHash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4ab32131"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflydb-dragonfly": {
     "name": "dragonfly",
@@ -9574,9 +9573,9 @@
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
     "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
-    "lastChecked": "2026-10-30T00:46:38.288Z",
+    "lastChecked": "2026-11-03T11:59:07.986Z",
     "revisionIdentifier": "1faa101f3b",
-    "lastVerified": "2026-10-30T00:46:38.288Z"
+    "lastVerified": "2026-11-03T11:59:07.986Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",
@@ -10580,9 +10579,9 @@
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
     "officialUrl": "https://github.com/relatedcode/ProgressHUD",
-    "lastChecked": "2026-10-30T13:37:26.834Z",
+    "lastChecked": "2026-11-03T11:59:10.476Z",
     "revisionIdentifier": "25471d6e",
-    "lastVerified": "2026-10-30T13:37:26.834Z"
+    "lastVerified": "2026-11-03T11:59:10.476Z"
   },
   "rehypejs-rehype": {
     "name": "rehype",

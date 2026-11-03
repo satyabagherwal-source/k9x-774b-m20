@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T10:45:55.784Z",
+  "last_updated": "2026-11-03T11:59:20.301Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3654,6 +3654,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-XIP9",
+      "directive_title": "fix!: send the snapshot contract's keys from HostSession and the AGT adapter run",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "microsoft/agent-governance-toolkit",
+      "source_commit": "4aa6ac3d",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-microsoft-agent-governance-toolkit"
     }
   ]
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `4ab32131`  
+> **Source Version**: `4edefad7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:14:27.488Z  
+> **Timestamp**: 2026-11-03T11:59:18.522Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:14:27.230Z  
+> **Harvest Timestamp**: 2026-11-03T11:59:18.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29159 stars
+- **Stars / Engagement**: 29171 stars
 
 ---
 
@@ -1041,11 +1041,14 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48897** (2026-11-03): **Fix unused variable warnings**
+  *Symptoms*: Example warnings emitted when compiling using clang trunk (triggered by [libc++ update](https://github.com/llvm/llvm-project/pull/203084)):  envoy/src/source/common/common/utility.cc:683:15: error: unused variable 'ret' [-Werror,-Wunused-variable]   683 |   std::string ret;       |               ^~~  envoy/src/source/server/admin/admin_html_util.cc:106:27: error: unused variable 'buf3' [-Werror,-Wunused-variable]   106 |   std::string buf1, buf2, buf3;       |                           ^~~~   envoy/src/mobile/library/common/network/socket_tag_socket_option_impl.cc:50:22: error: unused variable 'name' [-Werror,-Wunused-variable]    50 |   static std::string name = "socket_tag";       |                      ^~~~  envoy/src/test/test_listener.cc:13:17: error: unused variable 'active_singletons' [-Werror,-Wunused-variable]    13 |     std::string active_singletons = Envoy::Test::Globals::describeActiveSingletons();       |                 ^~~~~~~~~~~~~~~~~  envoy/src/test/test_common/environment.cc:352:21: error: unused variable 'effective_workspace' [-Werror,-Wunused-variable]   352 |   const std::string effective_workspace = workspace.empty() ? resolveMainWorkspace() : workspace;       |                     ^~~~~~~~~~~~~~~~~~~  ```
+  **Post-Mortem & Fix Analysis**:
+  > Hi, I would like to work on this. Unless @nigham is already fixing it, could it be assigned to me?
+  > I'm not working on this
+
 - **Issue #48627** (2026-10-28): **Compression being applied to bodyless responses**
   *Symptoms*: Making an issue because explaining all this in the PR (#48604) would be a bit much, and for discoverability if someone else runs into "Safari is aborting connections" with a similar cause.  On upgrading from envoy 1.36 to envoy 1.38 we found (eventually) that 204 responses started acquiring a 20 byte `sent_bytes`, despite 0 bytes from upstream.  The reason is that the upgrade changed the default from oghttp2 back to nghttp2 (again), and nghttp2 strips the content-length header from 204 responses.  Envoy, on receiving http2 with no content-length header, apparently does decodeHeaders(..., end_stream=false) then decodeData(empty_buffer, end_stream=true).  The compression filter starts compression on headers end_stream=false, so in these conditions results in gzipping zero bytes, creating a 20-byte body.  This becomes a much more severe problem than wasting 20 bytes when these responses go to a Safari browser, which, as far as we can tell, goes "a body on a 204 response? Outrageous! I'm aborting the entire connection!"  Which meant that a telemetry 204 would cause much more important POST requests to suddenly abort mid-stream, just for Safari browsers.  This took a week to notice, by which point non-edge instances had also deployed, which led to an extremely confusing situation where we could see that the upgrade on edge had clearly caused the increase in aborted POSTs, but when we flipped flags and reverted things it wasn't fixed - because the further-in proxies were, by now, *
-
-- **Issue #48410** (2026-10-29): **dynamic_modules: HTTP `send_response` reports `grpc-status: 0` (OK) to gRPC clients**
-  *Symptoms*: ## Description  `envoy_dynamic_module_callback_http_send_response` passes a literal `0` as the `grpc_status` argument of `sendLocalReply`:  ```cpp // source/extensions/filters/http/dynamic_modules/abi_impl.cc (main; same on release/v1.36, v1.37, v1.38) filter->sendLocalReply(static_cast<Http::Code>(status_code), body_view, modify_headers, 0,                        details_view); ```  The parameter is `absl::optional<Grpc::Status::GrpcStatus>`, so `0` is an *engaged* value of `Ok`. For a gRPC request, `Http::Utility::sendLocalReply` maps the HTTP code only when no status is given:  ```cpp local_reply_data.grpc_status_ ? local_reply_data.grpc_status_.value()                               : Grpc::Utility::httpToGrpcStatus(enumToInt(response_code)) ```  So every local reply a dynamic module sends to a gRPC client goes out as a trailers-only `:status 200` with `grpc-status: 0` and no message, whatever status code the module asked for. A module that denies a request with 403 tells the client the call succeeded.  **Expected:** the same mapping every other local reply gets (403 → `PERMISSION_DENIED` (7), 429 → `UNAVAILABLE` (14), and so on). That needs `absl::nullopt` here instead of `0`, or a module-supplied gRPC status if the ABI should expose one.  **Impact:** the request is still blocked, because the module returns `StopIteration` and the upstream is never called. But the client gets the wrong outcome:  - Unary clients typically surface "OK with no response message" as an `INTERN
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1062,122 +1065,303 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f19faee` (2026-10-30)
-**Commit Message**: test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)
+### Incident Patch 1: `4edefad7` (2026-11-03)
+**Commit Message**: router: fix crash in addDownstreamSetCookie when no downstream connection (#45984)
 
-FakeStream::encodeHeaders() posts a callback capturing the stream to the
-upstream connection thread and returns. respondToHealthCheck() is called
-back to back, and each call's waitForNewStream() replaces
-health_check_request_, deleting the previous FakeStream on the main
-thread while its posted callback may still be pending. TSAN caught this
-as a heap-use-after-free in EmptyLocalityAfterHealthCheckFailure.
+**Commit Message:**
+router: fix crash in addDownstreamSetCookie when no downstream
+connection
 
-Wait for the connection's posted callbacks to drain before returning.
+`Filter::addDownstreamSetCookie()` unconditionally dereferences
+`downstreamConnection()` to compose the per-connection seed for the
+generated cookie value. When the router is invoked without a downstream
+connection (e.g. `Http::AsyncClient`-driven paths such as `ext_authz` or
+ratelimit side calls, mirror/shadow, and health checks) the connection
+pointer is null and the worker process crashes whenever a cookie hash
+policy is configured.
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+Skip the connection-derived seed and return an empty cookie value for
+those callers. The resulting cookie hashes identically across all async
+invocations, which preserves hash-stability for the cookie hash policy
+on
+this path.
 
-**File**: `test/integration/load_stats_integration_test.cc` (modified, +5/-0)
+**Additional Description:**
+
+Supersedes #45134, which was auto-closed as stale; this PR carries the
+same
+one-line router fix plus the regression test requested in review there
+(GitHub does not permit reopening #45134 once its head branch advanced).
+The TODO in `router.h` had already flagged the risk ("Need to check for
+null conn if this is ever used 
+
+**File**: `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst` (added, +9/-0)
 ```diff
-@@ -195,6 +195,11 @@ class LoadStatsIntegrationTest : public Grpc::GrpcClientIntegrationParamTest,
-     EXPECT_EQ("/healthcheck", health_check_request_->headers().getPathValue());
-     health_check_request_->encodeHeaders(
-         Http::TestResponseHeaderMapImpl{{":status", std::to_string(response_code)}}, true);
-+    // encodeHeaders() only posts to the upstream connection thread. Wait for that to run before
-+    // returning, as the next call replaces health_check_request_ and the posted callback would
-+    // otherwise use the deleted stream.
-+    result = connection->waitForNoPost();
-+    RELEASE_ASSERT(result, result.message());
+@@ -0,0 +1,9 @@
++Fixed a crash in ``Filter::addDownstreamSetCookie()`` when the router is invoked
++without a downstream connection (e.g. ``Http::AsyncClient``-driven paths such as
++``ext_authz`` or ratelimit side calls, mirror/shadow, and health checks) and a
++cookie hash policy is configured. Previously the function would unconditionally
++dereference ``downstreamConnection()`` to compose the per-connection seed for
++the generated cookie value. When the connection pointer was null the worker
++would crash. The function now skips the connection-derived seed and returns an
++empty cookie value in that path, preserving hash-stability for those async
++invocations.
+```
+
+**File**: `source/common/router/router.h` (modified, +10/-1)
+```diff
+@@ -502,7 +502,16 @@ class Filter : Logger::Loggable<Logger::Id::router>,
+     // connections can receive different cookies if they race on requests.
+     std::string value;
+     const Network::Connection* conn = downstreamConnection();
+-    // Need to check for null conn if this is ever used by Http::AsyncClient in the future.
++    // Async-client-driven router invocations (ext_authz, ratelimit side calls,
++    // mirror/shadow) have a null downstream connection. Previously this path
++    // would unconditionally dereference `conn` to compose the per-connection
++    // seed, which crashed the worker. Skip the connection-derived seed and degrade
++    // to a stable empty seed for those callers; the resulting cookie value is
++    // hashed identically across all such async invocations, which preserves
++    // hash-stability requirements for the cookie hash policy.
++    if (conn == nullptr) {
++      return std::string();
++    }
+     value = conn->connectionInfoProvider().remoteAddress()->asString() +
+             conn->connectionInfoProvider().localAddress()->asString();
+ 
+```
+
+**File**: `test/common/router/router_test.cc` (modified, +54/-0)
+```diff
+@@ -738,6 +738,60 @@ TEST_F(RouterTest, AddMultipleCookies) {
+   router_->onDestroy();
+ }
+ 
++// Regression test for the crash in addDownstreamSetCookie() on the
++// Http::AsyncClient-driven router path (ext_authz / ratelimit side calls,
++// mirror/shadow), where there is no downstream connection. Previously the cookie
++// seed unconditionally dereferenced the null downstream connection and crashed
++// the worker whenever a cookie hash policy was configured. The call must now
++// degrade to a stable empty seed and not crash.
++TEST_F(RouterTest, AddCookieNullDownstreamConnection) {
++  router_->downstream_connection_is_null_ = true;
++
++  ON_CALL(callbacks_.route_->route_entry_, hashPolicy())
++      .WillByDefault(Return(&callbacks_.route_->route_entry_.hash_policy_));
++  NiceMock<Http::MockRequestEncoder> encoder;
++  Http::ResponseDecoder* response_decoder = nullptr;
++  expectNewStreamWithImmediateEncoder(encoder, &response_decoder, Http::Protocol::Http10);
++
++  EXPECT_CALL(cm_.thread_local_cluster_, httpConnPool(_, _, _, _))
++      .WillOnce(Invoke([&](Upstream::HostConstSharedPtr, Upstream::ResourcePriority,
++                           std::optional<Http::Protocol>, Upstream::LoadBalancerContext* context) {
++        EXPECT_EQ(10UL, context->computeHashKey().value());
++        return Upstream::HttpPoolData([]() {}, &cm_.thread_local_cluster_.conn_pool_);
++      }));
++
++  std::string cookie_value = "not-empty";
++  EXPECT_CALL(callbacks_.route_->route_entry_.hash_policy_, generateHash(_, _, _))
++      .WillOnce(
++          Invoke([&](OptRef<const Http::RequestHeaderMap>, OptRef<const StreamInfo::StreamInfo>,
++                     Http::HashPolicy::AddCookieCallback add_cookie) {
++            // Pre-fix this dereferenced the null downstream connection and crashed
++            // the worker; it must now return a stable empty seed.
++            cookie_value = add_cookie("foo", "", std::chrono::seconds(1337), {});
++            return std::optional<uint64_t>(10);
++          }));
++
++  // With no downstream connection the cookie is not generated, so no Set-Cookie
++  // header is emitted downstream.
++  EXPECT_CALL(callbacks_, encodeHeaders_(_, _))
++      .WillOnce(Invoke([&](const Http::HeaderMap& headers, const bool) -> void {
++        EXPECT_TRUE(headers.get(Http::Headers::get().SetCookie).empty());
++      }));
++  expectResponseTimerCreate();
++
++  Http::TestRequestHeaderMapImpl headers;
++  HttpTestUtility::addDefaultHeaders(headers);
++  router_->decodeHeaders(headers, true);
++
++  Http::ResponseHeaderMapPtr response_headers(
++      new Http::TestResponseHeaderMapImpl{{":status", "200"}});
++  response_decoder->decodeHeaders(std::move(response_headers), true);
++
++  // The worker did not crash and the async path produced a stable empty cookie.
++  EXPECT_EQ(cookie_value, "");
++  router_->onDestroy();
++}
++
+ TEST_F(RouterTest, MetadataNoOp) { EXPECT_EQ(nullptr, router_->metadataMatchCriteria()); }
+ 
+ TEST_F(RouterTest, MetadataMatchCriteria) {
+```
+
+**File**: `test/common/router/router_test_base.h` (modified, +6/-0)
+```diff
+@@ -52,13 +52,19 @@ class RouterTestFilter : public Filter {
    }
  
-   void mergeLoadStats(envoy::service::load_stats::v3::LoadStatsRequest& loadstats_request,
+   const Network::Connection* downstreamConnection() const override {
++    // Simulate the Http::AsyncClient-driven router path (ext_authz / ratelimit
++    // side calls, mirror/shadow), which has no downstream connection.
++    if (downstream_connection_is_null_) {
++      return nullptr;
++    }
+     return &downstream_connection_;
+   }
+ 
+   NiceMock<Network::MockConnection> downstream_connection_;
+   MockRetryState* retry_state_{};
+   bool reject_all_hosts_ = false;
+   bool retry_425_response_ = false;
++  bool downstream_connection_is_null_ = false;
+ };
+ 
+ class RouterTestBase : public testing::Test {
 ```
 
 ---
 
-### Incident Patch 2: `aef8ab7f` (2026-10-30)
-**Commit Message**: Exclude fuzz targets from Windows build (#48851)
+### Incident Patch 2: `8edf1e54` (2026-11-02)
+**Commit Message**: build(deps): bump sphinxcontrib-googleanalytics from 0.5 to 0.6 in /docs/tools/python (#48710)
 
-Windows clang toolchain is not configured with fuzz dependencies.
+Bumps
+[sphinxcontrib-googleanalytics](https://github.com/sphinx-contrib/googleanalytics)
+from 0.5 to 0.6.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/sphinx-contrib/googleanalytics/releases">sphinxcontrib-googleanalytics's
+releases</a>.</em></p>
+<blockquote>
+<h2>v0.6</h2>
+<ul>
+<li>Stop using the deprecated pkg_resources module. (Dmitry Shachnev, <a
+href="https://redirect.github.com/sphinx-contrib/googleanalytics/issues/22">#22</a>)</li>
+<li>Fix lint errors reported by newer ruff versions.</li>
+</ul>
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/sphinx-contrib/googleanalytics/commit/a6490e61da9b455aa085883da5e5bb98f939f0e9"><code>a6490e6</code></a>
+Release 0.6</li>
+<li><a
+href="https://github.com/sphinx-contrib/googleanalytics/commit/a0bc979aa6ec33e63780c3b105463ce6ce98225a"><code>a0bc979</code></a>
+Fix lint errors reported by newer ruff</li>
+<li><a
+href="https://github.com/sphinx-contrib/googleanalytics/commit/4ae0adf4e9b8a0fd0f97dc90ffdf2e7e49c4c13e"><code>4ae0adf</code></a>
+Merge pull re
 
-Risk Level: low
-Testing: unit tests
-Docs Changes: no
-Release Notes: no
-Platform Specific Features: Windows only
-
-Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
-
-**File**: `bazel/envoy_test.bzl` (modified, +2/-2)
+**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +2/-2)
 ```diff
-@@ -148,7 +148,7 @@ def envoy_cc_fuzz_test(
-             Label("//test/fuzz:fuzz_runner_lib"),
-             _TEST_VERSION_LINKSTAMP,
-         ],
--        tags = tags,
-+        tags = tags + ["skip_on_windows"],
-         **kwargs
-     )
- 
-@@ -179,7 +179,7 @@ def envoy_cc_fuzz_test(
-             ],
-         }) + deprecate_repository("envoy_cc_fuzz_test", repository),
-         size = size,
--        tags = ["fuzz_target"] + tags,
-+        tags = ["fuzz_target"] + tags + ["skip_on_windows"],
-     )
- 
-     fuzzing_decoration(
+@@ -6273,8 +6273,8 @@
+             "https://files.pythonhosted.org/packages/f6/d2/5beee64d3e4e747f316bae86b55943f51e82bb86ecd325883ef65741e7da/sphinxcontrib_devhelp-2.0.0.tar.gz": "sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad"
+           },
+           "sphinxcontrib-googleanalytics": {
+-            "https://files.pythonhosted.org/packages/6b/c7/e68a33ba7b8a4a697c8ad278a37d7bc8521c4175b0f9248fec80ae6fed4f/sphinxcontrib_googleanalytics-0.5-py3-none-any.whl": "sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a",
+-            "https://files.pythonhosted.org/packages/b5/78/ad9a210c24499ccfd97f0eccc902576b587af82ae2dc27021e0662929940/sphinxcontrib_googleanalytics-0.5.tar.gz": "sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561"
++            "https://files.pythonhosted.org/packages/84/24/bdd9ae42b7017fcea870fe24ee1815793289219644010a015253b9b21ce6/sphinxcontrib_googleanalytics-0.6.tar.gz": "sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7",
++            "https://files.pythonhosted.org/packages/ca/4a/516e8cfabfe1760ac1ea5e310779e2a0986174c2f7ba95499f9d5bf46e1c/sphinxcontrib_googleanalytics-0.6-py3-none-any.whl": "sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4"
+           },
+           "sphinxcontrib-htmlhelp": {
+             "https://files.pythonhosted.org/packages/0a/7b/18a8c0bcec9182c05a0b3ec2a776bba4ead82750a55ff798e8d406dae604/sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl": "sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8",
 ```
 
-**File**: `bazelrc.windows` (modified, +3/-0)
+**File**: `docs/MODULE.bazel.lock` (modified, +2/-2)
 ```diff
-@@ -3,6 +3,9 @@
- #############################################################################
- 
- 
-+build:windows --build_tag_filters=-skip_on_windows
-+build:windows --test_tag_filters=-skip_on_windows
-+
- build:windows --extra_execution_platforms=//bazel/platforms:x64_windows-clang-cl
- build:windows --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows-clang-cl
- build:windows --extra_toolchains=@rules_foreign_cc//toolchains:preinstalled_autoconf_toolchain
+@@ -6271,8 +6271,8 @@
+             "https://files.pythonhosted.org/packages/f6/d2/5beee64d3e4e747f316bae86b55943f51e82bb86ecd325883ef65741e7da/sphinxcontrib_devhelp-2.0.0.tar.gz": "sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad"
+           },
+           "sphinxcontrib-googleanalytics": {
+-            "https://files.pythonhosted.org/packages/6b/c7/e68a33ba7b8a4a697c8ad278a37d7bc8521c4175b0f9248fec80ae6fed4f/sphinxcontrib_googleanalytics-0.5-py3-none-any.whl": "sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a",
+-            "https://files.pythonhosted.org/packages/b5/78/ad9a210c24499ccfd97f0eccc902576b587af82ae2dc27021e0662929940/sphinxcontrib_googleanalytics-0.5.tar.gz": "sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561"
++            "https://files.pythonhosted.org/packages/84/24/bdd9ae42b7017fcea870fe24ee1815793289219644010a015253b9b21ce6/sphinxcontrib_googleanalytics-0.6.tar.gz": "sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7",
++            "https://files.pythonhosted.org/packages/ca/4a/516e8cfabfe1760ac1ea5e310779e2a0986174c2f7ba95499f9d5bf46e1c/sphinxcontrib_googleanalytics-0.6-py3-none-any.whl": "sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4"
+           },
+           "sphinxcontrib-htmlhelp": {
+             "https://files.pythonhosted.org/packages/0a/7b/18a8c0bcec9182c05a0b3ec2a776bba4ead82750a55ff798e8d406dae604/sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl": "sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8",
+```
+
+**File**: `docs/tools/python/requirements.txt` (modified, +3/-3)
+```diff
+@@ -1454,9 +1454,9 @@ sphinxcontrib-devhelp==2.0.0 \
+     #   -r requirements.in
+     #   envoy-docs-sphinx-runner
+     #   sphinx
+-sphinxcontrib-googleanalytics==0.5 \
+-    --hash=sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a \
+-    --hash=sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561
++sphinxcontrib-googleanalytics==0.6 \
++    --hash=sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4 \
++    --hash=sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7
+     # via -r requirements.in
+ sphinxcontrib-htmlhelp==2.1.0 \
+     --hash=sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8 \
 ```
 
 ---
 
-### Incident Patch 3: `3e4e2174` (2026-10-30)
-**Commit Message**: Exclude buffer_fuzz_lib from Windows build (#48855)
+### Incident Patch 3: `a42f23cd` (2026-11-02)
+**Commit Message**: http2: deflake RstStreamOverflowOnPendingFlushTimeout (#48791)
 
-This library has Linux specific code that can not be complied on
-Windows.
+Commit Message: http2: deflake RstStreamOverflowOnPendingFlushTimeout
 
-Risk Level: low
-Testing: unit tests
-Docs Changes: no
-Release Notes: no
-Platform Specific Features: Windows only
+The test set `stream_idle_timeout` to 400ms only to get a 400ms pending
+flush timer, since `stream_flush_timeout` defaults to it. The idle timer
+also covers the pre-fill stream, so that stream's upstream response had
+to start within 400ms of the request. On a slow runner the idle timeout
+fired first and left its local reply's two frames queued. The test then
+timed out waiting for 998 queued frames with "current value 2".
 
-Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
+This sets `stream_flush_timeout` to 400ms instead and leaves the idle
+timeout at its default. The flush timeout, RST_STREAM and overflow path
+the test is about doesn't change.
 
-**File**: `test/common/buffer/BUILD` (modified, +1/-0)
+Additional Description:
+It failed on 9 changes between 10-05 and 10-22 under tsan, always on
+oghttp2 with "current value 2". #45189 reported the same symptom back in
+May. Delaying the autonomous upstream's response by 500ms reproduces it
+on both codecs, so the oghttp2 skew in CI is just that codec being
+slower.
+
+AI Disclaimer: code change created with AI assistance, fully reviewed by
+me prior to opening.
+
+Risk Level: Low (test only)
+Testing:
+- 500ms delayed-
+
+**File**: `test/integration/http2_flood_integration_test.cc` (modified, +4/-3)
 ```diff
-@@ -32,6 +32,7 @@ envoy_cc_test_library(
-     srcs = ["buffer_fuzz.cc"],
-     hdrs = ["buffer_fuzz.h"],
-     rbe_pool = "linux_x64_small",
-+    tags = ["skip_on_windows"],
-     deps = [
-         ":buffer_fuzz_proto_cc_proto",
-         "//source/common/buffer:buffer_lib",
+@@ -650,12 +650,13 @@ TEST_P(Http2FloodMitigationTest, RST_STREAM) {
+ 
+ // Verify detection of flood by the RST_STREAM frame sent on pending flush timeout
+ TEST_P(Http2FloodMitigationTest, RstStreamOverflowOnPendingFlushTimeout) {
++  // Shorten only the pending flush timer. A short stream_idle_timeout would also apply to the
++  // pre-fill stream and fire if its upstream response is slow to start.
+   config_helper_.addConfigModifier(
+       [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
+              hcm) {
+-        hcm.mutable_stream_idle_timeout()->set_seconds(0);
+-        constexpr uint64_t IdleTimeoutMs = 400;
+-        hcm.mutable_stream_idle_timeout()->set_nanos(IdleTimeoutMs * 1000 * 1000);
++        constexpr uint64_t FlushTimeoutMs = 400;
++        hcm.mutable_stream_flush_timeout()->set_nanos(FlushTimeoutMs * 1000 * 1000);
+       });
+ 
+   // Pending flush timer is started when upstream response has completed but there is no window to
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48880** (2026-10-30): test: Use `linux_x64_small` RBE pool for heavy GCC compiles (@phlax)
-- **PR #48878** (2026-10-30): Replace shell file with portable test code (@yanavlasov)
-- **PR #48876** (2026-10-30): deps: Bump `bazel-registry` -> 3f7d9c0 (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #48871** (2026-10-30): deps: Bump `bazel-registry` -> 3e4b684 (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #48869** (2026-10-30): ci: Use hermetic llvm-strip for image binaries (@phlax)
-- **PR #48868** (2026-10-30): deps: Bump `envoy_toolshed` -> 0.5.12.envoy (@dependency-envoy[bot])
+- **PR #48945** (2026-11-02): Skip //test/common/upstream:health_check_fuzz_lib on Windows (@yanavlasov)
+- **PR #48942** (2026-11-02): grpc_stats: mark robust_to_untrusted_downstream (@ggreenway)
+- **PR #48937** (2026-11-02): Exclude admin interface from threat model (@yanavlasov)
+- **PR #48936** (2026-11-02): Change sni_cluster security posture to robust (@yanavlasov)
+- **PR #48931** (2026-11-02): Enable UNREFERENCED_PARAMETER on Windows (@yanavlasov)
+- **PR #48925** (2026-11-02): Disable corpus generation on Windows (@yanavlasov)
 
 ---
 
@@ -1197,25 +1381,29 @@ Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)
+## X. router: fix crash in addDownstreamSetCookie when no downstream connection (#4598
 
 **RULE**:
-When implementing operations in `test/integration/load_stats_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f19faee`: test/load_stats: Fix use-after-free in respondToHealthCheck (#48867). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4edefad7`: router: fix crash in addDownstreamSetCookie when no downstream connection (#45984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/load_stats_integration_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    // encodeHeaders() only posts to the upstream connection thread. Wait for that to run before
-    // returning, as the next call replaces health_check_request_ and the posted callback would
-    // otherwise use the deleted stream.
-    result = connection->waitForNoPost();
-    RELEASE_ASSERT(result, result.message());
+Fixed a crash in ``Filter::addDownstreamSetCookie()`` when the router is invoked
+without a downstream connection (e.g. ``Http::AsyncClient``-driven paths such as
+``ext_authz`` or ratelimit side calls, mirror/shadow, and health checks) and a
+cookie hash policy is configured. Previously the function would unconditionally
+dereference ``downstreamConnection()`` to compose the per-connection seed for
+the generated cookie value. When the connection pointer was null the worker
+would crash. The function now skips the connection-derived seed and returns an
+empty cookie value in that path, preserving hash-stability for those async
+invocations.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1225,4 +1413,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f19faee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4edefad7` are properly handled with clean fallback behavior.
