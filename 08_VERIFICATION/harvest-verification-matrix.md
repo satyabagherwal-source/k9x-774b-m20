@@ -6923,3 +6923,6 @@
 | `CYCLE-20261103-C8EJ` | `2026-11-03T15:54:43.723Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6504` | Yes (`1bf48eea...`) |
 | `CYCLE-20261103-C9G4` | `2026-11-03T15:54:45.076Z` | `pingcap/talent-plan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6532` | Yes (`a40c4f3b...`) |
 | `CYCLE-20261103-C9NJ` | `2026-11-03T15:54:45.343Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6533` | Yes (`3419dc50...`) |
+| `CYCLE-20261103-KYZB` | `2026-11-03T16:01:31.415Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6534` | Yes (`d4003470...`) |
+| `CYCLE-20261103-KZ0S` | `2026-11-03T16:01:31.468Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6534` | Yes (`a81c402b...`) |
+| `CYCLE-20261103-L130` | `2026-11-03T16:01:34.140Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6535` | Yes (`f41b8be0...`) |

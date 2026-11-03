@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-PTFD",
-    "timestamp": "2026-10-31T02:14:28.153Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-PXR0",
-    "timestamp": "2026-10-31T02:14:33.756Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-YLZL",
-    "timestamp": "2026-10-31T02:21:18.417Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-YN7V",
     "timestamp": "2026-10-31T02:21:20.011Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7445,51 @@
     "repository": "projectcontour/contour",
     "learningId": "learn-github-projectcontour-contour",
     "contentHash": "3419dc50c77549821d4bff1b3b33213d9b95a91f72f27c7280abfac1aa64ddd6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-KYZB",
+    "timestamp": "2026-11-03T16:01:31.415Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-KZ0S",
+    "timestamp": "2026-11-03T16:01:31.468Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-L130",
+    "timestamp": "2026-11-03T16:01:34.140Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

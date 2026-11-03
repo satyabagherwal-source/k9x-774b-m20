@@ -6932,3 +6932,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9ee43d78` | Multi-dimensional audit evidence | 2026-11-03T15:54:43.727Z |
 | `learn-github-pingcap-talent-plan` | `https://github.com/pingcap/talent-plan` | `8e91311a` | Multi-dimensional audit evidence | 2026-11-03T15:54:45.080Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `38795f67` | Multi-dimensional audit evidence | 2026-11-03T15:54:45.346Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `d956e12a` | Multi-dimensional audit evidence | 2026-11-03T16:01:31.418Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f988a147` | Multi-dimensional audit evidence | 2026-11-03T16:01:31.471Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `2ff9bb64` | Multi-dimensional audit evidence | 2026-11-03T16:01:34.143Z |

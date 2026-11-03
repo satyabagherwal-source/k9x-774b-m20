@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "4fffec7d",
+    "sourceVersion": "f988a147",
     "license": "NOASSERTION",
-    "contentHash": "9002ed4cc273e4af6a4e021d1a651cf86a6a3ae61a1b51f3d150cf171386334e",
-    "lastHarvestedAt": "2026-11-02T17:39:17.694Z",
+    "contentHash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
+    "lastHarvestedAt": "2026-11-03T16:01:31.471Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "a138218b",
+    "sourceVersion": "2ff9bb64",
     "license": "NOASSERTION",
-    "contentHash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
-    "lastHarvestedAt": "2026-10-31T18:15:38.721Z",
+    "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
+    "lastHarvestedAt": "2026-11-03T16:01:34.143Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "28e3d13a",
+    "sourceVersion": "d956e12a",
     "license": "Apache-2.0",
-    "contentHash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
-    "lastHarvestedAt": "2026-10-31T19:14:38.656Z",
+    "contentHash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
+    "lastHarvestedAt": "2026-11-03T16:01:31.418Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

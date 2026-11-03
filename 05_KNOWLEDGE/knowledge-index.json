@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T15:54:45.262Z",
+  "last_updated": "2026-11-03T16:01:34.090Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13938,8 +13938,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "4fffec7d",
-      "content_hash": "9002ed4cc273e4af6a4e021d1a651cf86a6a3ae61a1b51f3d150cf171386334e",
+      "source_version": "f988a147",
+      "content_hash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14122,6 +14122,11 @@
           "number": 6473,
           "title": "transport): add QUIC send primitives with deadlines per stage (#6091)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6534,
+          "title": "transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14129,7 +14134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:39:17.555Z",
+      "verified_at": "2026-11-03T16:01:31.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60509,8 +60514,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "a138218b",
-      "content_hash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
+      "source_version": "2ff9bb64",
+      "content_hash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -60573,6 +60578,11 @@
           "number": 6277,
           "title": "[#35616] CDC: Don't panic the walsender when the slot lock is already gone",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6535,
+          "title": "[#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60580,7 +60590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:15:38.626Z",
+      "verified_at": "2026-11-03T16:01:34.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168825,6 +168835,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T15:54:45.241Z"
+    },
+    "rule-6534": {
+      "learning_id": "rule-6534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6534,
+      "title": "transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "f988a147",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:01:31.376Z"
+    },
+    "rule-6535": {
+      "learning_id": "rule-6535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6535,
+      "title": "[#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializa",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "2ff9bb64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:01:34.077Z"
     }
   },
   "aliases": {

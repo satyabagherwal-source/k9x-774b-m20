@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T15:54:47.912Z",
-    "lastVerified": "2026-11-03T15:54:47.912Z",
+    "lastChecked": "2026-11-03T16:01:36.682Z",
+    "lastVerified": "2026-11-03T16:01:36.682Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T13:05:08.626Z",
-    "lastVerified": "2026-11-03T13:05:08.626Z",
+    "lastChecked": "2026-11-03T16:01:27.348Z",
+    "lastVerified": "2026-11-03T16:01:27.348Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -740,12 +740,12 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T19:14:37.952Z",
-    "lastVerified": "2026-10-31T19:14:37.952Z",
+    "lastChecked": "2026-11-03T16:01:29.769Z",
+    "lastVerified": "2026-11-03T16:01:29.769Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
+    "contentHash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -1214,14 +1214,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:39:15.968Z",
-    "lastVerified": "2026-11-02T17:39:15.968Z",
+    "lastChecked": "2026-11-03T16:01:29.460Z",
+    "lastVerified": "2026-11-03T16:01:29.460Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "9002ed4cc273e4af6a4e021d1a651cf86a6a3ae61a1b51f3d150cf171386334e",
+    "contentHash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6142,14 +6142,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-10-31T18:15:38.114Z",
-    "lastVerified": "2026-10-31T18:15:38.114Z",
+    "lastChecked": "2026-11-03T16:01:33.421Z",
+    "lastVerified": "2026-11-03T16:01:33.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
+    "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7537,9 +7537,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-10-31T14:19:25.399Z",
+    "lastChecked": "2026-11-03T16:01:12.339Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-10-31T14:19:25.399Z"
+    "lastVerified": "2026-11-03T16:01:12.339Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -9799,9 +9799,9 @@
   "raghav453-multilipi-hreflang-generator": {
     "name": "multilipi-hreflang-generator",
     "officialUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
-    "lastChecked": "2026-10-30T04:47:57.702Z",
+    "lastChecked": "2026-11-03T16:01:14.482Z",
     "revisionIdentifier": "ca4d146c",
-    "lastVerified": "2026-10-30T04:47:57.702Z"
+    "lastVerified": "2026-11-03T16:01:14.482Z"
   },
   "rickclephas-kmp-nativecoroutines": {
     "name": "KMP-NativeCoroutines",
@@ -10846,9 +10846,9 @@
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",
     "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
-    "lastChecked": "2026-10-30T15:37:00.511Z",
+    "lastChecked": "2026-11-03T16:01:17.006Z",
     "revisionIdentifier": "0d07d106",
-    "lastVerified": "2026-10-30T15:37:00.511Z"
+    "lastVerified": "2026-11-03T16:01:17.006Z"
   },
   "encode-httpx": {
     "name": "httpx",
