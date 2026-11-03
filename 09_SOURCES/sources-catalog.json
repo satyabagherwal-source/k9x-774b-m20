@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "012e1f0c",
+    "sourceVersion": "5760af6f",
     "license": "AGPL-3.0",
-    "contentHash": "07516f4ce856f9be38f54c4b578225c19a23f26be4610b7f68b11eb272c55d90",
-    "lastHarvestedAt": "2026-10-31T21:46:13.164Z",
+    "contentHash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
+    "lastHarvestedAt": "2026-11-03T19:24:25.789Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "64854199",
+    "sourceVersion": "c7606f50",
     "license": "GPL-3.0",
-    "contentHash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
-    "lastHarvestedAt": "2026-10-31T17:36:59.125Z",
+    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
+    "lastHarvestedAt": "2026-11-03T19:24:11.981Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "71e4b2b0",
+    "sourceVersion": "2d22bf9a",
     "license": "BSD-3-Clause",
-    "contentHash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
-    "lastHarvestedAt": "2026-10-30T08:04:03.927Z",
+    "contentHash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
+    "lastHarvestedAt": "2026-11-03T19:24:15.008Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

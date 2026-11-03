@@ -6991,3 +6991,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-03T19:14:57.307Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `95970c18` | Multi-dimensional audit evidence | 2026-11-03T19:15:12.715Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `84e92a33` | Multi-dimensional audit evidence | 2026-11-03T19:15:16.750Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `c7606f50` | Multi-dimensional audit evidence | 2026-11-03T19:24:11.981Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `2d22bf9a` | Multi-dimensional audit evidence | 2026-11-03T19:24:15.008Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `5760af6f` | Multi-dimensional audit evidence | 2026-11-03T19:24:25.789Z |

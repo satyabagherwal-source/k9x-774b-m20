@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T19:15:16.756Z",
-  "total_cycles_completed": 6959,
-  "total_learnings_persisted": 6959,
-  "total_rules_promoted": 6605,
+  "last_updated": "2026-11-03T19:24:25.794Z",
+  "total_cycles_completed": 6962,
+  "total_learnings_persisted": 6962,
+  "total_rules_promoted": 6608,
   "history": [
-    {
-      "timestamp": "2026-11-01T01:53:59.162Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T01:54:06.466Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T02:00:43.675Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-01T02:00:46.839Z",
       "repository": "actix/actix-web",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T19:15:16.756Z",
       "repository": "pathwaycom/serviette",
       "learningId": "learn-github-pathwaycom-serviette",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:24:11.986Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:24:15.013Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:24:25.794Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

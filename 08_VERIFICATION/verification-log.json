@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-IEU2",
-    "timestamp": "2026-10-31T05:52:39.578Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-YW7F",
-    "timestamp": "2026-10-31T06:05:28.587Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "4284288e27c0801b6b6ac66a92367ff11b06e95deff27f6ee0f65c11ce898a76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-1USA",
-    "timestamp": "2026-10-31T06:07:46.714Z",
-    "repository": "BuilderIO/builder",
-    "learningId": "learn-github-builderio-builder",
-    "contentHash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-EYRB",
     "timestamp": "2026-10-31T06:17:58.391Z",
     "repository": "kucherenko/jscpd",
@@ -7490,6 +7445,51 @@
     "repository": "pathwaycom/serviette",
     "learningId": "learn-github-pathwaycom-serviette",
     "contentHash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-TM4P",
+    "timestamp": "2026-11-03T19:24:11.977Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-TOGS",
+    "timestamp": "2026-11-03T19:24:15.004Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-TWS9",
+    "timestamp": "2026-11-03T19:24:25.785Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

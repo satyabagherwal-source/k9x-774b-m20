@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T19:15:19.313Z",
-    "lastVerified": "2026-11-03T19:15:19.313Z",
+    "lastChecked": "2026-11-03T19:24:28.356Z",
+    "lastVerified": "2026-11-03T19:24:28.356Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T18:47:48.340Z",
-    "lastVerified": "2026-11-03T18:47:48.340Z",
+    "lastChecked": "2026-11-03T19:24:20.287Z",
+    "lastVerified": "2026-11-03T19:24:20.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -874,9 +874,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-03T13:05:03.482Z",
+    "lastChecked": "2026-11-03T19:24:15.240Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-03T13:05:03.482Z"
+    "lastVerified": "2026-11-03T19:24:15.240Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2660,9 +2660,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-10-31T22:39:55.596Z",
+    "lastChecked": "2026-11-03T19:24:12.715Z",
     "revisionIdentifier": "43ce9031",
-    "lastVerified": "2026-10-31T22:39:55.596Z"
+    "lastVerified": "2026-11-03T19:24:12.715Z"
   },
   "crate-crate": {
     "name": "crate",
@@ -7567,14 +7567,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T21:46:12.552Z",
-    "lastVerified": "2026-10-31T21:46:12.552Z",
+    "lastChecked": "2026-11-03T19:24:23.514Z",
+    "lastVerified": "2026-11-03T19:24:23.514Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "07516f4ce856f9be38f54c4b578225c19a23f26be4610b7f68b11eb272c55d90",
+    "contentHash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8506,12 +8506,12 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T17:36:56.690Z",
-    "lastVerified": "2026-10-31T17:36:56.690Z",
+    "lastChecked": "2026-11-03T19:24:09.414Z",
+    "lastVerified": "2026-11-03T19:24:09.414Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
+    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -10203,14 +10203,14 @@
     "officialUrl": "https://github.com/scrapy/scrapy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T08:01:54.327Z",
-    "lastVerified": "2026-10-30T08:01:54.327Z",
+    "lastChecked": "2026-11-03T19:24:12.966Z",
+    "lastVerified": "2026-11-03T19:24:12.966Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11367,9 +11367,9 @@
   "rafsoh-dimeapp": {
     "name": "dimeApp",
     "officialUrl": "https://github.com/rafsoh/dimeApp",
-    "lastChecked": "2026-10-30T19:35:46.699Z",
+    "lastChecked": "2026-11-03T19:24:10.268Z",
     "revisionIdentifier": "0463cb8c",
-    "lastVerified": "2026-10-30T19:35:46.699Z"
+    "lastVerified": "2026-11-03T19:24:10.268Z"
   },
   "preactjs-preact": {
     "name": "preactjs/preact",

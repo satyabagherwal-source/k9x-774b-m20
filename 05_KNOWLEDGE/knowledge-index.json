@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T19:15:16.663Z",
+  "last_updated": "2026-11-03T19:24:25.700Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -70451,8 +70451,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "012e1f0c",
-      "content_hash": "07516f4ce856f9be38f54c4b578225c19a23f26be4610b7f68b11eb272c55d90",
+      "source_version": "5760af6f",
+      "content_hash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -70535,6 +70535,11 @@
           "number": 6335,
           "title": "snapshot): restore single files using commit IDs (#6840)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6591,
+          "title": "pathlock): preserve independent holders across handoff and recovery (#6895)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70542,7 +70547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:46:13.063Z",
+      "verified_at": "2026-11-03T19:24:25.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71023,8 +71028,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "64854199",
-      "content_hash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
+      "source_version": "c7606f50",
+      "content_hash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -71077,6 +71082,11 @@
           "number": 6266,
           "title": "Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6589,
+          "title": "build(docker): copy only Rust inputs into the cargo stage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71084,7 +71094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:36:59.024Z",
+      "verified_at": "2026-11-03T19:24:11.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73263,8 +73273,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "71e4b2b0",
-      "content_hash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
+      "source_version": "2d22bf9a",
+      "content_hash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -73298,6 +73308,11 @@
           "number": 5671,
           "title": "Ephemeral File-Backed Streaming with Exception-Safe Cleanup and Quota Guards",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6590,
+          "title": "the UserAgentMiddleware docs anchor (#8453)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73305,7 +73320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:04:03.830Z",
+      "verified_at": "2026-11-03T19:24:14.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169898,6 +169913,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T19:15:16.641Z"
+    },
+    "rule-6589": {
+      "learning_id": "rule-6589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6589,
+      "title": "build(docker): copy only Rust inputs into the cargo stage",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "c7606f50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:24:11.873Z"
+    },
+    "rule-6590": {
+      "learning_id": "rule-6590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6590,
+      "title": "the UserAgentMiddleware docs anchor (#8453)",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "2d22bf9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:24:14.868Z"
+    },
+    "rule-6591": {
+      "learning_id": "rule-6591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6591,
+      "title": "pathlock): preserve independent holders across handoff and recovery (#6895)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "5760af6f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:24:25.678Z"
     }
   },
   "aliases": {
