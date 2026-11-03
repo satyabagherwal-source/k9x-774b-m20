@@ -6978,3 +6978,7 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `18430ef4` | Multi-dimensional audit evidence | 2026-11-03T18:22:50.692Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `49e6d826` | Multi-dimensional audit evidence | 2026-11-03T18:22:57.802Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `0ab78e2d` | Multi-dimensional audit evidence | 2026-11-03T18:30:15.996Z |
+| `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `43de040a` | Multi-dimensional audit evidence | 2026-11-03T18:47:40.497Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `07758a25` | Multi-dimensional audit evidence | 2026-11-03T18:47:40.976Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `72da9dc9` | Multi-dimensional audit evidence | 2026-11-03T18:47:51.086Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `f9446abf` | Multi-dimensional audit evidence | 2026-11-03T18:47:57.745Z |

@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "1f40f8ba",
+    "sourceVersion": "72da9dc9",
     "license": "Apache-2.0",
-    "contentHash": "0fc1be6f4728287b7a8556b46b634f3a00030e49b09a86b8d56b92408f244ece",
-    "lastHarvestedAt": "2026-10-30T10:40:58.780Z",
+    "contentHash": "97decb14dd3b3ac24de22154e20db1757bd8db678830d4252f1e53bc4ddb6979",
+    "lastHarvestedAt": "2026-11-03T18:47:51.086Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "8193b024",
+    "sourceVersion": "f9446abf",
     "license": "MIT",
-    "contentHash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
-    "lastHarvestedAt": "2026-10-31T21:10:38.499Z",
+    "contentHash": "97944d9903aa8551151e715c209020871dc0d377c9502ad7afcbcf5e1eaa3eae",
+    "lastHarvestedAt": "2026-11-03T18:47:57.745Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "57ff303c",
+    "sourceVersion": "07758a25",
     "license": "Apache-2.0",
-    "contentHash": "b4de6ae48e5df2afcddd961e04b1ae98d75d0a717b50f81fe75e141b1884496b",
-    "lastHarvestedAt": "2026-10-31T17:14:12.165Z",
+    "contentHash": "2d8d0f2ec94bf8d2e2a2832374042c7cf2448f3cd771ac10608da0cdd14f786e",
+    "lastHarvestedAt": "2026-11-03T18:47:40.976Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -9953,10 +9953,10 @@
     "repository": "pointfreeco/sqlite-data",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/sqlite-data",
-    "sourceVersion": "37c461a8",
+    "sourceVersion": "43de040a",
     "license": "MIT",
-    "contentHash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
-    "lastHarvestedAt": "2026-10-20T02:09:31.320Z",
+    "contentHash": "3e5fdbb0aedc1f8ca28c37fa89130585f524f232844f0e0d196a5da7b0afc299",
+    "lastHarvestedAt": "2026-11-03T18:47:40.497Z",
     "learningId": "learn-github-pointfreeco-sqlite-data"
   },
   "sveltejs-svelte": {

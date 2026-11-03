@@ -6969,3 +6969,7 @@
 | `CYCLE-20261103-MPMP` | `2026-11-03T18:22:50.689Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6574` | Yes (`2e3b48d6...`) |
 | `CYCLE-20261103-MV46` | `2026-11-03T18:22:57.798Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6575` | Yes (`bd0bb4eb...`) |
 | `CYCLE-20261103-W988` | `2026-11-03T18:30:15.992Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6576` | Yes (`f01722f4...`) |
+| `CYCLE-20261103-IN66` | `2026-11-03T18:47:40.494Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6577` | Yes (`3e5fdbb0...`) |
+| `CYCLE-20261103-INJH` | `2026-11-03T18:47:40.973Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6578` | Yes (`2d8d0f2e...`) |
+| `CYCLE-20261103-IVCA` | `2026-11-03T18:47:51.082Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6579` | Yes (`97decb14...`) |
+| `CYCLE-20261103-J0H9` | `2026-11-03T18:47:57.741Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6580` | Yes (`97944d99...`) |

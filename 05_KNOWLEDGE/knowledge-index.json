@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T18:30:15.911Z",
+  "last_updated": "2026-11-03T18:47:57.659Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47014,14 +47014,19 @@
       "slug": "pointfreeco-sqlite-data",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/sqlite-data",
-      "source_version": "37c461a8",
-      "content_hash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
+      "source_version": "43de040a",
+      "content_hash": "3e5fdbb0aedc1f8ca28c37fa89130585f524f232844f0e0d196a5da7b0afc299",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "promoted_rules": [
         {
           "number": 2986,
           "title": "Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6577,
+          "title": "sorting of records when processing batches. (#571)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47030,7 +47035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:09:31.249Z",
+      "verified_at": "2026-11-03T18:47:40.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52697,8 +52702,8 @@
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "1f40f8ba",
-      "content_hash": "0fc1be6f4728287b7a8556b46b634f3a00030e49b09a86b8d56b92408f244ece",
+      "source_version": "72da9dc9",
+      "content_hash": "97decb14dd3b3ac24de22154e20db1757bd8db678830d4252f1e53bc4ddb6979",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "promoted_rules": [
@@ -52741,6 +52746,11 @@
           "number": 5731,
           "title": "Merge pull request #1728 from smallstep/dependabot/go_modules/github.com/go-jose",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6579,
+          "title": "Merge pull request #1730 from smallstep/dependabot/go_modules/github.com/fxamack",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52748,7 +52758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:40:58.682Z",
+      "verified_at": "2026-11-03T18:47:50.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57300,13 +57310,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "31315b3d",
-      "content_hash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "f9446abf",
+      "content_hash": "97944d9903aa8551151e715c209020871dc0d377c9502ad7afcbcf5e1eaa3eae",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -57437,6 +57447,11 @@
           "number": 6368,
           "title": "Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6580,
+          "title": "core/security: Add role catalog",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57444,7 +57459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:49:59.279Z",
+      "verified_at": "2026-11-03T18:47:57.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152318,8 +152333,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "57ff303c",
-      "content_hash": "b4de6ae48e5df2afcddd961e04b1ae98d75d0a717b50f81fe75e141b1884496b",
+      "source_version": "07758a25",
+      "content_hash": "2d8d0f2ec94bf8d2e2a2832374042c7cf2448f3cd771ac10608da0cdd14f786e",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -152332,6 +152347,11 @@
           "number": 6262,
           "title": "cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6578,
+          "title": "Catch OutOfMemory in IoUringBackend::isAvailable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -152339,7 +152359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:14:12.102Z",
+      "verified_at": "2026-11-03T18:47:40.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169642,6 +169662,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T18:30:15.889Z"
+    },
+    "rule-6577": {
+      "learning_id": "rule-6577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6577,
+      "title": "sorting of records when processing batches. (#571)",
+      "source_url": "https://github.com/pointfreeco/sqlite-data",
+      "source_version": "43de040a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:47:40.371Z"
+    },
+    "rule-6578": {
+      "learning_id": "rule-6578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6578,
+      "title": "Catch OutOfMemory in IoUringBackend::isAvailable",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "07758a25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:47:40.886Z"
+    },
+    "rule-6579": {
+      "learning_id": "rule-6579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6579,
+      "title": "Merge pull request #1730 from smallstep/dependabot/go_modules/github.com/fxamack",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "72da9dc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:47:50.995Z"
+    },
+    "rule-6580": {
+      "learning_id": "rule-6580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6580,
+      "title": "core/security: Add role catalog",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "f9446abf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:47:57.641Z"
     }
   },
   "aliases": {

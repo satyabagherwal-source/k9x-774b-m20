@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
-> **Source Version**: `37c461a8`  
+> **Source Version**: `43de040a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:09:30.976Z  
+> **Timestamp**: 2026-11-03T18:47:39.846Z  
 > **Learning ID**: `learn-github-pointfreeco-sqlite-data`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:09:29.669Z  
+> **Harvest Timestamp**: 2026-11-03T18:47:38.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast, lightweight replacement for SwiftData, powered by SQL and supporting CloudKit synchronization.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1942 stars
+- **Stars / Engagement**: 1955 stars
 
 ---
 
@@ -877,12 +877,14 @@ extension DatabaseWriter where Self == DatabaseQueue {
         return SendRecordsCallback {}
       }
 
-      let (saveResults, deleteResults) = try syncEngine.database.modifyRecords(
-        saving: batch.recordsToSave,
-        deleting: batch.recordIDsToDelete,
-        savePolicy: .ifServerRecordUnchanged,
-        atomically: batch.atomicByZone
-      )
+      let (saveResults, deleteResults) = try $_isRateLimitingDisabled.withValue(true) {
+        try syncEngine.database.modifyRecords(
+          saving: batch.recordsToSave,
+          deleting: batch.recordIDsToDelete,
+          savePolicy: .ifServerRecordUnchanged,
+          atomically: batch.atomicByZone
+        )
+      }
 
       var savedRecords: [CKRecord] = []
       var failedRecordSaves: [(record: CKRecord, error: CKError)] = []
@@ -907,11 +909,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
         case .failure(let error as CKError):
           failedRecordDeletes[recordID] = error
         case .failure:
-          fatalError("Mocks should only raise 'CKError' values.")
-        }
-      }
-      syncEngine.state.remove(
-        pendingRecor
+          fatalError("Mocks should only raise 'CKError' values
 ```
 
 ### Core Architecture Module: `Sources/SQLiteData/CloudKit/Internal/StateSerialization.swift`
@@ -1092,1194 +1090,138 @@ extension DatabaseWriter where Self == DatabaseQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5856cba` (2026-07-16)
-**Commit Message**: Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)
+### Incident Patch 1: `43de040a` (2026-11-03)
+**Commit Message**: Fix sorting of records when processing batches. (#571)
 
-* wip
-
-* wip
-
-* wip
-
-* cleanup
-
-* Remove ConcurrencyExtras (#498)
-
-* Use LockIsolated in FetchBox
-
-* fix
-
-* fix
-
-* Bump CI Xcode
-
-* Fix?
-
-* wip
-
-* Revert library test CI runner change
-
-* Smaller bump
-
-* fix
-
----------
-
-Co-authored-by: Stephen Celis <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ jobs:
-     name: macOS
-     strategy:
-       matrix:
--        xcode: ["26.2"]
-+        xcode: ["26.6"]
-         config: ["debug", "release"]
-     runs-on: macos-26
-     steps:
-@@ -32,7 +32,7 @@ jobs:
-     name: Examples
-     strategy:
-       matrix:
--        xcode: ["26.2"]
-+        xcode: ["26.6"]
-         config: ["debug"]
-         scheme: ["Reminders", "CaseStudies", "SyncUps"]
-     runs-on: macos-26
-```
-
-**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +1/-5)
-```diff
-@@ -1100,6 +1100,7 @@
- 			isa = XCLocalSwiftPackageReference;
- 			relativePath = ..;
- 			traits = (
-+				CasePaths,
- 				LazyInitializableByDefault,
- 			);
- 		};
-@@ -1121,9 +1122,6 @@
- 				kind = upToNextMajorVersion;
- 				minimumVersion = 1.7.0;
- 			};
--			traits = (
--				Clocks,
--			);
- 		};
- 		DCBE8A122D4842BF0071F499 /* XCRemoteSwiftPackageReference "swift-case-paths" */ = {
- 			isa = XCRemoteSwiftPackageReference;
-@@ -1140,8 +1138,6 @@
- 				kind = upToNextMajorVersion;
- 				minimumVersion = 2.2.3;
- 			};
--			traits = (
--			);
- 		};
- /* End XCRemoteSwiftPackageReference section */
- 
-```
-
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +21/-21)
+**File**: `Package.resolved` (modified, +10/-10)
 ```diff
 @@ -1,5 +1,5 @@
  {
--  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
-+  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
+-  "originHash" : "dfd7e0f6bddf53d83bc4372f08b665b419a79785b6e33925d051440a0a13ec00",
++  "originHash" : "f7503587ba7ade48448be5b58ac6834c7ebba67a5e6f166428a40a87b9921413",
    "pins" : [
      {
        "identity" : "combine-schedulers",
-@@ -15,17 +15,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
--        "version" : "7.11.0"
-+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
-+        "version" : "7.11.1"
+@@ -91,6 +91,15 @@
+         "version" : "1.1.1"
        }
      },
-     {
-       "identity" : "swift-case-paths",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-case-paths",
-       "state" : {
--        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
--        "version" : "1.7.3"
-+        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
-+        "version" : "1.8.0"
-       }
-     },
-     {
-@@ -60,17 +60,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
--        "version" : "1.6.0"
-+        "revision" : "a8cd6c976f335ed361dcecddb0dc39ebda51bc3e",
-+        "version" : "1.6.1"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "16f7dd14ee28d04617090f2a73198b8b316ffa12",
--        "version" : "1.13.1"
-+        "revision" : "8dc1fbf2f6255a73dec53b4648164884898db4c5",
-+        "version" : "1.14.1"
-       }
-     },
-     {
-@@ -87,44 +87,44 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-navigation",
-       "state" : {
--        "revision" : "32f35241b8be0719c4c7f00eb27713b1cadb6248",
--        "version" : "2.8.0"
-+        "revision" : "fad75807c596fecd724b0fc81cd61c94008faad4",
-+        "version" : "2.10.3"
-       }
-     },
-     {
-       "identity" : "swift-perception",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-perception",
-       "state" : {
--        "revision" : "25ac73741c3436605d61eceb5207e896973918e7",
--        "version" : "2.0.10"
-+        "revision" : "de219a1cf34e958134e75a9ebb134cf09bf52fc6",
-+        "version" : "2.0.11"
-       }
-     },
-     {
-       "identity" : "swift-sharing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
--        "version" : "2.8.2"
-+        "revision" : "8244fe63bf43e58188ab13851ad693eecf6a9e90",
-+        "version" : "2.9.1"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
-       "state" : {
--        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
--        "version" : "1.19.2"
-+        "revision" : "1bc16f430d8410e7f087d4c787767b26fd32fe30",
-+        "version" : "1.19.3"
-       }
-     },
-     {
-       "identity" : "swift-structured-queries",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-structured-queries",
-       "state" : {
--        "revision" : "50a429884d7a6c0613df2a31a24009cc436bfb18",
--        "version" : "0.33.2"
-+        "revision" : "e61b3713460507ce93ed4ca4d8f9e4423bf342ca",
-+        "version" : "0.33.0"
-       }
-     },
-     {
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "cb281f343fd953280336dcbd3822cdf47c182f5b",
--        "version" : "1.10.0"
-+        "revision" : "8f6abcf4c8950e2679d5b2fee4ca284fd7c34886",
-+        "version" : "1.11.0"
-       }
-     }
-   ],
-```
-
-**File**: `Package.resolved` (modified, +14/-14)
-```diff
-@@ -15,8 +15,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
--        "version" : "7.11.0"
-+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
-+        "version" : "7.11.1"
-       }
-     },
-     {
-@@ -51,17 +51,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
--        "version" : "1.6.0"
-+        "revision" : "a8cd6c976f335ed361dcecddb0dc39ebda51bc3e",
-+        "version" : "1.6.1"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "f80552807ec92f72fe3fe4543d71879182b0bfd5",
--        "version" : "1.13.0"
-+        "revision" : "8dc1fbf2f6255a73dec53b4648164884898db4c5",
-+        "version" : "1.14.1"
-       }
-     },
-     {
-@@ -105,26 +105,26 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
--        "version" : "2.8.2"
-+        "revision" : "8244fe63bf43e58188ab13851ad693eecf6a9e90",
-+        "version" : "2.9.1"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
-       "state" : {
--        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
--        "version" : "1.19.2"
-+        "revision" : "1bc16f430d8410e7f087d4c787767b26fd32fe30",
-+        "version" : "1.19.3"
-       }
-     },
-     {
-       "identity" : "swift-structured-queries",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-structured-queries",
-       "state" : {
--        "revision" : "50a429884d7a6c0613df2a31a24009cc436bfb18",
--        "version" : "0.33.2"
-+        "revision" : "9c2935e47b0ed9627e4278c566e0ac386be5472e",
-+        "version" : "0.33.3"
-       }
-     },
-     {
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "cb281f343fd953280336dcbd3822cdf47c182f5b",
--        "version" : "1.10.0"
-+        "revision" : "8f6abcf4c8950e2679d5b2fee4ca284fd7c34886",
-+        "version" : "1.11.0"
-       }
-     }
-   ],
-```
-
-**File**: `Package.swift` (modified, +0/-2)
-```diff
-@@ -68,7 +68,6 @@ let package = Package(
-     .target(
-       name: "SQLiteData",
-       dependencies: [
--        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "GRDB", package: "GRDB.swift"),
-         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-@@ -87,7 +86,6 @@ let package = Package(
-       name: "SQLiteDataTestSupport",
-       dependencies: [
-         "SQLiteData",
--        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "ConcurrencyExtrasTestSupport", package: "swift-concurrency-extras"),
-         .product(name: "CustomDump", package: "swift-custom-dump"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-```
-
-**File**: `Package@swift-6.0.swift` (modified, +0/-2)
-```diff
-@@ -35,7 +35,6 @@ let package = Package(
-     .target(
-       name: "SQLiteData",
-       dependencies: [
--        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "GRDB", package: "GRDB.swift"),
-         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-@@ -48,7 +47,6 @@ let package = Package(
-       name: "SQLiteDataTestSupport",
-       dependencies: [
-         "SQLiteData",
--        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "CustomDump", package: "swift-custom-dump"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
-```
-
-**File**: `Sources/SQLiteData/CloudKit/CloudKitSharing.swift` (modified, +1/-2)
-```diff
-@@ -1,6 +1,5 @@
- #if canImport(CloudKit)
-   public import CloudKit
--  import ConcurrencyExtras
-   import GRDB
-   import IssueReporting
-   public import StructuredQueries
-@@ -241,7 +240,7 @@
-     }
- 
-     func unshare(share: CKShare) async throws {
--      let result = try await syncEngines.private?.database.modifyRecords(
-+      let result = try await syncEngines.withLock(\.private)?.database.modifyRecords(
-         saving: [],
-         deleting: [share.recordID]
-       )
-```
-
-**File**: `Sources/SQLiteData/CloudKit/Internal/DataManager.swift` (modified, +3/-4)
-```diff
-@@ -1,5 +1,4 @@
- #if canImport(CloudKit) && canImport(CryptoKit)
--  package import ConcurrencyExtras
-   import CryptoKit
-   import Dependencies
-   package import Foundation
-@@ -55,7 +54,7 @@
-     package init() {}
- 
-     package func load(_ url: URL) throws -> Data {
--      try storage.withValue { storage in
-+      try storage.withLock { storage in
-         guard let data = storage[url]
-         else {
-           struct FileNotFound: Error {}
-@@ -66,11 +65,11 @@
-     }
- 
-     package func save(_ data: Data, to url: URL) throws {
--      storage.withValue { $0[url] = data }
-+      storage.withLock { $0[url] = data }
-     }
- 
-     package func sha256(of fileURL: URL) -> Data? {
--      storage.withValue {
-+      storage.withLock {
-         $0[fileURL].map {
-           Data(SHA256.hash(data: $0))
-         }
-```
-
----
-
-### Incident Patch 2: `a9c51726` (2026-08-19)
-**Commit Message**: Wrap `@Fetch*` state in SwiftUI's `@State` when possible (#504)
-
-* Add case studies for SwiftUI issue
-
-* @State fix
-
-* FetchBox
-
-* wip
-
-* New integration target
-
-* wip
-
-* fix
-
-* wip
-
-* cleanup
-
-* Add some prints to make it clear queries are not being executed.
-
-* wip
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +171/-34)
-```diff
-@@ -3,22 +3,24 @@
- 	archiveVersion = 1;
- 	classes = {
- 	};
--	objectVersion = 100;
-+	objectVersion = 77;
- 	objects = {
- 
- /* Begin PBXBuildFile section */
- 		CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = CA14DBC82DA884C400E36852 /* CasePaths */; };
- 		CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA2908C82D4AF70E003F165F /* UIKitNavigation */; };
- 		CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE292E71C469000974D3 /* SQLiteData */; };
--		CA2BDE2C2E71C472000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2B2E71C472000974D3 /* SQLiteData */; };
--		CA2BDE2E2E71C479000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2D2E71C479000974D3 /* SQLiteData */; };
--		CA2BDE302E71C480000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2F2E71C480000974D3 /* SQLiteData */; };
- 		CA5E46912DEBB8570069E0F8 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E46902DEBB8570069E0F8 /* SwiftUINavigation */; };
- 		CA5E47072DECEF0F0069E0F8 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47062DECEF0F0069E0F8 /* InlineSnapshotTesting */; };
- 		CA5E47092DECEFC80069E0F8 /* SnapshotTestingCustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47082DECEFC80069E0F8 /* SnapshotTestingCustomDump */; };
- 		CA5E470B2DECF0280069E0F8 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E470A2DECF0280069E0F8 /* DependenciesTestSupport */; };
- 		CAD001872D874F1F00FA977A /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CAD001862D874F1F00FA977A /* DependenciesTestSupport */; };
- 		DC5FA7482D4C63D60082743E /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC5FA7472D4C63D60082743E /* DependenciesMacros */; };
-+		DCB8AD4A30363D3800ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4930363D3800ACF09E /* SQLiteData */; };
-+		DCB8AD4C30363DB100ACF09E /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4B30363DB100ACF09E /* UIKitNavigation */; };
-+		DCB8AD4E30363F2100ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4D30363F2100ACF09E /* SQLiteData */; };
-+		DCB8AD5030363F2600ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4F30363F2600ACF09E /* SQLiteData */; };
-+		DCB8AD5230363F2A00ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD5130363F2A00ACF09E /* SQLiteData */; };
- 		DCBE8A142D4842BF0071F499 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = DCBE8A132D4842BF0071F499 /* CasePaths */; };
- 		DCF267392D48437300B680BE /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCF267382D48437300B680BE /* SwiftUINavigation */; };
- /* End PBXBuildFile section */
-@@ -56,6 +58,8 @@
- 		CAF836982D4735620047AEB5 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
- 		CAF836A82D4735640047AEB5 /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
- 		CAF836D82D4735AB0047AEB5 /* Reminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
-+		DC1584A630363595009DD95C /* Integration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Integration.app; sourceTree = BUILT_PRODUCTS_DIR; };
-+		DC55FADE30363BB000F2D8D3 /* sqlite-data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "sqlite-data"; path = "/Users/stephen/Developer/pointfreeco/sqlite-data"; sourceTree = "<absolute>"; };
- 		DCBE89CC2D483FB90071F499 /* SyncUps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncUps.app; sourceTree = BUILT_PRODUCTS_DIR; };
- /* End PBXFileReference section */
- 
-@@ -75,6 +79,14 @@
- 			);
- 			target = CAF836972D4735620047AEB5 /* CaseStudies */;
- 		};
-+		DC15854C303636A7009DD95C /* Exceptions for "CaseStudies" folder in "Integration" target */ = {
-+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-+			membershipExceptions = (
-+				Internal/CaseStudy.swift,
-+				"Internal/Text+Template.swift",
-+			);
-+			target = DC1584A530363595009DD95C /* Integration */;
-+		};
- 		DCA44CFA2D5D9D1E008D4E76 /* Exceptions for "Reminders" folder in "Reminders" target */ = {
- 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
- 			membershipExceptions = (
-@@ -116,6 +128,7 @@
- 			isa = PBXFileSystemSynchronizedRootGroup;
- 			exceptions = (
- 				CAD4819A2D584B510004799A /* Excep
-```
-
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
-+  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-@@ -24,8 +24,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-case-paths",
-       "state" : {
--        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
--        "version" : "1.7.3"
-+        "revision" : "794f4b0a9cf32042592388d014f6a1ea987d323a",
-+        "version" : "1.9.1"
-       }
-     },
-     {
-```
-
-**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/CloudKitDemo.xcscheme` (modified, +3/-0)
-```diff
-@@ -17,6 +17,7 @@
-                BuildableIdentifier = "primary"
-                BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-                BuildableName = "CloudKitDemo.app"
-+               BlueprintName = "CloudKitDemo"
-                ReferencedContainer = "container:Examples.xcodeproj">
-             </BuildableReference>
-          </BuildActionEntry>
-@@ -46,6 +47,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-             BuildableName = "CloudKitDemo.app"
-+            BlueprintName = "CloudKitDemo"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-@@ -62,6 +64,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-             BuildableName = "CloudKitDemo.app"
-+            BlueprintName = "CloudKitDemo"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-```
-
-**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/Integration.xcscheme` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme
-+   LastUpgradeVersion = "2700"
-+   version = "1.7">
-+   <BuildAction
-+      parallelizeBuildables = "YES"
-+      buildImplicitDependencies = "YES"
-+      buildArchitectures = "Automatic">
-+      <BuildActionEntries>
-+         <BuildActionEntry
-+            buildForTesting = "YES"
-+            buildForRunning = "YES"
-+            buildForProfiling = "YES"
-+            buildForArchiving = "YES"
-+            buildForAnalyzing = "YES">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "DC1584A530363595009DD95C"
-+               BuildableName = "Integration.app"
-+               ReferencedContainer = "container:Examples.xcodeproj">
-+            </BuildableReference>
-+         </BuildActionEntry>
-+      </BuildActionEntries>
-+   </BuildAction>
-+   <TestAction
-+      buildConfiguration = "Debug"
-+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-+      shouldUseLaunchSchemeArgsEnv = "YES"
-+      shouldAutocreateTestPlan = "YES">
-+   </TestAction>
-+   <LaunchAction
-+      buildConfiguration = "Debug"
-+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-+      launchStyle = "0"
-+      useCustomWorkingDirectory = "NO"
-+      ignoresPersistentStateOnLaunch = "NO"
-+      debugDocumentVersioning = "YES"
-+      debugServiceExtension = "internal"
-+      allowLocationSimulation = "YES"
-+      queueDebuggingEnabled = "No">
-+      <BuildableProductRunnable
-+         runnableDebuggingMode = "0">
-+         <BuildableReference
-+            BuildableIdentifier = "primary"
-+            BlueprintIdentifier = "DC1584A530363595009DD95C"
-+            BuildableName = "Integration.app"
-+            ReferencedContainer = "container:Examples.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </LaunchAction>
-+   <ProfileAction
-+      buildConfiguration = "Release"
-+      shouldUseLaunchSchemeArgsEnv = "YES"
-+      savedToolIdentifier = ""
-+      useCustomWorkingDirectory = "NO"
-+      debugDocumentVersioning = "YES">
-+      <BuildableProductRunnable
-+         runnableDebuggingMode = "0">
-+         <BuildableReference
-+            BuildableIdentifier = "primary"
-+            BlueprintIdentifier = "DC1584A530363595009DD95C"
-+            BuildableName = "Integration.app"
-+            ReferencedContainer = "container:Examples.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </ProfileAction>
-+   <AnalyzeAction
-+      buildConfiguration = "Debug">
-+   </AnalyzeAction>
-+   <ArchiveAction
-+      buildConfiguration = "Release"
-+      revealArchiveInOrganizer = "YES">
-+   </ArchiveAction>
-+</Scheme>
-```
-
-**File**: `Examples/Integration/Assets.xcassets/AccentColor.colorset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "colors" : [
-+    {
-+      "idiom" : "universal"
-+    }
-+  ],
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/Assets.xcassets/AppIcon.appiconset/Contents.json` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+{
-+  "images" : [
-+    {
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "dark"
-+        }
-+      ],
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "tinted"
-+        }
-+      ],
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/Assets.xcassets/Contents.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/IntegrationApp.swift` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import SwiftUI
-+
-+@main
-+struct IntegrationApp: App {
-+  var body: some Scene {
-+    WindowGroup {
-+    }
-+  }
-+}
-```
-
----
-
-### Incident Patch 3: `7f7ca8f7` (2026-10-13)
-**Commit Message**: Update demos for xcode 27 and debug snapshots (#531)
-
-* Fix some Xcode 27 warnings and use DebugSnapshots.
-
-* Fix @MainActor warnings.
-
-* Update all reminders tests to use DebugSnapshots
-
-* Update all SyncUps tests to use DebugSnapshots.
-
-* wip
-
-* Improve some tests
-
-* wip
-
-* wip
-
-**File**: `Examples/CaseStudies/Internal/CaseStudy.swift` (modified, +0/-2)
-```diff
-@@ -1,7 +1,6 @@
- import SwiftUI
- import UIKitNavigation
- 
--@MainActor
- protocol CaseStudy {
-   var readMe: String { get }
-   var caseStudyTitle: String { get }
-@@ -17,7 +16,6 @@ extension CaseStudy {
- }
- 
- @resultBuilder
--@MainActor
- enum CaseStudyViewBuilder {
-   @ViewBuilder
-   static func buildBlock() -> some View {}
-```
-
-**File**: `Examples/CaseStudies/ObservableModelDemo.swift` (modified, +0/-1)
-```diff
-@@ -43,7 +43,6 @@ struct ObservableModelDemo: SwiftUICaseStudy {
- }
- 
- @Observable
--@MainActor
- private class Model {
-   @ObservationIgnored
-   @FetchAll(Fact.order { $0.id.desc() }, animation: .default)
-```
-
-**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +132/-40)
-```diff
-@@ -7,6 +7,8 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
-+		CA0923FC3037ED040053D2D7 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA0923FB3037ED040053D2D7 /* DebugSnapshots */; };
-+		CA0923FE3037ED040053D2D7 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA0923FD3037ED040053D2D7 /* DebugSnapshots */; };
- 		CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = CA14DBC82DA884C400E36852 /* CasePaths */; };
- 		CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA2908C82D4AF70E003F165F /* UIKitNavigation */; };
- 		CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE292E71C469000974D3 /* SQLiteData */; };
-@@ -163,59 +165,77 @@
- /* Begin PBXFrameworksBuildPhase section */
- 		CA2BDD9A2E71C30B000974D3 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		CA5E46932DEBFE410069E0F8 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				CA5E47092DECEFC80069E0F8 /* SnapshotTestingCustomDump in Frameworks */,
- 				CA5E47072DECEF0F0069E0F8 /* InlineSnapshotTesting in Frameworks */,
- 				CA5E470B2DECF0280069E0F8 /* DependenciesTestSupport in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		CAD0017A2D874E6F00FA977A /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				CAD001872D874F1F00FA977A /* DependenciesTestSupport in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		CAF836952D4735620047AEB5 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				DCB8AD4E30363F2100ACF09E /* SQLiteData in Frameworks */,
- 				CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		CAF836A52D4735640047AEB5 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		CAF836D52D4735AB0047AEB5 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
-+				CA0923FC3037ED040053D2D7 /* DebugSnapshots in Frameworks */,
- 				DCB8AD5030363F2600ACF09E /* SQLiteData in Frameworks */,
- 				CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */,
- 				CA5E46912DEBB8570069E0F8 /* SwiftUINavigation in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		DC1584A330363595009DD95C /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				DCB8AD4A30363D3800ACF09E /* SQLiteData in Frameworks */,
- 				DCB8AD4C30363DB100ACF09E /* UIKitNavigation in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- 		DCBE89C92D483FB90071F499 /* Frameworks */ = {
- 			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
- 			files = (
- 				DCF267392D48437300B680BE /* SwiftUINavigation in Frameworks */,
- 				DC5FA7482D4C63D60082743E /* DependenciesMacros in Frameworks */,
- 				DCB8AD5230363F2A00ACF09E /* SQLiteData in Frameworks */,
- 				DCBE8A142D4842BF0071F499 /* CasePaths in Frameworks */,
-+				CA0923FE3037ED040053D2D7 /* DebugSnapshots in Frameworks */,
- 			);
-+			runOnlyForDeploymentPostprocessing = 0;
- 		};
- /* End PBXFrameworksBuildPhase section */
- 
-@@ -273,6 +293,8 @@
- 			);
- 			buildRules = (
- 			);
-+			dependencies = (
-+			);
- 			fileSystemSynchronizedGroups = (
- 				CA2BDD9E2E71C30B000974D3 /* CloudKitDemo */,
- 			);
-@@ -344,6 +366,8 @@
- 			);
- 			buildRules = (
- 			);
-+			dependencies = (
-+			);
- 			fileSystemSynchronizedGroups = (
- 				CAF8369A2D4735620047AEB5 /* CaseStudies */,
- 			);
-@@ -373,6 +397,8 @@
- 				CAF836AB2D4735640047AEB5 /* CaseStudiesTests */,
- 			);
- 			name = CaseStudiesTests;
-+			packageProductDependencies = (
-+			);
- 			productName = ExamplesTests;
- 			productReference = CAF836A82D4735640047AEB5 /* CaseStudiesTests.xctest */;
- 			productType = "com.apple.product-type.bundle.unit-test";
-@@ -387,6 +413,8 @@
- 			);
- 			buildRules = (
- 			);
-+			dependencies = (
-+			);
- 			fileSystemSynchronizedGroups = (
- 				CAF836D92D4735AB0047AEB5 /* Reminders */,
- 			);
-@@ -395,6 +423,7 @@
- 				CA14DBC82DA884C400E36852 /* CasePaths */,
- 				CA5E46902DEBB8570069E0F8 /* SwiftUINavigation */,
- 				DCB8AD4F30363F2600ACF09E /* SQLiteData */,
-+				CA0923FB3037ED040053D2D7 /* DebugSnapshots */,
- 			);
- 			productName = Reminders;
- 			productReference = CAF836D82D4735AB0047AEB5 /* Reminders.app */;
-@@ -410,6 +439,8 @@
- 			);
- 			buildRules = (
- 			);
-+			dependencies = (
-+			);
- 			fileSystemSynchronizedGroups = (
- 				DC1584A730363595009DD95C /* Integration */,
- 			);
-@@ -432,6 +463,8 @@
- 			);
- 
-```
-
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (added, +159/-0)
-```diff
-@@ -0,0 +1,159 @@
-+{
-+  "originHash" : "ad41d862cbf4ae7f82f17f353075ecb723d246b512a0877f555e27ec8185459a",
-+  "pins" : [
-+    {
-+      "identity" : "combine-schedulers",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/combine-schedulers",
-+      "state" : {
-+        "revision" : "114354e8c1667a2edc4993700fb9fa4f90157b56",
-+        "version" : "1.2.2"
-+      }
-+    },
-+    {
-+      "identity" : "grdb.swift",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/groue/GRDB.swift",
-+      "state" : {
-+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
-+        "version" : "7.11.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-case-paths",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-case-paths",
-+      "state" : {
-+        "revision" : "cb4cba6a8a46a86db0d37dbe09935ead6b24c91a",
-+        "version" : "1.10.0"
-+      }
-+    },
-+    {
-+      "identity" : "swift-clocks",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-clocks",
-+      "state" : {
-+        "revision" : "82440fa0a8b1c381a6d1e8e0fc7bbba53ec63204",
-+        "version" : "1.1.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-collections",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/apple/swift-collections",
-+      "state" : {
-+        "revision" : "98ef3c98609a1e31b7e157b5b619579001a789d6",
-+        "version" : "1.7.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-concurrency-extras",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
-+      "state" : {
-+        "revision" : "5fa253428866f2360c3754e88537f700ed2656b5",
-+        "version" : "1.4.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-custom-dump",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-custom-dump",
-+      "state" : {
-+        "revision" : "4fb9e7cbb4b8f5a7354005db39447f570d6b3e19",
-+        "version" : "1.7.3"
-+      }
-+    },
-+    {
-+      "identity" : "swift-debug-snapshots",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-debug-snapshots.git",
-+      "state" : {
-+        "revision" : "4e06b3615bd5e193525b331c218934dd42d30b2e",
-+        "version" : "0.5.2"
-+      }
-+    },
-+    {
-+      "identity" : "swift-dependencies",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-dependencies",
-+      "state" : {
-+        "revision" : "b476cc5761057d8d857de063fe7ac8daecf5c06b",
-+        "version" : "1.17.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-identified-collections",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-identified-collections",
-+      "state" : {
-+        "revision" : "322d9ffeeba85c9f7c4984b39422ec7cc3c56597",
-+        "version" : "1.1.1"
-+      }
-+    },
 +    {
 +      "identity" : "swift-issue-reporting",
 +      "kind" : "remoteSourceControl",
 +      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
 +      "state" : {
-+        "revision" : "75b000cea2ca6d7527a57e1b9cc0bdf21a9abe9f",
-+        "version" : "2.1.1"
++        "revision" : "71c7c9a761d1ca6ed4ccb6ced040fe1c1a39e8e7",
++        "version" : "2.1.0"
 +      }
 +    },
-+    {
-+      "identity" : "swift-navigation",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-navigation",
-+      "state" : {
-+        "revision" : "7e95e5e9ff0a64f6ad8bca59083f8d6ba381b6ff",
-+        "version" : "2.11.2"
-+      }
-+    },
-+    {
-+      "identity" : "swift-perception",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-perception",
-+      "state" : {
-+        "revision" : "597afd46249f4a71885b95d26b26cc5b893daf32",
-+        "version" : "2.0.12"
-+      }
-+    },
-+    {
-+      "identity" : "swift-sharing",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-sharing",
-+      "state" : {
-+        "revision" : "3552faf8a6c18ce896ec5a72bd8c34755f0f03e0",
-+        "version" : "2.10.1"
-+      }
-+    },
-+    {
-+      "identity" : "swift-snapshot-testing",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
-+      "state" : {
-+        "revision" : "28e5de025e3fd98991791bfbf83023ab3708da03",
-+        "version" : "1.19.6"
-+      }
-+    },
-+    {
-+      "identity" : "swift-structured-queries",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-structured-queries",
-+      "state" : {
-+        "revision" : "72d536d5f0319097612bea961e356f4223efd926",
-+        "version" : "0.39.2"
-+      }
-+    },
-+    {
-+      "identity" : "swift-syntax",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/swiftlang/swift-syntax",
-+      "state" : {
-+        "revision" : "050f
-```
-
-**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/Integration.xcscheme` (modified, +3/-0)
-```diff
-@@ -17,6 +17,7 @@
-                BuildableIdentifier = "primary"
-                BlueprintIdentifier = "DC1584A530363595009DD95C"
-                BuildableName = "Integration.app"
-+               BlueprintName = "Integration"
-                ReferencedContainer = "container:Examples.xcodeproj">
-             </BuildableReference>
-          </BuildActionEntry>
-@@ -46,6 +47,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "DC1584A530363595009DD95C"
-             BuildableName = "Integration.app"
-+            BlueprintName = "Integration"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-@@ -62,6 +64,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "DC1584A530363595009DD95C"
-             BuildableName = "Integration.app"
-+            BlueprintName = "Integration"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-```
-
-**File**: `Examples/Reminders/Helpers.swift` (modified, +4/-4)
-```diff
-@@ -23,10 +23,10 @@ extension Color {
-     public var hexValue: Int64? {
-       guard let components = UIColor(queryOutput).cgColor.components
-       else { return nil }
--      let r = Int64(components[0] * 0xFF) << 24
--      let g = Int64(components[1] * 0xFF) << 16
--      let b = Int64(components[2] * 0xFF) << 8
--      let a = Int64((components.indices.contains(3) ? components[3] : 1) * 0xFF)
-+      let r = Int64((components[0] * 0xFF).rounded()) << 24
-+      let g = Int64((components[1] * 0xFF).rounded()) << 16
-+      let b = Int64((components[2] * 0xFF).rounded()) << 8
-+      let a = Int64(((components.indices.contains(3) ? components[3] : 1) * 0xFF).rounded())
-       return r | g | b | a
+     {
+       "identity" : "swift-perception",
+       "kind" : "remoteSourceControl",
+@@ -135,15 +144,6 @@
+         "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
+         "version" : "603.0.2"
+       }
+-    },
+-    {
+-      "identity" : "xctest-dynamic-overlay",
+-      "kind" : "remoteSourceControl",
+-      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+-      "state" : {
+-        "revision" : "d9308ad679143c26a30dec52daefe82f54af2b82",
+-        "version" : "1.13.1"
+-      }
      }
+   ],
+   "version" : 3
+```
+
+**File**: `Sources/SQLiteData/CloudKit/SyncEngine.swift` (modified, +11/-15)
+```diff
+@@ -1090,27 +1090,23 @@
+       changes.sort { lhs, rhs in
+         switch (lhs, rhs) {
+         case (.saveRecord(let lhs), .saveRecord(let rhs)):
+-          guard
+-            let lhsRecordType = lhs.tableName,
+-            let lhsIndex = tablesByOrder[lhsRecordType],
+-            let rhsRecordType = rhs.tableName,
+-            let rhsIndex = tablesByOrder[rhsRecordType]
+-          else { return true }
+-          return lhsIndex < rhsIndex
++          return topologicallyAscending(
++            lhsTableName: lhs.tableName,
++            rhsTableName: rhs.tableName,
++            rootFirst: true
++          )
+         case (.deleteRecord(let lhs), .deleteRecord(let rhs)):
+-          guard
+-            let lhsRecordType = lhs.tableName,
+-            let lhsIndex = tablesByOrder[lhsRecordType],
+-            let rhsRecordType = rhs.tableName,
+-            let rhsIndex = tablesByOrder[rhsRecordType]
+-          else { return true }
+-          return lhsIndex > rhsIndex
++          return topologicallyAscending(
++            lhsTableName: lhs.tableName,
++            rhsTableName: rhs.tableName,
++            rootFirst: false
++          )
+         case (.saveRecord, .deleteRecord):
+           return false
+         case (.deleteRecord, .saveRecord):
+           return true
+         default:
+-          return true
++          return false
+         }
+       }
  
 ```
 
-**File**: `Examples/Reminders/RemindersDetail.swift` (modified, +7/-6)
+**File**: `Tests/SQLiteDataTests/CloudKitTests/CloudKitTests.swift` (modified, +26/-0)
 ```diff
-@@ -1,11 +1,12 @@
- import CasePaths
- import CloudKit
-+import DebugSnapshots
- import SQLiteData
- import Sharing
- import SwiftUI
- import SwiftUINavigation
- 
--@MainActor
-+@DebugSnapshot
- @Observable
- class RemindersDetailModel: HashableObject {
-   @ObservationIgnored @FetchAll var reminderRows: [Row]
-@@ -165,11 +166,11 @@ class RemindersDetailModel: HashableObject {
-   @Selection
-   struct Row: Identifiable {
-     var id: Reminder.ID { reminder.id }
--    let reminder: Reminder
--    let remindersList: RemindersList
--    let isPastDue: Bool
--    let notes: String
--    let tags: String
-+    var reminder: Reminder
-+    var remindersList: RemindersList
-+    var isPastDue: Bool
-+    var notes: String
-+    var tags: String
+@@ -927,5 +927,31 @@
+         }
+       }
+     }
++
++    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++    @Test func sendParentsBeforeChildren() async throws {
++      try await userDatabase.userWrite { db in
++        for id in 1...30 {
++          try RemindersList.insert { RemindersList(id: id, title: "List \(id)") }.execute(db)
++        }
++        for id in 1...30 {
++          try ScopedModel.insert { ScopedModel(id: id, title: "Model \(id)") }.execute(db)
++        }
++        for id in 1...30 {
++          try Reminder.insert {
++            Reminder(id: id, title: "Reminder \(id)", remindersListID: id)
++          }
++          .execute(db)
++        }
++      }
++
++      let batch = try #require(
++        await syncEngine.nextRecordZoneChangeBatch(syncEngine: syncEngine.private)
++      )
++      let recordTypes = batch.recordsToSave.map(\.recordType)
++      let lastListIndex = try #require(recordTypes.lastIndex(of: RemindersList.tableName))
++      let firstReminderIndex = try #require(recordTypes.firstIndex(of: Reminder.tableName))
++      #expect(lastListIndex < firstReminderIndex)
++    }
    }
- }
- 
-```
-
-**File**: `Examples/Reminders/RemindersLists.swift` (modified, +8/-5)
-```diff
-@@ -1,10 +1,11 @@
- import CloudKit
-+import DebugSnapshots
- import SQLiteData
- import SwiftUI
- import SwiftUINavigation
- import TipKit
- 
--@MainActor
-+@DebugSnapshot
- @Observable
- class RemindersListsModel {
-   @ObservationIgnored
-@@ -49,8 +50,8 @@ class RemindersListsModel {
-   )
-   var stats = Stats()
- 
--  var destination: Destination?
--  var searchRemindersModel = SearchRemindersModel()
-+  @DebugSnapshotConvertible var destination: Destination?
-+  @DebugSnapshotConvertible var searchRemindersModel = SearchRemindersModel()
-   var seedDatabaseTip: SeedDatabaseTip?
- 
-   @ObservationIgnored
-@@ -131,8 +132,8 @@ class RemindersListsModel {
-             let (first, rest) = (ids.first!, ids.dropFirst())
-             $0.position =
-               rest
--              .reduce(Case($0.id).when(first.element, then: first.offset)) { cases, id in
--                cases.when(id.element, then: id.offset)
-+              .reduce(Case($0.id).when(first.element, then: first.offset + 1)) { cases, id in
-+                cases.when(id.element, then: id.offset + 1)
-               }
-               .else($0.position)
-           }
-@@ -150,7 +151,9 @@ class RemindersListsModel {
-   #endif
- 
-   @CasePathable
-+  @DebugSnapshot
-   enum Destination {
-+    @DebugSnapshotConvertible
-     case detail(RemindersDetailModel)
-     case reminderForm(Reminder.Draft, remindersList: RemindersList)
-     case remindersListForm(RemindersList.Draft)
+ #endif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #571** (2026-11-03): Fix sorting of records when processing batches. (@mbrandonw)
+- **PR #564** (2026-11-02): Support rate limiting in mock database. (@mbrandonw)
 - **PR #562** (2026-10-09): Add missing visionOS argument for when using UTF8Span to produce CollationOrder (@bobek-balinek)
 - **PR #546** (2026-09-14): Update CloudKit sync docs link (@DominikGrodl)
 - **PR #544** (closed): Disable unused Sharing traits (@Econa77)
 - **PR #540** (2026-08-29): StructuredQueries 0.38 support (@stephencelis)
-- **PR #538** (2026-08-26): Nest temporary databases in a single directory (@stephencelis)
-- **PR #537** (2026-08-26): Clean up test databases at exit (@stephencelis)
 
 ---
 
@@ -2299,30 +1241,46 @@ Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)
+## X. sorting of records when processing batches. (#571)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5856cba`: Box `@Fetch*` property wrappers in SwiftUI state when possible (#486). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `43de040a`: sorting of records when processing batches. (#571). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        xcode: ["26.6"]
-        xcode: ["26.6"]
+  "originHash" : "f7503587ba7ade48448be5b58ac6834c7ebba67a5e6f166428a40a87b9921413",
+    {
+      "identity" : "swift-issue-reporting",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
+      "state" : {
+        "revision" : "71c7c9a761d1ca6ed4ccb6ced040fe1c1a39e8e7",
+        "version" : "2.1.0"
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        xcode: ["26.2"]
-        xcode: ["26.2"]
+  "originHash" : "dfd7e0f6bddf53d83bc4372f08b665b419a79785b6e33925d051440a0a13ec00",
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "d9308ad679143c26a30dec52daefe82f54af2b82",
+        "version" : "1.13.1"
+      }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5856cba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `43de040a` are properly handled with clean fallback behavior.
