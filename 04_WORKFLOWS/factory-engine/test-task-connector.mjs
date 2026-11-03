@@ -7,6 +7,7 @@
  */
 
 import fs from 'fs';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { 
@@ -25,7 +26,34 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
-const CHECKPOINTS_FILE = path.join(BRAIN_ROOT, '.project-brain', 'task-checkpoints.json');
+const PROD_CHECKPOINTS_FILE = path.join(BRAIN_ROOT, '.project-brain', 'task-checkpoints.json');
+const PROD_SESSION_MEM_FILE = path.join(BRAIN_ROOT, '.project-brain', 'session-memory.json');
+const beforeCheckpointsSha256 = fs.existsSync(PROD_CHECKPOINTS_FILE)
+  ? crypto.createHash('sha256').update(fs.readFileSync(PROD_CHECKPOINTS_FILE)).digest('hex')
+  : null;
+
+// Isolated simulation sandbox for test checkpoints
+const SANDBOX_DIR = path.join(BRAIN_ROOT, '.project-brain', 'simulation-sandbox', 'task-connector-test');
+fs.mkdirSync(path.join(SANDBOX_DIR, '.project-brain'), { recursive: true });
+const TEST_CHECKPOINTS_FILE = path.join(SANDBOX_DIR, '.project-brain', 'task-checkpoints.json');
+if (fs.existsSync(PROD_CHECKPOINTS_FILE)) {
+  fs.copyFileSync(PROD_CHECKPOINTS_FILE, TEST_CHECKPOINTS_FILE);
+} else {
+  fs.writeFileSync(TEST_CHECKPOINTS_FILE, JSON.stringify({ version: '1.0.0', tasks: {} }, null, 2), 'utf-8');
+}
+process.env.BRAIN_TASK_CHECKPOINTS_FILE = TEST_CHECKPOINTS_FILE;
+const CHECKPOINTS_FILE = TEST_CHECKPOINTS_FILE;
+
+const beforeSessionMemSha256 = fs.existsSync(PROD_SESSION_MEM_FILE)
+  ? crypto.createHash('sha256').update(fs.readFileSync(PROD_SESSION_MEM_FILE)).digest('hex')
+  : null;
+const TEST_SESSION_MEM_FILE = path.join(SANDBOX_DIR, '.project-brain', 'session-memory.json');
+if (fs.existsSync(PROD_SESSION_MEM_FILE)) {
+  fs.copyFileSync(PROD_SESSION_MEM_FILE, TEST_SESSION_MEM_FILE);
+} else {
+  fs.writeFileSync(TEST_SESSION_MEM_FILE, JSON.stringify({ version: '1.0.0', last_updated: new Date().toISOString(), memories: [] }, null, 2), 'utf-8');
+}
+process.env.BRAIN_SESSION_MEMORY_FILE = TEST_SESSION_MEM_FILE;
 
 console.log('======================================================================');
 console.log('🧪 TEST SUITE: UNIVERSAL TASK CONTRACT & CONNECTOR (MILESTONE 2)');
@@ -229,16 +257,16 @@ const finalCheckpoint = loadTaskCheckpoint(resolvedContract.task_id);
 assert(finalCheckpoint.status === TASK_STATUS.VERIFIED, 'Final checkpoint reflects VERIFIED state');
 
 // ---------------------------------------------------------------------------
-// CLEANUP TEST RECORD: 100% BYTE-FOR-BYTE RESTORATION
+// TEST 6: Production Checkpoint Invariance Verification
 // ---------------------------------------------------------------------------
-try {
-  if (beforeCheckpointsRaw !== null) {
-    fs.writeFileSync(CHECKPOINTS_FILE, beforeCheckpointsRaw, 'utf-8');
-  }
-  if (beforeSessionMemRaw !== null) {
-    fs.writeFileSync(sessionMemFile, beforeSessionMemRaw, 'utf-8');
-  }
-} catch (e) {}
+if (beforeCheckpointsSha256 !== null && fs.existsSync(PROD_CHECKPOINTS_FILE)) {
+  const afterCheckpointsSha256 = crypto.createHash('sha256').update(fs.readFileSync(PROD_CHECKPOINTS_FILE)).digest('hex');
+  assert(beforeCheckpointsSha256 === afterCheckpointsSha256, 'Production task-checkpoints.json remained completely untouched');
+}
+if (beforeSessionMemSha256 !== null && fs.existsSync(PROD_SESSION_MEM_FILE)) {
+  const afterSessionMemSha256 = crypto.createHash('sha256').update(fs.readFileSync(PROD_SESSION_MEM_FILE)).digest('hex');
+  assert(beforeSessionMemSha256 === afterSessionMemSha256, 'Production session-memory.json remained completely untouched');
+}
 
 // ---------------------------------------------------------------------------
 // SUMMARY

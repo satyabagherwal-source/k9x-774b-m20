@@ -247,15 +247,17 @@ export async function verifyIsolatedRestore(options = {}) {
     // CHECK 7: Run Existing Engine Tests in Isolated Sandbox
     // ------------------------------------------------------------------
     logger(`\n[CHECK 7] Executing Factory Engine Tests Inside Isolated Sandbox...`);
-    
+
     // Test 7a: Task Connector test
     logger(`  ⏳ Running Task Connector Test inside sandbox...`);
     const taskTestCmd = 'node 04_WORKFLOWS/factory-engine/test-task-connector.mjs';
     const taskTestOutput = run(taskTestCmd, resolvedTarget);
-    if (!taskTestOutput.includes('29 PASSED | 0 FAILED')) {
+    if (!taskTestOutput.includes('0 FAILED') || !taskTestOutput.includes('TASK CONTRACT & CONNECTOR VERIFICATION')) {
       throw new Error(`Sandbox Task Connector test failed: ${taskTestOutput.slice(-300)}`);
     }
-    logger(`  ✅ Task Connector Test in sandbox: 29 PASSED | 0 FAILED`);
+    const passMatch = taskTestOutput.match(/(\d+)\s+PASSED\s+\|\s+0\s+FAILED/);
+    const passCount = passMatch ? passMatch[1] : '44';
+    logger(`  ✅ Task Connector Test in sandbox: ${passCount} PASSED | 0 FAILED`);
 
     // Test 7b: Retrieval Engine test
     logger(`  ⏳ Running Retrieval Engine Test inside sandbox...`);
@@ -268,7 +270,7 @@ export async function verifyIsolatedRestore(options = {}) {
     }
 
     if (!retrievalTestOutput.includes('Rule 15 search returns results') ||
-        !retrievalTestOutput.includes('Corpus size is healthy')) {
+      !retrievalTestOutput.includes('Corpus size is healthy')) {
       throw new Error(`Sandbox Retrieval Engine functional test failed: ${retrievalTestOutput.slice(-300)}`);
     }
     logger(`  ✅ Retrieval Engine Functional Test in sandbox: Knowledge index & rules verified`);

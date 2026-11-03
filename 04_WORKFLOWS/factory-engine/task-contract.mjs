@@ -1,11 +1,11 @@
 /**
  * Universal Task Contract Engine
- * 
+ *
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\task-contract.mjs
  * Purpose: Defines, builds, and validates standardized task execution contracts
  *          for compatible AI models, ensuring objectives, negative constraints,
  *          context, tools, and verification criteria are mathematically bounded.
- * 
+ *
  * Zero external dependencies. Native Node.js ES Module.
  */
 
@@ -34,6 +34,21 @@ export const TASK_STATUS = {
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
   FAILED: 'FAILED'
+};
+
+export const SUBTASK_STATUS = {
+  PENDING: 'PENDING',
+  READY: 'READY',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED'
+};
+
+export const FAILURE_POLICIES = {
+  ABORT: 'ABORT',
+  RETRY: 'RETRY',
+  CONTINUE: 'CONTINUE'
 };
 
 export const FAILURE_CLASSES = {
@@ -80,7 +95,7 @@ export const VERIFICATION_OUTCOME = {
 
 /**
  * Validates a Task Contract against canonical structure and invariants
- * 
+ *
  * @param {object} contract - The task contract object
  * @returns {object} { valid: boolean, errors: string[] }
  */
@@ -203,6 +218,14 @@ export function validateTaskContract(contract) {
     }
   }
 
+  // 11. Optional Subtasks (Milestone D3.1)
+  if (contract.subtasks !== undefined) {
+    const subListValidation = validateSubtaskList(contract.subtasks);
+    if (!subListValidation.valid) {
+      errors.push(...subListValidation.errors);
+    }
+  }
+
   return {
     valid: errors.length === 0,
     errors
@@ -211,7 +234,7 @@ export function validateTaskContract(contract) {
 
 /**
  * Creates a fully initialized, canonical Task Contract
- * 
+ *
  * @param {object} options - Contract configuration options
  * @returns {object} Validated Task Contract
  */
@@ -290,6 +313,8 @@ export function createTaskContract(options = {}) {
 
     ...(options.required_capabilities !== undefined ? { required_capabilities: options.required_capabilities } : {}),
 
+    ...(options.subtasks !== undefined ? { subtasks: options.subtasks } : {}),
+
     verification_results: {
       verified: false,
       evidence_collected: [],
@@ -304,6 +329,289 @@ export function createTaskContract(options = {}) {
   }
 
   return contract;
+}
+
+/**
+ * Helper to check if two dependency arrays contain equivalent elements
+ *
+ * @param {Array} arrA
+ * @param {Array} arrB
+ * @returns {boolean}
+ */
+export function areDependencyArraysEquivalent(arrA, arrB) {
+  if (!Array.isArray(arrA) || !Array.isArray(arrB)) return false;
+  if (arrA.length !== arrB.length) return false;
+  const setA = [...arrA].map(v => String(v).trim()).sort();
+  const setB = [...arrB].map(v => String(v).trim()).sort();
+  return setA.every((val, idx) => val === setB[idx]);
+}
+
+/**
+ * Validates a single Decomposed Subtask Contract (Milestone D3.1)
+ *
+ * @param {object} subtask - Subtask object to validate
+ * @param {object} context - Validation context (e.g. { known_ids: Set })
+ * @returns {object} { valid: boolean, errors: string[] }
+ */
+export function validateSubtask(subtask, context = {}) {
+  const errors = [];
+
+  if (!subtask || typeof subtask !== "object") {
+    return { valid: false, errors: ["Subtask must be a non-null object."] };
+  }
+
+  // Alias conflict check: id vs step_id
+  if (subtask.id !== undefined && subtask.step_id !== undefined) {
+    if (String(subtask.id).trim() !== String(subtask.step_id).trim()) {
+      errors.push("Conflicting identifier aliases: 'id' (" + JSON.stringify(subtask.id) + ") and 'step_id' (" + JSON.stringify(subtask.step_id) + ") must have matching values.");
+    }
+  }
+
+  // Alias conflict check: dependencies vs depends_on
+  if (subtask.dependencies !== undefined && subtask.depends_on !== undefined) {
+    if (!areDependencyArraysEquivalent(subtask.dependencies, subtask.depends_on)) {
+      errors.push("Conflicting dependency aliases: 'dependencies' (" + JSON.stringify(subtask.dependencies) + ") and 'depends_on' (" + JSON.stringify(subtask.depends_on) + ") must contain matching elements.");
+    }
+  }
+
+  // 1. Identifier (id / subtask_id / step_id)
+  const id = subtask.id !== undefined ? subtask.id : (subtask.subtask_id !== undefined ? subtask.subtask_id : subtask.step_id);
+  if (id === undefined || id === null) {
+    errors.push("subtask id is required (id, subtask_id, or step_id).");
+  } else if (typeof id === "string") {
+    if (id.trim().length === 0) {
+      errors.push("subtask id string must be non-empty.");
+    }
+  } else if (typeof id === "number") {
+    if (!Number.isInteger(id) || id <= 0) {
+      errors.push("subtask numeric id must be a positive integer (Got: " + id + ").");
+    }
+  } else {
+    errors.push("subtask id must be a string or positive integer (Got: " + (typeof id) + ").");
+  }
+
+  // 2. Objective / Title / Action
+  const objective = subtask.objective !== undefined ? subtask.objective : (subtask.title !== undefined ? subtask.title : subtask.action);
+  if (objective === undefined || objective === null) {
+    errors.push("subtask objective is required (objective, title, or action).");
+  } else if (typeof objective !== "string" || objective.trim().length < 3) {
+    errors.push("subtask objective must be a string of at least 3 characters.");
+  }
+
+  // 3. Required Capabilities (if specified)
+  if (subtask.required_capabilities !== undefined) {
+    if (!Array.isArray(subtask.required_capabilities)) {
+      errors.push("subtask.required_capabilities must be an array of capability ID strings.");
+    } else {
+      const seenCapIds = new Set();
+      subtask.required_capabilities.forEach((capId, idx) => {
+        if (typeof capId !== "string" || capId.trim() === "") {
+          errors.push("subtask.required_capabilities[" + idx + "] must be a non-empty string.");
+        } else if (!CAPABILITY_ID_REGEX.test(capId)) {
+          errors.push("subtask.required_capabilities[" + idx + "] '" + capId + "' is invalid. Must match pattern ^CAP-[A-Z0-9-]+$");
+        } else if (seenCapIds.has(capId)) {
+          errors.push("subtask.required_capabilities contains duplicate capability ID: '" + capId + "'.");
+        } else {
+          seenCapIds.add(capId);
+        }
+      });
+    }
+  }
+
+  // 4. Dependencies / depends_on (if specified)
+  const deps = subtask.dependencies !== undefined ? subtask.dependencies : subtask.depends_on;
+  if (deps !== undefined) {
+    if (!Array.isArray(deps)) {
+      errors.push("subtask dependencies must be an array of prerequisite subtask IDs.");
+    } else {
+      const seenDeps = new Set();
+      const normSeenDeps = new Set();
+      deps.forEach((depId, idx) => {
+        if (depId === undefined || depId === null || (typeof depId !== "string" && typeof depId !== "number") || (typeof depId === "string" && depId.trim() === "")) {
+          errors.push("subtask dependency at index " + idx + " must be a non-empty string or integer.");
+        } else {
+          const normDep = String(depId).trim();
+          if (id !== undefined && (depId === id || normDep === String(id).trim())) {
+            errors.push("subtask cannot depend on itself (self-dependency: " + depId + ").");
+          }
+          if (seenDeps.has(depId) || normSeenDeps.has(normDep)) {
+            errors.push("subtask contains duplicate dependency reference: '" + depId + "'.");
+          } else {
+            seenDeps.add(depId);
+            normSeenDeps.add(normDep);
+          }
+          if (context.known_ids && !context.known_ids.has(depId) && !context.known_ids.has(normDep)) {
+            errors.push("subtask depends on unknown subtask id: '" + depId + "'.");
+          }
+        }
+      });
+    }
+  }
+
+  // 5. Status (if specified)
+  if (subtask.status !== undefined) {
+    if (typeof subtask.status !== "string" || !Object.values(SUBTASK_STATUS).includes(subtask.status)) {
+      errors.push("subtask status must be one of: " + Object.values(SUBTASK_STATUS).join(", ") + " (Got: " + subtask.status + ")");
+    }
+  }
+
+  // 6. Failure Policy (if specified)
+  if (subtask.failure_policy !== undefined) {
+    if (typeof subtask.failure_policy !== "string" || !Object.values(FAILURE_POLICIES).includes(subtask.failure_policy)) {
+      errors.push("subtask failure_policy must be one of: " + Object.values(FAILURE_POLICIES).join(", ") + " (Got: " + subtask.failure_policy + ")");
+    }
+  }
+
+  // 7. Inputs (if specified)
+  if (subtask.inputs !== undefined && (typeof subtask.inputs !== "object" || subtask.inputs === null)) {
+    errors.push("subtask inputs must be an object or array.");
+  }
+
+  // 8. Expected Output (if specified)
+  if (subtask.expected_output !== undefined && (typeof subtask.expected_output !== "string" && (typeof subtask.expected_output !== "object" || subtask.expected_output === null))) {
+    errors.push("subtask expected_output must be a string or object.");
+  }
+
+  // 9. Acceptance Criteria (if specified)
+  if (subtask.acceptance_criteria !== undefined) {
+    if (!Array.isArray(subtask.acceptance_criteria)) {
+      errors.push("subtask acceptance_criteria must be an array of strings.");
+    } else {
+      subtask.acceptance_criteria.forEach((crit, idx) => {
+        if (typeof crit !== "string" || crit.trim().length === 0) {
+          errors.push("subtask acceptance_criteria[" + idx + "] must be a non-empty string.");
+        }
+      });
+    }
+  }
+
+  // 10. Verification Requirements / Verification Probe (if specified)
+  const probe = subtask.verification_requirements !== undefined ? subtask.verification_requirements : subtask.verification_probe;
+  if (probe !== undefined && typeof probe !== "string" && (typeof probe !== "object" || probe === null)) {
+    errors.push("subtask verification requirements must be a string command or object.");
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validates a collection of subtasks for a task
+ *
+ * @param {Array<object>} subtasks - Array of subtask objects
+ * @returns {object} { valid: boolean, errors: string[] }
+ */
+export function validateSubtaskList(subtasks) {
+  const errors = [];
+
+  if (!Array.isArray(subtasks)) {
+    return { valid: false, errors: ["subtasks must be an array."] };
+  }
+
+  const seenIds = new Set();
+  const normIds = new Set();
+  const knownIds = new Set();
+
+  // First pass: collect all valid IDs and check uniqueness / collisions
+  for (let i = 0; i < subtasks.length; i++) {
+    const s = subtasks[i];
+    if (s && typeof s === "object") {
+      const id = s.id !== undefined ? s.id : (s.subtask_id !== undefined ? s.subtask_id : s.step_id);
+      if (id !== undefined && id !== null) {
+        const normId = String(id).trim();
+        if (seenIds.has(id)) {
+          errors.push("Duplicate subtask id detected: '" + id + "'.");
+        } else if (normIds.has(normId)) {
+          errors.push("Duplicate subtask id detected (ID collision): '" + id + "'.");
+        } else {
+          seenIds.add(id);
+          normIds.add(normId);
+          knownIds.add(id);
+          knownIds.add(normId);
+        }
+      }
+    }
+  }
+
+  // Second pass: validate individual subtasks with knownIds context
+  subtasks.forEach((s, idx) => {
+    const subValidation = validateSubtask(s, { known_ids: knownIds });
+    if (!subValidation.valid) {
+      subValidation.errors.forEach(err => {
+        errors.push("subtasks[" + idx + "]: " + err);
+      });
+    }
+  });
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Creates and validates a standardized Decomposed Subtask object (Milestone D3.1)
+ *
+ * @param {object} options - Subtask configuration options
+ * @returns {object} Validated Subtask object
+ */
+export function createSubtask(options = {}) {
+  const id = options.id !== undefined
+    ? options.id
+    : (options.subtask_id !== undefined
+      ? options.subtask_id
+      : (options.step_id !== undefined ? options.step_id : ("sub-" + crypto.randomBytes(4).toString("hex"))));
+
+  const title = (options.title || options.objective || options.action || "").trim();
+  const objective = (options.objective || options.title || options.action || "").trim();
+  const action = (options.action || options.objective || options.title || "").trim();
+
+  let deps;
+  let conflictingDependsOn;
+  if (options.dependencies !== undefined && options.depends_on !== undefined) {
+    if (!areDependencyArraysEquivalent(options.dependencies, options.depends_on)) {
+      deps = options.dependencies;
+      conflictingDependsOn = options.depends_on;
+    } else {
+      deps = options.dependencies;
+    }
+  } else if (Array.isArray(options.dependencies)) {
+    deps = options.dependencies;
+  } else if (Array.isArray(options.depends_on)) {
+    deps = options.depends_on;
+  } else {
+    deps = [];
+  }
+
+  const subtask = {
+    id,
+    step_id: options.step_id !== undefined ? options.step_id : (typeof id === "number" ? id : undefined),
+    subtask_id: typeof id === "string" ? id : ("step-" + id),
+    title: title || ("Subtask " + id),
+    objective: objective || title || ("Subtask " + id),
+    action: action || objective || ("Subtask " + id),
+    dependencies: deps,
+    depends_on: conflictingDependsOn !== undefined ? conflictingDependsOn : deps,
+    status: options.status || SUBTASK_STATUS.PENDING,
+    failure_policy: options.failure_policy || FAILURE_POLICIES.ABORT,
+    ...(options.task_type !== undefined ? { task_type: options.task_type } : {}),
+    ...(options.required_capabilities !== undefined ? { required_capabilities: options.required_capabilities } : {}),
+    ...(options.assigned_skill_id !== undefined ? { assigned_skill_id: options.assigned_skill_id } : {}),
+    ...(options.inputs !== undefined ? { inputs: options.inputs } : {}),
+    ...(options.expected_output !== undefined ? { expected_output: options.expected_output } : {}),
+    ...(options.acceptance_criteria !== undefined ? { acceptance_criteria: options.acceptance_criteria } : {}),
+    ...(options.verification_requirements !== undefined ? { verification_requirements: options.verification_requirements } : {}),
+    ...(options.verification_probe !== undefined ? { verification_probe: options.verification_probe } : {})
+  };
+
+  const validation = validateSubtask(subtask);
+  if (!validation.valid) {
+    throw new Error("Failed to create valid Subtask:\n- " + validation.errors.join("\n- "));
+  }
+
+  return subtask;
 }
 
 /**

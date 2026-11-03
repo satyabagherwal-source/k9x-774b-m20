@@ -8,7 +8,7 @@
 1. **AI-Builder-Brain का स्वरूप:** यह एक **Structural Data और Construction Intelligence System** है, स्वयं कोई AI Model या AI Agent नहीं है।
 2. **AI-Agnostic Usage:** किसी भी Compatible AI को इससे जोड़कर उत्पाद का उद्देश्य बताने पर उसे निर्माण के लिए आवश्यक समग्र ज्ञान, प्रक्रियाएँ, नियम और सत्यापन क्षमता मिलनी चाहिए।
 3. **पूर्ण Digital Product Universe:** लक्ष्य केवल Code लिखना नहीं, बल्कि संपूर्ण Digital Product Universe (Architecture, Engineering, Art, Imagination, Design, Content, SEO, Security, Legal Compliance, Operations और Problem Solving) को समझना है।
-4. **Internet-Scale Learning:** Brain को GitHub की 10,000 Repositories की सूची के साथ-साथ पूरे इंटरनेट के प्रासंगिक स्रोतों से लगातार सीखना होगा।
+4. **Internet-Scale Learning:** Brain को GitHub and hugingface ke all  Repositories tath other website ki repository की सूची के साथ-साथ पूरे इंटरनेट के प्रासंगिक स्रोतों से लगातार सीखना होगा।
 5. **Core Preservation:** मौजूदा Master Brain की 16-Folder Architecture, Retrieval Engine, Project Factory, Cloud Harvesting और पूर्व-उपयोगी ज्ञान को सुरक्षित रखना है।
 6. **Learning Persistence:** नई Learning केवल extract होकर दिखनी नहीं चाहिए, बल्कि वास्तव में Store, Index और Retrieve होनी चाहिए।
 7. **सुरक्षा एवं बैकअप:** Backup, Recovery, Versioning और Verification को विस्तार के दौरान सर्वोच्च प्राथमिकता पर रखना है।
@@ -87,7 +87,7 @@ Brain का काम Intelligence उपलब्ध कराना है।
 
 ## भाग 5 — 10,000 GitHub Repositories Program
 दो अलग-अलग लेकिन जुड़े हुए Deliverables:
-1. **Repository Discovery Catalog:** 10,000 Repositories का Multi-Dimensional कैटलॉग (ID, URL, Primary/Secondary Domains, Project Type, Languages, Architecture, Tests, Docs, License, Activity, Quality, Status).
+1. **Repository Discovery Catalog:** infinite Repositories का Multi-Dimensional कैटलॉग (ID, URL, Primary/Secondary Domains, Project Type, Languages, Architecture, Tests, Docs, License, Activity, Quality, Status).
 2. **Repository Learning Engine:** इन Repositories से उपयोगी, सत्यापित ज्ञान निकालकर Brain में जोड़ने वाला इंजन।
 - **चयन मापदंड:** केवल GitHub Stars नहीं, बल्कि वास्तविक समस्या समाधान, आर्किटेक्चर स्पष्टता, टेस्ट्स की गुणवत्ता, डॉक्यूमेंटेशन और यूनिक पैटर्न्स।
 

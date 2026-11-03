@@ -1,10 +1,10 @@
 /**
  * Universal Task Planning & DAG Decomposition Engine
- * 
+ *
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\task-planner.mjs
  * Purpose: Decomposes tasks into Directed Acyclic Graph (DAG) execution plans
  *          with step-level dependencies, verification probes, and progression tracking.
- * 
+ *
  * Zero external dependencies. Native Node.js ES Module.
  */
 
@@ -12,7 +12,7 @@ import { recordTaskCheckpoint } from './brain-connector.mjs';
 
 /**
  * Validates that an array of execution plan steps forms a valid Directed Acyclic Graph (DAG)
- * 
+ *
  * @param {Array<object>} steps - Array of steps with step_id and depends_on
  * @returns {object} { valid: boolean, errors: string[] }
  */
@@ -22,32 +22,60 @@ export function validatePlanDAG(steps) {
     return { valid: false, errors: ['Execution plan must contain at least one step.'] };
   }
 
-  const stepIds = new Set();
-  const graph = new Map(); // step_id -> Array of dependency IDs
+  const rawIds = new Set();
+  const normalizedIds = new Set();
+  const normToRaw = new Map();
+  const graph = new Map(); // normId -> Array of dependency IDs
   const inDegree = new Map();
 
   for (const step of steps) {
-    if (!step.step_id || typeof step.step_id !== 'number') {
+    const rawId = step.step_id !== undefined ? step.step_id : (step.id !== undefined ? step.id : step.subtask_id);
+    if (rawId === undefined || rawId === null || (typeof rawId !== 'number' && typeof rawId !== 'string') || (typeof rawId === 'string' && rawId.trim() === '')) {
       errors.push(`Step missing valid numeric step_id: ${JSON.stringify(step)}`);
       continue;
     }
-    if (stepIds.has(step.step_id)) {
-      errors.push(`Duplicate step_id detected: ${step.step_id}`);
+
+    const normId = String(rawId).trim();
+
+    if (rawIds.has(rawId)) {
+      errors.push(`Duplicate step_id detected: ${rawId}`);
+    } else if (normalizedIds.has(normId)) {
+      const existingRaw = normToRaw.get(normId);
+      errors.push(`Duplicate step_id detected (ID collision): '${rawId}' (${typeof rawId}) collides with '${existingRaw}' (${typeof existingRaw}).`);
     }
-    stepIds.add(step.step_id);
-    graph.set(step.step_id, Array.isArray(step.depends_on) ? step.depends_on : []);
-    inDegree.set(step.step_id, 0);
+
+    rawIds.add(rawId);
+    normalizedIds.add(normId);
+    normToRaw.set(normId, rawId);
+
+    const deps = Array.isArray(step.depends_on) ? step.depends_on : (Array.isArray(step.dependencies) ? step.dependencies : []);
+    graph.set(normId, deps);
+    inDegree.set(normId, 0);
   }
 
-  // Validate dependencies exist
-  for (const [id, deps] of graph.entries()) {
+  // Validate dependencies exist and check self-cycle or duplicate references
+  for (const [normId, deps] of graph.entries()) {
+    const rawId = normToRaw.get(normId);
+    const seenNormDeps = new Set();
+
     for (const depId of deps) {
-      if (!stepIds.has(depId)) {
-        errors.push(`Step ${id} depends on nonexistent step_id: ${depId}`);
+      if (depId === undefined || depId === null || (typeof depId !== 'number' && typeof depId !== 'string') || (typeof depId === 'string' && depId.trim() === '')) {
+        errors.push(`Step ${rawId} has invalid dependency identifier: ${JSON.stringify(depId)}`);
+        continue;
       }
-      if (depId === id) {
-        errors.push(`Step ${id} cannot depend on itself (self-cycle).`);
+
+      const normDepId = String(depId).trim();
+
+      if (!normalizedIds.has(normDepId)) {
+        errors.push(`Step ${rawId} depends on nonexistent step_id: ${depId}`);
       }
+      if (normDepId === normId) {
+        errors.push(`Step ${rawId} cannot depend on itself (self-cycle).`);
+      }
+      if (seenNormDeps.has(normDepId)) {
+        errors.push(`Step ${rawId} has duplicate dependency reference: ${depId}`);
+      }
+      seenNormDeps.add(normDepId);
     }
   }
 
@@ -58,12 +86,13 @@ export function validatePlanDAG(steps) {
   // Circular dependency check using Kahn's algorithm (Topological sort)
   // Build reverse adjacency list: dep -> steps that depend on it
   const adj = new Map();
-  for (const id of stepIds) adj.set(id, []);
+  for (const id of normalizedIds) adj.set(id, []);
 
-  for (const [id, deps] of graph.entries()) {
+  for (const [normId, deps] of graph.entries()) {
     for (const depId of deps) {
-      adj.get(depId).push(id);
-      inDegree.set(id, inDegree.get(id) + 1);
+      const normDepId = String(depId).trim();
+      adj.get(normDepId).push(normId);
+      inDegree.set(normId, inDegree.get(normId) + 1);
     }
   }
 
@@ -85,7 +114,7 @@ export function validatePlanDAG(steps) {
     }
   }
 
-  if (visitedCount !== stepIds.size) {
+  if (visitedCount !== normalizedIds.size) {
     errors.push('Circular dependency cycle detected in plan DAG.');
     return { valid: false, errors };
   }
@@ -95,7 +124,7 @@ export function validatePlanDAG(steps) {
 
 /**
  * Automatically decomposes a Task Contract into a verified DAG execution plan
- * 
+ *
  * @param {object} contract - The task contract
  * @returns {object} Updated contract with generated DAG plan
  */
@@ -288,12 +317,36 @@ export function planTaskDecomposition(contract) {
       break;
   }
 
+  // Annotate subtask contract metadata onto all decomposed steps (Milestone D3.1)
+  steps.forEach(s => {
+    if (s.id === undefined) s.id = s.step_id;
+    if (s.subtask_id === undefined) s.subtask_id = `${contract.task_id}-step-${s.step_id}`;
+    if (s.objective === undefined) s.objective = s.action || s.title;
+    if (s.dependencies === undefined) s.dependencies = s.depends_on || [];
+    if (s.failure_policy === undefined) s.failure_policy = 'ABORT';
+    if (s.required_capabilities === undefined) {
+      if (contract.task_type === 'SYSTEM_BUILD') {
+        if (s.step_id === 1 || s.step_id === 2) s.required_capabilities = ['CAP-PROJECT-FACTORY-BOOTSTRAP'];
+        else if (s.step_id === 4) s.required_capabilities = ['CAP-MULTILINGUAL-SEO-INTELLIGENCE'];
+        else s.required_capabilities = [];
+      } else {
+        s.required_capabilities = [];
+      }
+    }
+    if (s.acceptance_criteria === undefined && s.verification_probe) {
+      s.acceptance_criteria = [s.verification_probe];
+    }
+    if (s.inputs === undefined) s.inputs = {};
+    if (s.expected_output === undefined) s.expected_output = {};
+  });
+
   const dagCheck = validatePlanDAG(steps);
   if (!dagCheck.valid) {
     throw new Error(`Generated plan is an invalid DAG:\n- ${dagCheck.errors.join('\n- ')}`);
   }
 
   contract.execution_plan = steps;
+  contract.subtasks = steps;
   contract.checkpoint.total_steps = steps.length;
   contract.checkpoint.current_step = 0;
 
@@ -302,38 +355,41 @@ export function planTaskDecomposition(contract) {
 
 /**
  * Returns all steps in the plan that are ready to execute (all dependencies satisfied)
- * 
+ *
  * @param {object} contract - The task contract
  * @returns {Array<object>} Executable steps
  */
 export function getNextExecutableSteps(contract) {
-  if (!contract.execution_plan || contract.execution_plan.length === 0) {
+  const plan = contract.execution_plan || contract.subtasks || [];
+  if (!plan || plan.length === 0) {
     return [];
   }
 
   const completedStepIds = new Set(
-    contract.execution_plan
+    plan
       .filter(s => s.status === 'COMPLETED')
-      .map(s => s.step_id)
+      .map(s => (s.step_id !== undefined ? s.step_id : (s.id !== undefined ? s.id : s.subtask_id)))
   );
 
-  return contract.execution_plan.filter(step => {
-    if (step.status !== 'PENDING') return false;
+  return plan.filter(step => {
+    if (step.status !== 'PENDING' && step.status !== 'READY') return false;
+    const deps = Array.isArray(step.depends_on) ? step.depends_on : (Array.isArray(step.dependencies) ? step.dependencies : []);
     // Check if every dependency is in completedStepIds
-    return step.depends_on.every(depId => completedStepIds.has(depId));
+    return deps.every(depId => completedStepIds.has(depId));
   });
 }
 
 /**
  * Advances a step in the execution plan upon verified evidence
- * 
+ *
  * @param {object} contract - The task contract
- * @param {number} stepId - The ID of the step to advance
+ * @param {number|string} stepId - The ID of the step to advance
  * @param {object} stepEvidence - Evidence proving step completion
  * @returns {object} { success: boolean, advancedStep: object, nextExecutable: Array<object> }
  */
 export function advanceStep(contract, stepId, stepEvidence = {}) {
-  const step = contract.execution_plan.find(s => s.step_id === stepId);
+  const plan = contract.execution_plan || contract.subtasks || [];
+  const step = plan.find(s => s.step_id === stepId || s.id === stepId || s.subtask_id === stepId);
   if (!step) {
     throw new Error(`Step ID ${stepId} not found in execution plan.`);
   }
@@ -344,11 +400,11 @@ export function advanceStep(contract, stepId, stepEvidence = {}) {
   step.evidence = stepEvidence;
 
   if (success) {
-    contract.checkpoint.current_step = stepId;
+    contract.checkpoint.current_step = step.step_id !== undefined ? step.step_id : stepId;
   }
 
   // Update checkpoint in durable storage
-  recordTaskCheckpoint(contract, stepId, {
+  recordTaskCheckpoint(contract, contract.checkpoint.current_step, {
     lastStepAdvanced: stepId,
     stepStatus: step.status
   });
@@ -359,6 +415,6 @@ export function advanceStep(contract, stepId, stepEvidence = {}) {
     success,
     advancedStep: step,
     nextExecutable,
-    allStepsCompleted: contract.execution_plan.every(s => s.status === 'COMPLETED')
+    allStepsCompleted: plan.every(s => s.status === 'COMPLETED')
   };
 }

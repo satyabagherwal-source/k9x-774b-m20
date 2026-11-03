@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:18:46.612Z",
+  "last_updated": "2026-11-02T19:27:56.367Z",
   "memories": [
     {
       "memory_id": "mem-1791568984337-695191",
@@ -458,6 +458,74 @@
         "idempotency",
         "compensation",
         "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641228006-f7db3b",
+      "timestamp": "2026-11-02T17:40:28.006Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641241182-a3d0eb",
+      "timestamp": "2026-11-02T17:40:41.182Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641250564-b00725",
+      "timestamp": "2026-11-02T17:40:50.564Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793647676367-176102",
+      "timestamp": "2026-11-02T19:27:56.367Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
       ]
     }
   ]

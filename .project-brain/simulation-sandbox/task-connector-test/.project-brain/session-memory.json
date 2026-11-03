@@ -1,0 +1,549 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-02T20:02:15.145Z",
+  "memories": [
+    {
+      "memory_id": "mem-1791568984337-695191",
+      "timestamp": "2026-10-09T18:03:04.337Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791569153649-44ea77",
+      "timestamp": "2026-10-09T18:05:53.649Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791570004455-4880e0",
+      "timestamp": "2026-10-09T18:20:04.455Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791604054253-12dfb5",
+      "timestamp": "2026-10-10T03:47:34.253Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791645555840-a3f41c",
+      "timestamp": "2026-10-10T15:19:15.840Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730072388-44032f",
+      "timestamp": "2026-10-11T14:47:52.389Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730203823-b0c0c9",
+      "timestamp": "2026-10-11T14:50:03.823Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730426138-f63187",
+      "timestamp": "2026-10-11T14:53:46.138Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730639202-ab4033",
+      "timestamp": "2026-10-11T14:57:19.202Z",
+      "task_context": "Parse untrusted input collection while strictly rejecting oversized payloads",
+      "defect_observed": "Missing required evidence type: TEST_PASS",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Missing required evidence type: TEST_PASS",
+      "keywords": [
+        "FEATURE",
+        "parse",
+        "untrusted",
+        "input",
+        "collection",
+        "while"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730673028-d03095",
+      "timestamp": "2026-10-11T14:57:53.028Z",
+      "task_context": "Test oversized collection rejection",
+      "defect_observed": "Missing required evidence type: TEST_PASS",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Missing required evidence type: TEST_PASS",
+      "keywords": [
+        "FEATURE",
+        "test",
+        "oversized",
+        "collection",
+        "rejection"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730729849-66e617",
+      "timestamp": "2026-10-11T14:58:49.849Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791733347618-e0a0fe",
+      "timestamp": "2026-10-11T15:42:27.618Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791734881947-f023cc",
+      "timestamp": "2026-10-11T16:08:01.947Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 316: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791734903291-26a2d3",
+      "timestamp": "2026-10-11T16:08:23.291Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735452375-2139c9",
+      "timestamp": "2026-10-11T16:17:32.376Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 316: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735697481-016b95",
+      "timestamp": "2026-10-11T16:21:37.481Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735716398-7f5bc1",
+      "timestamp": "2026-10-11T16:21:56.398Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735944288-adeb01",
+      "timestamp": "2026-10-11T16:25:44.289Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791736092125-f0de83",
+      "timestamp": "2026-10-11T16:28:12.125Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791770959222-323e2f",
+      "timestamp": "2026-10-12T02:09:19.222Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791772472403-56acd1",
+      "timestamp": "2026-10-12T02:34:32.403Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791772650627-3e6115",
+      "timestamp": "2026-10-12T02:37:30.627Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791772665041-94b946",
+      "timestamp": "2026-10-12T02:37:45.041Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791772861927-4e43d2",
+      "timestamp": "2026-10-12T02:41:01.927Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791774139158-afb265",
+      "timestamp": "2026-10-12T03:02:19.158Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791774180966-62f233",
+      "timestamp": "2026-10-12T03:03:00.967Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791775126612-d26bb6",
+      "timestamp": "2026-10-12T03:18:46.612Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641228006-f7db3b",
+      "timestamp": "2026-11-02T17:40:28.006Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641241182-a3d0eb",
+      "timestamp": "2026-11-02T17:40:41.182Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793641250564-b00725",
+      "timestamp": "2026-11-02T17:40:50.564Z",
+      "task_context": "Acquire verified engineering patterns and invariants from source: https://github.com/fastify/fastify",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "SYSTEM_BUILD",
+        "acquire",
+        "verified",
+        "engineering",
+        "patterns",
+        "and"
+      ]
+    },
+    {
+      "memory_id": "mem-1793647676367-176102",
+      "timestamp": "2026-11-02T19:27:56.367Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1793649735145-9975eb",
+      "timestamp": "2026-11-02T20:02:15.145Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    }
+  ]
+}

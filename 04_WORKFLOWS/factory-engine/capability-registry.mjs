@@ -478,3 +478,206 @@ export function syncCapabilityCatalog(registry, customPath = null) {
   return p;
 }
 
+export const ELIGIBLE_CAPABILITY_STATUSES = ['VERIFIED WORKING'];
+
+/**
+ * Checks readiness and availability of required capabilities against the canonical registry.
+ *
+ * @param {string[]} requiredCapabilities - Array of capability IDs (e.g. ['CAP-DISASTER-RECOVERY-VAULT'])
+ * @param {object} options - Options (brainRoot, customRegistryPath, customRegistry, registry)
+ * @returns {object} Structured capability readiness assessment
+ */
+export function checkCapabilityReadiness(requiredCapabilities, options = {}) {
+  if (!Array.isArray(requiredCapabilities) || requiredCapabilities.length === 0) {
+    return {
+      ready: true,
+      allSatisfied: true,
+      totalRequired: 0,
+      satisfiedCount: 0,
+      failedCount: 0,
+      capabilities: [],
+      failures: [],
+      failureReason: null
+    };
+  }
+
+  // Resolve registry instance
+  let registry = options.registry || options.customRegistry || null;
+  if (!registry) {
+    try {
+      const p = options.customRegistryPath || getRegistryPaths(options.brainRoot).registryFile;
+      if (!fs.existsSync(p)) {
+        const msg = `Registry file not found at ${p}`;
+        return {
+          ready: false,
+          allSatisfied: false,
+          totalRequired: requiredCapabilities.length,
+          satisfiedCount: 0,
+          failedCount: requiredCapabilities.length,
+          capabilities: [],
+          failures: [msg],
+          failureReason: msg,
+          error: 'REGISTRY_FILE_NOT_FOUND'
+        };
+      }
+      registry = loadRegistry(p);
+    } catch (err) {
+      const msg = `Failed to load capability registry: ${err.message}`;
+      return {
+        ready: false,
+        allSatisfied: false,
+        totalRequired: requiredCapabilities.length,
+        satisfiedCount: 0,
+        failedCount: requiredCapabilities.length,
+        capabilities: [],
+        failures: [msg],
+        failureReason: msg,
+        error: 'REGISTRY_LOAD_FAILED'
+      };
+    }
+  }
+
+  // Validate registry object integrity
+  if (!registry || typeof registry !== 'object' || !Array.isArray(registry.capabilities)) {
+    const msg = 'Registry is malformed: missing capabilities array';
+    return {
+      ready: false,
+      allSatisfied: false,
+      totalRequired: requiredCapabilities.length,
+      satisfiedCount: 0,
+      failedCount: requiredCapabilities.length,
+      capabilities: [],
+      failures: [msg],
+      failureReason: msg,
+      error: 'REGISTRY_MALFORMED'
+    };
+  }
+
+  // Check for duplicate capability IDs in registry (registry corruption / ambiguity check)
+  const registryIdCounts = new Map();
+  for (const c of registry.capabilities) {
+    if (c && typeof c.id === 'string') {
+      registryIdCounts.set(c.id, (registryIdCounts.get(c.id) || 0) + 1);
+    }
+  }
+
+  const results = [];
+  const failures = [];
+  let satisfiedCount = 0;
+  let failedCount = 0;
+
+  for (const capId of requiredCapabilities) {
+    // 1. Check for duplicate/ambiguous ID in registry
+    if ((registryIdCounts.get(capId) || 0) > 1) {
+      const msg = `Capability '${capId}' is ambiguous [AMBIGUOUS_DUPLICATE]: duplicate ID / multiple entries found in registry`;
+      failures.push(msg);
+      failedCount++;
+      results.push({
+        id: capId,
+        found: true,
+        satisfied: false,
+        eligible: false,
+        status: 'AMBIGUOUS_DUPLICATE',
+        failureReason: msg
+      });
+      continue;
+    }
+
+    // 2. Lookup in registry
+    const record = getCapabilityById(capId, registry);
+    if (!record) {
+      const msg = `Required capability '${capId}' not found in registry [NOT_FOUND]`;
+      failures.push(msg);
+      failedCount++;
+      results.push({
+        id: capId,
+        found: false,
+        satisfied: false,
+        eligible: false,
+        status: 'NOT_FOUND',
+        failureReason: msg
+      });
+      continue;
+    }
+
+    // 3. Schema validation of the record
+    const recordValidation = validateCapabilityRecord(record);
+    if (!recordValidation.valid) {
+      const msg = `Capability '${capId}' record fails schema validation [RECORD_SCHEMA_INVALID]: ${recordValidation.errors.join('; ')}`;
+      failures.push(msg);
+      failedCount++;
+      results.push({
+        id: capId,
+        found: true,
+        satisfied: false,
+        eligible: false,
+        status: 'RECORD_SCHEMA_INVALID',
+        failureReason: msg
+      });
+      continue;
+    }
+
+    // 4. Status eligibility check
+    if (!ELIGIBLE_CAPABILITY_STATUSES.includes(record.status)) {
+      const gaps = (Array.isArray(record.knownGapsUnresolvedQuestions) && record.knownGapsUnresolvedQuestions.length > 0)
+        ? ` [Known Gaps: ${record.knownGapsUnresolvedQuestions.join('; ')}]`
+        : '';
+      const msg = `Capability '${capId}' has status '${record.status}', which is not eligible for use (required: 'VERIFIED WORKING')${gaps}`;
+      failures.push(msg);
+      failedCount++;
+      results.push({
+        id: capId,
+        found: true,
+        satisfied: false,
+        eligible: false,
+        status: record.status,
+        failureReason: msg,
+        knownGaps: record.knownGapsUnresolvedQuestions || []
+      });
+      continue;
+    }
+
+    // 5. Capability is satisfied and eligible
+    satisfiedCount++;
+    results.push({
+      id: capId,
+      name: record.name,
+      domain: record.domain,
+      found: true,
+      satisfied: true,
+      eligible: true,
+      status: record.status,
+      version: record.version,
+      requiredTools: record.requiredToolsInterfaces || [],
+      rulesConstraints: record.rulesConstraints || []
+    });
+  }
+
+  const allSatisfied = failedCount === 0 && satisfiedCount === requiredCapabilities.length;
+  const hasDup = results.some(r => r.status === 'AMBIGUOUS_DUPLICATE');
+  const hasInvalidRecord = results.some(r => r.status === 'RECORD_SCHEMA_INVALID');
+  const hasNotFound = results.some(r => r.status === 'NOT_FOUND');
+  let topError = null;
+  if (hasDup) {
+    topError = 'REGISTRY_AMBIGUOUS_DUPLICATE';
+  } else if (hasInvalidRecord) {
+    topError = 'RECORD_SCHEMA_INVALID';
+  } else if (hasNotFound) {
+    topError = 'CAPABILITY_NOT_FOUND';
+  } else if (failures.length > 0) {
+    topError = 'CAPABILITY_INELIGIBLE';
+  }
+
+  return {
+    ready: allSatisfied,
+    allSatisfied,
+    totalRequired: requiredCapabilities.length,
+    satisfiedCount,
+    failedCount,
+    capabilities: results,
+    failures,
+    failureReason: failures.length > 0 ? failures.join('; ') : null,
+    error: topError
+  };
+}
+

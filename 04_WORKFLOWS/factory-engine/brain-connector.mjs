@@ -13,37 +13,128 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { retrieveKnowledge, parseEngineeringPatterns } from './retrieval-engine.mjs';
-import { TASK_STATUS, KNOWLEDGE_APPLICATION_STATUS, VERIFICATION_OUTCOME, validateTaskContract, createTaskContract } from './task-contract.mjs';
+import { TASK_STATUS, SUBTASK_STATUS, KNOWLEDGE_APPLICATION_STATUS, VERIFICATION_OUTCOME, validateTaskContract, createTaskContract } from './task-contract.mjs';
 import { injectSessionMemoryIntoContract, recordSessionMemory } from './cross-session-memory.mjs';
 import { planTaskDecomposition, validatePlanDAG, getNextExecutableSteps, advanceStep } from './task-planner.mjs';
 import { bindSkillToTask } from './skill-runner.mjs';
+import { checkCapabilityReadiness } from './capability-registry.mjs';
+import { routeSubtaskCapabilities, evaluateSubtaskReadiness, routeTaskPlanSubtasks, SUBTASK_READINESS_STATUS } from './subtask-router.mjs';
+export { checkCapabilityReadiness, routeSubtaskCapabilities, evaluateSubtaskReadiness, routeTaskPlanSubtasks, SUBTASK_READINESS_STATUS };
+import { executeSubtaskDAG, bindSkillsToPlan, bindSkillToSubtask, getExecutableSubtasks, advanceSubtaskExecution, createExecutorAdapter } from './dag-executor.mjs';
+export { executeSubtaskDAG, bindSkillsToPlan, bindSkillToSubtask, getExecutableSubtasks, advanceSubtaskExecution, createExecutorAdapter };
+import {
+  acquireKnowledgeFromSource,
+  discoverSource,
+  fetchSourceContent,
+  extractAndCreateCandidates,
+  validateCandidateSecurityAndSchema,
+  checkDuplicatesAndContradictions,
+  persistAndReadBackVerify,
+  updateIndexAndVerifyRetrieval,
+  createKnowledgeAcquisitionContract,
+  ACQUISITION_STAGES,
+  ACQUISITION_STATUS,
+  inspectPromptInjection,
+  detectDirectiveOpposition
+} from './knowledge-acquisition-pipeline.mjs';
+export {
+  acquireKnowledgeFromSource,
+  discoverSource,
+  fetchSourceContent,
+  extractAndCreateCandidates,
+  validateCandidateSecurityAndSchema,
+  checkDuplicatesAndContradictions,
+  persistAndReadBackVerify,
+  updateIndexAndVerifyRetrieval,
+  createKnowledgeAcquisitionContract,
+  ACQUISITION_STAGES,
+  ACQUISITION_STATUS,
+  inspectPromptInjection,
+  detectDirectiveOpposition
+};
+
+import {
+  createEvidenceRecord,
+  validateEvidenceRecord,
+  categorizeKnowledgeAssertion,
+  evaluateEvidenceCorroboration,
+  assessContextualContradiction,
+  evaluateEvidenceDecision,
+  persistEvidenceRecord,
+  persistEvidenceBatch,
+  getEvidenceRecord,
+  listEvidenceForClaim,
+  readBackVerifyEvidence,
+  loadEvidenceLedger,
+  getEvidenceLedgerPath,
+  evaluateCandidateForCanonicalPromotion,
+  EVIDENCE_TYPES,
+  EVIDENCE_STATUS,
+  EVIDENCE_DECISION,
+  INDEPENDENCE_TIERS,
+  VERIFICATION_METHODS
+} from './knowledge-intelligence-engine.mjs';
+export {
+  createEvidenceRecord,
+  validateEvidenceRecord,
+  categorizeKnowledgeAssertion,
+  evaluateEvidenceCorroboration,
+  assessContextualContradiction,
+  evaluateEvidenceDecision,
+  persistEvidenceRecord,
+  persistEvidenceBatch,
+  getEvidenceRecord,
+  listEvidenceForClaim,
+  readBackVerifyEvidence,
+  loadEvidenceLedger,
+  getEvidenceLedgerPath,
+  evaluateCandidateForCanonicalPromotion,
+  EVIDENCE_TYPES,
+  EVIDENCE_STATUS,
+  EVIDENCE_DECISION,
+  INDEPENDENCE_TIERS,
+  VERIFICATION_METHODS
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
-const CHECKPOINTS_FILE = path.join(BRAIN_ROOT, '.project-brain', 'task-checkpoints.json');
+export const CHECKPOINTS_FILE = path.join(BRAIN_ROOT, '.project-brain', 'task-checkpoints.json');
+
+/**
+ * Resolves the path to the task checkpoints file dynamically.
+ * Priority: options.checkpointsPath -> options.brainRoot -> process.env.BRAIN_TASK_CHECKPOINTS_FILE -> BRAIN_ROOT default.
+ */
+export function getCheckpointsFilePath(options = {}) {
+  if (options && options.checkpointsPath) return options.checkpointsPath;
+  if (options && options.brainRoot) return path.join(options.brainRoot, '.project-brain', 'task-checkpoints.json');
+  if (process.env.BRAIN_TASK_CHECKPOINTS_FILE) return process.env.BRAIN_TASK_CHECKPOINTS_FILE;
+  return CHECKPOINTS_FILE;
+}
 
 /**
  * Ensures checkpoint storage directory and file exist
  */
-function ensureCheckpointsStorage() {
-  const dir = path.dirname(CHECKPOINTS_FILE);
+export function ensureCheckpointsStorage(options = {}) {
+  const filePath = getCheckpointsFilePath(options);
+  const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  if (!fs.existsSync(CHECKPOINTS_FILE)) {
-    fs.writeFileSync(CHECKPOINTS_FILE, JSON.stringify({ version: '1.0.0', tasks: {} }, null, 2), 'utf-8');
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify({ version: '1.0.0', tasks: {} }, null, 2), 'utf-8');
   }
+  return filePath;
 }
 
 /**
  * Loads all task checkpoints from durable storage
  */
-export function loadAllCheckpoints() {
-  ensureCheckpointsStorage();
+export function loadAllCheckpoints(options = {}) {
+  const filePath = ensureCheckpointsStorage(options);
   try {
-    return JSON.parse(fs.readFileSync(CHECKPOINTS_FILE, 'utf-8'));
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   } catch (e) {
     return { version: '1.0.0', tasks: {} };
   }
@@ -62,6 +153,30 @@ export function matchKnowledgeToTask(contract, options = {}) {
   const validation = validateTaskContract(contract);
   if (!validation.valid) {
     throw new Error(`Invalid contract passed to matchKnowledgeToTask: ${validation.errors.join(', ')}`);
+  }
+
+  // Milestone D2: Capability Discovery & Status Gating
+  if (Array.isArray(contract.required_capabilities)) {
+    if (!contract.context.capability_readiness) {
+      if (contract.required_capabilities.length > 0) {
+        const gatingResult = checkCapabilityReadiness(contract.required_capabilities, options);
+        contract.context.capability_readiness = gatingResult;
+
+        if (!gatingResult.ready) {
+          contract.status = TASK_STATUS.FAILED;
+          contract.verification_results.failure_reason = gatingResult.failureReason;
+          if (options.throwOnGatingFailure) {
+            throw new Error(`Capability Gating Failed: ${gatingResult.failureReason}`);
+          }
+          return contract;
+        }
+      } else {
+        contract.context.capability_readiness = checkCapabilityReadiness([], options);
+      }
+    } else if (!contract.context.capability_readiness.ready) {
+      contract.status = TASK_STATUS.FAILED;
+      return contract;
+    }
   }
 
   const profile = contract.task_profile || {};
@@ -270,6 +385,30 @@ export function resolveTaskContext(contract, options = {}) {
     throw new Error(`Invalid contract passed to resolveTaskContext: ${validation.errors.join(', ')}`);
   }
 
+  // Milestone D2: Capability Discovery & Status Gating
+  if (Array.isArray(contract.required_capabilities)) {
+    if (!contract.context.capability_readiness) {
+      if (contract.required_capabilities.length > 0) {
+        const gatingResult = checkCapabilityReadiness(contract.required_capabilities, options);
+        contract.context.capability_readiness = gatingResult;
+
+        if (!gatingResult.ready) {
+          contract.status = TASK_STATUS.FAILED;
+          contract.verification_results.failure_reason = gatingResult.failureReason;
+          if (options.throwOnGatingFailure) {
+            throw new Error(`Capability Gating Failed: ${gatingResult.failureReason}`);
+          }
+          return contract;
+        }
+      } else {
+        contract.context.capability_readiness = checkCapabilityReadiness([], options);
+      }
+    } else if (!contract.context.capability_readiness.ready) {
+      contract.status = TASK_STATUS.FAILED;
+      return contract;
+    }
+  }
+
   // Multi-attribute routing if task dimensions are provided
   const profile = contract.task_profile;
   const hasDimensions = profile && (
@@ -324,7 +463,12 @@ export function resolveTaskContext(contract, options = {}) {
  */
 export function formatExecutionPrompt(contract, options = {}) {
   if (contract.status === TASK_STATUS.CREATED) {
-    resolveTaskContext(contract);
+    resolveTaskContext(contract, options);
+  }
+
+  if (contract.status === TASK_STATUS.FAILED) {
+    const reason = contract.context?.capability_readiness?.failureReason || contract.verification_results?.failure_reason || 'Task in FAILED state';
+    throw new Error(`Cannot format execution prompt: Task ${contract.task_id} failed capability gating: ${reason}`);
   }
 
   // 1. Mandatory Negative Constraints Block
@@ -352,6 +496,10 @@ ${negativeList}
 ${verificationList}
 `;
 
+  const capabilitiesBlock = (contract.context?.capability_readiness?.capabilities?.length > 0)
+    ? `\n### VERIFIED REQUIRED CAPABILITIES:\n${contract.context.capability_readiness.capabilities.map(c => `- **${c.id}** (${c.name}): ${c.status}`).join('\n')}\n`
+    : '';
+
   // 4. User Prompt with Precision Retrieved Knowledge
   const userPrompt =
 `## TASK CONTRACT: [${contract.task_id}] (${contract.task_type})
@@ -361,7 +509,7 @@ ${contract.objective}
 
 ### OUTPUT FORMAT:
 ${contract.output_format}
-
+${capabilitiesBlock}
 ${contract.context.retrieval_prompt_block || ''}
 
 ### EXECUTION DIRECTIVE:
@@ -388,9 +536,9 @@ Execute this task strictly adhering to the retrieved invariants and negative con
  * @param {number} stepIndex - Current step index reached
  * @param {object} statePayload - Arbitrary state payload (files modified, variables, etc.)
  */
-export function recordTaskCheckpoint(contract, stepIndex = 0, statePayload = {}, explicitStatus = null) {
-  ensureCheckpointsStorage();
-  const db = loadAllCheckpoints();
+export function recordTaskCheckpoint(contract, stepIndex = 0, statePayload = {}, explicitStatus = null, options = {}) {
+  const filePath = ensureCheckpointsStorage(options);
+  const db = loadAllCheckpoints(options);
 
   contract.checkpoint.current_step = stepIndex;
   contract.checkpoint.last_checkpoint_at = new Date().toISOString();
@@ -412,7 +560,7 @@ export function recordTaskCheckpoint(contract, stepIndex = 0, statePayload = {},
     updated_at: new Date().toISOString()
   };
 
-  fs.writeFileSync(CHECKPOINTS_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8');
   return contract;
 }
 
@@ -420,10 +568,11 @@ export function recordTaskCheckpoint(contract, stepIndex = 0, statePayload = {},
  * Loads a specific task checkpoint from durable storage
  * 
  * @param {string} taskId - The unique task ID
+ * @param {object} options - Options for checkpoint resolution
  * @returns {object|null} The stored task record or null
  */
-export function loadTaskCheckpoint(taskId) {
-  const db = loadAllCheckpoints();
+export function loadTaskCheckpoint(taskId, options = {}) {
+  const db = loadAllCheckpoints(options);
   return db.tasks[taskId] || null;
 }
 
@@ -608,7 +757,7 @@ export function verifyKnowledgeApplications(contract, executionEvidence = {}) {
  * @param {object} executionEvidence - Evidence submitted from live execution
  * @returns {object} { verified: boolean, failureReason: string|null, contract: object }
  */
-export function verifyExecutionResult(contract, executionEvidence = {}) {
+export function verifyExecutionResult(contract, executionEvidence = {}, options = {}) {
   const criteria = contract.verification_criteria;
   const collected = [];
   let verified = true;
@@ -682,7 +831,7 @@ export function verifyExecutionResult(contract, executionEvidence = {}) {
   // Persist final verification state to checkpoint storage
   recordTaskCheckpoint(contract, contract.checkpoint.current_step, {
     verification: contract.verification_results
-  }, contract.status);
+  }, contract.status, options);
 
   return {
     verified,
@@ -692,81 +841,148 @@ export function verifyExecutionResult(contract, executionEvidence = {}) {
 }
 
 /**
- * Orchestrates a complete end-to-end task execution pipeline
- * connecting Contract, Retrieval, Skill DAG, Action Execution, Verification, and Memory
+ * Orchestrates a complete end-to-end task execution pipeline (Phase D3.4 Integrated)
+ * connecting Contract Validation, Retrieval, DAG Planning, Capability Routing,
+ * Dynamic Skill Binding, Sequential Execution via Adapter, Verification Barriers, and Checkpointing.
  * 
  * @param {object} contractInput - Task contract options or existing contract
- * @param {Function} executorFn - Function (step, contract) => Promise<{ success: boolean, evidence: object }>
+ * @param {Function} executorFn - Function (subtask/step, contract, context) => Promise<{ success: boolean, evidence?: object, error?: string }>
  * @param {object} options - Pipeline configuration options
- * @returns {Promise<object>} Pipeline execution outcome
+ * @returns {Promise<object>} Pipeline execution outcome adhering to canonical return contract
  */
 export async function executeUniversalTaskPipeline(contractInput, executorFn, options = {}) {
-  // 1. Task submission & Contract validation
+  // 1. Task submission & Contract validation (Barrier 1)
   const contract = contractInput.task_id ? contractInput : createTaskContract(contractInput);
   const validation = validateTaskContract(contract);
   if (!validation.valid) {
     throw new Error(`Task Contract validation failed: ${validation.errors.join(', ')}`);
   }
 
-  // 2. Context resolution (BM25 Retrieval + Cross-Session Memory Shields)
-  resolveTaskContext(contract);
+  // 2. Context resolution (BM25 Retrieval + Cross-Session Memory Shields + D2 Capability Gating) (Barrier 3)
+  resolveTaskContext(contract, options);
+  if (contract.status === TASK_STATUS.FAILED) {
+    const reason = contract.context?.capability_readiness?.failureReason || contract.verification_results?.failure_reason || 'Task in FAILED state';
+    throw new Error(`Task pipeline halted: capability gating failed: ${reason}`);
+  }
 
-  // 3. Applicable Skill Resolution (if skillId provided)
+  // 3. Applicable Skill Resolution (if explicit skillId provided at contract level)
   if (options.skillId) {
     bindSkillToTask(contract, options.skillId);
   }
 
-  // 4. DAG Task Decomposition & Validation
+  // 4. DAG Task Decomposition & Subtask Synchronization
   if (!contract.execution_plan || contract.execution_plan.length === 0) {
-    planTaskDecomposition(contract);
+    if (contract.subtasks && contract.subtasks.length > 0) {
+      contract.execution_plan = contract.subtasks;
+    } else {
+      planTaskDecomposition(contract);
+    }
   }
-  const dagCheck = validatePlanDAG(contract.execution_plan);
+  if (!contract.subtasks || contract.subtasks.length === 0) {
+    contract.subtasks = contract.execution_plan;
+  }
+
+  // Barrier 2: DAG Topology Validation
+  const dagCheck = validatePlanDAG(contract.execution_plan || contract.subtasks);
   if (!dagCheck.valid) {
     throw new Error(`Plan DAG is invalid: ${dagCheck.errors.join(', ')}`);
   }
 
   // Persist initial checkpoint
-  recordTaskCheckpoint(contract, 0, { phase: 'INITIALIZED' });
-
-  // 5. Step Progression & Execution
-  const executedSteps = [];
-  let executionFailed = false;
-
-  while (true) {
-    const nextSteps = getNextExecutableSteps(contract);
-    if (nextSteps.length === 0) break;
-
-    for (const step of nextSteps) {
-      let stepEvidence = {};
-      try {
-        if (typeof executorFn === 'function') {
-          const res = await executorFn(step, contract);
-          stepEvidence = res || { success: true };
-        } else {
-          stepEvidence = { success: true, simulated: true };
-        }
-      } catch (err) {
-        stepEvidence = { success: false, error: err.message };
-        executionFailed = true;
-      }
-
-      advanceStep(contract, step.step_id, stepEvidence);
-      executedSteps.push({ step_id: step.step_id, success: stepEvidence.success !== false });
-
-      if (stepEvidence.success === false) {
-        executionFailed = true;
-        break;
-      }
-    }
-
-    if (executionFailed) break;
+  if (options.persistCheckpoint !== false) {
+    recordTaskCheckpoint(contract, 0, { phase: 'INITIALIZED' }, null, options);
   }
 
-  // 6. Verification Barrier Check
+  // 4b. Subtask Capability Readiness Pre-Flight Gating (Barrier 3)
+  const subtaskGating = routeTaskPlanSubtasks(contract, options);
+  if (!subtaskGating.allReady) {
+    contract.status = TASK_STATUS.FAILED;
+    const reason = `Subtask capability gating failed:\n- ${subtaskGating.failures.join('\n- ')}`;
+    if (contract.verification_results) {
+      contract.verification_results.failure_reason = reason;
+    }
+    if (options.persistCheckpoint !== false) {
+      recordTaskCheckpoint(contract, 0, {
+        phase: 'SUBTASK_GATING_BLOCKED',
+        reason: subtaskGating.failureReason
+      }, TASK_STATUS.FAILED, options);
+    }
+    if (options.throwOnGatingFailure !== false) {
+      throw new Error(`Task pipeline halted: ${reason}`);
+    }
+    return {
+      taskId: contract.task_id,
+      contract,
+      verified: false,
+      executedSteps: [],
+      status: contract.status,
+      verification: {
+        verified: false,
+        failureReason: reason
+      }
+    };
+  }
+
+  // 4c. Dynamic Skill Binding (Barrier 4)
+  if (options.bindSkills !== false) {
+    const bindingResult = bindSkillsToPlan(contract, options);
+    if (!bindingResult.success) {
+      contract.status = TASK_STATUS.FAILED;
+      const reason = `Dynamic skill binding failed:\n- ${bindingResult.failures.join('\n- ')}`;
+      if (contract.verification_results) {
+        contract.verification_results.failure_reason = reason;
+      }
+      if (options.persistCheckpoint !== false) {
+        recordTaskCheckpoint(contract, 0, {
+          phase: 'SKILL_BINDING_BLOCKED',
+          reason: bindingResult.failureReason
+        }, TASK_STATUS.FAILED, options);
+      }
+      if (options.throwOnBindingFailure !== false) {
+        throw new Error(`Task pipeline halted: ${reason}`);
+      }
+      return {
+        taskId: contract.task_id,
+        contract,
+        verified: false,
+        executedSteps: [],
+        status: contract.status,
+        verification: {
+          verified: false,
+          failureReason: reason
+        }
+      };
+    }
+  }
+
+  // 5. Controlled Sequential DAG Execution via Adapted Executor (Barriers 5 & 6)
+  const adaptedExecutor = createExecutorAdapter(executorFn, contract, options);
+  const dagResult = await executeSubtaskDAG(contract, adaptedExecutor, {
+    ...options,
+    persistCheckpoint: options.persistCheckpoint !== false,
+    enforceReadinessGating: true,
+    bindSkills: false // already bound in step 4c
+  });
+
+  const executionFailed = !dagResult.success;
+  const executedSteps = (dagResult.executedSubtasks || []).map(es => ({
+    step_id: es.subtaskId,
+    subtask_id: es.subtaskId,
+    success: es.success !== false && es.status === SUBTASK_STATUS.COMPLETED,
+    status: es.status,
+    durationMs: es.durationMs,
+    evidence: es.evidence,
+    previouslyCompleted: es.previouslyCompleted || false,
+    skipped: es.status === SUBTASK_STATUS.SKIPPED
+  }));
+
+  // 6. Verification Barrier Check (Barriers 7 & 8)
   const verificationResult = verifyExecutionResult(contract, {
     buildExitCode: executionFailed ? 1 : 0,
-    terminalOutput: options.terminalOutput || '✓ Execution pipeline completed successfully with exit code 0',
-    evidenceTypes: options.evidenceTypes || ['BUILD_EXIT_0', 'TEST_PASS'],
+    terminalOutput: options.terminalOutput || (executionFailed
+      ? `Execution pipeline failed: ${dagResult.failureReason || 'One or more subtasks failed'}`
+      : '✓ Execution pipeline completed successfully with exit code 0'),
+    evidenceTypes: options.evidenceTypes || (executionFailed ? [] : ['BUILD_EXIT_0', 'TEST_PASS']),
     ...(options.customEvidence || {})
   });
 
@@ -776,6 +992,7 @@ export async function executeUniversalTaskPipeline(contractInput, executorFn, op
     verified: verificationResult.verified,
     executedSteps,
     status: contract.status,
-    verification: verificationResult
+    verification: verificationResult,
+    dagExecution: dagResult
   };
 }

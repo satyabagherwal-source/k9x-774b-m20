@@ -16,19 +16,27 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
-const MEMORY_FILE = path.join(BRAIN_ROOT, '.project-brain', 'session-memory.json');
+const DEFAULT_MEMORY_FILE = path.join(BRAIN_ROOT, '.project-brain', 'session-memory.json');
+
+export function getSessionMemoryFilePath(options = {}) {
+  if (options && options.memoryFilePath) return options.memoryFilePath;
+  if (options && options.brainRoot) return path.join(options.brainRoot, '.project-brain', 'session-memory.json');
+  if (process.env.BRAIN_SESSION_MEMORY_FILE) return process.env.BRAIN_SESSION_MEMORY_FILE;
+  return DEFAULT_MEMORY_FILE;
+}
 
 /**
  * Ensures session memory storage exists
  */
-function ensureMemoryStorage() {
-  const dir = path.dirname(MEMORY_FILE);
+function ensureMemoryStorage(options = {}) {
+  const filePath = getSessionMemoryFilePath(options);
+  const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  if (!fs.existsSync(MEMORY_FILE)) {
+  if (!fs.existsSync(filePath)) {
     const initial = { version: '1.0.0', last_updated: new Date().toISOString(), memories: [] };
-    fs.writeFileSync(MEMORY_FILE, JSON.stringify(initial, null, 2), 'utf-8');
+    fs.writeFileSync(filePath, JSON.stringify(initial, null, 2), 'utf-8');
   }
 }
 
@@ -37,10 +45,11 @@ function ensureMemoryStorage() {
  * 
  * @returns {object} Stored memories database
  */
-export function loadAllMemories() {
-  ensureMemoryStorage();
+export function loadAllMemories(options = {}) {
+  ensureMemoryStorage(options);
+  const filePath = getSessionMemoryFilePath(options);
   try {
-    return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf-8'));
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   } catch (e) {
     return { version: '1.0.0', last_updated: new Date().toISOString(), memories: [] };
   }
@@ -52,9 +61,9 @@ export function loadAllMemories() {
  * @param {object} item - Memory item configuration
  * @returns {object} Recorded memory record with unique memory_id
  */
-export function recordSessionMemory(item = {}) {
+export function recordSessionMemory(item = {}, options = {}) {
   ensureMemoryStorage();
-  const db = loadAllMemories();
+  const db = loadAllMemories(options);
 
   const memId = `mem-${Date.now()}-${crypto.randomBytes(3).toString('hex')}`;
   const memoryRecord = {
@@ -74,7 +83,8 @@ export function recordSessionMemory(item = {}) {
 
   db.memories.push(memoryRecord);
   db.last_updated = new Date().toISOString();
-  fs.writeFileSync(MEMORY_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  const filePath = getSessionMemoryFilePath(options);
+  fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8');
 
   return memoryRecord;
 }
@@ -85,7 +95,7 @@ export function recordSessionMemory(item = {}) {
  * @param {string} queryText - Task objective or error message
  * @returns {Array<object>} Matching memory warnings
  */
-export function querySessionMemories(queryText = '') {
+export function querySessionMemories(queryText = '', options = {}) {
   const db = loadAllMemories();
   if (!queryText || db.memories.length === 0) return [];
 

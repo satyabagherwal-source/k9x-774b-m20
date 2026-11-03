@@ -139,15 +139,15 @@ export async function executeDisasterRecovery(options = {}) {
     run(`git bundle verify "${bundlePath}"`, originalBrainDir);
   }
 
-  // 5. Unpack Auxiliary State (Non-Git Scoped State: Cache, Locks, Logs, Scripts)
-  if (fs.existsSync(auxTarPath)) {
+  // 5. Sync Files: Prioritize local snapshot tree if available, otherwise unpack auxiliary archive
+  if (fs.existsSync(treeDir)) {
+    logger(`\n[STEP 4] Syncing files from local snapshot tree...`);
+    fs.cpSync(treeDir, destination, { recursive: true });
+    logger(`  ✅ Files synced from local snapshot tree`);
+  } else if (fs.existsSync(auxTarPath)) {
     logger(`\n[STEP 4] Unpacking Auxiliary Non-Git State Archive...`);
     run(`tar -xzf "${auxTarPath}" -C "${destination}"`);
     logger(`  ✅ Restored retrieval cache, circuit breaker states, logs, and engine scripts`);
-  } else if (fs.existsSync(treeDir)) {
-    logger(`\n[STEP 4] Copying files from local snapshot tree...`);
-    fs.cpSync(treeDir, destination, { recursive: true });
-    logger(`  ✅ Files synced from local snapshot tree`);
   }
 
   // 6. Decrypt Secrets
