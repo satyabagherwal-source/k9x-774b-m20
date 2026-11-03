@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:36:52.744Z",
+  "last_updated": "2026-11-03T21:44:55.928Z",
   "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6999,8 +6999,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "26d69186",
-      "content_hash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
+      "source_version": "e9bd7c00",
+      "content_hash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7203,6 +7203,11 @@
           "number": 6548,
           "title": "Revert \"datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6624,
+          "title": "ipam/multi-pool: add per-pool IP and CIDR-block metrics",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7210,7 +7215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:06:29.803Z",
+      "verified_at": "2026-11-03T21:44:55.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52536,8 +52541,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "d9e73f40",
-      "content_hash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
+      "source_version": "2fa4ccf7",
+      "content_hash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -52610,6 +52615,11 @@
           "number": 6376,
           "title": "Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6623,
+          "title": "Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce r",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52617,7 +52627,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:10:33.954Z",
+      "verified_at": "2026-11-03T21:44:52.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53092,8 +53102,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "ec16f25b",
-      "content_hash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
+      "source_version": "5390e472",
+      "content_hash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -53116,6 +53126,11 @@
           "number": 5893,
           "title": "iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6622,
+          "title": "example): Allow undefined for optional SettingsSwitch props (#5130)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53123,7 +53138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:34:22.079Z",
+      "verified_at": "2026-11-03T21:44:49.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73946,8 +73961,8 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "ebaa7fc0",
-      "content_hash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
+      "source_version": "8931f869",
+      "content_hash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
@@ -73965,6 +73980,11 @@
           "number": 4731,
           "title": "Build: bump pypa/cibuildwheel (GH-536)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6621,
+          "title": "Preserve the native test lock counters when reusing generated C (GH-538)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73972,7 +73992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:07:44.936Z",
+      "verified_at": "2026-11-03T21:44:45.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170516,6 +170536,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:36:52.723Z"
+    },
+    "rule-6621": {
+      "learning_id": "rule-6621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6621,
+      "title": "Preserve the native test lock counters when reusing generated C (GH-538)",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "8931f869",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:44:45.900Z"
+    },
+    "rule-6622": {
+      "learning_id": "rule-6622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6622,
+      "title": "example): Allow undefined for optional SettingsSwitch props (#5130)",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "5390e472",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:44:49.933Z"
+    },
+    "rule-6623": {
+      "learning_id": "rule-6623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6623,
+      "title": "Issues: name a RollingUpdate surge as the cause of a one-replica ReadWriteOnce r",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "2fa4ccf7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:44:52.806Z"
+    },
+    "rule-6624": {
+      "learning_id": "rule-6624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6624,
+      "title": "ipam/multi-pool: add per-pool IP and CIDR-block metrics",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "e9bd7c00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:44:55.905Z"
     }
   },
   "aliases": {

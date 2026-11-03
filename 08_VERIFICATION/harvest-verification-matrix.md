@@ -7017,3 +7017,7 @@
 | `CYCLE-20261103-A86Y` | `2026-11-03T21:29:05.530Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6619` | Yes (`23f543c8...`) |
 | `CYCLE-20261103-K8R7` | `2026-11-03T21:36:52.819Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6620` | Yes (`01cc69a2...`) |
 | `CYCLE-20261103-K8RG` | `2026-11-03T21:36:52.828Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6620` | Yes (`d49175d9...`) |
+| `CYCLE-20261103-UDVD` | `2026-11-03T21:44:46.009Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6621` | Yes (`0c50f8c8...`) |
+| `CYCLE-20261103-UGZJ` | `2026-11-03T21:44:50.047Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6622` | Yes (`785c8521...`) |
+| `CYCLE-20261103-UJ78` | `2026-11-03T21:44:52.916Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6623` | Yes (`71a09be1...`) |
+| `CYCLE-20261103-ULL3` | `2026-11-03T21:44:56.007Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6624` | Yes (`27756688...`) |

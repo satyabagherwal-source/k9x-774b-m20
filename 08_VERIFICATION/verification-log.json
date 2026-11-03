@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-IOU0",
-    "timestamp": "2026-10-31T09:36:49.464Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "f529436a7cf808d7e8fb7a1c03d6fc8355fcb2142c554bbda1d468f5c7ed321b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-IRBC",
-    "timestamp": "2026-10-31T09:36:52.680Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-N1IN",
-    "timestamp": "2026-10-31T09:40:12.527Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-VYBW",
-    "timestamp": "2026-10-31T09:47:08.300Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-4RHB",
     "timestamp": "2026-10-31T09:53:59.327Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7430,66 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UDVD",
+    "timestamp": "2026-11-03T21:44:46.009Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UGZJ",
+    "timestamp": "2026-11-03T21:44:50.047Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UJ78",
+    "timestamp": "2026-11-03T21:44:52.916Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-ULL3",
+    "timestamp": "2026-11-03T21:44:56.007Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

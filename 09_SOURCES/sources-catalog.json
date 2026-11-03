@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "26d69186",
+    "sourceVersion": "e9bd7c00",
     "license": "Apache-2.0",
-    "contentHash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
-    "lastHarvestedAt": "2026-11-03T17:06:29.909Z",
+    "contentHash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
+    "lastHarvestedAt": "2026-11-03T21:44:56.011Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "d9e73f40",
+    "sourceVersion": "2fa4ccf7",
     "license": "Apache-2.0",
-    "contentHash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
-    "lastHarvestedAt": "2026-11-01T00:10:34.020Z",
+    "contentHash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
+    "lastHarvestedAt": "2026-11-03T21:44:52.920Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "ec16f25b",
+    "sourceVersion": "5390e472",
     "license": "MIT",
-    "contentHash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
-    "lastHarvestedAt": "2026-10-30T21:34:22.160Z",
+    "contentHash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
+    "lastHarvestedAt": "2026-11-03T21:44:50.051Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "ebaa7fc0",
+    "sourceVersion": "8931f869",
     "license": "BSD-3-Clause",
-    "contentHash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
-    "lastHarvestedAt": "2026-10-27T12:07:44.993Z",
+    "contentHash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
+    "lastHarvestedAt": "2026-11-03T21:44:46.013Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {

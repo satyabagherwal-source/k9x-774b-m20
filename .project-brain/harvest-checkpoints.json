@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:36:52.843Z",
+  "last_updated": "2026-11-03T21:44:56.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "268cd29a954eba588061d513c7e75266d7f7ec849953bd7b22120139a4637551",
-      "verified_at": "2026-11-03T17:06:29.918Z",
+      "content_hash": "27756688007b7970c0bcce3156cfe5b978da94e9f3e9f0c2900a5d31c6936aff",
+      "verified_at": "2026-11-03T21:44:56.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:06:29.918Z"
+      "last_updated": "2026-11-03T21:44:56.020Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
-      "verified_at": "2026-11-01T00:10:34.026Z",
+      "content_hash": "71a09be1a477c11bdcb6843cd036cb148fe6e926c8a6cdf3feaf56414f1e337e",
+      "verified_at": "2026-11-03T21:44:52.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:10:34.026Z"
+      "last_updated": "2026-11-03T21:44:52.929Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
-      "verified_at": "2026-10-30T21:34:22.167Z",
+      "content_hash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
+      "verified_at": "2026-11-03T21:44:50.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:34:22.167Z"
+      "last_updated": "2026-11-03T21:44:50.062Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",
@@ -14016,14 +14016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lxml-lxml",
-      "content_hash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
-      "verified_at": "2026-10-27T12:07:44.999Z",
+      "content_hash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
+      "verified_at": "2026-11-03T21:44:46.022Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:07:44.999Z"
+      "last_updated": "2026-11-03T21:44:46.022Z"
     },
     "mazzzystar/Queryable": {
       "repository": "mazzzystar/Queryable",

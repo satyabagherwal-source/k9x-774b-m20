@@ -7026,3 +7026,7 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `280986c1` | Multi-dimensional audit evidence | 2026-11-03T21:29:05.534Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a91f7fe5` | Multi-dimensional audit evidence | 2026-11-03T21:36:52.823Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `f481da3f` | Multi-dimensional audit evidence | 2026-11-03T21:36:52.832Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `8931f869` | Multi-dimensional audit evidence | 2026-11-03T21:44:46.013Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `5390e472` | Multi-dimensional audit evidence | 2026-11-03T21:44:50.051Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `2fa4ccf7` | Multi-dimensional audit evidence | 2026-11-03T21:44:52.920Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e9bd7c00` | Multi-dimensional audit evidence | 2026-11-03T21:44:56.011Z |

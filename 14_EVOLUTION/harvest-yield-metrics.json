@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T21:36:52.837Z",
-  "total_cycles_completed": 6994,
-  "total_learnings_persisted": 6994,
-  "total_rules_promoted": 6639,
+  "last_updated": "2026-11-03T21:44:56.016Z",
+  "total_cycles_completed": 6998,
+  "total_learnings_persisted": 6998,
+  "total_rules_promoted": 6643,
   "history": [
-    {
-      "timestamp": "2026-11-02T15:22:25.149Z",
-      "repository": "prof18/feed-flow",
-      "learningId": "learn-github-prof18-feed-flow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:22:29.571Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:22:30.388Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:29:37.078Z",
-      "repository": "LiquidAI/LFM3-VL-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T15:29:41.097Z",
       "repository": "saltstack/salt",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-03T21:36:52.837Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:44:46.019Z",
+      "repository": "lxml/lxml",
+      "learningId": "learn-github-lxml-lxml",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:44:50.058Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:44:52.926Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:44:56.016Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

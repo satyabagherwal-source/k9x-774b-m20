@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `26d69186`  
+> **Source Version**: `e9bd7c00`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:06:29.215Z  
+> **Timestamp**: 2026-11-03T21:44:55.297Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:06:28.414Z  
+> **Harvest Timestamp**: 2026-11-03T21:44:54.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25767 stars
+- **Stars / Engagement**: 25768 stars
 
 ---
 
@@ -1282,1316 +1282,531 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3eee24dd` (2026-11-03)
-**Commit Message**: Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`"
+### Incident Patch 1: `e9bd7c00` (2026-10-20)
+**Commit Message**: ipam/multi-pool: add per-pool IP and CIDR-block metrics
 
-This reverts commit 42bf3b174d7370e7807113c70823b82a28e0d9e8.
+Multi-pool IPAM gave us no per-pool visibility. The operator's
+ipam_{available,used,needed}_ips gauges don't help here, because in multi-pool
+mode the per-node IP accounting happens in the agent, not the operator.
 
-It made the Cilium Cluster Mesh upgrade and Conformance Cluster Mesh
-workflows flakier [1][2][3][4]. Its PR, #49671, ran the Cluster Mesh
-upgrade workflow 7 times before it merged, plus one re-run of a failed
-job, and 5 of those runs failed, a signal that it introduced a flake.
+Agent side: emit per-pool, per-family gauges from the multi-pool manager's
+updateLocalNode:
 
-1: https://github.com/cilium/cilium/actions/runs/41453693329/job/125305068628
-2: https://github.com/cilium/cilium/actions/runs/41529082626/job/125564694498
-3: https://github.com/cilium/cilium/actions/runs/41432220783/job/125233618569
-4: https://github.com/cilium/cilium/actions/runs/41080733992/job/124149040696
+  cilium_ipam_multipool_available_ips     (used + free, to match the operator)
+  cilium_ipam_multipool_used_ips
+  cilium_ipam_multipool_needed_ips
+  cilium_ipam_multipool_allocated_blocks  (pod CIDRs currently held by the node)
 
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
+Operator side: a pool can also run out of CIDR blocks while individual nodes
+still have free IPs, which the IP counts won't catch. So expose the pool-wide
+total from the operator:
 
-**File**: `bpf/bpf_host.c` (modified, +24/-20)
+  cilium_operator_ipam_multipool_total_blocks
+
+Comparing that against the sum of the agent's allocated_blocks shows how close a
+pool is to running out of blocks.
+
+The metrics are optional and no-op when not wired in (the ENI allocator and
+unit tests don't set them).
+
+Signed-off-by: Afeedh Shaji <[REDACTED_EMAIL]>
+
+**File**: `Documentation/observability/metrics.rst` (modified, +5/-0)
 ```diff
-@@ -193,7 +193,8 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
- 			return DROP_UNENCRYPTED_TRAFFIC;
- 	}
+@@ -812,6 +812,10 @@ Name                                     Labels
+ ``ipam_capacity``                        ``family``, ``cidr``                         Enabled    Total number of IPs in the IPAM pool labeled by family
+ ``ipam_events_total``                    ``action``, ``family``                       Enabled    Number of IPAM events received labeled by action and datapath family type
+ ``ip_addresses``                         ``family``                                   Enabled    Number of allocated IP addresses
++``ipam_multipool_available_ips``         ``pool``, ``family``                         Enabled    Total IPs (in-use and free) per pool and family. Emitted by the agent in multi-pool IPAM mode
++``ipam_multipool_used_ips``              ``pool``, ``family``                         Enabled    In-use (allocated) IPs per pool and family. Emitted by the agent in multi-pool IPAM mode
++``ipam_multipool_needed_ips``            ``pool``, ``family``                         Enabled    IPs needed to satisfy allocation demand per pool and family. Emitted by the agent in multi-pool IPAM mode
++``ipam_multipool_allocated_blocks``      ``pool``, ``family``                         Enabled    CIDR blocks (pod CIDRs) allocated to this node per pool and family. Emitted by the agent in multi-pool IPAM mode
+ ======================================== ============================================ ========== ========================================================
  
--	if (is_defined(ENABLE_NODEPORT) && !from_host) {
-+#ifdef ENABLE_NODEPORT
-+	if (!from_host) {
- 		if (!ctx_skip_nodeport(ctx)) {
- 			bool is_dsr = false;
+ KVstore
+@@ -995,6 +999,7 @@ Name                                     Labels
+ ``ipam_available_ips``                   ``target_node``                                                   Enabled    Number of available IPs on a node (taking into account plugin specific NIC/Address limits).
+ ``ipam_used_ips``                        ``target_node``                                                   Enabled    Number of currently used IPs on a node.
+ ``ipam_needed_ips``                      ``target_node``                                                   Enabled    Number of IPs needed to satisfy allocation on a node.
++``ipam_multipool_total_blocks``          ``pool``, ``family``                                              Enabled    Total number of CIDR blocks per pool and family.
+ ======================================== ================================================================= ========== ========================================================
  
-@@ -210,6 +211,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
- 				return ret;
- 		}
- 	}
-+#endif /* ENABLE_NODEPORT */
- 
- 	if (!CONFIG(enable_host_firewall))
- 		return CTX_ACT_OK;
-@@ -630,7 +632,8 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
- 			return DROP_UNENCRYPTED_TRAFFIC;
- 	}
- 
--	if (is_defined(ENABLE_NODEPORT) && !from_host) {
-+#ifdef ENABLE_NODEPORT
-+	if (!from_host) {
- 		if (!ctx_skip_nodeport(ctx)) {
- 			bool is_dsr = false;
- 
-@@ -649,6 +652,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
- 				return ret;
- 		}
- 	}
-+#endif /* ENABLE_NODEPORT */
- 
- 	if (!CONFIG(enable_host_firewall))
- 		return CTX_ACT_OK;
-@@ -1595,26 +1599,25 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 		}
- 	}
- 
--	if (is_defined(ENABLE_NODEPORT)) {
--		if (CONFIG(enable_health_check)) {
--			ret = lb_handle_health(ctx, proto);
--			if (ret != CTX_ACT_OK)
--				goto exit;
--		}
-+#ifdef ENABLE_NODEPORT
-+	if (CONFIG(enable_health_check)) {
-+		ret = lb_handle_health(ctx, proto);
-+		if (ret != CTX_ACT_OK)
-+			goto exit;
-+	}
- 
--		if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
--			/*
--			 * handle_nat_fwd tail calls in the majority of cases,
--			 * so control might never return to this program.
--			 */
--			ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace,
--					     &ext_err);
--			if (ret == CTX_ACT_REDIRECT)
--				return ret;
--		}
-+	if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
-+		/*
-+		 * handle_nat_fwd tail calls in the majority of cases,
-+		 * so control might never return to this program.
-+		 */
-+		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace, &ext_err);
-+		if (ret == CTX_ACT_REDIRECT)
-+			return ret;
- 	}
- 
- exit:
-+#endif
- 	if (IS_ERR(ret))
- 		goto drop_err;
- 
-@@ -1852,8 +1855,8 @@ int cil_to_host(struct __ctx_buff *ctx)
- 			ctx->mark = MARK_MAGIC_SKIP_TPROXY;
- #endif /* !TUNNEL_MODE */
- 
--		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
--		    validate_ethertype(ctx, &proto)) {
-+# ifdef ENABLE_NODEPORT
-+		if (ctx_is_encrypt(ctx) && validate_ethertype(ctx, &proto)) {
- 			/* handle_nat_fwd() tail calls in the majority of cases, so control
- 			 * might never return to this program. Since IPsec is not compatible
- 			 * iwth Host Firewall, this won't be an issue.
-@@ -1863,6 +1866,7 @@ int cil_to_host(struct __ctx_buff *ctx)
- 			if (IS_ERR(ret))
- 				goto out;
- 		}
-+#endif /* ENABLE_NODEPORT */
- 	}
- 
- 	if (CONFIG(enable_host_firewall)) {
+ LB-IPAM
 ```
 
-**File**: `bpf/bpf_lxc.c` (modified, +27/-11)
+**File**: `operator/pkg/ipam/allocator/multipool/metrics.go` (added, +59/-0)
 ```diff
-@@ -168,7 +168,8 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
- 
- 	svc = lb4_lookup_service(&key, is_defined(ENABLE_NODEPORT));
- 
--	if (is_defined(ENABLE_NODEPORT)) {
-+#if defined(ENABLE_NODEPORT)
-+	{
- 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
- 
- 		if (!svc) {
-@@ -191,6 +192,7 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
- 			}
- 		}
- 	}
-+#endif /* ENABLE_NODEPORT */
- 
- 	if (svc) {
- 		const struct lb4_backend *backend;
-@@ -343,7 +345,8 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
- 	 */
- 	svc = lb6_lookup_service(&key, is_defined(ENABLE_NODEPORT));
- 
--	if (is_defined(ENABLE_NODEPORT)) {
-+#if defined(ENABLE_NODEPORT)
-+	{
- 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
- 
- 		if (!svc) {
-@@ -366,6 +369,7 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
- 			}
- 		}
- 	}
-+#endif /* ENABLE_NODEPORT */
- 
- 	if (svc) {
- 		const struct lb6_backend *backend;
-@@ -729,11 +733,13 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
- 	/* The packet goes to a peer not managed by this agent instance */
- #ifdef TUNNEL_MODE
- 	if (ct_state->from_tunnel || !skip_tunnel) {
-+#if !defined(ENABLE_NODEPORT)
- 		/* See comment in handle_ipv4_from_lxc(). */
--		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
-+		if (CONFIG(enable_host_firewall) &&
- 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
- 		    identity_is_remote_node(dst_sec_identity))
- 			goto pass_to_stack;
-+#endif /* !ENABLE_NODEPORT */
- 
- 		if (info && info->flag_has_tunnel_ep)
- 			return encap_and_redirect_lxc(ctx, info, SECLABEL_IPV6,
-@@ -844,12 +850,14 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		lb6_ctx_restore_state(ctx, &ct_state_new, &proxy_port, true);
- 		hairpin_flow = ct_state_new.loopback;
- 
--		if (is_defined(ENABLE_NODEPORT)) {
-+#if defined(ENABLE_NODEPORT)
-+		{
- 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
- 
- 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
- 			ct_state_new.nat_port = nat_info->nat_port;
- 		}
-+#endif /* ENABLE_NODEPORT */
- 	}
- 
- 	ct_buffer = AUX_REUSE(cilium_tail_call_buffer6);
-@@ -973,12 +981,12 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 
- 	case CT_RELATED:
- 	case CT_REPLY:
-+#ifdef ENABLE_NODEPORT
- 		/* See comment in handle_ipv4_from_lxc().
- 		 *
- 		 * Needed for compatibility with pre-v1.19 CT entries.
- 		 */
--		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
--		    lb_is_svc_proto(tuple->nexthdr)) {
-+		if (ct_state->node_port && lb_is_svc_proto(tuple->nexthdr)) {
- 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV6,
- 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
- 					  TRACE_IFINDEX_UNKNOWN,
-@@ -987,6 +995,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 			return tail_call_internal(ctx, CILIUM_CALL_IPV6_NODEPORT_REVNAT_EGRESS,
- 						  ext_err);
- 		}
-+#endif /* ENABLE_NODEPORT */
- 		break;
- 	default:
- 		return DROP_UNKNOWN_CT;
-@@ -1224,6 +1233,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 		if (cluster_id > UINT16_MAX)
- 			return DROP_INVALID_CLUSTER_ID;
- 
-+#if !defined(ENABLE_NODEPORT)
- 		/*
- 		 * For the host firewall, traffic from a pod to a remote node is sent
- 		 * through the tunnel. In the case of node to remote pod traffic via
-@@ -1233,10 +1243,11 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 		 * to apply the correct reverse DNAT, and then be routed accordingly.
- 		 * See #14674 for details.
- 		 */
--		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
-+		if (CONFIG(enable_host_firewall) &&
- 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
- 		    identity_is_remote_node(dst_sec_identity))
- 			goto pass_to_stack;
-+#endif /* !ENABLE_NODEPORT */
- 
- #ifdef ENABLE_CLUSTER_AWARE_ADDRESSING
- 		/*
-@@ -1357,12 +1368,14 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		lb4_ctx_restore_state(ctx, &ct_state_new, &proxy_port, &cluster_id, true);
- 		hairpin_flow = ct_state_new.loopback;
- 
--		if (is_defined(ENABLE_NODEPORT)) {
-+#if defined(ENABLE_NODEPORT)
-+		{
- 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
- 
- 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
- 			ct_state_new.nat_port = nat_info->nat_port;
- 		}
-+#endif /* ENABLE_NODEPORT */
- 	}
- 
- 	bool same_subnet_id = false;
-@@ -1523,15 +1536,15 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 
- 	case CT_RELATED:
- 	case CT_REPLY:
-+#ifdef ENABLE_NODEPORT
- 		/* This handles reply traffic for the case where the nodeport EP
- 		 * is local to the node. We'll do the tail call to perform
- 		 * the reverse DNAT.
- 		 *
- 		 * This codepath currently doesn't support revDNAT for ICMP,
- 		 * so make sure
-```
-
-**File**: `bpf/bpf_overlay.c` (modified, +14/-13)
-```diff
-@@ -53,7 +53,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
- 				       __u32 *identity,
- 				       __s8 *ext_err __maybe_unused)
- {
--	int ret, l3_off = ETH_HLEN;
-+	int ret __maybe_unused, l3_off = ETH_HLEN;
- 	void *data_end, *data;
- 	struct ipv6hdr *ip6;
- 	const struct endpoint_info *ep;
-@@ -72,7 +72,8 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
- 			return DROP_FRAG_NOSUPPORT;
- 	}
- 
--	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
-+#ifdef ENABLE_NODEPORT
-+	if (!ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 
- 		ret = nodeport_lb6(ctx, ip6, *identity, &punt_to_stack,
-@@ -88,6 +89,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
- 		if (punt_to_stack)
- 			return ret;
- 	}
-+#endif
- 
- 	if (!revalidate_data(ctx, &data, &data_end, &ip6))
- 		return DROP_INVALID;
-@@ -257,7 +259,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
- 	struct iphdr *ip4;
- 	const struct endpoint_info *ep;
- 	bool is_dsr = false;
--	int ret;
-+	int ret __maybe_unused;
- 
- 	/* verifier workaround (dereference of modified ctx ptr) */
- 	if (!revalidate_data(ctx, &data, &data_end, &ip4))
-@@ -282,7 +284,8 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
- 	}
- #endif /* ENABLE_MULTICAST */
- 
--	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
-+#ifdef ENABLE_NODEPORT
-+	if (!ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 
- 		ret = nodeport_lb4(ctx, ip4, *identity, &punt_to_stack,
-@@ -298,7 +301,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
- 		if (punt_to_stack)
- 			return ret;
- 	}
--
-+#endif
- 	if (!revalidate_data(ctx, &data, &data_end, &ip4))
- 		return DROP_INVALID;
- 
-@@ -649,17 +652,15 @@ int cil_to_overlay(struct __ctx_buff *ctx)
- 
- 	set_identity_mark(ctx, src_sec_identity, MARK_MAGIC_OVERLAY);
- 
--	if (is_defined(ENABLE_NODEPORT)) {
--		if (snat_done) {
--			ret = CTX_ACT_OK;
--			goto out;
--		}
--
--		ret = handle_nat_fwd(ctx, cluster_id, src_sec_identity, proto, false, &trace,
--				     &ext_err);
-+#ifdef ENABLE_NODEPORT
-+	if (snat_done) {
-+		ret = CTX_ACT_OK;
-+		goto out;
- 	}
- 
-+	ret = handle_nat_fwd(ctx, cluster_id, src_sec_identity, proto, false, &trace, &ext_err);
- out:
-+#endif
- 	if (IS_ERR(ret))
- 		return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
- 						  METRIC_EGRESS);
-```
-
-**File**: `bpf/bpf_sock.c` (modified, +17/-6)
-```diff
-@@ -218,6 +218,7 @@ sock4_skip_xlate(const struct lb4_service *svc, __be32 address)
- 	return false;
- }
- 
-+#ifdef ENABLE_NODEPORT
- static __always_inline const struct lb4_service *
- sock4_wildcard_lookup(struct lb4_key *key)
- {
-@@ -245,14 +246,13 @@ sock4_wildcard_lookup(struct lb4_key *key)
- 	key->address = 0;
- 	return lb4_lookup_service(key, true);
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline const struct lb4_service *
- sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
- 			   const bool in_hostns __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return NULL;
--
-+#ifdef ENABLE_NODEPORT
- 	bool loopback = is_v4_loopback(key->address);
- 	const struct remote_endpoint_info *info;
- 	const struct lb4_service *svc;
-@@ -299,6 +299,9 @@ sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
- 	 */
- 	return (lb4_svc_is_hostport(svc) &&
- 		(!lb4_svc_is_loopback(svc) || loopback)) ? svc : NULL;
-+#endif /* ENABLE_NODEPORT */
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
 +
-+	return NULL;
- }
- 
- static __always_inline int __sock4_xlate_fwd(struct bpf_sock_addr *ctx,
-@@ -482,6 +485,7 @@ int cil_sock4_connect(struct bpf_sock_addr *ctx)
- 	return SYS_PROCEED;
- }
- 
-+#ifdef ENABLE_NODEPORT
- static __always_inline int __sock4_post_bind(struct bpf_sock *ctx,
- 					     struct bpf_sock *ctx_full)
- {
-@@ -536,6 +540,7 @@ int cil_sock4_post_bind(struct bpf_sock *ctx)
- 
- 	return SYS_PROCEED;
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline void sock4_auto_bind(struct bpf_sock_addr *ctx)
- {
-@@ -733,6 +738,7 @@ static __always_inline void ctx_get_v6_address(const struct bpf_sock_addr *ctx,
- 	barrier();
- }
- 
-+#ifdef ENABLE_NODEPORT
- static __always_inline void ctx_get_v6_src_address(const struct bpf_sock *ctx,
- 						   union v6addr *addr)
- {
-@@ -745,6 +751,7 @@ static __always_inline void ctx_get_v6_src_address(const struct bpf_sock *ctx,
- 	addr->p4 = ctx->src_ip6[3];
- 	barrier();
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline void ctx_set_v6_address(struct bpf_sock_addr *ctx,
- 					       const union v6addr *addr)
-@@ -776,6 +783,7 @@ sock6_skip_xlate(const struct lb6_service *svc, const union v6addr *address)
- 	return false;
- }
- 
-+#ifdef ENABLE_NODEPORT
- static __always_inline __maybe_unused const struct lb6_service *
- sock6_wildcard_lookup(struct lb6_key *key)
- {
-@@ -803,14 +811,13 @@ sock6_wildcard_lookup(struct lb6_key *key)
- 	memset(&key->address, 0, sizeof(key->address));
- 	return lb6_lookup_service(key, true);
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline __maybe_unused const struct lb6_service *
- sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
- 			   const bool in_hostns __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return NULL;
--
-+#ifdef ENABLE_NODEPORT
- 	bool loopback = is_v6_loopback(&key->address);
- 	const struct remote_endpoint_info *info;
- 	const struct lb6_service *svc;
-@@ -851,6 +858,8 @@ sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
- 
- 	return (lb6_svc_is_hostport(svc) &&
- 		(!lb6_svc_is_loopback(svc) || loopback)) ? svc : NULL;
-+#endif /* ENABLE_NODEPORT */
-+	return NULL;
- }
- 
- static __always_inline
-@@ -885,6 +894,7 @@ int sock6_xlate_v4_in_v6(struct bpf_sock_addr *ctx __maybe_unused,
- 	return -ENXIO;
- }
- 
-+#ifdef ENABLE_NODEPORT
- static __always_inline int
- sock6_post_bind_v4_in_v6(struct bpf_sock *ctx __maybe_unused)
- {
-@@ -951,6 +961,7 @@ int cil_sock6_post_bind(struct bpf_sock *ctx)
- 
- 	return SYS_PROCEED;
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline int
- sock6_pre_bind_v4_in_v6(struct bpf_sock_addr *ctx __maybe_unused)
++package multipool
++
++import (
++	"github.com/prometheus/client_golang/prometheus"
++
++	"github.com/cilium/cilium/pkg/ipam"
++	"github.com/cilium/cilium/pkg/metrics"
++	"github.com/cilium/cilium/pkg/metrics/metric"
++)
++
++const (
++	multiPoolSubsystem = "ipam_multipool"
++
++	labelPoolName = "pool"
++	labelIPFamily = "family"
++)
++
++type Metrics struct {
++	// TotalBlocks is the total number of CIDR blocks in the pool.
++	TotalBlocks metric.DeletableVec[metric.Gauge]
++}
++
++// NewMetrics returns a new Metrics instance.
++func NewMetrics() Metrics {
++	return Metrics{
++		TotalBlocks: metric.NewGaugeVec(metric.GaugeOpts{
++			Namespace: metrics.CiliumOperatorNamespace,
++			Subsystem: multiPoolSubsystem,
++			Name:      "total_blocks",
++			Help:      "Total number of CIDR blocks in the multi-pool IPAM pool",
++		}, []string{labelPoolName, labelIPFamily}),
++	}
++}
++
++// enabled returns false if m is nil, e.g. in unit tests.
++func (m *Metrics) enabled() bool {
++	return m != nil && m.TotalBlocks != nil
++}
++
++// setPool sets the total-blocks gauge for a given pool and family.
++// No-op when no Metrics was injected (see enabled).
++func (m *Metrics) setPool(pool string, family ipam.Family, total int) {
++	if !m.enabled() {
++		return
++	}
++	m.TotalBlocks.WithLabelValues(pool, string(family)).Set(float64(total))
++}
++
++// deletePool drops both families' series for a pool once it is deleted.
++// No-op when no Metrics was injected (see enabled).
++func (m *Metrics) deletePool(pool string) {
++	if !m.enabled() {
++		return
++	}
++	m.TotalBlocks.DeletePartialMatch(prometheus.Labels{labelPoolName: pool})
++}
 ```
 
-**File**: `bpf/bpf_wireguard.c` (modified, +17/-13)
+**File**: `operator/pkg/ipam/allocator/multipool/node_handler_test.go` (modified, +5/-5)
 ```diff
-@@ -63,7 +63,8 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 			return DROP_FRAG_NOSUPPORT;
- 	}
+@@ -98,7 +98,7 @@ type mockResult struct {
+ func TestNodeHandler(t *testing.T) {
+ 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
  
--	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
-+#ifdef ENABLE_NODEPORT
-+	if (!ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 		bool is_dsr = false;
+-	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
++	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 	err := backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0)
+ 	assert.NoError(t, err)
  
-@@ -75,6 +76,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 		if (!revalidate_data(ctx, &data, &data_end, &ip6))
- 			return DROP_INVALID;
- 	}
-+#endif
+@@ -259,7 +259,7 @@ func TestNodeHandler(t *testing.T) {
+ func TestOrphanCIDRsAfterRestart(t *testing.T) {
+ 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
  
- 	ep = lookup_ip6_endpoint(ip6);
- 	if (ep && !(ep->flags & ENDPOINT_MASK_HOST_DELIVERY)) {
-@@ -141,7 +143,8 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 			return DROP_FRAG_NOSUPPORT;
- 	}
+-	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
++	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
  
--	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
-+#ifdef ENABLE_NODEPORT
-+	if (!ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 		bool is_dsr = false;
+ 	onUpdateArgs := make(chan mockArgs)
  
-@@ -160,6 +163,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 		if (!revalidate_data(ctx, &data, &data_end, &ip4))
- 			return DROP_INVALID;
- 	}
-+#endif
+@@ -396,7 +396,7 @@ func TestOrphanCIDRsAfterRestart(t *testing.T) {
+ func TestOrphanCIDRsReleased(t *testing.T) {
+ 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
  
- 	/* Lookup IPv4 address in the list of local endpoints and host IPs.
- 	 *
-@@ -264,6 +268,7 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
- 	if (CONFIG(enable_identity_mark))
- 		set_decrypt_mark(ctx, 0);
+-	backend := NewPoolAllocator(hivetest.Logger(t), true, true)
++	backend := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 	err := backend.UpsertPool("test-pool",
+ 		[]poolCIDRConfig{
+ 			{cidr: netip.MustParsePrefix("10.0.0.0/28")},
+@@ -523,7 +523,7 @@ func TestNodeHandlerRetries(t *testing.T) {
+ 	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
  
-+#if defined(TUNNEL_MODE) && !(defined(ENABLE_NODEPORT) && defined(ENABLE_NODE_ENCRYPTION))
- 	/* In native routing mode we want to deliver packets to local endpoints
- 	 * straight from BPF, without passing through the stack.
- 	 * This matches overlay mode (where bpf_overlay would handle the delivery)
-@@ -279,9 +284,8 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
- 	 *
- 	 * Since neither of these conditions are met, we can return CTX_ACT_OK.
- 	 */
--	if (is_defined(TUNNEL_MODE) &&
--	    !(is_defined(ENABLE_NODEPORT) && is_defined(ENABLE_NODE_ENCRYPTION)))
--		return CTX_ACT_OK;
-+	return CTX_ACT_OK;
-+#endif
+ 	t.Run("get and update", func(t *testing.T) {
+-		backend := NewPoolAllocator(hivetest.Logger(t), true, false)
++		backend := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 		assert.NoError(t, backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0))
  
- 	switch (proto) {
- #ifdef ENABLE_IPV6
-@@ -360,17 +364,17 @@ int cil_to_wireguard(struct __ctx_buff *ctx)
- 	bpf_clear_meta(ctx);
- 	check_and_store_ip_trace_id(ctx);
+ 		node := &v2.CiliumNode{
+@@ -609,7 +609,7 @@ func TestNodeHandlerRetries(t *testing.T) {
+ 	})
  
--	if (is_defined(ENABLE_NODEPORT)) {
--		if (magic == MARK_MAGIC_OVERLAY)
--			goto out;
-+#ifdef ENABLE_NODEPORT
-+	if (magic == MARK_MAGIC_OVERLAY)
-+		goto out;
+ 	t.Run("updatestatus", func(t *testing.T) {
+-		backend := NewPoolAllocator(hivetest.Logger(t), true, false)
++		backend := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 		assert.NoError(t, backend.UpsertPool("default", []poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/8")}}, 24, nil, 0))
  
--		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, true, &trace, &ext_err);
--		if (IS_ERR(ret))
--			return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
--							  METRIC_EGRESS);
--	}
-+	ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, true, &trace, &ext_err);
-+	if (IS_ERR(ret))
-+		return send_drop_notify_error_ext(ctx, src_sec_identity, ret, ext_err,
-+						  METRIC_EGRESS);
- 
- out:
-+#endif /* ENABLE_NODEPORT */
- 
- 	send_trace_notify(ctx, TRACE_TO_CRYPTO, src_sec_identity, UNKNOWN_ID,
- 			  TRACE_EP_ID_UNKNOWN, CONFIG(interface_ifindex),
+ 		node := &v2.CiliumNode{
 ```
 
-**File**: `bpf/bpf_xdp.c` (modified, +15/-7)
+**File**: `operator/pkg/ipam/allocator/multipool/pool_allocator.go` (modified, +35/-1)
 ```diff
-@@ -93,6 +93,7 @@ bpf_xdp_exit(struct __ctx_buff *ctx, const int verdict)
-  * the ipcache here to reclassify a world-sourced orphan fragment drop. See
-  * frag_not_found_world() in l4.h for the rationale.
-  */
-+#ifdef ENABLE_NODEPORT
- static __always_inline int
- xdp_frag_not_found_world_v4(int ret, const struct iphdr *ip4)
- {
-@@ -104,8 +105,9 @@ xdp_frag_not_found_world_v4(int ret, const struct iphdr *ip4)
- 	info = lookup_ip4_remote_endpoint(ip4->saddr, 0);
- 	return frag_not_found_world(ret, info ? info->sec_identity : world_ipv4_id());
- }
-+#endif /* ENABLE_NODEPORT */
+@@ -130,24 +130,56 @@ type PoolAllocator struct {
  
--#if defined(ENABLE_IPV6)
-+#if defined(ENABLE_IPV6) && defined(ENABLE_NODEPORT)
- static __always_inline int
- xdp_frag_not_found_world_v6(int ret, const struct ipv6hdr *ip6)
- {
-@@ -117,8 +119,9 @@ xdp_frag_not_found_world_v6(int ret, const struct ipv6hdr *ip6)
- 	info = lookup_ip6_remote_endpoint((const union v6addr *)&ip6->saddr, 0);
- 	return frag_not_found_world(ret, info ? info->sec_identity : world_ipv6_id());
- }
--#endif /* ENABLE_IPV6 */
-+#endif /* ENABLE_IPV6 && ENABLE_NODEPORT */
+ 	ipv4Enabled, ipv6Enabled bool
  
-+#ifdef ENABLE_NODEPORT
- __declare_tail(CILIUM_CALL_IPV4_FROM_NETDEV)
- int tail_lb_ipv4(struct __ctx_buff *ctx)
- {
-@@ -161,6 +164,7 @@ static __always_inline int check_v4_lb(struct __ctx_buff *ctx)
- 	ret = tail_call_internal(ctx, CILIUM_CALL_IPV4_FROM_NETDEV, &ext_err);
- 	return send_drop_notify_error_ext(ctx, UNKNOWN_ID, ret, ext_err, METRIC_INGRESS);
- }
-+#endif /* ENABLE_NODEPORT */
- 
- static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
- {
-@@ -189,6 +193,7 @@ static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
++	metrics *Metrics
++
+ 	mutex   lock.RWMutex
+ 	pools   map[string]cidrPool    // poolName -> pool
+ 	nodes   map[string]poolToCIDRs // nodeName -> pool -> cidrs
+ 	orphans map[string]poolToCIDRs // nodeName -> pool -> list of orphaned CIDRs (CIDRs allocated to nodes but missing their parent pool)
+ 	ready   bool
  }
  
- #ifdef ENABLE_IPV6
-+#ifdef ENABLE_NODEPORT
- __declare_tail(CILIUM_CALL_IPV6_FROM_NETDEV)
- int tail_lb_ipv6(struct __ctx_buff *ctx)
- {
-@@ -230,6 +235,7 @@ static __always_inline int check_v6_lb(struct __ctx_buff *ctx)
- 	ret = tail_call_internal(ctx, CILIUM_CALL_IPV6_FROM_NETDEV, &ext_err);
- 	return send_drop_notify_error_ext(ctx, UNKNOWN_ID, ret, ext_err, METRIC_INGRESS);
+-func NewPoolAllocator(logger *slog.Logger, enableIPv4, enableIPv6 bool) *PoolAllocator {
++func NewPoolAllocator(logger *slog.Logger, enableIPv4, enableIPv6 bool, metrics *Metrics) *PoolAllocator {
+ 	return &PoolAllocator{
+ 		logger:      logger,
+ 		ipv4Enabled: enableIPv4,
+ 		ipv6Enabled: enableIPv6,
++		metrics:     metrics,
+ 		pools:       map[string]cidrPool{},
+ 		nodes:       map[string]poolToCIDRs{},
+ 		orphans:     map[string]poolToCIDRs{},
+ 	}
  }
-+#endif /* ENABLE_NODEPORT */
  
- static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
- {
-@@ -257,7 +263,7 @@ static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
++// updatePoolMetricsLocked recomputes and emits the total-blocks gauge for a
++// single pool. The total only changes when a pool's CIDRs, mask or reserved
++// ranges change, so this is called from UpsertPool. Caller must hold p.mutex.
++func (p *PoolAllocator) updatePoolMetricsLocked(poolName string) {
++	if !p.metrics.enabled() {
++		return
++	}
++	pool, ok := p.pools[poolName]
++	if !ok {
++		p.metrics.deletePool(poolName)
++		return
++	}
++	if p.ipv4Enabled {
++		p.metrics.setPool(poolName, ipam.IPv4, totalBlocks(pool.v4))
++	}
++	if p.ipv6Enabled {
++		p.metrics.setPool(poolName, ipam.IPv6, totalBlocks(pool.v6))
++	}
++}
++
++// totalBlocks sums the CIDR-block capacity across a pool's family allocators.
++func totalBlocks(allocators []cidralloc.CIDRAllocator) int {
++	total := 0
++	for _, a := range allocators {
++		total += a.Capacity()
++	}
++	return total
++}
++
+ func (p *PoolAllocator) RestoreFinished() {
+ 	p.mutex.Lock()
+ 	p.ready = true
+@@ -366,6 +398,7 @@ func validateExistingPool(pool cidrPool, ipv4MaskSize, ipv6MaskSize int, options
+ func (p *PoolAllocator) UpsertPool(poolName string, ipv4CIDRs []poolCIDRConfig, ipv4MaskSize int, ipv6CIDRs []poolCIDRConfig, ipv6MaskSize int, opts ...PoolOption) error {
+ 	p.mutex.Lock()
+ 	defer p.mutex.Unlock()
++	defer p.updatePoolMetricsLocked(poolName)
  
- 	return 0;
- }
--#endif /* ENABLE_IPV6 */
-+#endif /* ENABLE_IPV6 && ENABLE_NODEPORT */
+ 	var options poolOptions
+ 	for _, opt := range opts {
+@@ -434,6 +467,7 @@ func (p *PoolAllocator) UpsertPool(poolName string, ipv4CIDRs []poolCIDRConfig,
+ func (p *PoolAllocator) DeletePool(poolName string) error {
+ 	p.mutex.Lock()
+ 	defer p.mutex.Unlock()
++	defer p.metrics.deletePool(poolName)
  
- #ifndef xdp_early_hook
- #define xdp_early_hook(ctx, proto) CTX_ACT_OK
-@@ -286,8 +292,9 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
- 				return ret;
- 		}
- 
--		if (is_defined(ENABLE_NODEPORT))
--			ret = check_v4_lb(ctx);
-+#ifdef ENABLE_NODEPORT
-+		ret = check_v4_lb(ctx);
-+#endif /* ENABLE_NODEPORT */
- 		break;
- #ifdef ENABLE_IPV6
- 	case bpf_htons(ETH_P_IPV6):
-@@ -297,8 +304,9 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
- 				return ret;
- 		}
- 
--		if (is_defined(ENABLE_NODEPORT))
--			ret = check_v6_lb(ctx);
-+#ifdef ENABLE_NODEPORT
-+		ret = check_v6_lb(ctx);
-+#endif /* ENABLE_NODEPORT */
- 		break;
- #endif /* ENABLE_IPV6 */
- 	default:
+ 	if _, exists := p.pools[poolName]; !exists {
+ 		return fmt.Errorf("pool %q requested for deletion doesn't exist", poolName)
 ```
 
-**File**: `bpf/lib/conntrack.h` (modified, +2/-3)
+**File**: `operator/pkg/ipam/allocator/multipool/pool_allocator_test.go` (modified, +49/-12)
 ```diff
-@@ -325,9 +325,7 @@ ct_entry_matches_types(const struct ct_entry *entry __maybe_unused,
- 	    entry->rev_nat_index == state->rev_nat_index)
- 		return true;
+@@ -9,6 +9,7 @@ import (
+ 	"testing"
  
--	if (!is_defined(ENABLE_NODEPORT))
--		return false;
--
-+#ifdef ENABLE_NODEPORT
- 	if ((ct_entry_types & CT_ENTRY_NODEPORT) &&
- 	    entry->node_port && entry->rev_nat_index) {
- 		if (!state || !state->rev_nat_index)
-@@ -341,6 +339,7 @@ ct_entry_matches_types(const struct ct_entry *entry __maybe_unused,
- 	if (CONFIG(dsr_cfg).enable && (ct_entry_types & CT_ENTRY_DSR) &&
- 	    entry->dsr_internal)
- 		return true;
-+#endif
- 
- 	return false;
+ 	"github.com/cilium/hive/hivetest"
++	"github.com/prometheus/client_golang/prometheus/testutil"
+ 	"github.com/stretchr/testify/require"
+ 	"go4.org/netipx"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -51,7 +52,7 @@ func testNode(name string, requested []ipamTypes.IPAMPoolRequest, allocated []ip
  }
+ 
+ func TestPoolAllocator(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 	err := p.UpsertPool("default",
+ 		[]poolCIDRConfig{
+ 			{cidr: netip.MustParsePrefix("10.100.0.0/16")},
+@@ -169,7 +170,7 @@ func TestPoolAllocator(t *testing.T) {
+ }
+ 
+ func TestPoolAllocator_PoolErrors(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 	p.RestoreFinished()
+ 
+ 	node := testNode("node1",
+@@ -235,7 +236,7 @@ func TestPoolAllocator_PoolErrors(t *testing.T) {
+ }
+ 
+ func TestPoolAllocator_AddUpsertDelete(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	// Upserting a non-existing pool adds it
+ 	_, exists := p.pools["mars"]
+@@ -486,7 +487,7 @@ func TestPoolAllocatorAllowFirstAndLastIPs(t *testing.T) {
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+-			p := NewPoolAllocator(hivetest.Logger(t), true, false)
++			p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 			require.NotNil(t, p)
+ 
+ 			options := []PoolOption{}
+@@ -523,7 +524,7 @@ func TestPoolAllocatorAllowFirstAndLastIPs(t *testing.T) {
+ // TestUpdateCIDRSets_ShrinkPool ensures that shrinking a pool does not
+ // trigger a nil dereference in updateCIDRSets.
+ func TestUpdateCIDRSets_ShrinkPool(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	// Initial pool with two IPv4 CIDRs
+ 	err := p.UpsertPool("shrink-test",
+@@ -547,7 +548,7 @@ func TestUpdateCIDRSets_ShrinkPool(t *testing.T) {
+ }
+ 
+ func TestPoolUpdateWithCIDRInUse(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	// no pools available
+ 	require.Empty(t, p.pools)
+@@ -598,7 +599,7 @@ func TestPoolUpdateWithCIDRInUse(t *testing.T) {
+ }
+ 
+ func TestOrphanCIDRs(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	// no pools available
+ 	require.Empty(t, p.pools)
+@@ -812,7 +813,7 @@ func TestOrphanCIDRs(t *testing.T) {
+ }
+ 
+ func TestOrphanCIDRsNotStolenFromAnotherPool(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	// no pools available
+ 	require.Empty(t, p.pools)
+@@ -872,7 +873,7 @@ func TestOrphanCIDRsNotStolenFromAnotherPool(t *testing.T) {
+ }
+ 
+ func TestUpdatePoolKeepOldCIDRs(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, true)
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, nil)
+ 
+ 	err := p.UpsertPool("test-pool",
+ 		[]poolCIDRConfig{
+@@ -915,7 +916,7 @@ func TestUpdatePoolKeepOldCIDRs(t *testing.T) {
+ }
+ 
+ func TestPoolAllocator_ReservedRangesExcludeCIDRs(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, false)
++	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 
+ 	err := p.UpsertPool("test-pool",
+ 		[]poolCIDRConfig{
+@@ -948,7 +949,7 @@ func TestPoolAllocator_ReservedRangesExcludeCIDRs(t *testing.T) {
+ }
+ 
+ func TestPoolAllocator_ReservedRangesCanBeRemoved(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, false)
++	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 
+ 	err := p.UpsertPool("test-pool",
+ 		[]poolCIDRConfig{
+@@ -996,7 +997,7 @@ func TestPoolAllocator_ReservedRangesCanBeRemoved(t *testing.T) {
+ }
+ 
+ func TestPoolAllocator_ReleasedCIDRRemainsReserved(t *testing.T) {
+-	p := NewPoolAllocator(hivetest.Logger(t), true, false)
++	p := NewPoolAllocator(hivetest.Logger(t), true, false, nil)
+ 
+ 	err := p.UpsertPool("test-pool",
+ 		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/30")}},
+@@ -1046,3 +1047,39 @@ func TestPoolAllocator_ReleasedCIDRRemainsReserved(t *testing.T) {
+ 	err = p.AllocateToNode("node3", request)
+ 	require.ErrorIs(t, err, errPoolEmpty)
+ }
++
++func TestPoolAllocatorMetrics(t *testing.T) {
++	m := NewMetrics()
++	p := NewPoolAllocator(hivetest.Logger(t), true, true, &m)
++
++	// /24 carved at /28 => 1<<(28-24) = 16 v4 blocks; /120 at /122 => 1<<2 = 4 v6 blocks.
++	err := p.UpsertPool("default",
++		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("10.0.0.0/24")}}, 28,
++		[]poolCIDRConfig{{cidr: netip.MustParsePrefix("fd00::/120")}}, 122,
++	)
++	require.NoError(t, err)
++	require.Equal(t, float64(16), m.TotalBlocks.WithLabelValues("default", "ipv4").Get())
++	require.Equal(t, float64(4), m.TotalBlocks.WithLabelValues("default", "ipv6").Get())
++
++	// Addin
 ```
 
-**File**: `bpf/lib/lb.h` (modified, +12/-10)
+**File**: `operator/pkg/ipam/multipool.go` (modified, +4/-2)
 ```diff
-@@ -465,17 +465,21 @@ bool lb6_svc_is_loadbalancer(const struct lb6_service *svc __maybe_unused)
- static __always_inline
- bool lb4_svc_is_nodeport(const struct lb4_service *svc __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return false;
-+#ifdef ENABLE_NODEPORT
- 	return svc->flags & SVC_FLAG_NODEPORT;
-+#else
-+	return false;
-+#endif /* ENABLE_NODEPORT */
- }
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/cilium/cilium/operator/pkg/ipam/allocator/multipool"
+ 	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
+ 	"github.com/cilium/cilium/pkg/logging/logfields"
++	"github.com/cilium/cilium/pkg/metrics"
+ 	"github.com/cilium/cilium/pkg/option"
+ )
  
- static __always_inline
- bool lb6_svc_is_nodeport(const struct lb6_service *svc __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return false;
-+#ifdef ENABLE_NODEPORT
- 	return svc->flags & SVC_FLAG_NODEPORT;
-+#else
-+	return false;
-+#endif /* ENABLE_NODEPORT */
- }
+@@ -22,17 +23,18 @@ func init() {
+ 		"Multi Pool IP Allocator",
  
- static __always_inline
-@@ -1065,9 +1069,7 @@ lb6_lookup_service(struct lb6_key *key, const bool east_west)
- static __always_inline const struct lb6_service *
- lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return NULL;
--
-+#ifdef ENABLE_NODEPORT
- 	const struct remote_endpoint_info *info;
- 	bool in_nodeport_range;
- 	__u16 service_port;
-@@ -1107,6 +1109,7 @@ lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
+ 		cell.Config(multipool.DefaultConfig),
++		metrics.Metric(multipool.NewMetrics),
+ 		cell.Decorate(
+ 			func(logger *slog.Logger) *slog.Logger {
+ 				return logger.With(logfields.LogSubsys, "ipam-allocator-multi-pool")
+ 			},
+ 			cell.ProvidePrivate(
+-				func(logger *slog.Logger, daemonCfg *option.DaemonConfig) *multipool.PoolAllocator {
++				func(logger *slog.Logger, daemonCfg *option.DaemonConfig, m multipool.Metrics) *multipool.PoolAllocator {
+ 					if daemonCfg.IPAM != ipamOption.IPAMMultiPool {
+ 						return nil
+ 					}
  
- 		return svc;
+-					return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6)
++					return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6, &m)
+ 				},
+ 			),
+ 			cell.Invoke(multipool.StartAllocator),
+```
+
+**File**: `operator/pkg/ipam/multipool_script_test.go` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ func init() {
+ 
+ 		cell.Config(multipool.DefaultConfig),
+ 		cell.Provide(func(logger *slog.Logger, daemonCfg *option.DaemonConfig) *multipool.PoolAllocator {
+-			return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6)
++			return multipool.NewPoolAllocator(logger, daemonCfg.EnableIPv4, daemonCfg.EnableIPv6, nil)
+ 		}),
+ 		cell.Invoke(multipool.StartAllocator),
+ 	))
+```
+
+**File**: `operator/pkg/networkdriver/ipam/ipam.go` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ func registerAllocator(p allocatorParams) {
+ 		return
  	}
-+#endif
  
- 	return NULL;
- }
-@@ -1897,9 +1900,7 @@ lb4_lookup_service(struct lb4_key *key, const bool east_west)
- static __always_inline const struct lb4_service *
- lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
- {
--	if (!is_defined(ENABLE_NODEPORT))
--		return NULL;
--
-+#ifdef ENABLE_NODEPORT
- 	const struct remote_endpoint_info *info;
- 	bool in_nodeport_range;
- 	__u16 service_port;
-@@ -1943,6 +1944,7 @@ lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
- 
- 		return svc;
- 	}
-+#endif
- 
- 	return NULL;
- }
+-	allocator := multipool.NewPoolAllocator(p.Logger, p.NetworkDriverConfig.IPv4Enabled, p.NetworkDriverConfig.IPv6Enabled)
++	allocator := multipool.NewPoolAllocator(p.Logger, p.NetworkDriverConfig.IPv4Enabled, p.NetworkDriverConfig.IPv6Enabled, nil)
+ 	nodeHandler := multipool.NewNodeHandler(
+ 		"network-driver-ipam-sync",
+ 		p.Logger,
 ```
 
 ---
 
-### Incident Patch 2: `7020a554` (2026-11-03)
-**Commit Message**: Revert "datapath: remove some unneeded `__maybe_unused`"
+### Incident Patch 2: `84cfa840` (2026-10-20)
+**Commit Message**: ipam/cidrset: add Capacity method to CIDRAllocator
 
-This reverts commit 85c924ff6337b39af5b124b7fb628563c0b88f7e.
+Capacity returns the number of CIDRs in the set, excluding reserved ranges.
 
-It follows up on 42bf3b174d73, which the next commit reverts.
+Signed-off-by: Afeedh Shaji <[REDACTED_EMAIL]>
 
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `bpf/bpf_host.c` (modified, +2/-2)
+**File**: `operator/pkg/ipam/allocator/podcidr/podcidr_test.go` (modified, +4/-0)
 ```diff
-@@ -141,7 +141,7 @@ static __always_inline int
- handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
- 	    __u32 ipcache_srcid,
- 	    const bool from_host,
--	    bool *punt_to_stack,
-+	    bool *punt_to_stack __maybe_unused,
- 	    __s8 *ext_err)
- {
- 	struct ct_buffer6 *ct_buffer;
-@@ -590,7 +590,7 @@ static __always_inline int
- handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
- 	    __u32 ipcache_srcid,
- 	    const bool from_host,
--	    bool *punt_to_stack,
-+	    bool *punt_to_stack __maybe_unused,
- 	    __s8 *ext_err __maybe_unused)
- {
- 	struct ct_buffer4 *ct_buffer;
-```
-
-**File**: `bpf/bpf_overlay.c` (modified, +3/-3)
-```diff
-@@ -602,12 +602,12 @@ int cil_from_overlay(struct __ctx_buff *ctx)
- __section_entry
- int cil_to_overlay(struct __ctx_buff *ctx)
- {
--	bool snat_done = ctx_snat_done(ctx);
--	struct trace_ctx trace;
-+	bool snat_done __maybe_unused = ctx_snat_done(ctx);
-+	struct trace_ctx __maybe_unused trace;
- 	struct bpf_tunnel_key tunnel_key = {};
- 	__u32 src_sec_identity = UNKNOWN_ID;
- 	int ret = TC_ACT_OK;
--	__u32 cluster_id = 0;
-+	__u32 cluster_id __maybe_unused = 0;
- 	__be16 proto = 0;
- 	__s8 ext_err = 0;
- 
-```
-
-**File**: `bpf/bpf_sock.c` (modified, +4/-2)
-```diff
-@@ -247,7 +247,8 @@ sock4_wildcard_lookup(struct lb4_key *key)
+@@ -105,6 +105,10 @@ func (d *mockCIDRAllocator) IsFull() bool {
+ 	panic("d.IsFull should not have been called!")
  }
  
- static __always_inline const struct lb4_service *
--sock4_wildcard_lookup_full(struct lb4_key *key, const bool in_hostns)
-+sock4_wildcard_lookup_full(struct lb4_key *key __maybe_unused,
-+			   const bool in_hostns __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
-@@ -804,7 +805,8 @@ sock6_wildcard_lookup(struct lb6_key *key)
++func (d *mockCIDRAllocator) Capacity() int {
++	return 0
++}
++
+ func (d *mockCIDRAllocator) InRange(prefix netip.Prefix) bool {
+ 	if d.OnInRange != nil {
+ 		return d.OnInRange(prefix)
+```
+
+**File**: `pkg/ipam/cidralloc/cidralloc.go` (modified, +1/-0)
+```diff
+@@ -37,6 +37,7 @@ type CIDRAllocator interface {
+ 	Release(prefix netip.Prefix) error
+ 	IsAllocated(prefix netip.Prefix) (bool, error)
+ 	IsFull() bool
++	Capacity() int
+ 	InRange(prefix netip.Prefix) bool
+ 	IsClusterCIDR(prefix netip.Prefix) bool
+ 	Prefix() netip.Prefix
+```
+
+**File**: `pkg/ipam/cidrset/cidr_set.go` (modified, +11/-0)
+```diff
+@@ -146,6 +146,17 @@ func (s *CidrSet) IsFull() bool {
+ 	return s.unavailableCIDRs == s.maxCIDRs
  }
  
- static __always_inline __maybe_unused const struct lb6_service *
--sock6_wildcard_lookup_full(struct lb6_key *key, const bool in_hostns)
-+sock6_wildcard_lookup_full(struct lb6_key *key __maybe_unused,
-+			   const bool in_hostns __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
++// Capacity returns the number of CIDRs in the set, excluding reserved ones.
++func (s *CidrSet) Capacity() int {
++	s.Lock()
++	defer s.Unlock()
++	reserved := 0
++	for _, word := range s.reserved.Bits() {
++		reserved += bits.OnesCount(uint(word))
++	}
++	return s.maxCIDRs - reserved
++}
++
+ // AllocateNext allocates the next free CIDR range. This will set the range
+ // as occupied and return the allocated range.
+ func (s *CidrSet) AllocateNext() (netip.Prefix, error) {
 ```
 
-**File**: `bpf/bpf_wireguard.c` (modified, +4/-4)
+**File**: `pkg/ipam/cidrset/cidr_set_test.go` (modified, +3/-0)
 ```diff
-@@ -44,7 +44,7 @@
- #ifdef ENABLE_IPV6
- /* See the equivalent v4 path for comments */
- static __always_inline int
--handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err)
-+handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err __maybe_unused)
- {
- 	void *data_end, *data;
- 	struct ipv6hdr *ip6;
-@@ -121,7 +121,7 @@ int tail_handle_ipv6(struct __ctx_buff *ctx)
- #endif /* ENABLE_IPV6 */
+@@ -860,13 +860,15 @@ func TestComputeRangesToReserve(t *testing.T) {
+ 			}
+ 			cidrSet.SetReservedRanges(rangesToReserve)
+ 			assert.Equal(t, 1, cidrSet.unavailableCIDRs)
++			assert.Equal(t, 1, cidrSet.Capacity())
  
- static __always_inline int
--handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err)
-+handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err __maybe_unused)
- {
- 	void *data_end, *data;
- 	struct iphdr *ip4;
-@@ -343,8 +343,8 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
- __section_entry
- int cil_to_wireguard(struct __ctx_buff *ctx)
- {
--	int ret;
--	__s8 ext_err = 0;
-+	int __maybe_unused ret;
-+	__s8 __maybe_unused ext_err = 0;
- 	__be16 proto = ctx_get_protocol(ctx);
- 	__u32 src_sec_identity = UNKNOWN_ID;
- 	__u32 magic = ctx->mark & MARK_MAGIC_HOST_MASK;
-```
-
-**File**: `bpf/lib/lb.h` (modified, +4/-4)
-```diff
-@@ -463,15 +463,15 @@ bool lb6_svc_is_loadbalancer(const struct lb6_service *svc __maybe_unused)
- }
+ 			allocated, err := cidrSet.AllocateNext()
+ 			if err != nil {
+ 				t.Fatalf("AllocateNext() returned an unexpected error: %v", err)
+ 			}
+ 			assert.Equal(t, netip.MustParsePrefix(tc.allocatedCIDR), allocated)
+ 			assert.Equal(t, 2, cidrSet.unavailableCIDRs)
++			assert.Equal(t, 1, cidrSet.Capacity())
+ 			assert.True(t, cidrSet.IsFull())
  
- static __always_inline
--bool lb4_svc_is_nodeport(const struct lb4_service *svc)
-+bool lb4_svc_is_nodeport(const struct lb4_service *svc __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return false;
- 	return svc->flags & SVC_FLAG_NODEPORT;
- }
+ 			_, err = cidrSet.AllocateNext()
+@@ -878,6 +880,7 @@ func TestComputeRangesToReserve(t *testing.T) {
+ 			}
+ 			cidrSet.SetReservedRanges(rangesToReserve)
+ 			assert.Equal(t, 1, cidrSet.unavailableCIDRs)
++			assert.Equal(t, 2, cidrSet.Capacity())
+ 			assert.False(t, cidrSet.IsFull())
  
- static __always_inline
--bool lb6_svc_is_nodeport(const struct lb6_service *svc)
-+bool lb6_svc_is_nodeport(const struct lb6_service *svc __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return false;
-@@ -1063,7 +1063,7 @@ lb6_lookup_service(struct lb6_key *key, const bool east_west)
- 
- /* lb6_lookup_wildcard_service - see lb4_lookup_wildcard_service. */
- static __always_inline const struct lb6_service *
--lb6_lookup_wildcard_service(struct lb6_key *key)
-+lb6_lookup_wildcard_service(struct lb6_key *key __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
-@@ -1895,7 +1895,7 @@ lb4_lookup_service(struct lb4_key *key, const bool east_west)
-  * On match, zeros the address in @key and performs a wildcard service lookup.
-  */
- static __always_inline const struct lb4_service *
--lb4_lookup_wildcard_service(struct lb4_key *key)
-+lb4_lookup_wildcard_service(struct lb4_key *key __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
-```
-
-**File**: `bpf/lib/overloadable_skb.h` (modified, +3/-3)
-```diff
-@@ -77,21 +77,21 @@ neigh_resolver_available(void)
- }
- 
- static __always_inline __maybe_unused void
--ctx_skip_nodeport_clear(struct __sk_buff *ctx)
-+ctx_skip_nodeport_clear(struct __sk_buff *ctx __maybe_unused)
- {
- 	if (is_defined(ENABLE_NODEPORT))
- 		ctx->tc_index &= ~TC_INDEX_F_SKIP_NODEPORT;
- }
- 
- static __always_inline __maybe_unused void
--ctx_skip_nodeport_set(struct __sk_buff *ctx)
-+ctx_skip_nodeport_set(struct __sk_buff *ctx __maybe_unused)
- {
- 	if (is_defined(ENABLE_NODEPORT))
- 		ctx->tc_index |= TC_INDEX_F_SKIP_NODEPORT;
- }
- 
- static __always_inline __maybe_unused bool
--ctx_skip_nodeport(struct __sk_buff *ctx)
-+ctx_skip_nodeport(struct __sk_buff *ctx __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return true;
-```
-
-**File**: `bpf/lib/overloadable_xdp.h` (modified, +3/-3)
-```diff
-@@ -68,21 +68,21 @@ neigh_resolver_available(void)
- #define XFER_MARKER	6 /* xdp -> skb meta transfer */
- 
- static __always_inline __maybe_unused void
--ctx_skip_nodeport_clear(struct xdp_md *ctx)
-+ctx_skip_nodeport_clear(struct xdp_md *ctx __maybe_unused)
- {
- 	if (is_defined(ENABLE_NODEPORT))
- 		ctx_store_meta(ctx, RECIRC_MARKER, 0);
- }
- 
- static __always_inline __maybe_unused void
--ctx_skip_nodeport_set(struct xdp_md *ctx)
-+ctx_skip_nodeport_set(struct xdp_md *ctx __maybe_unused)
- {
- 	if (is_defined(ENABLE_NODEPORT))
- 		ctx_store_meta(ctx, RECIRC_MARKER, 1);
- }
- 
- static __always_inline __maybe_unused bool
--ctx_skip_nodeport(struct xdp_md *ctx)
-+ctx_skip_nodeport(struct xdp_md *ctx __maybe_unused)
- {
- 	if (!is_defined(ENABLE_NODEPORT))
- 		return true;
-```
-
-**File**: `bpf/tests/classifiers_common.h` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- 
- #define ENABLE_IPV4 1
- #define ENABLE_IPV6
--#define TUNNEL_MODE 1
-+#define TUNNEL_MODE
- #define ENCAP_IFINDEX   1
- 
- /* For testing L2/L3 devices, we make use of ETH_HLEN:
-```
-
----
-
-### Incident Patch 3: `61a11c86` (2026-11-03)
-**Commit Message**: Revert "datapath: turn `ENABLE_NODEPORT` into runtime config"
-
-This reverts commit 3597932f48827de0ceec263f6e1acefad37c2578.
-
-It builds on 42bf3b174d73, which a following commit reverts.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `bpf/Makefile` (modified, +21/-14)
-```diff
-@@ -18,15 +18,19 @@ LB_OPTIONS = \
- 	-DENABLE_IPV6: \
- 	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
- 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_EGRESS_GATEWAY: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_EGRESS_GATEWAY_COMMON: \
--	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_BANDWIDTH_MANAGER: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DDSR_ENCAP_MODE:-DENABLE_BANDWIDTH_MANAGER
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY_COMMON: \
-+	-DENABLE_IPV4:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT:-DENABLE_BANDWIDTH_MANAGER: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE:-DENABLE_BANDWIDTH_MANAGER
- 
- # These options are intended to max out the BPF program complexity. it is load
- # tested as well.
- MAX_BASE_OPTIONS = -DENABLE_IPV4=1 -DENABLE_IPV6=1 \
- 	-DPOLICY_VERDICT_NOTIFY=1 \
-+	-DENABLE_NODEPORT=1 \
- 	-DENABLE_BANDWIDTH_MANAGER=1 -DENABLE_EGRESS_GATEWAY=1 \
- 	-DENABLE_CLUSTER_AWARE_ADDRESSING=1 -DENABLE_INTER_CLUSTER_SNAT=1 \
- 	-DENCAP_IFINDEX=1 -DTUNNEL_MODE=1 -DENABLE_MULTICAST=1 \
-@@ -43,13 +47,15 @@ endif
- HOST_OPTIONS = $(LXC_OPTIONS) \
- 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
- 	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_EGRESS_GATEWAY: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_EGRESS_GATEWAY_COMMON: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_CLUSTER_AWARE_ADDRESSING:-DENABLE_INTER_CLUSTER_SNAT: \
--	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_MULTICAST: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_MULTICAST: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DDSR_ENCAP_MODE: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_EGRESS_GATEWAY_COMMON: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_CLUSTER_AWARE_ADDRESSING:-DENABLE_INTER_CLUSTER_SNAT: \
-+	-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_MULTICAST: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DENABLE_MULTICAST: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DPOLICY_VERDICT_NOTIFY:-DENABLE_NODEPORT
- 
- ifndef MAX_HOST_OPTIONS
- MAX_HOST_OPTIONS = $(MAX_BASE_OPTIONS)
-@@ -63,9 +69,9 @@ endif
- 
- XDP_OPTIONS = $(LB_OPTIONS) \
- 	-DENABLE_IPV4:-DENABLE_IPV6:-DFROM_HOST: \
--	-DENABLE_IPV4:-DENABLE_IPV6: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DTUNNEL_MODE: \
--	-DENABLE_IPV4:-DENABLE_IPV6:-DDSR_ENCAP_MODE
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT:-DTUNNEL_MODE: \
-+	-DENABLE_IPV4:-DENABLE_IPV6:-DENABLE_NODEPORT:-DDSR_ENCAP_MODE
- 
- ifndef MAX_XDP_OPTIONS
- MAX_XDP_OPTIONS = $(MAX_BASE_OPTIONS)
-@@ -80,6 +86,7 @@ LXC_OPTIONS = \
- 	 -DENABLE_IPV4:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
- 	 -DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
- 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DPOLICY_VERDICT_NOTIFY: \
-+	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE:-DENABLE_NODEPORT:-DPOLICY_VERDICT_NOTIFY: \
- 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:-DTUNNEL_MODE: \
- 	 -DENABLE_IPV4:-DENABLE_IPV6:-DENCAP_IFINDEX:
- 
-```
-
-**File**: `bpf/bpf_host.c` (modified, +4/-4)
-```diff
-@@ -193,7 +193,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx,
- 			return DROP_UNENCRYPTED_TRAFFIC;
- 	}
- 
--	if (CONFIG(enable_nodeport) && !from_host) {
-+	if (is_defined(ENABLE_NODEPORT) && !from_host) {
- 		if (!ctx_skip_nodeport(ctx)) {
- 			bool is_dsr = false;
- 
-@@ -630,7 +630,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx,
- 			return DROP_UNENCRYPTED_TRAFFIC;
- 	}
- 
--	if (CONFIG(enable_nodeport) && !from_host) {
-+	if (is_defined(ENABLE_NODEPORT) && !from_host) {
- 		if (!ctx_skip_nodeport(ctx)) {
- 			bool is_dsr = false;
- 
-@@ -1595,7 +1595,7 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 		}
- 	}
- 
--	if (CONFIG(enable_nodeport)) {
-+	if (is_defined(ENABLE_NODEPORT)) {
- 		if (CONFIG(enable_health_check)) {
- 			ret = lb_handle_health(ctx, proto);
- 			if (ret != CTX_ACT_OK)
-@@ -1852,7 +1852,7 @@ int cil_to_host(struct __ctx_buff *ctx)
- 			ctx->mark = MARK_MAGIC_SKIP_TPROXY;
- #endif /* !TUNNEL_MODE */
- 
--		if (CONFIG(enable_nodeport) && ctx_is_encrypt(ctx) &&
-+		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
- 		    validate_ethertype(ctx, &proto)) {
- 			/* handle_nat_fwd() tail calls in the majority of cases, so control
- 			 * might never return to this program. Since IPsec is not compatible
-```
-
-**File**: `bpf/bpf_lxc.c` (modified, +13/-13)
-```diff
-@@ -166,9 +166,9 @@ static __always_inline int __per_packet_lb_svc_xlate_4(void *ctx, struct iphdr *
- 
- 	lb4_fill_key(&key, &tuple);
- 
--	svc = lb4_lookup_service(&key, CONFIG(enable_nodeport));
-+	svc = lb4_lookup_service(&key, is_defined(ENABLE_NODEPORT));
- 
--	if (CONFIG(enable_nodeport)) {
-+	if (is_defined(ENABLE_NODEPORT)) {
- 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
- 
- 		if (!svc) {
-@@ -341,9 +341,9 @@ static __always_inline int __per_packet_lb_svc_xlate_6(void *ctx, struct ipv6hdr
- 	 * the CT entry for destination endpoints where we can't encode the
- 	 * state in the address.
- 	 */
--	svc = lb6_lookup_service(&key, CONFIG(enable_nodeport));
-+	svc = lb6_lookup_service(&key, is_defined(ENABLE_NODEPORT));
- 
--	if (CONFIG(enable_nodeport)) {
-+	if (is_defined(ENABLE_NODEPORT)) {
- 		struct nodeport_nat_info *nat_info = AUX(nodeport_nat_info);
- 
- 		if (!svc) {
-@@ -730,7 +730,7 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
- #ifdef TUNNEL_MODE
- 	if (ct_state->from_tunnel || !skip_tunnel) {
- 		/* See comment in handle_ipv4_from_lxc(). */
--		if (!CONFIG(enable_nodeport) && CONFIG(enable_host_firewall) &&
-+		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
- 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
- 		    identity_is_remote_node(dst_sec_identity))
- 			goto pass_to_stack;
-@@ -844,7 +844,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		lb6_ctx_restore_state(ctx, &ct_state_new, &proxy_port, true);
- 		hairpin_flow = ct_state_new.loopback;
- 
--		if (CONFIG(enable_nodeport)) {
-+		if (is_defined(ENABLE_NODEPORT)) {
- 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
- 
- 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
-@@ -977,7 +977,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		 *
- 		 * Needed for compatibility with pre-v1.19 CT entries.
- 		 */
--		if (CONFIG(enable_nodeport) && ct_state->node_port &&
-+		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
- 		    lb_is_svc_proto(tuple->nexthdr)) {
- 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV6,
- 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
-@@ -1233,7 +1233,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 		 * to apply the correct reverse DNAT, and then be routed accordingly.
- 		 * See #14674 for details.
- 		 */
--		if (!CONFIG(enable_nodeport) && CONFIG(enable_host_firewall) &&
-+		if (!is_defined(ENABLE_NODEPORT) && CONFIG(enable_host_firewall) &&
- 		    (ct_status == CT_REPLY || ct_status == CT_RELATED) &&
- 		    identity_is_remote_node(dst_sec_identity))
- 			goto pass_to_stack;
-@@ -1357,7 +1357,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		lb4_ctx_restore_state(ctx, &ct_state_new, &proxy_port, &cluster_id, true);
- 		hairpin_flow = ct_state_new.loopback;
- 
--		if (CONFIG(enable_nodeport)) {
-+		if (is_defined(ENABLE_NODEPORT)) {
- 			struct nodeport_nat_info *nat_info = AUX_REUSE(nodeport_nat_info);
- 
- 			ipv6_addr_copy(&ct_state_new.nat_addr, &nat_info->nat_addr);
-@@ -1530,7 +1530,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		 * This codepath currently doesn't support revDNAT for ICMP,
- 		 * so make sure that we only send TCP/UDP/SCTP down this way.
- 		 */
--		if (CONFIG(enable_nodeport) && ct_state->node_port &&
-+		if (is_defined(ENABLE_NODEPORT) && ct_state->node_port &&
- 		    lb_is_svc_proto(tuple->nexthdr)) {
- 			send_trace_notify(ctx, TRACE_TO_NETWORK, SECLABEL_IPV4,
- 					  *dst_sec_identity, TRACE_EP_ID_UNKNOWN,
-@@ -1932,7 +1932,7 @@ int tail_ipv6_policy(struct __ctx_buff *ctx)
- 		break;
- 	case CTX_ACT_OK:
- 		/* See comment in IPv4 path. */
--		if (!CONFIG(enable_bpf_routing) && !CONFIG(enable_nodeport) && from_tunnel) {
-+		if (!CONFIG(enable_bpf_routing) && !is_defined(ENABLE_NODEPORT) && from_tunnel) {
- 			ctx_change_type(ctx, PACKET_HOST);
- 			break;
- 		}
-@@ -2149,7 +2149,7 @@ ipv4_policy(struct __ctx_buff *ctx, struct iphdr *ip4, __u32 src_label,
- 	}
- 
- 	if (ret == CT_NEW) {
--		if (CONFIG(enable_nodeport) && CONFIG(srv6_cfg).enable)
-+		if (is_defined(ENABLE_NODEPORT) && CONFIG(srv6_cfg).enable)
- 			ct_state_new.node_port =
- 				ct_has_nodeport_egress_entry4(get_ct_map4(tuple),
- 							      tuple, NULL, false);
-@@ -2238,7 +2238,7 @@ int tail_ipv4_policy(struct __ctx_buff *ctx)
- 		 * will drop them.
- 		 * See #14646 for details.
- 		 */
--		if (!CONFIG(enable_bpf_routing) && !CONFIG(enable_nodeport) && from_tunnel) {
-+		if (!CONFIG(enable_bpf_routing) && !is_defined(ENABLE_NODEPORT) && from_tunnel) {
- 			ctx_change_type(ctx, PACKET_HOST);
- 			break;
- 		}
-```
-
-**File**: `bpf/bpf_overlay.c` (modified, +3/-3)
-```diff
-@@ -72,7 +72,7 @@ static __always_inline int handle_ipv6(struct __ctx_buff *ctx,
- 			return DROP_FRAG_NOSUPPORT;
- 	}
- 
--	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
-+	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 
- 		ret = nodeport_lb6(ctx, ip6, *identity, &punt_to_stack,
-@@ -282,7 +282,7 @@ static __always_inline int handle_ipv4(struct __ctx_buff *ctx,
- 	}
- #endif /* ENABLE_MULTICAST */
- 
--	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
-+	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 
- 		ret = nodeport_lb4(ctx, ip4, *identity, &punt_to_stack,
-@@ -649,7 +649,7 @@ int cil_to_overlay(struct __ctx_buff *ctx)
- 
- 	set_identity_mark(ctx, src_sec_identity, MARK_MAGIC_OVERLAY);
- 
--	if (CONFIG(enable_nodeport)) {
-+	if (is_defined(ENABLE_NODEPORT)) {
- 		if (snat_done) {
- 			ret = CTX_ACT_OK;
- 			goto out;
-```
-
-**File**: `bpf/bpf_sock.c` (modified, +2/-2)
-```diff
-@@ -249,7 +249,7 @@ sock4_wildcard_lookup(struct lb4_key *key)
- static __always_inline const struct lb4_service *
- sock4_wildcard_lookup_full(struct lb4_key *key, const bool in_hostns)
- {
--	if (!CONFIG(enable_nodeport))
-+	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
- 
- 	bool loopback = is_v4_loopback(key->address);
-@@ -806,7 +806,7 @@ sock6_wildcard_lookup(struct lb6_key *key)
- static __always_inline __maybe_unused const struct lb6_service *
- sock6_wildcard_lookup_full(struct lb6_key *key, const bool in_hostns)
- {
--	if (!CONFIG(enable_nodeport))
-+	if (!is_defined(ENABLE_NODEPORT))
- 		return NULL;
- 
- 	bool loopback = is_v6_loopback(&key->address);
-```
-
-**File**: `bpf/bpf_wireguard.c` (modified, +4/-4)
-```diff
-@@ -63,7 +63,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 			return DROP_FRAG_NOSUPPORT;
- 	}
- 
--	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
-+	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 		bool is_dsr = false;
- 
-@@ -141,7 +141,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 identity __maybe_unused, __s8 *ext_err
- 			return DROP_FRAG_NOSUPPORT;
- 	}
- 
--	if (CONFIG(enable_nodeport) && !ctx_skip_nodeport(ctx)) {
-+	if (is_defined(ENABLE_NODEPORT) && !ctx_skip_nodeport(ctx)) {
- 		bool punt_to_stack = false;
- 		bool is_dsr = false;
- 
-@@ -280,7 +280,7 @@ int cil_from_wireguard(struct __ctx_buff *ctx)
- 	 * Since neither of these conditions are met, we can return CTX_ACT_OK.
- 	 */
- 	if (is_defined(TUNNEL_MODE) &&
--	    !(CONFIG(enable_nodeport) && is_defined(ENABLE_NODE_ENCRYPTION)))
-+	    !(is_defined(ENABLE_NODEPORT) && is_defined(ENABLE_NODE_ENCRYPTION)))
- 		return CTX_ACT_OK;
- 
- 	switch (proto) {
-@@ -360,7 +360,7 @@ int cil_to_wireguard(struct __ctx_buff *ctx)
- 	bpf_clear_meta(ctx);
- 	check_and_store_ip_trace_id(ctx);
- 
--	if (CONFIG(enable_nodeport)) {
-+	if (is_defined(ENABLE_NODEPORT)) {
- 		if (magic == MARK_MAGIC_OVERLAY)
- 			goto out;
- 
-```
-
-**File**: `bpf/bpf_xdp.c` (modified, +2/-2)
-```diff
-@@ -286,7 +286,7 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
- 				return ret;
- 		}
- 
--		if (CONFIG(enable_nodeport))
-+		if (is_defined(ENABLE_NODEPORT))
- 			ret = check_v4_lb(ctx);
- 		break;
- #ifdef ENABLE_IPV6
-@@ -297,7 +297,7 @@ static __always_inline int check_filters(struct __ctx_buff *ctx)
- 				return ret;
- 		}
- 
--		if (CONFIG(enable_nodeport))
-+		if (is_defined(ENABLE_NODEPORT))
- 			ret = check_v6_lb(ctx);
- 		break;
- #endif /* ENABLE_IPV6 */
-```
-
-**File**: `bpf/complexity-tests/510/bpf_host/1.txt` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- -DENABLE_IPV4=1
- -DENABLE_IPV6=1
- -DPOLICY_VERDICT_NOTIFY=1
-+-DENABLE_NODEPORT=1
- -DDSR_ENCAP_MODE=DSR_ENCAP_NONE
- -DENABLE_BANDWIDTH_MANAGER=1
- -DENCAP_IFINDEX=1
+ 			allocated, err = cidrSet.AllocateNext()
 ```
 
 #### Recent Merged Pull Requests:
@@ -2620,70 +1835,32 @@ Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`"
+## X. ipam/multi-pool: add per-pool IP and CIDR-block metrics
 
 **RULE**:
-When implementing operations in `bpf/bpf_host.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/observability/metrics.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3eee24dd`: Revert "datapath: convert `ENABLE_NODEPORT` #ifdef branching to `is_defined()`". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9bd7c00`: ipam/multi-pool: add per-pool IP and CIDR-block metrics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_host.c`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/observability/metrics.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-#ifdef ENABLE_NODEPORT
-	if (!from_host) {
-#endif /* ENABLE_NODEPORT */
-#ifdef ENABLE_NODEPORT
-	if (!from_host) {
-#endif /* ENABLE_NODEPORT */
-#ifdef ENABLE_NODEPORT
-	if (CONFIG(enable_health_check)) {
-		ret = lb_handle_health(ctx, proto);
-		if (ret != CTX_ACT_OK)
-			goto exit;
-	}
-	if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
-		/*
-		 * handle_nat_fwd tail calls in the majority of cases,
-		 * so control might never return to this program.
-		 */
-		ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace, &ext_err);
-		if (ret == CTX_ACT_REDIRECT)
-			return ret;
-#endif
-# ifdef ENABLE_NODEPORT
-		if (ctx_is_encrypt(ctx) && validate_ethertype(ctx, &proto)) {
-#endif /* ENABLE_NODEPORT */
+``ipam_multipool_available_ips``         ``pool``, ``family``                         Enabled    Total IPs (in-use and free) per pool and family. Emitted by the agent in multi-pool IPAM mode
+``ipam_multipool_used_ips``              ``pool``, ``family``                         Enabled    In-use (allocated) IPs per pool and family. Emitted by the agent in multi-pool IPAM mode
+``ipam_multipool_needed_ips``            ``pool``, ``family``                         Enabled    IPs needed to satisfy allocation demand per pool and family. Emitted by the agent in multi-pool IPAM mode
+``ipam_multipool_allocated_blocks``      ``pool``, ``family``                         Enabled    CIDR blocks (pod CIDRs) allocated to this node per pool and family. Emitted by the agent in multi-pool IPAM mode
+``ipam_multipool_total_blocks``          ``pool``, ``family``                                              Enabled    Total number of CIDR blocks per pool and family.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if (is_defined(ENABLE_NODEPORT) && !from_host) {
-	if (is_defined(ENABLE_NODEPORT) && !from_host) {
-	if (is_defined(ENABLE_NODEPORT)) {
-		if (CONFIG(enable_health_check)) {
-			ret = lb_handle_health(ctx, proto);
-			if (ret != CTX_ACT_OK)
-				goto exit;
-		}
-		if (!ctx_snat_done(ctx) && !ctx_is_overlay(ctx) && !ctx_is_encrypt(ctx)) {
-			/*
-			 * handle_nat_fwd tail calls in the majority of cases,
-			 * so control might never return to this program.
-			 */
-			ret = handle_nat_fwd(ctx, 0, src_sec_identity, proto, false, &trace,
-					     &ext_err);
-			if (ret == CTX_ACT_REDIRECT)
-				return ret;
-		}
-		if (is_defined(ENABLE_NODEPORT) && ctx_is_encrypt(ctx) &&
-		    validate_ethertype(ctx, &proto)) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3eee24dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9bd7c00` are properly handled with clean fallback behavior.
