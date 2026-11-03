@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T20:27:38.927Z",
+  "last_updated": "2026-11-03T20:50:04.547Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4499,8 +4499,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "04ff7917",
-      "content_hash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
+      "source_version": "714b5043",
+      "content_hash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4588,6 +4588,11 @@
           "number": 6360,
           "title": "oac): exposePort add reserved ports (#4366)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6606,
+          "title": "files(fix): improve file service stability (#4396)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4595,7 +4600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:22:29.293Z",
+      "verified_at": "2026-11-03T20:50:04.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54244,17 +54249,23 @@
       "slug": "surrealdb-surrealdb",
       "platform": "github",
       "source_url": "https://github.com/surrealdb/surrealdb",
-      "source_version": "18971ffb",
-      "content_hash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
+      "source_version": "9577ac5f",
+      "content_hash": "22f57728f96504831b3a41cb37b4c8b2dcb5821a7479e5ff84607478d4c8a6a2",
       "dossier_path": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6605,
+          "title": "sql): a table given an alias is reachable only by the alias (#2505)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:45:38.613Z",
+      "verified_at": "2026-11-03T20:49:44.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170183,6 +170194,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T20:27:38.904Z"
+    },
+    "rule-6605": {
+      "learning_id": "rule-6605",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6605,
+      "title": "sql): a table given an alias is reachable only by the alias (#2505)",
+      "source_url": "https://github.com/surrealdb/surrealdb",
+      "source_version": "9577ac5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:49:44.988Z"
+    },
+    "rule-6606": {
+      "learning_id": "rule-6606",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6606,
+      "title": "files(fix): improve file service stability (#4396)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "714b5043",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:50:04.516Z"
     }
   },
   "aliases": {

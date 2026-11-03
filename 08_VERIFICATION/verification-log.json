@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-VYPF",
-    "timestamp": "2026-10-31T06:59:11.091Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-VZCQ",
-    "timestamp": "2026-10-31T06:59:11.930Z",
-    "repository": "telemt/telemt",
-    "learningId": "learn-github-telemt-telemt",
-    "contentHash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-094X",
     "timestamp": "2026-10-31T07:30:30.849Z",
     "repository": "karmada-io/karmada",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-VMVL",
+    "timestamp": "2026-11-03T20:49:45.105Z",
+    "repository": "surrealdb/surrealdb",
+    "learningId": "learn-github-surrealdb-surrealdb",
+    "contentHash": "22f57728f96504831b3a41cb37b4c8b2dcb5821a7479e5ff84607478d4c8a6a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-W1Y1",
+    "timestamp": "2026-11-03T20:50:04.633Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "04ff7917",
+    "sourceVersion": "714b5043",
     "license": "AGPL-3.0",
-    "contentHash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
-    "lastHarvestedAt": "2026-10-31T23:22:29.360Z",
+    "contentHash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
+    "lastHarvestedAt": "2026-11-03T20:50:04.637Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -6373,10 +6373,10 @@
     "repository": "surrealdb/surrealdb",
     "platform": "github",
     "sourceUrl": "https://github.com/surrealdb/surrealdb",
-    "sourceVersion": "18971ffb",
+    "sourceVersion": "9577ac5f",
     "license": "NOASSERTION",
-    "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
-    "lastHarvestedAt": "2026-10-19T05:45:38.681Z",
+    "contentHash": "22f57728f96504831b3a41cb37b4c8b2dcb5821a7479e5ff84607478d4c8a6a2",
+    "lastHarvestedAt": "2026-11-03T20:49:45.109Z",
     "learningId": "learn-github-surrealdb-surrealdb"
   },
   "mantinedev-mantine": {

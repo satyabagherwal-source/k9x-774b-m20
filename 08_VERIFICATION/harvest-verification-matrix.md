@@ -6999,3 +6999,5 @@
 | `CYCLE-20261103-KEJI` | `2026-11-03T20:13:01.470Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6602` | Yes (`fbfffc63...`) |
 | `CYCLE-20261103-37L6` | `2026-11-03T20:27:38.922Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6603` | Yes (`7641d053...`) |
 | `CYCLE-20261103-37NR` | `2026-11-03T20:27:39.015Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6604` | Yes (`4860b1ea...`) |
+| `CYCLE-20261103-VMVL` | `2026-11-03T20:49:45.105Z` | `surrealdb/surrealdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6605` | Yes (`22f57728...`) |
+| `CYCLE-20261103-W1Y1` | `2026-11-03T20:50:04.633Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6606` | Yes (`ee08a730...`) |
