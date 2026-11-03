@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "9ee43d78",
+    "sourceVersion": "ecab5ce6",
     "license": "Apache-2.0",
-    "contentHash": "c9c14454d7850b554ef30ad1b9901a46e5dfe80241abab5d0469537bcc35cd39",
-    "lastHarvestedAt": "2026-11-03T11:15:07.143Z",
+    "contentHash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
+    "lastHarvestedAt": "2026-11-03T22:32:05.233Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "e4d30349",
+    "sourceVersion": "41e8cb88",
     "license": "Apache-2.0",
-    "contentHash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
-    "lastHarvestedAt": "2026-10-30T22:20:21.347Z",
+    "contentHash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
+    "lastHarvestedAt": "2026-11-03T22:32:01.528Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "a3add88d",
+    "sourceVersion": "d4951da8",
     "license": "Apache-2.0",
-    "contentHash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
-    "lastHarvestedAt": "2026-11-01T00:03:04.470Z",
+    "contentHash": "092980e3ce074c3fa51cefd85aeb92a0ee55aa467deef7c0741459e084cfeaae",
+    "lastHarvestedAt": "2026-11-03T22:32:09.637Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "00b81ba4",
+    "sourceVersion": "1261fc46",
     "license": "MIT",
-    "contentHash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
-    "lastHarvestedAt": "2026-10-30T13:28:34.963Z",
+    "contentHash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
+    "lastHarvestedAt": "2026-11-03T22:31:58.913Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "cefe5997",
+    "sourceVersion": "c7fd75f9",
     "license": "MIT",
-    "contentHash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
-    "lastHarvestedAt": "2026-10-31T10:33:57.402Z",
+    "contentHash": "603c8c55c7bf24c32a734b499124cccf55caa5d66bfc03153040207a1f5e77d9",
+    "lastHarvestedAt": "2026-11-03T22:32:03.502Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

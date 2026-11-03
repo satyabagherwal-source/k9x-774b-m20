@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:23:42.340Z",
+  "last_updated": "2026-11-03T22:32:09.543Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54733,8 +54733,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "a3add88d",
-      "content_hash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
+      "source_version": "d4951da8",
+      "content_hash": "092980e3ce074c3fa51cefd85aeb92a0ee55aa467deef7c0741459e084cfeaae",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -54812,6 +54812,11 @@
           "number": 6372,
           "title": "refresh sidebar columns after saving table structure (#13850)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6646,
+          "title": "updates): clear cancelled exit requests and explain confirmation blockers (#1417",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54819,7 +54824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:03:04.404Z",
+      "verified_at": "2026-11-03T22:32:09.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70516,13 +70521,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "ecab5ce6",
-      "content_hash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -70622,7 +70627,7 @@
         {
           "number": 6600,
           "title": "Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70630,7 +70635,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:01:00.094Z",
+      "verified_at": "2026-11-03T22:32:05.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70760,8 +70765,8 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "e4d30349",
-      "content_hash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
+      "source_version": "41e8cb88",
+      "content_hash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
@@ -70791,7 +70796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:20:21.265Z",
+      "verified_at": "2026-11-03T22:32:01.372Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74332,8 +74337,8 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "00b81ba4",
-      "content_hash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
+      "source_version": "1261fc46",
+      "content_hash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
@@ -74356,6 +74361,11 @@
           "number": 5761,
           "title": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6644,
+          "title": "build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74363,7 +74373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:28:34.878Z",
+      "verified_at": "2026-11-03T22:31:58.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153484,8 +153494,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "cefe5997",
-      "content_hash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
+      "source_version": "c7fd75f9",
+      "content_hash": "603c8c55c7bf24c32a734b499124cccf55caa5d66bfc03153040207a1f5e77d9",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -153508,6 +153518,11 @@
           "number": 6168,
           "title": "Merge branch 'feat/346-weighted-repair' into integrate/fix-all-343-350",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6645,
+          "title": "The owl-dl headline says consistent: null when the search that would decide it d",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -153515,7 +153530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:33:57.315Z",
+      "verified_at": "2026-11-03T22:32:03.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170309,14 +170324,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6600,
       "title": "Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "ecab5ce6",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T20:01:00.094Z"
+      "verified_at": "2026-11-03T22:32:05.106Z"
     },
     "rule-6601": {
       "learning_id": "rule-6601",
@@ -170981,6 +170996,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:23:42.327Z"
+    },
+    "rule-6644": {
+      "learning_id": "rule-6644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6644,
+      "title": "build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "1261fc46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:31:58.796Z"
+    },
+    "rule-6645": {
+      "learning_id": "rule-6645",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6645,
+      "title": "The owl-dl headline says consistent: null when the search that would decide it d",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "c7fd75f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:32:03.387Z"
+    },
+    "rule-6646": {
+      "learning_id": "rule-6646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6646,
+      "title": "updates): clear cancelled exit requests and explain confirmation blockers (#1417",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "d4951da8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:32:09.519Z"
     }
   },
   "aliases": {

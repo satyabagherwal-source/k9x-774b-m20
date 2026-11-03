@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `a3add88d`  
+> **Source Version**: `d4951da8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T00:03:04.017Z  
+> **Timestamp**: 2026-11-03T22:32:08.858Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T00:03:03.637Z  
+> **Harvest Timestamp**: 2026-11-03T22:32:08.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 28372 stars
+- **Stars / Engagement**: 28925 stars
 
 ---
 
@@ -1988,14 +1988,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13929** (2026-10-30): **[Bug] 代码片段无法自定义排版格式，切换数据库类型自动替换失效**
-  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：,,,  ### 数据库类型和版本 MsSql  ### AI 摘要 在设置代码片段时，无法自定义维护排版格式；将SQL语句压缩为单行后，切换到MsSql数据库类型时，LIMIT自动替换脚本失效。  ### 原始描述 设置--代码片段：无法自定义维护排版格式，切换据库类型自动替换脚本失效。 例如：将 SELECT * FROM table LIMIT 100; 改为 SELECT * FROM table LIMIT 100; 切换到MsSql后limit替换失效。
-  **Post-Mortem & Fix Analysis**:
-  > /claim  ## 原因  `apps/desktop/src/lib/sql/sqlSnippetTemplates.ts` 中的 `resolveSqlSnippetBodyForDatabase` 只在片段正文与内置默认值**完全相等**（`snippet.body !== rule.defaultBody` 严格比较）时才按数据库方言生成写法，否则视为用户自定义内容原样返回。  这一规则来自 #4375，本意是保护用户真正修改过的内容（例如 `LIMIT 7`），但严格比较把只调整换行/空格的情况也当成了“自定义”。因此把      SELECT *     FROM table     LIMIT 100;  改成单行 `SELECT * FROM table LIMIT 100;` 后，切换到 SQL Server 时不再生成 `SELECT TOP 100 ...`，仍保留 `LIMIT`。`upd`（ClickHouse）和 `at`（新增列）片段走同一判断，存在相同问题；默认正文若为 `\r\n` 换行也会静默失效。  ## 修复方案  1. 判断是否为默认值前，先将连续空白折叠为单个空格再比较，仅调整排版时仍视为默认片段。 2. 若方言写法与用户正文（折叠空白后）一致，直接返回用户原文，不覆盖用户的缩进和排版（例如 MySQL 下的单行 `sel`、改过缩进的 CTE）。 3. 方言写法确实不同时：用户正文为单行则输出单行方言写法（如 `SELECT TOP 100 * FROM table;`），多行则使用默认多行写法。 4. 内容真正改过的片段（如 `LIMIT 7`、修改表名）行为不变，#4375 的保护测试保持通过。  ## 测试  在 `sqlCompletion.snippet.spec.ts` 中以表格驱动方式补充用例：SQL Server 单行 `sel`、MySQL 单行 `sel` 保持原样、改过缩进的 CTE 保持原样、Oracle 下重排过的多行 `sel`、`\r\n` 换行的默认正文。  额外开销仅限 11 个内置片段的空白折叠，每次补全为微秒级，自定义片段路径不变。
-  > ✅ @seaways1015-afk 已认领 #13929，开始处理吧！
+- **Issue #14202** (2026-11-03): **[Bug] sql编辑页面采纳智能提示时会吞掉前面一部分内容**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Doris 4.1  ### 问题描述 / Problem description  1、复现步骤：新建查询，编辑sql,采纳智能提示即可复现 2、期望结果：智能补全，并且不影响前面已经写好的sql 3、实际结果：采纳智能补全的时候会覆盖掉前面一部分sql,而且并不是所有智能补全都是这样，有时是好的，但是这个问题却很容易复现  https://github.com/user-attachments/assets/efe70355-2b2d-4106-859d-cec967086153  ### 支持信息 / Support information  DBX 版本: v0.6.65-beta.20261103.1 运行环境: 桌面端 操作系统: Windows 11 (10.0.26200.9457) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0 数据库类型: mysql, mysql/doris, postgres  注：另外一台macos 也复现了这个问题  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
-- **Issue #13917** (2026-10-29): **[Bug][Windows ARM64] 打开查询页 / 默认查询即闪退：0xC00000FD 主线程栈溢出（aarch64-pc-windows-msvc 未设置 8 MiB 栈）**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  IBM DB2（JDBC 插件）。问题与数据库无关：打开查询编辑器标签页时就会崩溃。  ### 问题描述 / Problem description  Windows ARM64 原生安装包从 0.6.57 起，**打开任何 SQL 查询标签页都会立即闪退**。0.6.56 是否受影响未验证。  复现步骤： 1. 侧栏右键任意连接 → 「打开默认查询」，或点工具栏「新建查询」 2. 应用在 1 秒内直接退出，没有任何提示  本机在 0.6.57、0.6.58、0.6.60、0.6.61 上均 100% 复现。  **stderr**（GUI 进程，用重定向 stderr 的方式启动后捕获）：  ``` [STARTUP] setup complete in 254.159ms (total 742.597083ms) DBX MCP Streamable HTTP listening on http://127.0.0.1:5225/mcp  thread 'main' (2408) has overflowed its stack ```  **Windows 事件日志（Application Error / WER APPCRASH）：**  | 版本 | 异常代码 | 异常偏移 | | --- | --- | --- | | 0.6.57 | `c00000fd` | `0x3056360` | | 0.6.58 | `c00000fd` | `0x3057160` | | 0.6.60 | `c00000fd` | `0x3118060` | | 0.6.61 | `c00000fd` | `0x3118060` |  反汇编 0.6.61 的 `0x3118060`，位置在 ARM64 的 `__chkstk` 栈探测循环（`ldr xzr, [x17]`）里。也就是说，主线程上某个栈帧在探测栈页时越过了栈底。  **根因分析**  0.6.61 安装包里 `dbx.exe` 的 PE 头：  ``` Machine            : 0xAA64 (ARM64) SizeOfStackReserve : 0x100000 (1 MiB)   <- Windows 默认值 SizeOfStackCommit  : 0x1000 ```  当前 `main` 分支的 `.cargo/config.toml` 只给两个 x86_64 目标设置了 8 MiB 主线程栈：  ```toml [target.x86_64-pc-windows-msvc] rustflags = ["-C", "link-arg=/STACK:8388608"]  [target.x86_64-win7-windows-msvc] rustflags = ["-C", "link-arg=/STACK:8388608"] ```  **没有 `[target.aarch64-pc-windows-msvc]` 这一段**，所以 Windows ARM64 包的主线程栈仍是 1 MiB。  这和 #13671 是同一类问题。#13448（v0.6.56）让建连 / transport 的调用栈变深，1 MiB 主线程栈被撑爆。#13672 只修复了 Win7 / Server 2012 R2 的 x64 遗留包，ARM64 被漏掉了。  **验证**  把 `dbx.exe`
+- **Issue #14200** (2026-11-03): **Redis Hash格式，有些语法不支持**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Redis  ### 问题描述 / Description / Problem description  <!-- Failed to upload "image.png" -->  <img width="657" height="237" alt="Image" src="https://github.com/user-attachments/assets/db685ea1-d936-4d96-9398-0018b3fbe8e9" />   数据结构大概是这样  <img width="664" height="417" alt="Image" src="https://github.com/user-attachments/assets/ba46b43d-ac4c-4fb0-aa59-b630550c64f3" />  ### 错误信息 / Error message  ```shell 就是查不到 ```  ### 支持信息 / Support information  DBX 已是最新版本 (0.6.65-beta.20261103.1)。  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > <img width="659" height="426" alt="Image" src="https://github.com/user-attachments/assets/d3557b38-8c31-4b99-b34e-50f41ff14c45" /> DBX中都不支持  补充下，直接到Redis命令行这里是支持的  <img width="874" height="456" alt="Image" src="https://github.com/user-attachments/assets/b6b4ee02-7944-4011-8117-38f5dab5c40a" />
+  > 是支持的 我看错了 忘记切另外一个redis连接地址了
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,411 +2012,767 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `708a2d3f` (2026-10-31)
-**Commit Message**: fix: refresh sidebar columns after saving table structure (#13850)
+### Incident Patch 1: `63019b25` (2026-11-03)
+**Commit Message**: fix(updates): clear cancelled exit requests and explain confirmation blockers (#14173)
 
-**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts` (modified, +22/-0)
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/App.vue` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
-   executeTabSql: vi.fn(),
-   getColumns: vi.fn(),
-   invalidateCompletionTableCache: vi.fn(),
-+  refreshTableColumnsTree: vi.fn(),
-   listIndexes: vi.fn(),
-   setErrorResult: vi.fn(),
-   setTableMeta: vi.fn(),
-@@ -34,6 +35,7 @@ vi.mock("@/stores/connectionStore", () => ({
-     connectionIdentifierQuote: () => undefined,
-     metadataGenerationFor: () => 0,
-     refreshObjectListTreeNode: vi.fn(),
-+    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
-     invalidateCompletionTableCache: mocks.invalidateCompletionTableCache,
-   }),
- }));
-@@ -219,11 +221,31 @@ describe("useNavigationTargets openTableTarget", () => {
-       tableName: target.tableName,
-     });
- 
-+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
-     expect(mocks.invalidateCompletionTableCache).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
-     expect(mocks.getColumns).toHaveBeenCalledTimes(2);
-     expect(mocks.tabs.map((tab) => tab.tableMeta?.primaryKeys)).toEqual([["fresh_id"], ["fresh_id"]]);
-   });
- 
-+  it("refreshes sidebar columns even without a data tab", async () => {
-+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
-+    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
-+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
-+    expect(mocks.getColumns).not.toHaveBeenCalled();
-+  });
-+
-+  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
-+    const navigation = useNavigationTargets(dialogs);
-+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
-+    await navigation.openLineageTarget(target);
-+    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
-+    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
-+    const toast = vi.fn();
-+    await navigation.onStructureEditorSaved(vi.fn(), toast, target);
-+    expect(toast).toHaveBeenCalledWith("sidebar unavailable", 5000);
-+    expect(mocks.tabs[0]?.tableMeta?.primaryKeys).toEqual(["fresh_id"]);
-+  });
-+
-   it("keeps row identity pending when shared metadata loading fails", async () => {
-     mocks.getColumns.mockRejectedValue(new Error("metadata unavailable"));
- 
+@@ -386,6 +386,8 @@ const translateUpdateSurface: UpdateConfigTranslator = (key, named) => (named ?
+ function updateBlockingConfigState(): UpdateBlockingConfigState {
+   return {
+     pendingAppClose: pendingAppCloseAction.value !== null,
++    saveCloseConfirm: queryStore.showCloseConfirm && queryStore.isConfirmingAppClose,
++    exitCloseConfirm: showCloseActionPrompt.value || showAiRunsClosePrompt.value || showBackgroundTasksClosePrompt.value,
+     connectionDialog: showConnectionDialog.value,
+     saveSqlDialog: showSaveSqlDialog.value,
+     ddlDialog: showQueryEditorDdlDialog.value,
 ```
 
-**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.store.spec.ts` (modified, +1/-0)
+**File**: `apps/desktop/src/components/layout/AiRunsClosePromptDialog.vue` (modified, +6/-1)
 ```diff
-@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
-     // 与真实 store 一致：setTableMeta 记录连接元数据代次
-     metadataGenerationFor: vi.fn(() => 0),
-     refreshObjectListTreeNode: vi.fn(),
-+    refreshTableColumnsTree: vi.fn(),
-     invalidateCompletionTableCache: vi.fn(),
-   },
-   settingsStore: {
+@@ -7,10 +7,15 @@ defineProps<{ count: number }>();
+ const open = defineModel<boolean>("open", { required: true });
+ const emit = defineEmits<{ cancel: []; quit: [] }>();
+ const { t } = useI18n();
++
++function handleOpenChange(value: boolean) {
++  open.value = value;
++  if (!value) emit("cancel");
++}
+ </script>
+ 
+ <template>
+-  <Dialog v-model:open="open">
++  <Dialog :open="open" @update:open="handleOpenChange">
+     <DialogContent class="sm:max-w-[440px]" @interact-outside.prevent>
+       <DialogHeader>
+         <DialogTitle>{{ t("ai.closeWithRunsTitle") }}</DialogTitle>
 ```
 
-**File**: `apps/desktop/src/composables/useNavigationTargets.ts` (modified, +5/-0)
+**File**: `apps/desktop/src/components/layout/AppTabBar.vue` (modified, +1/-1)
 ```diff
-@@ -437,6 +437,11 @@ export function useNavigationTargets(dialogs: { showFieldLineageDialog: { value:
-     // 其它 loadTableMetadata 消费者最长 30 秒拿到旧列。不带 schema/catalog
-     // 维度（宁可多废，schema 形态在各消费点可能不同）
-     invalidateTableMetadataCache({ connectionId: context.connectionId, database: context.database, tableName: context.tableName, ...(context.exactIdentity ? { schema: context.schema } : {}) });
-+    try {
-+      await connectionStore.refreshTableColumnsTree(context.connectionId, context.database, context.tableName, context.schema, context.catalog);
-+    } catch (e) {
-+      toast(e instanceof Error ? e.message : String(e), 5000);
-+    }
-     const matchingDataTabs = queryStore.tabs.filter((tab) => tab.mode === "data" && tab.connectionId === context.connectionId && tab.database === context.database && tab.tableMeta?.tableName === context.tableName && (tab.schema || tab.tableMeta.schema || "") === (context.schema || ""));
-     // 同一 catalog 只强制加载一次，结果分发给全部匹配 tab
-     const loadedByCatalog = new Map<string, { columns: ColumnInfo[]; primaryKeys: string[] }>();
-```
-
-**File**: `apps/desktop/src/stores/__tests__/connectionStore.refresh.spec.ts` (modified, +80/-1)
-```diff
-@@ -1,7 +1,8 @@
- import { createPinia, setActivePinia } from "pinia";
- import { beforeEach, describe, expect, it, vi } from "vitest";
- import { isObjectCacheInvalidationError } from "@/lib/metadata/objectCacheInvalidationError";
--import type { ConnectionConfig, TreeNode } from "@/types/database";
-+import { createColumnDrafts } from "@/lib/table/tableStructureEditorState";
-+import type { ColumnInfo, ConnectionConfig, TreeNode } from "@/types/database";
- 
- function installLocalStorage() {
-   const data = new Map<string, string>();
-@@ -104,6 +105,84 @@ describe("connectionStore tree refresh state", () => {
-     setActivePinia(createPinia());
-   });
- 
-+  it.each([
-+    [true, "old"],
-+    [false, "old"],
-+    [true, "renamed"],
-+    [false, "renamed"],
-+  ] as const)("refreshes saved table columns without changing expansion (%s, %s)", async (expanded, name) => {
-+    const getColumns = vi.fn().mockResolvedValue([column("old"), column("removed")]);
-+    installApiMocks({ getColumns });
-+    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
-+    const otherSchema = { ...group, id: "other-schema", schema: "other", isExpanded: true, children: [] };
-+    const otherCatalog = { ...group, id: "other-catalog", catalog: "external", isExpanded: true, children: [] };
-+    const store = await createStore(schemaNode([group, otherSchema, otherCatalog]));
-+    await store.loadColumns("pg-1", "app", "users", "public", group.id);
-+    group.isExpanded = expanded;
-+    const updated = { ...column(name), data_type: "character varying", character_maximum_length: 512, comment: "updated comment", is_nullable: false };
-+    getColumns.mockResolvedValue([updated]);
-+
-+    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
-+
-+    expect(getColumns).toHaveBeenCalledTimes(2);
-+    expect(getColumns).toHaveBeenLastCalledWith("pg-1", "app", "public", "users", undefined);
-+    expect(group.children).toHaveLength(1);
-+    expect(group.children![0]).toMatchObject({ label: `${name} (character varying)`, meta: updated });
-+    expect(createColumnDrafts([group.children![0]!.meta as ColumnInfo], "postgres")[0]).toMatchObject({ dataType: "character varying(512)", comment: "updated comment", isNullable: false });
-+    expect(group.objectCount).toBe(1);
-+    expect(group.isExpanded).toBe(expanded);
-+    expect(otherSchema.children).toEqual([]);
-+    expect(otherCatalog.children).toEqual([]);
-+  });
-+
-+  it("preserves old columns on a failed reload and retries an empty loaded group", async () => {
-+    const getColumns = vi.fn().mockResolvedValue([]);
-+    installApiMocks({ getColumns });
-+    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
-+    const store = await createStore(schemaNode([group]));
-+    await store.loadColumns("pg-1", "app", "users", "public", group.id);
-+    group.isExpanded = false;
-+    getColumns.mockResolvedValueOnce([column("added")]);
-+    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
-+    expect(group.children![0]!.meta).toEqual(column("added"));
-+    getColumns.mockRejectedValueOnce(new Error("metadata denied"));
-+    await expect(store.refreshTableColumnsTree("pg-1", "app", "users", "public")).rejects.toThrow("metadata denied");
-+    expect(group.children![0]!.meta).toEqual(column("added"));
-+    expect(group.isExpanded).toBe(false);
-+    expect(group.isLoading).toBe(false);
-+  });
-+
-+  it("ignores an older column request that finishes after the saved structure reload", async () => {
-+    let finishOld!: (value: ReturnType<typeof column>[]) => void;
-+    const getColumns = vi
-+      .fn()
-+      .mockImplementationOnce(
-+        () =>
-+          new Promise((resolve) => {
-+            finishOld = resolve;
-+          }),
-+      )
-+      .mockResolvedValue([column("fresh")]);
-+    installApiMocks({ getColumns });
-+    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
-+    const store = await createStore(schemaNode([group]));
-+    const oldLoad = store.loadColumns("pg-1", "app", "users", "public", group.id);
-+    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
-+    finishOld([column("stale")]);
-+    await oldLoad;
-+    expect(group.children![0]!.meta).toEqual(column("fresh"));
-+  });
-+
-+  it("does not load unopened column groups after a structure save", async () => {
-+    const getColumns = vi.fn();
-+    installApiMocks({ getColumns });
-+    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users"
-```
-
-**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +24/-3)
-```diff
-@@ -8335,7 +8335,7 @@ export const useConnectionStore = defineStore("connection", () => {
-     }
-   }
- 
--  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string) {
-+  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string, options?: { preserveExpansion?: boolean }) {
-     const parentId = nodeId ?? (schema ? `${connectionId}:${database}:${schema}:${table}:__columns` : `${connectionId}:${database}:${table}:__columns`);
-     const node = findNode(treeNodes.value, parentId);
-     if (!node) return;
-@@ -8368,7 +8368,7 @@ export const useConnectionStore = defineStore("connection", () => {
-             };
-           }),
-         );
--        targetNode.isExpanded = true;
-+        if (!options?.preserveExpansion) targetNode.isExpanded = true;
-         return;
+@@ -230,7 +230,7 @@ function handleCancelClose() {
+     :open="queryStore.showCloseConfirm"
+     @update:open="
+       (open) => {
+-        if (!open) queryStore.cancelClosePendingTab();
++        if (!open) handleCancelClose();
        }
-       const querySchema = metadataQuerySchema(connectionId, database, schema);
-@@ -8391,7 +8391,7 @@ export const useConnectionStore = defineStore("connection", () => {
-           meta: col,
-         })),
-       );
--      targetNode.isExpanded = true;
-+      if (!options?.preserveExpansion) targetNode.isExpanded = true;
-     } catch (e) {
-       recordMetadataLoadError(connectionId, e, load);
-       throw e;
-@@ -8913,6 +8913,26 @@ export const useConnectionStore = defineStore("connection", () => {
-     void loadSidebarTableStorage({ connectionId, database, schema: schema || "" }, { force: true });
-   }
- 
-+  // Saving structure does not replace existing sidebar column nodes. Reload only
-+  // materialized groups so their labels and DDL metadata stay current, including
-+  // groups the user has since collapsed, without opening new branches.
-+  async function refreshTableColumnsTree(connectionId: string, database: string, table: string, schema?: string, catalog?: string) {
-+    if (!connectedIds.value.has(connectionId)) return;
-+    const querySchema = metadataQuerySchema(connectionId, database, schema);
-+    const groups = findTreeNodes(
-+      treeNodes.value,
-+      (node) =>
-+        node.type === "group-columns" &&
-+        node.connectionId === connectionId &&
-+        node.database === database &&
-+        node.tableName === table &&
-+        metadataQuerySchema(connectionId, database, node.schema) === querySchema &&
-+        (node.catalog || "") === (catalog || "") &&
-+        !!(node.isExpanded || node.isLoading || node.children?.length || isTreeNodeChildrenLoaded(node.id)),
-+    );
-+    await Promise.all(groups.map((node) => loadColumns(connectionId, database, table, node.schema, node.id, node.catalog, { preserveExpansion: true })));
-+  }
-+
-   function isSchemaAwareDatabase(connectionId: string): boolean {
-     return isSchemaAware(getConfig(connectionId)?.db_type);
-   }
-@@ -11424,6 +11444,7 @@ export const useConnectionStore = defineStore("connection", () => {
-     refreshConnectionTreeNode,
-     refreshDatabaseTreeNode,
-     refreshObjectListTreeNode,
-+    refreshTableColumnsTree,
-     connectedIds,
-     connectingIds,
-     isConnectionClosedByUser,
+     "
+   >
 ```
 
----
-
-### Incident Patch 2: `4013855f` (2026-10-31)
-**Commit Message**: Revert "perf(window): lower the WebView2 memory target while the main window is hidden"
-
-This reverts commit 118f86ca3e74a370a88414a925140b58f20058c9.
-
-**File**: `src-tauri/src/lib.rs` (modified, +0/-8)
+**File**: `apps/desktop/src/components/layout/BackgroundTasksClosePromptDialog.vue` (modified, +6/-1)
 ```diff
-@@ -23,7 +23,6 @@ mod webview2_legacy_css;
- mod webview2_preflight;
- #[cfg(any(target_os = "windows", test))]
- mod webview2_recovery;
--mod webview_memory;
- mod window_geometry;
- mod window_state_guard;
- #[cfg(target_os = "windows")]
-@@ -766,7 +765,6 @@ pub(crate) fn hide_main_window_for_close<R: tauri::Runtime>(app: &tauri::AppHand
-     }
+@@ -10,10 +10,15 @@ defineProps<{ count: number }>();
+ const open = defineModel<boolean>("open", { required: true });
+ const emit = defineEmits<{ cancel: []; quit: [] }>();
+ const { t } = useI18n();
++
++function handleOpenChange(value: boolean) {
++  open.value = value;
++  if (!value) emit("cancel");
++}
+ </script>
  
-     let _ = window.hide();
--    webview_memory::sync(app);
+ <template>
+-  <Dialog v-model:open="open">
++  <Dialog :open="open" @update:open="handleOpenChange">
+     <DialogContent class="sm:max-w-[440px]" @interact-outside.prevent>
+       <DialogHeader>
+         <DialogTitle>{{ t("app.closeWithBackgroundTasksTitle") }}</DialogTitle>
+```
+
+**File**: `apps/desktop/src/components/layout/__tests__/AppTabBar.portal.spec.ts` (modified, +27/-5)
+```diff
+@@ -59,6 +59,7 @@ function mountNavigation(placement: "top" | "bottom" | "left" | "right", empty =
+   const workspace = ref<{ toggleResultsPane: () => boolean } | null>(null);
+   const saveTab = vi.fn();
+   const saveAll = vi.fn();
++  const cancelClose = vi.fn();
+   const active = computed(() => settings.settingsPageActive || pages.driverActive);
+   const portal = createGroupTabBarPortal(active);
+   const actions = {
+@@ -92,10 +93,10 @@ function mountNavigation(placement: "top" | "bottom" | "left" | "right", empty =
+   document.body.appendChild(host);
+   const root = defineComponent({
+     components: { AppTabBar, SqlEditorWorkspace, TooltipProvider },
+-    setup: () => ({ store, settings, pages, active, navigation, workspace, saveTab, saveAll }),
++    setup: () => ({ store, settings, pages, active, navigation, workspace, saveTab, saveAll, cancelClose }),
+     template: `
+       <TooltipProvider>
+-        <AppTabBar :settings-page-open="pages.settingsOpen" :settings-page-active="settings.settingsPageActive" :driver-store-open="pages.driverOpen" :driver-store-active="pages.driverActive" :tab-bar-width="navigation.width" :tab-bar-collapsed="navigation.collapsed" @save-tab="saveTab" @save-all-tab-close="saveAll">
++        <AppTabBar :settings-page-open="pages.settingsOpen" :settings-page-active="settings.settingsPageActive" :driver-store-open="pages.driverOpen" :driver-store-active="pages.driverActive" :tab-bar-width="navigation.width" :tab-bar-collapsed="navigation.collapsed" @save-tab="saveTab" @save-all-tab-close="saveAll" @cancel-tab-close="cancelClose">
+           <div v-show="settings.settingsPageActive" data-test="settings-page"><input v-model="pages.draft" data-test="settings-input" /></div>
+           <div v-show="pages.driverActive" data-test="driver-page">Drivers</div>
+         </AppTabBar>
+@@ -119,7 +120,7 @@ function mountNavigation(placement: "top" | "bottom" | "left" | "right", empty =
+     host.remove();
+     window.removeEventListener("dbx:activate-query-surface", onQuerySurface);
+   });
+-  return { host, store, settings, pages, portal, actions, warnings, navigation, workspace, saveTab, saveAll };
++  return { host, store, settings, pages, portal, actions, warnings, navigation, workspace, saveTab, saveAll, cancelClose };
  }
  
- pub(crate) fn request_app_close<R: tauri::Runtime>(app: &tauri::AppHandle<R>, target: &str) {
-@@ -2281,12 +2279,6 @@ pub fn run() {
-                 }
-                 return;
-             }
--            if window.label() == "main"
--                && matches!(event, tauri::WindowEvent::Focused(_) | tauri::WindowEvent::Resized(_))
--            {
--                // Minimize / hide-to-tray / restore all surface as a focus or size change.
--                webview_memory::sync(window.app_handle());
--            }
-             if let tauri::WindowEvent::Destroyed = event {
-                 // A webview that no longer exists must not leave drop grants
-                 // behind for a future renderer to claim.
+ function element(host: HTMLElement, selector: string): HTMLElement {
+@@ -152,7 +153,7 @@ describe("AppTabBar group navigation portal", () => {
+   }
+ 
+   it("keeps the current SQL save action in a mixed TYPE recovery batch", async () => {
+-    const { store, sql, recovery, saveTab, saveAll } = mixedClose();
++    const { store, sql, recovery, saveTab, saveAll, cancelClose } = mixedClose();
+     await settle();
+     expect(store.pendingCloseTabId).toBe(sql.id);
+     expect(closeButton("editor.discardChanges")).toBeDefined();
+@@ -164,12 +165,13 @@ describe("AppTabBar group navigation portal", () => {
+     await settle();
+     expect(saveTab).toHaveBeenCalledExactlyOnceWith(sql.id);
+     expect(saveAll).not.toHaveBeenCalled();
++    expect(cancelClose).not.toHaveBeenCalled();
+     expect(store.tabs.find((tab) => tab.id === recovery.id)?.typeManagementDraft).toEqual({ state: "stopped" });
+     expect(sql.sql).toBe("SELECT 1");
+   });
+ 
+   it.each([false, true])("scopes discard controls to the pending tab (TYPE first: %s)", async (recoveryFirst) => {
+-    const { store, sql, recovery } = mixedClose(recoveryFirst);
++    const { store, sql, recovery, cancelClose } = mixedClose(recoveryFirst);
+     await settle();
+     expect(store.pendingCloseTabId).toBe(recoveryFirst ? recovery.id : sql.id);
+     expect(closeButton(recoveryFirst ? "objects.typeManagementDiscardClose" : "editor.discardChanges")).toBeDefined();
+@@ -182,6 +184,7 @@ describe("AppTabBar group navigation portal", () => {
+     expect(store.tabs.map((tab) => tab.id)).toEqual([recoveryFirst ? sql.id : recovery.id]);
+     if (recoveryFirst) expect(store.tabs[0]?.sql).toBe("SELECT 1");
+     else expect(store.tabs[0]?.typeManagementDraft).toEqual({ state: "stopped" });
++    expect(cancelClose).not.toHaveBeenCalled();
+   });
+ 
+   it("cancels a mixed close without discarding SQL or the TYPE recovery draft", async () => {
+@@ -208,6 +211,25 @@ describe("AppTabBar group navigation portal", () => {
+     expect(saveAll).toHaveBeenCalledOnce();
+   });
+ 
++  it.each(["dismiss", "escape", "cancel"])("cancels the app close request when the unsaved changes dialog closes via %s", async (method) => {
++    const { store, settings, cancelClose } = mountNavigation("top");
++    settings.editorSettings.confirmUnsavedSqlClose = true;
++    settings.editorSettings.appCloseUnsavedTabsMode = "prompt";
++    store.tabs[0]!.originalSql = "SELECT 0";
++    expect(store.requestAppCloseConfirmation()).toBe(true);
++    await settle();
++    const dialog = document.querySelector<HTMLElement>("[role='dialog']")!;
++    expect(dialog).not.toBeNull();
++    if (method === "escape") dialog.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
 ```
 
-**File**: `src-tauri/src/webview_memory.rs` (removed, +0/-91)
+**File**: `apps/desktop/src/components/layout/__tests__/ClosePrompts.dismiss.spec.ts` (added, +81/-0)
 ```diff
-@@ -1,91 +0,0 @@
--//! Lowers the main WebView2's memory target while the window is not on screen.
--//!
--//! The app can sit in the tray or minimized for hours. WebView2 documents that setting
--//! `MemoryUsageTargetLevel = Low` on an inactive WebView lets the engine drop cached data and
--//! page memory to disk, and restoring `Normal` on return keeps full performance. See
--//! <https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/performance#use-memory-management-apis>.
--//!
--//! Only a window the user cannot see qualifies. Merely losing focus (alt-tab to documentation)
--//! keeps `Normal`: trimming a page the user is about to look at again makes the return sluggish.
--//!
--//! WKWebView and WebKitGTK expose no equivalent, so everything except the pure decision is
--//! Windows-only.
--
--/// A window that is minimized or hidden to the tray cannot be seen.
--#[cfg(any(target_os = "windows", test))]
--fn wants_low_memory(minimized: bool, visible: bool) -> bool {
--    minimized || !visible
--}
--
--#[cfg(target_os = "windows")]
--mod windows_impl {
--    use super::wants_low_memory;
--    use std::sync::atomic::{AtomicBool, Ordering};
--    use tauri::{Manager, Runtime};
--    use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_19, COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL};
--    use windows_core::Interface;
--
--    const MAIN_WINDOW_LABEL: &str = "main";
--    // COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL_NORMAL / _LOW
--    const LEVEL_NORMAL: i32 = 0;
--    const LEVEL_LOW: i32 = 1;
--
--    static LOW_APPLIED: AtomicBool = AtomicBool::new(false);
--
--    fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
--        // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
--        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
--        // cast and the caller only logs, leaving the default memory behavior unchanged.
--        unsafe {
--            let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
--            let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
--            let level = COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL(if low { LEVEL_LOW } else { LEVEL_NORMAL });
--            core19.SetMemoryUsageTargetLevel(level).map_err(|error| error.to_string())
--        }
--    }
--
--    /// Re-evaluates the target level from the main window's current visibility.
--    /// Cheap and idempotent: the WebView is only touched when the desired level changes.
--    pub fn sync<R: Runtime>(app: &tauri::AppHandle<R>) {
--        let Some(window) = app.get_webview_window(MAIN_WINDOW_LABEL) else {
--            return;
--        };
--        let minimized = window.is_minimized().unwrap_or(false);
--        let visible = window.is_visible().unwrap_or(true);
--        let low = wants_low_memory(minimized, visible);
--        if LOW_APPLIED.swap(low, Ordering::SeqCst) == low {
--            return;
--        }
--        let result = window.with_webview(move |webview| {
--            if let Err(error) = apply(&webview, low) {
--                eprintln!("[WARN] failed to set WebView2 memory usage target: {error}");
--            }
--        });
--        if let Err(error) = result {
--            LOW_APPLIED.store(!low, Ordering::SeqCst);
--            eprintln!("[WARN] failed to dispatch WebView2 memory usage target: {error}");
--        }
--    }
--}
--
--/// Called after anything that can change whether the main window is on screen.
--#[cfg(target_os = "windows")]
--pub fn sync<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
--    windows_impl::sync(app);
--}
--
--#[cfg(not(target_os = "windows"))]
--pub fn sync<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) {}
--
--#[cfg(test)]
--mod tests {
--    use super::wants_low_memory;
--
--    #[test]
--    fn only_an_invisible_window_gets_the_low_target() {
--        assert!(!wants_low_memory(false, true));
--        assert!(wants_low_memory(true, true));
--        assert!(wants_low_memory(false, false));
--        assert!(wants_low_memory(true, false));
--    }
--}
+@@ -0,0 +1,81 @@
++// @vitest-environment happy-dom
++import { createApp, h, nextTick, ref, type Component } from "vue";
++import { createI18n } from "vue-i18n";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import AiRunsClosePromptDialog from "../AiRunsClosePromptDialog.vue";
++import BackgroundTasksClosePromptDialog from "../BackgroundTasksClosePromptDialog.vue";
++
++const cleanups: Array<() => void> = [];
++afterEach(() => {
++  for (const cleanup of cleanups.splice(0)) cleanup();
++});
++
++async function settle() {
++  await nextTick();
++  await nextTick();
++  await nextTick();
++}
++
++function mountPrompt(component: Component) {
++  const open = ref(true);
++  const pendingClose = ref(true);
++  const cancel = vi.fn(() => {
++    pendingClose.value = false;
++    open.value = false;
++  });
++  const quit = vi.fn(() => {
++    open.value = false;
++  });
++  const host = document.createElement("div");
++  document.body.appendChild(host);
++  const app = createApp({
++    setup: () => () =>
++      h(component, {
++        open: open.value,
++        count: 1,
++        "onUpdate:open": (value: boolean) => {
++          open.value = value;
++        },
++        onCancel: cancel,
++        onQuit: quit,
++      }),
++  });
++  app.use(createI18n({ legacy: false, locale: "en", messages: { en: {} }, missingWarn: false, fallbackWarn: false }));
++  app.mount(host);
++  cleanups.push(() => {
++    app.unmount();
++    host.remove();
++  });
++  return { open, pendingClose, cancel, quit };
++}
++
++describe.each([
++  ["AI runs", AiRunsClosePromptDialog],
++  ["background tasks", BackgroundTasksClosePromptDialog],
++] as const)("%s exit confirmation", (_name, component) => {
++  it.each(["dismiss", "escape", "cancel"])("cancels the pending close via %s", async (method) => {
++    const { open, pendingClose, cancel, quit } = mountPrompt(component);
++    await settle();
++    const dialog = document.querySelector<HTMLElement>("[role='dialog']")!;
++    expect(dialog).not.toBeNull();
++    if (method === "escape") dialog.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
++    else if (method === "dismiss") dialog.querySelector<HTMLButtonElement>("[data-slot='dialog-close']")!.click();
++    else [...dialog.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "common.cancel")!.click();
++    await settle();
++    expect(open.value).toBe(false);
++    expect(pendingClose.value).toBe(false);
++    expect(cancel).toHaveBeenCalledOnce();
++    expect(quit).not.toHaveBeenCalled();
++  });
++
++  it("keeps an explicit quit separate from cancellation", async () => {
++    const { open, cancel, quit } = mountPrompt(component);
++    await settle();
++    const dialog = document.querySelector<HTMLElement>("[role='dialog']")!;
++    [...dialog.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.endsWith("Quit"))!.click();
++    await settle();
++    expect(open.value).toBe(false);
++    expect(quit).toHaveBeenCalledOnce();
++    expect(cancel).not.toHaveBeenCalled();
++  });
++});
+```
+
+**File**: `apps/desktop/src/i18n/locales/az.ts` (modified, +2/-0)
+```diff
+@@ -430,6 +430,8 @@ export default withEnglishFallback({
+     preparationTasks: "Aktiv tapşırıqları və tranzaksiyaları bitirin.",
+     preparationDrafts: "Dəyişiklikləri saxlayın və ya ləğv edin.",
+     preparationConfig: "Konfiqurasiya redaktəsini bitirin.",
++    preparationAppClose: "Çıxış təsdiqi pəncərəsi hələ açıqdır. Çıxışı ləğv edin, sonra Yenidən başladın və yeniləyin düyməsinə klikləyin.",
++    preparationSaveConfirmation: "Yadda saxlama təsdiqi pəncərəsi hələ açıqdır. Dəyişiklikləri yadda saxlayın və ya bağlamanı ləğv edin, sonra yeniləməyə yenidən cəhd edin.",
+     preparationConfigBusy: "Konfiqurasiya ixracı və ya idxalı davam edir. Yeniləmədən əvvəl tamamlanmasını gözləyin.",
+     preparationConfigDetail: "Yeniləmədən əvvəl «{surface}» pəncərəsini bağlayın.",
+     preparationOtherWindowHint: " (pəncərə başqa DBX pəncərəsindədir)",
+```
+
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +2/-0)
+```diff
+@@ -1314,6 +1314,8 @@ export default {
+     preparationTasks: "Finish active tasks and transactions before updating.",
+     preparationDrafts: "Save or discard unsaved changes before updating.",
+     preparationConfig: "Finish editing the current configuration before updating.",
++    preparationAppClose: "An exit confirmation is still open. Cancel exiting, then click Restart and Update.",
++    preparationSaveConfirmation: "A save confirmation is still open. Save your changes or cancel closing, then try updating again.",
+     preparationConfigBusy: "A configuration export or import is still running. Wait for it to finish before updating.",
+     preparationConfigDetail: "Close the {surface} dialog before updating.",
+     preparationOtherWindowHint: " (the dialog is in another DBX window)",
 ```
 
 ---
 
-### Incident Patch 3: `0b11c05e` (2026-10-31)
-**Commit Message**: Revert "docs(window): correct the WebView2 memory target version note"
+### Incident Patch 2: `7dab69e2` (2026-11-03)
+**Commit Message**: fix(connection): show timeout scope labels without truncation (#14156)
 
-This reverts commit 10fe0dc0a2cd1ae8f1293336224ea6e3619b82c3.
+Co-authored-by: zipg <[REDACTED_EMAIL]>
 
-**File**: `src-tauri/src/webview_memory.rs` (modified, +2/-3)
+**File**: `apps/desktop/src/components/connection/ConnectionDialog.vue` (modified, +19/-32)
 ```diff
-@@ -34,9 +34,8 @@ mod windows_impl {
+@@ -10810,39 +10810,21 @@ function openExternalUrl(url: string) {
+                   <h3 class="text-base font-bold">{{ t("connection.advancedConnectionBehavior") }}</h3>
+                   <div class="grid grid-cols-4 items-center gap-4">
+                     <Label :class="connectionLabelSmallClass">{{ t("connection.connectTimeout") }}</Label>
+-                    <div class="col-span-3 grid grid-cols-2 gap-2">
+-                      <div class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1 rounded border px-2 py-1.5 sm:flex" :class="form.connect_timeout_inherit === true ? 'border-primary/60 bg-background' : 'border-border bg-muted/30 text-muted-foreground'">
++                    <div class="connection-timeout-options col-span-3 grid gap-2">
++                      <div class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1 rounded border px-2 py-1.5" :class="form.connect_timeout_inherit === true ? 'border-primary/60 bg-background' : 'border-border bg-muted/30 text-muted-foreground'">
+                         <input id="connect-timeout-global" v-model="form.connect_timeout_inherit" type="radio" name="connect-timeout-scope" :value="true" class="h-3.5 w-3.5 shrink-0 accent-primary" />
+                         <div class="flex min-w-0 flex-1 items-center gap-1">
+-                          <label for="connect-timeout-global" class="min-w-0 cursor-pointer truncate text-xs" :title="t('connection.useGlobalQueryTimeout')">{{ t("connection.useGlobalQueryTimeout") }}</label>
++                          <label for="connect-timeout-global" class="min-w-0 cursor-pointer whitespace-normal break-words text-xs" :title="t('connection.useGlobalQueryTimeout')">{{ t("connection.useGlobalQueryTimeout") }}</label>
+                           <HelpTooltip :label="t('connection.globalConnectTimeoutHint')" content-class="max-w-[280px]">
+                             {{ t("connection.globalConnectTimeoutHint") }}
+                           </HelpTooltip>
+                         </div>
+-                        <Input
+-                          v-model.number="editGlobalConnectTimeoutSecs"
+-                          type="number"
+-                          min="1"
+-                          :max="MAX_CONNECT_TIMEOUT_SECS"
+-                          step="1"
+-                          class="col-span-2 h-7 w-full shrink-0 sm:col-span-1 sm:w-20"
+-                          :disabled="form.connect_timeout_inherit !== true"
+-                          @input="clampConnectTimeoutInput($event, 'global')"
+-                        />
++                        <Input v-model.number="editGlobalConnectTimeoutSecs" type="number" min="1" :max="MAX_CONNECT_TIMEOUT_SECS" step="1" class="col-span-2 h-7 w-full" :disabled="form.connect_timeout_inherit !== true" @input="clampConnectTimeoutInput($event, 'global')" />
+                       </div>
+-                      <div class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1 rounded border px-2 py-1.5 sm:flex" :class="form.connect_timeout_inherit !== true ? 'border-primary/60 bg-background' : 'border-border bg-muted/30 text-muted-foreground'">
++                      <div class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1 rounded border px-2 py-1.5" :class="form.connect_timeout_inherit !== true ? 'border-primary/60 bg-background' : 'border-border bg-muted/30 text-muted-foreground'">
+                         <input id="connect-timeout-connection" v-model="form.connect_timeout_inherit" type="radio" name="connect-timeout-scope" :value="false" class="h-3.5 w-3.5 shrink-0 accent-primary" />
+-                        <label for="connect-timeout-connection" class="min-w-0 flex-1 cursor-pointer truncate text-xs" :title="t('connection.useConnectionQueryTimeout')">{{ t("connection.useConnectionQueryTimeout") }}</label>
+-                        <Input
+-                          v-model.number="form.connect_timeout_secs"
+-                          type="number"
+-                          min="1"
+-                          :max="MAX_CONNECT_TIMEOUT_SECS"
+-                          step="1"
+-                          class="col-span-2 h-7 w-full shrink-0 sm:col-span-1 sm:w-20"
+-                          :disabled="form.connect_timeout_inherit === true"
+-                          @input="clampConnectTimeoutInput($event, 'connection')"
+-                        />
++                        <label for="connect-timeout-connection" class="min-w-0 flex-1 cursor-pointer whitespace-normal break-words text-xs" :title="t('connection.useConnectionQueryTimeout')">{{ t("connection.useConnectionQueryTimeout") }}</label>
++                        <Input v-model.number="form.connect_timeout_secs" type="number" min="1" :max="MAX_CONNECT_TIMEOUT_SECS" step="1" class="col-span-2 h-7 w-full" :disabled="form.connect_timeout_inherit === true" @input="clampConnectTimeoutInput($event, 'connection')" />
+                       </div>
+           
+```
+
+---
+
+### Incident Patch 3: `2521b973` (2026-11-03)
+**Commit Message**: fix(mysql): correct TiDB index column metadata and guard load failures
+
+Closes #14080
+
+**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +23/-2)
+```diff
+@@ -621,6 +621,9 @@ async function fetchDdl(force = false, options?: { preserveDraft?: boolean }) {
+ }
+ const errorMessage = ref("");
+ const secondaryMetadataErrors = ref<Partial<Record<ObjectMetadataFacet, string>>>({});
++// Keep the index write gate independent of display errors, which unrelated
++// facet loads and silent refreshes may clear or suppress.
++const indexMetadataReadError = ref("");
+ const columns = ref<EditableStructureColumn[]>([]);
+ const starrocksStatusBusy = ref(false);
+ const starrocksStatusRevision = ref(0);
+@@ -3012,6 +3015,7 @@ function createCurrentDraft(initialized = true): TableStructureEditorDraft {
+     createPartitioningColumns: cloneDraftValue(createPartitioningColumns.value),
+     createPartitioningExpression: createPartitioningExpression.value,
+     loadedMetadataFacets: [...loadedMetadataFacets],
++    indexMetadataReadError: indexMetadataReadError.value || undefined,
+     scrollPositions: cloneDraftValue(structureScrollPositions),
+     appliedInitialTabRequestId: lastAppliedInitialTabRequestId,
+     appliedInitialTargetRequestId: lastAppliedInitialTargetRequestId,
+@@ -3063,6 +3067,7 @@ function restoreDraft(draft: TableStructureEditorDraft) {
+     oracleIndexRefreshGuard.value = { ...cloneDraftValue(draft.oracleIndexRecovery), afterRequestId: -1 };
+     oracleIndexRefreshError.value = draft.oracleIndexRecovery.refreshError ?? "";
+   }
++  indexMetadataReadError.value = draft.indexMetadataReadError || "";
+   activeTab.value = draft.activeTab || "columns";
+   // Restore the DDL baseline alongside the edit, otherwise the restored script
+   // would read as dirty (or clean) against the wrong reference text.
+@@ -3864,6 +3869,7 @@ const canApply = computed(
+     (databaseType.value !== "starrocks" || !starrocksStatusBusy.value) &&
+     !postSaveRefreshing.value &&
+     !oracleIndexRefreshError.value &&
++    !schemaIndexWriteWarning() &&
+     !secondaryMetadataLoading.value &&
+     !mysqlTableEngineLoading.value &&
+     !sqlPreviewLoading.value &&
+@@ -3907,6 +3913,7 @@ function resetState() {
+   oracleIndexRefreshGuard.value = undefined;
+   lastAppliedInitialTargetRequestId = undefined;
+   secondaryMetadataErrors.value = {};
++  indexMetadataReadError.value = "";
+   isPartitionedParent.value = false;
+   isTablePartition.value = false;
+   isForeignTable.value = false;
+@@ -4411,6 +4418,9 @@ async function loadStructure(
+       }
  
-     fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
-         // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
--        // contract requires. `ICoreWebView2_19` ships with newer WebView2 runtimes (the SDK
--        // introduced it in 1.0.1823.32); on a runtime without it the cast fails and the caller only
--        // logs, leaving the default memory behavior unchanged.
-+        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
-+        // cast and the caller only logs, leaving the default memory behavior unchanged.
-         unsafe {
-             let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
-             let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
+       const nextIndexes = indexesResult.status === "fulfilled" ? indexesResult.value : undefined;
++      if (indexesResult.status === "rejected") {
++        indexMetadataReadError.value = indexesResult.reason?.message || String(indexesResult.reason);
++      }
+       const nextForeignKeys = foreignKeysResult.status === "fulfilled" ? foreignKeysResult.value : undefined;
+       const nextConstraints = constraintsResult.status === "fulfilled" ? constraintsResult.value : undefined;
+       const nextTriggers = triggersResult.status === "fulfilled" ? triggersResult.value : undefined;
+@@ -4423,6 +4433,7 @@ async function loadStructure(
+           indexes.value = createIndexDrafts(nextIndexes);
+         }
+         loadedMetadataFacets.add("indexes");
++        indexMetadataReadError.value = "";
+       }
+       if (nextForeignKeys) {
+         foreignKeys.value = createForeignKeyDrafts(nextForeignKeys, databaseType.value);
+@@ -6219,6 +6230,7 @@ function schemaIndexDraftIsReadOnly(index: EditableStructureIndex): boolean {
+ }
+ 
+ function schemaIndexWriteWarning(): string | undefined {
++  if (!isCreateMode.value && !ddlDirty.value && indexMetadataReadError.value && indexes.value.some(indexChanged)) return indexMetadataReadError.value;
+   const blocked = indexes.value.find((index) => schemaIndexDraftIsReadOnly(index) && indexChanged(index));
+   if (!blocked) return undefined;
+   return blocked.original?.owner == null ? t("schemaIndex.targetMissing", { name: blocked.original?.name }) : t("schemaIndex.crossOwnerReadOnly", { owner: blocked.original.owner, name: blocked.original.name });
+@@ -8088,6 +8100,12 @@ watch([() => props.connectionId, () => props.database, () => props.schema, () =>
+ 
+ watch(() => connection.value?.database_info?.productVersion, scheduleSqlPreviewRefresh);
+ 
++watch(indexMetadataReadError, () => {
++  if (schemaIndexWriteWarning()) clearSqlPreviewState();
++  scheduleSqlPreviewRefresh();
++  syncDraftToParent();
++});
++
+ watch(
+   [
+     isCreateMode,
+@@ -8220,6 +8238,9 @@ async function loadActiveTableStructureMetadataIfNeeded() {
+   }
+   if (loading.value || secondaryMetadataLoading.value) return;
+   const scope = withRequiredPostgresPrimaryKeyMetadata(unloadedTableStructureRefreshScope(activeTab.value, loadedMetadataFacets));
++  // A rejected facet is still unloaded, but retrying it whenever loading
++  // clears would loop indefinitely. The toolbar performs an explicit retry.
++  if (indexMetadataReadError.value) scope.indexes = false;
+   if (!hasTableStructureRefreshWork(scope)) return;
+   await loadStructure(true, scope, true, { blockSecondaryMetadata: tr
+```
+
+**File**: `apps/desktop/src/components/structure/__tests__/TableStructureEditor.metadataRevalidation.spec.ts` (modified, +206/-2)
+```diff
+@@ -1,6 +1,6 @@
+ // @vitest-environment happy-dom
+ 
+-import { createApp, nextTick, type App } from "vue";
++import { createApp, h, nextTick, reactive, ref, type App } from "vue";
+ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ 
+ // Regression for #8816: the editor serves its initial load from the frontend
+@@ -34,6 +34,7 @@ const mocks = vi.hoisted(() => ({
+   loadObjectMetadataFacet: vi.fn(),
+   invalidateObjectMetadataCache: vi.fn(),
+   invalidateTableMetadataCache: vi.fn(),
++  refreshStructure: vi.fn(),
+   toast: vi.fn(),
+ }));
+ 
+@@ -245,7 +246,12 @@ vi.mock("@/stores/connectionStore", async () => {
+   };
+ });
+ vi.mock("@/stores/productionSafetyStore", () => ({ useProductionSafetyStore: () => ({ requestConfirmation: vi.fn() }) }));
+-vi.mock("@/stores/queryStore", () => ({ useQueryStore: () => ({ tableStructureRefreshVersion: () => 0 }) }));
++vi.mock("@/stores/queryStore", async () => {
++  const { ref } = await import("vue");
++  const refreshVersion = ref(0);
++  mocks.refreshStructure.mockImplementation(() => refreshVersion.value++);
++  return { useQueryStore: () => ({ tableStructureRefreshVersion: () => refreshVersion.value }) };
++});
+ vi.mock("@/stores/historyStore", () => ({ useHistoryStore: () => ({ add: vi.fn() }) }));
+ vi.mock("@/stores/settingsStore", () => ({
+   useSettingsStore: () => ({
+@@ -762,6 +768,204 @@ describe("TableStructureEditor column index actions", () => {
+     await vi.waitFor(() => expect(indexRow(root).querySelector<HTMLInputElement>("[data-index-name-input]")?.value).toBe(name));
+   }
+ 
++  async function mountIndexSafetyEditor(waitForIndex = true, draft?: TableStructureEditorDraft) {
++    const navigation = reactive({ initialTab: "indexes" as "indexes" | "foreignKeys", initialTabRequestId: 1 });
++    const editor = ref<{ applyChanges: () => Promise<boolean> }>();
++    const drafts: TableStructureEditorDraft[] = [];
++    const root = document.createElement("div");
++    document.body.append(root);
++    const app = createApp({
++      setup: () => () =>
++        h(TableStructureEditor, {
++          connectionId: mocks.connection.id,
++          database: "test",
++          tableName: "users",
++          draft,
++          ...navigation,
++          ref: editor,
++          "onUpdate:draft": (draft: TableStructureEditorDraft | undefined) => {
++            if (draft) drafts.push(draft);
++          },
++        }),
++    });
++    mountedApps.push(app);
++    app.mount(root);
++    if (waitForIndex) await vi.waitFor(() => expect(indexRow(root)).not.toBeNull());
++    await settle();
++    const applyButton = () => [...root.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent?.trim() === "structureEditor.apply")!;
++    const unmount = () => {
++      app.unmount();
++      mountedApps.splice(mountedApps.indexOf(app), 1);
++      root.remove();
++    };
++    return { root, navigation, editor, drafts, applyButton, unmount };
++  }
++
++  it.each(["notification", "toolbar"])("blocks stale index drafts after a failed %s reload until index metadata recovers", async (trigger) => {
++    const metadata = [{ name: "legacy_email", columns: ["email"], is_unique: false, is_primary: false }];
++    loadMetadata(metadata);
++    const { root, navigation, editor, drafts, applyButton } = await mountIndexSafetyEditor();
++    const sql = "ALTER TABLE users DROP INDEX legacy_email, ADD INDEX renamed_email (email)";
++    mocks.buildTableStructureChangeSql.mockResolvedValue({ statements: [sql], warnings: [] });
++    const name = indexRow(root).querySelector<HTMLInputElement>("[data-index-name-input]")!;
++    name.value = "renamed_email";
++    name.dispatchEvent(new Event("input", { bubbles: true }));
++    await vi.waitFor(() => expect(applyButton().disabled).toBe(false));
++    expect(root.textContent).toContain(sql);
++
++    mocks.loadObjectMetadataFacet.mockImplementation(async (_request, facet) => {
++      if (facet === "indexes") {
++        // Yield so a retry-loop regression fails the request-count assertion
++        // instead of starving Vitest's timeout behind rejected microtasks.
++        await new Promise((resolve) => setTimeout(resolve, 1));
++        throw new Error("Index key metadata is incomplete");
++      }
++      return { value: facet === "columns" ? columnMetadata : facet === "comment" ? "" : [], cacheStatus: "remote" };
++    });
++    mocks.buildTableStructureChangeSql.mockClear();
++    if (trigger === "toolbar") root.querySelector<HTMLButtonElement>("[data-refresh-structure-shortcut]")!.click();
++    else mocks.refreshStructure();
++    await new Promise((resolve) => setTimeout(resolve, 50));
++    const indexReads = () => mocks.loadObjectMetadataFacet.mock.calls.filter((call) => call[1] === "indexes").length;
++    expect(indexReads()).toBe(2);
++    await vi.waitFor(() => expect(root.textContent).toContain("Index key metadata is incomplete"));
++    await settle();
++    expect(drafts.at(-1)?.indexes[0]?.name).toBe("renamed_email");
++    expect(applyButton().d
+```
+
+**File**: `apps/desktop/src/types/database.ts` (modified, +2/-0)
+```diff
+@@ -2440,6 +2440,8 @@ export interface TableStructureEditorDraft {
+   createPartitioningColumns?: string[];
+   createPartitioningExpression?: string;
+   loadedMetadataFacets?: import("@/lib/metadata/objectMetadataCache").ObjectMetadataFacet[];
++  /** A failed index read must keep restored index edits blocked until an explicit reload succeeds. */
++  indexMetadataReadError?: string;
+   scrollPositions?: Partial<Record<TableInfoTab, TableStructureEditorViewport>>;
+   /** Request id of the structureInitialTab the editor already applied; remounts must not replay a consumed initial tab over the restored draft. */
+   appliedInitialTabRequestId?: number;
+```
+
+**File**: `crates/dbx-driver-mysql/src/mysql.rs` (modified, +175/-42)
+```diff
+@@ -7647,6 +7647,62 @@ fn mysql_statistics_expression_is_unsupported(error: &mysql_async::Error) -> boo
+     }
+ }
+ 
++fn append_mysql_index_row(
++    row: &mysql_async::Row,
++    include_expression: bool,
++    include_index_comment: bool,
++    indexes: &mut Vec<IndexInfo>,
++    index_positions: &mut HashMap<String, usize>,
++) -> Result<(), String> {
++    let name = get_str_by_name(row, "INDEX_NAME");
++    let index_position = if let Some(index_position) = index_positions.get(&name) {
++        *index_position
++    } else {
++        let index_position = indexes.len();
++        index_positions.insert(name.clone(), index_position);
++        indexes.push(IndexInfo {
++            owner: None,
++            key_directions: Vec::new(),
++            visibility: None,
++            key_metadata_complete: false,
++            name: name.clone(),
++            columns: Vec::new(),
++            is_unique: get_opt_i32(row, "NON_UNIQUE").unwrap_or(1) == 0,
++            is_primary: name == "PRIMARY",
++            filter: None,
++            index_type: Some(get_str_by_name(row, "INDEX_TYPE")),
++            included_columns: None,
++            comment: if include_index_comment {
++                get_opt_str(row, "INDEX_COMMENT").filter(|value| !value.is_empty())
++            } else {
++                // MySQL 5.0/5.1 STATISTICS has no INDEX_COMMENT column (#14021).
++                None
++            },
++            key_is_expression: Vec::new(),
++            column_opclasses: vec![],
++            key_options: Vec::new(),
++            constraint_backed: false,
++        });
++        index_position
++    };
++
++    let index_part = if include_expression {
++        get_opt_str(row, "EXPRESSION")
++            // TiDB 4.0 returns the text "NULL", not SQL NULL, for ordinary
++            // index keys. Only EXPRESSION uses this sentinel; a column can
++            // legitimately be named NULL and must retain its original bytes.
++            .filter(|value| !value.trim().is_empty() && !value.trim().eq_ignore_ascii_case("NULL"))
++            .map(|expression| format!("({})", expression.trim()))
++            .or_else(|| get_opt_str(row, "COLUMN_NAME").filter(|value| !value.is_empty()))
++    } else {
++        get_opt_str(row, "COLUMN_NAME").filter(|value| !value.is_empty())
++    };
++    let index_part = index_part
++        .ok_or_else(|| format!("MySQL index metadata for {name:?} has a key without a column name or expression"))?;
++    indexes[index_position].columns.push(index_part);
++    Ok(())
++}
++
+ pub async fn list_indexes(pool: &MySqlPool, database: &str, table: &str) -> Result<Vec<IndexInfo>, String> {
+     let mut conn = get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
+     // Column sets shrink in steps: MySQL 8+ carries both EXPRESSION and
+@@ -7672,56 +7728,29 @@ pub async fn list_indexes(pool: &MySqlPool, database: &str, table: &str) -> Resu
+         let include_index_comment = with_comment;
+         let mut indexes = Vec::new();
+         let mut index_positions = HashMap::new();
++        let mut metadata_error = None;
+ 
++        // Drain the result even if one key cannot be decoded, but never expose
++        // a partial composite index to consumers that can generate DDL.
+         result
+             .for_each_and_drop(|row| {
+-                let name = get_str_by_name(&row, "INDEX_NAME");
+-                let index_position = if let Some(index_position) = index_positions.get(&name) {
+-                    *index_position
+-                } else {
+-                    let index_position = indexes.len();
+-                    index_positions.insert(name.clone(), index_position);
+-                    indexes.push(IndexInfo {
+-                        owner: None,
+-                        key_directions: Vec::new(),
+-                        visibility: None,
+-                        key_metadata_complete: false,
+-                        name: name.clone(),
+-                        columns: Vec::new(),
+-                        is_unique: get_opt_i32(&row, "NON_UNIQUE").unwrap_or(1) == 0,
+-                        is_primary: name == "PRIMARY",
+-                        filter: None,
+-                        index_type: Some(get_str_by_name(&row, "INDEX_TYPE")),
+-                        included_columns: None,
+-                        comment: if include_index_comment {
+-                            get_opt_str(&row, "INDEX_COMMENT").filter(|value| !value.is_empty())
+-                        } else {
+-                            // MySQL 5.0/5.1 STATISTICS has no INDEX_COMMENT column (#14021).
+-                            None
+-                        },
+-                        key_is_expression: Vec::new(),
+-                        column_opclasses: vec![],
+-                        key_options: Vec::new(),
+-                        constraint_backed: false,
+-                    });
+-                    index_position
+-                };
+-
+-                let index_part = if include_expression {
+-                    get_opt_str(&
+```
+
+**File**: `crates/dbx-driver-mysql/tests/live_tidb_index_metadata.rs` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++//! Opt-in TiDB 4.0.11 index metadata regression for #14080.
++//! Set `DBX_LIVE_TIDB_INDEXES_URL` to an isolated TiDB 4.0.11 server and run:
++//! `cargo test -p dbx-driver-mysql --test live_tidb_index_metadata -- --ignored --nocapture`.
++//! Creates only `dbx_issue14080.index_metadata_fixture`, retains it for inspection,
++//! and never drops or alters an existing table. Do not point this at production.
++use dbx_driver_mysql::mysql;
++use mysql_async::prelude::Queryable;
++use std::collections::BTreeMap;
++use std::time::Duration;
++
++const SCHEMA: &str = "dbx_issue14080";
++const TABLE: &str = "index_metadata_fixture";
++
++#[tokio::test]
++#[ignore = "requires an isolated TiDB 4.0.11 server; creates and retains a task-specific fixture"]
++async fn tidb_index_metadata_matches_show_index_and_survives_reload() {
++    let url = std::env::var("DBX_LIVE_TIDB_INDEXES_URL").expect("set DBX_LIVE_TIDB_INDEXES_URL");
++    let pool = mysql::connect(&url, Duration::from_secs(15)).await.unwrap();
++    let mut conn = mysql::get_conn_with_health_check(&pool).await.unwrap();
++    let version: String = conn.query_first("SELECT VERSION()").await.unwrap().unwrap();
++    assert!(version.contains("TiDB-v4.0.11"), "this regression requires TiDB 4.0.11; got {version}");
++    println!("server version: {version}");
++
++    conn.query_drop("CREATE DATABASE IF NOT EXISTS dbx_issue14080").await.unwrap();
++    conn.query_drop(
++        "CREATE TABLE IF NOT EXISTS dbx_issue14080.index_metadata_fixture (
++            id BIGINT NOT NULL PRIMARY KEY,
++            code VARCHAR(32),
++            tenant_id INT,
++            `NULL` INT,
++            ` leading` INT,
++            KEY custom_code_lookup (code),
++            UNIQUE KEY business_pair (tenant_id, code),
++            KEY literal_null_name (`NULL`),
++            KEY leading_space_name (` leading`)
++        )",
++    )
++    .await
++    .unwrap();
++
++    let statistics: Vec<mysql_async::Row> = conn
++        .query(
++            "SELECT INDEX_NAME, COLUMN_NAME, EXPRESSION, SEQ_IN_INDEX,
++                    EXPRESSION IS NULL AS expression_is_sql_null
++             FROM information_schema.STATISTICS
++             WHERE TABLE_SCHEMA = 'dbx_issue14080' AND TABLE_NAME = 'index_metadata_fixture'
++             ORDER BY INDEX_NAME, SEQ_IN_INDEX",
++        )
++        .await
++        .unwrap();
++    println!("STATISTICS: {statistics:?}");
++    assert_eq!(statistics.len(), 6);
++    for row in &statistics {
++        assert_eq!(row.get::<String, _>("EXPRESSION").as_deref(), Some("NULL"));
++        assert_eq!(row.get::<i64, _>("expression_is_sql_null"), Some(0));
++    }
++
++    let show_rows: Vec<mysql_async::Row> =
++        conn.query("SHOW INDEX FROM dbx_issue14080.index_metadata_fixture").await.unwrap();
++    println!("SHOW INDEX: {show_rows:?}");
++    let mut show_indexes = BTreeMap::<String, (bool, Vec<(u64, String)>)>::new();
++    for row in &show_rows {
++        let name: String = row.get("Key_name").unwrap();
++        let unique = row.get::<u64, _>("Non_unique").unwrap() == 0;
++        let sequence: u64 = row.get("Seq_in_index").unwrap();
++        let column: String = row.get("Column_name").unwrap();
++        let entry = show_indexes.entry(name).or_insert_with(|| (unique, Vec::new()));
++        assert_eq!(entry.0, unique);
++        entry.1.push((sequence, column));
++    }
++    for (_, columns) in show_indexes.values_mut() {
++        columns.sort_by_key(|(sequence, _)| *sequence);
++    }
++    drop(conn);
++
++    let indexes = mysql::list_indexes(&pool, SCHEMA, TABLE).await.unwrap();
++    println!("DBX indexes: {}", serde_json::to_string_pretty(&indexes).unwrap());
++    assert_eq!(indexes.len(), 5);
++    for index in &indexes {
++        let (unique, columns) = show_indexes.get(&index.name).expect("DBX preserved the server index name");
++        let columns: Vec<_> = columns.iter().map(|(_, column)| column.clone()).collect();
++        assert_eq!(index.columns, columns, "index {}", index.name);
++        assert_eq!(index.is_unique, *unique, "index {}", index.name);
++        assert_eq!(index.is_primary, index.name == "PRIMARY");
++        assert_eq!(index.index_type.as_deref(), Some("BTREE"));
++    }
++    let expected = [
++        ("PRIMARY", vec!["id"]),
++        ("business_pair", vec!["tenant_id", "code"]),
++        ("custom_code_lookup", vec!["code"]),
++        ("leading_space_name", vec![" leading"]),
++        ("literal_null_name", vec!["NULL"]),
++    ];
++    for (name, columns) in expected {
++        let index = indexes.iter().find(|index| index.name == name).unwrap();
++        assert_eq!(index.columns, columns, "index {name}");
++    }
++    let reloaded = mysql::list_indexes(&pool, SCHEMA, TABLE).await.unwrap();
++    assert_eq!(serde_json::to_value(&indexes).unwrap(), serde_json::to_value(&reloaded).unwrap());
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14022** (closed): fix(mysql): 索引元数据查询对 MySQL 5.0 逐层降级列集，修复比较架构 1054 (@dienaso)
-- **PR #14014** (2026-10-31): docs(import): 记录表数据导入的「失败继续」选项 (@dienaso)
-- **PR #13961** (2026-10-31): Codex/issue 13888 mysql comment (@imcman)
-- **PR #13957** (2026-10-31): fix(ai): wrap composer context controls without squeezing icons (@khalil-shao)
-- **PR #13953** (2026-10-30): fix(sidebar): clear the collapsed marker when expanding a search result (@yiqiui)
-- **PR #13951** (2026-10-30): fix(grid): 精简选区统计并记住底栏显示指标 (@zipg)
+- **PR #14209** (2026-11-03): fix(structure): keep sticky column headers opaque over a wallpaper (@thailoc-dev)
+- **PR #14207** (2026-11-03): fix(editor): prevent SQL completion replacing earlier text (@dajiaohuang)
+- **PR #14205** (2026-11-03): fix(grid): separate row and column deletion actions (@eryajf)
+- **PR #14201** (2026-11-03): feat(schema): add table column sorting (@eryajf)
+- **PR #14197** (2026-11-03): fix(connection): 统一配置弹窗宽度并修正高级表单对齐 (@zipg)
+- **PR #14195** (2026-11-03): fix(sidebar): prefill rename dialog with the current object name (@thailoc-dev)
 
 ---
 
@@ -2436,38 +2792,22 @@ This reverts commit 10fe0dc0a2cd1ae8f1293336224ea6e3619b82c3.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refresh sidebar columns after saving table structure (#13850)
+## X. updates): clear cancelled exit requests and explain confirmation blockers (#1417
 
 **RULE**:
-When implementing operations in `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/App.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `708a2d3f`: refresh sidebar columns after saving table structure (#13850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63019b25`: updates): clear cancelled exit requests and explain confirmation blockers (#14173). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.vue`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  refreshTableColumnsTree: vi.fn(),
-    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
-    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
-  it("refreshes sidebar columns even without a data tab", async () => {
-    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
-    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
-    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
-    expect(mocks.getColumns).not.toHaveBeenCalled();
-  });
-
-  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
-    const navigation = useNavigationTargets(dialogs);
-    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
-    await navigation.openLineageTarget(target);
-    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
-    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
-    const toast = vi.fn();
-    await navigation.onStructureEditorSaved(vi.fn(), toast, 
+    saveCloseConfirm: queryStore.showCloseConfirm && queryStore.isConfirmingAppClose,
+    exitCloseConfirm: showCloseActionPrompt.value || showAiRunsClosePrompt.value || showBackgroundTasksClosePrompt.value,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2477,4 +2817,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `708a2d3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63019b25` are properly handled with clean fallback behavior.

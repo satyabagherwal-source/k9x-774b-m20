@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T22:23:42.397Z",
+  "last_updated": "2026-11-03T22:32:09.648Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
-      "verified_at": "2026-11-03T20:01:00.171Z",
+      "content_hash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
+      "verified_at": "2026-11-03T22:32:05.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:01:00.171Z"
+      "last_updated": "2026-11-03T22:32:05.244Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -2556,14 +2556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saffsanity-sill",
-      "content_hash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
-      "verified_at": "2026-10-30T22:20:21.355Z",
+      "content_hash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
+      "verified_at": "2026-11-03T22:32:01.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:20:21.355Z"
+      "last_updated": "2026-11-03T22:32:01.538Z"
     },
     "textbee/textbee": {
       "repository": "textbee/textbee",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
-      "verified_at": "2026-11-01T00:03:04.476Z",
+      "content_hash": "092980e3ce074c3fa51cefd85aeb92a0ee55aa467deef7c0741459e084cfeaae",
+      "verified_at": "2026-11-03T22:32:09.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:03:04.476Z"
+      "last_updated": "2026-11-03T22:32:09.647Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -14166,14 +14166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cheeriojs-dom-serializer",
-      "content_hash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
-      "verified_at": "2026-10-30T13:28:34.969Z",
+      "content_hash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
+      "verified_at": "2026-11-03T22:31:58.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:28:34.969Z"
+      "last_updated": "2026-11-03T22:31:58.923Z"
     },
     "paololeonardi/WaterfallGrid": {
       "repository": "paololeonardi/WaterfallGrid",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
-      "verified_at": "2026-10-31T10:33:57.410Z",
+      "content_hash": "603c8c55c7bf24c32a734b499124cccf55caa5d66bfc03153040207a1f5e77d9",
+      "verified_at": "2026-11-03T22:32:03.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:33:57.410Z"
+      "last_updated": "2026-11-03T22:32:03.511Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",

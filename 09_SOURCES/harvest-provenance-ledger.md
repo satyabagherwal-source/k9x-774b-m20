@@ -7049,3 +7049,8 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `9a76fe0e` | Multi-dimensional audit evidence | 2026-11-03T22:23:37.330Z |
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `da2a26e8` | Multi-dimensional audit evidence | 2026-11-03T22:23:38.999Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `da7b0e35` | Multi-dimensional audit evidence | 2026-11-03T22:23:42.391Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `1261fc46` | Multi-dimensional audit evidence | 2026-11-03T22:31:58.913Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `41e8cb88` | Multi-dimensional audit evidence | 2026-11-03T22:32:01.528Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `c7fd75f9` | Multi-dimensional audit evidence | 2026-11-03T22:32:03.502Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ecab5ce6` | Multi-dimensional audit evidence | 2026-11-03T22:32:05.233Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `d4951da8` | Multi-dimensional audit evidence | 2026-11-03T22:32:09.637Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source**: github ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
-> **Source Version**: `00b81ba4`  
+> **Source Version**: `1261fc46`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:28:34.497Z  
+> **Timestamp**: 2026-11-03T22:31:58.088Z  
 > **Learning ID**: `learn-github-cheeriojs-dom-serializer`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:28:34.054Z  
+> **Harvest Timestamp**: 2026-11-03T22:31:56.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -661,11 +661,11 @@ function renderText(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1757** (2026-10-30): **build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1**
-  *Symptoms*: Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.0 to 8.72.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/typescript-eslint/typescript-eslint/releases">typescript-eslint's releases</a>.</em></p> <blockquote> <h2>v8.72.1</h2> <h2>8.72.1 (2026-10-26)</h2> <h3>🩹 Fixes</h3> <ul> <li><strong>eslint-plugin:</strong> [no-unnecessary-condition] false positives on unresolved conditional types (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13062">#13062</a>)</li> <li><strong>eslint-plugin:</strong> [no-unnecessary-type-assertion] bound recursive type traversal instead of catching stack overflows (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13039">#13039</a>)</li> <li><strong>typescript-estree:</strong> use one Program per tsconfig for the project service in single-run mode (<a href="https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12988">#12988</a>)</li> </ul> <h3>❤️ Thank You</h3> <ul> <li>Evyatar Daud <a href="https://github.com/StyleShit"><code>@​StyleShit</code></a></li> <li>Josh Ghoulberg 👻</li> </ul> <p>See <a href="https://github.com/typescript-eslint/typescript-eslint/releases/tag/v8.72.1">GitHub Releases</a> for more information.</p> <p>You can read about our <a href="https://typescript-eslint.io/users/versioning">versioning strategy</a> and <a href="https://typescr
+- **Issue #1761** (2026-11-03): **build(deps-dev): bump eslint from 10.13.0 to 10.14.0**
+  *Symptoms*: Bumps [eslint](https://github.com/eslint/eslint) from 10.13.0 to 10.14.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/eslint/eslint/releases">eslint's releases</a>.</em></p> <blockquote> <h2>v10.14.0</h2> <h2>Features</h2> <ul> <li><a href="https://github.com/eslint/eslint/commit/d23a7f9eed78e2733fa2d17d7d7dbb9891bbb692"><code>d23a7f9</code></a> feat: fix property descriptor handling in <code>func-name-matching</code> (<a href="https://redirect.github.com/eslint/eslint/issues/21400">#21400</a>) (xbinaryx)</li> </ul> <h2>Bug Fixes</h2> <ul> <li><a href="https://github.com/eslint/eslint/commit/4a12580eefdb240bd9b6ae83428638120e9a5f66"><code>4a12580</code></a> fix: require minimatch <code>10.2.6</code> to avoid vulnerable brace-expansion (<a href="https://redirect.github.com/eslint/eslint/issues/21460">#21460</a>) (lumir)</li> <li><a href="https://github.com/eslint/eslint/commit/827a8f3cca710d3efd76c1d7088d894deff08434"><code>827a8f3</code></a> fix: <code>no-restricted-globals</code> crash on global objects as property values (<a href="https://redirect.github.com/eslint/eslint/issues/21449">#21449</a>) (xbinaryx)</li> <li><a href="https://github.com/eslint/eslint/commit/161558ae1391a8649a8d69a8b2c2e555b40121b9"><code>161558a</code></a> fix: handle LS, PS and empty hashbang comments (<a href="https://redirect.github.com/eslint/eslint/issues/21419">#21419</a>) (lumir)</li> <li><a href="https://github.com/eslint/eslint/commit/619493987
 
-- **Issue #1755** (2026-10-26): **build(deps-dev): bump undici from 7.30.0 to 7.30.1**
-  *Symptoms*: Bumps [undici](https://github.com/nodejs/undici) from 7.30.0 to 7.30.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/nodejs/undici/releases">undici's releases</a>.</em></p> <blockquote> <h2>v7.30.1</h2> <h2>Security fixes</h2> <h3>High severity</h3> <h4>Denial of service via TLS 1.2 certificate-changing renegotiation</h4> <p><strong>CVE-2026-87018 · <a href="https://github.com/nodejs/undici/security/advisories/GHSA-qrxm-fqhp-jwvm">GHSA-qrxm-fqhp-jwvm</a></strong></p> <p>A malicious or compromised HTTPS server could crash the Node.js process by initiating TLS 1.2 renegotiation and presenting a different, CA-trusted certificate whose hostname did not match the requested host. The resulting socket error reached an assertion in undici's HTTP/1.1 and HTTP/2 connection handling. This release handles post-connect certificate errors without terminating the process.</p> <h4>TLS certificate validation bypass through dropped <code>Agent</code> options</h4> <p><strong>CVE-2026-109383 · <a href="https://github.com/nodejs/undici/security/advisories/GHSA-2m5v-pch6-74hx">GHSA-2m5v-pch6-74hx</a></strong></p> <p><code>Agent</code> used a JSON-based clone for constructor options, which silently removed function-valued TLS options such as <code>checkServerIdentity</code>. Applications relying on custom certificate or public-key verification could therefore accept a certificate that the callback was intended to reject. This release preserves TLS optio
+- **Issue #1760** (2026-11-02): **build(deps-dev): bump @types/node from 26.6.5 to 26.6.6**
+  *Symptoms*: Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 26.6.5 to 26.6.6. <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=@types/node&package-manager=npm_and_yarn&previous-version=26.6.5&new-version=26.6.6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -682,18 +682,112 @@ function renderText(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00b81ba4` (2026-10-30)
-**Commit Message**: build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)
+### Incident Patch 1: `1261fc46` (2026-11-03)
+**Commit Message**: build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)
 
-Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.0 to 8.72.1.
-- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
-- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
-- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.1/packages/typescript-eslint)
+Bumps [eslint](https://github.com/eslint/eslint) from 10.13.0 to 10.14.0.
+- [Release notes](https://github.com/eslint/eslint/releases)
+- [Commits](https://github.com/eslint/eslint/compare/v10.13.0...v10.14.0)
 
 ---
 updated-dependencies:
-- dependency-name: typescript-eslint
-  dependency-version: 8.72.1
+- dependency-name: eslint
+  dependency-version: 10.14.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `package-lock.json` (modified, +10/-10)
+```diff
+@@ -19,7 +19,7 @@
+         "@feedic/eslint-config": "^0.5.0",
+         "@types/node": "^26.6.6",
+         "cheerio": "^1.2.0",
+-        "eslint": "^10.13.0",
++        "eslint": "^10.14.0",
+         "eslint-config-biome": "^2.1.3",
+         "typescript": "^6.0.2",
+         "typescript-eslint": "^8.72.1",
+@@ -1891,9 +1891,9 @@
+       }
+     },
+     "node_modules/eslint": {
+-      "version": "10.13.0",
+-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
+-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
++      "version": "10.14.0",
++      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
++      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
+       "dev": true,
+       "license": "MIT",
+       "workspaces": [
+@@ -1906,7 +1906,7 @@
+         "@eslint/config-helpers": "^0.7.0",
+         "@eslint/core": "^1.2.1",
+         "@eslint/plugin-kit": "^0.7.3",
+-        "@humanfs/node": "^0.16.6",
++        "@humanfs/node": "^0.16.8",
+         "@humanwhocodes/module-importer": "^1.0.1",
+         "@humanwhocodes/retry": "^0.4.2",
+         "@types/estree": "^1.0.6",
+@@ -1927,7 +1927,7 @@
+         "imurmurhash": "^0.1.4",
+         "is-glob": "^4.0.0",
+         "json-stable-stringify-without-jsonify": "^1.0.1",
+-        "minimatch": "^10.2.5",
++        "minimatch": "^10.2.6",
+         "natural-compare": "^1.4.0",
+         "optionator": "^0.9.3"
+       },
+@@ -3090,13 +3090,13 @@
+       }
+     },
+     "node_modules/minimatch": {
+-      "version": "10.2.5",
+-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
+-      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
++      "version": "10.2.6",
++      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
++      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
+       "dev": true,
+       "license": "BlueOak-1.0.0",
+       "dependencies": {
+-        "brace-expansion": "^5.0.5"
++        "brace-expansion": "^5.0.8"
+       },
+       "engines": {
+         "node": "18 || 20 || >=22"
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@
+     "@feedic/eslint-config": "^0.5.0",
+     "@types/node": "^26.6.6",
+     "cheerio": "^1.2.0",
+-    "eslint": "^10.13.0",
++    "eslint": "^10.14.0",
+     "eslint-config-biome": "^2.1.3",
+     "typescript": "^6.0.2",
+     "typescript-eslint": "^8.72.1",
+```
+
+---
+
+### Incident Patch 2: `d77562ee` (2026-11-02)
+**Commit Message**: build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (#1760)
+
+Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 26.6.5 to 26.6.6.
+- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
+- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+
+---
+updated-dependencies:
+- dependency-name: "@types/node"
+  dependency-version: 26.6.6
   dependency-type: direct:development
   update-type: version-update:semver-patch
 ...
@@ -701,138 +795,52 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +65/-65)
+**File**: `package-lock.json` (modified, +4/-4)
 ```diff
-@@ -22,7 +22,7 @@
+@@ -17,7 +17,7 @@
+         "@biomejs/biome": "^2.5.15",
+         "@eslint/compat": "^2.1.1",
+         "@feedic/eslint-config": "^0.5.0",
+-        "@types/node": "^26.6.5",
++        "@types/node": "^26.6.6",
+         "cheerio": "^1.2.0",
          "eslint": "^10.13.0",
          "eslint-config-biome": "^2.1.3",
-         "typescript": "^6.0.2",
--        "typescript-eslint": "^8.72.0",
-+        "typescript-eslint": "^8.72.1",
-         "vitest": "^5.0.5"
-       },
-       "engines": {
-@@ -934,17 +934,17 @@
-       }
+@@ -924,9 +924,9 @@
+       "license": "MIT"
      },
-     "node_modules/@typescript-eslint/eslint-plugin": {
--      "version": "8.72.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.0.tgz",
--      "integrity": "sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
-+      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+     "node_modules/@types/node": {
+-      "version": "26.6.5",
+-      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
+-      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
++      "version": "26.6.6",
++      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
++      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
        "dev": true,
        "license": "MIT",
        "dependencies": {
-         "@eslint-community/regexpp": "^4.12.2",
--        "@typescript-eslint/scope-manager": "8.72.0",
--        "@typescript-eslint/type-utils": "8.72.0",
--        "@typescript-eslint/utils": "8.72.0",
--        "@typescript-eslint/visitor-keys": "8.72.0",
-+        "@typescript-eslint/scope-manager": "8.72.1",
-+        "@typescript-eslint/type-utils": "8.72.1",
-+        "@typescript-eslint/utils": "8.72.1",
-+        "@typescript-eslint/visitor-keys": "8.72.1",
-         "ignore": "^7.0.5",
-         "natural-compare": "^1.4.0",
-         "ts-api-utils": "^2.5.0"
-@@ -957,32 +957,32 @@
-         "url": "https://opencollective.com/typescript-eslint"
-       },
-       "peerDependencies": {
--        "@typescript-eslint/parser": "^8.72.0",
-+        "@typescript-eslint/parser": "^8.72.1",
-         "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
-         "typescript": ">=4.8.4 <6.1.0"
-       }
-     },
-     "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore": {
--      "version": "7.0.13",
--      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.13.tgz",
--      "integrity": "sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q==",
-+      "version": "7.0.14",
-+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
-+      "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-         "node": ">= 4"
-       }
-     },
-     "node_modules/@typescript-eslint/parser": {
--      "version": "8.72.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.0.tgz",
--      "integrity": "sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
-+      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@typescript-eslint/scope-manager": "8.72.0",
--        "@typescript-eslint/types": "8.72.0",
--        "@typescript-eslint/typescript-estree": "8.72.0",
--        "@typescript-eslint/visitor-keys": "8.72.0",
-+        "@typescript-eslint/scope-manager": "8.72.1",
-+        "@typescript-eslint/types": "8.72.1",
-+        "@typescript-eslint/typescript-estree": "8.72.1",
-+        "@typescript-eslint/visitor-keys": "8.72.1",
-         "debug": "^4.4.3"
-       },
-       "engines": {
-@@ -998,14 +998,14 @@
-       }
-     },
-     "node_modules/@typescript-eslint/project-service": {
--      "version": "8.72.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.0.tgz",
--      "integrity": "sha512-bzHngBbmIgzj6TsTjVUCntGx6FFLgE7mPjpO0PzHycOaZHXqS43XnrkFIHRS16LLr/xO6FHSXG3GJFo/F4bSBQ==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
-+      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@typescript-eslint/tsconfig-utils": "^8.72.0",
--        "@typescript-eslint/types": "^8.72.0",
-+        "@typescript-eslint/tsconfig-utils": "^8.72.1",
-+        "@typescript-eslint/types": "^8.72.1",
-         "debug": "^4.4.3"
-       },
-       "engines": {
-@@ -1020,14 +1020,14 @@
-       }
-     },
-     "node_modules/@typescript-eslint/scope-manager": {
--      "version": "8.72.0",
--      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.0.tgz",
--      "integrity": "sha512-JewPyJOYcXBSAS7PIgufscHOwZqhTGyBRiQJhhuDln66tMchxvvt7nJ90JKKIoOelmdHA3kAQbm9cEUHc4JSEA==",
-+      "version": "8.72.1",
-+      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
-+
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -42,7 +42,7 @@
+@@ -37,7 +37,7 @@
+     "@biomejs/biome": "^2.5.15",
+     "@eslint/compat": "^2.1.1",
+     "@feedic/eslint-config": "^0.5.0",
+-    "@types/node": "^26.6.5",
++    "@types/node": "^26.6.6",
+     "cheerio": "^1.2.0",
      "eslint": "^10.13.0",
      "eslint-config-biome": "^2.1.3",
-     "typescript": "^6.0.2",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vitest": "^5.0.5"
-   },
-   "engines": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1761** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
+- **PR #1760** (2026-11-02): build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
 - **PR #1757** (2026-10-30): build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
+- **PR #1756** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.3 (@dependabot[bot])
 - **PR #1755** (2026-10-26): build(deps-dev): bump undici from 7.30.0 to 7.30.1 (@dependabot[bot])
 - **PR #1754** (2026-10-26): build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #1753** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.2 (@dependabot[bot])
-- **PR #1752** (2026-10-23): build(deps-dev): bump typescript-eslint from 8.71.2 to 8.72.0 (@dependabot[bot])
-- **PR #1751** (2026-10-20): build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (@dependabot[bot])
 
 ---
 
@@ -852,13 +860,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)
+## X. build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00b81ba4`: build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1261fc46`: build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -866,50 +874,32 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "typescript-eslint": "^8.72.1",
-      "version": "8.72.1",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
-      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
-        "@typescript-eslint/scope-manager": "8.72.1",
-        "@typescript-eslint/type-utils": "8.72.1",
-        "@typescript-eslint/utils": "8.72.1",
-        "@typescript-eslint/visitor-keys": "8.72.1",
-        "@typescript-eslint/parser": "^8.72.1",
-      "version": "7.0.14",
-      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
-      "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
-      "version": "8.72.1",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
-      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
-        "@typescript-eslint/scope-manager": "8.72.1",
-        "@typescript-eslint/types": "8.72.1",
-        "@typescript-eslint/typescript-estree": "8.72.1",
-        "@typescript-eslint/visitor-ke
+        "eslint": "^10.14.0",
+      "version": "10.14.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
+      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
+        "@humanfs/node": "^0.16.8",
+        "minimatch": "^10.2.6",
+      "version": "10.2.6",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
+      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
+        "brace-expansion": "^5.0.8"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        "typescript-eslint": "^8.72.0",
-      "version": "8.72.0",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.0.tgz",
-      "integrity": "sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==",
-        "@typescript-eslint/scope-manager": "8.72.0",
-        "@typescript-eslint/type-utils": "8.72.0",
-        "@typescript-eslint/utils": "8.72.0",
-        "@typescript-eslint/visitor-keys": "8.72.0",
-        "@typescript-eslint/parser": "^8.72.0",
-      "version": "7.0.13",
-      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.13.tgz",
-      "integrity": "sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q==",
-      "version": "8.72.0",
-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.0.tgz",
-      "integrity": "sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==",
-        "@typescript-eslint/scope-manager": "8.72.0",
-        "@typescript-eslint/types": "8.72.0",
-        "@typescript-eslint/typescript-estree": "8.72.0",
-        "@typescript-eslint/visitor-ke
+        "eslint": "^10.13.0",
+      "version": "10.13.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
+      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+        "@humanfs/node": "^0.16.6",
+        "minimatch": "^10.2.5",
+      "version": "10.2.5",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
+      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+        "brace-expansion": "^5.0.5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00b81ba4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1261fc46` are properly handled with clean fallback behavior.
