@@ -6892,3 +6892,7 @@
 | `CYCLE-20261103-LSHS` | `2026-11-03T11:22:13.504Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6507` | Yes (`e56e1456...`) |
 | `CYCLE-20261103-LVCG` | `2026-11-03T11:22:17.200Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6508` | Yes (`2ee238f1...`) |
 | `CYCLE-20261103-LXTQ` | `2026-11-03T11:22:20.414Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6509` | Yes (`6aae1fdd...`) |
+| `CYCLE-20261103-7IUA` | `2026-11-03T11:39:07.426Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6510` | Yes (`a4fd673e...`) |
+| `CYCLE-20261103-7MDC` | `2026-11-03T11:39:12.000Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6511` | Yes (`56ad5a69...`) |
+| `CYCLE-20261103-DXTK` | `2026-11-03T11:44:06.776Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6512` | Yes (`c36786b0...`) |
+| `CYCLE-20261103-F3RG` | `2026-11-03T11:45:01.132Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md` | Yes (`3e029908...`) |

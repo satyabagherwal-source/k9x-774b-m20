@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:22:20.333Z",
+  "last_updated": "2026-11-03T11:45:01.032Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37807,8 +37807,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "37e457dd",
-      "content_hash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
+      "source_version": "e9fc337f",
+      "content_hash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -37821,6 +37821,11 @@
           "number": 4584,
           "title": "Windows/Linux: keep Mochi whole after a monitor change",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6512,
+          "title": "Windows and Linux: the closed island always wakes, Mochi lives in it, and a forg",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37828,7 +37833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:22:19.255Z",
+      "verified_at": "2026-11-03T11:44:06.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45107,8 +45112,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "6356fbe3",
-      "content_hash": "c1ec3bd26c3e0b861aca570220c98416e1953f8b8eb0aa485ec90bcd848345f3",
+      "source_version": "1549ae4f",
+      "content_hash": "a4fd673ef0c64ddf5d975f4628c3ca89769f58a84f7c52cabd2cc690f6360908",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -45161,6 +45166,11 @@
           "number": 6003,
           "title": "Allow overriding non-computed fields in tests (#4777)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6510,
+          "title": "uiinput context cancellation v02 (#4755)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45168,7 +45178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:00:30.548Z",
+      "verified_at": "2026-11-03T11:39:07.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53083,8 +53093,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "321ad215",
-      "content_hash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
+      "source_version": "d4f206e3",
+      "content_hash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -53127,6 +53137,11 @@
           "number": 6252,
           "title": "card) :: let a card's link open a new tab (#1586)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6511,
+          "title": "modal) :: apply `height` to the model's content (#1585)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53134,7 +53149,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:39:50.149Z",
+      "verified_at": "2026-11-03T11:39:11.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56154,8 +56169,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "dd4fca39",
-      "content_hash": "832143cd6de71b1bd04f2d13028a8d99cae5cb20d6f824ba130af1412ebc5c9b",
+      "source_version": "2dfd6fcd",
+      "content_hash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -56215,7 +56230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:59:57.504Z",
+      "verified_at": "2026-11-03T11:45:01.002Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168298,6 +168313,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:22:20.313Z"
+    },
+    "rule-6510": {
+      "learning_id": "rule-6510",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6510,
+      "title": "uiinput context cancellation v02 (#4755)",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "1549ae4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:39:07.305Z"
+    },
+    "rule-6511": {
+      "learning_id": "rule-6511",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6511,
+      "title": "modal) :: apply `height` to the model's content (#1585)",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "d4f206e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:39:11.895Z"
+    },
+    "rule-6512": {
+      "learning_id": "rule-6512",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6512,
+      "title": "Windows and Linux: the closed island always wakes, Mochi lives in it, and a forg",
+      "source_url": "https://github.com/Louis-CFM/coucou",
+      "source_version": "e9fc337f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:44:06.670Z"
     }
   },
   "aliases": {

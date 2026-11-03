@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "321ad215",
+    "sourceVersion": "d4f206e3",
     "license": "MIT",
-    "contentHash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
-    "lastHarvestedAt": "2026-10-31T16:39:50.266Z",
+    "contentHash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
+    "lastHarvestedAt": "2026-11-03T11:39:12.004Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "6356fbe3",
+    "sourceVersion": "1549ae4f",
     "license": "MPL-2.0",
-    "contentHash": "c1ec3bd26c3e0b861aca570220c98416e1953f8b8eb0aa485ec90bcd848345f3",
-    "lastHarvestedAt": "2026-10-31T02:00:30.630Z",
+    "contentHash": "a4fd673ef0c64ddf5d975f4628c3ca89769f58a84f7c52cabd2cc690f6360908",
+    "lastHarvestedAt": "2026-11-03T11:39:07.430Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "dd4fca39",
+    "sourceVersion": "2dfd6fcd",
     "license": "GPL-3.0",
-    "contentHash": "832143cd6de71b1bd04f2d13028a8d99cae5cb20d6f824ba130af1412ebc5c9b",
-    "lastHarvestedAt": "2026-10-31T12:59:57.588Z",
+    "contentHash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
+    "lastHarvestedAt": "2026-11-03T11:45:01.142Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "37e457dd",
+    "sourceVersion": "e9fc337f",
     "license": "MIT",
-    "contentHash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
-    "lastHarvestedAt": "2026-10-30T13:22:19.365Z",
+    "contentHash": "c36786b08d516e8dda978813896c3099251aca6c5d4cdbae7a8145bfa11ed278",
+    "lastHarvestedAt": "2026-11-03T11:44:06.780Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

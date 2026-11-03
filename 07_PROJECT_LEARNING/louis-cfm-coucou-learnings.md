@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `37e457dd`  
+> **Source Version**: `e9fc337f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:22:19.085Z  
+> **Timestamp**: 2026-11-03T11:44:06.021Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:22:17.322Z  
+> **Harvest Timestamp**: 2026-11-03T11:39:03.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6783 stars
+- **Stars / Engagement**: 6919 stars
 
 ---
 
@@ -162,6 +162,10 @@ final class AppState: ObservableObject {
     }
 
     // In-chat provider + model — picked via the model selector in the prompt view
+    /// The chat's Mail switch (GitHub build): the AI sees the latest messages and may prepare
+    /// actions on them. Off at each launch.
+    @Published var chatMailMode = false
+
     @Published var chatProvider: ChatProvider = .anthropic {
         didSet { UserDefaults.standard.set(chatProvider.rawValue, forKey: "chatProvider") }
     }
@@ -244,10 +248,7 @@ final class AppState: ObservableObject {
                     providerModelFetchError[provider] = provider == .ollama
                         ? "No models yet. Download one in Ollama first."
                         : "No models yet. Download one in LM Studio first."
-                case .success(let models):
-                    fetchedProviderModels[provider] = models
-                    let current = provider == .ollama ? ollamaChatModel : lmstudioChatModel
-   
+                ca
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/ApprovalQueue.swift`
@@ -786,6 +787,10 @@ final class HookServer: @unchecked Sendable {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = prev }
             }
         }
+        if questions.head != nil {
+            showQuestionHead()
+            return
+        }
         if let note {
             state.noteMessage = note
             state.view = .note
@@ -820,10 +825,7 @@ final class HookServer: @unchecked Sendable {
         for a in approvals.entries where a.pillId == pill {
             waiting[Self.boardKey(a.sessionId, pill: pill, cwd: a.cwd)] = .approval
         }
-        return waiting
-    }
 
-    /// A session that starts waiting while it shares `pill` with
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/IslandStateMachine.swift`
@@ -1853,8 +1855,8 @@ final class UploadSequenceEngine {
 - **Issue #949** (2026-10-29): **Coucou 0.5.3 crashes on launch when no microphone is present**
   *Symptoms*: Coucou 0.5.3 crashes on launch when no microphone is present 27 oct 2026 · @Gabriel Añez Lopez  **Summary** Coucou 0.5.3 aborts on every launch when voice is enabled (voiceEnabled = 1) and the Mac has no audio input device. VoiceAudio.start() calls installTapOnBus on the input node without checking that an input device exists, and AVFAudio throws an uncaught NSException. The app never reaches its UI, so the user cannot turn voice off from Settings. It has crashed 8 times since 2026-10-26 18:22.  **Environment**  App	                   : Coucou 0.5.3 (build 20, commit 95017af), bundle fr.louisraille.NotchBuddy macOS               : 26.6.2 (25G83) Hardware           : Mac mini, Apple M4 (Mac16,10) Audio inputs      : None: the Mac mini has no built-in microphone and nothing is connected Audio outputs    :  Built-in speaker and 2 HDMI/USB-C displays, all 48 kHz Relevant setting : voiceEnabled = 1, flowEngine = parakeet  The system log for 21:51:38 also shows UpdateStreamFormats: 0 input streams and Input render format: 0 ch, 0 Hz from AUHAL just before the throw.  **Root cause and suggested fix** The input node has no hardware format (0 channels, 0 Hz) when there is no input device. VoiceAudio.start() installs the tap with a 44.1 kHz stereo format anyway, and AVFAudio raises an Objective-C exception that Swift cannot catch. SettingsView.init() touches VoiceEngine.shared from the Settings scene body, so the crash happens during app launch, before any window shows. Suggested chang
 
-- **Issue #901** (2026-10-23): **WhatsApp pill shows a conversation ("David") that doesn't exist anywhere on my phone/account**
-  *Symptoms*: **What happened**  Coucou's WhatsApp pill showed a conversation with a contact named "David" that does not exist anywhere in my real WhatsApp — not in the main chat list, not in Archived. I confirmed Archived chats actually works (I archived a real old chat as a test, and only that one showed up there — "David" wasn't there either). I have no contact saved as "David", and normally an unsaved number shows as a phone number in WhatsApp, not a name — this showed a name with no number anywhere.  I also searched "David" across my entire WhatsApp (global search, not just chats) — the only match was an unrelated saved contact, "David Jóvenes" (someone from my church group, different full name), with no chat/message history shown for him either. No contact or chat matching plain "David" exists anywhere in my account.  The pill showed: a TikTok link, then (about an hour later) "Video" with a 😂 reaction, as a new unread message. I never clicked the link or opened the video (the island doesn't let you open it directly, and there's no real chat to check it from on my phone).  I logged out the Coucou/GOWA linked device from WhatsApp as a precaution. I also checked my phone's Linked Devices list — only expected devices were there (phone, the Coucou link, my laptop's Chrome), nothing unrecognized.  **What I expected**  The pill should only ever show conversations that genuinely exist on my linked WhatsApp account, since it's supposed to just mirror it.  **How to reproduce**  Unclear — happ
+- **Issue #925** (2026-10-31): **Windows: pill toolbar disappears when moving the mouse onto its buttons**
+  *Symptoms*: **What happened** When I hover over the pill on the left edge of the screen, it expands into the toolbar (Mochi, dictation mic, Record a call, open Coucou). As soon as I move the mouse toward one of the buttons to click it, the toolbar collapses and disappears, so I can’t click anything. Additionally, if the pill is set to be at the bottom of the screen, it functions as intended. If the pull is set to be on the right edge of the screen, it doesn't bring up the toolbar at all.  **What you expected** The toolbar should stay open while the pointer is on it, so I can click Dictate, Record a call or Open Coucou.  **How to reproduce** Launch Coucou on Windows 11. Hover over the pill on the left edge of the screen. The toolbar expands. Move the mouse toward any button in the toolbar. The toolbar collapses before I can click it.  **Windows version** Edition	Windows 11 Pro Version	25H2 Installed on	‎10/‎26/‎2025 OS build	26200.7462 Experience	Windows Feature Experience Pack 1000.26100.275.0  **PC model** Custom built Display scaling: 100%.  Monitors: 1  **Coucou version** 0.5.3  https://github.com/user-attachments/assets/4c169c97-ad88-4b09-b33c-7e2328c46bb9
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1871,201 +1873,415 @@ final class UploadSequenceEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f06fc09c` (2026-10-29)
-**Commit Message**: Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch)
+### Incident Patch 1: `861d443d` (2026-11-02)
+**Commit Message**: Windows and Linux: the closed island always wakes, Mochi lives in it, and a forgotten call stops by itself
 
-Versions, CHANGELOG sections, README rows and What's new in every language.
+A cursor-poll tick still running as the island folded could make the
+folded window click-through again after set_collapsed made it take the
+mouse: nothing could ever wake the island (the closed island froze, and
+before it the wake strip vanished). The poll now stops before the window
+folds, sets click-through only under the gate's lock while it is open,
+and, folded, glances at the cursor four times a second and wakes the
+island itself when it is on it.
+
+Mochi in the closed island blinks and looks around every few seconds, as
+on a Mac without a notch, with the loop asleep in between.
+
+A call left recording ran the microphone and Parakeet for hours (8 h in
+one log), then took as long again to write. It now stops by itself after
+15 minutes with nobody speaking, or after 4 hours, and says so.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +17/-13)
+**File**: `windows/src-tauri/src/island.rs` (modified, +46/-1)
 ```diff
-@@ -1,25 +1,29 @@
+@@ -114,6 +114,16 @@ impl PollGate {
+         }
+     }
+ 
++    /// Waits until the gate opens or `timeout` passes; true when it is open.
++    pub(crate) fn wait_active_for(&self, timeout: Duration) -> bool {
++        let guard = self.active.lock().unwrap();
++        if *guard {
++            return true;
++        }
++        let (guard, _) = self.cv.wait_timeout(guard, timeout).unwrap();
++        *guard
++    }
++
+     pub(crate) fn is_active(&self) -> bool {
+         *self.active.lock().unwrap()
+     }
+@@ -491,13 +501,26 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
+         // find no cursor costs CPU for nothing.
+         let (period, screen_every) = if platform::CURSOR_POLL { (16, 30) } else { (500, 1) };
+         loop {
+-            gate.wait_until_active();
++            // Parked. Folded on Windows, a glance at the cursor four times a
++            // second: on the closed island, it is told to wake up, whether or
++            // not the webview delivers the pointer to such a small window.
++            loop {
++                if gate.wait_active_for(Duration::from_millis(250)) {
++                    break;
++                }
++                if platform::CURSOR_POLL && gate.collapsed.load(Ordering::Relaxed) {
++                    wake_if_hovered(&app, &gate);
++                }
++            }
+             let mut last = (f64::MIN, f64::MIN);
+             let mut ticks: u32 = 0;
+             // The cursor was far at the last tick, and the page has been told.
+             let mut far = false;
+             while gate.is_active() {
+                 std::thread::sleep(Duration::from_millis(if far { FAR_PERIOD_MS } else { period }));
++                if !gate.is_active() {
++                    break;
++                }
+ 
+                 // Monitors get plugged in, unplugged, rearranged and rescaled, and
+                 // an island pinned to coordinates that no longer exist is an island
+@@ -565,6 +588,14 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
+ 
+                 let accept = on_island || dragging;
+                 if gate.ignoring.load(Ordering::Relaxed) == accept {
++                    // Under the gate's lock, and only while it is open: a tick
++                    // still running as the island folds must not make the
++                    // closed island click-through after set_collapsed made it
++                    // take the mouse — nothing would ever wake it again.
++                    let active = gate.active.lock().unwrap();
++                    if !*active {
++                        break;
++                    }
+                     gate.ignoring.store(!accept, Ordering::Relaxed);
+                     let _ = win.set_ignore_cursor_events(!accept);
+                 }
+@@ -581,6 +612,20 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
+     });
+ }
+ 
++/// The cursor is on the folded window: it takes the mouse, and the page hears
++/// `closed-hover` (it opens the compact island).
++fn wake_if_hovered(app: &AppHandle, gate: &PollGate) {
++    let Some(win) = window(app) else { return };
++    let (Ok(origin), Ok(size), Some((cx, cy))) = (win.outer_position(), win.inner_size(), cursor_physical()) else { return };
++    let x = cx - origin.x as f64;
++    let y = cy - origin.y as f64;
++    if x >= 0.0 && y >= 0.0 && x <= size.width as f64 && y <= size.height as f64 + 2.0 {
++        gate.ignoring.store(false, Ordering::Relaxed);
++        let _ = win.set_ignore_cursor_events(false);
++        let _ = win.emit("closed-hover", ());
++    }
++}
++
+ /// Re-applies click-through after the window or the island changed shape.
+ ///
+ /// With the cursor poll (Windows) the window takes the mouse again and the next
+```
+
+**File**: `windows/src-tauri/src/lib.rs` (modified, +5/-0)
+```diff
+@@ -172,6 +172,11 @@ fn set_collapsed(app: AppHandle, shared: State<Shared>, collapsed: bool, width:
+     // An older page sends no size: the wake strip, as before.
+     let size = island::clamp_collapsed((width.unwrap_or(island::STRIP_W), height.unwrap_or(island::STRIP_H)));
+     *shared.gate.collapsed_size.lock().unwrap() = size;
++    // The poll stops first: a tick of it after this could make the closed
++    // island click-through again (see spawn_cursor_poll).
++    if collapsed {
++        shared.gate.set_active(false);
++    }
+     island::apply_geometry(&app, &pref, collapsed.then_some(size));
+     // The closed island must always take the mouse, and a resize invalidates the flag.
+     island::refresh_click_through(&app, &shared.gate);
+```
+
+**File**: `windows/src-tauri/src/notes/mod.rs` (modified, +52/-0)
+```diff
+@@ -337,8 +337,24 @@ fn spawn_live(
+     stop: Arc<AtomicBool>,
+ ) {
+     std::thread::spawn(move || {
++        let started = std::time::Instant::now();
++        let mut last_words = std::time::Instant::now();
+         while !stop.load(Ordering::Relaxed) {
+             std::thread::sleep(Duration::from_secs(1));
++            // A call left recording by mistake keeps the microphone and the
++            // voice model busy for hours, then takes as long again to write:
++            // it stops by itself after a long silence, or a very long call.
++            if let Some(why) = auto_stop(started.elapsed(), last_words.elapsed()) {
++                crate::log::line(format!("notes: stopped by itself ({why:?})"));
++                // `stop` here is the live loop's flag: the module's function.
++                crate::notes::stop(&app);
++                let text = match why {
++                    AutoStop::Silence => t("Nobody has spoken for 15 minutes: Coucou stopped recording the call."),
++                    AutoStop::Length => t("The call has been recorded for 4 hours: Coucou stopped recording it."),
++                };
++                pill::announce(&app, "mic", "#F7B32B", text, None, 30);
++                break;
++            }
+             let mut channels = vec![(mic.clone(), builder::ME)];
+             if let Some(s) = &system {
+                 channels.push((s.clone(), "others"));
+@@ -351,6 +367,7 @@ fn spawn_live(
+                 if text.is_empty() || stop.load(Ordering::Relaxed) {
+                     continue;
+                 }
++                last_words = std::time::Instant::now();
+                 let end = start + samples.len() as f64 / speech::SAMPLE_RATE as f64;
+                 taker.change(&app, &id, |n| {
+                     n.lines.push(Line { id: crate::flow::text::new_id(), speaker: speaker.into(), start, end, text });
+@@ -361,6 +378,27 @@ fn spawn_live(
+     });
+ }
+ 
++/// Why a call stopped recording by itself.
++#[derive(Debug, Clone, Copy, PartialEq)]
++enum AutoStop {
++    Silence,
++    Length,
++}
++
++/// Longest stretch with nobody speaking, and longest call.
++const SILENCE_LIMIT: Duration = Duration::from_secs(15 * 60);
++const LENGTH_LIMIT: Duration = Duration::from_secs(4 * 3600);
++
++fn auto_stop(recording: Duration, since_words: Duration) -> Option<AutoStop> {
++    if recording >= LENGTH_LIMIT {
++        Some(AutoStop::Length)
++    } else if since_words >= SILENCE_LIMIT {
++        Some(AutoStop::Silence)
++    } else {
++        None
++    }
++}
++
+ pub fn stop(app: &AppHandle) {
+     let Some(taker) = get(app) else { return };
+     let Some(mut rec) = taker.recording.lock().unwrap().take() else { return };
+@@ -716,3 +754,17 @@ pub fn notes_export(taker: State<Arc<NoteTaker>>, id: String) -> Result<String,
+     crate::platform::reveal_folder(&dir.to_string_lossy());
+     Ok(path.to_string_lossy().to_string())
+ }
++
++#[cfg(test)]
++mod auto_stop_tests {
++    use super::*;
++
++    #[test]
++    fn a_forgotten_call_stops_by_itself() {
++        let min = |m: u64| Duration::from_secs(m * 60);
++        assert_eq!(auto_stop(min(60), min(2)), None);
++        assert_eq!(auto_stop(min(60), min(15)), Some(AutoStop::Silence));
++        assert_eq!(auto_stop(min(240), min(1)), Some(AutoStop::Length));
++        assert_eq!(auto_stop(min(14), min(14)), None);
++    }
++}
+```
+
+**File**: `windows/src/i18n/extra.json` (modified, +30/-0)
+```diff
+@@ -7488,6 +7488,36 @@
+       "tr": "Çalan şarkı",
+       "ko": "재생 중인 음악",
+       "ja": "再生中の曲"
++    },
++    "Nobody has spoken for 15 minutes: Coucou stopped recording the call.": {
++      "zh-Hans": "已有 15 分钟没人说话：Coucou 已停止录制通话。",
++      "hi": "15 मिनट से कोई नहीं बोला: Coucou ने कॉल की रिकॉर्डिंग रोक दी।",
++      "es": "Nadie ha hablado en 15 minutos: Coucou dejó de grabar la llamada.",
++      "ar": "لم يتحدث أحد منذ 15 دقيقة: أوقف Coucou تسجيل المكالمة.",
++      "fr": "Personne n'a parlé depuis 15 minutes : Coucou a arrêté d'enregistrer l'appel.",
++      "bn": "১৫ মিনিট ধরে কেউ কথা বলেনি: Coucou কলের রেকর্ডিং বন্ধ করেছে।",
++      "pt-BR": "Ninguém fala há 15 minutos: o Coucou parou de gravar a chamada.",
++      "ru": "Уже 15 минут никто не говорит: Coucou остановил запись звонка.",
++      "id": "Tidak ada yang bicara selama 15 menit: Coucou berhenti merekam panggilan.",
++      "de": "Seit 15 Minuten hat niemand gesprochen: Coucou hat die Aufnahme des Anrufs beendet.",
++      "tr": "15 dakikadır kimse konuşmadı: Coucou aramayı kaydetmeyi durdurdu.",
++      "ko": "15분 동안 아무도 말하지 않아 Coucou가 통화 녹음을 멈췄습니다.",
++      "ja": "15 分間だれも話していないため、Coucou は通話の録音を止めました。"
++    },
++    "The call has been recorded for 4 hours: Coucou stopped recording it.": {
++      "zh-Hans": "通话已录制 4 小时：Coucou 已停止录制。",
++      "hi": "कॉल 4 घंटे से रिकॉर्ड हो रही थी: Coucou ने रिकॉर्डिंग रोक दी।",
++      "es": "La llamada lleva 4 horas grabándose: Coucou dejó de grabarla.",
++      "ar": "استمر تسجيل المكالمة 4 ساعات: أوقف Coucou التسجيل.",
++      "fr": "L'appel est enregistré depuis 4 heures : Coucou a arrêté l'enregistrement.",
++      "bn": "কলটি ৪ ঘণ্টা ধরে রেকর্ড হচ্ছিল: Coucou রেকর্ডিং বন্ধ করেছে।",
++      "pt-BR": "A chamada está sendo gravada há 4 horas: o Coucou parou de gravá-la.",
++      "ru": "Звонок записывается уже 4 часа: Coucou остановил запись.",
++      "id": "Panggilan sudah direkam selama 4 jam: Coucou berhenti merekamnya.",
++      "de": "Der Anruf wurde 4 Stunden lang aufgenommen: Coucou hat die Aufnahme beendet.",
++      "tr": "Arama 4 saattir kaydediliyor: Coucou kaydı durdurdu.",
++      "ko": "통화를 4시간 동안 녹음해 Coucou가 녹음을 멈췄습니다.",
++      "ja": "通話を 4 時間録音したため、Coucou は録音を止めました。"
+     }
+   }
+ }
+```
+
+**File**: `windows/src/island/island.ts` (modified, +45/-1)
+```diff
+@@ -75,6 +75,11 @@ export class Island {
+   private closedKey = "";
+   /** Width of the closed island for what it shows now. */
+   private closedW = 120;
++  /** Mochi's little life in the closed island: where he looks, and until when
++   *  the loop runs for what he is doing (a blink, a glance). */
++  private closedLook = { x: 0, y: 0 };
++  private closedAwakeUntil = 0;
++  private closedLife: number | null = null;
+   /** The size the window was last folded to, so a new one is only sent on a change. */
+   private collapsedTo = { w: 0, h: 0 };
+   private countdown!: HTMLElement;
+@@ -449,6 +454,7 @@ export class Island {
+     // Folding all the way: the closed island's width for what it will show.
+     if (mode === "hidden") this.updateClosed();
+     else this.closedEl.classList.remove("on");
++    this.scheduleClosedLife();
+     this.updateWindowCollapsed();
+     this.animateGeometry(modeOrder(mode) < modeOrder(prev));
+     State.notify();
+@@ -841,6 +847,39 @@ export class Island {
+     }
+   }
+ 
++  /**
++   * Mochi in the closed island now and then blinks or glances around, as he
++   * does on a Mac without a notch: a few frames every few seconds, the loop
++   * asleep in between. Nothing runs for the other closed islands.
++   */
++  private scheduleClosedLife() {
++    if (this.closedLife != null) window.clearTimeout(this.closedLife);
++    this.closedLife = null;
++    if (State.mode !== "hidden" || closedIsland(State.settings.closedIsland) !== "mochi") {
++      this.closedLook = { x: 0, y: 0 };
++      return;
++    }
++    this.closedLife = window.setTimeout(() => {
++      this.closedLife = null;
++      if (State.mode !== "hidden" || State.paused) return this.scheduleClosedLife();
++      if (Math.random() < 0.55) {
++        this.engine.blink();
++      } else {
++        this.closedLook = { x: (Math.random() * 2 - 1) * 0.8, y: (Math.random() * 2 - 1) * 0.3 };
++      }
++      this.closedAwakeUntil = performance.now() + 700;
++      this.ensureRunning();
++      this.scheduleClosedLife();
++    }, 2500 + Math.random() * 3500);
++  }
++
++  /** The pointer is on the folded window (Rust's `closed-hover`): the island wakes. */
++  wakeFromClosed() {
++    if (State.mode !== "hidden") return;
++    Sound.resume();
++    this.fsm.mouseEntered();
++  }
++
+   /** Tells Rust the folded window's size: the closed island's, or none (the strip). */
+   private sendCollapsedSize(force = false) {
+     const size = this.closedShows ? { w: this.closedW, h: CLOSED_H } : { w: 0, h: 0 };
+@@ -1178,7 +1217,8 @@ export class Island {
+     const botMoving = !this.botCx.settled || !this.botCy.settled || !this.botSize.settled;
+     // Closed, only the folding — and Mochi reaching his place in the closed island.
+     const busy = State.mode === "hidden"
+-      ? settling || (botMoving && closedIsland(State.settings.closedIsland) === "mochi")
++      ? settling || (closedIsland(State.settings.closedIsland) === "mochi" &&
++        (botMoving || nowMs < this.closedAwakeUntil))
+       : settling ||
+         !this.botCx.settled || !this.botCy.settled || !this.botSize.settled ||
+         greetingActive || this.engine.busy || UploadSeq.isActive || viewAnimating;
+@@ -1304,12 +1344,15 @@ export class Island {
+ 
+   /** BotCanvasView.lookX / lookY — tanh of the distance to the bot. */
+   private lookX(): number {
++    // In the closed island the cursor isn't followed: he looks around by himself.
++    if (State.mode === "hidden") return this.closedLook.x;
+     const rect = this.islandRect();
+     const botScreenX = rect.x + this.botCx.value;
+     return Math.tanh((State.mouse.x - botScreenX) / 260);
+   }
+ 
+   private lookY(): number {
++    if (State.mode === "hidden") return this.closedLook.y;
+     return -Math.tanh((State.mouse.y - this.botCy.value) / 200);
+   }
+ 
+@@ -1425,6 +1468,7 @@ export class Island {
+       this.animateGeometry(true);
+       if (this.collapsed) this.sendCollapsedSize();
+     }
++    this.scheduleClosedLife();
+     Sound.setEnabled(State.settings.soundEnabled);
+     Sound.setVolume(State.settings.soundVolume);
+     this.fsm.homeToPetitDelay = State.settings.autoCloseInterval;
+```
+
+**File**: `windows/src/main.ts` (modified, +1/-0)
+```diff
+@@ -63,6 +63,7 @@ async function main() {
+ 
+   await onEvent<{ x: number; y: number }>("cursor", ({ x, y }) => island.onCursor(x, y));
+   await onEvent<boolean>("pointer-inside", (inside) => island.setPointerInside(inside));
++  await onEvent<null>("closed-hover", () => island.wakeFromClosed());
+ 
+   /** Pause has to reach Rust too, or the pollers keep calling out. */
+   const setPaused = (on: boolean) => {
+```
+
+---
+
+### Incident Patch 2: `f61c428c` (2026-11-03)
+**Commit Message**: Release prep: Windows and Linux 0.5.9
+
+The island never disappears (Mochi or the time when closed, ✕ to fold),
+dictation keeps your language, any dictation key, silence while you speak
+on Windows, the Coucou window comes alive, a forgotten call stops by
+itself; Claude API models (#1000) and Flow saves (#1003) by @lazarevtill.
+CHANGELOG, README and What's new in the 14 languages.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -1,5 +1,18 @@
  # Changelog
  
--## Unreleased
-+## 0.5.4 — October 29, 2026
- 
--- **Mac: WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
--
--### Reliability (Mac, Windows, Linux)
--
--Bugs reported by @romainb82 and others, fixed by the community.
-+Reliability: bugs reported by @romainb82 and others, fixed by the community.
- 
- - **The hook server never gives up** — one failed connection no longer stops Coucou from hearing Claude Code until the next launch (#872 by @seongj-un, #853)
--- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854); on Windows, the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
--- **Mac: no crash without a microphone** (#950 by @gabbe-swe, #949)
--- **Mac: "Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
--- **Mac: nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
-+- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854)
-+- **No crash without a microphone** (#950 by @gabbe-swe, #949)
-+- **"Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
-+- **Nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
- - **Service pills tell the truth** — n8n no longer replays an old run as new at launch, and keeps each run's real time (#948, #861); Stripe no longer adds different currencies together (#938, #860); GitHub counts the stars of all your repositories, past the first 100 (#939, #862); Kraken keeps tickers such as XTZ and ZRX whole (#926, #863). All by @Ohualtex
--- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the relay pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
--- **Windows/Linux: settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
--- **Windows/Linux: the Flow pill's buttons take clicks** and the pill keeps its edge (#760 by @arnavaggarwal-dev, #759); on Linux its toolbar folds even when the leave event is lost (#946 by @dougkusanagi, #584)
-+- **WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
++## Windows and Linux 0.5.9 — November 3, 2026
 +
-+## Windows and Linux 0.5.4 — October 29, 2026
++- **The island never disappears** — once closed, a small island stays at the top of the screen, as on a Mac without a notch: Mochi in it (he blinks and looks around), or the time, the date, your Claude usage or what's playing (Settings → General → Closed island shows). Hovering it brings the compact island, and it always wakes up again
++- **✕ folds the open island** — at the top right, as on the Mac, with the Mac's icons in the header; the Claude plan card fills its card again
++- **Dictation keeps your language** — it no longer starts in English and switches mid-sentence when you speak right away
++- **Your own dictation key** — Left Ctrl, Left Alt and Left Shift join the list, or record a shortcut of your own (Alt + Shift + F, F9…). On Windows its letter no longer reaches the app in front, and a held Alt or Win opens no menu
++- **Silence while you speak** *(Windows)* — videos, music and calls go quiet while Coucou listens to you, then come back (Flow → Settings → Microphone)
++- **The Coucou window comes alive on Windows** — the particles and the little Mochis of each page now show, on the deep black, and follow your voice while you dictate; thin scrollbars without arrows, one box for the settings search
++- **A forgotten call stops by itself** — the Notetaker stops recording after 15 minutes with nobody speaking, or after 4 hours
++- **Lighter on the processor** — the island no longer follows a cursor that is far from it, and the closed island polls nothing
++- **Claude API models** — the model picker lists your account's models and keeps your choice (#1000 by @lazarevtill)
++- **Flow keeps your edits** — a dictionary, snippet, style or history change that can't be saved says so and lets you retry (#1003 by @lazarevtill)
 +
-+Reliability: 25 community fixes, shared with the Mac where they apply.
-+
-+- **The hook relay never gives up** — a failed pipe connection no longer stops Coucou from hearing Claude Code (#872 by @seongj-un, #853); the pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
-+- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
-+- **Settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
-+- **The Flow pill's buttons take clicks** and the pill keeps its edge (#760 by @arnavaggarwal-dev, #759); on Linux its toolbar folds even when the leave event is lost (#946 by @dougkusanagi, #584)
- - **Windows: the Settings window opens even when creating it at startup failed** (#807 by @afpruivo, #775); the last edit stays on the ticker after Claude Code finishes (#846 by @afpruivo, #840); the chat field keeps the focus after an answer (#931 by @ce017); no coloured bar under Mochi at 150 % scale (#867 by @PythonTilk)
- - **WhatsApp groups show their names** instead of "Group <id>" (#907 by @arnavaggarwal-dev)
- - **OpenCode 2 sessions finish properly in the island** (#808 by @afpruivo, #717)
-+- **Service pills tell the truth** — n8n, Stripe and GitHub, as on the Mac (#948, #938, #939 by @Ohualtex)
- - **Linux: 24-bit microphones work for Flow and notes** (#785 by @eduardo-qts); on Arch, the desktop entry uses the portal's app id (#947 by @rahul05ranjan, #804); the build has no warnings left (#893 by @ZouaouiB)
+ ## 0.5.8 — October 31, 2026
  
- ## Windows and Linux 0.5.3 — October 22, 2026
+ Fixes by @Ohualtex.
 ```
 
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
+**File**: `README.md` (modified, +3/-2)
 ```diff
-@@ -34,9 +34,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.5.3</string>
-+	<string>0.5.4</string>
- 	<key>CFBundleVersion</key>
--	<string>20</string>
-+	<string>21</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
-**File**: `NotchBuddy/Resources/whats-new.json` (modified, +75/-0)
-```diff
-@@ -1,6 +1,81 @@
- {
-   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-   "releases": [
-+    {
-+      "version": "0.5.4",
-+      "items": [
-+        {
-+          "icon": "shield",
-+          "title": {
-+            "en": "Coucou keeps listening",
-+            "fr": "Coucou reste à l’écoute",
-+            "es": "Coucou sigue escuchando",
-+            "pt-BR": "O Coucou continua ouvindo",
-+            "ru": "Coucou всегда на связи",
-+            "zh-Hans": "Coucou 始终在线",
-+            "hi": "Coucou हमेशा सुनता रहे",
-+            "ar": "Coucou يبقى منصتًا",
-+            "bn": "Coucou সবসময় শোনে",
-+            "id": "Coucou terus mendengarkan",
-+            "de": "Coucou hört weiter zu",
-+            "tr": "Coucou dinlemeye devam eder",
-+            "th": "Coucou ฟังต่อเนื่อง",
-+            "zh-Hant": "Coucou 始終在線"
-+          },
-+          "detail": {
-+            "en": "One failed connection no longer cuts Claude Code off, and only Coucou’s own hooks are touched.",
-+            "fr": "Une connexion ratée ne coupe plus Claude Code, et seuls les hooks de Coucou sont modifiés.",
-+            "es": "Una conexión fallida ya no corta Claude Code, y solo se tocan los hooks de Coucou.",
-+            "pt-BR": "Uma conexão com falha não corta mais o Claude Code, e só os hooks do Coucou são alterados.",
-+            "ru": "Сбой одного соединения больше не отключает Claude Code, а Coucou меняет только свои хуки.",
-+            "zh-Hans": "一次连接失败不再让 Claude Code 断开，且只改动 Coucou 自己的 hooks。",
-+            "hi": "एक कनेक्शन फ़ेल होने से अब Claude Code नहीं कटता, और सिर्फ़ Coucou के अपने hooks बदलते हैं।",
-+            "ar": "لم يعد فشل اتصال واحد يقطع Claude Code، ولا يُعدَّل إلا خطافات Coucou نفسها.",
-+            "bn": "একটি সংযোগ ব্যর্থ হলে আর Claude Code বিচ্ছিন্ন হয় না, আর শুধু Coucou-র নিজের hooks বদলায়।",
-+            "id": "Satu koneksi gagal tak lagi memutus Claude Code, dan hanya hook milik Coucou yang diubah.",
-+            "de": "Eine fehlgeschlagene Verbindung trennt Claude Code nicht mehr, und nur Coucous eigene Hooks werden geändert.",
-+            "tr": "Tek bir başarısız bağlantı artık Claude Code’u koparmıyor; yalnızca Coucou’nun kendi hook’ları değişir.",
-+            "th": "การเชื่อมต่อที่ล้มเหลวไม่ตัด Claude Code อีกต่อไป และแก้เฉพาะ hooks ของ Coucou เอง",
-+            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。"
-+          }
-+        },
-+        {
-+          "icon": "bug",
-+          "title": {
-+            "en": "25 community fixes",
-+            "fr": "25 correctifs de la communauté",
-+            "es": "25 arreglos de la comunidad",
-+            "pt-BR": "25 correções da comunidade",
-+            "ru": "25 исправлений от сообщества",
-+            "zh-Hans": "25 项社区修复",
-+            "hi": "समुदाय के 25 सुधार",
-+            "ar": "25 إصلاحًا من المجتمع",
-+            "bn": "কমিউনিটির ২৫টি সমাধান",
-+            "id": "25 perbaikan dari komunitas",
-+            "de": "25 Fixes aus der Community",
-+            "tr": "Topluluktan 25 düzeltme",
-+            "th": "25 การแก้ไขจากชุมชน",
-+            "zh-Hant": "25 項社群修正"
-+          },
-+          "detail": {
-+            "en": "No crash without a mic, the hide delay works, and truer n8n, Stripe and GitHub pills.",
-+            "fr": "Plus de crash sans micro, le délai de masquage fonctionne, et des pills n8n, Stripe et GitHub plus justes.",
-+            "es": "Sin cierres sin micrófono, el retraso para ocultar funciona y pills de n8n, Stripe y GitHub más precisas.",
-+            "pt-BR": "Sem travar sem microfone, o tempo para ocultar funciona e pills do n8n, Stripe e GitHub mais precisas.",
-+            "ru": "Нет сбоев без микрофона, задержка скрытия работает, а пилюли n8n, Stripe и GitHub точнее.",
-+            "zh-Hans": "没有麦克风也不会崩溃，隐藏延迟生效，n8n、Stripe 和 GitHub 胶囊更准确。",
-+            "hi": "माइक के बिना क्रैश नहीं, छिपाने की देरी काम करती है, और n8n, Stripe व GitHub पिल्स ज़्यादा सटीक।",
-+            "ar": "لا أعطال دون ميكروفون، ومهلة الإخفاء تعمل، وكبسولات n8n وStripe وGitHub أدق.",
-+            "bn": "মাইক ছাড়া আর ক্র্যাশ নয়, লুকানোর বিলম্ব কাজ করে, আর n8n, Stripe ও GitHub পিল আরও সঠিক।",
-+            "id": "Tak ada crash tanpa mikrofon, jeda sembunyi berfungsi, dan pill n8n, Stripe, GitHub lebih akurat.",
-+            "de": "Kein Absturz ohne Mikrofon, die Ausblendverzögerung greift, und genauere n8n-, Stripe- und GitHub-Pills.",
-+            "tr": "Mikrofon yokken çökme yok, gizleme gecikmesi çalışıyor; n8n, Stripe ve GitHub hapları daha doğru.",
-+            "th": "ไม่แครชเมื่อไม่มีไมค์ ระยะเวลาซ่อนใช้งานได้ และพิลล์ n8n, Stripe, GitHub แม่นยำขึ้น",
-+            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。"
-+          }
-+        }
-+      ]
-+    },
-     {
-       "version":
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
-```diff
-@@ -140,8 +140,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "20"
--        CFBundleShortVersionString: "0.5.3"
-+        CFBundleVersion: "21"
-+        CFBundleShortVersionString: "0.5.4"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
-```
-
-**File**: `README.md` (modified, +4/-2)
-```diff
-@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
- 
- | Version | Date | Highlights |
- |---------|------|------------|
-+| [0.5.4](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, your own hooks stay untouched, no crash without a mic, truer n8n, Stripe and GitHub pills |
- | [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
- | [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
- | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
-@@ -173,6 +174,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+@@ -181,6 +181,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
  
  | Windows & Linux | Date | Highlights |
  |---------|------|------------|
-+| 0.5.4 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.4) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, approval cards go when the terminal takes over, a sturdier Flow pill, WhatsApp group names |
- | 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | WhatsApp in the island (experimental): one-click gateway install, your chats and replies |
- | 0.5.2 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.2) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.2) | Oct 22, 2026 | Mochi turns blue when a new version waits, What's new after each update; GitLab and Gitea pills; the weekly recap on Android |
- | 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
-@@ -249,7 +251,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
++| 0.5.9 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.9) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.9) | Nov 3, 2026 | The island never disappears (Mochi or the time when closed), ✕ to fold it, dictation keeps your language, your own dictation key, silence while you speak |
+ | 0.5.8 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.8) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.8) | Oct 31, 2026 | 14 fixes and features by @Ohualtex: permission requests queue, Claude Desktop cards and pill, plan usage in the compact island, Flow pill in a corner |
+ | 0.5.7 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.7) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.7) | Oct 31, 2026 | Mail with classic Outlook on Windows: search, filters, automatic sorting, mail plans from the chat; search the settings |
+ | 0.5.6 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.6) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot); Korean and Japanese |
+@@ -262,7 +263,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
  
  This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
  
--**Windows and Linux 0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
-+**Windows and Linux 0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat f
+-**Windows and Linux 0.5.8** bring 14 fixes and features by @Ohualtex: permission requests wait their turn, Claude Desktop cards on Windows and its pill on Linux, plan usage in the compact island. **0.5.7** bring **Mail** to Windows with classic Outlook (search, automatic sorting, mail plans from the chat) and a search field for the settings. **0.5.6** chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot) and speak Korean and Japanese. **0.5.5** answer on your Claude plan through Claude Code when no API key is saved. **0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
++**Windows and Linux 0.5.9** keep a small island at the top of the screen once it is closed (Mochi, the time or your Claude usage in it), fold it with ✕, keep your language when you dictate, take any dictation key you like and, on Windows, quiet the other apps while you speak. **0.5.8** bring 14 fixes and features by @Ohualtex: permission requests wait their turn, Claude Desktop cards on Windows and its pill on Linux, plan usage in the compact island. **0.5.7** bring **Mail** to Windows with classic Outlook (search, automatic sorting, mail plans from the chat) and a search field for the settings. **0.5.6** chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot) and speak Korean and Japanese. **0.5.5** answer on your Claude plan through Claude Code when no API key is saved. **0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak Ge
 ```
 
 **File**: `linux/arch/PKGBUILD` (modified, +1/-1)
@@ -2074,8 +2290,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  pkgname=coucou-git
  _pkgname=coucou
--pkgver=0.5.3
-+pkgver=0.5.4
+-pkgver=0.5.8
++pkgver=0.5.9
  pkgrel=1
  pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
  arch=('x86_64' 'aarch64')
@@ -2083,21 +2299,21 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 **File**: `windows/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -719,7 +719,7 @@ dependencies = [
+@@ -804,7 +804,7 @@ dependencies = [
  
  [[package]]
  name = "coucou"
--version = "0.5.3"
-+version = "0.5.4"
+-version = "0.5.8"
++version = "0.5.9"
  dependencies = [
   "arboard",
   "cpal",
-@@ -755,7 +755,7 @@ dependencies = [
+@@ -841,7 +841,7 @@ dependencies = [
  
  [[package]]
  name = "coucou-hook"
--version = "0.5.3"
-+version = "0.5.4"
+-version = "0.5.8"
++version = "0.5.9"
  dependencies = [
   "libc",
   "serde_json",
@@ -2109,470 +2325,197 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  resolver = "2"
  
  [workspace.package]
--version = "0.5.3"
-+version = "0.5.4"
+-version = "0.5.8"
++version = "0.5.9"
  edition = "2021"
  license = "MIT"
  
 ```
 
+**File**: `windows/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "coucou-windows",
+-  "version": "0.5.8",
++  "version": "0.5.9",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "coucou-windows",
+-      "version": "0.5.8",
++      "version": "0.5.9",
+       "dependencies": {
+         "@tauri-apps/api": "^2"
+       },
+```
+
+**File**: `windows/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "coucou-windows",
+   "private": true,
+-  "version": "0.5.8",
++  "version": "0.5.9",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+```
+
+**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://schema.tauri.app/config/2",
+   "productName": "Coucou",
+-  "version": "0.5.8",
++  "version": "0.5.9",
+   "identifier": "fr.louisraille.coucou",
+   "build": {
+     "beforeDevCommand": "npm run dev",
+```
+
 ---
 
-### Incident Patch 2: `479cf573` (2026-10-29)
-**Commit Message**: Release prep: Mac 0.5.6, Windows and Linux 0.5.6 (chat on your AI subscription, Korean and Japanese)
+### Incident Patch 3: `968710a7` (2026-11-02)
+**Commit Message**: Windows and Linux: dictation keeps its language from the first word; one box for the settings search
+
+A dictation starts the moment the key goes down: the microphone opens
+with a click and the first word is already under way. Parakeet, which
+guesses the language by itself, then often started in English and went
+on mixing ('Okay, that marche plutôt bien. Moi, le truc is that…'). Each
+stretch now reaches the model with half a second of silence before it and
+a little after, as a call always has, and stays in the language spoken.
+Word times are shifted back, so the Notetaker's timeline is unchanged.
+
+The window's text-field style drew a second box inside the sidebar's
+search field.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +11/-0)
+**File**: `windows/src-tauri/src/speech/mod.rs` (modified, +58/-3)
 ```diff
-@@ -1,5 +1,16 @@
- # Changelog
+@@ -338,6 +338,26 @@ pub struct Transcript {
+ /// quietest, near this length.
+ const MAX_CHUNK_SECONDS: f64 = 28.0;
  
-+## 0.5.6 — October 30, 2026
++/// Silence given to the model before and after each stretch, in samples.
++///
++/// A dictation starts the moment the key goes down: the microphone opens with
++/// a little click and the first word is already under way. Parakeet, which
++/// guesses the language by itself, then often starts in English and keeps
++/// going ("Okay, that marche plutôt bien. Moi, le truc is that…"). Half a
++/// second of silence first, as a call always has, and it hears the language
++/// that is spoken (tests: `a_sudden_start_keeps_its_language`).
++const LEAD_SILENCE: usize = SAMPLE_RATE as usize / 2;
++const TAIL_SILENCE: usize = SAMPLE_RATE as usize * 3 / 10;
 +
-+- **Chat on your own AI subscription** — Settings → Chat → Your AI subscriptions: one switch per provider. On, the chat goes through the provider's official terminal tool, signed in with your own account: Claude Code (Claude plan), Antigravity CLI or Gemini CLI (Google AI plan), Codex CLI (ChatGPT plan), and two new choices in the chat, Cursor CLI and GitHub Copilot CLI. Off, the API key as before. Replaces 0.5.5's hidden rule (empty the key and Claude Code answers): each row says whether the tool is installed, how to install it and how to sign in, and the chat's model chip names the tool that answers. Every run is read-only (plan or ask modes, no shell, no edits), loads none of your hooks, MCP servers or extensions where the tool lets Coucou turn them off, saves no session, and searches the web for the chat only; a dropped file is read with no web. Coucou reads no credential. GitHub build: the App Store build is sandboxed and still needs a key
-+- **The tools are found where you installed them** — nvm, fnm, Volta, Bun, pnpm, Homebrew or the tools' own installers, and else through your login shell (a Claude Code installed with npm under nvm was not found before)
-+- **Korean** (#880 by @lovyestar) **and Japanese**: 16 languages
++/// `chunk` between the silences the model is given it with.
++pub fn padded(chunk: &[f32]) -> Vec<f32> {
++    let mut out = Vec::with_capacity(LEAD_SILENCE + chunk.len() + TAIL_SILENCE);
++    out.resize(LEAD_SILENCE, 0.0);
++    out.extend_from_slice(chunk);
++    out.resize(out.len() + TAIL_SILENCE, 0.0);
++    out
++}
 +
-+## Windows and Linux 0.5.6 — October 30, 2026
-+
-+- **Chat on your own AI subscription** — the same switches as on the Mac in Settings → Chat (Claude Code, Antigravity CLI or Gemini CLI, Codex CLI, Cursor CLI, Copilot CLI), read-only runs, and the phone's chat takes the same path. Through npm's `.cmd` shims on Windows the prompt goes in on stdin. Without a key and with Claude's switch off, the chat asks for a key instead of answering through Claude Code anyway; Flow's clean-up and the notes of a call still use Claude Code when no key is saved
-+- **Korean** (#880 by @lovyestar) **and Japanese**: 14 languages
-+
- ## 0.5.5 — October 29, 2026
- 
- - **Chat on your Claude plan, no API key** — with no Anthropic key saved, the chat is answered by your own Claude Code (`claude -p`), signed in with your account. Each run loads none of your settings or hooks, no MCP server, saves no session, and may only search the web or, with no web at all, read the file you dropped (copied alone into a folder of its own). GitHub build: the App Store build is sandboxed and still needs a key. Saving a key switches back to the API
-```
-
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
-```diff
-@@ -36,9 +36,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.5.5</string>
-+	<string>0.5.6</string>
- 	<key>CFBundleVersion</key>
--	<string>22</string>
-+	<string>23</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
-**File**: `NotchBuddy/Resources/whats-new.json` (modified, +83/-0)
-```diff
-@@ -1,6 +1,89 @@
- {
-   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-   "releases": [
-+    {
-+      "version": "0.5.6",
-+      "items": [
-+        {
-+          "icon": "chat",
-+          "title": {
-+            "en": "Chat on your AI subscription",
-+            "fr": "Le chat sur ton abonnement IA",
-+            "es": "Chat con tu suscripción de IA",
-+            "pt-BR": "Chat com sua assinatura de IA",
-+            "ru": "Чат по вашей подписке на ИИ",
-+            "zh-Hans": "用你的 AI 订阅聊天",
-+            "hi": "अपनी AI सदस्यता से चैट",
-+            "ar": "دردشة باشتراكك في الذكاء الاصطناعي",
-+            "bn": "আপনার AI সাবস্ক্রিপশনে চ্যাট",
-+            "id": "Chat dengan langganan AI-mu",
-+            "de": "Chat mit deinem KI-Abo",
-+            "tr": "Yapay zekâ aboneliğinizle sohbet",
-+            "th": "แชตด้วยการสมัครใช้ AI ของคุณ",
-+            "zh-Hant": "用你的 AI 訂閱聊天",
-+            "ko": "내 AI 구독으로 채팅",
-+            "ja": "AI サブスクリプションでチャット"
-+          },
-+          "detail": {
-+            "en": "Claude, Gemini, ChatGPT, Cursor or Copilot, no key: turn it on in Settings → Chat.",
-+            "fr": "Claude, Gemini, ChatGPT, Cursor ou Copilot, sans clé : active-le dans Réglages → Chat.",
-+            "es": "Claude, Gemini, ChatGPT, Cursor o Copilot, sin clave: actívalo en Ajustes → Chat.",
-+            "pt-BR": "Claude, Gemini, ChatGPT, Cursor ou Copilot, sem chave: ative em Ajustes → Chat.",
-+            "ru": "Claude, Gemini, ChatGPT, Cursor или Copilot без ключа: включите в Настройки → Чат.",
-+            "zh-Hans": "Claude、Gemini、ChatGPT、Cursor 或 Copilot，无需密钥：在 设置 → 聊天 中开启。",
-+            "hi": "Claude, Gemini, ChatGPT, Cursor या Copilot, बिना कुंजी: सेटिंग्स → चैट में चालू करें।",
-+            "ar": "Claude وGemini وChatGPT وCursor وCopilot دون مفتاح: فعّله من الإعدادات ← الدردشة.",
-+            "bn": "Claude, Gemini, ChatGPT, Cursor বা Copilot, কী ছাড়াই: সেটিংস → চ্যাট-এ চালু করুন।",
-+            "id": "Claude, Gemini, ChatGPT, Cursor, atau Copilot, tanpa kunci: nyalakan di Pengaturan → Chat.",
-+            "de": "Claude, Gemini, ChatGPT, Cursor oder Copilot ohne Schlüssel: in Einstellungen → Chat einschalten.",
-+            "tr": "Claude, Gemini, ChatGPT, Cursor veya Copilot, anahtarsız: Ayarlar → Sohbet'ten açın.",
-+            "th": "Claude, Gemini, ChatGPT, Cursor หรือ Copilot โดยไม่ต้องใช้คีย์: เปิดได้ใน การตั้งค่า → แชต",
-+            "zh-Hant": "Claude、Gemini、ChatGPT、Cursor 或 Copilot，免金鑰：在 設定 → 聊天 中開啟。",
-+            "ko": "Claude, Gemini, ChatGPT, Cursor, Copilot을 키 없이: 설정 → 채팅에서 켜세요.",
-+            "ja": "Claude、Gemini、ChatGPT、Cursor、Copilot をキーなしで：設定 → チャットでオンに。"
-+          }
-+        },
-+        {
-+          "icon": "languages",
-+          "title": {
-+            "en": "Korean and Japanese",
-+            "fr": "Coréen et japonais",
-+            "es": "Coreano y japonés",
-+            "pt-BR": "Coreano e japonês",
-+            "ru": "Корейский и японский",
-+            "zh-Hans": "韩语和日语",
-+            "hi": "कोरियाई और जापानी",
-+            "ar": "الكورية واليابانية",
-+            "bn": "কোরিয়ান ও জাপানি",
-+            "id": "Bahasa Korea dan Jepang",
-+            "de": "Koreanisch und Japanisch",
-+            "tr": "Korece ve Japonca",
-+            "th": "ภาษาเกาหลีและญี่ปุ่น",
-+            "zh-Hant": "韓文和日文",
-+            "ko": "한국어와 일본어",
-+            "ja": "韓国語と日本語"
-+          },
-+          "detail": {
-+            "en": "Coucou now speaks 16 languages. Korean thanks to @lovyestar.",
-+            "fr": "Coucou parle maintenant 16 langues. Le coréen grâce à @lovyestar.",
-+            "es": "Coucou ya habla 16 idiomas. El coreano gracias a @lovyestar.",
-+            "pt-BR": "O Coucou agora fala 16 idiomas. O coreano graças a @lovyestar.",
-+            "ru": "Coucou теперь говорит на 16 языках. Корейский — благодаря @lovyestar.",
-+            "zh-Hans": "Coucou 现在支持 16 种语言。韩语由 @lovyestar 贡献。",
-+            "hi": "Coucou अब 16 भाषाएँ बोलता है। कोरियाई @lovyestar की बदौलत।",
-+            "ar": "يتحدث Coucou الآن 16 لغة. الكورية بفضل @lovyestar.",
-+            "bn": "Coucou এখন 16টি ভাষায় কথা বলে। কোরিয়ান @lovyestar-এর সৌজন্যে।",
-+            "id": "Coucou kini berbicara 16 bahasa. Bahasa Korea berkat @lovyestar.",
-+            "de": "Coucou spricht jetzt 16 Sprachen. Koreanisch dank @lovyestar.",
-+            "tr": "Coucou artık 16 dil konuşuyor. Korece @lovyestar sayesinde.",
-+            "th": "ตอนนี้ Coucou พูดได้ 16 ภาษา ภาษาเกาหลีโดย @lovyestar",
-+            "zh-Hant": "Coucou 現在支援 16 種語言。韓文由 @lovyestar 貢獻。",
-+            "ko": "Coucou가 이제 16개 언어를 지원합니다. 한국어는 @lovyestar 덕분이에요.",
-+            "ja": "Coucou は 16 言語に対応しました。韓国語は @lovyestar のおかげです。"
-+          }
+ /// Transcribes 16 kHz mono audio.
+ pub fn transcribe(samples: &[f32]) -> Option<Transcript> {
+     let rec = recognizer()?;
+@@ -347,11 +367,19 @@ pub fn transcribe(samples: &[f32]) -> Option<Transcript> {
+             continue;
+         }
+         let stream = rec.create_stream();
+-        stream.accept_waveform(SAMPLE_RATE as i32, chunk);
++        let audio = padded(chunk);
++        stream.accept_waveform(SAMPLE_RATE as i32, &audio);
+         rec.decode(&stream);
+         let Some(result) = stream.get_result() else { continue };
+-        let start = offset as f64 / SAMPLE_RATE as f64;
+-        let words = words_from_tokens(&result.tokens, result.timestamps.as_deref().unwrap_or(&[]), start, chunk.len() as f64 / SAMPLE_RATE as f64);
++        // The words' times count from the start of the silence: take it off.
++        let start = (offset as f64 - LEAD_SILENCE as f64) / SAMPLE_RATE as f64;
++        let mut words = words_from_tokens(&result.tokens, result.timestamps.as_deref().unwrap_or(&[]), start, audio.len() as f64 / SAMPLE_RATE as f64);
++        // A word the model places a hair into the silence starts with the audio.
++        let from = offset as f64 / SAMPLE_RATE as f64;
++        for w in &mut words {
++            w.start = w.start.max(from);
++            w.end = w.end.max(w.start);
 +        }
-+      ]
-+    },
-     {
-       "version": "0.5.5",
- 
+         let text = result.text.trim();
+         if !text.is_empty() {
+             if !out.text.is_empty() {
+@@ -459,6 +487,33 @@ mod tests {
+ /// With the models downloaded: `COUCOU_TEST_WAV=… cargo test -- --ignored speech`.
+ #[cfg(test)]
+ mod with_models {
++    #[test]
++    fn the_model_hears_silence_around_the_words() {
++        let chunk = vec![0.5f32; 1000];
++        let audio = super::padded(&chunk);
++        assert_eq!(audio.len(), super::LEAD_SILENCE + 1000 + super::TAIL_SILENCE);
++        assert!(audio[..super::LEAD_SILENCE].iter().all(|&s| s == 0.0));
++        assert_eq!(&audio[super::LEAD_SILENCE..super::LEAD_SILENCE + 1000], &chunk[..]);
++        assert!(audio[super::LEAD_SILENCE + 1000..].iter().all(|&s| s == 0.0));
++    }
++
++    /// A dictation that starts with the microphone's click and the first word
++    /// already under way (a French one, from `COUCOU_SUDDEN_WAV`, 16 kHz):
++    /// Parakeet used to write half of it in English.
++    /// `cargo test -p coucou --lib a_sudden_start -- --ignored --nocapture`
++    #[test]
++    #[ignore]
++    fn a_sudden_start_keeps_its_language() {
++        let path = std::env::var("COUCOU_SUDDEN_WAV").expect("COUCOU_SUDDEN_WAV");
++        let samples = super::audio::read_wav(std::path::Path::new(&path)).unwrap();
++        let t = super::transcribe(&samples).expect("models");
++        println!("{}", t.text);
++        let english = ["that", "is", "for", "it", "when", "the"];
++        let words: Vec<String> = t.text.split(|c: char| !c.is_alphabetic()).map(str::to_lowercase).collect();
++        assert!(!words.iter().any(|w| english.contains(&w.as_str())), "{}", t.text);
++        assert!(t.words.first().is_some_and(|w| w.start >= 0.0));
++    }
++
+     #[test]
+     #[ignore]
+     fn transcribes_a_recording() {
 ```
 
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+**File**: `windows/src/hub/hub.css` (modified, +14/-0)
 ```diff
-@@ -140,8 +140,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "22"
--        CFBundleShortVersionString: "0.5.5"
-+        CFBundleVersion: "23"
-+        CFBundleShortVersionString: "0.5.6"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
-```
-
-**File**: `README.md` (modified, +5/-3)
-```diff
-@@ -66,7 +66,7 @@ Flow dictation and the Notetaker are on the Mac for now; Windows and Linux are n
- - See what Claude is editing, live in the notch: each file modification shows the file name and +N −M counts in the ticker, tap to read the full diff
- - ✅ **Approve and answer from the notch** — Claude Code permission requests show up with **Allow / Deny / Always**; `AskUserQuestion` prompts show the choices right in the notch (single or multi-select, up to 4 questions). One click, or "Reply in terminal" to fall back to the CLI. Codex also gets Allow / Deny.
- - 🧑‍💻 **Jump to the right terminal** — open the exact terminal window of a session *(macOS)*.
--- 💬 **Chat with Claude, Gemini, OpenAI, DeepSeek, Qwen, Moonshot, or a local model (Ollama / LM Studio)** — click the model name above the chat box to switch provider and pick a model. Cloud providers use your own API key; local providers connect to a server running on your Mac. **No API key?** With Claude Code installed, Claude answers through it, on your Claude plan *(GitHub build, Windows, Linux)*. *(Gemini, OpenAI, DeepSeek, Qwen, Moonshot and local models: macOS)*
-+- 💬 **Chat with Claude, Gemini, OpenAI, DeepSeek, Qwen, Moonshot, or a local model (Ollama / LM Studio)** — click the model name above the chat box to switch provider and pick a model. Cloud providers use your own API key; local providers connect to a server running on your Mac. **No API key? Use your subscription**: switch it on in Settings → Chat and the chat goes through the official terminal tool you already pay for, signed in with your own account — Claude Code, Antigravity CLI or Gemini CLI, Codex CLI (ChatGPT), Cursor CLI or GitHub Copilot CLI *(GitHub build, Windows, Linux)*. *(Gemini, OpenAI, DeepSeek, Qwen, Moonshot and local models: macOS)*
- - 📈 **Portfolio pill** *(macOS)* — track your crypto across 16 networks (Bitcoin, Ethereum, Solana, Polygon, BNB, Avalanche, Arbitrum, Optimism, Base, Dogecoin, Litecoin, TRON, XRP, Cardano, Cosmos, NEAR) and 5 exchanges (Binance, OKX, Bybit, Kraken, Coinbase) in the notch. Live balances, 7-day sparklines and 24-hour price change per holding. Read-only API keys for exchanges, public addresses for wallets — nothing leaves your Mac.
- - 📊 **Claude plan usage** *(macOS, GitHub build)* — a small pill in the notch header shows your 5-hour and weekly Claude plan limits. Enable it from Settings → Agents → Plan usage. Pro and Max plans only.
- - 📊 **Codex plan usage** *(macOS, GitHub build)* — a Codex pill next to it shows your Codex limits and how many free resets you have left, read from the Codex CLI. Turn it on in Settings → Agents → Plan usage.
-@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
- 
- | Version | Date | Highlights |
- |---------|------|------------|
-+| [0.5.6](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot), switched on in Settings → Chat; Korean and Japanese |
- | [0.5.5](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.5) | Oct 29, 2026 | Chat on your Claude plan with no API key; each session apart behind its pill, questions side by side; Claude Code on a remote machine |
- | [0.5.4](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, your own hooks stay untouched, no crash without a mic, truer n8n, Stripe and GitHub pills |
- | [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
-@@ -175,6 +176,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
- 
- | Windows & Linux | Date | Highlights |
- |---------|------|------------|
-+| 0.5.6 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.6) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot); Korean and Japanese |
- | 0.5.5 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.5) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.5) | Oct 29, 2026 | No API key? Your own Claude Code answers the chat, Flow's clean-up and the notes of a call, on your Claude plan |
- | 0.5.4 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.4) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, approval cards go when the terminal takes over, a sturdier Flow pill, WhatsApp group names |
- | 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | Wha
-```
-
-**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- pkgname=coucou-git
- _pkgname=coucou
--pkgver=0.5.5
-+pkgver=0.5.6
- pkgrel=1
- pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
- arch=('x86_64' 'aarch64')
-```
-
-**File**: `windows/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -719,7 +719,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou"
--version = "0.5.5"
-+version = "0.5.6"
- dependencies = [
-  "arboard",
-  "cpal",
-@@ -755,7 +755,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou-hook"
--version = "0.5.5"
-+version = "0.5.6"
- dependencies = [
-  "libc",
-  "serde_json",
-```
-
-**File**: `windows/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
- resolver = "2"
- 
- [workspace.package]
--version = "0.5.5"
-+version = "0.5.6"
- edition = "2021"
- license = "MIT"
- 
-```
-
----
-
-### Incident Patch 3: `4dd4861a` (2026-10-29)
-**Commit Message**: Japanese on Mac, Windows and Linux
-
-Every Mac string (930), every Windows and Linux string of extra.json (473),
-and every What's new entry, in Japanese. Added to the language pickers, the
-bundle localizations and the plural rules (one form, as Korean). Mac 16
-languages, Windows and Linux 14.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -31,4 +31,4 @@ Windows and Linux: `cd windows && npm install && npm run tauri dev`
- - Pill IDs are stable contract values (Keychain, UserDefaults, hook routing): never rename an existing pill ID.
- - New views follow the existing app style. `design/prototype/notch-buddy.html` and `design/captures/` are references for new work, not a reason to change existing views.
- - Every release adds its CHANGELOG.md section, a row in the README Versions table, and commits the regenerated Info.plist with the new version.
--- Every release also adds its What's new, shown once in the notch or the island after Coucou updates itself: an entry for the new version in `NotchBuddy/Resources/whats-new.json` (Mac, the 14 languages) or `windows/src/whats-new/whats-new.json` (Windows and Linux, the 12 languages). 1 to 4 items picked from the CHANGELOG section, each with an icon from `scripts/test-whats-new.py`, a short title and one line, translated in every language. `python3 scripts/test-whats-new.py` checks it; CI and `release.sh` fail without it.
-+- Every release also adds its What's new, shown once in the notch or the island after Coucou updates itself: an entry for the new version in `NotchBuddy/Resources/whats-new.json` (Mac, the 16 languages) or `windows/src/whats-new/whats-new.json` (Windows and Linux, the 14 languages). 1 to 4 items picked from the CHANGELOG section, each with an icon from `scripts/test-whats-new.py`, a short title and one line, translated in every language. `python3 scripts/test-whats-new.py` checks it; CI and `release.sh` fail without it.
-```
-
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@
- 		<string>fr</string>
- 		<string>hi</string>
- 		<string>id</string>
-+		<string>ja</string>
- 		<string>ko</string>
- 		<string>pt-BR</string>
- 		<string>ru</string>
-```
-
-**File**: `NotchBuddy/Resources/InfoAppStore.plist` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@
- 		<string>fr</string>
- 		<string>hi</string>
- 		<string>id</string>
-+		<string>ja</string>
- 		<string>ko</string>
- 		<string>pt-BR</string>
- 		<string>ru</string>
-```
-
-**File**: `NotchBuddy/Resources/whats-new.json` (modified, +45/-23)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-+  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-   "releases": [
-     {
-       "version": "0.5.5",
-@@ -21,7 +21,8 @@
-             "tr": "API anahtarı olmadan sohbet",
-             "th": "แชตโดยไม่ต้องใช้คีย์ API",
-             "zh-Hant": "免 API 金鑰即可聊天",
--            "ko": "API 키 없이 채팅"
-+            "ko": "API 키 없이 채팅",
-+            "ja": "API キーなしでチャット"
-           },
-           "detail": {
-             "en": "No key? Your own Claude Code answers, on your Claude plan.",
-@@ -38,7 +39,8 @@
-             "tr": "Anahtar yok mu? Claude Code’un, Claude planınla yanıtlar.",
-             "th": "ไม่มีคีย์? Claude Code ของคุณตอบให้ ด้วยแพ็กเกจ Claude ของคุณ",
-             "zh-Hant": "沒有金鑰？由你的 Claude Code 用你的 Claude 方案回答。",
--            "ko": "키가 없나요? 내 Claude Code가 내 Claude 요금제로 답합니다."
-+            "ko": "키가 없나요? 내 Claude Code가 내 Claude 요금제로 답합니다.",
-+            "ja": "キーがなくても、あなたの Claude Code が Claude プランで答えます。"
-           }
-         },
-         {
-@@ -58,7 +60,8 @@
-             "tr": "Her oturum ayrı",
-             "th": "แยกแต่ละเซสชัน",
-             "zh-Hant": "每個工作階段各自獨立",
--            "ko": "세션마다 따로"
-+            "ko": "세션마다 따로",
-+            "ja": "セッションごとに分けて"
-           },
-           "detail": {
-             "en": "Two terminals, two names. The session waiting for you takes a place in the grid.",
-@@ -75,7 +78,8 @@
-             "tr": "İki terminal, iki ad. Seni bekleyen oturum ızgarada bir yer alır.",
-             "th": "สองเทอร์มินัล สองชื่อ เซสชันที่รอคุณจะได้ที่ในตาราง",
-             "zh-Hant": "兩個終端機，兩個名稱。等你處理的工作階段會佔據格狀中的一個位置。",
--            "ko": "터미널 두 개, 이름 두 개. 나를 기다리는 세션이 그리드에 자리를 잡습니다."
-+            "ko": "터미널 두 개, 이름 두 개. 나를 기다리는 세션이 그리드에 자리를 잡습니다.",
-+            "ja": "ターミナル 2 つなら名前も 2 つ。あなたを待つセッションはグリッドに場所を取ります。"
-           }
-         }
-       ]
-@@ -99,7 +103,8 @@
-             "de": "Coucou hört weiter zu",
-             "tr": "Coucou dinlemeye devam eder",
-             "th": "Coucou ฟังต่อเนื่อง",
--            "zh-Hant": "Coucou 始終在線"
-+            "zh-Hant": "Coucou 始終在線",
-+            "ja": "Coucou は聞き続けます"
-           },
-           "detail": {
-             "en": "One failed connection no longer cuts Claude Code off, and only Coucou’s own hooks are touched.",
-@@ -115,7 +120,8 @@
-             "de": "Eine fehlgeschlagene Verbindung trennt Claude Code nicht mehr, und nur Coucous eigene Hooks werden geändert.",
-             "tr": "Tek bir başarısız bağlantı artık Claude Code’u koparmıyor; yalnızca Coucou’nun kendi hook’ları değişir.",
-             "th": "การเชื่อมต่อที่ล้มเหลวไม่ตัด Claude Code อีกต่อไป และแก้เฉพาะ hooks ของ Coucou เอง",
--            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。"
-+            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。",
-+            "ja": "1 回接続に失敗しても Claude Code が途切れず、触れるのは Coucou 自身のフックだけです。"
-           }
-         },
-         {
-@@ -134,7 +140,8 @@
-             "de": "25 Fixes aus der Community",
-             "tr": "Topluluktan 25 düzeltme",
-             "th": "25 การแก้ไขจากชุมชน",
--            "zh-Hant": "25 項社群修正"
-+            "zh-Hant": "25 項社群修正",
-+            "ja": "コミュニティによる 25 の修正"
-           },
-           "detail": {
-             "en": "No crash without a mic, the hide delay works, and truer n8n, Stripe and GitHub pills.",
-@@ -150,7 +157,8 @@
-             "de": "Kein Absturz ohne Mikrofon, die Ausblendverzögerung greift, und genauere n8n-, Stripe- und GitHub-Pills.",
-             "tr": "Mikrofon yokken çökme yok, gizleme gecikmesi çalışıyor; n8n, Stripe ve GitHub hapları daha doğru.",
-             "th": "ไม่แครชเมื่อไม่มีไมค์ ระยะเวลาซ่อนใช้งานได้ และพิลล์ n8n, Stripe, GitHub แม่นยำขึ้น",
--            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。"
-+            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。",
-+            "ja": "マイクがなくてもクラッシュせず、非表示の遅延が機能し、n8n・Stripe・GitHub のピルがより正確に。"
-           }
-         }
-       ]
-@@ -175,7 +183,8 @@
-             "tr": "Güncellemede Mochi maviye döner",
-             "th": "Mochi เป็นสีฟ้าเมื่อมีอัปเดต",
-             "zh-Hant": "有更新時 Mochi 變藍",
--            "ko": "업데이트가 있으면 모찌가 파랗게 돼요"
-+            "ko": "업데이트가 있으면 모찌가 파랗게 돼요",
-+            "ja": "アップデートで Mochi が青に"
-           },
-           "detail": {
-             "en": "A new Coucou turns him blue, in the notch and the menu bar. One click installs it.",
-@@ -192,7 +201,8 @@
-             "tr": "Yeni Coucou onu çentikte ve menü çubuğunda maviye çevir
-```
-
-**File**: `NotchBuddy/Sources/App/SettingsView.swift` (modified, +1/-0)
-```diff
-@@ -477,6 +477,7 @@ struct SettingsView: View {
-                     Text("Türkçe").tag("tr")
-                     Text("ไทย").tag("th")
-                     Text("한국어").tag("ko")
-+                    Text("日本語").tag("ja")
-                 }
-                 .pickerStyle(.menu)
-                 .labelsHidden()
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +2/-0)
-```diff
-@@ -164,6 +164,7 @@ targets:
-           - fr
-           - hi
-           - id
-+          - ja
-           - ko
-           - pt-BR
-           - ru
-@@ -248,6 +249,7 @@ targets:
-           - fr
-           - hi
-           - id
-+          - ja
-           - ko
-           - pt-BR
-           - ru
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ Flow dictation and the Notetaker are on the Mac for now; Windows and Linux are n
- - 📱 **Coucou on iPhone** — your sessions, approvals and services in your pocket, with Live Activities, widgets and Siri. See [Coucou on iPhone](#coucou-on-iphone).
- - 🤖 **Coucou for Android** — your agents, approvals with your fingerprint, questions, chat and home-screen widgets on an Android phone, linked to Coucou on Windows or Linux over your Wi-Fi. By [@Rhytam23](https://github.com/Rhytam23). See [Coucou for Android](#coucou-for-android).
- - 📅 **Weekly recap** *(macOS)* — every Monday morning Coucou shows a summary of the past week: time coding, sessions, files, lines changed, commands, permissions, top agent and project, busiest day and longest session. Share it as a 1080 × 1920 image with Mochi — project names optional. All local, no sync.
--- 🌍 **14 languages** — English, 简体中文, 繁體中文, हिन्दी, Español, العربية, Français, বাংলা, Português, Русский, Bahasa Indonesia, Deutsch, Türkçe, ไทย. Pick one in Settings → General → Language; Traditional Chinese and Thai are on the Mac only for now. Community translations welcome.
-+- 🌍 **16 languages** — English, 简体中文, 繁體中文, हिन्दी, Español, العربية, Français, বাংলা, Português, Русский, Bahasa Indonesia, Deutsch, Türkçe, ไทย, 한국어, 日本語. Pick one in Settings → General → Language; Traditional Chinese and Thai are on the Mac only for now. Community translations welcome.
- - 🔒 **Private by design** — no telemetry, no account. Keys live in your macOS Keychain, Windows Credential Manager or Linux Secret Service (GNOME Keyring, KWallet). The app only talks to the services you plug in (and, once you agree, to GitHub's releases API to tell you about new versions).
- 
- ## Coucou on iPhone
-```
-
-**File**: `scripts/test-whats-new.py` (modified, +3/-3)
-```diff
-@@ -3,8 +3,8 @@
- 
- Coucou shows, once after it updated itself, what the new version brings (an icon, a title and a
- line per item, in every language the app speaks). The entries live in
--  NotchBuddy/Resources/whats-new.json   (Mac, the 15 languages of Localizable.xcstrings)
--  windows/src/whats-new/whats-new.json  (Windows and Linux, the 12 languages of strings.json)
-+  NotchBuddy/Resources/whats-new.json   (Mac, the 16 languages of Localizable.xcstrings)
-+  windows/src/whats-new/whats-new.json  (Windows and Linux, the languages of strings.json)
- This test fails when the version the app is about to ship has no entry, or an entry is
- incomplete. release.sh runs it too, so a release can't go out without its "What's new".
- 
-@@ -23,7 +23,7 @@
-     "sparkles", "bolt", "puzzle", "paint", "eye", "keyboard", "heart", "clock", "download", "bug",
+@@ -96,6 +96,20 @@ body.hub-window {
+   padding: 0;
  }
  
--MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant", "ko"]
-+MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant", "ko", "ja"]
- 
- MAX_ITEMS = 4
- MAX_TITLE = 48     # characters, any language: one line in the card
++/* The window's text fields (settings.css, input[type="text"]) weigh more than
++   one class and drew a second box inside this one: the field is the box. */
++.hub-search .hub-search-input,
++.hub-search .hub-search-input:focus {
++  border: 0;
++  background: transparent;
++  box-shadow: none;
++  outline: none;
++  height: auto;
++  padding: 0;
++  margin: 0;
++  border-radius: 0;
++}
++
+ .hub-search-input::placeholder {
+   color: var(--hub-muted);
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #965** (2026-10-29): 0.5.6: chat on your own AI subscription, Korean and Japanese (@Louis-CFM)
-- **PR #962** (2026-10-29): Sessions apart, questions side by side, remote sessions (Mac, iPhone) (@Louis-CFM)
-- **PR #961** (2026-10-29): Chat on your Claude plan, no API key (Mac, Windows, Linux) (@Louis-CFM)
-- **PR #959** (2026-10-29): Reliability batch: 25 community fixes (@Louis-CFM)
-- **PR #950** (2026-10-29): Fix crash on launch when no audio input device is present (@gabbe-swe)
-- **PR #948** (2026-10-29): fix(n8n): seed poller on launch and preserve real execution dates (#861) (@Ohualtex)
+- **PR #1052** (2026-11-03): Flow (Mac): mute while dictating, Copy card, custom shortcut (@Louis-CFM)
+- **PR #1050** (closed): Volume and brightness keys in the notch, with Mochi (GitHub build) Feature/system hud (@CristianMusto)
+- **PR #1048** (2026-11-03): Windows and Linux 0.5.9: the island never disappears, dictation keeps your language, your own key, silence while you speak (@Louis-CFM)
+- **PR #1033** (2026-10-31): Windows and Linux: Claude API models and Flow save errors (#1000, #1003 by @lazarevtill) (@Louis-CFM)
+- **PR #1020** (closed): File shelf: dropped files wait in the notch (@CyberAakash)
+- **PR #1019** (2026-10-31): App Store 2.0 — Mac and iPhone (@Louis-CFM)
 
 ---
 
@@ -2592,53 +2535,55 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch)
+## X. Windows and Linux: the closed island always wakes, Mochi lives in it, and a forg
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `windows/src-tauri/src/island.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f06fc09c`: Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `861d443d`: Windows and Linux: the closed island always wakes, Mochi lives in it, and a forgotten call stops by itself. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src-tauri/src/island.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-## 0.5.4 — October 29, 2026
-Reliability: bugs reported by @romainb82 and others, fixed by the community.
-- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854)
-- **No crash without a microphone** (#950 by @gabbe-swe, #949)
-- **"Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
-- **Nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
-- **WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
+    /// Waits until the gate opens or `timeout` passes; true when it is open.
+    pub(crate) fn wait_active_for(&self, timeout: Duration) -> bool {
+        let guard = self.active.lock().unwrap();
+        if *guard {
+            return true;
+        }
+        let (guard, _) = self.cv.wait_timeout(guard, timeout).unwrap();
+        *guard
+    }
 
-## Windows and Linux 0.5.4 — October 29, 2026
-
-Reliability: 25 community fixes, shared with the Mac where they apply.
-
-- **The hook relay never gives up** — a failed pipe connection no longer stops Coucou from hearing Claude Code (#872 by @seongj-un, #853); the pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
-- **Windows: an approval card goes once the terminal ha
+            // Parked. Folded on Windows, a glance at the cursor four times a
+            // second: on the closed island, it is told to wake up, whether or
+            // not the webview delivers the pointer to such a small window.
+            loop {
+                if gate.wait_active_for(Duration::from_millis(250)) {
+                    break;
+                }
+                if platform::CURSOR_POLL && gate.collapsed.load(Ordering::Relaxed) {
+                    wake_if_hovered(&app, &gate);
+                }
+            }
+                if !gate.is_active() {
+                    break;
+                }
+                    // Under the gate's lock, and only while it is open: a tick
+                    // still running as the island folds must not make the
+                    // closed island click-through after set_collapsed made it
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-## Unreleased
-- **Mac: WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
-
-### Reliability (Mac, Windows, Linux)
-
-Bugs reported by @romainb82 and others, fixed by the community.
-- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854); on Windows, the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
-- **Mac: no crash without a microphone** (#950 by @gabbe-swe, #949)
-- **Mac: "Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
-- **Mac: nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
-- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the relay pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
-- **Windows/Linux: settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
-
+            gate.wait_until_active();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f06fc09c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `861d443d` are properly handled with clean fallback behavior.

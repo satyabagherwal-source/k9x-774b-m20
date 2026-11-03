@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `dd4fca39`  
+> **Source Version**: `2dfd6fcd`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:59:57.102Z  
+> **Timestamp**: 2026-11-03T11:45:00.818Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:59:57.098Z  
+> **Harvest Timestamp**: 2026-11-03T11:38:58.520Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4723 stars
+- **Stars / Engagement**: 4729 stars
 
 ---
 
@@ -1472,11 +1472,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2470** (2026-10-30): **chore(renovate): switch to weekly schedule**
-  *Symptoms*: Committed via https://github.com/asottile/all-repos
+- **Issue #2473** (2026-11-02): **fix(zed): query Zed's release endpoint to avoid GitHub rate limits**
+  *Symptoms*: ## What does this PR do?  Fixes the Zed step failing with `invalid type: map, expected a sequence`.  The step fetched the release list from api.github.com and parsed the body as a `Vec`. It never checked the response status, and unauthenticated GitHub API requests are capped at 60 per hour per IP. Once the cap is hit, GitHub answers 403 with a JSON object, so serde complained about a map where it expected a sequence. The cap resets hourly, so the step failed intermittently and looked like a parsing bug.  The version lookup now uses Zed's own release endpoint on `cloud.zed.dev`, the one `zed.dev/install.sh` already queries before downloading. It needs no token and is not rate limited, and it returns a single version field instead of a list, so the prerelease scan and the tag parsing for the preview channel are gone as well.  The 60/hour cap applies to `api.github.com`, not to the release downloads served behind `github.com`, so nothing is lost by leaving the REST API.  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [x] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps. - [x] If this PR introduces new user-facing messages, they are translated  ### AI involvement  AI generated the majority of the PR. An AI agent investigated the endp
 
-- **Issue #2469** (2026-10-30): **chore(deps): update rust crate sysinfo to 0.40.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sysinfo](https://redirect.github.com/GuillaumeGomez/sysinfo) | dependencies | minor | `0.38.4` → `0.40.0` |  ---  ### Release Notes  <details> <summary>GuillaumeGomez/sysinfo (sysinfo)</summary>  ### [`v0.40.1`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0401)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.40.0...v0.40.1)  - Add back `From<X> for Vec<Y>` trait implementations for `Disks`, `Gpus`, `Groups` and `Users`. - Windows: `System::load_average` now returns `Err(Error::Unsupported)`.  ### [`v0.40.0`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0400)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.39.6...v0.40.0)  - Add new `gpu` feature. - Add new `Process::gpu_usage` and `Process::gpu_memory` API. - Add new `GPUs` API. - Add new `NetworkData::transmit_link_speed` and `NetworkData::receive_link_speed` API. - Add new `Disk::id` API. - Remove `IS_SUPPORTED_SYSTEM` constant. - Remove `set_open_files_limit` API. - Remove `list[_mut]` methods for `Users`, `Components` and `Disks`. - Remove `Networks::list` method. - Remove `From` trait implementations for `Users`, `Groups` and `Disks`. - Fix `Networks` refresh. - `Networks` interface names have been switched from `String` to `OsString`. - Unix: Fix not thread-safe code in `Groups`. - Unix: Fix potential 
+- **Issue #2472** (2026-11-02): **chore(deps): lock file maintenance**
+  *Symptoms*: This PR contains the following updates:  | Update | Change | |---|---| | lockFileMaintenance | All locks refreshed |  🔧 This Pull Request updates lock files to use the latest dependency versions.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - Between 12:00 AM and 03:59 AM, only on Monday (`* 0-3 * * 1`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/topgrade-rs/topgrade). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119--> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1493,28 +1493,212 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd4fca39` (2026-10-30)
-**Commit Message**: chore(renovate): switch to weekly schedule (#2470)
+### Incident Patch 1: `8497c4e3` (2026-11-02)
+**Commit Message**: fix(zed): query Zed's release endpoint to avoid GitHub rate limits (#2473)
 
-**File**: `.github/renovate.json5` (modified, +1/-0)
+**File**: `locales/app.yml` (modified, +0/-9)
 ```diff
-@@ -5,6 +5,7 @@
-         ":semanticCommits",
-         ":semanticCommitTypeAll(chore)",
-         ":disableRateLimiting",
-+        "schedule:weekly",
-     ],
-     maxMajorIncrement: 0,
-     customManagers: [
+@@ -1728,12 +1728,3 @@ _version: 2
+   zh_TW: "不支援更新 Zed %{channel} 通道"
+   de: "Updates für den Zed-Kanal %{channel} werden nicht unterstützt"
+   ko: "Zed %{channel} 채널은 업데이트를 지원하지 않습니다"
+-"No Zed preview release found on GitHub":
+-  en: "No Zed preview release found on GitHub"
+-  lt: "GitHub'e nerasta Zed preview leidimo"
+-  es: "No se encontró ninguna versión preview de Zed en GitHub"
+-  fr: "Aucune version preview de Zed trouvée sur GitHub"
+-  zh_CN: "在 GitHub 上找不到 Zed preview 版本"
+-  zh_TW: "在 GitHub 上找不到 Zed preview 版本"
+-  de: "Keine Zed-Preview-Version auf GitHub gefunden"
+-  ko: "GitHub에서 Zed 프리뷰 릴리스를 찾을 수 없습니다"
+```
+
+**File**: `src/steps/os/linux.rs` (modified, +16/-26)
+```diff
+@@ -3,7 +3,7 @@ use std::io::Write;
+ use std::path::{Path, PathBuf};
+ use std::process::Stdio;
+ 
+-use color_eyre::eyre::{OptionExt, Result, WrapErr, eyre};
++use color_eyre::eyre::{Result, WrapErr, eyre};
+ use ini::Ini;
+ use rust_i18n::t;
+ use semver::Version;
+@@ -1279,34 +1279,24 @@ pub fn run_zed(ctx: &ExecutionContext) -> Result<()> {
+ 
+     #[derive(Deserialize)]
+     struct Response {
+-        tag_name: String,
+-        prerelease: bool,
++        version: String,
+     }
+ 
+-    let release = if channel == "stable" {
+-        client
+-            .get("https://api.github.com/repos/zed-industries/zed/releases/latest")
+-            .send()
+-            .wrap_err("Failed to get latest version")?
+-            .json::<Response>()?
+-    } else {
+-        // Preview releases are GitHub prereleases tagged `vx.y.z-pre`; the list is sorted newest first
+-        client
+-            .get("https://api.github.com/repos/zed-industries/zed/releases")
+-            .send()
+-            .wrap_err("Failed to fetch releases")?
+-            .json::<Vec<Response>>()?
+-            .into_iter()
+-            .find(|release| release.prerelease && release.tag_name.ends_with("-pre"))
+-            .ok_or_else(|| eyre!(t!("No Zed preview release found on GitHub")))?
+-    };
++    let arch = std::env::consts::ARCH;
++    if !["x86_64", "aarch64"].contains(&arch) {
++        return Err(SkipStep(format!("No Zed build for the {arch} architecture")).into());
++    }
++
++    let release = client
++        .get(format!(
++            "https://cloud.zed.dev/releases/{channel}/latest/asset?asset=zed&os=linux&arch={arch}"
++        ))
++        .send()
++        .and_then(|response| response.error_for_status())
++        .wrap_err("Failed to fetch the latest Zed release")?
++        .json::<Response>()?;
+ 
+-    let tag = release
+-        .tag_name
+-        .strip_prefix('v')
+-        .ok_or_eyre("Tag on GitHub doesn't start with 'v'")?;
+-    // The installed preview reports `x.y.z` without the `-pre` suffix
+-    let latest = Version::parse(tag.strip_suffix("-pre").unwrap_or(tag))?;
++    let latest = Version::parse(&release.version)?;
+ 
+     if version < latest {
+         let mut response = client
+```
+
+---
+
+### Incident Patch 2: `7a939362` (2026-11-02)
+**Commit Message**: fix: exclude run0 from Toolbx privilege escalation (#2453)
+
+Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+
+**File**: `src/main.rs` (modified, +41/-5)
+```diff
+@@ -82,6 +82,43 @@ impl Drop for TempCwd {
+     }
+ }
+ 
++/// Whether `TOPGRADE_PREFIX` is the Toolbx child Topgrade.
++///
++/// Toolbx shares the host home and the host system bus, so a configured `run0`
++/// would execute on the host (exit status 203 inside the container).
++/// `src/steps/toolbx.rs` passes `TOPGRADE_PREFIX=Toolbx <name>` to `env`.
++/// The name must be nonempty: SSH hosts, Distrobox, and any other prefix stay
++/// unrestricted.
++///
++/// See: https://github.com/topgrade-rs/topgrade/issues/2373
++fn is_toolbx_child(prefix: Option<&str>) -> bool {
++    matches!(prefix.and_then(|prefix| prefix.strip_prefix("Toolbx ")), Some(name) if !name.is_empty())
++}
++
++/// Choose the privilege-escalation command.
++///
++/// Explicit kinds other than `run0` are kept. Inside Toolbx, configured `run0`
++/// is treated as unset, so detection runs with `run0` removed. Elevated
++/// execution with no kind, including that rewritten `run0`, stays `Null`.
++fn select_sudo(configured: Option<SudoKind>, elevated: bool, prefix: Option<&str>) -> Result<Sudo, SudoCreateError> {
++    let in_toolbx = is_toolbx_child(prefix);
++    if in_toolbx {
++        debug!("Toolbx child: excluding run0 from privilege escalation");
++    }
++
++    let configured = match configured {
++        Some(SudoKind::Run0) if in_toolbx => None,
++        other => other,
++    };
++    match configured {
++        Some(kind) => Sudo::new(kind),
++        None if elevated => Sudo::new(SudoKind::Null),
++        // Toolbx exposes the host system bus, so `run0` would act on the host.
++        None if in_toolbx => Sudo::detect(&[SudoKind::Run0]),
++        None => Sudo::detect(&[]),
++    }
++}
++
+ fn run() -> Result<()> {
+     install_color_eyre()?;
+     ctrlc::set_handler();
+@@ -171,11 +208,10 @@ fn run() -> Result<()> {
+         }
+     }
+ 
+-    let sudo = match config.sudo_command() {
+-        Some(kind) => Sudo::new(kind),
+-        None if elevated => Sudo::new(SudoKind::Null),
+-        None => Sudo::detect(),
+-    };
++    // The Toolbx child inherits the host config. Its prefix is what tells us
++    // to keep `run0` off the host bus; other prefixes stay on the normal path.
++    let prefix = env::var("TOPGRADE_PREFIX").ok();
++    let sudo = select_sudo(config.sudo_command(), elevated, prefix.as_deref());
+     debug!("Sudo: {:?}", sudo);
+ 
+     let (sudo, sudo_err) = match sudo {
+```
+
+**File**: `src/steps/toolbx.rs` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ pub fn run_toolbx(ctx: &ExecutionContext) -> Result<()> {
+     let topgrade_path = topgrade_path.to_str().ok_or_eyre("Non-UTF-8 path")?;
+ 
+     for tb in toolboxes.iter() {
+-        let topgrade_prefix = format!("TOPGRADE_PREFIX='Toolbx {tb}'");
++        let topgrade_prefix = format!("TOPGRADE_PREFIX=Toolbx {tb}");
+         let mut args = vec![
+             "run",
+             "-c",
+```
+
+**File**: `src/sudo.rs` (modified, +8/-2)
+```diff
+@@ -148,10 +148,16 @@ const DETECT_ORDER: [SudoKind; 2] = [SudoKind::Gsudo, SudoKind::WinSudo];
+ 
+ impl Sudo {
+     /// Get the `sudo` binary for this platform.
+-    pub fn detect() -> Result<Self, SudoCreateError> {
++    ///
++    /// Kinds in `disallowed_kinds` are skipped. Later candidates keep their
++    /// order, and the existing not-found / Windows errors are unchanged.
++    pub fn detect(disallowed_kinds: &[SudoKind]) -> Result<Self, SudoCreateError> {
+         use SudoCreateError::*;
+ 
+         for kind in DETECT_ORDER {
++            if disallowed_kinds.contains(&kind) {
++                continue;
++            }
+             match Self::new(kind) {
+                 Ok(sudo) => return Ok(sudo),
+                 Err(CannotFindBinary) => continue,
+@@ -566,7 +572,7 @@ impl Sudo {
+ // We always define both though, so that we don't have to put
+ // #[cfg(...)] everywhere.
+ 
+-#[derive(Clone, Copy, Debug, Display, Deserialize)]
++#[derive(Clone, Copy, Debug, PartialEq, Eq, Display, Deserialize)]
+ #[serde(rename_all = "lowercase")]
+ #[strum(serialize_all = "lowercase")]
+ pub enum SudoKind {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2473** (2026-11-02): fix(zed): query Zed's release endpoint to avoid GitHub rate limits (@d-enk)
+- **PR #2472** (2026-11-02): chore(deps): lock file maintenance (@renovate[bot])
 - **PR #2470** (2026-10-30): chore(renovate): switch to weekly schedule (@GideonBear)
 - **PR #2469** (closed): chore(deps): update rust crate sysinfo to 0.40.0 (@renovate[bot])
 - **PR #2468** (2026-10-28): fix(rubygems): skip --system update when gem is managed by Homebrew or macOS (@thedavidweng)
 - **PR #2466** (closed): fix(skills): always pass --yes to npx runner (@thedavidweng)
-- **PR #2464** (2026-10-28): fix(ollama): list models from the server, skip unknown pulls (@uwuclxdy)
-- **PR #2463** (2026-10-28): feat(am): merge appman with am, and run am/appman reinstall (@GideonBear)
 
 ---
 
@@ -1528,34 +1712,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. renovate): switch to weekly schedule (#2470)
-
-**RULE**:
-When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `dd4fca39`: renovate): switch to weekly schedule (#2470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        "schedule:weekly",
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd4fca39` are properly handled with clean fallback behavior.

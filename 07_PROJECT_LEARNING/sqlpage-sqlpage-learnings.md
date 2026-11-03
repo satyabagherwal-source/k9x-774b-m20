@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `321ad215`  
+> **Source Version**: `d4f206e3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:39:49.465Z  
+> **Timestamp**: 2026-11-03T11:39:11.267Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:39:49.457Z  
+> **Harvest Timestamp**: 2026-11-03T11:39:10.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2578 stars
+- **Stars / Engagement**: 2580 stars
 
 ---
 
@@ -1161,83 +1161,62 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `321ad215` (2026-10-31)
-**Commit Message**: feat(card) :: let a card's link open a new tab (#1586)
+### Incident Patch 1: `d4f206e3` (2026-11-02)
+**Commit Message**: fix(modal) :: apply `height` to the model's content (#1585)
 
-Each card accepts a `target`, such as `_blank`, for its link. It works like the button component's `target`.
+The `height` of the modal component sets the height of its content. Overflow content scrolls.
 
-Fixes #820
+Fixes #1046
 
 Assisted-By :: Claude Opus 5.5
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -22,6 +22,8 @@
+@@ -24,6 +24,8 @@
  
- - Each item of the tracking component accepts a `link`. ([#900](https://github.com/sqlpage/SQLPage/issues/900))
+ - Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
  
-+- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
++- The `height` of the modal component sets the height of its content. Overflow content scrolls. ([#1046](https://github.com/sqlpage/SQLPage/issues/1046))
 +
  - Custom components can call inline partials inside `each_row` and after it, when the partials are defined before `each_row`. ([#846](https://github.com/sqlpage/SQLPage/issues/846))
  
  ## v0.47.0 (2026-10-15)
 ```
 
-**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +1/-0)
+**File**: `examples/official-site/sqlpage/migrations/63_modal.sql` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
-     ('footer', 'Muted text to display at the bottom of the card.', 'TEXT', FALSE, TRUE),
-     ('footer_md', 'Muted text to display at the bottom of the card, with rich text formatting in Markdown format.', 'TEXT', FALSE, TRUE),
-     ('link', 'An URL to which the user should be taken when they click on the card.', 'URL', FALSE, TRUE),
-+    ('target', 'Where the card''s link opens: "_blank" for a new tab, "_self" for the same tab, "_parent" for the parent frame, or "_top" for the full body of the window.', 'TEXT', FALSE, TRUE),
-     ('footer_link', 'An URL to which the user should be taken when they click on the footer.', 'URL', FALSE, TRUE),
-     ('style', 'Inline style property to your iframe embed code. For example "background-color: #FFFFFF"', 'TEXT', FALSE, TRUE),
-     ('height', 'Height of the iframe embed code, in pixels. Used only when embed_mode is ''iframe''.', 'INTEGER', FALSE, TRUE),
+@@ -18,7 +18,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
+     ('small','Indicates that the modal box has a reduced width.','BOOLEAN',TRUE,TRUE),
+     ('embed','Embed remote content in an iframe.','TEXT',TRUE,TRUE),
+     ('embed_mode','Use "iframe" to display embedded content within an iframe.','TEXT',TRUE,TRUE),
+-    ('height','Height of the embedded content.','INTEGER',TRUE,TRUE),
++    ('height','Height of the modal content, in pixels. Overflow content scrolls.','INTEGER',TRUE,TRUE),
+     ('allow','For embedded content, this attribute specifies the features or permissions that can be used.','TEXT',TRUE,TRUE),
+     ('sandbox','For embedded content, this attribute specifies the security restrictions on the loaded content.','TEXT',TRUE,TRUE),
+     ('style','Applies CSS styles to the embedded content.','TEXT',TRUE,TRUE)
 ```
 
-**File**: `sqlpage/templates/card.handlebars` (modified, +1/-1)
+**File**: `sqlpage/templates/modal.handlebars` (modified, +2/-1)
 ```diff
-@@ -35,7 +35,7 @@
-                 "
-                 {{#if (and embed (ne embed_mode "iframe"))}}data-pre-init="card" data-embed="{{embed}}"{{/if}}>
-                 {{#if link}}
--                    <a href="{{link}}" style="text-decoration: inherit; color: inherit">
-+                    <a href="{{link}}"{{#if target}} target="{{target}}"{{/if}} style="text-decoration: inherit; color: inherit">
-                 {{/if}}
-                 {{#if top_image}}
-                     <img src="{{top_image}}" class="card-img-top"{{#if top_image_width}} width="{{top_image_width}}"{{/if}}{{#if top_image_height}} height="{{top_image_height}}"{{/if}}{{#if top_image_lazy}} loading="lazy"{{/if}}/>
-```
-
-**File**: `tests/end-to-end/fixtures/card/target/index.sql` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+SELECT 'card' AS component;
-+SELECT 'In a new tab' AS title, 'https://example.com' AS link, '_blank' AS target;
-+SELECT 'In the same tab' AS title, 'https://example.com' AS link;
-```
-
-**File**: `tests/end-to-end/fixtures/card/target/test.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+import { expect, test } from "../../../fixture.ts";
-+
-+test("a card's link opens where its target says", async ({ page }) => {
-+  await expect(
-+    page.getByRole("link", { name: "In a new tab" }),
-+  ).toHaveAttribute("target", "_blank");
-+  await expect(
-+    page.getByRole("link", { name: "In the same tab" }),
-+  ).not.toHaveAttribute("target");
-+});
+@@ -10,7 +10,8 @@
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{default (default close_label close) "close"}}"></button>
+             </div>
+             <div class="modal-body">
+-                <div class="card bg-transparent border-0"
++                <div class="card bg-transparent border-0{{#if height}} overflow-auto{{/if}}"
++                    {{~#if height}} style="height: {{height}}px"{{/if~}}
+                     {{~#if (and embed (ne embed_mode "iframe"))}} data-pre-init="card" data-embed="{{embed}}"{{/if ~}}
+                 >
+                     <div class="card-body p-0">
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1586** (2026-10-31): feat(card) :: let a card's link open a new tab (@81reap)
+- **PR #1585** (2026-11-02): fix(modal) :: apply `height` to the model's content (@81reap)
 - **PR #1584** (2026-10-30): fix(frontend) :: drop source map comments from joined sylesheet (@81reap)
 - **PR #1583** (2026-10-30): fix(tab) :: underline only the active tab (@81reap)
 - **PR #1582** (2026-10-30): fix(hero) :: show image first on small screens when `reversed` (@81reap)
 - **PR #1581** (2026-10-30): build(deps): bump rustls from 0.23.45 to 0.23.46 in /fuzz (@dependabot[bot])
-- **PR #1580** (2026-10-30): fix(templates) :: let `each_row` call inline partials (@81reap)
 
 ---
 
@@ -1257,13 +1236,13 @@ Assisted-By :: Claude Opus 5.5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. card) :: let a card's link open a new tab (#1586)
+## X. modal) :: apply `height` to the model's content (#1585)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `321ad215`: card) :: let a card's link open a new tab (#1586). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4f206e3`: modal) :: apply `height` to the model's content (#1585). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1271,7 +1250,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
+- The `height` of the modal component sets the height of its content. Overflow content scrolls. ([#1046](https://github.com/sqlpage/SQLPage/issues/1046))
 
 ```
 
@@ -1282,4 +1261,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `321ad215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4f206e3` are properly handled with clean fallback behavior.

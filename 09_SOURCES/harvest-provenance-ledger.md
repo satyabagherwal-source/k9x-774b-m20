@@ -6901,3 +6901,7 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `8c85d41a` | Multi-dimensional audit evidence | 2026-11-03T11:22:13.508Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `c6aab998` | Multi-dimensional audit evidence | 2026-11-03T11:22:17.204Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c28cd7c3` | Multi-dimensional audit evidence | 2026-11-03T11:22:20.418Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `1549ae4f` | Multi-dimensional audit evidence | 2026-11-03T11:39:07.430Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `d4f206e3` | Multi-dimensional audit evidence | 2026-11-03T11:39:12.004Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `e9fc337f` | Multi-dimensional audit evidence | 2026-11-03T11:44:06.780Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `2dfd6fcd` | Multi-dimensional audit evidence | 2026-11-03T11:45:01.142Z |
