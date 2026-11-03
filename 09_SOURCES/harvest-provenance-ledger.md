@@ -7074,3 +7074,4 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `fb88a1b1` | Multi-dimensional audit evidence | 2026-11-03T23:46:09.023Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `e4ec6073` | Multi-dimensional audit evidence | 2026-11-03T23:46:10.207Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `6bb987c8` | Multi-dimensional audit evidence | 2026-11-03T23:46:11.769Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `61e6a768` | Multi-dimensional audit evidence | 2026-11-03T23:59:32.394Z |

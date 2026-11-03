@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "1bb45751",
+    "sourceVersion": "61e6a768",
     "license": "Apache-2.0",
-    "contentHash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
-    "lastHarvestedAt": "2026-10-30T17:06:08.867Z",
+    "contentHash": "5cc5b07d3b128638502437d285ede00ce1e959ef51bc3639d1068b168305080f",
+    "lastHarvestedAt": "2026-11-03T23:59:32.394Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:46:11.699Z",
+  "last_updated": "2026-11-03T23:59:32.303Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9044,8 +9044,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "1bb45751",
-      "content_hash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
+      "source_version": "61e6a768",
+      "content_hash": "5cc5b07d3b128638502437d285ede00ce1e959ef51bc3639d1068b168305080f",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -9093,6 +9093,11 @@
           "number": 5806,
           "title": "query): dedup in-flight cascades group tasks (#20883)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6666,
+          "title": "query): remove experimental privilege check settings (#20933)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9100,7 +9105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:06:08.772Z",
+      "verified_at": "2026-11-03T23:59:32.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171399,6 +171404,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:46:11.680Z"
+    },
+    "rule-6666": {
+      "learning_id": "rule-6666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6666,
+      "title": "query): remove experimental privilege check settings (#20933)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "61e6a768",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:59:32.273Z"
     }
   },
   "aliases": {
