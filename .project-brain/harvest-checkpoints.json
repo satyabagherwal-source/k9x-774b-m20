@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T11:59:20.307Z",
+  "last_updated": "2026-11-03T12:06:31.771Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
-      "verified_at": "2026-10-31T17:03:58.143Z",
+      "content_hash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
+      "verified_at": "2026-11-03T12:06:31.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:03:58.143Z"
+      "last_updated": "2026-11-03T12:06:31.770Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -17331,14 +17331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "content_hash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
-      "verified_at": "2026-10-30T03:18:52.156Z",
+      "content_hash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
+      "verified_at": "2026-11-03T12:06:24.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:18:52.156Z"
+      "last_updated": "2026-11-03T12:06:24.787Z"
     },
     "yuezhiai/jonex": {
       "repository": "yuezhiai/jonex",

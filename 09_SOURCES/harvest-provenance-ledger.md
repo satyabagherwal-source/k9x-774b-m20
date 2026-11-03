@@ -6912,3 +6912,5 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `195e0b01` | Multi-dimensional audit evidence | 2026-11-03T11:59:11.780Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `4edefad7` | Multi-dimensional audit evidence | 2026-11-03T11:59:19.333Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4aa6ac3d` | Multi-dimensional audit evidence | 2026-11-03T11:59:20.294Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-03T12:06:24.778Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `16c646c3` | Multi-dimensional audit evidence | 2026-11-03T12:06:31.762Z |

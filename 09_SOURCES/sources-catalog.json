@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "e38d2e32",
+    "sourceVersion": "16c646c3",
     "license": "Apache-2.0",
-    "contentHash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
-    "lastHarvestedAt": "2026-10-31T17:03:58.135Z",
+    "contentHash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
+    "lastHarvestedAt": "2026-11-03T12:06:31.762Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
-    "lastHarvestedAt": "2026-10-30T03:18:52.149Z",
+    "contentHash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
+    "lastHarvestedAt": "2026-11-03T12:06:24.778Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

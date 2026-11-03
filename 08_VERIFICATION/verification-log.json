@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-HFTN",
-    "timestamp": "2026-10-31T01:39:57.659Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-HJTL",
-    "timestamp": "2026-10-31T01:40:02.841Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-HKAV",
     "timestamp": "2026-10-31T01:40:03.463Z",
     "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -7490,6 +7460,36 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6M86",
+    "timestamp": "2026-11-03T12:06:24.774Z",
+    "repository": "LiconStudio/Minimax-H3-VBVR",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6RM6",
+    "timestamp": "2026-11-03T12:06:31.758Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

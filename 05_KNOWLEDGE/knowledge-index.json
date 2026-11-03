@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:59:20.175Z",
+  "last_updated": "2026-11-03T12:06:31.653Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2368,8 +2368,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "e38d2e32",
-      "content_hash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
+      "source_version": "16c646c3",
+      "content_hash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2444,7 +2444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:03:58.046Z",
+      "verified_at": "2026-11-03T12:06:31.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154348,7 +154348,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
       "source_version": "hf-liconstudio-minimax-h3-vbvr",
-      "content_hash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
+      "content_hash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
       "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "promoted_rules": [
@@ -154361,6 +154361,16 @@
           "number": 5573,
           "title": "Spatial-Temporal Consistency Validation via Comparative Video Diffing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6518,
+          "title": "LoRA Weight Injection & Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6519,
+          "title": "Video Generation Physical Consistency Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -154368,7 +154378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:18:51.962Z",
+      "verified_at": "2026-11-03T12:06:24.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168455,6 +168465,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:59:19.210Z"
+    },
+    "rule-6518": {
+      "learning_id": "rule-6518",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6518,
+      "title": "LoRA Weight Injection & Compatibility Invariant",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:06:24.671Z"
+    },
+    "rule-6519": {
+      "learning_id": "rule-6519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6519,
+      "title": "Video Generation Physical Consistency Guard",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:06:24.672Z"
     }
   },
   "aliases": {
