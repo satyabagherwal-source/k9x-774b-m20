@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T11:07:55.712Z",
+  "last_updated": "2026-11-03T11:15:10.469Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
-      "verified_at": "2026-11-02T17:31:49.913Z",
+      "content_hash": "c9c14454d7850b554ef30ad1b9901a46e5dfe80241abab5d0469537bcc35cd39",
+      "verified_at": "2026-11-03T11:15:07.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:31:49.913Z"
+      "last_updated": "2026-11-03T11:15:07.152Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
-      "verified_at": "2026-11-03T10:45:55.788Z",
+      "content_hash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
+      "verified_at": "2026-11-03T11:15:10.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:45:55.788Z"
+      "last_updated": "2026-11-03T11:15:10.468Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",

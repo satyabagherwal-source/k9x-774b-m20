@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T11:07:58.268Z",
-    "lastVerified": "2026-11-03T11:07:58.268Z",
+    "lastChecked": "2026-11-03T11:15:13.010Z",
+    "lastVerified": "2026-11-03T11:15:13.010Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -430,13 +430,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T10:45:55.256Z",
-    "lastVerified": "2026-11-03T10:45:55.256Z",
+    "lastChecked": "2026-11-03T11:15:09.200Z",
+    "lastVerified": "2026-11-03T11:15:09.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
-    "promotedRulesCount": 0,
+    "contentHash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -2332,12 +2332,12 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T15:36:46.183Z",
-    "lastVerified": "2026-11-02T15:36:46.183Z",
+    "lastChecked": "2026-11-03T11:15:04.660Z",
+    "lastVerified": "2026-11-03T11:15:04.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c129acbb3b6fdcb261491ed27f696195643e467b7686b32cdc0415e43d5097f0",
+    "contentHash": "c9c14454d7850b554ef30ad1b9901a46e5dfe80241abab5d0469537bcc35cd39",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5183,9 +5183,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-10-31T16:20:28.086Z",
+    "lastChecked": "2026-11-03T11:15:02.376Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-10-31T16:20:28.086Z"
+    "lastVerified": "2026-11-03T11:15:02.376Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -6761,9 +6761,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-10-31T12:46:41.840Z",
+    "lastChecked": "2026-11-03T11:14:49.878Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-10-31T12:46:41.840Z"
+    "lastVerified": "2026-11-03T11:14:49.878Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -6792,9 +6792,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-10-31T17:14:13.133Z",
+    "lastChecked": "2026-11-03T11:14:57.366Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-10-31T17:14:13.133Z"
+    "lastVerified": "2026-11-03T11:14:57.366Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -9510,9 +9510,9 @@
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
     "officialUrl": "https://github.com/searchsolved/search-solved-public-seo",
-    "lastChecked": "2026-10-30T00:18:49.579Z",
+    "lastChecked": "2026-11-03T11:14:52.351Z",
     "revisionIdentifier": "f1108d97e7",
-    "lastVerified": "2026-10-30T00:18:49.579Z"
+    "lastVerified": "2026-11-03T11:14:52.351Z"
   },
   "exyte-popupview": {
     "name": "PopupView",
@@ -10466,9 +10466,9 @@
   "pointfreeco-isowords": {
     "name": "isowords",
     "officialUrl": "https://github.com/pointfreeco/isowords",
-    "lastChecked": "2026-10-30T12:58:25.123Z",
+    "lastChecked": "2026-11-03T11:14:54.835Z",
     "revisionIdentifier": "c727d3a7",
-    "lastVerified": "2026-10-30T12:58:25.123Z"
+    "lastVerified": "2026-11-03T11:14:54.835Z"
   },
   "inikulin-parse5": {
     "name": "inikulin/parse5",

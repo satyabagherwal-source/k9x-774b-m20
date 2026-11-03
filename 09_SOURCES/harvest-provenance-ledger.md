@@ -6894,3 +6894,5 @@ Every entry in this ledger must capture:
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `83109877` | Multi-dimensional audit evidence | 2026-11-03T10:59:53.782Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e38898bf` | Multi-dimensional audit evidence | 2026-11-03T10:59:55.291Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `f0a4fa6d` | Multi-dimensional audit evidence | 2026-11-03T11:07:55.702Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `9ee43d78` | Multi-dimensional audit evidence | 2026-11-03T11:15:07.143Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `12382609` | Multi-dimensional audit evidence | 2026-11-03T11:15:10.460Z |

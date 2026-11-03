@@ -6885,3 +6885,5 @@
 | `CYCLE-20261103-T2R7` | `2026-11-03T10:59:53.779Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6502` | Yes (`64c42121...`) |
 | `CYCLE-20261103-T3X3` | `2026-11-03T10:59:55.287Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`c83fe9c6...`) |
 | `CYCLE-20261103-3ELU` | `2026-11-03T11:07:55.698Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6503` | Yes (`c0d2cc6a...`) |
+| `CYCLE-20261103-CNIB` | `2026-11-03T11:15:07.139Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6504` | Yes (`c9c14454...`) |
+| `CYCLE-20261103-CQ2G` | `2026-11-03T11:15:10.456Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6505` | Yes (`13c255f6...`) |

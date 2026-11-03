@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:07:55.615Z",
+  "last_updated": "2026-11-03T11:15:10.375Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43378,8 +43378,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "3703f13a",
-      "content_hash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
+      "source_version": "12382609",
+      "content_hash": "13c255f6c8132ef8b2378b792d260a9c7a6d9f30c79e95c309020f874ee83a44",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43582,6 +43582,11 @@
           "number": 6478,
           "title": "NUC 57 Thin Arrows and Python-Style Lambdas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6505,
+          "title": "Require every agent to pull before starting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43589,7 +43594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:45:55.683Z",
+      "verified_at": "2026-11-03T11:15:10.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69935,13 +69940,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "395f7978",
-      "content_hash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "9ee43d78",
+      "content_hash": "c9c14454d7850b554ef30ad1b9901a46e5dfe80241abab5d0469537bcc35cd39",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -70032,6 +70037,11 @@
           "number": 6439,
           "title": "Merge pull request #4613 from aleo-labs-protocol/dependabot/cargo/staging/sha2-0",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6504,
+          "title": "Merge pull request #4614 from aleo-labs-protocol/add-stress-test-workflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70039,7 +70049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:31:49.795Z",
+      "verified_at": "2026-11-03T11:15:07.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168184,6 +168194,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:07:55.594Z"
+    },
+    "rule-6504": {
+      "learning_id": "rule-6504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6504,
+      "title": "Merge pull request #4614 from aleo-labs-protocol/add-stress-test-workflow",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "9ee43d78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:15:07.017Z"
+    },
+    "rule-6505": {
+      "learning_id": "rule-6505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6505,
+      "title": "Require every agent to pull before starting",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "12382609",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:15:10.347Z"
     }
   },
   "aliases": {
