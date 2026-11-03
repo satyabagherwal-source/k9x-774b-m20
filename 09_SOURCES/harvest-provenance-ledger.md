@@ -7000,3 +7000,7 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `63b8c3e2` | Multi-dimensional audit evidence | 2026-11-03T19:52:17.487Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `ca8a1dad` | Multi-dimensional audit evidence | 2026-11-03T19:52:24.914Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `fccb3537` | Multi-dimensional audit evidence | 2026-11-03T19:52:35.672Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `606096f6` | Multi-dimensional audit evidence | 2026-11-03T20:00:47.066Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `583dce38` | Multi-dimensional audit evidence | 2026-11-03T20:00:55.663Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ecab5ce6` | Multi-dimensional audit evidence | 2026-11-03T20:01:00.165Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `84e92a33` | Multi-dimensional audit evidence | 2026-11-03T20:01:01.979Z |

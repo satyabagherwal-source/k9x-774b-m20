@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T19:52:38.237Z",
-    "lastVerified": "2026-11-03T19:52:38.237Z",
+    "lastChecked": "2026-11-03T20:01:04.528Z",
+    "lastVerified": "2026-11-03T20:01:04.528Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -157,22 +157,21 @@
     "revisionIdentifier": "eca2269a"
   },
   "sxyazi-yazi": {
-    "name": "yazi",
+    "name": "sxyazi/yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:01:29.056Z",
-    "lastVerified": "2026-10-31T18:01:29.056Z",
+    "lastChecked": "2026-11-03T20:00:45.178Z",
+    "lastVerified": "2026-11-03T20:00:45.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
+    "contentHash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ec4ce8f2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -335,11 +334,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
-    "name": "llm-app",
+    "name": "pathwaycom/serviette",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-10-31T22:12:13.812Z",
-    "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-31T22:12:13.812Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-03T20:01:00.464Z",
+    "lastVerified": "2026-11-03T20:01:00.464Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pathwaycom-serviette",
+    "contentHash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -426,8 +435,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T19:15:10.737Z",
-    "lastVerified": "2026-11-03T19:15:10.737Z",
+    "lastChecked": "2026-11-03T20:00:57.089Z",
+    "lastVerified": "2026-11-03T20:00:57.089Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1126,12 +1135,12 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T15:54:42.161Z",
-    "lastVerified": "2026-11-03T15:54:42.161Z",
+    "lastChecked": "2026-11-03T20:00:58.650Z",
+    "lastVerified": "2026-11-03T20:00:58.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "1bf48eeabd100360fec3d06049811efe0dc0e000d9d1c8bc65d156d11baa3166",
+    "contentHash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2855,22 +2864,21 @@
     "lastVerified": "2026-10-31T03:45:22.348Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway",
+    "name": "kgateway-dev/kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T23:02:04.473Z",
-    "lastVerified": "2026-10-31T23:02:04.473Z",
+    "lastChecked": "2026-11-03T20:00:54.118Z",
+    "lastVerified": "2026-11-03T20:00:54.118Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
+    "contentHash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "753b3276"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -10288,9 +10296,9 @@
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
-    "lastChecked": "2026-10-30T08:53:24.504Z",
+    "lastChecked": "2026-11-03T20:00:43.843Z",
     "revisionIdentifier": "0eef52b5",
-    "lastVerified": "2026-10-30T08:53:24.504Z"
+    "lastVerified": "2026-11-03T20:00:43.843Z"
   },
   "lessica-trollfools": {
     "name": "TrollFools",
@@ -11457,9 +11465,9 @@
   "apple-sample-food-truck": {
     "name": "sample-food-truck",
     "officialUrl": "https://github.com/apple/sample-food-truck",
-    "lastChecked": "2026-10-30T20:05:04.909Z",
+    "lastChecked": "2026-11-03T20:00:46.529Z",
     "revisionIdentifier": "3954a769",
-    "lastVerified": "2026-10-30T20:05:04.909Z"
+    "lastVerified": "2026-11-03T20:00:46.529Z"
   },
   "cypress-io-cypress": {
     "name": "cypress-io/cypress",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T19:52:35.584Z",
+  "last_updated": "2026-11-03T20:01:01.918Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35181,8 +35181,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "753b3276",
-      "content_hash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
+      "source_version": "583dce38",
+      "content_hash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -35235,6 +35235,11 @@
           "number": 5790,
           "title": "CVE fixes (#14929)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6599,
+          "title": "ds): release published routing configs no client holds (#14962)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35242,7 +35247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:49:19.635Z",
+      "verified_at": "2026-11-03T20:00:55.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54468,8 +54473,8 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "ec4ce8f2",
-      "content_hash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
+      "source_version": "606096f6",
+      "content_hash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
@@ -54502,6 +54507,11 @@
           "number": 5457,
           "title": "random read/write for virtual file systems (#4451)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6598,
+          "title": "invalidate affected directories after file operations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54509,7 +54519,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:42:58.452Z",
+      "verified_at": "2026-11-03T20:00:46.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68727,13 +68737,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "pathwaycom/serviette",
       "repository": "pathwaycom/serviette",
-      "slug": "pathwaycom-serviette",
+      "slug": "pathwaycom-llm-app",
       "platform": "github",
-      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_url": "https://github.com/pathwaycom/llm-app",
       "source_version": "84e92a33",
-      "content_hash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
-      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "content_hash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
       "promoted_rules": [
         {
           "number": 926,
@@ -68748,7 +68758,7 @@
         {
           "number": 6588,
           "title": "use fused order for MMR relevance after query decomposition",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68756,7 +68766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:15:16.641Z",
+      "verified_at": "2026-11-03T20:01:01.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70353,8 +70363,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "9ee43d78",
-      "content_hash": "1bf48eeabd100360fec3d06049811efe0dc0e000d9d1c8bc65d156d11baa3166",
+      "source_version": "ecab5ce6",
+      "content_hash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -70452,6 +70462,11 @@
           "number": 6504,
           "title": "Merge pull request #4614 from aleo-labs-protocol/add-stress-test-workflow",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6600,
+          "title": "Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70459,7 +70474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T15:54:43.614Z",
+      "verified_at": "2026-11-03T20:01:00.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169935,14 +169950,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6588,
       "title": "use fused order for MMR relevance after query decomposition",
-      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_url": "https://github.com/pathwaycom/llm-app",
       "source_version": "84e92a33",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T19:15:16.641Z"
+      "verified_at": "2026-11-03T20:01:01.904Z"
     },
     "rule-6589": {
       "learning_id": "rule-6589",
@@ -170069,6 +170084,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T19:52:35.561Z"
+    },
+    "rule-6598": {
+      "learning_id": "rule-6598",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6598,
+      "title": "invalidate affected directories after file operations",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "606096f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:00:46.995Z"
+    },
+    "rule-6599": {
+      "learning_id": "rule-6599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6599,
+      "title": "ds): release published routing configs no client holds (#14962)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "583dce38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:00:55.590Z"
+    },
+    "rule-6600": {
+      "learning_id": "rule-6600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6600,
+      "title": "Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ecab5ce6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:01:00.094Z"
     }
   },
   "aliases": {

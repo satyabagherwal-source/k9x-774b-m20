@@ -6991,3 +6991,7 @@
 | `CYCLE-20261103-TQOB` | `2026-11-03T19:52:17.483Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6595` | Yes (`db4b4bf2...`) |
 | `CYCLE-20261103-TWEM` | `2026-11-03T19:52:24.910Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6596` | Yes (`2def9e54...`) |
 | `CYCLE-20261103-U4PG` | `2026-11-03T19:52:35.668Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6597` | Yes (`17f99642...`) |
+| `CYCLE-20261103-4NVB` | `2026-11-03T20:00:47.063Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6598` | Yes (`375a66de...`) |
+| `CYCLE-20261103-4UI4` | `2026-11-03T20:00:55.660Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6599` | Yes (`4cc11417...`) |
+| `CYCLE-20261103-4XZ6` | `2026-11-03T20:01:00.162Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6600` | Yes (`8871c680...`) |
+| `CYCLE-20261103-4ZDK` | `2026-11-03T20:01:01.976Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6588` | Yes (`4c45326c...`) |

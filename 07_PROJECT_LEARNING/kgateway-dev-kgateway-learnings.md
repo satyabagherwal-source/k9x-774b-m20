@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `753b3276`  
+> **Source Version**: `583dce38`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:49:19.088Z  
+> **Timestamp**: 2026-11-03T20:00:55.174Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:49:18.764Z  
+> **Harvest Timestamp**: 2026-11-03T20:00:54.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5727 stars
+- **Stars / Engagement**: 5731 stars
 
 ---
 
@@ -930,11 +930,11 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14961** (2026-10-30): **[2.5] Revert "perf: batch route changes before gateway translation (#14813)" (#14960)**
-  *Symptoms*: # Description  **Motivation:** #14813 debounced route changes so a burst of N route updates would not rebuild each affected Gateway N times. The KRT bump in #14950 now skips those redundant recomputes on its own, so the debounce no longer saves work. What remains is its cost: each route change waits for the batch window, and a flush that carries several changes compares the debounced copy against the full route list.  **What changed:** Backports #14960 to v2.5.x, reverting #14813. v2.5.x already carries the KRT bump (#14951). - Removes the debounced route collections from `RoutesIndex`; Gateway translation reads the route collections directly again. - Removes the `KGW_TRANSLATION_DEBOUNCE` and `KGW_TRANSLATION_DEBOUNCE_MAX` settings. envconfig ignores unknown variables, so a deployment that still sets them starts normally and the values have no effect.  **Results:** gateway-api-bench on a GCP VM, same image built from main at 430fc963fa (which includes #14950, backported here as #14951), debounce at its defaults vs `KGW_TRANSLATION_DEBOUNCE=0`:  | | debounce on | debounce off | | --- | --- | --- | | Route scale, controller CPU | 1082 core-s | 967 core-s | | 40k ListenerSets, controller CPU | 2972 core-s | 2142 core-s (0.72x) | | 40k ListenerSets, allocation | 1x | 0.71x |  The route-scale difference is within run-to-run noise. Before #14950, the same route test cost 2345 core-s with the debounce off, which is the gap the debounce was closing. At ListenerSet sc
+- **Issue #14966** (2026-11-02): **fix(xds): record routing targets at publish instead of memoizing configs**
+  *Symptoms*: The publication gate holds a deferred build's route flip when the build newly references an unready cluster. It decides that by comparing the build with the routing targets of the snapshot published on the client's connection, which it rebuilt by scanning the published routes and listeners under the gate lock. The result was memoized by the identity of the two item maps. Each memo entry kept both maps alive, and the memo was cleared only at 4096 entries, so superseded routing configs stayed reachable after their routes, ListenerSets and Gateways were deleted.  Routing targets now travel with the configuration they describe:  - Each gateway translation already computes ReferencedClusters. Each backend listener's targets are now computed once, in the backend's base row. snapshotPerClient composes a build's targets from these shared sets, so clients of one gateway share them, and an endpoint-only rebuild reuses them without walking routes or listeners. - Every gate composition (flip hold, carry, reference-ahead hold, and listeners added during a hold) returns its snapshot together with its targets. A composition only adds listeners under names the base lacks, so its targets are the base's plus those of the added listeners. - setSnapshot takes that pair. It records the targets in the gate's per-connection published mark only once the snapshot is installed, including when the install succeeds but answering watches fails. A new connection or a departure forgets them, as before.  Th
 
-- **Issue #14960** (2026-10-30): **Revert "perf: batch route changes before gateway translation (#14813)"**
-  *Symptoms*: # Description  **Motivation:** #14813 debounced route changes so a burst of N route updates would not rebuild each affected Gateway N times. The KRT bump in #14950 now skips those redundant recomputes on its own, so the debounce no longer saves work. What remains is its cost: each route change waits for the batch window, and a flush that carries several changes compares the debounced copy against the full route list.  **What changed:** Reverts #14813. - Removes the debounced route collections from `RoutesIndex`; Gateway translation reads the route collections directly again. - Removes the `KGW_TRANSLATION_DEBOUNCE` and `KGW_TRANSLATION_DEBOUNCE_MAX` settings. **Results:** gateway-api-bench on a GCP VM, same image built from main at 430fc963fa (which includes #14950), debounce at its defaults vs `KGW_TRANSLATION_DEBOUNCE=0`:  | | debounce on | debounce off | | --- | --- | --- | | Route scale, controller CPU | 1082 core-s | 967 core-s | | 40k ListenerSets, controller CPU | 2972 core-s | 2142 core-s (0.72x) | | 40k ListenerSets, allocation | 1x | 0.71x |  # Change Type  /kind cleanup  # Changelog  ```release-note NONE ```  # Additional Notes - The revert is the exact inverse of #14813. The only conflicts were the gateway-api bump's edits to the two deleted debounce files. 
+- **Issue #14964** (2026-11-02): **[2.5] fix(xds): release published routing configs no client holds**
+  *Symptoms*: # Description  Backport of https://github.com/kgateway-dev/kgateway/pull/14962 to `v2.5.x`. The memo being fixed came in with #14698, which `v2.5.x` carries.  **Motivation:** after every route, ListenerSet and Gateway was deleted, the control plane kept up to ~1 GB of Envoy route and listener config alive. The cause is the memo of published routing targets used by the deferred-flip path. - It was keyed by the identity of the published route and listener item maps. - Each entry kept both maps alive. - It was only cleared at 4096 entries.  A mass delete sends many builds through that path, so every published RDS/LDS version stayed pinned.  **What changed:** - The publish gate now owns the memo, guarded by its lock. - Each client holds the entry it last looked up, and an entry is dropped once no client holds it. - `forgetConnectionLocked` releases a client's hold, along with its other per-client state. - Clients of one Gateway still share an entry, and the memo retains at most one routing config per connected client. - `resolveDeferredPerCluster` takes the flip-blocking clusters its caller computed, so a deferred build walks them once.  **Results** (gateway-api-bench, 40,000 ListenerSet routes, 15 min load, then everything deleted and observed for 10 min; same base commit, one run each):  | | before | after | |---|---|---| | live heap after everything is deleted | 966 MB | 36 MB (idle: 37 MB) | | Go heap in use / working set at the end of the teardown | 1,335 / 2,510 MiB | 126 /
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,787 +951,343 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b964278d` (2026-10-29)
-**Commit Message**: CVE fixes (#14929)
-
-Signed-off-by: Seth Heidkamp <[REDACTED_EMAIL]>
-
-**File**: `.oss-scanner/Dockerfile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
-     && rm -rf /var/lib/apt/lists/*
- # The binary validator (strict Envoy config validation) shells out to /usr/local/bin/envoy. Match the ENVOY_IMAGE pin
- # in the Makefile.
--COPY --from=docker.io/envoyproxy/envoy:v1.39.4 /usr/local/bin/envoy /usr/local/bin/envoy
-+COPY --from=docker.io/envoyproxy/envoy:v1.39.6 /usr/local/bin/envoy /usr/local/bin/envoy
- COPY . /src
- WORKDIR /src
- # Fetch every module the build, the tests and the tools/ module (setup-envtest, gotestsum) need.
-```
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ else
- 	OSV_SCANNER_PLATFORM := --platform=linux/amd64
- endif
- 
--export ENVOY_IMAGE ?= envoyproxy/envoy:v1.39.4
-+export ENVOY_IMAGE ?= envoyproxy/envoy:v1.39.6
- 
- # ENVOY_IMAGE is used by some of the *-docker targets which are used by CI e2e tests, so figure out the correct image
- # to use base on GOARCH. This doesn't affect goreleaser
-```
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -23,7 +23,7 @@ require (
- 	github.com/envoyproxy/go-control-plane/ratelimit v0.1.1-0.20250507123352-93990c5ec02f
- 	github.com/fsnotify/fsnotify v1.10.1
- 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
--	github.com/go-jose/go-jose/v4 v4.1.4
-+	github.com/go-jose/go-jose/v4 v4.1.6
- 	github.com/go-logr/logr v1.4.4
- 	github.com/go-logr/zapr v1.3.0
- 	github.com/golang-jwt/jwt/v5 v5.3.1
-@@ -215,7 +215,7 @@ require (
- 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -252,8 +252,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
- github.com/go-gorp/gorp/v3 v3.1.0 h1:ItKF/Vbuj31dmV4jxA1qblpSwkl9g1typ24xoe70IGs=
- github.com/go-gorp/gorp/v3 v3.1.0/go.mod h1:dLEjIyyRNiXvNZ8PSmzpt1GsWAUK8kjVhEpjH8TixEw=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-@@ -925,8 +925,8 @@ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
- golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
- golang.org/x/net v0.33.0/go.mod h1:HXLR5J+9DxmrqMwG9qjGCxZ+zKXxBru04zlTvWlWuN4=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-```
-
-**File**: `hack/utils/oss_compliance/osa_provided.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ Name|Version|License
- [go-control-plane/ratelimit](https://github.com/envoyproxy/go-control-plane)|v0.1.1-0.20250507123352-93990c5ec02f|Apache License 2.0
- [fsnotify/fsnotify](https://github.com/fsnotify/fsnotify)|v1.10.1|BSD 3-clause "New" or "Revised" License
- [ghodss/yaml](https://github.com/ghodss/yaml)|v1.0.1-0.20190212211648-25d852aebe32|MIT License
--[go-jose/v4](https://github.com/go-jose/go-jose)|v4.1.4|Apache License 2.0
-+[go-jose/v4](https://github.com/go-jose/go-jose)|v4.1.6|Apache License 2.0
- [go-logr/logr](https://github.com/go-logr/logr)|v1.4.4|Apache License 2.0
- [go-logr/zapr](https://github.com/go-logr/zapr)|v1.3.0|Apache License 2.0
- [jwt/v5](https://github.com/golang-jwt/jwt)|v5.3.1|MIT License
-```
-
-**File**: `internal/envoy_modules/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -188,7 +188,7 @@ dependencies = [
- [[package]]
- name = "envoy-proxy-dynamic-modules-rust-sdk"
- version = "0.1.0"
--source = "git+https://github.com/envoyproxy/envoy?tag=v1.39.4#72315c132d462e5126e492ab2a71057565dbc87a"
-+source = "git+https://github.com/envoyproxy/envoy?tag=v1.39.6#aacd0340210b536e99ec44ebe59ab9d16b259552"
- dependencies = [
-  "bindgen",
-  "mockall",
-```
-
-**File**: `internal/envoy_modules/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -13,4 +13,4 @@ default-members = ["module-init"]
- [workspace.dependencies]
- # The SDK version must match the Envoy version due to the strict compatibility requirements.
- # Update this single entry when upgrading Envoy.
--envoy-proxy-dynamic-modules-rust-sdk = { git = "https://github.com/envoyproxy/envoy", tag = "v1.39.4" }
-+envoy-proxy-dynamic-modules-rust-sdk = { git = "https://github.com/envoyproxy/envoy", tag = "v1.39.6" }
-```
-
-**File**: `tilt-settings.yaml` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ providers:
-     # NOTE: Do NOT include ENTRYPOINT here - the Tiltfile will append the correct
-     # entrypoint (standard or debug) based on whether debug_port is set.
-     dockerfile_contents: |
--      FROM envoyproxy/envoy:v1.39.4 as envoy-bin
-+      FROM envoyproxy/envoy:v1.39.6 as envoy-bin
- 
-       FROM golang:latest as tilt
-       WORKDIR /app
-```
-
----
-
-### Incident Patch 2: `964057d7` (2026-10-30)
-**Commit Message**: Revert "perf: batch route changes before gateway translation (#14813)" (#14960)
+### Incident Patch 1: `583dce38` (2026-11-02)
+**Commit Message**: fix(xds): release published routing configs no client holds (#14962)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `api/settings/settings.go` (modified, +0/-12)
+**File**: `pkg/kgateway/proxy_syncer/carry_dependencies_test.go` (modified, +3/-1)
 ```diff
-@@ -387,18 +387,6 @@ type Settings struct {
- 	// for Backend resources when AWS EC2 discovery is enabled.
- 	AwsEc2RefreshInterval time.Duration `split_words:"true" default:"30s"`
+@@ -259,7 +259,9 @@ func TestCarryDependencyCyclesEnd(t *testing.T) {
+ 	require.NoError(t, err)
+ 	build.Resources[envoycachetypes.Route] = routeResourcesForClusters("x")
  
--	// TranslationDebounce batches changes to translation inputs before they trigger Gateway translation: changes
--	// are delivered once no further change has arrived for this long. Each change otherwise rebuilds the whole
--	// translation of every Gateway it affects, so batching a burst saves a rebuild per change, at the cost of
--	// delaying each change by about this much. It currently applies to route changes. Set to 0 to deliver every
--	// change immediately.
--	TranslationDebounce time.Duration `split_words:"true" default:"10ms"`
--
--	// TranslationDebounceMax bounds how long changes can be held while new changes keep arriving.
--	// It is the main trade-off between translation work during a burst of changes and how stale
--	// Gateway configuration and status can get. Values below TranslationDebounce are raised to it.
--	TranslationDebounceMax time.Duration `split_words:"true" default:"100ms"`
--
- 	PolicyMerge string `split_words:"true" default:"{}"`
+-	composed, _, _ := resolveDeferredPerCluster(XdsSnapWrapper{snap: build, proxyKey: publishGateTestClient, missingReferenced: []string{"x"}}, published, true, nil, nil,
++	wrap := XdsSnapWrapper{snap: build, proxyKey: publishGateTestClient, missingReferenced: []string{"x"}}
++	flipBlocking := flipBlockingClusters(newReferencedClustersMemo().get(publishGateTestClient, published), wrap, published, nil)
++	composed, _, _ := resolveDeferredPerCluster(wrap, published, flipBlocking, nil,
+ 		func(string) (uint64, bool) { return 0, false })
  
- 	// EnableExperimentalGatewayAPIFeatures enables kgateway to support experimental features and APIs
+ 	assert.ElementsMatch(t, []string{"x", "y"}, mapKeys(composed.Resources[envoycachetypes.Cluster].Items))
 ```
 
-**File**: `api/settings/settings_test.go` (modified, +0/-8)
+**File**: `pkg/kgateway/proxy_syncer/dereference_grace.go` (modified, +1/-1)
 ```diff
-@@ -48,8 +48,6 @@ func allEnvVarsSet() map[string]string {
- 		"KGW_LEADER_ELECTION_RETRY_PERIOD":              "5s",
- 		"KGW_ENABLE_AWS_EC2_DISCOVERY":                  "true",
- 		"KGW_AWS_EC2_REFRESH_INTERVAL":                  "45s",
--		"KGW_TRANSLATION_DEBOUNCE":                      "25ms",
--		"KGW_TRANSLATION_DEBOUNCE_MAX":                  "250ms",
- 		"KGW_POLICY_MERGE":                              `{"TrafficPolicy":{"extProc":"DeepMerge"}}`,
- 		"KGW_GATEWAY_CLASS_PARAMETERS_REFS":             `{"kgateway":{"name":"custom-gwp","namespace":"infra"}}`,
- 		"KGW_XDS_AUTH":                                  "false",
-@@ -122,8 +120,6 @@ func TestSettings(t *testing.T) {
- 				LeaderElectionRetryPeriod:             2 * time.Second,
- 				EnableAwsEc2Discovery:                 false,
- 				AwsEc2RefreshInterval:                 30 * time.Second,
--				TranslationDebounce:                   10 * time.Millisecond,
--				TranslationDebounceMax:                100 * time.Millisecond,
- 				PolicyMerge:                           "{}",
- 				XdsAuth:                               true,
- 				XdsTLS:                                false,
-@@ -170,8 +166,6 @@ func TestSettings(t *testing.T) {
- 				LeaderElectionRetryPeriod:             5 * time.Second,
- 				EnableAwsEc2Discovery:                 true,
- 				AwsEc2RefreshInterval:                 45 * time.Second,
--				TranslationDebounce:                   25 * time.Millisecond,
--				TranslationDebounceMax:                250 * time.Millisecond,
- 				PolicyMerge:                           `{"TrafficPolicy":{"extProc":"DeepMerge"}}`,
- 				XdsAuth:                               false,
- 				XdsTLS:                                true,
-@@ -348,8 +342,6 @@ func TestSettings(t *testing.T) {
- 				LeaderElectionRetryPeriod:             2 * time.Second,
- 				EnableAwsEc2Discovery:                 false,
- 				AwsEc2RefreshInterval:                 30 * time.Second,
--				TranslationDebounce:                   10 * time.Millisecond,
--				TranslationDebounceMax:                100 * time.Millisecond,
- 				ReferenceGrantMode:                    ReferenceGrantPermissive,
- 				XdsScopingMode:                        XdsScopingAll,
- 				XdsScopingDereferenceGrace:            5 * time.Second,
+@@ -333,7 +333,7 @@ func (g *publishGate) publishWithTransitionGracesLocked(
+ 		held, edsHashes := g.referenceAheadHoldLocked(snapWrap, published, graced)
+ 		publishErr = g.publishHeldLocked(ctx, cache, snapWrap, held, nil, newlyEmitted, aheadFor, edsHashes)
+ 	} else {
+-		resolved, _, edsHashes := resolveDeferredPerCluster(snapWrap, published, false, nil, graced, g.lastPublishedEDSLocked(snapWrap.proxyKey))
++		resolved, _, edsHashes := resolveDeferredPerCluster(snapWrap, published, nil, graced, g.lastPublishedEDSLocked(snapWrap.proxyKey))
+ 		// publishLocked cancels a pending first publish or flip release, whose
+ 		// timer would otherwise re-publish an older build.
+ 		publishErr = g.publishLocked(ctx, cache, snapWrap.proxyKey, resolved, snapWrap.synthesizedEndpoints, edsHashes)
 ```
 
-**File**: `pkg/krtcollections/debounce.go` (removed, +0/-117)
+**File**: `pkg/kgateway/proxy_syncer/kube_gw_translator_syncer.go` (modified, +59/-53)
 ```diff
-@@ -1,117 +0,0 @@
--package krtcollections
--
--import (
--	"time"
--
--	"istio.io/istio/pkg/kube/krt"
--	"istio.io/istio/pkg/util/concurrent"
--	"istio.io/istio/pkg/util/sets"
--
--	apisettings "github.com/kgateway-dev/kgateway/v2/api/settings"
--	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/krtutil"
--)
--
--// newDebouncedCollection mirrors src and delivers its changes in batches: a burst of changes reaches dependents as
--// a single event set, flushed once no change has arrived for window, and at least once per maxDelay while changes
--// keep arriving.
--//
--// A krt collection queues one recomputation per event set it receives, and each recomputation reruns the
--// transformation against the latest state. A Gateway's translation reads all of its routes, so without batching
--// a burst of N route changes rebuilds every affected Gateway N times, each a full translation. Batching the burst
--// gives one rebuild per flush.
--//
--// A non-positive window disables batching and returns src unchanged.
--func newDebouncedCollection[T any](
--	src krt.Collection[T],
--	window, maxDelay time.Duration,
--	stop <-chan struct{},
--	opts ...krt.CollectionOption,
--) krt.Collection[T] {
--	if window <= 0 {
--		return src
--	}
--	maxDelay = max(maxDelay, window)
--
--	seeded := make(chan struct{})
--	out := krt.NewMutableCollection[T](seededSyncer{src: src, seeded: seeded}, nil, opts...)
--
--	// Every changed key reaches the debouncer, which merges them into one set per flush. Until the debouncer
--	// starts, keys wait in the source's handler queue.
--	changed := make(chan string)
--	reg := src.RegisterBatch(func(events []krt.Event[T]) {
--		for _, ev := range events {
--			select {
--			case changed <- krt.GetKey(ev.Latest()):
--			case <-stop:
--				return
--			}
--		}
--	}, false)
--
--	go func() {
--		defer reg.UnregisterHandler()
--		if !src.WaitUntilSynced(stop) {
--			return
--		}
--		// Seed before reporting synced, so dependents never observe a partial mirror.
--		out.Reset(src.List())
--		close(seeded)
--
--		var debouncer concurrent.Debouncer[string]
--		debouncer.Run(changed, stop, window, maxDelay, func(keys sets.Set[string]) {
--			if keys.Len() == 1 {
--				// A lone change, the common case outside bursts: apply just that key rather than comparing
--				// every object.
--				for k := range keys {
--					if obj := src.GetKey(k); obj != nil {
--						out.ConditionalUpdateObject(*obj)
--					} else {
--						out.DeleteObject(k)
--					}
--				}
--				return
--			}
--			// Several changes must reach dependents as one event set, and Reset is the only way to publish one.
--			// Applying them key by key would deliver one event set, and so one rebuild, per change.
--			out.Reset(src.List())
--		})
--	}()
--	return out.AsCollection()
--}
--
--// debounceForTranslation batches changes to a translation input as configured by the translation debounce settings.
--func debounceForTranslation[T any](
--	c krt.Collection[T],
--	krtopts krtutil.KrtOptions,
--	settings apisettings.Settings,
--	name string,
--) krt.Collection[T] {
--	return newDebouncedCollection(c, settings.TranslationDebounce, settings.TranslationDebounceMax, krtopts.Stop, krtopts.ToOptions(name)...)
--}
--
--// seededSyncer reports synced once src has synced and the mirror has been seeded from it.
--type seededSyncer struct {
--	src    krt.Syncer
--	seeded <-chan struct{}
--}
--
--func (s seededSyncer) HasSynced() bool {
--	select {
--	case <-s.seeded:
--		return s.src.HasSynced()
--	default:
--		return false
--	}
--}
--
--func (s seededSyncer) WaitUntilSynced(stop <-chan struct{}) bool {
--	if !s.src.WaitUntilSynced(stop) {
--		return false
--	}
--	select {
--	case <-s.seeded:
--		return true
--	case <-stop:
--		return false
--	}
--}
-```
-
-**File**: `pkg/krtcollections/debounce_test.go` (removed, +0/-184)
-```diff
-@@ -1,184 +0,0 @@
--package krtcollections
--
--import (
--	"fmt"
--	"slices"
--	"strings"
+@@ -6,7 +6,6 @@ import (
+ 	"maps"
+ 	"reflect"
+ 	"slices"
 -	"sync"
--	"sync/atomic"
--	"testing"
--	"time"
--
--	"github.com/stretchr/testify/assert"
--	"github.com/stretchr/testify/require"
--	"istio.io/istio/pkg/kube/krt"
--	"istio.io/istio/pkg/test"
--)
--
--type debounceItem struct {
--	Name  string
--	Value int
--}
--
--func (d debounceItem) ResourceName() string {
--	return d.Name
--}
--
--func (d debounceItem) Equals(other debounceItem) bool {
--	return d.Name == other.Name && d.Value == other.Value
--}
--
--func sortedItems(c krt.Collection[debounceItem]) []debounceItem {
--	return slices.SortedFunc(slices.Values(c.List()), func(a, b debounceItem) int {
--		return strings.Compare(a.Name, b.Name)
--	})
--}
--
--func TestDebouncedCollectionDisabledReturnsSource(t *testing.T) {
--	src := krt.NewStaticCollection[debounceItem](nil, nil)
--
--	out := newDebouncedCollection[debounceItem](src, 0, time.Second, test.NewStop(t))
--
--	assert.Equal(t, krt.Collection[debounceItem](src), out, "a zero window should not wrap the source")
--}
--
--func TestDebouncedCollectionSeedsBeforeSync(t *testing.T) {
--	stop := test.NewStop(t)
--	src := krt.NewStaticCollection(nil, []debounceItem{{Name: "a", Value: 1}, {Name: "b", Value: 2}})
--
--	out := newDebouncedCollection[debounceItem](src, time.Hour, time.Hour, stop)
--
--	require.True(t, out.WaitUntilSynced(stop), "the mirror should sync")
--	assert.Equal(t, sortedItems(src), sortedItems(out), "the mirror should hold the source state as soon as it syncs")
--}
--
--func TestDebouncedCollectionBatchesBurst(t *testing.T) {
--	stop := test.NewStop(t)
--	src := krt.NewMutableCollection[debounceItem](nil, nil)
--	out := newDebouncedCollection[debounceItem](src.AsCollection(), 200*time.Millisecond, 10*time.Second, stop)
--	require.True(t, out.WaitUntilSynced(stop), "the mirror should sync")
--
--	var batches, events atomic.Int32
--	out.RegisterBatch(func(evs []krt.Event[debounceItem]) {
--		batches.Add(1)
--		events.Add(int32(len(evs))) //nolint:gosec // G115: test sizes are tiny
--	}, false)
--
--	const n = 100
--	for i := range n {
--		src.UpdateObject(debounceItem{Name: fmt.Sprint("item-", i), Value: i})
--	}
--
--	assert.Eventually(t, func() bool { return events.Load() == n }, 5*time.Second, 10*time.Millisecond,
--		"every change should reach the mirror")
--	assert.Equal(t, int32(1), batches.Load(), "a burst should be delivered as one event set")
--	assert.Equal(t, sortedItems(src.AsCollection()), sortedItems(out), "the mirror should match the source after the flush")
--}
--
--// countedItem counts its Equals calls, to show how many objects a flush compares.
--type countedItem struct {
--	Name  string
--	Value int
--}
--
--var countedItemEquals atomic.Int64
--
--func (c countedItem) ResourceName() string {
--	return c.Name
--}
--
--func (c countedItem) Equals(other countedItem) bool {
--	countedItemEquals.Add(1)
--	return c.Name == other.Name && c.Value == other.Value
--}
--
--func TestDebouncedCollectionAppliesALoneChangeByItself(t *testing.T) {
--	stop := test.NewStop(t)
--	var items []countedItem
--	for i := range 100 {
--		items = append(items, countedItem{Name: fmt.Sprint("item-", i), Value: i})
--	}
--	src := krt.NewMutableCollection(nil, items)
--	out := newDebouncedCollection[countedItem](src.AsCollection(), 10*time.Millisecond, 100*time.Millisecond, stop)
--	require.True(t, out.WaitUntilSynced(stop), "the mirror should sync")
--
--	var mu sync.Mutex
--	var batches [][]krt.Event[countedItem]
--	out.RegisterBatch(func(evs []krt.Event[countedItem]) {
--		mu.Lock()
--		defer mu.Unlock()
--		batches = append(batches, evs)
--	}, false)
--	countedItemEquals.Store(0)
--
--	src.UpdateObject(countedItem{Name: "item-7", Value: 1000})
--	assert.Eventually(t, func() bool {
--		obj := out.GetKey("item-7")
--		return obj != nil && obj.Value == 1000
--	}, 5*time.Second, 5*time.Millisecond, "a lone update should reach the mirror")
--	src.DeleteObject("item-8")
--	assert.Eventually(t, func() bool { return out.GetKey("item-8") == nil }, 5*time.Second, 5*time.Millisecond,
--		"a lone delete should reach the mirror")
--
--	assert.Eventually(t, func() bool {
--		mu.Lock()
--		defer mu.Unlock()
--		return len(batches) == 2
--	}, 5*time.Second, 5*time.Millisecond, "each lone change should be delivered as its own event set")
--	mu.Lock()
--	defer mu.Unlock()
--	assert.Len(t, batches[0], 1, "the update flush should carry only the updated object")
--	assert.Len(t, batches[1], 1, "the delete flush should carry only the deleted object")
--	assert.LessOrEqual(t, countedItemEquals.Load(), int64(1), "a lone change should compare only the changed object")
--}
--
--func TestDebouncedCollectionFlushesWhileChangesKeepArriving(t *testing.T) {
--	stop := test.NewStop(t)
--	src := krt.NewMutableCollection[debounceItem](nil, nil)
--	// The window never elapses while changes arrive every 5ms, so only the ceiling can flush.
--	out := newDebouncedCollection[debounceItem](src.AsCollection(), 100*time.Millisecond, 200*time.Millisecond, stop)
--	require.True(t, out.WaitUntilSynced(stop), "the mirror should sync"
-```
-
-**File**: `pkg/krtcollections/policy.go` (modified, +8/-10)
-```diff
-@@ -1300,29 +1300,27 @@ func NewRoutesIndex(
+ 
+ 	envoycachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
+ 	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
+@@ -72,61 +71,69 @@ func (s *ProxyTranslator) syncXds(
  	}
- 	h.hasSyncedFuncs = append(h.hasSyncedFuncs, httproutes.HasSynced, grpcroutes.HasSynced, tcproutes.HasSynced, tlsroutes.HasSynced)
- 
--	// Each route collection is debounced where it is built, so Gateway translation sees a burst of route changes as
--	// one batch, whether it reads routes by parent or follows delegation to child routes.
--	h.httpRoutes = debounceForTranslation(krt.NewCollection(httproutes, func(kctx krt.HandlerContext, i *gwv1.HTTPRoute) *ir.HttpRouteIR {
-+	h.httpRoutes = krt.NewCollection(httproutes, func(kctx krt.HandlerContext, i *gwv1.HTTPRoute) *ir.HttpRouteIR {
- 		return h.transformHttpRoute(kctx, i)
--	}, krtopts.ToOptions("http-routes-with-policy")...), krtopts, globalSettings, "http-routes-debounced")
-+	}, krtopts.ToOptions("http-routes-with-policy")...)
- 
- 	httpRouteCollection := krt.NewCollection(h.httpRoutes, func(kctx krt.HandlerContext, i ir.HttpRouteIR) *RouteWrapper {
- 		return &RouteWrapper{Route: &i}
- 	}, krtopts.ToOptions("routes-http-routes-with-policy")...)
- 
- 	var tcpRoutesCollection, tlsRoutesCollection, grpcRoutesCollection krt.Collection[RouteWrapper]
- 
--	grpcRoutesCollection = debounceForTranslation(krt.NewCollection(grpcroutes, func(kctx krt.HandlerContext, i *gwv1.GRPCRoute) *RouteWrapper {
-+	grpcRoutesCollection = krt.NewCollection(grpcroutes, func(kctx krt.HandlerContext, i *gwv1.GRPCRoute) *RouteWrapper {
- 		return &RouteWrapper{Route: h.transformGRPCRoute(kctx, i)}
--	}, krtopts.ToOptions("routes-grpc-routes-with-policy")...), krtopts, globalSettings, "routes-grpc-routes-debounced")
-+	}, krtopts.ToOptions("routes-grpc-routes-with-policy")...)
- 
--	tcpRoutesCollection = debounceForTranslation(krt.NewCollection(tcproutes, func(kctx krt.HandlerContext, i *gwv1a2.TCPRoute) *RouteWrapper {
-+	tcpRoutesCollection = krt.NewCollection(tcproutes, func(kctx krt.HandlerContext, i *gwv1a2.TCPRoute) *RouteWrapper {
- 		return &RouteWrapper{Route: h.transformTcpRoute(kctx, i)}
--	}, krtopts.ToOptions("routes-tcp-routes-with-policy")...), krtopts, globalSettings, "routes-tcp-routes-debounced")
-+	}, krtopts.ToOptions("routes-tcp-routes-with-policy")...)
- 
--	tlsRoutesCollection = debounceForTranslation(krt.NewCollection(tlsroutes, func(kctx krt.HandlerContext, i *gwv1a2.TLSRoute) *RouteWrapper {
-+	tlsRoutesCollection = krt.NewCollection(tlsroutes, func(kctx krt.HandlerContext, i *gwv1a2.TLSRoute) *RouteWrapper {
- 		return &RouteWrapper{Route: h.transformTlsRoute(kctx, i)}
--	}, krtopts.ToOptions("routes-tls-routes-with-policy")...), krtopts, globalSettings, "routes-tls-routes-debounced")
-+	}, krtopts.ToOptions("routes-tls-routes-with-policy")...)
- 
- 	h.routes = krt.JoinCollection([]krt.Collection[RouteWrapper]{httpRouteCollection, grpcRoutesCollection, tcpRoutesCollection, tlsRoutesCollection}, krtopts.ToOptions("all-routes-with-policy")...)
- 
-```
-
-**File**: `pkg/krtcollections/policy_test.go` (modified, +5/-23)
-```diff
-@@ -82,7 +82,7 @@ func TestRoutesFor(t *testing.T) {
- 		},
- 	}}
- 
--	inputs := []any{
-+	routes := preRouteIndex(t, []any{
- 		&gwv1.HTTPRoute{
- 			ObjectMeta: metav1.ObjectMeta{Name: "http-route", Namespace: "default"},
- 			Spec: gwv1.HTTPRouteSpec{
-@@ -109,28 +109,14 @@ func TestRoutesFor(t *testing.T) {
- 				RouteStatus: gwv1.RouteStatus{Parents: parentStatus},
- 			},
- 		},
--	}
-+	})
- 
- 	nns := types.NamespacedName{Namespace: "default", Name: "example-gateway"}
- 	group := wellknown.GatewayGVK.Group
- 	kind := wellknown.GatewayGVK.Kind
- 
--	t.Run("immediate", func(t *testing.T) {
--		routes := preRouteIndex(t, inputs)
--		require.Len(t, routes.RoutesFor(krt.TestingDummyContext{}, nns, group, kind), 2)
--	})
--	t.Run("debounced", func(t *testing.T) {
--		routes := preRouteIndexWithSettings(t, inputs, krtutil.KrtOptions{Stop: test.NewStop(t)}, apisettings.Settings{
--			TranslationDebounce:    time.Millisecond,
--			TranslationDebounceMax: 10 * time.Millisecond,
--		})
--		require.Len(t, routes.RoutesFor(krt.TestingDummyContext{}, nns, group, kind), 2,
--			"routes should be indexed by parent as soon as the debounced index syncs")
--		require.NotNil(t, routes.FetchHttp(krt.TestingDummyContext{}, "default", "http-route"),
--			"delegation lookups by name should read the debounced HTTPRoutes")
--		require.Len(t, routes.FetchHTTPRoutesBySelector(krt.TestingDummyContext{}, HTTPRouteSelector{Namespace: "default"}), 1,
--			"delegation lookups by selector should read the debounced HTTPRoutes")
--	})
-+	rts := routes.RoutesFor(krt.TestingDummyContext{}, nns, group, kind)
-+	require.Len(t, rts, 2)
  }
  
- func TestGetBackendDifNsWithRefGrant(t *testing.T) {
-@@ -553,10 +539,6 @@ func tcpRouteWithBackendRef(refNs string) *gwv1a2.TCPRoute {
- }
- 
- func preRouteIndex(t test.Failer, inputs []any) *RoutesIndex {
--	return preRouteIndexWithSettings(t, inputs, krtutil.KrtOptions{}, apisettings.Settings{})
+-// publishedReferencedClusters returns the routing targets of the published
+-// routes and listeners. Callers must not modify the shared result.
+-func publishedReferencedClusters(published envoycache.ResourceSnapshot) map[string]struct{} {
+-	routes := published.GetResourcesAndTTL(envoyresourcev3.RouteType)
+-	listeners := published.GetResourcesAndTTL(envoyresourcev3.ListenerType)
+-	return publishedRefs.get(routes, listeners, func() map[string]struct{} {
+-		return collectReferencedClusters(envoycache.Resources{Items: routes}, envoycache.Resources{Items: listeners})
+-	})
 -}
 -
--func preRouteIndexWithSettings(t test.Failer, inputs []any, krtopts krtutil.KrtOptions, settings apisettings.Settings) *RoutesIndex {
- 	mock := krttest.NewMock(t, inputs)
- 	services := krttest.GetMockCollection[*corev1.Service](mock)
- 	policyCol := krttest.GetMockCollection[ir.PolicyWrapper](mock)
-@@ -580,7 +562,7 @@ func preRouteIndexWithSettings(t test.Failer, inputs []any, krtopts krtutil.KrtO
- 	tcpproutes := krttest.GetMockCollection[*gwv1a2.TCPRoute](mock)
- 	tlsroutes := krttest.GetMockCollection[*gwv1a2.TLSRoute](mock)
- 	grpcroutes := krttest.GetMockCollection[*gwv1.GRPCRoute](mock)
--	rtidx := NewRoutesIndex(krtopts, httproutes, grpcroutes, tcpproutes, tlsroutes, policies, upstreams, refgrants, settings)
-+	rtidx := NewRoutesIndex(krtutil.KrtOptions{}, httproutes, grpcroutes, tcpproutes, tlsroutes, policies, upstreams, refgrants, apisettings.Settings{})
- 	services.WaitUntilSynced(nil)
- 	backends.WaitUntilSynced(nil)
- 	policyCol.WaitUntilSynced(nil)
+-// publishedRefs memoizes publishedReferencedClusters. Collecting targets
+-// unmarshals every listener, which under the gate's single lock would
+-// serialize all clients' deferred builds. Published routes and listeners
+-// change rarely, and published snapshots reuse their translation's immutable
+-// item maps.
+-var publishedRefs = &referencedClustersMemo{}
+-
+-// referencedClustersMemo keys target sets by the identity of the route and
+-// listener item maps. An entry retains its maps, so their addresses cannot be
+-// reused and identity implies equal content. It is cleared at
+-// maxReferencedClustersMemo entries.
++// referencedClustersMemo memoizes the routing targets of published routes and
++// listeners. Collecting targets unmarshals every listener under the gate's
++// single lock, which would serialize all clients' deferred builds. Published
++// routes and listeners change rarely, and published snapshots reuse their
++// translation's immutable item maps, so clients of one Gateway share an entry.
++//
++// Entries are keyed by the identity of the route and listener item maps. An
++// entry retains its maps, so their addresses cannot be reused and identity
++// implies equal content. Each client holds the entry it last looked up, and an
++// entry is dropped once no client holds it, so the memo retains at most one
++// routing config per connected client. The gate guards it with its mu.
+ type referencedClustersMemo struct {
+-	mu      sync.Mutex
+-	entries map[[2]uintptr]referencedClustersEntry
++	entries map[[2]uintptr]*referencedClustersEntry
++	byProxy map[string]*referencedClustersEntry
+ }
+ 
+ type referencedClustersEntry struct {
++	key               [2]uintptr
+ 	routes, listeners map[string]envoycachetypes.ResourceWithTTL
+ 	refs              map[string]struct{}
++	holders           int
+ }
+ 
+-const maxReferencedClustersMemo = 4096
++func newReferencedClustersMemo() *referencedClustersMemo {
++	return &referencedClustersMemo{
++		entries: make(map[[2]uintptr]*referencedClustersEntry),
++		byProxy: make(map[string]*referencedClustersEntry),
++	}
++}
+ 
+-func (m *referencedClustersMemo) get(
+-	routes, listeners map[string]envoycachetypes.ResourceWithTTL,
+-	compute func() map[string]struct{},
+-) map[string]struct{} {
++// get returns the routing targets of the routes and listeners published to
++// proxyKey. Callers must not modify the shared result.
++func (m *referencedClustersMemo) get(proxyKey string, published envoycache.ResourceSnapshot) map[string]struct{} {
++	routes := published.GetResourcesAndTTL(envoyresourcev3.RouteType)
++	listeners := published.GetResourcesAndTTL(envoyresourcev3.ListenerType)
+ 	if routes == nil && listeners == nil {
+-		return compute()
++		return nil
+ 	}
+ 	key := [2]uintptr{reflect.ValueOf(routes).Pointer(), reflect.ValueOf(listeners).Pointer()}
+-	m.mu.Lock()
+-	entry, ok := m.entries[key]
+-	m.mu.Unlock()
+-	if ok {
+-		return entry.refs
++	entry := m.entries[key]
++	if entry == nil {
++		refs := collectReferencedClusters(envoycache.Resources{Items: routes}, envoycache.Resources{Items: listeners})
++		entry = &referencedClustersEntry{key: key, routes: routes, listeners: listeners, refs: refs}
++		m.entries[key] = entry
++	}
++	if m.byProxy[proxyKey] != entry {
++		m.release(proxyKey)
++		m.byProxy[proxyKey] = entry
++		entry.holders++
++	}
++	return entry.refs
++}
++
++// release drops proxyKey's hold, so a departed client pins nothing.
++func (m *referencedClustersMemo) release(proxyKey string) {
++	entry := m.byProxy[proxyKey]
++	if entry == nil {
++		return
+ 	}
+-	refs := compute()
+-	m.mu.Lock()
+-	defer m.mu.Unlock()
+-	if m.entries == nil || len(m.entries) >= maxReferencedClustersMemo {
+-		m.entries = make(map[[2]uintptr]referencedClustersEntry)
++	delete(m.byProxy, proxyKey)
++	if entry.holders--; entry.holders == 0 {
++		delete(m.entries, entry.key)
+ 	}
+-	m.entries[key] = referencedClustersEntry{routes: routes, listeners: listeners, refs: refs}
+-	return refs
+ }
+ 
+ // flipBlockingClusters returns the clusters a deferred build would hold its
+@@ -135,8 +142,8 @@ func (m *referencedClustersMemo) get(
+ // Pending blockers remain blocking while the build still reports their
+ // cluste
 ```
 
----
-
-### Incident Patch 3: `753b3276` (2026-10-30)
-**Commit Message**: fix(backendconfigpolicy): match verifySubjectAltNames against the right SAN type (#14760)
-
-Signed-off-by: Harsh Raj <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls.go` (modified, +36/-6)
+**File**: `pkg/kgateway/proxy_syncer/publish_gate.go` (modified, +10/-3)
 ```diff
-@@ -3,6 +3,8 @@ package backendconfigpolicy
+@@ -158,6 +158,9 @@ type publishGate struct {
+ 	// in an open reference-ahead window, timed before installation; sending is
+ 	// not observed. clientDeparted clears it.
+ 	aheadSent map[string]map[string]time.Time
++	// publishedRefs memoizes published routing targets for flipBlockingClusters.
++	// clientDeparted releases a client's entry.
++	publishedRefs *referencedClustersMemo
+ }
+ 
+ type pendingFirstPublish struct {
+@@ -227,6 +230,7 @@ func newPublishGate(budget time.Duration, checkConsistency bool, clientState krt
+ 		publishedEDS:     make(map[string]map[string]uint64),
+ 		dereferenced:     make(map[string]*dereferenceState),
+ 		aheadSent:        make(map[string]map[string]time.Time),
++		publishedRefs:    newReferencedClustersMemo(),
+ 	}
+ }
+ 
+@@ -439,10 +443,12 @@ func (g *publishGate) resolveDeferredLocked(
+ 	if pf := g.pendingFlips[snapWrap.proxyKey]; pf != nil {
+ 		pending = pf.blocking
+ 	}
+-	holding := len(newlyEmitted) > 0 || len(flipBlockingClusters(snapWrap, published, pending)) > 0
++	// pending preserves gaps across listeners installed by an earlier hold.
++	flipBlocking := flipBlockingClusters(g.publishedRefs.get(snapWrap.proxyKey, published), snapWrap, published, pending)
++	holding := len(newlyEmitted) > 0 || len(flipBlocking) > 0
+ 	graced, opened := g.graceDereferencedClustersLocked(
+ 		snapWrap.proxyKey, published, snapWrap.snap.Resources[envoycachetypes.Cluster], snapWrap.translatedClusters, holding, now)
+-	resolved, heldBlocking, edsHashes := resolveDeferredPerCluster(snapWrap, published, true, pending, graced, g.lastPublishedEDSLocked(snapWrap.proxyKey))
++	resolved, heldBlocking, edsHashes := resolveDeferredPerCluster(snapWrap, published, flipBlocking, graced, g.lastPublishedEDSLocked(snapWrap.proxyKey))
+ 	var publishErr error
+ 	switch {
+ 	case len(heldBlocking) > 0:
+@@ -800,7 +806,7 @@ func (g *publishGate) releaseFlipLocked(ctx context.Context, cache envoycache.Sn
+ 	now := time.Now()
+ 	graced, opened := g.graceDereferencedClustersLocked(
+ 		proxyKey, published, pf.wrap.snap.Resources[envoycachetypes.Cluster], pf.wrap.translatedClusters, false, now)
+-	released, _, edsHashes := resolveDeferredPerCluster(g.boundCarryLocked(pf.wrap, published, time.Now()), published, false, nil, graced, g.lastPublishedEDSLocked(proxyKey))
++	released, _, edsHashes := resolveDeferredPerCluster(g.boundCarryLocked(pf.wrap, published, time.Now()), published, nil, graced, g.lastPublishedEDSLocked(proxyKey))
+ 	// A reference-ahead window closing on its own is expected. Warn and count a
+ 	// bounded publish only when the budget cut one short.
+ 	mode := boundedPublishFlipRelease
+@@ -855,6 +861,7 @@ func (g *publishGate) forgetConnectionLocked(proxyKey string) {
+ 	delete(g.carriedSince, proxyKey)
+ 	delete(g.publishedEDS, proxyKey)
+ 	delete(g.aheadSent, proxyKey)
++	g.publishedRefs.release(proxyKey)
+ }
+ 
+ // connectionStarted forgets the previous connection, as clientDeparted does,
+```
+
+**File**: `pkg/kgateway/proxy_syncer/publish_gate_test.go` (modified, +54/-16)
+```diff
+@@ -2,6 +2,7 @@ package proxy_syncer
+ 
  import (
- 	"errors"
- 	"fmt"
-+	"net/netip"
-+	"strings"
+ 	"context"
++	"fmt"
+ 	"testing"
+ 	"time"
  
- 	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
- 	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
-@@ -276,13 +278,41 @@ func parseTLSVersion(tlsVersion *kgateway.TLSVersion) (envoytlsv3.TlsParameters_
- func verifySanListToTypedMatchSanList(sanList []string) []*envoytlsv3.SubjectAltNameMatcher {
- 	var matchSanList []*envoytlsv3.SubjectAltNameMatcher
- 	for _, san := range sanList {
--		matchSan := &envoytlsv3.SubjectAltNameMatcher{
--			SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
--			Matcher: &envoymatcher.StringMatcher{
--				MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: san},
--			},
-+		if ip, err := netip.ParseAddr(san); err == nil {
-+			// A certificate can carry an IP address as an IP SAN or as a DNS SAN. Match both, so
-+			// certificates that matched the DNS-only matcher before still match. The IP matcher
-+			// uses the canonical form of the address, which is the form Envoy compares IP SANs in.
-+			matchSanList = append(matchSanList,
-+				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS, ip.String()),
-+				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_DNS, san),
-+			)
-+			continue
- 		}
--		matchSanList = append(matchSanList, matchSan)
-+		matchSanList = append(matchSanList, exactSanMatcher(sanTypeOf(san), san))
- 	}
- 	return matchSanList
+@@ -453,7 +454,8 @@ func TestFlipRelease_StaleTimerDoesNotReleaseLaterEpisode(t *testing.T) {
+ 	require.NoError(t, pt.gate.publishLocked(ctx, pt.xdsCache, publishGateTestClient, published, nil, nil))
+ 	current := pt.gate.connectionSnapshotLocked(pt.xdsCache, publishGateTestClient)
+ 	require.NotNil(t, current)
+-	held, blocking, hashes := resolveDeferredPerCluster(flipWrap, current, true, nil, nil, pt.gate.lastPublishedEDSLocked(publishGateTestClient))
++	flipBlocking := flipBlockingClusters(pt.gate.publishedRefs.get(publishGateTestClient, current), flipWrap, current, nil)
++	held, blocking, hashes := resolveDeferredPerCluster(flipWrap, current, flipBlocking, nil, pt.gate.lastPublishedEDSLocked(publishGateTestClient))
+ 	require.NotEmpty(t, blocking)
+ 	require.NoError(t, pt.gate.publishHeldLocked(ctx, pt.xdsCache, flipWrap, held, blocking, nil, 0, hashes))
+ 	pt.gate.mu.Unlock()
+@@ -857,30 +859,66 @@ func TestHeldFlipDoesNotCarryAnExpiredCluster(t *testing.T) {
+ 	assert.False(t, hasCLA)
  }
-+
-+func exactSanMatcher(sanType envoytlsv3.SubjectAltNameMatcher_SanType, san string) *envoytlsv3.SubjectAltNameMatcher {
-+	return &envoytlsv3.SubjectAltNameMatcher{
-+		SanType: sanType,
-+		Matcher: &envoymatcher.StringMatcher{
-+			MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: san},
-+		},
-+	}
-+}
-+
-+// sanTypeOf picks the SAN type to match a verifySubjectAltNames entry that is not an IP address
-+// against. Typed matchers only compare against a single SAN type, so a DNS-only matcher never
-+// matches a certificate that carries its identity as a URI (such as a SPIFFE ID) or an email
-+// address.
-+func sanTypeOf(san string) envoytlsv3.SubjectAltNameMatcher_SanType {
-+	switch {
-+	case strings.Contains(san, ":"):
-+		return envoytlsv3.SubjectAltNameMatcher_URI
-+	case strings.Contains(san, "@"):
-+		return envoytlsv3.SubjectAltNameMatcher_EMAIL
-+	default:
-+		return envoytlsv3.SubjectAltNameMatcher_DNS
-+	}
-+}
-```
-
-**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls_test.go` (modified, +90/-0)
-```diff
-@@ -542,6 +542,96 @@ func TestVerifySanListToTypedMatchSanList(t *testing.T) {
- 				},
- 			},
- 		},
-+		{
-+			name:    "SPIFFE ID is matched as a URI SAN",
-+			sanList: []string{"spiffe://example.org/ns/default/sa/backend"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_URI,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "spiffe://example.org/ns/default/sa/backend"},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name:    "IPv4 address is matched as an IP SAN and as a DNS SAN",
-+			sanList: []string{"10.0.0.1"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
-+					},
-+				},
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name:    "IPv6 address is matched as an IP SAN and as a DNS SAN",
-+			sanList: []string{"fd00::1"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
-+					},
-+				},
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name:    "IPv6 address in long form is matched in canonical form as an IP SAN",
-+			sanList: []string{"fd00:0:0:0:0:0:0:1"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
-+					},
-+				},
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00:0:0:0:0:0:0:1"},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name:    "email address is matched as an email SAN",
-+			sanList: []string{"svc@example.org"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_EMAIL,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "svc@example.org"},
-+					},
-+				},
-+			},
-+		},
-+		{
-+			name:    "wildcard hostname stays a DNS SAN",
-+			sanList: []string{"*.example.com"},
-+			expected: []*envoytlsv3.SubjectAltNameMatcher{
-+				{
-+					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
-+					Matcher: &envoymatcher.StringMatcher{
-+						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "*.example.com"},
-+					},
-+				},
-+			},
-+		},
- 	}
  
- 	for _, tt := range tests {
++// publishedWith returns a snapshot publishing routes and listeners.
++func publishedWith(routes, listeners envoycache.Resources) *envoycache.Snapshot {
++	snap := &envoycache.Snapshot{}
++	snap.Resources[envoycachetypes.Route] = routes
++	snap.Resources[envoycachetypes.Listener] = listeners
++	return snap
++}
++
+ // The routing-target walk is memoized by map identity: retained maps reuse it,
+ // and different content under a reused version label is walked again.
+ func TestPublishedReferencedClustersIsMemoizedByIdentity(t *testing.T) {
+-	memo := &referencedClustersMemo{}
++	memo := newReferencedClustersMemo()
+ 	routesA := routeResourcesForClusters("cluster-a")
+ 	listeners := sliceToResources([]*envoylistenerv3.Listener{httpListenerWithRDS(t, "listener", "route-config")})
+-	walks := 0
+-	refsOf := func(routes envoycache.Resources) map[string]struct{} {
+-		return memo.get(routes.Items, listeners.Items, func() map[string]struct{} {
+-			walks++
+-			return collectReferencedClusters(routes, listeners)
+-		})
+-	}
+ 
+-	first := refsOf(routesA)
+-	again := refsOf(routesA)
+-	assert.Equal(t, map[string]struct{}{"cluster-a": {}}, first)
+-	assert.Equal(t, first, again)
+-	assert.Equal(t, 1, walks, "the same routing config is walked once")
++	assert.Equal(t, map[string]struct{}{"cluster-a": {}}, memo.get(publishGateTestClient, publishedWith(routesA, listeners)))
++	memo.get("client-2", publishedWith(routesA, listeners))
++	assert.Len(t, memo.entries, 1, "clients on the same routing config share its entry")
++	assert.Equal(t, 2, memo.byProxy["client-2"].holders)
+ 
+ 	routesB := routeResourcesForClusters("cluster-b")
+ 	routesB.Version = routesA.Version // a reused label must not alias different content
+-	assert.Equal(t, map[string]struct{}{"cluster-b": {}}, refsOf(routesB))
+-	assert.Equal(t, 2, walks)
++	assert.Equal(t, map[string]struct{}{"cluster-b": {}}, memo.get(publishGateTestClient, publishedWith(routesB, listeners)))
++}
++
++// The memo retains only the routing configs its clients last looked up, so a
++// stream of published versions, or a departed client, pins nothing.
++func TestPublishedReferencedClustersMemoRetainsOnlyHeldEntries(t *testing.T) {
++	memo := newReferencedClustersMemo()
++	listeners := sliceToResources([]*envoylistenerv3.Listener{httpListenerWithRDS(t, "listener", "route-config")})
++	shared := publishedWith(routeResourcesForClusters("cluster-a"), listeners)
++	memo.get("client-1", shared)
++	memo.get("client-2", shared)
++
++	for i := range 100 {
++		memo.get("client-1", publishedWith(routeResourcesForClusters(fmt.Sprintf("cluster-%d", i)), listeners))
++	}
++	assert.Len(t, memo.entries, 2, "client-1 holds only its latest config; client-2 still holds the shared one")
++
++	memo.release("client-2")
++	assert.Len(t, memo.entries, 1, "a released entry no client holds is dropped")
++	memo.release("client-1")
++	assert.Empty(t, memo.entries, "departed clients pin nothing")
++	assert.Empty(t, memo.byProxy)
++}
++
++// A departed client releases its memo entry along with the rest of its
++// connection state.
++func TestClientDepartedReleasesPublishedRefs(t *testing.T) {
++	gate := newPublishGateTestTranslator(t, false, time.Hour).gate
++	listeners := sliceToResources([]*envoylistenerv3.Listener{httpListenerWithRDS(t, "listener", "route-config")})
++	gate.mu.Lock()
++	gate.publishedRefs.get(publishGateTestClient, publishedWith(routeResourcesForClusters("cluster-a"), listeners))
++	gate.mu.Unlock()
++	require.Len(t, gate.publishedRefs.entries, 1)
++
++	gate.clientDeparted(publishGateTestClient)
++
++	assert.Empty(t, gate.publishedRefs.entries, "the departed client's entry is dropped")
++	assert.Empty(t, gate.publishedRefs.byProxy)
+ }
+ 
+ // Publication tests model connected clients; their snapshots cannot be reclaimed.
 ```
 
-**File**: `pkg/kgateway/translator/gateway/testutils/inputs/backendconfigpolicy/tls-san.yaml` (modified, +2/-0)
+**File**: `pkg/kgateway/proxy_syncer/reference_ahead.go` (modified, +1/-1)
 ```diff
-@@ -54,6 +54,8 @@ spec:
-     verifySubjectAltNames:
-       - test.example.com
-       - api.example.com
-+      - spiffe://example.org/ns/default/sa/backend
-+      - 10.0.0.1
-     allowRenegotiation: true
- ---
- apiVersion: gateway.networking.k8s.io/v1
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/backendconfigpolicy/tls-san.yaml` (modified, +9/-0)
-```diff
-@@ -74,6 +74,15 @@ Clusters:
-           - matcher:
-               exact: api.example.com
-             sanType: DNS
-+          - matcher:
-+              exact: spiffe://example.org/ns/default/sa/backend
-+            sanType: URI
-+          - matcher:
-+              exact: 10.0.0.1
-+            sanType: IP_ADDRESS
-+          - matcher:
-+              exact: 10.0.0.1
-+            sanType: DNS
-           trustedCa:
-             inlineString: |
-               -----BEGIN CERTIFICATE-----
+@@ -121,7 +121,7 @@ func (g *publishGate) referenceAheadHoldLocked(
+ 	for name := range published.GetResourcesAndTTL(envoyresourcev3.ClusterType) {
+ 		closure[name] = struct{}{}
+ 	}
+-	resolved, _, edsHashes := resolveDeferredPerCluster(snapWrap, published, false, nil, closure, g.lastPublishedEDSLocked(snapWrap.proxyKey))
++	resolved, _, edsHashes := resolveDeferredPerCluster(snapWrap, published, nil, closure, g.lastPublishedEDSLocked(snapWrap.proxyKey))
+ 	held := holdRoutingTypes(resolved, published)
+ 	addBuiltClusterListeners(held, snapWrap.snap)
+ 	return held, edsHashes
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14966** (closed): fix(xds): record routing targets at publish instead of memoizing configs (@chandler-solo)
+- **PR #14964** (2026-11-02): [2.5] fix(xds): release published routing configs no client holds (@puertomontt)
+- **PR #14962** (2026-11-02): fix(xds): release published routing configs no client holds (@puertomontt)
 - **PR #14961** (2026-10-30): [2.5] Revert "perf: batch route changes before gateway translation (#14813)" (#14960) (@puertomontt)
 - **PR #14960** (2026-10-30): Revert "perf: batch route changes before gateway translation (#14813)" (@puertomontt)
 - **PR #14958** (2026-10-29): [2.5] chore: Bump gateway api to v1.7.0 (#14955) (@davidjumani)
-- **PR #14957** (2026-10-29): feat(backendconfigpolicy): backport no-traffic health-check interval (@chandler-solo)
-- **PR #14955** (2026-10-29): chore: Bump gateway api to v1.7.0 (@davidjumani)
-- **PR #14954** (2026-10-29): test:Cleanup SKIP message (@sheidkamp)
 
 ---
 
@@ -1751,28 +1307,30 @@ Signed-off-by: Harsh Raj <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CVE fixes (#14929)
+## X. xds): release published routing configs no client holds (#14962)
 
 **RULE**:
-When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/kgateway/proxy_syncer/carry_dependencies_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b964278d`: CVE fixes (#14929). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `583dce38`: xds): release published routing configs no client holds (#14962). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/proxy_syncer/carry_dependencies_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-COPY --from=docker.io/envoyproxy/envoy:v1.39.6 /usr/local/bin/envoy /usr/local/bin/envoy
+	wrap := XdsSnapWrapper{snap: build, proxyKey: publishGateTestClient, missingReferenced: []string{"x"}}
+	flipBlocking := flipBlockingClusters(newReferencedClustersMemo().get(publishGateTestClient, published), wrap, published, nil)
+	composed, _, _ := resolveDeferredPerCluster(wrap, published, flipBlocking, nil,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-COPY --from=docker.io/envoyproxy/envoy:v1.39.4 /usr/local/bin/envoy /usr/local/bin/envoy
+	composed, _, _ := resolveDeferredPerCluster(XdsSnapWrapper{snap: build, proxyKey: publishGateTestClient, missingReferenced: []string{"x"}}, published, true, nil, nil,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b964278d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `583dce38` are properly handled with clean fallback behavior.

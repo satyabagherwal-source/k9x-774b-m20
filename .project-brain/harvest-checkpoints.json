@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T19:52:35.682Z",
+  "last_updated": "2026-11-03T20:01:01.986Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2331,14 +2331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pathwaycom-serviette",
-      "content_hash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
-      "verified_at": "2026-11-03T19:15:16.759Z",
+      "content_hash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+      "verified_at": "2026-11-03T20:01:01.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:15:16.759Z"
+      "last_updated": "2026-11-03T20:01:01.986Z"
     },
     "EverMind-AI/Raven": {
       "repository": "EverMind-AI/Raven",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "1bf48eeabd100360fec3d06049811efe0dc0e000d9d1c8bc65d156d11baa3166",
-      "verified_at": "2026-11-03T15:54:43.736Z",
+      "content_hash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
+      "verified_at": "2026-11-03T20:01:00.171Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T15:54:43.736Z"
+      "last_updated": "2026-11-03T20:01:00.171Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
-      "verified_at": "2026-10-30T15:49:19.739Z",
+      "content_hash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
+      "verified_at": "2026-11-03T20:00:55.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:49:19.739Z"
+      "last_updated": "2026-11-03T20:00:55.670Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
-      "verified_at": "2026-10-28T23:42:58.517Z",
+      "content_hash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
+      "verified_at": "2026-11-03T20:00:47.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T23:42:58.517Z"
+      "last_updated": "2026-11-03T20:00:47.073Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",

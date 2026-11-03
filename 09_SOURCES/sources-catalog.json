@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "753b3276",
+    "sourceVersion": "583dce38",
     "license": "Apache-2.0",
-    "contentHash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
-    "lastHarvestedAt": "2026-10-30T15:49:19.730Z",
+    "contentHash": "4cc1141747f33b7c26ee3c60786521192e4a4e5967ac3bbebdfee875f189fe15",
+    "lastHarvestedAt": "2026-11-03T20:00:55.663Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "9ee43d78",
+    "sourceVersion": "ecab5ce6",
     "license": "Apache-2.0",
-    "contentHash": "1bf48eeabd100360fec3d06049811efe0dc0e000d9d1c8bc65d156d11baa3166",
-    "lastHarvestedAt": "2026-11-03T15:54:43.727Z",
+    "contentHash": "8871c68041886ba04f75a0664a1b466ded215d5aa5a6dc4421c462cf18b39d58",
+    "lastHarvestedAt": "2026-11-03T20:01:00.165Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6523,10 +6523,10 @@
     "repository": "pathwaycom/serviette",
     "platform": "github",
     "sourceUrl": "https://github.com/pathwaycom/llm-app",
-    "sourceVersion": "e2a7a09b",
+    "sourceVersion": "84e92a33",
     "license": "MIT",
-    "contentHash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
-    "lastHarvestedAt": "2026-10-19T06:04:56.200Z",
+    "contentHash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+    "lastHarvestedAt": "2026-11-03T20:01:01.979Z",
     "learningId": "learn-github-pathwaycom-serviette"
   },
   "amir1376-ab-download-manager": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "ec4ce8f2",
+    "sourceVersion": "606096f6",
     "license": "MIT",
-    "contentHash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
-    "lastHarvestedAt": "2026-10-28T23:42:58.509Z",
+    "contentHash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
+    "lastHarvestedAt": "2026-11-03T20:00:47.066Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {
