@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-talent-plan-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/talent-plan](https://github.com/pingcap/talent-plan))  
-> **Source Version**: `18d81c90`  
+> **Source Version**: `8e91311a`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:20:31.251Z  
+> **Timestamp**: 2026-11-03T15:54:44.302Z  
 > **Learning ID**: `learn-github-pingcap-talent-plan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-talent-plan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/talent-plan](https://github.com/pingcap/talent-plan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:20:31.243Z  
+> **Harvest Timestamp**: 2026-11-03T15:54:43.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: open source training courses about distributed database and distributed systems
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 11023 stars
+- **Stars / Engagement**: 11034 stars
 
 ---
 
@@ -632,14 +632,24 @@ impl KvsEngine for KvStore {
     ///
     /// Returns `None` if the given key does not exist.
     fn get(&self, key: String) -> Result<Option<String>> {
-        if let Some(cmd_pos) = self.index.get(&key) {
-            if let Command::Set { value, .. } = self.reader.read_command(*cmd_pos.value())? {
-                Ok(Some(value))
-            } else {
-                Err(KvsError::UnexpectedCommandType)
+        loop {
+            let cmd_pos = match self.index.get(&key) {
+                Some(entry) => *entry.value(),
+                None => return Ok(None),
+            };
+            match self.reader.read_command(cmd_pos) {
+                Ok(Command::Set { value, .. }) => return Ok(Some(value)),
+                Ok(_) => return Err(KvsError::UnexpectedCommandType),
+                // A compaction can move the entry to a new log file and delete the old
+                // file between the index lookup and the read, so look the key up again.
+                Err(KvsError::Io(ref e))
+                    if e.kind() == io::ErrorKind::NotFound
+                        && self.index.get(&key).map(|e| e.value().gen) != Some(cmd_pos.gen) =>
+                {
+                    continue
+                }
+                Err(e) => return Err(e),
             }
-        } else {
-            Ok(None)
         }
     }
 
@@ -789,27 +799,12 @@ impl KvStoreWriter {
         let mut compaction_writer = new_log_file(&self.path, compaction_gen)?;
 
         let mut new_pos = 0; // pos in the new log file
+        let mut new_index = Vec::new();
         for entry in self.index.iter() {
             let len = self.reader.read_and(*entry.value(), |mut entry_reader| {
                 Ok(io::copy(&mut entry_reader, &mut compaction_writer)?)
             })?;
-            self.index.insert(
-                entry.key().clone(),
-                (compaction_gen, new_pos..new_pos + len).into(),
-            );
-            new_pos += len;
-        }
-        compaction_writer.flush()?;
-
-        self.reader
-            .safe_point
-            .store(compaction_gen, Ordering::SeqCst);
-        self.reader.close_stale_handles();
-
-        // remove stale log files
-        // Note that actually these files are not deleted immediately because `KvStoreReader`s
-        // still keep open file handles. When `KvStoreReader` is used next time, it will clear
-        // its stale file handles. On Unix, the files 
+            new_index.push((entry.key().clone(
 ```
 
 ### Core Architecture Module: `courses/rust/projects/project-4/src/engines/mod.rs`
@@ -956,7 +951,10 @@ fn run_tasks(rx: TaskReceiver) {
             Ok(task) => {
                 task();
             }
-            Err(_) => debug!("Thread exits because the thread pool is destroyed."),
+            Err(_) => {
+                debug!("Thread exits because the thread pool is destroyed.");
+                break;
+            }
         }
     }
 }
@@ -1112,20 +1110,28 @@ impl<P: ThreadPool> KvsEngine for KvStore<P> {
         let index = self.index.clone();
         let (tx, rx) = oneshot::channel();
         self.thread_pool.spawn(move || {
-            let res = (|| {
-                if let Some(cmd_pos) = index.get(&key) {
-                    let reader = reader_pool.pop().unwrap();
-                    let res = if let Command::Set { value, .. } =
-                        reader.read_command(*cmd_pos.value())?
+            let res = (|| loop {
+                let cmd_pos = match index.get(&key) {
+                    Some(entry) => *entry.value(),
+                    None => return Ok(None),
+                };
+                let reader = reader_pool.pop().unwrap();
+                // Return the reader to the pool before checking the result,
+                // so a failed read doesn't leak it.
+                let res = reader.read_command(cmd_pos);
+                reader_pool.push(reader).unwrap();
+                match res {
+                    Ok(Command::Set { value, .. }) => return Ok(Some(value)),
+                    Ok(_) => return Err(KvsError::UnexpectedCommandType),
+                    // A compaction can move the entry to a new log file and delete the old
+                    // file between the index lookup and the read, so look the key up again.
+                    Err(KvsError::Io(ref e))
+                        if e.kind() == io::ErrorKind::NotFound
+                            && index.get(&key).map(|e| e.value().gen) != Some(cmd_pos.gen) =>
                     {
-                        Ok(Some(value))
-                    } else {
-                        Err(KvsError::UnexpectedCommandType)
-                    };
-                    reader_pool.push(reader).unwrap();
-                    res
-                } else {
-                    Ok(None)
+                        continue
+                    }
+                    Err(e) => return Err(e),
                 }
             })();
             if tx.send(res).is_err() {
@@ -1236,24 +1242,7 @@ struct KvStoreWriter {
     writer: BufWriterWithPos<File>,
     current_gen: u64,
     // the number of bytes representing "stale" commands that could be
-    // deleted during a compaction
-    uncompacted: u64,
-    path: Arc<PathBuf>,
-    index: Arc<SkipMap<String, CommandPos>>,
-}
-
-impl KvStoreWriter {
-    fn set(&mut self, key: String, value: String) -> Result<()> {
-        let cmd = Command::set(key, value);
-        let pos = self.writer.pos;
-        serde_json::to_writer(&mut self.writer, &cmd)?;
-        self.writer.flush()?;
-        if let Command::Set { key, .. } = cmd {
-            if let Some(old_cmd) = self.index.get(&key) {
-                self.uncompacted += old_cmd.value().len;
-            }
-            self.index
-                .insert(key, (sel
+    // delet
 ```
 
 ### Core Architecture Module: `courses/rust/projects/project-5/src/engines/mod.rs`
@@ -1295,11 +1284,11 @@ pub trait KvsEngine: Clone + Send + 'static {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #470** (2026-07-11): **courses/dss: fixed compilation errors and clippy warnings**
-  *Symptoms*: <!-- Thank you for contributing to talent-plan!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve?  - Fixed compilation errors and resolved clippy warnings that were appearing while running `make test_others`
+- **Issue #474** (2026-11-02): **rust/projects/project-4,project-5: retry get when compaction removes its log file**
+  *Symptoms*: ### What problem does this PR solve?  - Brief description of the problem: `KvStore::get` in project-4 and project-5 reads the index without a lock. If a compaction moves the entry to the compaction file and deletes the old log file between the index lookup and the read, `get` fails with `IO error: No such file or directory` for a key that is still live. Reported by the internal code-security scanner.  ### What is changed and how it works?  When the read fails with `NotFound` and the key's index entry now points to a different generation, `get` looks the key up again and retries. Any other error, or a `NotFound` for an entry that did not move, is returned as before. In project-5 the reader is still returned to the pool before the result is checked (#472).  ### Check List  Tests   - Unit test: the existing project-4 and project-5 suites pass (cargo 1.53 with rustc 1.47, `--locked`).  - Manual test: a local stress test (not committed) with 4 reader threads calling `get` on 200 live keys while one writer overwrites a 4 KiB value for 20 s, triggering repeated compactions. Before: 6 NotFound errors in project-4 (out of 31.7M reads). After: 0 in both projects.  Not in this PR: the same stress test shows that `get` can also return `None` for a live key while it is being re-inserted. crossbeam-skiplist's `insert` removes an existing entry before inserting the new one, and compaction re-inserts every live key. Fixing that needs in-place index updates, so it is left for a separate chang
 
-- **Issue #468** (2024-12-16): **Jchen/raft lab2a leader election**
-  *Symptoms*: <!-- Thank you for contributing to talent-plan!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve?  - Issue number: close #xxx <!-- remove this line if no issue to close --> - Breif description of the problem:  ### What is changed and how it works?  ### Check List <!--REMOVE the items that are not applicable-->  Tests <!-- At least one of them must be included. -->   - Unit test  - Integration test  - Manual test (add detailed scripts or steps below)  - No code  Side effects   - Possible performance regression  - Increased code complexity  Related changes   - Need to update the documentation 
+- **Issue #473** (2026-11-02): **rust/projects/project-5: serve connections concurrently and drop bad streams**
+  *Symptoms*: ### What problem does this PR solve?  - Brief description of the problem: in the project-5 reference solution, one bad 4-byte request makes `kvs-server` loop writing error responses and then exit, and connections are served one at a time.  ### What is changed and how it works?  `courses/rust/projects/project-5/src/server.rs` only.  - **Connections are served one at a time, and one error stops the server.** `for_each` ran `serve()` inline, so the next connection waited for the previous one to finish, and an error from any connection (or from `accept`) ended `for_each` and the server. Now each connection is `tokio::spawn`ed, and a failed accept is logged and the server keeps listening. - **Stream errors were answered forever.** `serve()` turned every error into `Response::Err`, including read and decode errors from the socket, and kept polling the failed stream. Now only engine errors become error responses; a stream error closes that connection.  ### Check List  Tests   - Integration test: existing `cargo test --locked` for project-5 (Docker, `rust:1.53` cargo with `rustc` 1.47, as in the companion PR). All pass except `cli_access_server_sled_engine`, which fails intermittently on unchanged `master` too.  - Manual test: start `kvs-server`, then send the 4 bytes `ff ff ff ff` (a frame length over the codec's limit):     ```bash    exec 3<>/dev/tcp/127.0.0.1/4000; printf '\xff\xff\xff\xff' >&3    timeout 2 cat <&3 | wc -c    ```     | | `master` | this PR |    |---|---|---|    |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1316,89 +1305,233 @@ pub trait KvsEngine: Clone + Send + 'static {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c02b586` (2022-06-06)
-**Commit Message**: fix clippy error (#414)
+### Incident Patch 1: `9f846dab` (2026-11-02)
+**Commit Message**: rust/projects: fix bugs in the kvs reference solutions and unbreak project-4's build (#472)
 
-fix clippy error: this expression borrows a reference that is
-immediately dereferenced by the compiler
+* rust/projects/project-4: pin crossbeam-skiplist to a fixed rev
 
-**File**: `courses/dss/labrpc/src/network.rs` (modified, +1/-1)
+crossbeam renamed its default branch from master to main, so
+branch = "master" no longer resolves and project-4 fails to fetch
+its dependencies. Pin the commit that Cargo.lock already used
+(90cd7dca), as project-5 does. No dependency code changes.
+
+* ci: pin the dss CI image by digest
+
+* rust/projects: stop shared queue workers when the pool is dropped
+
+run_tasks logged and looped again when recv() failed, so once the
+SharedQueueThreadPool was dropped every worker spun at 100% CPU.
+Break out of the loop instead (project-4 and project-5).
+
+* rust/projects: refuse to start on an unreadable engine file
+
+kvs-server treated an invalid engine file as "no engine selected",
+so it could open data written by one engine with the other. Exit
+with an error instead, as the spec requires when the engine differs
+(project-3, project-4 and project-5).
+
+* rust/projects: fix reader leak and compaction ordering in KvStore
+
+- project-5: KvStore::get returned early on a read error without
+  putting the reader back in the pool. After enough errors t
+
+**File**: `.circleci/config.yml` (modified, +1/-1)
 ```diff
-@@ -350,7 +350,7 @@ async fn server_dead(
- ) {
-     loop {
-         Delay::new(interval).await;
--        if net.is_server_dead(&client_name, &server_name, server_id) {
-+        if net.is_server_dead(client_name, server_name, server_id) {
-             debug!("{:?} is dead", server_name);
-             return;
+@@ -2,7 +2,7 @@ version: 2.1
+ jobs:
+   dss:
+     docker:
+-      - image: circleci/rust:stretch
++      - image: circleci/rust:stretch@sha256:5646e23b70685e1e57499c71358c2036134582f5c6d70ad27ff86725959446d8
+     environment:
+       RUST_BACKTRACE: "1"
+       RUSTFLAGS: "-Dwarnings"
+```
+
+**File**: `courses/rust/projects/project-3/src/bin/kvs-server.rs` (modified, +5/-5)
+```diff
+@@ -1,7 +1,7 @@
+ use clap::arg_enum;
+ use kvs::*;
+ use log::LevelFilter;
+-use log::{error, info, warn};
++use log::{error, info};
+ use std::env::current_dir;
+ use std::fs;
+ use std::net::SocketAddr;
+@@ -87,9 +87,9 @@ fn current_engine() -> Result<Option<Engine>> {
+ 
+     match fs::read_to_string(engine)?.parse() {
+         Ok(engine) => Ok(Some(engine)),
+-        Err(e) => {
+-            warn!("The content of engine file is invalid: {}", e);
+-            Ok(None)
+-        }
++        Err(e) => Err(KvsError::StringError(format!(
++            "The content of engine file is invalid: {}",
++            e
++        ))),
+     }
+ }
+```
+
+**File**: `courses/rust/projects/project-3/src/engines/kvs.rs` (modified, +1/-1)
+```diff
+@@ -351,7 +351,7 @@ struct BufWriterWithPos<W: Write + Seek> {
+ 
+ impl<W: Write + Seek> BufWriterWithPos<W> {
+     fn new(mut inner: W) -> Result<Self> {
+-        let pos = inner.seek(SeekFrom::Current(0))?;
++        let pos = inner.seek(SeekFrom::End(0))?;
+         Ok(BufWriterWithPos {
+             writer: BufWriter::new(inner),
+             pos,
+```
+
+**File**: `courses/rust/projects/project-4/Cargo.lock` (modified, +6/-6)
+```diff
+@@ -318,10 +318,10 @@ dependencies = [
+ [[package]]
+ name = "crossbeam-epoch"
+ version = "0.9.1"
+-source = "git+https://github.com/crossbeam-rs/crossbeam.git?branch=master#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
++source = "git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
+ dependencies = [
+  "cfg-if 1.0.0",
+- "crossbeam-utils 0.8.1 (git+https://github.com/crossbeam-rs/crossbeam.git?branch=master)",
++ "crossbeam-utils 0.8.1 (git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a)",
+  "lazy_static",
+  "loom",
+  "memoffset 0.6.1",
+@@ -340,11 +340,11 @@ dependencies = [
+ [[package]]
+ name = "crossbeam-skiplist"
+ version = "0.0.0"
+-source = "git+https://github.com/crossbeam-rs/crossbeam.git?branch=master#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
++source = "git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
+ dependencies = [
+  "cfg-if 1.0.0",
+- "crossbeam-epoch 0.9.1 (git+https://github.com/crossbeam-rs/crossbeam.git?branch=master)",
+- "crossbeam-utils 0.8.1 (git+https://github.com/crossbeam-rs/crossbeam.git?branch=master)",
++ "crossbeam-epoch 0.9.1 (git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a)",
++ "crossbeam-utils 0.8.1 (git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a)",
+  "scopeguard 1.1.0",
+ ]
+ 
+@@ -383,7 +383,7 @@ dependencies = [
+ [[package]]
+ name = "crossbeam-utils"
+ version = "0.8.1"
+-source = "git+https://github.com/crossbeam-rs/crossbeam.git?branch=master#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
++source = "git+https://github.com/crossbeam-rs/crossbeam.git?rev=90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a#90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a"
+ dependencies = [
+  "autocfg 1.0.1",
+  "cfg-if 1.0.0",
+```
+
+**File**: `courses/rust/projects/project-4/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ sled = "0.34.6"
+ crossbeam = "0.7.1"
+ rayon = "1.0.3"
+ num_cpus = "1.10.0"
+-crossbeam-skiplist = { git = "https://github.com/crossbeam-rs/crossbeam.git", branch = "master" }
++crossbeam-skiplist = { git = "https://github.com/crossbeam-rs/crossbeam.git", rev = "90cd7dca89a58fd09e2fd92d6c0e9cfbe3f0a04a" }
+ 
+ [dev-dependencies]
+ assert_cmd = "0.11"
+```
+
+**File**: `courses/rust/projects/project-4/src/bin/kvs-server.rs` (modified, +5/-5)
+```diff
+@@ -2,7 +2,7 @@ use clap::arg_enum;
+ use kvs::thread_pool::*;
+ use kvs::*;
+ use log::LevelFilter;
+-use log::{error, info, warn};
++use log::{error, info};
+ use std::env;
+ use std::env::current_dir;
+ use std::fs;
+@@ -97,9 +97,9 @@ fn current_engine() -> Result<Option<Engine>> {
+ 
+     match fs::read_to_string(engine)?.parse() {
+         Ok(engine) => Ok(Some(engine)),
+-        Err(e) => {
+-            warn!("The content of engine file is invalid: {}", e);
+-            Ok(None)
+-        }
++        Err(e) => Err(KvsError::StringError(format!(
++            "The content of engine file is invalid: {}",
++            e
++        ))),
+     }
+ }
+```
+
+**File**: `courses/rust/projects/project-4/src/engines/kvs.rs` (modified, +9/-5)
+```diff
+@@ -271,18 +271,22 @@ impl KvStoreWriter {
+         let mut compaction_writer = new_log_file(&self.path, compaction_gen)?;
+ 
+         let mut new_pos = 0; // pos in the new log file
++        let mut new_index = Vec::new();
+         for entry in self.index.iter() {
+             let len = self.reader.read_and(*entry.value(), |mut entry_reader| {
+                 Ok(io::copy(&mut entry_reader, &mut compaction_writer)?)
+             })?;
+-            self.index.insert(
+-                entry.key().clone(),
+-                (compaction_gen, new_pos..new_pos + len).into(),
+-            );
++            new_index.push((entry.key().clone(), new_pos..new_pos + len));
+             new_pos += len;
          }
+         compaction_writer.flush()?;
+ 
++        // Readers don't take the lock, so only point the index at the compaction
++        // file after its contents are flushed.
++        for (key, range) in new_index {
++            self.index.insert(key, (compaction_gen, range).into());
++        }
++
+         self.reader
+             .safe_point
+             .store(compaction_gen, Ordering::SeqCst);
+@@ -453,7 +457,7 @@ struct BufWriterWithPos<W: Write + Seek> {
+ 
+ impl<W: Write + Seek> BufWriterWithPos<W> {
+     fn new(mut inner: W) -> Result<Self> {
+-        let pos = inner.seek(SeekFrom::Current(0))?;
++        let pos = inner.seek(SeekFrom::End(0))?;
+         Ok(BufWriterWithPos {
+             writer: BufWriter::new(inner),
+             pos,
 ```
 
-**File**: `courses/dss/raft/src/kvraft/tests.rs` (modified, +1/-1)
+**File**: `courses/rust/projects/project-4/src/thread_pool/shared_queue.rs` (modified, +4/-1)
 ```diff
-@@ -263,7 +263,7 @@ fn generic_test(
-                                 j += 1;
-                             } else {
-                                 debug!("{}: client new get {:?}", cli, key);
--                                let v = get(&cfg1, &myck, &key);
-+                                let v = get(&cfg1, myck, &key);
-                                 if v != last {
-                                     panic!(
-                                         "get wrong value, key {:?}, wanted:\n{:?}\n, got\n{:?}",
-```
-
----
-
-### Incident Patch 2: `3d9d3d7f` (2022-06-06)
-**Commit Message**: fix link about Talent Plan Site (#415)
-
-**File**: `talent-plan-1.0/README-CN.md` (modified, +6/-6)
-```diff
-@@ -11,10 +11,10 @@ Talent Plan 1.0 课程中共有 2 条学习路径供大家选择，分别是：
- >
- > Talent Plan 2.0 课程已正式上线，相比 1.0 版本，新增了用 Go 语言全新设计的分布式关系型数据库 TinySQL 课程和分布式 Key-value 数据库 TinyKV 课程，并结合大家的兴趣爱好和知识背景全新规划了 5 条推荐的学习路径，分别是：
- >
--> * 路径 1：[实现一个 Mini 版本的分布式关系型数据库](https://university.pingcap.com/talent-plan/implement-a-mini-distributed-relational-database)
--> * 路径 2：[实现一个 Mini 版本的分布式 Key-value 数据库](https://university.pingcap.com/talent-plan/implement-a-mini-distributed-key-value-database)
--> * 路径 3：[参与工业级开源分布式关系型数据库 TiDB 的开发实践](https://university.pingcap.com/talent-plan/become-a-tidb-contributor)
--> * 路径 4：[参与工业级开源分布式 Key-value 数据库 TiKV 的开发实践](https://university.pingcap.com/talent-plan/become-a-tikv-contributor)
--> * 路径 5：[Rust 编程原理与实践](https://university.pingcap.com/talent-plan/rust-programming)
-+> * 路径 1：[实现一个 Mini 版本的分布式关系型数据库](https://learn.pingcap.com/learner/talent-plan/implement-a-mini-distributed-relational-database)
-+> * 路径 2：[实现一个 Mini 版本的分布式 Key-value 数据库](https://learn.pingcap.com/learner/talent-plan/implement-a-mini-distributed-key-value-database)
-+> * 路径 3：[参与工业级开源分布式关系型数据库 TiDB 的开发实践](https://learn.pingcap.com/learner/talent-plan/become-a-tidb-contributor)
-+> * 路径 4：[参与工业级开源分布式 Key-value 数据库 TiKV 的开发实践](https://learn.pingcap.com/learner/talent-plan/become-a-tikv-contributor)
-+> * 路径 5：[Rust 编程原理与实践](>https://learn.pingcap.com/learner/talent-plan/rust-programming)
- >
--> 小伙伴们也可直接通过 [Talent Plan 官网](https://university.pingcap.com/talent-plan/) 开始 Talent Plan 2.0 课程的学习。
-+> 小伙伴们也可直接通过 [Talent Plan 官网](https://learn.pingcap.com/learner/talent-plan) 开始 Talent Plan 2.0 课程的学习。
-```
-
----
-
-### Incident Patch 3: `a41b846b` (2022-04-06)
-**Commit Message**: README.md: fix the link error (#410)
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ We love our community and take great care to ensure it is fun, safe and rewardin
- 
- ## We're here to help
- 
--If you have questions about building (or taking) courses, you can ask in the channel **#wg-talent-plan-courses** of the [tidbcommunity](https://pingcap.com/tidbslack/) slack workspace.
-+If you have questions about building (or taking) courses, you can ask in the channel **#wg-talent-plan-courses** of the [tidbcommunity](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE#/shared-invite/email) slack workspace.
- 
- ## License
- 
+@@ -65,7 +65,10 @@ fn run_tasks(rx: TaskReceiver) {
+             Ok(task) => {
+                 task();
+             }
+-            Err(_) => debug!("Thread exits because the thread pool is destroyed."),
++            Err(_) => {
++                debug!("Thread exits because the thread pool is destroyed.");
++                break;
++            }
+         }
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #474** (2026-11-02): rust/projects/project-4,project-5: retry get when compaction removes its log file (@seominjea1942)
+- **PR #473** (2026-11-02): rust/projects/project-5: serve connections concurrently and drop bad streams (@seominjea1942)
+- **PR #472** (2026-11-02): rust/projects: fix bugs in the kvs reference solutions and unbreak project-4's build (@seominjea1942)
 - **PR #470** (closed): courses/dss: fixed compilation errors and clippy warnings (@kumarlokesh)
 - **PR #468** (closed): Jchen/raft lab2a leader election (@drinkbeer)
 - **PR #467** (closed): Fixing the clippy (@drinkbeer)
-- **PR #460** (closed): Mine (@joema-m)
-- **PR #457** (closed): Update tp102-how-to-use-git-github.md (@RTCFoundation)
-- **PR #456** (closed): (WIP) raft with rust (@WenyXu)
 
 ---
 
@@ -1418,28 +1551,28 @@ immediately dereferenced by the compiler
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clippy error (#414)
+## X. rust/projects: fix bugs in the kvs reference solutions and unbreak project-4's b
 
 **RULE**:
-When implementing operations in `courses/dss/labrpc/src/network.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/talent-plan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.circleci/config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/talent-plan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c02b586`: clippy error (#414). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f846dab`: rust/projects: fix bugs in the kvs reference solutions and unbreak project-4's build (#472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `courses/dss/labrpc/src/network.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/config.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if net.is_server_dead(client_name, server_name, server_id) {
+      - image: circleci/rust:stretch@sha256:5646e23b70685e1e57499c71358c2036134582f5c6d70ad27ff86725959446d8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if net.is_server_dead(&client_name, &server_name, server_id) {
+      - image: circleci/rust:stretch
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c02b586` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f846dab` are properly handled with clean fallback behavior.

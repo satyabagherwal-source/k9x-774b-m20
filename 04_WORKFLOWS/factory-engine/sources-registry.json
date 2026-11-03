@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T15:46:53.687Z",
-    "lastVerified": "2026-11-03T15:46:53.687Z",
+    "lastChecked": "2026-11-03T15:54:47.912Z",
+    "lastVerified": "2026-11-03T15:54:47.912Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T12:51:47.574Z",
-    "lastVerified": "2026-11-03T12:51:47.574Z",
+    "lastChecked": "2026-11-03T15:54:39.054Z",
+    "lastVerified": "2026-11-03T15:54:39.054Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -675,14 +675,14 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-31T19:00:40.243Z",
-    "lastVerified": "2026-10-31T19:00:40.243Z",
+    "lastChecked": "2026-11-03T15:54:38.883Z",
+    "lastVerified": "2026-11-03T15:54:38.883Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "262e8a76d66c9b011e459e27770c468390b4c4cf2c19844f090d2f9a4d926c9f",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "3419dc50c77549821d4bff1b3b33213d9b95a91f72f27c7280abfac1aa64ddd6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1130,12 +1130,12 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:31:48.046Z",
-    "lastVerified": "2026-11-02T17:31:48.046Z",
+    "lastChecked": "2026-11-03T15:54:42.161Z",
+    "lastVerified": "2026-11-03T15:54:42.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
+    "contentHash": "1bf48eeabd100360fec3d06049811efe0dc0e000d9d1c8bc65d156d11baa3166",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -6063,11 +6063,21 @@
     "lastVerified": "2026-11-02T17:46:42.771Z"
   },
   "pingcap-talent-plan": {
-    "name": "talent-plan",
+    "name": "pingcap/talent-plan",
     "officialUrl": "https://github.com/pingcap/talent-plan",
-    "lastChecked": "2026-10-31T18:08:49.105Z",
-    "revisionIdentifier": "18d81c90",
-    "lastVerified": "2026-10-31T18:08:49.105Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-03T15:54:43.752Z",
+    "lastVerified": "2026-11-03T15:54:43.752Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pingcap-talent-plan",
+    "contentHash": "a40c4f3b451ac0067309aa8f8f0c064c679ce36678a247b71b843f75b2c26536",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "yvgude-lean-ctx": {
     "name": "yvgude/lean-ctx",
@@ -7489,9 +7499,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-10-31T14:08:04.606Z",
+    "lastChecked": "2026-11-03T15:54:24.118Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-10-31T14:08:04.606Z"
+    "lastVerified": "2026-11-03T15:54:24.118Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -9765,9 +9775,9 @@
   "mitrovicsinisaa-schemaorg-rs": {
     "name": "schemaorg-rs",
     "officialUrl": "https://github.com/mitrovicsinisaa/schemaorg-rs",
-    "lastChecked": "2026-10-30T04:41:35.743Z",
+    "lastChecked": "2026-11-03T15:54:26.766Z",
     "revisionIdentifier": "34463033",
-    "lastVerified": "2026-10-30T04:41:35.743Z"
+    "lastVerified": "2026-11-03T15:54:26.766Z"
   },
   "zoontek-react-native-bootsplash": {
     "name": "zoontek/react-native-bootsplash",
@@ -10799,12 +10809,12 @@
     "lastVerified": "2026-10-30T15:21:52.386Z"
   },
   "superhighfives-pika": {
-    "name": "superhighfives/pika",
+    "name": "pika",
     "officialUrl": "https://github.com/superhighfives/pika",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T15:21:59.238Z",
-    "lastVerified": "2026-10-30T15:21:59.238Z",
+    "lastChecked": "2026-11-03T15:54:29.076Z",
+    "lastVerified": "2026-11-03T15:54:29.076Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-superhighfives-pika",
@@ -10813,7 +10823,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1e16dfd2"
   },
   "urllib3-urllib3": {
     "name": "urllib3/urllib3",

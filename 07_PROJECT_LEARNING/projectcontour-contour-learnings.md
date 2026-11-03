@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `ae99b5a1`  
+> **Source Version**: `38795f67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:00:42.093Z  
+> **Timestamp**: 2026-11-03T15:54:44.599Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:00:40.243Z  
+> **Harvest Timestamp**: 2026-11-03T15:54:38.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,15 +1592,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7805** (2026-10-31): **Update for Contour v1.33.8 release**
-  *Symptoms*: Changelog, versions.yaml and compatibility matrix for v1.33.8.
+- **Issue #7807** (2026-11-02): **Fix included HTTPProxy regex matching outside its prefix**
+  *Symptoms*: This PR prevents an included `HTTPProxy` from matching paths outside its include prefix with regex. The prefix is escaped, the child regex is grouped, and the merged regex is validated.  Fixes GHSA-g6qh-g3pq-5cpm.  This is already released in v1.33.8, so no release notes.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7805?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.30%. Comparing base ([`f1de7f9`](https://app.codecov.io/gh/projectcontour/contour/commit/f1de7f97e1d1a50243494b758438efdc552795d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`7c7dfda`](https://app.codecov.io/gh/projectcontour/contour/commit/7c7dfdab1afb37458c43df752f80f00ff5707328?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree grap
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7807?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.30%. Comparing base ([`ae99b5a`](https://app.codecov.io/gh/projectcontour/contour/commit/ae99b5a1a13166db87bee5d16a445c9c66f3e8de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`1040db1`](https://app.codecov.io/gh/projectcontour/contour/commit/1040db17d9df48e642604448c4efd1eb401d0eae?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
 
-- **Issue #7804** (2026-10-31): **release-1.33: Update Kubernetes version for E2E tests to 1.37**
-  *Symptoms*: Run test suite in release-1.33 branch with Kubernetes 1.37, 1.36 and 1.35.  Related to #7732 and #7749.
+- **Issue #7806** (2026-11-02): **Include all distinguishing fields in DNSNameCluster name**
+  *Symptoms*: This PR includes all JWKS settings in the `DNSNameCluster` name. Before, HTTPProxies with the same JWKS host shared one Envoy cluster and used the settings of only one of them.  Fixes GHSA-9x3c-68m7-f3x4.  This is already released in v1.33.8, so no release notes.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7804?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 82.37%. Comparing base ([`4de356a`](https://app.codecov.io/gh/projectcontour/contour/commit/4de356a66eb923ba5f09fa7986cb5673eabb3b76?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`4c61675`](https://app.codecov.io/gh/projectcontour/contour/commit/4c61675cd412b310afe424c993015946b9d80bd4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7806?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.29%. Comparing base ([`ae99b5a`](https://app.codecov.io/gh/projectcontour/contour/commit/ae99b5a1a13166db87bee5d16a445c9c66f3e8de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`4d888f7`](https://app.codecov.io/gh/projectcontour/contour/commit/4d888f7d0bd51a3ad3bd41f4f4303c306c796938?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1617,105 +1617,695 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae99b5a1` (2026-10-31)
-**Commit Message**: Update for Contour v1.33.8 release (#7805)
+### Incident Patch 1: `2625d1e5` (2026-11-02)
+**Commit Message**: Fix included HTTPProxy regex matching outside its prefix (#7807)
+
+* Fix HTTPProxy Path Delegation Escape and Metacharacter Injection via Regex Conditions in mergePathMatchConditions
+
+1. Regex Alternation Escape:
+When a tenant-controlled child route regex contained a '|' (alternation) operator, raw concatenation allowed
+the alternation to escape the parent include prefix constraint (e.g., '^/team-a/x|/admin/.' evaluated
+as '(^/team-a/x)|(/admin/.)'). This allowed tenants to hijack arbitrary co-hosted routes (such as /admin).
+
+2. Unescaped Parent Prefix Metacharacters:
+When a parent include prefix contained regex metacharacters (e.g., '/v1.0') and was merged with
+a child regex route, the parent prefix was concatenated without being escaped. The '.' was interpreted
+as an RE2 wildcard, allowing the tenant to match and intercept traffic destined for other prefixes (e.g., /v100).
+
+3. Updates TestPathMatchCondition in conditions_test.go to assert the secure non-capturing group
+output format and adds explicit security exploit test cases.
+
+* Validate merged regex path conditions, add test cases
 
 Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
-**File**: `changelogs/CHANGELOG-v1.33.8.md` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+We are delighted to present version v1.33.8 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
-+
-+- [All Changes](#all-changes)
-+- [Installing/Upgrading](#installing-and-upgrading)
-+- [Compatible Kubernetes Versions](#compatible-kubernetes-versions)
-+
-+# All Changes
-+
-+## Security fix for [GHSA-899w-6852-7fr3](https://github.com/projectcontour/contour/security/advisories/GHSA-899w-6852-7fr3)
-+
-+Crash loop when an Ingress has a resource backend.
-+
-+## Security fix for [GHSA-9x3c-68m7-f3x4](https://github.com/projectcontour/contour/security/advisories/GHSA-9x3c-68m7-f3x4)
-+
-+HTTPProxy JWKS settings can be replaced by another HTTPProxy that uses the same JWKS host.
-+
-+## Security fix for [GHSA-g6qh-g3pq-5cpm](https://github.com/projectcontour/contour/security/advisories/GHSA-g6qh-g3pq-5cpm)
-+
-+Included HTTPProxy can receive requests outside its prefix by using regex.
-+
-+## Other Changes
-+
-+- Updates Envoy to v1.38.9. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9) for more information about the content of the release.
-+- Bumps Go to 1.26.10.
-+- Updated dependencies to fix CVEs.
-+
-+# Installing and Upgrading
-+
-+For a fresh install of Contour, consult the [getting started documentation](https://projectcontour.io/getting-started/).
-+
-+To upgrade an existing Contour installation, please consult the [upgrade documentation](https://projectcontour.io/resources/upgrading/).
-+
-+# Compatible Kubernetes Versions
-+
-+Contour v1.33.8 is tested against Kubernetes 1.35 through 1.37.
-+
-+# Are you a Contour user? We would love to know!
-+If you're using Contour and want to add your organization to our adopters list, please visit this [page](https://projectcontour.io/resources/adopters/). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Contour, please post on this [GitHub thread](https://github.com/projectcontour/contour/issues/1269).
-```
+---------
 
-**File**: `site/content/resources/compatibility-matrix.md` (modified, +2/-0)
+Signed-off-by: Tero Saarni <[REDACTED_
+
+**File**: `internal/dag/builder_test.go` (modified, +149/-1)
 ```diff
-@@ -10,6 +10,7 @@ This page lists the versions of Envoy and Kubernetes that each Contour release w
- | Contour Version | Tested Envoy Version | Tested Kubernetes Versions | Gateway API Version |
- | --------------- | :------------------- | -------------------------- | --------------------|
- | main            | [1.40.2][85]         | 1.37, 1.36, 1.35    | [1.3.0][113]        |
-+| 1.33.8          | [1.38.9][86]         | 1.37, 1.36, 1.35    | [1.3.0][113]        |
- | 1.33.7          | [1.38.4][84]         | 1.34, 1.33, 1.32    | [1.3.0][113]        |
- | 1.33.6          | [1.38.3][83]         | 1.34, 1.33, 1.32    | [1.3.0][113]        |
- | 1.33.5          | [1.35.10][80]        | 1.34, 1.33, 1.32    | [1.3.0][113]        |
-@@ -264,6 +265,7 @@ __Note:__ This list of extensions was last verified to be complete with Envoy v1
- [83]: https://www.envoyproxy.io/docs/envoy/v1.38.3/version_history/v1.38/v1.38.3
- [84]: https://www.envoyproxy.io/docs/envoy/v1.38.4/version_history/v1.38/v1.38.4
- [85]: https://www.envoyproxy.io/docs/envoy/v1.40.2/version_history/v1.40/v1.40.2
-+[86]: https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9
+@@ -14013,7 +14013,7 @@ func TestDAGInsert(t *testing.T) {
+ 					Port: 8080,
+ 					VirtualHosts: virtualhosts(
+ 						virtualhost("example.valid.regexpath.com",
+-							routeClusterRegex("/foo/regex/.*",
++							routeClusterRegex("/foo(?:/regex/.*)",
+ 								&Cluster{
+ 									Upstream: service(s1),
+ 								},
+@@ -14028,6 +14028,108 @@ func TestDAGInsert(t *testing.T) {
+ 				},
+ 			),
+ 		},
++		"httpproxy include with prefix, child regex with alternation is wrapped in non-capturing group": {
++			objs: []any{
++				&contour_v1.HTTPProxy{
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "root",
++						Namespace: s1.Namespace,
++					},
++					Spec: contour_v1.HTTPProxySpec{
++						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
++						Includes: []contour_v1.Include{{
++							Name:      "child",
++							Namespace: s1.Namespace,
++							Conditions: []contour_v1.MatchCondition{{
++								Prefix: "/team-a",
++							}},
++						}},
++					},
++				},
++				&contour_v1.HTTPProxy{
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "child",
++						Namespace: s1.Namespace,
++					},
++					Spec: contour_v1.HTTPProxySpec{
++						Routes: []contour_v1.Route{{
++							Conditions: []contour_v1.MatchCondition{{
++								Regex: "/x|/admin/.*",
++							}},
++							Services: []contour_v1.Service{{
++								Name: s1.Name,
++								Port: 8080,
++							}},
++						}},
++					},
++				},
++				s1,
++			},
++			want: listeners(
++				&Listener{
++					Name: HTTP_LISTENER_NAME,
++					Port: 8080,
++					VirtualHosts: virtualhosts(
++						virtualhost("example.com",
++							routeClusterRegex("/team-a(?:/x|/admin/.*)",
++								&Cluster{Upstream: service(s1)},
++							),
++						),
++					),
++				},
++			),
++		},
++		"httpproxy include with prefix containing metacharacters, prefix is escaped in merged regex": {
++			objs: []any{
++				&contour_v1.HTTPProxy{
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "root",
++						Namespace: s1.Namespace,
++					},
++					Spec: contour_v1.HTTPProxySpec{
++						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
++						Includes: []contour_v1.Include{{
++							Name:      "child",
++							Namespace: s1.Namespace,
++							Conditions: []contour_v1.MatchCondition{{
++								Prefix: "/v1.0",
++							}},
++						}},
++					},
++				},
++				&contour_v1.HTTPProxy{
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "child",
++						Namespace: s1.Namespace,
++					},
++					Spec: contour_v1.HTTPProxySpec{
++						Routes: []contour_v1.Route{{
++							Conditions: []contour_v1.MatchCondition{{
++								Regex: "/.*",
++							}},
++							Services: []contour_v1.Service{{
++								Name: s1.Name,
++								Port: 8080,
++							}},
++						}},
++					},
++				},
++				s1,
++			},
++			want: listeners(
++				&Listener{
++					Name: HTTP_LISTENER_NAME,
++					Port: 8080,
++					VirtualHosts: virtualhosts(
++						virtualhost("example.com",
++							routeClusterRegex(`/v1\.0(?:/.*)`,
++								&Cluster{Upstream: service(s1)},
++							),
++						),
++					),
++				},
++			),
++		},
+ 	}
  
- [98]: https://github.com/kubernetes/client-go
- [99]: https://github.com/kubernetes/client-go#compatibility-matrix
+ 	for name, tc := range tests {
+@@ -15597,6 +15699,52 @@ func TestHTTPProxyConficts(t *testing.T) {
+ 			{Name: "root-proxy", Namespace: "default"}:        fixture.NewValidCondition().Valid(),
+ 		},
+ 	})
++
++	run(t, "child proxy with regex that produces invalid merged regex reports route error", testcase{
++		objs: []any{
++			&contour_v1.HTTPProxy{
++				ObjectMeta: meta_v1.ObjectMeta{
++					Name:      "root-proxy",
++					Namespace: "default",
++				},
++				Spec: contour_v1.HTTPProxySpec{
++					VirtualHost: &contour_v1.VirtualHost{
++						Fqdn: "example.com",
++					},
++					Includes: []contour_v1.Include{{
++						Name:       "child-proxy",
++						Namespace:  "default",
++						Conditions: []contour_v1.MatchCondition{{Prefix: "/team-a"}},
++					}},
++				},
++			},
++			&contour_v1.HTTPProxy{
++				ObjectMeta: meta_v1.ObjectMeta{
++					Name:      "child-proxy",
++					Namespace: "default",
++				},
++				Spec: contour_v1.HTTPProxySpec{
++					Routes: []contour_v1.Route{{
++						Conditions: []contour_v1.MatchCondition{{
++							Regex: `/\Qfoo`,
++						}},
++						Services: []contour_v1.Service{{
++							Name: "existing-service-1",
++							Port: 8080,
++						}},
++					}},
++				},
++			},
++			existingService1,
++		},
++		wantListeners: listeners(),
++		wantStatus: map[types.NamespacedName]contour_v1.DetailedCondition{
++			{Name: "child-proxy", Namespace: "default"}: fixture.NewValidCondition().
++				WithError(contour_v1.ConditionTypeRouteError, "PathMatchConditionsNotValid",
++					"route: regex invalid after merging with include prefix"),
++			{Name: "root-proxy", Namespace: "default"}: fixture.NewValidCondition().Valid(),
++		},
++	})
+ }
+ 
+ func TestDefaultHeadersPolicies(t *testing.T) {
 ```
 
-**File**: `versions.yaml` (modified, +11/-1)
+**File**: `internal/dag/conditions.go` (modified, +36/-13)
 ```diff
-@@ -14,8 +14,18 @@ versions:
-         - "1.35"
-       gateway-api:
-         - "1.3.0"
--  - version: v1.33.7
-+  - version: v1.33.8
-     supported: "true"
-+    dependencies:
-+      envoy: "1.38.9"
-+      kubernetes:
-+        - "1.37"
-+        - "1.36"
-+        - "1.35"
-+      gateway-api:
-+        - "1.3.0"
-+  - version: v1.33.7
-+    supported: "false"
-     dependencies:
-       envoy: "1.38.4"
-       kubernetes:
+@@ -26,22 +26,41 @@ import (
+ // prefix/exact/regex Condition.
+ // In the case no regex is present then the leaf condition of the include tree
+ // decides whether the merged condition will be prefix or exact.
+-// In case there is a regex condition present the entire condition becomes a regex condition.
+-// pathMatchConditionsValid guarantees that if a prefix is present, it will start with a
+-// / character, so we can simply concatenate.
+-func mergePathMatchConditions(conds []contour_v1.MatchCondition) MatchCondition {
+-	mergedPath := ""
++// In case there is a regex condition present the entire condition becomes a regex condition,
++// with prefixes escaped and the regex wrapped in a non-capturing group.
++// An error is returned if the merged regex is not valid.
++func mergePathMatchConditions(conds []contour_v1.MatchCondition) (MatchCondition, error) {
+ 	isRegex := false
++	for _, cond := range conds {
++		if cond.Regex != "" {
++			isRegex = true
++			break
++		}
++	}
+ 
++	mergedPath := ""
+ 	for _, cond := range conds {
+ 		switch {
+ 		case cond.Prefix != "":
+-			mergedPath += cond.Prefix
++			if isRegex {
++				// Drop trailing "/" from prefix so the child regex's leading "/" is not doubled when wrapped in a non-capturing group.
++				// "/team-a/" + "/x" -> "/team-a(?:/x)".
++				trimmed := strings.TrimRight(cond.Prefix, "/")
++				mergedPath += regexp.QuoteMeta(trimmed)
++			} else {
++				mergedPath += cond.Prefix
++			}
+ 		case cond.Exact != "":
++			// "Exact" cannot be used with "Regex" in the same chain so there is no need to escape it.
++			// Specifically, includeMatchConditionsValid() forbids Exact/Regex in parent includes.
+ 			mergedPath += cond.Exact
+ 		case cond.Regex != "":
+-			mergedPath += cond.Regex
+-			isRegex = true
++			if mergedPath != "" {
++				// Wrap in a non-capturing group so that "|" cannot escape the parent prefix.
++				mergedPath += "(?:" + cond.Regex + ")"
++			} else {
++				mergedPath += cond.Regex
++			}
+ 		}
+ 	}
+ 
+@@ -57,28 +76,32 @@ func mergePathMatchConditions(conds []contour_v1.MatchCondition) MatchCondition
+ 		mergedPath = `/`
+ 		return &PrefixMatchCondition{
+ 			Prefix: mergedPath,
+-		}
++		}, nil
+ 	}
+ 
+ 	// If mergedPath is not empty then choose match type using the last rule of the delegation chain
+ 	lastCondition := conds[len(conds)-1]
+ 	switch {
+ 	case isRegex:
++		// Merged regex can be invalid even if each part was valid alone according to pathMatchConditionsValid().
++		if err := ValidateRegex(mergedPath); err != nil {
++			return nil, errors.New("regex invalid after merging with include prefix")
++		}
+ 		return &RegexMatchCondition{
+ 			Regex: mergedPath,
+-		}
++		}, nil
+ 	case lastCondition.Prefix != "":
+ 		return &PrefixMatchCondition{
+ 			Prefix: mergedPath,
+-		}
++		}, nil
+ 	case lastCondition.Exact != "":
+ 		return &ExactMatchCondition{
+ 			Path: mergedPath,
+-		}
++		}, nil
+ 	default:
+ 		return &PrefixMatchCondition{
+ 			Prefix: mergedPath,
+-		}
++		}, nil
+ 	}
+ }
+ 
+```
+
+**File**: `internal/dag/conditions_test.go` (modified, +27/-2)
+```diff
+@@ -178,7 +178,31 @@ func TestPathMatchCondition(t *testing.T) {
+ 			}, {
+ 				Regex: "/v[0-9]+",
+ 			}},
+-			want: &RegexMatchCondition{Regex: "/api/v[0-9]+"},
++			want: &RegexMatchCondition{Regex: "/api(?:/v[0-9]+)"},
++		},
++		"exploit scenario - prefix escape via regex alternation": {
++			matchconditions: []contour_v1.MatchCondition{{
++				Prefix: "/team-a",
++			}, {
++				Regex: "/x|/admin/.*",
++			}},
++			want: &RegexMatchCondition{Regex: "/team-a(?:/x|/admin/.*)"},
++		},
++		"exploit scenario - prefix metacharacter escape": {
++			matchconditions: []contour_v1.MatchCondition{{
++				Prefix: "/v1.0",
++			}, {
++				Regex: "/.*",
++			}},
++			want: &RegexMatchCondition{Regex: `/v1\.0(?:/.*)`},
++		},
++		"child regex with escaped backslash before Q": {
++			matchconditions: []contour_v1.MatchCondition{{
++				Prefix: "/team-a",
++			}, {
++				Regex: `/\\Qfoo`,
++			}},
++			want: &RegexMatchCondition{Regex: `/team-a(?:/\\Qfoo)`},
+ 		},
+ 		"header condition": {
+ 			matchconditions: []contour_v1.MatchCondition{{
+@@ -197,7 +221,8 @@ func TestPathMatchCondition(t *testing.T) {
+ 
+ 	for name, tc := range tests {
+ 		t.Run(name, func(t *testing.T) {
+-			got := mergePathMatchConditions(tc.matchconditions)
++			got, err := mergePathMatchConditions(tc.matchconditions)
++			require.NoError(t, err)
+ 			assert.Equal(t, tc.want, got)
+ 		})
+ 	}
+```
+
+**File**: `internal/dag/httpproxy_processor.go` (modified, +16/-3)
+```diff
+@@ -676,8 +676,11 @@ func addRoutes(vhost vhost, routes []*Route) {
+ 
+ func (p *HTTPProxyProcessor) addStatusBadGatewayRoute(routes []*Route, conds []contour_v1.MatchCondition, proxy *contour_v1.HTTPProxy) []*Route {
+ 	if len(conds) > 0 {
++		// Include conditions are prefix only, so no regex is merged and no error can be returned.
++		pathMatchCondition, _ := mergePathMatchConditions(conds)
++
+ 		route := &Route{
+-			PathMatchCondition:        mergePathMatchConditions(conds),
++			PathMatchCondition:        pathMatchCondition,
+ 			HeaderMatchConditions:     mergeHeaderMatchConditions(conds),
+ 			QueryParamMatchConditions: mergeQueryParamMatchConditions(conds),
+ 			DirectResponse:            directResponse(http.StatusBadGateway, ""),
+@@ -869,8 +872,15 @@ func (p *HTTPProxyProcessor) computeRoutes(
+ 
+ 		directPolicy := directResponsePolicy(route.DirectResponsePolicy)
+ 
++		pathMatchCondition, err := mergePathMatchConditions(routeConditions)
++		if err != nil {
++			validCond.AddErrorf(contour_v1.ConditionTypeRouteError, "PathMatchConditionsNotValid",
++				"route: %s", err)
++			return nil
++		}
++
+ 		r := &Route{
+-			PathMatchCondition:        mergePathMatchConditions(routeConditions),
++			PathMatchCondition:        pathMatchCondition,
+ 			HeaderMatchConditions:     mergeHeaderMatchConditions(routeConditions),
+ 			QueryParamMatchConditions: mergeQueryParamMatchConditions(routeConditions),
+ 			Websocket:                 route.EnableWebsockets,
+@@ -1870,7 +1880,10 @@ type matchConditionAggregate struct {
+ func includeMatchConditionsIdentical(includeConds []contour_v1.MatchCondition, seenConds map[string][]matchConditionAggregate) bool {
+ 	pathPrefix := ""
+ 
+-	switch pathPrefixRef := mergePathMatchConditions(includeConds).(type) {
++	// Include conditions are prefix only, so no regex is merged and no error can be returned.
++	mergedCond, _ := mergePathMatchConditions(includeConds)
++
++	switch pathPrefixRef := mergedCond.(type) {
+ 	case *PrefixMatchCondition:
+ 		pathPrefix = pathPrefixRef.Prefix
+ 	default:
+```
+
+**File**: `test/e2e/httpproxy/include_regex_path_condition_test.go` (modified, +42/-0)
+```diff
+@@ -76,6 +76,19 @@ func testIncludeRegexCondition(namespace string) {
+ 							},
+ 						},
+ 					},
++					{
++						Services: []contour_v1.Service{
++							{
++								Name: "echo-1",
++								Port: 80,
++							},
++						},
++						Conditions: []contour_v1.MatchCondition{
++							{
++								Regex: "/x|/admin/.*",
++							},
++						},
++					},
+ 				},
+ 			},
+ 		}
+@@ -149,6 +162,15 @@ func testIncludeRegexCondition(namespace string) {
+ 							},
+ 						},
+ 					},
++					{
++						Name:      echo1Proxy.Name,
++						Namespace: echo1Proxy.Namespace,
++						Conditions: []contour_v1.MatchCondition{
++							{
++								Prefix: "/v1.0",
++							},
++						},
++					},
+ 				},
+ 			},
+ 		}
+@@ -183,6 +205,9 @@ func testIncludeRegexCondition(namespace string) {
+ 			"/echo1/us-west-1/test": "echo-1", // "Prefix: /echo1 with included Regex: /us-west-1/.*"
+ 			"/echo1/us-west-3/test": "echo-1", // "Prefix: /echo1 with included Regex: /us-west-3/.*"
+ 			"/echo2/dev/utils":      "echo-2", // "Prefix: /echo2 with included Regex: /(dev|staging)/.*"
++			"/echo1/x":              "echo-1", // "Prefix: /echo1 with included Regex: /x|/admin/.*"
++			"/echo1/admin/secret":   "echo-1", // "Prefix: /echo1 with included Regex: /x|/admin/.*"
++			"/v1.0/us-west-1/test":  "echo-1", // "Prefix: /v1.0 with included Regex: /us-west-1/.*"
+ 		}
+ 
+ 		for path, expectedService := range cases {
+@@ -199,5 +224,22 @@ func testIncludeRegexCondition(namespace string) {
+ 
+ 			assert.Equal(t, expectedService, f.GetEchoResponseBody(res.Body).Service)
+ 		}
++
++		notFound := []string{
++			"/x",                   // "/x" branch of the child regex, outside /echo1
++			"/admin/secret",        // "/admin/.*" branch of the child regex, outside /echo1
++			"/v1X0/us-west-1/test", // "." in the delegated prefix /v1.0 used as a wildcard
++		}
++
++		for _, path := range notFound {
++			t.Logf("Querying %q, expecting 404", path)
++
++			res, ok := f.HTTP.RequestUntil(&e2e.HTTPRequestOpts{
++				Host:      rootProxy.Spec.VirtualHost.Fqdn,
++				Path:      path,
++				Condition: e2e.HasStatusCode(404),
++			})
++			assert.Truef(t, ok, "expected 404 response code for %q, got %d", path, res.StatusCode)
++		}
+ 	})
+ }
+```
+
+---
+
+### Incident Patch 2: `38795f67` (2026-11-02)
+**Commit Message**: Include all distinguishing fields in DNSNameCluster name (#7806)
+
+Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
+
+**File**: `internal/envoy/cluster.go` (modified, +30/-1)
+```diff
+@@ -131,6 +131,35 @@ func AnyPositive(first uint32, rest ...uint32) bool {
+ 	return false
+ }
+ 
++// DNSNameClusterName returns the name of the CDS cluster for this DNS name based upstream (e.g. JWKS endpoint).
++// The name looks like dnsname/https/idp.example.com/443/92e2d87ab4868b426840.
++//
++// Note: Cluster name is used to deduplicate clusters.
++// When for example two HTTPProxies result in Clusters with equal name, only single cluster will be configured to Envoy.
++// Therefore the generated name must contain all relevant fields that make the cluster unique.
+ func DNSNameClusterName(cluster *dag.DNSNameCluster) string {
+-	return strings.Join([]string{"dnsname", cluster.Scheme, cluster.Address}, "/")
++	// Values are quoted to keep their boundaries unambiguous, otherwise e.g. CA secrets
++	// tenant-a/idp-ca and tenant-ai/dp-ca would both become "tenant-aidp-ca".
++	buf := strconv.Quote(cluster.Scheme) + strconv.Quote(cluster.Address) + strconv.Quote(strconv.Itoa(cluster.Port))
++	buf += strconv.Quote(cluster.DNSLookupFamily)
++
++	if uv := cluster.UpstreamValidation; uv != nil {
++		for _, ca := range uv.CACertificates {
++			if ca != nil {
++				buf += strconv.Quote(ca.Namespace()) + strconv.Quote(ca.Name())
++			}
++		}
++		for _, sn := range uv.SubjectNames {
++			buf += strconv.Quote(sn)
++		}
++	}
++
++	// Unlike in Clustername(), the name does not include the namespace, so a user in
++	// another namespace could use the same JWKS URI and try subjectNames until the hash
++	// matches. The hash must be long enough to make that infeasible.
++	hash := sha256.Sum256([]byte(buf))
++
++	// Scheme, address and port are added as plain text to make the name readable.
++	// Hashname() is not used since it would truncate long hostnames.
++	return strings.Join([]string{"dnsname", cluster.Scheme, cluster.Address, strconv.Itoa(cluster.Port), fmt.Sprintf("%x", hash[:10])}, "/")
+ }
+```
+
+**File**: `internal/envoy/v3/cluster_test.go` (modified, +10/-10)
+```diff
+@@ -894,11 +894,11 @@ func TestDNSNameCluster(t *testing.T) {
+ 				DNSLookupFamily: "auto",
+ 			},
+ 			want: &envoy_config_cluster_v3.Cluster{
+-				Name:                 "dnsname/http/foo.projectcontour.io",
++				Name:                 "dnsname/http/foo.projectcontour.io/80/c1a5cfb578cafae01a91",
+ 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
+ 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/http/foo.projectcontour.io",
++					ClusterName: "dnsname/http/foo.projectcontour.io/80/c1a5cfb578cafae01a91",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -923,11 +923,11 @@ func TestDNSNameCluster(t *testing.T) {
+ 				DNSLookupFamily: "v4",
+ 			},
+ 			want: &envoy_config_cluster_v3.Cluster{
+-				Name:                 "dnsname/http/foo.projectcontour.io",
++				Name:                 "dnsname/http/foo.projectcontour.io/80/23b4f1ac31c67cc50a67",
+ 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_V4_ONLY,
+ 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/http/foo.projectcontour.io",
++					ClusterName: "dnsname/http/foo.projectcontour.io/80/23b4f1ac31c67cc50a67",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -952,11 +952,11 @@ func TestDNSNameCluster(t *testing.T) {
+ 				DNSLookupFamily: "all",
+ 			},
+ 			want: &envoy_config_cluster_v3.Cluster{
+-				Name:                 "dnsname/http/foo.projectcontour.io",
++				Name:                 "dnsname/http/foo.projectcontour.io/80/3fc4a884a77ef80f294e",
+ 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_ALL,
+ 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_LOGICAL_DNS),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/http/foo.projectcontour.io",
++					ClusterName: "dnsname/http/foo.projectcontour.io/80/3fc4a884a77ef80f294e",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -981,11 +981,11 @@ func TestDNSNameCluster(t *testing.T) {
+ 				DNSLookupFamily: "auto",
+ 			},
+ 			want: &envoy_config_cluster_v3.Cluster{
+-				Name:                 "dnsname/https/foo.projectcontour.io",
++				Name:                 "dnsname/https/foo.projectcontour.io/443/92e2d87ab4868b426840",
+ 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
+ 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/https/foo.projectcontour.io",
++					ClusterName: "dnsname/https/foo.projectcontour.io/443/92e2d87ab4868b426840",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -1023,11 +1023,11 @@ func TestDNSNameCluster(t *testing.T) {
+ 				},
+ 			},
+ 			want: &envoy_config_cluster_v3.Cluster{
+-				Name:                 "dnsname/https/foo.projectcontour.io",
++				Name:                 "dnsname/https/foo.projectcontour.io/443/4177316d05096dff8011",
+ 				DnsLookupFamily:      envoy_config_cluster_v3.Cluster_AUTO,
+ 				ClusterDiscoveryType: ClusterDiscoveryType(envoy_config_cluster_v3.Cluster_STRICT_DNS),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/https/foo.projectcontour.io",
++					ClusterName: "dnsname/https/foo.projectcontour.io/443/4177316d05096dff8011",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+```
+
+**File**: `internal/featuretests/v3/jwtverification_test.go` (modified, +32/-32)
+```diff
+@@ -142,7 +142,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -164,11 +164,11 @@ func TestJWTVerification(t *testing.T) {
+ 				SocketOptions: envoy_v3.NewSocketOptions().TCPKeepalive().Build(),
+ 			},
+ 		),
+-	}).Request(clusterType, "dnsname/https/jwt.example.com").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++	}).Request(clusterType, "dnsname/https/jwt.example.com/443/0771aeda175c510932e2").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
+ 		TypeUrl: clusterType,
+ 		Resources: resources(t,
+ 			&envoy_config_cluster_v3.Cluster{
+-				Name: "dnsname/https/jwt.example.com",
++				Name: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 				ClusterDiscoveryType: &envoy_config_cluster_v3.Cluster_Type{
+ 					Type: envoy_config_cluster_v3.Cluster_STRICT_DNS,
+ 				},
+@@ -177,7 +177,7 @@ func TestJWTVerification(t *testing.T) {
+ 				},
+ 				ConnectTimeout: durationpb.New(2 * time.Second),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/https/jwt.example.com",
++					ClusterName: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 					Endpoints: []*envoy_config_endpoint_v3.LocalityLbEndpoints{
+ 						{
+ 							LbEndpoints: []*envoy_config_endpoint_v3.LbEndpoint{
+@@ -295,7 +295,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -403,7 +403,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -513,7 +513,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -528,7 +528,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/443/0771aeda175c510932e2",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -627,7 +627,7 @@ func TestJWTVerification(t *testing.T) {
+ 											HttpUri: &envoy_config_core_v3.HttpUri{
+ 												Uri: "https://jwt.example.com:8443/jwks.json",
+ 												HttpUpstreamType: &envoy_config_core_v3.HttpUri_Cluster{
+-													Cluster: "dnsname/https/jwt.example.com",
++													Cluster: "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629",
+ 												},
+ 												Timeout: durationpb.New(7 * time.Second),
+ 											},
+@@ -649,11 +649,11 @@ func TestJWTVerification(t *testing.T) {
+ 				SocketOptions: envoy_v3.NewSocketOptions().TCPKeepalive().Build(),
+ 			},
+ 		),
+-	}).Request(clusterType, "dnsname/https/jwt.example.com").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++	}).Request(clusterType, "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629").Equals(&envoy_service_discovery_v3.DiscoveryResponse{
+ 		TypeUrl: clusterType,
+ 		Resources: resources(t,
+ 			&envoy_config_cluster_v3.Cluster{
+-				Name: "dnsname/https/jwt.example.com",
++				Name: "dnsname/https/jwt.example.com/8443/f3c7698ae471934ed629",
+ 				ClusterDiscoveryType: &envoy_config_cluster_v3.Cluster_Type{
+ 					Type: envoy_config_cluster_v3.Cluster_STRICT_DNS,
+ 				},
+@@ -662,7 +662,7 @@ func TestJWTVerification(t *testing.T) {
+ 				},
+ 				ConnectTimeout: durationpb.New(2 * time.Second),
+ 				LoadAssignment: &envoy_config_endpoint_v3.ClusterLoadAssignment{
+-					ClusterName: "dnsname/https/jwt.example.com",
++					ClusterName: "dnsname/https/jwt.example.com/8443/f3c7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7807** (2026-11-02): Fix included HTTPProxy regex matching outside its prefix (@tsaarni)
+- **PR #7806** (2026-11-02): Include all distinguishing fields in DNSNameCluster name (@tsaarni)
 - **PR #7805** (2026-10-31): Update for Contour v1.33.8 release (@tsaarni)
 - **PR #7804** (2026-10-31): release-1.33: Update Kubernetes version for E2E tests to 1.37 (@tsaarni)
 - **PR #7803** (2026-10-30): Use unique filter names for Lua misdirected-request and cookie-rewrite filters (@tsaarni)
 - **PR #7797** (2026-10-29): Revert "Do not use body size limit filter for websockets (#7787)" (@tsaarni)
-- **PR #7795** (2026-10-29): release-1.33: Bump golang.org/x/net  (@tsaarni)
-- **PR #7794** (2026-10-29): release-1.33: Bump to go 1.26.10 (@tsaarni)
 
 ---
 
@@ -1735,56 +2325,72 @@ Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update for Contour v1.33.8 release (#7805)
+## X. included HTTPProxy regex matching outside its prefix (#7807)
 
 **RULE**:
-When implementing operations in `changelogs/CHANGELOG-v1.33.8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/dag/builder_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae99b5a1`: Update for Contour v1.33.8 release (#7805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2625d1e5`: included HTTPProxy regex matching outside its prefix (#7807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/CHANGELOG-v1.33.8.md`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/dag/builder_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-We are delighted to present version v1.33.8 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
-
-- [All Changes](#all-changes)
-- [Installing/Upgrading](#installing-and-upgrading)
-- [Compatible Kubernetes Versions](#compatible-kubernetes-versions)
-
-# All Changes
-
-## Security fix for [GHSA-899w-6852-7fr3](https://github.com/projectcontour/contour/security/advisories/GHSA-899w-6852-7fr3)
-
-Crash loop when an Ingress has a resource backend.
-
-## Security fix for [GHSA-9x3c-68m7-f3x4](https://github.com/projectcontour/contour/security/advisories/GHSA-9x3c-68m7-f3x4)
-
-HTTPProxy JWKS settings can be replaced by another HTTPProxy that uses the same JWKS host.
-
-## Security fix for [GHSA-g6qh-g3pq-5cpm](https://github.com/projectcontour/contour/security/advisories/GHSA-g6qh-g3pq-5cpm)
-
-Included HTTPProxy can receive requests outside its prefix by using regex.
-
-## Other Changes
-
-- Updates Envoy to v1.38.9. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9) for more information about the content of the release.
-- Bumps Go to 1.26.10.
-- Updated dependencies to fix CVEs.
-
-# Installing and Upgrading
-
-For a fresh install of Conto
+							routeClusterRegex("/foo(?:/regex/.*)",
+		"httpproxy include with prefix, child regex with alternation is wrapped in non-capturing group": {
+			objs: []any{
+				&contour_v1.HTTPProxy{
+					ObjectMeta: meta_v1.ObjectMeta{
+						Name:      "root",
+						Namespace: s1.Namespace,
+					},
+					Spec: contour_v1.HTTPProxySpec{
+						VirtualHost: &contour_v1.VirtualHost{Fqdn: "example.com"},
+						Includes: []contour_v1.Include{{
+							Name:      "child",
+							Namespace: s1.Namespace,
+							Conditions: []contour_v1.MatchCondition{{
+								Prefix: "/team-a",
+							}},
+						}},
+					},
+				},
+				&contour_v1.HTTPProxy{
+					ObjectMeta: meta_v1.ObjectMeta{
+						Name:      "child",
+						Namespace: s1.Namespace,
+					},
+					Spec: contour_v1.HTTPProxySpec{
+						Routes: []contour_v1.Route{{
+							Conditions: []contour_v1.MatchCondition{{
+								Regex: "/x|/admin/.*",
+							}},
+							Services: []contour_v1.Service{{
+								Name: s1.Name,
+								Port: 8080,
+							}},
+						}},
+					},
+				},
+				s1,
+			},
+			want: listeners(
+				&Listener{
+					Name: HTTP_LISTENER_NAME,
+					Port: 8080,
+					VirtualHosts: virtualhosts(
+						virtualhost("example.com",
+							routeClusterRege
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+							routeClusterRegex("/foo/regex/.*",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae99b5a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2625d1e5` are properly handled with clean fallback behavior.
