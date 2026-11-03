@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `ea52d606`  
+> **Source Version**: `54140784`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:40:41.696Z  
+> **Timestamp**: 2026-11-03T21:17:15.700Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:40:40.381Z  
+> **Harvest Timestamp**: 2026-11-03T21:17:15.695Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17315 stars
+- **Stars / Engagement**: 17389 stars
 
 ---
 
@@ -1429,167 +1429,431 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea52d606` (2026-10-31)
-**Commit Message**: feat: backlash vs backslash (#4768)
+### Incident Patch 1: `c1c9849d` (2026-11-02)
+**Commit Message**: fix: broken build due to outdated dep
 
-**File**: `harper-core/default_config.json` (modified, +7/-0)
+**File**: `pnpm-lock.yaml` (modified, +13/-30)
 ```diff
-@@ -4583,6 +4583,13 @@
- 								"label": "A Whole Other"
- 							}
- 						},
-+						{
-+							"Bool": {
-+								"name": "BacklashBackslash",
-+								"state": true,
-+								"label": "Backlash / Backslash"
-+							}
-+						},
- 						{
- 							"Bool": {
- 								"name": "BadRap",
-```
-
-**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklash.weir` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+expr main <[([conservative, cultural, gear, political, public, violent] backslash), (backslash [adjustment, against, gear, gears])], backslash>
-+
-+let message "Did you mean `backlash`?"
-+let description "Corrects `backslash` to `backlash` when it looks like a typo."
-+let kind "Typo"
-+let becomes "backlash"
-+
-+test "Citizens' Assembly Sparks Art World Criticism and Conservative Backslash." "Citizens' Assembly Sparks Art World Criticism and Conservative Backlash."
-+test "adopt AI, despite inevitable public backslash" "adopt AI, despite inevitable public backlash"
-+test "The attacks triggered a violent backslash against the Muslim community" "The attacks triggered a violent backlash against the Muslim community"
-+test "calibration errors,gear backslash" "calibration errors,gear backlash"
-+test "Backslash adjustment in Takahashi mounts" "Backlash adjustment in Takahashi mounts"
-+test "Miniature zero-backslash gears and actuators for precision positioning applications." "Miniature zero-backlash gears and actuators for precision positioning applications."
-+test "Cultural Backslash: Trump, Brexit and the Rise of Authoritarian Populism" "Cultural Backlash: Trump, Brexit and the Rise of Authoritarian Populism"
-```
-
-**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklashes.weir` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+expr main <[(backslashes against), ([conservative, political, public] backslashes)], backslashes>
-+
-+let message "Did you mean `backlashes`?"
-+let description "Corrects `backslashes` to `backlashes` when it looks like a typo."
-+let kind "Typo"
-+let becomes "backlashes"
-+
-+test "The recent backslashes against the numerisation project" "The recent backlashes against the numerisation project"
-+test "the easiest job you can do without receiving public backslashes is to market a generally loved 'item'" "the easiest job you can do without receiving public backlashes is to market a generally loved 'item'"
-+test "there were political backslashes, with energy cost a factor" "there were political backlashes, with energy cost a factor"
-+test "but faced various conservative backslashes in the form of right-wing national policies" "but faced various conservative backlashes in the form of right-wing national policies"
-```
-
-**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslash.weir` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+expr main <[([single, double][-, ( )]backlash), (backlash [character, characters, key]), ([escaped, escaping] backlash)], backlash>
-+
-+let message "Did you mean `backslash`?"
-+let description "Corrects `backlash` to `backslash` when it looks like a typo."
-+let kind "Typo"
-+let becomes "backslash"
-+
-+test "Exporting adds backlash characters after each row" "Exporting adds backslash characters after each row"
-+test "Backlash character in the prompt needs to be escaped" "Backslash character in the prompt needs to be escaped"
-+test "It was written as a double backslash but it renders as a single backlash." "It was written as a double backslash but it renders as a single backslash."
-+test "string representation of a JSON with escaped backlash is incorrect" "string representation of a JSON with escaped backslash is incorrect"
-+test "which does not differentiate between the escaping backlash and the literal character" "which does not differentiate between the escaping backslash and the literal character"
-+test "Mapping the yen/backlash key didn't seem to work" "Mapping the yen/backslash key didn't seem to work"
-+test "note the double backlash only on the first backslash" "note the double backslash only on the first backslash"
-```
-
-**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslashes.weir` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+expr main <[([single, double][-, ( )]backlashes), (both backlashes), ([enter, entered, insert, inserted, type, typed] two backlashes), (backlashes [character, characters])], backlashes>
-+
-+let message "Did you mean `backslashes`?"
-+let description "Corrects `backlashes` to `backslashes` when it looks like a typo."
-+let kind "Typo"
-+let becomes "backslashes"
-+
-+test "Using r-strings is the correct solution if you want unescaped single backlashes" "Using r-strings is the correct solution if you want unescaped single backslashes"
-+test "As an aside, it looks like the Markdown extension only interprets double-backlashes as escapes." "As an aside, it looks like the Markdown extension only interprets double-backslashes as escapes."
-+test "To make a \“SLSH\” appear in the forum, type TWO backlashes" "To make a \“SLSH\” appear in the forum, type TWO backslashes"
-+test "To use a backslash in such shell string, enter two backlashes" "To use a backslash in such shell string, enter two backslashes"
-+test "A parameter designator consists of a backlashes character, followed by a digit (0 - 9)" "A parameter designator consists of a backslashes character, followed by a digit (0 - 9)"
-+
-+# test "Replacing backslash with two backlashes in ansible" "Replacing backslash with two backslashes in ansible"
-+
-+allows "The two backlashes against globalisation."
+@@ -9243,8 +9243,8 @@ packages:
+     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
+     engines: {node: '>=0.10.0'}
+ 
+-  jsonwebtoken@9.0.2:
+-    resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
++  jsonwebtoken@9.0.3:
++    resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
+     engines: {node: '>=12', npm: '>=6'}
+ 
+   jsx-ast-utils@3.3.5:
+@@ -9254,17 +9254,11 @@ packages:
+   jszip@3.10.1:
+     resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
+ 
+-  jwa@1.4.1:
+-    resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
++  jwa@2.0.1:
++    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
+ 
+-  jwa@2.0.0:
+-    resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
+-
+-  jws@3.2.2:
+-    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
+-
+-  jws@4.0.0:
+-    resolution: {integrity: sha512-KDncfTmOZoOMTFG4mBlG0qUIOlc03fmzH+ru6RgYVZhPkyiy/92Owlt/8UEN+a4TXR1FQetfIpJE8ApdvdVxTg==}
++  jws@4.0.1:
++    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
+ 
+   keytar@7.9.0:
+     resolution: {integrity: sha512-VPD8mtVtm5JNtA2AErl6Chp06JBfy7diFQ7TQQhdpWOl6MrCRB+eRbvAZUsbGQS9kiMq0coJsy0W0vHpDCkWsQ==}
+@@ -13752,7 +13746,7 @@ snapshots:
+       '@azure/msal-browser': 4.7.0
+       '@azure/msal-node': 3.3.0
+       events: 3.3.0
+-      jws: 4.0.0
++      jws: 4.0.1
+       open: 10.1.0
+       stoppable: 1.1.0
+       tslib: 2.8.1
+@@ -13772,7 +13766,7 @@ snapshots:
+   '@azure/msal-node@3.3.0':
+     dependencies:
+       '@azure/msal-common': 15.2.1
+-      jsonwebtoken: 9.0.2
++      jsonwebtoken: 9.0.3
+       uuid: 8.3.2
+ 
+   '@babel/code-frame@7.26.2':
+@@ -24463,9 +24457,9 @@ snapshots:
+ 
+   jsonpointer@5.0.1: {}
+ 
+-  jsonwebtoken@9.0.2:
++  jsonwebtoken@9.0.3:
+     dependencies:
+-      jws: 3.2.2
++      jws: 4.0.1
+       lodash.includes: 4.3.0
+       lodash.isboolean: 3.0.3
+       lodash.isinteger: 4.0.4
+@@ -24490,26 +24484,15 @@ snapshots:
+       readable-stream: 2.3.8
+       setimmediate: 1.0.5
+ 
+-  jwa@1.4.1:
+-    dependencies:
+-      buffer-equal-constant-time: 1.0.1
+-      ecdsa-sig-formatter: 1.0.11
+-      safe-buffer: 5.2.1
+-
+-  jwa@2.0.0:
++  jwa@2.0.1:
+     dependencies:
+       buffer-equal-constant-time: 1.0.1
+       ecdsa-sig-formatter: 1.0.11
+       safe-buffer: 5.2.1
+ 
+-  jws@3.2.2:
+-    dependencies:
+-      jwa: 1.4.1
+-      safe-buffer: 5.2.1
+-
+-  jws@4.0.0:
++  jws@4.0.1:
+     dependencies:
+-      jwa: 2.0.0
++      jwa: 2.0.1
+       safe-buffer: 5.2.1
+ 
+   keytar@7.9.0:
 ```
 
 ---
 
-### Incident Patch 2: `2a98627f` (2026-10-31)
-**Commit Message**: feat: fan fare/fan-fare → fanfare (#4766)
+### Incident Patch 2: `4001b8b5` (2026-11-02)
+**Commit Message**: fix(web): present correct metadata in head (#4764)
 
-**File**: `harper-core/default_config.json` (modified, +7/-0)
+**File**: `packages/web/src/app.d.ts` (modified, +2/-0)
 ```diff
-@@ -495,6 +495,13 @@
- 								"label": "Everywhere"
- 							}
- 						},
-+						{
-+							"Bool": {
-+								"name": "Fanfare",
-+								"state": true,
-+								"label": "Fanfare"
-+							}
-+						},
- 						{
- 							"Bool": {
- 								"name": "Furthermore",
+@@ -1,3 +1,5 @@
++/// <reference types="@sveltepress/vite/types" />
++
+ // See https://kit.svelte.dev/docs/types#app
+ // for information about these interfaces
+ declare global {
 ```
 
-**File**: `harper-core/src/linting/closed_compounds.rs` (modified, +19/-0)
+**File**: `packages/web/src/app.html` (modified, +0/-22)
 ```diff
-@@ -35,6 +35,7 @@ pub fn lint_group() -> LintGroup {
-         "Everybody"       => (&["every body"][..], "everybody"),
-         "Everyone"        => (&["every one"][..], "everyone"),
-         "Everywhere"      => (&["every where"][..], "everywhere"),
-+        "Fanfare"         => (&["fan fare", "fan-fare"][..], "fanfare"),
-         "Furthermore"     => (&["further more"][..], "furthermore"),
-         "Guesswork"       => (&["guess work"][..], "guesswork"),
-         "Henceforth"      => (&["hence forth"][..], "henceforth"),
-@@ -418,4 +419,22 @@ mod tests {
-             "the rust compiler is fast, but oftentimes it has to perform a lot of unnecessary checks because crates contain more stuff than needed",
-         );
+@@ -7,17 +7,10 @@
+   <meta name="language" content="en" />
+   <meta name="robots" content="index,follow" />
+ 
+-  <title>Harper | Privacy-First Offline Grammar Checker for Developers & Writers</title>
+-
+-  <meta name="description"
+-    content="Harper is a blazing-fast, open-source grammar & spell checker that runs entirely on your device, covering US, UK, Canadian, Australian & Indian English—no data ever leaves your machine. Harper is the only grammar checker that doesn't use AI." />
+-
+   <meta name="keywords"
+     content="Harper, grammar checker, spell checker, privacy-first, offline, open source, fast grammar tool, developer writing, markdown checker" />
+   <meta name="author" content="Elijah Potter" />
+ 
+-  <link rel="canonical" href="https://writewithharper.com/" />
+-
+   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+@@ -29,15 +22,7 @@
+   <meta property="og:type" content="website" />
+   <meta property="og:site_name" content="Harper" />
+   <meta property="og:locale" content="en_US" />
+-  <meta property="og:url" content="https://writewithharper.com/" />
+-  <meta property="og:title" content="Harper | Privacy-First Offline Grammar Checker" />
+-  <meta property="og:description"
+-    content="Harper checks your writing instantly—fast, lightweight and utterly private—so you can polish every clause without surrendering a single keystroke." />
+-
+   <meta name="twitter:card" content="summary_large_image" />
+-  <meta name="twitter:title" content="Harper | Privacy-First Offline Grammar Checker" />
+-  <meta name="twitter:description"
+-    content="Blazing-fast, open-source grammar & spell checking that never sends your words to the cloud." />
+   <meta property="og:image" content="https://writewithharper.com/social_image.png" />
+   <meta property="og:image:alt" content="Stylised ‘Harper’ wordmark on a clean pastel backdrop" />
+   <meta property="og:image:type" content="image/png" />
+@@ -73,13 +58,6 @@
      }
+   </script>
+ 
+-  <title>Harper: Free, Open Source Grammar Checker</title>
+-  <meta name="description" content="Harper checks your writing fast, without compromising your privacy." />
+-  <link rel="canonical" href="https://writewithharper.com" />
+-  <meta property="og:title" content="Harper: Free, Open Source Grammar Checker" />
+-  <meta property="og:description" content="Harper checks your writing fast, without compromising your privacy." />
+-  <meta property="og:url" content="https://writewithharper.com" />
+-
+   <script>
+     (() => {
+       var stored = localStorage.getItem('SVELTEPRESS_DARK_MODE') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'on' : 'off');
+```
+
+**File**: `packages/web/src/lib/PageMetadata.svelte` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++<script lang="ts">
++import type { ResolvedPageMetadata } from './seo';
 +
-+    #[test]
-+    fn fan_space_fare() {
-+        assert_suggestion_result(
-+            "There was much fan fare over all the technology Bill Gates put into his house.",
-+            lint_group(),
-+            "There was much fanfare over all the technology Bill Gates put into his house.",
-+        );
-+    }
++/** SveltePress owns document titles/descriptions on docs pages; this component owns the other tags. */
++interface Props extends ResolvedPageMetadata {
++	includeDocumentMetadata?: boolean;
++}
 +
-+    #[test]
-+    fn fan_hyphen_fare() {
-+        assert_suggestion_result(
-+            "Indeed, most users will experience major version updates with absolutely zero fan-fare.",
-+            lint_group(),
-+            "Indeed, most users will experience major version updates with absolutely zero fanfare.",
-+        );
-+    }
- }
++let { title, description, canonical, includeDocumentMetadata = true }: Props = $props();
++</script>
++
++<svelte:head>
++	{#if includeDocumentMetadata}
++		<title>{title}</title>
++		<meta name="description" content={description} />
++	{/if}
++	<link rel="canonical" href={canonical} />
++	<meta property="og:url" content={canonical} />
++	<meta property="og:title" content={title} />
++	<meta property="og:description" content={description} />
++	<meta name="twitter:title" content={title} />
++	<meta name="twitter:description" content={description} />
++</svelte:head>
+```
+
+**File**: `packages/web/src/lib/marketing/SveltePressPageLayout.svelte` (modified, +8/-0)
+```diff
+@@ -1,15 +1,23 @@
+ <script>
++import siteConfig from 'virtual:sveltepress/site';
+ import DefaultPageLayout from '@sveltepress/theme-default/PageLayout.svelte';
+ import { page } from '$app/stores';
++import PageMetadata from '$lib/PageMetadata.svelte';
++import { resolvePageMetadata } from '$lib/seo';
+ 
+ const { fm, children, heroImage, titleAction, ...rest } = $props();
+ 
+ const marketingRoutes = new Set(['/', '/get', '/desktop', '/install-browser-extension']);
+ const isMarketingRoute = $derived(
+ 	marketingRoutes.has($page.url.pathname.replace(/\/$/, '') || '/'),
+ );
++const metadata = $derived(
++	resolvePageMetadata($page.url.pathname, fm, siteConfig, isMarketingRoute),
++);
+ </script>
+ 
++<PageMetadata {...metadata} includeDocumentMetadata={isMarketingRoute} />
++
+ {#if isMarketingRoute}
+ 	{@render children?.()}
+ {:else}
+```
+
+**File**: `packages/web/src/lib/seo.ts` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++const siteOrigin = 'https://writewithharper.com';
++
++/** Page frontmatter fields used for document and social metadata. */
++export interface MetadataInput {
++	title?: string;
++	description?: string;
++}
++
++/** Final metadata shared by the page head and SveltePress layout. */
++export interface ResolvedPageMetadata {
++	title: string;
++	description: string;
++	canonical: string;
++}
++
++/** Use the production origin and a slash-normalized path, without query or fragment data. */
++export function canonicalUrl(pathname: string): string {
++	const url = new URL(siteOrigin);
++	url.pathname = pathname.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
++	return url.href;
++}
++
++/** Match SveltePress title/description defaults; marketing pages use their titles without a suffix. */
++export function resolvePageMetadata(
++	pathname: string,
++	frontmatter: MetadataInput,
++	site: Required<MetadataInput>,
++	standaloneTitle = false,
++): ResolvedPageMetadata {
++	return {
++		title: frontmatter.title
++			? standaloneTitle
++				? frontmatter.title
++				: `${frontmatter.title} - ${site.title}`
++			: site.title,
++		description: frontmatter.description || site.description,
++		canonical: canonicalUrl(pathname),
++	};
++}
+```
+
+**File**: `packages/web/src/routes/+page.svelte` (modified, +3/-9)
+```diff
+@@ -1,6 +1,8 @@
+-<script module>
++<script module lang="ts">
+ export const frontmatter = {
+ 	home: false,
++	title: 'Free Grammar & Spell Checker — Private, No AI',
++	description: 'Harper is the free, private, open-source grammar checker that runs on your device.',
+ };
+ </script>
+ 
+@@ -160,14 +162,6 @@ onMount(() => {
+ 
+ </script>
+ 
+-<svelte:head>
+-	<title>Free Grammar & Spell Checker — Private, No AI</title>
+-	<meta
+-		name="description"
+-		content="Harper is the free, private, open-source grammar checker that runs on your device."
+-	/>
+-</svelte:head>
+-
+ <div class="min-h-screen bg-[#f6f1e6] text-[#1c1a16] dark:bg-black dark:text-white">
+ 	<MarketingHeader active="home" />
+ 
+```
+
+**File**: `packages/web/src/routes/desktop/+page.svelte` (modified, +7/-8)
+```diff
+@@ -1,3 +1,10 @@
++<script module lang="ts">
++export const frontmatter = {
++	title: 'Harper Desktop',
++	description: 'Harper Desktop brings private grammar checking to text fields across macOS.',
++};
++</script>
++
+ <script lang="ts">
+ import AppLogoTile from '$lib/marketing/AppLogoTile.svelte';
+ import DesktopMockups from '$lib/marketing/DesktopMockups.svelte';
+@@ -29,14 +36,6 @@ const faqs = [
+ ];
+ </script>
+ 
+-<svelte:head>
+-	<title>Harper Desktop</title>
+-	<meta
+-		name="description"
+-		content="Harper Desktop brings private grammar checking to text fields across macOS."
+-	/>
+-</svelte:head>
+-
+ <div class="min-h-screen bg-[#f6efe2] text-[#1c1a16] dark:bg-black dark:text-white">
+ 	<MarketingHeader active="desktop" />
+ 
+```
+
+**File**: `packages/web/src/routes/docs/about/+page.md` (modified, +12/-8)
+```diff
+@@ -1,33 +1,37 @@
+ ---
+ title: What Is Harper?
++description: Learn how Harper checks English grammar, how releases are versioned, and which projects use Harper.
+ ---
+ 
+ Harper is a grammar checker designed to run anywhere there is text (so really, anywhere).
+ Most Harper users are catching their mistakes in [Neovim](./integrations/neovim), [Obsidian](./integrations/obsidian), or [Visual Studio Code](./integrations/visual-studio-code).
+ 
+ <script>
+-    import { Editor } from "harper-editor"
+     import { onMount } from "svelte"
++    import { createEditorLinter } from "$lib/createEditorLinter"
+ 
+     let linter = null
++    let Editor = null
+ 
+     onMount(async () => {
+-        const [{ WorkerLinter }, { slimBinary }] = await Promise.all([
+-            import("harper.js"),
+-            import("harper.js/slimBinary"),
++        const [editorModule, instance] = await Promise.all([
++            import("harper-editor"),
++            createEditorLinter(),
+         ])
+ 
+-        linter = new WorkerLinter({ binary: slimBinary })
+-        await linter.setup()
++        Editor = editorModule.Editor
++        linter = instance
+     })
+ </script>
+ 
+ <div class="h-96">
+-    {#if linter}
+-        <Editor
++    {#if Editor && linter}
++        <svelte:component this={Editor}
+             content={`You can try out a editor that uses\nHarper under the hood here.\n\nIt is rnning in your browser right now. \n\nNo server required!`}
+             {linter}
+         />
++    {:else}
++        <p role="status">Loading Harper's grammar engine...</p>
+     {/if}
+ </div>
+ 
+```
+
+---
+
+### Incident Patch 3: `1349a868` (2026-11-02)
+**Commit Message**: fix: add "gatekeep" to `irregular_verbs.json` (#4785)
+
+Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+
+**File**: `harper-core/irregular_verbs.json` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@
+ 	["forget", "forgot", "forgotten"],
+ 	["forgo", "forwent", "forgone"],
+ 	["freeze", "froze", "frozen"],
++	["gatekeep", "gatekept", "gatekept"],
+ 	"// get -- got -- gotten",
+ 	["get", "got", "got"],
+ 	["give", "gave", "given"],
+```
+
+**File**: `harper-core/src/linting/regular_irregulars.rs` (modified, +12/-0)
+```diff
+@@ -363,6 +363,18 @@ mod tests {
+                 "Rune is a TUI editor, so I fed the same terminal sequences to the old and new apps.",
+             );
+         }
++
++        #[test]
++        fn fix_gatekepped() {
++            use crate::Dialect;
++            use crate::spell::FstDictionary;
++
++            assert_suggestion_result(
++                "Foundational principles between languages are the same, I don’t understand why positions are gatekeeped based on implementation trivia.",
++                crate::linting::LintGroup::new_curated(FstDictionary::curated(), Dialect::American),
++                "Foundational principles between languages are the same, I don’t understand why positions are gatekept based on implementation trivia.",
++            );
++        }
+     }
+ 
+     mod adjectives {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4768** (2026-10-31): feat: backlash vs backslash (@hippietrail)
-- **PR #4766** (2026-10-31): feat: fan fare/fan-fare → fanfare (@hippietrail)
-- **PR #4763** (2026-10-30): docs(weir): compare wildcards to regex `.` instead of `*` (@costajohnt)
-- **PR #4758** (2026-10-30): feat(web): show browser extension install links on the home page (@elijah-potter)
-- **PR #4757** (2026-10-30): fix(web): show the correct link for the user's browser (@elijah-potter)
-- **PR #4752** (closed): docs(web): fix wildcard comparison in the Weir docs (@techsaurabh-394)
+- **PR #4793** (2026-11-03): feat: round about → roundabout (@hippietrail)
+- **PR #4790** (2026-11-03): docs: start PR template with link to agent policy (@hippietrail)
+- **PR #4787** (2026-11-02): feat: Upgrade Vite to v8 and disable SSR on broken pages (@elijah-potter)
+- **PR #4785** (2026-11-02): fix: add "gatekeep" to `irregular_verbs.json` (@hippietrail)
+- **PR #4784** (closed): Fix for suggest "a lot" and "lots" for "a lots", not only "a lot's". (@gerardrecinto)
+- **PR #4780** (2026-11-03): feat: expand "blanketed statement" to "blanked", "blanker", and plurals (@hippietrail)
 
 ---
 
@@ -1609,34 +1873,69 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. backlash vs backslash (#4768)
+## X. broken build due to outdated dep
 
 **RULE**:
-When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea52d606`: backlash vs backslash (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1c9849d`: broken build due to outdated dep. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-						{
-							"Bool": {
-								"name": "BacklashBackslash",
-								"state": true,
-								"label": "Backlash / Backslash"
-							}
-						},
+  jsonwebtoken@9.0.3:
+    resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
+  jwa@2.0.1:
+    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
+  jws@4.0.1:
+    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
+      jws: 4.0.1
+      jsonwebtoken: 9.0.3
+  jsonwebtoken@9.0.3:
+      jws: 4.0.1
+  jwa@2.0.1:
+  jws@4.0.1:
+      jwa: 2.0.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  jsonwebtoken@9.0.2:
+    resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
+  jwa@1.4.1:
+    resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
+  jwa@2.0.0:
+    resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
+
+  jws@3.2.2:
+    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
+
+  jws@4.0.0:
+    resolution: {integrity: sha512-KDncfTmOZoOMTFG4mBlG0qUIOlc03fmzH+ru6RgYVZhPkyiy/92Owlt/8UEN+a4TXR1FQetfIpJE8ApdvdVxTg==}
+      jws: 4.0.0
+      jsonwebtoken: 9.0.2
+  jsonwebtoken@9.0.2:
+      jws: 3.2.2
+  jwa@1.4.1:
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+
+  jwa@2.0.0:
+  jws@3.2.2:
+    dependencies:
+      jwa: 1.4.1
+      safe-buffer: 5.2.1
+
+  jws@4.0.0:
+      jwa: 2.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea52d606` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1c9849d` are properly handled with clean fallback behavior.

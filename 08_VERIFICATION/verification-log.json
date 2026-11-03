@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-K8VV",
-    "timestamp": "2026-10-31T08:14:03.259Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-K97N",
-    "timestamp": "2026-10-31T08:14:03.683Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-2FH1",
-    "timestamp": "2026-10-31T08:28:11.605Z",
-    "repository": "valeriansaliou/sonic",
-    "learningId": "learn-github-valeriansaliou-sonic",
-    "contentHash": "2df03a4b810ecf07a7d30d7ab1465057ee10b52fbce7b2a0ea4ac69d5154dfc4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-67MF",
     "timestamp": "2026-10-31T08:31:08.055Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7445,51 @@
     "repository": "signerlabs/Klee",
     "learningId": "learn-github-signerlabs-klee",
     "contentHash": "b827284fd77378f21f01a4b4747c95f464fe2c76c09c13a40d9248019f1998b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UU57",
+    "timestamp": "2026-11-03T21:17:07.483Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-V0W9",
+    "timestamp": "2026-11-03T21:17:16.233Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-V6B5",
+    "timestamp": "2026-11-03T21:17:23.249Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:09:05.038Z",
+  "last_updated": "2026-11-03T21:17:23.202Z",
   "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4112,8 +4112,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "ea52d606",
-      "content_hash": "f80eeefc4282b063221581e5f16a6ec63f8ee063a060ec74a7e79d00de9c5d39",
+      "source_version": "54140784",
+      "content_hash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4176,6 +4176,11 @@
           "number": 6283,
           "title": "backlash vs backslash (#4768)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6614,
+          "title": "broken build due to outdated dep",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4183,7 +4188,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:40:42.309Z",
+      "verified_at": "2026-11-03T21:17:16.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54352,14 +54357,19 @@
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "e0e559ee",
-      "content_hash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
+      "source_version": "4ffb3b68",
+      "content_hash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "promoted_rules": [
         {
           "number": 5876,
           "title": "Resolve scheme targets by ID so a renamed target still builds (#344)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6615,
+          "title": "Build the scheme's Run target even when the Build action leaves it out (#344)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -54368,7 +54378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:06:23.209Z",
+      "verified_at": "2026-11-03T21:17:23.189Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157178,7 +157188,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
+      "content_hash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [
@@ -157203,7 +157213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:42:07.187Z",
+      "verified_at": "2026-11-03T21:17:07.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170383,6 +170393,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:09:05.013Z"
+    },
+    "rule-6614": {
+      "learning_id": "rule-6614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6614,
+      "title": "broken build due to outdated dep",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "54140784",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:17:16.170Z"
+    },
+    "rule-6615": {
+      "learning_id": "rule-6615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6615,
+      "title": "Build the scheme's Run target even when the Build action leaves it out (#344)",
+      "source_url": "https://github.com/sweetpad-dev/sweetpad",
+      "source_version": "4ffb3b68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:17:23.189Z"
     }
   },
   "aliases": {

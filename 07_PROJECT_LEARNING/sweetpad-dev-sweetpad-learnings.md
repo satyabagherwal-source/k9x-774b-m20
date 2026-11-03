@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `e0e559ee`  
+> **Source Version**: `4ffb3b68`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:06:22.638Z  
+> **Timestamp**: 2026-11-03T21:17:22.769Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:06:21.432Z  
+> **Harvest Timestamp**: 2026-11-03T21:17:22.765Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1916 stars
+- **Stars / Engagement**: 1922 stars
 
 ---
 
@@ -1592,13 +1592,14 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #343** (2026-10-25): **bsp serve: report sources of local Swift packages referenced by the Xcode project**
-  *Symptoms*: **Setup** - sweetpad CLI 0.1.13 (`sweetpad bsp init --project SafePlace.xcodeproj`), VS Code + sweetpad 0.2.19, Xcode 27.1 toolchain sourcekit-lsp - App target + 14 local Swift packages under `Packages/*` (each with its own `Package.swift`), linked into the app target  **What happens** - `workspace/buildTargets` returns only the 3 Xcode targets; `buildTarget/sources` returns 39 files, none under `Packages/`. - Opening any file in `Packages/X/` makes sourcekit-lsp create an implicit SwiftPM workspace for that package ("Opening implicit workspace at …" in its log). - Each implicit workspace background-indexes with its own `swift build` for **macOS** into `Packages/X/.build/index-build`, rebuilding shared dependencies (e.g. `Core`) once per package. Here: ~10 GB across 10 packages, plus noticeable CPU/swap pressure on top of the regular iOS-simulator build.  **Expected** `bsp serve` also reports the Swift sources of local package targets that are part of the scheme's build graph, with their compiler arguments from the Xcode build, so sourcekit-lsp keeps those files in the root workspace and uses the one DerivedData index store.  **Repro** Any `.xcodeproj` with a local package dependency: open a file inside the package and check `Packages/<name>/.build/index-build` appear. 
-  **Post-Mortem & Fix Analysis**:
-  > Shipped in extension 0.2.20 and CLI 0.1.14: `bsp serve` now reports local package sources with Xcode's compiler arguments. Thanks for the report! Closing.
+- **Issue #345** (2026-11-03): **BSP puts indexing artifacts inside the xcodeproj directory**
+  *Symptoms*: I noticed an issue using this with one of my projects where indexing artifacts were appearing in my project whenever I would open an editor and the lsp would index the project. I've attached a sample project to this, but the project setup to reproduce is simple:  - Create a new app project (both json and plist project files have the issue) - Add a unit test bundle for the app. This uses the default setup where there's no scheme for the test target and the tests are hosted in the app. - Add a package dependency (the sample project uses a local dependency, but this happens with only remote dependencies as well)  ## Reproduction Steps  With this package setup: - run `sweetpad bsp init`.  - Open the project with an editor that uses sourcekit-lsp and let it index (I was using neovim with the default lsp configuration). - Open up the `.xcodepoj` directory to see an `-Xcc` directory containing indexing artifacts.  <img width="609" height="364" alt="Image" src="https://github.com/user-attachments/assets/0d72665f-7717-45f5-a680-31030ca9552e" />  ## Versions - Xcode 27.2 - sweetpad 0.1.16  [SweetpadBugReproProject.zip](https://github.com/user-attachments/files/34250807/SweetpadBugReproProject.zip)
 
-- **Issue #342** (2026-10-25): **[Bug] Incorrect scheme -> build configuration mapping (UAT scheme builds with TEST config)**
-  *Symptoms*:  ## Description SweetPad fails to correctly resolve the binding between the selected Xcode scheme and its corresponding build configuration. When selecting a specific scheme (e.g., UAT), the extension ignores the configuration mapped in the .xcscheme file and incorrectly builds using a different configuration (e.g., TEST).  ## Environment  Cursor Version: 3.25.9  SweetPad Version: 0.2.19  OS: macOS 26.7.1  Xcode Version: 27.1  ## Steps to Reproduce  Open an iOS/macOS project in Cursor with the SweetPad extension enabled.  Ensure the project has multiple schemes with distinct build configurations (e.g., scheme UAT mapped to UAT config, and scheme TEST mapped to TEST config).  Select the UAT scheme in SweetPad's UI.  Trigger a build process.  Inspect the executed xcodebuild command and build logs.  ### Expected Behavior SweetPad should parse the scheme definitions and correctly identify that the UAT scheme is bound to the UAT build configuration. It should pass the correct -configuration UAT flag to xcodebuild.  ### Actual Behavior SweetPad passes the incorrect configuration flag (e.g., -configuration TEST) when attempting to build the UAT scheme, leading to build failures or incorrect environment variables being injected. The incorrect configuration is the one selected during the very first configuration of the project for SweetPad.  ## Additional Context  Building the exact same scheme directly in Xcode UI or via native CLI (xcodebuild -scheme UAT) works perfectly and uses th
+- **Issue #344** (2026-10-31): **`sweetpad run` fails with `error: no target matched scheme XXX`**
+  *Symptoms*: The app builds fine using the correct scheme with it returns error when installing the app: `error: no target matched scheme XXX`. It only happens on one of my projects, and I think it is because the scheme is a private one (located in `*.xcworkspace/xcuserdata/*.xcuserdatad/xcschemes/myscheme.xcscheme`)
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the report! I found two cases that cause this exact error and fixed both in 0.1.15 (`brew upgrade sweetpad`): a scheme that still uses a target's old name after a rename, and a scheme that spells the project name with different capitalization. Could you try it and let me know? If it still fails, please paste the `BuildableReference` blocks from your `.xcscheme` file. 
+  > Hi! Tested with latest version and still doesn't work, here is the `BuildableReference` block in `LaunchAction`:  ``` <BuildableReference         BuildableIdentifier = "primary"         BlueprintIdentifier = "259EC44C2C32A4B500FB9CD7"         BuildableName = "TestApp.app"         BlueprintName = "TestApp"         ReferencedContainer = "container:App/TestApp.xcodeproj"> </BuildableReference> ```  I have a `TestApp.xcworkspace` at the project root which is what sweetpad references, the scheme is inside this xcworkspace `xcuserdata` folder. It's weird because on the first run sweetpad detects the schema correctly (I select it from the scheme selection prompt), builds correctly but fails at launch. `App/TestApp.xcodeproj` exists
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,295 +1616,380 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6337f46e` (2026-10-27)
-**Commit Message**: Resolve scheme targets by ID so a renamed target still builds (#344)
+### Incident Patch 1: `9b36d91c` (2026-10-30)
+**Commit Message**: Build the scheme's Run target even when the Build action leaves it out (#344)
 
-A scheme saved before its target was renamed still has the old BlueprintName, and Xcode resolves the buildable by its BlueprintIdentifier instead. sweetpad matched by name only, so 'run' failed with "no target matched scheme" after xcodebuild had built the app. sweetpad now rebinds each buildable to the target its ID names when it parses a scheme.
+xcodebuild builds the Launch action's runnable for a run even when no Build action entry builds it for running, as in a scheme with an empty Build action or one that lists the app with buildForRunning="NO". sweetpad resolved only the entries, so the build succeeded but locating the app failed with "no target matched scheme". The run build set, the BSP's scheme targets and the scheme platform check now include the runnable.
 
-**File**: `sweetpad-core/tests/build_settings.rs` (modified, +37/-0)
+**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +6/-5)
 ```diff
-@@ -753,6 +753,43 @@ fn workspace_level_scheme_resolves() {
+@@ -2082,16 +2082,17 @@ impl Server {
+         listing
+     }
+ 
+-    /// The targets the scheme `name` builds: its build entries, then the
+-    /// targets those depend on. A scheme with no file is one Xcode
+-    /// autocreates, which builds the target it is named after.
++    /// The targets the scheme `name` builds: its build entries and the
++    /// runnable a run adds ([`scheme::Scheme::buildables`]), then the targets
++    /// those depend on. A scheme with no file is one Xcode autocreates, which
++    /// builds the target it is named after.
+     fn scheme_targets(&self, name: &str) -> (Vec<String>, Vec<String>) {
+         let entries: Vec<String> = match scheme::locate(&self.project_path, name) {
+             Some(path) => scheme::parse_file(&path)
+                 .map(|s| {
+-                    s.build_entries
++                    s.buildables()
+                         .into_iter()
+-                        .map(|e| e.buildable.blueprint_name)
++                        .map(|b| b.blueprint_name.clone())
+                         .collect()
+                 })
+                 .unwrap_or_default(),
+```
+
+**File**: `sweetpad-core/src/build_context.rs` (modified, +9/-11)
+```diff
+@@ -549,10 +549,11 @@ impl BuildContext {
+     }
+ 
+     /// Turn a scheme's `BuildAction` into a list of [`ResolveQuery`]s
+-    /// against this context. One query per entry that participates in
+-    /// `build_for` (xcodebuild only builds the entries whose matching
+-    /// `buildFor*` flag is set — a testing-only entry is skipped for a
+-    /// plain build) and whose `BlueprintName` resolves to a target in
++    /// against this context. One query per buildable a build for
++    /// `build_for` builds ([`Scheme::buildables_for`]: xcodebuild only builds
++    /// the entries whose matching `buildFor*` flag is set — a testing-only
++    /// entry is skipped for a plain build — plus, for a run, the Run action's
++    /// runnable) whose `BlueprintName` resolves to a target in
+     /// `self.project`; cross-container entries land in
+     /// [`BuildPlan::skipped`].
+     ///
+@@ -581,13 +582,10 @@ impl BuildContext {
+             .is_some_and(|t| t.code_coverage_enabled);
+         let mut entries = Vec::new();
+         let mut skipped = Vec::new();
+-        for entry in &scheme.build_entries {
+-            if !entry.builds_for(build_for) {
+-                continue;
+-            }
+-            let name = &entry.buildable.blueprint_name;
++        for buildable in scheme.buildables_for(build_for) {
++            let name = &buildable.blueprint_name;
+             let owned = self.project.targets.iter().any(|t| t.name == *name)
+-                && container_matches(&entry.buildable.container, &self.project.path);
++                && container_matches(&buildable.container, &self.project.path);
+             if owned {
+                 let mut q = ResolveQuery::new(name, configuration, sdk, arch)
+                     .with_code_coverage_enabled(code_coverage)
+@@ -597,7 +595,7 @@ impl BuildContext {
+                 }
+                 entries.push(q);
+             } else {
+-                skipped.push(entry.buildable.clone());
++                skipped.push(buildable.clone());
+             }
+         }
+         BuildPlan { entries, skipped }
+```
+
+**File**: `sweetpad-core/src/supported_platforms.rs` (modified, +6/-4)
+```diff
+@@ -118,17 +118,19 @@ impl SupportedPlatforms {
+ /// doesn't resolve. `None` means "don't filter", so a missing file falls back
+ /// to every target in the container rather than to an empty set.
+ ///
+-/// Entries count regardless of which action they build for. A per-action set
++/// Entries count regardless of which action they build for, and so does the
++/// Run action's runnable that a run builds
++/// ([`sweetpad_lib::scheme::Scheme::buildables`]). A per-action set
+ /// (Run vs Test vs Archive) could only ever narrow this further, and a
+ /// narrower set makes a scheme look *more* platform-specific than it is, the
+ /// wrong direction to guess in, since over-narrowing would send a build to a
+ /// platform the scheme can't produce.
+ fn scheme_build_targets(container: &Path, scheme: &str) -> Option<BTreeSet<String>> {
+     let parsed = find_scheme(container, scheme)?;
+     let names: BTreeSet<String> = parsed
+-        .build_entries
+-        .iter()
+-        .map(|e| e.buildable.blueprint_name.clone())
++        .buildables()
++        .into_iter()
++        .map(|b| b.blueprint_name.clone())
+         .collect();
+     (!names.is_empty()).then_some(names)
+ }
+```
+
+**File**: `sweetpad-core/tests/build_settings.rs` (modified, +24/-7)
+```diff
+@@ -442,8 +442,7 @@ fn write_scheme(dir: &PathBuf, name: &str) {
+ }
+ 
+ /// [`SCRATCH_SCHEME_XML`] with a Launch action that runs the `Scratch` target.
+-fn write_running_scheme(dir: &PathBuf, name: &str) {
+-    std::fs::create_dir_all(dir).unwrap();
++fn running_scheme_xml() -> String {
+     let launch = r#"   <LaunchAction buildConfiguration="Debug">
+       <BuildableProductRunnable runnableDebuggingMode="0">
+          <BuildableReference
+@@ -456,11 +455,12 @@ fn write_running_scheme(dir: &PathBuf, name: &str) {
+       </BuildableProductRunnable>
+    </LaunchAction>
+ </Scheme>"#;
+-    std::fs::write(
+-        dir.join(format!("{name}.xcscheme")),
+-        SCRATCH_SCHEME_XML.replace("</Scheme>", launch),
+-    )
+-    .unwrap();
++    SCRATCH_SCHEME_XML.replace("</Scheme>", launch)
++}
++
++fn write_running_scheme(dir: &PathBuf, name: &str) {
++    std::fs::create_dir_all(dir).unwrap();
++    std::fs::write(dir.join(format!("{name}.xcscheme")), running_scheme_xml()).unwrap();
+ }
+ 
+ #[test]
+@@ -775,6 +775,23 @@ fn workspace_user_scheme_naming_its_project_in_another_case_resolves() {
      assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
  }
  
 +#[test]
-+fn workspace_user_scheme_naming_a_renamed_target_resolves() {
-+    // Regression for issue #344: a private workspace scheme saved before its
-+    // target was renamed still calls it `OldName`. xcodebuild resolves the
-+    // buildable by its BlueprintIdentifier and builds `Scratch`, so the
-+    // resolver must too rather than fail with "no target matched scheme".
-+    let (root, _proj) = scratch_copy("ws-stale-name");
-+    let ws = root.join("Test.xcworkspace");
-+    std::fs::create_dir_all(&ws).unwrap();
-+    std::fs::write(
-+        ws.join("contents.xcworkspacedata"),
-+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workspace version=\"1.0\">\n  <FileRef location=\"group:Scratch.xcodeproj\"/>\n</Workspace>\n",
-+    )
-+    .unwrap();
-+    let dir = ws.join(format!(
-+        "xcuserdata/{}.xcuserdatad/xcschemes",
-+        visible_user()
-+    ));
-+    std::fs::create_dir_all(&dir).unwrap();
-+    std::fs::write(
-+        dir.join("Private.xcscheme"),
-+        SCRATCH_SCHEME_XML.replace("BlueprintName=\"Scratch\"", "BlueprintName=\"OldName\""),
-+    )
-+    .unwrap();
++fn workspace_user_scheme_running_what_its_build_action_leaves_out_resolves() {
++    // Issue #344: xcodebuild builds the Run action's target for a run even
++    // when the Build action has no entries, or lists the target with
++    // `buildForRunning="NO"`.
++    let running = running_scheme_xml();
++    let start = running.find("<BuildActionEntries>").unwrap() + "<BuildActionEntries>".len();
++    let end = running.find("</BuildActionEntries>").unwrap();
++    let empty = format!("{}{}", &running[..start], &running[end..]);
++    let s = resolve_private_workspace_scheme("ws-empty-build-action", &empty);
++    assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
 +
-+    let opts = BuildSettingsOptions {
-+        workspace: Some(ws),
-+        scheme: Some("Private".to_string()),
-+        configuration: "Debug".to_string(),
-+        sdk: "macosx".to_string(),
-+        arch: "arm64".to_string(),
-+        ..Default::default()
-+    };
-+    let s = resolve_one(opts);
++    let not_for_running = running.replacen("buildForRunning=\"YES\"", "buildForRunning=\"NO\"", 1);
++    let s = resolve_private_workspace_scheme("ws-not-for-running", &not_for_running);
 +    assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
 +}
 +
- /// A workspace whose single member project is nested two directories below it
- /// (`<root>/Modules/App/Scratch.xcodeproj`) — the layout that defeats
- /// `find_derived_data_container`'s parent/grandparent search. Named `Apps`,
+ /// Resolve `scheme_xml`, saved as the current user's `Private` scheme in a
+ /// workspace whose single member is a copy of the Scratch project.
+ fn resolve_private_workspace_scheme(tag: &str, scheme_xml: &str) -> BTreeMap<String, String> {
 ```
 
-**File**: `sweetpad-lib/src/project.rs` (modified, +53/-11)
+**File**: `sweetpad-lib/src/scheme.rs` (modified, +117/-0)
 ```diff
-@@ -205,6 +205,34 @@ pub fn open(xcodeproj_path: &Path) -> Result<Project, Error> {
-     Document::parse(xcodeproj_path)?.open(xcodeproj_path)
+@@ -169,6 +169,20 @@ pub struct BuildableRef {
+     pub container: String,
  }
  
-+/// The current name of the project's target whose object ID is `id`, the
-+/// `BlueprintIdentifier` a scheme names it by. `None` when the project declares
-+/// no such target or can't be read. Reads only the target list, so the
-+/// scheme listing [`open`] builds can call it without recursing.
-+#[must_use]
-+pub fn target_name(xcodeproj_path: &Path, id: &str) -> Option<String> {
-+    match Document::parse(xcodeproj_path).ok()? {
-+        Document::Pbxproj(value) => {
-+            let (objects, project_obj) = project_root(&value).ok()?;
-+            let declared = project_obj
-+                .get("targets")
-+                .and_then(Value::as_array)?
-+                .iter()
-+                .any(|t| t.as_str() == Some(id));
-+            if !declared {
-+                return None;
++impl BuildableRef {
++    /// Whether two references in one scheme name the same target: the same
++    /// container, and the same ID, or the same name where either has no ID.
++    #[must_use]
++    pub fn same_target(&self, other: &BuildableRef) -> bool {
++        same_path_ignoring_case(Path::new(&self.container), Path::new(&other.container))
++            && if self.blueprint_identifier.is_empty() || other.blueprint_identifier.is_empty() {
++                self.blueprint_name == other.blueprint_name
++            } else {
++                self.blueprint_identifier == other.blueprint_identifier
 +            }
-+            objects
-+                .get(id)?
-+                .get("name")
-+                .and_then(Value::as_str)
-+                .map(str::to_string)
-+        }
-+        Document::Xcproj(value) => crate::project_xcproj::target_name(&value, id),
-+        Document::Pif(_) => None,
 +    }
 +}
 +
- /// Like [`open`] but driven by an already-parsed pbxproj value. Use this when
- /// the caller has cached the pbxproj parse for reuse across multiple queries
- /// (e.g. [`crate::build_context::BuildContext`]).
-@@ -4601,17 +4629,15 @@ pub fn scheme_for_target(xcodeproj_path: &Path, target: &str) -> Option<String>
- 
- /// The blueprint (target) names a scheme's `BuildAction` builds.
- fn scheme_build_action_targets(scheme_path: &Path) -> Vec<String> {
--    let Ok(root) = crate::xcscheme::parse_file(scheme_path) else {
--        return Vec::new();
--    };
--    let Some(build_action) = root.child("BuildAction") else {
--        return Vec::new();
--    };
--    build_action
--        .descendants_named("BuildableReference")
--        .iter()
--        .filter_map(|e| e.attr("BlueprintName").map(String::from))
--        .collect()
-+    crate::scheme::parse_file(scheme_path)
-+        .map(|scheme| {
-+            scheme
-+                .build_entries
-+                .into_iter()
-+                .map(|e| e.buildable.blueprint_name)
-+                .collect()
-+        })
-+        .unwrap_or_default()
+ /// A `<CommandLineArgument>` under `LaunchAction.CommandLineArguments`.
+ #[derive(Debug, Clone)]
+ pub struct CommandLineArgument {
+@@ -796,6 +810,42 @@ pub struct LaunchSettings {
  }
  
- #[cfg(test)]
-@@ -6092,6 +6118,22 @@ mod tests {
-     /// hash to different DerivedData folders if the trailing slash survived.
-     /// `absolutize` normalizes both spellings, keeping the folder stable
-     /// regardless of how the caller spelled the container path.
-+    #[test]
-+    fn target_name_looks_a_target_up_by_its_object_id() {
-+        let pbxproj =
-+            fixtures_root().join("_synthetic-xcconfigs/xcode-26.5.0/project/Scratch.xcodeproj");
-+        assert_eq!(
-+            target_name(&pbxproj, "14A71A1C6762522AADB33EF1").as_deref(),
-+            Some("Scratch")
+ impl Scheme {
++    /// What a build for `action` builds: the Build action's entries flagged
++    /// for it, then, for a run, the Run action's runnable when none of them is
++    /// it. xcodebuild adds the runnable itself, so a scheme whose Build action
++    /// is empty, or lists the app with `buildForRunning = "NO"`, still builds
++    /// and runs the app (issue #344).
++    #[must_use]
++    pub fn buildables_for(&self, action: BuildFor) -> Vec<&BuildableRef> {
++        let mut out: Vec<&BuildableRef> = self
++            .build_entries
++            .iter()
++            .filter(|e| e.builds_for(action))
++            .map(|e| &e.buildable)
++            .collect();
++        if action == BuildFor::Running {
++            self.add_runnable(&mut out);
++        }
++        out
++    }
++
++    /// Everything the scheme builds for any action: the Build action's
++    /// entries, then the runnable a run adds ([`Self::buildables_for`]).
++    #[must_use]
++    pub fn buildables(&self) -> Vec<&BuildableRef> {
++        let mut out: Vec<&BuildableRef> = self.build_entries.iter().map(|e| &e.buildable).collect();
++        self.add_runnable(&mut out);
++        out
++    }
++
++    fn add_runnable<'a>(&'a self, buildables: &mut Vec<&'a BuildableRef>) {
++        if let Some(runnable) = &self.launch_target
++            && !buildables.iter().any(|b| b.same_target(runnable))
++        {
++            buildables.push(runnable);
++        }
++    }
++
+     /// The target whose resolved build settings expand `$(VAR)` in the launch
+     /// arguments and environment: the Run action's `MacroExpansion`, or else
+     /// the target it launches.
+@@ -1708,4 +1758,71 @@ mod tests {
+         assert!(references.cover(Some(&dir), "Scratch", true));
+         assert!(!references.cover(Some(&dir), "OldName", true));
+     }
++
++    /// A scheme whose Run action launches `App` (ID `A1`), with `entries` as
++    /// its Build action's entries.
++    fn running_scheme(entries: &str) -> Scheme {
++        let xml = format!(
++            r#"<?xml version="1.0" encoding="UTF-8"?>
++<Scheme version="1.7">
++   <BuildAction>
++      <BuildActionEntries>{entries}</BuildActionEntries>
++   </BuildAction>
++   <LaunchAction buildConfiguration="Debug">
++      <BuildableProductRunnable>
++         <BuildableReference BlueprintIdentifier="A1" BuildableName="App.app"
++            BlueprintName="App" ReferencedContainer="container:App.xcodeproj"/>
++      </BuildableProductRunnable>
++   </LaunchAction>
++</Scheme>"#
 +        );
-+        assert_eq!(target_name(&pbxproj, "000000000000000000000000"), None);
-+        let xcproj = fixtures_root().join("_xcproj/NetNewsWire.xcodeproj");
++        from_element(&xcscheme::parse(&xml).unwrap()).unwrap()
++    }
++
++    fn entry(id: &str, name: &str, for_running: &str) -> String {
++        format!(
++            r#"<BuildActionEntry buildForRunning="{for_running}" buildForTesting="YES">
++            <BuildableReference BlueprintIdentifier="{id}" BuildableName="{name}"
++               BlueprintName="{name}" ReferencedContainer="container:App.xcodeproj"/>
++         </BuildActionEntry>"#
++        )
++    }
++
++    fn names(buildables: &[&BuildableRef]) -> Vec<String> {
++        buildables
++            .iter()
++            .map(|b| b.blueprint_name.clone())
++            .collect()
++    }
++
++    /// xcodebuild builds the Run action's app for a run even when no Build
++    /// action entry builds it for running (issue #344), and only once when
++    /// one does.
++    #[test]
++    fn a_run_builds_the_runnable_the_build_action_leaves_out() {
++        let empty = running_scheme("");
++        assert_eq!(names(&empty.buildables_for(BuildFor::Running)), ["App"]);
++        assert!(empty.buildables_for(BuildFor::Testing).is_empty());
++        assert_eq!(names(&empty.buildables()), ["App"]);
++
++        let not_for_running = running_scheme(&entry("A1", "App", "NO"));
 +        assert_eq!(
-+            target_name(&xcproj, "840D617B2029031C009BC708").as_deref(),
-+            Some("NetNewsWire-iOS")
++            names(&not_for_running.buildables_for(BuildFor::Running)),
++            ["App"]
++        );
++        assert_eq!(names(&not_for_running.buildables()), ["App"]);
++
++        let listed = running_scheme(&(entry("K1", "Kit", "YES") + &entry("A1", "App", "YES")));
++        assert_eq!(
++            names(&listed.buildables_for(BuildFor::Running)),
++    
+```
+
+---
+
+### Incident Patch 2: `0ae51db0` (2026-11-02)
+**Commit Message**: Keep BSP target-build index artifacts in DerivedData (#345)
+
+**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +54/-5)
+```diff
+@@ -1749,13 +1749,25 @@ impl Server {
+         }
+     }
+ 
+-    /// `SYMROOT` / `OBJROOT` for a `-target` build: the products and
+-    /// intermediates roots inside the DerivedData the editor arguments resolve
+-    /// against. Empty when that directory can't be located, which leaves
+-    /// xcodebuild its own defaults rather than a half-pinned tree.
++    /// The products, intermediates and index store for a `-target` build,
++    /// inside the DerivedData the editor reads. Empty when DerivedData can't
++    /// be located.
+     fn build_roots(&self) -> Vec<(&'static str, PathBuf)> {
+         self.derived_data().map_or_else(Vec::new, |dd| {
+-            vec![("SYMROOT", dd.products), ("OBJROOT", dd.intermediates)]
++            vec![
++                ("SYMROOT", dd.products),
++                ("OBJROOT", dd.intermediates),
++                // A test target without a scheme takes this -target fallback.
++                // Xcode 27.2 enables indexing for its Swift package dependencies
++                // but can leave the store path empty; SYMROOT/OBJROOT don't set it.
++                // The resulting `-index-store-path -Xcc` treats -Xcc as the path
++                // and writes into <project>.xcodeproj/-Xcc (#345).
++                // Keep this path aligned with initialize's indexStorePath.
++                (
++                    "INDEX_DATA_STORE_DIR",
++                    dd.folder.join("Index.noindex/DataStore"),
++                ),
++            ]
+         })
+     }
+ 
+@@ -2754,6 +2766,43 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn a_target_prepare_writes_to_the_advertised_index_store() {
++        let project = PathBuf::from(format!(
++            "{}/fixtures/_synthetic-objectversion-110/project/SweetpadCIApp.xcodeproj",
++            env!("SWEETPAD_LIB_DIR")
++        ));
++        let scratch = crate::scratch::ScratchDir::new("sweetpad-bsp-index-store").unwrap();
++        let flags = parse_flags(&[
++            "--project".into(),
++            project.display().to_string(),
++            "--derived-data-path".into(),
++            scratch.join("Custom DerivedData").display().to_string(),
++        ]);
++        let server = Server::build(
++            ResolvedConfig::from_flags(project, &flags),
++            None,
++            Arc::new(AtomicU8::new(LogLevel::Info as u8)),
++            CommandLine::default(),
++            Sent::default().writer(),
++        )
++        .unwrap();
++        let initialized = server.initialize();
++        let store = initialized["data"]["indexStorePath"].as_str().unwrap();
++        let (cmd, _) = server.prepare_command("SweetpadCIAppTests");
++        let args: Vec<_> = cmd.get_args().map(|a| a.to_string_lossy()).collect();
++        assert!(
++            args.windows(2)
++                .any(|w| w == ["-target", "SweetpadCIAppTests"]),
++            "expected the fallback for a target without a scheme: {args:?}"
++        );
++        assert!(
++            args.iter()
++                .any(|a| a == &format!("INDEX_DATA_STORE_DIR={store}")),
++            "prepare must write index data where the client reads it: {args:?}"
 +        );
 +    }
 +
      #[test]
-     fn trailing_slash_does_not_change_the_derived_data_hash() {
-         let with = absolutize(Path::new("/root/Foo.xcodeproj/"));
-```
-
-**File**: `sweetpad-lib/src/project_xcproj.rs` (modified, +12/-0)
-```diff
-@@ -109,6 +109,18 @@ fn extract_targets(value: &Value, configurations: &[String]) -> Vec<Target> {
-         .collect()
- }
- 
-+/// The name of the target whose `id` is `id`; see [`crate::project::target_name`].
-+pub(crate) fn target_name(value: &Value, id: &str) -> Option<String> {
-+    value
-+        .get("targets")
-+        .and_then(Value::as_array)?
-+        .iter()
-+        .find(|target| target.get("id").and_then(Value::as_str) == Some(id))?
-+        .get("name")
-+        .and_then(Value::as_str)
-+        .map(str::to_string)
-+}
-+
- /// The `isa` the pbxproj would have used, so downstream rules that match on it
- /// keep working whichever format the project is in.
- fn isa_for(target: &Value) -> &'static str {
-```
-
-**File**: `sweetpad-lib/src/scheme.rs` (modified, +150/-11)
-```diff
-@@ -234,10 +234,72 @@ impl From<xcscheme::Error> for Error {
-     }
- }
- 
--/// Parse an `.xcscheme` file into a typed [`Scheme`].
-+/// Parse an `.xcscheme` file into a typed [`Scheme`], each buildable naming
-+/// the target its `BlueprintIdentifier` points at today ([`rebind`]).
- pub fn parse_file(path: &Path) -> Result<Scheme, Error> {
-     let root = xcscheme::parse_file(path)?;
--    from_element(&root)
-+    let mut scheme = from_element(&root)?;
-+    if let Some(base) = reference_base(path) {
-+        let testables = scheme
-+            .test_action
-+            .iter_mut()
-+            .flat_map(|t| t.testables.iter_mut().map(|t| &mut t.buildable));
-+        for reference in scheme
-+            .build_entries
-+            .iter_mut()
-+            .map(|e| &mut e.buildable)
-+            .chain(testables)
-+            .chain(scheme.launch_target.as_mut())
-+            .chain(scheme.launch_macro_expansion.as_mut())
-+        {
-+            rebind(reference, base);
-+        }
-+    }
-+    Ok(scheme)
-+}
-+
-+/// The directory a scheme file's `container:` references resolve against:
-+/// the one holding the `.xcodeproj` / `.xcworkspace` whose `xcshareddata` or
-+/// `xcuserdata` the file sits in.
-+fn reference_base(scheme_file: &Path) -> Option<&Path> {
-+    scheme_file
-+        .ancestors()
-+        .find(|dir| {
-+            matches!(
-+                dir.file_name().and_then(OsStr::to_str),
-+                Some("xcshareddata" | "xcuserdata")
-+            )
-+        })?
-+        .parent()?
-+        .parent()
-+}
-+
-+/// The `.xcodeproj` a buildable's `ReferencedContainer` names, resolved
-+/// against `base` ([`reference_base`]). `None` for a package's bare
-+/// `container:`, which names no project.
-+fn referenced_project(base: &Path, reference: &BuildableRef) -> Option<PathBuf> {
-+    match reference.container.split_once(':') {
-+        Some(("container", "")) => None,
-+        Some(("container", rel)) => Some(crate::project::absolutize(&base.join(rel))),
-+        Some(("absolute", abs)) => Some(crate::project::absolutize(Path::new(abs))),
-+        _ => None,
-+    }
-+}
-+
-+/// Point `reference` at the target its `BlueprintIdentifier` names in its
-+/// project, the way Xcode resolves it. The `BlueprintName` beside it is the
-+/// target's name when the scheme was last saved, so a target renamed since
-+/// still builds from a scheme that names it the old way (issue #344). A
-+/// reference whose ID names no target keeps the name it has.
-+fn rebind(reference: &mut BuildableRef, base: &Path) {
-+    if reference.blueprint_identifier.is_empty() {
-+        return;
-+    }
-+    if let Some(name) = referenced_project(base, reference)
-+        .and_then(|project| crate::project::target_name(&project, &reference.blueprint_identifier))
-+    {
-+        reference.blueprint_name = name;
-+    }
- }
- 
- /// The login user whose `xcuserdata` Xcode would consult: the account's
-@@ -396,11 +458,12 @@ impl SchemeReferences {
-     #[must_use]
-     pub fn of(container: &Path) -> Self {
-         let base = container.parent().unwrap_or(Path::new(""));
--        let project_of = |reference: &BuildableRef| match reference.container.split_once(':') {
--            Some(("container", "")) => None,
--            Some(("container", rel)) => Some(crate::project::absolutize(&base.join(rel))),
--            Some(("absolute", abs)) => Some(crate::project::absolutize(Path::new(abs))),
--            _ => None,
-+        let project_of = |mut reference: BuildableRef| {
-+            rebind(&mut reference, base);
-+            (
-+                referenced_project(base, &reference),
-+                reference.blueprint_name,
-+            )
-         };
-         let mut out = Self::default();
-         for name in container_schemes(container) {
-@@ -419,8 +482,7 @@ impl SchemeReferences {
-                     .and_then(|r| r.child("BuildableReference"))
-                     .and_then(parse_buildable)
-                 {
--                    out.runs
--                        .push((project_of(&reference), reference.blueprint_name.clone()));
-+                    out.runs.push(project_of(reference));
-                 }
-             }
-             let entries = root
-@@ -432,8 +494,7 @@ impl SchemeReferences {
-             {
-                 if let Some(reference) = entry.child("BuildableReference").and_then(parse_buildable)
-                 {
--                    out.builds
--                        .push((project_of(&reference), reference.blueprint_name.clone()));
-+                    out.builds.push(project_of(reference));
-                 }
-             }
-         }
-@@ -1542,4 +1603,82 @@ mod tests {
-         let elsewhere = dir.parent().unwrap().join("Other.xcodeproj");
-         assert!(!references.cover(Some(&elsewhere), "App", true));
-     }
-+
-+    /// A scheme saved while the Scratch fixture's target was still called
-+    /// `OldName`, plus an entry whose ID names no target.
-+    const STALE_NAME_SCHEME: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme version
+     fn the_projects_command_line_reaches_resolution_and_the_prepare_build() {
+         let project = format!(
 ```
 
 #### Recent Merged Pull Requests:
@@ -1932,56 +2018,37 @@ A scheme saved before its target was renamed still has the old BlueprintName, an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Resolve scheme targets by ID so a renamed target still builds (#344)
+## X. Build the scheme's Run target even when the Build action leaves it out (#344)
 
 **RULE**:
-When implementing operations in `sweetpad-core/tests/build_settings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sweetpad-core/src/bsp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6337f46e`: Resolve scheme targets by ID so a renamed target still builds (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b36d91c`: Build the scheme's Run target even when the Build action leaves it out (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-core/tests/build_settings.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-core/src/bsp/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn workspace_user_scheme_naming_a_renamed_target_resolves() {
-    // Regression for issue #344: a private workspace scheme saved before its
-    // target was renamed still calls it `OldName`. xcodebuild resolves the
-    // buildable by its BlueprintIdentifier and builds `Scratch`, so the
-    // resolver must too rather than fail with "no target matched scheme".
-    let (root, _proj) = scratch_copy("ws-stale-name");
-    let ws = root.join("Test.xcworkspace");
-    std::fs::create_dir_all(&ws).unwrap();
-    std::fs::write(
-        ws.join("contents.xcworkspacedata"),
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workspace version=\"1.0\">\n  <FileRef location=\"group:Scratch.xcodeproj\"/>\n</Workspace>\n",
-    )
-    .unwrap();
-    let dir = ws.join(format!(
-        "xcuserdata/{}.xcuserdatad/xcschemes",
-        visible_user()
-    ));
-    std::fs::create_dir_all(&dir).unwrap();
-    std::fs::write(
-        dir.join("Private.xcscheme"),
-        SCRATCH_SCHEME_XML.replace("BlueprintName=\"Scratch\"", "BlueprintName=\"OldName\""),
-    )
-    .unwrap();
-
-    let opts = BuildSettingsOptions {
-        workspace: Some(ws),
-        scheme: Some("Private".to_string()),
-        con
+    /// The targets the scheme `name` builds: its build entries and the
+    /// runnable a run adds ([`scheme::Scheme::buildables`]), then the targets
+    /// those depend on. A scheme with no file is one Xcode autocreates, which
+    /// builds the target it is named after.
+                    s.buildables()
+                        .map(|b| b.blueprint_name.clone())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    /// The targets the scheme `name` builds: its build entries, then the
+    /// targets those depend on. A scheme with no file is one Xcode
+    /// autocreates, which builds the target it is named after.
+                    s.build_entries
+                        .map(|e| e.buildable.blueprint_name)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6337f46e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b36d91c` are properly handled with clean fallback behavior.

@@ -7017,3 +7017,6 @@ Every entry in this ledger must capture:
 | `learn-github-kortix-ai-companyos` | `https://github.com/kortix-ai/CompanyOS` | `69e6b932` | Multi-dimensional audit evidence | 2026-11-03T21:08:53.237Z |
 | `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `da674c53` | Multi-dimensional audit evidence | 2026-11-03T21:09:02.467Z |
 | `learn-github-signerlabs-klee` | `https://github.com/signerlabs/Klee` | `ba09a7ac` | Multi-dimensional audit evidence | 2026-11-03T21:09:05.125Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-03T21:17:07.491Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `54140784` | Multi-dimensional audit evidence | 2026-11-03T21:17:16.236Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `4ffb3b68` | Multi-dimensional audit evidence | 2026-11-03T21:17:23.251Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:09:05.134Z",
+  "last_updated": "2026-11-03T21:17:23.257Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "f80eeefc4282b063221581e5f16a6ec63f8ee063a060ec74a7e79d00de9c5d39",
-      "verified_at": "2026-10-31T18:40:42.424Z",
+      "content_hash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
+      "verified_at": "2026-11-03T21:17:16.241Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:40:42.424Z"
+      "last_updated": "2026-11-03T21:17:16.241Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
-      "verified_at": "2026-10-30T21:06:23.316Z",
+      "content_hash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
+      "verified_at": "2026-11-03T21:17:23.257Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:06:23.316Z"
+      "last_updated": "2026-11-03T21:17:23.257Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",
@@ -17391,14 +17391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "content_hash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
-      "verified_at": "2026-10-30T10:42:07.299Z",
+      "content_hash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
+      "verified_at": "2026-11-03T21:17:07.497Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:42:07.299Z"
+      "last_updated": "2026-11-03T21:17:07.497Z"
     },
     "mobile-next/mobile-mcp": {
       "repository": "mobile-next/mobile-mcp",
