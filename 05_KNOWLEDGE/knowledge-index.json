@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:06:19.655Z",
+  "last_updated": "2026-11-03T23:13:19.155Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36802,8 +36802,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "0be3cd1c",
-      "content_hash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
+      "source_version": "28f8ba4a",
+      "content_hash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -36856,6 +36856,11 @@
           "number": 5796,
           "title": "agentic): reject loop agents without subagents or with maxIterations below 1 (#6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6653,
+          "title": "mcp): limit the size of messages received by the Streamable HTTP and WebSocket t",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36863,7 +36868,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:00:43.767Z",
+      "verified_at": "2026-11-03T23:13:19.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39920,8 +39925,8 @@
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "239bb745",
-      "content_hash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
+      "source_version": "fc792f3a",
+      "content_hash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "promoted_rules": [
@@ -39956,7 +39961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:45:36.226Z",
+      "verified_at": "2026-11-03T23:13:08.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171152,6 +171157,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:06:19.633Z"
+    },
+    "rule-6653": {
+      "learning_id": "rule-6653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6653,
+      "title": "mcp): limit the size of messages received by the Streamable HTTP and WebSocket t",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "28f8ba4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:13:19.136Z"
     }
   },
   "aliases": {

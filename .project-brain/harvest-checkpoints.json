@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T23:06:19.751Z",
+  "last_updated": "2026-11-03T23:13:19.234Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4551,14 +4551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-michael-a-kuykendall-shimmy",
-      "content_hash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
-      "verified_at": "2026-10-31T00:45:36.349Z",
+      "content_hash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
+      "verified_at": "2026-11-03T23:13:08.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:45:36.349Z"
+      "last_updated": "2026-11-03T23:13:08.336Z"
     },
     "infinitered/reactotron": {
       "repository": "infinitered/reactotron",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
-      "verified_at": "2026-10-30T16:00:43.860Z",
+      "content_hash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
+      "verified_at": "2026-11-03T23:13:19.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:00:43.860Z"
+      "last_updated": "2026-11-03T23:13:19.234Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

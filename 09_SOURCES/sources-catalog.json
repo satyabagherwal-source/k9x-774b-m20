@@ -2953,10 +2953,10 @@
     "repository": "Michael-A-Kuykendall/shimmy",
     "platform": "github",
     "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "sourceVersion": "239bb745",
+    "sourceVersion": "fc792f3a",
     "license": "Apache-2.0",
-    "contentHash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
-    "lastHarvestedAt": "2026-10-31T00:45:36.338Z",
+    "contentHash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
+    "lastHarvestedAt": "2026-11-03T23:13:08.327Z",
     "learningId": "learn-github-michael-a-kuykendall-shimmy"
   },
   "infinitered-reactotron": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "0be3cd1c",
+    "sourceVersion": "28f8ba4a",
     "license": "Apache-2.0",
-    "contentHash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
-    "lastHarvestedAt": "2026-10-30T16:00:43.854Z",
+    "contentHash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
+    "lastHarvestedAt": "2026-11-03T23:13:19.226Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

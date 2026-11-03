@@ -7060,3 +7060,5 @@ Every entry in this ledger must capture:
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `ac785430` | Multi-dimensional audit evidence | 2026-11-03T22:59:08.773Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `1ff68d53` | Multi-dimensional audit evidence | 2026-11-03T23:06:09.494Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `499eab89` | Multi-dimensional audit evidence | 2026-11-03T23:06:19.741Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `fc792f3a` | Multi-dimensional audit evidence | 2026-11-03T23:13:08.327Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `28f8ba4a` | Multi-dimensional audit evidence | 2026-11-03T23:13:19.226Z |

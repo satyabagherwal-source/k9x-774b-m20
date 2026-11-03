@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T23:06:22.304Z",
-    "lastVerified": "2026-11-03T23:06:22.304Z",
+    "lastChecked": "2026-11-03T23:13:21.779Z",
+    "lastVerified": "2026-11-03T23:13:21.779Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T22:38:49.876Z",
+    "lastChecked": "2026-11-03T23:13:17.153Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T22:38:49.876Z"
+    "lastVerified": "2026-11-03T23:13:17.153Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -413,8 +413,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:30:05.000Z",
-    "lastVerified": "2026-11-03T18:30:05.000Z",
+    "lastChecked": "2026-11-03T23:13:12.169Z",
+    "lastVerified": "2026-11-03T23:13:12.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1836,22 +1836,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "michael-a-kuykendall-shimmy": {
-    "name": "shimmy",
+    "name": "Michael-A-Kuykendall/shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:38:43.182Z",
-    "lastVerified": "2026-10-31T20:38:43.182Z",
+    "lastChecked": "2026-11-03T23:13:05.654Z",
+    "lastVerified": "2026-11-03T23:13:05.654Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 5,
+    "contentHash": "56f0d2d754f916d8180f4aefb69526c0c352d6532110ad26d53cf27d75903e2f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "239bb745"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-supersoniclabs-julia-1": {
     "name": "SupersonicLabs/Julia-1",
@@ -1922,22 +1921,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j",
+    "name": "langchain4j/langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-01T00:42:41.808Z",
-    "lastVerified": "2026-11-01T00:42:41.808Z",
+    "lastChecked": "2026-11-03T23:13:18.407Z",
+    "lastVerified": "2026-11-03T23:13:18.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
+    "contentHash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0be3cd1c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -3941,9 +3939,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-01T01:33:40.725Z",
+    "lastChecked": "2026-11-03T23:13:09.694Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-01T01:33:40.725Z"
+    "lastVerified": "2026-11-03T23:13:09.694Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -10746,9 +10744,9 @@
   "remarkjs-remark": {
     "name": "remark",
     "officialUrl": "https://github.com/remarkjs/remark",
-    "lastChecked": "2026-10-30T14:18:24.695Z",
+    "lastChecked": "2026-11-03T23:13:04.865Z",
     "revisionIdentifier": "1146b3a2",
-    "lastVerified": "2026-10-30T14:18:24.695Z"
+    "lastVerified": "2026-11-03T23:13:04.865Z"
   },
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
@@ -12008,9 +12006,9 @@
   "xotahal-react-native-material-ui": {
     "name": "react-native-material-ui",
     "officialUrl": "https://github.com/xotahal/react-native-material-ui",
-    "lastChecked": "2026-10-30T22:56:29.760Z",
+    "lastChecked": "2026-11-03T23:13:07.147Z",
     "revisionIdentifier": "254006ae",
-    "lastVerified": "2026-10-30T22:56:29.760Z"
+    "lastVerified": "2026-11-03T23:13:07.147Z"
   },
   "fastify-fastify": {
     "name": "fastify",

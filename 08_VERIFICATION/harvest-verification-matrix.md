@@ -7051,3 +7051,5 @@
 | `CYCLE-20261103-I1CY` | `2026-11-03T22:59:08.770Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6650` | Yes (`99cebca5...`) |
 | `CYCLE-20261103-R1ZM` | `2026-11-03T23:06:09.490Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6651` | Yes (`1541f4ae...`) |
 | `CYCLE-20261103-R9W9` | `2026-11-03T23:06:19.737Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6652` | Yes (`e979bc99...`) |
+| `CYCLE-20261103-015V` | `2026-11-03T23:13:08.323Z` | `Michael-A-Kuykendall/shimmy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md` | Yes (`56f0d2d7...`) |
+| `CYCLE-20261103-09KN` | `2026-11-03T23:13:19.223Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6653` | Yes (`3a36ea3c...`) |

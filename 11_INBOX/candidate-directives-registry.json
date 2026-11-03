@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T19:14:57.313Z",
+  "last_updated": "2026-11-03T23:13:08.331Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3709,6 +3709,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
+    },
+    {
+      "id": "CD-0163",
+      "directive_title": "Simplify SPONSORS.md to remove public individual listing",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Michael-A-Kuykendall/shimmy",
+      "source_commit": "fc792f3a",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-michael-a-kuykendall-shimmy"
     }
   ]
 }
