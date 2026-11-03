@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "6c1466ab",
+    "sourceVersion": "a1e7e9ed",
     "license": "Apache-2.0",
-    "contentHash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
-    "lastHarvestedAt": "2026-10-31T17:37:11.408Z",
+    "contentHash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
+    "lastHarvestedAt": "2026-11-03T12:51:52.153Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -9443,10 +9443,10 @@
     "repository": "sparrowcode/AlertKit",
     "platform": "github",
     "sourceUrl": "https://github.com/sparrowcode/AlertKit",
-    "sourceVersion": "e8a0208c",
+    "sourceVersion": "b8f3dff0",
     "license": "MIT",
-    "contentHash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
-    "lastHarvestedAt": "2026-10-19T23:15:41.283Z",
+    "contentHash": "0014c0bc8595a07bb99578f891092e0e2f2ecdb38cfe7ddc3acef4e12381610c",
+    "lastHarvestedAt": "2026-11-03T12:51:42.986Z",
     "learningId": "learn-github-sparrowcode-alertkit"
   },
   "nalexn-viewinspector": {
@@ -11778,5 +11778,15 @@
     "contentHash": "0a318f0dffec92e39d6c2594ed6ac62d1b98990b92609d380babf18c0d766945",
     "lastHarvestedAt": "2026-11-03T12:25:01.716Z",
     "learningId": "learn-github-alfa546-crawler"
+  },
+  "nduckmink-arkon": {
+    "repository": "nduckmink/arkon",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nduckmink/arkon",
+    "sourceVersion": "5e4069df",
+    "license": "NOASSERTION",
+    "contentHash": "fac3a4f88bffc2b2ce5d47dcac2f0d76be833a41579222e6d2b7269f1765240a",
+    "lastHarvestedAt": "2026-11-03T12:51:35.003Z",
+    "learningId": "learn-github-nduckmink-arkon"
   }
 }

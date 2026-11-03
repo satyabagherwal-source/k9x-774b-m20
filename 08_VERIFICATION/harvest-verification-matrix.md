@@ -6912,3 +6912,6 @@
 | `CYCLE-20261103-UQEK` | `2026-11-03T12:25:09.932Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6521` | Yes (`b4582aca...`) |
 | `CYCLE-20261103-US2F` | `2026-11-03T12:25:12.087Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6522` | Yes (`6451b733...`) |
 | `CYCLE-20261103-3S8X` | `2026-11-03T12:32:12.225Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6523` | Yes (`12dce603...`) |
+| `CYCLE-20261103-SPG8` | `2026-11-03T12:51:35.000Z` | `nduckmink/arkon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6524` | Yes (`fac3a4f8...`) |
+| `CYCLE-20261103-SVLZ` | `2026-11-03T12:51:42.983Z` | `sparrowcode/AlertKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6525` | Yes (`0014c0bc...`) |
+| `CYCLE-20261103-T2OM` | `2026-11-03T12:51:52.150Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6526` | Yes (`a6f86025...`) |

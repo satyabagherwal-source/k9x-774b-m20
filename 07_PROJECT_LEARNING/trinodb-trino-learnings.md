@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `6c1466ab`  
+> **Source Version**: `a1e7e9ed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:37:10.727Z  
+> **Timestamp**: 2026-11-03T12:51:51.595Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:37:10.719Z  
+> **Harvest Timestamp**: 2026-11-03T12:51:51.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13388 stars
+- **Stars / Engagement**: 13436 stars
 
 ---
 
@@ -1862,160 +1862,269 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a81ce638` (2026-10-31)
-**Commit Message**: Size array value builders from entry counts
+### Incident Patch 1: `bdd23f55` (2026-11-02)
+**Commit Message**: Fix overflow in Faker long decimal sequences
 
-**File**: `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java` (modified, +1/-1)
+Long decimal sequences multiplied the step by the row number before
+capping the value at the max, so a large step, like one close to the
+whole range of a DECIMAL(38) column, failed queries with an arithmetic
+overflow after a few rows.
+
+**File**: `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java` (modified, +15/-5)
 ```diff
-@@ -20,7 +20,7 @@ public interface ArrayValueBuilder<E extends Throwable>
-     static <E extends Throwable> Block buildArrayValue(ArrayType arrayType, int entryCount, ArrayValueBuilder<E> builder)
-             throws E
-     {
--        return new BufferedArrayValueBuilder(arrayType, 1)
-+        return new BufferedArrayValueBuilder(arrayType, entryCount)
-                 .build(entryCount, builder);
-     }
- 
-```
-
----
-
-### Incident Patch 2: `9e64fa37` (2026-10-31)
-**Commit Message**: Size projection builders from selected positions
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/project/GeneratedPageProjection.java` (modified, +8/-2)
-```diff
-@@ -19,6 +19,7 @@
- import io.trino.spi.connector.SourcePage;
- import io.trino.sql.gen.PageProjectionWork;
- import io.trino.sql.ir.Expression;
-+import jakarta.annotation.Nullable;
- 
- import java.lang.invoke.MethodHandle;
- 
-@@ -34,6 +35,7 @@ public class GeneratedPageProjection
-     private final InputChannels inputChannels;
-     private final MethodHandle pageProjectionWorkFactory;
- 
-+    @Nullable
-     private BlockBuilder blockBuilder;
- 
-     public GeneratedPageProjection(Expression projection, boolean isDeterministic, InputChannels inputChannels, MethodHandle pageProjectionWorkFactory)
-@@ -42,7 +44,6 @@ public GeneratedPageProjection(Expression projection, boolean isDeterministic, I
-         this.isDeterministic = isDeterministic;
-         this.inputChannels = requireNonNull(inputChannels, "inputChannels is null");
-         this.pageProjectionWorkFactory = requireNonNull(pageProjectionWorkFactory, "pageProjectionWorkFactory is null");
--        this.blockBuilder = projection.type().createBlockBuilder(null, 1);
-     }
- 
-     @Override
-@@ -60,7 +61,12 @@ public InputChannels getInputChannels()
-     @Override
-     public Block project(ConnectorSession session, SourcePage page, SelectedPositions selectedPositions)
-     {
--        blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
-+        if (blockBuilder == null) {
-+            blockBuilder = projection.type().createBlockBuilder(null, selectedPositions.size());
-+        }
-+        else {
-+            blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
-+        }
-         try {
-             return ((PageProjectionWork) pageProjectionWorkFactory.invoke(blockBuilder, session, page, selectedPositions)).process();
+@@ -1074,7 +1074,7 @@ long at(long index)
          }
+     }
+ 
+-    private record Int128Range(Int128 low, Int128 high, Int128 step)
++    private record Int128Range(Int128 low, Int128 high, Int128 step, long lastIndex)
+     {
+         static Int128Range of(Range range)
+         {
+@@ -1091,14 +1091,24 @@ static Int128Range of(Range range, Int128 step)
+             if (!range.isHighUnbounded() && range.isHighInclusive()) {
+                 high = add(high, Int128.ONE);
+             }
+-            return new Int128Range(low, high, step);
++            // multiplying the step by an index after the last one that fits in the range can overflow, so such indexes are capped instead
++            long lastIndex = high.toBigInteger().subtract(BigInteger.ONE).subtract(low.toBigInteger())
++                    .divide(step.toBigInteger())
++                    .min(BigInteger.valueOf(Long.MAX_VALUE))
++                    .longValue();
++            return new Int128Range(low, high, step, lastIndex);
+         }
+ 
+         Int128 at(long index)
+         {
+-            Int128 nextValue = add(low, Int128Math.multiply(Int128.valueOf(index), step));
+-            Int128 highInclusive = Int128Math.subtract(high, Int128.ONE);
+-            return highInclusive.compareTo(nextValue) < 0 ? highInclusive : nextValue;
++            if (index > lastIndex) {
++                return Int128Math.subtract(high, Int128.ONE);
++            }
++            // decimals span almost twice the max value of Int128, so multiplying the step by the index can overflow,
++            // even if the result doesn't, but adding each half separately keeps every partial result in the range
++            long halfIndex = index / 2;
++            Int128 halfway = add(low, Int128Math.multiply(Int128.valueOf(halfIndex), step));
++            return add(halfway, Int128Math.multiply(Int128.valueOf(index - halfIndex), step));
+         }
+     }
+ 
+```
+
+**File**: `plugin/trino-faker/src/test/java/io/trino/plugin/faker/TestFakerQueries.java` (modified, +1/-0)
+```diff
+@@ -834,6 +834,7 @@ void testSelectStepProperties()
+                 .add(new TestDataType("rnd_timestamp", "timestamp", Map.of("min", "2000-01-01 00:00:00.000", "step", "1d"), "count(distinct rnd_timestamp) = 200000 AND min(rnd_timestamp) = TIMESTAMP '2000-01-01 00:00:00.000' AND max(rnd_timestamp) = TIMESTAMP '2000-01-01 00:00:00.000' + INTERVAL '199999' DAY", "true"))
+                 .add(new TestDataType("rnd_bigint", "bigint", Map.of("min", "0", "step", "100000000000000"), "count(distinct rnd_bigint) = 92235 AND min(rnd_bigint) = 0", "true"))
+                 .add(new TestDataType("rnd_bigint_wide", "bigint", Map.of("min", "-9223372036854775808", "max", "9223372036854775807", "step", "9223372036854775807"), "count(distinct rnd_bigint_wide) = 4 AND max(rnd_bigint_wide) = 9223372036854775807", "true"))
++                .add(new TestDataType("rnd_decimal_wide", "decimal(38,0)", Map.of("min", "-99999999999999999999999999999999999999", "max", "99999999999999999999999999999999999999", "step", "99999999999999999999999999999999999999"), "count(distinct rnd_decimal_wide) = 3 AND max(rnd_decimal_wide) = DECIMAL '99999999999999999999999999999999999999'", "true"))
+                 .build();
+ 
+         for (TestDataType testCase : testCases) {
 ```
 
 ---
 
-### Incident Patch 3: `bd932a1f` (2026-10-31)
-**Commit Message**: Size split builders for the exact output
+### Incident Patch 2: `2ebde3a7` (2026-09-17)
+**Commit Message**: Fix deduplication of TABLESAMPLE subqueries
 
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/StringFunctions.java` (modified, +13/-17)
+Treat sampled relations as non-deterministic during scope-aware expression
+comparison, unless the sample keeps all rows or none, so repeated sampling
+subqueries are planned independently.
+
+Add regression coverage for BERNOULLI and SYSTEM sampling.
+
+Fixes #31178
+
+**File**: `core/trino-main/src/main/java/io/trino/sql/planner/ScopeAware.java` (modified, +13/-0)
 ```diff
 @@ -22,6 +22,7 @@
- import io.trino.spi.TrinoException;
- import io.trino.spi.block.Block;
- import io.trino.spi.block.BlockBuilder;
-+import io.trino.spi.block.VariableWidthBlockBuilder;
- import io.trino.spi.function.Constraint;
- import io.trino.spi.function.Description;
- import io.trino.spi.function.LiteralParameter;
-@@ -439,32 +440,27 @@ public static Block split(@SqlType("varchar(x)") Slice string, @SqlType("varchar
-         checkCondition(limit > 0, INVALID_FUNCTION_ARGUMENT, "Limit must be positive");
-         checkCondition(limit <= Integer.MAX_VALUE, INVALID_FUNCTION_ARGUMENT, "Limit is too large");
-         checkCondition(delimiter.length() > 0, INVALID_FUNCTION_ARGUMENT, "The delimiter may not be the empty string");
--        BlockBuilder parts = VARCHAR.createBlockBuilder(null, 1, string.length());
--        // If limit is one, the last and only element is the complete string
--        if (limit == 1) {
--            VARCHAR.writeSlice(parts, string);
--            return parts.build();
--        }
--
-+        int expectedEntries = 1;
-         int index = 0;
--        while (index < string.length()) {
-+        while (expectedEntries < limit && index < string.length()) {
-             int splitIndex = string.indexOf(delimiter, index);
--            // Found split?
-             if (splitIndex < 0) {
-                 break;
+ import io.trino.sql.tree.FunctionCall;
+ import io.trino.sql.tree.Identifier;
+ import io.trino.sql.tree.Node;
++import io.trino.sql.tree.SampledRelation;
+ 
+ import java.util.Optional;
+ import java.util.OptionalInt;
+@@ -46,6 +47,9 @@
+  * named query "t". This is because we currently don't assign identity to table references. (TODO: implement this)
+  *
+  * <pre>SELECT (SELECT t.a FROM t), (SELECT a FROM t)</pre>
++ * <p>
++ * Non-deterministic function calls and sampled relations are equal only to themselves, unless the sample keeps all rows or none.
++ * Only those written inside the compared expression are detected: one behind a named query or view is compared as a plain table reference.
+  */
+ public class ScopeAware<T extends Node>
+ {
+@@ -158,6 +162,15 @@ private Boolean scopeAwareComparison(Node left, Node right)
              }
--            // Add the part from current index to found split
-+            expectedEntries++;
-+            index = splitIndex + delimiter.length();
+         }
+ 
++        if (left instanceof SampledRelation leftSample && right instanceof SampledRelation rightSample) {
++            double leftRatio = analysis.getSampleRatio(leftSample);
++            double rightRatio = analysis.getSampleRatio(rightSample);
++            // Sampling is non-deterministic, unless it keeps all rows or none.
++            if (leftRatio != rightRatio || (leftRatio > 0 && leftRatio < 1)) {
++                return left == right;
++            }
 +        }
 +
-+        int expectedBytes = string.length() - (expectedEntries - 1) * delimiter.length();
-+        BlockBuilder parts = new VariableWidthBlockBuilder(null, expectedEntries, expectedBytes);
-+        index = 0;
-+        for (int part = 1; part < expectedEntries; part++) {
-+            int splitIndex = string.indexOf(delimiter, index);
-             VARCHAR.writeSlice(parts, string, index, splitIndex - index);
--            // Continue searching after delimiter
-             index = splitIndex + delimiter.length();
--            // Reached limit-1 parts so we can stop
--            if (parts.getPositionCount() == limit - 1) {
--                break;
--            }
+         if (!left.shallowEquals(right)) {
+             return false;
          }
--        // Rest of string
-+        // The last part includes any remaining delimiters when the limit is reached.
-         VARCHAR.writeSlice(parts, string, index, string.length() - index);
--
-         return parts.build();
-     }
- 
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestStringFunctions.java` (modified, +11/-0)
+**File**: `core/trino-main/src/test/java/io/trino/sql/analyzer/TestAnalyzer.java` (modified, +17/-0)
 ```diff
-@@ -1259,6 +1259,17 @@ public void testCharSubstring()
-     @Test
-     public void testSplit()
-     {
-+        assertThat(assertions.function("split", "''", "'.'"))
-+                .isEqualTo(ImmutableList.of(""));
-+        assertThat(assertions.function("split", "'abc'", "'abcdef'", "2147483647"))
-+                .isEqualTo(ImmutableList.of("abc"));
-+        assertThat(assertions.function("split", "'aaaaa'", "'aa'"))
-+                .isEqualTo(ImmutableList.of("", "", "a"));
-+        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'"))
-+                .isEqualTo(ImmutableList.builder().addAll(nCopies(1000, "a")).add("").build());
-+        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'", "2"))
-+                .isEqualTo(ImmutableList.of("a", "a.".repeat(999)));
+@@ -1122,6 +1122,23 @@ public void testNonDeterministicOrderBy()
+                 .hasErrorCode(EXPRESSION_NOT_IN_DISTINCT);
+     }
+ 
++    @Test
++    public void testRepeatedSampledSubquery()
++    {
++        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) AS x FROM t1 ORDER BY x");
++        analyze("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50))");
++        assertFails("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50))")
++                .hasErrorCode(EXPRESSION_NOT_IN_DISTINCT);
 +
-         assertThat(assertions.function("split", "'a.b.c'", "'.'"))
-                 .hasType(new ArrayType(createVarcharType(5)))
-                 .isEqualTo(ImmutableList.of("a", "b", "c"));
++        analyze("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a) FROM t1 GROUP BY 1");
++        assertFails("SELECT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a) FROM t1 GROUP BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (50) WHERE t2.a = t1.a)")
++                .hasErrorCode(EXPRESSION_NOT_AGGREGATE);
++
++        // a sample that keeps all rows or none is deterministic
++        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (100)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (100))");
++        analyze("SELECT DISTINCT (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (0)) FROM t1 ORDER BY (SELECT count(*) FROM t2 TABLESAMPLE BERNOULLI (0))");
++    }
++
+     @Test
+     public void testNonBooleanWhereClause()
+     {
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/sql/planner/TestLogicalPlanner.java` (modified, +54/-0)
+```diff
+@@ -85,6 +85,8 @@
+ import io.trino.type.CharVarcharCoercion;
+ import io.trino.type.Reals;
+ import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
+ 
+ import java.util.List;
+ import java.util.Map;
+@@ -779,6 +781,58 @@ public void testSameScalarSubqueryIsAppliedOnlyOnce()
+                 TableScanNode.class::isInstance)).isEqualTo(3);
+     }
+ 
++    @ParameterizedTest
++    @ValueSource(strings = {"BERNOULLI", "SYSTEM"})
++    public void testSampledScalarSubqueriesAreNotDeduplicated(String sampleType)
++    {
++        assertThat(countOfMatchingNodes(
++                plan(
++                        """
++                        SELECT
++                            (SELECT count(*) FROM nation TABLESAMPLE %s (50)),
++                            (SELECT count(*) FROM nation TABLESAMPLE %s (50)),
++                            (SELECT count(*) FROM nation TABLESAMPLE %s (50))
++                        """.formatted(sampleType, sampleType, sampleType)),
++                TableScanNode.class::isInstance)).isEqualTo(3);
++        // a full sample of a sampled relation
++        assertThat(countOfMatchingNodes(
++                plan(
++                        """
++                        SELECT
++                            (SELECT count(*) FROM (SELECT * FROM nation TABLESAMPLE %s (50)) TABLESAMPLE %s (100)),
++                            (SELECT count(*) FROM (SELECT * FROM nation TABLESAMPLE %s (50)) TABLESAMPLE %s (100))
++                        """.formatted(sampleType, sampleType, sampleType, sampleType)),
++                TableScanNode.class::isInstance)).isEqualTo(2);
++    }
++
++    @Test
++    public void testSampledSubqueryPredicatesAreNotDeduplicated()
++    {
++        assertThat(countOfMatchingNodes(
++                plan("SELECT EXISTS (SELECT 1 FROM nation TABLESAMPLE BERNOULLI (50)), EXISTS (SELECT 1 FROM nation TABLESAMPLE BERNOULLI (50))"),
++                TableScanNode.class::isInstance)).isEqualTo(2);
++        assertThat(countOfMatchingNodes(
++                plan("SELECT 1 IN (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50)), 1 IN (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50))"),
++                TableScanNode.class::isInstance)).isEqualTo(2);
++        assertThat(countOfMatchingNodes(
++                plan("SELECT 1 <= ALL (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50)), 1 <= ALL (SELECT nationkey FROM nation TABLESAMPLE BERNOULLI (50))"),
++                TableScanNode.class::isInstance)).isEqualTo(2);
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {"BERNOULLI", "SYSTEM"})
++    public void testFullSampleScalarSubqueryIsAppliedOnlyOnce(String sampleType)
++    {
++        assertThat(countOfMatchingNodes(
++                plan(
++                        """
++                        SELECT
++                            (SELECT count(*) FROM nation TABLESAMPLE %s (100)),
++                            (SELECT count(*) FROM nation TABLESAMPLE %s (100))
++                        """.formatted(sampleType, sampleType)),
++                TableScanNode.class::isInstance)).isEqualTo(1);
++    }
++
+     @Test
+     public void testSameInSubqueryIsAppliedOnlyOnce()
+     {
+```
+
+---
+
+### Incident Patch 3: `fff6d9c4` (2026-10-31)
+**Commit Message**: Skip Faker dictionaries for columns with only nulls
+
+When a source column has only nulls, its number of distinct values is
+zero, so dictionary detection gave it an empty `allowed_values` list.
+Setting the `null_probability` table property in the CTAS keeps the
+column from becoming only nulls, so every query reading it failed with
+an internal error, because there is no value to generate.
+
+**File**: `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerMetadata.java` (modified, +2/-1)
+```diff
+@@ -719,7 +719,8 @@ private Map<String, List<Object>> getColumnValues(SchemaTableName tableName, Tab
+             }
+         });
+         List<FakerColumnHandle> dictionaryColumns = distinctValues.entrySet().stream()
+-                .filter(entry -> entry.getValue() <= MAX_DICTIONARY_SIZE)
++                // columns with only nulls have no values to build a dictionary from
++                .filter(entry -> entry.getValue() > 0 && entry.getValue() <= MAX_DICTIONARY_SIZE)
+                 .map(entry -> columnHandles.get(entry.getKey()))
+                 .filter(Objects::nonNull)
+                 .filter(column -> isRangeType(column.type()))
+```
+
+**File**: `plugin/trino-faker/src/test/java/io/trino/plugin/faker/TestFakerQueries.java` (modified, +7/-0)
+```diff
+@@ -1506,6 +1506,13 @@ FROM TABLE(sequence(start => 0, stop => 1000, step => 1))
+             String createTable = (String) computeScalar("SHOW CREATE TABLE " + table.getName());
+             assertThat(createTable).containsPattern("nullable integer WITH \\(null_probability = 1E0\\)");
+         }
++
++        // the table property overrides the detected null probability, so the column generates values without having any in the source
++        try (TestTable table = new TestTable(getQueryRunner()::execute, "only_nulls", "WITH (null_probability = 0.5) AS " + source)) {
++            assertThat((Long) computeScalar("SELECT count(nullable) FROM " + table.getName())).isPositive();
++            String createTable = (String) computeScalar("SHOW CREATE TABLE " + table.getName());
++            assertThat(createTable).doesNotContain(ALLOWED_VALUES_PROPERTY);
++        }
+     }
+ 
+     @Test
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31933** (2026-10-31): Use known counts to size block builders (@wendigo)
-- **PR #31924** (2026-10-31): Reduce initial variable-width block allocation (@wendigo)
-- **PR #31923** (2026-10-31): Write row projections directly to output blocks (@wendigo)
-- **PR #31915** (2026-10-30): Bind CHAR parameters as char in JDBC setObject  (@findepi)
-- **PR #31912** (2026-10-30): Fix type of CHAR literal with non-BMP characters (@findepi)
-- **PR #31910** (2026-10-30): Resolve Faker functions only in the default schema (@chenjian2664)
+- **PR #31971** (2026-11-03): Upgrade ClickHouse server to supported version (@krvikash)
+- **PR #31970** (closed): Test: Run GCP CI (@ebyhr)
+- **PR #31969** (2026-11-03): Update ClickHouse driver to 0.11.0 (@ebyhr)
+- **PR #31967** (closed): Update ClickHouse driver to 0.11.0 (@ebyhr)
+- **PR #31965** (2026-11-02): Avoid retaining mutable S3 filesystem configuration (@electrum)
+- **PR #31963** (2026-11-02): Update project dependencies (@wendigo)
 
 ---
 
@@ -2035,28 +2144,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Size array value builders from entry counts
+## X. overflow in Faker long decimal sequences
 
 **RULE**:
-When implementing operations in `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a81ce638`: Size array value builders from entry counts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bdd23f55`: overflow in Faker long decimal sequences. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-faker/src/main/java/io/trino/plugin/faker/FakerPageSource.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        return new BufferedArrayValueBuilder(arrayType, entryCount)
+    private record Int128Range(Int128 low, Int128 high, Int128 step, long lastIndex)
+            // multiplying the step by an index after the last one that fits in the range can overflow, so such indexes are capped instead
+            long lastIndex = high.toBigInteger().subtract(BigInteger.ONE).subtract(low.toBigInteger())
+                    .divide(step.toBigInteger())
+                    .min(BigInteger.valueOf(Long.MAX_VALUE))
+                    .longValue();
+            return new Int128Range(low, high, step, lastIndex);
+            if (index > lastIndex) {
+                return Int128Math.subtract(high, Int128.ONE);
+            }
+            // decimals span almost twice the max value of Int128, so multiplying the step by the index can overflow,
+            // even if the result doesn't, but adding each half separately keeps every partial result in the range
+            long halfIndex = index / 2;
+            Int128 halfway = add(low, Int128Math.multiply(Int128.valueOf(halfIndex), step));
+            return add(halfway, Int128Math.multiply(Int128.valueOf(index - halfIndex), step));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        return new BufferedArrayValueBuilder(arrayType, 1)
+    private record Int128Range(Int128 low, Int128 high, Int128 step)
+            return new Int128Range(low, high, step);
+            Int128 nextValue = add(low, Int128Math.multiply(Int128.valueOf(index), step));
+            Int128 highInclusive = Int128Math.subtract(high, Int128.ONE);
+            return highInclusive.compareTo(nextValue) < 0 ? highInclusive : nextValue;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a81ce638` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bdd23f55` are properly handled with clean fallback behavior.

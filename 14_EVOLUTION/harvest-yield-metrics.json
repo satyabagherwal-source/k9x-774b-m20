@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:32:12.235Z",
-  "total_cycles_completed": 6889,
-  "total_learnings_persisted": 6889,
-  "total_rules_promoted": 6537,
+  "last_updated": "2026-11-03T12:51:52.157Z",
+  "total_cycles_completed": 6892,
+  "total_learnings_persisted": 6892,
+  "total_rules_promoted": 6540,
   "history": [
-    {
-      "timestamp": "2026-10-31T20:53:08.848Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T20:53:10.138Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T20:53:23.902Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T20:59:36.839Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T12:32:12.235Z",
       "repository": "zvec-ai/zvec-grep",
       "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:51:35.007Z",
+      "repository": "nduckmink/arkon",
+      "learningId": "learn-github-nduckmink-arkon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:51:42.990Z",
+      "repository": "sparrowcode/AlertKit",
+      "learningId": "learn-github-sparrowcode-alertkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:51:52.157Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

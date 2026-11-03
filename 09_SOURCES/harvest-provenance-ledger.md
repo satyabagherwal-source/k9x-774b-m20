@@ -6921,3 +6921,6 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `48774760` | Multi-dimensional audit evidence | 2026-11-03T12:25:09.935Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `8ddaf495` | Multi-dimensional audit evidence | 2026-11-03T12:25:12.089Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `4eaaeb8a` | Multi-dimensional audit evidence | 2026-11-03T12:32:12.229Z |
+| `learn-github-nduckmink-arkon` | `https://github.com/nduckmink/arkon` | `5e4069df` | Multi-dimensional audit evidence | 2026-11-03T12:51:35.003Z |
+| `learn-github-sparrowcode-alertkit` | `https://github.com/sparrowcode/AlertKit` | `b8f3dff0` | Multi-dimensional audit evidence | 2026-11-03T12:51:42.986Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `a1e7e9ed` | Multi-dimensional audit evidence | 2026-11-03T12:51:52.153Z |

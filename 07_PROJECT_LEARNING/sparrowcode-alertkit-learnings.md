@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md`  
 > **Source**: github ([https://github.com/sparrowcode/AlertKit](https://github.com/sparrowcode/AlertKit))  
-> **Source Version**: `e8a0208c`  
+> **Source Version**: `b8f3dff0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:15:40.975Z  
+> **Timestamp**: 2026-11-03T12:51:42.393Z  
 > **Learning ID**: `learn-github-sparrowcode-alertkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sparrowcode/AlertKit](https://github.com/sparrowcode/AlertKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:15:40.768Z  
+> **Harvest Timestamp**: 2026-11-03T12:51:42.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native alert from Apple Music & Feedback. Contains Done, Heart & Message and other presets.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2636 stars
+- **Stars / Engagement**: 2637 stars
 
 ---
 
@@ -246,7 +246,9 @@ import UIKit
 extension UIFont {
     
     static func preferredFont(forTextStyle style: TextStyle, weight: Weight, addPoints: CGFloat = 0) -> UIFont {
-        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
+        // Base size at the default category, UIFontMetrics scales it once to the current one.
+        let traits = UITraitCollection(preferredContentSizeCategory: .large)
+        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style, compatibleWith: traits)
         let font = UIFont.systemFont(ofSize: descriptor.pointSize + addPoints, weight: weight)
         let metrics = UIFontMetrics(forTextStyle: style)
         return metrics.scaledFont(for: font)
@@ -430,298 +432,28 @@ public class AlertIconErrorView: UIView, AlertIconAnimatable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d35de60` (2023-11-08)
-**Commit Message**: Fixed crash when tap for alert.
+### Incident Patch 1: `92047fab` (2026-10-31)
+**Commit Message**: Fix double scaling in preferredFont(forTextStyle:weight:addPoints:)
 
-**File**: `README.md` (modified, +7/-5)
+The base size came from the current content size category and then
+UIFontMetrics scaled it again, so large text sizes grew twice. Take the
+base size at .large and let UIFontMetrics scale it once.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `Sources/AlertKit/Extensions/UIFontExtension.swift` (modified, +3/-1)
 ```diff
-@@ -75,7 +75,7 @@ or adding it to the `dependencies` of your `Package.swift`:
- 
- ```swift
- dependencies: [
--    .package(url: "https://github.com/sparrowcode/AlertKit", .upToNextMajor(from: "5.1.5"))
-+    .package(url: "https://github.com/sparrowcode/AlertKit", .upToNextMajor(from: "5.1.8"))
- ]
- ```
- 
-@@ -99,7 +99,7 @@ If you prefer not to use any of dependency managers, you can integrate manually.
- 
- ## SwiftUI
- 
--You can use basic way via AlertKitAPI or call via modifier:
-+You can use basic way via `AlertKitAPI` or call via modifier:
- 
- ```swift
- let alertView = AlertAppleMusic17View(title: "Hello", subtitle: nil, icon: .done)
-@@ -114,9 +114,10 @@ If you need customisation fonts, icon, colors or any other, make view:
- 
- ```swift
- let alertView = AlertAppleMusic17View(title: "Added to Library", subtitle: nil, icon: .done)
--// Change Font
-+
-+// change font
- alertView.titleLabel.font = UIFont.systemFont(ofSize: 21)
--// Change Color
-+// change color
- alertView.titleLabel.textColor = .white
- ```
- 
-@@ -126,8 +127,9 @@ You can present and dismiss alerts manually via view.
- 
- ```swift
- let alertView = AlertAppleMusic17View(title: "Added to Library", subtitle: nil, icon: .done)
--alertView.present(on: self)
- 
-+// present
-+alertView.present(on: self)
- // and dismiss
- alertView.dismiss()
- ```
-```
-
-**File**: `SPAlert.podspec` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
- 
-   s.name = 'SPAlert'
--  s.version = '5.1.6'
-+  s.version = '5.1.8'
-   s.summary = 'Native alert from Apple Music & Feedback. Contains Done, Heart & Message and other presets. Support SwiftUI.'
-   s.homepage = 'https://github.com/sparrowcode/AlertKit'
-   s.source = { :git => 'https://github.com/sparrowcode/AlertKit.git', :tag => s.version }
-```
-
-**File**: `Sources/AlertKit/AlertKitAPI.swift` (modified, +9/-7)
-```diff
-@@ -26,13 +26,16 @@ public enum AlertKitAPI {
-         }
-     }
+@@ -3,7 +3,9 @@ import UIKit
+ extension UIFont {
      
-+    /**
-+     Call only with this one `completion`. Internal ones is canceled.
-+     */
-     public static func dismissAllAlerts(completion: (() -> Void)? = nil) {
-         
--        var alertViews: [AlertViewProtocol] = []
-+        var alertViews: [AlertViewInternalDismissProtocol] = []
-         
-         for window in UIApplication.shared.windows {
-             for view in window.subviews {
--                if let view = view as? AlertViewProtocol {
-+                if let view = view as? AlertViewInternalDismissProtocol {
-                     alertViews.append(view)
-                 }
-             }
-@@ -43,14 +46,13 @@ public enum AlertKitAPI {
-         } else {
-             for (index, view) in alertViews.enumerated() {
-                 if index == .zero {
--                    view.dismiss(completion: completion)
-+                    view.dismiss(customCompletion: {
-+                        completion?()
-+                    })
-                 } else {
--                    view.dismiss(completion: nil)
-+                    view.dismiss(customCompletion: nil)
-                 }
-             }
--            alertViews.first?.dismiss {
--                completion?()
--            }
-         }
-     }
- }
-```
-
-**File**: `Sources/AlertKit/Views/AlertAppleMusic16View.swift` (modified, +10/-3)
-```diff
-@@ -23,6 +23,8 @@ public class AlertAppleMusic16View: UIView, AlertViewProtocol {
-     fileprivate var presentDismissDuration: TimeInterval = 0.2
-     fileprivate var presentDismissScale: CGFloat = 0.8
-     
-+    fileprivate var completion: (()->Void)? = nil
-+    
-     private lazy var backgroundView: UIVisualEffectView = {
-         let view: UIVisualEffectView = {
-             #if !os(tvOS)
-@@ -124,6 +126,7 @@ public class AlertAppleMusic16View: UIView, AlertViewProtocol {
-     
-     open func present(on view: UIView, completion: (()->Void)? = nil) {
-         self.viewForPresent = view
-+        self.completion = completion
-         viewForPresent?.addSubview(self)
-         guard let viewForPresent = viewForPresent else { return }
-         
-@@ -155,20 +158,24 @@ public class AlertAppleMusic16View: UIView, AlertViewProtocol {
-                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + self.duration) {
-                     // If dismiss manually no need call original completion.
-                     if self.alpha != 0 {
--                        self.dismiss(completion: completion)
-+                        self.dismiss()
-                     }
-                 }
-             }
-         })
-     }
-     
--    @objc open func dismiss(completion: (()->Void)? = nil) {
-+    @objc open func dismiss() {
-+        self.dismiss(customCompletion: self.completion)
-+    }
-+    
-+    func dismiss(customCompletion: (()->Void)? = nil) {
-         UIView.animate(withDuration: presentDismissDuration, animations: {
-             self.alpha = 0
-             self.transform = self.transform.scaledBy(x: self.presentDismissScale, y: self.presentDismissScale)
-         }, completion: { [weak self] finished in
-             self?.removeFromSuperview()
--            completion?()
-+            customCompletion?()
-         })
-     }
-     
-```
-
-**File**: `Sources/AlertKit/Views/AlertAppleMusic17View.swift` (modified, +11/-4)
-```diff
-@@ -2,7 +2,7 @@ import UIKit
- import SwiftUI
- 
- @available(iOS 13, visionOS 1, *)
--public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-+public class AlertAppleMusic17View: UIView, AlertViewProtocol, AlertViewInternalDismissProtocol {
-     
-     open var dismissByTap: Bool = true
-     open var dismissInTime: Bool = true
-@@ -28,6 +28,8 @@ public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-     fileprivate var presentDismissDuration: TimeInterval = 0.2
-     fileprivate var presentDismissScale: CGFloat = 0.8
-     
-+    fileprivate var completion: (()->Void)? = nil
-+    
-     private lazy var backgroundView: UIView = {
-         #if os(visionOS)
-         let swiftUIView = VisionGlassBackgroundView(cornerRadius: 12)
-@@ -126,6 +128,7 @@ public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-     
-     open func present(on view: UIView, completion: (()->Void)? = nil) {
-         self.viewForPresent = view
-+        self.completion = completion
-         viewForPresent?.addSubview(self)
-         guard let viewForPresent = viewForPresent else { return }
-         
-@@ -163,20 +166,24 @@ public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + self.duration) {
-                     // If dismiss manually no need call original completion.
-                     if self.alpha != 0 {
--                        self.dismiss(completion: completion)
-+                        self.dismiss()
-                     }
-                 }
-             }
-         })
-     }
-     
--    @objc open func dismiss(completion: (()->Void)? = nil) {
-+    @objc open func dismiss() {
-+        self.dismiss(customCompletion: self.completion)
-+    }
-+    
-+    func dismiss(customCompletion: (()->Void)? = nil) {
-         UIView.animate(withDuration: presentDismissDuration, animations: {
-             self.alpha = 0
-             self.transform = self.transform.scaledBy(x: self.presentDismissScale, y: self.presentDismissScale)
-         }, completion: { [weak self] finished in
-             self?.removeFromSuperview()
--            completion?()
-+            customCompletion?()
-         })
-     }
-     
-```
-
-**File**: `Sources/AlertKit/Views/AlertViewInternalDismissProtocol.swift` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+import UIKit
-+
-+protocol AlertViewInternalDismissProtocol {
-+    
-+    func dismiss(customCompletion: (()->Void)?)
-+}
-```
-
-**File**: `Sources/AlertKit/Views/AlertViewProtocol.swift` (modified, +1/-1)
-```diff
-@@ -3,5 +3,5 @@ import UIKit
- public protocol AlertViewProtocol {
-     
-     func present(on view: UIView, completion: (()->Void)?)
--    func dismiss(completion: (()->Void)?)
-+    func dismiss()
- }
-```
-
----
-
-### Incident Patch 2: `3c7acb28` (2023-11-01)
-**Commit Message**: Fix layout bug when trigger in any time.
-
-**File**: `Sources/AlertKit/Views/AlertAppleMusic16View.swift` (modified, +2/-0)
-```diff
-@@ -176,6 +176,8 @@ public class AlertAppleMusic16View: UIView, AlertViewProtocol {
-     
-     public override func layoutSubviews() {
-         super.layoutSubviews()
-+        
-+        guard self.transform == .identity else { return }
-         backgroundView.frame = self.bounds
-         
-         if let iconView = self.iconView {
-```
-
-**File**: `Sources/AlertKit/Views/AlertAppleMusic17View.swift` (modified, +1/-0)
-```diff
-@@ -182,6 +182,7 @@ public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-     
-     public override func layoutSubviews() {
-         super.layoutSubviews()
-+        guard self.transform == .identity else { return }
-         backgroundView.frame = self.bounds
-         layout(maxWidth: frame.width)
-     }
-```
-
----
-
-### Incident Patch 3: `30228c31` (2023-10-17)
-**Commit Message**: Fixed blur style for iOS17 preset.
-
-**File**: `SPAlert.podspec` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
- 
-   s.name = 'SPAlert'
--  s.version = '5.1.2'
-+  s.version = '5.1.4'
-   s.summary = 'Native alert from Apple Music & Feedback. Contains Done, Heart & Message and other presets. Support SwiftUI.'
-   s.homepage = 'https://github.com/sparrowcode/AlertKit'
-   s.source = { :git => 'https://github.com/sparrowcode/AlertKit.git', :tag => s.version }
-```
-
-**File**: `Sources/AlertKit/Views/AlertAppleMusic17View.swift` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ public class AlertAppleMusic17View: UIView, AlertViewProtocol {
-         hostView.isUserInteractionEnabled = false
-         return hostView
-         #else
--        let view = UIVisualEffectView(effect: UIBlurEffect())
-+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
-         view.isUserInteractionEnabled = false
-         return view
-         #endif
+     static func preferredFont(forTextStyle style: TextStyle, weight: Weight, addPoints: CGFloat = 0) -> UIFont {
+-        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
++        // Base size at the default category, UIFontMetrics scales it once to the current one.
++        let traits = UITraitCollection(preferredContentSizeCategory: .large)
++        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style, compatibleWith: traits)
+         let font = UIFont.systemFont(ofSize: descriptor.pointSize + addPoints, weight: weight)
+         let metrics = UIFontMetrics(forTextStyle: style)
+         return metrics.scaledFont(for: font)
 ```
 
 #### Recent Merged Pull Requests:
@@ -750,38 +482,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed crash when tap for alert.
+## X. double scaling in preferredFont(forTextStyle:weight:addPoints:)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sparrowcode/AlertKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/AlertKit/Extensions/UIFontExtension.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sparrowcode/AlertKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d35de60`: Fixed crash when tap for alert.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92047fab`: double scaling in preferredFont(forTextStyle:weight:addPoints:). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/AlertKit/Extensions/UIFontExtension.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    .package(url: "https://github.com/sparrowcode/AlertKit", .upToNextMajor(from: "5.1.8"))
-You can use basic way via `AlertKitAPI` or call via modifier:
-
-// change font
-// change color
-// present
-alertView.present(on: self)
+        // Base size at the default category, UIFontMetrics scales it once to the current one.
+        let traits = UITraitCollection(preferredContentSizeCategory: .large)
+        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style, compatibleWith: traits)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    .package(url: "https://github.com/sparrowcode/AlertKit", .upToNextMajor(from: "5.1.5"))
-You can use basic way via AlertKitAPI or call via modifier:
-// Change Font
-// Change Color
-alertView.present(on: self)
+        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d35de60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92047fab` are properly handled with clean fallback behavior.

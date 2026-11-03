@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T12:32:12.240Z",
+  "last_updated": "2026-11-03T12:51:52.160Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
-      "verified_at": "2026-10-31T17:37:11.417Z",
+      "content_hash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
+      "verified_at": "2026-11-03T12:51:52.160Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:37:11.417Z"
+      "last_updated": "2026-11-03T12:51:52.160Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -14211,14 +14211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sparrowcode-alertkit",
-      "content_hash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
-      "verified_at": "2026-10-19T23:15:41.290Z",
+      "content_hash": "0014c0bc8595a07bb99578f891092e0e2f2ecdb38cfe7ddc3acef4e12381610c",
+      "verified_at": "2026-11-03T12:51:42.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:15:41.290Z"
+      "last_updated": "2026-11-03T12:51:42.992Z"
     },
     "nalexn/ViewInspector": {
       "repository": "nalexn/ViewInspector",
@@ -17729,6 +17729,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-03T12:25:01.726Z"
+    },
+    "nduckmink/arkon": {
+      "repository": "nduckmink/arkon",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nduckmink-arkon",
+      "content_hash": "fac3a4f88bffc2b2ce5d47dcac2f0d76be833a41579222e6d2b7269f1765240a",
+      "verified_at": "2026-11-03T12:51:35.010Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-03T12:51:35.010Z"
     }
   },
   "repos": {

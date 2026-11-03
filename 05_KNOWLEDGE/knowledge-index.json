@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T12:32:12.135Z",
-  "total_verified_learnings": 1196,
+  "last_updated": "2026-11-03T12:51:52.094Z",
+  "total_verified_learnings": 1197,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -53032,14 +53032,19 @@
       "slug": "sparrowcode-alertkit",
       "platform": "github",
       "source_url": "https://github.com/sparrowcode/AlertKit",
-      "source_version": "e8a0208c",
-      "content_hash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
+      "source_version": "b8f3dff0",
+      "content_hash": "0014c0bc8595a07bb99578f891092e0e2f2ecdb38cfe7ddc3acef4e12381610c",
       "dossier_path": "07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md",
       "promoted_rules": [
         {
           "number": 2883,
           "title": "Fixed crash when tap for alert.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6525,
+          "title": "double scaling in preferredFont(forTextStyle:weight:addPoints:)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -53048,7 +53053,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:15:41.209Z",
+      "verified_at": "2026-11-03T12:51:42.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56807,8 +56812,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "6c1466ab",
-      "content_hash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
+      "source_version": "a1e7e9ed",
+      "content_hash": "a6f86025631bd0965fb5c7a3516acbca345df0134fad554daa424fa1e3eab685",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -56871,6 +56876,11 @@
           "number": 6268,
           "title": "Size array value builders from entry counts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6526,
+          "title": "overflow in Faker long decimal sequences",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56878,7 +56888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:37:11.307Z",
+      "verified_at": "2026-11-03T12:51:52.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168579,6 +168589,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T12:32:12.111Z"
+    },
+    "learn-github-nduckmink-arkon": {
+      "learning_id": "learn-github-nduckmink-arkon",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nduckmink/arkon",
+      "repository": "nduckmink/arkon",
+      "slug": "nduckmink-arkon",
+      "platform": "github",
+      "source_url": "https://github.com/nduckmink/arkon",
+      "source_version": "5e4069df",
+      "content_hash": "fac3a4f88bffc2b2ce5d47dcac2f0d76be833a41579222e6d2b7269f1765240a",
+      "dossier_path": "07_PROJECT_LEARNING/nduckmink-arkon-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nduckmink-arkon-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6524,
+          "title": "fe/be): clean up Vietnamese localization leaks for verbatim sources feature",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-03T12:51:34.925Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6524": {
+      "learning_id": "rule-6524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6524,
+      "title": "fe/be): clean up Vietnamese localization leaks for verbatim sources feature",
+      "source_url": "https://github.com/nduckmink/arkon",
+      "source_version": "5e4069df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:51:34.925Z"
+    },
+    "rule-6525": {
+      "learning_id": "rule-6525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6525,
+      "title": "double scaling in preferredFont(forTextStyle:weight:addPoints:)",
+      "source_url": "https://github.com/sparrowcode/AlertKit",
+      "source_version": "b8f3dff0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:51:42.884Z"
+    },
+    "rule-6526": {
+      "learning_id": "rule-6526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6526,
+      "title": "overflow in Faker long decimal sequences",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "a1e7e9ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:51:52.078Z"
     }
   },
   "aliases": {
