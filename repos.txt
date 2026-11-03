@@ -4794,3 +4794,7 @@ https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GG
 # --- Automatically Discovered by AI Scout Engine [2026-11-03T12:51:27.142Z] ---
 # [AI-AGENTS] nduckmink/arkon (1145 score) - Arkon: Enterprise AI Knowledge Hub & MCP Server. Self-hosted knowledge base for 
 https://github.com/nduckmink/arkon
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T15:34:23.778Z] ---
+# [AI-AGENTS] seleniumbase/SeleniumBase (7369 score) - 📊 APIs for Web Scraping, Browser Automation, and E2E Testing. CDP Mode bypasses
+https://github.com/seleniumbase/SeleniumBase

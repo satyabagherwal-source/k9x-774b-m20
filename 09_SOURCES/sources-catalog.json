@@ -11788,5 +11788,15 @@
     "contentHash": "fac3a4f88bffc2b2ce5d47dcac2f0d76be833a41579222e6d2b7269f1765240a",
     "lastHarvestedAt": "2026-11-03T12:51:35.003Z",
     "learningId": "learn-github-nduckmink-arkon"
+  },
+  "seleniumbase-seleniumbase": {
+    "repository": "seleniumbase/SeleniumBase",
+    "platform": "github",
+    "sourceUrl": "https://github.com/seleniumbase/SeleniumBase",
+    "sourceVersion": "437304a2",
+    "license": "MIT",
+    "contentHash": "b2052b81e3aa7ee5b1fb0cc8b55e88f55a605e85f7a6bfaec692bf00d48dd565",
+    "lastHarvestedAt": "2026-11-03T15:34:30.439Z",
+    "learningId": "learn-github-seleniumbase-seleniumbase"
   }
 }

@@ -6926,3 +6926,4 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `a1e7e9ed` | Multi-dimensional audit evidence | 2026-11-03T12:51:52.153Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `289622a5` | Multi-dimensional audit evidence | 2026-11-03T13:05:09.521Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `66f1aaa3` | Multi-dimensional audit evidence | 2026-11-03T13:05:13.583Z |
+| `learn-github-seleniumbase-seleniumbase` | `https://github.com/seleniumbase/SeleniumBase` | `437304a2` | Multi-dimensional audit evidence | 2026-11-03T15:34:30.439Z |

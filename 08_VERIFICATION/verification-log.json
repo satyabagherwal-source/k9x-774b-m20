@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-GS6F",
-    "timestamp": "2026-10-31T02:07:26.631Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-GUGA",
     "timestamp": "2026-10-31T02:07:29.578Z",
     "repository": "temporalio/temporal",
@@ -7490,6 +7475,21 @@
     "repository": "apache/zookeeper",
     "learningId": "learn-github-apache-zookeeper",
     "contentHash": "022104b3a51662d83b8d5ab8ff73838a947e7f4932a26f6568322ea8b5460155",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-M884",
+    "timestamp": "2026-11-03T15:34:30.436Z",
+    "repository": "seleniumbase/SeleniumBase",
+    "learningId": "learn-github-seleniumbase-seleniumbase",
+    "contentHash": "b2052b81e3aa7ee5b1fb0cc8b55e88f55a605e85f7a6bfaec692bf00d48dd565",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

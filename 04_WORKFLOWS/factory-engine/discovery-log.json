@@ -20128,5 +20128,20 @@
     "qualityScore": 1145,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-03T12:48:00.340Z"
+  },
+  {
+    "name": "SeleniumBase",
+    "fullName": "seleniumbase/SeleniumBase",
+    "url": "https://github.com/seleniumbase/SeleniumBase",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "📊 APIs for Web Scraping, Browser Automation, and E2E Testing. CDP Mode bypasses bot-detection and CAPTCHAs. Supports Playwright. Includes an MCP server and a CLI.",
+    "stars": 13223,
+    "forks": 1611,
+    "openIssues": 12,
+    "language": "Python",
+    "qualityScore": 7369,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-03T15:30:51.694Z"
   }
 ]
