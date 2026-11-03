@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T12:06:31.771Z",
+  "last_updated": "2026-11-03T12:18:33.489Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
-      "verified_at": "2026-10-30T04:34:56.930Z",
+      "content_hash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
+      "verified_at": "2026-11-03T12:13:39.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:34:56.930Z"
+      "last_updated": "2026-11-03T12:13:39.367Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
-      "verified_at": "2026-10-31T02:28:00.650Z",
+      "content_hash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
+      "verified_at": "2026-11-03T12:13:35.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:28:00.650Z"
+      "last_updated": "2026-11-03T12:13:35.355Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -10656,14 +10656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-ci-typos",
-      "content_hash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
-      "verified_at": "2026-10-19T07:40:35.180Z",
+      "content_hash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
+      "verified_at": "2026-11-03T12:18:33.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:40:35.180Z"
+      "last_updated": "2026-11-03T12:18:33.488Z"
     },
     "emberstack/kubernetes-reflector": {
       "repository": "emberstack/kubernetes-reflector",

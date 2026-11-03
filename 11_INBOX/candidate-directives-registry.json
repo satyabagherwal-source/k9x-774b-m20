@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T11:59:20.301Z",
+  "last_updated": "2026-11-03T12:18:33.483Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3665,6 +3665,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit"
+    },
+    {
+      "id": "CD-FUGL",
+      "directive_title": "rules: fix flaky TestUpdateWhenStopped panic",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "caebd2cf",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-prometheus-prometheus"
+    },
+    {
+      "id": "CD-M8I2",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "crate-ci/typos",
+      "source_commit": "4c8b7f51",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-crate-ci-typos"
     }
   ]
 }

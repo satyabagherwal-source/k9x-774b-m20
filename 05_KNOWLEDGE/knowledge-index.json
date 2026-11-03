@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T12:06:31.653Z",
+  "last_updated": "2026-11-03T12:18:33.371Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8260,8 +8260,8 @@
       "slug": "crate-ci-typos",
       "platform": "github",
       "source_url": "https://github.com/crate-ci/typos",
-      "source_version": "7f9d0819",
-      "content_hash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
+      "source_version": "4c8b7f51",
+      "content_hash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
       "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "promoted_rules": [
@@ -8286,7 +8286,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:40:35.119Z",
+      "verified_at": "2026-11-03T12:18:33.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47436,8 +47436,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "9e28ec50",
-      "content_hash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
+      "source_version": "caebd2cf",
+      "content_hash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -47507,7 +47507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:28:00.562Z",
+      "verified_at": "2026-11-03T12:13:35.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49694,8 +49694,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "8b10e2d9",
-      "content_hash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
+      "source_version": "8d71a376",
+      "content_hash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -49735,7 +49735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:34:56.817Z",
+      "verified_at": "2026-11-03T12:13:39.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112587,14 +112587,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
       "title": "Update README.md",
-      "source_url": "https://github.com/mazzzystar/Queryable",
-      "source_version": "19825faa",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "8d71a376",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T11:52:01.859Z"
+      "verified_at": "2026-11-03T12:13:39.246Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",

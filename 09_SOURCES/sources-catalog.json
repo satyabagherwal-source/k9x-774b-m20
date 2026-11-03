@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "8b10e2d9",
+    "sourceVersion": "8d71a376",
     "license": "MIT",
-    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
-    "lastHarvestedAt": "2026-10-30T04:34:56.919Z",
+    "contentHash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
+    "lastHarvestedAt": "2026-11-03T12:13:39.357Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "9e28ec50",
+    "sourceVersion": "caebd2cf",
     "license": "Apache-2.0",
-    "contentHash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
-    "lastHarvestedAt": "2026-10-31T02:28:00.642Z",
+    "contentHash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
+    "lastHarvestedAt": "2026-11-03T12:13:35.343Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "7f9d0819",
+    "sourceVersion": "4c8b7f51",
     "license": "Apache-2.0",
-    "contentHash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
-    "lastHarvestedAt": "2026-10-19T07:40:35.174Z",
+    "contentHash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
+    "lastHarvestedAt": "2026-11-03T12:18:33.476Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `9e28ec50`  
+> **Source Version**: `caebd2cf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:28:00.059Z  
+> **Timestamp**: 2026-11-03T12:13:35.059Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:27:59.658Z  
+> **Harvest Timestamp**: 2026-11-03T12:13:34.268Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66866 stars
+- **Stars / Engagement**: 66920 stars
 
 ---
 
@@ -36,6 +36,337 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `.agents/skills/contributor-trust/scripts/score_contributors.py`
+```
+#!/usr/bin/env python3
+# Copyright The Prometheus Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""
+Computes contributor trust scores for any GitHub repository using repository
+governance roles (Maintainer, Member, Contributor, New Contributor) and a
+rolling monthly contribution average (1.0x merged PRs + 1.5x reviewed PRs).
+"""
+import argparse
+import base64
+from concurrent.futures import ThreadPoolExecutor
+import datetime
+import json
+import math
+import os
+import re
+import subprocess
+import sys
+import time
+
+
+ROLE_MAINTAINER = "Maintainer"
+ROLE_MEMBER = "Member"
+ROLE_CONTRIBUTOR = "Contributor"
+ROLE_NEW_CONTRIBUTOR = "New Contributor"
+
+ROLE_BASE_SCORES = {
+    ROLE_MAINTAINER: 50.0,
+    ROLE_MEMBER: 35.0,
+    ROLE_CONTRIBUTOR: 15.0,
+    ROLE_NEW_CONTRIBUTOR: 0.0,
+}
+
+ROLE_RANK = {
+    ROLE_NEW_CONTRIBUTOR: 0,
+    ROLE_CONTRIBUTOR: 1,
+    ROLE_MEMBER: 2,
+    ROLE_MAINTAINER: 3,
+}
+
+ASSOC_RANK = {
+    "NONE": 0,
+    "FIRST_TIMER": 1,
+    "FIRST_TIME_CONTRIBUTOR": 1,
+    "CONTRIBUTOR": 2,
+    "COLLABORATOR": 3,
+    "MEMBER": 4,
+    "OWNER": 5,
+}
+
+PROMETHEUS_ORGS = {"prometheus", "prometheus-community", "promcon"}
+RESERVED_GH_PATHS = {
+    "orgs",
+    "organizations",
+    "teams",
+    "issues",
+    "pulls",
+    "pull",
+    "discussions",
+    "actions",
+    "settings",
+    "security",
+    "sponsors",
+    "about",
+    "pricing",
+    "features",
+}
+
+MERGED_PR_WEIGHT = 1.0
+REVIEWED_PR_WEIGHT = 1.5
+CONTRIB_LOG_SCALE = 12.0
+MAX_CONTRIB_BONUS = 40.0
+DEFAULT_WINDOW_DAYS = 90
+DEFAULT_AGING_PER_DAY = 1.5
+NEW_CONTRIBUTOR_WELCOME_SCORE = 30.0
+
+
+# NOTE(bwplotka): We query repository.pullRequests ordered by UPDATED_AT DESC
+# instead of the GraphQL search connection. GitHub search caps results at 1,000
+# items and enforces strict secondary rate limits, whereas repository.pullRequests
+# streams cleanly and can stop as soon as updatedAt falls behind the window cutoff.
+ACTIVITY_GRAPHQL_QUERY = """
+query($owner: String!, $name: String!, $states: [PullRequestState!]!, $after: String) {
+  repository(owner: $owner, name: $name) {
+    pullRequests(states: $states, first: 100, after: $after, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        number
+        state
+        updatedAt
+        mergedAt
+        mergedBy { __typename login }
+        author { __typename login }
+        authorAssociation
+        reviews(last: 30, states: [APPROVED, CHANGES_REQUESTED, COMMENTED]) {
+          nodes {
+            submittedAt
+            authorAssociation
+            author { __typename login }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def run_cmd(cmd):
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        return None
+    return res.stdout
+
+
+def fetch_file_from_repo(owner, repo, path):
+    out = run_cmd(["gh", "api", f"repos/{owner}/{repo}/contents/{path}"])
+    if not out:
+        return None
+    try:
+        data = json.loads(out)
+        if "content" in data:
+            return base64.b64decode(data["content"]).decode("utf-8", errors="replace")
+    except Exception:
+        pass
+    return None
+
+
+def is_bot(actor):
+    if not actor:
+        return True
+    if isinstance(actor, dict):
+        if actor.get("__typename") == "Bot":
+            return True
+        login = actor.get("login")
+    else:
+        login = str(actor)
+    if not login:
+        return True
+    low = login.lower()
+    return (
+        "[bot]" in low
+        or "dependabot" in low
+        or "renovate" in low
+        or "copilot" in low
+        or low in ("prombot", "cla-bot", "netlify", "codecov")
+    )
+
+
+def _extract_handles_from_line(line):
+    """Extracts GitHub handles from a line, preferring github.com/<handle> links over @tokens."""
+    gh_links = [
+        h
+        for h in re.findall(r"github\.com/([a-zA-Z0-9-]+)(?:[/?#)\]\s]|$)", line)
+        if h.lower() not in RESERVED_GH_PATHS
+    ]
+    if gh_links:
+        seen = []
+        for h in gh_links:
+            if h not in seen:
+                seen.append(h)
+        return seen
+
+    # Strip inline code spans containing whitespace (such as CNCF Slack `@Full Name`)
+    # before matching @handles so display names are not mistaken for GitHub logins.
+    cleaned = re.sub(r"`[^`]*\s[^`]*`", " ", line)
+    handles = re.findall(r"(?:^|[\s/(\[|`])@([a-zA-Z0-9-]+)", cleaned)
+    seen = []
+    for h in handles:
+        if h not in seen:
+            seen.append(h)
+    return seen
+
+
+def parse_maintainers_md(content):
+    """Extracts general maintainers, path-specific rules, and all active maintainer handles."""
+    general = []
+    specific = []
+    all_maintainers = []
+    if not content:
+        return general, specific, all_maintainers
+
+    # Default to "general" so simple bullet or Markdown-table MAINTAINERS.md files
+    # (such as client_golang, common, and thanos-io/thanos) work without specific headers.
+    mode = "general"
+    prefix_stack = []
+
+    for line in content.splitlines():
+        stripped = line.strip()
+        low = stripped.lower()
+        if not stripped:
+            continue
+        if low.startswith("general maintainers") or "core maintainers" in low:
+            mode = "general"
+            prefix_stack = []
+            continue
+        if low.startswith("maintainers for specific") or "named maintainers" in low:
+            mode = "specific"
+            prefix_stack = []
+            continue
+        if (
+            low.startswith("v3 release")
+            or low.startswith("release coordinators")
+            or low.startswith("for the sake of")
+            or (
+                low.startswith("#")
+                and any(
+                    stop in low
+                    for stop in ("triage", "alumni", "emeritus", "retired", "former")
+                )
+            )
+            or low.startswith("emeritus")
+        ):
+            mode = None
+            prefix_stack = []
+            continue
+        if mode is None:
+            continue
+
+        # Skip Markdown table separator rows (e.g. |---|---|).
+        if stripped.startswith("|") and re.match(r"^\|[\s:|-]+\|?$", stripped):
+            continue
+
+        handles = _extract_handles_from_line(line)
+        indent = len(line) - len(line.lstrip(" "))
+        m_code = re.match(r"^\s*[-*]\s*`([^`]+)`", line)
+
+        if m_code:
+            token = m_code.group(1).strip("/")
+            while prefix_stack and prefix_stack[-1][0] >= indent:
+                prefix_stack.pop()
+            prefix_stack.append((indent, token))
+            full_path = "/".join(t for _, t in prefix_stack)
+            if handles:
+                specific.append((full_path, handles))
+                for h in handles:
+                    if h not in all_maintainers:
+                        all_maintainers.append(h)
+        elif handles and stripped.startswith(("*", "-", "|")):
+            for h in handles:
+                if mode == "general" and h not in general:
+                    general.append(h)
+                if h not in all_maintainers:
+                    all_maintainers.append(h)
+
+    return general, specific, all_maintainers
+
+
+def parse_codeowners(content):
+    """Parses CODEOWNERS into default owners, path rules, and all individual handles."""
+    rules = []
+    default_individuals = []
+    all_individuals = []
+    if not content:
+        return default_individuals, rules, all_individuals
+
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+        pattern = parts[0]
+        raw_owners = [o.lstrip("@") for o in parts[1:] if o.startswith("@")]
+        indiv = [o for o in raw_owners if "/" not in o]
+        teams = [o for o in raw_owners if "/" in o]
+        for i in indiv:
+            if i not in all_individuals:
+                all_individuals.append(i)
+        if pattern == "*":
+            for i in indiv:
+                if i not in default_individuals:
+                    default_individuals.append(i)
+        else:
+            rules.append((pattern.lstrip("/"), indiv, teams))
+    return default_individuals, rules, all_individuals
+
+
+def parse_owners_yaml(owners_content, aliases_content=""):
+    """Parses Kubernetes/Prow-style OWNERS and OWNERS_ALIASES files for approvers."""
+    if not owners_content:
+        return []
+
+    aliases = {}
+    if aliases_content:
+        current_alias = None
+        in_aliases = False
+        for raw in aliases_content.splitlines():
+            line = raw.split("#", 1)[0].rstrip()
+            stripped = line.strip()
+            if not stripped:
+                continue
+            indent = len(line) - len(line.lstrip(" "))
+            if indent == 0:
+                in_aliases = stripped.startswith("aliases:")
+                current_alias = None
+                continue
+            if not in_aliases:
+                continue
+            if stripped.endswith(":") and not stripped.startswith("-"):
+                current_alias = stripped[:-1].strip()
+                aliases.setdefault(current_alias, [])
+            elif stripped.startswith("-") and current_alias:
+                val = stripped[1:].strip().lstrip("@")
+                if val:
+                    aliases[current_alias].append(val)
+
+    approvers = []
+    in_approvers = False
+    for raw in owners_content.splitlines():
+        line = raw.split("#", 1)[0].rstrip()
+        stripped = line.strip()
+        if 
+```
 
 ### Core Architecture Module: `discovery/util.go`
 ```
@@ -1444,68 +1775,17 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ```
 
-### Core Architecture Module: `tsdb/fileutil/dir_windows.go`
-```
-// Copyright The Prometheus Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//go:build windows
-
-package fileutil
-
-import (
-	"os"
-	"syscall"
-)
-
-// OpenDir opens a directory in windows with write access for syncing.
-func OpenDir(path string) (*os.File, error) {
-	fd, err := openDir(path)
-	if err != nil {
-		return nil, err
-	}
-	return os.NewFile(uintptr(fd), path), nil
-}
-
-func openDir(path string) (fd syscall.Handle, err error) {
-	if len(path) == 0 {
-		return syscall.InvalidHandle, syscall.ERROR_FILE_NOT_FOUND
-	}
-	pathp, err := syscall.UTF16PtrFromString(path)
-	if err != nil {
-		return syscall.InvalidHandle, err
-	}
-	access := uint32(syscall.GENERIC_READ | syscall.GENERIC_WRITE)
-	sharemode := uint32(syscall.FILE_SHARE_READ | syscall.FILE_SHARE_WRITE)
-	createmode := uint32(syscall.OPEN_EXISTING)
-	fl := uint32(syscall.FILE_FLAG_BACKUP_SEMANTICS)
-	return syscall.CreateFile(pathp, access, sharemode, nil, createmode, fl, 0)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20237** (2026-10-30): **chore(compliance): enable stateless and stateless-st remote write sender tests**
-  *Symptoms*: Bump `github.com/prometheus/compliance` to latest `main` and run `sender.StatelessComplianceTests()` and `sender.StatelessSTComplianceTests()` against both `server` and `agent` modes in `TestRemoteWriteSender` now that `remote_write.mode` (#20098) is merged.  Commits: - `compliance: enable stateless and stateless-st remote write sender tests`  ```release-notes NONE ```
+- **Issue #20278** (2026-11-03): **build: create manifests with buildx imagetools (#20229)**
+  *Symptoms*: cherrypick of https://github.com/prometheus/prometheus/pull/20229  Signed-off-by: Owen Williams <owen.williams@grafana.com> ```release-notes NONE ``` 
 
-- **Issue #20227** (2026-10-29): **docs: simplify 3.16 changelog PR references**
-  *Symptoms*: As we usually do <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [
+- **Issue #20271** (2026-11-02): **chore: update release shepherds for 3.17 and 3.18**
+  *Symptoms*: Assign @bwplotka as release shepherd for v3.17 and move @krajorama to v3.18. Also fixes the v3.18 pre-release year typo from `2026-01-13` to `2027-01-13` and adds the `v3.19` volunteer slot.  ```release-notes NONE ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1522,119 +1802,562 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e062fea` (2026-10-30)
-**Commit Message**: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
+### Incident Patch 1: `2a12aec2` (2026-11-01)
+**Commit Message**: rules: fix flaky TestUpdateWhenStopped panic
 
-tsdb: use synctest for series eviction reader wait test
+TestUpdateWhenStopped starts a rule manager without a QueryFunc or
+AppendableV2, loads a group with a recording rule on a 10s interval and
+stops the manager right after. If the group's evaluation slot, derived
+from a hash of the group, falls between Update and Stop, the group is
+evaluated and RecordingRule.Eval calls the nil QueryFunc, panicking the
+whole rules test binary. Give the manager a no-op QueryFunc and a test
+storage, as other manager tests do.
 
-**File**: `tsdb/head_series_eviction_test.go` (modified, +47/-35)
+Signed-off-by: Aditya Agrawal <[REDACTED_EMAIL]>
+
+**File**: `rules/manager_test.go` (modified, +6/-2)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"slices"
- 	"strconv"
- 	"testing"
-+	"testing/synctest"
- 	"time"
+@@ -2679,9 +2679,13 @@ func TestBoundedRuleEvalConcurrency(t *testing.T) {
  
- 	prom_testutil "github.com/prometheus/client_golang/prometheus/testutil"
-@@ -744,42 +745,53 @@ func TestSeriesEviction_QueryStartingAtLastTimestampIsWaitedForByNextEviction(t
- 	}
- 	for name, openQuery := range queriers {
- 		t.Run(name, func(t *testing.T) {
--			testDB := newSeriesEvictionTestDB(t)
--			db := testDB.db
--
--			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
--			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
--			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
--			db.compactHeadViewBeforeEvictTestingCallback = func() {
--				app := db.Appender(context.Background())
--				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
-+			synctest.Test(t, func(t *testing.T) {
-+				testDB := newSeriesEvictionTestDB(t)
-+				db := testDB.db
-+
-+				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
-+				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
-+				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
-+				db.compactHeadViewBeforeEvictTestingCallback = func() {
-+					app := db.Appender(context.Background())
-+					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
-+					require.NoError(t, err)
-+					require.NoError(t, app.Commit())
-+				}
-+				var reading *readingSeries
-+				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
-+					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
-+				}
-+				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
-+				require.NotNil(t, reading)
-+				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
-+
-+				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
-+				done := make(chan error, 1)
-+				go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
-+				synctest.Wait()
-+
-+				// The query is still open, so the eviction must be waiting for it.
-+				select {
-+				case err := <-done:
-+					require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
-+				default:
-+				}
-+				samples, err := reading.read()
- 				require.NoError(t, err)
--				require.NoError(t, app.Commit())
--			}
--			var reading *readingSeries
--			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
--				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
--			}
--			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
--			require.NotNil(t, reading)
--			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
--
--			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
--			done := make(chan error, 1)
--			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
--
--			// The query is still open, so the eviction must keep waiting for it, with the series in the head.
--			select {
--			case err := <-done:
--				require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
--			case <-time.After(time.Second):
--			}
--			samples, err := reading.read()
--			require.NoError(t, err)
--			require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
--			require.NoError(t, reading.close())
--
--			require.NoError(t, <-done)
-+				require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
-+				require.NoError(t, reading.close())
-+
-+				// Advance fake time past the reader-wait polling interval.
-+				time.Sleep(time.Second)
-+				synctest.Wait()
-+				select {
-+				case err := <-done:
-+					require.NoError(t, err)
-+				default:
-+					t.Fatal("the eviction must complete after the query closes")
-+				}
-+			})
- 		})
- 	}
+ func TestUpdateWhenStopped(t *testing.T) {
+ 	files := []string{"fixtures/rules.yaml"}
++	// The group is evaluated if its evaluation slot falls between Update and Stop,
++	// so the manager needs a working QueryFunc and AppendableV2.
+ 	ruleManager := NewManager(&ManagerOptions{
+-		Context: context.Background(),
+-		Logger:  promslog.NewNopLogger(),
++		Context:      context.Background(),
++		Logger:       promslog.NewNopLogger(),
++		AppendableV2: teststorage.New(t),
++		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
+ 	})
+ 	ruleManager.start()
+ 	err := ruleManager.Update(10*time.Second, files, labels.EmptyLabels(), "", nil)
+```
+
+---
+
+### Incident Patch 2: `ef78ff64` (2026-10-31)
+**Commit Message**: fix(scrape): update metadata and family association across metric_relabel_configs (#20103)
+
+* scrape: update metadata and family association across metric_relabel_configs
+
+In scrapeLoopAppenderV2, associate parsed family metadata using the pre-relabel metric name so renamed metrics retain their metadata in AppenderV2 and ST synthesis, and update scrapeCache metadata only for surviving post-relabel series under their post-relabel metric family name (fixing #14013).
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* Address review comment: preserve post-relabel name when pre-relabel name equals family name
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* Address review comment: preserve droppedSeries cache hit when metric_relabel_configs is set
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* Address review comment: replace cached series entry when post-relabel lset changes
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+**File**: `scrape/scrape.go` (modified, +70/-1)
+```diff
+@@ -926,6 +926,16 @@ type cacheEntry struct {
+ 	st *stCache
  }
+ 
++// seriesMetaEntry caches a series' post-relabel metadata and metric family name (meta, mfName)
++// alongside the pre-relabel parser state (origMeta, origMFName) that produced them.
++// When metric_relabel_configs is configured, the fast path checks origMeta and origMFName
++// before parsing labels or running relabeling so unchanged series can reuse
++// meta and mfName directly.
++type seriesMetaEntry struct {
++	origMeta, meta     metadata.Metadata
++	origMFName, mfName string
++}
++
+ type scrapeLoop struct {
+ 	// ctx represents a local context that is cancellable via s.cancel.
+ 	// It's meant to synchronize run() with stop().
+@@ -1020,6 +1030,9 @@ type scrapeCache struct {
+ 	seriesCur  map[storage.SeriesRef]*cacheEntry
+ 	seriesPrev map[storage.SeriesRef]*cacheEntry
+ 
++	// Per-series post-relabel metadata cache, lazily allocated only when metric_relabel_configs is non-empty.
++	seriesMeta map[*cacheEntry]seriesMetaEntry
++
+ 	// TODO(bwplotka): Consider moving metadata caching to head. See
+ 	// https://github.com/prometheus/prometheus/issues/17619.
+ 	metaMtx  sync.Mutex            // Mutex is needed due to api touching it when metadata is queried.
+@@ -1080,6 +1093,9 @@ func (c *scrapeCache) iterDone(flushCache bool) {
+ 		for s, e := range c.series {
+ 			if c.iter != e.lastIter {
+ 				delete(c.series, s)
++				if c.seriesMeta != nil {
++					delete(c.seriesMeta, e)
++				}
+ 			}
+ 		}
+ 		for s, iter := range c.droppedSeries {
+@@ -1121,6 +1137,36 @@ func (c *scrapeCache) addRef(met []byte, ref storage.SeriesRef, lset labels.Labe
+ 	return ce
+ }
+ 
++func (c *scrapeCache) setSeriesMeta(ce *cacheEntry, origMeta, meta metadata.Metadata, origMFName, mfName string) {
++	if c.seriesMeta == nil {
++		c.seriesMeta = make(map[*cacheEntry]seriesMetaEntry)
++	}
++	// origMFName comes from yoloString(lastMFName) backed by a reusable buffer, so we must
++	// not retain its backing array. Reuse existing immutable strings when possible to avoid
++	// allocating on the heap.
++	switch {
++	case origMFName == mfName:
++		origMFName = mfName
++	case strings.HasPrefix(ce.lset.Get(model.MetricNameLabel), origMFName):
++		origMFName = ce.lset.Get(model.MetricNameLabel)[:len(origMFName)]
++	default:
++		origMFName = strings.Clone(origMFName)
++	}
++	c.seriesMeta[ce] = seriesMetaEntry{
++		origMeta:   origMeta,
++		meta:       meta,
++		origMFName: origMFName,
++		mfName:     mfName,
++	}
++}
++
++func (c *scrapeCache) deleteSeries(met []byte, ce *cacheEntry) {
++	delete(c.series, string(met))
++	if c.seriesMeta != nil {
++		delete(c.seriesMeta, ce)
++	}
++}
++
+ func (c *scrapeCache) addDropped(met []byte) {
+ 	iter := c.iter
+ 	c.droppedSeries[string(met)] = &iter
+@@ -1241,6 +1287,26 @@ func (c *scrapeCache) setUnit(mfName, unit []byte) ([]byte, *metaEntry) {
+ 	return mfName, e
+ }
+ 
++func (c *scrapeCache) setMetadata(mfName string, m metadata.Metadata) {
++	c.metaMtx.Lock()
++	defer c.metaMtx.Unlock()
++
++	e, ok := c.metadata[mfName]
++	var oldSize int
++	if !ok {
++		e = &metaEntry{Metadata: metadata.Metadata{Type: model.MetricTypeUnknown}}
++		c.metadata[mfName] = e
++	} else {
++		oldSize = e.size()
++	}
++	if !e.Equals(m) {
++		e.Metadata = m
++		e.lastIterChange = c.iter
++	}
++	e.lastIter = c.iter
++	c.metadataSize += e.size() - oldSize
++}
++
+ // GetMetadata returns metadata given the metric family name.
+ func (c *scrapeCache) GetMetadata(mfName string) (MetricMetadata, bool) {
+ 	c.metaMtx.Lock()
+@@ -2087,7 +2153,10 @@ loop:
+ 
+ // TODO(https://github.com/prometheus/prometheus/issues/17900): Move this to text and OM parser.
+ func isSeriesPartOfFamily(mName string, mfName []byte, typ model.MetricType) bool {
+-	mfNameStr := yoloString(mfName)
++	return isSeriesPartOfFamilyStr(mName, yoloString(mfName), typ)
++}
++
++func isSeriesPartOfFamilyStr(mName, mfNameStr string, typ model.MetricType) bool {
+ 	if !strings.HasPrefix(mName, mfNameStr) { // Fast path.
+ 		return false
+ 	}
+```
+
+**File**: `scrape/scrape_append_v2.go` (modified, +270/-51)
+```diff
+@@ -14,6 +14,7 @@
+ package scrape
+ 
+ import (
++	"bytes"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -27,6 +28,7 @@ import (
+ 	"github.com/prometheus/prometheus/model/exemplar"
+ 	"github.com/prometheus/prometheus/model/histogram"
+ 	"github.com/prometheus/prometheus/model/labels"
++	"github.com/prometheus/prometheus/model/metadata"
+ 	"github.com/prometheus/prometheus/model/textparse"
+ 	"github.com/prometheus/prometheus/model/timestamp"
+ 	"github.com/prometheus/prometheus/model/value"
+@@ -132,6 +134,11 @@ func (sl *scrapeLoopAppenderV2) append(b []byte, contentType string, ts time.Tim
+ 		e              exemplar.Exemplar // Escapes to heap so hoisted out of loop.
+ 		lastMeta       *metaEntry
+ 		lastMFName     []byte
++		parsedMeta     metaEntry
++		parsedMFName   []byte
++		lastSetMFName  string
++		lastSetMeta    metadata.Metadata
++		hasMRC         = len(sl.mrc) > 0
+ 	)
+ 
+ 	exemplars := make([]exemplar.Exemplar, 0, 1)
+@@ -173,13 +180,28 @@ loop:
+ 		case textparse.EntryType:
+ 			// TODO(bwplotka): Build meta entry directly instead of locking and updating the map. This will
+ 			// allow to properly update metadata when e.g unit was added, then removed;
+-			lastMFName, lastMeta = sl.cache.setType(p.Type())
++			if !hasMRC {
++				lastMFName, lastMeta = sl.cache.setType(p.Type())
++				continue
++			}
++			mfName, typ := p.Type()
++			lastMFName, lastMeta = sl.setParsedType(mfName, typ, &parsedMFName, &parsedMeta)
+ 			continue
+ 		case textparse.EntryHelp:
+-			lastMFName, lastMeta = sl.cache.setHelp(p.Help())
++			if !hasMRC {
++				lastMFName, lastMeta = sl.cache.setHelp(p.Help())
++				continue
++			}
++			mfName, help := p.Help()
++			lastMFName, lastMeta = sl.setParsedHelp(mfName, help, &parsedMFName, &parsedMeta)
+ 			continue
+ 		case textparse.EntryUnit:
+-			lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
++			if !hasMRC {
++				lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
++				continue
++			}
++			mfName, unit := p.Unit()
++			lastMFName, lastMeta = sl.setParsedUnit(mfName, unit, &parsedMFName, &parsedMeta)
+ 			continue
+ 		case textparse.EntryComment:
+ 			continue
+@@ -202,40 +224,124 @@ loop:
+ 			t = *parsedTimestamp
+ 		}
+ 
+-		if sl.cache.getDropped(met) {
+-			continue
+-		}
+-		ce, seriesCached, seriesAlreadyScraped := sl.cache.get(met)
+-		var ref storage.SeriesRef
++		var (
++			ce                   *cacheEntry
++			seriesCached         bool
++			seriesAlreadyScraped bool
++			ref                  storage.SeriesRef
++			sampleMeta           metadata.Metadata
++			origMeta             metadata.Metadata
++			origMFName           string
++			sampleMFName         string
++		)
+ 
+-		if seriesCached {
+-			ref = ce.ref
+-			lset = ce.lset
+-		} else {
+-			p.Labels(&lset)
++		if !hasMRC {
++			if sl.cache.getDropped(met) {
++				continue
++			}
++			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
++			if seriesCached {
++				ref = ce.ref
++				lset = ce.lset
++			} else {
++				p.Labels(&lset)
++
++				// Add target labels and apply relabeling before storing the final label set.
++				lset = sl.sampleMutator(lset)
++
++				// The label set may be set to empty to indicate dropping.
++				if lset.IsEmpty() {
++					sl.cache.addDropped(met)
++					continue
++				}
+ 
+-			// Add target labels and apply relabeling before storing the final label set.
+-			lset = sl.sampleMutator(lset)
++				if !lset.Has(model.MetricNameLabel) {
++					err = errNameLabelMandatory
++					break loop
++				}
++				if !lset.IsValid(sl.validationScheme) {
++					err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
++					break loop
++				}
+ 
+-			// The label set may be set to empty to indicate dropping.
+-			if lset.IsEmpty() {
+-				sl.cache.addDropped(met)
++				// If any label limits is exceeded the scrape should fail.
++				if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
++					sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
++					break loop
++				}
++			}
++		} else {
++			if sl.cache.getDropped(met) {
+ 				continue
+ 			}
+-
+-			if !lset.Has(model.MetricNameLabel) {
+-				err = errNameLabelMandatory
+-				break loop
++			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
++			if lastMeta != nil {
++				origMeta = lastMeta.Metadata
++				origMFName = yoloString(lastMFName)
+ 			}
+-			if !lset.IsValid(sl.validationScheme) {
+-				err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
+-				break loop
++			var (
++				sm            seriesMetaEntry
++				hasCachedMeta bool
++			)
++			if seriesCached && sl.cache.seriesMeta != nil {
++				sm, hasCachedMeta = sl.cache.seriesMeta[ce]
+ 			}
+ 
+-			// If any label limits is exceeded the scrape should fail.
+-			if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
+-				sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
+-				break loop
++			if seriesCached && hasCachedMeta && sm.origMFName == origMFName && sm.origMeta.Equals(origMeta) {
++				ref = ce.ref
++				lset = ce.lset
++				sampleMeta = sm.meta
++				sampleMFName = sm.mfName
++				if sampleMFName != "" && (sampleMFName != lastSetMFName || !sampleMeta.Equals
+```
+
+**File**: `scrape/scrape_test.go` (modified, +222/-0)
+```diff
+@@ -1472,6 +1472,228 @@ test_metric_total 1
+ 	require.Empty(t, md.Unit)
+ }
+ 
++func TestScrapeLoopMetricRelabelMetadata(t *testing.T) {
++	appTest := teststorage.NewAppendable()
++	target := NewTarget(
++		labels.FromStrings("instance", "localhost:9090", "job", "test"),
++		&config.ScrapeConfig{},
++		nil,
++		nil,
++	)
++	rc := []*relabel.Config{
++		// Drop dropped_metric_total completely; its metadata should not enter scrapeCache.
++		{
++			SourceLabels:         model.LabelNames{"__name__"},
++			Separator:            ";",
++			Regex:                relabel.MustNewRegexp("dropped_metric_total"),
++			Replacement:          "$1",
++			Action:               relabel.Drop,
++			NameValidationScheme: model.UTF8Validation,
++		},
++		// Rename old_http_requests_total -> http_requests_total.
++		{
++			SourceLabels:         model.LabelNames{"__name__"},
++			Separator:            ";",
++			Regex:                relabel.MustNewRegexp("old_(http_requests_total)"),
++			TargetLabel:          "__name__",
++			Replacement:          "$1",
++			Action:               relabel.Replace,
++			NameValidationScheme: model.UTF8Validation,
++		},
++		// Rename old_latency_* -> latency_* for histogram family.
++		{
++			SourceLabels:         model.LabelNames{"__name__"},
++			Separator:            ";",
++			Regex:                relabel.MustNewRegexp("old_(latency.*)"),
++			TargetLabel:          "__name__",
++			Replacement:          "$1",
++			Action:               relabel.Replace,
++			NameValidationScheme: model.UTF8Validation,
++		},
++		// Rename old_summary -> summary_count (no component suffix on pre-relabel name).
++		{
++			SourceLabels:         model.LabelNames{"__name__"},
++			Separator:            ";",
++			Regex:                relabel.MustNewRegexp("old_summary"),
++			TargetLabel:          "__name__",
++			Replacement:          "summary_count",
++			Action:               relabel.Replace,
++			NameValidationScheme: model.UTF8Validation,
++		},
++	}
++
++	var mutatorCalls int
++	sl, _ := newTestScrapeLoop(t, withAppendable(appTest, true), func(sl *scrapeLoop) {
++		sl.mrc = rc
++		sl.sampleMutator = func(l labels.Labels) labels.Labels {
++			mutatorCalls++
++			return mutateSampleLabels(l, target, false, rc)
++		}
++	})
++
++	now := time.Now()
++	scrapeText := []byte(`# TYPE dropped_metric counter
++# HELP dropped_metric should not be cached
++dropped_metric_total 10
++# TYPE old_http_requests counter
++# HELP old_http_requests Total HTTP requests
++# UNIT old_http_requests requests
++old_http_requests_total 42
++# TYPE old_latency histogram
++# HELP old_latency Request latency
++old_latency_bucket{le="+Inf"} 1
++old_latency_sum 0.5
++old_latency_count 1
++# TYPE old_summary summary
++# HELP old_summary Summary renamed to end with _count
++old_summary{quantile="0.5"} 0.25
++# TYPE foo gauge
++foo 1
++bar 1
++# EOF`)
++
++	app := sl.appender()
++	total, added, seriesAdded, err := app.append(scrapeText, "application/openmetrics-text", now)
++	require.NoError(t, err)
++	require.NoError(t, app.Commit())
++	require.Equal(t, 8, total)
++	require.Equal(t, 7, added)
++	require.Equal(t, 7, seriesAdded)
++	require.Equal(t, 8, mutatorCalls)
++
++	// Dropped metric metadata must not be stored in scrapeCache (#14013).
++	_, ok := sl.cache.GetMetadata("dropped_metric")
++	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
++	_, ok = sl.cache.GetMetadata("dropped_metric_total")
++	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
++
++	// Pre-rename metric families must not be stored under the old names.
++	_, ok = sl.cache.GetMetadata("old_http_requests")
++	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
++	_, ok = sl.cache.GetMetadata("old_http_requests_total")
++	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
++	_, ok = sl.cache.GetMetadata("old_latency")
++	require.False(t, ok, "expected pre-rename histogram family to be absent from scrapeCache")
++
++	// Renamed counter family must have its metadata stored under post-relabel family name.
++	md, ok := sl.cache.GetMetadata("http_requests")
++	require.True(t, ok)
++	require.Equal(t, model.MetricTypeCounter, md.Type)
++	require.Equal(t, "requests", md.Unit)
++	require.Equal(t, "Total HTTP requests", md.Help)
++
++	// Renamed histogram family must have its metadata stored under post-relabel family name ("latency").
++	md, ok = sl.cache.GetMetadata("latency")
++	require.True(t, ok)
++	require.Equal(t, model.MetricTypeHistogram, md.Type)
++	require.Equal(t, "Request latency", md.Help)
++
++	// When pre-relabel series name equals its family name ("old_summary"), no suffix is stripped from the renamed name ("summary_count").
++	md, ok = sl.cache.GetMetadata("summary_count")
++	require.True(t, ok)
++	require.Equal(t, model.MetricTypeSummary, md.Type)
++	require.Equal(t, "Summary renamed to end with _count", md.Help)
++
++	// bar had no metadata on the first scrape and must not inherit foo's metadata.
++	_, ok = sl.cache.GetMetadata("bar")
++	require.Fal
+```
+
+---
+
+### Incident Patch 3: `b0c3a30a` (2026-11-02)
+**Commit Message**: build: create manifests with buildx imagetools (#20229)
+
+* Makefile.common: create manifests with buildx imagetools
+
+docker build now attaches provenance attestations, so each per-arch image
+is pushed as an OCI index. docker manifest create refuses indexes as
+sources, so no multi-arch tags get published.
+
+Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
+
+* Makefile.common: fail docker targets on the first error
+
+The docker recipes run in a single shell loop, so only the exit status of
+the last command was reported. Failed manifest pushes went unnoticed while
+the publish job stayed green.
+
+Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
+
+* Revert "Makefile.common: fail docker targets on the first error"
+
+This reverts commit d4ff4e8bbe3a35b17148a904277e44ec12d63214.
+
+Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
+
+**File**: `Makefile.common` (modified, +4/-8)
+```diff
+@@ -352,8 +352,7 @@ common-docker-manifest:
+ 				echo "Skipping manifest for $$variant_name variant (no supported architectures)"; \
+ 				continue; \
+ 			fi; \
+-			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
+-			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name"; \
++			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
+ 		fi; \
+ 		if [ "$$dockerfile" = "Dockerfile" ]; then \
+ 			echo "Creating default variant ($$variant_name) manifest"; \
+@@ -365,8 +364,7 @@ common-docker-manifest:
+ 				echo "Skipping default variant manifest (no supported architectures)"; \
+ 				continue; \
+ 			fi; \
+-			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
+-			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)"; \
++			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
+ 		fi; \
+ 		if [ "$(DOCKER_IMAGE_TAG)" = "latest" ]; then \
+ 			if [ "$$dockerfile" != "Dockerfile" ] || [ "$$variant_name" != "default" ]; then \
+@@ -379,8 +377,7 @@ common-docker-manifest:
+ 					echo "Skipping version-tag manifest for $$variant_name variant (no supported architectures)"; \
+ 					continue; \
+ 				fi; \
+-				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
+-				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name"; \
++				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
+ 			fi; \
+ 			if [ "$$dockerfile" = "Dockerfile" ]; then \
+ 				echo "Creating default variant version tag manifest"; \
+@@ -392,8 +389,7 @@ common-docker-manifest:
+ 					echo "Skipping default variant version-tag manifest (no supported architectures)"; \
+ 					continue; \
+ 				fi; \
+-				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
+-				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)"; \
++				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
+ 			fi; \
+ 		fi; \
+ 	done
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20237** (2026-10-30): chore(compliance): enable stateless and stateless-st remote write sender tests (@bwplotka)
-- **PR #20227** (2026-10-29): docs: simplify 3.16 changelog PR references (@roidelapluie)
-- **PR #20226** (2026-10-30): tsdb: use synctest for series eviction reader wait test (@roidelapluie)
-- **PR #20225** (2026-10-30): storage[PERF]: reuse histogram decoding targets (@pedro-stanaka)
-- **PR #20224** (2026-10-29): docs: fix flag name for start timestamp processing in API reference (@gauvainw)
-- **PR #20223** (2026-10-29): fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (@bwplotka)
+- **PR #20278** (2026-11-03): build: create manifests with buildx imagetools (#20229) (@ywwg)
+- **PR #20271** (2026-11-02): chore: update release shepherds for 3.17 and 3.18 (@bwplotka)
+- **PR #20263** (2026-11-02): chore: add contributor-trust skill and rank pr-triage-board by author trust (@bwplotka)
+- **PR #20258** (2026-11-03): rules: fix flaky TestUpdateWhenStopped panic (@adityacosmos24)
+- **PR #20251** (2026-11-03): promtool: return sample iterator errors from tsdb dump (@adityacosmos24)
+- **PR #20250** (2026-11-03): rulefmt: do not report a syntax error as a multi-document rule file (@adityacosmos24)
 
 ---
 
@@ -1654,75 +2377,34 @@ tsdb: use synctest for series eviction reader wait test
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
+## X. rules: fix flaky TestUpdateWhenStopped panic
 
 **RULE**:
-When implementing operations in `tsdb/head_series_eviction_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rules/manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e062fea`: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a12aec2`: rules: fix flaky TestUpdateWhenStopped panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/head_series_eviction_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rules/manager_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"testing/synctest"
-			synctest.Test(t, func(t *testing.T) {
-				testDB := newSeriesEvictionTestDB(t)
-				db := testDB.db
-
-				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
-				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
-				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
-				db.compactHeadViewBeforeEvictTestingCallback = func() {
-					app := db.Appender(context.Background())
-					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
-					require.NoError(t, err)
-					require.NoError(t, app.Commit())
-				}
-				var reading *readingSeries
-				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
-					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
-				}
-				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
-				require.NotNil(t, reading)
-				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
-
-				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
-				done := make(chan error, 1)
-		
+	// The group is evaluated if its evaluation slot falls between Update and Stop,
+	// so the manager needs a working QueryFunc and AppendableV2.
+		Context:      context.Background(),
+		Logger:       promslog.NewNopLogger(),
+		AppendableV2: teststorage.New(t),
+		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			testDB := newSeriesEvictionTestDB(t)
-			db := testDB.db
-
-			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
-			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
-			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
-			db.compactHeadViewBeforeEvictTestingCallback = func() {
-				app := db.Appender(context.Background())
-				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
-				require.NoError(t, app.Commit())
-			}
-			var reading *readingSeries
-			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
-				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
-			}
-			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
-			require.NotNil(t, reading)
-			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
-
-			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
-			done := make(chan error, 1)
-			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
-
-			// The query is still open, so 
+		Context: context.Background(),
+		Logger:  promslog.NewNopLogger(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e062fea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a12aec2` are properly handled with clean fallback behavior.

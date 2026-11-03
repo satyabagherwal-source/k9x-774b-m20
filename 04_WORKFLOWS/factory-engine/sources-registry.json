@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T12:06:34.304Z",
-    "lastVerified": "2026-11-03T12:06:34.304Z",
+    "lastChecked": "2026-11-03T12:18:36.021Z",
+    "lastVerified": "2026-11-03T12:18:36.021Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T11:39:09.843Z",
-    "lastVerified": "2026-11-03T11:39:09.843Z",
+    "lastChecked": "2026-11-03T12:13:36.685Z",
+    "lastVerified": "2026-11-03T12:13:36.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -507,8 +507,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T16:26:10.750Z",
-    "lastVerified": "2026-11-02T16:26:10.750Z",
+    "lastChecked": "2026-11-03T12:13:31.595Z",
+    "lastVerified": "2026-11-03T12:13:31.596Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -5573,22 +5573,21 @@
     "lastVerified": "2026-11-02T16:40:18.237Z"
   },
   "rqlite-rqlite": {
-    "name": "rqlite",
+    "name": "rqlite/rqlite",
     "officialUrl": "https://github.com/rqlite/rqlite",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T17:14:18.054Z",
-    "lastVerified": "2026-10-31T17:14:18.054Z",
+    "lastChecked": "2026-11-03T12:13:38.877Z",
+    "lastVerified": "2026-11-03T12:13:38.877Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
+    "contentHash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8b10e2d9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "xudong-huang-may": {
     "name": "may",
@@ -7203,11 +7202,21 @@
     "revisionIdentifier": "71f47d41"
   },
   "crate-ci-typos": {
-    "name": "typos",
+    "name": "crate-ci/typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-10-31T13:27:03.707Z",
-    "revisionIdentifier": "7f9d0819",
-    "lastVerified": "2026-10-31T13:27:03.707Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-03T12:13:26.828Z",
+    "lastVerified": "2026-11-03T12:13:26.828Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crate-ci-typos",
+    "contentHash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/JEV-27B-VL",
@@ -7234,22 +7243,21 @@
     "lastVerified": "2026-10-31T14:19:30.439Z"
   },
   "prometheus-prometheus": {
-    "name": "prometheus",
+    "name": "prometheus/prometheus",
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T18:01:36.664Z",
-    "lastVerified": "2026-10-31T18:01:36.664Z",
+    "lastChecked": "2026-11-03T12:13:34.268Z",
+    "lastVerified": "2026-11-03T12:13:34.268Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9e28ec50"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clickhouse-clickhouse": {
     "name": "ClickHouse/ClickHouse",
@@ -9587,9 +9595,9 @@
   "melbahja-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/melbahja/seo",
-    "lastChecked": "2026-10-30T03:18:43.112Z",
+    "lastChecked": "2026-11-03T12:13:24.061Z",
     "revisionIdentifier": "cd4e4122",
-    "lastVerified": "2026-10-30T03:18:43.112Z"
+    "lastVerified": "2026-11-03T12:13:24.061Z"
   },
   "ehpanda-team-ehpanda": {
     "name": "EhPanda",
@@ -10618,9 +10626,9 @@
   "kitlangton-hex": {
     "name": "Hex",
     "officialUrl": "https://github.com/kitlangton/Hex",
-    "lastChecked": "2026-10-30T13:53:15.047Z",
+    "lastChecked": "2026-11-03T12:13:26.596Z",
     "revisionIdentifier": "3e300721",
-    "lastVerified": "2026-10-30T13:53:15.047Z"
+    "lastVerified": "2026-11-03T12:13:26.596Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "syntax-tree/hast-util-to-html",

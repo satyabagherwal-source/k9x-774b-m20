@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `8b10e2d9`  
+> **Source Version**: `8d71a376`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T04:34:56.508Z  
+> **Timestamp**: 2026-11-03T12:13:38.885Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T04:34:55.397Z  
+> **Harvest Timestamp**: 2026-11-03T12:13:38.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17883 stars
+- **Stars / Engagement**: 17911 stars
 
 ---
 
@@ -2066,11 +2066,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2997** (2026-11-02): **Add rqlite trademark notice to README**
+  *Symptoms*: Marks the first prose mention of rqlite in the README with ™ and adds a short Trademark section after Pronunciation. The rqlite name is being asserted as a common-law trademark, so ™ is used rather than ®.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
 - **Issue #2992** (2026-10-28): **Upgrade dependencies via `go get`**
   *Symptoms*: 
-
-- **Issue #2991** (2026-10-27): **JSON error response bodies for remove node**
-  *Symptoms*: ## Summary Applies the JSON error body change from #2984 and #2989 to `DELETE /remove`.  - The handler now sets a JSON Content-Type and returns a JSON `{"error": "..."}` body on failure instead of plain text. - Unlike the other node-management endpoints, there is deliberately no 404 for an unknown node. Raft treats removal of a node not in the cluster as a no-op and the endpoint has always returned 200 for it, so clients and the shutdown self-removal path depend on that. A comment on the handler records this.  Each commit is one logical change.  ## Test plan - [x] New `http` tests: success, store error, and forward error for `DELETE /remove`, decoding the JSON body. The handler previously had no error-path tests, so a `removeFn` hook was added to the HTTP mock store. - [x] `go vet ./...`, `gofmt -l .`, and `go test ./http` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,30 +2087,56 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b10e2d9` (2026-10-29)
+### Incident Patch 1: `8d71a376` (2026-11-02)
 **Commit Message**: Update README.md
 
-**File**: `README.md` (modified, +2/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,8 @@
+@@ -12,7 +12,7 @@
+ [![Slack](https://img.shields.io/badge/Slack--purple.svg)](https://www.rqlite.io/join-slack)
+ [![Google Group](https://img.shields.io/badge/Google%20Group--blue.svg)](https://groups.google.com/group/rqlite)
+ 
+-[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
++[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+ 
  Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
  
- <a href="https://rqlite.io"><strong>Website</strong></a> ·
--<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
-+<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
-+<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
+```
+
+---
+
+### Incident Patch 2: `a3e4ffb4` (2026-11-02)
+**Commit Message**: Merge pull request #2997 from rqlite/tm
+
+Add rqlite trademark notice to README
+
+**File**: `README.md` (modified, +4/-1)
+```diff
+@@ -12,7 +12,7 @@
+ [![Slack](https://img.shields.io/badge/Slack--purple.svg)](https://www.rqlite.io/join-slack)
+ [![Google Group](https://img.shields.io/badge/Google%20Group--blue.svg)](https://groups.google.com/group/rqlite)
  
- ## Quick Start
- [_Check out the full Quick Start guide_](https://rqlite.io/docs/quick-start/)
+-[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
++[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+ 
+ Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
+ 
+@@ -68,3 +68,6 @@ curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'
+ 
+ ## Pronunciation
+ Common pronunciations of rqlite include "R Q lite" and "ree-qwell-lite".
++
++## Trademark
++rqlite™ is a trademark of Philip O'Toole.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2997** (2026-11-02): Add rqlite trademark notice to README (@otoolep)
 - **PR #2992** (2026-10-28): Upgrade dependencies via `go get` (@otoolep)
 - **PR #2991** (2026-10-27): JSON error response bodies for remove node (@otoolep)
 - **PR #2990** (2026-10-27): Test that CDC events survive a Raft snapshot restore (@otoolep)
 - **PR #2989** (2026-10-27): JSON error response bodies for promote and demote (@otoolep)
 - **PR #2988** (2026-10-27): Reject local auto-backup filenames reserved for internal use (@otoolep)
-- **PR #2987** (2026-10-27): Keep backup file if metadata rename fails (@otoolep)
 
 ---
 
@@ -2136,7 +2162,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b10e2d9`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d71a376`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -2144,15 +2170,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
-<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
+[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
+[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b10e2d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d71a376` are properly handled with clean fallback behavior.

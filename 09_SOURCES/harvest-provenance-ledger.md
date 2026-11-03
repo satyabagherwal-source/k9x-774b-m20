@@ -6914,3 +6914,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4aa6ac3d` | Multi-dimensional audit evidence | 2026-11-03T11:59:20.294Z |
 | `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-03T12:06:24.778Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `16c646c3` | Multi-dimensional audit evidence | 2026-11-03T12:06:31.762Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `caebd2cf` | Multi-dimensional audit evidence | 2026-11-03T12:13:35.343Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `8d71a376` | Multi-dimensional audit evidence | 2026-11-03T12:13:39.357Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `4c8b7f51` | Multi-dimensional audit evidence | 2026-11-03T12:18:33.476Z |
