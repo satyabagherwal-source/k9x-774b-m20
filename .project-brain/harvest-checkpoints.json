@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T16:09:23.512Z",
+  "last_updated": "2026-11-03T16:18:05.954Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
-      "verified_at": "2026-10-31T18:29:14.021Z",
+      "content_hash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
+      "verified_at": "2026-11-03T16:18:05.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:29:14.021Z"
+      "last_updated": "2026-11-03T16:18:05.954Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

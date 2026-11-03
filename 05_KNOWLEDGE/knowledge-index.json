@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T16:09:23.371Z",
+  "last_updated": "2026-11-03T16:18:05.874Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60147,8 +60147,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "a762d016",
-      "content_hash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
+      "source_version": "fc82aedd",
+      "content_hash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -60216,6 +60216,11 @@
           "number": 6282,
           "title": "Enable core/base tests in open-source builds (#57764)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6539,
+          "title": "REQUIREMENTS(cpu) from real usage — Security (#57899)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60223,7 +60228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:29:13.920Z",
+      "verified_at": "2026-11-03T16:18:05.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168920,6 +168925,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T16:09:23.343Z"
+    },
+    "rule-6539": {
+      "learning_id": "rule-6539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6539,
+      "title": "REQUIREMENTS(cpu) from real usage — Security (#57899)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "fc82aedd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:18:05.861Z"
     }
   },
   "aliases": {

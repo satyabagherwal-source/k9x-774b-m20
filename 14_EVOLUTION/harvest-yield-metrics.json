@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T16:09:23.507Z",
-  "total_cycles_completed": 6906,
-  "total_learnings_persisted": 6906,
-  "total_rules_promoted": 6554,
+  "last_updated": "2026-11-03T16:18:05.952Z",
+  "total_cycles_completed": 6907,
+  "total_learnings_persisted": 6907,
+  "total_rules_promoted": 6555,
   "history": [
-    {
-      "timestamp": "2026-10-31T21:55:13.835Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T21:56:56.953Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-03T16:09:23.507Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T16:18:05.952Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

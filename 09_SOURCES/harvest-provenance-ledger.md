@@ -6938,3 +6938,4 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `1cadf448` | Multi-dimensional audit evidence | 2026-11-03T16:09:09.013Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `b506147f` | Multi-dimensional audit evidence | 2026-11-03T16:09:17.883Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8deb3872` | Multi-dimensional audit evidence | 2026-11-03T16:09:23.501Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `fc82aedd` | Multi-dimensional audit evidence | 2026-11-03T16:18:05.948Z |

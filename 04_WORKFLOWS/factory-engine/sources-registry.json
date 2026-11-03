@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:09:26.061Z",
-    "lastVerified": "2026-11-03T16:09:26.061Z",
+    "lastChecked": "2026-11-03T16:18:08.500Z",
+    "lastVerified": "2026-11-03T16:18:08.500Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T15:46:42.967Z",
-    "lastVerified": "2026-11-03T15:46:42.967Z",
+    "lastChecked": "2026-11-03T16:16:12.609Z",
+    "lastVerified": "2026-11-03T16:16:12.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -942,9 +942,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-10-31T19:30:37.162Z",
+    "lastChecked": "2026-11-03T16:16:05.020Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-10-31T19:30:37.162Z"
+    "lastVerified": "2026-11-03T16:16:05.020Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1410,9 +1410,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-02T17:54:09.943Z",
+    "lastChecked": "2026-11-03T16:16:07.485Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-02T17:54:09.943Z"
+    "lastVerified": "2026-11-03T16:16:07.485Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -6272,14 +6272,14 @@
     "officialUrl": "https://github.com/ydb-platform/ydb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T18:29:13.430Z",
-    "lastVerified": "2026-10-31T18:29:13.430Z",
+    "lastChecked": "2026-11-03T16:16:20.011Z",
+    "lastVerified": "2026-11-03T16:16:20.011Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
+    "contentHash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7626,9 +7626,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-10-31T14:32:26.200Z",
+    "lastChecked": "2026-11-03T16:15:57.497Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-10-31T14:32:26.200Z"
+    "lastVerified": "2026-11-03T16:15:57.497Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -9827,9 +9827,9 @@
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
     "officialUrl": "https://github.com/samvelik/sitemap-checker",
-    "lastChecked": "2026-10-30T05:01:11.451Z",
+    "lastChecked": "2026-11-03T16:15:59.711Z",
     "revisionIdentifier": "unknown",
-    "lastVerified": "2026-10-30T05:01:11.451Z"
+    "lastVerified": "2026-11-03T16:15:59.711Z"
   },
   "hi-manshu-charty": {
     "name": "charty",
@@ -10884,9 +10884,9 @@
   "jordansinger-swiftui-kit": {
     "name": "SwiftUI-Kit",
     "officialUrl": "https://github.com/jordansinger/SwiftUI-Kit",
-    "lastChecked": "2026-10-30T16:00:28.404Z",
+    "lastChecked": "2026-11-03T16:16:03.442Z",
     "revisionIdentifier": "1211aa6b",
-    "lastVerified": "2026-10-30T16:00:28.404Z"
+    "lastVerified": "2026-11-03T16:16:03.442Z"
   },
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
