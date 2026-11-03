@@ -7024,3 +7024,5 @@ Every entry in this ledger must capture:
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `2fd7bd0f` | Multi-dimensional audit evidence | 2026-11-03T21:28:35.515Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `786978fd` | Multi-dimensional audit evidence | 2026-11-03T21:28:35.877Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `280986c1` | Multi-dimensional audit evidence | 2026-11-03T21:29:05.534Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a91f7fe5` | Multi-dimensional audit evidence | 2026-11-03T21:36:52.823Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `f481da3f` | Multi-dimensional audit evidence | 2026-11-03T21:36:52.832Z |

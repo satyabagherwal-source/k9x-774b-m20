@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:29:05.545Z",
+  "last_updated": "2026-11-03T21:36:52.843Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
-      "verified_at": "2026-10-30T17:21:02.009Z",
+      "content_hash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
+      "verified_at": "2026-11-03T21:36:52.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:21:02.009Z"
+      "last_updated": "2026-11-03T21:36:52.833Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
-      "verified_at": "2026-10-31T06:45:29.190Z",
+      "content_hash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
+      "verified_at": "2026-11-03T21:36:52.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:45:29.190Z"
+      "last_updated": "2026-11-03T21:36:52.842Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

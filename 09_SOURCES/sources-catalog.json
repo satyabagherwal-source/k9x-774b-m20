@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "a4447108",
+    "sourceVersion": "a91f7fe5",
     "license": "Apache-2.0",
-    "contentHash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
-    "lastHarvestedAt": "2026-10-30T17:21:02.003Z",
+    "contentHash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
+    "lastHarvestedAt": "2026-11-03T21:36:52.823Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "5ef8d0c3",
+    "sourceVersion": "f481da3f",
     "license": "NOASSERTION",
-    "contentHash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
-    "lastHarvestedAt": "2026-10-31T06:45:29.181Z",
+    "contentHash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
+    "lastHarvestedAt": "2026-11-03T21:36:52.832Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

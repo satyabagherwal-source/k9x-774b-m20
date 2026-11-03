@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T21:29:08.106Z",
-    "lastVerified": "2026-11-03T21:29:08.106Z",
+    "lastChecked": "2026-11-03T21:36:55.403Z",
+    "lastVerified": "2026-11-03T21:36:55.403Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -435,8 +435,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T21:00:07.471Z",
-    "lastVerified": "2026-11-03T21:00:07.471Z",
+    "lastChecked": "2026-11-03T21:36:48.867Z",
+    "lastVerified": "2026-11-03T21:36:48.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -978,30 +978,29 @@
     "revisionIdentifier": "867d27e8"
   },
   "weaviate-weaviate": {
-    "name": "weaviate",
+    "name": "weaviate/weaviate",
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T23:16:08.322Z",
-    "lastVerified": "2026-10-31T23:16:08.322Z",
+    "lastChecked": "2026-11-03T21:36:50.878Z",
+    "lastVerified": "2026-11-03T21:36:50.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
+    "contentHash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5ef8d0c3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T19:00:28.945Z",
-    "lastVerified": "2026-10-31T19:00:28.945Z",
+    "lastChecked": "2026-11-03T21:36:33.773Z",
+    "lastVerified": "2026-11-03T21:36:33.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ducaale-xh",
@@ -1807,9 +1806,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-03T16:58:42.950Z",
+    "lastChecked": "2026-11-03T21:36:43.798Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-11-03T16:58:42.950Z"
+    "lastVerified": "2026-11-03T21:36:43.798Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -3332,22 +3331,21 @@
     "lastVerified": "2026-10-31T05:00:42.751Z"
   },
   "kumahq-kuma": {
-    "name": "kuma",
+    "name": "kumahq/kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T00:02:54.213Z",
-    "lastVerified": "2026-11-01T00:02:54.213Z",
+    "lastChecked": "2026-11-03T21:36:48.676Z",
+    "lastVerified": "2026-11-03T21:36:48.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
+    "contentHash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a4447108"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -10470,9 +10468,9 @@
   "buriy-python-readability": {
     "name": "python-readability",
     "officialUrl": "https://github.com/buriy/python-readability",
-    "lastChecked": "2026-10-30T10:53:59.881Z",
+    "lastChecked": "2026-11-03T21:36:36.300Z",
     "revisionIdentifier": "3e7a8321",
-    "lastVerified": "2026-10-30T10:53:59.881Z"
+    "lastVerified": "2026-11-03T21:36:36.300Z"
   },
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
@@ -11675,9 +11673,9 @@
   "callstack-react-native-builder-bob": {
     "name": "react-native-builder-bob",
     "officialUrl": "https://github.com/callstack/react-native-builder-bob",
-    "lastChecked": "2026-10-30T21:19:21.911Z",
+    "lastChecked": "2026-11-03T21:36:38.777Z",
     "revisionIdentifier": "a73fd95b",
-    "lastVerified": "2026-10-30T21:19:21.911Z"
+    "lastVerified": "2026-11-03T21:36:38.777Z"
   },
   "mochajs-mocha": {
     "name": "mochajs/mocha",

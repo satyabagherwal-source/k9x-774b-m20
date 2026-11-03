@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T21:29:05.540Z",
-  "total_cycles_completed": 6992,
-  "total_learnings_persisted": 6992,
-  "total_rules_promoted": 6637,
+  "last_updated": "2026-11-03T21:36:52.837Z",
+  "total_cycles_completed": 6994,
+  "total_learnings_persisted": 6994,
+  "total_rules_promoted": 6639,
   "history": [
-    {
-      "timestamp": "2026-11-02T15:15:31.458Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:22:21.163Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T15:22:25.149Z",
       "repository": "prof18/feed-flow",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T21:29:05.540Z",
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:36:52.829Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:36:52.837Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

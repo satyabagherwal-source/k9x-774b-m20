@@ -7015,3 +7015,5 @@
 | `CYCLE-20261103-9L13` | `2026-11-03T21:28:35.511Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6617` | Yes (`566ab5ae...`) |
 | `CYCLE-20261103-9LB6` | `2026-11-03T21:28:35.874Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6618` | Yes (`32e699b1...`) |
 | `CYCLE-20261103-A86Y` | `2026-11-03T21:29:05.530Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6619` | Yes (`23f543c8...`) |
+| `CYCLE-20261103-K8R7` | `2026-11-03T21:36:52.819Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6620` | Yes (`01cc69a2...`) |
+| `CYCLE-20261103-K8RG` | `2026-11-03T21:36:52.828Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6620` | Yes (`d49175d9...`) |

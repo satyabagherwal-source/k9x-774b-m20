@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:29:05.446Z",
+  "last_updated": "2026-11-03T21:36:52.744Z",
   "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -59491,8 +59491,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "5ef8d0c3",
-      "content_hash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
+      "source_version": "f481da3f",
+      "content_hash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -59515,6 +59515,11 @@
           "number": 6109,
           "title": "test): match testShardWithSettings signature after v1.39 merge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6620,
+          "title": "Merge pull request #13646 from weaviate/fix/close-busy-http-servers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59522,7 +59527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:45:29.081Z",
+      "verified_at": "2026-11-03T21:36:52.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170497,6 +170502,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:29:05.424Z"
+    },
+    "rule-6620": {
+      "learning_id": "rule-6620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6620,
+      "title": "Merge pull request #13646 from weaviate/fix/close-busy-http-servers",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "f481da3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:36:52.723Z"
     }
   },
   "aliases": {
