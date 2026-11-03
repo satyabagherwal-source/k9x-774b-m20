@@ -6947,3 +6947,6 @@
 | `CYCLE-20261103-R0LT` | `2026-11-03T17:30:12.305Z` | `sozercan/kaset` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sozercan-kaset-learnings.md` | Yes (`35436630...`) |
 | `CYCLE-20261103-R4Q7` | `2026-11-03T17:30:17.647Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6555` | Yes (`c2e47a10...`) |
 | `CYCLE-20261103-R8OF` | `2026-11-03T17:30:22.767Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6556` | Yes (`a77afd54...`) |
+| `CYCLE-20261103-1F1G` | `2026-11-03T17:38:17.572Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6557` | Yes (`fc17b305...`) |
+| `CYCLE-20261103-1KBJ` | `2026-11-03T17:38:24.415Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6558` | Yes (`06bdd11d...`) |
+| `CYCLE-20261103-1KEH` | `2026-11-03T17:38:24.521Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6558` | Yes (`501f6bc8...`) |

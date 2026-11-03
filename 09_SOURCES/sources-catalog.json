@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "b08148b3",
+    "sourceVersion": "2f682f3a",
     "license": "MIT",
-    "contentHash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
-    "lastHarvestedAt": "2026-10-30T16:00:39.425Z",
+    "contentHash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
+    "lastHarvestedAt": "2026-11-03T17:38:24.525Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "8bd47ad6",
+    "sourceVersion": "71592e74",
     "license": "Apache-2.0",
-    "contentHash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
-    "lastHarvestedAt": "2026-10-31T20:59:40.851Z",
+    "contentHash": "06bdd11df0c5a74b14150ab1c715e85e6d9021783f5a388f7fd92bf593f8f937",
+    "lastHarvestedAt": "2026-11-03T17:38:24.420Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "ba63a022",
+    "sourceVersion": "8a47b351",
     "license": "NOASSERTION",
-    "contentHash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
-    "lastHarvestedAt": "2026-10-31T15:56:42.109Z",
+    "contentHash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
+    "lastHarvestedAt": "2026-11-03T17:38:17.576Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

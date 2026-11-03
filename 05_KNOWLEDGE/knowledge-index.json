@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:30:22.708Z",
+  "last_updated": "2026-11-03T17:38:24.394Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40887,8 +40887,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "b08148b3",
-      "content_hash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
+      "source_version": "2f682f3a",
+      "content_hash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -40996,6 +40996,11 @@
           "number": 5795,
           "title": "Expand ~ in the hardump option (#8541)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6558,
+          "title": "build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41003,7 +41008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:00:39.363Z",
+      "verified_at": "2026-11-03T17:38:24.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61009,8 +61014,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "ba63a022",
-      "content_hash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
+      "source_version": "8a47b351",
+      "content_hash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -61073,6 +61078,11 @@
           "number": 6240,
           "title": "recent_projects: Show remote picker scrollbar (#63909)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6557,
+          "title": "Windows shell detection for uppercase executable names (#66387)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61080,7 +61090,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:56:41.987Z",
+      "verified_at": "2026-11-03T17:38:17.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169262,6 +169272,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:30:22.695Z"
+    },
+    "rule-6557": {
+      "learning_id": "rule-6557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6557,
+      "title": "Windows shell detection for uppercase executable names (#66387)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "8a47b351",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:38:17.450Z"
+    },
+    "rule-6558": {
+      "learning_id": "rule-6558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6558,
+      "title": "build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.1",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "2f682f3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:38:24.368Z"
     }
   },
   "aliases": {

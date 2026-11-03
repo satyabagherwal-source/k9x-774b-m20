@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T17:30:25.309Z",
-    "lastVerified": "2026-11-03T17:30:25.309Z",
+    "lastChecked": "2026-11-03T17:38:27.075Z",
+    "lastVerified": "2026-11-03T17:38:27.075Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T17:06:27.266Z",
-    "lastVerified": "2026-11-03T17:06:27.266Z",
+    "lastChecked": "2026-11-03T17:38:22.371Z",
+    "lastVerified": "2026-11-03T17:38:22.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1779,14 +1779,14 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T20:59:40.391Z",
-    "lastVerified": "2026-10-31T20:59:40.391Z",
+    "lastChecked": "2026-11-03T17:38:21.844Z",
+    "lastVerified": "2026-11-03T17:38:21.844Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
+    "contentHash": "06bdd11df0c5a74b14150ab1c715e85e6d9021783f5a388f7fd92bf593f8f937",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2240,22 +2240,21 @@
     "revisionIdentifier": "146f7699"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy",
+    "name": "mitmproxy/mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T11:07:33.708Z",
-    "lastVerified": "2026-11-03T11:07:33.708Z",
+    "lastChecked": "2026-11-03T17:38:22.632Z",
+    "lastVerified": "2026-11-03T17:38:22.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
+    "contentHash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b08148b3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -6888,9 +6887,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-10-31T20:11:54.539Z",
+    "lastChecked": "2026-11-03T17:38:19.201Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-10-31T20:11:54.539Z"
+    "lastVerified": "2026-11-03T17:38:19.201Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -8066,14 +8065,14 @@
     "officialUrl": "https://github.com/zed-industries/zed",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:56:41.005Z",
-    "lastVerified": "2026-10-31T15:56:41.005Z",
+    "lastChecked": "2026-11-03T17:38:14.572Z",
+    "lastVerified": "2026-11-03T17:38:14.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
+    "contentHash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10011,9 +10010,9 @@
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",
     "officialUrl": "https://github.com/m0ntydad0n/pseo-engine-oss",
-    "lastChecked": "2026-10-30T06:23:14.204Z",
+    "lastChecked": "2026-11-03T17:38:11.497Z",
     "revisionIdentifier": "945ce349",
-    "lastVerified": "2026-10-30T06:23:14.204Z"
+    "lastVerified": "2026-11-03T17:38:11.497Z"
   },
   "realm-realm-kotlin": {
     "name": "realm-kotlin",
@@ -11096,9 +11095,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-10-30T17:59:58.209Z",
+    "lastChecked": "2026-11-03T17:38:13.285Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-10-30T17:59:58.209Z"
+    "lastVerified": "2026-11-03T17:38:13.285Z"
   },
   "miso-belica-justext": {
     "name": "justext",

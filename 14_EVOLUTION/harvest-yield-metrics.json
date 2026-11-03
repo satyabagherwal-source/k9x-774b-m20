@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T17:30:22.774Z",
-  "total_cycles_completed": 6924,
-  "total_learnings_persisted": 6924,
-  "total_rules_promoted": 6572,
+  "last_updated": "2026-11-03T17:38:24.531Z",
+  "total_cycles_completed": 6927,
+  "total_learnings_persisted": 6927,
+  "total_rules_promoted": 6575,
   "history": [
-    {
-      "timestamp": "2026-10-31T23:08:22.719Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T23:08:38.019Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T23:15:59.942Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T23:16:01.725Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T17:30:22.774Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:38:17.582Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:38:24.426Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:38:24.531Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

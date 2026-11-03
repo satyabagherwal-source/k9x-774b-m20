@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T17:30:22.777Z",
+  "last_updated": "2026-11-03T17:38:24.535Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
-      "verified_at": "2026-10-30T16:00:39.431Z",
+      "content_hash": "501f6bc8d781ca483de7002243adfc1f61aa13d7c87e92fee6161d3bcca9eee5",
+      "verified_at": "2026-11-03T17:38:24.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:00:39.431Z"
+      "last_updated": "2026-11-03T17:38:24.534Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
-      "verified_at": "2026-10-31T20:59:40.857Z",
+      "content_hash": "06bdd11df0c5a74b14150ab1c715e85e6d9021783f5a388f7fd92bf593f8f937",
+      "verified_at": "2026-11-03T17:38:24.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:59:40.857Z"
+      "last_updated": "2026-11-03T17:38:24.430Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
-      "verified_at": "2026-10-31T15:56:42.118Z",
+      "content_hash": "fc17b3057affce68499f37a9c7bf395e016fca2f4ab5c49d430ed89764a02e95",
+      "verified_at": "2026-11-03T17:38:17.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:56:42.118Z"
+      "last_updated": "2026-11-03T17:38:17.585Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

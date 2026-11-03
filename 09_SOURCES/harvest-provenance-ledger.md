@@ -6956,3 +6956,6 @@ Every entry in this ledger must capture:
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `6a20e60c` | Multi-dimensional audit evidence | 2026-11-03T17:30:12.307Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `697bdea5` | Multi-dimensional audit evidence | 2026-11-03T17:30:17.650Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `60fc36fb` | Multi-dimensional audit evidence | 2026-11-03T17:30:22.770Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `8a47b351` | Multi-dimensional audit evidence | 2026-11-03T17:38:17.576Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `71592e74` | Multi-dimensional audit evidence | 2026-11-03T17:38:24.420Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `2f682f3a` | Multi-dimensional audit evidence | 2026-11-03T17:38:24.525Z |
