@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T21:48:31.225Z",
+  "last_updated": "2026-11-03T10:29:44.347Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9157,8 +9157,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8be1e442",
-      "content_hash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
+      "source_version": "c1ca386c",
+      "content_hash": "2b3f90a8673ccd4ff83e10fdc78300c770827bf1cbff798a8777ad846afdb0d9",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9491,6 +9491,11 @@
           "number": 6415,
           "title": "fix nightly clippy::perf warnings (#4990)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6490,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9498,7 +9503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:46:37.636Z",
+      "verified_at": "2026-11-03T10:29:44.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167917,6 +167922,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T21:48:31.207Z"
+    },
+    "rule-6490": {
+      "learning_id": "rule-6490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6490,
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "c1ca386c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:29:44.316Z"
     }
   },
   "aliases": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T21:48:33.838Z",
-    "lastVerified": "2026-11-02T21:48:33.838Z",
+    "lastChecked": "2026-11-03T10:29:46.976Z",
+    "lastVerified": "2026-11-03T10:29:46.976Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,22 +243,21 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T21:23:05.369Z",
-    "lastVerified": "2026-11-02T21:23:05.369Z",
+    "lastChecked": "2026-11-03T10:29:40.112Z",
+    "lastVerified": "2026-11-03T10:29:40.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
+    "contentHash": "2b3f90a8673ccd4ff83e10fdc78300c770827bf1cbff798a8777ad846afdb0d9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8be1e442"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1798,9 +1797,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-02T14:53:42.983Z",
+    "lastChecked": "2026-11-03T10:29:30.671Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-11-02T14:53:42.983Z"
+    "lastVerified": "2026-11-03T10:29:30.671Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -4812,9 +4811,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-10-31T15:29:49.572Z",
+    "lastChecked": "2026-11-03T10:29:33.125Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-10-31T15:29:49.572Z"
+    "lastVerified": "2026-11-03T10:29:33.125Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc-rs/webrtc",
@@ -6350,9 +6349,9 @@
   "graphprotocol-graph-node": {
     "name": "graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
-    "lastChecked": "2026-10-31T12:00:21.531Z",
+    "lastChecked": "2026-11-03T10:29:20.734Z",
     "revisionIdentifier": "cc31bc78",
-    "lastVerified": "2026-10-31T12:00:21.531Z"
+    "lastVerified": "2026-11-03T10:29:20.734Z"
   },
   "hf-argmaxinc-whisperkit-coreml": {
     "name": "argmaxinc/whisperkit-coreml",
@@ -6391,9 +6390,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-10-31T16:20:23.089Z",
+    "lastChecked": "2026-11-03T10:29:28.131Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-10-31T16:20:23.089Z"
+    "lastVerified": "2026-11-03T10:29:28.131Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -9401,9 +9400,9 @@
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
     "officialUrl": "https://github.com/kaiopiola/SEOCheck",
-    "lastChecked": "2026-10-29T23:09:23.334Z",
+    "lastChecked": "2026-11-03T10:29:23.116Z",
     "revisionIdentifier": "a1e13f715f",
-    "lastVerified": "2026-10-29T23:09:23.334Z"
+    "lastVerified": "2026-11-03T10:29:23.116Z"
   },
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",
@@ -10299,9 +10298,9 @@
   "johnbean393-sidekick": {
     "name": "Sidekick",
     "officialUrl": "https://github.com/johnbean393/Sidekick",
-    "lastChecked": "2026-10-30T10:07:39.082Z",
+    "lastChecked": "2026-11-03T10:29:25.585Z",
     "revisionIdentifier": "83b3e6e0",
-    "lastVerified": "2026-10-30T10:07:39.082Z"
+    "lastVerified": "2026-11-03T10:29:25.585Z"
   },
   "webrecorder-browsertrix-crawler": {
     "name": "webrecorder/browsertrix-crawler",

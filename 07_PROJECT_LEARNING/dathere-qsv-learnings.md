@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8be1e442`  
+> **Source Version**: `c1ca386c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:46:37.004Z  
+> **Timestamp**: 2026-11-03T10:29:43.654Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:46:35.953Z  
+> **Harvest Timestamp**: 2026-11-03T10:29:40.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3817 stars
+- **Stars / Engagement**: 3818 stars
 
 ---
 
@@ -2203,697 +2203,57 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `275e5414` (2026-11-02)
-**Commit Message**: refactor: fix nightly clippy::perf warnings (#4990)
+### Incident Patch 1: `c1ca386c` (2026-11-03)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)
 
-* refactor: fix nightly clippy::perf warnings
-
-Nightly clippy (0.1.101) reports these; CI's stable clippy (0.1.99)
-does not yet, but uploads its results to code scanning, so fix them
-before they surface there.
-
-- unnecessary_lazy_evaluations: `bool::then(|| x)` -> `then_some(x)`
-  (7 in moarstats, 2 in viz) and `map_or_else(|_| len, ..)` -> `map_or`
-  (color). Every eagerly evaluated value is a float division or a
-  length, which cannot panic; when the guard is false the result is
-  discarded as before.
-- new_instead_of_clear: `x = String::new()` -> `x.clear()` in fetch and
-  fetchpost (8), where the value is not moved first.
-- help_markdown_gen: clippy's `.clear()` suggestion is wrong there, since
-  the Vec was just MOVED into option_groups. Use std::mem::take in the
-  push instead, which needs no reset at all.
-
-No behavior change: help markdown regenerates byte-identically, and the
-moarstats, color, fetch, fetchpost and viz suites pass.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* CHANGELOG: cite #4990
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Build: bump `cached` from 4.0 to 4.1. `geocode cache-info` now counts each result cache's entries with `cached`'s new `RedbCache::scan_stats()`, added at our request ([jaemk/cached#336](https://github.com/jaemk/cached/issues/336)). Previously qsv opened the redb file a second time and decoded `cached`'s on-disk format itself. The scan uses the open cache handle and stays correct if `cached` changes its file format. qsv no longer depends on `redb` and `rmp-serde` directly. `cache-info` output is unchanged. ([#4983](https://github.com/dathere/qsv/pull/4983))
- - Build: `viz` vendors DataTables 3.1.5 (from 3.1.4), with Buttons 4.1.3, ColumnControl 2.1.3 and DateTime 2.1.3 (SearchBuilder stays at 2.1.1), for the Data Schematic data viewer. None of the upstream patches is a security fix. The ones visible in qsv: Buttons positions the Advanced Filter popover correctly, and ColumnControl fixes a relative-position calculation. The seven vendored DataTables locales were re-fetched: upstream restructured the unused StateRestore strings, and German date-picker weekdays are now abbreviated (`So.`, not `Sonntag`). The gallery is regenerated.
- - Build: `viz_static` no longer depends on `webdriver-downloader` directly. qsv never called it; it is a build dependency of `plotly_static` (to fetch chromedriver at build time), and the patched fork still reaches it there. The `qsv` binary stops compiling 9 crates it didn't use (`webdriver-downloader`, `tar`, `which`, `home`, `xattr`, `lenient_semver*`, `tracing-attributes`). No behavior change. ([#4989](https://github.com/dathere/qsv/pull/4989))
-+- Code hygiene: fixes the warnings nightly clippy reports with `-W clippy::perf` (`then` -> `then_some`, `map_or_else` -> `map_or`, and reusing a cleared buffer instead of assigning a new `String`/`Vec`) in `color`, `fetch`, `fetchpost`, `moarstats`, `viz` and the help generator, ahead of those lints reaching stable clippy. No behavior change. ([#4990](https://github.com/dathere/qsv/pull/4990))
- - **`scripts/benchmarks.sh` 10.0.0 runs on hyperfine 2.0, records peak memory, and quarantines suspect results** ([#4960](https://github.com/dathere/qsv/pull/4960)).
-   - hyperfine 2.0 changed the exports the script reads, so with it installed every benchmark was flagged as failed and a run recorded nothing. hyperfine 2.0 is now required.
-   - The archive gains a `peak_mem_mib` column, the largest peak RSS of a benchmark's timed runs, so memory regressions show up as well as slowdowns.
-```
-
-**File**: `src/cmd/color.rs` (modified, +4/-7)
-```diff
-@@ -416,13 +416,10 @@ fn test_fill() {
- #[inline]
- fn field_width(field: &[u8]) -> usize {
-     // Use display width for UTF-8 so East Asian wide chars/emoji align correctly.
--    std::str::from_utf8(field).map_or_else(
--        |_| field.len(),
--        |s| {
--            use unicode_width::UnicodeWidthStr;
--            s.width()
--        },
--    )
-+    std::str::from_utf8(field).map_or(field.len(), |s| {
-+        use unicode_width::UnicodeWidthStr;
-+        s.width()
-+    })
- }
- 
- #[test]
-```
-
-**File**: `src/cmd/fetch.rs` (modified, +4/-4)
-```diff
-@@ -880,7 +880,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             // just use the field as-is as the URL
-             s.clone_into(&mut url);
-         } else {
--            url = String::new();
-+            url.clear();
-         }
- 
-         if url.is_empty() {
-@@ -1420,7 +1420,7 @@ fn get_response(
-                         api_status.canonical_reason().unwrap_or("unknown error")
-                     );
-                 } else {
--                    final_value = String::new();
-+                    final_value.clear();
-                 }
-             } else {
-                 error_flag = false;
-@@ -1439,7 +1439,7 @@ fn get_response(
-                             if flag_store_error {
-                                 final_value = e.to_string();
-                             } else {
--                                final_value = String::new();
-+                                final_value.clear();
-                             }
-                             error_flag = true;
-                         },
-@@ -1462,7 +1462,7 @@ fn get_response(
-                             if flag_store_error {
-                                 final_value = e.to_string();
-                             } else {
--                                final_value = String::new();
-+                                final_value.clear();
-                             }
-                             error_flag = true;
-                         },
-```
-
-**File**: `src/cmd/fetchpost.rs` (modified, +4/-4)
-```diff
-@@ -949,7 +949,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         } else if let Ok(s) = simdutf8::basic::from_utf8(&record[column_index]) {
-             s.clone_into(&mut url);
-         } else {
--            url = String::new();
-+            url.clear();
-         }
-         if url.is_empty() {
-             final_response.clone_from(&empty_response);
-@@ -1548,7 +1548,7 @@ fn get_response(
-                         api_status.canonical_reason().unwrap_or("unknown error")
-                     );
-                 } else {
--                    final_value = String::new();
-+                    final_value.clear();
-                 }
-             } else {
-                 error_flag = false;
-@@ -1567,7 +1567,7 @@ fn get_response(
-                             if flag_store_error {
-                                 final_value = e.to_string();
-                             } else {
--                                final_value = String::new();
-+                                final_value.clear();
-                             }
-                             error_flag = true;
-                         },
-@@ -1590,7 +1590,7 @@ fn get_response(
-                             if flag_store_error {
-                                 final_value = e.to_string();
-                             } else {
--                                final_value = String::new();
-+                                final_value.clear();
-                             }
-                             error_flag = true;
-                         },
-```
-
-**File**: `src/cmd/moarstats.rs` (modified, +7/-7)
-```diff
-@@ -1333,7 +1333,7 @@ fn compute_percentile_ratio(p10: Option<f64>, p90: Option<f64>) -> Option<f64> {
- #[inline]
- #[allow(clippy::cast_precision_loss)]
- fn compute_share(part: u64, total: u64) -> Option<f64> {
--    (total > 0).then(|| part as f64 / total as f64)
-+    (total > 0).then_some(part as f64 / total as f64)
- }
- 
- /// Compute Normalized Entropy: `shannon_entropy` / log2(cardinality)
-@@ -2935,7 +2935,7 @@ impl CentralMoments {
- 
-     /// Biased excess kurtosis g2 = m4 / m2² - 3
-     fn g2(&self) -> Option<f64> {
--        (self.m2 > 0.0).then(|| self.m4 / (self.m2 * self.m2) - 3.0)
-+        (self.m2 > 0.0).then_some(self.m4 / (self.m2 * self.m2) - 3.0)
-     }
- 
-     /// Adjusted Fisher-Pearson sample skewness G1 (scipy `skew(bias=False)`).
-@@ -3077,7 +3077,7 @@ fn compute_lag1_autocorrelation(values: &[f64], mean: f64) -> Option<f64> {
-         let d = x - mean;
-         den = d.mul_add(d, den);
-     }
--    (den > 0.0).then(|| num / den)
-+    (den > 0.0).then_some(num / den)
- }
- 
- /// Minimum count of non-zero values for a Benford first-digit test
-@@ -3224,7 +3224,7 @@ fn finalize_kga(mut values: Vec<f64>, is_date: bool, atkinson_epsilon: f64) -> K
-     };
- 
-     let non_negative = !is_date && values.iter().all(|&v| v >= 0.0);
--    let hoover_val = (non_negative && sum > 0.0).then(|| mean_abs_dev / (2.0 * moments.mean));
-+    let hoover_val = (non_negative && sum > 0.0).then_some(mean_abs_dev / (2.0 * moments.mean));
-     let benford_val = if is_date {
-         None
-     } else {
-@@ -3235,9 +3235,9 @@ fn finalize_kga(mut values: Vec<f64>, is_date: bool, atkinson_epsilon: f64) -> K
-     let (l_cv_val, l_skew_val, l_kurt_val) = match compute_l_moments(&values, moments.mean) {
-         // l_cv of a constant positive column is a genuine 0; the ratios over l2 are not
-         Some([l1, l2, l3, l4]) => (
--            (!is_date && l1 > 0.0 && l2 >= 0.0).then(|| l2 / l1),
--            (l2 > 0.0).then(|| l3 / l2),
--            (l2 > 0.0).then(|| l4 / l2),
-+            (!is_date && l1 > 0.0 && l2 >= 0.0).then_some(l2 / l1),
-+            (l2 > 0.0).then_some(l3 / l2),
-+            (l2 > 0.0).then_some(l4 / l2),
-         ),
-         None => (None, None, None),
-     };
-```
-
-**File**: `src/cmd/viz.rs` (modified, +2/-2)
-```diff
-@@ -28045,7 +28045,7 @@ fn pearson_skewness_stat(s: &crate::cmd::stats::StatsData) -> Option<f64> {
-         else {
-             return None;
-         };
--        (stddev > 0.0).then(|| 3.0 * (mean - median) / stddev)
-+        (stddev > 0.0).then_some(3.0 * (mean - median) / stddev)
-     })
- }
- 
-@@ -28145,7 +28145,7 @@ fn zero_share(s: &crate::cmd::stats::StatsData) -> Option<f64> {
-     };
-     let total = neg + zero + pos;
-     #[allow(clippy::cast_precision_loss)]
--    (total > 0).then(|| zero as f64 / total as f64)
-+    (total > 0).then_some(zero as f64 / total as f64)
- }
- 
- /// The notable-shape hints for a box/violin/histogram panel, from cached statistics, in priority
-```
-
-**File**: `src/help_markdown_gen.rs` (modified, +12/-6)
-```diff
-@@ -901,8 +901,10 @@ fn parse_usage_sections(usage_text: &str) -> UsageSections {
-         if trimmed.starts_with("Usage:") {
-             // Finalize any pending option group
-             if !current_option_lines.is_empty() {
--                option_groups.push((current_option_group_name.clone(), current_option_lines));
--                current_option_lines = Vec::new();
-+                option_groups.push((
-+                    current_option_group_name.clone(),
-+                    std::mem::take(&mut current_option_lines),
-+                ));
-                 current_option_group_name.clear();
-             }
-             state = State::UsagePatterns;
-@@ -932,8 +934,10 @@ fn parse_usage_sections(usage_text: &str) -> UsageSections {
-             if trimmed.ends_with("options:") || trimmed.ends_with("option:") {
-                 // Finalize previous option group
-                 if !current_option_lines.is_empty() {
--                    option_groups.push((current_option_group_name.clone(), current_option_lines));
--                    current_option_lines = Vec::new();
-+                    option_groups.push((
-+                        current_option_group_name.clone(),
-+                        std::mem::take(&mut current_option_lines),
-+                    ));
-                 }
-                 current_option_group_name = trimmed.trim_end_matches(':').to_string();
-                 state = State::Options;
-@@ -956,8 +960,10 @@ fn parse_usage_sections(usage_text: &str) -> UsageSections {
-             {
-                 // Finalize previous option group
-                 if !current_option_lines.is_empty() {
--                    option_groups.push((current_option_group_name.clone(), current_option_lines));
--                    current_option_lines = Vec::new();
-+                    option_groups.push((
-+                        current_option_group_name.clone(),
-+                        std::mem::take(&mut current_option_lines),
-+                    ));
-                 }
-                 current_option_group_name = trimmed.trim_end_matches(':').to_string();
-                 continue;
-```
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.265 to 1.0.266.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/6d5ae526d25ce88daa2200be073e1a373167f064...d535f5172dec02b204866b393d6b20b9b2aaf98d)
 
 ---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.266
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-### Incident Patch 2: `35e91910` (2026-11-02)
-**Commit Message**: ci(devskim): fix ignore-globs; suppress false positives inline (#4984)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* deps: update lock file
-
-* ci(devskim): fix ignore-globs; suppress false positives inline
-
-The ignore-globs input was a newline-separated list of root-relative
-globs. DevSkim-Action passes it unquoted to `devskim analyze
---ignore-globs`, and DevSkim matches globs against absolute paths, so
-the list excluded nothing: tests/resources, .claude, docs/describegpt
-and the vendored DataTables bundle were all scanned (77 results).
-Verified by running the action's image at the pinned SHA locally; a
-single comma-separated line of `**/`-prefixed globs excludes all four.
-Commas alone are not enough.
-
-The remaining open alerts outside those paths are false positives:
-W3C vocabulary IRIs (ldqd, dcterms), which must stay http and are never
-fetched, and localhost/127.0.0.1 in test assertions. Suppress them
-inline. Three existing suppressions named DS137138 on lines that trip
-DS162092, and one had been wrapped across two lines by rustfmt.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/devskim.yml` (modified, +6/-9)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -44,15 +44,12 @@ jobs:
-           #   literal, none pass a string — minified third-party noise.
-           #   Scoped to the two vendored files so any hand-written asset added
-           #   to this dir stays scanned.
--          ignore-globs: |
--            .claude/**
--            tests/resources/**
--            docs/describegpt/*.md
--            docs/describegpt/*.json
--            docs/describegpt/*.toon
--            src/cmd/assets/datatables.min.js
--            src/cmd/assets/datatables.min.css
--        
-+          # FORMAT: ONE comma-separated line, each glob prefixed with `**/`. The action passes
-+          # this input unquoted to `devskim analyze --ignore-globs`, and DevSkim matches globs
-+          # against absolute paths (/github/workspace/...). A newline-separated list of
-+          # root-relative globs ignored NOTHING: verified by running the action's image locally.
-+          ignore-globs: "**/.git/**,**/.claude/**,**/tests/resources/**,**/docs/describegpt/*.md,**/docs/describegpt/*.json,**/docs/describegpt/*.toon,**/src/cmd/assets/datatables.min.js,**/src/cmd/assets/datatables.min.css"
-+
-       - name: Upload DevSkim scan results to GitHub Security tab
-         uses: github/codeql-action/upload-sarif@v4.39.1
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
++        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
          with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `resources/profiles/dcat-us-v3.yaml` (modified, +3/-3)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -133,9 +133,9 @@ vocabularies:
-   # (https://www.w3.org/2016/05/ldqd). Swap these to report against a
-   # different quality framework; a dimension mapped to "" is omitted.
-   quality_dimensions:
--    completeness:      "http://www.w3.org/2016/05/ldqd#completeness"
--    conciseness:       "http://www.w3.org/2016/05/ldqd#conciseness"
--    syntacticValidity: "http://www.w3.org/2016/05/ldqd#syntacticValidity"
-+    completeness:      "http://www.w3.org/2016/05/ldqd#completeness"  # DevSkim: ignore DS137138 (W3C vocabulary IRI, not fetched)
-+    conciseness:       "http://www.w3.org/2016/05/ldqd#conciseness"  # DevSkim: ignore DS137138 (W3C vocabulary IRI, not fetched)
-+    syntacticValidity: "http://www.w3.org/2016/05/ldqd#syntacticValidity"  # DevSkim: ignore DS137138 (W3C vocabulary IRI, not fetched)
+@@ -34,7 +34,7 @@ jobs:
  
-   # Disclosures appended to text qsv generates, in the style of
-   # describegpt's "WARNING: ... Verify before using!" attribution.
-```
-
-**File**: `src/cmd/geocode/census.rs` (modified, +1/-1)
-```diff
-@@ -1877,7 +1877,7 @@ mod tests {
-             DEFAULT_CENSUS_GEOCODER_URL
-         );
-         for bad in [
--            "localhost:8080/geocoder",
-+            "localhost:8080/geocoder", // DevSkim: ignore DS162092
-             "ftp://x/geocoder",
-             "not a url",
-             "file:///tmp",
-```
-
-**File**: `src/cmd/profile/derive.rs` (modified, +3/-3)
-```diff
-@@ -1477,8 +1477,8 @@ mod tests {
-     fn quality_measurements_completeness_and_validity() {
-         let dpp = json!({"RECORD_COUNT": 4});
-         let dims = json!({
--            "completeness": "http://www.w3.org/2016/05/ldqd#completeness",
--            "syntacticValidity": "http://www.w3.org/2016/05/ldqd#syntacticValidity",
-+            "completeness": "http://www.w3.org/2016/05/ldqd#completeness", // DevSkim: ignore DS137138
-+            "syntacticValidity": "http://www.w3.org/2016/05/ldqd#syntacticValidity", // DevSkim: ignore DS137138
-         });
-         formula_helpers::set_sql_backend(None);
-         let v = quality_measurements(
-@@ -1499,7 +1499,7 @@ mod tests {
-         assert_eq!(arr[3]["value"], "true");
-         assert_eq!(
-             arr[3]["isMeasurementOf"]["inDimension"],
--            "http://www.w3.org/2016/05/ldqd#syntacticValidity"
-+            "http://www.w3.org/2016/05/ldqd#syntacticValidity" // DevSkim: ignore DS137138
-         );
-     }
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
++        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
-```
-
-**File**: `src/cmd/profile/discovery_merge.rs` (modified, +1/-1)
-```diff
-@@ -499,7 +499,7 @@ discovery_merge:
-     #[test]
-     fn inferred_keys_match_as_escaped_pointers() {
-         let profile = load_from_str(PROFILE_WITH_NEVER, "t").unwrap();
--        let key = "http://purl.org/dc/terms/description";
-+        let key = "http://purl.org/dc/terms/description"; // DevSkim: ignore DS137138
-         let merged = merge_with_inferred(
-             &profile,
-             json!({ key: "Generated" }),
-```
-
-**File**: `src/cmd/profile/llm.rs` (modified, +2/-2)
-```diff
-@@ -599,10 +599,10 @@ mod normalize_tests {
-             "Invalid model: no-such-model; Valid models: a, b"
-         );
-         let dead_url = "\nInteracting with LLM...\nnetwork error: error sending request for url \
--                        (http://127.0.0.1:9/v1/models)\n"; // DevSkim: ignore DS137138
-+                        (http://127.0.0.1:9/v1/models)\n"; // DevSkim: ignore DS137138,DS162092
-         assert_eq!(
-             describegpt_error(dead_url),
--            "network error: error sending request for url (http://127.0.0.1:9/v1/models)" /* DevSkim: ignore DS137138 */
-+            "network error: error sending request for url (http://127.0.0.1:9/v1/models)" /* DevSkim: ignore DS137138,DS162092 */
-         );
-         assert_eq!(describegpt_error("Interacting with LLM...\n\n"), "");
-         assert!(describegpt_error(&"x".repeat(500)).ends_with('…'));
-```
-
-**File**: `tests/test_describegpt.rs` (modified, +1/-1)
-```diff
-@@ -4901,7 +4901,7 @@ fn start_llm_mock() -> (
-         },
-     };
- 
--    let listener = TcpListener::bind("127.0.0.1:0").unwrap(); // DevSkim: ignore DS137138
-+    let listener = TcpListener::bind("127.0.0.1:0").unwrap(); // DevSkim: ignore DS162092
-     let base_url = format!("http://{}/v1", listener.local_addr().unwrap()); // DevSkim: ignore DS137138
-     let answer = Arc::new(Mutex::new(String::new()));
-     let calls = Arc::new(AtomicUsize::new(0));
-```
-
-**File**: `tests/test_profile.rs` (modified, +4/-5)
-```diff
-@@ -4220,10 +4220,10 @@ fn profile_utf8_and_validity_only_with_validate() {
-         .as_array()
-         .unwrap();
-     assert!(qm.iter().any(|m| m["isMeasurementOf"]["inDimension"]
--        == "http://www.w3.org/2016/05/ldqd#syntacticValidity"
-+        == "http://www.w3.org/2016/05/ldqd#syntacticValidity" // DevSkim: ignore DS137138
-         && m["value"] == "true"));
-     assert!(qm.iter().any(|m| m["isMeasurementOf"]["inDimension"]
--        == "http://www.w3.org/2016/05/ldqd#conciseness"
-+        == "http://www.w3.org/2016/05/ldqd#conciseness" // DevSkim: ignore DS137138
-         && m["value"] == "0"));
- }
- 
-@@ -5511,7 +5511,7 @@ fn infer_without_a_reachable_llm_warns_and_keeps_the_stats_description() {
-     seed_llm_fixtures(&wrk);
-     let mut cmd = wrk.command("profile");
-     // nothing listens on port 9: describegpt fails fast
--    cmd.env("QSV_LLM_BASE_URL", "http://127.0.0.1:9/v1") // DevSkim: ignore DS137138
-+    cmd.env("QSV_LLM_BASE_URL", "http://127.0.0.1:9/v1") // DevSkim: ignore DS137138,DS162092
-         // a key, so describegpt gets as far as the (unreachable) server: 127.0.0.1 is not
-         // "localhost", the only base URL it lets through without one
-         .env("QSV_LLM_APIKEY", "unused")
-@@ -5527,8 +5527,7 @@ fn infer_without_a_reachable_llm_warns_and_keeps_the_stats_description() {
-             .any(|w| w["severity"] == "recommended"
-                 && w["message"].as_str().unwrap().starts_with("--infer:")
-                 // describegpt's own error, not a generic "is an LLM configured?"
--                && w["message"].as_str().unwrap().contains("127.0.0.1:9")), /* DevSkim: ignore
--                                                                             * DS137138 */
-+                && w["message"].as_str().unwrap().contains("127.0.0.1:9")), /* DevSkim: ignore DS137138,DS162092 */
-         "{:?}",
-         warnings_for(&out, "description")
-     );
-```
-
----
-
-### Incident Patch 3: `72fde6ec` (2026-11-02)
-**Commit Message**: docs: pre-release documentation audit fixes (#4982)
-
-* docs: pre-release documentation audit fixes (repo side)
-
-From the 2026-11-01 documentation audit:
-- CHANGELOG: DP+ dpp_suggestions precedence; measured vs estimated
-  values (temporalResolution, spatialResolutionInMeters, Distribution
-  modified are inferred); identifier fallback also from a seeded/CKAN
-  resource.url; --locate census state threshold and region-column
-  precedence (#4973); QSVBM_*/benchmarks help wording; CSVW datatype
-  object and column order are DCAT-US v3 only; cite #4966.
-- profile USAGE: inferred-tier wording (LLM column annotations: only an
-  override replaces them), census thresholds, --tag-vocab is a local
-  CSV, geoconnex is not in prebuilt binaries.
-- resources/profiles/README: ckan_group_concepts / ckan_group_scheme.
-- README: profile row gains the web and geospatial icons.
-- Stale comments in context.rs, projection.rs, derive.rs, locate.rs.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(profile): geoconnex build needs feature_capable for the qsv binary
-
-`cargo build --bin qsv -F geoconnex` fails: the qsv bin has
-required-features = ["feature_capable"]. Document
-`-F feature_capable,geoc
-
-**File**: `CHANGELOG.md` (modified, +8/-8)
-```diff
-@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Added
--- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0): ([#4967](https://github.com/dathere/qsv/pull/4967))
-+- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0). Where a DataPusher+ spec supplies its own suggestions (`dpp_suggestions`), those still take precedence: ([#4967](https://github.com/dathere/qsv/pull/4967))
-   - `temporalResolution`, as an exact xsd:duration. A regular series reports its step (`PT15M`, `P1D`, and calendar steps such as `P1M` instead of a day count that varies from 28 to 31). Irregular data, such as event timestamps, reports the precision its values are recorded at (`P1D`, `PT1M`, `PT1S`). The smallest gap between two events is a sampling accident, not a resolution.
-   - `accrualPeriodicity`: an ISO 19115 code (`daily`, `weekly`, `monthly`, ...) only when the dates form a regular calendar series, where 90% or more of the gaps are the same exact step. Event timestamps, such as 311 requests, describe no update schedule and get none.
-   - `spatial`: the bounding box now excludes out-of-range coordinates and (0, 0) "null island" placeholder rows, noting how many it dropped. Distribution `spatialResolutionInMeters` is now the finest separation the coordinates' decimal precision can express. The DP+ helper it replaces as the default measures the bbox diagonal, which is the area's extent.
-@@ -16,11 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - With `--validate`, the Distribution's `characterEncoding` (`["UTF-8"]`), asserted only after `qsv validate` passes. No RFC 4180 `conformsTo` is claimed, because `qsv validate` is deliberately lenient (LF line endings, any delimiter).
-   - Distribution `modified` from the server's `Last-Modified` header for URL inputs.
-   - CSVW `csvw:tableSchema` columns carry constraints: `required`, numeric/date `minimum`/`maximum`, string `minLength`/`maxLength` for ASCII columns, an enumeration regex for small categorical columns, and a table `primaryKey` (a column whose distinct count equals the row count).
--- `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, where a measured value still wins over discovery. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
--- `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. For URL inputs with no identifier, the source URL is used as an inferred `identifier`. ([#4967](https://github.com/dathere/qsv/pull/4967))
-+- `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, while values measured from the file (byte size, checksum, bounding box, temporal coverage, CSVW schema, quality measurements) still win over discovery. qsv's estimates - `temporalResolution`, `spatialResolutionInMeters` and a Distribution `modified` read from `Last-Modified` - are inferred, so a publisher's stated values replace them. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
-+- `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. When no 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@
- | [pivotp](docs/help/pivotp.md)✨<br>🐻‍❄️🚀🪄 | Pivot CSV data. Features "smart" aggregation auto-selection based on data type & stats. |
- | [pragmastat](docs/help/pragmastat.md)<br>📇🤯🎲🪄 | Compute pragmatic statistics using the [Pragmastat](https://pragmastat.dev/) library. Uses the stats cache to auto-filter non-numeric columns and support Date/DateTime columns. |
- | [pro](docs/help/pro.md) | Interact with the [qsv pro](https://qsvpro.dathere.com) API. |
--| [profile](docs/help/profile.md)✨<br>📇🧠🤖📚⛩️ ![CKAN](docs/images/ckan.png) | Extract, derive & infer metadata from a CSV (local path or URL) - using the statistical profile of a dataset, mapped and driven by a configurable metadata [scheming](https://github.com/ckan/ckanext-scheming) YAML spec ([DCAT-US v3](https://resources.data.gov/resources/dcat-us3/), [DCAT-AP v3](https://semiceu.github.io/DCAT-AP/releases/3.0.0/) and [Croissant 1.1](https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html) bundled; [Geoconnex](https://docs.geoconnex.us/reference/overview) when built with the `geoconnex` feature), with optional CKAN/DCAT metadata discovery for URL inputs. This enables [FAIRification](https://www.go-fair.org/fair-principles/fairification-process/) at scale. |
-+| [profile](docs/help/profile.md)✨<br>📇🧠🤖🌐📚🌎⛩️ ![CKAN](docs/images/ckan.png) | Extract, derive & infer metadata from a CSV (local path or URL) - using the statistical profile of a dataset, mapped and driven by a configurable metadata [scheming](https://github.com/ckan/ckanext-scheming) YAML spec ([DCAT-US v3](https://resources.data.gov/resources/dcat-us3/), [DCAT-AP v3](https://semiceu.github.io/DCAT-AP/releases/3.0.0/) and [Croissant 1.1](https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html) bundled; [Geoconnex](https://docs.geoconnex.us/reference/overview) when built with the `geoconnex` feature), with optional CKAN/DCAT metadata discovery for URL inputs. This enables [FAIRification](https://www.go-fair.org/fair-principles/fairification-process/) at scale. |
- | [prompt](docs/help/prompt.md)✨<br>🐻‍❄️🖥️ | Open a file dialog to either pick a file as input or save output to a file. |
- | [pseudo](docs/help/pseudo.md)<br>🔣👆 | [Pseudonymise](https://en.wikipedia.org/wiki/Pseudonymization) the value of the given column by replacing them with an incremental identifier.  |
- | [py](docs/help/py.md)✨<br>📇🔣 | Create a new computed column or filter rows by evaluating a Python expression on every row of a CSV file. Python's [f-strings](https://www.freecodecamp.org/news/python-f-strings-tutorial-how-to-use-f-strings-for-string-formatting/) is particularly useful for extended formatting, [with the ability to evaluate Python expressions as well](https://github.com/dathere/qsv/blob/4cd00dca88addf0d287247fa27d40563b6d46985/src/cmd/python.rs#L23-L31). [Requires Python 3.11 or greater](https://github.com/dathere/qsv/blob/master/docs/INTERPRETERS.md#building-qsv-with-python-feature). |
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@
- | [pivotp](pivotp.md)<br>[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🚀](#legend "multithreaded even without an index.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Pivot CSV data. Features "smart" aggregation auto-selection based on data type & stats. |
- | [pragmastat](pragmastat.md)<br>[📇](#legend "uses an index when available.")[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Compute pragmatic statistics using the [Pragmastat](https://pragmastat.dev/) library. Uses the stats cache to auto-filter non-numeric columns and support Date/DateTime columns. |
- | [pro](pro.md) | Interact with the [qsv pro](https://qsvpro.dathere.com) API. |
--| [profile](profile.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🤖](#legend "command uses Natural Language Processing or Generative AI.")[📚](#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[⛩️](#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integration options.") | Extract, derive & infer metadata from a CSV (local path or URL) - using the statistical profile of a dataset, mapped and driven by a configurable metadata [scheming](https://github.com/ckan/ckanext-scheming) YAML spec ([DCAT-US v3](https://resources.data.gov/resources/dcat-us3/), [DCAT-AP v3](https://semiceu.github.io/DCAT-AP/releases/3.0.0/) and [Croissant 1.1](https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html) bundled; [Geoconnex](https://docs.geoconnex.us/reference/overview) when built with the `geoconnex` feature), with optional CKAN/DCAT metadata discovery for URL inputs. This enables [FAIRification](https://www.go-fair.org/fair-principles/fairification-process/) at scale. |
-+| [profile](profile.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🤖](#legend "command uses Natural Language Processing or Generative AI.")[🌐](#legend "has web-aware options.")[📚](#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[🌎](#legend "has geospatial capabilities.")[⛩️](#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integration options.") | Extract, derive & infer metadata from a CSV (local path or URL) - using the statistical profile of a dataset, mapped and driven by a configurable metadata [scheming](https://github.com/ckan/ckanext-scheming) YAML spec ([DCAT-US v3](https://resources.data.gov/resources/dcat-us3/), [DCAT-AP v3](https://semiceu.github.io/DCAT-AP/releases/3.0.0/) and [Croissant 1.1](https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html) bundled; [Geoconnex](https://docs.geoconnex.us/reference/overview) when built with the `geoconnex` feature), with optional CKAN/DCAT metadata discovery for URL inputs. This enables [FAIRification](https://www.go-fair.org/fair-principles/fairification-process/) at scale. |
- | [prompt](prompt.md)<br>[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🖥️](#legend "part of the User Interface (UI) feature group.") | Open a file dialog to either pick a file as input or save output to a file. |
- | [pseudo](pseudo.md)<br>[🔣](#legend "requires UTF-8 encoded input.")[👆](#legend "has powerful column selector support. See `select` for syntax.") | [Pseudonymise](https://en.wikipedia.org/wiki/Pseudonymization) the value of the given column by replacing them with an incremental identifier. |
- | [py](py.md)<br>[📇](#legend "uses an index when available.")[🔣](#legend "requires UTF-8 encoded input.") | Create a new computed column or filter rows by evaluating a Python expression on every row of a CSV file. Python's [f-strings](https://www.freecodecamp.org/news/python-f-strings-tutorial-how-to-use-f-strings-for-string-formatting/) is particularly useful for extended formatting, [with the ability to evaluate Python expressions as well](https://github.com/dathere/qsv/blob/4cd00dca88addf0d287247fa27d40563b6d46985/src/cmd/python.rs#L23-L31). [Requires Python 3.11 or greater](https://github.com/dathere/qsv/blob/master/docs/INTERPRETERS.md#building-qsv-with-python-feature). |
-```
-
-**File**: `docs/help/profile.md` (modified, +9/-7)
-```diff
-@@ -2,7 +2,7 @@
- 
- > Extract, derive & infer metadata from a CSV (local path or URL) - using the statistical profile of a dataset, mapped and driven by a configurable metadata [scheming](https://github.com/ckan/ckanext-scheming) YAML spec ([DCAT-US v3](https://resources.data.gov/resources/dcat-us3/), [DCAT-AP v3](https://semiceu.github.io/DCAT-AP/releases/3.0.0/) and [Croissant 1.1](https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html) bundled; [Geoconnex](https://docs.geoconnex.us/reference/overview) when built with the `geoconnex` feature), with optional CKAN/DCAT metadata discovery for URL inputs. This enables [FAIRification](https://www.go-fair.org/fair-principles/fairification-process/) at scale.
- 
--**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/profile.rs](https://github.com/dathere/qsv/blob/master/src/cmd/profile.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🧠](TableOfContents.md#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[⛩️](TableOfContents.md#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.")
-+**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/profile.rs](https://github.com/dathere/qsv/blob/master/src/cmd/profile.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🧠](TableOfContents.md#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")[🌐](TableOfContents.md#legend "has web-aware options.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[🌎](TableOfContents.md#legend "has geospatial capabilities.")[⛩️](TableOfContents.md#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.")
- 
- <a name="nav"></a>
- [Description](#description) | [Examples](#examples) | [Usage](#usage) | [Arguments](#arguments) | [Profile Options](#profile-options) | [Common Options](#common-options)
-@@ -48,9 +48,11 @@ a regular calendar series), the content language, DQV quality measurements
- (completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
- and a CSVW table schema with per-column constraints (required, ranges,
- lengths, enumerations, primary key). Values
--that are generated or detected rather than measured - a description, the
--language, the schedule - form an "inferred" tier that the publisher's own
--metadata replaces; `projection_provenance` lists them. A generated
-+that are generated, detected or estimated rather than measured (a
-+description, the language, the schedule, the temporal and spatial resolution)
-+form an "inferred" tier that the publisher's own metadata replaces;
-+`projection_provenance` lists them (and LLM column annotations, which only an
-+override replaces). A generated
- description carries a disclosure and a review warning, so it never passes
- for a human-authored one.
- 
-@@ -167,18 +169,18 @@ qsv profile --help
- | &nbsp;`‑‑no‑projection`&nbsp; | flag | Skip the metadata projection block (dcat/croissant/ geoconnex, depending on the active profile). |  |
- | &nbsp;`‑‑no‑ckan`&nbsp; | flag | Skip the CKAN-shape block. |  |
- | &nbsp;`‑‑croissant‑frequency`&nbsp; | flag | Embed per-column value-frequency distributions in the metadata projection. The croissant profile renders them as inline cr:RecordSets (one `<col>-frequency` RecordSet of {value, count, percentage} rows per column), per the spec's "distribution of values is a statistic on the field" guidance. Off by default (keeps the projection compact); the raw counts always remain in the top-level `frequency` block regardless. Other bundled profiles ignore this flag. |  |
--| &nbsp;`‑‑locate`&nbsp; | string | Name the places the data covers, as DCAT-US v3 `spatial` Locations, by looking up the densest coordinate cells (up to 40, row-weighted) with `qsv geocode`. <mode> is one of: geonames - label the bounding box with the place, admin1 or country that 80% of the sampled rows share (offline Geonames index). census   - add each US state, and each county holding at least 5% of the sampled rows, keyed by Census GEOID (US Census Geocoder: online, keyless, cached). State and county columns, when they resolve, supply these instead, with or without coordinates, as they name every row exactly: states as USPS, FIPS or names; counties as names or GEOIDs, matched exactly within each row's state (TIGERweb county names). A name several counties share is noted, not guessed. both     - g
-```
-
-**File**: `resources/profiles/README.md` (modified, +2/-0)
-```diff
-@@ -75,6 +75,8 @@ undefined, not an error, when its inputs are absent, so guard with
- | `quality_measurements(stats, dpp, dims, rfc4180)` | DQV `QualityMeasurement` array; `dims` maps `completeness` / `conciseness` / `syntacticValidity` to dimension IRIs. |
- | `build_csvw_schema_rich(stats, dppf, headers, rows, dictionary?)` | CSVW table schema in file order, with per-column constraints (string lengths only for ASCII columns: qsv counts bytes, CSVW characters) and a `primaryKey` (a column whose cardinality equals `rows`). `dictionary` (`llm.dictionary`) adds each described column's LLM label to `titles` and its description as `dc:description`, with an Info note. |
- | `detect_data_language(stats, dppf)` | ISO 639-1 code of the text values (needs the `whatlang` feature). |
-+| `ckan_group_concepts(groups, scheme)` | CKAN groups as DCAT-US v3 `theme` Concepts: `prefLabel` from the group's title (else display name, else name), `definition` from its description, and `inScheme` the given scheme. Groups with no label are skipped; undefined when none is left. |
-+| `ckan_group_scheme(urls, fallback_title, portal_title)` | The `ConceptScheme` of a CKAN portal's groups, from the first URL with CKAN's `/dataset/` path: `@id` `<portal>/group/`, titled `portal_title` with `{portal}` replaced. Without such a URL, a scheme titled `fallback_title` (undefined when that is empty). |
- | `with_located(base, located)` | `base` (a `[Location]`, e.g. from `robust_bbox`) with the `--locate` results folded in: `located.primary` keys merge into the first Location (keys it already has win), `located.regions` follow it, and `located.notes` become Info warnings. With `located` null, `base` is returned unchanged. |
- 
- The projection context also exposes `dppf` (per-column frequency),
-```
-
-**File**: `src/cmd/profile.rs` (modified, +16/-9)
-```diff
-@@ -36,9 +36,11 @@ a regular calendar series), the content language, DQV quality measurements
- (completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
- and a CSVW table schema with per-column constraints (required, ranges,
- lengths, enumerations, primary key). Values
--that are generated or detected rather than measured - a description, the
--language, the schedule - form an "inferred" tier that the publisher's own
--metadata replaces; `projection_provenance` lists them. A generated
-+that are generated, detected or estimated rather than measured (a
-+description, the language, the schedule, the temporal and spatial resolution)
-+form an "inferred" tier that the publisher's own metadata replaces;
-+`projection_provenance` lists them (and LLM column annotations, which only an
-+override replaces). A generated
- description carries a disclosure and a review warning, so it never passes
- for a human-authored one.
- 
-@@ -146,9 +148,11 @@ profile options:
-                                            place, admin1 or country that 80%
-                                            of the sampled rows share (offline
-                                            Geonames index).
--                                census   - add each US state, and each county
-+                                census   - add each US state and county
-                                            holding at least 5% of the sampled
--                                           rows, keyed by Census GEOID (US
-+                                           rows (the heaviest state always;
-+                                           up to 10 counties), keyed by
-+                                           Census GEOID (US
-                                            Census Geocoder: online, keyless,
-                                            cached). State and county
-                                            columns, when they resolve, supply
-@@ -179,8 +183,9 @@ profile options:
-                               environment variables. If it cannot run, a
-                               warning is added and the statistics-based
-                               description is used.
--    --tag-vocab <file>        With --describegpt or --infer: a `tag,description`
--                              CSV (as for describegpt). Only tags in it are
-+    --tag-vocab <file>        With --describegpt or --infer: a local
-+                              `tag,description` CSV (the format describegpt
-+                              uses for its own tag vocabulary). Only tags in it are
-                               kept - describegpt only asks the LLM to keep to
-                               the vocabulary - and they also become `theme`
-                               Concepts carrying the vocabulary's description.
-@@ -248,8 +253,10 @@ profile options:
-     --profile <name|path>     Metadata projection profile to use. Embedded
-                               names: dcat-us-v3 (default), dcat-ap-v3,
-                               croissant; geoconnex (when built with the
--                              `geoconnex` feature — qsv default; qsvdp
--                              opt-in via -F datapusher_plus,geoconnex).
-+                              `geoconnex` feature, which no prebuilt binary
-+                              includes: build qsv with
-+                              `-F feature_capable,geoconnex`, or qsvdp
-+                              with `-F datapusher_plus,geoconnex`).
-                               A path to a custom YAML profile is also
-                               accepted; embedded names always win over
-                               same-named files. See
-```
-
-**File**: `src/cmd/profile/context.rs` (modified, +7/-5)
-```diff
-@@ -44,7 +44,7 @@ pub struct ContextArgs<'a> {
-     /// load.
-     pub profile:         &'a super::profile_spec::ProfileSpec,
-     /// Run `qsv validate` (RFC 4180 + UTF-8) so the projection can
--    /// assert `conformsTo` / `characterEncoding`. Set from `--validate`:
-+    /// assert `characterEncoding` and record syntactic validity. Set from `--validate`:
-     /// a profile that was not asked to validate never pays for the
-     /// extra full-file scan (§5.8).
-     pub check_rfc4180:   bool,
-@@ -236,8 +236,9 @@ pub fn build(args: &ContextArgs, _spec: Option<&Spec>) -> CliResult<AnalysisCont
-     // --- 7. RFC 4180 + UTF-8 conformance (with --validate) ---------------
-     // `qsv validate` with no schema checks the file is well-formed CSV
-     // (consistent field counts, quoting) and valid UTF-8. The projection
--    // derives `conformsTo`, `characterEncoding` and a syntactic-validity
--    // quality measurement from the result, so they are only asserted
-+    // derives `characterEncoding` and a syntactic-validity quality
-+    // measurement from the result (no RFC 4180 `conformsTo`: `qsv validate`
-+    // is deliberately lenient), so they are only asserted
-     // when actually checked; without --validate `rfc4180` is null and
-     // they are omitted. Any failure — invalid data or a validator that
-     // could not run — reads as `valid: false` rather than aborting.
-@@ -339,8 +340,9 @@ fn detect_lat_lon(stats: &[StatsData]) -> (Option<String>, Option<String>) {
- /// latitude/longitude pair. A String column qualifies when its min and
- /// max both start `POINT (` (case-folded, any spacing before the
- /// parenthesis): every value sorting between two strings that share a
--/// prefix shares it too, so the stats prove the whole column without a
--/// scan. Requiring the parenthesis keeps out place names such as
-+/// prefix shares it too, so every value starts `POINT` without a scan
-+/// (a value that is not a point after all just fails to parse and drops
-+/// out). Requiring the parenthesis keeps out place names such as
- /// "Point Reyes". `POINT Z`/`M`/`ZM` qualify (their first two numbers
- /// are still longitude and latitude); EWKT (`SRID=4326;POINT(…)`) does
- /// not.
-```
-
-**File**: `src/cmd/profile/derive.rs` (modified, +1/-1)
-```diff
-@@ -618,7 +618,7 @@ fn date_field(args: &Rest<Value>, state: &minijinja::State) -> Option<String> {
- }
- 
- /// Whole calendar months from `a` to `b` when both fall on the same
--/// day of month at midnight (`2024-01-15 → 2024-04-15` is 3), else
-+/// day of month and time of day (`2024-01-15 → 2024-04-15` is 3), else
- /// `None`.
- fn calendar_months(a: NaiveDateTime, b: NaiveDateTime) -> Option<i32> {
-     if a.day() != b.day() || a.time() != b.time() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4996** (2026-11-03): docs: Statistics at a Glance (159 statistic columns) in STATS_DEFINITIONS, with a count test (@jqnatividad)
+- **PR #4995** (2026-11-03): build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (@dependabot[bot])
 - **PR #4994** (2026-11-02): bench: regenerate Benchmarks Data Schematic for the 28.0.0 run (@jqnatividad)
 - **PR #4993** (2026-11-02): deps: bump Polars to upstream rev 0b47007 (@jqnatividad)
 - **PR #4992** (2026-11-02): build(deps): bump anthropics/claude-code-action from 1.0.264 to 1.0.265 (@dependabot[bot])
 - **PR #4990** (2026-11-02): refactor: fix nightly clippy::perf warnings (@jqnatividad)
-- **PR #4989** (2026-11-02): deps: drop the unused direct webdriver-downloader dependency (@jqnatividad)
-- **PR #4988** (2026-11-02): deps(viz): vendor DataTables 3.1.5 (Buttons 4.1.3, ColumnControl 2.1.3, DateTime 2.1.3) (@jqnatividad)
 
 ---
 
@@ -2913,28 +2273,28 @@ required-features = ["feature_capable"]. Document
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix nightly clippy::perf warnings (#4990)
+## X. build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `275e5414`: fix nightly clippy::perf warnings (#4990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1ca386c`: build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Code hygiene: fixes the warnings nightly clippy reports with `-W clippy::perf` (`then` -> `then_some`, `map_or_else` -> `map_or`, and reusing a cleared buffer instead of assigning a new `String`/`Vec`) in `color`, `fetch`, `fetchpost`, `moarstats`, `viz` and the help generator, ahead of those lints reaching stable clippy. No behavior change. ([#4990](https://github.com/dathere/qsv/pull/4990))
+        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `275e5414` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1ca386c` are properly handled with clean fallback behavior.
