@@ -6984,3 +6984,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `f9446abf` | Multi-dimensional audit evidence | 2026-11-03T18:47:57.745Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `630068f9` | Multi-dimensional audit evidence | 2026-11-03T18:56:43.223Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `9297e2c3` | Multi-dimensional audit evidence | 2026-11-03T18:56:53.920Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `d8039f36` | Multi-dimensional audit evidence | 2026-11-03T19:05:56.185Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `14318705` | Multi-dimensional audit evidence | 2026-11-03T19:06:02.863Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `f2163b51` | Multi-dimensional audit evidence | 2026-11-03T19:06:07.818Z |

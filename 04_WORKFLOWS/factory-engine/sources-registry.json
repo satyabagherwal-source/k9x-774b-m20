@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T18:56:56.484Z",
-    "lastVerified": "2026-11-03T18:56:56.484Z",
+    "lastChecked": "2026-11-03T19:06:10.368Z",
+    "lastVerified": "2026-11-03T19:06:10.368Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T18:22:39.485Z",
+    "lastChecked": "2026-11-03T19:06:02.982Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T18:22:39.485Z"
+    "lastVerified": "2026-11-03T19:06:02.982Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -688,9 +688,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-03T12:32:15.198Z",
+    "lastChecked": "2026-11-03T19:05:58.490Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-03T12:32:15.198Z"
+    "lastVerified": "2026-11-03T19:05:58.490Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2538,22 +2538,21 @@
     "lastVerified": "2026-10-31T03:02:36.660Z"
   },
   "nats-io-nats.go": {
-    "name": "nats.go",
+    "name": "nats-io/nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T22:23:47.435Z",
-    "lastVerified": "2026-10-31T22:23:47.435Z",
+    "lastChecked": "2026-11-03T19:06:01.078Z",
+    "lastVerified": "2026-11-03T19:06:01.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
+    "contentHash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "36314d40"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infinity",
@@ -7473,14 +7472,14 @@
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T21:26:55.781Z",
-    "lastVerified": "2026-10-31T21:26:55.781Z",
+    "lastChecked": "2026-11-03T19:06:06.287Z",
+    "lastVerified": "2026-11-03T19:06:06.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
+    "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8453,22 +8452,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nguyenphutrong-quotio": {
-    "name": "quotio",
+    "name": "nguyenphutrong/quotio",
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T17:30:01.489Z",
-    "lastVerified": "2026-10-31T17:30:01.489Z",
+    "lastChecked": "2026-11-03T19:05:53.690Z",
+    "lastVerified": "2026-11-03T19:05:53.690Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
+    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c9555ad4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
     "name": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -10180,9 +10178,9 @@
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
     "officialUrl": "https://github.com/santifer/santifer-irepair",
-    "lastChecked": "2026-10-30T07:45:54.889Z",
+    "lastChecked": "2026-11-03T19:05:51.191Z",
     "revisionIdentifier": "5c1ce0b2",
-    "lastVerified": "2026-10-30T07:45:54.889Z"
+    "lastVerified": "2026-11-03T19:05:51.191Z"
   },
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
@@ -11305,9 +11303,9 @@
   "zekunyan-ttgtagcollectionview": {
     "name": "TTGTagCollectionView",
     "officialUrl": "https://github.com/zekunyan/TTGTagCollectionView",
-    "lastChecked": "2026-10-30T19:19:12.075Z",
+    "lastChecked": "2026-11-03T19:05:53.762Z",
     "revisionIdentifier": "cad737af",
-    "lastVerified": "2026-10-30T19:19:12.075Z"
+    "lastVerified": "2026-11-03T19:05:53.762Z"
   },
   "hf-liquidai-lfm3-1.7b-gguf": {
     "name": "LiquidAI/LFM3-1.7B-GGUF",

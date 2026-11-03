@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T18:56:53.932Z",
+  "last_updated": "2026-11-03T19:06:07.828Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
-      "verified_at": "2026-10-31T21:26:57.495Z",
+      "content_hash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
+      "verified_at": "2026-11-03T19:06:07.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T21:26:57.495Z"
+      "last_updated": "2026-11-03T19:06:07.827Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
-      "verified_at": "2026-10-28T22:58:58.483Z",
+      "content_hash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
+      "verified_at": "2026-11-03T19:05:56.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:58:58.483Z"
+      "last_updated": "2026-11-03T19:05:56.194Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
-      "verified_at": "2026-10-30T14:40:27.816Z",
+      "content_hash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
+      "verified_at": "2026-11-03T19:06:02.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:40:27.816Z"
+      "last_updated": "2026-11-03T19:06:02.873Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",

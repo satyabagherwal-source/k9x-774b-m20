@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-OOXQ",
-    "timestamp": "2026-10-31T05:29:32.990Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "27dd85d7bd9a7d2cd25a1fbdf51de82b6c412b63e38820d13e608960cc783246",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-OSRI",
-    "timestamp": "2026-10-31T05:29:37.950Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-X0J3",
-    "timestamp": "2026-10-31T05:36:01.263Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-X17J",
     "timestamp": "2026-10-31T05:36:02.143Z",
     "repository": "wasm-bindgen/wasm-pack",
@@ -7490,6 +7445,51 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "7e1589ecc81e8a513af164aac8c1233b904a0d64eaad37800be60202aca5ee9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-64LX",
+    "timestamp": "2026-11-03T19:05:56.181Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-69RF",
+    "timestamp": "2026-11-03T19:06:02.859Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6DL2",
+    "timestamp": "2026-11-03T19:06:07.814Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T18:56:53.818Z",
+  "last_updated": "2026-11-03T19:06:07.731Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42352,8 +42352,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "36314d40",
-      "content_hash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
+      "source_version": "14318705",
+      "content_hash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -42396,6 +42396,11 @@
           "number": 5776,
           "title": "[IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6584,
+          "title": "[FIXED]  WebSocket frame handling (#2225)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42403,7 +42408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:40:27.682Z",
+      "verified_at": "2026-11-03T19:06:02.754Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68337,8 +68342,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "9086c659",
-      "content_hash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
+      "source_version": "f2163b51",
+      "content_hash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -68396,6 +68401,11 @@
           "number": 6327,
           "title": "embedding): harden transformers resolve for OpenCode nested installs (#467)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6585,
+          "title": "harden cleanup vacuum and dreaming run feedback (#480)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68403,7 +68413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:26:57.381Z",
+      "verified_at": "2026-11-03T19:06:07.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68607,8 +68617,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "c9555ad4",
-      "content_hash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
+      "source_version": "d8039f36",
+      "content_hash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -68661,6 +68671,11 @@
           "number": 5445,
           "title": "docs(macos): note Antigravity quota fix in changelog",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6583,
+          "title": "desktop): add GPUI tray app for macOS, Linux and Windows (#568)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68668,7 +68683,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:58:58.342Z",
+      "verified_at": "2026-11-03T19:05:56.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169756,6 +169771,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T18:56:53.785Z"
+    },
+    "rule-6583": {
+      "learning_id": "rule-6583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6583,
+      "title": "desktop): add GPUI tray app for macOS, Linux and Windows (#568)",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "d8039f36",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:05:56.078Z"
+    },
+    "rule-6584": {
+      "learning_id": "rule-6584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6584,
+      "title": "[FIXED]  WebSocket frame handling (#2225)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "14318705",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:06:02.754Z"
+    },
+    "rule-6585": {
+      "learning_id": "rule-6585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6585,
+      "title": "harden cleanup vacuum and dreaming run feedback (#480)",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "f2163b51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:06:07.708Z"
     }
   },
   "aliases": {

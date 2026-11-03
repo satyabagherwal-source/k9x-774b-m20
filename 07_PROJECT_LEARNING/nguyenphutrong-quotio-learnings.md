@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `c9555ad4`  
+> **Source Version**: `d8039f36`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:58:57.777Z  
+> **Timestamp**: 2026-11-03T19:05:55.421Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:58:57.771Z  
+> **Harvest Timestamp**: 2026-11-03T19:05:53.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4899 stars
+- **Stars / Engagement**: 4906 stars
 
 ---
 
@@ -1025,11 +1025,11 @@ public struct ProviderSettingsState: Sendable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #529** (2026-09-14): **Claude Code tool-search (defer_loading) not forwarded — MCP tools load fully into prefix instead of on-demand**
-  *Symptoms*: ### What happened?  When Claude Code is pointed at CLIProxyAPI via ANTHROPIC_BASE_URL (used via Quotio's local proxy), MCP tool definitions are not deferred/loaded on-demand — they get loaded fully into every request's prefix, massively inflating context usage.  ### Steps to reproduce  - Same account, same project, same MCP servers (~250-265 tools) - Through CLIProxyAPI (ANTHROPIC_BASE_URL=http://127.0.0.1:8317): /context shows MCP tools: 180.4k tokens (247 tools), no "(loaded on-demand)" label - Direct connection (native claude.ai login, no base URL override): /context shows MCP tools: 12.3k tokens (265 tools) · loaded on-demand  ### Expected behavior  MCP tool definitions should be deferred/loaded on-demand (same as a direct connection), not loaded fully into every request. Native login shows "MCP tools: 12.3k tokens (265 tools) · loaded on-demand"; through the proxy it's "180.4k tokens (247 tools)" with no on-demand label — a ~15x overhead difference for the same tool set.  ### Severity  🟠 High - Core feature broken, no workaround  ### Affected component  Proxy Server (CLIProxyAPI)  ### Provider (if applicable)  Anthropic Claude  ### CLI Agent (if applicable)  Claude Code  ### macOS Version  26.6.2 (25G83) Tahoe  ### Quotio Version  0.31.0  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  Root cause is likely upstream in CLIProxyAPI, not Quotio's UI. Claude Code requests tool search via an
-
 - **Issue #514** (2026-08-25): **App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)**
   *Symptoms*: ### What happened?  ### Title App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)  ### Environment - Quotio: 0.29.1 (build 70) - macOS: 26.5.2 (25F84) - Device: MacBook Pro, Apple M2 Max (Mac14,5), 32GB RAM  ### Crash Summary - Exception: EXC_BREAKPOINT (SIGTRAP), code 1 - esr: brk 1 (Swift runtime trap — not memory corruption; likely fatalError / force-unwrap of nil / array out-of-bounds / try! failure) - Crashing thread: Thread 6, dispatch queue `com.apple.root.user-initiated-qos.cooperative` (inside a background Swift Task) - Entire crash stack is within the app's own binary; symbols are stripped in this release build, so it can't be resolved to function names without the matching dSYM  ### Possibly Related Context At the time of the crash, another thread was mid-call into LocalAuthentication (`LAContext setInteractionNotAllowed`), suggesting a biometric auth flow was active during this session. Not confirmed to be causally related — noting it as context only.  ### Request Could you symbolicate the following addresses against the dSYM for 0.29.1 (build 70) to pinpoint the exact crash location? - 0x1001bc9e4 (base +477668) - 0x1001cb914 (base +538900) - 0x10040f61d (base +2913821) - 0x100189b81 (base +269185) - 0x10033df7d (base +2056061)  Full crash log attached below.  [crash_report.txt](https://github.com/user-attachments/files/31423602/crash_report.txt)  ### Steps to reproduce  1. Launch Quotio 2. crash  ### Expected behavior  App should co
+
+- **Issue #447** (2026-08-21): **Repeated macOS keychain password prompts: ad-hoc code signature prevents XARA partition approval from persisting**
+  *Symptoms*: ### What happened?  **Repo:** nguyenphutrong/quotio **Version:** 0.25.0 **Severity:** High — user is prompted for their macOS login password several times a day, indefinitely, with no setting that stops it.  ---  ## Environment  | | | |---|---| | macOS | 26.5.2 (build 25F84) | | Hardware | Mac mini, arm64 | | Quotio | 0.25.0, installed to `/Applications/Quotio.app` | | Bundle ID | `dev.quotio.desktop` | | Code signature | `flags=0x2(adhoc)`, `Signature=adhoc`, `TeamIdentifier=not set` | | CDHash | `a7f5c328c9ad08f466e182ebf8a83aded418ff36` | | FileVault | On | | Login keychain | `no-timeout`, does not lock on sleep |  ---  ## Summary  Quotio reads the GitHub CLI's OAuth token from the macOS login keychain (generic password, service `gh:github.com`). Because Quotio ships **ad-hoc signed with no Team ID**, macOS can only identify it in the keychain's XARA partition list by CDHash. Approving "Always Allow" writes that CDHash entry, but the approval does not survive the next Quotio launch — securityd raises a fresh partition mismatch and prompts again.  Net effect: an unavoidable, recurring macOS login-password prompt. On this machine it fires roughly twice a day, aligned with Sparkle and cliproxy release checks, plus once on every app restart.  ---  ## Steps to reproduce  1. Authenticate the GitHub CLI so a token exists in the login keychain: `gh auth login`. This creates generic password items with service `gh:github.com`. 2. Install Quotio 0.25.0 from the release page (ad-hoc 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1046,173 +1046,626 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f59a0427` (2026-10-28)
-**Commit Message**: docs(macos): note Antigravity quota fix in changelog
+### Incident Patch 1: `3afe4870` (2026-11-03)
+**Commit Message**: feat(desktop): add GPUI tray app for macOS, Linux and Windows (#568)
 
-**File**: `apps/macos/CHANGELOG.md` (modified, +4/-0)
+* feat(cli): add embedded server entry point
+
+run_embedded lets a desktop app host the /v2 server in-process: the caller supplies the bearer token, receives the bound address, and stops the server through a channel instead of a parent pipe.
+
+* feat(desktop): add GPUI tray popup and accounts window for Linux and Windows
+
+* feat(desktop): add dark theme that follows the system appearance
+
+The Wonder tokens follow AlignUI, so each one maps to its AlignUI dark counterpart. The component library's theme is kept in step so dialogs and inputs match.
+
+* refactor(desktop): split the settings window into page modules
+
+* feat(desktop): search accounts and act on them from settings
+
+Each row's menu refreshes, renames, replaces an API key, pauses, resumes or removes the account through the host's /v2 operations. Paused accounts stay listed in settings but leave the tray. Rows that need attention retry or grant access.
+
+* feat(desktop): add accounts from the settings window
+
+Add account and "Connect another provider" open a provider picker backed by /v2/providers. Each provider offers the ways the host supports on this platfor
+
+**File**: `.github/workflows/desktop-ci.yml` (added, +62/-0)
 ```diff
-@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+### Fixed
+@@ -0,0 +1,62 @@
++name: Desktop checks
 +
-+- Show every Antigravity quota window again. Accounts were only showing their Claude and GPT limits; Gemini session and weekly limits and the Gemini 4 Argon weekly limit (shown as "Argon Weekly") now appear too.
++on:
++  pull_request:
++    paths:
++      - 'apps/desktop/**'
++      - 'apps/cli/**'
++      - '.github/workflows/desktop-ci.yml'
++  push:
++    branches: [master]
++    paths:
++      - 'apps/desktop/**'
++      - 'apps/cli/**'
++      - '.github/workflows/desktop-ci.yml'
++  workflow_dispatch:
 +
- ## [1.0.0-beta.10] - 2026-10-20
- 
- ### Fixed
++defaults:
++  run:
++    working-directory: apps/desktop
++    shell: bash
++
++permissions: {}
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  build:
++    name: Desktop on ${{ matrix.os }}
++    runs-on: ${{ matrix.os }}
++    timeout-minutes: 30
++    permissions:
++      contents: read
++    strategy:
++      fail-fast: false
++      matrix:
++        os: [macos-15, ubuntu-24.04, windows-2025]
++    env:
++      CARGO_TERM_COLOR: never
++      RUST_BACKTRACE: '1'
++    steps:
++      - name: Checkout repository
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++      - name: Install Rust toolchain
++        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
++      - name: Install Linux libraries
++        if: runner.os == 'Linux'
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y --no-install-recommends \
++            libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb1-dev \
++            libwayland-dev libvulkan-dev libfontconfig-dev libfreetype-dev
++      - name: Check formatting
++        if: runner.os == 'Linux'
++        run: cargo +stable fmt --check
++      - name: Lint
++        run: cargo +stable clippy --locked --all-targets -- -D warnings
++      - name: Test
++        run: cargo +stable test --locked
 ```
 
----
-
-### Incident Patch 2: `5d9e1d81` (2026-10-28)
-**Commit Message**: fix(cli): label Antigravity Argon bucket as Argon Weekly
-
-**File**: `apps/cli/src/contract/snapshot.rs` (modified, +3/-1)
+**File**: `apps/cli/docs/openapi.json` (modified, +2/-1)
 ```diff
-@@ -438,6 +438,7 @@ fn metric_display_name<'a>(provider: &str, label: &'a str) -> &'a str {
-                 "gemini-weekly" => "Weekly",
-                 "3p-5h" | "3p-session" => "Claude Session",
-                 "3p-weekly" => "Claude Weekly",
-+                "gemini-argon-weekly" | "gemini-argon-wtu-weekly" => "Argon Weekly",
-                 _ if bucket.eq_ignore_ascii_case("session") => {
-                     if label.starts_with("Claude") {
-                         "Claude Session"
-@@ -800,8 +801,9 @@ mod tests {
-                     "Claude and GPT models 3p-weekly",
-                     "Gemini Models gemini-weekly",
-                     "Gemini Models gemini-5h",
-+                    "Gemini 4 Argon gemini-argon-wtu-weekly",
-                 ],
--                vec!["Session", "Weekly", "Claude Weekly"],
-+                vec!["Session", "Weekly", "Claude Weekly", "Argon Weekly"],
-             ),
-             (
-                 "antigravity",
+@@ -3994,7 +3994,8 @@
+               "type": "string",
+               "enum": [
+                 "macos",
+-                "linux"
++                "linux",
++                "windows"
+               ]
+             },
+             "description": "Supported saved-account storage platforms. Linux requires a separately supplied vault master key."
 ```
 
----
-
-### Incident Patch 3: `ca77cdea` (2026-10-28)
-**Commit Message**: fix: send Antigravity hub user agent for quota summary requests (#570)
-
-The quota summary endpoint only returns full bucket coverage when the
-request identifies as the Antigravity hub client. Send that identity for
-summary calls, keep the existing agents for the other methods, and add
-tests covering all returned quota buckets and per-method user agents.
-
-**File**: `apps/cli/src/providers/antigravity.rs` (modified, +75/-4)
+**File**: `apps/cli/docs/provider-coverage.md` (modified, +44/-44)
 ```diff
-@@ -380,10 +380,11 @@ impl AntigravityProvider {
-                 .header("Authorization", authorization.clone())
-                 .header(
-                     "User-Agent",
--                    if matches!(method, "loadCodeAssist" | "retrieveUserQuota") {
--                        "agy"
--                    } else {
--                        "antigravity"
-+                    match method {
-+                        // The summary response's quota coverage depends on client identity.
-+                        "retrieveUserQuotaSummary" => "antigravity/hub/2.23.0 darwin/arm64",
-+                        "loadCodeAssist" | "retrieveUserQuota" => "agy",
-+                        _ => "antigravity",
-                     },
-                 )
-                 .json(&payload)
-@@ -637,6 +638,66 @@ mod tests {
-         ));
-     }
-     #[tokio::test]
-+    async fn hub_summary_request_preserves_all_quota_buckets() {
-+        let (base, task) = http::fixture::server(vec![
-+            json!({"id":"demo-id","email":"demo@example.invalid"}),
-+            json!({"cloudaicompanionProject":"demo-project"}),
-+            json!({"groups":[
-+                {"displayName":"Gemini","buckets":[
-+                    {"bucketId":"gemini-5h","window":"5h","remainingFraction":0.25,"resetTime":"2026-10-27T01:00:00Z"},
-+                    {"bucketId":"gemini-weekly","window":"weekly","remainingFraction":0.5,"resetTime":"2026-11-01T00:00:00Z"}
-+                ]},
-+                {"displayName":"Third-party","buckets":[
-+                    {"bucketId":"3p-5h","window":"5h","remainingFraction":0.75},
-+                    {"bucketId":"3p-weekly","window":"weekly","remainingFraction":0.0}
-+                ]},
-+                {"displayName":"Argon","buckets":[
-+                    {"bucketId":"gemini-argon-weekly","window":"weekly","remainingFraction":0.125}
-+                ]}
-+            ]}),
-+        ])
-+        .await;
-+        let usage = AntigravityProvider
-+            .fetch_api(
-+                &http::fixture::context(),
-+                &format!("{base}/v1internal:"),
-+                &format!("{base}/userinfo"),
-+            )
-+            .await
-+            .unwrap();
-+        assert_eq!(usage.windows.len(), 5);
-+        for (window, (label, used)) in usage.windows.iter().zip([
-+            ("Gemini gemini-5h", 75.0),
-+            ("Gemini gemini-weekly", 50.0),
-+            ("Third-party 3p-5h", 25.0),
-+            ("Third-party 3p-weekly", 100.0),
-+            ("Argon gemini-argon-weekly", 87.5),
-+        ]) {
-+            assert_eq!(window.label, label);
-+            assert_eq!(window.quota, Quota::from_used(Some(used)));
-+            assert_eq!(window.provenance.source, "antigravity_api_summary");
-+        }
+@@ -19,50 +19,50 @@ all providers. Windows/Linux runtime checks are deferred.
+ | Provider | Authentication | Sources (ownership) | Account storage OS |
+ | --- | --- | --- | --- |
+ | mock | — | — | — |
+-| codex | oauth, native | codex_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| amp | api_key, native | amp_native (borrowed_native) | macos, linux |
+-| antigravity | native, owned_token | antigravity_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| synthetic | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| openrouter | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| zai | api_key | quotio_custom_provider (borrowed_proxy), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| minimax | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| factory | api_key, owned_token, native | factory_native (borrowed_native) | macos, linux |
+-| aiand | api_key | — | macos, linux |
+-| alibabacodingplan | api_key | — | macos, linux |
++| codex | oauth, native | codex_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| amp | api_key, native | amp_native (borrowed_native) | macos, linux, windows |
++| antigravity | native, owned_token | antigravity_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| synthetic | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| openrouter | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| zai | api_key | quotio_custom_provider (borrowed_proxy), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| minimax | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| factory | api_key, owned_token, native | factory_native (borrowed_native) | macos, linux, windows |
++| aiand | api_key | — | macos, linux, windows |
++| alibabacodingplan | api_key | — | macos, linux, windows |
+ | azureopenai | native | — | — |
+-| chutes | api_key | — | macos, linux |
+-| claude | oauth, native | claude_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| clawrouter | api_key | — | macos, linux |
+-| clinepass | api_key | quotio_custom_provider (borrowed_proxy) | macos, linux |
+-| codebuff | api_key | — | macos, linux |
+-| copilot | oauth, native | copilot_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| crof | api_key | — | macos, linux |
+-| cursor | native | cursor_native (borrowed_native) | macos, linux |
+-| deepgram | api_key | — | macos, linux |
+-| deepinfra | api_key | — | macos, linux |
+-| deepseek | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| devin | api_key | — | macos, linux |
+-| devin-desktop | api_key | devin_desktop_native (borrowed_native) | macos, linux |
+-| doubao | api_key | — | macos, linux |
+-| elevenlabs | api_key | — | macos, linux |
+-| fireworks | api_key | — | macos, linux |
++| chutes | api_key | — | macos, linux, windows |
++| claude | oauth, native | claude_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| clawrouter | api_key | — | macos, linux, windows |
++| clinepass | api_key | quotio_custom_provider (borrowed_proxy) | macos, linux, windows |
++| codebuff | api_key | — | macos, linux, windows |
++| copilot | oauth, native | copilot_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| crof | api_key | — | macos, linux, windows |
++| cursor | native | cursor_native (borrowed_native) | macos, linux, windows |
++| deepgram | api_key | — | macos, linux, windows |
++| deepinfra | api_key | — | macos, linux, windows |
++| deepseek | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
++| devin | api_key | — | macos, linux, windows |
++| devin-desktop | api_key | devin_desktop_native (borrowed_native) | macos, linux, windows |
++| doubao | api_key | — | macos, linux, windows |
++| elevenlabs | api_key | — | macos, linux, windows |
++| fireworks | api_key | — | macos, linux, windows |
+ | gemini | native | cli_proxy_auth_file (borrowed_proxy) | — |
+-| grok | native, owned_token | grok_native (borrowed_native) | macos, linux |
+-| groq | api_key | — | macos, linux |
+-| ibmbob | api_key | — | macos, linux |
+-| kilo | api_key | — | macos, linux |
+-| kimi | api_key | — | macos, linux |
+-| kiro | native, owned_token | kiro_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| litellm | api_key | — | macos, linux |
+-| llmproxy | api_key | — | macos, linux |
+-| moonshot | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| neuralwatt | api_key | — | macos, linux |
+-| openai | api_key | — | macos, linux |
+-| opencodego | api_key | — | macos, linux |
+-| poe | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
+-| sub2api | api_key | — | macos, linux |
+-| venice | api_key | cli_proxy_auth_file (borrowed_pr
+```
+
+**File**: `apps/cli/src/providers/capabilities.rs` (modified, +5/-2)
+```diff
+@@ -418,7 +418,7 @@ pub fn capability(provider: Provider) -> ProviderCapability {
+         usage_platform: "all",
+         account_storage_platform: provider.supports_accounts().then_some("macos"),
+         account_storage_platforms: if provider.supports_accounts() {
+-            vec!["macos", "linux"]
++            vec!["macos", "linux", "windows"]
+         } else {
+             vec![]
+         },
+@@ -441,7 +441,10 @@ mod tests {
+     #[test]
+     fn registry_metadata_and_core_settings_are_exposed_without_environment_names() {
+         let factory = capability(Provider::Factory);
+-        assert_eq!(factory.account_storage_platforms, vec!["macos", "linux"]);
 +        assert_eq!(
-+            usage.windows[0].resets_at,
-+            Some(OffsetDateTime::parse("2026-10-27T01:00:00Z", &Rfc3339).unwrap())
++            factory.account_storage_platforms,
++            vec!["macos", "linux", "windows"]
 +        );
-+        let requests = task.await.unwrap();
-+        assert_eq!(requests.len(), 3);
-+        assert!(
-+            requests[1]
-+                .to_ascii_lowercase()
-+                .contains("user-agent: agy\r\n")
-+        );
-+        assert!(requests[2].starts_with("POST /v1internal:retrieveUserQuotaSummary "));
-+        assert!(
-+            requests[2]
-+                .to_ascii_lowercase()
-+                .contains("user-agent: antigravity/hub/2.23.0 darwin/arm64\r\n")
-+        );
-+        assert!(requests[2].contains("Bearer synthetic-token"));
-+        assert!(requests[2].ends_with("{\"project\":\"demo-project\"}"));
+         assert_eq!(
+             factory.auth,
+             vec![
+```
+
+**File**: `apps/cli/src/server.rs` (modified, +38/-4)
+```diff
+@@ -1171,7 +1171,26 @@ async fn wait_for_next_refresh(state: &ApiState) {
+     }
+     state.status.lock().await.next_refresh_at = None;
+ }
++/// Host running inside a native application process instead of a child process.
++/// The application supplies the management token, receives the bound address, and
++/// stops the host by sending on or dropping `stop`.
++pub struct Embedded {
++    pub token: String,
++    /// First-run values, as a native parent sends them over its pipe.
++    pub preferences: Option<crate::settings::NativePreferences>,
++    pub ready: tokio::sync::oneshot::Sender<std::net::SocketAddr>,
++    pub stop: tokio::sync::oneshot::Receiver<()>,
++}
+ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
++    serve(args, None).await
++}
++pub async fn run_embedded(args: ServeArgs, embedded: Embedded) -> Result<(), ServerError> {
++    if args.parent_pipe {
++        return Err(ServerError::Security);
 +    }
-+    #[tokio::test]
-     async fn subscription_plan_is_optional_bounded_and_uses_existing_request() {
-         for (status, metadata, plan) in [
-             (
-@@ -908,6 +969,16 @@ mod tests {
-             "fetchAvailableModels",
-         ]) {
-             assert!(request.starts_with(&format!("POST /v1internal:{method} ")));
-+            let user_agent = match method {
-+                "retrieveUserQuotaSummary" => "antigravity/hub/2.23.0 darwin/arm64",
-+                "loadCodeAssist" => "agy",
-+                _ => "antigravity",
-+            };
-+            assert!(
-+                request
-+                    .to_ascii_lowercase()
-+                    .contains(&format!("user-agent: {user_agent}\r\n"))
-+            );
-         }
-         assert!(
-             requests
++    serve(args, Some(embedded)).await
++}
++async fn serve(args: ServeArgs, mut embedded: Option<Embedded>) -> Result<(), ServerError> {
+     if !args.listen.ip().is_loopback() {
+         return Err(ServerError::Listen);
+     }
+@@ -1203,10 +1222,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+     } else {
+         None
+     };
+-    let view = match parent
+-        .as_mut()
+-        .and_then(bootstrap::Parent::take_preferences)
+-    {
++    let preferences = match (&mut parent, &mut embedded) {
++        (Some(parent), _) => parent.take_preferences(),
++        (None, Some(embedded)) => embedded.preferences.take(),
++        (None, None) => None,
++    };
++    let view = match preferences {
+         Some(preferences)
+             if config_adopted && adoption.as_ref().is_none_or(|source| !source.adopted()) =>
+         {
+@@ -1217,6 +1238,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+     .map_err(|_| ServerError::Config)?;
+     let token = if let Some(parent) = &mut parent {
+         Some(parent.take_token())
++    } else if let Some(embedded) = &mut embedded {
++        // Do not silently select between two credentials.
++        if std::env::var_os("QUOTIO_SERVER_TOKEN").is_some() {
++            return Err(ServerError::Security);
++        }
++        Some(std::mem::take(&mut embedded.token))
+     } else {
+         match std::env::var("QUOTIO_SERVER_TOKEN") {
+             Ok(t) => Some(t),
+@@ -1312,8 +1339,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+         vault,
+         oauth,
+     });
++    let mut embedded_stop = None;
+     if args.parent_pipe {
+         bootstrap::announce(address)?;
++    } else if let Some(Embedded { ready, stop, .. }) = embedded {
++        ready.send(address).map_err(|_| ServerError::Initialize)?;
++        embedded_stop = Some(stop);
+     } else {
+         eprintln!("Quotio API listening on http://{address}");
+     }
+@@ -1373,6 +1404,9 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+         _=async {
+             if let Some(parent) = &mut parent {
+                 tokio::select! { _=shutdown_signal()=>(), _=parent.closed()=>() }
++            } else if let Some(stop) = &mut embedded_stop {
++                // The application owns process signals; a dropped sender also stops the host.
++                let _ = stop.await;
+             } else {
+                 shutdown_signal().await;
+             }
+```
+
+**File**: `apps/desktop/.gitignore` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++/target/
+```
+
+**File**: `apps/desktop/Cargo.toml` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++[package]
++name = "quotio-desktop"
++version = "0.1.0"
++edition = "2024"
++license = "MIT"
++publish = false
++
++[[bin]]
++name = "quotio-desktop"
++path = "src/main.rs"
++
++[dependencies]
++anyhow = "1"
++chrono = { version = "0.4", default-features = false, features = ["clock"] }
++directories = "6"
++env_logger = { version = "0.11", default-features = false, features = ["auto-color"] }
++futures = "0.3"
++gpui-kit = "=0.7.3"
++qrcode = { version = "0.14", default-features = false, features = ["svg"] }
++quotio = { path = "../cli" }
++reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
++ring = "0.17"
++rust-embed = { version = "8.7", features = ["include-exclude"] }
++serde = { version = "1", features = ["derive"] }
++serde_json = "1"
++time = { version = "=0.3.47", features = ["serde", "serde-well-known", "formatting"] }
++tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
++
++[target.'cfg(target_os = "linux")'.dependencies]
++ksni = { version = "0.3", default-features = false, features = ["tokio"] }
++raw-window-handle = "0.6"
++x11rb = "0.13"
++
++[target.'cfg(any(windows, target_os = "macos"))'.dependencies]
++tray-icon = "0.26"
++
++[target.'cfg(target_os = "macos")'.dependencies]
++block2 = "0.6"
++objc2 = "0.6"
++objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "block2", "objc2-core-foundation", "NSApplication", "NSAttributedString", "NSButton", "NSColor", "NSControl", "NSEvent", "NSFont", "NSFontDescriptor", "NSGraphics", "NSImage", "NSResponder", "NSStatusBarButton", "NSStatusItem", "NSStringDrawing", "NSView", "NSWindow"] }
++objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSGeometry", "NSString"] }
++
++[target.'cfg(windows)'.dependencies]
++raw-window-handle = "0.6"
++windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_HiDpi", "Win32_UI_WindowsAndMessaging"] }
+```
+
+**File**: `apps/desktop/assets/fonts/OFL.txt` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++Inter 4.0 beta 7 (Regular, Medium, SemiBold), from the Debian fonts-inter package.
++Copyright 2016-2022 The Inter Project Authors (https://github.com/rsms/inter).
++
++This Font Software is licensed under the SIL Open Font License, Version 1.1.
++
++PREAMBLE
++The goals of the Open Font License (OFL) are to stimulate worldwide
++development of collaborative font projects, to support the font
++creation efforts of academic and linguistic communities, and to
++provide a free and open framework in which fonts may be shared and
++improved in partnership with others.
++
++The OFL allows the licensed fonts to be used, studied, modified and
++redistributed freely as long as they are not sold by themselves. The
++fonts, including any derivative works, can be bundled, embedded,
++redistributed and/or sold with any software provided that any
++reserved names are not used by derivative works. The fonts and
++derivatives, however, cannot be released under any other type of
++license. The requirement for fonts to remain under this license
++does not apply to any document created using the fonts or their
++derivatives.
++
++DEFINITIONS
++Font Software refers to the set of files released by the
++Copyright Holder(s) under this license and clearly marked as such.
++This may include source files, build scripts and documentation.
++
++Reserved Font Name refers to any names specified as such after
++the copyright statement(s).
++
++Original Version refers to the collection of Font Software
++components as distributed by the Copyright Holder(s).
++
++Modified Version refers to any derivative made by adding to,
++deleting, or substituting in part or in whole any of the components
++of the Original Version, by changing formats or by porting the Font
++Software to a new environment.
++
++Author refers to any designer, engineer, programmer, technical
++writer or other person who contributed to the Font Software.
++
++PERMISSION & CONDITIONS
++Permission is hereby granted, free of charge, to any person
++obtaining a copy of the Font Software, to use, study, copy, merge,
++embed, modify, redistribute, and sell modified and unmodified copies
++of the Font Software, subject to the following conditions:
++
++1) Neither the Font Software nor any of its individual components,
++   in Original or Modified Versions, may be sold by itself.
++
++2) Original or Modified Versions of the Font Software may be bundled,
++   redistributed and/or sold with any software, provided that each
++   copy contains the above copyright notice and this license. These
++   can be included either as stand-alone text files, human-readable
++   headers or in the appropriate machine-readable metadata fields
++   within text or binary files as long as those fields can be easily
++   viewed by the user.
++
++3) No Modified Version of the Font Software may use the Reserved Font
++   Name(s) unless explicit written permission is granted by the
++   corresponding Copyright Holder. This restriction only applies to
++   the primary font name as presented to the users.
++
++4) The name(s) of the Copyright Holder(s) or the Author(s) of the
++   Font Software shall not be used to promote, endorse or advertise
++   any Modified Version, except to acknowledge the contribution(s)
++   of the Copyright Holder(s) and the Author(s) or with their
++   explicit written permission.
++
++5) The Font Software, modified or unmodified, in part or in whole,
++   must be distributed entirely under this license, and must not be
++   distributed under any other license. The requirement for fonts to
++   remain under this license does not apply to any document created
++   using the Font Software.
++
++TERMINATION
++This license becomes null and void if any of the above conditions
++are not met.
++
++DISCLAIMER
++THE FONT SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND,
++EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
++MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
++OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
++THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR
++CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR
++OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT
++SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
++
+```
+
+---
+
+### Incident Patch 2: `d8039f36` (2026-11-03)
+**Commit Message**: ci(desktop): run release build steps in bash on Windows
+
+The job's run defaults replaced the workflow's shell: bash, so the
+Windows build ran PowerShell and $TARGET expanded to nothing.
+
+**File**: `.github/workflows/desktop-release.yml` (modified, +2/-0)
+```diff
+@@ -44,6 +44,8 @@ jobs:
+             asset: quotio-desktop-x86_64-unknown-linux-gnu
+     defaults:
+       run:
++        # Job defaults replace the workflow's; without this Windows runs pwsh.
++        shell: bash
+         working-directory: apps/desktop
+     env:
+       CARGO_TERM_COLOR: never
+```
+
+---
+
+### Incident Patch 3: `212f1242` (2026-11-02)
+**Commit Message**: ci(desktop): publish signed Windows and Linux builds
+
+**File**: `.github/workflows/desktop-release.yml` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++name: Desktop release
++
++# Builds the Windows and Linux desktop app and, when dispatched, publishes a
++# `desktop-v*` prerelease with Ed25519 signatures the in-app updater checks.
++# macOS keeps shipping the Swift app through macos-release.yml.
++on:
++  workflow_dispatch:
++    inputs:
++      version:
++        description: Version matching apps/desktop/Cargo.toml, without desktop-v (for example 0.1.0)
++        required: true
++        type: string
++  pull_request:
++    paths:
++      - '.github/workflows/desktop-release.yml'
++
++permissions: {}
++concurrency:
++  group: desktop-release-${{ github.ref }}
++  cancel-in-progress: false
++
++defaults:
++  run:
++    shell: bash
++
++jobs:
++  build:
++    name: Build ${{ matrix.target }}
++    runs-on: ${{ matrix.os }}
++    timeout-minutes: 45
++    permissions:
++      contents: read
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++          - os: windows-2025
++            target: x86_64-pc-windows-msvc
++            binary: quotio-desktop.exe
++            asset: quotio-desktop-x86_64-pc-windows-msvc.exe
++          - os: ubuntu-24.04
++            target: x86_64-unknown-linux-gnu
++            binary: quotio-desktop
++            asset: quotio-desktop-x86_64-unknown-linux-gnu
++    defaults:
++      run:
++        working-directory: apps/desktop
++    env:
++      CARGO_TERM_COLOR: never
++      VERSION: ${{ inputs.version }}
++      TARGET: ${{ matrix.target }}
++      BINARY: ${{ matrix.binary }}
++      ASSET: ${{ matrix.asset }}
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++      - name: Validate version
++        if: github.event_name == 'workflow_dispatch' && runner.os == 'Linux'
++        run: |
++          python3 - <<'PY'
++          import os, re, tomllib
++          version = os.environ['VERSION']
++          assert re.fullmatch(r'\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?', version)
++          assert tomllib.load(open('Cargo.toml', 'rb'))['package']['version'] == version
++          PY
++      - name: Install Rust toolchain
++        run: rustup toolchain install stable --profile minimal --target "$TARGET"
++      - name: Install Linux libraries
++        if: runner.os == 'Linux'
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y --no-install-recommends \
++            libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb1-dev \
++            libwayland-dev libvulkan-dev libfontconfig-dev libfreetype-dev
++      - name: Build
++        run: |
++          cargo +stable build --locked --release --target "$TARGET"
++          mkdir -p artifacts
++          cp "target/$TARGET/release/$BINARY" "artifacts/$ASSET"
++      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
++        with:
++          name: desktop-${{ matrix.target }}
++          path: apps/desktop/artifacts/*
++          if-no-files-found: error
++          retention-days: 7
++  release:
++    name: Publish signed prerelease
++    if: github.event_name == 'workflow_dispatch'
++    needs: build
++    runs-on: ubuntu-24.04
++    environment: release
++    timeout-minutes: 10
++    permissions:
++      contents: write # Required to create the GitHub release.
++    env:
++      VERSION: ${{ inputs.version }}
++      GH_TOKEN: ${{ github.token }}
++    steps:
++      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
++        with:
++          pattern: desktop-*
++          path: artifacts
++          merge-multiple: true
++      - name: Sign executables
++        env:
++          DESKTOP_UPDATE_KEY: ${{ secrets.DESKTOP_UPDATE_KEY }}
++        run: |
++          : "${DESKTOP_UPDATE_KEY:?Set the DESKTOP_UPDATE_KEY secret to the Ed25519 private key PEM}"
++          key=$(mktemp)
++          trap 'rm -f "$key"' EXIT
++          printf '%s\n' "$DESKTOP_UPDATE_KEY" > "$key"
++          # Must match PUBLIC_KEY in apps/desktop/src/updater.rs, or every client rejects the update.
++          public=$(openssl pkey -in "$key" -pubout -outform DER | tail -c 32 | od -An -tx1 | tr -d ' \n')
++          test "$public" = f0b16f944f287150a3ddb80fadfd6fa70a28b849754ee353aaec9502d77b1b15
++          cd artifacts
++          for file in quotio-desktop-*; do
++            openssl pkeyutl -sign -inkey "$key" -rawin -in "$file" -out "$file.sig"
++          done
++          sha256sum quotio-desktop-* > SHA256SUMS
++      - name: Create GitHub prerelease
++        run: |
++          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|rc)\.[0-9]+)?$ ]]
++          gh release create "desktop-v$VERSION" artifacts/* --repo "$GITHUB_REPOSITORY" \
++            --target "$GITHUB_SHA" --prerelease --latest=false \
++            --title "Quotio Desktop v$VERSION" --generate-notes
+```
+
+**File**: `AGENTS.md` (modified, +4/-3)
+```diff
+@@ -25,6 +25,7 @@ xcodebuild -project apps/macos/Quotio.xcodeproj -scheme Quotio -configuration De
+ cargo test --manifest-path apps/cli/Cargo.toml --locked --all-features
+ ```
+ 
+-Use `v*` tags for macOS releases and `cli-v*` tags for CLI releases. Preserve
+-both imported histories; never rewrite shared history or reuse one product's tag
+-namespace for the other.
++Use `v*` tags for macOS releases, `cli-v*` tags for CLI releases and
++`desktop-v*` tags for the Windows and Linux desktop app. Preserve both imported
++histories; never rewrite shared history or reuse one product's tag namespace for
++another.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #574** (2026-11-03): feat(desktop): signed releases and self-update for Windows and Linux (@nguyenphutrong)
+- **PR #573** (2026-11-03): feat(desktop): signed releases and self-update for Windows and Linux (@nguyenphutrong)
+- **PR #572** (closed): fix(macos): reopen Settings from menu bar and respect Dock visibility (@sleepless)
 - **PR #571** (2026-10-28): fix(cli): label Antigravity Argon bucket as Argon Weekly (@nguyenphutrong)
 - **PR #570** (2026-10-28): fix: send Antigravity hub user agent for quota summary requests (@sleepless)
 - **PR #569** (2026-10-23): fix(cli): update locked dependencies for new advisories (@nguyenphutrong)
-- **PR #567** (closed): fix(antigravity): read quota through agy (@defaultsq)
-- **PR #566** (2026-10-20): fix(macos): surface stale quota and refresh failures (@nguyenphutrong)
-- **PR #565** (2026-10-16): fix(cli): update rustls to 0.23.46 (@nguyenphutrong)
 
 ---
 
@@ -1232,24 +1685,72 @@ tests covering all returned quota buckets and per-method user agents.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(macos): note Antigravity quota fix in changelog
+## X. desktop): add GPUI tray app for macOS, Linux and Windows (#568)
 
 **RULE**:
-When implementing operations in `apps/macos/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/desktop-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f59a0427`: docs(macos): note Antigravity quota fix in changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3afe4870`: desktop): add GPUI tray app for macOS, Linux and Windows (#568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/macos/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/desktop-ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
+name: Desktop checks
 
-- Show every Antigravity quota window again. Accounts were only showing their Claude and GPT limits; Gemini session and weekly limits and the Gemini 4 Argon weekly limit (shown as "Argon Weekly") now appear too.
+on:
+  pull_request:
+    paths:
+      - 'apps/desktop/**'
+      - 'apps/cli/**'
+      - '.github/workflows/desktop-ci.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'apps/desktop/**'
+      - 'apps/cli/**'
+      - '.github/workflows/desktop-ci.yml'
+  workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: apps/desktop
+    shell: bash
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Desktop on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, ubuntu-24.04, windows-2025]
+    env:
+      CARGO_TERM_COLOR: never
+      RUST_BACKTRACE: '1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Rust toolchain
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Install Linux libraries
+        if: runner.os == 'Linux'
+        run: |
+         
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1259,4 +1760,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f59a0427` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3afe4870` are properly handled with clean fallback behavior.

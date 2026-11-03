@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `36314d40`  
+> **Source Version**: `14318705`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T14:40:27.107Z  
+> **Timestamp**: 2026-11-03T19:06:02.112Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T14:40:26.811Z  
+> **Harvest Timestamp**: 2026-11-03T19:06:01.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6796 stars
+- **Stars / Engagement**: 6797 stars
 
 ---
 
@@ -1561,569 +1561,412 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36314d40` (2026-10-30)
-**Commit Message**: [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)
+### Incident Patch 1: `14318705` (2026-11-03)
+**Commit Message**: [FIXED]  WebSocket frame handling (#2225)
+
+* [FIXED] Panic or spin on an empty fragment of a compressed WebSocket message
+
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+* [FIXED] Do not send status 1005 when replying to a WebSocket close frame
+
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+* [FIXED] Corrupted WebSocket PONG payload while the writer buffers
+
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+**File**: `ws.go` (modified, +18/-8)
+```diff
+@@ -158,7 +158,10 @@ func (d *wsDecompressor) ReadByte() (byte, error) {
+ }
+ 
+ func (d *wsDecompressor) addBuf(b []byte) {
+-	d.bufs = append(d.bufs, b)
++	// Read and ReadByte rely on no buffer being empty.
++	if len(b) > 0 {
++		d.bufs = append(d.bufs, b)
++	}
+ }
+ 
+ func (d *wsDecompressor) decompress() ([]byte, error) {
+@@ -734,17 +737,21 @@ func (nc *Conn) wsEnqueueCloseMsgLocked(status int, payload string) {
+ 	if !ok || wr.cmDone {
+ 		return
+ 	}
+-	statusAndPayloadLen := 2 + len(payload)
++	var statusAndPayloadLen int
++	// 1005 stands for a close frame without status and must not be sent.
++	if status != wsCloseStatusNoStatusReceived {
++		statusAndPayloadLen = 2 + len(payload)
++	}
+ 	frame := make([]byte, 2+4+statusAndPayloadLen)
+ 	n, key := wsFillFrameHeader(frame, false, wsCloseMessage, statusAndPayloadLen)
+-	// Set the status
+-	binary.BigEndian.PutUint16(frame[n:], uint16(status))
+-	// If there is a payload, copy
+-	if len(payload) > 0 {
++	if statusAndPayloadLen > 0 {
++		// Set the status
++		binary.BigEndian.PutUint16(frame[n:], uint16(status))
++		// If there is a payload, copy
+ 		copy(frame[n+2:], payload)
++		// Mask status + payload
++		wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
+ 	}
+-	// Mask status + payload
+-	wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
+ 	wr.cm = frame
+ 	wr.cmDone = true
+ 	nc.bw.flush()
+@@ -769,6 +776,9 @@ func (nc *Conn) wsEnqueueControlMsg(needsLock bool, frameType wsOpCode, payload
+ 	fh, key := wsCreateFrameHeader(false, frameType, len(payload))
+ 	wr.ctrlFrames = append(wr.ctrlFrames, fh)
+ 	if len(payload) > 0 {
++		// The payload points into the read buffer, which is reused before
++		// the frame is sent if the writer is buffering.
++		payload = bytes.Clone(payload)
+ 		wsMaskBuf(key, payload)
+ 		wr.ctrlFrames = append(wr.ctrlFrames, payload)
+ 	}
+```
+
+**File**: `ws_test.go` (modified, +102/-0)
+```diff
+@@ -225,6 +225,41 @@ func TestWSParseControlFrames(t *testing.T) {
+ 	}
+ }
+ 
++func TestWSPongPayloadWhileBuffering(t *testing.T) {
++	mr := &fakeReader{ch: make(chan []byte, 1)}
++	defer mr.close()
++	r := wsNewReader(mr)
++	var out bytes.Buffer
++	r.nc = &Conn{bw: &natsWriter{w: &websocketWriter{w: &out}}}
++	// As during a reconnect, the PONG is sent only once pending is flushed.
++	r.nc.bw.switchToPending()
++
++	// A data frame in the same read is drained into the buffer that held
++	// the PING payload.
++	mr.buf.Write([]byte{byte(wsPingMessage) | wsFinalBit, 4})
++	mr.buf.WriteString("ping")
++	mr.buf.Write([]byte{byte(wsBinaryMessage) | wsFinalBit, 5})
++	mr.buf.WriteString("hello")
++
++	p := make([]byte, 100)
++	n, err := r.Read(p)
++	if err != nil || string(p[:n]) != "hello" {
++		t.Fatalf("Unexpected read: n=%v err=%v data=%q", n, err, p[:n])
++	}
++	r.nc.bw.doneWithPending()
++	r.nc.bw.flush()
++
++	frame := out.Bytes()
++	if len(frame) != 10 || frame[0] != byte(wsPongMessage)|wsFinalBit || frame[1] != wsMaskBit|4 {
++		t.Fatalf("Unexpected PONG frame: %v", frame)
++	}
++	payload := frame[6:]
++	wsMaskBuf(frame[2:6], payload)
++	if string(payload) != "ping" {
++		t.Fatalf("Expected PONG payload %q, got %q", "ping", payload)
++	}
++}
++
+ func TestWSDataBeforeCloseFrame(t *testing.T) {
+ 	mr := &fakeReader{ch: make(chan []byte, 1)}
+ 	defer mr.close()
+@@ -270,6 +305,25 @@ func TestWSDataBeforeCloseFrame(t *testing.T) {
+ 	}
+ }
+ 
++func TestWSCloseReplyWithoutStatus(t *testing.T) {
++	mr := &fakeReader{ch: make(chan []byte, 1)}
++	defer mr.close()
++	r := wsNewReader(mr)
++	var out bytes.Buffer
++	r.nc = &Conn{bw: &natsWriter{w: &websocketWriter{w: &out}}}
++
++	mr.buf.Write([]byte{byte(wsCloseMessage) | wsFinalBit, 0})
++	p := make([]byte, 100)
++	if n, err := r.Read(p); err != io.EOF || n != 0 {
++		t.Fatalf("Unexpected read: n=%v err=%v", n, err)
++	}
++	// 1005 must not be sent, so the reply has no status either.
++	frame := out.Bytes()
++	if len(frame) != 6 || frame[0] != byte(wsCloseMessage)|wsFinalBit || frame[1] != wsMaskBit {
++		t.Fatalf("Unexpected close frame: %v", frame)
++	}
++}
++
+ func TestWSParseInvalidFrames(t *testing.T) {
+ 
+ 	newReader := func() (*fakeReader, *websocketReader) {
+@@ -604,6 +658,54 @@ func TestWSCompressionWithContinuationFrames(t *testing.T) {
+ 	}
+ }
+ 
++func TestWSCompressionWithEmptyFrames(t *testing.T) {
++	buf := &bytes.Buffer{}
++	compressor, _ := flate.NewWriter(buf, flate.BestSpeed)
++	compressor.Write([]byte("hello"))
++	compressor.Flush()
++	b := buf.Bytes()
++	b = b[:len(b)-4]
++
++	for _, test := range []struct {
++		name    string
++		frames  [][]byte
++		wantErr bool
++	}{
++		// Not a valid deflate stream, but must fail rather than panic.
++		{"only", [][]byte{nil}, true},
++		{"first", [][]byte{nil, b}, false},
++		{"middle", [][]byte{b[:2], nil, b[2:]}, false},
++		{"last", [][]byte{b, nil}, false},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			srbuf := &bytes.Buffer{}
++			for i, frame := range test.frames {
++				b0 := byte(wsContinuationFrame)
++				if i == 0 {
++					b0 = byte(wsBinaryMessage) | wsRsv1Bit
++				}
++				if i == len(test.frames)-1 {
++					b0 |= wsFinalBit
++				}
++				srbuf.Write([]byte{b0, byte(len(frame))})
++				srbuf.Write(frame)
++			}
++			r := wsNewReader(srbuf)
++			rbuf := make([]byte, 100)
++			n, err := r.Read(rbuf)
++			if test.wantErr {
++				if err == nil {
++					t.Fatalf("Expected error, got n=%v", n)
++				}
++				return
++			}
++			if err != nil || string(rbuf[:n]) != "hello" {
++				t.Fatalf("Unexpected read: n=%v err=%v data=%q", n, err, rbuf[:n])
++			}
++		})
++	}
++}
++
+ func TestWSTlsNoConfig(t *testing.T) {
+ 	opts := GetDefaultOptions()
+ 	opts.Servers = []string{"wss://localhost:443"}
+```
+
+---
+
+### Incident Patch 2: `c782ae0e` (2026-11-02)
+**Commit Message**: [FIXED] Preserve options when following object links (#2220)
 
 Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 
-**File**: `headers_test.go` (added, +311/-0)
+**File**: `jetstream/object.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,311 @@
-+// Copyright 2012-2026 The NATS Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package nats
-+
-+import (
-+	"bytes"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"strconv"
-+	"strings"
-+	"testing"
-+)
-+
-+func TestHeaderParser(t *testing.T) {
-+	shouldErr := func(hdr string) {
-+		t.Helper()
-+		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
-+			t.Fatalf("Expected an error")
-+		}
-+	}
-+	shouldErr("NATS/1.0")
-+	shouldErr("NATS/1.0\r\n")
-+	shouldErr("NATS/1.0\r\nk1:v1")
-+	shouldErr("NATS/1.0\r\nk1:v1\r\n")
-+	shouldErr("NATS/1.0 5\r\n\r\n")
-+	shouldErr("NATS/1.0 41\r\n\r\n")
-+	shouldErr("NATS/1.0 \r\n\r\n")
-+
-+	// Check that we can do inline status and descriptions
-+	checkStatus := func(hdr string, status int, description string) {
-+		t.Helper()
-+		hdrs, err := DecodeHeadersMsg([]byte(hdr + "\r\n\r\n"))
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		if code, err := strconv.Atoi(hdrs.Get(statusHdr)); err != nil || code != status {
-+			t.Fatalf("Expected status of %d, got %s", status, hdrs.Get(statusHdr))
-+		}
-+		if len(description) > 0 {
-+			if descr := hdrs.Get(descrHdr); err != nil || descr != description {
-+				t.Fatalf("Expected description of %q, got %q", description, descr)
-+			}
-+		}
-+	}
-+
-+	checkStatus("NATS/1.0 503", 503, "")
-+	checkStatus("NATS/1.0 503 No Responders", 503, "No Responders")
-+	checkStatus("NATS/1.0  404   No Messages", 404, "No Messages")
-+}
-+
-+func TestHeaderMultiLine(t *testing.T) {
-+	m := NewMsg("foo")
-+	m.Header = Header{
-+		"CorrelationID": []string{"123"},
-+		"Msg-ID":        []string{"456"},
-+		"X-NATS-Keys":   []string{"A", "B", "C"},
-+		"X-Test-Keys":   []string{"D", "E", "F"},
-+	}
-+	// Users can opt-in to canonicalize like http.Header does
-+	// by using http.Header#Set or http.Header#Add.
-+	http.Header(m.Header).Set("accept-encoding", "json")
-+	http.Header(m.Header).Add("AUTHORIZATION", "s3cr3t")
-+
-+	// Multi Value Header becomes represented as multi-lines in the wire
-+	m.Header.Set("X-Test", "First")
-+	m.Header.Add("X-Test", "Second")
-+	m.Header.Add("X-Test", "Third")
-+
-+	b, err := m.headerBytes()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	result := string(b)
-+
-+	// Require the header string to have a known prefix and suffix
-+	if !strings.HasPrefix(result, "NATS/1.0\r\n") {
-+		t.Fatalf("header prefix not present")
-+	}
-+	if !strings.HasSuffix(result, "\r\n\r\n") {
-+		t.Fatalf("header suffix not present")
-+	}
-+
-+	// Require the header string to contain each of the following rows. Note
-+	// that headers can be written in any order.
-+	expectedHeaderLines := []string{
-+		"Accept-Encoding: json\r\n",
-+		"Authorization: s3cr3t\r\n",
-+		"CorrelationID: 123\r\n",
-+		"Msg-ID: 456\r\n",
-+		"X-NATS-Keys: A\r\n",
-+		"X-NATS-Keys: B\r\n",
-+		"X-NATS-Keys: C\r\n",
-+		"X-Test: First\r\n",
-+		"X-Test: Second\r\n",
-+		"X-Test: Third\r\n",
-+		"X-Test-Keys: D\r\n",
-+		"X-Test-Keys: E\r\n",
-+		"X-Test-Keys: F\r\n",
-+	}
-+	for _, h := range expectedHeaderLines {
-+		if !strings.Contains(result, h) {
-+			t.Fatalf("expected header line '%s' to be present", h)
-+		}
-+	}
-+}
-+
-+func TestHeaderValidKeys(t *testing.T) {
-+	const validChars = "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~"
-+
-+	m := NewMsg("foo")
-+	m.Header = Header{
-+		validChars: []string{"value"},
-+	}
-+	if _, err := m.headerBytes(); err != nil {
-+		t.Fatal(err.Error())
-+	}
-+}
-+
-+func TestHeaderInvalidKeys(t *testing.T) {
-+	testKeys := []string{
-+		"",       // Empty string
-+		":",      // Illegal printable ASCII character
-+		"\r",     // Non-printable ASCII character
-+		"\n",     // Non-printable ASCII character
-+		"\t",     // Non-printable ASCII character
-+		"\x00",   // Non-printable ASCII character
-+		"→",      // Standard Unicode character
-+		"\u200b", // Non-printable Unicode character
-+	}
-+	for _, key := range testKeys {
-+		m := NewMsg("foo")
-+		m.Header = Header{
-+			key: []string{"value"},
-+		}
-+		if _, err := m.headerBytes(); err == nil {
-+			t.Fatalf("expected error for key '%s'", key)
-+		}
-+	}
-+}
-+
-+func TestHeaderValidValues(t *testing.T) {
-+	testValues := []string{
-+		"!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",                              // Printable ASCII characters
-+		"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1c\x1d\x1e\x1f", // Invisible ASCII characters (except CR/LF)
-+		"→",      // Standard Unicode characters
-+		"\u200b", // No
-```
-
-**File**: `nats.go` (modified, +29/-5)
-```diff
-@@ -911,6 +911,12 @@ func (m *Msg) headerSize() (int, error) {
- }
- 
- func (m *Msg) headerBytes() ([]byte, error) {
-+	var b bytes.Buffer
-+	return m.encodeHeaders(&b)
-+}
-+
-+// encodeHeaders writes the headers into an empty buffer.
-+func (m *Msg) encodeHeaders(b *bytes.Buffer) ([]byte, error) {
- 	var hdr []byte
- 	hdrSize, err := m.headerSize()
- 	if hdrSize == 0 || err != nil {
-@@ -921,14 +927,13 @@ func (m *Msg) headerBytes() ([]byte, error) {
- 	// is intended to be a valid implementation of the io.StringWriter interface.
- 	// This implementation cannot actually fail in practice, so it is safe to
- 	// ignore write errors here.
--	var b bytes.Buffer
- 	b.Grow(hdrSize)
- 	_, _ = b.WriteString(hdrLine)
- 	for k, vs := range m.Header {
- 		for _, v := range vs {
- 			_, _ = b.WriteString(k)
- 			_, _ = b.WriteString(": ")
--			writeHeaderValue(&b, v)
-+			writeHeaderValue(b, v)
- 			_, _ = b.WriteString(crlf)
+@@ -866,15 +866,15 @@ func (obs *obs) Get(ctx context.Context, name string, opts ...GetObjectOpt) (Obj
+ 		// is the link in the same bucket?
+ 		lbuck := info.ObjectMeta.Opts.Link.Bucket
+ 		if lbuck == obs.name {
+-			return obs.Get(ctx, info.ObjectMeta.Opts.Link.Name)
++			return obs.Get(ctx, info.ObjectMeta.Opts.Link.Name, opts...)
  		}
- 	}
-@@ -4656,15 +4661,34 @@ func readMIMEHeader(s string) (Header, error) {
- 	}
- }
  
-+const maxPooledHeaderSize = 64 * 1024
-+
-+var publishHeaderPool = sync.Pool{
-+	New: func() any { return new(bytes.Buffer) },
-+}
-+
- // PublishMsg publishes the Msg structure, which includes the
- // Subject, an optional Reply and an optional Data field.
- func (nc *Conn) PublishMsg(m *Msg) error {
- 	if m == nil {
- 		return ErrInvalidMsg
+ 		// different bucket
+ 		lobs, err := obs.js.ObjectStore(ctx, lbuck)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+-		return lobs.Get(ctx, info.ObjectMeta.Opts.Link.Name)
++		return lobs.Get(ctx, info.ObjectMeta.Opts.Link.Name, opts...)
  	}
--	hdr, err := m.headerBytes()
--	if err != nil {
--		return err
-+	var hdr []byte
-+	if len(m.Header) > 0 {
-+		b := publishHeaderPool.Get().(*bytes.Buffer)
-+		defer func() {
-+			// publish copies the headers into the writer's buffer before returning.
-+			// Do not retain unusually large headers in the pool.
-+			if b.Cap() <= maxPooledHeaderSize {
-+				b.Reset()
-+				publishHeaderPool.Put(b)
-+			}
-+		}()
-+		var err error
-+		hdr, err = m.encodeHeaders(b)
-+		if err != nil {
-+			return err
-+		}
- 	}
- 	validateReply := m.Reply != _EMPTY_
- 	return nc.publish(m.Subject, m.Reply, validateReply, hdr, m.Data)
+ 
+ 	result := &objResult{info: info, ctx: ctx, cancel: cancel}
 ```
 
-**File**: `nats_test.go` (modified, +0/-204)
+**File**: `jetstream/test/object_test.go` (modified, +43/-0)
 ```diff
-@@ -31,13 +31,11 @@ import (
- 	"fmt"
- 	"math/big"
- 	"net"
--	"net/http"
- 	"net/url"
- 	"os"
- 	"reflect"
- 	"regexp"
- 	"runtime"
--	"strconv"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-@@ -1606,165 +1604,6 @@ func TestNoPanicOnSrvPoolSizeChanging(t *testing.T) {
- 	wg.Wait()
- }
- 
--func TestHeaderParser(t *testing.T) {
--	shouldErr := func(hdr string) {
--		t.Helper()
--		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
--			t.Fatalf("Expected an error")
--		}
--	}
--	shouldErr("NATS/1.0")
--	shouldErr("NATS/1.0\r\n")
--	shouldErr("NATS/1.0\r\nk1:v1")
--	shouldErr("NATS/1.0\r\nk1:v1\r\n")
--	shouldErr("NATS/1.0 5\r\n\r\n")
--	shouldErr("NATS/1.0 41\r\n\r\n")
--	shouldErr("NATS/1.0 \r\n\r\n")
--
--	// Check that we can do inline status and descriptions
--	checkStatus := func(hdr string, status int, description string) {
--		t.Helper()
--		hdrs, err := DecodeHeadersMsg([]byte(hdr + "\r\n\r\n"))
--		if err != nil {
--			t.Fatalf("Unexpected error: %v", err)
--		}
--		if code, err := strconv.Atoi(hdrs.Get(statusHdr)); err != nil || code != status {
--			t.Fatalf("Expected status of %d, got %s", status, hdrs.Get(statusHdr))
--		}
--		if len(description) > 0 {
--			if descr := hdrs.Get(descrHdr); err != nil || descr != description {
--				t.Fatalf("Expected description of %q, got %q", description, descr)
--			}
--		}
--	}
--
--	checkStatus("NATS/1.0 503", 503, "")
--	checkStatus("NATS/1.0 503 No Responders", 503, "No Responders")
--	checkStatus("NATS/1.0  404   No Messages", 404, "No Messages")
--}
--
--func TestHeaderMultiLine(t *testing.T) {
--	m := NewMsg("foo")
--	m.Header = Header{
--		"CorrelationID": []string{"123"},
--		"Msg-ID":        []string{"456"},
--		"X-NATS-Keys":   []string{"A", "B", "C"},
--		"X-Test-Keys":   []string{"D", "E", "F"},
--	}
--	// Users can opt-in to canonicalize like http.Header does
--	// by using http.Header#Set or http.Header#Add.
--	http.Header(m.Header).Set("accept-encoding", "json")
--	http.Header(m.Header).Add("AUTHORIZATION", "s3cr3t")
--
--	// Multi Value Header becomes represented as multi-lines in the wire
--	m.Header.Set("X-Test", "First")
--	m.Header.Add("X-Test", "Second")
--	m.Header.Add("X-Test", "Third")
--
--	b, err := m.headerBytes()
--	if err != nil {
--		t.Fatal(err)
--	}
--	result := string(b)
--
--	// Require the header string to have a known prefix and suffix
--	if !strings.HasPrefix(result, "NATS/1.0\r\n") {
--		t.Fatalf("header prefix not present")
--	}
--	if !strings.HasSuffix(result, "\r\n\r\n") {
--		t.Fatalf("header suffix not present")
--	}
--
--	// Require the header string to contain each of the following rows. Note
--	// that headers can be written in any order.
--	expectedHeaderLines := []string{
--		"Accept-Encoding: json\r\n",
--		"Authorization: s3cr3t\r\n",
--		"CorrelationID: 123\r\n",
--		"Msg-ID: 456\r\n",
--		"X-NATS-Keys: A\r\n",
--		"X-NATS-Keys: B\r\n",
--		"X-NATS-Keys: C\r\n",
--		"X-Test: First\r\n",
--		"X-Test: Second\r\n",
--		"X-Test: Third\r\n",
--		"X-Test-Keys: D\r\n",
--		"X-Test-Keys: E\r\n",
--		"X-Test-Keys: F\r\n",
--	}
--	for _, h := range expectedHeaderLines {
--		if !strings.Contains(result, h) {
--			t.Fatalf("expected header line '%s' to be present", h)
--		}
--	}
--}
--
--func TestHeaderValidKeys(t *testing.T) {
--	const validChars = "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~"
--
--	m := NewMsg("foo")
--	m.Header = Header{
--		validChars: []string{"value"},
--	}
--	if _, err := m.headerBytes(); err != nil {
--		t.Fatal(err.Error())
--	}
--}
--
--func TestHeaderInvalidKeys(t *testing.T) {
--	testKeys := []string{
--		"",       // Empty string
--		":",      // Illegal printable ASCII character
--		"\r",     // Non-printable ASCII character
--		"\n",     // Non-printable ASCII character
--		"\t",     // Non-printable ASCII character
--		"\x00",   // Non-printable ASCII character
--		"→",      // Standard Unicode character
--		"\u200b", // Non-printable Unicode character
--	}
--	for _, key := range testKeys {
--		m := NewMsg("foo")
--		m.Header = Header{
--			key: []string{"value"},
--		}
--		if _, err := m.headerBytes(); err == nil {
--			t.Fatalf("expected error for key '%s'", key)
--		}
--	}
--}
--
--func TestHeaderValidValues(t *testing.T) {
--	testValues := []string{
--		"!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",                              // Printable ASCII characters
--		"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1c\x1d\x1e\x1f", // Invisible ASCII characters (except CR/LF)
--		"→",      // Standard Unicode characters
--		"\u200b", // Non-printable Unicode characters
--	}
--	for _, v := range testValues {
--		m := NewMsg(v)
--		m.Header = Header{
--			"key": []string{v},
--		}
--		if _, err := m.headerBytes(); err != nil {
--			t.Fatal(err.Error())
--		}
--	}
--}
--
--func TestHeaderNewlineValue(t *testing.T) {
--	m := NewMsg("foo")
--	m.Header.Set("X-Test", "line1\nline2\rline3")
--
--	b, err := m.headerBytes()
--	if err != nil {
--		t.Fatal(err.Error())
--	}
--	out := string(b)
--	if !strings.Contains(out, 
-```
-
-**File**: `test/bench_test.go` (modified, +29/-22)
-```diff
-@@ -38,29 +38,36 @@ func BenchmarkPublishSpeed(b *testing.B) {
- }
- 
- func BenchmarkPublishSpeedHeaders(b *testing.B) {
--	withServerB(b, func(b *testing.B, nc *nats.Conn) {
--		headers := make(nats.Header, 10)
--		for i := range 10 {
--			headers.Add(
--				fmt.Sprintf("header_%d", i),
--				generateRandomString(32),
--			)
--		}
--		msg := &nats.Msg{
--			Subject: "foo",
--			Header:  headers,
--			Data:    []byte("Hello World"),
--		}
-+	for _, n := range []int{0, 1, 10, 100} {
-+		b.Run(fmt.Sprintf("headers=%d", n), func(b *testing.B) {
-+			withServerB(b, func(b *testing.B, nc *nats.Conn) {
-+				headers := make(nats.Header, n)
-+				for i := range n {
-+					headers.Add(
-+						fmt.Sprintf("header_%d", i),
-+						generateRandomString(32),
-+					)
-+				}
-+				msg := &nats.Msg{
-+					Subject: "foo",
-+					Header:  headers,
-+					Data:    []byte("Hello World"),
-+				}
- 
--		b.ResetTimer()
--		for range b.N {
--			if err := nc.PublishMsg(msg); err != nil {
--				b.Fatalf("Error in benchmark during PublishMsg: %v\n", err)
--			}
--		}
--		nc.Flush()
--		b.StopTimer()
--	})
-+				b.ReportAllocs()
-+				b.ResetTimer()
-+				for range b.N {
-+					if err := nc.PublishMsg(msg); err != nil {
-+						b.Fatalf("Error in benchmark during PublishMsg: %v\n", err)
-+					}
-+				}
-+				if err := nc.Flush(); err != nil {
-+					b.Fatal(err)
-+				}
-+				b.StopTimer()
-+			})
-+		})
-+	}
- }
- 
- func generateRandomString(length int) string {
-```
-
-**File**: `test/headers_test.go` (modified, +59/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"net/http/httptest"
- 	"reflect"
- 	"sort"
-+	"strings"
- 	"sync"
- 	"testing"
- 	"time"
-@@ -55,6 +56,64 @@ func TestBasicHeaders(t *testing.T) {
+@@ -732,6 +732,49 @@ func TestObjectWatch(t *testing.T) {
  	})
  }
  
-+func TestPublishMsgConcurrentHeaders(t *testing.T) {
-+	withServer(t, func(t *testing.T, nc *nats.Conn) {
-+		const publishers, messages = 4, 100
-+		sub, err := nc.SubscribeSync("headers.concurrent")
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		defer sub.Unsubscribe()
++func TestObjectLinksShowDeleted(t *testing.T) {
++	withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++		defer cancel()
++		root, err := js.CreateObjectStore(ctx, jetstream.ObjectStoreConfig{Bucket: "ROOT"})
++		expectOk(t, err)
++		dir, err := js.CreateObjectStore(ctx, jetstream.ObjectStoreConfig{Bucket: "DIR"})
++		expectOk(t, err)
 +
-+		var wg sync.WaitGroup
-+		errs := make(chan error, publishers)
-+		for p := range publishers {
-+			wg.Add(1)
-+			go func() {
-+				defer wg.Done()
-+				for i := range messages {
-+					id := fmt.Sprintf("%d/%d", p, i)
-+					m := &nats.Msg{
-+						Subject: "headers.concurrent",
-+						Data:    []byte(id),
-+						Header:  nats.Header{"X-Value": {id, strings.Repeat(id, i+1)}},
-+					}
-+					if err := nc.PublishMsg(m); err != nil {
-+						errs <- err
-+						return
-+					}
++		info, err := root.PutString(ctx, "A", "AAA")
++		expectOk(t, err)
++		_, err = root.AddLink(ctx, "SAME", info)
++		expectOk(t, err)
++		info, err = dir.PutString(ctx, "A", "BBB")
++		expectOk(t, err)
++		_, err = root.AddLink(ctx, "CROSS", info)
++		expectOk(t, err)
++		expectOk(t, root.Delete(ctx, "A"))
++		expectOk(t, dir.Delete(ctx, "A"))
++
++		for _, name := range []string{"A", "SAME", "CROSS"} {
++			t.Run(name, func(t *testing.T) {
++				_, err := root.Get(ctx, name)
++				expectErr(t, err, jetstream.ErrObjectNotFound)
++
++				result, err := root.Get(ctx, name, jetstream.GetObjectShowDeleted())
++				expectOk(t, err)
++				defer result.Close()
++				info, err := result.Info()
++				expectOk(t, err)
++				if !info.Deleted {
++					t.Fatal("Expected the deleted target's metadata")
 +				}
-+			}()
-+		}
-+		wg.Wait()
-+		close(errs)
-+		for err := range errs {
-+			t.Fatal(err)
-+		}
-+
-+		seen := make(map[string]bool, publishers*messages)
-+		for range publishers * messages {
-+			m, err := sub.NextMsg(time.Second)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			id := string(m.Data)
-+			var p, i int
-+			if _, err := fmt.Sscanf(id, "%d/%d", &p, &i); err != nil || p < 0 || p >= publishers || i < 0 || i >= messages {
-+				t.Fatalf("Invalid message ID %q", id)
-+			}
-+			if seen[id] {
-+				t.Fatalf("Duplicate message %q", id)
-+			}
-+			seen[id] = true
-+			expected := nats.Header{"X-Value": {id, strings.Repeat(id, i+1)}}
-+			if !reflect.DeepEqual(m.Header, expected) {
-+				t.Fatalf("Headers for %q: expected %v, got %v", id, expected, m.Header)
-+			}
++				data, err := io.ReadAll(result)
++				expectOk(t, err)
++				if len(data) != 0 {
++					t.Fatalf("Expected an empty deleted object, got %q", data)
++				}
++			})
 +		}
 +	})
 +}
 +
- func TestRequestMsg(t *testing.T) {
- 	withServer(t, func(t *testing.T, nc *nats.Conn) {
- 		subject := "headers.test"
+ func TestObjectLinks(t *testing.T) {
+ 	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
+ 		ctx := newTesterCtx(t, 10*time.Second)
+```
+
+**File**: `object.go` (modified, +2/-2)
+```diff
+@@ -622,15 +622,15 @@ func (obs *obs) Get(name string, opts ...GetObjectOpt) (ObjectResult, error) {
+ 		// is the link in the same bucket?
+ 		lbuck := info.ObjectMeta.Opts.Link.Bucket
+ 		if lbuck == obs.name {
+-			return obs.Get(info.ObjectMeta.Opts.Link.Name)
++			return obs.Get(info.ObjectMeta.Opts.Link.Name, opts...)
+ 		}
+ 
+ 		// different bucket
+ 		lobs, err := obs.js.ObjectStore(lbuck)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+-		return lobs.Get(info.ObjectMeta.Opts.Link.Name)
++		return lobs.Get(info.ObjectMeta.Opts.Link.Name, opts...)
+ 	}
+ 
+ 	result := &objResult{info: info, ctx: ctx, readTimeout: obs.js.opts.wait}
+```
+
+**File**: `test/object_test.go` (modified, +82/-0)
+```diff
+@@ -670,6 +670,88 @@ func TestObjectWatch(t *testing.T) {
+ 	})
+ }
+ 
++func TestObjectLinksContext(t *testing.T) {
++	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
++		js, err := nc.JetStream()
++		expectOk(t, err)
++
++		root, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "ROOT"})
++		expectOk(t, err)
++		dir, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "DIR"})
++		expectOk(t, err)
++
++		info, err := root.PutString("A", "AAA")
++		expectOk(t, err)
++		_, err = root.AddLink("SAME", info)
++		expectOk(t, err)
++		info, err = dir.PutString("A", "BBB")
++		expectOk(t, err)
++		_, err = root.AddLink("CROSS", info)
++		expectOk(t, err)
++
++		for _, name := range []string{"A", "SAME", "CROSS"} {
++			t.Run(name, func(t *testing.T) {
++				ctx, cancel := context.WithCancel(context.Background())
++				defer cancel()
++				result, err := root.Get(name, nats.Context(ctx))
++				expectOk(t, err)
++				defer result.Close()
++
++				cancel()
++				var buf [1]byte
++				n, err := result.Read(buf[:])
++				expectErr(t, err, context.Canceled)
++				if n != 0 {
++					t.Fatalf("Read returned %d bytes after cancellation", n)
++				}
++			})
++		}
++	})
++}
++
++func TestObjectLinksShowDeleted(t *testing.T) {
++	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
++		js, err := nc.JetStream()
++		expectOk(t, err)
++		root, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "ROOT"})
++		expectOk(t, err)
++		dir, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "DIR"})
++		expectOk(t, err)
++
++		info, err := root.PutString("A", "AAA")
++		expectOk(t, err)
++		_, err = root.AddLink("SAME", info)
++		expectOk(t, err)
++		info, err = dir.PutString("A", "BBB")
++		expectOk(t, err)
++		_, err = root.AddLink("CROSS", info)
++		expectOk(t, err)
++		expectOk(t, root.Delete("A"))
++		expectOk(t, dir.Delete("A"))
++
++		for _, name := range []string{"A", "SAME", "CROSS"} {
++			t.Run(name, func(t *testing.T) {
++				_, err := root.Get(name)
++				expectErr(t, err, nats.ErrObjectNotFound)
++
++				result, err := root.Get(name, nats.GetObjectShowDeleted())
++				expectOk(t, err)
++				defer result.Close()
++				info, err := result.Info()
++				expectOk(t, err)
++				if !info.Deleted {
++					t.Fatal("Expected the deleted target's metadata")
++				}
++				data, err := io.ReadAll(result)
++				expectOk(t, err)
++				if len(data) != 0 {
++					t.Fatalf("Expected an empty deleted object, got %q", data)
++				}
++			})
++		}
++	})
++}
++
+ func TestObjectLinks(t *testing.T) {
+ 	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
+ 		js, err := nc.JetStream(nats.MaxWait(10 * time.Second))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2225** (2026-11-03): [FIXED]  WebSocket frame handling (@piotrpio)
+- **PR #2220** (2026-11-02): [FIXED] Preserve options when following object links (@Grivn)
 - **PR #2219** (2026-10-30): [IMPROVED] Reuse header encoding buffers in PublishMsg (@Grivn)
 - **PR #2218** (2026-10-27): [FIXED] Legacy JetStream reconnect watcher cleanup (@piotrpio)
 - **PR #2217** (2026-10-26): [FIXED] Keep TLS server name for IPs discovered via an IP entry (@igor-kupczynski)
 - **PR #2216** (2026-10-26): [FIXED] Release the JetStream reconnect watcher after publisher cleanup (@Grivn)
-- **PR #2214** (2026-10-23): Release v1.55.0 (@piotrpio)
-- **PR #2213** (2026-10-23): [IMPROVED] Document default MaxAckPending for legacy JetStream subscriptions (@piotrpio)
 
 ---
 
@@ -2143,69 +1986,52 @@ Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)
+## X. [FIXED]  WebSocket frame handling (#2225)
 
 **RULE**:
-When implementing operations in `headers_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ws.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36314d40`: [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14318705`: [FIXED]  WebSocket frame handling (#2225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `headers_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ws.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// Copyright 2012-2026 The NATS Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package nats
-
-import (
-	"bytes"
-	"fmt"
-	"io"
-	"net/http"
-	"strconv"
-	"strings"
-	"testing"
-)
-
-func TestHeaderParser(t *testing.T) {
-	shouldErr := func(hdr string) {
-		t.Helper()
-		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
-			t.Fatalf("Expected an error")
-		}
+	// Read and ReadByte rely on no buffer being empty.
+	if len(b) > 0 {
+		d.bufs = append(d.bufs, b)
 	}
-	shouldErr("NATS/1.0")
-	shouldErr("NATS/1.0\r\n")
-	shouldErr("NATS/1.0\r\nk1:v1")
-	shouldErr("NATS/1.0\r\nk1:v1\r\n")
-	shouldErr("NATS/1.0 5\r\n\r\n")
-	shouldErr("NATS/1.0 41\r\n\r\n")
-	shouldErr("NATS/1.0 \r\n\r\n")
-
-	// Check that we can do inline status and descriptions
-	checkStatus := func(hdr string, status int, description s
+	var statusAndPayloadLen int
+	// 1005 stands for a close frame without status and must not be sent.
+	if status != wsCloseStatusNoStatusReceived {
+		statusAndPayloadLen = 2 + len(payload)
+	}
+	if statusAndPayloadLen > 0 {
+		// Set the status
+		binary.BigEndian.PutUint16(frame[n:], uint16(status))
+		// If there is a payload, copy
+		// Mask status + payload
+		wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
+		// The payload points into the read buffer, which is reused before
+		// the frame is sent if the writer is buffering.
+		payload = bytes.Clone(payload)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	d.bufs = append(d.bufs, b)
+	statusAndPayloadLen := 2 + len(payload)
+	// Set the status
+	binary.BigEndian.PutUint16(frame[n:], uint16(status))
+	// If there is a payload, copy
+	if len(payload) > 0 {
+	// Mask status + payload
+	wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36314d40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14318705` are properly handled with clean fallback behavior.

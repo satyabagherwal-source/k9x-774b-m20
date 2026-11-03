@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "9086c659",
+    "sourceVersion": "f2163b51",
     "license": "MIT",
-    "contentHash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
-    "lastHarvestedAt": "2026-10-31T21:26:57.486Z",
+    "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
+    "lastHarvestedAt": "2026-11-03T19:06:07.818Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "c9555ad4",
+    "sourceVersion": "d8039f36",
     "license": "MIT",
-    "contentHash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
-    "lastHarvestedAt": "2026-10-28T22:58:58.475Z",
+    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
+    "lastHarvestedAt": "2026-11-03T19:05:56.185Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "36314d40",
+    "sourceVersion": "14318705",
     "license": "Apache-2.0",
-    "contentHash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
-    "lastHarvestedAt": "2026-10-30T14:40:27.808Z",
+    "contentHash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
+    "lastHarvestedAt": "2026-11-03T19:06:02.863Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
