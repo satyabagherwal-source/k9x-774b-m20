@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:20:18.840Z",
+  "last_updated": "2026-11-03T23:32:24.050Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35855,8 +35855,8 @@
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "a1fcff90",
-      "content_hash": "34b41002de85351349299f42743474017bf1e4e1468047db997ff928670a4615",
+      "source_version": "74462690",
+      "content_hash": "8b5a6c837d561870a5e95bb0b7f402e7984403555cb7f01e3e7f8a6d61227ff1",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "promoted_rules": [
@@ -35874,6 +35874,11 @@
           "number": 5840,
           "title": "Merge pull request #1132 from krakend/upgrade_gojose",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6658,
+          "title": "Merge pull request #1133 from krakend/dev-3.0.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35881,7 +35886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:29:33.943Z",
+      "verified_at": "2026-11-03T23:32:19.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36649,8 +36654,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "e9b2f7e6",
-      "content_hash": "db52434f09e6aefdf9e82c55d9ace4a808034d8c59a0737dca809165761b8668",
+      "source_version": "28ba3499",
+      "content_hash": "145b8cd43fcebe675d626774c6b0e38ca4c84c71f65947d4475dbab85302b887",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -36718,6 +36723,11 @@
           "number": 6387,
           "title": "support batch size options for column refreshes (#4777)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6660,
+          "title": "deps)!: upgrade candle to remove vulnerable zip",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36725,7 +36735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:56:08.093Z",
+      "verified_at": "2026-11-03T23:32:24.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43356,8 +43366,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "9297e2c3",
-      "content_hash": "7e1589ecc81e8a513af164aac8c1233b904a0d64eaad37800be60202aca5ee9b",
+      "source_version": "1680298d",
+      "content_hash": "93b372f4fbee7e930f25b74c5e8054352077354d4388d9cda2ec89dd67819299",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -43450,6 +43460,11 @@
           "number": 6582,
           "title": "cli): simplify remote session display and selector layout (#2260)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6659,
+          "title": "proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43457,7 +43472,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:56:53.785Z",
+      "verified_at": "2026-11-03T23:32:21.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49035,8 +49050,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "73e3aeca",
-      "content_hash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
+      "source_version": "edf2b86e",
+      "content_hash": "3f760147ca7782b826487f29aec76ca9c5fdbc82e7a9c7494c6475f05befda05",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -49059,6 +49074,11 @@
           "number": 5934,
           "title": "Compile folly's SanitizeLeak.cpp in Fantom's tester",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6657,
+          "title": "iOS Fabric unmount assertions for zero-sized recycled views",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49066,7 +49086,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:15:07.570Z",
+      "verified_at": "2026-11-03T23:32:17.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58153,8 +58173,8 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "e4933f27",
-      "content_hash": "787394e8fb8a7d1c10387c8585009ea9c7d6adc397d28657792304fbd68c4dc4",
+      "source_version": "5d33d8ea",
+      "content_hash": "44a8daa36310118ea67df550d1f664ed7a6f4848b2606d4deff11e14275404f3",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
@@ -58192,6 +58212,11 @@
           "number": 6314,
           "title": "update flake.nix hashes for v0.12.2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6656,
+          "title": "Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58199,7 +58224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:53:10.069Z",
+      "verified_at": "2026-11-03T23:32:12.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171209,6 +171234,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:20:18.819Z"
+    },
+    "rule-6656": {
+      "learning_id": "rule-6656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6656,
+      "title": "Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "5d33d8ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:32:12.886Z"
+    },
+    "rule-6657": {
+      "learning_id": "rule-6657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6657,
+      "title": "iOS Fabric unmount assertions for zero-sized recycled views",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "edf2b86e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:32:17.596Z"
+    },
+    "rule-6658": {
+      "learning_id": "rule-6658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6658,
+      "title": "Merge pull request #1133 from krakend/dev-3.0.3",
+      "source_url": "https://github.com/krakend/krakend-ce",
+      "source_version": "74462690",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:32:19.652Z"
+    },
+    "rule-6659": {
+      "learning_id": "rule-6659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6659,
+      "title": "proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "1680298d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:32:21.730Z"
+    },
+    "rule-6660": {
+      "learning_id": "rule-6660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6660,
+      "title": "deps)!: upgrade candle to remove vulnerable zip",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "28ba3499",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:32:24.029Z"
     }
   },
   "aliases": {

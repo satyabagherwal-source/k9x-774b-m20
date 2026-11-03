@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source**: github ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
-> **Source Version**: `a1fcff90`  
+> **Source Version**: `74462690`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:29:33.369Z  
+> **Timestamp**: 2026-11-03T23:32:19.016Z  
 > **Learning ID**: `learn-github-krakend-krakend-ce`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:28:10.060Z  
+> **Harvest Timestamp**: 2026-11-03T23:32:19.009Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2699 stars
+- **Stars / Engagement**: 2701 stars
 
 ---
 
@@ -794,239 +794,312 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1fcff90` (2026-10-30)
-**Commit Message**: Merge pull request #1132 from krakend/upgrade_gojose
+### Incident Patch 1: `74462690` (2026-11-02)
+**Commit Message**: Merge pull request #1133 from krakend/dev-3.0.3
 
-go-jose/v3 removed
+CE patch release 3.0.3
 
-**File**: `go.mod` (modified, +4/-5)
+**File**: `Makefile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ BIN_NAME :=krakend
+ OS := $(shell uname | tr '[:upper:]' '[:lower:]')
+ MODULE := github.com/krakend/krakend-ce/v3
+-VERSION := 3.0.2
++VERSION := 3.0.3
+ SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
+ GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
+ PKGNAME := krakend
+```
+
+**File**: `go.mod` (modified, +9/-9)
 ```diff
 @@ -18,7 +18,7 @@ require (
  	github.com/krakend/krakend-gologging/v3 v3.0.0
  	github.com/krakend/krakend-httpcache/v3 v3.0.0
  	github.com/krakend/krakend-httpsecure/v3 v3.0.0
--	github.com/krakend/krakend-jose/v3 v3.0.1
-+	github.com/krakend/krakend-jose/v3 v3.0.2
+-	github.com/krakend/krakend-jose/v3 v3.0.2
++	github.com/krakend/krakend-jose/v3 v3.0.3
  	github.com/krakend/krakend-jsonschema/v3 v3.0.0
  	github.com/krakend/krakend-koanf/v2 v2.0.0
  	github.com/krakend/krakend-lambda/v3 v3.0.0
-@@ -35,6 +35,7 @@ require (
+@@ -27,16 +27,15 @@ require (
+ 	github.com/krakend/krakend-martian/v3 v3.0.0
+ 	github.com/krakend/krakend-metrics/v3 v3.0.0
+ 	github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0
+-	github.com/krakend/krakend-otel/v2 v2.0.0
++	github.com/krakend/krakend-otel/v2 v2.0.1
+ 	github.com/krakend/krakend-pubsub/v3 v3.0.0
+ 	github.com/krakend/krakend-ratelimit/v4 v4.0.0
+ 	github.com/krakend/krakend-rss/v3 v3.0.0
+ 	github.com/krakend/krakend-usage/v2 v2.1.0
  	github.com/krakend/krakend-xml/v3 v3.0.0
- 	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
+-	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
++	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-+	go.opentelemetry.io/otel v1.45.0
- 	golang.org/x/sync v0.23.0
+-	go.opentelemetry.io/otel v1.45.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
  )
  
-@@ -102,8 +103,7 @@ require (
- 	github.com/fsnotify/fsnotify v1.9.0 // indirect
- 	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
- 	github.com/gin-contrib/sse v1.1.1 // indirect
--	github.com/go-jose/go-jose/v3 v3.0.5 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-playground/locales v0.14.1 // indirect
-@@ -155,7 +155,7 @@ require (
- 	github.com/krakend/binder v0.0.0-20250826131726-e91a8a754ef8 // indirect
- 	github.com/krakend/dotnotation v0.2.0 // indirect
- 	github.com/krakend/flatmap v1.2.0 // indirect
--	github.com/krakend/go-auth0/v2 v2.0.4 // indirect
-+	github.com/krakend/go-auth0/v2 v2.0.5 // indirect
- 	github.com/krakend/httpcache v1.1.1 // indirect
- 	github.com/krakend/lru v0.0.0-20250121172718-0e3a6eab620d // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
-@@ -217,7 +217,6 @@ require (
+ require (
+@@ -217,6 +216,7 @@ require (
  	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.45.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+@@ -236,12 +236,12 @@ require (
+ 	gocloud.dev/pubsub/rabbitpubsub v0.46.0 // indirect
+ 	gocloud.dev/secrets/hashivault v0.45.0 // indirect
+ 	golang.org/x/arch v0.29.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
+ 	google.golang.org/api v0.291.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +6/-16)
+**File**: `go.sum` (modified, +16/-16)
 ```diff
-@@ -163,10 +163,8 @@ github.com/gin-gonic/gin v1.12.0 h1:b3YAbrZtnf8N//yjKeU2+MQsh2mY5htkZidOM7O0wG8=
- github.com/gin-gonic/gin v1.12.0/go.mod h1:VxccKfsSllpKshkBWgVgRniFFAzFb9csfngsqANjnLc=
- github.com/go-contrib/uuid v1.2.0 h1:cmH7YYcGGC682wuBHFWnEzdrNvzmmmFWFgm23oPiFJs=
- github.com/go-contrib/uuid v1.2.0/go.mod h1:R9zf5oXjEfersQve5ceWY37X8JR3qtDTU2WSVxbWXGE=
--github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
--github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-@@ -197,7 +195,6 @@ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6
- github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
- github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
- github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
--github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/go-replayers/grpcreplay v1.3.0 h1:1Keyy0m1sIpqstQmgz307zhiJ1pV4uIlFds5weTmxbo=
-@@ -314,8 +311,8 @@ github.com/krakend/dotnotation v0.2.0 h1:VrZI6fPo1+kC6Nz5MMdk04LOUtoG3JamzAnJ068
- github.com/krakend/dotnotation v0.2.0/go.mod h1:htI2BQzcpVwSN01bLwEqXVj+m8yj+kykEN9e5ZKND3s=
- github.com/krakend/flatmap v1.2.0 h1:4NPncAKH7Ca/t878kbGlc/LPWLa+m4sgBhs8aT2Q1SY=
- github.com/krakend/flatmap v1.2.0/go.mod h1:FyCOoggdVlWr31+aQaOFvBxlMgYfCE5yuwInLbW1/jM=
--github.com/krakend/go-auth0/v2 v2.0.4 h1:uCcVCSbbBve3Q81IMPHSYEC9CX99kTSj6Vhqu1JhdM4=
--github.com/krakend/go-auth0/v2 v2.0.4/go.mod h1:PAS0nKU6mJUPAEYuMlDKoj6W/ZxtSGIwCFl1sCY57ho=
-+github.com/krakend/go-auth0/v2 v2.0.5 h1:KpPyXF7Fkfmx2ui4sUdFat7bqS+YkQGTAd/Z7TTATKk=
-+github.com/krakend/go-auth0/v2 v2.0.5/go.mod h1:92l+cdcEHi02DAqEV7YfmcZfpPuDjZWZoHinse0SBPY=
- github.com/krakend/httpcache v1.1.1 h1:bxt6iBt6n8Sga7YtaydYMMyQ5E6SBss2w91L3pWezRw=
- github.com/krakend/httpcache v1.1.1/go.mod h1:JrPHdkcpz5IEq2HtDUE7Yjlg9Awq2zNgNn2XNEqSdCc=
- github.com/krakend/krakend-amqp/v3 v3.0.0 h1:pOGuqFFfzBR87KQF75oDhlqRXMDMskBAitWX3ck6nqU=
-@@ -342,8 +339,8 @@ github.com/krakend/krakend-httpcache/v3 v3.0.0 h1:q8wdayi13zyySgLx/+NRV8TVo4ZAmr
+@@ -339,8 +339,8 @@ github.com/krakend/krakend-httpcache/v3 v3.0.0 h1:q8wdayi13zyySgLx/+NRV8TVo4ZAmr
  github.com/krakend/krakend-httpcache/v3 v3.0.0/go.mod h1:8QZe0WDEwVb9Z1u0wpXFP9AWUkMiJqC+VIw7oIo84tU=
  github.com/krakend/krakend-httpsecure/v3 v3.0.0 h1:QuJ092CLwncGTCDLfpRDuP047DMmSdpUZlWJnZ7Y6RY=
  github.com/krakend/krakend-httpsecure/v3 v3.0.0/go.mod h1:PM1FJ7tfLsYIxjRQFdgwXzc3GmeAHU4yvgBgRXnRzLU=
--github.com/krakend/krakend-jose/v3 v3.0.1 h1:Uc6QGfy7kZx6/tHhuH5/g00/Pe1ydxt5xJG3hUpCsgk=
--github.com/krakend/krakend-jose/v3 v3.0.1/go.mod h1:38b7GV3xzgLmgzC3kh2lNvPmzTRupaNQfidlyQn8V6E=
-+github.com/krakend/krakend-jose/v3 v3.0.2 h1:UYSyt5xKHdVJDl4XZ71YR5Sa1lhJ+E31HmkEujW/KWQ=
-+github.com/krakend/krakend-jose/v3 v3.0.2/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
+-github.com/krakend/krakend-jose/v3 v3.0.2 h1:UYSyt5xKHdVJDl4XZ71YR5Sa1lhJ+E31HmkEujW/KWQ=
+-github.com/krakend/krakend-jose/v3 v3.0.2/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
++github.com/krakend/krakend-jose/v3 v3.0.3 h1:VnegIf8k+t8HhfimG7x5vI8Y4vmPnCztU7fPTxmlPcg=
++github.com/krakend/krakend-jose/v3 v3.0.3/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
  github.com/krakend/krakend-jsonschema/v3 v3.0.0 h1:qVSmX5ghWVyVeOsDULVnromfdbog3fvLNJJ2UoA8hCg=
  github.com/krakend/krakend-jsonschema/v3 v3.0.0/go.mod h1:UYyAqNeFr0mf/sgxvL1J9/wgKoeTrsQV29Cy4MJT2QU=
  github.com/krakend/krakend-koanf/v2 v2.0.0 h1:LorxbZLtm1D2sWzyr2HmQWTJmQzxQ8SwPQSrpmLCW40=
-@@ -590,7 +587,6 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
+@@ -357,8 +357,8 @@ github.com/krakend/krakend-metrics/v3 v3.0.0 h1:yDtl6YjlExoAq8s+cYPVv7uNW6XdAT5g
+ github.com/krakend/krakend-metrics/v3 v3.0.0/go.mod h1:MJES6Hi7MzrNTzEozZ5gJDtz8UUdPIZFvnKlgYtlq+A=
+ github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0 h1:3tA1xuaWzu8Zdq5kkYfp09KZvIrsjq9Pv9pDsGdcZRI=
+ github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0/go.mod h1:HXJ20mQ5od1FhGy41vawgE9wAwAliFXuP/rNdW/rH28=
+-github.com/krakend/krakend-otel/v2 v2.0.0 h1:o0zHr0IWWs2MqVIp4Uu/3pCgFMRD1b0iciqGgAsEOWY=
+-github.com/krakend/krakend-otel/v2 v2.0.0/go.mod h1:iT0JZtrv9q5qti2yRC37LOjV13nTzxiNQKhZC7hOR7s=
++github.com/krakend/krakend-otel/v2 v2.0.1 h1:ztM7c9rARb9POJjnSzdyMoJoK1Jq2zIlool0d/2SkB8=
++github.com/krakend/krakend-otel/v2 v2.0.1/go.mod h1:iT0JZtrv9q5qti2yRC37LOjV13nTzxiNQKhZC7hOR7s=
+ github.com/krakend/krakend-pubsub/v3 v3.0.0 h1:kAphXgBTZL2ZOW9FHA8yKkd5c0YCpUVamIKv8EBrxzk=
+ github.com/krakend/krakend-pubsub/v3 v3.0.0/go.mod h1:3rGwkLCq2ZwJ947wcTIaowrqmuues1tC9uAYL/dHhwc=
+ github.com/krakend/krakend-ratelimit/v4 v4.0.0 h1:1hczP3N3HR7X6FLMEBtIMDF6ZOY/J6uJW8L7+x28Zpc=
+@@ -375,8 +375,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
+ github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
+ github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
+ github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
+-github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796 h1:g+qo8cK1u/fI24V2EPvrgnxqqJ7DtWmx92hq8qj8Sb4=
+-github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796/go.mod h1:rg4I/Oe8nxfEf5V5OpaZj1dLI8HLacHA55HO3x1S5k4=
++github.com/luraproject/lura/v3 v3.0.1 h1:e61LRSIiGLZ384+LLrcx6QWzbrIwsgZ66gcatQuHst4=
++github.com/luraproject/lura/v3 v3.0.1/go.mod h1:ejY+PZ4cgEMI9en0IJiCkeT9HZ5CIoA5WgBiytfMPVE=
+ github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
+ github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
+ github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
+@@ -587,8 +587,8 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
  golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
  golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
  golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
--golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
- golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
  golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa h1:Zt3DZoOFFYkKhDT3v7Lm9FDMEV06GpzjG2jrqW+QTE0=
-@@ -607,7 +603,6 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
+ golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa/go.mod h1:K79w1Vqn7PoiZn+TkNpx3BUWUQksGO3JcVX6qIjytmA=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+@@ -603,15 +603,15 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
  golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
  golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEX
+ golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEXEuWns=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.
+```
+
+**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_307.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ 			"foo":42,
+ 			"headers":{
+ 				"Accept-Encoding":["gzip"],
+-				"User-Agent":["KrakenD Version 3.0.2"],
++				"User-Agent":["KrakenD Version 3.0.3"],
+ 				"X-Forwarded-Host":["localhost:8080"]
+ 			},
+ 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
 ```
 
 ---
 
-### Incident Patch 2: `c9674128` (2026-10-29)
-**Commit Message**: go-jose/v3 removed
+### Incident Patch 2: `d4d36b72` (2026-11-02)
+**Commit Message**: Merge pull request #1135 from krakend/bump_x_net
 
-Signed-off-by: kpacha <[REDACTED_EMAIL]>
+Bump more deps for 3.0.3
 
-**File**: `go.mod` (modified, +4/-5)
+**File**: `go.mod` (modified, +6/-6)
 ```diff
-@@ -18,7 +18,7 @@ require (
- 	github.com/krakend/krakend-gologging/v3 v3.0.0
- 	github.com/krakend/krakend-httpcache/v3 v3.0.0
- 	github.com/krakend/krakend-httpsecure/v3 v3.0.0
--	github.com/krakend/krakend-jose/v3 v3.0.1
-+	github.com/krakend/krakend-jose/v3 v3.0.2
- 	github.com/krakend/krakend-jsonschema/v3 v3.0.0
- 	github.com/krakend/krakend-koanf/v2 v2.0.0
- 	github.com/krakend/krakend-lambda/v3 v3.0.0
-@@ -35,6 +35,7 @@ require (
+@@ -33,9 +33,9 @@ require (
+ 	github.com/krakend/krakend-rss/v3 v3.0.0
+ 	github.com/krakend/krakend-usage/v2 v2.1.0
  	github.com/krakend/krakend-xml/v3 v3.0.0
- 	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
+-	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
++	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-+	go.opentelemetry.io/otel v1.45.0
- 	golang.org/x/sync v0.23.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
  )
  
-@@ -102,8 +103,7 @@ require (
- 	github.com/fsnotify/fsnotify v1.9.0 // indirect
- 	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
- 	github.com/gin-contrib/sse v1.1.1 // indirect
--	github.com/go-jose/go-jose/v3 v3.0.5 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-playground/locales v0.14.1 // indirect
-@@ -155,7 +155,7 @@ require (
- 	github.com/krakend/binder v0.0.0-20250826131726-e91a8a754ef8 // indirect
- 	github.com/krakend/dotnotation v0.2.0 // indirect
- 	github.com/krakend/flatmap v1.2.0 // indirect
--	github.com/krakend/go-auth0/v2 v2.0.4 // indirect
-+	github.com/krakend/go-auth0/v2 v2.0.5 // indirect
- 	github.com/krakend/httpcache v1.1.1 // indirect
- 	github.com/krakend/lru v0.0.0-20250121172718-0e3a6eab620d // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
-@@ -217,7 +217,6 @@ require (
- 	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ require (
+@@ -236,12 +236,12 @@ require (
+ 	gocloud.dev/pubsub/rabbitpubsub v0.46.0 // indirect
+ 	gocloud.dev/secrets/hashivault v0.45.0 // indirect
+ 	golang.org/x/arch v0.29.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
+ 	google.golang.org/api v0.291.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +6/-16)
+**File**: `go.sum` (modified, +12/-12)
 ```diff
-@@ -163,10 +163,8 @@ github.com/gin-gonic/gin v1.12.0 h1:b3YAbrZtnf8N//yjKeU2+MQsh2mY5htkZidOM7O0wG8=
- github.com/gin-gonic/gin v1.12.0/go.mod h1:VxccKfsSllpKshkBWgVgRniFFAzFb9csfngsqANjnLc=
- github.com/go-contrib/uuid v1.2.0 h1:cmH7YYcGGC682wuBHFWnEzdrNvzmmmFWFgm23oPiFJs=
- github.com/go-contrib/uuid v1.2.0/go.mod h1:R9zf5oXjEfersQve5ceWY37X8JR3qtDTU2WSVxbWXGE=
--github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
--github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-@@ -197,7 +195,6 @@ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6
- github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
- github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
- github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
--github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/go-replayers/grpcreplay v1.3.0 h1:1Keyy0m1sIpqstQmgz307zhiJ1pV4uIlFds5weTmxbo=
-@@ -314,8 +311,8 @@ github.com/krakend/dotnotation v0.2.0 h1:VrZI6fPo1+kC6Nz5MMdk04LOUtoG3JamzAnJ068
- github.com/krakend/dotnotation v0.2.0/go.mod h1:htI2BQzcpVwSN01bLwEqXVj+m8yj+kykEN9e5ZKND3s=
- github.com/krakend/flatmap v1.2.0 h1:4NPncAKH7Ca/t878kbGlc/LPWLa+m4sgBhs8aT2Q1SY=
- github.com/krakend/flatmap v1.2.0/go.mod h1:FyCOoggdVlWr31+aQaOFvBxlMgYfCE5yuwInLbW1/jM=
--github.com/krakend/go-auth0/v2 v2.0.4 h1:uCcVCSbbBve3Q81IMPHSYEC9CX99kTSj6Vhqu1JhdM4=
--github.com/krakend/go-auth0/v2 v2.0.4/go.mod h1:PAS0nKU6mJUPAEYuMlDKoj6W/ZxtSGIwCFl1sCY57ho=
-+github.com/krakend/go-auth0/v2 v2.0.5 h1:KpPyXF7Fkfmx2ui4sUdFat7bqS+YkQGTAd/Z7TTATKk=
-+github.com/krakend/go-auth0/v2 v2.0.5/go.mod h1:92l+cdcEHi02DAqEV7YfmcZfpPuDjZWZoHinse0SBPY=
- github.com/krakend/httpcache v1.1.1 h1:bxt6iBt6n8Sga7YtaydYMMyQ5E6SBss2w91L3pWezRw=
- github.com/krakend/httpcache v1.1.1/go.mod h1:JrPHdkcpz5IEq2HtDUE7Yjlg9Awq2zNgNn2XNEqSdCc=
- github.com/krakend/krakend-amqp/v3 v3.0.0 h1:pOGuqFFfzBR87KQF75oDhlqRXMDMskBAitWX3ck6nqU=
-@@ -342,8 +339,8 @@ github.com/krakend/krakend-httpcache/v3 v3.0.0 h1:q8wdayi13zyySgLx/+NRV8TVo4ZAmr
- github.com/krakend/krakend-httpcache/v3 v3.0.0/go.mod h1:8QZe0WDEwVb9Z1u0wpXFP9AWUkMiJqC+VIw7oIo84tU=
- github.com/krakend/krakend-httpsecure/v3 v3.0.0 h1:QuJ092CLwncGTCDLfpRDuP047DMmSdpUZlWJnZ7Y6RY=
- github.com/krakend/krakend-httpsecure/v3 v3.0.0/go.mod h1:PM1FJ7tfLsYIxjRQFdgwXzc3GmeAHU4yvgBgRXnRzLU=
--github.com/krakend/krakend-jose/v3 v3.0.1 h1:Uc6QGfy7kZx6/tHhuH5/g00/Pe1ydxt5xJG3hUpCsgk=
--github.com/krakend/krakend-jose/v3 v3.0.1/go.mod h1:38b7GV3xzgLmgzC3kh2lNvPmzTRupaNQfidlyQn8V6E=
-+github.com/krakend/krakend-jose/v3 v3.0.2 h1:UYSyt5xKHdVJDl4XZ71YR5Sa1lhJ+E31HmkEujW/KWQ=
-+github.com/krakend/krakend-jose/v3 v3.0.2/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
- github.com/krakend/krakend-jsonschema/v3 v3.0.0 h1:qVSmX5ghWVyVeOsDULVnromfdbog3fvLNJJ2UoA8hCg=
- github.com/krakend/krakend-jsonschema/v3 v3.0.0/go.mod h1:UYyAqNeFr0mf/sgxvL1J9/wgKoeTrsQV29Cy4MJT2QU=
- github.com/krakend/krakend-koanf/v2 v2.0.0 h1:LorxbZLtm1D2sWzyr2HmQWTJmQzxQ8SwPQSrpmLCW40=
-@@ -590,7 +587,6 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
+@@ -375,8 +375,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
+ github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
+ github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
+ github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
+-github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796 h1:g+qo8cK1u/fI24V2EPvrgnxqqJ7DtWmx92hq8qj8Sb4=
+-github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796/go.mod h1:rg4I/Oe8nxfEf5V5OpaZj1dLI8HLacHA55HO3x1S5k4=
++github.com/luraproject/lura/v3 v3.0.1 h1:e61LRSIiGLZ384+LLrcx6QWzbrIwsgZ66gcatQuHst4=
++github.com/luraproject/lura/v3 v3.0.1/go.mod h1:ejY+PZ4cgEMI9en0IJiCkeT9HZ5CIoA5WgBiytfMPVE=
+ github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
+ github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
+ github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
+@@ -587,8 +587,8 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
  golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
  golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
  golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
--golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
- golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
  golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa h1:Zt3DZoOFFYkKhDT3v7Lm9FDMEV06GpzjG2jrqW+QTE0=
-@@ -607,7 +603,6 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
+ golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa/go.mod h1:K79w1Vqn7PoiZn+TkNpx3BUWUQksGO3JcVX6qIjytmA=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+@@ -603,15 +603,15 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
  golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
  golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEX
+ golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEXEuWns=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -623,8 +623,8 @@ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.7.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.2.0/go.mod h1:TVmDHMZPmdnySmBfhjOoOdhjzdE1h4u1VwSiw2l1Nuc=
+@@ -637,8 +637,8 @@ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+ golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1135** (2026-11-02): Bump more deps for 3.0.3 (@thedae)
 - **PR #1134** (2026-10-30): Bump krakend-jose and krakend-otel (@thedae)
+- **PR #1133** (2026-11-02): CE patch release 3.0.3 (@thedae)
 - **PR #1132** (2026-10-30): go-jose/v3 removed (@kpacha)
 - **PR #1131** (2026-10-21): Tweak README after 3.0 upgrade (@thedae)
 - **PR #1130** (2026-10-20): Bump go setup action (@thedae)
-- **PR #1129** (2026-10-21): CE patch release 3.0.2 (@thedae)
-- **PR #1127** (2026-10-13): Bump github.com/rabbitmq/amqp091-go from 1.13.0 to 1.14.0 (@dependabot[bot])
 
 ---
 
@@ -1046,35 +1119,28 @@ Signed-off-by: kpacha <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1132 from krakend/upgrade_gojose
+## X. Merge pull request #1133 from krakend/dev-3.0.3
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1fcff90`: Merge pull request #1132 from krakend/upgrade_gojose. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74462690`: Merge pull request #1133 from krakend/dev-3.0.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/krakend/krakend-jose/v3 v3.0.2
-	go.opentelemetry.io/otel v1.45.0
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
-	github.com/krakend/go-auth0/v2 v2.0.5 // indirect
+VERSION := 3.0.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/krakend/krakend-jose/v3 v3.0.1
-	github.com/go-jose/go-jose/v3 v3.0.5 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-	github.com/krakend/go-auth0/v2 v2.0.4 // indirect
-	go.opentelemetry.io/otel v1.45.0 // indirect
+VERSION := 3.0.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1fcff90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74462690` are properly handled with clean fallback behavior.

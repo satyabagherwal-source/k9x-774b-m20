@@ -7064,3 +7064,8 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `28f8ba4a` | Multi-dimensional audit evidence | 2026-11-03T23:13:19.226Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `fbe27c3e` | Multi-dimensional audit evidence | 2026-11-03T23:20:13.167Z |
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `7bcadd29` | Multi-dimensional audit evidence | 2026-11-03T23:20:18.925Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `5d33d8ea` | Multi-dimensional audit evidence | 2026-11-03T23:32:12.992Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `edf2b86e` | Multi-dimensional audit evidence | 2026-11-03T23:32:17.705Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `74462690` | Multi-dimensional audit evidence | 2026-11-03T23:32:19.769Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `1680298d` | Multi-dimensional audit evidence | 2026-11-03T23:32:21.837Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `28ba3499` | Multi-dimensional audit evidence | 2026-11-03T23:32:24.135Z |

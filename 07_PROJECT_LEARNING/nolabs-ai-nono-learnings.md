@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `9297e2c3`  
+> **Source Version**: `1680298d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:56:53.036Z  
+> **Timestamp**: 2026-11-03T23:32:21.105Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:56:53.026Z  
+> **Harvest Timestamp**: 2026-11-03T23:32:21.097Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2980,157 +2980,277 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9297e2c3` (2026-11-03)
-**Commit Message**: refactor(cli): simplify remote session display and selector layout (#2260)
+### Incident Patch 1: `1680298d` (2026-11-03)
+**Commit Message**: fix(proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)
 
-Remove raw session ID columns from `nono ps` tables and interactive selector cards to keep the UI clean and scannable. Fall back to using the global session ID as the display name when no explicit session name is recorded by the runtime.
+Endpoint rules (allow_domain endpoints, URL-form --allow-domain, and
+endpoint_rules on routes) were only evaluated on the TLS-intercept and
+reverse-proxy paths. Absolute-form http:// requests sent via HTTP_PROXY
+are handled by handle_forward_http, which checked only the host filter,
+so any method and path on an allowed host was forwarded — the rules
+looked enforced while plain-HTTP traffic bypassed them entirely.
 
-- Omit binary paths from agent metadata display to filter out internal activation scripts
-- Display the platform or console host label across section headers and target selection outputs
-- Reduce selector card height from 3 to 2 lines per session to fit more items on screen
+Evaluate the endpoint policy of matching routes on the forward path too,
+mirroring select_intercept_route's authorization semantics: explicit
+denies and approve-required rules fail closed with 403 + an
+EndpointPolicy audit event, legacy allow-lists gate via the
+endpoint-only layer, and catch-all routes impose no L7 constraint.
+Candidate routes are matched by upstream host with an 80→443 alias so
+https-registered rules also cover plain-HTTP default-port requests,
+while loopback routes keep their explicit port so distinct local
+services never gate each other.
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+Closes #2174
 
-**File**: `crates/nono-cli/src/connect_client.rs` (modified, +151/-89)
+Signed-off-by: LuckVd <[REDACTED_EMAIL]>
+Co-authored-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-proxy/src/route.rs` (modified, +115/-0)
 ```diff
-@@ -37,7 +37,7 @@ const DEFAULT_DETACH_SEQUENCE: &[u8] = &[0x1d, b'd'];
- const WEBSOCKET_CONNECT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
- const TERMINAL_PROTOCOL_V1: &str = "nono.terminal.v1";
- const SELECTOR_HEADER_ROWS: u16 = 7;
--const SELECTOR_ROWS_PER_SESSION: u16 = 3;
-+const SELECTOR_ROWS_PER_SESSION: u16 = 2;
- static REMOTE_EXIT_CODE: AtomicI32 = AtomicI32::new(0);
+@@ -451,6 +451,52 @@ impl RouteStore {
+         matches
+     }
  
- #[derive(Debug, Deserialize)]
-@@ -218,13 +218,7 @@ pub(crate) fn run_remote_ps(args: &PsArgs) -> Result<()> {
++    /// Return all routes whose endpoint policy can constrain a plain-HTTP
++    /// forward-proxy request to `host:port`.
++    ///
++    /// The absolute-form forward path (`handle_forward_http`) sees
++    /// `http://host:port/…` targets. A route is a candidate when its upstream
++    /// host matches (wildcard-aware, same grammar as the host filter) and
++    /// either its upstream port equals the request port, or the request uses
++    /// the plain-HTTP default port 80 and the route is the port-443 `https`
++    /// upstream of the same host: `allow_domain` entries with endpoints (and
++    /// URL-form `--allow-domain 'https://host/path'`) always compile to
++    /// `https` upstreams, so without that alias every `http://` request would
++    /// bypass the rules entirely (issue #2174). Loopback routes keep their
++    /// explicit port (often an `http://` upstream on a non-default port), so
++    /// different local services on the same host never gate each other.
++    #[must_use]
++    pub fn lookup_forward_endpoint_candidates(
++        &self,
++        host: &str,
++        port: u16,
++    ) -> Vec<(&str, &LoadedRoute)> {
++        let normalised_host = match host.parse::<std::net::IpAddr>() {
++            Ok(std::net::IpAddr::V4(v4)) => v4.to_string(),
++            Ok(std::net::IpAddr::V6(v6)) => format!("[{v6}]"),
++            Err(_) => nono::net_filter::HostFilter::normalize_authority_host(host),
++        };
++        let request_port = port.to_string();
++        let mut matches: Vec<_> = self
++            .routes
++            .iter()
++            .filter(|(_, route)| {
++                route
++                    .upstream_host_port
++                    .as_ref()
++                    .and_then(|hp| hp.rsplit_once(':'))
++                    .is_some_and(|(pattern_host, pattern_port)| {
++                        nono::net_filter::host_pattern_matches(pattern_host, &normalised_host)
++                            && (pattern_port == request_port
++                                || (port == 80 && pattern_port == "443"))
++                    })
++            })
++            .map(|(prefix, route)| (prefix.as_str(), route))
++            .collect();
++        matches.sort_by_key(|(prefix, _)| *prefix);
++        matches
++    }
++
+     /// Whether any route for `host:port` requires TLS interception.
+     #[must_use]
+     pub fn has_intercept_route(&self, host_port: &str) -> bool {
+@@ -1085,6 +1131,75 @@ mod tests {
+         assert!(!store.is_route_upstream("github.com:443"));
+     }
+ 
++    /// Candidates for the plain-HTTP forward path (issue #2174): exact-port
++    /// matches always apply; port-80 requests also see the port-443 `https`
++    /// upstream of the same host; other ports on the same host do not gate
++    /// each other (loopback services on distinct ports stay independent).
++    #[tokio::test]
++    async fn test_forward_endpoint_candidates() {
++        fn route(prefix: &str, upstream: &str) -> RouteConfig {
++            RouteConfig {
++                redeem_phantoms: Vec::new(),
++                prefix: prefix.to_string(),
++                upstream: upstream.to_string(),
++                credential_key: None,
++                inject_mode: Default::default(),
++                inject_header: "Authorization".to_string(),
++                credential_format: None,
++                path_pattern: None,
++                path_replacement: None,
++                query_param_name: None,
++                proxy: None,
++                env_var: None,
++                endpoint_rules: vec![EndpointRule {
++                    method: "GET".to_string(),
++                    path: "/get".to_string(),
++                }],
++                endpoint_policy: None,
++                tls_ca: None,
++                tls_client_cert: None,
++                tls_client_key: None,
++                oauth2: None,
++                aws_auth: None,
++                spiffe: None,
++                upgrades: vec![],
++                rate_limit: None,
++            }
++        }
++
++        let routes = vec![
++            route("api", "https://api.example.com"),
++            route("local", "http://127.0.0.1:3000"),
++            route("wild", "https://*.example.com"),
++        ];
++        let store = RouteStore::load(&routes).await.unwrap();
++
++        let prefixes = |host: &str, port: u16| -> Vec<String> {
++            store
++                .lookup_forward_endpoint_candidates(host, port)
++                .into_iter()
++                .map(|(prefix, _)| prefix.to_string())
++                .collect()
++        };
++
++        // Exact upstream port match.
++        assert_eq!(prefixes("api.example.com", 443), vec!["api", "wild"]);
++        // Plain-HTTP default port 80 sees the https (443) upstream of the
++        // same host — the issue #2174 bypass.
++        assert_eq!(prefixes("api.example.com", 80), vec!["api", "wild"]);
++        // Wildcard route upstreams match subdomains.
++        asser
+```
+
+**File**: `crates/nono-proxy/src/server.rs` (modified, +367/-11)
+```diff
+@@ -9,7 +9,7 @@
+ 
+ use crate::audit;
+ use crate::capture::CredentialCaptureBackend;
+-use crate::config::ProxyConfig;
++use crate::config::{EndpointPolicyOutcome, ProxyConfig};
+ use crate::connect;
+ use crate::credential::CredentialStore;
+ use crate::error::{ProxyError, Result};
+@@ -2279,16 +2279,8 @@ async fn handle_forward_http(
          return Ok(());
      }
  
--    let enrollment = crate::platform_client::load_state()?;
--    print_remote_sessions(
--        &sessions,
--        args.all,
--        &console,
--        enrollment.as_ref().map(|state| state.platform_url.as_str()),
--    );
-+    print_remote_sessions(&sessions, args.all, &remote_host_label(&access, &console));
-     Ok(())
- }
+-    // 3. Read the request body before building upstream headers so chunked
+-    //    framing can be decoded and re-written with Content-Length.
+-    let body = match reverse::read_request_body(stream, header_bytes, buffered).await? {
+-        Some(body) => body,
+-        None => return Ok(()), // send_error already written (e.g. 413 / 400)
+-    };
+-
+-    // Build the origin-form request bytes: rewritten request line +
+-    // proxy-header-stripped header block + optional Content-Length +
+-    // terminating CRLF.
++    // Build the origin-form request line and extract method + path so the
++    // endpoint-policy gate below can evaluate the L7 rules.
+     let origin_line = rewrite_absolute_to_origin_form(first_line)?;
+     let inbound_path = origin_line
+         .split_whitespace()
+@@ -2301,6 +2293,24 @@ async fn handle_forward_http(
+         .unwrap_or("GET")
+         .to_string();
  
-@@ -244,6 +238,8 @@ pub(crate) fn take_remote_exit_code() -> Option<i32> {
- pub(crate) struct ConsoleAccess {
-     pub(crate) credential: ApiCredential,
-     pub(crate) session_console: Option<Url>,
-+    /// The platform a `nono login` session is signed in to. Display only.
-+    pub(crate) session_platform: Option<String>,
- }
- 
- /// Choose the console credential: an explicit token file or
-@@ -256,6 +252,7 @@ pub(crate) fn console_access(token_file: Option<&Path>) -> Result<ConsoleAccess>
-         return Ok(ConsoleAccess {
-             credential: session.credential,
-             session_console: session.console_url,
-+            session_platform: Some(session.platform_url),
-         });
-     }
-     if !explicit && crate::platform_oauth::org_override()?.is_some() {
-@@ -267,6 +264,7 @@ pub(crate) fn console_access(token_file: Option<&Path>) -> Result<ConsoleAccess>
-     Ok(ConsoleAccess {
-         credential: load_token(token_file)?,
-         session_console: None,
-+        session_platform: None,
-     })
- }
- 
-@@ -296,11 +294,12 @@ fn resolve_attach_url(
-     }
- 
-     let console_url = resolve_console(console, access)?;
-+    let host = remote_host_label(access, &console_url);
-     let session = match target {
-         Some(value) => select_named_session(&list_live_sessions(&console_url, token)?, value)?,
--        None => select_interactively(&list_live_sessions(&console_url, token)?)?,
-+        None => select_interactively(&list_live_sessions(&console_url, token)?, &host)?,
-     };
--    print_connect_target(&session, &console_url);
-+    print_connect_target(&session, &host);
-     terminal_url(&console_url, &session.global_session_id)
- }
- 
-@@ -901,7 +900,6 @@ fn filter_remote_sessions(mut sessions: Vec<RemoteSession>, all: bool) -> Vec<Re
- }
- 
- struct RemoteDisplayRow {
--    session: String,
-     name: String,
-     status: String,
-     agent: String,
-@@ -912,36 +910,36 @@ struct RemoteDisplayRow {
- impl RemoteDisplayRow {
-     fn from_session(session: &RemoteSession) -> Self {
-         Self {
--            session: terminal_text(&session.global_session_id),
--            name: terminal_text(remote_name(session)),
-+            name: terminal_text(remote_display_name(session)),
-             status: terminal_text(remote_status(session)),
-             agent: terminal_text(remote_agent(session)),
-             repo: terminal_text(&remote_repo(session)),
-             live: is_live_session(session),
-         }
-     }
-+
-+    /// `agent · repo`, omitting fields the console did not report.
-+    fn metadata(&self) -> Option<String> {
-+        let parts = [self.agent.as_str(), self.repo.as_str()]
-+            .into_iter()
-+            .filter(|part| *part != "-")
-+            .collect::<Vec<_>>();
-+        (!parts.is_empty()).then(|| parts.join(" · "))
++    // 2b. Endpoint-policy gate. The host filter authorizes the HOST; endpoint
++    //     rules configured on routes for that host restrict which method+path
++    //     combinations may pass. The CONNECT-intercept path enforces them via
++    //     `select_intercept_route`; without the same gate here every
++    //     plain-HTTP request to an allowed host would bypass the rules
++    //     entirely (issue #2174).
++    if enforce_forward_http_endpoint_rules(state, &host, port, &method, &inbound_path).await {
++        reverse::send_error_generic(stream, 403, "Forbidden").await?;
++        return Ok(());
 +    }
- }
- 
- #[derive(Debug, Eq, PartialEq)]
- struct RemoteTableLayout {
--    widths: [usize; 5],
-+    widths: [usize; 4],
-     compact: bool,
- }
- 
--fn print_remote_sessions(
--    sessions: &[RemoteSession],
--    all: bool,
--    console: &Url,
--    platform_url: Option<&str>,
--) {
--    if let Some(platform_url) = platform_url {
--        println!("  Platform: {}", terminal_text(platform_url));
--    }
-+fn print_remote_sessions(sessions: &[RemoteSession], all: bool, host: &str) {
-     if sessions.is_empty() {
-         if all {
--            eprintln!("No remote sessions found.");
-+            eprintln!("No remote sessions found on {host}.");
-         } else {
--            eprintln!("No live remote sessions. Use --all to include inactive sessions.");
-+            eprintln!("No live remote sessions on {host}. Use --all to include inactive sessions.");
-         }
-         return;
++
++    // 3. Read the request body before building upstream headers so chunked
++    //    framing can be decoded and re-written with Content-Length.
++    let body = match reverse::read_request_body(stream, header_bytes, buffered).await? {
++        Some(body) => body,
++        None => return Ok(()), // send_error already written (e.g. 413 / 400)
++    };
++
+     // Target matches a route's upstream (not nono's own port, handled above) —
+     // redeem any phantom nonce before forwarding, as CONNECT already does.
+     let host_port = crate::route::format_host_port(&host, port);
+@@ -2433,6 +2443,112 @@ async fn handle_forward_http(
      }
-@@ -960,8 +958,8 @@ fn print_remote_sessions(
-     println!(
-         "  {}  {}  {}",
-         "REMOTE SESSIONS".bold(),
-+        host.bold(),
-         summary.dimmed(),
--        console_label(console).dimmed(),
-     );
-     println!();
- 
-@@ -975,12 +973,12 @@ fn print_remote_sessions(
  }
  
- fn remote_table_layout(rows: &[RemoteDisplayRow], columns: usize) -> RemoteTableLayout {
--    const HEADERS: [&str; 5] = ["NAME", "STATUS", "AGENT", "R
++/// Audit an endpoint-policy denial on the plain-HTTP forward path.
++async fn log_forward_endpoint_denial(
++    state: &ProxyState,
++    host: &str,
++    port: u16,
++    route_id: Option<&str>,
++    reason: &str,
++) {
++    warn!("forward-http: {}", reason);
++    audit::log_denied(
++        state.audit_log.as_ref(),
++        audit::ProxyMode::Reverse,
++        &audit::EventContext {
++            route_id,
++            denial_category: Some(nono::undo::NetworkAuditDenialCategory::EndpointPolicy),
++            ..audit::EventContext::default()
++        },
++        host,
++        port,
++        reason,
++    );
++}
++
++/// Evaluate the endpoint rules configured on routes matching an absolute-form
++/// forward target, mirroring `select_intercept_route`'s authorization
++/// semantics (without credential selection, approval workflows, or rate
++/// limiting — the forward path is a transparent proxy that never injects a
++/// managed credential).
++///
++/// Returns `true` when the request must be denied (the caller responds 403);
++/// `false` when it may proceed.
++async fn enforce_forward_http_endpoint_rules(
++    state: &ProxyState,
++    host: &str,
++    port: u16,
++    method: &str,
++    path: &str,
++) -> bool {
++    let candidates = state
++        .route_store
++        .lookup_forward_endpoint_candidates(host, port);
++    if candidates.is_empty() {
++        return false;
++    }
++
++    let mut has_endpoint_only_route = false;
++    let mut endpoint_authorized = false;
++    for (prefix, route) in &candidates {
++        if route.endpoint_policy.allows_all_without_l7() {
++            // Catch-all route for this host: no L7 constraint.
++            continue;
++        }
++        match route.endpoint_policy.evaluate(method, path) {
++            EndpointPolicyOutcome::Allow { .. } => {
++                endpoint_authorized = true;
++            }
++            EndpointPolicyOutcome::Approve { rule_label, .. } => {
++                // Approval workflows have no client surface on the
++                // plain-HTTP forward path; fail closed.
++                let reason = format!(
++                    "endpoint rule {} requires approval, which is not supported \
++                     on the plain-HTTP forward path: {} {} on {}:{}",
++                    rule_label, method, path, host, port
++                );
++                log_forward_endpoint_denial(state, host, port, Some(prefix), &reason).await;
++                return true;
++            }
++         
 ```
 
 #### Recent Merged Pull Requests:
@@ -3159,77 +3279,49 @@ Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): simplify remote session display and selector layout (#2260)
+## X. proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/connect_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-proxy/src/route.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9297e2c3`: cli): simplify remote session display and selector layout (#2260). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1680298d`: proxy): enforce endpoint rules on plain-HTTP forward requests (#2184). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/connect_client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/route.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const SELECTOR_ROWS_PER_SESSION: u16 = 2;
-    print_remote_sessions(&sessions, args.all, &remote_host_label(&access, &console));
-    /// The platform a `nono login` session is signed in to. Display only.
-    pub(crate) session_platform: Option<String>,
-            session_platform: Some(session.platform_url),
-        session_platform: None,
-    let host = remote_host_label(access, &console_url);
-        None => select_interactively(&list_live_sessions(&console_url, token)?, &host)?,
-    print_connect_target(&session, &host);
-            name: terminal_text(remote_display_name(session)),
-
-    /// `agent · repo`, omitting fields the console did not report.
-    fn metadata(&self) -> Option<String> {
-        let parts = [self.agent.as_str(), self.repo.as_str()]
-            .into_iter()
-            .filter(|part| *part != "-")
-            .collect::<Vec<_>>();
-        (!parts.is_empty()).then(|| parts.join(" · "))
-    }
-    widths: [usize; 4],
-fn print_remote_sessions(sessions: &[RemoteSession], all: bool, host: &str) {
-            eprintln!("No remote sessions found on {host}.");
-            eprintln!("No live remote sessions on {host}. Use --all to include inactive sessions.");
-      
+    /// Return all routes whose endpoint policy can constrain a plain-HTTP
+    /// forward-proxy request to `host:port`.
+    ///
+    /// The absolute-form forward path (`handle_forward_http`) sees
+    /// `http://host:port/…` targets. A route is a candidate when its upstream
+    /// host matches (wildcard-aware, same grammar as the host filter) and
+    /// either its upstream port equals the request port, or the request uses
+    /// the plain-HTTP default port 80 and the route is the port-443 `https`
+    /// upstream of the same host: `allow_domain` entries with endpoints (and
+    /// URL-form `--allow-domain 'https://host/path'`) always compile to
+    /// `https` upstreams, so without that alias every `http://` request would
+    /// bypass the rules entirely (issue #2174). Loopback routes keep their
+    /// explicit port (often an `http://` upstream on a non-default port), so
+    /// different local services on the same host never gate each other.
+    #[must_use]
+    pub fn lookup_forward_endpoint_candidates(
+        &self,
+        host: &str,
+        port: u16,
+    ) -> Vec<(&str, &LoadedRoute)> {
+        let normalised_host = match host.parse::<std::net::IpAddr>() {
+            
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-const SELECTOR_ROWS_PER_SESSION: u16 = 3;
-    let enrollment = crate::platform_client::load_state()?;
-    print_remote_sessions(
-        &sessions,
-        args.all,
-        &console,
-        enrollment.as_ref().map(|state| state.platform_url.as_str()),
-    );
-        None => select_interactively(&list_live_sessions(&console_url, token)?)?,
-    print_connect_target(&session, &console_url);
-    session: String,
-            session: terminal_text(&session.global_session_id),
-            name: terminal_text(remote_name(session)),
-    widths: [usize; 5],
-fn print_remote_sessions(
-    sessions: &[RemoteSession],
-    all: bool,
-    console: &Url,
-    platform_url: Option<&str>,
-) {
-    if let Some(platform_url) = platform_url {
-        println!("  Platform: {}", terminal_text(platform_url));
-    }
-            eprintln!("No remote sessions found.");
-            eprintln!("No live remote sessions. Use --all to include inactive sessions.");
-        console_label(console).dimmed(),
-    const HEADERS: [&str; 5] = ["NAME", "STATUS", "AGENT", "R
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9297e2c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1680298d` are properly handled with clean fallback behavior.

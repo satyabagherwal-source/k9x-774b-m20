@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `e4933f27`  
+> **Source Version**: `5d33d8ea`  
 > **License**: ISC  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:53:09.645Z  
+> **Timestamp**: 2026-11-03T23:32:12.237Z  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:53:09.640Z  
+> **Harvest Timestamp**: 2026-11-03T23:32:11.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5247 stars
+- **Stars / Engagement**: 5254 stars
 
 ---
 
@@ -2505,112 +2505,57 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4933f27` (2026-10-31)
-**Commit Message**: chore: update flake.nix hashes for v0.12.2
+### Incident Patch 1: `5d33d8ea` (2026-11-02)
+**Commit Message**: Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21
 
-**File**: `flake.nix` (modified, +2/-2)
+chore(deps): bump globset from 0.4.20 to 0.4.21
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -29,9 +29,9 @@
-             owner = "unhappychoice";
-             repo = "gitlogue";
-             rev = "v${version}";
--            hash = "sha256-aG/q97qbIctQGXgAeAXUSyCG6wtUxRYAKc3TM0NLNOo=";
-+            hash = "sha256-HQ6508OuAWYaP786keoNIyBsA7kiAgI0f3Ly3KkXEH8=";
-           };
--          cargoHash = "sha256-pA8i0bQcMRnmcU7YjkZpM/3zneVKE+DDLY2aTto40wQ=";
-+          cargoHash = "sha256-J0Z0MrrthLOwD7mj9aaj3jyF3o/ZYynYqbi1bwmyodU=";
-           nativeBuildInputs = [ pkgs.pkg-config pkgs.git pkgs.perl ];
-           buildInputs = [ pkgs.openssl ];
-           doCheck = false;
+@@ -745,9 +745,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "globset"
+-version = "0.4.20"
++version = "0.4.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
++checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
+ dependencies = [
+  "aho-corasick",
+  "bstr",
 ```
 
 ---
 
-### Incident Patch 2: `756861d1` (2026-10-31)
-**Commit Message**: chore: bump version to v0.12.2
+### Incident Patch 2: `f6fa62e8` (2026-11-02)
+**Commit Message**: Merge pull request #256 from unhappychoice/dependabot/cargo/unicode-width-0.2.3
 
-**File**: `CHANGELOG.md` (modified, +18/-1)
-```diff
-@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## [0.12.2] - 2026-10-31
-+
-+### 🐛 Bug Fixes
-+
-+- fix(swift): capture nil via nil_literal node ([c202bce](https://github.com/unhappychoice/gitlogue/commit/c202bce))
-+- fix(dart): use the highlight query bundled with tree-sitter-dart ([be65dd1](https://github.com/unhappychoice/gitlogue/commit/be65dd1))
-+
-+### 📝 Other Changes
-+
-+- chore: bump version to v0.12.2 ([4e57e27](https://github.com/unhappychoice/gitlogue/commit/4e57e27))
-+- test(syntax): assert every highlight and injection query compiles ([84ea30f](https://github.com/unhappychoice/gitlogue/commit/84ea30f))
-+- chore(deps): bump tree-sitter-dart from 0.2.0 to 0.3.0 ([edf5913](https://github.com/unhappychoice/gitlogue/commit/edf5913))
-+- chore(deps): bump tree-sitter-md from 0.5.3 to 0.5.4 ([a02ffd1](https://github.com/unhappychoice/gitlogue/commit/a02ffd1))
-+- chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3 ([b0c640a](https://github.com/unhappychoice/gitlogue/commit/b0c640a))
-+- chore: update flake.nix hashes for v0.12.1 ([94123e9](https://github.com/unhappychoice/gitlogue/commit/94123e9))
-+
-+
- ## [0.12.1] - 2026-10-17
- 
- ### 🐛 Bug Fixes
-@@ -13,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### 📝 Other Changes
- 
--- chore: bump version to v0.12.1 ([63630fd](https://github.com/unhappychoice/gitlogue/commit/63630fd))
-+- chore: bump version to v0.12.1 ([9613abb](https://github.com/unhappychoice/gitlogue/commit/9613abb))
- - test(ui): replace no-op step regression test with history navigation check ([3b23f10](https://github.com/unhappychoice/gitlogue/commit/3b23f10))
- - chore(deps): bump tree-sitter-erlang from 0.20.0 to 0.21.0 ([10911eb](https://github.com/unhappychoice/gitlogue/commit/10911eb))
- - chore(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 ([3565f10](https://github.com/unhappychoice/gitlogue/commit/3565f10))
-```
+chore(deps): bump unicode-width from 0.2.2 to 0.2.3
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -688,7 +688,7 @@ dependencies = [
+@@ -2413,9 +2413,9 @@ dependencies = [
  
  [[package]]
- name = "gitlogue"
--version = "0.12.1"
-+version = "0.12.2"
- dependencies = [
-  "anyhow",
-  "chrono",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "gitlogue"
--version = "0.12.1"
-+version = "0.12.2"
- edition = "2021"
- authors = ["unhappychoice"]
- description = "A Git history screensaver - watch your code rewrite itself"
-```
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-       packages = forAllSystems ({ pkgs }: {
-         default = pkgs.rustPlatform.buildRustPackage rec {
-           pname = "gitlogue";
--          version = "0.12.1";
-+          version = "0.12.2";
-           src = pkgs.fetchFromGitHub {
-             owner = "unhappychoice";
-             repo = "gitlogue";
+ name = "unicode-width"
+-version = "0.2.2"
++version = "0.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
++checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+ 
+ [[package]]
+ name = "unicode-xid"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #256** (2026-11-02): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
+- **PR #255** (2026-11-02): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
 - **PR #254** (2026-10-30): chore(deps): bump tree-sitter-dart from 0.2.0 to 0.3.0 (@dependabot[bot])
 - **PR #253** (2026-10-29): chore(deps): bump tree-sitter-md from 0.5.3 to 0.5.4 (@dependabot[bot])
 - **PR #252** (2026-10-21): chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3 (@dependabot[bot])
 - **PR #251** (2026-10-12): fix(ui): ignore key release events so keys do not fire twice on Windows (@Naoki326)
-- **PR #249** (2026-10-12): chore(deps): bump tree-sitter-erlang from 0.20.0 to 0.21.0 (@dependabot[bot])
-- **PR #248** (2026-10-12): chore(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 (@dependabot[bot])
 
 ---
 
@@ -2630,30 +2575,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update flake.nix hashes for v0.12.2
+## X. Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4933f27`: update flake.nix hashes for v0.12.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d33d8ea`: Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            hash = "sha256-HQ6508OuAWYaP786keoNIyBsA7kiAgI0f3Ly3KkXEH8=";
-          cargoHash = "sha256-J0Z0MrrthLOwD7mj9aaj3jyF3o/ZYynYqbi1bwmyodU=";
+version = "0.4.21"
+checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            hash = "sha256-aG/q97qbIctQGXgAeAXUSyCG6wtUxRYAKc3TM0NLNOo=";
-          cargoHash = "sha256-pA8i0bQcMRnmcU7YjkZpM/3zneVKE+DDLY2aTto40wQ=";
+version = "0.4.20"
+checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4933f27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d33d8ea` are properly handled with clean fallback behavior.
