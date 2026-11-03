@@ -6941,3 +6941,4 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `fc82aedd` | Multi-dimensional audit evidence | 2026-11-03T16:18:05.948Z |
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `b4628bc8` | Multi-dimensional audit evidence | 2026-11-03T16:25:23.645Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `6b406fe8` | Multi-dimensional audit evidence | 2026-11-03T16:32:18.727Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `0df32817` | Multi-dimensional audit evidence | 2026-11-03T16:40:41.787Z |

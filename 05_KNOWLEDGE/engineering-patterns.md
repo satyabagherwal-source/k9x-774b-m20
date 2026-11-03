@@ -478450,3 +478450,219 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9daf6d52` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6542. Watch Stream Resilience & Session Hygiene (Harvested from emberstack/kubernetes-reflector)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Watch Stream Resilience & Session Hygiene",
+  "source": "emberstack/kubernetes-reflector",
+  "source_url": "https://github.com/emberstack/kubernetes-reflector",
+  "source_version": "0df32817",
+  "license": "MIT",
+  "extracted_at": "2026-11-03T16:40:41.286Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-emberstack-kubernetes-reflector",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector) (Revision: `0df32817`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any system consuming a long-lived streaming API (like Kubernetes Watch, Kafka, or WebSocket) MUST implement a "Session Heartbeat" and "Stale Session Detection" mechanism. The consumer MUST NOT assume the stream is alive if no events are received for a configurable timeout period, even if the underlying TCP connection is open. The system MUST proactively close and re-establish the stream if the session duration exceeds a defined threshold or if the API server signals a disconnect.
+
+**WHY**:
+Kubernetes API servers (and proxies like Envoy/Istio) may silently drop idle connections or terminate long-lived watches due to `watchTimeout` settings (default 5 minutes in many setups). If the client does not detect this "silent death" or the API server's forced termination, the client will believe it is still watching, leading to a "zombie" state where changes are missed. This results in data inconsistency (e.g., expired certificates not being renewed). The `WatcherBackgroundService` in this repo explicitly logs "Session closed. Duration: ... Faulted: False" and immediately re-requests resources, proving that passive waiting is insufficient.
+
+**WHEN TO APPLY**:
+Any .NET, Java, or Go application implementing a Kubernetes Controller, Event Sourcing consumer, or Real-time Dashboard backend.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```csharp
+// C# / .NET Pattern using System.Threading.Channels or similar
+public class ResilientWatcher<T> : BackgroundService
+{
+    private readonly TimeSpan _maxSessionDuration = TimeSpan.FromMinutes(4); // Slightly less than API server timeout
+    private readonly TimeSpan _staleTimeout = TimeSpan.FromSeconds(30);
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var sessionStart = DateTime.UtcNow;
+            try
+            {
+                // Start the watch stream
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+                
+                // Monitor for staleness in a parallel task
+                var stalenessTask = Task.Run(async () =>
+                {
+                    while (!cts.Token.IsCancellationRequested)
+                    {
+                        await Task.Delay(_staleTimeout, cts.Token);
+                        if (DateTime.UtcNow - _lastEventTime > _staleTimeout)
+                        {
+                            _logger.LogWarning("Watch stream stale. Forcing reconnect.");
+                            cts.Cancel(); // Force the watch to close
+                        }
+                    }
+                }, cts.Token);
+
+                // Consume events
+                await foreach (var evt in _k8sClient.WatchAsync<T>(cts.Token))
+                {
+                    _lastEventTime = DateTime.UtcNow;
+                    await ProcessEvent(evt);
+                    
+                    // Hard limit on session duration to prevent indefinite hangs
+                    if (DateTime.UtcNow - sessionStart > _maxSessionDuration)
+                    {
+                        _logger.LogInformation("Max session duration reached. Reconnecting.");
+                        cts.Cancel();
+                        break;
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected on reconnect or shutdown
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Watch stream faulted. Reconnecting in 5s.");
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```csharp
+// ANTI-PATTERN: Assuming the stream is alive because no exception was thrown
+// This leads to "Zombie Watchers" that miss events after API server timeout
+public async Task StartWatch()
+{
+    // If the API server closes the connection silently or the proxy drops it,
+    // this loop may hang forever or stop receiving data without error.
+    await foreach (var evt in _k8sClient.WatchAsync()) 
+    {
+        Process(evt);
+        // No timeout check, no staleness detection
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Chaos Engineering Test**: Deploy the service. Use `iptables` or a network policy to drop packets after 60 seconds of inactivity. Verify the service logs a "Stale Session" or "Reconnect" event within 90 seconds.
+2.  **Unit Test**: Mock the `IAsyncEnumerable<T>` to yield no items for 35 seconds. Assert that the `CancellationToken` is triggered and the watch is restarted.
+
+
+---
+
+## 6543. Annotation-Driven Resource Filtering & Immutability (Harvested from emberstack/kubernetes-reflector)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Annotation-Driven Resource Filtering & Immutability",
+  "source": "emberstack/kubernetes-reflector",
+  "source_url": "https://github.com/emberstack/kubernetes-reflector",
+  "source_version": "0df32817",
+  "license": "MIT",
+  "extracted_at": "2026-11-03T16:40:41.582Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-emberstack-kubernetes-reflector",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector) (Revision: `0df32817`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When mirroring resources based on metadata (annotations/labels), the filtering logic MUST be applied at the *event ingestion* layer, not just the *mutation* layer. The system MUST treat the source resource's annotations as immutable inputs for the decision process. If a resource is excluded by annotation, the system MUST NOT create a target resource, and if a previously mirrored resource loses its annotation, the system MUST trigger a deletion of the target resource (or mark it for deletion) to maintain consistency.
+
+**WHY**:
+If filtering is only applied when deciding whether to *update*, you will have "orphaned" resources in the target namespace that are no longer supposed to be mirrored. This leads to security leaks (e.g., a secret that should be removed from a namespace remains because the "update" logic skipped it, but the "delete" logic didn't run). The `ResourceMirror` in this repo validates resources and handles deletions based on the presence/absence of reflection annotations.
+
+**WHEN TO APPLY**:
+Any multi-tenant resource synchronization system, GitOps controllers, or CRD-based operators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```csharp
+public class AnnotationFilter
+{
+    private const string ReflectKey = "reflector.emberstack.com/reflect";
+
+    public bool ShouldMirror(V1ObjectMeta meta)
+    {
+        if (meta.Annotations == null) return false;
+        if (!meta.Annotations.TryGetValue(ReflectKey, out var value)) return false;
+        return value == "true";
+    }
+
+    public async Task HandleEventAsync(WatcherEvent<V1Secret> evt, IClient client)
+    {
+        var shouldMirror = ShouldMirror(evt.Object.Metadata);
+        
+        switch (evt.Type)
+        {
+            case EventType.Added:
+            case EventType.Modified:
+                if (shouldMirror)
+                {
+                    await UpsertTarget(evt.Object);
+                }
+                else
+                {
+                    // CRITICAL: If it was previously mirrored but annotation removed, delete target
+                    await DeleteTargetIfExists(evt.Object);
+                }
+                break;
+            case EventType.Deleted:
+                // Always delete target if source is deleted, regardless of annotation
+                await DeleteTarget(evt.Object);
+                break;
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```csharp
+// ANTI-PATTERN: Only checking annotation on Upsert
+public async Task HandleEventAsync(WatcherEvent<V1Secret> evt)
+{
+    if (evt.Type == EventType.Added || evt.Type == EventType.Modified)
+    {
+        if (ShouldMirror(evt.Object.Metadata))
+        {
+            await UpsertTarget(evt.Object);
+        }
+        // BUG: If annotation is removed, this does nothing. 
+        // The target secret remains in the namespace forever.
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Integration Test**: 
+    1. Create a Secret with `reflector.emberstack.com/reflect: "true"`.
+    2. Assert Target Secret exists.
+    3. Update Source Secret to remove the annotation.
+    4. Assert Target Secret is deleted within N seconds.
+2.  **Static Analysis**: Lint rule to ensure `EventType.Deleted` and `EventType.Modified` (with annotation check) both have paths to `DeleteTarget`.

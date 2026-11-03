@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T16:32:18.735Z",
+  "last_updated": "2026-11-03T16:40:41.795Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
-      "verified_at": "2026-10-30T10:09:26.021Z",
+      "content_hash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
+      "verified_at": "2026-11-03T16:40:41.794Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:09:26.021Z"
+      "last_updated": "2026-11-03T16:40:41.794Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",

@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "a5ba070c",
+    "sourceVersion": "0df32817",
     "license": "MIT",
-    "contentHash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
-    "lastHarvestedAt": "2026-10-30T10:09:26.013Z",
+    "contentHash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
+    "lastHarvestedAt": "2026-11-03T16:40:41.787Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {

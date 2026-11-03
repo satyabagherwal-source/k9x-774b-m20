@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-S1FQ",
-    "timestamp": "2026-10-31T02:44:11.462Z",
-    "repository": "bitnami/sealed-secrets",
-    "learningId": "learn-github-bitnami-sealed-secrets",
-    "contentHash": "f211dcaed648c3e736ad95ea04d9b3a1d26acc9b507bfef92f18b066343d0301",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-S45W",
     "timestamp": "2026-10-31T02:44:14.996Z",
     "repository": "Comfy-Org/Fibo-2.0",
@@ -7492,6 +7477,21 @@
     "contentHash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-ZCJD",
+    "timestamp": "2026-11-03T16:40:41.785Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
