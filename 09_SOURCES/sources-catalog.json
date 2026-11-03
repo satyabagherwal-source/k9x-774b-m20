@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "b9b06661",
+    "sourceVersion": "03a91cb3",
     "license": "Apache-2.0",
-    "contentHash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
-    "lastHarvestedAt": "2026-10-30T13:37:36.144Z",
+    "contentHash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
+    "lastHarvestedAt": "2026-11-03T18:02:32.754Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "ee6c2133",
+    "sourceVersion": "43f90387",
     "license": "NOASSERTION",
-    "contentHash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
-    "lastHarvestedAt": "2026-10-30T16:39:42.313Z",
+    "contentHash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
+    "lastHarvestedAt": "2026-11-03T18:02:32.971Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "1d2c21aa",
+    "sourceVersion": "505d8729",
     "license": "NOASSERTION",
-    "contentHash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
-    "lastHarvestedAt": "2026-10-31T03:59:09.033Z",
+    "contentHash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
+    "lastHarvestedAt": "2026-11-03T18:02:36.654Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "34cbc70f",
+    "sourceVersion": "675ee5b9",
     "license": "NOASSERTION",
-    "contentHash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
-    "lastHarvestedAt": "2026-10-31T16:39:39.739Z",
+    "contentHash": "9220c2d6414fb83bb14dace9ffefab48c3ba78017b28ec3fab5069245f0408e0",
+    "lastHarvestedAt": "2026-11-03T18:02:27.866Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

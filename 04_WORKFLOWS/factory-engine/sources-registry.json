@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T17:53:57.299Z",
-    "lastVerified": "2026-11-03T17:53:57.299Z",
+    "lastChecked": "2026-11-03T18:02:39.204Z",
+    "lastVerified": "2026-11-03T18:02:39.204Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -105,22 +105,21 @@
     "lastVerified": "2026-11-03T12:24:59.819Z"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T11:39:04.803Z",
-    "lastVerified": "2026-11-03T11:39:04.803Z",
+    "lastChecked": "2026-11-03T18:02:32.145Z",
+    "lastVerified": "2026-11-03T18:02:32.145Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
-    "promotedRulesCount": 1,
+    "contentHash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ee6c2133"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -145,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T17:30:17.623Z",
-    "lastVerified": "2026-11-03T17:30:17.623Z",
+    "lastChecked": "2026-11-03T18:02:30.759Z",
+    "lastVerified": "2026-11-03T18:02:30.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2064,22 +2063,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress",
+    "name": "higress-group/higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T21:26:47.000Z",
-    "lastVerified": "2026-10-31T21:26:47.000Z",
+    "lastChecked": "2026-11-03T18:02:31.307Z",
+    "lastVerified": "2026-11-03T18:02:31.307Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
+    "contentHash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b9b06661"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -7109,22 +7107,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflydb-dragonfly": {
-    "name": "dragonfly",
+    "name": "dragonflydb/dragonfly",
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T20:38:55.767Z",
-    "lastVerified": "2026-10-31T20:38:55.767Z",
+    "lastChecked": "2026-11-03T18:02:35.428Z",
+    "lastVerified": "2026-11-03T18:02:35.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+    "contentHash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1d2c21aa"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -8187,14 +8184,14 @@
     "officialUrl": "https://github.com/oven-sh/bun",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T16:39:38.771Z",
-    "lastVerified": "2026-10-31T16:39:38.771Z",
+    "lastChecked": "2026-11-03T18:02:25.735Z",
+    "lastVerified": "2026-11-03T18:02:25.735Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
+    "contentHash": "9220c2d6414fb83bb14dace9ffefab48c3ba78017b28ec3fab5069245f0408e0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10061,9 +10058,9 @@
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
     "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
-    "lastChecked": "2026-10-30T06:43:10.859Z",
+    "lastChecked": "2026-11-03T18:02:18.765Z",
     "revisionIdentifier": "1788648c",
-    "lastVerified": "2026-10-30T06:43:10.859Z"
+    "lastVerified": "2026-11-03T18:02:18.765Z"
   },
   "chrisbanes-skills": {
     "name": "chrisbanes/skills",
@@ -11166,9 +11163,9 @@
   "mikelikesdesign-swiftui-experiments": {
     "name": "SwiftUI-experiments",
     "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-    "lastChecked": "2026-10-30T18:25:26.956Z",
+    "lastChecked": "2026-11-03T18:02:21.032Z",
     "revisionIdentifier": "b75268ca",
-    "lastVerified": "2026-10-30T18:25:26.956Z"
+    "lastVerified": "2026-11-03T18:02:21.032Z"
   },
   "sveltejs-svelte": {
     "name": "sveltejs/svelte",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `b9b06661`  
+> **Source Version**: `03a91cb3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:37:35.474Z  
+> **Timestamp**: 2026-11-03T18:02:31.929Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:37:34.177Z  
+> **Harvest Timestamp**: 2026-11-03T18:02:31.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9676 stars
+- **Stars / Engagement**: 9705 stars
 
 ---
 
@@ -1736,11 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5282** (2026-10-30): **fix(mcp-server): unify Modern and Legacy business compatibility**
-  *Symptoms*: ## I. Summary  Restore the pre-#4281 Legacy business policy across Legacy and Modern requests: a common 100 MiB complete-request budget, shared tool execution and descriptors, ignored legacyOnly, and removal of unused schema preparation/gates. HTTP business error responses retain the selected historical Retry-After/WWW-Authenticate headers through existing cleanup. HTTP/auto/SSE business forwarding shares lossless client IDs/numbers and compliant outbound construction while retaining separate strict control handling and existing routing/lifecycle behavior.  Initial SSE GET401/403 authentication failures now replace inherited response headers using the existing cleanup, preserving status/client identity and all valid challenges while removing stale encoding, cookies, sessions and private headers.  Restore the agreed historical Origin and trusted-SSE-endpoint policy. Endpoint-selected Authority and existing credential rules may reach another virtual host in the original cluster; the migration documentation explains that trust boundary and DNS-rebinding tradeoff.  ## II. Related issue  Fixes #5264. Planning: Proposal #5280 and Design #5281.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  Choose exactly one participation declaration:  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agen
+- **Issue #5294** (2026-11-03): **fix(mcp): bind user-level access to consumers**
+  *Symptoms*: ## Summary `mcp-session` (stacked on the header-sanitization change): user-level MCP server access is now bound to the authenticated consumer.  - With `enable_user_level_server: true`, the authenticated Higress consumer is the user identity; the URL-path `uid` is only a routing parameter — a mismatch is rejected (403), and a missing trusted principal is rejected (401). - Per-user configuration storage and reads are keyed by `(serverName, consumer)`; rate-limit buckets and whitelist checks use the verified principal instead of the path uid. - No unauthenticated legacy mode; existing user-level deployments need consumer authentication configured and their per-user data considered migrated.  ## Tests Missing/valid/forged consumer; cross-uid read and write denied; whitelist impersonation denied; rate-limit bucket isolation; Redis error path. Green on host; e2e in CI. 
 
-- **Issue #5276** (2026-10-28): **chore(tools): remove GPL lint dependency**
-  *Symptoms*: ## I. Summary  Remove `github.com/golangci/check` from the repository's source dependency graph by deleting the pinned `tools/src/golangci-lint` Go module. Install the official golangci-lint v2.15.0 release binary instead, with fixed SHA-256 digests for macOS and Linux on amd64/arm64. No product runtime code or shipped gateway artifact changes.  Migrate `.golangci.yml` to the v2 schema using the official migrator, while preserving the existing 10-minute `run.timeout`. The migration moves gofmt/goimports to `formatters`, carries forward the existing exclusions and output limits, and removes the unsupported `exportloopref` entry. Also drop the v1-only default `--out-format=github-actions` flag, which v2 rejects. Older prebuilt versions are not usable here: v1.57.2 cannot read the current Go export-data format, and v1.64.8 was built with Go 1.24 and rejects the repository's Go 1.26 target.  ## II. Related issue  Related to the FOSSA finding discussed in #5263. No standalone issue is marked fixed: this is a separately requested maintenance PR for a pre-existing build-tool dependency.  ## III. Change type  - [ ] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting. - [x] **Verified maintainer/adminis
+- **Issue #5293** (2026-11-03): **fix(mcp): remove client config headers on ingress**
+  *Symptoms*: ## Summary `mcp-session`: the `x-higress-mcpserver-config` request header is now removed at ingress before it can influence per-user MCP server configuration.  - Stripped at `DecodeHeaders` entry (before URL parsing and route matching), plus on generated MCP routes (including registry-provided VirtualServices), and route add/set operations can no longer inject it. - Only a successful, non-empty dynamic config lookup writes the header; empty or errored lookups leave nothing behind (no client-supplied residue), while static MCP server configuration remains the fallback. - The internal header name is unchanged (rolling-upgrade friendly).  ## Tests Malformed / unmatched / REST / streamable / SSE / unknown-upstream path shapes; valid, empty, and errored lookups; forged-header stripping; static fallback preserved. Green on host; e2e in CI. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,462 +1757,1616 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9b06661` (2026-10-30)
-**Commit Message**: fix(mcp-server): unify Modern and Legacy business compatibility (#5282)
+### Incident Patch 1: `6532bcef` (2026-11-01)
+**Commit Message**: fix(plugins): add configurable Redis failure handling (#5287)
 
-Signed-off-by: sunxiao <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +15/-3)
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md` (modified, +1/-0)
 ```diff
-@@ -208,8 +208,8 @@ proxywasm.AddHttpRequestHeader("x-envoy-allow-mcp-tools", "tool1,tool2,tool3")
- | `tools[].requestTemplate.security.id` | string  | 当 `tools[].requestTemplate.security` 配置时必填 | - | 引用在 `server.securitySchemes` 中定义的认证方案 ID。 |
- | `tools[].requestTemplate.security.credential` | string | 选填 | - | REST-to-MCP 的后端凭证，覆盖所引用方案的 `defaultCredential`。启用透传且成功提取到非空凭证时，优先使用透传凭证。 |
- | `tools[].errorResponseTemplate` | string | 选填 | - | HTTP 响应状态码大于等于 300 或小于 200 时使用的错误响应转换模板。 |
--| `tools[].legacyOnly` | boolean | 选填 | `false` | 仅供旧版 MCP 客户端使用。设为 `true` 后，工具不会出现在 MCP `2026-07-28` 的工具列表中，也不能通过该版本调用。 |
--| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema。当前旧版工具列表会返回该字段，MCP `2026-07-28` 的工具列表暂不返回；插件不会据此校验输出是否符合 Schema。 |
-+| `tools[].legacyOnly` | boolean | 选填 | `false` | 已废弃，仍兼容解析省略、`false` 和 `true`，但不再影响工具可见性或调用。 |
-+| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema；所有支持的协议版本都会返回。插件不会据此校验输出是否符合 Schema。 |
+@@ -39,6 +39,7 @@ description: 基于 Key 集群限流插件配置参考
+ | show_limit_quota_header | bool | 否 | false | 响应头中是否显示 `X-RateLimit-Limit`（限制的总请求数）和 `X-RateLimit-Remaining`（剩余还可以发送的请求数） |
+ | rejected_code           | int | 否 | 429 | 请求被限流时，返回的 HTTP 状态码                                                         |
+ | rejected_msg            | string | 否 | Too many requests | 请求被限流时，返回的响应体                                                               |
++| failure_mode            | string | 否 | fail_open | Redis 调用失败、超时或响应异常时的策略：`fail_open` 放行请求；`fail_closed` 返回固定 503。需要严格限流时使用 `fail_closed`。 |
+ | redis                   | object          | 是                                                           | -                 | redis 相关配置                                                                  |
  
- ### 直接响应
- 
-@@ -236,7 +236,11 @@ tools:
- 
- 配置 `outputSchema` 后，如果后端响应为合法 JSON，插件会将后端原始 JSON 同时作为 `structuredContent` 返回；`responseTemplate` 生成的文本不会替换这部分结构化内容。直接响应模式则使用模板生成的合法 JSON 作为结构化内容。
- 
--MCP `2026-07-28` 会在调用工具前校验输入参数。如果工具的参数定义无法用于校验，该工具可能仍出现在列表中，但调用会被拒绝。需要暂时保留旧版调用的工具，可设置 `legacyOnly: true`。
-+所有支持的协议版本共用历史工具查找、认证、`allowTools`、Create/Call 和 REST 参数转换流程，不在网关处执行 inputSchema 校验、schema 编译或私有 schema 资源门禁。工具描述按正常 JSON 序列化发布，包含 `outputSchema`；工具自身仍负责输入业务约束。
-+
-+升级前使用 `legacyOnly: true` 的工具现在也会对 Modern 客户端可见、可调用，仍受认证和 `allowTools` 控制。请审阅现有工具授权范围；不再需要用该标记绕过 schema 校验。内置 `mcp-e2bdev` 和 `mcp-firecrawl` 已清理该标记。
-+
-+Legacy/Modern 的完整 UTF-8 JSON-RPC 请求体上限统一为 **100 MiB**，包含 envelope 和 `_meta`。普通 Content-Type/Accept、非身份元数据、普通重复键、深度和值数量沿历史业务策略；Modern 的原 1 MiB arguments、64 层、65536 值和名称私有限制已移除。合法单对象消息、协议版本/方法/工具名身份冲突及严格探测/协商边界继续保留。代理归一化实际上游请求，并保留客户端 ID token 与精确 JSON 数字；直接工具的原始 Create 输入和 REST 自身的类型转换保持原契约。
- 
- ## 协议支持与后端连接
- 
-@@ -773,6 +777,14 @@ allowTools:
- 
- 代理模式下，`tools` 用于工具级配置，不是工具白名单；限制工具访问范围应使用 `allowTools`。
- 
-+### Origin 与 SSE endpoint 的信任边界
-+
-+插件恢复历史 Origin 接受策略：缺省、跨域、不同端口及 `null` Origin 均可进入正常处理。插件不再提供这项 Origin 同源拒绝所承担的 DNS rebinding 防护。部署者需在可信网络、网关入口或其他部署边界评估并实施相应防护；CORS 和认证不等价于该防护，升级时必须单独审阅这一取舍。
-+
-+旧 SSE 的初始 GET 仍复用主请求和既有路由。插件信任配置上游返回的 endpoint，按历史相对/绝对 URL 规则选择后续控制及业务 POST 的 path/query 和 HTTP Authority。完整 endpoint 可以选择不同 Authority；已有静态/透传 Authorization、header/query apiKey 等凭据可能按现有移除和覆盖规则发送给该 Authority。已移除的客户端凭据不会恢复，鉴权失败仍终止后续请求。
-+
-+实际发送固定在原路由 cluster，endpoint 域名不会新增 DNS 直连或切换 cluster。固定 cluster 不等于固定 HTTP 虚拟主机或全部 TLS 身份：TLS 沿既有 cluster/路由和调用方式。请信任配置的 MCP 上游及其 endpoint，并评估该 cluster 内按 Authority 可达的服务及凭据接收范围。路径配置仍可能产生空 Authority 或 `unknownhost` 等历史失败；插件不会从 cluster 名称猜补 Authority，也不保证所有路径组合可用。
-+
- ### MCP 代理服务器示例：使用 SSE 协议
- 
- ```yaml
+ `global_threshold` 中每一项的配置字段说明。
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +15/-3)
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/README_EN.md` (modified, +1/-0)
 ```diff
-@@ -206,8 +206,8 @@ Using `ReplaceHttpRequestHeader` ensures:
- | `tools[].requestTemplate.security.id` | string  | Required when `tools[].requestTemplate.security` is configured | - | References a security scheme ID defined in `server.securitySchemes`. |
- | `tools[].requestTemplate.security.credential` | string | No | - | Backend credential for REST-to-MCP, overriding the referenced scheme's `defaultCredential`. A successfully extracted, non-empty passthrough credential takes precedence when passthrough is enabled. |
- | `tools[].errorResponseTemplate` | string | No | - | Error response template used when the HTTP response status is greater than or equal to 300, or less than 200. |
--| `tools[].legacyOnly` | boolean | No | `false` | Restricts the tool to legacy MCP clients. When `true`, the tool is neither listed nor callable through MCP `2026-07-28`. |
--| `tools[].outputSchema` | object | No | - | JSON Schema for structured tool output. Currently returned in legacy tool lists, but not MCP `2026-07-28` tool lists. The plugin does not validate output against this schema. |
-+| `tools[].legacyOnly` | boolean | No | `false` | Deprecated. Omitted, `false`, and `true` remain parse-compatible but no longer affect visibility or calls. |
-+| `tools[].outputSchema` | object | No | - | JSON Schema for structured tool output, returned for every supported protocol version. The plugin does not validate output against this schema. |
+@@ -41,6 +41,7 @@ It supports three rate limiting modes:
+ | show_limit_quota_header  | bool          | No                                        | false             | Whether to display `X-RateLimit-Limit` (total allowed requests) and `X-RateLimit-Remaining` (remaining allowed requests) in the response header. |  
+ | rejected_code            | int           | No                                        | 429               | HTTP status code returned when a request is rate-limited.                  |  
+ | rejected_msg             | string        | No                                        | Too many requests | Response body returned when a request is rate-limited.                      |  
++| failure_mode             | string        | No                                        | fail_open         | Policy for Redis call failures, timeouts, and invalid responses: `fail_open` allows the request; `fail_closed` returns a fixed 503. Use `fail_closed` when rate limiting must remain strict during Redis failures. |
+ | redis                    | object        | Yes                                       | -                   | Configuration for Redis.                                                   |  
  
- ### Direct Responses
- 
-@@ -234,7 +234,11 @@ tools:
- 
- When `outputSchema` is configured and the backend response is valid JSON, the plugin also returns the raw backend JSON as `structuredContent`. Text produced by `responseTemplate` does not replace this structured content. In direct response mode, structured content comes from the valid JSON rendered by the template instead.
- 
--MCP `2026-07-28` validates input arguments before calling a tool. If the tool's parameter definition cannot be used for validation, the tool may still appear in the list, but calls will be rejected. Set `legacyOnly: true` for tools that temporarily need to remain available only to legacy clients.
-+All supported profiles use the historical tool lookup, authentication, `allowTools`, Create/Call, and REST conversion paths. The gateway no longer compiles or validates input schemas or applies private schema resource gates. Normally JSON-serializable descriptors, including `outputSchema`, remain publishable; tools retain their own business input constraints.
-+
-+Tools previously marked `legacyOnly: true` now become visible and callable to Modern clients, subject to authentication and `allowTools`. Review existing tool authorization during migration; the flag is no longer needed to bypass schema validation. The built-in `mcp-e2bdev` and `mcp-firecrawl` configurations have removed this flag.
-+
-+Legacy and Modern share a **100 MiB** limit for the complete UTF-8 JSON-RPC body, including its envelope and `_meta`. Ordinary media headers, non-identity metadata, duplicate keys, depth, and value counts follow historical business behavior. The Modern-only 1 MiB arguments, 64-level, 65536-value, and name budgets are removed. Valid single-object messages, protocol identity conflicts, and strict probe/handshake checks remain. Proxies normalize the selected upstream request and preserve client ID tokens and exact JSON numbers; direct Create inputs and tool-owned REST conversions keep their existing contracts.
- 
- ## Protocol Support and Backend Connections
- 
-@@ -765,6 +769,14 @@ Fetching the tool list uses the default backend key; calling `get-secure-product
- 
- In proxy mode, `tools` provides per-tool configuration, not an allowlist. Use `allowTools` to restrict tool access.
- 
-+### Origin and SSE Endpoint Trust
-+
-+The plugin restores historical Origin acceptance: absent, cross-origin, different-port, and `null` Origin values enter normal processing. It no longer provides the DNS rebinding protection supplied by the former same-origin rejection. Deployers must assess and enforce suitable protection at trusted network or gateway entry boundaries. CORS and authentication are not equivalent replacements; review this tradeoff during upgrades.
-+
-+Legacy SSE keeps its main-request GET and existing route. The plugin trusts endpoints returned by the configured upstream and applies historical relative/absolute URL rules to later control/business POST path, query, and HTTP Authority. A complete endpoint can select another Authority. Existing static or forwarded Authorization and header/query apiKey credentials may reach that Authority under the existing removal and override rules. Removed client credentials stay removed; authentication failures still stop subsequent requests.
-+
-+Actual sends retain the original route cluster; endpoint domains do not trigger a new DNS connection or switch clusters. A fixed cluster does not fix the HTTP virtual host or every TLS identity: TLS follows existing cluster/route configuration and call behavior. Trust the conf
+ ### Configuration Fields for `global_threshold`
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/conformance_test.go` (modified, +10/-14)
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/config/config.go` (modified, +12/-0)
 ```diff
-@@ -250,7 +250,7 @@ func TestOfficial20260728RequestAndResponseBufferBounds(t *testing.T) {
+@@ -43,6 +43,9 @@ const (
+ 	DefaultRejectedCode uint32 = 429
+ 	DefaultRejectedMsg  string = "Too many requests"
  
- 		requestLimit, err := host.GetProperty([]string{"set_decoder_buffer_limit"})
- 		require.NoError(t, err)
--		require.Equal(t, "1048576", string(requestLimit), "modern request body limit must remain 1 MiB")
-+		require.Equal(t, "104857600", string(requestLimit), "both profiles admit a complete body up to 100 MiB")
- 		responseLimit, err := host.GetProperty([]string{"set_encoder_buffer_limit"})
- 		require.NoError(t, err)
- 		require.Equal(t, "104857600", string(responseLimit), "response buffer limit must remain the explicit 100 MiB compatibility bound")
-@@ -291,15 +291,12 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
++	FailureModeFailOpen   = "fail_open"
++	FailureModeFailClosed = "fail_closed"
++
+ 	Second           int64 = 1
+ 	SecondsPerMinute       = 60 * Second
+ 	SecondsPerHour         = 60 * SecondsPerMinute
+@@ -66,6 +69,7 @@ type ClusterKeyRateLimitConfig struct {
+ 	ShowLimitQuotaHeader bool             // 响应头中是否显示X-RateLimit-Limit和X-RateLimit-Remaining
+ 	RejectedCode         uint32           // 当请求超过阈值被拒绝时,返回的HTTP状态码
+ 	RejectedMsg          string           // 当请求超过阈值被拒绝时,返回的响应体
++	FailureMode          string
+ 	RedisClient          wrapper.RedisClient
+ }
  
- 	contentType := newCase("unsupported-content-type", "list-tools-request.json", "replace Content-Type application/json with text/plain")
- 	contentType.Headers = replaceHeader(t, contentType.Headers, "content-type", "text/plain")
--	contentType.WantError = invalidRequestAtHeaders(415, "unsupported Content-Type")
+@@ -161,6 +165,14 @@ func ParseClusterKeyRateLimitConfig(json gjson.Result, config *ClusterKeyRateLim
+ 	} else {
+ 		config.RejectedMsg = DefaultRejectedMsg
+ 	}
++
++	config.FailureMode = FailureModeFailOpen
++	if failureMode := json.Get("failure_mode"); failureMode.Exists() {
++		config.FailureMode = failureMode.String()
++	}
++	if config.FailureMode != FailureModeFailOpen && config.FailureMode != FailureModeFailClosed {
++		return fmt.Errorf("invalid failure_mode %q: must be %q or %q", config.FailureMode, FailureModeFailOpen, FailureModeFailClosed)
++	}
+ 	return nil
+ }
  
- 	accept := newCase("unacceptable-accept", "list-tools-request.json", "replace Accept with application/json so text/event-stream is absent")
- 	accept.Headers = replaceHeader(t, accept.Headers, "accept", "application/json")
--	accept.WantError = invalidRequestAtHeaders(406, "unacceptable response media type")
- 
- 	hostileOrigin := newCase("hostile-origin", "list-tools-request.json", "append Origin https://evil.example while authority remains mcp.example.com")
- 	hostileOrigin.Headers = append(hostileOrigin.Headers, [2]string{"origin", "https://evil.example"})
--	hostileOrigin.WantError = invalidRequestAtHeaders(403, "untrusted Origin")
- 
- 	trustedOrigin := newCase("same-origin", "list-tools-request.json", "append same-origin Origin https://mcp.example.com")
- 	trustedOrigin.Headers = append(trustedOrigin.Headers, [2]string{"origin", "https://mcp.example.com"})
-@@ -310,7 +307,7 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
- 
- 	responseEnvelope := newCase("response-envelope", "list-tools-result-response.json", "send the official ListToolsResultResponse example as a request using ListToolsRequest transport headers")
- 	responseEnvelope.Headers = modernHeaders(readOfficialFixture(t, "list-tools-request.json"))
--	responseEnvelope.WantError = invalidRequestWithNullID("JSON-RPC response envelopes are not accepted")
-+	responseEnvelope.WantError = &errorExpectation{HTTPStatus: 400, Code: -32600, Message: "JSON-RPC response envelopes are not accepted", ID: `"list-tools-example"`}
- 
- 	trailingJSON := newCase("trailing-json", "list-tools-request.json", "append a second empty JSON object after the official request")
- 	trailingJSON.Body = append(trailingJSON.Body, []byte("\n{}")...)
-@@ -378,15 +375,15 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
- 
- 	nullID := newCase("null-jsonrpc-id", "list-tools-request.json", "replace the official string id with JSON null")
- 	nullID.Body = mutateJSONObject(t, nullID.Body, func(object map[string]any) { object["id"] = nil })
--	nullID.WantError = invalidRequestWithNullID("JSON-RPC id must be a string or integer")
-+	nullID.WantID = "null"
- 
- 	fractionalID := newCase("fractional-jsonrpc-id", "list-tools-request.json", "replace the official string id with fractional number 1.5")
- 	fractionalID.Body = mutateJSONObject(t, fractionalID.Body, func(object map[string]any) { object["id"] = 1.5 })
--	fractionalID.WantError = invalidRequestWithNullID("JSON-RPC id must be a string or integer")
-+	fractionalID.WantID = "1.5"
- 
- 	booleanID := newCase("boolean-jsonrpc-id", "list-tools-request.json", "replace the official string id with boolean true")
- 	booleanID.Body = mutateJSONObject(t, booleanID.Body, func(object map[string]any) { object["id"] = true })
--	booleanID.WantError = invalidRequestWithNullID("JSON-RPC id must be a string or integer")
-+	booleanID.WantError = invalidRequestWithNullID("JSON-RPC id must be a string, number or null")
- 
- 	integerID := newCase("integer-jsonrpc-id", "list-tools-request.json", "replace the official string id with integer 42")
- 	integerID.Body = mutateJSONObject(t, integerID.Body, func(object map[string]any) { object["id"] = int64(42) })
-@@ -407,7 +404,6 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
- 
- 	missingCapabilities := newCase("missing-client-capabilities-meta", "list-tools-request.json", "remove required io.modelcontextprotocol/clientCapabilities metadata")
- 	missingCapabilities.Body = mutateJSONObject(t, missingCapabilities.Body, func(object map[string]any) { delete(requestMeta(t, object), protocol.MetaClientCapabilities) })
--	missingCapabilities.WantError = &errorExpectation{HTTPStatus: 400, Code: -32602, Message: "modern MCP clientCapabilities metadata is required", ID: `"list-tools-example"`, Reference: "invalid-tool-arguments-error.json"}
- 
- 	optionalClientInfo := newCase("optional-client-info-omitted", "list-tools-request.json", "remove optional io.modelcontextprotocol/clientInfo metadata
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +11/-69)
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/config/config_test.go` (modified, +7/-0)
 ```diff
-@@ -304,7 +304,7 @@ func TestSchemaCompatibilityConfigurationLoadsGloballyAndAtRuleLevel(t *testing.
+@@ -46,6 +46,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 					Count:      100,
+ 					TimeWindow: Second,
+ 				},
++				FailureMode:  FailureModeFailOpen,
+ 				RejectedCode: DefaultRejectedCode,
+ 				RejectedMsg:  DefaultRejectedMsg,
+ 			},
+@@ -64,6 +65,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 					Count:      1000,
+ 					TimeWindow: SecondsPerMinute,
+ 				},
++				FailureMode:  FailureModeFailOpen,
+ 				RejectedCode: DefaultRejectedCode,
+ 				RejectedMsg:  DefaultRejectedMsg,
+ 			},
+@@ -112,6 +114,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 						},
+ 					},
+ 				},
++				FailureMode:  FailureModeFailOpen,
+ 				RejectedCode: DefaultRejectedCode,
+ 				RejectedMsg:  DefaultRejectedMsg,
+ 			},
+@@ -163,6 +166,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 						},
+ 					},
+ 				},
++				FailureMode:  FailureModeFailOpen,
+ 				RejectedCode: DefaultRejectedCode,
+ 				RejectedMsg:  DefaultRejectedMsg,
+ 			},
+@@ -200,6 +204,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 					},
+ 				},
+ 				ShowLimitQuotaHeader: false,
++				FailureMode:          FailureModeFailOpen,
+ 				RejectedCode:         DefaultRejectedCode,
+ 				RejectedMsg:          DefaultRejectedMsg,
+ 			},
+@@ -225,6 +230,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 					Count:      100,
+ 					TimeWindow: Second,
+ 				},
++				FailureMode:  FailureModeFailOpen,
+ 				RejectedCode: 403,
+ 				RejectedMsg:  "Forbidden",
+ 			},
+@@ -243,6 +249,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
+ 					TimeWindow: Second,
+ 				},
+ 				ShowLimitQuotaHeader: true,
++				FailureMode:          FailureModeFailOpen,
+ 				RejectedCode:         DefaultRejectedCode,
+ 				RejectedMsg:          DefaultRejectedMsg,
+ 			},
+```
+
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/main.go` (modified, +50/-7)
+```diff
+@@ -140,25 +140,53 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
+ 	}
+ 
+ 	err := cfg.RedisClient.Eval(MultiKeyFixedWindowScript, n, keys, args, func(response resp.Value) {
++		if err := response.Error(); err != nil {
++			log.Errorf("redis call error: %v", err)
++			handleRedisFailure(cfg, true)
++			return
++		}
++
++		if response.Type() != resp.Array {
++			log.Errorf("unexpected redis response type %s", response.Type())
++			handleRedisFailure(cfg, true)
++			return
++		}
+ 		arr := response.Array()
+ 		if len(arr) != n {
+ 			log.Errorf("redis response length mismatch: got %d, want %d", len(arr), n)
+-			_ = proxywasm.ResumeHttpRequest()
++			handleRedisFailure(cfg, true)
+ 			return
+ 		}
+ 
+ 		// 使用 math.MaxFloat64 初始化，避免在 arr[0] 校验前预先读取
+ 		tightestIdx := 0
+ 		tightestRatio := math.MaxFloat64
++		tuples := make([][3]int, n)
+ 
+ 		for i, sub := range arr {
++			if sub.Type() != resp.Array {
++				log.Errorf("unexpected redis sub-array response type %s", sub.Type())
++				handleRedisFailure(cfg, true)
++				return
++			}
+ 			a := sub.Array()
+ 			if len(a) != 3 {
+ 				log.Errorf("redis sub-array length mismatch: got %d, want 3", len(a))
+-				_ = proxywasm.ResumeHttpRequest()
++				handleRedisFailure(cfg, true)
+ 				return
+ 			}
+-			threshold, current, ttl := a[0].Integer(), a[1].Integer(), a[2].Integer()
++			for _, value := range a {
++				if value.Type() != resp.Integer {
++					log.Errorf("unexpected redis counter response type %s", value.Type())
++					handleRedisFailure(cfg, true)
++					return
++				}
++			}
++			tuples[i] = [3]int{a[0].Integer(), a[1].Integer(), a[2].Integer()}
++		}
++
++		for i, tuple := range tuples {
++			threshold, current, ttl := tuple[0], tuple[1], tuple[2]
+ 			log.Debugf("cluster-key-rate-limit:   eval rule[%d] key=%s threshold=%d current=%d ttl=%ds",
+ 				i, matched[i].key, threshold, current, ttl)
+ 
+@@ -181,8 +209,8 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
+ 		}
+ 
+ 		// 未触发：写入 tightest 规则到 LimitContext，供 onHttpResponseHeaders 读取 X-RateLimit-* 头
+-		tightSub := arr[tightestIdx].Array()
+-		tightThreshold, tightCurrent, tightTtl := tightSub[0].Integer(), tightSub[1].Integer(), tightSub[2].Integer()
++		tightestTuple := tuples[tightestIdx]
++		tightThreshold, tightCurrent, tightTtl := tightestTuple[0], tightestTuple[1], tightestTuple[2]
+ 		log.Debugf("cluster-key-rate-limit: all %d rule(s) within threshold, tightest rule[%d] key=%s (count=%d remaining=%d reset=%ds)",
+ 			n, tightestIdx, matched[tightestIdx].key, tightThreshold, tightThreshold-tightCurrent, tightTtl)
+ 		ctx.SetContext(LimitContextKey, LimitContext{
+@@ -195,8 +223,7 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
+ 	})
+ 
+ 	if err != nil {
+-		log.Errorf("redis call failed: %v", err)
+-		return types.ActionContinue
++		return handleRedisDispatchError(cfg, err)
+ 	}
+ 	return types.HeaderStopAllIterationAndWatermark
+ }
+@@ -352,6 +379,22 @@ func getDownStreamIp(rule config.LimitRuleItem) (net.IP, error) {
+ 	return realIP, nil
+ }
+ 
++func handleRedisDispatchError(cfg config.ClusterKeyRateLimitConfig, err error) types.Action {
++	log.Errorf("redis call failed: %v", err)
++	return handleRedisFailure(cfg, false)
++}
++
++func handleRedisFailure(cfg config.ClusterKeyRateLimitConfig, resumeOnOpen bool) types.Action {
++	if cfg.FailureMode == config.FailureModeFailClosed {
++		proxywasm.SendHttpResponse(503, nil, []byte("Service Unavailable"), -1)
++		return types.ActionPause
++	}
++	if resumeOnOpen {
++		_ = proxywasm.ResumeHttpRequest()
++	}
++	return types.ActionContinue
++}
++
+ func rejected(config config.ClusterKeyRateLimitConfig, context LimitContext) {
+ 	headers := make(map[string][]string)
+ 	headers[RateLimitResetHeader] = []string{strconv.Itoa(context.reset)}
+```
+
+**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/main_test.go` (modified, +173/-0)
+```diff
+@@ -16,14 +16,17 @@ package main
+ 
+ import (
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"strings"
+ 	"testing"
+ 
+ 	"cluster-key-rate-limit/config"
+ 
++	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/proxytest"
+ 	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
+ 	"github.com/higress-group/wasm-go/pkg/test"
++	"github.com/higress-group/wasm-go/pkg/wrapper"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/tidwall/resp"
+ )
+@@ -296,6 +299,7 @@ func TestParseConfig(t *testing.T) {
+ 			require.True(t, parsedConfig.ShowLimitQuotaHeader)
+ 			require.Equal(t, uint32(429), parsedConfig.RejectedCode)
+ 			require.Equal(t, "Too many requests", parsedConfig.RejectedMsg)
++			require.Equal(t, config.FailureModeFailOpen, parsedConfig.FailureMode)
+ 		})
+ 
+ 		// 测试基于请求参数的限流配置解析
+@@ -417,6 +421,12 @@ func TestParseConfig(t *testing.T) {
+ 			require.Equal(t, config.RegexpType, parsedConfig.RuleItems[0].ConfigItems[0].ConfigType)
+ 			require.True(t, parsedConfig.ShowLimitQuotaHeader)
+ 		})
++
++		t.Run("invalid failure mode", func(t *testing.T) {
++			host, status := test.NewTestHost(configWithFailureMode(globalThresholdConfig, "invalid"))
++			defer host.Reset()
++			require.Equal(t, types.OnPluginStartStatusFailed, status)
++		})
  	})
  }
  
--func TestSchemaPreparationResourceLimitLoadsGloballyAndAtRuleLevel(t *testing.T) {
-+func TestLargeSchemaDescriptionsLoadGloballyAndAtRuleLevel(t *testing.T) {
- 	test.RunTest(t, func(t *testing.T) {
- 		for _, fixture := range []struct {
- 			name   string
-@@ -324,7 +324,7 @@ func TestSchemaPreparationResourceLimitLoadsGloballyAndAtRuleLevel(t *testing.T)
- 
- func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 	test.RunTest(t, func(t *testing.T) {
--		t.Run("modern list preserves degraded and valid descriptors", func(t *testing.T) {
-+		t.Run("modern list preserves all serializable descriptors", func(t *testing.T) {
- 			host, status := test.NewTestHost(schemaCompatibilityConfig)
- 			defer host.Reset()
- 			require.Equal(t, types.OnPluginStartStatusOK, status)
-@@ -353,7 +353,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 			host.CompleteHttp()
- 		})
- 
--		t.Run("modern degraded call returns exact server error without routing", func(t *testing.T) {
-+		t.Run("schema interpretation does not block historical REST conversion", func(t *testing.T) {
- 			host, status := test.NewTestHost(schemaCompatibilityConfig)
- 			defer host.Reset()
- 			require.Equal(t, types.OnPluginStartStatusOK, status)
-@@ -365,19 +365,11 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 				{"Mcp-Method", "tools/call"}, {"Mcp-Name", "getTransactionRecordListV2"},
- 			})
- 			require.Equal(t, types.HeaderStopIteration, action)
--			body := []byte(`{"jsonrpc":"2.0","id":"blocked","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
-+			body := []byte(`{"jsonrpc":"2.0","id":"schema-call","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"transactionId":"fixture","businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
- 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
--			response := proxyTestResponse(host)
--			require.NotNil(t, response)
--			require.Equal(t, uint32(200), response.StatusCode)
--			var envelope map[string]interface{}
--			require.NoError(t, json.Unmarshal(response.Data, &envelope))
--			require.Equal(t, "blocked", envelope["id"])
--			errorObject := envelope["error"].(map[string]interface{})
--			require.Equal(t, float64(-32603), errorObject["code"])
--			require.Equal(t, "tool input schema validation is unavailable", errorObject["message"])
--			require.Equal(t, "schema_validation_unavailable", errorObject["data"].(map[string]interface{})["reason"])
--			require.Empty(t, host.GetHttpCalloutAttributes())
-+			require.Nil(t, proxyTestResponse(host), "schema descriptions do not introduce an admission gate")
-+			require.Empty(t, host.GetHttpCalloutAttributes(), "REST keeps the original routed request")
-+			require.Contains(t, string(host.GetRequestBody()), "SALE")
- 			host.CompleteHttp()
- 		})
- 
-@@ -401,56 +393,6 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
+@@ -814,6 +824,169 @@ func TestOnHttpRequestHeaders(t *testing.T) {
  	})
  }
  
--func TestSchemaCompatibilityMetricsGlobalAndRuleLevel(t *testing.T) {
--	const (
--		publishedMetric = "mcp_server_schema_validation_unavailable_published_total"
--		blockedMetric   = "mcp_server_schema_validation_unavailable_call_blocked_total"
--	)
--	test.RunTest(t, func(t *testing.T) {
--		for _, fixture := range []struct {
--			name   string
--			config json.RawMessage
--		}{
--			{name: "global", config: schemaCompatibilityConfig},
--			{name: "rule-level", config: ruleLevelSchemaCompatibilityConfig},
--		} {
--			t.Run(fixture.name, func(t *testing.T) {
--				host, status := test.NewTestHost(fixture.config)
--				defer host.Reset()
--				require.Equal(t, types.OnPluginStartStatusOK, status)
--				published, err := host.GetCounterMetric(publishedMetric)
--				require.NoError(t, err)
--				require.Equal(t, uint64(1), published, "one degraded tool must be counted once for its published generation")
--				blocked, err := host.GetCounterMetric(blockedMetric)
--				require.NoError(t, err)
--				require.Zero(t, blocked)
--
--				for call := 1; call <= 2; call++ {
--					host.InitHttp()
--					action := host.CallOnHttpRequestHeaders([][2]string{
--						{":authority", "compat.example.com"}, {":method", "POST"}, {":path", "/mcp"},
--						{"content-type", "application/json"}, {"accept", "application/json, text/event-stream"},
--						{"origin", "http://compat.example.com"}, {"MCP-Protocol-Version", "2026-07-28"},
--						{"Mcp-Method", "tools/call"}, {"Mcp-Name", "getTransactionRecordListV2"},
--					})
--					require.Equal(t, types.HeaderStopIteration, action)
--					body := []byte(fmt.Sprintf(`{"jsonrpc":"2.0","id":"blocked-%d","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments"
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/conformance/official/PROVENANCE.json` (modified, +142/-142)
-```diff
-@@ -1,126 +1,77 @@
- {
--  "repository": "https://github.com/modelcontextprotocol/modelcontextprotocol",
-   "commit": "f817239f4d6b1efff2c4dfc2f7af85c985d73076",
--  "release": "2026-07-28",
--  "sourceRoot": "schema/draft/examples",
--  "files": {
--    "discover-request.json": "DiscoverRequest/server-discover-request.json",
--    "discover-result.json": "DiscoverResult/server-capabilities-discovery.json",
--    "discover-result-response.json": "DiscoverResultResponse/discover-result-response.json",
--    "list-tools-request.json": "ListToolsRequest/list-tools-request.json",
--    "list-tools-result-response.json": "ListToolsResultResponse/list-tools-result-response.json",
--    "call-tool-request.json": "CallToolRequest/call-tool-request.json",
--    "call-tool-result-response.json": "CallToolResultResponse/call-tool-result-response.json",
--    "cancelled-notification.json": "CancelledNotification/user-requested-cancellation.json",
--    "tools-minimum-capability.json": "ServerCapabilities/tools-minimum-baseline-support.json",
--    "missing-required-client-capability-error.json": "MissingRequiredClientCapabilityError/missing-elicitation-capability.json",
--    "header-mismatch-error.json": "HeaderMismatchError/header-mismatch.json",
--    "unsupported-version-error.json": "UnsupportedProtocolVersionError/unsupported-version.json",
--    "invalid-tool-arguments-error.json": "InvalidParamsError/invalid-tool-arguments.json",
--    "method-not-found-error.json": "MethodNotFoundError/prompts-not-supported.json",
--    "parse-error.json": "ParseError/invalid-json.json"
--  },
--  "sha256": {
--    "discover-request.json": "9a3b843d325275c4840ce7556204133547d56d8906c42aa243956beec3b48640",
--    "discover-result.json": "2025afe831909d22e9f5824366e587f1c5e2ebfc0eb15836bf788bd749ecfd9c",
--    "discover-result-response.json": "fed5352e48f76294f0e8e63d20caacfcfecf3ec1aa86e7ea0e4fbd57ecc03271",
--    "list-tools-request.json": "d22da12df78cc674498e3effe7b498900db1512665771206c9733f8e5d426e87",
--    "list-tools-result-response.json": "0c297989cb18c4020955e71cec759514dbbe05b3580146279eb76c18416a04c2",
--    "call-tool-request.json": "d275701f77b9ccdaf603b91c9570619720b912ef00a4d7a621175576e9610719",
--    "call-tool-result-response.json": "dba80c897863fc978370b4d856067756a1d566ad91cbaa011f6f6b9e17c8d73f",
--    "cancelled-notification.json": "13f6643825653461ad0a58ac6947351fbc50eaa3086926714dca091297e78c2d",
--    "tools-minimum-capability.json": "61468467448a94c5c6ced36d05894d7ba2e2f7501ca84270a30da1cd18a3c713",
--    "missing-required-client-capability-error.json": "67cec37a4c78c7b06282322bb6788ff83054e10aaa4044069158f7cb2a0b0080",
--    "header-mismatch-error.json": "d3861ec4e8b1d6fb7764d90642675d4e661784ae452b7cf57d7d85e621f89d14",
--    "unsupported-version-error.json": "6f6ff9030449c6a588ebcbc35fdac3fff0c9bb7c0677f1b11010369b820cbcc4",
--    "invalid-tool-arguments-error.json": "bd3f341a3f3373f3c405546265bdf912a946d60a956b53d9857bddae0e866408",
--    "method-not-found-error.json": "429f9c32bf2b6776f638c26ff4e9648182f45054a25f6c73a0abc39ecfd90ea2",
--    "parse-error.json": "7d34ed3b0397d7264718e3fc24e0ca4e8645bfad20fc8e604dbe291099de36ae"
--  },
-   "derivedCases": {
--    "unsupported-content-type": {
--      "base": "list-tools-request.json",
--      "basePath": "schema/draft/examples/ListToolsRequest/list-tools-request.json",
--      "derivation": "replace Content-Type application/json with text/plain",
--      "sha256": "ef73e188524b26a3ff06f33599a28f89a31faf280b26c68cb9107516acdfe1e5"
--    },
--    "unacceptable-accept": {
--      "base": "list-tools-request.json",
--      "basePath": "schema/draft/examples/ListToolsRequest/list-tools-request.json",
--      "derivation": "replace Accept with application/json so text/event-stream is absent",
--      "sha256": "c4bbfb670d90d81b119c75001e72443738f867d64a87e6e1a527857d1a70648e"
--    },
--    "hostile-origin": {
-+    "batch-envelope": {
-       "base": "list-tools-request.json",
-       "basePath": "schema/draft/examples/ListToolsRequest/list-tools-request.json",
--      "derivation": "append Origin https://evil.example while authority remains mcp.example.com",
--      "sha256": "d0a3b4a9b5e96fef472021e8caffb3d6e08bc9a15aa8cb2c02dbdd5c93d11321"
-+      "derivation": "wrap the complete official request in a one-element JSON array",
-+      "sha256": "04d2109a11884b795a0211745612f0ffcd2c117e958ab0c46c724dfe9bab1d74"
-     },
--    "same-origin": {
-+    "boolean-jsonrpc-id": {
-       "base": "list-tools-request.json",
-       "basePath": "schema/draft/examples/ListToolsRequest/list-tools-request.json",
--      "derivation": "append same-origin Origin https://mcp.example.com",
--      "sha256": "7731aefbb5acc33a41c76824be07a64eef8759723b4d9049378ade4aba9c2711"
-+      "derivation": "replace the official string id with boolean true",
-+      "sha256": "56c379666194039f0fa94a30162402160b5d7699dd174e5fd64227f05ddb2eb6"
-     },
--    "batch-envelope": {
-+    "duplicate-method-header": {
-       "base": "list-tools-request.json",
- 
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +229/-796)
-```diff
-@@ -1,815 +1,248 @@
--# MCP server Envoy runtime verification
-+# MCP compatibility runtime verification
- 
--This directory contains a repeatable runtime regression environment for the
--Higress WASM `mcp-server` plugin. The harness builds `plugin.wasm` from the exact
--checked-out source, loads it into Envoy from the fixed
--`higress/gateway:v2.2.3` image, drives MCP requests through real proxy-Wasm
--listeners, and records sanitized, machine-readable evidence. The full registry
--name and resolved digest are retained in the evidence manifest.
-+The default `run.sh` entry delegates to `run-compat.sh`. This loop builds a clean
-+exact candidate and two pinned sources, uses the existing Compose backend,
-+Envoy renderer, bounded lifecycle helpers and evidence finalizer, then runs the
-+existing routing regression runner. It does not certify native, official-client
-+or kind acceptance; those checks remain separate verification commands.
- 
--A clean exact-head run must pass every enumerated case with **0 FAIL**.
--`expected-main-cases.json` binds the traffic case IDs to the final matrix; a
--missing or duplicate case is a failure, even if all remaining cases pass.
--
--## Focused upstream instructions mode
--
--From `plugins/wasm-go/extensions/mcp-server`, on a clean committed candidate:
--
--```bash
--RUNTIME_VERIFY_INSTRUCTIONS=1 \
--INSTRUCTIONS_BASELINE_SHA=36f2f1ac5c7305c5a46c296c617b45d1fbacb7d3 \
--RUNTIME_EVIDENCE=/Users/<user>/instructions-evidence \
--bash testdata/runtime-verification/run.sh
--```
--
--This optional mode uses the same build, pinned images, listener generator,
--backend, exchange ledger, lifecycle helpers and task-owned cleanup as the full
--runner. It builds only the candidate and the pinned pre-feature baseline. Both
--use the candidate harness; the baseline receives configurations that omit the
--new flag. Candidate omitted/false responses are compared to that baseline.
--The remaining cases cover extraction and field omission, decoded UTF-8 byte
--limits, gateway field ownership without whole-result schema validation,
--server-level header/query/passthrough/anonymous authentication, public discover
--with protected tools, failures and incomplete results, ordinary header/metadata
--preservation, main-route retries and timeout, denial by a later filter, current
--request values and concurrent isolation, and a disconnected client followed by
--a fresh request. Configured Envoy retries are counted separately from a single
--plugin route submission. The disconnect case observes the existing lifecycle;
--it does not assert a new active upstream reset guarantee.
--
--[`instructions_contract.py`](./instructions_contract.py) independently pins the
--baseline's 2 cases/2 exchanges and candidate's 29 cases/33 exchanges. Finalization
--requires every case's exact request IDs and count, matching case/global exchange
--ledgers, and one matching access record per request. The raw disconnect retains
--its submitted HTTP bytes and hash plus Envoy's `code=0 flags=DC` observation; it
--does not invent an HTTP response. Missing, duplicated or substituted cases,
--exchanges and access records fail. RPC-error cases require an error with no
--`result`, even when a mixed upstream envelope contains valid instructions.
--[`instructions_self_test.py`](./instructions_self_test.py) exercises these
--negative controls and ordinary/controlled header checks for the legacy bridge.
--
--`instructions-baseline.json`, `instructions-candidate.json`, access logs,
--image/tool versions, cleanup proof and `instructions-manifest.json` identify
--this as **focused** evidence. Its manifest explicitly does not certify the
--historical full matrix. Run the existing default `run.sh` and `run-routing.sh`
--separately for those regressions; their fixed baselines and assertions remain
--unchanged. The normal dirty-tree development override is not acceptance
--verification.
--
--## Purpose and validation boundary
--
--This harness verifies the MCP 2026 Tools Baseline at the Envoy data-plane
--boundary:
--
--- the built WASM module can be loaded by Envoy's real proxy-Wasm runtime;
--- modern `2026-07-28` requests and the supported legacy protocol versions take
--  the expected registered, REST, composed, and proxy paths;
--- modern response contracts, legacy compatibility, proxy handshakes, error
--  behavior, and header isolation hold at runtime;
--- each main-matrix client exchange has exactly one flushed Envoy access record;
--- evidence records the source, plugin, container-image, tool, result, and
--  cleanup identities needed to reproduce and compare a run;
--- the v2.0.0 oracle `39ec41aab6eb1d40499bed2847085696de0ebb96` accepts
--  the compatibility descriptor and constructs the historical REST request,
--  while affected revision `c55d9825c90868f50edbff9764a6b3cf2eb13162`
--  rejects it;
--- an independent malformed URL-template control is rejected by the oracle,
--  affected, and candidate revisions; and
--- a ten-fixture representative corpus records the oracle, affected, and
--  candidate acceptance
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/auto_backend.py` (modified, +1/-1)
-```diff
-@@ -209,6 +209,6 @@ def error(code, status=400, data=None, wrong_id=False):
-             result["_meta"] = {"io.modelcontextprotocol/serverInfo": {"name": "auto-fixture", "version": "1"}}
-         value = {"jsonrpc": "2.0", "id": rpc_id, "result": result}
-         if mode == "sse":
--            return raw_response(handler, 200, "data:" + json.dumps(value) + "\n\n", "text/event-stream")
-+            return raw_response(handler, 200, "data: " + json.dumps(value) + "\n\n", "text/event-stream")
-         return handler.send_json(200, value)
-     return error(-32601, 404)
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/auto_self_test.py` (modified, +13/-0)
-```diff
-@@ -61,6 +61,19 @@ def rpc(self, method, key="test", headers=None):
-     def state(self):
-         return json.loads(self.request("/__state")[2])
- 
-+    def test_sse_business_uses_historical_data_space_without_changing_probe_frames(self):
-+        self.configure("sse")
-+        status, headers, probe = self.rpc(verify_auto.PROBE)
-+        self.assertEqual(200, status)
-+        self.assertIn(b'data:{"jsonrpc":"2.0","method":"notifications/progress"', probe)
-+        self.assertIn(b"data: {\r\ndata: ", probe)
-+        status, headers, business = self.rpc(verify_auto.CALL)
-+        self.assertEqual(200, status)
-+        self.assertEqual("text/event-stream", headers["Content-Type"])
-+        self.assertTrue(business.startswith(b"data: "))
-+        self.assertEqual(900719925474099312345, json.loads(business[len(b"data: "):])["result"]["opaque"])
-+        self.assertEqual([verify_auto.PROBE, verify_auto.CALL], [event["rpcMethod"] for event in self.state()["events"]])
++func configWithFailureMode(raw json.RawMessage, mode string) json.RawMessage {
++	var value map[string]interface{}
++	if err := json.Unmarshal(raw, &value); err != nil {
++		panic(err)
++	}
++	value["failure_mode"] = mode
++	result, err := json.Marshal(value)
++	if err != nil {
++		panic(err)
++	}
++	return result
++}
 +
-     def test_required_cases_are_distinct_and_complete(self):
-         names = [name for name, _ in verify_auto.cases(SimpleNamespace())]
-         self.assertEqual(len(names), len(set(names)))
++type dispatchErrorRedisClient struct {
++	wrapper.RedisClient
++	calls int
++}
++
++func (c *dispatchErrorRedisClient) Eval(string, int, []interface{}, []interface{}, wrapper.RedisResponseCallback) error {
++	c.calls++
++	return errors.New("dispatch failed")
++}
++
++type dispatchTestContext struct {
++	wrapper.HttpContext
++}
++
++func (*dispatchTestContext) DisableReroute() {}
++func (*dispatchTestContext) Host() string    { return "example.com" }
++func (*dispatchTestContext) Path() string    { return "/api/test" }
++
++func TestRedisDispatchFailureModes(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		for _, mode := range []string{config.FailureModeFailOpen, config.FailureModeFailClosed} {
++			t.Run(mode, func(t *testing.T) {
++				host, status := test.NewTestHost(configWithFailureMode(headerLimitConfig, mode))
++				defer host.Reset()
++				require.Equal(t, types.OnPluginStartStatusOK, status)
++
++				matchedConfig, err := host.GetMatchConfig()
++				require.NoError(t, err)
++				cfg := matchedConfig.(*config.ClusterKeyRateLimitConfig)
++				cfg.GlobalThreshold = &config.GlobalThreshold{Count: 1000, TimeWindow: 60}
++				cfg.RuleItems = nil
++				client := &dispatchErrorRedisClient{}
++				cfg.RedisClient = client
++
++				action := host.CallOnHttpRequestHeaders([][2]string{
++					{":authority", "example.com"},
++					{":path", "/api/test"},
++					{":method", "GET"},
++				})
++				require.Equal(t, types.ActionContinue, action)
++				action = onHttpRequestHeaders(&dispatchTestContext{}, *cfg)
++
++				require.Equal(t, 1, client.calls)
++				if mode == config.FailureModeFailOpen {
++					require.Equal(t, types.ActionContinue, action)
++					requireFailOpenRequest(t, host)
++				} else {
++					require.Equal(t, types.ActionPause, action)
++					requireFailureResponseWithoutQuotaHeaders(t, host.GetLocalResponse())
++				}
++				host.CompleteHttp()
++			})
++		}
++	})
++}
++
++func TestRedisCallbackFailureModes(t *testing.T) {
++	test.RunTest(t, func(t *testing.T) {
++		tests := []struct {
++			name      string
++			rawConfig json.RawMessage
++			status    int32
++			response  []byte
++		}{
++			{name: "callback error", response: test.CreateRedisRespError("redis error")},
++			{name: "timeout", status: 1},
++			{name: "protocol error", response: []byte("invalid-resp")},
++			{name: "malformed response", response: test.CreateRedisRespString("unexpected")},
++			{name: "malformed scalar tuple", response: []byte("*1\r\n*3\r\n+OK\r\n+OK\r\n+OK\r\n")},
++			{
++				name:      "malformed scalar tuple after triggered rule",
++				rawConfig: hybridLimitConfig,
++				response:  []byte("*2\r\n*3\r\n:10000\r\n:10001\r\n:60\r\n*3\r\n:100\r\n+OK\r\n:60\r\n"),
++			},
++		}
++		for _, mode := range []string{config.FailureModeFailOpen, config.FailureModeFailClosed} {
++			for _, tt := range tests {
++				t.Run(mode+"/"+tt.name, func(t *testing.T) {
++					rawConfig := tt.rawConfig
++					if rawConfig == nil {
++						rawConfig = globalThresholdConfig
++					}
++					host, status := test.NewTestHost(configWithFailureMode(rawConfig, mode))
++					defer host.Reset()
++					require.Equal(t, types.OnPluginStartStatusOK, status)
++
++					action := host.CallOnHttpRequestHeaders([][2]string{
++						{":authority", "example.com"},
++						{":path", "/api/test"},
++						{":method", "GET"},
++						{"x-api-key", "vip-key"},
++					})
++					require.Equal(t, types.HeaderStopAllIterationAndWaterma
+```
+
+**File**: `plugins/wasm-go/extensions/replay-protection/README.md` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ description: 防重放攻击插件配置参考
+ | `reject_code`        | int    | 否   | 429        | 拒绝请求时返回的状态码             |
+ | `reject_msg`         | string | 否   | `Replay Attack Detected` | 拒绝请求时返回的错误信息           |
+ | `validate_base64`    | bool    | 否   | false | 是否校验 nonce 的 base64 编码格式 |
++| `failure_mode` | string | 否 | `fail_closed` | Redis 调用失败、超时或响应异常时的策略：`fail_closed` 返回固定 503；`fail_open` 放行请求。可用性优先且接受暂时跳过 nonce 去重时可选择 `fail_open`。 |
+ | `redis` | Object | 是   | -              | redis 相关配置 |
+ 
+ `redis` 中每一项的配置字段说明
+```
+
+**File**: `plugins/wasm-go/extensions/replay-protection/README_EN.md` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ Plugin execution priority: `800`
+ | `reject_code`        | int    | No   | 429        | The status code returned when a request is rejected.             |
+ | `reject_msg`         | string | No   | `Replay Attack Detected` | The error message returned when a request is rejected.           |
+ | `validate_base64`    | bool    | No   | false | Whether to verify the Base64 encoding format of the nonce. |
++| `failure_mode` | string | No | `fail_closed` | Policy for Redis call failures, timeouts, and invalid responses: `fail_closed` returns a fixed 503; `fail_open` allows the request. Choose `fail_open` only when availability takes priority over temporary nonce deduplication. |
+ | `redis` | Object | Yes   | -              | Redis-related configuration |
+ 
+ Description of each configuration field in `redis`
+```
+
+---
+
+### Incident Patch 2: `5638911c` (2026-11-01)
+**Commit Message**: test(plugins): add HTTP/2 DATA body regression coverage (#5286)
+
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+
+**File**: `plugins/wasm-go/extensions/ext-auth/go.mod` (modified, +3/-0)
+```diff
+@@ -14,6 +14,8 @@ require (
+ 	github.com/tidwall/gjson v1.18.0
+ )
+ 
++require golang.org/x/text v0.28.0 // indirect
++
+ require (
+ 	github.com/davecgh/go-spew v1.1.1 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+@@ -23,5 +25,6 @@ require (
+ 	github.com/tidwall/pretty v1.2.1 // indirect
+ 	github.com/tidwall/resp v0.1.1 // indirect
+ 	github.com/tidwall/sjson v1.2.5 // indirect
++	golang.org/x/net v0.43.0
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+ )
+```
+
+**File**: `plugins/wasm-go/extensions/ext-auth/go.sum` (modified, +4/-0)
+```diff
+@@ -24,6 +24,10 @@ github.com/tidwall/resp v0.1.1 h1:Ly20wkhqKTmDUPlyM1S7pWo5kk0tDu8OoC/vFArXmwE=
+ github.com/tidwall/resp v0.1.1/go.mod h1:3/FrruOBAxPTPtundW0VXgmsQ4ZBA0Aw714lVYgwFa0=
+ github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
+ github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
++golang.org/x/net v0.43.0 h1:lat02VYK2j4aLzMzecihNvTlJNQUq316m2Mr9rnM6YE=
++golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
++golang.org/x/text v0.28.0 h1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=
++golang.org/x/text v0.28.0/go.mod h1:U8nCwOR8jO/marOQ0QbDiOngZVEBB7MAiitBuMjXiNU=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+```
+
+**File**: `plugins/wasm-go/extensions/ext-auth/http2_body_test.go` (added, +160/-0)
+```diff
+@@ -0,0 +1,160 @@
++// Copyright (c) 2024 Alibaba Group Holding Ltd.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package main
++
++import (
++	"bytes"
++	"io"
++	"net"
++	"testing"
++	"time"
++
++	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
++	"github.com/higress-group/wasm-go/pkg/test"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/net/http2"
++	"golang.org/x/net/http2/hpack"
++)
++
++type extAuthHTTP2Result struct {
++	headerAction types.Action
++	bodyActions  []types.Action
++}
++
++// Raw frames make DATA boundaries and omitted content headers deterministic.
++func runExtAuthHTTP2Request(t *testing.T, host test.TestHost, headers [][2]string, chunks [][]byte) extAuthHTTP2Result {
++	t.Helper()
++	clientConn, serverConn := net.Pipe()
++	defer clientConn.Close()
++	deadline := time.Now().Add(5 * time.Second)
++	require.NoError(t, clientConn.SetDeadline(deadline))
++	require.NoError(t, serverConn.SetDeadline(deadline))
++
++	var result extAuthHTTP2Result
++	done := make(chan error, 1)
++	go func() {
++		defer serverConn.Close()
++		preface := make([]byte, len(http2.ClientPreface))
++		if _, err := io.ReadFull(serverConn, preface); err != nil {
++			done <- err
++			return
++		}
++		framer := http2.NewFramer(serverConn, serverConn)
++		for {
++			frame, err := framer.ReadFrame()
++			if err != nil {
++				done <- err
++				return
++			}
++			switch f := frame.(type) {
++			case *http2.HeadersFrame:
++				decoder := hpack.NewDecoder(4096, nil)
++				fields, err := decoder.DecodeFull(f.HeaderBlockFragment())
++				if err != nil {
++					done <- err
++					return
++				}
++				requestHeaders := make([][2]string, 0, len(fields))
++				for _, field := range fields {
++					requestHeaders = append(requestHeaders, [2]string{field.Name, field.Value})
++				}
++				result.headerAction = host.CallOnHttpRequestHeaders(requestHeaders)
++			case *http2.DataFrame:
++				result.bodyActions = append(result.bodyActions, host.CallOnHttpStreamingRequestBody(f.Data(), f.StreamEnded()))
++				if f.StreamEnded() {
++					done <- nil
++					return
++				}
++			}
++		}
++	}()
++
++	_, err := io.WriteString(clientConn, http2.ClientPreface)
++	require.NoError(t, err)
++	framer := http2.NewFramer(clientConn, clientConn)
++	require.NoError(t, framer.WriteSettings())
++	var block bytes.Buffer
++	encoder := hpack.NewEncoder(&block)
++	for _, header := range headers {
++		require.NoError(t, encoder.WriteField(hpack.HeaderField{Name: header[0], Value: header[1]}))
++	}
++	require.NoError(t, framer.WriteHeaders(http2.HeadersFrameParam{
++		StreamID:      1,
++		BlockFragment: block.Bytes(),
++		EndHeaders:    true,
++	}))
++	for i, chunk := range chunks {
++		require.NoError(t, framer.WriteData(1, i == len(chunks)-1, chunk))
++	}
++	require.NoError(t, <-done)
++	return result
++}
++
++func TestExtAuthHTTP2BodyDelivery(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		payload := []byte("body-over-http2-data")
++		tests := []struct {
++			name   string
++			chunks [][]byte
++		}{
++			{name: "single DATA without content headers", chunks: [][]byte{payload}},
++			{name: "multiple DATA frames", chunks: [][]byte{payload[:3], payload[3:8], payload[8:]}},
++			{name: "empty then non-empty DATA", chunks: [][]byte{{}, payload}},
++			{name: "non-empty DATA then empty END_STREAM", chunks: [][]byte{payload, {}}},
++		}
++		for _, tt := range tests {
++			t.Run(tt.name, func(t *testing.T) {
++				host, status := test.NewTestHost(withRequestBodyConfig)
++				defer host.Reset()
++				require.Equal(t, types.OnPluginStartStatusOK, status)
++
++				result := runExtAuthHTTP2Request(t, host, [][2]string{
++					{":method", "POST"}, {":scheme", "http"}, {":path", "/users"}, {":authority", "example.com"},
++				}, tt.chunks)
++
++				require.Equal(t, types.ActionPause, result.headerAction)
++				require.Len(t, result.bodyActions, len(tt.chunks))
++				for i, action := range result.bodyActions {
++					require.Equal(t, types.ActionPause, action, "unexpected body-phase action for DATA frame %d", i)
++				}
++				callouts := host.GetHttpCalloutAttributes()
++				require.Len(t, callouts, 1)
++				require.Equal(t, payload, callouts[0].Body)
++			})
++		}
++	})
++}
++
++func TestExtAuthHTTP2EncodedBodyCompatibility(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		host, status := test.NewTestHost(withRequestBodyConfig)
++		defer host.Reset()
++		require.Equal(t, types.OnPluginStartStatusOK, status)
++
++		payload := []byte("encoded-body")
++		result := runExtAuthHTTP2Request(t, host, [][2]string{
++			{":method", "POST"}, {":sc
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.mod` (modified, +3/-0)
+```diff
+@@ -11,6 +11,8 @@ require (
+ 	github.com/tidwall/gjson v1.18.0
+ )
+ 
++require golang.org/x/text v0.28.0 // indirect
++
+ require (
+ 	github.com/davecgh/go-spew v1.1.1 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+@@ -20,5 +22,6 @@ require (
+ 	github.com/tidwall/pretty v1.2.1 // indirect
+ 	github.com/tidwall/resp v0.1.1 // indirect
+ 	github.com/tidwall/sjson v1.2.5 // indirect
++	golang.org/x/net v0.43.0
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+ )
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.sum` (modified, +4/-0)
+```diff
+@@ -24,6 +24,10 @@ github.com/tidwall/resp v0.1.1 h1:Ly20wkhqKTmDUPlyM1S7pWo5kk0tDu8OoC/vFArXmwE=
+ github.com/tidwall/resp v0.1.1/go.mod h1:3/FrruOBAxPTPtundW0VXgmsQ4ZBA0Aw714lVYgwFa0=
+ github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
+ github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
++golang.org/x/net v0.43.0 h1:lat02VYK2j4aLzMzecihNvTlJNQUq316m2Mr9rnM6YE=
++golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
++golang.org/x/text v0.28.0 h1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=
++golang.org/x/text v0.28.0/go.mod h1:U8nCwOR8jO/marOQ0QbDiOngZVEBB7MAiitBuMjXiNU=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/http2_body_test.go` (added, +159/-0)
+```diff
+@@ -0,0 +1,159 @@
++// Copyright (c) 2025 Alibaba Group Holding Ltd.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package main
++
++import (
++	"bytes"
++	"io"
++	"net"
++	"testing"
++	"time"
++
++	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
++	"github.com/higress-group/wasm-go/pkg/test"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/net/http2"
++	"golang.org/x/net/http2/hpack"
++)
++
++type hmacHTTP2Result struct {
++	headerAction types.Action
++	bodyActions  []types.Action
++}
++
++// Raw frames make DATA boundaries and omitted content headers deterministic.
++func runHmacHTTP2Request(t *testing.T, host test.TestHost, headers [][2]string, chunks [][]byte) hmacHTTP2Result {
++	t.Helper()
++	clientConn, serverConn := net.Pipe()
++	defer clientConn.Close()
++	deadline := time.Now().Add(5 * time.Second)
++	require.NoError(t, clientConn.SetDeadline(deadline))
++	require.NoError(t, serverConn.SetDeadline(deadline))
++
++	var result hmacHTTP2Result
++	done := make(chan error, 1)
++	go func() {
++		defer serverConn.Close()
++		preface := make([]byte, len(http2.ClientPreface))
++		if _, err := io.ReadFull(serverConn, preface); err != nil {
++			done <- err
++			return
++		}
++		framer := http2.NewFramer(serverConn, serverConn)
++		for {
++			frame, err := framer.ReadFrame()
++			if err != nil {
++				done <- err
++				return
++			}
++			switch f := frame.(type) {
++			case *http2.HeadersFrame:
++				decoder := hpack.NewDecoder(4096, nil)
++				fields, err := decoder.DecodeFull(f.HeaderBlockFragment())
++				if err != nil {
++					done <- err
++					return
++				}
++				requestHeaders := make([][2]string, 0, len(fields))
++				for _, field := range fields {
++					requestHeaders = append(requestHeaders, [2]string{field.Name, field.Value})
++				}
++				result.headerAction = host.CallOnHttpRequestHeaders(requestHeaders)
++			case *http2.DataFrame:
++				result.bodyActions = append(result.bodyActions, host.CallOnHttpStreamingRequestBody(f.Data(), f.StreamEnded()))
++				if f.StreamEnded() {
++					done <- nil
++					return
++				}
++			}
++		}
++	}()
++
++	_, err := io.WriteString(clientConn, http2.ClientPreface)
++	require.NoError(t, err)
++	framer := http2.NewFramer(clientConn, clientConn)
++	require.NoError(t, framer.WriteSettings())
++	var block bytes.Buffer
++	encoder := hpack.NewEncoder(&block)
++	for _, header := range headers {
++		require.NoError(t, encoder.WriteField(hpack.HeaderField{Name: header[0], Value: header[1]}))
++	}
++	require.NoError(t, framer.WriteHeaders(http2.HeadersFrameParam{
++		StreamID:      1,
++		BlockFragment: block.Bytes(),
++		EndHeaders:    true,
++	}))
++	for i, chunk := range chunks {
++		require.NoError(t, framer.WriteData(1, i == len(chunks)-1, chunk))
++	}
++	require.NoError(t, <-done)
++	return result
++}
++
++func TestHmacHTTP2BodyDigest(t *testing.T) {
++	test.RunGoTest(t, func(t *testing.T) {
++		payload := []byte("body-over-http2-data")
++		tests := []struct {
++			name            string
++			chunks          [][]byte
++			incorrectDigest bool
++		}{
++			{name: "single DATA without content headers", chunks: [][]byte{payload}},
++			{name: "multiple DATA frames", chunks: [][]byte{payload[:3], payload[3:8], payload[8:]}},
++			{name: "empty then non-empty DATA with incorrect digest", chunks: [][]byte{{}, payload}, incorrectDigest: true},
++			{name: "non-empty DATA then empty END_STREAM", chunks: [][]byte{payload, {}}},
++		}
++		for _, tt := range tests {
++			t.Run(tt.name, func(t *testing.T) {
++				host, status := test.NewTestHost(createConfig(
++					[]map[string]interface{}{{"name": "consumer1", "access_key": "ak1", "secret_key": "sk1"}},
++					map[string]interface{}{"global_auth": true, "validate_request_body": true},
++				))
++				defer host.Reset()
++				require.Equal(t, types.OnPluginStartStatusOK, status)
++
++				date := gmt()
++				auth := authHeaderRequestTargetDate("ak1", "sk1", "hmac-sha256", "POST", "/p", date)
++				digestBody := payload
++				if tt.incorrectDigest {
++					digestBody = []byte("different")
++				}
++				result := runHmacHTTP2Request(t, host, [][2]string{
++					{":method", "POST"}, {":scheme", "http"}, {":path", "/p"}, {":authority", "e.com"},
++					{"authorization", auth}, {"date", date}, {"digest", calculateBodyDigest(digestBody)},
++				}, tt.chunks)
++
++				require.Equal(t, types.ActionPause, result.headerAction,
++					"HeaderStopIteration must hold the request for body validation")
++				require.Len(t, result.bodyActions, len(tt.chunks))
++				for i, action := range result.bodyActions {
++					expected := type
+```
+
+---
+
+### Incident Patch 3: `03a91cb3` (2026-11-03)
+**Commit Message**: fix(mcp): remove user-level mode and validate sessions (5294)
+
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+
+**File**: `pkg/ingress/kube/configmap/mcp_server.go` (modified, +21/-60)
+```diff
+@@ -56,16 +56,6 @@ type SecretKeyReference struct {
+ 	Key string `json:"key,omitempty"`
+ }
+ 
+-// MCPRatelimitConfig defines the configuration for rate limit
+-type MCPRatelimitConfig struct {
+-	// The limit of the rate limit
+-	Limit int64 `json:"limit,omitempty"`
+-	// The window of the rate limit
+-	Window int64 `json:"window,omitempty"`
+-	// The white list of the rate limit
+-	WhiteList []string `json:"white_list,omitempty"`
+-}
+-
+ // SSEServer defines the configuration for Server-Sent Events (SSE) server
+ type SSEServer struct {
+ 	// The name of the SSE server
+@@ -82,6 +72,9 @@ type SSEServer struct {
+ 
+ // MatchRule defines a rule for matching requests
+ type MatchRule struct {
++	// Name of the MCP server that owns this rule. When empty, mcp-session
++	// binds sessions to the rule's own match key.
++	ServerName string `json:"server_name,omitempty"`
+ 	// Domain pattern, supports wildcards
+ 	MatchRuleDomain string `json:"match_rule_domain,omitempty"`
+ 	// Path pattern to match
+@@ -108,18 +101,13 @@ type McpServer struct {
+ 	Servers []*SSEServer `json:"servers,omitempty"`
+ 	// List of match rules for filtering requests
+ 	MatchList []*MatchRule `json:"match_list,omitempty"`
+-	// Flag to control whether user level server is enabled
+-	EnableUserLevelServer bool `json:"enable_user_level_server,omitempty"`
+-	// Rate limit config for MCP server
+-	Ratelimit *MCPRatelimitConfig `json:"rate_limit,omitempty"`
+ }
+ 
+ func NewDefaultMcpServer() *McpServer {
+ 	return &McpServer{
+-		Enable:                false,
+-		Servers:               make([]*SSEServer, 0),
+-		MatchList:             make([]*MatchRule, 0),
+-		EnableUserLevelServer: false,
++		Enable:    false,
++		Servers:   make([]*SSEServer, 0),
++		MatchList: make([]*MatchRule, 0),
+ 	}
+ }
+ 
+@@ -171,9 +159,11 @@ type golangPluginConfig struct {
+ 	Value interface{} `json:"value"`
+ }
+ 
+-// mcpSessionMatchRule is the wire form of a match_list entry. Every field is
+-// always emitted, matching what mcp-session's ParseMatchList expects.
++// mcpSessionMatchRule is the wire form of a match_list entry. Match fields are
++// always emitted, matching what mcp-session's ParseMatchList expects;
++// server_name is omitted when the rule has no server identity.
+ type mcpSessionMatchRule struct {
++	ServerName        string `json:"server_name,omitempty"`
+ 	MatchRuleDomain   string `json:"match_rule_domain"`
+ 	MatchRulePath     string `json:"match_rule_path"`
+ 	MatchRuleType     string `json:"match_rule_type"`
+@@ -189,18 +179,10 @@ type mcpSessionRedisConfig struct {
+ 	DB       int    `json:"db"`
+ }
+ 
+-type mcpSessionRateLimitConfig struct {
+-	Limit     int64    `json:"limit"`
+-	Window    int64    `json:"window"`
+-	WhiteList []string `json:"white_list"`
+-}
+-
+ type mcpSessionPluginValue struct {
+-	Redis                 *mcpSessionRedisConfig     `json:"redis"`
+-	RateLimit             *mcpSessionRateLimitConfig `json:"rate_limit"`
+-	SSEPathSuffix         string                     `json:"sse_path_suffix"`
+-	MatchList             []mcpSessionMatchRule      `json:"match_list"`
+-	EnableUserLevelServer bool                       `json:"enable_user_level_server"`
++	Redis         *mcpSessionRedisConfig `json:"redis"`
++	SSEPathSuffix string                 `json:"sse_path_suffix"`
++	MatchList     []mcpSessionMatchRule  `json:"match_list"`
+ }
+ 
+ // mcpServerEntry is the wire form of a servers entry. domain_list and config
+@@ -232,6 +214,7 @@ func newGolangFilterConfig(pluginName string, value interface{}) golangFilterCon
+ 
+ func newMcpSessionMatchRule(rule *MatchRule) mcpSessionMatchRule {
+ 	return mcpSessionMatchRule{
++		ServerName:        rule.ServerName,
+ 		MatchRuleDomain:   rule.MatchRuleDomain,
+ 		MatchRulePath:     rule.MatchRulePath,
+ 		MatchRuleType:     rule.MatchRuleType,
+@@ -307,6 +290,9 @@ func validMatchRule(rule *MatchRule) error {
+ 	if rule.EnablePathRewrite && rule.UpstreamType != "sse" {
+ 		return errors.New("path rewrite is only supported for SSE upstream type")
+ 	}
++	if err := mcpserver.ValidateRuleValue("server_name", rule.ServerName); err != nil {
++		return err
++	}
+ 	// An empty domain is allowed and matches any host, so only the character
+ 	// constraints are enforced here.
+ 	return mcpserver.ValidateRuleContent([]string{rule.MatchRuleDomain}, rule.MatchRulePath, rule.PathRewritePrefix)
+@@ -326,10 +312,6 @@ func validMcpServer(m *McpServer) error {
+ 		}
+ 	}
+ 
+-	if m.EnableUserLevelServer && m.Redis == nil {
+-		return errors.New("redis config cannot be empty when user level server is enabled")
+-	}
+-
+ 	// Validate match rule types
+ 	for _, rule := range m.MatchList {
+ 		if err := validMatchRule(rule); err != nil {
+@@ -375,17 +357,8 @@ func deepCopyMcpServer(mcp *McpServer) (*McpServer, error) {
+ 			}
+ 		}
+ 	}
+-	if mcp.Ratelimit != nil {
+-		newMcp.Ratelimit = &MCPRatelimitConfig{
+-			Limit:     mcp.Ratelimit.Limit,
+-			Window:    mcp.Ratelimit.Window,
+-			WhiteList: mcp.Ratelimit.WhiteList,
+-		}
+-	}
+ 	newMcp.SSEPathSuffix = mcp.SSEPathSuffix
+ 
+-	newMcp.EnableUserLevelServer = mcp.Enabl
+```
+
+**File**: `pkg/ingress/kube/configmap/mcp_server_test.go` (modified, +16/-62)
+```diff
+@@ -48,20 +48,18 @@ func Test_validMcpServer(t *testing.T) {
+ 		{
+ 			name: "enabled but no redis config",
+ 			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: false,
+-				Redis:                 nil,
+-				MatchList:             []*MatchRule{},
+-				Servers:               []*SSEServer{},
++				Enable:    true,
++				Redis:     nil,
++				MatchList: []*MatchRule{},
++				Servers:   []*SSEServer{},
+ 			},
+ 			wantErr: nil,
+ 		},
+ 		{
+ 			name: "enabled but bad match_rule_type",
+ 			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: false,
+-				Redis:                 nil,
++				Enable: true,
++				Redis:  nil,
+ 				MatchList: []*MatchRule{
+ 					{
+ 						MatchRuleDomain: "*",
+@@ -76,9 +74,8 @@ func Test_validMcpServer(t *testing.T) {
+ 		{
+ 			name: "enabled but bad upstream_type",
+ 			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: false,
+-				Redis:                 nil,
++				Enable: true,
++				Redis:  nil,
+ 				MatchList: []*MatchRule{
+ 					{
+ 						MatchRuleDomain: "*",
+@@ -94,9 +91,8 @@ func Test_validMcpServer(t *testing.T) {
+ 		{
+ 			name: "enabled but path rewrite with unsupported upstream type",
+ 			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: false,
+-				Redis:                 nil,
++				Enable: true,
++				Redis:  nil,
+ 				MatchList: []*MatchRule{
+ 					{
+ 						MatchRuleDomain:   "*",
+@@ -111,17 +107,6 @@ func Test_validMcpServer(t *testing.T) {
+ 			},
+ 			wantErr: errors.New("path rewrite is only supported for SSE upstream type"),
+ 		},
+-		{
+-			name: "enabled with user level server but no redis config",
+-			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: true,
+-				Redis:                 nil,
+-				MatchList:             []*MatchRule{},
+-				Servers:               []*SSEServer{},
+-			},
+-			wantErr: errors.New("redis config cannot be empty when user level server is enabled"),
+-		},
+ 		{
+ 			name: "redis config with password secret missing name",
+ 			mcp: &McpServer{
+@@ -149,8 +134,7 @@ func Test_validMcpServer(t *testing.T) {
+ 		{
+ 			name: "valid config with redis",
+ 			mcp: &McpServer{
+-				Enable:                true,
+-				EnableUserLevelServer: true,
++				Enable: true,
+ 				Redis: &RedisConfig{
+ 					Address:  "localhost:6379",
+ 					Username: "default",
+@@ -569,19 +553,6 @@ func TestMcpServerController_ValidHigressConfig(t *testing.T) {
+ 			},
+ 			wantErr: nil,
+ 		},
+-		{
+-			name: "invalid config - user level server without redis",
+-			higressConfig: &HigressConfig{
+-				McpServer: &McpServer{
+-					Enable:                true,
+-					EnableUserLevelServer: true,
+-					Redis:                 nil,
+-					MatchList:             []*MatchRule{},
+-					Servers:               []*SSEServer{},
+-				},
+-			},
+-			wantErr: errors.New("redis config cannot be empty when user level server is enabled"),
+-		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -670,10 +641,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 							"password": "",
+ 							"db": 0
+ 						},
+-						"rate_limit": null,
+ 						"sse_path_suffix": "",
+-						"match_list": [],
+-						"enable_user_level_server": false
++						"match_list": []
+ 					}
+ 				}
+ 			}`,
+@@ -710,12 +679,6 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 						PathRewritePrefix: "/mcp",
+ 					},
+ 				},
+-				EnableUserLevelServer: true,
+-				Ratelimit: &MCPRatelimitConfig{
+-					Limit:     100,
+-					Window:    3600,
+-					WhiteList: []string{"user1", "user2"},
+-				},
+ 			},
+ 			wantJSON: `{
+ 				"@type": "type.googleapis.com/envoy.extensions.filters.http.golang.v3alpha.Config",
+@@ -731,11 +694,6 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 							"password": "pass",
+ 							"db": 1
+ 						},
+-						"rate_limit": {
+-							"limit": 100,
+-							"window": 3600,
+-							"white_list": ["user1","user2"]
+-						},
+ 						"sse_path_suffix": "/sse",
+ 						"match_list": [{
+ 							"match_rule_domain": "*",
+@@ -758,8 +716,7 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 							"upstream_type": "sse",
+ 							"enable_path_rewrite": true,
+ 							"path_rewrite_prefix": "/mcp"
+-						}],
+-						"enable_user_level_server": true
++						}]
+ 					}
+ 				}
+ 			}`,
+@@ -793,10 +750,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 							"password": "${secret.test-namespace/redis-credentials.password}",
+ 							"db": 0
+ 						},
+-						"rate_limit": null,
+ 						"sse_path_suffix": "",
+-						"match_list": [],
+-						"enable_user_level_server": false
++						"match_list": []
+ 					}
+ 				}
+ 			}`,
+@@ -830,10 +785,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
+ 							"password": "${secret.other-ns/redis-credentials.password}",
+ 							"db": 0
+ 						},
+-						"rate_limit": null,
+ 						"sse_path_suffix": "",
+-						"match_list": [],
+-						"enable_user_level_server": false
++						"matc
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/match.go` (modified, +23/-0)
+```diff
+@@ -2,6 +2,7 @@ package common
+ 
+ import (
+ 	"regexp"
++	"strconv"
+ 	"strings"
+ 
+ 	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
+@@ -40,6 +41,7 @@ type HostMatcher struct {
+ 
+ // MatchRule defines the structure for a matching rule
+ type MatchRule struct {
++	ServerName        string       `json:"server_name"`         // MCP server that owns this rule, when known
+ 	MatchRuleDomain   string       `json:"match_rule_domain"`   // Domain pattern, supports wildcards
+ 	MatchRulePath     string       `json:"match_rule_path"`     // Path pattern to match
+ 	MatchRuleType     RuleType     `json:"match_rule_type"`     // Type of match rule
+@@ -55,6 +57,9 @@ func ParseMatchList(matchListConfig []interface{}) []MatchRule {
+ 	for _, item := range matchListConfig {
+ 		if ruleMap, ok := item.(map[string]interface{}); ok {
+ 			rule := MatchRule{}
++			if serverName, ok := ruleMap["server_name"].(string); ok {
++				rule.ServerName = serverName
++			}
+ 			if domain, ok := ruleMap["match_rule_domain"].(string); ok {
+ 				rule.MatchRuleDomain = domain
+ 			}
+@@ -101,6 +106,24 @@ func ParseMatchList(matchListConfig []interface{}) []MatchRule {
+ 	return matchList
+ }
+ 
++// SessionServerName returns the identity a session must be bound to for this
++// rule. A rule that carries an explicit server name uses it directly. When the
++// server name is unavailable, the rule's own match key is used so that distinct
++// rules never share sessions. There is deliberately no global fallback: using
++// one would make sessions replayable across routes.
++func (rule MatchRule) SessionServerName() string {
++	if rule.ServerName != "" {
++		return rule.ServerName
++	}
++	return "rule:" +
++		encodeKeyComponent(rule.MatchRuleDomain) + ":" +
++		encodeKeyComponent(rule.MatchRulePath) + ":" +
++		encodeKeyComponent(string(rule.MatchRuleType)) + ":" +
++		encodeKeyComponent(string(rule.UpstreamType)) + ":" +
++		encodeKeyComponent(strconv.FormatBool(rule.EnablePathRewrite)) + ":" +
++		encodeKeyComponent(rule.PathRewritePrefix)
++}
++
+ // stripPortFromHost removes port from host string
+ // Port removing code is inspired by
+ // https://github.com/envoyproxy/envoy/blob/v1.17.0/source/common/http/header_utility.cc#L219
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/match_test.go` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++package common
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestParseMatchListCarriesServerName(t *testing.T) {
++	rules := ParseMatchList([]interface{}{
++		map[string]interface{}{
++			"server_name":       "orders",
++			"match_rule_domain": "orders.example.com",
++			"match_rule_path":   "/mcp",
++			"match_rule_type":   "prefix",
++			"upstream_type":     "rest",
++		},
++	})
++
++	require.Len(t, rules, 1)
++	require.Equal(t, "orders", rules[0].ServerName)
++	require.Equal(t, "orders", rules[0].SessionServerName())
++}
++
++func TestSessionServerNameUsesServerName(t *testing.T) {
++	rule := MatchRule{ServerName: "server-A"}
++	require.Equal(t, "server-A", rule.SessionServerName())
++}
++
++func TestSessionServerNameFallsBackToRuleKey(t *testing.T) {
++	ruleA := MatchRule{
++		MatchRuleDomain: "a.example.com",
++		MatchRulePath:   "/server-a",
++		MatchRuleType:   PrefixMatch,
++		UpstreamType:    RestUpstream,
++	}
++	ruleB := MatchRule{
++		MatchRuleDomain: "b.example.com",
++		MatchRulePath:   "/server-b",
++		MatchRuleType:   PrefixMatch,
++		UpstreamType:    RestUpstream,
++	}
++
++	nameA := ruleA.SessionServerName()
++	require.True(t, strings.HasPrefix(nameA, "rule:"))
++	require.NotEqual(t, nameA, ruleB.SessionServerName())
++
++	// The key is stable for the same rule and changes with its match fields.
++	require.Equal(t, nameA, ruleA.SessionServerName())
++	ruleA.MatchRulePath = "/server-c"
++	require.NotEqual(t, nameA, ruleA.SessionServerName())
++}
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/redis.go` (modified, +4/-23)
+```diff
+@@ -2,13 +2,16 @@ package common
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"time"
+ 
+ 	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
+ 	"github.com/go-redis/redis/v8"
+ )
+ 
++var ErrKeyNotExist = errors.New("key does not exist")
++
+ type RedisConfig struct {
+ 	address  string
+ 	username string
+@@ -233,7 +236,7 @@ func (r *RedisClient) Set(key string, value string, expiration time.Duration) er
+ func (r *RedisClient) Get(key string) (string, error) {
+ 	value, err := r.client.Get(r.ctx, key).Result()
+ 	if err == redis.Nil {
+-		return "", fmt.Errorf("key does not exist")
++		return "", ErrKeyNotExist
+ 	} else if err != nil {
+ 		return "", fmt.Errorf("failed to get key: %w", err)
+ 	}
+@@ -250,30 +253,8 @@ func (r *RedisClient) Get(key string) (string, error) {
+ 	return value, nil
+ }
+ 
+-// Expire sets the expiration time for a key
+-func (r *RedisClient) Expire(key string, expiration time.Duration) error {
+-	ok, err := r.client.Expire(r.ctx, key, expiration).Result()
+-	if err != nil {
+-		return fmt.Errorf("failed to set expiration for key: %w", err)
+-	}
+-	if !ok {
+-		return fmt.Errorf("key does not exist")
+-	}
+-	return nil
+-}
+-
+ // Close closes the Redis client and stops the keepalive goroutine
+ func (r *RedisClient) Close() error {
+ 	r.cancel()
+ 	return r.client.Close()
+ }
+-
+-// Eval executes a Lua script
+-func (r *RedisClient) Eval(script string, numKeys int, keys []string, args []interface{}) (interface{}, error) {
+-	result, err := r.client.Eval(r.ctx, script, keys, args...).Result()
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to execute Lua script: %w", err)
+-	}
+-
+-	return result, nil
+-}
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/session_registry.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++package common
++
++import (
++	"errors"
++	"fmt"
++	"strconv"
++	"time"
++)
++
++const sessionTimeout = 24 * time.Hour
++
++type SessionRegistry interface {
++	RegisterSession(serverName, sessionID string) error
++	ValidateSession(serverName, sessionID string) (bool, error)
++}
++
++type sessionRegistryClient interface {
++	Set(key string, value string, expiration time.Duration) error
++	Get(key string) (string, error)
++}
++
++type RedisSessionRegistry struct {
++	client sessionRegistryClient
++}
++
++func NewRedisSessionRegistry(redisClient *RedisClient) SessionRegistry {
++	return &RedisSessionRegistry{client: redisClient}
++}
++
++func encodeKeyComponent(value string) string {
++	return strconv.Itoa(len(value)) + ":" + value
++}
++
++func getSessionRegistryKey(serverName, sessionID string) string {
++	return "mcp-server-session:v1:" + encodeKeyComponent(serverName) + ":" + encodeKeyComponent(sessionID)
++}
++
++func (r *RedisSessionRegistry) RegisterSession(serverName, sessionID string) error {
++	if err := r.client.Set(getSessionRegistryKey(serverName, sessionID), serverName, sessionTimeout); err != nil {
++		return fmt.Errorf("failed to register MCP session: %w", err)
++	}
++	return nil
++}
++
++func (r *RedisSessionRegistry) ValidateSession(serverName, sessionID string) (bool, error) {
++	key := getSessionRegistryKey(serverName, sessionID)
++	value, err := r.client.Get(key)
++	if err != nil {
++		if errors.Is(err, ErrKeyNotExist) {
++			return false, nil
++		}
++		return false, fmt.Errorf("failed to validate MCP session: %w", err)
++	}
++	if value != serverName {
++		return false, nil
++	}
++	// Sliding validity: an actively used session is re-registered with the
++	// full TTL so long-lived SSE connections do not expire mid-use, while
++	// abandoned sessions still age out after the idle timeout.
++	if err := r.client.Set(key, value, sessionTimeout); err != nil {
++		return false, fmt.Errorf("failed to refresh MCP session: %w", err)
++	}
++	return true, nil
++}
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/session_registry_test.go` (added, +211/-0)
+```diff
+@@ -0,0 +1,211 @@
++package common
++
++import (
++	"errors"
++	"net/http"
++	"testing"
++	"time"
++
++	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
++	"github.com/stretchr/testify/require"
++)
++
++type registryTestClient struct {
++	values      map[string]string
++	expirations map[string]time.Duration
++	expiresAt   map[string]time.Time
++	setCalls    int
++	now         func() time.Time
++	setErr      error
++	getErr      error
++}
++
++func (c *registryTestClient) currentTime() time.Time {
++	if c.now != nil {
++		return c.now()
++	}
++	return time.Now()
++}
++
++func (c *registryTestClient) Set(key string, value string, expiration time.Duration) error {
++	if c.setErr != nil {
++		return c.setErr
++	}
++	if c.values == nil {
++		c.values = make(map[string]string)
++	}
++	if c.expirations == nil {
++		c.expirations = make(map[string]time.Duration)
++	}
++	if c.expiresAt == nil {
++		c.expiresAt = make(map[string]time.Time)
++	}
++	c.values[key] = value
++	c.expirations[key] = expiration
++	c.expiresAt[key] = c.currentTime().Add(expiration)
++	c.setCalls++
++	return nil
++}
++
++func (c *registryTestClient) Get(key string) (string, error) {
++	if c.getErr != nil {
++		return "", c.getErr
++	}
++	value, ok := c.values[key]
++	if !ok {
++		return "", ErrKeyNotExist
++	}
++	if expiry, ok := c.expiresAt[key]; ok && !c.currentTime().Before(expiry) {
++		delete(c.values, key)
++		delete(c.expirations, key)
++		delete(c.expiresAt, key)
++		return "", ErrKeyNotExist
++	}
++	return value, nil
++}
++
++func TestRedisSessionRegistryValidatesServerBinding(t *testing.T) {
++	client := &registryTestClient{
++		values:      make(map[string]string),
++		expirations: make(map[string]time.Duration),
++	}
++	registry := &RedisSessionRegistry{client: client}
++
++	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
++	require.Equal(t, sessionTimeout, client.expirations[getSessionRegistryKey("server-A", "session-1")])
++
++	valid, err := registry.ValidateSession("server-A", "session-1")
++	require.NoError(t, err)
++	require.True(t, valid)
++
++	valid, err = registry.ValidateSession("server-B", "session-1")
++	require.NoError(t, err)
++	require.False(t, valid)
++
++	valid, err = registry.ValidateSession("server-A", "unknown")
++	require.NoError(t, err)
++	require.False(t, valid)
++}
++
++func TestRedisSessionRegistryReturnsStoreErrors(t *testing.T) {
++	storeErr := errors.New("redis unavailable")
++	registry := &RedisSessionRegistry{client: &registryTestClient{getErr: storeErr}}
++
++	valid, err := registry.ValidateSession("server-A", "session-1")
++	require.False(t, valid)
++	require.ErrorIs(t, err, storeErr)
++
++	registry = &RedisSessionRegistry{client: &registryTestClient{setErr: storeErr}}
++	require.ErrorIs(t, registry.RegisterSession("server-A", "session-1"), storeErr)
++}
++
++func TestRedisSessionRegistryRefreshesOnSuccessfulValidation(t *testing.T) {
++	now := time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC)
++	client := &registryTestClient{now: func() time.Time { return now }}
++	registry := &RedisSessionRegistry{client: client}
++	key := getSessionRegistryKey("server-A", "session-1")
++
++	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
++	require.Equal(t, 1, client.setCalls)
++	require.Equal(t, sessionTimeout, client.expirations[key])
++	firstExpiry := client.expiresAt[key]
++
++	// A validation 23 hours after registration must re-SET the full TTL.
++	now = now.Add(23 * time.Hour)
++	valid, err := registry.ValidateSession("server-A", "session-1")
++	require.NoError(t, err)
++	require.True(t, valid)
++	require.Equal(t, 2, client.setCalls)
++	require.Equal(t, sessionTimeout, client.expirations[key])
++	require.Equal(t, now.Add(sessionTimeout), client.expiresAt[key])
++	require.True(t, client.expiresAt[key].After(firstExpiry))
++
++	// 25 hours after registration the original TTL would have expired, but the
++	// refreshed session is still valid.
++	now = now.Add(2 * time.Hour)
++	valid, err = registry.ValidateSession("server-A", "session-1")
++	require.NoError(t, err)
++	require.True(t, valid)
++	require.Equal(t, 3, client.setCalls)
++}
++
++func TestRedisSessionRegistryDoesNotRefreshRejectedSession(t *testing.T) {
++	client := &registryTestClient{}
++	registry := &RedisSessionRegistry{client: client}
++
++	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
++	require.Equal(t, 1, client.setCalls)
++
++	valid, err := registry.ValidateSession("server-B", "session-1")
++	require.NoError(t, err)
++	require.False(t, valid)
++	require.Equal(t, 1, client.setCalls)
++}
++
++func TestRedisSessionRegistryFailsWhenRefreshFails(t *testing.T) {
++	storeErr := errors.New("redis unavailable")
++	key := getSessionRegistryKey("server-A", "session-1")
++	client := &registryTestClient{
++		values: map[string]string{key: "server-A"},
++		setErr: storeErr,
++	}
++	registry := &RedisSessionRegistry{client: client}
++
++	valid, err := registry.ValidateSession("server-A", "session-1")
++	require.False(t, valid)
++	require.ErrorIs(t, err, storeErr)
++}
++
++func TestSessionRegistryKeyUsesComponentSafeEncoding(t *testing.T) {
++	l
+```
+
+**File**: `plugins/golang-filter/mcp-session/common/sse.go` (modified, +33/-8)
+```diff
+@@ -22,11 +22,13 @@ func GetSSEChannelName(sessionID string) string {
+ // It provides real-time communication capabilities over HTTP using the SSE protocol.
+ type SSEServer struct {
+ 	server          *MCPServer
++	serverName      string
+ 	baseURL         string
+ 	messageEndpoint string
+ 	sseEndpoint     string
+ 	sessions        sync.Map
+ 	redisClient     *RedisClient // Redis client for pub/sub
++	sessionRegistry SessionRegistry
+ }
+ 
+ func (s *SSEServer) GetMessageEndpoint() string {
+@@ -38,7 +40,7 @@ func (s *SSEServer) GetSSEEndpoint() string {
+ }
+ 
+ func (s *SSEServer) GetServerName() string {
+-	return s.server.name
++	return s.serverName
+ }
+ 
+ // Option defines a function type for configuring SSEServer
+@@ -65,16 +67,32 @@ func WithSSEEndpoint(endpoint string) Option {
+ 	}
+ }
+ 
++// WithServerName overrides the identity used to bind sessions to a server.
++// The filter sets this per request from the matched MCP server rule so that a
++// session issued for one route cannot be replayed on another.
++func WithServerName(serverName string) Option {
++	return func(s *SSEServer) {
++		s.serverName = serverName
++	}
++}
++
+ func WithRedisClient(redisClient *RedisClient) Option {
+ 	return func(s *SSEServer) {
+ 		s.redisClient = redisClient
+ 	}
+ }
+ 
++func WithSessionRegistry(registry SessionRegistry) Option {
++	return func(s *SSEServer) {
++		s.sessionRegistry = registry
++	}
++}
++
+ // NewSSEServer creates a new SSE server instance with the given MCP server and options.
+ func NewSSEServer(server *MCPServer, opts ...Option) *SSEServer {
+ 	s := &SSEServer{
+ 		server:          server,
++		serverName:      server.name,
+ 		sseEndpoint:     "/sse",
+ 		messageEndpoint: "/message",
+ 	}
+@@ -86,11 +104,25 @@ func NewSSEServer(server *MCPServer, opts ...Option) *SSEServer {
+ 	return s
+ }
+ 
++// registerSession binds a generated session to this server's identity.
++func (s *SSEServer) registerSession(sessionID string) error {
++	if s.sessionRegistry == nil {
++		return nil
++	}
++	return s.sessionRegistry.RegisterSession(s.serverName, sessionID)
++}
++
+ // handleSSE handles incoming SSE connection requests.
+ // It sets up appropriate headers and creates a new session for the client.
+ func (s *SSEServer) HandleSSE(cb api.FilterCallbackHandler, stopChan chan struct{}) {
+ 	sessionID := uuid.New().String()
+ 
++	if err := s.registerSession(sessionID); err != nil {
++		api.LogErrorf("Failed to register MCP session: %v", err)
++		cb.EncoderFilterCallbacks().SendLocalReply(http.StatusServiceUnavailable, "", nil, 0, "")
++		return
++	}
++
+ 	s.sessions.Store(sessionID, true)
+ 	defer s.sessions.Delete(sessionID)
+ 
+@@ -219,13 +251,6 @@ func (s *SSEServer) HandleMessage(w http.ResponseWriter, r *http.Request, body j
+ 		ctx = WithIstiodToken(ctx, istiodToken)
+ 	}
+ 
+-	//TODO： check session id
+-	// _, ok := s.sessions.Load(sessionID)
+-	// if !ok {
+-	// 	s.writeJSONRPCError(w, nil, mcp.INVALID_PARAMS, "Invalid session ID")
+-	// 	return
+-	// }
+-
+ 	// Process message through MCPServer
+ 	response := s.server.HandleMessage(ctx, body)
+ 	var status int
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5282** (2026-10-30): fix(mcp-server): unify Modern and Legacy business compatibility (@sunxia0)
-- **PR #5276** (2026-10-28): chore(tools): remove GPL lint dependency (@johnlanni)
-- **PR #5263** (2026-10-28): feat(mcp-server): optionally preserve upstream discovery instructions (@sunxia0)
-- **PR #5239** (2026-10-22): ci: use the full commit SHA for the translate action pin (@johnlanni)
-- **PR #5238** (closed): docs(ip-restriction): normalize x-real-ip example (@purplellllll)
-- **PR #5237** (closed): docs(ai-proxy): correct Vertex safety setting name (@purplellllll)
+- **PR #5294** (2026-11-03): fix(mcp): bind user-level access to consumers (@johnlanni)
+- **PR #5293** (2026-11-03): fix(mcp): remove client config headers on ingress (@johnlanni)
+- **PR #5292** (2026-11-02): fix(plugins): isolate ai-cache data by consumer (@johnlanni)
+- **PR #5291** (2026-11-01): fix(plugins): require raw bodies for request validation (@johnlanni)
+- **PR #5289** (2026-11-01): fix(request-validation): validate all JSON body types (@johnlanni)
+- **PR #5288** (2026-11-01): fix(hmac-auth-apisix): default signed headers to date (@johnlanni)
 
 ---
 
@@ -2232,41 +3386,28 @@ Signed-off-by: sunxiao <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): unify Modern and Legacy business compatibility (#5282)
+## X. plugins): add configurable Redis failure handling (#5287)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9b06661`: mcp-server): unify Modern and Legacy business compatibility (#5282). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6532bcef`: plugins): add configurable Redis failure handling (#5287). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `tools[].legacyOnly` | boolean | 选填 | `false` | 已废弃，仍兼容解析省略、`false` 和 `true`，但不再影响工具可见性或调用。 |
-| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema；所有支持的协议版本都会返回。插件不会据此校验输出是否符合 Schema。 |
-所有支持的协议版本共用历史工具查找、认证、`allowTools`、Create/Call 和 REST 参数转换流程，不在网关处执行 inputSchema 校验、schema 编译或私有 schema 资源门禁。工具描述按正常 JSON 序列化发布，包含 `outputSchema`；工具自身仍负责输入业务约束。
-
-升级前使用 `legacyOnly: true` 的工具现在也会对 Modern 客户端可见、可调用，仍受认证和 `allowTools` 控制。请审阅现有工具授权范围；不再需要用该标记绕过 schema 校验。内置 `mcp-e2bdev` 和 `mcp-firecrawl` 已清理该标记。
-
-Legacy/Modern 的完整 UTF-8 JSON-RPC 请求体上限统一为 **100 MiB**，包含 envelope 和 `_meta`。普通 Content-Type/Accept、非身份元数据、普通重复键、深度和值数量沿历史业务策略；Modern 的原 1 MiB arguments、64 层、65536 值和名称私有限制已移除。合法单对象消息、协议版本/方法/工具名身份冲突及严格探测/协商边界继续保留。代理归一化实际上游请求，并保留客户端 ID token 与精确 JSON 数字；直接工具的原始 Create 输入和 REST 自身的类型转换保持原契约。
-### Origin 与 SSE endpoint 的信任边界
-
-插件恢复历史 Origin 接受策略：缺省、跨域、不同端口及 `null` Origin 均可进入正常处理。插件不再提供这项 Origin 同源拒绝所承担的 DNS rebinding 防护。部署者需在可信网络、网关入口或其他部署边界评估并实施相应防护；CORS 和认证不等价于该防护，升级时必须单独审阅这一取舍。
-
-旧 SSE 的初始 GET 仍复用主请求和既有路由。插件信任配置上游返回的 endpoint，按历史相对/绝对 URL 规则选择后续控制及业务 POST 的 path/query 和 HTTP Authority。完整 endpoint 可以选择不同 Authority；已有静态/透传 Authorization、header/query apiKey 等凭据可能按现有移除和覆盖规则发送给该 Authorit
+| failure_mode            | string | 否 | fail_open | Redis 调用失败、超时或响应异常时的策略：`fail_open` 放行请求；`fail_closed` 返回固定 503。需要严格限流时使用 `fail_closed`。 |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-| `tools[].legacyOnly` | boolean | 选填 | `false` | 仅供旧版 MCP 客户端使用。设为 `true` 后，工具不会出现在 MCP `2026-07-28` 的工具列表中，也不能通过该版本调用。 |
-| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema。当前旧版工具列表会返回该字段，MCP `2026-07-28` 的工具列表暂不返回；插件不会据此校验输出是否符合 Schema。 |
-MCP `2026-07-28` 会在调用工具前校验输入参数。如果工具的参数定义无法用于校验，该工具可能仍出现在列表中，但调用会被拒绝。需要暂时保留旧版调用的工具，可设置 `legacyOnly: true`。
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9b06661` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6532bcef` are properly handled with clean fallback behavior.

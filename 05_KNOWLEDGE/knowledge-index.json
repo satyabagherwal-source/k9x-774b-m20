@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:53:54.644Z",
+  "last_updated": "2026-11-03T18:02:36.565Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10814,8 +10814,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "1d2c21aa",
-      "content_hash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+      "source_version": "505d8729",
+      "content_hash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -10893,6 +10893,11 @@
           "number": 6058,
           "title": "cancel save op if loading starts (#8505)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6569,
+          "title": "tiering): fix small-bins leak and stash-cancellation on failure (#8636)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10900,7 +10905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:59:08.949Z",
+      "verified_at": "2026-11-03T18:02:36.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16012,8 +16017,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "ee6c2133",
-      "content_hash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
+      "source_version": "43f90387",
+      "content_hash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -16063,7 +16068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:39:42.211Z",
+      "verified_at": "2026-11-03T18:02:32.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32004,8 +32009,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "b9b06661",
-      "content_hash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
+      "source_version": "03a91cb3",
+      "content_hash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -32028,6 +32033,11 @@
           "number": 5765,
           "title": "mcp-server): unify Modern and Legacy business compatibility (#5282)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6568,
+          "title": "plugins): add configurable Redis failure handling (#5287)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32035,7 +32045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:37:36.040Z",
+      "verified_at": "2026-11-03T18:02:32.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45749,8 +45759,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "34cbc70f",
-      "content_hash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
+      "source_version": "675ee5b9",
+      "content_hash": "9220c2d6414fb83bb14dace9ffefab48c3ba78017b28ec3fab5069245f0408e0",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -45803,6 +45813,11 @@
           "number": 6251,
           "title": "Instantiate BunGlobWalker's methods once, in bun_glob (#47513)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6567,
+          "title": "node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45810,7 +45825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:39:39.588Z",
+      "verified_at": "2026-11-03T18:02:27.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169452,6 +169467,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:53:54.622Z"
+    },
+    "rule-6567": {
+      "learning_id": "rule-6567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6567,
+      "title": "node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591)",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "675ee5b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:02:27.746Z"
+    },
+    "rule-6568": {
+      "learning_id": "rule-6568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6568,
+      "title": "plugins): add configurable Redis failure handling (#5287)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "03a91cb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:02:32.625Z"
+    },
+    "rule-6569": {
+      "learning_id": "rule-6569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6569,
+      "title": "tiering): fix small-bins leak and stash-cancellation on failure (#8636)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "505d8729",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:02:36.534Z"
     }
   },
   "aliases": {

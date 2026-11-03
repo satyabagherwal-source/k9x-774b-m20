@@ -6967,3 +6967,7 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `cbae181d` | Multi-dimensional audit evidence | 2026-11-03T17:53:49.930Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `a08e420b` | Multi-dimensional audit evidence | 2026-11-03T17:53:53.024Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `6c452ddc` | Multi-dimensional audit evidence | 2026-11-03T17:53:54.733Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `675ee5b9` | Multi-dimensional audit evidence | 2026-11-03T18:02:27.866Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `03a91cb3` | Multi-dimensional audit evidence | 2026-11-03T18:02:32.754Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `43f90387` | Multi-dimensional audit evidence | 2026-11-03T18:02:32.971Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `505d8729` | Multi-dimensional audit evidence | 2026-11-03T18:02:36.654Z |

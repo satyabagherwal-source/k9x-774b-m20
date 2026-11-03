@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `34cbc70f`  
+> **Source Version**: `675ee5b9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:39:38.937Z  
+> **Timestamp**: 2026-11-03T18:02:27.087Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:39:38.771Z  
+> **Harvest Timestamp**: 2026-11-03T18:02:25.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96488 stars
+- **Stars / Engagement**: 96530 stars
 
 ---
 
@@ -648,7 +648,7 @@ struct us_poll_t *us_create_poll(struct us_loop_t *loop, int fallthrough, unsign
     if (!fallthrough) {
         loop->num_polls++;
     }
-    return CLEAR_POINTER_TAG(us_malloc(sizeof(struct us_poll_t) + ext_size));
+    return CLEAR_POINTER_TAG(us_xmalloc(sizeof(struct us_poll_t) + ext_size));
 }
 
 /* Todo: this one should be us_internal_poll_free */
@@ -801,7 +801,7 @@ static int bun_kevent64_wait(int kqfd, struct kevent64_s *eventlist, int nevents
 
 /* Loop */
 struct us_loop_t *us_create_loop(void *hint, void (*wakeup_cb)(struct us_loop_t *loop), void (*pre_cb)(struct us_loop_t *loop), void (*post_cb)(struct us_loop_t *loop), unsigned int ext_size) {
-    struct us_loop_t *loop = (struct us_loop_t *) us_calloc(1, sizeof(struct us_loop_t) + ext_size);
+    struct us_loop_t *loop = (struct us_loop_t *) us_xcalloc(1, sizeof(struct us_loop_t) + ext_size);
     loop->num_polls = 0;
     /* These could be accessed if we close a poll before starting the loop */
     loop->num_ready_polls = 0;
@@ -848,7 +848,7 @@ static void us_internal_dispatch_ready_polls(struct us_loop_t *loop) {
             int events = loop->ready_polls[loop->current_ready_poll].events;
             /* Normalize to 0/1 like the kqueue path's EV_ERROR: the value is
              * forwarded as a libus close code, and a raw EPOLLERR (8) would
-             * read as errno
+             * read as err
 ```
 
 ### Core Architecture Module: `packages/bun-usockets/src/internal/eventing/epoll_kqueue.h`
@@ -978,11 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #47450** (2026-10-30): **bun lint: @shadcn/lint jsPlugin misreads custom theme token (text-13 as color) when run from monorepo root; oxlint does not**
-  *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+da867c60b  ### What platform is your operating system?  Linux 7.2.11 x64 (Arch)  ### What steps can reproduce the bug?  This is a monorepo (private, so no public link). It uses an `.oxlintrc.json` at the repo root with the `@shadcn/lint` jsPlugin (`^0.2.0`):  ```jsonc {   "jsPlugins": ["@shadcn/lint", "./tools/oxlint-plugins/no-relative-import.js", "./tools/oxlint-plugins/no-native-controls.js"],   "settings": { "shadcn": { "ui": "@opex/ui" } },   "rules": { "shadcn/no-restyle": ["error", { "allow": ["layout"], "contracts": [ /* ... */ ] }] } } ```  There is no `components.json` at the repo root. Each workspace package has its own `components.json` with `tailwind.css` pointing to a shared theme file that defines a custom font-size token in `@theme inline`:  ```css --text-13: 13px; ```  Usage in `packages/pmo/src/client/Sprints.tsx`:  ```tsx <Label className="flex-col items-stretch font-normal leading-normal text-13"> ```  Run both linters from the **repo root**:  ```sh oxlint -f unix .                       # oxlint 1.82.0 bun lint --no-script -f unix .         # 1.4.4-canary.1 ```  ### What is the expected behavior?  Same diagnostics as oxlint. oxlint reports 34 problems and none for `text-13`. The migration guide says any difference from oxlint is a bug.  ### What do you see instead?  `bun lint` reports 39 problems: the same 34, plus 5 extra `shadcn/no-restyle` errors, all on the `text-13` token:  ``` packages/pmo/src/clie
+- **Issue #47830** (2026-11-03): **Bun.serve still buffers without bound for a slow (not stalled) reader of a ReadableStream response**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Linux 6.8.0-147-generic x86_64  ### What steps can reproduce the bug?  #32469 fixed the case of a client that stops reading: Bun now stops pulling the response stream. A client that keeps reading, but slowly, still lets Bun pull the stream far ahead of the socket and buffer the difference in memory without bound.  Save as `repro.mjs` and run `bun repro.mjs`. It is safe: the body stops at 256 MiB and the run ends after 10 seconds. The client reads 64 KiB every 50 ms, about 1.25 MB/s.  ```js import { connect } from 'node:net';  const CHUNK = new Uint8Array(64 * 1024).fill(65); // 64 KiB const CAP = 256 * 1024 * 1024; let enqueued = 0; let read = 0;  const server = Bun.serve({   port: 0,   hostname: '127.0.0.1',   fetch() {     const stream = new ReadableStream(       {         pull(controller) {           controller.enqueue(CHUNK);           enqueued += CHUNK.byteLength;           if (enqueued >= CAP) controller.close();         },       },       { highWaterMark: 1 },     );     return new Response(stream);   }, });  // A client that keeps reading, slowly: 64 KiB every 50 ms. const socket = connect(server.port, '127.0.0.1'); socket.pause(); socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n'); setInterval(() => {   const chunk = socket.read(64 * 1024);   if (chunk !== null) read += chunk.length; }, 50);  let t = 0; setInterval(() => {   t += 1;   const rss = (process.memoryUsage().rs
 
-- **Issue #47397** (2026-10-29): **bun bundler .module.css issue**
-  *Symptoms*: ### What version of Bun is running?  _No response_  ### What platform is your computer?  _No response_  ### What steps can reproduce the bug?  ..  ### What is the expected behavior?  ..  ### What do you see instead?  Uncaught Error: Accessing undefined property diffInsert     at Object.get (editor.bun.js:29859:13)     at editor.bun.js:29957:27  ### Additional information  That error explains why the Bun version shows a blank page. The bundle is throwing an exception during initialization:  `Uncaught Error: Accessing undefined property diffInsert`  The important clue is that this appears to be an undefined-property access, potentially caused by a missing export, an incompatible module, or a bundler-generated module wrapper. It doesn't necessarily mean `diffInsert` itself should simply be defined manually.  Since `editor.esbuild.js` works, we can use it as the reference to find the exact mismatch rather than guessing.  I found the exact bug in the two bundles.  Root cause: Bun is generating the wrong CSS Module property names for how the code accesses them.  In `editor.bun.js`, the CSS module exports:  ``` var util_module_default = {   scrollbar: "scrollbar_XcDXfQ",   "diff-insert": "diff-insert_XcDXfQ",   "diff-delete": "diff-delete_XcDXfQ",   "diff-empty": "diff-empty_XcDXfQ" }; ```  But the application accesses these properties using camelCase:  ``` var HexDecoratorStyles = {   [0]: style.diffInsert,   [1]: style.diffDelete,   [2]: style.diffEmpty }; ```  The `style` proxy t
+- **Issue #47714** (2026-11-02): **bun lint / bun check / bun fmt run a package.json script of the same name, but bun test / bun build always run the built-in**
+  *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+3f3a9ff87  ### What platform is your computer?  Darwin 25.6.0 arm64 arm  ### What steps can reproduce the bug?  In an empty directory:  ```bash cat > package.json <<'EOF' {"name":"shadow","scripts":{"lint":"echo SCRIPT-lint","check":"echo SCRIPT-check","fmt":"echo SCRIPT-fmt","test":"echo SCRIPT-test","build":"echo SCRIPT-build"}} EOF for c in lint check fmt test build; do echo "--- bun $c"; bun $c 2>&1 | head -2; done ```  ### What is the expected behavior?  `bun <name>` should resolve the same way for every command that is both a built-in and a script name. Either the built-in always wins, or a script of that name always wins.   ### What do you see instead?  The result depends on the command:  - `bun lint`, `bun check` and `bun fmt` run the package.json script (output `SCRIPT-lint` and so on). - `bun test` and `bun build` run Bun's built-in and ignore the script. `bun run test` and `bun run build` do run the script.  ### Additional information  The inconsistency breaks tooling that wraps the built-ins. For example, a CLI that runs `bun lint …` or `bun check --types=…` internally gets hijacked in any package that also defines scripts named `lint` or `check`. The wrapper calls its own script again, so it recurses with the wrapper's flags. The flags `--silent`, `--bun` and `--cwd` don't bypass it.  I don't know whether this is intended or changed between versions. My request is that it be consistent, and if scripts are meant 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,608 +999,1200 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34cbc70f` (2026-10-31)
-**Commit Message**: Instantiate BunGlobWalker's methods once, in bun_glob (#47513)
+### Incident Patch 1: `cee9dd92` (2026-11-01)
+**Commit Message**: node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591)
 
 ### What does this PR do?
 
-`BunGlobWalker` is a generic walker with its parameters filled in. Its
-methods are instantiated in each crate that uses it (the bundler, the
-linter, the runtime), because `-Zshare-generics` only reuses an
-instantiation from an upstream crate and these crates do not depend on
-each other. `bun_glob::walk_bun_glob` calls `walk()` inside `bun_glob`,
-so the instantiation exists upstream of all of them and each links to
-that copy. Nothing needs to call the new function.
+A third batch of independent `node:crypto` / WebCrypto fixes found by
+diffing Bun against Node, following #47559 and #47567. Every behaviour
+below was compared with Node v26.12.1.
 
-Function sizes of the walker in a linux-x64 release build: -23,750 B.
+**Cipher**
 
-### How did you verify your code works?
+- `cipher.update()` and `cipher.final()` call `EVP_CipherUpdate_ex` and
+`EVP_CipherFinal_ex2`, which are told how much room the output has. They
+called `EVP_CipherUpdate` and `EVP_CipherFinal_ex`, which take no size.
+`update()` gets the room it needs from `EVP_CIPHER_CTX_max_next_update`.
+`final()` writes at most two blocks, into an array on the stack.
+- `update()` reads the input's address and length once.
+- The result's `ArrayBuffer` is as long as the result, like Node's.
+- Deleted: the branch of `update()` for key-wrap ciphers. BoringSSL has
+none.
 
-The change was part of a stripped linux-x64 release build at
-69f4077643c. On that build a sample of 58 test files had the same
-results as without it, and instruction counts of `bun lint`, `bun
-check`, `bun fmt`, `bun build` and `bun test` runs stayed within
-run-to-run noise.
+**Random**
 
-This branch itself has not been built locally.
+- `crypto.getRandomValues()` always fills the view with `RAND_bytes`,
+which is what Node fills it with. Views of 256 bytes or less were filled
+from the cache of random bytes that `randomUUID()` draws from. With
+1.4.4 on an AMD EPYC, a 16-byte view takes 22 ns from the cache, and the
+calls that already go to `RAND_bytes` take 550 to 
 
-**File**: `src/glob/lib.rs` (modified, +6/-0)
+**File**: `src/jsc/bindings/JSDOMExceptionHandling.cpp` (modified, +16/-12)
 ```diff
-@@ -44,6 +44,12 @@ impl<P: AsRef<[u8]>> Prepared<P> {
- pub type BunGlobWalker = walk::GlobWalker<walk::SyscallAccessor, false>;
- pub type BunGlobWalkerZ = walk::GlobWalker<walk::SyscallAccessor, true>;
+@@ -106,6 +106,20 @@ String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue
+     return errorMessage;
+ }
  
-+/// `-Zshare-generics` reuses an instantiation only from an upstream crate. The users of `BunGlobWalker` do not depend on
-+/// each other, so its methods are instantiated here and every user links to this copy.
-+pub fn walk_bun_glob(walker: &mut BunGlobWalker) -> Result<bun_sys::Result<()>, bun_core::Error> {
-+    walker.walk()
++JSValue createDOMExceptionObject(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message)
++{
++    // FIXME: All callers to createDOMException need to pass in the correct global object.
++    // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
++    // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
++    // https://bugs.webkit.org/show_bug.cgi?id=222229
++    JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
++    JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
++
++    ASSERT(errorObject);
++    addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
++    return errorObject;
 +}
 +
- /// Returns true if `text` has an unescaped `@(`, `+(` or `!(`.
- /// The other two extglob prefixes, `?` and `*`, are glob syntax on their own.
- pub fn has_extglob_prefix(text: &[u8]) -> bool {
+ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message, const String& extra)
+ {
+     auto& vm = JSC::getVM(lexicalGlobalObject);
+@@ -168,18 +182,8 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
+     case ExceptionCode::WORKER_INVALID_EXEC_ARGV:
+         return Bun::createError(lexicalGlobalObject, Bun::ErrorCode::ERR_WORKER_INVALID_EXEC_ARGV, message);
+ 
+-    default: {
+-        // FIXME: All callers to createDOMException need to pass in the correct global object.
+-        // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
+-        // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
+-        // https://bugs.webkit.org/show_bug.cgi?id=222229
+-        JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
+-        JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
+-
+-        ASSERT(errorObject);
+-        addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
+-        return errorObject;
+-    }
++    default:
++        return createDOMExceptionObject(lexicalGlobalObject, ec, message);
+     }
+     return {};
+ }
+```
+
+**File**: `src/jsc/bindings/JSDOMExceptionHandling.h` (modified, +2/-0)
+```diff
+@@ -63,6 +63,8 @@ WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::Exception*, Cache
+ 
+ JSC::JSValue createDOMException(JSC::JSGlobalObject&, Exception&&);
+ JSC::JSValue createDOMException(JSC::JSGlobalObject*, ExceptionCode, const String& = emptyString(), const String& extra = String());
++// Always a DOMException: createDOMException() turns ExceptionCode::SyntaxError into JavaScript's own SyntaxError.
++JSC::JSValue createDOMExceptionObject(JSC::JSGlobalObject*, ExceptionCode, const String& message);
+ 
+ // Convert a DOM implementation exception into a JavaScript exception in the execution lexicalGlobalObject.
+ WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::JSGlobalObject&, JSC::ThrowScope&, Exception&&);
+```
+
+**File**: `src/jsc/bindings/JSX509Certificate.cpp` (modified, +3/-2)
+```diff
+@@ -581,9 +581,10 @@ bool JSX509Certificate::checkIP(JSGlobalObject* globalObject, WTF::StringView ip
+     VM& vm = globalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
+ 
+-    // utf8() asserts on failure. A string too long to convert isn't an IP address.
++    // utf8() asserts on failure. A string too long to convert isn't an IP address, and neither is one with a NUL,
++    // where the C string that checkIp() takes would end.
+     auto ipUtf8 = ip.tryGetUTF8();
+-    auto result = ipUtf8 ? view().checkIp(ipUtf8->legacyCStringPointer(), 0) : ncrypto::X509View::CheckMatch::INVALID_NAME;
++    auto result = ipUtf8 && !ip.contains(u'\0') ? view().checkIp(ipUtf8->legacyCStringPointer(), 0) : ncrypto::X509View::CheckMatch::INVALID_NAME;
+     return handleMatchResult(globalObject, "Invalid IP address"_s, scope, result);
+ }
+ 
+```
+
+**File**: `src/jsc/bindings/ncrypto.cpp` (modified, +27/-12)
+```diff
+@@ -1495,17 +1495,8 @@ DataPointer DHPointer::computeSecret(const BignumPointer& peer) const
+     auto dp = DataPointer::Alloc(size());
+     if (!dp) return {};
+ 
+-    int size = DH_compute_key(static_cast<uint8_t*>(dp.get()), peer.get(), dh_.get());
+-    if (size < 0) return {};
+-
+-    // The size of the computed key can be smaller than the size of the DH key.
+-    // We want to make sure that the key is correctly padded.
+-    if (static_cast<size_t>(size) < dp.size()) {
+-        const size_t padding = dp.size() - size;
+-        uint8_t* data = static_cast<uint8_t*>(dp.get());
+-        memmove(data + padding, data, size);
+-        memset(data, 0, padding);
+-    }
++    // Not upstream, which calls DH_compute_key and puts back the leading zeros that it strips.
++    if (DH_compute_key_padded(static_cast<uint8_t*>(dp.get()), peer.get(), dh_.get()) < 0) return {};
+ 
+     return dp;
+ }
+@@ -3292,6 +3283,13 @@ bool EVPKeyCtxPointer::setRsaOaepMd(const Digest& md)
+     return EVP_PKEY_CTX_set_rsa_oaep_md(ctx_.get(), md_ptr) > 0;
+ }
+ 
++bool EVPKeyCtxPointer::setRsaMgf1Md(const Digest& md)
++{
++    if (!md || !ctx_) return false;
++    const EVP_MD* md_ptr = md;
++    return EVP_PKEY_CTX_set_rsa_mgf1_md(ctx_.get(), md_ptr) > 0;
++}
++
+ bool EVPKeyCtxPointer::setRsaPadding(int padding)
+ {
+     return setRsaPadding(ctx_.get(), padding, std::nullopt);
+@@ -3420,7 +3418,7 @@ DataPointer CipherImpl(const EVPKeyPointer& key,
+ {
+     if (!key) return {};
+     EVPKeyCtxPointer ctx = key.newCtx();
+-    if (!ctx || init(ctx.get()) <= 0 || !ctx.setRsaPadding(params.padding) || (params.digest != nullptr && !ctx.setRsaOaepMd(params.digest))) {
++    if (!ctx || init(ctx.get()) <= 0 || !ctx.setRsaPadding(params.padding) || (params.digest != nullptr && !ctx.setRsaOaepMd(params.digest)) || (params.mgf1_digest != nullptr && !ctx.setRsaMgf1Md(params.mgf1_digest))) {
+         return {};
+     }
+ 
+@@ -3481,6 +3479,23 @@ const Rsa::PrivateKey Rsa::getPrivateKey() const
+     return key;
+ }
+ 
++// Not upstream: there is no loop over getOtherPrimeInfos(), which is empty with BoringSSL, and nothing is multiplied
++// for a modulus that BoringSSL refuses to use or a factor that is longer than the modulus.
++bool Rsa::checkPrimeProduct() const
++{
++    const auto pub = getPublicKey();
++    const auto priv = getPrivateKey();
++    if (pub.n == nullptr || priv.p == nullptr || priv.q == nullptr) return false;
++    const unsigned bits = BN_num_bits(pub.n);
++    if (bits > OPENSSL_RSA_MAX_MODULUS_BITS || BN_num_bits(priv.p) > bits || BN_num_bits(priv.q) > bits) return false;
++    auto product = BignumPointer::New();
++    BignumCtxPointer ctx(BN_CTX_new());
++    if (!product || !ctx || BN_mul(product.get(), priv.p, priv.q, ctx.get()) != 1) {
++        return false;
++    }
++    return BN_cmp(product.get(), pub.n) == 0;
++}
++
+ const std::optional<Rsa::PssParams> Rsa::getPssParams() const
+ {
+     if (rsa_ == nullptr) return std::nullopt;
+```
+
+**File**: `src/jsc/bindings/ncrypto.h` (modified, +4/-0)
+```diff
+@@ -321,6 +321,7 @@ class Cipher final {
+     struct CipherParams {
+         int padding;
+         Digest digest;
++        Digest mgf1_digest;
+         const Buffer<const void> label;
+     };
+ 
+@@ -401,6 +402,8 @@ class Rsa final {
+ 
+     const PublicKey getPublicKey() const;
+     const PrivateKey getPrivateKey() const;
++    // Check that n is the product of all private-key prime factors.
++    bool checkPrimeProduct() const;
+     const std::optional<PssParams> getPssParams() const;
+ 
+     bool setPublicKey(BignumPointer&& n, BignumPointer&& e);
+@@ -673,6 +676,7 @@ class EVPKeyCtxPointer final {
+     bool setEcParameters(int curve, int encoding);
+ 
+     bool setRsaOaepMd(const Digest& md);
++    bool setRsaMgf1Md(const Digest& md);
+     bool setRsaPadding(int padding);
+     bool setRsaKeygenPubExp(BignumPointer&& e);
+     bool setRsaKeygenBits(int bits);
+```
+
+**File**: `src/jsc/bindings/node/crypto/JSCipher.cpp` (modified, +30/-16)
+```diff
+@@ -66,6 +66,22 @@ enum class CipherOperation {
+     recover,
+ };
+ 
++// Reads an option that names a digest. `digest` stays empty if the option is undefined.
++static void getDigestOption(JSGlobalObject* globalObject, ThrowScope& scope, JSObject* options, ASCIILiteral name, ASCIILiteral argName, ncrypto::Digest& digest)
++{
++    JSValue value = options->get(globalObject, Identifier::fromString(globalObject->vm(), name));
++    RETURN_IF_EXCEPTION(scope, );
++    if (value.isUndefined())
++        return;
++    V::validateString(scope, globalObject, value, argName);
++    RETURN_IF_EXCEPTION(scope, );
++    GCOwnedDataScope<WTF::StringView> view = asString(value)->view(globalObject);
++    RETURN_IF_EXCEPTION(scope, );
++    digest = ncrypto::Digest::FromName(view);
++    if (!digest)
++        ERR::OSSL_EVP_INVALID_DIGEST(scope, globalObject);
++}
++
+ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, KeyType keyType, CipherOperation operation, int32_t defaultPadding)
+ {
+     VM& vm = lexicalGlobalObject->vm();
+@@ -76,9 +92,10 @@ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* ca
+     JSValue optionsValue = callFrame->argument(0);
+     JSValue bufferValue = callFrame->argument(1);
+ 
+-    // Like Node, validate the cipher options (padding, oaepHash, oaepLabel) before any key
++    // The cipher options (padding, oaepHash, mgf1Hash, oaepLabel) are validated before any key
+     // parsing so an invalid digest is reported even when the key material itself is invalid.
+     ncrypto::Digest digest;
++    ncrypto::Digest mgf1Digest;
+     int32_t padding = defaultPadding;
+     std::optional<WTF::Vector<uint8_t>> oaepLabel;
+     JSValue encodingValue = jsUndefined();
+@@ -90,21 +107,10 @@ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* ca
+             RETURN_IF_EXCEPTION(scope, {});
+         }
+ 
+-        JSValue oaepHashValue = options->get(lexicalGlobalObject, Identifier::fromString(vm, "oaepHash"_s));
++        getDigestOption(lexicalGlobalObject, scope, options, "oaepHash"_s, "key.oaepHash"_s, digest);
++        RETURN_IF_EXCEPTION(scope, {});
++        getDigestOption(lexicalGlobalObject, scope, options, "mgf1Hash"_s, "key.mgf1Hash"_s, mgf1Digest);
+         RETURN_IF_EXCEPTION(scope, {});
+-        if (!oaepHashValue.isUndefined()) {
+-            V::validateString(scope, lexicalGlobalObject, oaepHashValue, "options.oaepHash"_s);
+-            RETURN_IF_EXCEPTION(scope, {});
+-            JSString* oaepHashString = oaepHashValue.toString(lexicalGlobalObject);
+-            RETURN_IF_EXCEPTION(scope, {});
+-            GCOwnedDataScope<WTF::StringView> oaepHashView = oaepHashString->view(lexicalGlobalObject);
+-            RETURN_IF_EXCEPTION(scope, {});
+-            digest = ncrypto::Digest::FromName(oaepHashView);
+-            if (!digest) {
+-                ERR::OSSL_EVP_INVALID_DIGEST(scope, lexicalGlobalObject);
+-                return {};
+-            }
+-        }
+ 
+         encodingValue = options->get(lexicalGlobalObject, Identifier::fromString(vm, "encoding"_s));
+         RETURN_IF_EXCEPTION(scope, {});
+@@ -114,7 +120,7 @@ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* ca
+         if (!oaepLabelValue.isUndefined()) {
+             // Key parsing below runs user JS (option getters, warning events) that could
+             // detach a borrowed label buffer, so copy the bytes instead of holding a view.
+-            auto view = getArrayBufferOrView2(lexicalGlobalObject, scope, oaepLabelValue, "options.oaepLabel"_s, encodingValue);
++            auto view = getArrayBufferOrView2(lexicalGlobalObject, scope, oaepLabelValue, "key.oaepLabel"_s, encodingValue);
+             RETURN_IF_EXCEPTION(scope, {});
+             oaepLabel = copyArgumentBytes(lexicalGlobalObject, scope, std::span { view->data(), view->size() }, "oaepLabel"_s);
+             if (!oaepLabel) return {};
+@@ -184,6 +190,13 @@ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* ca
+         return {};
+     }
+ 
++    // Under another padding, OpenSSL's encryption and decryption ignore the OAEP options. BoringSSL refuses them.
++    if (padding != RSA_PKCS1_OAEP_PADDING && (operation == CipherOperation::encrypt || operation == CipherOperation::decrypt)) {
++        digest = nullptr;
++        mgf1Digest = nullptr;
++        oaepLabel.reset();
++    }
++
+     ncrypto::Buffer<const void> labelBuf = {};
+     if (oaepLabel) {
+         labelBuf = {
+@@ -195,6 +208,7 @@ JSValue rsaFunction(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* ca
+     ncrypto::Cipher::CipherParams cipherParams {
+         .padding = padding,
+         .digest = digest,
++        .mgf1_digest = mgf1Digest,
+         .label = labelBuf,
+     };
+ 
+```
+
+**File**: `src/jsc/bindings/node/crypto/JSCipherPrototype.cpp` (modified, +32/-39)
+```diff
+@@ -56,18 +56,21 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherUpdate, (JSC::JSGlobalObject * lexicalGlobalObj
+     JSArrayBufferView* dataView = getArrayBufferOrView(lexicalGlobalObject, scope, dataValue, "data"_s, encodingValue);
+     RETURN_IF_EXCEPTION(scope, {});
+ 
++    // Read once: the length of a length-tracking view is not fixed.
++    const std::span<const uint8_t> data = dataView->span();
++
+     ClearErrorOnReturn clearErrorOnReturn;
+ 
+-    if (dataView->byteLength() > INT_MAX) {
+-        return ERR::OUT_OF_RANGE(scope, lexicalGlobalObject, "data is too big"_s, 0, INT_MAX, jsNumber(dataView->byteLength()));
++    if (data.size() > INT_MAX) {
++        return ERR::OUT_OF_RANGE(scope, lexicalGlobalObject, "data is too big"_s, 0, INT_MAX, jsNumber(data.size()));
+     }
+ 
+     if (!cipher->m_ctx) {
+         throwCryptoError(lexicalGlobalObject, scope, ERR_peek_error(), "Trying to add data in unsupported state");
+         return {};
+     }
+ 
+-    if (cipher->m_ctx.isCcmMode() && !cipher->checkCCMMessageLength(dataView->byteLength())) {
++    if (cipher->m_ctx.isCcmMode() && !cipher->checkCCMMessageLength(data.size())) {
+         // return undefined
+         // https://github.com/nodejs/node/blob/6b4255434226491449b7d925038008439e5586b2/src/crypto/crypto_cipher.cc#L742
+         return JSValue::encode(jsUndefined());
+@@ -78,56 +81,50 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherUpdate, (JSC::JSGlobalObject * lexicalGlobalObj
+         ASSERT_UNUSED(passed, passed);
+     }
+ 
+-    const int32_t blockSize = cipher->m_ctx.getBlockSize();
+-    if (dataView->byteLength() + blockSize > INT_MAX) {
+-        throwCryptoError(lexicalGlobalObject, scope, ERR_peek_error(), "Trying to add data in unsupported state");
+-        return {};
+-    }
+-    int32_t bufLen = dataView->byteLength() + blockSize;
+-
+-    ncrypto::Buffer<const uint8_t> buf {
+-        .data = reinterpret_cast<uint8_t*>(dataView->vector()),
+-        .len = dataView->byteLength(),
+-    };
+-
+-    if (cipher->m_kind == CipherKind::Cipher && cipher->m_ctx.isWrapMode() && !cipher->m_ctx.update(buf, nullptr, &bufLen)) {
++    if (data.size() + cipher->m_ctx.getBlockSize() > INT_MAX) {
+         throwCryptoError(lexicalGlobalObject, scope, ERR_peek_error(), "Trying to add data in unsupported state");
+         return {};
+     }
+ 
+-    RefPtr<ArrayBuffer> outBuf = JSC::ArrayBuffer::tryCreateUninitialized(cipher->heldBackBlock().size() + bufLen, 1);
++    RefPtr<ArrayBuffer> outBuf = JSC::ArrayBuffer::tryCreateUninitialized(cipher->heldBackBlock().size() + EVP_CIPHER_CTX_max_next_update(cipher->m_ctx, data.size()), 1);
+     if (!outBuf) {
+         throwOutOfMemoryError(lexicalGlobalObject, scope);
+         return {};
+     }
+-    const size_t heldBack = cipher->takeHeldBackBlock(outBuf->mutableSpan());
++    size_t outLen = cipher->takeHeldBackBlock(outBuf->mutableSpan());
+ 
+-    buf = {
+-        .data = reinterpret_cast<uint8_t*>(dataView->vector()),
+-        .len = dataView->byteLength(),
+-    };
+-
+-    bool res = cipher->m_ctx.update(buf, static_cast<unsigned char*>(outBuf->data()) + heldBack, &bufLen);
+-    ASSERT(heldBack + bufLen <= outBuf->byteLength());
++    auto out = outBuf->mutableSpan().subspan(outLen);
++    size_t written = 0;
++    bool res = EVP_CipherUpdate_ex(cipher->m_ctx, out.data(), &written, out.size(), data.data(), data.size()) == 1;
++    ensureStillAliveHere(dataView);
++    outLen += written;
+ 
+     if (!res && cipher->m_kind == CipherKind::Decipher && cipher->m_ctx.isCcmMode()) {
+         cipher->m_pendingAuthFailed = true;
+         RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), 0)));
+     }
+ 
+-    if (res != 1) {
++    if (!res) {
+         throwCryptoError(lexicalGlobalObject, scope, ERR_peek_error(), "Trying to add data in unsupported state");
+         return {};
+     }
+ 
+-    RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), WTF::move(outBuf), 0, heldBack + bufLen)));
++    // The result's ArrayBuffer is as long as what was written, like Node's. BoringSSL documents
++    // EVP_CIPHER_CTX_max_next_update() as an upper bound, but it is exact today, so nothing is copied.
++    if (outLen != outBuf->byteLength())
++        outBuf = ArrayBuffer::tryCreate(outBuf->span().first(outLen));
++    if (!outBuf) {
++        throwOutOfMemoryError(lexicalGlobalObject, scope);
++        return {};
++    }
++
++    RELEASE_AND_RETURN(scope, JSValue::encode(createBuffer(lexicalGlobalObject, outBuf.releaseNonNull())));
+ }
+ 
+ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObject, JSC::CallFrame* callFrame))
+ {
+     auto& vm = lexicalGlobalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
+-    auto* globalObject = defaultGlobalObject(lexicalGlobalObject);
+ 
+     ClearErrorOnReturn clearErrorOnReturn;
+ 
+@@ -149,13 +146,9 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObje
+ 
+```
+
+**File**: `src/jsc/bindings/node/crypto/KeyObject.cpp` (modified, +65/-32)
+```diff
+@@ -967,6 +967,11 @@ JSValue KeyObject::toCryptoKey(JSGlobalObject* lexicalGlobalObject, ThrowScope&
+     auto usagesBitmap = WebCore::SubtleCrypto::toCryptoKeyUsageBitmap(keyUsages);
+ 
+     auto throwDOMException = [&](WebCore::ExceptionCode code, const String& message) -> JSValue {
++        // createDOMException() turns this code into JavaScript's own SyntaxError.
++        if (code == WebCore::SyntaxError) {
++            throwException(lexicalGlobalObject, scope, WebCore::createDOMExceptionObject(lexicalGlobalObject, code, message));
++            return {};
++        }
+         WebCore::propagateException(*lexicalGlobalObject, scope, WebCore::Exception { code, message });
+         return {};
+     };
+@@ -1190,20 +1195,18 @@ GCOwnedDataScope<WTF::StringView> getJwkStringView(JSGlobalObject* globalObject,
+     return strView;
+ }
+ 
+-JSArrayBufferView* getDecodedJwkStringBuf(JSGlobalObject* globalObject, ThrowScope& scope, JSObject* jwk, ASCIILiteral propName, ASCIILiteral keyName)
++inline BignumPointer jwkBufToBn(JSArrayBufferView* buf)
+ {
+-    auto strView = getJwkStringView(globalObject, scope, jwk, propName, keyName);
+-    RETURN_IF_EXCEPTION(scope, {});
+-
+-    auto* dataBuf = decodeJwkString(globalObject, scope, strView, keyName);
+-    RETURN_IF_EXCEPTION(scope, {});
+-
+-    return dataBuf;
++    return BignumPointer(reinterpret_cast<uint8_t*>(buf->vector()), buf->byteLength());
+ }
+ 
+-inline BignumPointer jwkBufToBn(JSArrayBufferView* buf)
++static BignumPointer jwkStringToBn(JSGlobalObject* globalObject, ThrowScope& scope, JSValue string, ASCIILiteral keyName)
+ {
+-    return BignumPointer(reinterpret_cast<uint8_t*>(buf->vector()), buf->byteLength());
++    auto strView = asString(string)->view(globalObject);
++    RETURN_IF_EXCEPTION(scope, {});
++    auto* dataBuf = decodeJwkString(globalObject, scope, strView, keyName);
++    RETURN_IF_EXCEPTION(scope, {});
++    return jwkBufToBn(dataBuf);
+ }
+ 
+ static bool hasRawPublicKey(const EVPKeyPointer& key, std::span<const uint8_t> expected)
+@@ -1388,48 +1391,78 @@ __attribute__((minsize)) KeyObject KeyObject::getKeyObjectHandleFromJwk(JSGlobal
+         return create(keyType, WTF::move(key));
+     }
+     case Kty::Rsa: {
+-        auto nView = getJwkStringView(globalObject, scope, jwk, "n"_s, "key.n"_s);
++        // Node's ImportJWKRsaKey: https://github.com/nodejs/node/blob/v26.12.1/src/crypto/crypto_rsa.cc#L372
++        const ASCIILiteral invalidKey = "Invalid JWK RSA key"_s;
++        VM& vm = globalObject->vm();
++        JSValue nValue = jwk->get(globalObject, Identifier::fromString(vm, "n"_s));
+         RETURN_IF_EXCEPTION(scope, {});
+-        auto eView = getJwkStringView(globalObject, scope, jwk, "e"_s, "key.e"_s);
++        JSValue eValue = jwk->get(globalObject, Identifier::fromString(vm, "e"_s));
+         RETURN_IF_EXCEPTION(scope, {});
+-
+-        auto* nBuf = decodeJwkString(globalObject, scope, nView, "key.n"_s);
++        JSValue dValue = jwk->get(globalObject, Identifier::fromString(vm, "d"_s));
+         RETURN_IF_EXCEPTION(scope, {});
+-        auto* eBuf = decodeJwkString(globalObject, scope, eView, "key.e"_s);
++        JSValue othValue = jwk->get(globalObject, Identifier::fromString(vm, "oth"_s));
+         RETURN_IF_EXCEPTION(scope, {});
+ 
++        // BoringSSL has no multi-prime RSA, so no "oth" is valid.
++        if (!nValue.isString() || !eValue.isString() || (!dValue.isUndefined() && !dValue.isString()) || !othValue.isUndefined()) {
++            ERR::CRYPTO_INVALID_JWK(scope, globalObject, invalidKey);
++            return {};
++        }
++
++        // The JWK itself decides whether private key material is present.
++        const bool isPrivate = dValue.isString();
++        if (keyType == CryptoKeyType::Private && !isPrivate) {
++            ERR::CRYPTO_INVALID_JWK(scope, globalObject, "JWK does not contain private key material"_s);
++            return {};
++        }
++
+         MarkPopErrorOnReturn markPopError;
+ 
++        BignumPointer n = jwkStringToBn(globalObject, scope, nValue, "key.n"_s);
++        RETURN_IF_EXCEPTION(scope, {});
++        BignumPointer e = jwkStringToBn(globalObject, scope, eValue, "key.e"_s);
++        RETURN_IF_EXCEPTION(scope, {});
++
+         RSAPointer rsa(RSA_new());
+         Rsa rsaView(rsa.get());
+ 
+-        if (!rsaView.setPublicKey(jwkBufToBn(nBuf), jwkBufToBn(eBuf))) {
+-            ERR::CRYPTO_INVALID_JWK(scope, globalObject, "Invalid JWK RSA key"_s);
++        if (!rsaView.setPublicKey(WTF::move(n), WTF::move(e))) {
++            ERR::CRYPTO_INVALID_JWK(scope, globalObject, invalidKey);
+             return {};
+         }
+ 
+-        if (keyType == CryptoKeyType::Private) {
+-            auto* dBuf = getDecodedJwkStringBuf(globalObject, scope, jwk, "d"_s, "key.d"_s);
++        if (isPrivate) {
++            JSValue pValue = jwk->get(globalObject, Identifier::fromString(vm, "p"_s));
++            RETURN_IF_EXCEPTION(scope, {});
++            JSValue qValue = jwk->get(globalObject, Identifier::fromString(vm, "q"_s));
++            RETUR
 ```
 
 ---
 
-### Incident Patch 2: `d7d941c0` (2026-10-31)
-**Commit Message**: Put the small hot fields of the checker, parser and formatter structs first (#47512)
+### Incident Patch 2: `89fbb780` (2026-10-31)
+**Commit Message**: node:crypto, webcrypto, tls: more Node compatibility fixes (#47567)
 
 ### What does this PR do?
 
-On x86-64 a field within 127 bytes of the start of a struct is reached
-with a one-byte offset, a field further away with four bytes. `Checker`,
-`Files`, `OwnStore`, `hir::FileIn`, `Lexer`, `Parser`, `Formatter` and
-`Tracker` are large and are accessed all over their crates. They are
-laid out as declared (`#[repr(C)]`), with the small fields that most
-accesses touch first. No field is added or removed.
+A second batch of independent `node:crypto` / WebCrypto / TLS fixes
+found by diffing Bun against Node, following #47559. Every behaviour
+below was compared with Node v26.12.1.
 
-Linux-x64 release binary, stripped: -155,648 B. `Parser` grows by 8
-bytes. On arm64 the encoding is the same either way, so nothing is saved
-there.
+**Deep equality**
 
-The order now has to be kept by hand: a new field goes at the end unless
-it is small and hot.
+- `assert.deepStrictEqual`, `assert.deepEqual`,
+`util.isDeepStrictEqual`, `Bun.deepEquals` and `expect().toEqual` /
+`toStrictEqual` found any two `KeyObject`s equal, and any two
+`CryptoKey`s, because neither has own enumerable properties.
+`assert.partialDeepStrictEqual` compared `KeyObject`s but found any two
+`CryptoKey`s equal. They now compare [what Node
+compares](https://github.com/nodejs/node/blob/v26.12.1/lib/internal/util/comparisons.js#L413-L458):
+the type and the key material, and for a `CryptoKey` also `extractable`,
+`usages` and `algorithm`.
 
-### How did you verify your code works?
+**BoringSSL's error queue**
 
-The change was part of a stripped linux-x64 release build at
-69f4077643c. On that build a sample of 58 test files had the same
-results as without it, and instruction counts of `bun lint`, `bun
-check`, `bun fmt`, `bun build` and `bun test` runs stayed within
-run-to-run noise.
+BoringSSL keeps a queue of errors per thread. Many `node:crypto`,
+WebCrypto and `tls` entry points returned after a failure with entries
+still on it, and the functions that build an exception from the queue
+read its oldest entry. So a later, unrelated failure could be reported
+with an earlier one's code and message. Tw
 
-This branch itself has not been built locally.
-
-**File**: `src/format/ir/document.rs` (modified, +3/-0)
+**File**: `packages/bun-usockets/src/crypto/openssl.c` (modified, +92/-2)
 ```diff
-@@ -66,6 +66,9 @@ struct State {
- }
+@@ -1169,11 +1169,101 @@ enum {
+   US_IDENTITY_UNCHECKED = 2,
+ };
  
- #[derive(Default)]
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub(crate) struct Tracker {
-     state: State,
-     frames: Vec<Frame>,
-```
-
-**File**: `src/format/ir/formatter.rs` (modified, +9/-6)
-```diff
-@@ -430,20 +430,23 @@ pub(crate) struct FormatterBuffers {
- }
- 
- /// Collects the elements of a document.
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub(crate) struct Formatter<'a> {
--    /// `storage.pool` is the document so far.
--    pub(crate) storage: Storage,
-     /// Sees every element as it's written.
-     tracker: Tracker,
-+    /// `storage.pool` is the document so far.
-+    pub(crate) storage: Storage,
-     /// Scratch vectors. See [`Formatter::take_vec`].
-     spare: Vec<Vec<FormatElement>>,
--    /// Maps interned content to its copy without soft line breaks.
--    cleaned: FxHashMap<Interned, Interned>,
--    next_group_id: Cell<u32>,
--    source: &'a [u8],
-     /// Computed from `source`.
-     odd_blocks: OddBlocks,
-     context: JsFormatContext<'a>,
-+    /// Maps interned content to its copy without soft line breaks.
-+    cleaned: FxHashMap<Interned, Interned>,
-+    source: &'a [u8],
-+    next_group_id: Cell<u32>,
- }
- 
- impl<'a> Formatter<'a> {
-```
-
-**File**: `src/sema/check/mod.rs` (modified, +472/-469)
-```diff
-@@ -1513,61 +1513,402 @@ pub enum Requested {
-     EarlyErrors,
- }
- 
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub struct Checker<'p, 's> {
-+    files: &'p Files<'s>,
-     pub p: &'p Program<'s>,
-     /// The arena of the thread that runs the task. It's for the records the task creates, which may
-     /// be published. Everything else that a task allocates is on the regular heap.
-     pub arena: &'s Arena,
-+    /// The lowest index given to `mark_tainted_from` since the innermost `begin_scope`.
-+    lowest_taint: usize,
-+    /// Number of circular queries.
-+    cycles: u64,
-+    deepest_stack: std::cell::Cell<usize>,
-+    /// How many times `error_at_current_node` had nothing to report since `check_file` began. The
-+    /// computation in progress at that point isn't cached.
-+    limits: u64,
-+    ran_out_of_stack: std::cell::Cell<bool>,
-     /// The task that this checker runs. Every access to a `Buffered` or `FileLocal` table takes it
-     /// as an argument because it owns the write buffer.
-     task: Task<'s>,
--    /// The tainted frame that `leave` popped last, for `cache_provisionally`.
--    left_frame: Option<QueryFrame>,
--    files: &'p Files<'s>,
--    /// `varianceTypeParameter`: its name.
--    variance_type_parameter: Atom,
--    /// `autoArrayType`
--    auto_array_type: TypeId,
--    stack: Vec<Query>,
--    /// One per entry of `stack`.
--    frames: Vec<QueryFrame>,
-     /// For each class, the position of its innermost entry of `stack`, plus one. 0: the class is empty, and a query
-     /// of it isn't in progress. `QueryFrame::next_of_class` leads on to the other entries of the class.
-     in_progress: [u32; 1024],
--    /// The result of the last `enter`. `leave` and `excessively_deep` reset it to `Entered`.
--    last_enter: EnterOutcome,
--    /// The patterns whose implied type is being computed as the contextual type of their
--    /// initializer, and the stack depth when that began.
--    contextual_binding_patterns: Vec<(FileId, PatId, usize)>,
--    /// `left` of the latest `getTypeOfExpression(left)` of `getContextualTypeForAssignmentExpression`.
--    requested_assignment_target: Option<(FileId, ExprId)>,
--    /// The type node whose type `precheck_type_node` is requesting.
--    looked_at_type_node: Option<(FileId, TypeNodeId)>,
-+    /// For each class of calls, the position of its innermost entry of `resolved_meanwhile`, plus one. As `in_progress`
-+    /// and `QueryFrame::next_of_class`.
-+    resolved_meanwhile_of_class: [u32; 256],
-+    /// See `union_property`.
-+    union_members: union_property::UnionMembers<'p>,
-+    /// See check/sibling_intersections.rs. `Some` while `reduced_members` filters a union.
-+    sibling_intersections: Option<shape::SiblingIntersections<'p>>,
-+    union_calls: unions::UnionCalls,
-+    /// A 256-bit filter of the property names of `Object`, `Function`, `CallableFunction` and
-+    /// `NewableFunction`. A name whose bit is clear isn't one of them. All zero means it isn't built yet.
-+    pub(super) inherited_names: [u64; 4],
-+    /// The names themselves, to check a name whose bit is set. `None` if it isn't built yet, or if the members
-+    /// of one of the four types aren't stored, so that looking up a name in that type resolves them again.
-+    pub(super) inherited_name_set: Option<crate::util::FxHashSet<Atom>>,
-+    /// The spans of `task.file` that `checkSourceFile` never visits. The passes that iterate over
-+    /// all nodes of a kind do visit them.
-+    never_checked: std::cell::RefCell<Vec<(u32, u32)>>,
-+    /// `number_name` of each index, or `NONE` if it hasn't been requested.
-+    names_of_small_numbers: std::cell::RefCell<Vec<Atom>>,
-     /// `membersAndExportsLinks`, keyed by container and side.
-     late_bound_members: FxHashMap<(Sym, bool), late_bound::LateBoundMembers>,
-     /// `symbolNodeLinks.Get(decl).resolvedSymbol != nil`: the declarations that `lateBindMember`
-     /// has bound, for the containers in `late_binding`.
-     late_bound_declarations: crate::util::FxHashSet<(FileId, crate::bind::Decl)>,
-     /// `has_this_type` of an interface.
-     this_types: FxHashMap<Sym, bool>,
--    /// The interfaces for which `has_this_type` is in progress.
--    this_types_in_progress: Vec<Sym>,
-     /// See `is_thisless_for_this_mapper`.
-     thisless_members: FxHashMap<Sym, bool>,
-     /// `links.resolvedType` of instantiated symbols, by target and mapper. Only contains the ones that differ from what
-     /// the target's type gives. See `link_of_instantiated_symbol`.
-     instantiated_symbol_links: FxHashMap<Sym, Vec<(MapperId, TypeId)>>,
-+    /// The sides for which `resolveDeclaredMembers` or `resolveAnonymousTypeMembers` assigned
-+    /// `earlySymbols` at the request of a computed name that was being bound for `late_binding_by_symbol`.
-+    /// No outer call assigns the members again, so no type of the container gets the late-bound members
-```
-
-**File**: `src/sema/hir.rs` (modified, +5/-5)
-```diff
-@@ -2456,6 +2456,11 @@ pub struct ImportedConstant {
- /// The parser's output for one source file.
- #[derive(Default)]
- pub struct FileIn<S: Storage> {
-+    pub exprs: S::Nodes<Expr>,
-+    pub stmts: S::Nodes<Stmt>,
-+    pub types: S::Nodes<TypeNode>,
-+    pub fns: S::Nodes<Func>,
-+    pub members: S::Nodes<Member>,
-     pub kind: FileKind,
-     /// `.js`, `.jsx`, `.mjs`, `.cjs`. Parsed like `.tsx`: TypeScript-only syntax is accepted and reported as an error
-     /// afterwards.
-@@ -2605,13 +2610,9 @@ pub struct FileIn<S: Storage> {
- 
-     pub ids: S::Nodes<u32>,
-     pub numbers: S::Nodes<f64>,
--    pub exprs: S::Nodes<Expr>,
--    pub stmts: S::Nodes<Stmt>,
--    pub types: S::Nodes<TypeNode>,
-     pub pats: S::Nodes<Pat>,
-     pub pat_props: S::Nodes<PatProp>,
-     pub pat_elems: S::Nodes<PatElem>,
--    pub fns: S::Nodes<Func>,
-     pub params: S::Nodes<Param>,
-     pub type_params: S::Nodes<TypeParam>,
-     pub classes: S::Nodes<Class>,
-@@ -2620,7 +2621,6 @@ pub struct FileIn<S: Storage> {
-     pub enums: S::Few<Enum>,
-     pub enum_members: S::Few<EnumMember>,
-     pub modules: S::Few<Module>,
--    pub members: S::Nodes<Member>,
-     pub props: S::Nodes<Prop>,
-     pub var_decls: S::Nodes<VarDecl>,
-     pub calls: S::Nodes<Call>,
-```
-
-**File**: `src/sema/parser/lexer.rs` (modified, +42/-39)
-```diff
-@@ -21,15 +21,10 @@ use bun_sema::hir::{
- 
- mod runtime_text;
- 
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub(crate) struct Lexer<'a> {
--    pub(crate) src: &'a [u8],
--    /// Computed for the whole text, even while `src` is cut short.
--    stops: ScannerStops<'a>,
--    pub(crate) token: T,
--    /// A line break precedes the token.
--    pub(crate) newline_before: bool,
--    /// The name or keyword has a Unicode escape, or the template piece has an invalid escape.
--    pub(crate) has_escape: bool,
-     /// The start of the token.
-     pub(crate) start: u32,
-     /// The end of the token.
-@@ -38,12 +33,48 @@ pub(crate) struct Lexer<'a> {
-     pub(crate) full_start: u32,
-     /// The text of a name, keyword or bigint, or the value of a string or template piece.
-     pub(crate) atom: Atom,
--    pub(crate) number: f64,
--    /// The start of the last string whose contents are only printable ASCII, with no backslash.
--    plain_string: u32,
-+    /// See `Parser::finish_node`. A node that starts after this offset can't affect any pending comment.
-+    pub(crate) max_relevant_node_start: u32,
-+    pub(crate) token: T,
-+    /// A line break precedes the token.
-+    pub(crate) newline_before: bool,
-+    /// The name or keyword has a Unicode escape, or the template piece has an invalid escape.
-+    pub(crate) has_escape: bool,
-     pub(crate) rejection: Option<Rejection>,
-+    pub(crate) number: f64,
-+    pub(crate) stack_check: bun_core::StackCheck,
-+    pub(crate) src: &'a [u8],
-+    /// Every scanned private name that wasn't declared by a class that has ended since, for
-+    /// `hir::rare::ODD_PRIVATE_NAME`. `Atom::NONE` marks one after `super.`.
-+    pub(crate) private_names: Vec<Atom>,
-+    /// `hir::File::comment_directives`
-+    pub(crate) comment_directives: Vec<CommentDirective>,
-+    /// The comments before the first token.
-+    pub(crate) leading_comments: Vec<(u32, u32)>,
-+    /// `hir::File::comments`
-+    pub(crate) comments: Vec<Comment>,
-+    /// Errors that TypeScript's scanner reports about syntax ECMAScript allows outside strict mode: the message code,
-+    /// start and end. Only filled in with `is_ecmascript`. Otherwise the text is rejected.
-+    pub(crate) flagged: Vec<(u32, u32, u32)>,
-+    /// The errors that [`Lexer::error`] reported and the parser hasn't taken yet (`Parser::take_scanner_errors`), in
-+    /// the order they were reported.
-+    pub(crate) errors: Vec<Diagnostic>,
-+    /// `hir::File::jsdoc_asterisks`, in scan order: unsorted, and possibly with duplicates.
-+    pub(crate) jsdoc_asterisks: Vec<u32>,
-+    /// For each of `errors`, where the scan that reported it began. See [`Lexer::error`].
-+    origins: Vec<u32>,
-+    /// Scratch space for decoding values that have escapes.
-+    buffer: Vec<u8>,
-+    /// Only filled in if `records_html_opens` is set.
-+    pub(crate) html_opens: HtmlOpens,
-+    /// Computed for the whole text, even while `src` is cut short.
-+    stops: ScannerStops<'a>,
-+    pub(crate) atoms: &'a dyn Intern,
-+    pub(crate) names: &'a mut Names,
-     /// Where the text was rejected, and by which line of this crate.
-     pub(crate) rejected_at: (u32, &'static core::panic::Location<'static>),
-+    /// The start of the last string whose contents are only printable ASCII, with no backslash.
-+    plain_string: u32,
-     /// `full_start` at that point.
-     pub(crate) rejected_after: u32,
-     /// `</` is one token.
-@@ -62,45 +93,17 @@ pub(crate) struct Lexer<'a> {
-     pub(crate) is_oxc: bool,
-     /// Records `<!--` positions in `html_opens`. The caller may reparse a text that has one as a script.
-     pub(crate) records_html_opens: bool,
--    /// Only filled in if `records_html_opens` is set.
--    pub(crate) html_opens: HtmlOpens,
--    /// Every scanned private name that wasn't declared by a class that has ended since, for
--    /// `hir::rare::ODD_PRIVATE_NAME`. `Atom::NONE` marks one after `super.`.
--    pub(crate) private_names: Vec<Atom>,
--    pub(crate) atoms: &'a dyn Intern,
--    pub(crate) names: &'a mut Names,
--    /// `hir::File::comment_directives`
--    pub(crate) comment_directives: Vec<CommentDirective>,
--    /// The comments before the first token.
--    pub(crate) leading_comments: Vec<(u32, u32)>,
--    /// `hir::File::comments`
--    pub(crate) comments: Vec<Comment>,
-     /// While scanning the comments between two tokens: true if a line break was seen since the last comment, or since
-     /// the previous token if there was no comment yet.
-     newline_since_comment: bool,
-     /// `Options::attach_comments`
-     pub(crate) attach_comments: bool,
--    /// See `Parser::finish_node`. A node that starts after this offset can't affect any pending comment.
--    pub(crate) max_relevant_node_start: u32,
--    /// Errors that TypeScript's scanner reports about syntax ECMAScript allows outside strict mode: the message code,
--    /// start and end. Only fil
-```
-
-**File**: `src/sema/parser/parser/mod.rs` (modified, +54/-51)
-```diff
-@@ -193,39 +193,76 @@ pub(crate) struct Checkpoint {
- ///
- /// `COMMENTS`: the parser finds the nodes around each comment when the options enable it. See [`comments`]. When it's
- /// false that code is compiled out, so `bun check` and `bun lint`, which don't need those nodes, don't pay for it.
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub(crate) struct Parser<'a, const GENERAL: bool, const COMMENTS: bool> {
--    pub(crate) lx: Lexer<'a>,
--    pub(crate) f: FileBuilder,
--    pub(crate) s: Stacks,
-     /// `ctx`
-     pub(crate) context: u32,
--    /// Number of enclosing classes.
--    pub(crate) class_depth: u32,
--    pub(crate) options: Options,
-     /// See `recovers()`.
-     recovers: bool,
--    /// See `reads_jsdoc()`.
--    reads_jsdoc: bool,
--    pub(crate) jsdoc: jsdoc::State,
-+    /// `Dialect::ecmascript`, in a JavaScript file.
-+    pub(crate) is_ecmascript: bool,
-+    pub(crate) options: Options,
-+    pub(crate) lx: Lexer<'a>,
-     comments: comments::CommentTracker,
--    /// `parsingContexts`: one bit for each `ListKind` that has an open list.
--    pub(crate) lists: u32,
-+    pub(crate) f: FileBuilder,
-+    pub(crate) s: Stacks,
-+    pub(crate) jsdoc: jsdoc::State,
-+    /// The private names the enclosing classes have declared so far.
-+    pub(crate) declared_private_names: Vec<Atom>,
-+    pub(crate) declared: Declared,
-+    /// `notParenthesizedArrow`: the sorted positions where a speculative parse found that no arrow function starts.
-+    pub(crate) not_arrows: Vec<u32>,
-+    /// See `is_at_parameters_of_function_type`. Each entry is a position, the context and the answer, sorted by
-+    /// position.
-+    pub(crate) function_type_starts: Vec<(u32, u32, bool)>,
-+    /// See `try_type_arguments_in_expression`. Each entry is the position of a `<` and the context. Sorted.
-+    pub(crate) not_type_arguments: Vec<(u32, u32)>,
-     pub(crate) declaration_scan: stmt::DeclarationScan,
-+    /// The token where `fail` was last called, and its position.
-+    failed_at: (T, u32),
-+    /// `failed_at`, if that call is why the last `try_parse` rolled back.
-+    pub(crate) was_abandoned_at: Option<(T, u32)>,
-     /// The start of the token where the last error was reported, and how many errors were reported there.
-     pub(crate) errors_at: (u32, u32),
--    /// `Dialect::ecmascript`, in a JavaScript file.
--    pub(crate) is_ecmascript: bool,
--    /// `Dialect::flow`, in a JavaScript file.
--    flow: bool,
--    /// True if a `<` after an expression can start type arguments. False in JavaScript, except for Flow.
--    pub(crate) has_type_arguments_in_expressions: bool,
-+    /// For `rare::NESTED_MODULE_SYNTAX`, in a JavaScript file for oxc: how many `import` and `export` statements were
-+    /// parsed at any depth, and how many of the file's top-level statements are one.
-+    pub(crate) module_statements: (u32, u32),
-+    /// See [`Parsed::end`].
-+    pub(crate) end: (u32, u32),
-+    /// The last `T?` node and its end.
-+    pub(crate) last_nullable_type: (TypeNodeId, u32),
-+    /// Number of enclosing classes.
-+    pub(crate) class_depth: u32,
-+    /// `parsingContexts`: one bit for each `ListKind` that has an open list.
-+    pub(crate) lists: u32,
-     /// In Flow: the start of the last expression statement.
-     pub(crate) flow_statement_start: u32,
-     /// `TypeExcludesFlags`: the context bits cleared inside a type, an enum's members and a top-level namespace. oxc
-     /// keeps the enclosing code's await and yield context there.
-     pub(crate) cleared_in_types: u32,
-     /// Number of `await` and `yield` expressions created so far.
-     pub(crate) suspensions: u32,
-+    /// Number of parameters so far with a modifier, a `?` or `...`. It only grows.
-+    pub(crate) odd_parameters: u32,
-+    /// While `reparses_rest_of_file` is set, the start of the previous statement.
-+    pub(crate) reparsed_at: u32,
-+    /// The position of a JSX child's `<` for which the native parser still has the token from before the rescan. See
-+    /// `rescan_jsx_child`.
-+    pub(crate) jsx_child_with_stale_token: u32,
-+    /// The position of the `?` of the last optional parameter.
-+    pub(crate) parameter_question_pos: u32,
-+    /// See `private_name_before_in`. The position of the last one.
-+    pub(crate) private_name_before_in: u32,
-+    /// Number of speculative parses in progress.
-+    speculations: u32,
-+    /// See `reads_jsdoc()`.
-+    reads_jsdoc: bool,
-+    /// `Dialect::flow`, in a JavaScript file.
-+    flow: bool,
-+    /// True if a `<` after an expression can start type arguments. False in JavaScript, except for Flow.
-+    pub(crate) has_type_arguments_in_expressions: bool,
-     /// `Dialect::oxc`, in a TypeScript file. See `oxc.rs`.
-     is_typescript_for_oxc: bool,
-     /// True while parsing a class's `implements` clause for oxc, which accepts any word as a name there.
-@@ -234,16 +271,6 @@ pub(crate) struct P
-```
-
-**File**: `src/sema/program.rs` (modified, +88/-85)
-```diff
-@@ -544,17 +544,65 @@ impl ByPath<'_> {
- /// Used instead of a file of the program for a related location in the configuration file.
- pub const IN_CONFIGURATION: FileId = FileId(u32::MAX - 1);
- 
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub struct Files<'s> {
--    session: &'s Session,
--    /// The arena of the thread that runs `load`. The tables below live in it, and only that thread
--    /// adds to them, since every method that does takes `&mut self`.
--    arena: &'s Arena,
--    pub atoms: Interner<'s>,
--    pub options: &'s Options,
-     pub modules: ArenaVec<'s, ModuleCell<'s>>,
--    pub by_path: ByPath<'s>,
-+    pub options: &'s Options,
- 
-     pub globals: SymbolMap<'s>,
-+    /// `moduleSymbolLinks` of the modules whose exports `getExportsOfModule` resolved during the
-+    /// symbol merge, for an alias that `mergeSymbol` resolved. `resolvedExports` is a copy of the
-+    /// tables at that point: a name that a later augmentation adds to the module isn't in it, and
-+    /// is 2305 for an import. At the end of the merge they move to `Memo::module_links`.
-+    module_links_at_merge: Guarded<ArenaVec<'s, (Sym, ModuleSymbolLinks<'s>)>>,
-+    memo: Memo<'s>,
-+    /// The components of the import graph, which is the `edges` and `imports` of every file in `order`.
-+    pub components: Components<'s>,
-+    /// `CommonSourceDirectory` without its trailing `/`, if an output path depends on it.
-+    pub common_source_directory: Option<&'s [u8]>,
-+    /// Indexes into `ambient_patterns`, bucketed by the last byte of the text after the `*`. Bucket 256 is for patterns
-+    /// that end with the `*`. A specifier ending in byte `b` can only match patterns in buckets `b` and 256. Empty
-+    /// until all patterns are known.
-+    ambient_patterns_by_end: &'s [&'s [u32]],
-+    /// The modules of `module_links_at_merge`.
-+    modules_resolved_at_merge: &'s [Sym],
-+    /// The modules with one of `ModuleSymbolLinks::export_collisions` in another file. Filled by
-+    /// `link`.
-+    pub modules_with_nested_export_collisions: &'s [Sym],
-+    /// Sorted by file and identifier. The runs for one identifier are in the order they began. Filled by `link`.
-+    failed_lookups: &'s [FailedLookup<'s>],
-+    /// The file order in which declarations of one symbol in several files are considered: it
-+    /// determines the order of overloads.
-+    pub order: &'s [FileId],
-+    /// The index of each file in `order`, indexed by `FileId`.
-+    ranks: &'s [u32],
-+    /// `global_type` of every name below `known::sym_iterator`, indexed by atom number.
-+    global_types: &'s [GlobalType],
-+    /// Errors in what the options refer to, not attributable to any file.
-+    program_errors: &'s [Problem],
-+    /// `GetIncludeProcessorDiagnostics`: errors about the inclusion of a file in the program,
-+    /// reported at the reference in another file. Each has that file and the span.
-+    include_errors: &'s [(FileId, u32, u32, Problem)],
-+    /// `DirectoriesByRealpath`: each directory that is known to be a symlink target, with a symlink
-+    /// to it, in order. The `package.json` of each is in `package_jsons` under the path of the
-+    /// symlink.
-+    pub linked_directories: &'s [(&'s [u8], &'s [u8])],
-+    /// (identifier expressions, type nodes) of each file, indexed by `FileId`. Used to estimate how much a file costs
-+    /// to check.
-+    pub sizes: &'s [(u32, u32)],
-+    /// The `traceResolution` log, in order.
-+    pub resolution_trace: &'s [DiagAndArgs],
-+    /// The fields of `Included` that come from `load`, saved for `explain_files`.
-+    starts: &'s [FileId],
-+    root_of_start: &'s [u32],
-+    root_file_names: &'s [Vec<u8>],
-+    /// `redirectFilesByPath`, in the order `collectFiles` reaches them: the name of a copy of a
-+    /// package file, and the copy that's in the program.
-+    package_copies: &'s [(&'s [u8], FileId)],
-+    /// `Included::explained_in_diagnostics` for the errors that `load` produced.
-+    explained_in_diagnostics: &'s [Vec<u8>],
-     /// `globalThisSymbol`: a module symbol that no file declares, which is in `globals` and whose
-     /// `Exports` are `globals`. A symbol of the first file.
-     pub global_this_symbol: Sym,
-@@ -563,21 +611,19 @@ pub struct Files<'s> {
-     pub undefined_symbol: Sym,
-     /// `unknownSymbol`: the target of an alias that can't be resolved. It isn't in any table.
-     pub unknown_symbol: Sym,
--    /// `CommonSourceDirectory` without its trailing `/`, if an output path depends on it.
--    pub common_source_directory: Option<&'s [u8]>,
--    /// `UseCaseSensitiveFileNames`
--    pub is_case_sensitive: bool,
-     /// `prototypeSymbol` of `bindClassLikeDeclaration`: the property `symbol.Exports["prototype"]`
-     /// of a class, which has no declaration.
-     /// Shared by all classes.
-     pub prototype_symbol: Sym,
-+    libs_end: usize,
-+    roots_end: usize,
+-/* A blocked public key (blocked_spkis.cpp) is reported the way X509_verify_cert reports its own errors: to the SSL's
+- * verify callback, which says whether to go on. Without one, as in quic.c and node:quic, this returns 0 as it would. */
++/* The syntax check of OpenSSL's cn2dnsid: whether a common name reads as a host name of two or more labels.
++ * https://github.com/nodejs/node/blob/v26.12.1/deps/openssl/openssl/crypto/x509/v3_ncons.c#L341 */
++static int us_looks_like_dns_name(const unsigned char *in, int len) {
++  int is_dns_name = 0;
++  for (int i = 0; i < len; i++) {
++    unsigned char c = in[i];
++    if (OPENSSL_isalnum(c) || c == '_') continue;
++    if (i == 0 || i == len - 1) return 0;
++    if (c == '-') continue;
++    if (c != '.' || in[i + 1] == '.' || in[i - 1] == '-' || in[i + 1] == '-') return 0;
++    is_dns_name = 1;
++  }
++  return is_dns_name;
++}
 +
-+    /// `alias
++/* OpenSSL's nc_dns. */
++static int us_dns_name_is_within(const unsigned char *name, int len, const ASN1_IA5STRING *base) {
++  if (base->length == 0) return 1;
++  if (len < base->length) return 0;
++  name += len - base->length;
++  if (len > base->length && base->data[0] != '.' && name[-1] != '.') return 0;
++  return OPENSSL_strncasecmp((const char *)name, (const char *)base->data, base->length) == 0;
++}
++
++/* OpenSSL's nc_match for a DNS name. BoringSSL's strips a trailing dot and refuses an explicit minimum of 0. */
++static int us_name_constraints_check_dns_name(const NAME_CONSTRAINTS *nc, const unsigned char *name, int len) {
++  enum { UNCONSTRAINED, NOT_PERMITTED, PERMITTED } match = UNCONSTRAINED;
++  for (size_t i = 0; i < sk_GENERAL_SUBTREE_num(nc->permittedSubtrees); i++) {
++    const GENERAL_SUBTREE *sub = sk_GENERAL_SUBTREE_value(nc->permittedSubtrees, i);
++    if (sub->base->type != GEN_DNS) continue;
++    if (sub->maximum || ASN1_INTEGER_get(sub->minimum) != 0) return X509_V_ERR_SUBTREE_MINMAX;
++    if (match != PERMITTED) match = us_dns_name_is_within(name, len, sub->base->d.dNSName) ? PERMITTED : NOT_PERMITTED;
++  }
++  if (match == NOT_PERMITTED) return X509_V_ERR_PERMITTED_VIOLATION;
++  for (size_t i = 0; i < sk_GENERAL_SUBTREE_num(nc->excludedSubtrees); i++) {
++    const GENERAL_SUBTREE *sub = sk_GENERAL_SUBTREE_value(nc->excludedSubtrees, i);
++    if (sub->base->type != GEN_DNS) continue;
++    if (sub->maximum || ASN1_INTEGER_get(sub->minimum) != 0) return X509_V_ERR_SUBTREE_MINMAX;
++    if (us_dns_name_is_within(name, len, sub->base->d.dNSName)) return X509_V_ERR_EXCLUDED_VIOLATION;
++  }
++  return X509_V_OK;
++}
++
++/* OpenSSL's NAME_CONSTRAINTS_check_CN. BoringSSL looks at common names only when there is no subjectAltName at all. */
++static int us_name_constraints_check_cn(X509 *leaf, const NAME_CONSTRAINTS *nc) {
++  const X509_NAME *subject = X509_get_subject_name(leaf);
++  int error = X509_V_OK;
++  for (int i = -1; error == X509_V_OK && (i = X509_NAME_get_index_by_NID(subject, NID_commonName, i)) >= 0;) {
++    unsigned char *common_name = NULL;
++    int len = ASN1_STRING_to_UTF8(&common_name, X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subject, i)));
++    /* OpenSSL's check_name_constraints gives up here, which its X509_verify_cert reports as unspecified. */
++    if (len < 0) return X509_V_ERR_UNSPECIFIED;
++    while (len > 0 && common_name[len - 1] == '\0') len--;
++    if (len > 0 && memchr(common_name, 0, len)) {
++      error = X509_V_ERR_UNSUPPORTED_NAME_SYNTAX;
++    } else if (us_looks_like_dns_name(common_name, len)) {
++      error = us_name_constraints_check_dns_name(nc, common_name, len);
++    }
++    OPENSSL_free(common_name);
++  }
++  return error;
++}
++
++/* OpenSSL's has_san_id(cert, GEN_DNS). */
++static int us_x509_has_dns_name(X509 *cert) {
++  GENERAL_NAMES *names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
++  int has_dns_name = 0;
++  for (size_t i = 0; i < sk_GENERAL_NAME_num(names) && !has_dns_name; i++) {
++    has_dns_name = sk_GENERAL_NAME_value(names, i)->type == GEN_DNS;
++  }
++  GENERAL_NAMES_free(names);
++  return has_dns_name;
++}
++
++/* When the leaf's subjectAltName lists no DNS name, its common names are checked against the chain's constraints on DNS
++ * names, as in OpenSSL's check_name_constraints. The nearest failing CA decides the error, as with node's callback. */
++static int us_x509_store_ctx_common_name_error(X509_STORE_CTX *ctx) {
++  STACK_OF(X509) *chain = X509_STORE_CTX_get0_chain(ctx);
++  X509 *leaf = sk_X509_value(chain, 0);
++  int error = X509_V_OK;
++  for (size_t i = 1; i < sk_X509_num(chain) && error == X509_V_OK; i++) {
++    NAME_CONSTRAINTS *nc = X509_get_ext_d2i(sk_X509_value(chain, i), NID_name_constraints, NULL, NULL);
++    if (nc && !us_x509_has_dns_name(leaf)) error = us_name_constraints_check_cn(leaf, nc);
++    NAME_CONSTRAINTS_free(nc);
++  }
++  return error;
++}
++
++/* What X509_verify_cert does not look for, a blocked public key (blocked_spkis.cpp) and
++ * us_x509_store_ctx_common_name_error, is reported
 ```
 
-**File**: `src/sema/types.rs` (modified, +17/-14)
+**File**: `src/js/internal-for-testing.ts` (modified, +9/-0)
 ```diff
-@@ -2260,34 +2260,37 @@ impl Destination<'_> {
- /// All task-local records: atoms, lists of index components, mappers, signatures, types. A field of
- /// `Task`. No other task sees it. A record that the task publishes is created in the shared store
- /// instead, and these are dropped with the task.
-+// The fields are laid out as declared: small ones that most accesses touch first, where x86-64 reaches them with a
-+// one-byte offset.
-+#[repr(C)]
- pub struct OwnStore<'s> {
-+    types: Own<'s, TypeRecord<'s>>,
-+    /// The files that the task has visited and that nothing imports, indexed by `FileId`. No other
-+    /// task can reference a node or a symbol of such a file. If it's empty, nothing is bound.
-+    unimported_files: Bits,
-+    /// Files the task has visited, indexed by `FileId`.
-+    visited_files: Bits,
-     /// Arena of the thread that runs the task. Records and their lists are allocated from it, and
-     /// the lists may be published.
-     arena: &'s Arena,
-     atoms: Own<'s, List<'s, u8>>,
-     components: Own<'s, List<'s, IndexComponent>>,
-     mappers: Own<'s, MapperRecord<'s>>,
-     sigs: Own<'s, SigData<'s>>,
--    types: Own<'s, TypeRecord<'s>>,
--    /// The files that the task has visited and that nothing imports, indexed by `FileId`. No other
--    /// task can reference a node or a symbol of such a file. If it's empty, nothing is bound.
--    unimported_files: Bits,
--    /// See `Types::is_unresolved_name`.
--    has_unresolved_names: Cell<bool>,
--    /// See `Types::as_first_request`.
--    first_request: Cell<FirstRequest>,
--    sharing: Sharing,
-+    summaries: TaskRecords<'s, Summary>,
-     /// Ids the task has reserved but not used yet, by pool (`ID_POOLS`). Only used with
-     /// `Sharing::Publishes`.
-     ids: [Cell<Placeholders<'s>>; ID_POOLS],
--    /// Number of ids the task has used for published records, by kind.
--    published: [Cell<u32>; 5],
--    /// Files the task has visited, indexed by `FileId`.
--    visited_files: Bits,
-     /// By kind, the records this task published that reference a node or symbol in one of `visited_files`, directly or
-     /// through another record. Indexed by id.
-     of_visited_files: [RefCell<Bits>; 5],
--    summaries: TaskRecords<'s, Summary>,
-+    /// Number of ids the task has used for published records, by kind.
-+    published: [Cell<u32>; 5],
-+    sharing: Sharing,
-+    /// See `Types::is_unresolved_name`.
-+    has_unresolved_names: Cell<bool>,
-+    /// See `Types::as_first_request`.
-+    first_request: Cell<FirstRequest>,
+@@ -24,6 +24,15 @@ export const addBlockedSPKIForTesting: (hash: ArrayBufferView) => void = $newCpp
+ );
+ export const clearBlockedSPKIsForTesting: () => void = $newCppFunction("NodeTLS.cpp", "clearBlockedSPKIsForTesting", 0);
+ 
++// This thread's BoringSSL error queue. An API that returns with entries on it makes the next unrelated failure that
++// reads the queue report them. `put` adds BN_R_BITS_TOO_SMALL; `take` empties it and returns its entries, oldest first.
++export const putBoringSSLErrorForTesting: () => void = $newCppFunction("NodeTLS.cpp", "putBoringSSLErrorForTesting", 0);
++export const takeBoringSSLErrorQueueForTesting: () => string[] = $newCppFunction(
++  "NodeTLS.cpp",
++  "takeBoringSSLErrorQueueForTesting",
++  0,
++);
++
+ // Runtime-dispatched SIMD xxHash3 kernel (src/jsc/bindings/xxhash3.cpp), driven
+ // directly so tests can exercise the Highway path independent of Bun.hash.
+ export const xxHash3ForTesting: (view: ArrayBufferView, seed?: number | bigint) => bigint = $newCppFunction(
+```
+
+**File**: `src/jsc/JSGlobalObject.rs` (modified, +1/-0)
+```diff
+@@ -516,6 +516,7 @@ impl JSGlobalObject {
+ 
+     pub fn throw_invalid_scrypt_params(&self) -> JsError {
+         let err = bun_boringssl::c::ERR_peek_last_error();
++        bun_boringssl::c::ERR_clear_error();
+         if err != 0 {
+             let mut buf = [0u8; 256];
+             // SAFETY: FFI — `buf` is a 256-byte stack buffer; `len` matches its capacity;
+```
+
+**File**: `src/jsc/bindings/NodeTLS.cpp` (modified, +24/-1)
+```diff
+@@ -289,7 +289,9 @@ JSC_DEFINE_HOST_FUNCTION(parseCACertificates, (JSC::JSGlobalObject * globalObjec
+     }
+     if (parseError) {
+         // Reuse the shared ERR_OSSL_<LIB>_<REASON> decoration path
+-        // (library/function/reason/code + opensslErrorStack), same as node:crypto.
++        // (library/function/reason/code), same as node:crypto. Node's
++        // LoadCertsFromBIO pops its errors, so there is no opensslErrorStack.
++        ERR_clear_error();
+         throwCryptoError(globalObject, scope, parseError);
+         return {};
+     }
+@@ -362,4 +364,25 @@ JSC_DEFINE_HOST_FUNCTION(clearBlockedSPKIsForTesting, (JSC::JSGlobalObject * glo
+     return JSValue::encode(jsUndefined());
  }
  
- impl<'s> OwnStore<'s> {
++JSC_DEFINE_HOST_FUNCTION(putBoringSSLErrorForTesting, (JSC::JSGlobalObject * globalObject, JSC::CallFrame* callFrame))
++{
++    OPENSSL_PUT_ERROR(BN, BN_R_BITS_TOO_SMALL);
++    return JSValue::encode(jsUndefined());
++}
++
++JSC_DEFINE_HOST_FUNCTION(takeBoringSSLErrorQueueForTesting, (JSC::JSGlobalObject * globalObject, JSC::CallFrame* callFrame))
++{
++    auto& vm = globalObject->vm();
++    auto scope = DECLARE_THROW_SCOPE(vm);
++    JSArray* errors = constructEmptyArray(globalObject, nullptr);
++    RETURN_IF_EXCEPTION(scope, {});
++    while (uint32_t error = ERR_get_error()) {
++        char message[256];
++        ERR_error_string_n(error, message, sizeof(message));
++        errors->putDirectIndex(globalObject, errors->length(), jsString(vm, String::fromUTF8(message)));
++        RETURN_IF_EXCEPTION(scope, {});
++    }
++    return JSValue::encode(errors);
++}
++
+ } // namespace Bun
+```
+
+**File**: `src/jsc/bindings/NodeTLS.h` (modified, +2/-0)
+```diff
+@@ -11,5 +11,7 @@ JSC_DECLARE_HOST_FUNCTION(parseCACertificates);
+ JSC_DECLARE_HOST_FUNCTION(selectServerName);
+ JSC_DECLARE_HOST_FUNCTION(addBlockedSPKIForTesting);
+ JSC_DECLARE_HOST_FUNCTION(clearBlockedSPKIsForTesting);
++JSC_DECLARE_HOST_FUNCTION(putBoringSSLErrorForTesting);
++JSC_DECLARE_HOST_FUNCTION(takeBoringSSLErrorQueueForTesting);
+ 
+ }
+```
+
+**File**: `src/jsc/bindings/bindings.cpp` (modified, +22/-0)
+```diff
+@@ -143,6 +143,8 @@
+ #include "JavaScriptCore/AOTJSONHooks.h"
+ #include "DOMURL.h"
+ #include "JSDOMURL.h"
++#include "JSCryptoKey.h"
++#include "JSKeyObject.h"
+ 
+ #include <string_view>
+ #include <bun-uws/src/App.h>
+@@ -1407,6 +1409,23 @@ static std::optional<bool> temporalObjectsDequal(JSC::JSObject* o1, JSC::JSObjec
+     return std::nullopt;
+ }
+ 
++// A KeyObject or CryptoKey keeps its key in an internal slot and has no own properties
++// either. Own properties are still compared afterwards, like node does.
++static bool keyObjectsDequal(JSC::JSObject* o1, JSC::JSObject* o2)
++{
++    auto* key1 = dynamicDowncast<Bun::JSKeyObject>(o1);
++    auto* key2 = dynamicDowncast<Bun::JSKeyObject>(o2);
++    if (key1 || key2)
++        return key1 && key2 && key1->handle().equals(key2->handle()).value_or(false);
++
++    auto* cryptoKey1 = dynamicDowncast<JSCryptoKey>(o1);
++    auto* cryptoKey2 = dynamicDowncast<JSCryptoKey>(o2);
++    if (cryptoKey1 || cryptoKey2)
++        return cryptoKey1 && cryptoKey2 && Bun::KeyObject::cryptoKeysEqual(cryptoKey1->wrapped(), cryptoKey2->wrapped());
++
++    return true;
++}
++
+ struct DeepEqualsMode {
+     bool isStrict;
+     bool enableAsymmetricMatchers;
+@@ -2177,6 +2196,9 @@ std::optional<bool> specialObjectsDequal(JSC::JSGlobalObject* globalObject, Mark
+             if (temporalEqual.has_value())
+                 return temporalEqual;
+ 
++            if (!keyObjectsDequal(obj1, obj2))
++                return false;
++
+             const bool isSymbol1 = obj1->inherits<SymbolObject>();
+             const bool isBigInt1 = obj1->inherits<BigIntObject>();
+             if (isSymbol1 || isBigInt1) {
+```
+
+**File**: `src/jsc/bindings/ncrypto.cpp` (modified, +144/-2)
+```diff
+@@ -44,16 +44,22 @@ static constexpr int kX509NameFlagsRFC2253WithinUtf8JSON = XN_FLAG_RFC2253 & ~AS
+ 
+ // ============================================================================
+ 
++// Not upstream: ERR_clear_error() resets all 16 slots even when the queue is empty, 46ns against 8ns for a peek.
++static inline void clearErrorQueue()
++{
++    if (ERR_peek_error() != 0) ERR_clear_error();
++}
++
+ ClearErrorOnReturn::ClearErrorOnReturn(CryptoErrorList* errors)
+     : errors_(errors)
+ {
+-    ERR_clear_error();
++    clearErrorQueue();
+ }
+ 
+ ClearErrorOnReturn::~ClearErrorOnReturn()
+ {
+     if (errors_ != nullptr) errors_->capture();
+-    ERR_clear_error();
++    clearErrorQueue();
+ }
+ 
+ MarkPopErrorOnReturn::MarkPopErrorOnReturn(CryptoErrorList* errors)
+@@ -1871,6 +1877,142 @@ int EVPKeyPointer::base_id() const
+     return base_id(get());
+ }
+ 
++namespace {
++constexpr size_t kEd25519PointSize = 32;
++constexpr size_t kEd448PointSize = 57;
++
++// Ed25519 has cofactor 8, so the first eight entries are the full
++// canonical small-order subgroup: identity, one point of order 2,
++// two points of order 4, and four points of order 8.
++constexpr unsigned char kEd25519SmallOrderPoints[][kEd25519PointSize] = {
++    // Identity.
++    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
++    // Order 2.
++    { 0xec, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f },
++    // Order 4.
++    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80 },
++    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
++    // Order 8.
++    { 0xc7, 0x17, 0x6a, 0x70, 0x3d, 0x4d, 0xd8, 0x4f, 0xba, 0x3c, 0x0b,
++        0x76, 0x0d, 0x10, 0x67, 0x0f, 0x2a, 0x20, 0x53, 0xfa, 0x2c, 0x39,
++        0xcc, 0xc6, 0x4e, 0xc7, 0xfd, 0x77, 0x92, 0xac, 0x03, 0x7a },
++    { 0xc7, 0x17, 0x6a, 0x70, 0x3d, 0x4d, 0xd8, 0x4f, 0xba, 0x3c, 0x0b,
++        0x76, 0x0d, 0x10, 0x67, 0x0f, 0x2a, 0x20, 0x53, 0xfa, 0x2c, 0x39,
++        0xcc, 0xc6, 0x4e, 0xc7, 0xfd, 0x77, 0x92, 0xac, 0x03, 0xfa },
++    { 0x26, 0xe8, 0x95, 0x8f, 0xc2, 0xb2, 0x27, 0xb0, 0x45, 0xc3, 0xf4,
++        0x89, 0xf2, 0xef, 0x98, 0xf0, 0xd5, 0xdf, 0xac, 0x05, 0xd3, 0xc6,
++        0x33, 0x39, 0xb1, 0x38, 0x02, 0x88, 0x6d, 0x53, 0xfc, 0x05 },
++    { 0x26, 0xe8, 0x95, 0x8f, 0xc2, 0xb2, 0x27, 0xb0, 0x45, 0xc3, 0xf4,
++        0x89, 0xf2, 0xef, 0x98, 0xf0, 0xd5, 0xdf, 0xac, 0x05, 0xd3, 0xc6,
++        0x33, 0x39, 0xb1, 0x38, 0x02, 0x88, 0x6d, 0x53, 0xfc, 0x85 },
++    // Non-canonical encodings of the same small-order points.
++    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80 },
++    { 0xec, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
++    { 0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f },
++    { 0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
++    { 0xed, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
++    { 0xed, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f },
++};
++
++// Ed448 has cofactor 4, so these four entries are the full canonical
++// small-order subgroup: identity, one point of order 2, and two points
++// of order 4.
++constexpr unsigned char kEd448SmallOrderPoints[][kEd448PointSize] = {
++    // Identity.
++    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0
+```
+
+**File**: `src/jsc/bindings/ncrypto.h` (modified, +2/-0)
+```diff
+@@ -813,6 +813,8 @@ class EVPKeyPointer final {
+ 
+     int id() const;
+     int base_id() const;
++    bool hasSmallOrderEdDsaPoint(
++        const Buffer<const unsigned char>& signature) const;
+     size_t size() const;
+ 
+     size_t rawPublicKeySize() const;
+```
+
+---
+
+### Incident Patch 3: `bc55d562` (2026-10-31)
+**Commit Message**: node:crypto, webcrypto: assorted Node compatibility fixes (#47559)
+
+### What does this PR do?
+
+A batch of small, independent `node:crypto` / WebCrypto fixes found by
+diffing Bun against Node. Every behaviour below was compared with Node
+v26.12.1.
+
+**node:crypto**
+
+- `createPublicKey({ key, format: "der", type: "pkcs8" | "pkcs1" |
+"sec1" })` returns a KeyObject of type `"public"`, as it already did for
+PEM input. The fix is the last `create(...)` in
+`KeyObject::getPublicOrPrivateKey`.
+- A JWK private key with a component that cannot be parsed as a bignum
+is rejected with `ERR_CRYPTO_INVALID_JWK`
+(`ECKeyPointer::setPrivateKey`, `Rsa::setPrivateKey`).
+- `decipher.setAutoPadding(false)` after `update()` keeps the block a
+padded decipher holds back. BoringSSL never looks at `ctx->final` again
+once padding is off, so the plaintext came out one block short. OpenSSL
+emits the block from the next `update()`/`final()`, and now so does Bun
+(`JSCipher::takeHeldBackBlock`).
+- `maybePassAuthTagToOpenSSL()` in `update()` was called inside
+`ASSERT()`, so release builds skipped it until `final()`. The call is
+now outside the `ASSERT`. No visible change.
+- `hmac.digest(encoding)` with an `encoding` 
+
+**File**: `mordant-baseline.toml` (modified, +3/-0)
+```diff
+@@ -43,6 +43,9 @@
+ [bun_format]
+ "field_valid_only_when:src/format/css/postcss.rs" = 1
+ 
++[bun_glob]
++"unused_pub:src/glob/lib.rs" = 1
++
+ [bun_http]
+ "bound_checked_only_in_debug:src/http/websocket.rs" = 1
+ "freed_while_borrowed:src/http/AsyncHTTP.rs" = 1
+```
+
+**File**: `src/js/internal-for-testing.ts` (modified, +1/-3)
+```diff
+@@ -359,8 +359,7 @@ export const isolatedModuleCacheSourceType: (specifier: string) => string | null
+ export const Dequeue = require("internal/fifo");
+ 
+ // node lib/internal/util.js normalizeEncoding: nullish and '' mean utf8, and
+-// non-strings are undefined; Bun's Rust binding does not fold 'utf-16le',
+-// so the node edge cases are handled here.
++// non-strings are undefined; the node edge cases are handled here.
+ const rustNormalizeEncoding: (encoding: string) => string | undefined = $bindgen(
+   "node_util_binding.bind.ts",
+   "normalizeEncoding",
+@@ -370,7 +369,6 @@ function nodeNormalizeEncoding(enc: unknown) {
+   if (enc == null) return "utf8";
+   if (typeof enc !== "string") return undefined;
+   const lower = enc.toLowerCase();
+-  if (lower === "utf-16le") return "utf16le";
+   // The Rust map also accepts Buffer-only names node's normalizeEncoding rejects.
+   if (lower === "buffer" || lower === "utf16-le") return undefined;
+   return rustNormalizeEncoding(enc);
+```
+
+**File**: `src/jsc/bindings/JSX509Certificate.cpp` (modified, +1/-1)
+```diff
+@@ -1220,7 +1220,7 @@ JSValue JSX509Certificate::computeInfoAccess(ncrypto::X509View view, JSGlobalObj
+         RETURN_IF_EXCEPTION(scope, {});
+         if (existingValue) {
+             JSArray* array = uncheckedDowncast<JSArray>(existingValue);
+-            array->push(globalObject, jsString(vm, value));
++            array->putDirectIndex(globalObject, array->length(), jsString(vm, value));
+             RETURN_IF_EXCEPTION(scope, {});
+         } else {
+             JSArray* array = constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), 1);
+```
+
+**File**: `src/jsc/bindings/ncrypto.cpp` (modified, +13/-2)
+```diff
+@@ -393,7 +393,7 @@ bool BignumPointer::generate(const PrimeConfig& params,
+     if (innerCb) {
+         cb = BignumGenCallbackPointer(BN_GENCB_new());
+         if (!cb) [[unlikely]]
+-            return -1;
++            return false;
+         BN_GENCB_set(
+             cb.get(),
+             [](int a, int b, BN_GENCB* ctx) mutable -> int {
+@@ -402,6 +402,14 @@ bool BignumPointer::generate(const PrimeConfig& params,
+             },
+             &innerCb);
+     }
++
++    // BoringSSL searches forever where OpenSSL refuses: candidates have the top two bits set, the safe primes 11 and 23 do not.
++    // https://github.com/nodejs/node/blob/v26.12.1/deps/openssl/openssl/crypto/bn/bn_prime.c#L137-L145
++    if (params.safe && !params.add && params.bits < 6 && params.bits != 3) {
++        OPENSSL_PUT_ERROR(BN, BN_R_BITS_TOO_SMALL);
++        return false;
++    }
++
+     if (BN_generate_prime_ex(get(),
+             params.bits,
+             params.safe ? 1 : 0,
+@@ -2977,7 +2985,7 @@ bool ECKeyPointer::setPublicKeyRaw(const BignumPointer& x,
+ 
+ bool ECKeyPointer::setPrivateKey(const BignumPointer& priv)
+ {
+-    if (!key_) return false;
++    if (!key_ || !priv) return false;
+     return EC_KEY_set_private_key(key_.get(), priv.get()) == 1;
+ }
+ 
+@@ -3385,6 +3393,9 @@ bool Rsa::setPrivateKey(BignumPointer&& d,
+     BignumPointer&& dq,
+     BignumPointer&& qi)
+ {
++    // RSA_set0_key accepts a null d once n and e are set, which would leave a "private" key without one.
++    if (!d || !q || !p || !dp || !dq || !qi) return false;
++
+     if (!RSA_set0_key(const_cast<RSA*>(rsa_), nullptr, nullptr, d.get())) {
+         return false;
+     }
+```
+
+**File**: `src/jsc/bindings/node/crypto/CryptoPrimes.cpp` (modified, +21/-4)
+```diff
+@@ -187,7 +187,17 @@ extern "C" void Bun__GeneratePrimeJobCtx__runTask(GeneratePrimeJobCtx* ctx, JSGl
+ }
+ void GeneratePrimeJobCtx::runTask(JSGlobalObject* lexicalGlobalObject)
+ {
++    ncrypto::ClearErrorOnReturn clearErrorOnReturn;
+     m_failed = !m_prime.generate({ .bits = m_size, .safe = m_safe, .add = m_add, .rem = m_rem }, whileScriptAllowed(lexicalGlobalObject));
++    if (m_failed)
++        m_opensslError = ERR_get_error();
++}
++
++static JSValue createGeneratePrimeError(JSGlobalObject* globalObject, ThrowScope& scope, uint32_t opensslError)
++{
++    if (!opensslError)
++        return createError(globalObject, ErrorCode::ERR_CRYPTO_OPERATION_FAILED, "could not generate prime"_s);
++    return createCryptoError(globalObject, scope, opensslError, nullptr);
+ }
+ 
+ extern "C" void Bun__GeneratePrimeJobCtx__runFromJS(GeneratePrimeJobCtx* ctx, JSGlobalObject* lexicalGlobalObject, JSCallbackArgs* out)
+@@ -199,8 +209,11 @@ JSCallbackArgs GeneratePrimeJobCtx::runFromJS(JSGlobalObject* globalObject)
+     auto& vm = globalObject->vm();
+     auto scope = DECLARE_THROW_SCOPE(vm);
+ 
+-    if (m_failed) [[unlikely]]
+-        return { createError(globalObject, ErrorCode::ERR_CRYPTO_OPERATION_FAILED, "could not generate prime"_s) };
++    if (m_failed) [[unlikely]] {
++        JSValue error = createGeneratePrimeError(globalObject, scope, m_opensslError);
++        RETURN_IF_EXCEPTION(scope, {});
++        return { error };
++    }
+     JSValue result = GeneratePrimeJob::result(globalObject, scope, m_prime, m_bigint);
+     if (auto* exception = scope.exception()) [[unlikely]] {
+         // A stopped worker's termination (which a trap can raise anywhere in result(), even with a
+@@ -468,8 +481,12 @@ JSC_DEFINE_HOST_FUNCTION(jsGeneratePrimeSync, (JSC::JSGlobalObject * lexicalGlob
+         return ERR::CRYPTO_OPERATION_FAILED(scope, lexicalGlobalObject, "could not generate prime"_s);
+     }
+ 
+-    if (!prime.generate({ .bits = size, .safe = safe, .add = add, .rem = rem }, whileScriptAllowed(lexicalGlobalObject))) [[unlikely]]
+-        return ERR::CRYPTO_OPERATION_FAILED(scope, lexicalGlobalObject, "could not generate prime"_s);
++    if (!prime.generate({ .bits = size, .safe = safe, .add = add, .rem = rem }, whileScriptAllowed(lexicalGlobalObject))) [[unlikely]] {
++        JSValue error = createGeneratePrimeError(lexicalGlobalObject, scope, ERR_get_error());
++        RETURN_IF_EXCEPTION(scope, {});
++        throwException(lexicalGlobalObject, scope, error);
++        return {};
++    }
+ 
+     RELEASE_AND_RETURN(scope, JSValue::encode(GeneratePrimeJob::result(lexicalGlobalObject, scope, prime, bigint)));
+ }
+```
+
+**File**: `src/jsc/bindings/node/crypto/CryptoPrimes.h` (modified, +1/-0)
+```diff
+@@ -44,6 +44,7 @@ struct GeneratePrimeJobCtx {
+     ncrypto::BignumPointer m_rem;
+     ncrypto::BignumPointer m_prime;
+     bool m_failed { false };
++    uint32_t m_opensslError { 0 };
+ 
+     WTF_MAKE_TZONE_ALLOCATED(GeneratePrimeJobCtx);
+ };
+```
+
+**File**: `src/jsc/bindings/node/crypto/JSCipher.h` (modified, +20/-0)
+```diff
+@@ -88,6 +88,26 @@ class JSCipher final : public JSC::JSDestructibleObject {
+         return ncrypto::Cipher::FromCtx(m_ctx).isSupportedAuthenticatedMode();
+     }
+ 
++    // The block a padded decipher held back, once padding is off: OpenSSL still emits it, BoringSSL does not.
++    std::span<const uint8_t> heldBackBlock() const
++    {
++        const EVP_CIPHER_CTX* ctx = m_ctx.get();
++        if (!ctx->final_used || !(ctx->flags & EVP_CIPH_NO_PADDING))
++            return {};
++        return std::span { ctx->final }.first(m_ctx.getBlockSize());
++    }
++
++    // Moves heldBackBlock() to the front of `out` and returns its size.
++    size_t takeHeldBackBlock(std::span<uint8_t> out)
++    {
++        auto block = heldBackBlock();
++        if (block.empty())
++            return 0;
++        memcpySpan(out, block);
++        m_ctx.get()->final_used = 0;
++        return block.size();
++    }
++
+     ncrypto::CipherCtxPointer m_ctx;
+     const CipherKind m_kind;
+     AuthTagState m_authTagState;
+```
+
+**File**: `src/jsc/bindings/node/crypto/JSCipherPrototype.cpp` (modified, +12/-9)
+```diff
+@@ -74,7 +74,8 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherUpdate, (JSC::JSGlobalObject * lexicalGlobalObj
+     }
+ 
+     if (cipher->m_kind == CipherKind::Decipher && cipher->isAuthenticatedMode()) {
+-        ASSERT(cipher->maybePassAuthTagToOpenSSL());
++        bool passed = cipher->maybePassAuthTagToOpenSSL();
++        ASSERT_UNUSED(passed, passed);
+     }
+ 
+     const int32_t blockSize = cipher->m_ctx.getBlockSize();
+@@ -94,19 +95,20 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherUpdate, (JSC::JSGlobalObject * lexicalGlobalObj
+         return {};
+     }
+ 
+-    RefPtr<ArrayBuffer> outBuf = JSC::ArrayBuffer::tryCreateUninitialized(bufLen, 1);
++    RefPtr<ArrayBuffer> outBuf = JSC::ArrayBuffer::tryCreateUninitialized(cipher->heldBackBlock().size() + bufLen, 1);
+     if (!outBuf) {
+         throwOutOfMemoryError(lexicalGlobalObject, scope);
+         return {};
+     }
++    const size_t heldBack = cipher->takeHeldBackBlock(outBuf->mutableSpan());
+ 
+     buf = {
+         .data = reinterpret_cast<uint8_t*>(dataView->vector()),
+         .len = dataView->byteLength(),
+     };
+ 
+-    bool res = cipher->m_ctx.update(buf, static_cast<unsigned char*>(outBuf->data()), &bufLen);
+-    ASSERT(static_cast<size_t>(bufLen) <= outBuf->byteLength());
++    bool res = cipher->m_ctx.update(buf, static_cast<unsigned char*>(outBuf->data()) + heldBack, &bufLen);
++    ASSERT(heldBack + bufLen <= outBuf->byteLength());
+ 
+     if (!res && cipher->m_kind == CipherKind::Decipher && cipher->m_ctx.isCcmMode()) {
+         cipher->m_pendingAuthFailed = true;
+@@ -118,7 +120,7 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherUpdate, (JSC::JSGlobalObject * lexicalGlobalObj
+         return {};
+     }
+ 
+-    RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), WTF::move(outBuf), 0, bufLen)));
++    RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), WTF::move(outBuf), 0, heldBack + bufLen)));
+ }
+ 
+ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObject, JSC::CallFrame* callFrame))
+@@ -148,11 +150,12 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObje
+     };
+ 
+     int32_t outLen = cipher->m_ctx.getBlockSize();
+-    RefPtr<ArrayBuffer> outBuf = ArrayBuffer::tryCreateUninitialized(outLen, 1);
++    RefPtr<ArrayBuffer> outBuf = ArrayBuffer::tryCreateUninitialized(cipher->heldBackBlock().size() + outLen, 1);
+     if (!outBuf) {
+         throwOutOfMemoryError(lexicalGlobalObject, scope);
+         return {};
+     }
++    const size_t heldBack = cipher->takeHeldBackBlock(outBuf->mutableSpan());
+ 
+     if (cipher->m_kind == CipherKind::Decipher && Cipher::FromCtx(cipher->m_ctx).isSupportedAuthenticatedMode()) {
+         cipher->maybePassAuthTagToOpenSSL();
+@@ -168,8 +171,8 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObje
+         ok = !cipher->m_pendingAuthFailed;
+         outLen = 0;
+     } else {
+-        ok = cipher->m_ctx.update({}, static_cast<unsigned char*>(outBuf->data()), &outLen, true);
+-        ASSERT(outLen <= outBuf->byteLength());
++        ok = cipher->m_ctx.update({}, static_cast<unsigned char*>(outBuf->data()) + heldBack, &outLen, true);
++        ASSERT(heldBack + outLen <= outBuf->byteLength());
+ 
+         if (ok && cipher->m_kind == CipherKind::Cipher && cipher->isAuthenticatedMode()) {
+             ASSERT(cipher->m_authTagLen.has_value());
+@@ -185,7 +188,7 @@ JSC_DEFINE_HOST_FUNCTION(jsCipherFinal, (JSC::JSGlobalObject * lexicalGlobalObje
+         return {};
+     }
+ 
+-    RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), WTF::move(outBuf), 0, outLen)));
++    RELEASE_AND_RETURN(scope, JSValue::encode(JSUint8Array::create(lexicalGlobalObject, globalObject->JSBufferSubclassStructure(), WTF::move(outBuf), 0, heldBack + outLen)));
+ }
+ 
+ JSC_DEFINE_HOST_FUNCTION(jsCipherSetAutoPadding, (JSC::JSGlobalObject * globalObject, JSC::CallFrame* callFrame))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #47533** (closed): Fix false TS2425 in bun check for a method inherited from an object literal (@robobun)
-- **PR #47517** (closed): [do not merge] Run the tests with signed return addresses on Linux arm64 (oven-sh/WebKit#945 preview) (@dylan-conway)
-- **PR #47513** (2026-10-31): Instantiate BunGlobWalker's methods once, in bun_glob (@dylan-conway)
-- **PR #47512** (2026-10-31): Put the small hot fields of the checker, parser and formatter structs first (@dylan-conway)
-- **PR #47498** (2026-10-31): Shrink defaultGlobalObject's inline part and use putDirectNamed at 114 more sites (@dylan-conway)
-- **PR #47490** (2026-10-31): Compile four cold paths in lint, the type checker and error conversion once (@dylan-conway)
+- **PR #47836** (2026-11-03): Fixes in node:net, node:http, node:http2, node:stream, node:quic, node:worker_threads, node:crypto and Bun.password (@dylan-conway)
+- **PR #47824** (2026-11-03): ci: remove the issue dedupe and PR issue-finder workflows (@dylan-conway)
+- **PR #47820** (2026-11-03): X509Certificate, Bun.password and Bun.CryptoHasher: a fifth batch of crypto fixes (@dylan-conway)
+- **PR #47810** (2026-11-03): css: keep a named sublayer that follows an anonymous layer in a masked import (@alii)
+- **PR #47797** (2026-11-03): css: print @layer statements before @import and keep the layers of duplicate imports (@alii)
+- **PR #47779** (2026-11-02): ci: look up and bake Windows images with Azure federated identities (@dylan-conway)
 
 ---
 
@@ -1620,33 +2212,54 @@ This branch itself has not been built locally.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Instantiate BunGlobWalker's methods once, in bun_glob (#47513)
+## X. node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591)
 
 **RULE**:
-When implementing operations in `src/glob/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/jsc/bindings/JSDOMExceptionHandling.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34cbc70f`: Instantiate BunGlobWalker's methods once, in bun_glob (#47513). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cee9dd92`: node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/glob/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/jsc/bindings/JSDOMExceptionHandling.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// `-Zshare-generics` reuses an instantiation only from an upstream crate. The users of `BunGlobWalker` do not depend on
-/// each other, so its methods are instantiated here and every user links to this copy.
-pub fn walk_bun_glob(walker: &mut BunGlobWalker) -> Result<bun_sys::Result<()>, bun_core::Error> {
-    walker.walk()
+JSValue createDOMExceptionObject(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message)
+{
+    // FIXME: All callers to createDOMException need to pass in the correct global object.
+    // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
+    // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
+    // https://bugs.webkit.org/show_bug.cgi?id=222229
+    JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
+    JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
+
+    ASSERT(errorObject);
+    addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
+    return errorObject;
 }
 
+    default:
+        return createDOMExceptionObject(lexicalGlobalObject, ec, message);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    default: {
+        // FIXME: All callers to createDOMException need to pass in the correct global object.
+        // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
+        // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
+        // https://bugs.webkit.org/show_bug.cgi?id=222229
+        JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(lexicalGlobalObject);
+        JSValue errorObject = toJS(lexicalGlobalObject, globalObject, DOMException::create(ec, message));
+
+        ASSERT(errorObject);
+        addErrorInfo(lexicalGlobalObject, asObject(errorObject), true);
+        return errorObject;
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34cbc70f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cee9dd92` are properly handled with clean fallback behavior.

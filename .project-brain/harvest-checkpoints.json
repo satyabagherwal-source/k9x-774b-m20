@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T17:53:54.743Z",
+  "last_updated": "2026-11-03T18:02:36.663Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
-      "verified_at": "2026-10-30T13:37:36.154Z",
+      "content_hash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
+      "verified_at": "2026-11-03T18:02:32.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:37:36.154Z"
+      "last_updated": "2026-11-03T18:02:32.763Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
-      "verified_at": "2026-10-30T16:39:42.323Z",
+      "content_hash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
+      "verified_at": "2026-11-03T18:02:32.979Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:39:42.323Z"
+      "last_updated": "2026-11-03T18:02:32.980Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
-      "verified_at": "2026-10-31T03:59:09.041Z",
+      "content_hash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
+      "verified_at": "2026-11-03T18:02:36.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:59:09.041Z"
+      "last_updated": "2026-11-03T18:02:36.662Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
-      "verified_at": "2026-10-31T16:39:39.748Z",
+      "content_hash": "9220c2d6414fb83bb14dace9ffefab48c3ba78017b28ec3fab5069245f0408e0",
+      "verified_at": "2026-11-03T18:02:27.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:39:39.748Z"
+      "last_updated": "2026-11-03T18:02:27.874Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

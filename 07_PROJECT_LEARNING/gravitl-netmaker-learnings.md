@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `ee6c2133`  
+> **Source Version**: `43f90387`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:39:41.602Z  
+> **Timestamp**: 2026-11-03T18:02:32.634Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:39:41.392Z  
+> **Harvest Timestamp**: 2026-11-03T18:02:32.145Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11848 stars
+- **Stars / Engagement**: 11856 stars
 
 ---
 
@@ -1017,8 +1017,8 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9acda995` (2026-10-30)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4210)
+### Incident Patch 1: `43f90387` (2026-11-03)
+**Commit Message**: Pre-Release Fixes v1.8.0 (#4216)
 
 * fix(go): validate traffic public key;
 
@@ -1046,289 +1046,464 @@ Observed empirical fixes and code patches:
 
 * fix(go): return error on user device host sso callback if user is disabled;
 
-**File**: `logic/peers.go` (modified, +9/-9)
+* fix(go): reset auto relayed peers on inet gw creation;
+
+* feat(go): reset host owner_username field;
+
+* feat(go): return user-auth host registration unsupported error;
+
+* feat(go): remove unused file;
+
+* feat(go): move auto relayed peers reset to callers;
+
+* feat(go): allow updating static port;
+
+**File**: `auth/auth.go` (removed, +0/-6)
 ```diff
-@@ -407,6 +407,15 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
- 			if UserDevicesAreNotPeers(host, peerHost) {
- 				continue
- 			}
-+			if host.EnableFlowLogs {
-+				peerIdentity := nodeFlowIdentity(&peer, peerHost)
-+				if peer.Address.IP != nil {
-+					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
-+				}
-+				if peer.Address6.IP != nil {
-+					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
-+				}
-+			}
- 			peerConfig := wgtypes.PeerConfig{
- 				PublicKey:                   peerHost.PublicKey.Key,
- 				PersistentKeepaliveInterval: &peerHost.PersistentKeepalive,
-@@ -643,15 +652,6 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
- 				hostPeerUpdate.PeerIDs[peerHost.PublicKey.String()] = ida
- 				hostPeerUpdate.NodePeers = append(hostPeerUpdate.NodePeers, nodePeer)
- 			}
--			if host.EnableFlowLogs {
--				peerIdentity := nodeFlowIdentity(&peer, peerHost)
--				if peer.Address.IP != nil {
--					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
--				}
--				if peer.Address6.IP != nil {
--					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
--				}
+@@ -1,6 +0,0 @@
+-package auth
+-
+-// == consts ==
+-const (
+-	node_signin_length = 64
+-)
+```
+
+**File**: `auth/host_session.go` (modified, +8/-228)
+```diff
+@@ -9,10 +9,8 @@ import (
+ 
+ 	"github.com/google/uuid"
+ 	"github.com/gorilla/websocket"
+-	"github.com/gravitl/netmaker/db"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/logic"
+-	"github.com/gravitl/netmaker/logic/pro/netcache"
+ 	"github.com/gravitl/netmaker/models"
+ 	"github.com/gravitl/netmaker/mq"
+ 	"github.com/gravitl/netmaker/orchestrator"
+@@ -21,234 +19,16 @@ import (
+ 	"github.com/gravitl/netmaker/servercfg"
+ )
+ 
+-// SessionHandler - called by the HTTP router when user
+-// is calling netclient with join/register -s parameter in order to authenticate
+-// via SSO mechanism by OAuth2 protocol flow.
+-// This triggers a session start and it is managed by the flow implemented here and callback
+-// When this method finishes - the auth flow has finished either OK or by timeout or any other error occured
++// errHostAuthRegistrationUnsupported is returned to clients that attempt to register a host
++// via SSO or basic auth (netclient join/register -s/-u). Only enrollment tokens are supported.
++var errHostAuthRegistrationUnsupported = errors.New("registering a host via SSO/basic auth is no longer supported; use an enrollment token: netclient join -t <token>")
++
++// SessionHandler - called by the HTTP router when a client dials in to register a host
++// via SSO/basic auth. That flow is no longer supported, so the session is rejected
++// and the reason is sent to the client in the websocket close message.
+ func SessionHandler(ctx context.Context, conn *websocket.Conn) {
+ 	defer conn.Close()
+-	// If reached here we have a session from user to handle...
+-	messageType, message, err := conn.ReadMessage()
+-	if err != nil {
+-		logger.Log(0, "Error during message reading:", err.Error())
+-		return
+-	}
+-
+-	var registerMessage models.RegisterMsg
+-	if err = json.Unmarshal(message, &registerMessage); err != nil {
+-		logger.Log(0, "Failed to unmarshall data err=", err.Error())
+-		return
+-	}
+-	if registerMessage.RegisterHost.ID == uuid.Nil {
+-		logger.Log(0, "invalid host registration attempted")
+-		return
+-	}
+-
+-	req := new(netcache.CValue)
+-	req.Value = string(registerMessage.RegisterHost.ID.String())
+-	req.Network = registerMessage.Network
+-	req.Host = registerMessage.RegisterHost
+-	req.ALL = registerMessage.JoinAll
+-	req.Pass = ""
+-	req.User = registerMessage.User
+-	if len(req.User) > 0 && len(registerMessage.Password) == 0 {
+-		logger.Log(0, "invalid host registration attempted")
+-		return
+-	}
+-	req.Scope = scope.Level(ctx)
+-	req.ScopeID = scope.ID(ctx)
+-	// Add any extra parameter provided in the configuration to the Authorize Endpoint request??
+-	stateStr := logic.RandomString(node_signin_length)
+-	if err := netcache.Set(stateStr, req); err != nil {
+-		logger.Log(0, "Failed to process sso request -", err.Error())
+-		return
+-	}
+-	defer netcache.Del(stateStr)
+-	// Wait for the user to finish his auth flow...
+-	timeout := make(chan bool, 2)
+-	answer := make(chan netcache.CValue, 1)
+-	defer close(answer)
+-	defer close(timeout)
+-	if len(registerMessage.User) > 0 { // handle basic auth
+-		logger.Log(0, "user registration attempted with host:", registerMessage.RegisterHost.Name, "user:", registerMessage.User)
+-
+-		user := &schema.User{
+-			Username: registerMessage.User,
+-		}
+-		err = user.GetWithMembership(ctx)
+-		if err != nil {
+-			handleHostRegErr(conn, fmt.Errorf("error fetching user %s: %w", registerMessage.User, err))
+-			return
+-		}
+-
+-		if user.AccountDisabled {
+-			handleHostRegErr(conn, errors.New("user is disabled"))
+-			return
+-		}
+-
+-		if !logic.IsBasicAuthEnabled(ctx) {
+-			handleHostRegErr(conn, errors.New("basic auth is disabled"))
+-			return
+-		}
+-		_, err := logic.VerifyAuthRequest(ctx, models.UserAuthParams{
+-			UserName: registerMessage.User,
+-			Password: registerMessage.Password,
+-		}, logic.NetclientApp)
+-		if err != nil {
+-			if err.Error() != "incorrect credentials" {
+-				err = fmt.Errorf("failed to authenticate user %s", registerMessage.User)
 -			}
+-			handleHostRegErr(conn, err)
+-			return
+-		}
+-		req.Pass = req.Host.ID.String()
+-		// user, err := logic.GetUser(req.User)
+-		// if err != nil {
+-		// 	logger.Log(0, "failed to get user", req.User, "from database")
+-		// 	err = conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+-		// 	if err != nil {
+-		// 		logger.Log(0, "error during message writing:", err.Error())
+-		// 	}
+-		// 	return
+-		// }
+-		// if !user.IsAdmin && !user.IsSuperAdmin {
+-		// 	logger.Log(0, "user", req.User, "is neither an admin or superadmin. denying registeration")
+-		// 	conn.WriteMessage(messageType, []byte("cannot register with a non-admin or non-superadmin"))
+-		// 	err = conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+-		// 	if err != nil {
+-		// 		logger.Log(0, "error during message writing:", err.Error())
+-		// 	}
+-		// 	return
+-		// }
+-
+-		if err = netcache.Set(stateStr, req); err != nil { // give the user's host access in the DB
+-			l
+```
+
+**File**: `controllers/inet_gws.go` (modified, +12/-0)
+```diff
+@@ -64,6 +64,12 @@ func createInternetGw(w http.ResponseWriter, r *http.Request) {
  		}
- 		logInternetEgressBypassConfig(&node, hostPeerUpdate)
- 		var extPeers []wgtypes.PeerConfig
-```
-
-**File**: `pro/auth/azure-ad.go` (modified, +7/-2)
-```diff
-@@ -186,15 +186,18 @@ func (p *AzureADProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
- 
- 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
- 	if fetchErr != nil {
-+		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
+ 		_ = logic.SetNodeSelectedInternetEgress(&clientNode, e.ID, clientNode.UseTcpUplink)
  	}
- 	authRequest := models.UserAuthParams{
--		UserName: content.UserPrincipalName,
-+		UserName: user.Username,
- 		Password: newPass,
- 	}
- 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
- 	if jwtErr != nil {
--		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
-+		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 
-@@ -256,6 +259,8 @@ func (p *AzureADProvider) GetUserInfo(state string, code string) (*OAuthUser, er
- 	if userInfo.Email == "" && userInfo.UserPrincipalName != "" {
- 		userInfo.Email = userInfo.UserPrincipalName
- 	}
-+	userInfo.Email = normalizeUsername(userInfo.Email)
-+	userInfo.UserPrincipalName = normalizeUsername(userInfo.UserPrincipalName)
- 	if userInfo.Email == "" {
- 		return userInfo, errors.New("failed to fetch user email from SSO state")
- 	}
-```
-
-**File**: `pro/auth/github.go` (modified, +8/-4)
-```diff
-@@ -196,15 +196,18 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
- 
- 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
- 	if fetchErr != nil {
-+		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 	authRequest := models.UserAuthParams{
--		UserName: content.Email,
-+		UserName: user.Username,
- 		Password: newPass,
- 	}
- 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
- 	if jwtErr != nil {
--		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
-+		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 
-@@ -224,8 +227,8 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
- 		},
- 		Origin: schema.Dashboard,
- 	})
--	logger.Log(1, "completed github OAuth signin for", content.Email)
--	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
-+	logger.Log(1, "completed github OAuth signin for", user.Username)
-+	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
- }
- 
- func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
-@@ -270,6 +273,7 @@ func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
- 			logger.Log(0, "failed to fetch user's email from github: ", err.Error())
- 		}
- 	}
-+	userInfo.Email = normalizeUsername(userInfo.Email)
- 	if userInfo.Email == "" {
- 		return userInfo, errors.New("failed to fetch user email from SSO state")
- 	}
-```
-
-**File**: `pro/auth/google.go` (modified, +8/-4)
-```diff
-@@ -187,15 +187,18 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
- 
- 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
- 	if fetchErr != nil {
-+		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 	authRequest := models.UserAuthParams{
--		UserName: content.Email,
-+		UserName: user.Username,
- 		Password: newPass,
- 	}
- 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
- 	if jwtErr != nil {
--		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
-+		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 
-@@ -216,8 +219,8 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
- 		Origin: schema.Dashboard,
- 	})
- 
--	logger.Log(1, "completed google OAuth signin for", content.Email)
--	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, content.Email), http.StatusPermanentRedirect)
-+	logger.Log(1, "completed google OAuth signin for", user.Username)
-+	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, user.Username), http.StatusPermanentRedirect)
- }
- 
- func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, error) {
-@@ -248,5 +251,6 @@ func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, err
- 		return nil, fmt.Errorf("failed parsing email from response data: %s", err.Error())
- 	}
- 	userInfo.AccessToken = string(data)
-+	userInfo.Email = normalizeUsername(userInfo.Email)
- 	return userInfo, nil
- }
-```
-
-**File**: `pro/auth/headless_callback.go` (modified, +6/-3)
-```diff
-@@ -97,18 +97,21 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
- 	}
- 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
- 	if fetchErr != nil {
-+		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), models.UserAuthParams{
- 		UserName: user.Username,
- 		Password: newPass,
- 	}, logic.NetclientApp)
- 	if jwtErr != nil {
--		logger.Log(1, "could not parse jwt for user", userClaims.getUserName())
-+		logger.Log(1, "could not parse jwt for user", user.Username, jwtErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 
--	logger.Log(1, "headless SSO login by user:", userClaims.getUserName())
-+	logger.Log(1, "headless SSO login by user:", user.Username)
- 
- 	// Send OK to user in the browser
- 	var response bytes.Buffer
-@@ -117,7 +120,7 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
- 		Verb: "authenticated",
- 	}); err != nil {
- 		logger.Log(0, "Could not render SSO callback template ", err.Error())
--		response := returnErrTemplate(userClaims.getUserName(), "Could not render SSO callback template", state, reqKeyIf)
-+		response := returnErrTemplate(user.Username, "Could not render SSO callback template", state, reqKeyIf)
- 		w.WriteHeader(http.StatusInternalServerError)
- 		w.Write(response)
- 	} else {
-```
-
-**File**: `pro/auth/oidc.go` (modified, +7/-3)
-```diff
-@@ -196,15 +196,18 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
- 
- 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
- 	if fetchErr != nil {
-+		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 	authRequest := models.UserAuthParams{
--		UserName: content.Email,
-+		UserName: user.Username,
- 		Password: newPass,
- 	}
- 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
- 	if jwtErr != nil {
- 		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
-+		handleSomethingWentWrong(w)
- 		return
- 	}
- 
-@@ -224,8 +227,8 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
- 		},
- 		Origin: schema.Dashboard,
- 	})
--	logger.Log(1, "completed OIDC OAuth signin for", content.Email)
--	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
-+	logger.Log(1, "completed OIDC OAuth signin for", user.Username)
-+	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
- }
- 
- func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e error) {
-@@ -265,5 +268,6 @@ func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e e
- 		e = fmt.Errorf("error when claiming OIDCUser: %w", err)
- 	}
- 	u.ID = StringOrInt(idToken.Subject)
-+	u.Email = normalizeUsername(u.Email)
- 	return
- }
-```
-
-**File**: `pro/auth/register_callback.go` (modified, +10/-4)
-```diff
-@@ -76,17 +76,23 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	if user.PlatformRoleID != schema.AdminRole && user.PlatformRoleID != schema.SuperAdminRole {
--		response := returnErrTemplate(userClaims.getUserName(), "only admin users can register using SSO", state, reqKeyIf)
-+		response := returnErrTemplate(user.Username, "only admin users can register using SSO", state, reqKeyIf)
- 		w.WriteHeader(http.StatusForbidden)
- 		w.Write(response)
- 		return
- 	}
--	logger.Log(1, "registering host for user:", userClaims.getUserName(), reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
-+	if user.AccountDisabled {
-+		response := returnErrTemplate(user.Username, "user is disabled", state, reqKeyIf)
-+		w.WriteHeader(http.StatusForbidden)
-+		w.Write(response)
-+		return
++	if len(node.AutoRelayedPeers) > 0 {
++		if err := logic.ResetAutoRelayedPeer(r.Context(), &node); err != nil {
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
++			return
++		}
 +	}
-+	logger.Log(1, "registering host for user:", user.Username, reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
- 
- 	// Send OK to user in the browser
- 	var response bytes.Buffer
- 	if err := ssoCallbackTemplate.Execute(&response, ssoCallbackTemplateConfig{
--		User: userClaims.getUserName(),
-+		User: user.Username,
- 		Verb: "authenticated",
- 	}); err != nil {
- 		logger.Log(0, "Could not render SSO callback template ", err.Error())
-@@ -98,7 +104,7 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
- 		w.Write(response.Bytes())
+ 	node.IsInternetGateway = true
+ 	if node.IsGw && node.IngressDNS == "" {
+ 		node.IngressDNS = "1.1.1.1"
+@@ -122,6 +128,12 @@ func updateInternetGw(w http.ResponseWriter, r *http.Request) {
+ 		}
+ 		_ = logic.SetNodeSelectedInternetEgress(&clientNode, e.ID, clientNode.UseTcpUplink)
+ 	}
++	if len(node.AutoRelayedPeers) > 0 {
++		if err := logic.ResetAutoRelayedPeer(r.Context(), &node); err != nil {
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
++			return
++		}
++	}
+ 	node.IsInternetGateway = true
+ 	err = logic.UpsertNode(&node)
+ 	if err != nil {
+```
+
+**File**: `controllers/node.go` (modified, +11/-0)
+```diff
+@@ -871,10 +871,12 @@ func updateNode(w http.ResponseWriter, r *http.Request) {
+ 	// inet_node_req / relaynodes that include exit clients (RelayedIGWClients),
+ 	// which must not be treated as a new IGW or manual relay assignment.
+ 	connectionToggle := currentNode.Connected != newNode.Connected
++	resetAutoRelayedPeers := false
+ 	if !connectionToggle {
+ 		enablingInetGw := !currentNode.IsInternetGateway && newNode.IsInternetGateway
+ 		updatingInetGwClients := newNode.IsInternetGateway && len(newNode.InetNodeReq.InetNodeClientIDs) > 0
+ 		if enablingInetGw || updatingInetGwClients {
++			resetAutoRelayedPeers = true
+ 			err = logic.ValidateInetGwReq(
+ 				r.Context(),
+ 				logic.ConvertModelsNodeToSchemaNode(newNode),
+@@ -965,6 +967,15 @@ func updateNode(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	updated = true
++	if resetAutoRelayedPeers && len(newNode.AutoRelayedPeers) > 0 {
++		// the node is becoming an internet gateway, so it can no longer be auto relayed.
++		if err := logic.ResetAutoRelayedPeer(r.Context(), newNode); err != nil {
++			logger.Log(0, r.Header.Get("user"),
++				fmt.Sprintf("failed to reset auto relayed peers for node [ %s ]: %v", nodeid, err))
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
++			return
++		}
++	}
+ 	for _, address := range replacedAddrs {
+ 		if err := networkOrch.ReleaseIP(r.Context(), network, address, schema.IPOwnerNode, currentNode.ID.String()); err != nil {
+ 			slog.Error("failed to release node address", "network", network.Name, "address", address, "error", err)
+```
+
+**File**: `logic/hosts.go` (modified, +4/-3)
+```diff
+@@ -259,15 +259,16 @@ func UpdateHostFromClient(ctx context.Context, newHost, currHost *schema.Host) (
+ 		sendPeerUpdate = true
+ 		peerUpdateReasons = append(peerUpdateReasons, "public_key")
+ 	}
+-	if !currHost.IsStaticPort {
++	if newHost.IsStaticPort || !currHost.IsStaticPort {
+ 		if newHost.ListenPort != 0 && currHost.ListenPort != newHost.ListenPort {
+ 			currHost.ListenPort = newHost.ListenPort
++			currHost.IsStaticPort = newHost.IsStaticPort
+ 			sendPeerUpdate = true
+ 			peerUpdateReasons = append(peerUpdateReasons, "listen_port")
+ 		}
+-		if newHost.WgPublicListenPort != 0 &&
+-			currHost.WgPublicListenPort != newHost.WgPublicListenPort {
++		if newHost.WgPublicListenPort != 0 && currHost.WgPublicListenPort != newHost.WgPublicListenPort {
+ 			currHost.WgPublicListenPort = newHost.WgPublicListenPort
++			currHost.IsStaticPort = newHost.IsStaticPort
+ 			sendPeerUpdate = true
+ 			peerUpdateReasons = append(peerUpdateReasons, "wg_public_listen_port")
+ 		}
+```
+
+**File**: `migrate/migrate_v1_8_0.go` (modified, +12/-0)
+```diff
+@@ -56,6 +56,11 @@ func migrateV1_8_0(ctx context.Context) error {
+ 		return err
  	}
  
--	reqKeyIf.User = userClaims.getUserName() // set the cached registering hosts' user
-+	reqKeyIf.User = user.Username // set the cached registering hosts' user
- 	if err = netcache.Set(state, reqKeyIf); err != nil {
- 		logger.Log(0, "machine failed to complete join on network,", reqKeyIf.Network, "-", err.Error())
- 		return
++	err = resetHostOwnerUsernames(ctx)
++	if err != nil {
++		return err
++	}
++
+ 	// runs after the extclients are migrated, since the addresses of the
+ 	// extclients are allocated to their ids.
+ 	err = migrateIPAllocations(ctx)
+@@ -456,6 +461,13 @@ func migrateUserEmailUsernamesToLowercase(ctx context.Context) error {
+ 	return nil
+ }
+ 
++// resetHostOwnerUsernames clears the owner_username on hosts.
++func resetHostOwnerUsernames(ctx context.Context) error {
++	return db.FromContext(ctx).Model(&schema.Host{}).
++		Where("owner_username <> ''").
++		Update("owner_username", "").Error
++}
++
+ // migrateIPAllocations backfills the address pools and allocations of the
+ // existing networks from the addresses of their nodes and extclients.
+ //
+```
+
+**File**: `models/host.go` (modified, +44/-54)
+```diff
+@@ -42,50 +42,50 @@ const (
+ 
+ // Host - represents a host on the network
+ type Host struct {
+-	ID                  uuid.UUID        `json:"id"                      yaml:"id"`
+-	Verbosity           int              `json:"verbosity"               yaml:"verbosity"`
+-	FirewallInUse       string           `json:"firewallinuse"           yaml:"firewallinuse"`
+-	Version             string           `json:"version"                 yaml:"version"`
+-	IPForwarding        bool             `json:"ipforwarding"            yaml:"ipforwarding"`
+-	DaemonInstalled     bool             `json:"daemoninstalled"         yaml:"daemoninstalled"`
+-	AutoUpdate          bool             `json:"autoupdate"              yaml:"autoupdate"`
+-	HostPass            string           `json:"hostpass"                yaml:"hostpass"`
+-	Name                string           `json:"name"                    yaml:"name"`
+-	OS                  string           `json:"os"                      yaml:"os"`
+-	OSFamily            string           `json:"os_family" yaml:"os_family"`
+-	OSVersion           string           `json:"os_version"                      yaml:"os_version"`
+-	KernelVersion       string           `json:"kernel_version" yaml:"kernel_version"`
+-	Interface           string           `json:"interface"               yaml:"interface"`
+-	Debug               bool             `json:"debug"                   yaml:"debug"`
+-	ListenPort          int              `json:"listenport"              yaml:"listenport"`
+-	WgPublicListenPort  int              `json:"wg_public_listen_port"   yaml:"wg_public_listen_port"`
+-	TcpProxyEnabled     bool             `json:"tcp_proxy_enabled"       yaml:"tcp_proxy_enabled"`
+-	TcpProxyListenPort  int              `json:"tcp_proxy_listen_port"   yaml:"tcp_proxy_listen_port"`
+-	TcpProxyTLSMode     string           `json:"tcp_proxy_tls_mode"      yaml:"tcp_proxy_tls_mode"`
+-	TcpProxyListenAddr     string           `json:"tcp_proxy_listen_addr,omitempty" yaml:"tcp_proxy_listen_addr,omitempty"`
+-	TcpProxyPublicHostname string           `json:"tcp_proxy_public_hostname,omitempty" yaml:"tcp_proxy_public_hostname,omitempty"`
+-	TcpProxyCertFingerprint string       `json:"tcp_proxy_cert_fingerprint,omitempty" yaml:"tcp_proxy_cert_fingerprint,omitempty"`
+-	MTU                 int              `json:"mtu"                     yaml:"mtu"`
+-	PublicKey           wgtypes.Key      `json:"publickey"               yaml:"publickey"`
+-	MacAddress          net.HardwareAddr `json:"macaddress"              yaml:"macaddress"`
+-	TrafficKeyPublic    []byte           `json:"traffickeypublic"        yaml:"traffickeypublic"`
+-	Nodes               []string         `json:"nodes"                   yaml:"nodes"`
+-	Interfaces          []schema.Iface   `json:"interfaces"              yaml:"interfaces"`
+-	DefaultInterface    string           `json:"defaultinterface"        yaml:"defaultinterface"`
+-	EndpointIP          net.IP           `json:"endpointip"              yaml:"endpointip"`
+-	EndpointIPv6        net.IP           `json:"endpointipv6"            yaml:"endpointipv6"`
+-	IsDocker            bool             `json:"isdocker"                yaml:"isdocker"`
+-	IsK8S               bool             `json:"isk8s"                   yaml:"isk8s"`
+-	IsStaticPort        bool             `json:"isstaticport"            yaml:"isstaticport"`
+-	IsStatic            bool             `json:"isstatic"        yaml:"isstatic"`
+-	IsDefault           bool             `json:"isdefault"               yaml:"isdefault"`
+-	DNS                 string           `json:"dns_status"               yaml:"dns_status"`
+-	NatType             string           `json:"nat_type,omitempty"      yaml:"nat_type,omitempty"`
+-	TurnEndpoint        *netip.AddrPort  `json:"turn_endpoint,omitempty" yaml:"turn_endpoint,omitempty"`
+-	PersistentKeepalive time.Duration    `json:"persistentkeepalive" swaggertype:"primitive,integer" format:"int64" yaml:"persistentkeepalive"`
+-	Location            string           `json:"location"` // Format: "lat,lon"
+-	CountryCode         string           `json:"country_code"`
+-	EnableFlowLogs      bool             `json:"enable_flow_logs" yaml:"enable_flow_logs"`
++	ID                      uuid.UUID        `json:"id"                      yaml:"id"`
++	Verbosity               int              `json:"verbosity"               yaml:"verbosity"`
++	FirewallInUse           string           `json:"firewallinuse"           yaml:"firewallinuse"`
++	Version                 string           `json:"version"                 yaml:"version"`
++	IPForwarding            bool             `json:"ipforwarding"            yaml:"ipforwarding"`
++	DaemonInstalled         bool             `json:"daemoninstalled"         yaml:"daemoninstalled"`
++	AutoUpdate              bool             `json:"autoupdate"              yaml:"autoupdate"`
++	HostPass                string           `json:"hostpass"                yaml:"hostpass"`
++	Name                    string           `json:"name"              
+```
+
+**File**: `pro/auth/register_callback.go` (modified, +5/-92)
+```diff
+@@ -4,111 +4,24 @@ import (
+ 	"bytes"
+ 	"fmt"
+ 	"net/http"
+-	"time"
+ 
+ 	"github.com/gorilla/mux"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/logic/pro/netcache"
+-	"github.com/gravitl/netmaker/schema"
+ 	"github.com/gravitl/netmaker/scope"
+ )
+ 
+ var (
+ 	redirectUrl string
+ )
+ 
+-// HandleHostSSOCallback handles the callback from the sso endpoint
+-// It is the analogue of auth.handleNodeSSOCallback but takes care of the end point flow
+-// Retrieves the mkey from the state cache and adds the machine to the users email namespace
+-// TODO: A confirmation page for new machines should be added to avoid phishing vulnerabilities
+-// TODO: Add groups information from OIDC tokens into machine HostInfo
++// HandleHostSSOCallback handles the callback from the sso endpoint for host registration.
++// Registering a host via SSO is no longer supported, so the request is rejected.
+ // Listens in /oidc/callback.
+ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
+-
+-	p, ok := Registry().FromContext(r.Context())
+-	if !ok {
+-		w.WriteHeader(http.StatusBadRequest)
+-		w.Write([]byte("bad conf"))
+-		logger.Log(0, "Missing Oauth config in HandleNodeSSOCallback")
+-		return
+-	}
+-
+-	state, code := getStateAndCode(r)
+-
+-	var userClaims, err = p.GetUserInfo(state, code)
+-	if err != nil {
+-		logger.Log(0, "error when getting user info from callback:", err.Error())
+-		handleOauthNotConfigured(w)
+-		return
+-	}
+-
+-	if code == "" || state == "" {
+-		w.WriteHeader(http.StatusBadRequest)
+-		w.Write([]byte("Wrong params"))
+-		logger.Log(0, "Missing params in HandleSSOCallback")
+-		return
+-	}
+-
+-	// all responses should be in html format from here on out
+-	w.Header().Add("content-type", "text/html; charset=utf-8")
+-
+-	// retrieve machinekey from state cache
+-	reqKeyIf, machineKeyFoundErr := netcache.Get(state)
+-	if machineKeyFoundErr != nil {
+-		logger.Log(0, "requested machine state key expired before authorisation completed -", machineKeyFoundErr.Error())
+-		reqKeyIf = &netcache.CValue{
+-			Network:    "invalid",
+-			Value:      state,
+-			Pass:       "",
+-			User:       "netmaker",
+-			Expiration: time.Now(),
+-		}
+-		response := returnErrTemplate("", "requested machine state key expired before authorisation completed", state, reqKeyIf)
+-		w.WriteHeader(http.StatusInternalServerError)
+-		w.Write(response)
+-		return
+-	}
+-	// check if user exists
+-	user := &schema.User{Username: userClaims.getUserName()}
+-	err = user.Get(r.Context())
+-	if err != nil {
+-		handleOauthUserNotFound(w)
+-		return
+-	}
+-	if user.PlatformRoleID != schema.AdminRole && user.PlatformRoleID != schema.SuperAdminRole {
+-		response := returnErrTemplate(user.Username, "only admin users can register using SSO", state, reqKeyIf)
+-		w.WriteHeader(http.StatusForbidden)
+-		w.Write(response)
+-		return
+-	}
+-	if user.AccountDisabled {
+-		response := returnErrTemplate(user.Username, "user is disabled", state, reqKeyIf)
+-		w.WriteHeader(http.StatusForbidden)
+-		w.Write(response)
+-		return
+-	}
+-	logger.Log(1, "registering host for user:", user.Username, reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
+-
+-	// Send OK to user in the browser
+-	var response bytes.Buffer
+-	if err := ssoCallbackTemplate.Execute(&response, ssoCallbackTemplateConfig{
+-		User: user.Username,
+-		Verb: "authenticated",
+-	}); err != nil {
+-		logger.Log(0, "Could not render SSO callback template ", err.Error())
+-		response := returnErrTemplate(reqKeyIf.User, "Could not render SSO callback template", state, reqKeyIf)
+-		w.WriteHeader(http.StatusInternalServerError)
+-		w.Write(response)
+-	} else {
+-		w.WriteHeader(http.StatusOK)
+-		w.Write(response.Bytes())
+-	}
+-
+-	reqKeyIf.User = user.Username // set the cached registering hosts' user
+-	if err = netcache.Set(state, reqKeyIf); err != nil {
+-		logger.Log(0, "machine failed to complete join on network,", reqKeyIf.Network, "-", err.Error())
+-		return
+-	}
++	logger.Log(0, "host registration via SSO attempted, but it is no longer supported")
++	w.WriteHeader(http.StatusGone)
++	_, _ = w.Write([]byte("registering a host via SSO is no longer supported; use an enrollment token: netclient join -t <token>"))
+ }
+ 
+ func setNetcache(ncache *netcache.CValue, state string) error {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4216** (2026-11-03): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4212** (2026-10-30): NM-356: network-role API access and user-device host auth , Reject host-password JWTs for user-owned devices; AuthorizeHost accepts a user session plus X-Host-ID instead. (@abhishek9686)
 - **PR #4211** (2026-10-30): NM-356: enrich topology and connections with location, is_gw, and egresses  (@abhishek9686)
 - **PR #4210** (2026-10-30): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4208** (2026-10-29): List Auto Relayed Peers for a Node API (@VishalDalwadi)
 - **PR #4207** (closed): V1.8.0 nm 356 (@abhishek9686)
-- **PR #4206** (2026-10-25): v1.7.0: fix: load user groups via membership for ACL expansion (@abhishek9686)
 
 ---
 
@@ -1342,50 +1517,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Pre-Release Fixes v1.8.0 (#4210)
-
-**RULE**:
-When implementing operations in `logic/peers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `9acda995`: Pre-Release Fixes v1.8.0 (#4210). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `logic/peers.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-			if host.EnableFlowLogs {
-				peerIdentity := nodeFlowIdentity(&peer, peerHost)
-				if peer.Address.IP != nil {
-					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
-				}
-				if peer.Address6.IP != nil {
-					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
-				}
-			}
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-			if host.EnableFlowLogs {
-				peerIdentity := nodeFlowIdentity(&peer, peerHost)
-				if peer.Address.IP != nil {
-					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
-				}
-				if peer.Address6.IP != nil {
-					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
-				}
-			}
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9acda995` are properly handled with clean fallback behavior.
