@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T22:59:08.781Z",
+  "last_updated": "2026-11-03T23:06:19.751Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
-      "verified_at": "2026-10-31T00:34:19.578Z",
+      "content_hash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
+      "verified_at": "2026-11-03T23:06:09.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:34:19.578Z"
+      "last_updated": "2026-11-03T23:06:09.503Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
-      "verified_at": "2026-10-30T15:49:23.804Z",
+      "content_hash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
+      "verified_at": "2026-11-03T23:06:19.750Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:49:23.804Z"
+      "last_updated": "2026-11-03T23:06:19.750Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

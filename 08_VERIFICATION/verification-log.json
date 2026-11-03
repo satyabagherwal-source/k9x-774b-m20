@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-5SXA",
-    "timestamp": "2026-10-31T11:46:46.318Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-EGH6",
-    "timestamp": "2026-10-31T11:53:30.090Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-EQOU",
     "timestamp": "2026-10-31T11:53:43.326Z",
     "repository": "xerj-org/xerj",
@@ -7490,6 +7460,36 @@
     "repository": "makecindy/cindy",
     "learningId": "learn-github-makecindy-cindy",
     "contentHash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-R1ZM",
+    "timestamp": "2026-11-03T23:06:09.490Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-R9W9",
+    "timestamp": "2026-11-03T23:06:19.737Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

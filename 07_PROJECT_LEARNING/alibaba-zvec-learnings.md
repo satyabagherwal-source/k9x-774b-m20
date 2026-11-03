@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `4c5be75d`  
+> **Source Version**: `499eab89`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:49:23.145Z  
+> **Timestamp**: 2026-11-03T23:06:19.005Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:49:23.137Z  
+> **Harvest Timestamp**: 2026-11-03T23:06:18.724Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16165 stars
+- **Stars / Engagement**: 16178 stars
 
 ---
 
@@ -1092,517 +1092,1193 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c5be75d` (2026-10-30)
-**Commit Message**: fix(io): prevent file descriptor inheritance across exec (#859)
+### Incident Patch 1: `1bcbc4cc` (2026-11-03)
+**Commit Message**: fix(db): avoid null writing_segment_ on DDL writing segment recreation failure (#822)
 
-**File**: `src/ailego/io/file.cc` (modified, +6/-0)
+**File**: `src/db/collection.cc` (modified, +18/-82)
 ```diff
-@@ -34,6 +34,9 @@ namespace ailego {
- #if !defined(_WIN64) && !defined(_WIN32)
- 
- static inline int OpenSafely(const char *path, int flags) {
-+  // Set close-on-exec atomically with open: a later fcntl can race with a
-+  // concurrent process launch and leave the child holding collection locks.
-+  flags |= O_CLOEXEC;
-   int fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-   while (fd == -1 && errno == EINTR) {
-     fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-@@ -424,6 +427,8 @@ bool File::create(const char *path, size_t len, bool direct) {
-   ailego_false_if_false(Utf8PathOk(path, wpath));
- 
-   // Try opening or creating the file
-+  // Null security attributes make this handle and the direct-I/O reopen below
-+  // non-inheritable, even when the child process enables handle inheritance.
-   HANDLE file_handle =
-       ::CreateFileW(wpath.c_str(), GENERIC_WRITE | GENERIC_READ,
-                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-@@ -470,6 +475,7 @@ bool File::open(const char *path, bool rdonly, bool direct) {
-   if (direct) {
-     flags |= FILE_FLAG_NO_BUFFERING;
+@@ -1379,52 +1379,30 @@ Status CollectionImpl::add_column(const FieldSchema::Ptr &column_schema,
+     CHECK_RETURN_STATUS(s);
    }
-+  // Null security attributes keep this handle non-inheritable.
-   HANDLE file_handle = ::CreateFileW(
-       wpath.c_str(), (rdonly ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE),
-       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
-```
-
-**File**: `tests/ailego/io/file_test.cc` (modified, +43/-0)
-```diff
-@@ -17,9 +17,52 @@
- #include <ailego/utility/memory_helper.h>
- #include <gtest/gtest.h>
- #include <zvec/ailego/io/file.h>
-+#if defined(_WIN64) || defined(_WIN32)
-+#include <Windows.h>
-+#ifdef RemoveDirectory
-+#undef RemoveDirectory
-+#endif
-+#else
-+#include <fcntl.h>
-+#endif
  
- using namespace zvec::ailego;
+-  Version new_version = version_manager_->get_current_version();
++  auto old_writing_segment = writing_segment_;
++  Version old_version = version_manager_->get_current_version();
++  Version new_version = old_version;
  
-+namespace {
-+
-+void ExpectNonInheritable(const File &file) {
-+#if defined(_WIN64) || defined(_WIN32)
-+  DWORD flags = 0;
-+  ASSERT_TRUE(GetHandleInformation(file.native_handle(), &flags));
-+  EXPECT_EQ(0u, flags & HANDLE_FLAG_INHERIT);
-+#else
-+  int flags = fcntl(file.native_handle(), F_GETFD);
-+  ASSERT_NE(-1, flags);
-+  EXPECT_NE(0, flags & FD_CLOEXEC);
-+#endif
-+}
-+
-+}  // namespace
-+
-+TEST(File, HandlesAreNotInherited) {
-+  const char *path = "file_inheritance_test.dat";
-+  for (bool direct : {false, true}) {
-+    SCOPED_TRACE(direct);
-+    File file;
-+    ASSERT_TRUE(file.create(path, 4096, direct));
-+    ExpectNonInheritable(file);
-+    file.close();
-+
-+    for (bool read_only : {false, true}) {
-+      SCOPED_TRACE(read_only);
-+      ASSERT_TRUE(file.open(path, read_only, direct));
-+      ExpectNonInheritable(file);
-+      file.close();
-+    }
-+  }
-+  EXPECT_TRUE(File::Delete(path));
-+}
-+
- TEST(File, General) {
-   EXPECT_TRUE(File::IsDirectory("."));
-   EXPECT_TRUE(File::IsDirectory(".."));
+   // add column on segment manager
+   s = segment_manager_->add_column(field_copy, expression,
+                                    options.concurrency_);
+   CHECK_RETURN_STATUS(s);
+ 
+-  // reset writing segment with new schema
+-  auto id = writing_segment_->id();
+   auto min_doc_id = writing_segment_->meta()->min_doc_id();
+ 
+-  s = writing_segment_->destroy();
+-  CHECK_RETURN_STATUS(s);
+-  writing_segment_.reset();
+-
+-  SegmentOptions seg_options;
+-  seg_options.enable_mmap_ = options_.enable_mmap_;
+-  seg_options.max_buffer_size_ = options_.max_buffer_size_;
+-  seg_options.read_only_ = options_.read_only_;
+-  auto writing_segment =
+-      Segment::CreateAndOpen(path_, *new_schema, id, min_doc_id, id_map_,
+-                             delete_store_, version_manager_, seg_options);
+-  if (!writing_segment) {
+-    return writing_segment.error();
+-  }
+-  writing_segment_ = writing_segment.value();
+-
+   // update new version
+   new_version.set_schema(*new_schema);
+-  new_version.reset_writing_segment_meta(writing_segment_->meta());
+ 
+   auto new_segment_metas = segment_manager_->get_segments_meta();
+   for (auto meta : new_segment_metas) {
+     s = new_version.update_persisted_segment_meta(meta);
+     CHECK_RETURN_STATUS(s);
+   }
+ 
+-  s = version_manager_->apply(new_version);
+-  CHECK_RETURN_STATUS(s);
+-
+-  // persist manifest
+-  s = version_manager_->flush();
++  s = commit_schema_change_with_new_writing_segment(
++      new_schema, old_writing_segment, old_version, &new_version, min_doc_id);
+   CHECK_RETURN_STATUS(s);
+ 
+-  schema_ = new_schema;
+-
+   return Status::OK();
+ }
+ 
+@@ -1455,51 +1433,29 @@ Status CollectionImpl::drop_column(const std::string &column_name) {
+     CHECK_RETURN_STATUS(s);
+   }
+ 
+-  Version new_version = version_manager_->get_current_version();
++  auto old_writing_segment = writing_segment_;
++  Version old_version = version_manager_->get_current_version();
++  Version new_version = old_version;
+ 
+   // drop column on segment manager
+   s = segment_manager_->drop_column(column_name);
+   CHECK_RETURN_STATUS(s);
+ 
+-  // reset writing segment with new schema
+-  auto id = writing_segment_->id();
+   auto min_doc_id = writing_segment_->meta()->min_doc_id();
+ 
+-  s = writing_segment_->destroy();
+-  CHECK_RETURN_STATUS(s);
+-  writing_segment_.reset();
+-
+-  SegmentOptions seg_options;
+-  seg_options.enable_mmap_ = options_.enable_mmap_;
+-  seg_options.max_buffer_size_ = options_.max_buffer_size_;
+-  seg_options.read_only_ = options_.read_only_;
+-  auto writing_segment =
+-      Segment::CreateAndOpen(path_, *new_schema, id, min_doc_id, id_map_,
+-                             delete_store_, version_manager_, seg_options);
+-  if (!writing_segment) {
+-    return writing_segment.error();
+-  }
+-  writing_segment_ = writing_segment.value();
+-
+   // update new version
+   new_version.set_schema(*new_schema);
+-  new_version.reset_writing_segment_meta(writing_segment_->meta());
+ 
+   auto new_segment_metas = segment_manager_->get_segments_meta();
+   for (auto meta : new_segment_metas) {
+     s = new_version.update_persisted_segment_meta(meta);
+     CHECK_RETURN_STATUS(s);
+   }
+ 
+-  s = version_manager_->apply(new_version);
+-  CHECK_RETURN_STATUS(s);
+-
+-  // persist manifest
+-  s = version_manager_->flush();
++  s = commit_schema_change_with_new_writing_segment(
++      new_schema, old_writing_segment, old_version, &new_version, min_doc_id);
+   CHECK_RETURN_STATUS(s);
+ 
+-  schema_ = new_schema;
+-
+   return Status::OK();
+ }
+ 
+@@ -1541,52 +1497,30 @@ Status CollectionImpl::alter_column(const std::string &column_name,
+     CHECK_RETURN_STATUS(s);
+   }
+ 
+-  Version new_version = version_manager_->get_current_version();
++  auto old_writing_segment = writing_segment_;
++  Version old_version = version_manager_->get_current_version();
++  Version new_version = old_version;
+ 
+   // alter column on segment manager
+   s = segment_manager_->alter_column(column_name, field_copy,
+                                      options.concurrency_);
+   CHECK_RETURN_STATUS(s);
+ 
+-  // reset writing segment with new schema
+-  auto id = writing_segment_->id();
+   auto min_doc_id = writing_segment_->meta()->min_doc_id();
+ 
+-  s = writing_segment_->destroy();
+-  CHECK_RETURN_STATUS(s);
+-  writing_segment_.reset();
+-
+-  SegmentOptions seg_options;
+-  seg_options.enable_mmap_ = options_.enable_mmap_;
+-  seg_options.max_buffer_size_ = options_.max_buffer_size_;
+-  seg_options.read_only_ = options_.read_only_;
+-  auto writing_segment =
+-      Segment::CreateAndOpen(path_, *new_schema, id, min_doc_id, id_map_,
+-                             delete_store_, version_manager_, seg_options);
+-  if (!writing_
 ```
 
 ---
 
-### Incident Patch 2: `804ab197` (2026-10-30)
-**Commit Message**: fix: enforce read-only storage and WAL recovery boundaries (#840)
+### Incident Patch 2: `55eef077` (2026-11-03)
+**Commit Message**: fix(storage): separate BufferStorage creation and write permissions (#870)
 
-**File**: `python/tests/test_hnsw_contiguous_memory.py` (modified, +32/-76)
+**File**: `src/core/interface/index.cc` (modified, +6/-3)
 ```diff
-@@ -11,21 +11,9 @@
- # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- # See the License for the specific language governing permissions and
- # limitations under the License.
--"""
--Tests for the ``use_contiguous_memory`` optimization on ``HnswIndexParam``.
--
--The HNSW streamer supports two allocation strategies for graph nodes:
-+"""HNSW contiguous storage is used only for read-only mmap opens.
+@@ -557,12 +557,15 @@ int Index::open(const std::string &file_path, StorageOptions storage_options) {
+       return core::IndexError_Unsupported;
+   }
  
--* ``use_contiguous_memory=False`` (default): each node allocates its own
--  linked buffer. Lower peak memory usage, worse cache locality.
--* ``use_contiguous_memory=True``: a single contiguous arena holds every
--  node. Higher peak memory usage, better cache locality and search
--  throughput.
--
--These tests exercise the Python surface end-to-end and make sure that
--when a collection is created / reopened with ``use_contiguous_memory=True``
--the underlying HNSW streamer entity is constructed correctly and serves
--search traffic.
-+Verify parameter persistence and query parity across writable/read-only opens.
- """
- 
- from __future__ import annotations
-@@ -224,34 +212,17 @@ def rng() -> np.random.Generator:
-     return np.random.default_rng(seed=42)
- 
- 
--# NOTE: the ``enable_mmap=False`` (BufferPool) variant is intentionally
--# omitted from this fixture. Building a persisted HNSW index via
--# ``optimize()`` / ``create_vector_index`` / ``drop_vector_index``
--# currently requires mmap-backed storage, because the BufferPool backend
--# has not implemented the ``create_new`` semantics yet and the guard in
--# ``SegmentImpl::merge_vector_indexer`` rejects that combination. Once
--# BufferPool gains write support, re-add ``False`` to ``params`` (and
--# drop the guard in segment.cc) so these end-to-end tests cover both
--# storage modes again.
-+# Persisted HNSW builds require mmap until BufferPool supports create_new.
- @pytest.fixture(params=[True], ids=["mmap_on"])
- def collection_option(request) -> CollectionOption:
-     return CollectionOption(read_only=False, enable_mmap=request.param)
- 
- 
--# Building a new persisted HNSW index currently requires mmap-backed storage
--# because the BufferPool backend has not implemented `create_new` semantics
--# yet. Collections opened with ``enable_mmap=False`` therefore cannot run
--# optimize()/create_vector_index/drop_vector_index. Tests use this fixture
--# to know which behaviour to assert, and once BufferPool gains write support
--# the guard in segment.cc (and these branches) can be removed together.
- @pytest.fixture
- def build_index_supported(collection_option: CollectionOption) -> bool:
-     return bool(collection_option.enable_mmap)
- 
- 
--# Error message fragments emitted by the NotSupported guard in
--# SegmentImpl::merge_vector_indexer / drop_vector_index. If the C++ message
--# changes, update these together.
- _BUILD_NOT_SUPPORTED_FRAGMENTS = ("not yet supported", "enable_mmap=false")
- 
- 
-@@ -264,21 +235,13 @@ def test_create_with_contiguous_memory_and_query(
-         collection_option,
-         rng,
-     ):
--        """With the flag on, the schema round-trips and search works end-to-end.
--
--        After ``optimize()`` the writing segment is compacted into a persisted
--        segment backed by the configured HNSW entity. We assert both the
--        user-observable behaviour (schema + search) and, via the debug hook,
--        that the entity type actually honours ``use_contiguous_memory``.
--        """
-         schema = _build_schema("hnsw_contig_create", use_contiguous_memory=True)
- 
-         path = tmp_path_factory.mktemp("zvec") / "hnsw_contig_create"
-         coll = zvec.create_and_open(
-             path=str(path), schema=schema, option=collection_option
-         )
-         try:
--            # Schema round-trips with the flag set.
-             vec_schema = coll.schema.vectors[0]
-             assert vec_schema.index_param.use_contiguous_memory is True
- 
-@@ -288,27 +251,26 @@ def test_create_with_contiguous_memory_and_query(
-                 assert r.ok(), f"insert failed: code={r.code()}"
-             assert coll.stats.doc_count == NUM_DOCS
- 
--            # Build persisted HNSW index; this is where the contiguous entity
--            # is actually instantiated.
-             coll.optimize()
--            assert _debug_hnsw_storage_mode(coll) == "contiguous", (
--                "use_contiguous_memory=True should produce a contiguous entity"
--            )
-+            assert _debug_hnsw_storage_mode(coll) == "mmap"
- 
--            # Pick an existing vector as the query; top-1 must be itself.
-             query_vec = docs[0].vector("dense")
-             ids = _assert_query_matches(coll, query_vec)
-             assert ids[0] == "0", f"expected self-recall, got top-1 id={ids[0]}"
-+
-+            coll.close()
-+            coll = zvec.open(path=str(path), option=CollectionOption(read_only=True))
-+            assert _debug_hnsw_storage_mode(coll) == "contiguous"
-+            assert _assert_query_matches(coll, query_vec) == ids
-         finally:
--            coll.destr
+-  // read_options.create_new
+-  int ret = storage_->open(file_path, storage_options.create_new);
++  const core::IndexStorage::OpenOptions open_options{storage_options.create_new,
++                                                     storage_options.read_only};
++  int ret = storage_options.type == StorageOptions::StorageType::kBufferPool
++                ? storage_->open(file_path, open_options)
++                : storage_->open(file_path, storage_options.create_new);
+   if (ret != 0) {
+     LOG_ERROR("Failed to open storage, path: %s, err: %s", file_path.c_str(),
+               core::IndexError::What(ret));
+-    return core::IndexError_Runtime;
++    return ret;
+   }
+   ret = prepare_streamer_open(storage_options);
+   if (ret != 0) {
 ```
 
-**File**: `python/tests/test_readonly_storage.py` (added, +250/-0)
+**File**: `src/core/utility/buffer_storage.cc` (modified, +15/-9)
 ```diff
-@@ -0,0 +1,250 @@
-+# Copyright 2025-present the zvec project
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
+@@ -1001,7 +1001,15 @@ class BufferStorage : public IndexStorage {
+ 
+   //! Open storage
+   int open(const std::string &path, bool create_if_missing) override {
+-    if (!ailego::File::IsExist(path) && create_if_missing) {
++    // Preserve the access mode of callers using the legacy boolean API.
++    return open_with_options(
++        path, OpenOptions{create_if_missing, /*read_only=*/!create_if_missing});
++  }
 +
-+"""Read-only opens preserve files, including after an unclean shutdown."""
++  int open_with_options(const std::string &path,
++                        const OpenOptions &options) override {
++    const bool writable = !options.read_only;
++    if (!ailego::File::IsExist(path) && options.create_if_missing) {
+       size_t last_slash = path.rfind('/');
+       if (last_slash != std::string::npos) {
+         ailego::File::MakePath(path.substr(0, last_slash));
+@@ -1017,9 +1025,8 @@ class BufferStorage : public IndexStorage {
+     try {
+       // Capture both owners before replacing the published state. In
+       // particular, a failed reopen must not change existing segments' pool.
+-      // create_if_missing also indicates write intent, like MMapFileStorage.
+-      auto candidate_pool = std::make_shared<ailego::VecBufferPool>(
+-          path, /*writable=*/create_if_missing);
++      auto candidate_pool =
++          std::make_shared<ailego::VecBufferPool>(path, writable);
+       auto candidate_handle =
+           std::make_shared<ailego::VecBufferPoolHandle>(candidate_pool);
+       file_name_ = path;
+@@ -1042,16 +1049,16 @@ class BufferStorage : public IndexStorage {
+     const size_t page_count =
+         file_size == 0 ? 0 : (file_size - 1) / ailego::kVectorPageSize + 1;
+     const size_t metadata_bytes =
+-        ailego::VecBufferPool::metadata_bytes_for_page_count(
+-            page_count, /*writable=*/create_if_missing);
++        ailego::VecBufferPool::metadata_bytes_for_page_count(page_count,
++                                                             writable);
+     const size_t available =
+         ailego::MemoryLimitPool::get_instance().available();
+     const bool cache_can_fit =
+         metadata_bytes != std::numeric_limits<size_t>::max() &&
+         metadata_bytes <= available &&
+         ailego::kVectorPageSize <= available - metadata_bytes;
+     ret = cache_can_fit ? buffer_pool_->init() : -1;
+-    if (ret != 0 && create_if_missing) {
++    if (ret != 0 && writable) {
+       this->close_index();
+       return IndexError_NoMemory;
+     }
+@@ -1063,8 +1070,7 @@ class BufferStorage : public IndexStorage {
+           path.c_str(), available, metadata_bytes, ailego::kVectorPageSize);
+     }
+     LOG_INFO("BufferStorage opened: file=%s, writable=%d, segment_count=%zu",
+-             file_name_.c_str(), static_cast<int>(create_if_missing),
+-             segments_.size());
++             file_name_.c_str(), static_cast<int>(writable), segments_.size());
+     return 0;
+   }
+ 
+```
+
+**File**: `src/include/zvec/core/framework/index_storage.h` (modified, +20/-0)
+```diff
+@@ -34,6 +34,11 @@ class IndexStorage : public IndexModule {
+   //! Index Storage Pointer
+   typedef std::shared_ptr<IndexStorage> Pointer;
+ 
++  struct OpenOptions {
++    bool create_if_missing{false};
++    bool read_only{true};
++  };
 +
-+import contextlib
-+import os
-+import stat
-+import subprocess
-+import sys
-+from pathlib import Path
-+
-+import pytest
-+import zvec
-+
-+
-+@pytest.fixture(scope="module", autouse=True)
-+def initialize():
-+    zvec.init(memory_limit_mb=512, query_threads=2, optimize_threads=2)
-+
-+
-+def _schema(kind="flat"):
-+    fields = [
-+        zvec.FieldSchema(
-+            "value", zvec.DataType.INT64, index_param=zvec.InvertIndexParam()
-+        ),
-+        zvec.FieldSchema(
-+            "text", zvec.DataType.STRING, index_param=zvec.FtsIndexParam()
-+        ),
-+    ]
-+    vectors = []
-+    if kind != "scalar":
-+        sparse = kind == "sparse"
-+        param_type = zvec.FlatIndexParam if kind == "flat" else zvec.HnswIndexParam
-+        param = param_type(
-+            metric_type=zvec.MetricType.IP if sparse else zvec.MetricType.L2
-+        )
-+        vectors = [
-+            zvec.VectorSchema(
-+                "v",
-+                zvec.DataType.SPARSE_VECTOR_FP32
-+                if sparse
-+                else zvec.DataType.VECTOR_FP32,
-+                index_param=param,
-+                **({} if sparse else {"dimension": 4}),
-+            )
-+        ]
-+    return zvec.CollectionSchema(
-+        name="readonly_storage", fields=fields, vectors=vectors
-+    )
-+
-+
-+def _doc(key, value, kind):
-+    vectors = (
-+        {}
-+        if kind == "scalar"
-+        else {"v": {value: 1.0} if kind == "sparse" else [float(value), 1.0, 0.0, 0.0]}
-+    )
-+    return zvec.Doc(
-+        id=key, fields={"value": value, "text": "hello readonly"}, vectors=vectors
-+    )
-+
-+
-+def _snapshot(path):
-+    return {
-+        str(p.relative_to(path)): (
-+            p.read_bytes(),
-+            p.stat().st_ino,
-+            p.stat().st_mtime_ns,
-+        )
-+        for p in path.rglob("*")
-+        if p.is_file()
+   struct MemoryBlock {
+     enum MemoryBlockType {
+       MBT_UNKNOWN = 0,
+@@ -650,6 +655,15 @@ class IndexStorage : public IndexModule {
+   //! Open storage
+   virtual int open(const std::string &path, bool create_if_missing) = 0;
+ 
++  //! Open with independent creation and access permissions. Implementations
++  //! that have not opted in return Unsupported instead of ignoring access.
++  int open(const std::string &path, const OpenOptions &options) {
++    if (options.create_if_missing && options.read_only) {
++      return IndexError_InvalidArgument;
 +    }
-+
-+
-+def _crash_writer(path, enable_mmap, kind, operation):
-+    # A fresh process using os._exit leaves a WAL without running destructors.
-+    subprocess.run(
-+        [sys.executable, __file__, str(path), str(int(enable_mmap)), kind, operation],
-+        check=True,
-+        timeout=60,
-+    )
-+
-+
-+def _assert_docs(collection, expected):
-+    fetched = collection.fetch(["a", "b", "c"])
-+    assert {key: doc.fields["value"] for key, doc in fetched.items()} == expected
-+    assert collection.stats.doc_count == len(expected)
-+    assert {doc.id for doc in collection.iter_docs()} == set(expected)
-+
-+
-+@pytest.mark.parametrize("enable_mmap", [True, False])
-+@pytest.mark.parametrize("kind", ["flat", "sparse", "scalar"])
-+@pytest.mark.parametrize("operation", ["insert", "update", "upsert", "delete"])
-+def test_pending_wal_requires_writable_recovery(tmp_path, enable_mmap, kind, operation):
-+    path = tmp_path / "collection"
-+    _crash_writer(path, enable_mmap, kind, operation)
-+    before = _snapshot(path)
-+    assert list(path.rglob("*.wal"))
-+    for _ in range(2):
-+        with pytest.raises(
-+            (ValueError, RuntimeError), match="requires WAL recovery.*read_only=false"
-+        ):
-+            zvec.open(
-+                str(path),
-+                zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap),
-+            )
-+        assert _snapshot(path) == before
-+
-+    expected = {"a": 1, "b": 2}
-+    if operation == "insert":
-+        expected["c"] = 3
-+    elif operation in ("update", "upsert"):
-+        expected["a"] = 4
-+    else:
-+        del expected["a"]
-+    writer = zvec.open(str(path), zvec.CollectionOption(enable_mmap=enable_mmap))
-+    _assert_docs(writer, expected)
-+    writer.close()
-+    recovered = _snapshot(path)
-+    reader = zvec.open(
-+        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
-+    )
-+    _assert_docs(reader, expected)
-+    reader.close()
-+    assert _snapshot(path) == recovered
-+
-+
-+@pytest.mark.parametrize("enable_mmap", [True, False])
-+def test_header_only_wal_can_be_opened_readonly(tmp_path, enable_mmap):
-+    path = tmp_path / "collection"
-+    _crash_writer(path, enable_mmap, "flat", "empty")
-+    wal = next(path.rglob("*.wal"))
-+    assert wal.stat().st_size == 64
-+    before = _snapshot(path)
-+    reader = zvec.open(
-+        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
-+    )
-+    _assert_docs(reader, {"a": 1, "b": 2})
-+    reader
-```
-
-**File**: `python/zvec/zvec.py` (modified, +3/-0)
-```diff
-@@ -219,6 +219,9 @@ def open(path: str, option: CollectionOption = CollectionOption()) -> Collection
- 
-     The collection must have been previously created with ``create_and_open``.
- 
-+    Pending WAL recovery requires opening and closing the collection with
-+    ``CollectionOption(read_only=False)`` before a read-only open.
-+
-     Args:
-         path (str): Path or name of the existing collection.
-         option (CollectionOption, optional): Configuration options
-```
-
-**File**: `src/core/algorithm/hnsw/hnsw_streamer.cc` (modified, +4/-1)
-```diff
-@@ -325,7 +325,10 @@ int HnswStreamer::open(IndexStorage::Pointer stg) {
-     default: {
-       if (use_external_vector_) {
-         entity_ = std::make_unique<HnswExternalStreamerEntity>(stats_);
--      } else if (use_contiguous_memory_) {
-+      } else if (use_contiguous_memory_ &&
-+                 stg->name() == "MMapFileReadStorage") {
-+        // Writable appends would leave cloned contexts using stale contiguous
-+        // snapshots.
-         entity_ = std::make_unique<HnswContiguousStreamerEntity>(stats_);
-       } else {
-         entity_ = std::make_unique<HnswMmapStreamerEntity>(stats_);
-```
-
-**File**: `src/core/interface/index.cc` (modified, +13/-3)
-```diff
-@@ -503,6 +503,10 @@ int Index::init(const BaseIndexParam &param) {
- 
- 
- int Index::open(const std::string &file_path, StorageOptions storage_options) {
-+  if (storage_options.read_only && storage_options.create_new) {
-+    LOG_ERROR("Cannot create storage for a read-only index");
-+    return core::IndexError_Runtime;
++    return open_with_options(path, options);
 +  }
-   ailego::Params storage_params;
-   // storage_params.set("proxima.mmap_file.storage.memory_warmup", true);
-   // storage_params.set("proxima.mmap_file.storage.segment_meta_capacity",
-@@ -519,14 +523,16 @@ int Index::open(const std::string &file_path, StorageOptions storage_options) {
++
+   //! Flush storage
+   virtual int flush() = 0;
  
-   switch (storage_options.type) {
-     case StorageOptions::StorageType::kMMAP: {
--      storage_ = core::IndexFactory::CreateStorage("MMapFileStorage");
-+      const char *storage_name =
-+          storage_options.read_only ? "MMapFileReadStorage" : "MMapFileStorage";
-+      storage_ = core::IndexFactory::CreateStorage(storage_name);
-       if (storage_ == nullptr) {
--        LOG_ERROR("Failed to create MMapFileStorage");
-+        LOG_ERROR("Failed to create %s", storage_name);
-         return core::IndexError_Runtime;
-       }
-       int ret = storage_->init(storage_params);
-       if (ret != 0) {
--        LOG_ERROR("Failed to init MMapFileStorage, path: %s, err: %s",
-+        LOG_ERROR("Failed to init %s, path: %s, err: %s", storage_name,
-                   file_path.c_str(), core::IndexError::What(ret));
-         return ret;
-       }
-@@ -1415,6 +1421,10 @@ int Index::_sparse_search(const VectorData &vector_data,
- 
- int Index::merge(const std::vector<Index::Pointer> &indexes,
-                  const IndexFilter &filter, const MergeOptions &options) {
-+  if (!is_open_ || is_read_only_) {
-+    LOG_ERROR("Cannot merge into an index that is closed or read-only");
-+    return core::IndexError_Runtime;
+@@ -709,6 +723,12 @@ class IndexStorage : public IndexModule {
+   virtual std::string file_path() const {
+     return "";
+   }
++
++ protected:
++  //! Separate dispatch keeps legacy open() overrides source-compatible.
++  virtual int open_with_options(const std::string &, const OpenOptions &) {
++    return IndexError_Unsupported;
 +  }
-   if (indexes.empty()) {
-     return core::IndexError_Success;
+ };
+ 
+ }  // namespace core
+```
+
+**File**: `tests/core/interface/index_interface_test.cc` (modified, +79/-5)
+```diff
+@@ -4868,6 +4868,11 @@ TEST(IndexInterface, IsDirty) {
+ TEST(IndexInterface, IsDirtyBufferPool) {
+   constexpr uint32_t kDimension = 16;
+   const std::string index_name{"test_is_dirty_bp.index"};
++  auto &pool = zvec::ailego::MemoryLimitPool::get_instance();
++  const size_t previous_capacity = pool.capacity();
++  ASSERT_EQ(0, pool.init(64UL * 1024UL * 1024UL));
++  auto restore = zvec::ailego::ScopeGuard::Make(
++      [&]() { EXPECT_EQ(0, pool.init(previous_capacity)); });
+ 
+   zvec::test_util::RemoveTestFiles(index_name);
+ 
+@@ -4881,15 +4886,16 @@ TEST(IndexInterface, IsDirtyBufferPool) {
+                      .build();
+     auto index = IndexFactory::CreateAndInitIndex(*param);
+     ASSERT_NE(nullptr, index);
+-    index->open(index_name, {StorageOptions::StorageType::kMMAP, true});
++    ASSERT_EQ(
++        0, index->open(index_name, {StorageOptions::StorageType::kMMAP, true}));
+     std::vector<float> vec(kDimension, 1.0f);
+     VectorData vd;
+     vd.vector = DenseVector{vec.data()};
+     ASSERT_EQ(0, index->add(vd, 1));
+-    index->close();
++    ASSERT_EQ(0, index->close());
+   }
+ 
+-  // Reopen with BufferPool storage in writable mode
++  // Reopen an existing file for writing without permitting file creation.
+   {
+     auto param = FlatIndexParamBuilder()
+                      .with_metric_type(MetricType::kInnerProduct)
+@@ -4899,7 +4905,9 @@ TEST(IndexInterface, IsDirtyBufferPool) {
+                      .build();
+     auto index = IndexFactory::CreateAndInitIndex(*param);
+     ASSERT_NE(nullptr, index);
+-    index->open(index_name, {StorageOptions::StorageType::kBufferPool, true});
++    ASSERT_EQ(0,
++              index->open(index_name, {StorageOptions::StorageType::kBufferPool,
++                                       false, false}));
+ 
+     ASSERT_FALSE(index->is_dirty());
+ 
+@@ -4912,12 +4920,78 @@ TEST(IndexInterface, IsDirtyBufferPool) {
+     ASSERT_EQ(0, index->flush());
+     ASSERT_FALSE(index->is_dirty());
+ 
+-    index->close();
++    ASSERT_EQ(0, index->close());
++  }
++
++  // Both the original and appended vectors must survive another reopen.
++  {
++    auto param = FlatIndexParamBuilder()
++                     .with_metric_type(MetricType::kInnerProduct)
++                     .with_data_type(DataType::DT_FP32)
++                     .with_dimension(kDimension)
++                     .with_is_sparse(false)
++                     .build();
++    auto index = IndexFactory::CreateAndInitIndex(*param);
++    ASSERT_NE(nullptr, index);
++    ASSERT_EQ(0,
++              index->open(index_name, {StorageOptions::StorageType::kBufferPool,
++                                       false, true}));
++    for (uint32_t id : {1U, 2U}) {
++      VectorDataBuffer fetched;
++      ASSERT_EQ(0, index->fetch(id, &fetched));
++      const auto &data =
++          std::get<DenseVectorBuffer>(fetched.vector_buffer).data;
++      const std::vector<float> expected(kDimension, static_cast<float>(id));
++      ASSERT_EQ(expected.size() * sizeof(float), data.size());
++      EXPECT_EQ(0, std::memcmp(expected.data(), data.data(), data.size()));
++    }
++    ASSERT_EQ(0, index->close());
+   }
+ 
+   zvec::test_util::RemoveTestFiles(index_name);
+ }
+ 
++TEST(IndexInterface, BufferPoolOpenPreservesCreationAndMemoryErrors) {
++  using zvec::core::IndexError_NoMemory;
++  using zvec::core::IndexError_OpenFile;
++  const std::string path = "buffer_pool_open_errors.index";
++  zvec::test_util::RemoveTestFiles(path);
++  auto remove = zvec::ailego::ScopeGuard::Make(
++      [&]() { zvec::test_util::RemoveTestFiles(path); });
++  auto &pool = zvec::ailego::MemoryLimitPool::get_instance();
++  const size_t previous_capacity = pool.capacity();
++  auto restore = zvec::ailego::ScopeGuard::Make(
++      [&]() { EXPECT_EQ(0, pool.init(previous_capacity)); });
++  ASSERT_EQ(0, pool.init(64UL * 1024UL * 1024UL));
++  auto param = FlatIndexParamBuilder()
++                   .with_metric_type(MetricType::kL2sq)
++                   .with_data_type(DataType::DT_FP32)
++                   .with_dimension(16)
++                   .with_is_sparse(false)
++                   .build();
++  {
++    auto index = IndexFactory::CreateAndInitIndex(*param);
++    ASSERT_NE(nullptr, index);
++    EXPECT_EQ(IndexError_OpenFile,
++              index->open(path, {StorageOptions::StorageType::kBufferPool,
++                                 false, false}));
++    EXPECT_FALSE(zvec::ailego::File::IsExist(path));
++  }
++  {
++    auto index = IndexFactory::CreateAndInitIndex(*param);
++    ASSERT_NE(nullptr, index);
++    ASSERT_EQ(
++        0, index->open(path, {StorageOptions::StorageType::kBufferPool, true}));
++    ASSERT_EQ(0, index->close());
++  }
++  ASSERT_EQ(0, pool.init(zvec::ailego::kVectorPageSize));
++  auto index = IndexFactory::CreateAndInitIndex(*param);
++  ASSERT_NE(nullptr, index);
++  EXPECT_EQ(IndexError_NoMemory,
++            index->open(path, {StorageOptions::StorageType::kBufferPool, false,
++                               false}));
++}
++
+ TEST(IndexInterface, BuilderSetsAllBaseFields) {
+  
+```
+
+**File**: `tests/core/utility/buffer_storage_write_test.cc` (modified, +121/-3)
+```diff
+@@ -49,13 +49,16 @@ class BufferStorageWriteTest : public ::testing::Test {
+     ailego::File::Delete(file_path_);
+   }
+ 
+-  // Open BufferStorage in writable mode (create_if_missing=true)
++  // Open BufferStorage in writable mode, creating it when missing.
+   IndexStorage::Pointer open_writable() {
+     auto storage = IndexFactory::CreateStorage("BufferStorage");
+     if (!storage) return nullptr;
+     ailego::Params params;
+     storage->init(params);
+-    if (storage->open(file_path_, true) != 0) return nullptr;
++    if (storage->open(file_path_, IndexStorage::OpenOptions{true, false}) !=
++        0) {
++      return nullptr;
++    }
+     return storage;
+   }
+ 
+@@ -65,13 +68,128 @@ class BufferStorageWriteTest : public ::testing::Test {
+     if (!storage) return nullptr;
+     ailego::Params params;
+     storage->init(params);
+-    if (storage->open(file_path_, false) != 0) return nullptr;
++    if (storage->open(file_path_, IndexStorage::OpenOptions{false, true}) !=
++        0) {
++      return nullptr;
++    }
+     return storage;
+   }
+ 
+   std::string file_path_;
+ };
+ 
++TEST_F(BufferStorageWriteTest, WritableReopenWithoutCreationPersistsChanges) {
++  {
++    auto storage = open_writable();
++    ASSERT_NE(nullptr, storage);
++    ASSERT_EQ(0, storage->append("payload", 4096));
++    auto segment = storage->get("payload");
++    ASSERT_NE(nullptr, segment);
++    const std::string original = "original";
++    ASSERT_EQ(original.size(),
++              segment->write(0, original.data(), original.size()));
++    ASSERT_EQ(0, storage->close());
++  }
++
++  const std::string expected = "updated after writable reopen";
++  {
++    auto storage = IndexFactory::CreateStorage("BufferStorage");
++    ASSERT_NE(nullptr, storage);
++    ASSERT_EQ(0, storage->init(ailego::Params{}));
++    ASSERT_EQ(
++        0, storage->open(file_path_, IndexStorage::OpenOptions{false, false}));
++    ASSERT_TRUE(storage->vec_buffer_pool()->writable());
++    auto segment = storage->get("payload");
++    ASSERT_NE(nullptr, segment);
++    ASSERT_EQ(expected.size(),
++              segment->write(0, expected.data(), expected.size()));
++    ASSERT_EQ(0, storage->append("appended", 4096));
++    ASSERT_EQ(0, storage->flush());
++    ASSERT_EQ(0, storage->close());
++  }
++
++  auto storage = open_read_only();
++  ASSERT_NE(nullptr, storage);
++  EXPECT_FALSE(storage->vec_buffer_pool()->writable());
++  EXPECT_TRUE(storage->has("appended"));
++  auto segment = storage->get("payload");
++  ASSERT_NE(nullptr, segment);
++  std::string actual(expected.size(), '\0');
++  ASSERT_EQ(actual.size(), segment->fetch(0, actual.data(), actual.size()));
++  EXPECT_EQ(expected, actual);
++  ASSERT_EQ(0, storage->close());
++}
++
++TEST_F(BufferStorageWriteTest,
++       WritableOpenWithoutCreationRequiresExistingFile) {
++  auto storage = IndexFactory::CreateStorage("BufferStorage");
++  ASSERT_NE(nullptr, storage);
++  ASSERT_EQ(0, storage->init(ailego::Params{}));
++  EXPECT_EQ(IndexError_OpenFile,
++            storage->open(file_path_, IndexStorage::OpenOptions{false, false}));
++  EXPECT_FALSE(ailego::File::IsExist(file_path_));
++  EXPECT_EQ(nullptr, storage->vec_buffer_pool());
++
++  ASSERT_EQ(0,
++            storage->open(file_path_, IndexStorage::OpenOptions{true, false}));
++  EXPECT_TRUE(storage->vec_buffer_pool()->writable());
++  ASSERT_EQ(0, storage->close());
++}
++
++TEST_F(BufferStorageWriteTest, ReadOnlyOpenCannotCreateFile) {
++  auto storage = IndexFactory::CreateStorage("BufferStorage");
++  ASSERT_NE(nullptr, storage);
++  ASSERT_EQ(0, storage->init(ailego::Params{}));
++  EXPECT_EQ(IndexError_InvalidArgument,
++            storage->open(file_path_, IndexStorage::OpenOptions{true, true}));
++  EXPECT_FALSE(ailego::File::IsExist(file_path_));
++  EXPECT_EQ(nullptr, storage->vec_buffer_pool());
++}
++
++TEST_F(BufferStorageWriteTest, LegacyOpenPreservesAccessModes) {
++  auto storage = IndexFactory::CreateStorage("BufferStorage");
++  ASSERT_NE(nullptr, storage);
++  ASSERT_EQ(0, storage->init(ailego::Params{}));
++  ASSERT_EQ(0, storage->open(file_path_, true));
++  EXPECT_TRUE(storage->vec_buffer_pool()->writable());
++  ASSERT_EQ(0, storage->close());
++  ASSERT_EQ(0, storage->open(file_path_, false));
++  EXPECT_FALSE(storage->vec_buffer_pool()->writable());
++  ASSERT_EQ(0, storage->close());
++}
++
++TEST_F(BufferStorageWriteTest, ExplicitOpenRequiresImplementationSupport) {
++  auto storage = IndexFactory::CreateStorage("MMapFileStorage");
++  ASSERT_NE(nullptr, storage);
++  ASSERT_EQ(0, storage->init(ailego::Params{}));
++  EXPECT_EQ(IndexError_Unsupported,
++            storage->open(file_path_, IndexStorage::OpenOptions{true, false}));
++  EXPECT_FALSE(ailego::File::IsExist(file_path_));
++}
++
++TEST_F(BufferStorageWriteTest, WritableReopenNeedsCacheAndAllowsRetry) {
++  {
++    auto storage = open_writable();
++    ASSERT_NE(nullptr, storage);
++    ASSERT_EQ(0, storage->close());
++  }
++  auto &pool = ailego::MemoryLimitPool::get_instance();
++  AILEGO_DEFER([&]() { EXPECT_EQ(0, pool.init(64UL * 1024UL * 10
+```
+
+---
+
+### Incident Patch 3: `960ecbc2` (2026-11-02)
+**Commit Message**: fix(hnsw): skip unavailable external vectors during queries (#861)
+
+**File**: `src/core/algorithm/hnsw/hnsw_algorithm.cc` (modified, +18/-4)
+```diff
+@@ -80,8 +80,10 @@ int HnswAlgorithm<EntityType>::search(HnswContext *ctx) const {
+   }
+ 
+   dist_t dist = ctx->dist_calculator().dist(entry_point);
++  if (ailego_unlikely(ctx->error())) return IndexError_Runtime;
+   for (level_t cur_level = max_level; cur_level >= 1; --cur_level) {
+     select_entry_point(cur_level, &entry_point, &dist, ctx);
++    if (ailego_unlikely(ctx->error())) return IndexError_Runtime;
+   }
+ 
+   const uint32_t capacity = std::max(ctx->topk(), ctx->ef());
+@@ -94,11 +96,12 @@ int HnswAlgorithm<EntityType>::search(HnswContext *ctx) const {
+     search_neighbors(0, &entry_point, &dist, topk, ctx);
+   }
+ 
++  if (ailego_unlikely(ctx->error())) return IndexError_Runtime;
+   if (ctx->group_by_search()) {
+     expand_neighbors_by_group(ctx);
+   }
+ 
+-  return 0;
++  return ctx->error() ? IndexError_Runtime : 0;
+ }
+ 
+ template <typename EntityType>
+@@ -159,6 +162,7 @@ void HnswAlgorithm<EntityType>::select_entry_point(level_t level,
+ 
+     dc.batch_dist(neighbor_vecs.data(), size, dists.data(),
+                   has_extra_values ? neighbor_extra_values.data() : nullptr);
++    if (ailego_unlikely(dc.error())) return;
+ 
+     for (uint32_t i = 0; i < size; ++i) {
+       dist_t cur_dist = dists[i];
+@@ -262,7 +266,9 @@ void fast_search_neighbors(const EntityType &entity, HeapType &pool,
+       if (visit.visited(node)) continue;
+       visit.set_visited(node);
+       const void *vec_ptr = entity.get_vector_ptr(node);
+-      ailego_prefetch_lines(vec_ptr, prefetch_lines);
++      if (ailego_likely(vec_ptr != nullptr)) {
++        ailego_prefetch_lines(vec_ptr, prefetch_lines);
++      }
+       neighbor_ids[unvisited_count] = node;
+       neighbor_vecs[unvisited_count] = vec_ptr;
+       if (has_extra_values) {
+@@ -288,6 +294,7 @@ void fast_search_neighbors(const EntityType &entity, HeapType &pool,
+     if (unvisited_count == 0) continue;
+     dc.batch_dist(neighbor_vecs.data(), unvisited_count, dists.data(),
+                   has_extra_values ? neighbor_extra_values.data() : nullptr);
++    if (ailego_unlikely(dc.error())) return;
+ 
+     pool.push_block(dists.data(), neighbor_ids.data(),
+                     static_cast<int32_t>(unvisited_count));
+@@ -360,11 +367,14 @@ void fast_search_neighbors_buffer(const EntityType &entity, HeapType &pool,
+     }
+     const uint32_t po = std::min(prefetch_offset, unvisited_count);
+     for (uint32_t i = 0; i < po; ++i) {
+-      ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
++      if (ailego_likely(neighbor_vecs[i] != nullptr)) {
++        ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
++      }
+     }
+ 
+     dc.batch_dist(neighbor_vecs.data(), unvisited_count, dists.data(),
+                   has_extra_values ? neighbor_extra_values.data() : nullptr);
++    if (ailego_unlikely(dc.error())) return;
+     pool.push_block(dists.data(), neighbor_ids.data(),
+                     static_cast<int32_t>(unvisited_count));
+   }
+@@ -491,11 +501,14 @@ void dual_heap_search_neighbors(const EntityType &entity, level_t level,
+ 
+     // do prefetch
+     for (uint32_t i = 0; i < std::min(prefetch_offset, size); ++i) {
+-      ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
++      if (ailego_likely(neighbor_vecs[i] != nullptr)) {
++        ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
++      }
+     }
+ 
+     dc.batch_dist(neighbor_vecs.data(), size, dists.data(),
+                   has_extra_values ? neighbor_extra_values.data() : nullptr);
++    if (ailego_unlikely(dc.error())) return;
+ 
+     for (uint32_t i = 0; i < size; ++i) {
+       node_id_t node = neighbor_ids[i];
+@@ -675,6 +688,7 @@ void HnswAlgorithm<EntityType>::expand_neighbors_by_group(
+       }
+       dc.batch_dist(neighbor_vecs.data(), size, dists.data(),
+                     has_extra_values ? neighbor_extra_values.data() : nullptr);
++      if (ailego_unlikely(dc.error())) return;
+ 
+       for (uint32_t i = 0; i < size; ++i) {
+         node_id_t node = neighbor_ids[i];
+```
+
+**File**: `src/core/algorithm/hnsw/hnsw_context.h` (modified, +20/-1)
+```diff
+@@ -333,7 +333,7 @@ class HnswContext : public IndexContext {
+   //! The active layout is bound together with the distance functions because
+   //! graph construction may use records supplied by an external provider.
+   inline const void *get_extra_values(const void *vector) const {
+-    return extra_values_size_ == 0
++    return extra_values_size_ == 0 || vector == nullptr
+                ? nullptr
+                : static_cast<const char *>(vector) + vector_data_size_;
+   }
+@@ -355,6 +355,25 @@ class HnswContext : public IndexContext {
+         vector, vector == nullptr ? nullptr : get_extra_values(vector));
+   }
+ 
++  //! Query-only distance: an unavailable external record is skipped, while
++  //! storage errors and missing internal records still fail the query.
++  inline bool try_batch_dist(node_id_t id, dist_t &distance,
++                             bool skip_missing_vectors = false) {
++    IndexStorage::MemoryBlock block;
++    if (ailego_unlikely(dc_.get_vector(id, block) != 0)) {
++      LOG_ERROR("Failed to get vector, id=%u", id);
++      dc_.set_error();
++      return false;
++    }
++    const void *vector = block.data();
++    if (ailego_unlikely(vector == nullptr && skip_missing_vectors)) {
++      LOG_ERROR("Skip nullptr external vector, id=%u", id);
++      return false;
++    }
++    distance = dc_.batch_dist(vector, get_extra_values(vector));
++    return !dc_.error();
++  }
++
+   inline TopkHeap &update_heap() {
+     return update_heap_;
    }
 ```
 
-**File**: `src/core/interface/indexes/diskann_index.cc` (modified, +6/-0)
+**File**: `src/core/algorithm/hnsw/hnsw_dist_calculator.h` (modified, +40/-16)
 ```diff
-@@ -137,6 +137,10 @@ int DiskAnnIndex::create_and_init_streamer(const BaseIndexParam &param) {
+@@ -34,6 +34,8 @@ class HnswDistCalculator {
+     DIST_SPARSE = 3
+   };
  
- int DiskAnnIndex::open(const std::string &file_path,
-                        StorageOptions storage_options) {
-+  if (storage_options.read_only && storage_options.create_new) {
-+    LOG_ERROR("Cannot create storage for a read-only index");
-+    return core::IndexError_Runtime;
++  enum class Status { kOk, kError, kMissingVector };
++
+  public:
+   //! Constructor
+   HnswDistCalculator(const HnswEntity *entity,
+@@ -99,23 +101,23 @@ class HnswDistCalculator {
+ 
+   //! Reset query vector data
+   inline void reset_query(const void *query) {
+-    error_ = false;
++    status_ = Status::kOk;
+     query_ = query;
+   }
+ 
+   //! Returns distance
+   inline dist_t dist(const void *vec_lhs, const void *vec_rhs) {
+     if (ailego_unlikely(vec_lhs == nullptr || vec_rhs == nullptr)) {
+       LOG_ERROR("Nullptr of dense vector");
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+ 
+     float score{0.0f};
+ 
+     if (ailego_unlikely(!distance_)) {
+       LOG_ERROR("Distance function is not initialized");
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     distance_(vec_lhs, vec_rhs, dim_, &score);
+@@ -137,13 +139,13 @@ class HnswDistCalculator {
+     int ret = get_vector(id, vec_block);
+     if (ailego_unlikely(ret != 0)) {
+       LOG_ERROR("Get nullptr vector, id=%u", id);
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     const void *feat = vec_block.data();
+     if (ailego_unlikely(feat == nullptr)) {
+       LOG_ERROR("Get nullptr vector, id=%u", id);
+-      error_ = true;
++      status_ = Status::kMissingVector;
+       return 0.0f;
+     }
+ 
+@@ -159,7 +161,7 @@ class HnswDistCalculator {
+     int ret = get_vector(lhs, vec_block_feat);
+     if (ailego_unlikely(ret != 0)) {
+       LOG_ERROR("Get nullptr vector, id=%u", lhs);
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     const void *feat = vec_block_feat.data();
+@@ -168,13 +170,13 @@ class HnswDistCalculator {
+     ret = get_vector(rhs, vec_block_query);
+     if (ailego_unlikely(ret != 0)) {
+       LOG_ERROR("Get nullptr vector, id=%u", rhs);
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     const void *query = vec_block_query.data();
+     if (ailego_unlikely(feat == nullptr || query == nullptr)) {
+       LOG_ERROR("Get nullptr vector");
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+ 
+@@ -197,9 +199,25 @@ class HnswDistCalculator {
+                   const void **extra_values) {
+     compare_cnt_++;
+ 
++    if (num == 0) return;
++    if (ailego_unlikely(vecs == nullptr || query_ == nullptr)) {
++      LOG_ERROR("Nullptr of dense vector batch or query");
++      status_ = Status::kError;
++      std::fill(distances, distances + num, 0.0f);
++      return;
++    }
++    for (size_t i = 0; i < num; ++i) {
++      if (ailego_unlikely(vecs[i] == nullptr)) {
++        LOG_ERROR("Get nullptr vector in batch, offset=%zu", i);
++        status_ = Status::kMissingVector;
++        std::fill(distances, distances + num, 0.0f);
++        return;
++      }
++    }
++
+     if (ailego_unlikely(!batch_distance_)) {
+       LOG_ERROR("Batch distance function is not initialized");
+-      error_ = true;
++      status_ = Status::kError;
+       std::fill(distances, distances + num, 0.0f);
+       return;
+     }
+@@ -209,15 +227,15 @@ class HnswDistCalculator {
+   inline dist_t batch_dist(const void *feat, const void *extra_values) {
+     compare_cnt_++;
+ 
+-    if (ailego_unlikely(feat == nullptr)) {
++    if (ailego_unlikely(feat == nullptr || query_ == nullptr)) {
+       LOG_ERROR("Get nullptr vector");
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     dist_t score = 0;
+     if (ailego_unlikely(!batch_distance_)) {
+       LOG_ERROR("Batch distance function is not initialized");
+-      error_ = true;
++      status_ = Status::kError;
+       return 0.0f;
+     }
+     if (extra_values != nullptr) {
+@@ -231,19 +249,25 @@ class HnswDistCalculator {
+ 
+   inline void clear() {
+     compare_cnt_ = 0;
+-    error_ = false;
++    status_ = Status::kOk;
+   }
+ 
+   inline void clear_compare_cnt() {
+     compare_cnt_ = 0;
+   }
+ 
++  //! Both failure states stop graph traversal. External-vector queries may
++  //! retry kMissingVector with a linear scan.
+   inline bool error() const {
+-    return error_;
++    return status_ != Status::kOk;
 +  }
-   ailego::Params storage_params;
-   file_path_ = file_path;
-   is_read_only_ = storage_options.read_only;
-@@ -200,6 +204,7 @@ int DiskAnnIndex::generate_holder() {
- }
++
++  inline Status status() const {
++    return status_;
+   }
  
- int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
-+  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
-   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
-     LOG_ERROR("this diskann index is trained or has a pending build");
-     return core::IndexError_Runtime;
-@@ -223,6 +228,7 @@ int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
+   inline void set_error() {
+-    error_ = true;
++    status_ = Status::kError;
+   }
  
- int DiskAnnIndex::train() {
-   if (is_trained_) return 0;
-+  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
-   if (build_stage_ == BuildStage::kCollecting) {
-     int ret = reset_builder();
-     if (ret != 0) return ret;
+   //! Get distances compute times
+@@ -306,7 +330,7 @@ class HnswDistCalculator {
+ 
+   uint32_t compare_cnt_;  // record distance compute times
+   // uint32_t compare_cnt_batch_;  // record batch distance compute time
+-  bool error_{false};
++  Status status_{Status::kOk};
+ 
+   // get original vector, used to build graph
+   IndexProvider::Pointer provider_{};
 ```
 
-**File**: `src/core/interface/indexes/flat_index.cc` (modified, +1/-1)
+**File**: `src/core/algorithm/hnsw/hnsw_streamer.cc` (modified, +37/-4)
 ```diff
-@@ -33,7 +33,7 @@ int ReadPersistedFlatIndexMeta(const std::string &file_path,
-   const char *storage_name = nullptr;
-   switch (storage_options.type) {
-     case StorageOptions::StorageType::kMMAP:
--      storage_name = "MMapFileStorage";
-+      storage_name = "MMapFileReadStorage";
-       break;
-     case StorageOptions::StorageType::kBufferPool:
-       storage_name = "BufferStorage";
+@@ -955,9 +955,17 @@ int HnswStreamer::search_impl(const void *query, const IndexQueryMeta &qmeta,
+   bind_search_dist_space(ctx);
+   ctx->resize_results(count);
+   ctx->check_need_adjuct_ctx(entity_->doc_cnt());
++  const void *queries = query;
+   for (size_t q = 0; q < count; ++q) {
+     ctx->reset_query(query, meta_);
+     ret = alg_->search(ctx);
++    if (ailego_unlikely(ctx->dist_calculator().status() ==
++                            HnswDistCalculator::Status::kMissingVector &&
++                        storage_mode() == HnswStorageMode::kExternal)) {
++      // Missing graph nodes can include the entry point or disconnect the
++      // route to valid neighbors. Retry the batch against available records.
++      return search_bf_impl(queries, qmeta, count, context);
++    }
+     if (ailego_unlikely(ret != 0)) {
+       LOG_ERROR("Hnsw searcher fast search failed");
+       return ret;
+@@ -1009,6 +1017,11 @@ int HnswStreamer::search_candidates_impl(
+   ctx->check_need_adjuct_ctx(entity_->doc_cnt());
+   ctx->reset_query(query, meta_);
+   ret = alg_->search(ctx);
++  if (ailego_unlikely(ctx->dist_calculator().status() ==
++                          HnswDistCalculator::Status::kMissingVector &&
++                      storage_mode() == HnswStorageMode::kExternal)) {
++    ret = search_bf_impl(query, qmeta, 1, context);
++  }
+   if (ailego_unlikely(ret != 0)) {
+     LOG_ERROR("Hnsw searcher fast search failed");
+     return ret;
+@@ -1076,6 +1089,8 @@ int HnswStreamer::search_bf_impl(
+   bind_search_dist_space(ctx);
+   ctx->resize_results(count);
+ 
++  const bool skip_missing_vectors =
++      storage_mode() == HnswStorageMode::kExternal;
+   if (ctx->group_by_search()) {
+     if (!ctx->group_by().is_valid()) {
+       LOG_ERROR("Invalid group-by function");
+@@ -1096,7 +1111,11 @@ int HnswStreamer::search_bf_impl(
+         }
+ 
+         if (!ctx->filter().is_valid() || !ctx->filter()(entity_->get_key(id))) {
+-          dist_t dist = ctx->batch_dist(id);
++          dist_t dist;
++          if (!ctx->try_batch_dist(id, dist, skip_missing_vectors)) {
++            if (ctx->error()) return IndexError_Runtime;
++            continue;
++          }
+ 
+           std::string group_id = group_by(id);
+ 
+@@ -1123,7 +1142,11 @@ int HnswStreamer::search_bf_impl(
+         }
+ 
+         if (!filter.is_valid() || !filter(entity_->get_key(id))) {
+-          dist_t dist = ctx->batch_dist(id);
++          dist_t dist;
++          if (!ctx->try_batch_dist(id, dist, skip_missing_vectors)) {
++            if (ctx->error()) return IndexError_Runtime;
++            continue;
++          }
+           topk.emplace(id, dist);
+         }
+       }
+@@ -1171,6 +1194,8 @@ int HnswStreamer::search_bf_by_p_keys_impl(
+   bind_search_dist_space(ctx);
+   ctx->resize_results(count);
+ 
++  const bool skip_missing_vectors =
++      storage_mode() == HnswStorageMode::kExternal;
+   if (ctx->group_by_search()) {
+     if (!ctx->group_by().is_valid()) {
+       LOG_ERROR("Invalid group-by function");
+@@ -1190,7 +1215,11 @@ int HnswStreamer::search_bf_by_p_keys_impl(
+         if (!ctx->filter().is_valid() || !ctx->filter()(pk)) {
+           node_id_t id = entity_->get_id(pk);
+           if (id != kInvalidNodeId) {
+-            dist_t dist = ctx->batch_dist(id);
++            dist_t dist;
++            if (!ctx->try_batch_dist(id, dist, skip_missing_vectors)) {
++              if (ctx->error()) return IndexError_Runtime;
++              continue;
++            }
+             std::string group_id = group_by(id);
+ 
+             auto &topk_heap = ctx->group_topk_heaps()[group_id];
+@@ -1216,7 +1245,11 @@ int HnswStreamer::search_bf_by_p_keys_impl(
+         if (!filter.is_valid() || !filter(pk)) {
+           node_id_t id = entity_->get_id(pk);
+           if (id != kInvalidNodeId) {
+-            dist_t dist = ctx->batch_dist(id);
++            dist_t dist;
++            if (!ctx->try_batch_dist(id, dist, skip_missing_vectors)) {
++              if (ctx->error()) return IndexError_Runtime;
++              continue;
++            }
+             topk.emplace(id, dist);
+           }
+         }
 ```
 
-**File**: `src/core/interface/indexes/ivf_index.cc` (modified, +5/-0)
+**File**: `src/include/zvec/core/interface/vector_source.h` (modified, +6/-0)
 ```diff
-@@ -170,6 +170,10 @@ int IVFIndex::load_streamer() {
+@@ -25,6 +25,12 @@ class ZVEC_CORE_API VectorSource {
+   VectorSource();
+   virtual ~VectorSource();
  
- int IVFIndex::open(const std::string &file_path,
-                    StorageOptions storage_options) {
-+  if (storage_options.read_only && storage_options.create_new) {
-+    LOG_ERROR("Cannot create storage for a read-only index");
-+    return core::IndexError_Runtime;
-+  }
-   ailego::Params storage_params;
-   file_path_ = file_path;
-   is_read_only_ = storage_options.read_only;
-@@ -239,6 +243,7 @@ int IVFIndex::generate_holder() {
++  //! Return a vector record for node_id. During HNSW queries, nullptr marks
++  //! an unavailable record: it is logged and excluded from the results.
++  //! A graph query encountering such a record retries with a linear scan of
++  //! available records. Query-time availability and returned buffers must
++  //! remain stable until the query finishes. During insertion, all records
++  //! referenced by graph construction must be available.
+   virtual const void *get_vector(uint32_t node_id) const = 0;
+ 
+   virtual void get_vectors(const uint32_t *ids, uint32_t count,
+```
+
+**File**: `tests/core/algorithm/hnsw/hnsw_dist_calculator_test.cc` (modified, +52/-0)
+```diff
+@@ -177,6 +177,58 @@ TEST(HnswDistCalculatorTest, PassesNullWhenMetricHasNoExtraValues) {
+   EXPECT_FLOAT_EQ(0.0f, distance);
  }
  
- int IVFIndex::add(const VectorData &vector, uint32_t doc_id) {
-+  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
-   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
-     LOG_ERROR("this IVF index is trained or has a pending build");
-     return core::IndexError_Runtime;
++TEST(HnswDistCalculatorTest, RejectsNullBatchRecordsBeforeCallingMetric) {
++  auto metric = CreateMetric();
++  float query = 0.0f;
++  float vector = 1.0f;
++  HnswDistCalculator calculator(nullptr, metric, 1, &query);
++  bool called = false;
++  calculator.update_distance(metric->distance(),
++                             [&](const void **, const void *, size_t, size_t,
++                                 float *, const void **) { called = true; });
++  for (size_t missing = 0; missing < 3; ++missing) {
++    const void *vectors[] = {&vector, &vector, &vector};
++    vectors[missing] = nullptr;
++    float distances[] = {1.0f, 1.0f, 1.0f};
++    calculator.reset_query(&query);
++    calculator.batch_dist(vectors, 3, distances, nullptr);
++    EXPECT_TRUE(calculator.error());
++    EXPECT_EQ(HnswDistCalculator::Status::kMissingVector, calculator.status());
++    EXPECT_FALSE(called);
++  }
++  calculator.clear();
++  EXPECT_FALSE(calculator.error());
++  EXPECT_EQ(HnswDistCalculator::Status::kOk, calculator.status());
++
++  calculator.reset_query(nullptr);
++  const void *vectors[] = {&vector};
++  float distance = 1.0f;
++  calculator.batch_dist(vectors, 1, &distance, nullptr);
++  EXPECT_TRUE(calculator.error());
++  EXPECT_EQ(HnswDistCalculator::Status::kError, calculator.status());
++  EXPECT_FALSE(called);
++
++  calculator.reset_query(&query);
++  calculator.batch_dist(vectors, 1, &distance, nullptr);
++  EXPECT_FALSE(calculator.error());
++  EXPECT_EQ(HnswDistCalculator::Status::kOk, calculator.status());
++  EXPECT_TRUE(called);
++}
++
++TEST(HnswDistCalculatorTest, QueryDistancePreservesInternalReadErrors) {
++  auto entity = std::make_shared<InlineVectorHnswEntity>(
++      std::vector<InlineVectorHnswEntity::Record>(1));
++  auto metric = CreateMetric();
++  HnswContext context(1, metric, entity);
++  float query = 0.0f;
++  context.dist_calculator().reset_query(&query);
++  float distance = 0.0f;
++  EXPECT_FALSE(context.try_batch_dist(1, distance));
++  EXPECT_TRUE(context.error());
++  EXPECT_EQ(HnswDistCalculator::Status::kError,
++            context.dist_calculator().status());
++}
++
+ }  // namespace
+ }  // namespace core
+ }  // namespace zvec
+```
+
+**File**: `tests/core/interface/hnsw_external_null_test.cc` (added, +233/-0)
+```diff
+@@ -0,0 +1,233 @@
++// Copyright 2026-present the zvec project
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++#include <algorithm>
++#include <array>
++#include <cstdint>
++#include <initializer_list>
++#include <memory>
++#include <string>
++#include <tuple>
++#include <vector>
++#include <gtest/gtest.h>
++#include <zvec/core/interface/index.h>
++#include <zvec/core/interface/index_factory.h>
++#include <zvec/core/interface/index_param_builders.h>
++#include <zvec/core/interface/vector_source.h>
++#include "algorithm/hnsw/hnsw_context.h"
++#include "tests/test_util.h"
++
++using namespace zvec::core_interface;
++
++namespace {
++
++class NullableVectorSource : public zvec::core::VectorSource {
++ public:
++  static constexpr uint32_t kDimension = 16;
++
++  explicit NullableVectorSource(uint32_t count)
++      : vectors(count), missing(count, false) {
++    for (uint32_t id = 0; id < count; ++id) {
++      vectors[id][0] = static_cast<float>(id);
++    }
++  }
++
++  const void *get_vector(uint32_t id) const override {
++    return missing.at(id) ? nullptr : vectors.at(id).data();
++  }
++
++  std::vector<std::array<float, kDimension>> vectors;
++  std::vector<bool> missing;
++};
++
++class HnswExternalNullTest
++    : public testing::TestWithParam<std::tuple<uint32_t, bool>> {
++ protected:
++  void SetUp() override {
++    source_ = std::make_unique<NullableVectorSource>(std::get<0>(GetParam()));
++    const auto *info = testing::UnitTest::GetInstance()->current_test_info();
++    directory_ = std::string("hnsw_external_null/") + info->name() + "/";
++    zvec::test_util::RemoveTestPath(directory_);
++    auto param = HNSWIndexParamBuilder()
++                     .with_metric_type(MetricType::kL2sq)
++                     .with_data_type(DataType::DT_FP32)
++                     .with_dimension(NullableVectorSource::kDimension)
++                     .with_is_sparse(false)
++                     .with_use_external_vector(true)
++                     .build();
++    index_ = std::dynamic_pointer_cast<HNSWIndex>(
++        IndexFactory::CreateAndInitIndex(*param));
++    ASSERT_NE(nullptr, index_);
++    ASSERT_EQ(0, index_->open(directory_ + "index",
++                              {StorageOptions::StorageType::kMMAP, true}));
++    ASSERT_EQ("external", index_->storage_mode());
++    for (uint32_t id = 0; id < source_->vectors.size(); ++id) {
++      VectorData vector{DenseVector{source_->vectors[id].data()}};
++      ASSERT_EQ(0, index_->add_with_source(vector, id, *source_));
++    }
++    param_ = HNSWQueryParamBuilder()
++                 .with_topk(2)
++                 .with_ef_search(50)
++                 .with_fetch_vector(std::get<1>(GetParam()))
++                 .build();
++  }
++
++  void TearDown() override {
++    if (index_) index_->close();
++    zvec::test_util::RemoveTestPath(directory_);
++  }
++
++  int search() {
++    // The query is independent of the unavailable source records.
++    std::array<float, NullableVectorSource::kDimension> query{};
++    VectorData vector{DenseVector{query.data()}};
++    result_ = SearchResult{};
++    return index_->search_with_source(vector, param_, *source_, &result_);
++  }
++
++  void expect_results(std::initializer_list<uint32_t> ids) {
++    ASSERT_EQ(ids.size(), result_.doc_list_.size());
++    size_t offset = 0;
++    for (uint32_t id : ids) {
++      const auto &doc = result_.doc_list_[offset++];
++      EXPECT_EQ(id, doc.key());
++      EXPECT_FLOAT_EQ(static_cast<float>(id * id), doc.score());
++      if (std::get<1>(GetParam())) {
++        EXPECT_EQ(source_->vectors[id].data(), doc.vector());
++      }
++    }
++  }
++
++  std::unique_ptr<NullableVectorSource> source_;
++  std::shared_ptr<HNSWIndex> index_;
++  HNSWQueryParam::Pointer param_;
++  SearchResult result_;
++  std::string directory_;
++};
++
++TEST_P(HnswExternalNullTest, SkipsMissingNearestAndRecovers) {
++  ASSERT_EQ(0, search());
++  expect_results({0, 1});
++  source_->missing[0] = true;
++  testing::internal::CaptureStderr();
++  const int ret = search();
++  const std::string diagnostic = testing::internal::GetCapturedStderr();
++  EXPECT_EQ(0, ret);
++  EXPECT_NE(std::string::npos, diagnostic.find("nullptr"));
++  expect_results({1, 2});
++  source_->missing[0] = false;
++  ASSERT_EQ(0, search());
++  expect_results({0, 1});
++}
++
++TEST_P(HnswExternalNullTest, HandlesMissingEntryPointAndEmptySource) {
++  auto context = index_->index_searcher()->create_context();
++  auto *hnsw_context = dynamic_cast<zvec::core::HnswContext *>(context.get());
++  ASSERT_NE(nullptr, hns
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #870** (2026-11-03): fix(storage): separate BufferStorage creation and write permissions (@iaojnh)
+- **PR #862** (2026-11-02): perf(core): accelerate HNSW construction and FP16 HNSW/Flat distances (@luoxiaojian)
+- **PR #861** (2026-11-02): fix(hnsw): skip unavailable external vectors during queries (@iaojnh)
 - **PR #859** (2026-10-30): fix(io): prevent file descriptor inheritance across exec (@egolearner)
 - **PR #856** (2026-10-29): feat(turbo): complete ARM NEON one-to-many distance kernels (@richyreachy)
 - **PR #853** (2026-10-30): perf(diskann): borrow mmap vectors during graph construction (@iaojnh)
-- **PR #851** (2026-10-28): fix(hnsw_rabitq): refine entry scores before level-0 search (@egolearner)
-- **PR #846** (2026-10-27): perf: deduplicate string parameter constants (@egolearner)
-- **PR #844** (2026-10-26): docs: simplify README badges and organize SDK installation tables (@JalinWang)
 
 ---
 
@@ -1622,33 +2298,75 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. io): prevent file descriptor inheritance across exec (#859)
+## X. db): avoid null writing_segment_ on DDL writing segment recreation failure (#822
 
 **RULE**:
-When implementing operations in `src/ailego/io/file.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/db/collection.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c5be75d`: io): prevent file descriptor inheritance across exec (#859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bcbc4cc`: db): avoid null writing_segment_ on DDL writing segment recreation failure (#822). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/io/file.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/db/collection.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // Set close-on-exec atomically with open: a later fcntl can race with a
-  // concurrent process launch and leave the child holding collection locks.
-  flags |= O_CLOEXEC;
-  // Null security attributes make this handle and the direct-I/O reopen below
-  // non-inheritable, even when the child process enables handle inheritance.
-  // Null security attributes keep this handle non-inheritable.
+  auto old_writing_segment = writing_segment_;
+  Version old_version = version_manager_->get_current_version();
+  Version new_version = old_version;
+  s = commit_schema_change_with_new_writing_segment(
+      new_schema, old_writing_segment, old_version, &new_version, min_doc_id);
+  auto old_writing_segment = writing_segment_;
+  Version old_version = version_manager_->get_current_version();
+  Version new_version = old_version;
+  s = commit_schema_change_with_new_writing_segment(
+      new_schema, old_writing_segment, old_version, &new_version, min_doc_id);
+  auto old_writing_segment = writing_segment_;
+  Version old_version = version_manager_->get_current_version();
+  Version new_version = old_version;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  Version new_version = version_manager_->get_current_version();
+  // reset writing segment with new schema
+  auto id = writing_segment_->id();
+  s = writing_segment_->destroy();
+  CHECK_RETURN_STATUS(s);
+  writing_segment_.reset();
+
+  SegmentOptions seg_options;
+  seg_options.enable_mmap_ = options_.enable_mmap_;
+  seg_options.max_buffer_size_ = options_.max_buffer_size_;
+  seg_options.read_only_ = options_.read_only_;
+  auto writing_segment =
+      Segment::CreateAndOpen(path_, *new_schema, id, min_doc_id, id_map_,
+                             delete_store_, version_manager_, seg_options);
+  if (!writing_segment) {
+    return writing_segment.error();
+  }
+  writing_segment_ = writing_segment.value();
+
+  new_version.reset_writing_segment_meta(writing_segment_->meta());
+  s = version_manager_->apply(new_version);
+  CHECK_RETURN_STATUS(s);
+
+  // persist manifest
+  s = version_manager_->flush();
+  schema_ = new_schema;
+
+  Version new_version = version_manager_->get_current_version();
+  // reset writing segment with new schema
+  auto id = writing_segment_->id();
+  s = writing_segment_->destroy();
+  CHECK_RETURN_STATUS(s);
+  writing_segment_.reset();
+
+  SegmentOptions seg_options;
+  seg
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c5be75d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bcbc4cc` are properly handled with clean fallback behavior.

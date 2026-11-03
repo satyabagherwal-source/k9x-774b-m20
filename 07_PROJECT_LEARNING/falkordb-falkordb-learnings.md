@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `155a246f`  
+> **Source Version**: `1ff68d53`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:34:18.890Z  
+> **Timestamp**: 2026-11-03T23:06:08.759Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:34:18.665Z  
+> **Harvest Timestamp**: 2026-11-03T23:06:07.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10505 stars
+- **Stars / Engagement**: 10501 stars
 
 ---
 
@@ -848,7 +848,7 @@ mod tests {
 //!                        |
 //!                        +--> single writer loop
 //!                              +--> execute_query_write()
-//!                              +--> commit() on success / rollback() on error
+//!                              +--> commit() on success / drop the fork on error
 //! ```
 //!
 //! The key design goal is predictable write ordering with high read throughput.
@@ -1062,7 +1062,7 @@ pub struct WriteMessage {
     pub slot: Option<QueueSlot>,
     /// True if this is a GRAPH.PROFILE write: execute with profiling enabled and
     /// reply with the profile tree instead of the result set. Otherwise handled
-    /// exactly like a GRA
+    /// exactly like a 
 ```
 
 ### Core Architecture Module: `bench/pmc_tool.c`
@@ -2328,291 +2328,403 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee21013d` (2026-10-29)
-**Commit Message**: fix: map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)
+### Incident Patch 1: `8a33eb28` (2026-11-01)
+**Commit Message**: test: give the bulk loader in test12 an explicit socket timeout (#3590)
 
-On the compact (nodeLabels) path LAGraph reports the component /
-community representative as a compact index; map it through
-compact_to_id like the node itself, matching C and the unfiltered run.
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +13/-2)
-```diff
-@@ -442,6 +442,17 @@ unsafe fn extract_vector_f64(v: crate::graph::graphblas::GrB_Vector) -> Vec<(u64
-     indices.into_iter().zip(values).collect()
- }
- 
-+/// Map a node-valued LAGraph result (a component or community representative)
-+/// from the compact index space back to the original node id. LAGraph reports
-+/// these as vertex indices of the matrix it ran on, so on the `nodeLabels`
-+/// path they are compact indices, like the vector's own indices.
-+fn compact_to_original(
-+    compact_to_id: Option<&[u64]>,
-+    idx: i64,
-+) -> i64 {
-+    compact_to_id.map_or(idx, |m| m[idx as usize] as i64)
-+}
-+
- /// Extract GrB_Vector entries as (index, i64) pairs.
- unsafe fn extract_vector_i64(v: crate::graph::graphblas::GrB_Vector) -> Vec<(u64, i64)> {
-     use crate::graph::graphblas::{GrB_Index, GrB_Vector_extractTuples_INT64, GrB_Vector_nvals};
-@@ -920,7 +931,7 @@ fn register_wcc(funcs: &mut Functions) {
-                         continue;
-                     }
-                     node_ids.push(NodeId::from(orig_id));
--                    component_ids.push(comp_id);
-+                    component_ids.push(compact_to_original(compact_to_id.as_deref(), comp_id));
-                 }
- 
-                 GrB_Vector_free(&raw mut component);
-@@ -1341,7 +1352,7 @@ fn register_cdlp(funcs: &mut Functions) {
-                         continue;
-                     }
-                     node_ids.push(NodeId::from(orig_id));
--                    community_ids.push(community_id);
-+                    community_ids.push(compact_to_original(compact_to_id.as_deref(), community_id));
-                 }
- 
-                 GrB_Vector_free(&raw mut cdlp);
-```
-
-**File**: `tests/flow/test_cdlp.py` (modified, +14/-0)
-```diff
-@@ -502,6 +502,20 @@ def test_label_propagation_relationship_filtering(self):
-         self.env.assertEqual(combined_community_count, 4)
- 
- 
-+    def test_label_propagation_label_filter_reports_node_ids(self):
-+        """With nodeLabels, communityId is the id of a node in the community
-+        (as without a filter), not an index into the filtered node set"""
-+
-+        self.graph.query("""CREATE (:A {id:0}), (:B {id:1}), (:A {id:2}), (:A {id:3})""")
-+        self.graph.query("MATCH (a {id:2}), (b {id:3}) CREATE (a)-[:R]->(b)")
-+        self.graph.query("MATCH (a {id:0}), (b {id:1}) CREATE (a)-[:R]->(b)")
-+
-+        res = self.graph.query("""CALL algo.labelPropagation({nodeLabels: ['A']})
-+                                  YIELD node, communityId
-+                                  RETURN id(node), communityId
-+                                  ORDER BY id(node)""").result_set
-+        self.env.assertEqual(res, [[0, 0], [2, 2], [3, 3]])
-+
-     def test_unknown_label_or_relationship_type(self):
-         """An unknown nodeLabels / relationshipTypes entry is an error (as in C)"""
- 
-```
-
-**File**: `tests/flow/test_wcc.py` (modified, +14/-0)
-```diff
-@@ -385,3 +385,17 @@ def test_wcc_with_random_graph(self):
- 
-             self.env.assertEqual(lbl_node_count, component_size)
- 
-+
-+    def test_wcc_label_filter_reports_node_ids(self):
-+        """With nodeLabels, componentId is the id of a node in the component
-+        (as without a filter), not an index into the filtered node set"""
-+
-+        self.graph.query("""CREATE (:A {id:0}), (:B {id:1}), (:A {id:2}), (:A {id:3})""")
-+        self.graph.query("MATCH (a {id:2}), (b {id:3}) CREATE (a)-[:R]->(b)")
-+        self.graph.query("MATCH (a {id:0}), (b {id:1}) CREATE (a)-[:R]->(b)")
-+
-+        res = self.graph.query("""CALL algo.WCC({nodeLabels: ['A']})
-+                                  YIELD node, componentId
-+                                  RETURN id(node), componentId
-+                                  ORDER BY id(node)""").result_set
-+        self.env.assertEqual(res, [[0, 0], [2, 2], [3, 2]])
-```
-
----
-
-### Incident Patch 2: `5497f6fc` (2026-10-29)
-**Commit Message**: fix: size HarmonicCentrality's source vector by the id bound (#3045)
-
-* fix: size HarmonicCentrality's source vector by the id bound (#3044)
-
-The unfiltered matrix spans node_count + deleted_nodes_count ids, but the
-source vector used node_count alone, so after a delete the highest ids
-were never sources. Other algo procedures already use the id bound.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* refactor: use node_id_bound() for the node id bound in algo procedures
-
-Review on #3045: Graph::node_id_bound() is already node_count() +
-deleted_nodes_count(). Use it at the HarmonicCentrality site and at the
-six other places in algo_procedures.rs that spelled the sum out.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +12/-9)
-```diff
-@@ -761,7 +761,7 @@ fn register_pagerank(funcs: &mut Functions) {
-                     let adj = g.build_adjacency_matrix(&rel_types);
-                     let raw_adj: GrB_Matrix = adj.inner();
-                     owned_adj = Some(adj);
--                    let n = g.node_count() + g.deleted_nodes_count();
-+                    let n = g.node_id_bound();
-                     GrB_Matrix_resize(raw_adj, n, n);
-                     (raw_adj, None)
-                 } else {
-@@ -871,7 +871,7 @@ fn register_wcc(funcs: &mut Functions) {
-                     let adj = g.build_symmetric_adjacency_matrix(&rel_types);
-                     let raw_adj: GrB_Matrix = adj.inner();
-                     owned_adj = Some(adj);
--                    let n = g.node_count() + g.deleted_nodes_count();
-+                    let n = g.node_id_bound();
-                     GrB_Matrix_resize(raw_adj, n, n);
-                     (raw_adj, None)
-                 } else {
-@@ -998,7 +998,7 @@ fn register_betweenness(funcs: &mut Functions) {
-                     let adj = g.build_adjacency_matrix(&rel_types);
-                     let raw_adj: GrB_Matrix = adj.inner();
-                     owned_adj = Some(adj);
--                    let n = g.node_count() + g.deleted_nodes_count();
-+                    let n = g.node_id_bound();
-                     GrB_Matrix_resize(raw_adj, n, n);
-                     (raw_adj, None)
-                 } else {
-@@ -1019,7 +1019,7 @@ fn register_betweenness(funcs: &mut Functions) {
- 
-                 // Select source nodes for sampling (all from compact matrix)
-                 let n_nodes = compact_to_id.as_ref().map_or_else(
--                    || (g.node_count() + g.deleted_nodes_count()) as usize,
-+                    || g.node_id_bound() as usize,
-                     Vec::len,
-                 );
-                 let sources: Vec<u64> = if n_nodes == 0 {
-@@ -1293,7 +1293,7 @@ fn register_cdlp(funcs: &mut Functions) {
-                     let adj = g.build_symmetric_adjacency_matrix(&rel_types);
-                     let raw_adj: GrB_Matrix = adj.inner();
-                     owned_adj = Some(adj);
--                    let n = g.node_count() + g.deleted_nodes_count();
-+                    let n = g.node_id_bound();
-                     GrB_Matrix_resize(raw_adj, n, n);
-                     (raw_adj, None)
-                 } else {
-@@ -2812,7 +2812,7 @@ fn register_harmonic_centrality(funcs: &mut Functions) {
-                         adj.inner(),
-                         std::ptr::null_mut(),
-                     );
--                    let n = g.node_count() + g.deleted_nodes_count();
-+                    let n = g.node_id_bound();
-                     crate::graph::graphblas::GrB_Matrix_resize(raw_adj, n, n);
-                     (raw_adj, None)
-                 } else {
-@@ -2834,9 +2834,12 @@ fn register_harmonic_centrality(funcs: &mut Functions) {
- 
-                 runtime.check_timeout()?;
-                 let mut nodes: GrB_Vector = null_mut();
--                let node_vec_len = compact_to_id
--                    .as_ref()
--                    .map_or_else(|| g.node_count(), |m| m.len() as u64);
-+                // Unfiltered, the matrix spans every id up to the highest
-+                // (deleted ids included, as above), so the source vector must too.
-+                let node_vec_len = compact_to_id.as_ref().map_or_else(
-+                    || g.node_id_bound(),
-+                    |m| m.len() as u64,
-+                );
-                 GrB_Vector_new(&raw mut nodes, GrB_BOOL, node_vec_len);
-                 GrB_Vector_assign_BOOL(
-                     nodes,
-```
-
-**File**: `tests/flow/test_harmonic_centrality.py` (modified, +15/-0)
-```diff
-@@ -321,6 +321,21 @@ def test08_centrality_large_sparse(self):
-         self.env.assertEqual(scores[N - 1], 0.0)
- 
- 
-+    def test09_centrality_with_deleted_node(self):
-+        # chain 1 -> 2 -> 3 -> 4, node 0 deleted: the unfiltered run must
-+        # still use every id up to the highest, so node 4 is scored and
-+        # counted as reachable
-+        self.graph.query("UNWIND range(0, 4) AS i CREATE (:A {id: i})")
-+        self.graph.query("""MATCH (a:A), (b:A) WHERE b.id = a.id + 1 AND a.id > 0
-+                            CREATE (a)-[:R]->(b)""")
-+        self.graph.query("MATCH (n:A {id: 0}) DELETE n")
-+
-+        res = self.graph.query("""CALL algo.HarmonicCentrality()
-+                                  YIELD node, reachable
-+                                  RETURN node.id, reachable
-+                                  ORDER BY node.id""").result_set
-+        self.env.assertEqual(res, [[1, 4], [2, 3], [3, 2], [4, 1]])
-+
-     def test_unknown_label_or_relationship_type(self):
-         """An unknown nodeLabels / relationshipTypes entry is an error (as in C)"""
- 
-```
-
----
-
-### Incident Patch 3: `e8ad0d33` (2026-10-29)
-**Commit Message**: fix: algo.SPpaths/SSpaths charge 1 for an edge lacking costProp, like C (#3121) (#3580)
-
-The single-cheapest-path route summed costProp with a default of 0 for an
-edge that lacks it; C charges 1. No costProp at all still reports 0.
+The loader builds its own redis client, which gets redis-py's 5s default;
+one 64MB GRAPH.BULK batch exceeds that on the coverage build and the loader
+aborts mid-load. Pass the module's SOCKET_TIMEOUT in the URL and surface the
+loader exception in the assertion message.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +5/-2)
+**File**: `tests/flow/test_bulk_insertion.py` (modified, +11/-2)
 ```diff
-@@ -2355,9 +2355,12 @@ fn dijkstra_single_path(
-     edges.reverse();
+@@ -797,7 +797,16 @@ def test12_load_large_graph(self):
  
-     // `costProp` is not what the search optimises for, just an attribute the
--    // caller asked to have reported: sum it over the winning path only.
-+    // caller asked to have reported: sum it over the winning path only. Like
-+    // C, an edge that lacks a configured `costProp` costs 1 (#3121), while no
-+    // `costProp` at all reports 0.
-+    let missing_cost = if config.cost_prop.is_some() { 1.0 } else { 0.0 };
-     let cost = edges.iter().fold(0.0, |acc, &(edge_id, _, _)| {
--        acc + edge_numeric_attr(g, edge_id, config.cost_prop.as_ref(), 0.0)
-+        acc + edge_numeric_attr(g, edge_id, config.cost_prop.as_ref(), missing_cost)
-     });
+         # start bulk-insert
+         start_time = time.perf_counter()
+-        res = runner.invoke(bulk_insert, ['--server-url', f"redis://{self.env.host}:{self.port}",
++        # The loader builds its own redis client from the URL, and redis-py
++        # (>= 6) gives such a client a 5s socket timeout. A single GRAPH.BULK
++        # batch here is up to 64MB (millions of edges) and takes longer than
++        # that on an instrumented (coverage / ASAN) build: the loader then
++        # aborts with TimeoutError while the server is still applying the
++        # batch, leaving a partial graph (e.g. 2874998 of 4000000 edges).
++        # State the deadline in the URL instead.
++        url = (f"redis://{self.env.host}:{self.port}"
++               f"?socket_timeout={SOCKET_TIMEOUT}&socket_connect_timeout={SOCKET_TIMEOUT}")
++        res = runner.invoke(bulk_insert, ['--server-url', url,
+                                           *nodes_args, *edges_args, graphname])
+         # calculate the execution time
+         execution_time = time.perf_counter() - start_time
+@@ -811,7 +820,7 @@ def test12_load_large_graph(self):
+         self.env.assertGreaterEqual(ping_count, execution_time / 2)
  
-     Ok(Some((edges, labels[&target].weight, cost)))
+         # validate script results
+-        self.env.assertEqual(res.exit_code, 0)
++        self.env.assertEqual(res.exit_code, 0, message=repr(res.exception))
+         self.env.assertContains(f'{node_lbl_count} nodes created', res.output)
+         self.env.assertContains(f'{edge_count} relations created', res.output)
+ 
 ```
 
-**File**: `tests/flow/test_path_algorithms.py` (modified, +20/-0)
+---
+
+### Incident Patch 2: `b02266c2` (2026-11-01)
+**Commit Message**: fix: i64::MIN / -1 is an overflow error instead of wrapping (#3205, #3242) (#3603)
+
+Integer / Integer stays exact (a deliberate divergence from C, which goes
+through double above 2^53). The one unrepresentable quotient, i64::MIN / -1,
+now raises 'ArgumentError: integer overflow in division' in both the scalar
+and vectorised paths. i64::MIN % -1 stays 0.
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/value.rs` (modified, +3/-1)
 ```diff
-@@ -1064,3 +1064,23 @@ def sp(extra):
-             YIELD path, pathCost
-             RETURN [n IN nodes(path) | n.id], pathCost""").result_set
-         self.env.assertEqual(result, [[[0, 1], 1]])
+@@ -1160,7 +1160,9 @@ impl Div for Value {
+                 if b == 0 {
+                     Err(String::from("Division by zero"))
+                 } else {
+-                    Ok(Self::Int(a.wrapping_div(b)))
++                    a.checked_div(b)
++                        .map(Self::Int)
++                        .ok_or_else(|| String::from("ArgumentError: integer overflow in division"))
+                 }
+             }
+             (Self::Float(a), Self::Float(b)) => Ok(Self::Float(a / b)),
+```
+
+**File**: `graph/src/runtime/vector_expr.rs` (modified, +8/-1)
+```diff
+@@ -892,7 +892,14 @@ fn arithmetic(
+             ExprIR::Add => Some((0..len).map(|i| a[i].wrapping_add(b[i])).collect()),
+             ExprIR::Sub => Some((0..len).map(|i| a[i].wrapping_sub(b[i])).collect()),
+             ExprIR::Mul => Some((0..len).map(|i| a[i].wrapping_mul(b[i])).collect()),
+-            ExprIR::Div | ExprIR::Modulo if (0..len).all(|i| b[i] != 0 || nulls.is_null(i)) => {
++            // `i64::MIN / -1` is not representable: leave it to the scalar
++            // path, which raises the overflow error.
++            ExprIR::Div | ExprIR::Modulo
++                if (0..len).all(|i| b[i] != 0 || nulls.is_null(i))
++                    && (!matches!(op, ExprIR::Div)
++                        || (0..len)
++                            .all(|i| !(a[i] == i64::MIN && b[i] == -1) || nulls.is_null(i))) =>
++            {
+                 let div = matches!(op, ExprIR::Div);
+                 Some(
+                     (0..len)
+```
+
+**File**: `tests/flow/test_function_calls.py` (modified, +53/-0)
+```diff
+@@ -2966,3 +2966,56 @@ def test98_exists_unbound_variables(self):
+ 
+         # the server is still responsive
+         self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
 +
-+    def test24_missing_cost_prop_costs_one(self):
-+        # An edge that lacks the configured costProp costs 1, as in C (#3121),
-+        # also on the single cheapest path (Dijkstra) route.
-+        g = self.db.select_graph("missing_cost_prop")
-+        g.query("""CREATE (:L {id:'A'})-[:E {weight:1, cost:2}]->(:L {id:'B'})
-+                   -[:E2 {weight:1}]->(:L {id:'C'})""")
++    # Integer / Integer is exact (not routed through double as C does), and
++    # i64::MIN / -1 is an overflow error instead of wrapping. Differences from
++    # C above 2^53 are intentional (#3242); the overflow is #3205.
++    def test99_integer_division_is_exact(self):
++        cases = [
++            ("9007199254740993 / 1", 9007199254740993),
++            ("9007199254740993 / 3", 3002399751580331),
++            ("123456789012345678 / 10", 12345678901234567),
++            ("1000000000000000001 / 7", 142857142857142857),
++            ("9223372036854775807 / 2", 4611686018427387903),
++            ("-9223372036854775807 / 1", -9223372036854775807),
++            ("4611686018427387903 / 4611686018427387904", 0),
++            ("(9007199254740993 / 3) * 3 + 9007199254740993 % 3", 9007199254740993),
++            ("-9007199254740993 / 2", -4503599627370496),
++            ("-7 / 2", -3),
++            ("7 / -2", -3),
++            ("-7 % 2", -1),
++            # not an overflow: the quotient fits
++            ("-9223372036854775807 / -1", 9223372036854775807),
++            ("(-9223372036854775807 - 1) / 1", -9223372036854775808),
++            # the remainder is representable and stays 0
++            ("(-9223372036854775807 - 1) % -1", 0),
++        ]
++        for expr, expected in cases:
++            res = self.graph.query(f"RETURN {expr}")
++            self.env.assertEqual(res.result_set, [[expected]], message=expr)
 +
-+        def sp(cfg):
-+            return g.query(f"""
-+                MATCH (s:L {{id:'A'}}), (t:L {{id:'C'}})
-+                CALL algo.SPpaths({{sourceNode: s, targetNode: t, {cfg}}})
-+                YIELD pathWeight, pathCost
-+                RETURN pathWeight, pathCost""").result_set
++        # the same values through the vectorised (per-row) path
++        res = self.graph.query(
++            "UNWIND [9007199254740993, 123456789012345678, 9223372036854775807] AS x "
++            "RETURN x / 1, x / 10, x % 10")
++        self.env.assertEqual(res.result_set, [
++            [9007199254740993, 900719925474099, 3],
++            [123456789012345678, 12345678901234567, 8],
++            [9223372036854775807, 922337203685477580, 7]])
 +
-+        self.env.assertEqual(sp("weightProp: 'weight', costProp: 'cost'"), [[2, 3]])
-+        self.env.assertEqual(sp("costProp: 'cost'"), [[2, 3]])
-+        self.env.assertEqual(sp("weightProp: 'weight', costProp: 'cost', pathCount: 0"), [[2, 3]])
-+        # without a costProp the cost stays 0
-+        self.env.assertEqual(sp("weightProp: 'weight'"), [[2, 0]])
++        # i64::MIN / -1 does not fit in an Integer
++        queries = [
++            "RETURN -9223372036854775808 / -1",
++            "RETURN (-9223372036854775807 - 1) / -1",
++            "UNWIND [1, -9223372036854775807 - 1] AS x RETURN x / -1",
++            "UNWIND [-9223372036854775807 - 1] AS x UNWIND [-1] AS y RETURN x / y",
++        ]
++        for q in queries:
++            try:
++                self.graph.query(q)
++                self.env.assertTrue(False, message=q)
++            except redis.ResponseError as e:
++                self.env.assertContains("integer overflow in division", str(e))
++
++        # the server is still responsive
++        self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
+```
+
+---
+
+### Incident Patch 3: `a477d9aa` (2026-11-02)
+**Commit Message**: fix: MERGE after SET/DELETE matches each live node exactly once (#3453) (#3467)
+
+* fix: MERGE after SET/DELETE matches each live node exactly once (#3453)
+
+`Pending::get_pending_nodes_with_labels`, Phase 2 of `IncludePendingOp`,
+returned every `set_labels` entry carrying all pattern labels: a deleted
+node too (`SET n:B DELETE n MERGE (m:B)` matched it), a node the committed
+scan had already yielded (`SET n:A MERGE (m:A)` returned it twice), and
+never a node whose labels were split between committed and staged
+(`SET n:B MERGE (m:A:B)` created a duplicate).
+
+Phase 2 now keeps a staged node when it is not pending-deleted, its
+effective labels ((committed \ remove_labels) ∪ set_labels) contain the
+pattern, and the committed scan would not already have yielded it.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: MERGE's pending-label candidates are taken from one source only (#3453)
+
+An indexed scan reads the committed index, which can omit a node whose
+indexed value changed in this query or already emit one whose secondary
+label was staged. Emit every label-staged node from IncludePending alone and
+skip those nodes in the wrapped scan, so each is enumerated exactly once.
+
+Co
+
+**File**: `graph/src/runtime/ops/include_pending.rs` (modified, +17/-5)
+```diff
+@@ -1,7 +1,8 @@
+ //! Composable operator that augments a child scan with pending mutations.
+ //!
+ //! Wraps any scan operator (NodeByLabelScan, NodeByIndexScan, etc.) and:
+-//! 1. Filters out pending-deleted nodes and nodes with pending label removals
++//! 1. Filters out pending-deleted nodes, nodes with pending label removals and
++//!    nodes the second step emits itself
+ //! 2. After child exhaustion, emits pending-created nodes and nodes with
+ //!    pending label additions
+ //!
+@@ -31,6 +32,9 @@ pub struct IncludePendingOp<'a> {
+     /// Nodes to filter out of child results.
+     deleted_nodes: Option<RoaringTreemap>,
+     label_removed_nodes: Option<RoaringTreemap>,
++    /// Nodes emitted from `pending_extra` instead of the child, so the child
++    /// does not yield them a second time.
++    extra_nodes: RoaringTreemap,
+     /// Whether we've finished pulling from the child.
+     child_exhausted: bool,
+     /// Correlated argument rows captured from the enclosing sub-plan's
+@@ -59,6 +63,7 @@ impl<'a> IncludePendingOp<'a> {
+             pending_extra: None,
+             deleted_nodes: None,
+             label_removed_nodes: None,
++            extra_nodes: RoaringTreemap::new(),
+             child_exhausted: false,
+             argument_rows: Vec::new(),
+             cur_pending_node: None,
+@@ -88,22 +93,22 @@ impl<'a> IncludePendingOp<'a> {
+             .iter()
+             .filter_map(|l| g.get_label_id(l))
+             .collect();
+-        drop(g);
+ 
+         let pending = self.runtime.pending.borrow();
+ 
+         self.deleted_nodes = Some(pending.deleted_nodes());
+         self.label_removed_nodes = Some(pending.nodes_with_pending_label_removes(&label_ids));
+ 
+         let pending_nodes = if label_ids.len() == self.node_pattern.labels.len() {
+-            pending.get_pending_nodes_with_labels(&label_ids)
++            pending.get_pending_nodes_with_labels(&label_ids, &g)
+         } else {
+             RoaringTreemap::new()
+         };
+ 
+         drop(pending);
++        drop(g);
+ 
+-        self.pending_extra = Some(Box::new(pending_nodes.into_iter().map(NodeId::from)));
++        self.extra_nodes = pending_nodes;
+     }
+ 
+     /// Emit a batch from pending_extra nodes.
+@@ -179,7 +184,10 @@ impl<'a> Iterator for IncludePendingOp<'a> {
+                             let env = BatchRow::new(&batch, row).to_owned_row();
+                             if let Some(Value::Node(nid)) = env.get_by_id(alias.id) {
+                                 let raw: u64 = (*nid).into();
+-                                if deleted.contains(raw) || removed.contains(raw) {
++                                if deleted.contains(raw)
++                                    || removed.contains(raw)
++                                    || self.extra_nodes.contains(raw)
++                                {
+                                     continue;
+                                 }
+                             } else {
+@@ -200,6 +208,10 @@ impl<'a> Iterator for IncludePendingOp<'a> {
+                     Some(Err(e)) => return Some(Err(e)),
+                     None => {
+                         self.child_exhausted = true;
++                        // The child is done, so the skip-set becomes the
++                        // emission queue without a second copy.
++                        let extra = std::mem::take(&mut self.extra_nodes);
++                        self.pending_extra = Some(Box::new(extra.into_iter().map(NodeId::from)));
+                         break;
+                     }
+                 }
+```
+
+**File**: `graph/src/runtime/pending.rs` (modified, +32/-5)
+```diff
+@@ -1097,20 +1097,47 @@ impl Pending {
+         self.created_nodes.contains(id.into())
+     }
+ 
+-    /// Returns pending-created node IDs that have ALL of the given labels.
+-    /// When `label_ids` is empty, returns all pending-created nodes.
++    /// The nodes that GAIN a pattern label in this query and carry ALL of
++    /// `label_ids` once the pending changes apply: live (not pending-deleted),
++    /// with every label in the node's effective set
++    /// (`(committed \ remove_labels) ∪ set_labels`, `set_labels` alone for a
++    /// created node), and with at least one of them only staged. A node whose
++    /// pattern labels are all committed (and none pending removal) is left to
++    /// the wrapped scan: re-setting a label it already has changes nothing.
++    ///
++    /// A returned node may also be emitted by an indexed scan, which checks
++    /// secondary labels pending-aware. The caller therefore takes every
++    /// returned node from here only, skipping them in the wrapped scan, so
++    /// each is enumerated exactly once. When `label_ids` is empty, returns all
++    /// pending-created nodes.
+     #[must_use]
+     pub fn get_pending_nodes_with_labels(
+         &self,
+         label_ids: &[LabelId],
++        g: &Graph,
+     ) -> RoaringTreemap {
+         if label_ids.is_empty() {
+             return self.created_nodes.clone();
+         }
+-        let label_ids_u64: Vec<u64> = label_ids.iter().map(|l| usize::from(*l) as u64).collect();
+         let mut result = RoaringTreemap::new();
+-        for (&node_id, node_labels) in &self.set_labels {
+-            if label_ids_u64.iter().all(|lid| node_labels.contains(lid)) {
++        // A node that gains a pattern label must have it staged, so
++        // `set_labels` holds every candidate.
++        for (&node_id, staged) in &self.set_labels {
++            if self.deleted_nodes.contains(node_id) {
++                continue;
++            }
++            let created = self.created_nodes.contains(node_id);
++            let removed = self.remove_labels.get(&node_id);
++            let mut all_committed = !created;
++            let matches = label_ids.iter().all(|&label| {
++                let lid = usize::from(label) as u64;
++                let committed = !created
++                    && !removed.is_some_and(|r| r.contains(&lid))
++                    && g.node_has_label_id(NodeId::from(node_id), label);
++                all_committed &= committed;
++                committed || staged.contains(&lid)
++            });
++            if matches && !all_committed {
+                 result.insert(node_id);
+             }
+         }
+```
+
+**File**: `tests/flow/test_graph_merge.py` (modified, +63/-0)
+```diff
+@@ -925,6 +925,69 @@ def test42_merge_edge_of_detach_deleted_node(self):
+                                          RETURN count(r)""")
+             self.env.assertEqual(actual.result_set, [[1]])
+ 
++    def test43_merge_sees_labels_set_earlier_in_the_query(self):
++        # #3453: MERGE's node scan pairs the committed graph with this query's
++        # pending label changes. Each node it should see must come back exactly
++        # once, and a deleted one not at all.
++        g = self.db.select_graph("merge_pending_labels")
++
++        # A node given a label and then deleted is not a match: MERGE creates.
++        g.query("CREATE (:A)")
++        res = g.query("MATCH (n:A) SET n:B DELETE n MERGE (m:B) RETURN id(m) <> id(n)")
++        self.env.assertEqual(res.result_set, [[True]])
++        self.env.assertEqual(res.nodes_created, 1)
++        self.env.assertEqual(g.query("MATCH (n) RETURN labels(n)").result_set, [[["B"]]])
++
++        # Re-setting a label the node already has does not match it twice.
++        g.delete()
++        g.query("CREATE (:A)")
++        res = g.query("""MATCH (n:A) SET n:A
++                         MERGE (m:A) ON MATCH SET m.hits = coalesce(m.hits, 0) + 1
++                         RETURN m.hits""")
++        self.env.assertEqual(res.result_set, [[1]])
++        self.env.assertEqual(res.nodes_created, 0)
++
++        # A node whose pattern labels are split between committed (A) and
++        # staged (B) matches.
++        g.delete()
++        g.query("CREATE (:A)")
++        res = g.query("MATCH (n:A) SET n:B MERGE (m:A:B) RETURN id(m) = id(n)")
++        self.env.assertEqual(res.result_set, [[True]])
++        self.env.assertEqual(res.nodes_created, 0)
++        self.env.assertEqual(g.query("MATCH (n) RETURN count(n)").result_set, [[1]])
++
++        # A label removed earlier in the query is not matched, even if another
++        # pattern label was staged.
++        g.delete()
++        g.query("CREATE (:A)")
++        res = g.query("MATCH (n:A) SET n:B REMOVE n:A MERGE (m:A:B) RETURN id(m) = id(n)")
++        self.env.assertEqual(res.result_set, [[False]])
++        self.env.assertEqual(res.nodes_created, 1)
++
++        # With an index on the pattern label, a node that gains a pattern label
++        # is returned once, not by both the index scan and the pending
++        # candidates.
++        g.delete()
++        create_node_range_index(g, "A", "v", sync=True)
++        g.query("CREATE (:A {v: 1})")
++        q = "MATCH (n:A) SET n:B MERGE (m:A:B {v: 1}) RETURN id(m) = id(n)"
++        self.env.assertContains("Node By Index Scan", str(g.explain(q)))
++        res = g.query(q)
++        self.env.assertEqual(res.result_set, [[True]])
++        self.env.assertEqual(res.nodes_created, 0)
++
++        # Re-setting labels a node already has leaves it on the indexed path:
++        # one match per correlated row, not a candidate-by-row product.
++        g.delete()
++        create_node_range_index(g, "A", "v", sync=True)
++        g.query("UNWIND range(1, 5) AS i CREATE (:A:B {v: i})")
++        q = "MATCH (n:A:B) SET n:B MERGE (m:A:B {v: n.v}) RETURN count(*)"
++        self.env.assertContains("Node By Index Scan", str(g.explain(q)))
++        res = g.query(q)
++        self.env.assertEqual(res.result_set, [[5]])
++        self.env.assertEqual(res.nodes_created, 0)
++        g.delete()
++
+     def test40_merge_path_over_bound_endpoints_keeps_every_match(self):
+         # With every node bound and no named relationship, MERGE kept only the
+         # first match. A path variable still tells parallel edges apart (#3040).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3586** (2026-10-29): fix: algo.MSF sizes its id mapping by active nodes, not the highest node id (#3444) (@AviAvni)
-- **PR #3580** (2026-10-29): fix: algo.SPpaths charges 1 for an edge lacking costProp, like C (#3121) (@AviAvni)
-- **PR #3552** (2026-10-29): ci: a C release moves :latest only when GitHub marks it latest (@DvirDukhan)
-- **PR #3550** (2026-10-28): fix(index): hand the indexer lock over fairly between population batches (@DvirDukhan)
-- **PR #3549** (closed): fix(deps): pin parking_lot to 0.12.5; Dependabot skips 0.13 (@DvirDukhan)
-- **PR #3547** (2026-10-29): feat(index): native-only writes — no Range fields to RediSearch under the flag (@DvirDukhan)
+- **PR #3657** (2026-11-02): refactor(mvcc): writers fork and commit; drop the write slot (@DvirDukhan)
+- **PR #3655** (closed): Truncated shortestPath relationship filters can hang the parser (@gkorland)
+- **PR #3638** (2026-11-01): build(asan): make the symbolizer COPY robust to the toolchain's libLLVM layout (@AviAvni)
+- **PR #3636** (closed): fix(rdb): encode an empty tensor section as one zero, load legacy ones (@dudizimber)
+- **PR #3630** (2026-11-01): chore(deps): bump the bench-deps group in /bench with 3 updates (@dependabot[bot])
+- **PR #3629** (2026-11-01): chore(deps): bump the cargo-deps group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2632,41 +2744,39 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)
+## X. test: give the bulk loader in test12 an explicit socket timeout (#3590)
 
 **RULE**:
-When implementing operations in `graph/src/runtime/functions/algo_procedures.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/flow/test_bulk_insertion.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee21013d`: map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a33eb28`: test: give the bulk loader in test12 an explicit socket timeout (#3590). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/runtime/functions/algo_procedures.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/flow/test_bulk_insertion.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Map a node-valued LAGraph result (a component or community representative)
-/// from the compact index space back to the original node id. LAGraph reports
-/// these as vertex indices of the matrix it ran on, so on the `nodeLabels`
-/// path they are compact indices, like the vector's own indices.
-fn compact_to_original(
-    compact_to_id: Option<&[u64]>,
-    idx: i64,
-) -> i64 {
-    compact_to_id.map_or(idx, |m| m[idx as usize] as i64)
-}
-
-                    component_ids.push(compact_to_original(compact_to_id.as_deref(), comp_id));
-                    community_ids.push(compact_to_original(compact_to_id.as_deref(), community_id));
+        # The loader builds its own redis client from the URL, and redis-py
+        # (>= 6) gives such a client a 5s socket timeout. A single GRAPH.BULK
+        # batch here is up to 64MB (millions of edges) and takes longer than
+        # that on an instrumented (coverage / ASAN) build: the loader then
+        # aborts with TimeoutError while the server is still applying the
+        # batch, leaving a partial graph (e.g. 2874998 of 4000000 edges).
+        # State the deadline in the URL instead.
+        url = (f"redis://{self.env.host}:{self.port}"
+               f"?socket_timeout={SOCKET_TIMEOUT}&socket_connect_timeout={SOCKET_TIMEOUT}")
+        res = runner.invoke(bulk_insert, ['--server-url', url,
+        self.env.assertEqual(res.exit_code, 0, message=repr(res.exception))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    component_ids.push(comp_id);
-                    community_ids.push(community_id);
+        res = runner.invoke(bulk_insert, ['--server-url', f"redis://{self.env.host}:{self.port}",
+        self.env.assertEqual(res.exit_code, 0)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee21013d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a33eb28` are properly handled with clean fallback behavior.

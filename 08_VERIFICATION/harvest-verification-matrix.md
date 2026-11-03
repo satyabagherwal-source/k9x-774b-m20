@@ -7049,3 +7049,5 @@
 | `CYCLE-20261103-8US4` | `2026-11-03T22:52:00.340Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6648` | Yes (`83cf89fc...`) |
 | `CYCLE-20261103-HX2H` | `2026-11-03T22:59:03.209Z` | `watchexec/watchexec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6649` | Yes (`29605595...`) |
 | `CYCLE-20261103-I1CY` | `2026-11-03T22:59:08.770Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6650` | Yes (`99cebca5...`) |
+| `CYCLE-20261103-R1ZM` | `2026-11-03T23:06:09.490Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6651` | Yes (`1541f4ae...`) |
+| `CYCLE-20261103-R9W9` | `2026-11-03T23:06:19.737Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6652` | Yes (`e979bc99...`) |

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T22:59:11.590Z",
-    "lastVerified": "2026-11-03T22:59:11.590Z",
+    "lastChecked": "2026-11-03T23:06:22.304Z",
+    "lastVerified": "2026-11-03T23:06:22.304Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T22:32:05.695Z",
-    "lastVerified": "2026-11-03T22:32:05.695Z",
+    "lastChecked": "2026-11-03T23:06:16.172Z",
+    "lastVerified": "2026-11-03T23:06:16.172Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -319,12 +319,12 @@
     "lastVerified": "2026-11-03T12:51:40.105Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T18:22:42.201Z",
-    "lastVerified": "2026-11-03T18:22:42.201Z",
+    "lastChecked": "2026-11-03T23:06:11.226Z",
+    "lastVerified": "2026-11-03T23:06:11.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -333,7 +333,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6b2e03f8"
   },
   "pathwaycom-llm-app": {
     "name": "pathwaycom/serviette",
@@ -1753,22 +1754,21 @@
     "lastVerified": "2026-11-03T22:59:08.992Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB",
+    "name": "FalkorDB/FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:31:50.164Z",
-    "lastVerified": "2026-10-31T20:31:50.164Z",
+    "lastChecked": "2026-11-03T23:06:07.083Z",
+    "lastVerified": "2026-11-03T23:06:07.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
+    "contentHash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "155a246f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "name": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1819,22 +1819,21 @@
     "lastVerified": "2026-11-03T21:36:43.798Z"
   },
   "alibaba-zvec": {
-    "name": "zvec",
+    "name": "alibaba/zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-01T00:36:23.835Z",
-    "lastVerified": "2026-11-01T00:36:23.835Z",
+    "lastChecked": "2026-11-03T23:06:18.724Z",
+    "lastVerified": "2026-11-03T23:06:18.724Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
+    "contentHash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4c5be75d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
@@ -3897,9 +3896,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-01T01:26:47.332Z",
+    "lastChecked": "2026-11-03T23:06:08.699Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-01T01:26:47.332Z"
+    "lastVerified": "2026-11-03T23:06:08.699Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -10720,12 +10719,12 @@
     "lastVerified": "2026-11-03T12:13:26.596Z"
   },
   "syntax-tree-hast-util-to-html": {
-    "name": "syntax-tree/hast-util-to-html",
+    "name": "hast-util-to-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-to-html",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T14:11:50.426Z",
-    "lastVerified": "2026-10-30T14:11:50.426Z",
+    "lastChecked": "2026-11-03T23:06:03.656Z",
+    "lastVerified": "2026-11-03T23:06:03.656Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-syntax-tree-hast-util-to-html",
@@ -10734,7 +10733,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9c689126"
   },
   "sindresorhus-keyboardshortcuts": {
     "name": "KeyboardShortcuts",
@@ -11984,9 +11984,9 @@
   "margelo-react-native-blur": {
     "name": "react-native-blur",
     "officialUrl": "https://github.com/margelo/react-native-blur",
-    "lastChecked": "2026-10-30T22:49:52.472Z",
+    "lastChecked": "2026-11-03T23:06:06.176Z",
     "revisionIdentifier": "7edfaa0f",
-    "lastVerified": "2026-10-30T22:49:52.472Z"
+    "lastVerified": "2026-11-03T23:06:06.176Z"
   },
   "pallets-flask": {
     "name": "pallets/flask",

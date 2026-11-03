@@ -7058,3 +7058,5 @@ Every entry in this ledger must capture:
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `9655d320` | Multi-dimensional audit evidence | 2026-11-03T22:52:00.344Z |
 | `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `f71af3b1` | Multi-dimensional audit evidence | 2026-11-03T22:59:03.212Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `ac785430` | Multi-dimensional audit evidence | 2026-11-03T22:59:08.773Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `1ff68d53` | Multi-dimensional audit evidence | 2026-11-03T23:06:09.494Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `499eab89` | Multi-dimensional audit evidence | 2026-11-03T23:06:19.741Z |

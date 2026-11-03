@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "155a246f",
+    "sourceVersion": "1ff68d53",
     "license": "NOASSERTION",
-    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
-    "lastHarvestedAt": "2026-10-31T00:34:19.569Z",
+    "contentHash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
+    "lastHarvestedAt": "2026-11-03T23:06:09.494Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "4c5be75d",
+    "sourceVersion": "499eab89",
     "license": "Apache-2.0",
-    "contentHash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
-    "lastHarvestedAt": "2026-10-30T15:49:23.795Z",
+    "contentHash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
+    "lastHarvestedAt": "2026-11-03T23:06:19.741Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:59:08.701Z",
+  "last_updated": "2026-11-03T23:06:19.655Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1621,8 +1621,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "4c5be75d",
-      "content_hash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
+      "source_version": "499eab89",
+      "content_hash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1670,6 +1670,11 @@
           "number": 5792,
           "title": "io): prevent file descriptor inheritance across exec (#859)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6652,
+          "title": "db): avoid null writing_segment_ on DDL writing segment recreation failure (#822",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1677,7 +1682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:49:23.696Z",
+      "verified_at": "2026-11-03T23:06:19.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13025,8 +13030,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "155a246f",
-      "content_hash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
+      "source_version": "1ff68d53",
+      "content_hash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -13074,6 +13079,11 @@
           "number": 5958,
           "title": "map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6651,
+          "title": "test: give the bulk loader in test12 an explicit socket timeout (#3590)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13081,7 +13091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:34:19.471Z",
+      "verified_at": "2026-11-03T23:06:09.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171114,6 +171124,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:59:08.683Z"
+    },
+    "rule-6651": {
+      "learning_id": "rule-6651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6651,
+      "title": "test: give the bulk loader in test12 an explicit socket timeout (#3590)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "1ff68d53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:06:09.385Z"
+    },
+    "rule-6652": {
+      "learning_id": "rule-6652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6652,
+      "title": "db): avoid null writing_segment_ on DDL writing segment recreation failure (#822",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "499eab89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:06:19.633Z"
     }
   },
   "aliases": {
