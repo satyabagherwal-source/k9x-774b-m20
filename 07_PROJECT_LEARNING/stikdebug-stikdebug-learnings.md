@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source**: github ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
-> **Source Version**: `97530a90`  
+> **Source Version**: `1c3801b8`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:14:59.732Z  
+> **Timestamp**: 2026-11-03T15:46:41.980Z  
 > **Learning ID**: `learn-github-stikdebug-stikdebug`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:14:58.896Z  
+> **Harvest Timestamp**: 2026-11-03T15:46:40.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2948 stars
+- **Stars / Engagement**: 2994 stars
 
 ---
 
@@ -1533,11 +1533,11 @@ final class JITEnableContext {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #493** (2026-10-30): **Failed to connect debug proxy: ServiceNotFound**
+  *Symptoms*: ### Description  Worked perfectly a while ago. Changed nothing. Didn’t update. Just stopped working. DDI is fine, VPN is fine, tried re-pairing, nothing helps. I try to launch an app with JIT that worked perfectly a while ago(any app) and i get the error “ServiceNotFound”  ### Steps to Reproduce  1. Connect LocalDevVPN 2. Open StikDebug 3. Try to launch an app with JIT or use Processes tool 4. Error  ### Expected Behavior  No error, app launches, processes tool works.  ### iOS Version  27.2  ### Device  iPhone Duo  ### StikDebug Version  3.2.0  ### Logs  ```shell === DEVICE INFORMATION === Version: 27.2 Name: iPhone Model: iPhone StikDebug Version: App Version: 1.0  === LOG ENTRIES === [23:10:42] [INFO]         "mr", [23:10:42] [INFO]         "my", [23:10:42] [INFO]         "nb", [23:10:42] [INFO]         "ne", [23:10:42] [INFO]         "nl", [23:10:42] [INFO]         "nn-NO", [23:10:42] [INFO]         "or", [23:10:42] [INFO]         "pl", [23:10:42] [INFO]         "pt", [23:10:42] [INFO]         "pt-BR", [23:10:42] [INFO]         "ro", [23:10:42] [INFO]         "ru", [23:10:42] [INFO]         "si", [23:10:42] [INFO]         "sk", [23:10:42] [INFO]         "sl", [23:10:42] [INFO]         "sr", [23:10:42] [INFO]         "sv", [23:10:42] [INFO]         "ta", [23:10:42] [INFO]         "te", [23:10:42] [INFO]         "th", [23:10:42] [INFO]         "tr", [23:10:42] [INFO]         "uk", [23:10:42] [INFO]         "vi", [23:10:42] [INFO]         "zh-Hans", [23:10:42] [INFO]         
+
 - **Issue #491** (2026-10-26): **⁠[Bug] StikDebug reports successful execution but target app launches with "JIT is not enabled"⁠**
   *Symptoms*: ### Description  Problem When using StikDebug to launch an app requiring JIT (Just-In-Time compilation), StikDebug completes the process without throwing any errors or warnings. However, once the target application launches, it reports that JIT is not enabled. This appears to be a silent failure where StikDebug dispatches the launch command successfully, but the debugger hook fails somehow!    ### Steps to Reproduce  Steps to i did and got this Error 1. Open StikDebug with active LocalDevVPN / pairing configuration. 2. Select an application that requires JIT. 3. Tap to launch/enable JIT. 4. Observe StikDebug status: No errors shown (indicates success). 5. Target app opens automatically. 6. Target app displays an alert: ⁠"JIT is not enabled"⁠.  ### Expected Behavior  It should’ve worked normally   ### iOS Version  27.0.1  ### Device  Iphone Air  ### StikDebug Version  3.1.15  ### Logs  ```shell  ```  ### Screenshots  _No response_
-
-- **Issue #483** (2026-10-19): **Connection reset by peer**
-  *Symptoms*: ### Description  connected localDevVPN said connection reset by peer downgraded to a version below latest and diddnt work  ### Steps to Reproduce  go to localdevvpn press connect  then go to stikdebug error popsup  ### Expected Behavior  i expected it to work not error  ### iOS Version  27  ### Device  iphone 15  ### StikDebug Version  3.1.14 and 3.1.15 idk about others theres no ipa to downgrade too  ### Logs  ```shell  ```  ### Screenshots  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1554,102 +1554,185 @@ final class JITEnableContext {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `117c158d` (2026-10-29)
-**Commit Message**: fix: release the route when playback finishes so a new spot can be set (#490)
+### Incident Patch 1: `1c3801b8` (2026-11-03)
+**Commit Message**: docs: add pairing and supported app guides
 
-LocationSimulationSession.routeCoordinates was set when a route started and
-only cleared by Stop or by simulating a pin. When playback finished, or
-failed partway, the view handed off to the resend loop at the last point but
-left the route in the session, so isRouteRunning stayed true: map taps,
-search results and bookmarks were ignored, and Reset, route search and
-import stayed disabled. Stop was the only control that worked, which also
-cleared the simulated location and closed the simulation connection.
-
-Clear the session's route at both points where playback ends. Once the
-route is released, tapping a new spot and pressing Simulate Location works
-again, reusing the open connection.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `StikDebug/Views/MapSelectionView.swift` (modified, +4/-0)
+**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +18/-1)
 ```diff
-@@ -1557,6 +1557,7 @@ struct LocationSimulationView: View {
-                     await MainActor.run {
-                         routePlaybackTask = nil
-                         routePlaybackCoordinate = lastSuccessfulCoordinate
-+                        LocationSimulationSession.shared.clearRoute()
-                         if let lastSuccessfulCoordinate {
-                             startResendLoop(with: lastSuccessfulCoordinate)
-                         }
-@@ -1577,6 +1578,9 @@ struct LocationSimulationView: View {
-             await MainActor.run {
-                 guard LocationSimulationSession.shared.isCurrentRoute(routeID) else { return }
-                 routePlaybackTask = nil
-+                // The route has ended; while it stays set, isRouteRunning keeps
-+                // map taps, search, bookmarks and Reset disabled.
-+                LocationSimulationSession.shared.clearRoute()
-                 if let lastSuccessfulCoordinate {
-                     routePlaybackCoordinate = lastSuccessfulCoordinate
-                     startResendLoop(with: lastSuccessfulCoordinate)
+@@ -14,6 +14,14 @@ body:
+       placeholder: Describe what happened...
+     validations:
+       required: true
++  - type: textarea
++    id: affected-app
++    attributes:
++      label: JIT - Affected App and IPA Source
++      description: If the issue involves enabling JIT for a particular app, name the app and tell us where you obtained its IPA. Include a download page or repository link if available.
++      placeholder: |
++        App name and version:
++        IPA source or link:
+   - type: textarea
+     id: steps
+     attributes:
+@@ -35,7 +43,7 @@ body:
+   - type: input
+     id: ios-version
+     attributes:
+-      label: iOS Version
++      label: iOS / iPadOS Version
+       placeholder: e.g. 18.3.1
+     validations:
+       required: true
+@@ -53,6 +61,15 @@ body:
+       placeholder: e.g. 1.0.0
+     validations:
+       required: true
++  - type: dropdown
++    id: livecontainer
++    attributes:
++      label: Are you running StikDebug inside LiveContainer?
++      options:
++        - "Yes"
++        - "No"
++    validations:
++      required: true
+   - type: textarea
+     id: logs
+     attributes:
+```
+
+**File**: `PAIRING.md` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++# Pairing Your Device
++
++StikDebug requires a specialized **pairing file** to communicate with your device remotely. This file is specific to your device and is required to use StikDebug. Without it, StikDebug will not work.
++
++> [!WARNING]
++> Because of iOS/iPadOS limitations, resetting or changing your device's passcode will invalidate its pairing file. You will need to generate and place a new one.
++>
++> Keep your pairing file private. It contains connection credentials for your device. Do not share it publicly or attach it to bug reports.
++
++## Method 1: On-device
++
++On iOS/iPadOS 27 or later, StikDebug can generate and save its own pairing file without a computer.
++
++Open **Settings → Pair a Device → Pair iPhone or iPad**, then follow the in-app instructions. Once pairing finishes, StikDebug saves the file automatically.
++
++**Pairing another device:** You can also pair another iPhone or iPad running iOS/iPadOS 27 or later, or an Apple TV running tvOS 14 or later. After pairing, export its file or place it directly in a supported app on that device. For an Apple TV, choose **Pair Apple TV** instead. Apple TV pairing is not yet supported inside LiveContainer.
++
++## Method 2: Computer
++
++This method uses [iloader](https://iloader.app) on a computer to generate and place the pairing file. You will need a computer and a USB cable.
++
++### Prerequisites
++
++#### Mac
++
++1. Download and install [iloader for Mac](https://github.com/nab138/iloader/releases/latest/download/iloader-darwin-universal.dmg).
++
++#### Windows
++
++1. Download and install [iTunes](https://apple.co/ms).
++2. Download the iloader installer: [MSI (recommended)](https://github.com/nab138/iloader/releases/latest/download/iloader-windows-x64.msi) or [EXE](https://github.com/nab138/iloader/releases/latest/download/iloader-windows-x64.exe).
++3. Run the installer.
++
++#### Linux
++
++1. Install `usbmuxd` using your package manager if it is not already installed.
++2. Download and install iloader for your distribution: [Debian/Ubuntu](https://github.com/nab138/iloader/releases/latest/download/iloader-linux-amd64.deb), [Fedora/openSUSE](https://github.com/nab138/iloader/releases/latest/download/iloader-linux-x86_64.rpm), or [AppImage for other distributions](https://github.com/nab138/iloader/releases/latest/download/iloader-linux-amd64.AppImage).
++
++### Generating and placing the pairing file
++
++1. For best results, connect your device to your computer using a USB cable. If your device appears wirelessly in iloader, that should work too.
++2. Click **Manage Pairing File**.
++3. Click **Place** beside **StikDebug** and any other apps you want to pair. A green **"Pairing file placed successfully!"** message should appear.
+```
+
+**File**: `README.md` (modified, +3/-1)
+```diff
+@@ -44,6 +44,8 @@
+ | 17.4 – 18.x              | Fully supported      | Stable                                                                |
+ | 26.0+              | Supported            | Limited App Availability (Developers need to update their apps to work.) |
+ 
++See [Officially Supported Apps](SUPPORTED_APPS.md) for the apps supported by the StikDebug team and their bundled scripts.
++
+ ## How to Enable JIT
+ 
+ StikDebug enables **JIT** for sideloaded apps on iOS 17.4+ without needing a computer after the initial pairing setup.
+@@ -56,7 +58,7 @@ StikDebug enables **JIT** for sideloaded apps on iOS 17.4+ without needing a com
+ 
+ ### Steps
+ 1. **Obtain a pairing file**  
+-   - Detailed guide: [Pairing File Instructions](https://github.com/StikDebug/StikDebug-Guide/blob/main/pairing_file.md) (or ask in Discord).
++   - Detailed guide: [Pairing File Instructions](PAIRING.md) (or ask in Discord).
+ 
+ 2. **Set up VPN**  
+    - Launch LocalDevVPN and enable the VPN.
+```
+
+**File**: `SUPPORTED_APPS.md` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++# Officially Supported Apps
++
++These apps are officially supported by the StikDebug team and have built-in script support on iOS/iPadOS 26 and later. To submit your app, get in touch in the [idevice Discord server](https://discord.gg/qtgv6QtYbV), [open a GitHub issue](https://github.com/StikDebug/StikDebug/issues/new), or [submit a pull request](https://github.com/StikDebug/StikDebug/pulls). We can review your project for inclusion and offer support to your users.
++
++We review submissions on a case-by-case basis and generally decline projects without an established user base, low-quality projects that are substantially AI-generated, and forks of apps we already support.
++
++Apps not listed here may still work with StikDebug. Inclusion in this list means official support from the StikDebug team.
++
++The following apps are supported by StikDebug:
++
++| App | Script |
++| --- | --- |
++| [AetherPS4](https://github.com/Leviidev/AetherPS4) | [universal.js](StikDebug/Scripts/universal.js) |
++| [Amethyst](https://github.com/AngelAuraMC/Amethyst-iOS) | [universal.js](StikDebug/Scripts/universal.js) |
++| [Applesauce](https://github.com/0xjohnnydev/Applesauce) | [universal.js](StikDebug/Scripts/universal.js) |
++| [ARMSX2 iOS](https://github.com/ARMSX2/ARMSX2) | [legacy.js](StikDebug/Scripts/legacy.js) |
++| [DolphiniOS](https://github.com/OatmealDome/dolphin-ios) | [legacy.js](StikDebug/Scripts/legacy.js) |
++| [DukeX](https://github.com/MaftyManicEMU/DukeX) | [universal.js](StikDebug/Scripts/universal.js) |
++| [Flycast](https://github.com/chachillie/Flycast-iOS) | [legacy.js](StikDebug/Scripts/legacy.js) |
++| [Geode](https://github.com/geode-sdk/ios-launcher) | [Geode.js](StikDebug/Scripts/Geode.js) |
++| [Husk](https://github.com/Leviidev/Husk) | [universal.js](StikDebug/Scripts/universal.js) |
++| [Manic EMU](https://github.com/Manic-EMU/ManicEMU) | [universal.js](StikDebug/Scripts/universal.js) |
++| [MeloCafé](https://github.com/stossy11/MeloCafe) | [universal.js](StikDebug/Scripts/universal.js) |
++| [MeloNX](https://starforgejo.dev/projects/MeloNX) | [universal.js](StikDebug/Scripts/universal.js) |
++| [RPCS3](https://github.com/XITRIX/RPCS3-iOS-Releases) | [universal.js](StikDebug/Scripts/universal.js) |
++| [UTM](https://github.com/utmapp/UTM) | [legacy.js](StikDebug/Scripts/legacy.js) |
++| [XeniOS](https://github.com/xenios-jp/XeniOS) | [universal.js](StikDebug/Scripts/universal.js) |
+```
+
+**File**: `StikDebug/Views/SettingsView.swift` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ import UIKit
+ 
+ private enum SettingsLinks {
+     static let githubStars = URL(string: "https://github.com/StikDebug/StikDebug")!
+-    static let pairingFileGuide = URL(string: "https://github.com/StikDebug/StikDebug-Guide/blob/main/pairing_file.md")!
++    static let pairingFileGuide = URL(string: "https://github.com/StikDebug/StikDebug/blob/main/PAIRING.md")!
+     static let localDevVPN = URL(string: "https://apps.apple.com/us/app/localdevvpn/id6755608044")!
+     static let discord = URL(string: "https://discord.gg/qahjXNTDwS")!
+ }
 ```
 
 ---
 
-### Incident Patch 2: `51713a7d` (2026-10-29)
-**Commit Message**: fix: disable raw idevice file logging
+### Incident Patch 2: `9ed2b84d` (2026-10-31)
+**Commit Message**: fix: restore idevice file logging at info level
 
-**File**: `StikDebug/Device/JITEnableContext.swift` (modified, +1/-1)
+**File**: `StikDebug/Device/JITEnableContext.swift` (modified, +2/-1)
 ```diff
-@@ -291,7 +291,7 @@ final class JITEnableContext {
+@@ -291,7 +291,8 @@ final class JITEnableContext {
      private init() {
          var path = Array(IdeviceLogFileManager.logURL.path.utf8CString)
          path.withUnsafeMutableBufferPointer { buffer in
--            _ = idevice_init_logger(Info, Debug, buffer.baseAddress)
-+            _ = idevice_init_logger(Info, Disabled, buffer.baseAddress)
+-            _ = idevice_init_logger(Info, Disabled, buffer.baseAddress)
++            // Debug logging includes pairing-file credentials and protocol payloads.
++            _ = idevice_init_logger(Info, Info, buffer.baseAddress)
          }
      }
  
-```
-
----
-
-### Incident Patch 3: `24c239d8` (2026-10-29)
-**Commit Message**: ci: build all fork branches with Xcode 27.1
-
-**File**: `.github/workflows/build_ipa.yml` (modified, +8/-3)
-```diff
-@@ -2,7 +2,7 @@ name: Build Debug IPA
- 
- on:
-   push:
--    branches: [ "main" ]
-+    branches: [ "**" ]
-     tags: [ "[0-9]*" ]
-   pull_request:
-     branches: [ "main" ]
-@@ -14,7 +14,12 @@ permissions:
- jobs:
-   build:
-     name: Build IPA
--    runs-on: macos-latest
-+    if: >-
-+      github.event_name != 'push' ||
-+      github.ref_type == 'tag' ||
-+      github.repository != 'StikDebug/StikDebug' ||
-+      github.ref == 'refs/heads/main'
-+    runs-on: xcode-27
-     outputs:
-       version: ${{ steps.version.outputs.version }}
-     env:
-@@ -27,7 +32,7 @@ jobs:
-       - name: 2. Configure Xcode Environment
-         uses: maxim-lobanov/setup-xcode@v1
-         with:
--          xcode-version: '26.6'
-+          xcode-version: '27.1'
- 
-       - name: 3. Compile Project Archive
-         run: |
 ```
 
 #### Recent Merged Pull Requests:
@@ -1678,31 +1761,45 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release the route when playback finishes so a new spot can be set (#490)
+## X. docs: add pairing and supported app guides
 
 **RULE**:
-When implementing operations in `StikDebug/Views/MapSelectionView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/bug_report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `117c158d`: release the route when playback finishes so a new spot can be set (#490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c3801b8`: docs: add pairing and supported app guides. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `StikDebug/Views/MapSelectionView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug_report.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                        LocationSimulationSession.shared.clearRoute()
-                // The route has ended; while it stays set, isRouteRunning keeps
-                // map taps, search, bookmarks and Reset disabled.
-                LocationSimulationSession.shared.clearRoute()
+  - type: textarea
+    id: affected-app
+    attributes:
+      label: JIT - Affected App and IPA Source
+      description: If the issue involves enabling JIT for a particular app, name the app and tell us where you obtained its IPA. Include a download page or repository link if available.
+      placeholder: |
+        App name and version:
+        IPA source or link:
+      label: iOS / iPadOS Version
+  - type: dropdown
+    id: livecontainer
+    attributes:
+      label: Are you running StikDebug inside LiveContainer?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      label: iOS Version
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `117c158d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c3801b8` are properly handled with clean fallback behavior.

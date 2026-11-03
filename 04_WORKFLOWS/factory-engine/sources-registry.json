@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T15:34:44.310Z",
-    "lastVerified": "2026-11-03T15:34:44.310Z",
+    "lastChecked": "2026-11-03T15:46:53.687Z",
+    "lastVerified": "2026-11-03T15:46:53.687Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T12:32:20.039Z",
-    "lastVerified": "2026-11-03T12:32:20.039Z",
+    "lastChecked": "2026-11-03T15:46:42.967Z",
+    "lastVerified": "2026-11-03T15:46:42.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -580,9 +580,9 @@
   "open-policy-agent-gatekeeper": {
     "name": "gatekeeper",
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "lastChecked": "2026-10-31T18:52:34.683Z",
+    "lastChecked": "2026-11-03T15:46:36.513Z",
     "revisionIdentifier": "e492e24c",
-    "lastVerified": "2026-10-31T18:52:34.683Z"
+    "lastVerified": "2026-11-03T15:46:36.513Z"
   },
   "nolabs-ai-nono": {
     "name": "nolabs-ai/nono",
@@ -1055,9 +1055,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-02T17:24:29.504Z",
+    "lastChecked": "2026-11-03T15:46:42.952Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-02T17:24:29.504Z"
+    "lastVerified": "2026-11-03T15:46:42.952Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -6002,14 +6002,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-31T18:01:46.617Z",
-    "lastVerified": "2026-10-31T18:01:46.617Z",
+    "lastChecked": "2026-11-03T15:46:49.559Z",
+    "lastVerified": "2026-11-03T15:46:49.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
+    "contentHash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7431,9 +7431,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-10-31T13:54:10.821Z",
+    "lastChecked": "2026-11-03T15:46:29.065Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-10-31T13:54:10.821Z"
+    "lastVerified": "2026-11-03T15:46:29.065Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -9751,9 +9751,9 @@
   "crawlcove-crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "lastChecked": "2026-10-30T04:34:41.288Z",
+    "lastChecked": "2026-11-03T15:46:30.302Z",
     "revisionIdentifier": "3e8c680f",
-    "lastVerified": "2026-10-30T04:34:41.288Z"
+    "lastVerified": "2026-11-03T15:46:30.302Z"
   },
   "kdchang-reactjs101": {
     "name": "reactjs101",
@@ -10779,14 +10779,14 @@
     "officialUrl": "https://github.com/StikDebug/StikDebug",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T15:14:58.896Z",
-    "lastVerified": "2026-10-30T15:14:58.896Z",
+    "lastChecked": "2026-11-03T15:46:40.795Z",
+    "lastVerified": "2026-11-03T15:46:40.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stikdebug-stikdebug",
-    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+    "contentHash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

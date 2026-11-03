@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-GUGA",
-    "timestamp": "2026-10-31T02:07:29.578Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-GX7B",
-    "timestamp": "2026-10-31T02:07:33.143Z",
-    "repository": "Qwen/Qwen3-14B",
-    "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-GYYB",
     "timestamp": "2026-10-31T02:07:35.411Z",
     "repository": "GreptimeTeam/greptimedb",
@@ -7490,6 +7460,36 @@
     "repository": "seleniumbase/SeleniumBase",
     "learningId": "learn-github-seleniumbase-seleniumbase",
     "contentHash": "b2052b81e3aa7ee5b1fb0cc8b55e88f55a605e85f7a6bfaec692bf00d48dd565",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-1X6O",
+    "timestamp": "2026-11-03T15:46:42.624Z",
+    "repository": "StikDebug/StikDebug",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-23RD",
+    "timestamp": "2026-11-03T15:46:51.145Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6918,3 +6918,5 @@
 | `CYCLE-20261103-A5XQ` | `2026-11-03T13:05:09.518Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6527` | Yes (`e84efc2b...`) |
 | `CYCLE-20261103-A92J` | `2026-11-03T13:05:13.579Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6528` | Yes (`022104b3...`) |
 | `CYCLE-20261103-M884` | `2026-11-03T15:34:30.436Z` | `seleniumbase/SeleniumBase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6529` | Yes (`b2052b81...`) |
+| `CYCLE-20261103-1X6O` | `2026-11-03T15:46:42.624Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6530` | Yes (`036a511d...`) |
+| `CYCLE-20261103-23RD` | `2026-11-03T15:46:51.145Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6531` | Yes (`dedfd96b...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T15:34:30.354Z",
+  "last_updated": "2026-11-03T15:46:51.061Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53344,8 +53344,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "90b24cce",
-      "content_hash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
+      "source_version": "c65d4db1",
+      "content_hash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -53408,6 +53408,11 @@
           "number": 6275,
           "title": "[BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invert",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6531,
+          "title": "[BugFix][RB-723] Journal a reshard job's version reservation before releasing it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53415,7 +53420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:01:47.277Z",
+      "verified_at": "2026-11-03T15:46:51.043Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53573,8 +53578,8 @@
       "slug": "stikdebug-stikdebug",
       "platform": "github",
       "source_url": "https://github.com/StikDebug/StikDebug",
-      "source_version": "97530a90",
-      "content_hash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+      "source_version": "1c3801b8",
+      "content_hash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
       "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "promoted_rules": [
@@ -53587,6 +53592,11 @@
           "number": 5784,
           "title": "release the route when playback finishes so a new spot can be set (#490)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6530,
+          "title": "docs: add pairing and supported app guides",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53594,7 +53604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:15:00.226Z",
+      "verified_at": "2026-11-03T15:46:42.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168749,6 +168759,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T15:34:30.334Z"
+    },
+    "rule-6530": {
+      "learning_id": "rule-6530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6530,
+      "title": "docs: add pairing and supported app guides",
+      "source_url": "https://github.com/StikDebug/StikDebug",
+      "source_version": "1c3801b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T15:46:42.542Z"
+    },
+    "rule-6531": {
+      "learning_id": "rule-6531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6531,
+      "title": "[BugFix][RB-723] Journal a reshard job's version reservation before releasing it",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "c65d4db1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T15:46:51.044Z"
     }
   },
   "aliases": {

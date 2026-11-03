@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T15:34:30.449Z",
+  "last_updated": "2026-11-03T15:46:51.156Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
-      "verified_at": "2026-10-31T18:01:47.352Z",
+      "content_hash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
+      "verified_at": "2026-11-03T15:46:51.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:01:47.352Z"
+      "last_updated": "2026-11-03T15:46:51.156Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -14301,14 +14301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stikdebug-stikdebug",
-      "content_hash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
-      "verified_at": "2026-10-30T15:15:00.317Z",
+      "content_hash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
+      "verified_at": "2026-11-03T15:46:42.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:15:00.317Z"
+      "last_updated": "2026-11-03T15:46:42.635Z"
     },
     "remarkjs/remark": {
       "repository": "remarkjs/remark",

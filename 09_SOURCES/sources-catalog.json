@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "90b24cce",
+    "sourceVersion": "c65d4db1",
     "license": "Apache-2.0",
-    "contentHash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
-    "lastHarvestedAt": "2026-10-31T18:01:47.346Z",
+    "contentHash": "dedfd96b61576e3d3eac572e3e3699ab8585f58eca3692f9f285259627930abc",
+    "lastHarvestedAt": "2026-11-03T15:46:51.148Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -9503,10 +9503,10 @@
     "repository": "StikDebug/StikDebug",
     "platform": "github",
     "sourceUrl": "https://github.com/StikDebug/StikDebug",
-    "sourceVersion": "97530a90",
+    "sourceVersion": "1c3801b8",
     "license": "AGPL-3.0",
-    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
-    "lastHarvestedAt": "2026-10-30T15:15:00.310Z",
+    "contentHash": "036a511db9eee46a413288295e84defbba92213d461b503c84a0c44aaa4c07b9",
+    "lastHarvestedAt": "2026-11-03T15:46:42.627Z",
     "learningId": "learn-github-stikdebug-stikdebug"
   },
   "remarkjs-remark": {

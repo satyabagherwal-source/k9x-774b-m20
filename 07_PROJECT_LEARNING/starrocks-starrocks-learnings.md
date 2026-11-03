@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `90b24cce`  
+> **Source Version**: `c65d4db1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:01:46.901Z  
+> **Timestamp**: 2026-11-03T15:46:50.526Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:01:46.617Z  
+> **Harvest Timestamp**: 2026-11-03T15:46:49.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12221 stars
+- **Stars / Engagement**: 12228 stars
 
 ---
 
@@ -1818,388 +1818,585 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec9a17ed` (2026-10-31)
-**Commit Message**: [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (#81979)
+### Incident Patch 1: `c65d4db1` (2026-11-03)
+**Commit Message**: [BugFix][RB-723] Journal a reshard job's version reservation before releasing its lock (#81922)
 
-Signed-off-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java` (modified, +2/-4)
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java` (modified, +16/-14)
 ```diff
-@@ -32,14 +32,12 @@
+@@ -215,21 +215,24 @@ protected void runPendingJob() {
+         // 3. Commit transaction (update next version)
+         // NOTE: After updateNextVersions(), the table's next version is advanced.
+         // From this point the job must not abort or throw, because the run() wrapper would attempt to abort.
++        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
++        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
++        // the reserved version would never be published.
+         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.WRITE)) {
+             // Same lock as the version reservation, so the gtid falls between those of commits before and after.
+             // Drawn first, so a failure here leaves no version reserved.
+             gtid = globalStateMgr.getGtidGenerator().nextGtid();
+             updateNextVersions(lockedTable.get());
+-        }
  
- public class ArithmeticCommutativeRule extends BottomUpScalarOperatorRewriteRule {
-     // Don't support DIVIDE, because DIVIDE will use double type, Double is not efficient and will lose precision
-+    // Don't support years/months add/sub: they clamp to the month end, so they are not invertible, e.g.
-+    // months_add(c, 1) = '2024-02-29' holds for c in 2024-01-29..31, not only for months_sub('2024-02-29', 1)
-     private static final Map<String, String> LEFT_COMMUTATIVE_MAP = ImmutableMap.<String, String>builder()
-             .put(FunctionSet.ADD, FunctionSet.SUBTRACT)
-             .put(FunctionSet.SUBTRACT, FunctionSet.ADD)
-             .put(FunctionSet.DIVIDE, FunctionSet.MULTIPLY)
--            .put(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB)
--            .put(FunctionSet.YEARS_SUB, FunctionSet.YEARS_ADD)
--            .put(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB)
--            .put(FunctionSet.MONTHS_SUB, FunctionSet.MONTHS_ADD)
-             .put(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB)
-             .put(FunctionSet.DAYS_SUB, FunctionSet.DAYS_ADD)
-             .put(FunctionSet.ADDDATE, FunctionSet.SUBDATE)
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRule.java` (modified, +7/-0)
-```diff
-@@ -16,6 +16,7 @@
+-        // 4. Add new tablets to inverted index
+-        addTabletsToInvertedIndex();
++            // 4. Add new tablets to inverted index
++            addTabletsToInvertedIndex();
  
- import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
-+import com.google.common.collect.ImmutableSet;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Sets;
- import com.starrocks.catalog.Function;
-@@ -66,6 +67,7 @@ public class SimplifiedPredicateRule extends BottomUpScalarOperatorRewriteRule {
-             .put("microseconds_", ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB))
-             .put("date", ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB))
-             .build();
-+    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of("years_", "quarters_", "months_");
-     private static final List<String> TIME_FN_NAMES = ImmutableList.<String>builder()
-             .add(FunctionSet.YEARS_ADD).add(FunctionSet.YEARS_SUB)
-             .add(FunctionSet.QUARTERS_ADD).add(FunctionSet.QUARTERS_SUB)
-@@ -464,6 +466,11 @@ private ScalarOperator simplifiedTimeFns(CallOperator call) {
-         if (l1.isNull() || l2.isNull()) {
-             return ConstantOperator.createNull(call.getType());
-         }
-+        // years/quarters/months clamp to the month end, so they do not compose:
-+        // months_add(months_add('2024-01-31', 1), 1) = '2024-03-29' but months_add('2024-01-31', 2) = '2024-03-31'
-+        if (MONTH_BASED_TIME_FNS.contains(fn)) {
-+            return call;
+-        // 5. Register resharding tablets
+-        registerReshardingTablets();
++            // 5. Register resharding tablets
++            registerReshardingTablets();
+ 
+-        // 6. Set job state to PREPARING
+-        setJobState(JobState.PREPARING);
++            // 6. Set job state to PREPARING
++            setJobState(JobState.PREPARING);
 +        }
- 
-         int i1 = call.getFnName().contains("add") ? l1.getInt() : l1.getInt() * -1;
-         int i2 = child.getFnName().contains("add") ? l2.getInt() : l2.getInt() * -1;
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExpressionTest.java` (modified, +19/-4)
-```diff
-@@ -1012,13 +1012,22 @@ public void testArithmeticCommutative() throws Exception {
-         planFragment = getFragmentPlan(sql);
-         assertContains(planFragment, "PREDICATES: 8: id_datetime = '2020-12-23 00:00:00'");
- 
-+        // years/months add/sub clamp to the month end and are not invertible: keep the predicate as is
-         sql = "select t1a from test_all_type where years_sub(id_datetime, 2) = '2020-12-21'";
-         planFragment = getFragmentPlan(sql);
--        assertContains(planFragment, "PREDICATES: 8: id_datetime = '2022-12-21 00:00:00'");
-+        assertContains(planFragment, "PREDICATES: years_sub(8: id_datetime, 2) = '2020-12-21 00:00:00'");
- 
--        sql = "select t1a from test_all_type where years_add(id_datetime, 2) = '2020-12-21'";
-+        sql = "select t1a from test_all_type where years_add(id_datetime, 1) = '2025-02-28'";
-         planFragment = getFragmentPlan(sql);
--        assertContains(planFragment, "PREDICATES: 8: id_datetime = '2018-12-21 00:00:00'");
-+        assertContains(planFragment, "PREDICATES: years_add(8: id_datetime, 1) = '2025-02-28 00:00:00'");
-+
-+        sql = "select t1a from test_all_type where months_add(id_datetime, 1) = '2024-02-29'";
-+        planFragment = getFragmentPlan(sql);
-+        assertContains(planFragment, "PREDICATES: months_add(8: id_datetime, 1) = '2024-02-29 00:00:00'");
-+
-+        sql = "select t1a from test_all_type where date_add(id_datetime, interval 1 month) < '2024-02-29'";
-+        planFragment = getFragmentPlan(sql);
-+        assertContains(planFragment, "PREDICATES: months_add(8: id_datetime, 1) < '2024-02-29 00:00:00'");
      }
  
-     @Test
-@@ -1802,9 +1811,15 @@ public void testDateAddReduce() throws Exception {
-         plan = getFragmentPlan(sql);
-         assertContains(plan, "days_sub(CAST(2: v2 AS DATETIME), 6)");
+     /*
+@@ -634,13 +637,12 @@ private void updateNextVersions(OlapTable olapTable) {
+                 reshardingPhysicalPartition.setCommitVersion(commitVersion);
+             }
  
-+        // years/quarters/months clamp to the month end and do not compose: 2020-02-29 + 1 + 2 - 3 years = 2020-02-28
-         sql = "select years_add(years_sub(years_sub(v2, -1), -2), -3) from t0";
-         plan = getFragmentPlan(sql);
--        assertContains(plan, "<slot 4> : CAST(2: v2 AS DATETIME)");
-+        assertContains(plan, "years_add(years_sub(years_sub(CAST(2: v2 AS DATETIME), -1), -2), -3)");
+-            // Never move nextVersion backwards. The commit version is reserved here, in
+-            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
+-            // few steps later -- so a load transaction that commits in between journals its own
+-            // entry first, and a replaying FE applies that entry before this one. By then the
+-            // transaction has already carried nextVersion past the version reserved here, and
+-            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
+-            // version out twice.
++            // Never move nextVersion backwards. runPendingJob journals the reservation before it
++            // releases the table lock, but a journal written by an FE without that ordering can
++            // still carry a load that committed between the reservation and its PREPARING entry.
++            // A replaying FE applies that load first, so the load has already carried nextVersion
++            // past the version reserved here, and assigning commitVersion + 1 unconditionally
++            // would drag it back, handing the same version out twice.
+             if (physicalPartition.getNextVersion() < commitVersion + 1) {
+                 physicalPartition.setNextVersion(commitVersion + 1);
+             }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/SplitTabletJob.java` (modified, +16/-14)
+```diff
+@@ -253,21 +253,24 @@ protected void runPendingJob() {
+         // 3. Commit transaction (update next version)
+         // NOTE: After updateNextVersions(), the table's next version is advanced.
+         // From this point the job must not abort or throw, because the run() wrapper would attempt to abort.
++        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
++        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
++        // the reserved version would never be published.
+         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.WRITE)) {
+             // Same lock as the version reservation, so the gtid falls between those of commits before and after.
+             // Drawn first, so a failure here leaves no version reserved.
+             gtid = globalStateMgr.getGtidGenerator().nextGtid();
+             updateNextVersions(lockedTable.get());
+-        }
+ 
+-        // 4. Add new tablets to inverted index
+-        addTabletsToInvertedIndex();
++            // 4. Add new tablets to inverted index
++            addTabletsToInvertedIndex();
+ 
+-        // 5. Register resharding tablets
+-        registerReshardingTablets();
++            // 5. Register resharding tablets
++            registerReshardingTablets();
+ 
+-        // 6. Set job state to PREPARING
+-        setJobState(JobState.PREPARING);
++            // 6. Set job state to PREPARING
++            setJobState(JobState.PREPARING);
++        }
+     }
+ 
+     /*
+@@ -717,13 +720,12 @@ private void updateNextVersions(OlapTable olapTable) {
+                 reshardingPhysicalPartition.setCommitVersion(commitVersion);
+             }
+ 
+-            // Never move nextVersion backwards. The commit version is reserved here, in
+-            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
+-            // few steps later -- so a load transaction that commits in between journals its own
+-            // entry first, and a replaying FE applies that entry before this one. By then the
+-            // transaction has already carried nextVersion past the version reserved here, and
+-            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
+-            // version out twice.
++            // Never move nextVersion backwards. runPendingJob journals the reservation before it
++            // releases the table lock, but a journal written by an FE without that ordering can
++            // still carry a load that committed between the reservation and its PREPARING entry.
++            // A replaying FE applies that load first, so the load has already carried nextVersion
++            // past the version reserved here, and assigning commitVersion + 1 unconditionally
++            // would drag it back, handing the same version out twice.
+             if (physicalPartition.getNextVersion() < commitVersion + 1) {
+                 physicalPartition.setNextVersion(commitVersion + 1);
+             }
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/MergeTabletJobTest.java` (modified, +54/-0)
+```diff
+@@ -45,6 +45,7 @@
+ import com.starrocks.metric.LongCounterMetric;
+ import com.starrocks.metric.Metric.MetricUnit;
+ import com.starrocks.metric.MetricRepo;
++import com.starrocks.persist.EditLog;
+ import com.starrocks.proto.AggregatePublishVersionRequest;
+ import com.starrocks.proto.PublishVersionRequest;
+ import com.starrocks.proto.PublishVersionResponse;
+@@ -65,6 +66,7 @@
+ import com.starrocks.thrift.TStorageMedium;
+ import com.starrocks.transaction.GlobalTransactionMgr;
+ import com.starrocks.transaction.TransactionState;
++import com.starrocks.transaction.TransactionStatus;
+ import com.starrocks.type.IntegerType;
+ import com.starrocks.utframe.MockedBackend.MockLakeService;
+ import com.starrocks.utframe.StarRocksAssert;
+@@ -89,6 +91,7 @@
+ import java.util.concurrent.Future;
+ import java.util.concurrent.ThreadPoolExecutor;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicLong;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.stream.Collectors;
+ 
+@@ -302,6 +305,57 @@ public void createShardsForMerge(Invocation invocation, Map<Long, List<Long>> ne
+                         + " of the load committed below it");
+     }
+ 
++    /**
++     * A load that committed after the job reserved its version but before the job journaled the reservation would
++     * reach the journal first, so a leader change in between would leave the reserved version to no one and the
++     * partition stuck behind it. Such a load has to wait for the reservation's journal entry, then takes the next
++     * version.
++     */
++    @Test
++    public void testCommitVersionJournaledBeforeNextLoad() throws Exception {
++        MergeTabletJob mergeJob = createMergeTabletReshardJob();
++        PhysicalPartition physicalPartition = table.getAllPhysicalPartitions().iterator().next();
++        ConcurrentLoad.holdPublishDaemon();
++        long loadId = ConcurrentLoad.begin(db, table);
++        AtomicLong nextVersionWhenJournaled = new AtomicLong();
++        new MockUp<EditLog>() {
++            @Mock
++            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob job) {
++                boolean reservationEntry = job.getJobState() == TabletReshardJob.JobState.PREPARING;
++                if (reservationEntry) {
++                    ConcurrentLoad.tryCommit(db, table, loadId, 100);
++                }
++                invocation.proceed();
++                if (reservationEntry) {
++                    nextVersionWhenJournaled.set(physicalPartition.getNextVersion());
++                }
++            }
++        };
++        long reservedVersion = physicalPartition.getNextVersion();
 +
-+        sql = "select months_sub(months_add(v2, 1), 1), quarters_add(quarters_add(v2, 1), 1) from t0";
-+        plan = getFragmentPlan(sql);
-+        assertContains(plan, "months_sub(months_add(6: cast, 1), 1)");
-+        assertContains(plan, "quarters_add(quarters_add(6: cast, 1), 1)");
++        mergeJob.init();
++        mergeJob.runPendingJob();
++
++        GlobalTransactionMgr txnMgr = GlobalStateMgr.getCurrentState().getGlobalTransactionMgr();
++        Assertions.assertEquals(TransactionStatus.PREPARE,
++                txnMgr.getTransactionState(db.getId(), loadId).getTransactionStatus());
++        Assertions.assertEquals(reservedVersion + 1, nextVersionWhenJournaled.get());
++        TransactionState load = ConcurrentLoad.commit(db, table, loadId);
++        Assertions.assertEquals(reservedVersion + 1, ConcurrentLoad.versionIn(load, table, physicalPartition.getId()));
++
++        // The job publishes the version it reserved, then waits in CLEANING for the load above it.
++        long deadlineMs = System.currentTimeMillis() + 60_000L;
++        while (mergeJob.getJobState() != TabletReshardJob.JobState.CLEANING) {
++            Assertions.assertTrue(System.currentTimeMillis() < deadlineMs, "job is still " + mergeJob.getJobState());
++            mergeJob.run();
++            Thread.sleep(10);
++        }
++        ConcurrentLoad.makeVisible(db, load);
++        mergeJob.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, mergeJob.getJobState());
++    }
++
++
+     @Test
+     public void testRunMergeBumpsOptimisticVersion() throws Exception {
+         TabletReshardJob splitJob = createSplitTabletReshardJob();
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +64/-0)
+```diff
+@@ -36,6 +36,7 @@
+ import com.starrocks.lake.StarOSAgent;
+ import com.starrocks.lake.Utils;
+ import com.starrocks.lake.compaction.CompactionMgr;
++import com.starrocks.persist.EditLog;
+ import com.starrocks.proto.AggregatePublishVersionRequest;
+ import com.starrocks.proto.PublishVersionRequest;
+ import com.starrocks.proto.PublishVersionResponse;
+@@ -53,6 +54,7 @@
+ import com.starrocks.thrift.TStatusCode;
+ import com.starrocks.transaction.GlobalTransactionMgr;
+ import com.starrocks.transaction.TransactionState;
++import com.starrocks.transaction.TransactionStatus;
+ import com.starrocks.type.IntegerType;
+ import com.starrocks.utframe.MockedBackend.MockLakeService;
+ import com.starrocks.utframe.StarRocksAssert;
+@@ -78,6 +80,7 @@
+ import java.util.concurrent.Future;
+ import java.util.concurrent.ThreadPoolExecutor;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicLong;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BiConsumer;
+ import java.util.stream.Collectors;
+@@ -237,6 +240,67 @@ public void createShardsForSplit(Invocation invocation, Map<Long, Long> newToOld
+                         + " of the load committed below it");
+     }
  
-         sql = "select date_add(date_add(date_sub(v2, -1), -2), -3) from t0";
-         plan = getFragmentPlan(sql);
++    /**
++     * A load that committed after the job reserved its version but before the job journaled the reservation would
++     * reach the journal first, so a leader change in between would leave the reserved version to no one and the
++     * partition stuck behind it. Such a load has to wait for the reservation's journal entry, then takes the next
++     * version.
++     */
++    @Test
++    public void testCommitVersionJournaledBeforeNextLoad() throws Exception {
++        installLakeServiceMock(this::addDataDrivenRanges);
++        starRocksAssert.withTable("create table journal_split_table (key1 int, key2 varchar(10)) order by(key1) "
++                + "properties('replication_num' = '1')");
++        OlapTable journalTable = (OlapTable) GlobalStateMgr.getCurrentState().getLocalMetastore()
++                .getTable(db.getFullName(), "journal_split_table");
++        PhysicalPartition physicalPartition = journalTable.getAllPhysicalPartitions().iterator().next();
++        ConcurrentLoad.holdPublishDaemon();
++        long loadId = ConcurrentLoad.begin(db, journalTable);
++        AtomicLong nextVersionWhenJournaled = new AtomicLong();
++        new MockUp<EditLog>() {
++            @Mock
++            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob job) {
++                boolean reservationEntry = job.getJobState() == TabletReshardJob.JobState.PREPARING;
++                if (reservationEntry) {
++                    ConcurrentLoad.tryCommit(db, journalTable, loadId, 100);
++                }
++                invocation.proceed();
++                if (reservationEntry) {
++                    nextVersionWhenJournaled.set(physicalPartition.getNextVersion());
++                }
++            }
++        };
++        long tabletId = physicalPartition.getLatestBaseIndex().getTablets().get(0).getId();
++        SplitTabletClause clause = new SplitTabletClause(null, new TabletList(List.of(tabletId)),
++                Map.of(PropertyAnalyzer.PROPERTIES_TABLET_RESHARD_TARGET_SIZE, "-2"));
++        clause.setTabletReshardTargetSize(-2);
++        TabletReshardJob job = new SplitTabletJobFactory(db, journalTable, clause).createTabletReshardJob();
++        long reservedVersion = physicalPartition.getNextVersion();
++
++        job.init();
++        job.runPendingJob();
++
++        GlobalTransactionMgr txnMgr = GlobalStateMgr.getCurrentState().getGlobalTransactionMgr();
++        Assertions.assertEquals(TransactionStatus.PREPARE,
++                txnMgr.getTransactionState(db.getId(), loadId).getTransactionStatus());
++        Assertions.assertEquals(reservedVersion + 1, nextVersionWhenJournaled.get());
++        TransactionState load = ConcurrentLoad.commit(db, journalTable, loadId);
++        Assertions.assertEquals(reservedVersion + 1,
++                ConcurrentLoad.versionIn(load, journalTable, physicalPartition.getId()));
++
++        // The job publishes the version it reserved, then waits in CLEANING for the load above it.
++        long deadlineMs = System.currentTimeMillis() + 60_000L;
++        while (job.getJobState() != TabletReshardJob.JobState.CLEANING) {
++            Assertions.assertTrue(System.currentTimeMillis() < deadlineMs, "job is still " + job.getJobState());
++            job.run();
++            Thread.sleep(10);
++        }
++        ConcurrentLoad.makeVisible(db, load);
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
++    }
++
++
+     /**
+      * Records the transactions and the version of each reshard publish, and answers it the way a BE splits the
+      * tablets by their data.
 ```
 
 ---
 
-### Incident Patch 2: `3e3d88cd` (2026-10-31)
-**Commit Message**: [BugFix][RB-225] Keep array<struct> rows when unnest reads only an element subfield missing from the file (#81971)
+### Incident Patch 2: `a0d0645a` (2026-11-03)
+**Commit Message**: [BugFix] Gtid may not be monotonic after leader failover (#81580)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
 
-**File**: `be/src/exec/pipeline/table_function_operator.cpp` (modified, +4/-4)
+**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
 ```diff
-@@ -319,10 +319,10 @@ void TableFunctionOperator::_copy_result(Columns& columns, uint32_t max_output_s
-         }
+@@ -1259,6 +1259,15 @@ This topic introduces the following types of FE configurations:
+ - Description: The maximum number of low-cardinality dictionary-optimized columns listed in the `dict_col` field of each scan node in `EXPLAIN VERBOSE` output. When a scan node has more applied dictionary columns than this value, the list is truncated and followed by an ellipsis. Values less than or equal to `0` are treated as `0`, which truncates the list entirely. This item affects only the `EXPLAIN VERBOSE` output and does not change how dictionary optimization is applied to queries.
+ - Introduced in: v4.2.0
  
-         uint32_t copy_rows = std::min(end - start, max_output_size - curr_output_size);
--        VLOG(2) << "_next_output_row=" << _next_output_row << " start=" << start << " end=" << end
--                << " copy_rows=" << copy_rows << " input_size=" << offsets_data.back()
--                << " _next_output_row_offset=" << _next_output_row_offset
--                << " _input_index_of_first_result=" << _input_index_of_first_result;
-+        VLOG_ROW << "_next_output_row=" << _next_output_row << " start=" << start << " end=" << end
-+                 << " copy_rows=" << copy_rows << " input_size=" << offsets_data.back()
-+                 << " _next_output_row_offset=" << _next_output_row_offset
-+                 << " _input_index_of_first_result=" << _input_index_of_first_result;
- 
-         if (copy_rows > 0) {
-             append_outer(copy_rows);
-```
-
-**File**: `be/src/exprs/table_function/multi_unnest.h` (modified, +4/-4)
-```diff
-@@ -174,10 +174,10 @@ class MultiUnnest final : public TableFunction {
-         // the batch's input-row range plus the intra-row offset it stopped at is exactly what the
-         // operator pairs its outer columns against. Same VLOG level as TableFunctionOperator's own
-         // per-bracket trace, so both sides of the contract can be read together.
--        VLOG(2) << "MultiUnnest batch: input_rows=" << input_rows << " first_row=" << first_row
--                << " processed_rows=" << state->processed_rows() << " offset=" << state->get_offset()
--                << " emitted=" << emitted << " max_output_rows=" << max_output_rows
--                << " required=" << fn_result_required;
-+        VLOG_ROW << "MultiUnnest batch: input_rows=" << input_rows << " first_row=" << first_row
-+                 << " processed_rows=" << state->processed_rows() << " offset=" << state->get_offset()
-+                 << " emitted=" << emitted << " max_output_rows=" << max_output_rows
-+                 << " required=" << fn_result_required;
- 
-         Columns result;
-         result.reserve(num_args);
-```
-
-**File**: `be/src/formats/parquet/column_reader_factory.cpp` (modified, +58/-5)
-```diff
-@@ -14,6 +14,8 @@
- 
- #include "formats/parquet/column_reader_factory.h"
- 
-+#include <optional>
++### `gtid_batch_window_ms`
 +
- #include "base/failpoint/fail_point.h"
- #include "column/column_helper.h"
- #include "column/datum_convert.h"
-@@ -391,6 +393,43 @@ static const ParquetField* find_readable_struct_leaf(const ParquetField& field)
-     return nullptr;
++- Default: 5000
++- Type: Long
++- Unit: Milliseconds
++- Is mutable: Yes
++- Description: How far ahead the FE reserves a batch of gtids when the next gtid would pass the current batch end. Values below `1` are treated as `1`. The window must also fit in the remaining 42-bit snowflake timestamp; a larger value makes gtid allocation fail instead of wrapping the reserved batch end. A larger valid value writes the metadata journal less often. The side effect is that unused reserved gtids are discarded on leader failover, so the timestamp bits of a gtid can jump forward by at most this window.
++- Introduced in: -
++
+ ### `hive_meta_cache_refresh_interval_s`
+ 
+ - Default: 60
+```
+
+**File**: `docs/en/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
+```diff
+@@ -446,6 +446,13 @@ For more information on how to build a monitoring service for your StarRocks clu
+ - Labels: `fstype` (`cachefs`)
+ - Description: Cumulative number of Data Cache misses when reading the files of cloud-native tables in a shared-data cluster. Each read covers at most one cache block. For the byte-based metrics, see `default_cache_miss_bytes`.
+ 
++## `gtid_timestamp_ahead_of_clock_ms`
++
++- Unit: Milliseconds
++- Type: Instantaneous
++- Labels: `is_leader`
++- Description: How far the gtid generator's last timestamp is ahead of the local wall clock on the Leader FE (`max(0, lastTimestamp - now)`). A positive value means the generator is ahead of this FE's clock. After failover this is normally at most `gtid_batch_window_ms` and falls back to `0` as wall-clock time catches up. A value that stays much larger than the window means a previously issued timestamp was far ahead of this FE's clock and has been persisted. Reported only by the Leader FE (`is_leader="true"`). Returns `0` before any gtid has been issued, and when the wall clock has caught up.
++
+ ## `hive_write_bytes`
+ 
+ - Unit: Bytes
+```
+
+**File**: `docs/ja/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
+```diff
+@@ -1299,6 +1299,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
+ - 説明：`EXPLAIN VERBOSE` の出力において、各スキャンノードの `dict_col` フィールドに表示される低カーディナリティ辞書最適化カラムの最大数。スキャンノードに適用された辞書カラムの数がこの値を超える場合、リストは切り詰められ、省略記号が付加されます。`0` 以下の値は `0` として扱われ、リスト全体が切り詰められます。この項目は `EXPLAIN VERBOSE` の出力にのみ影響し、クエリに対する辞書最適化の適用方法は変更しません。
+ - 導入時期：v4.2.0
+ 
++### `gtid_batch_window_ms`
++
++- デフォルト：5000
++- タイプ：Long
++- 単位：ミリ秒
++- 変更可能：Yes
++- 説明：次の gtid が現在のバッチ終端を超えるときに、FE が先回りして予約するミリ秒ウィンドウ。`1` 未満の値は `1` として扱います。ウィンドウは snowflake の残り 42 ビットタイムスタンプに収まっている必要があり、それを超えると予約境界をラップせず発番に失敗します。有効な範囲で値を大きくするとメタデータジャーナルの書き込みは減ります。副作用として、リーダーフェイルオーバー時に未使用の予約は破棄され、gtid のタイムスタンプはこのウィンドウ分まで前方に跳ねることがあります。
++- 導入時期：-
++
+ ### `hive_meta_cache_refresh_interval_s`
+ 
+ - デフォルト：3600 * 2
+```
+
+**File**: `docs/ja/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
+```diff
+@@ -446,6 +446,13 @@ StarRocksクラスターの監視サービスを構築する方法の詳細に
+ - ラベル: `fstype` (`cachefs`)
+ - 説明: 共有データクラスタでクラウドネイティブテーブルのファイルを読み取る際の、データキャッシュの累積ミス数。1 回の読み取りは最大で 1 つのキャッシュブロックを対象とします。バイト数ベースのメトリクスについては `default_cache_miss_bytes` を参照してください。
+ 
++## `gtid_timestamp_ahead_of_clock_ms`
++
++- 単位: ミリ秒
++- タイプ: 瞬間
++- ラベル: `is_leader`
++- 説明: Leader FE 上の gtid ジェネレーターの直近タイムスタンプがローカル壁時計よりどれだけ進んでいるか（`max(0, lastTimestamp - now)`）。正の値はジェネレーターがこの FE の時計より進んでいることを示します。フェイルオーバー直後は通常 `gtid_batch_window_ms` 以下で、壁時計が追いつくと `0` に戻ります。ウィンドウを大きく上回る値が長く続く場合、過去に発行したタイムスタンプがこの FE の時計より大幅に進んでおり、メタデータに永続化済みです。Leader FE のみが報告します（`is_leader="true"`）。まだ gtid を発行していない場合、および壁時計が追いついた場合は `0` です。
++
+ ## `hive_write_bytes`
+ 
+ - 単位: バイト
+```
+
+**File**: `docs/zh/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
+```diff
+@@ -1295,6 +1295,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
+ - 描述: `EXPLAIN VERBOSE` 输出中每个 Scan 节点的 `dict_col` 字段所列出的低基数字典优化列的最大数量。当某个 Scan 节点应用的字典列数量超过该值时，列表将被截断并以省略号结尾。小于或等于 `0` 的值会被视为 `0`，即完全截断该列表。该参数仅影响 `EXPLAIN VERBOSE` 的输出，不会改变字典优化在查询中的实际应用方式。
+ - 引入版本: v4.2.0
+ 
++### `gtid_batch_window_ms`
++
++- 默认值: 5000
++- 类型: Long
++- 单位: 毫秒
++- 是否可变: Yes
++- 描述: 下一条 gtid 将越过当前批次上界时，FE 向前预留的毫秒窗口。小于 `1` 的值按 `1` 处理。窗口还必须落在 snowflake 剩余的 42 位时间戳内；再大则发号失败，而不会把预留上界算溢出。合法范围内值越大，元数据 journal 写入越少。副作用是切主时未用完的预留作废，gtid 的时间戳最多向前跳这整个窗口。
++- 引入版本: -
++
+ ### `hive_meta_cache_refresh_interval_s`
+ 
+ - 默认值: 3600 * 2
+```
+
+**File**: `docs/zh/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
+```diff
+@@ -446,6 +446,13 @@ description: "Alphabetical d - h"
+ - 标签：`fstype`（`cachefs`）
+ - 描述：存算分离集群读取云原生表文件时 Data Cache 的累计未命中次数。每次读取最多涉及一个缓存块。按字节统计的指标参见 `default_cache_miss_bytes`。
+ 
++## `gtid_timestamp_ahead_of_clock_ms`
++
++- 单位: 毫秒
++- 类型: 瞬时
++- 标签: `is_leader`
++- 描述: Leader FE 上 gtid 发号器最近一条时间戳相对本机墙上时钟快多少（`max(0, lastTimestamp - now)`）。正值表示发号器快于本机时钟。切主后通常不超过 `gtid_batch_window_ms`，墙上时钟追上后回到 `0`。若长期远大于该窗口，说明曾经发出的时间戳已远快于本机时钟并已写入元数据。仅 Leader FE 上报（`is_leader="true"`）。尚未发过号，或墙上时钟已经追上时，均为 `0`。
++
+ ## `hive_write_bytes`
+ 
+ - 单位: 字节
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/common/Config.java` (modified, +11/-0)
+```diff
+@@ -1698,6 +1698,17 @@ public class Config extends ConfigBase {
+     @ConfField(mutable = true)
+     public static int max_running_txn_num_per_db = 1000;
+ 
++    /**
++     * How far ahead, in milliseconds, the gtid generator reserves a batch when the next gtid would
++     * pass the current batch end. Must be {@code >= 1}; values below 1 are treated as 1. Must also
++     * fit in the remaining 42-bit snowflake timestamp ({@code GtidGenerator.MAX_TIMESTAMP}); a
++     * larger value fails {@code nextGtid} rather than wrapping the batch end. A larger valid window
++     * writes journal less often. The side effect is that unused reservation is discarded on
++     * leader failover, so the timestamp field can jump forward by up to this window.
++     */
++    @ConfField(mutable = true)
++    public static long gtid_batch_window_ms = 5000;
++
+     @ConfField(mutable = true, comment = "A comma-separated list of transaction latency metric groups to report. " +
+             "Load job source types (see TransactionState.LoadJobSourceType) are categorized into logical groups " +
+             "for monitoring. When a group is enabled, its name is added as a 'type' label to transaction metrics. " +
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/metric/MetricRepo.java` (modified, +12/-0)
+```diff
+@@ -525,6 +525,7 @@ public static void recordCompactionScoreAtTrigger(long score) {
+     public static GaugeMetricImpl<Double> GAUGE_QUERY_LATENCY_P999;
+     public static LeaderAwareGaugeMetricLong GAUGE_SPM_BASELINE_COUNT;
+     public static LeaderAwareGaugeMetricLong GAUGE_MAX_JOURNAL_REPLAY_LAG;
++    public static LeaderAwareGaugeMetricLong GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS;
+     public static LeaderAwareGaugeMetric<Long> GAUGE_MAX_TABLET_COMPACTION_SCORE;
+     public static GaugeMetricImpl<Long> GAUGE_STACKED_JOURNAL_NUM;
+ 
+@@ -734,6 +735,17 @@ public Long getValueLeader() {
+         };
+         STARROCKS_METRIC_REGISTER.addMetric(GAUGE_MAX_JOURNAL_REPLAY_LAG);
+ 
++        GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS = new LeaderAwareGaugeMetricLong(
++                "gtid_timestamp_ahead_of_clock_ms", MetricUnit.MILLISECONDS,
++                "gtid generator lastTimestamp minus the local wall clock, floored at 0; " +
++                "positive means the generator is ahead") {
++            @Override
++            public Long getValueLeader() {
++                return GlobalStateMgr.getCurrentState().getGtidGenerator().getTimestampAheadOfClockMs();
++            }
++        };
++        STARROCKS_METRIC_REGISTER.addMetric(GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS);
++
+         GAUGE_SPM_BASELINE_COUNT = new LeaderAwareGaugeMetricLong(
+                 SPM_BASELINE_COUNT_METRIC_NAME,
+                 MetricUnit.NOUNIT,
+```
+
+---
+
+### Incident Patch 3: `1e2f91a8` (2026-11-03)
+**Commit Message**: [BugFix] Unload the primary index before a recovery that may fail to remove it (#81265)
+
+Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `be/src/storage/lake/txn_log_applier.cpp` (modified, +9/-4)
+```diff
+@@ -454,6 +454,10 @@ class PrimaryKeyTxnLogApplier : public TxnLogApplier {
+             // then we can retry again.
+             // 1. unload index first
+             _index_entry->value().unload();
++            // The entry outlives this publish when another holder still references it, so it must not stay
++            // charged for the memory the unload just freed.
++            _tablet.primary_key_mgr()->index_cache().update_object_size(_index_entry,
++                                                                        _index_entry->value().memory_usage());
+             // 2. and then release guard
+             _guard.reset(nullptr);
+             // 3. remove index from cache to save resource
+@@ -647,10 +651,11 @@ class PrimaryKeyTxnLogApplier : public TxnLogApplier {
+     Status recover() {
+         TRACE_COUNTER_SCOPE_LATENCY_US("primary_key_recover");
+         LOG(INFO) << "Primary Key recover begin, tablet_id: " << _tablet.id() << " base_ver: " << _base_version;
+-        // release and remove index entry's reference
+-        _tablet.primary_key_mgr()->release_primary_index_cache(_index_entry);
+-        _guard.reset(nullptr);
+-        _index_entry = nullptr;
++        // Unload the index before letting go of it, as a failed publish does: this publish may already
++        // have written to it, and recovery cannot remove it from the cache while another holder still
++        // references it. The retry must then reload the index from the metadata instead of working on
++        // top of this attempt's writes.
++        handle_failure();
+         // rebuild delvec and pk index
+         LakePrimaryKeyRecover recover(&_builder, &_tablet, _metadata);
+         RETURN_IF_ERROR(recover.recover());
+```
+
+**File**: `be/test/storage/lake/primary_key_publish_test.cpp` (modified, +50/-0)
+```diff
+@@ -2558,6 +2558,56 @@ TEST_P(LakePrimaryKeyPublishTest, test_recover_with_dels_v2_encoding) {
+     }
  }
  
-+// The type a level source is read as: a scalar as itself; a list, map or struct down to a single readable leaf, so
-+// that only that leaf's column is read. nullopt when no leaf under `field` is readable.
-+static std::optional<TypeDescriptor> level_source_read_type(const ParquetField& field) {
-+    if (is_readable_level_source(field)) {
-+        return variant_typed_desc_from_parquet_field(&field);
++// A publish that asks for recovery has already written to the cached index: the delete vector check fails
++// after the upsert of kKey. Recovery cannot remove the index from the cache while another holder still
++// references the entry, so it fails. Neither that holder nor the retry may then see the failed attempt's upsert.
++// On top of it, kKey already points at the row this same publish writes, so the retry would delete that row and
++// keep the old one.
++TEST_P(LakePrimaryKeyPublishTest, test_retry_reloads_index_when_recover_cannot_remove_it) {
++    constexpr int32_t kKey = 5;
++    constexpr int32_t kOldValue = 50;
++    constexpr int32_t kNewValue = 500;
++    ConfigResetGuard<bool> recover_guard(&config::enable_primary_key_recover, true);
++    const auto tablet_id = _tablet_metadata->id();
++    ASSERT_OK(publish_single_version(tablet_id, 2, write_single_upsert_txn(tablet_id, kKey, kOldValue)).status());
++    const int64_t txn_id = write_single_upsert_txn(tablet_id, kKey, kNewValue);
++
++    bool injected = false;
++    SyncPoint::GetInstance()->SetCallBack("delvec_inconsistent", [&](void* arg) {
++        if (!injected) {
++            *(Status*)arg = Status::InternalError("ut_test");
++            injected = true;
++        }
++    });
++    SyncPoint::GetInstance()->EnableProcessing();
++    DeferOp clear_sync_point([]() {
++        SyncPoint::GetInstance()->ClearCallBack("delvec_inconsistent");
++        SyncPoint::GetInstance()->DisableProcessing();
++    });
++    {
++        auto* other_holder = _primary_key_mgr->index_cache().get(tablet_id);
++        ASSERT_NE(nullptr, other_holder);
++        DeferOp release_other_holder([&]() { _primary_key_mgr->release_primary_index_cache(other_holder); });
++        ASSERT_FALSE(publish_single_version(tablet_id, 3, txn_id).ok());
++        ASSERT_TRUE(injected);
++        // What a reader that probes the index before the retry checks, e.g. the auto-increment probe of a load.
++        EXPECT_FALSE(other_holder->value().is_load(2));
++        // Nor may the cache keep charging for the memory the unload freed.
++        EXPECT_EQ(other_holder->value().memory_usage(), other_holder->size());
 +    }
-+    switch (field.type) {
-+    case ColumnType::ARRAY:
-+        if (!field.children.empty()) {
-+            if (auto element = level_source_read_type(field.children[0]); element.has_value()) {
-+                return TypeDescriptor::create_array_type(*element);
-+            }
-+        }
-+        return std::nullopt;
-+    case ColumnType::MAP:
-+        // An unknown key or value type is not read (see ColumnReaderFactory::create).
-+        if (field.children.size() >= 2) {
-+            if (auto key = level_source_read_type(field.children[0]); key.has_value()) {
-+                return TypeDescriptor::create_map_type(*key, TypeDescriptor(TYPE_UNKNOWN));
-+            }
-+            if (auto value = level_source_read_type(field.children[1]); value.has_value()) {
-+                return TypeDescriptor::create_map_type(TypeDescriptor(TYPE_UNKNOWN), *value);
-+            }
-+        }
-+        return std::nullopt;
-+    case ColumnType::STRUCT:
-+        for (const auto& child : field.children) {
-+            if (auto child_type = level_source_read_type(child); child_type.has_value()) {
-+                return TypeDescriptor::create_struct_type({child.name}, {*child_type});
-+            }
-+        }
-+        return std::nullopt;
-+    default:
-+        return std::nullopt;
-+    }
++
++    ASSERT_OK(publish_single_version(tablet_id, 3, txn_id).status());
++    ASSIGN_OR_ABORT(auto published, _tablet_mgr->get_tablet_metadata(tablet_id, 3));
++    ASSERT_EQ(2, published->rowsets_size());
++    const IndexValue new_row(uint64_t{published->rowsets(1).id()} << 32);
++    auto visible = visible_oracle(tablet_id, 3, kKey);
++    EXPECT_EQ(1, visible.row_count);
++    EXPECT_EQ(std::optional<int32_t>(kNewValue), visible.target_value);
++    EXPECT_EQ(new_row, cached_point_get(tablet_id, kKey));
++    _primary_key_mgr->unload_and_remove_primary_index(tablet_id);
++    EXPECT_EQ(new_row, prepare_and_point_get(published, 3, kKey));
 +}
 +
- const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetField& field) {
-     // Its values are read and dropped, so prefer a fixed-width one over a byte array.
-     const ParquetField* byte_array = nullptr;
-@@ -410,7 +449,7 @@ const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetF
-         return byte_array;
-     }
-     // No direct scalar subfield: a leaf under a struct subfield also has one value per row and carries this
--    // struct's def levels. A struct whose stored subfields are only lists or maps keeps reading NULL.
-+    // struct's def levels.
-     for (const auto& child : field.children) {
-         if (child.type != ColumnType::STRUCT) {
-             continue;
-@@ -419,6 +458,22 @@ const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetF
-             return leaf;
-         }
-     }
-+    // Only lists or maps are stored: one of them, read through its own list or map reader down to one leaf, still
-+    // gives one entry per row, and its levels carry this struct's def levels (the extra repetition levels are
-+    // skipped by the struct and by any enclosing list). Without it, a struct in a list would make the whole list
-+    // NULL.
-+    for (const auto& child : field.children) {
-+        if ((child.type == ColumnType::ARRAY || child.type == ColumnType::MAP) &&
-+            level_source_read_type(child).has_value()) {
-+            return &child;
-+        }
-+    }
-+    // No direct list or map: a struct subfield holding one is read the same way through its struct reader.
-+    for (const auto& child : field.children) {
-+        if (child.type == ColumnType::STRUCT && level_source_read_type(child).has_value()) {
-+            return &child;
-+        }
-+    }
-     return nullptr;
- }
- 
-@@ -542,8 +597,7 @@ StatusOr<ColumnReaderPtr> ColumnReaderFactory::create(const ColumnReaderOptions&
-         if (level_source_field != nullptr) {
-             // Iceberg subfields added after the file was written: keep the struct's nulls and fill the defaults.
-             // Readers keep a pointer to their type, so it lives in the struct reader.
--            auto level_source_type =
--                    std::make_unique<TypeDescriptor>(variant_typed_desc_from_parquet_field(level_source_field));
-+            auto level_source_type = std::make_unique<TypeDescriptor>(*level_source_read_type(*level_source_field));
-             ASSIGN_OR_RETURN(ColumnReaderPtr level_source, create(opts, level_source_field, *level_source_type));
-             return std::make_unique<StructColumnReader>(field, std::move(children_readers), std::move(default_columns),
-                                                         std::move(level_source), std::move(level_source_type));
-@@ -581,8 +635,7 @@ StatusOr<ColumnReaderPtr> ColumnReaderFactory::create_array_offsets_only(const C
-     for (const auto& name : col_type.children[0].field_names) {
-         children_readers.emplace(
-```
-
-**File**: `be/src/formats/parquet/column_reader_factory.h` (modified, +3/-3)
-```diff
-@@ -94,9 +94,9 @@ class ColumnReaderFactory {
-                                                           const TIcebergSchemaField* lake_schema_field,
-                                                           bool parquet_has_field_id);
- 
--    // For an Iceberg struct none of whose used subfields is in the file: a stored scalar column read only for the
--    // struct's levels (a direct subfield, else a leaf under a struct subfield), or nullptr if there is none. The
--    // reader factory and LakeMetaHelper use the same choice.
-+    // For an Iceberg struct none of whose used subfields is in the file: a stored field read only for the struct's
-+    // levels (a direct scalar subfield, else a leaf under a struct subfield, else a subfield holding a list or map,
-+    // read down to one leaf), or nullptr if there is none. The reader factory and LakeMetaHelper use the same choice.
-     static const ParquetField* find_struct_level_source(const ParquetField& field);
- 
-     // For an array<struct> column whose consumers need only its offsets (access path /<col>/OFFSET, e.g.
-```
-
-**File**: `be/test/formats/parquet/iceberg_schema_evolution_file_reader_test.cpp` (modified, +97/-0)
-```diff
-@@ -25,6 +25,7 @@
- #include "exprs/expr_executor.h"
- #include "exprs/expr_factory.h"
- #include "formats/parquet/column_chunk_reader.h"
-+#include "formats/parquet/column_reader_factory.h"
- #include "formats/parquet/file_reader.h"
- #include "formats/parquet/metadata.h"
- #include "formats/parquet/page_reader.h"
-@@ -1612,4 +1613,100 @@ TEST_F(IcebergSchemaEvolutionTest, TestInnerStructWithoutSubfield) {
-     }
- }
- 
-+TEST_F(IcebergSchemaEvolutionTest, TestArrayStructOnlyMissingSubfieldWithListSibling) {
-+    // The element struct's stored subfields hold only lists and the only used subfield was added after the file was
-+    // written: a list still gives the element levels, so the array keeps its rows and the subfield reads NULL.
-+    // Files (written by pyarrow, field ids as in the comments):
-+    //   required int32 id = 1;
-+    //   optional group arr (LIST) = 2 { repeated group list { optional group element = 3 {
-+    //     optional group items (LIST) = 4 { repeated group list { optional int32 element = 5; } } } } }
-+    //   with rows (1, [{[1,2]}, {[3]}]), (2, []), (3, NULL), (4, [NULL, {NULL}, {[]}]);
-+    // and the same with `items` wrapped in `optional group s = 7`, so the list is reached only through a struct.
-+    for (const std::string file_name : {"array_struct_only_list_subfield", "array_struct_only_nested_list_subfield"}) {
-+        SCOPED_TRACE(file_name);
-+        const std::string file_path =
-+                "./be/test/formats/parquet/test_data/iceberg_schema_evolution/" + file_name + ".parquet";
-+        auto file = _create_file(file_path);
-+        auto file_reader = std::make_shared<FileReader>(config::vector_chunk_size, file.get(),
-+                                                        std::filesystem::file_size(file_path));
-+
-+        // --------------init context---------------
-+        auto ctx = _create_scan_context();
-+        TIcebergSchema schema = TIcebergSchema{};
-+
-+        TIcebergSchemaField field_id{};
-+        field_id.__set_field_id(1);
-+        field_id.__set_name("id");
-+
-+        TIcebergSchemaField field_b{};
-+        field_b.__set_field_id(6);
-+        field_b.__set_name("b");
-+
-+        TIcebergSchemaField field_element{};
-+        field_element.__set_field_id(3);
-+        field_element.__set_name("element");
-+        field_element.__set_children({field_b});
-+
-+        TIcebergSchemaField field_arr{};
-+        field_arr.__set_field_id(2);
-+        field_arr.__set_name("arr");
-+        field_arr.__set_children({field_element});
-+
-+        schema.__set_fields({field_id, field_arr});
-+        ctx->format_scan_context.lake_schema = &schema;
-+
-+        TypeDescriptor id = TypeDescriptor::from_logical_type(LogicalType::TYPE_INT);
-+        TypeDescriptor element = TypeDescriptor::create_struct_type({"b"}, {TypeDescriptor(LogicalType::TYPE_INT)});
-+        TypeDescriptor arr = TypeDescriptor::create_array_type(element);
-+
-+        Utils::SlotDesc slot_descs[] = {{"id", id}, {"arr", arr}, {""}};
-+
-+        TupleDescriptor* tuple_desc = parquet::Utils::create_tuple_descriptor(_runtime_state, &_pool, slot_descs);
-+        Utils::make_column_info_vector(tuple_desc, &ctx->format_scan_context.materialized_columns);
-+        ctx->slot_descs = tuple_desc->slots();
-+        _set_scan_range(ctx, _create_scan_range(file_path));
-+        // --------------finish init context---------------
-+
-+        ASSERT_OK(file_reader->init(&ctx->format_scan_context));
-+
-+        auto chunk = std::make_shared<Chunk>();
-+        chunk->append_column(ColumnHelper::create_column(id, true), chunk->num_columns());
-+        chunk->append_column(ColumnHelper::create_column(arr, true), chunk->num_columns());
-+
-+        ASSERT_OK(file_reader->get_next(&chunk));
-+        ASSERT_EQ(4, chunk->num_rows());
-+
-+        EXPECT_EQ("[1, [{b:NULL},{b:NULL}]]", chunk->debug_row(0));
-+        EXPECT_EQ("[2, []]", chunk->debug_row(1));
-+        EXPECT_EQ("[3, NULL]", chunk->debug_row(2));
-+        EXPECT_EQ("[4, [NULL,{b:NULL},{b:NULL}]]", chunk->debug_row(3));
-+    }
-+}
-+
-+TEST_F(IcebergSchemaEvolutionTest, TestStructLevelSourcePrefersDirectList) {
-+    // A list under a struct subfield is the last resort: a direct list subfield is taken even when it comes later.
-+    auto make_field = [](std::string name, ColumnType type, std::vector<ParquetField> children = {}) {
-+        ParquetField field{};
-+        field.name = std::move(name);
-+        field.type = type;
-+        field.physical_type = tparquet::Type::INT32;
-+        field.children = std::move(children);
-+        return field;
-+    };
-+    auto make_list = [&](std::string name) {
-+        return make_field(std::move(name), ColumnType::ARRAY, {make_field("element", ColumnType::SCALAR)});
-+    };
-+
-+    ParquetField element = make_field("element", ColumnType::STRUCT,
-+                                      {make_field("s", ColumnType::STRUCT, {make_list("items")}), make_list("tiny")});
-+    const ParquetField* source = ColumnReaderFactory::find_struct_level_source(
+ TEST_P(LakePrimaryKeyPublishTest, test_index_load_failure) {
+     auto [chunk0, indexes] = gen_data_and_index(kChunkSize, 0, true, true);
+     auto version = 1;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81992** (closed): [BugFix] Fail a Fluss log read that stops making progress (@fresh-borzoni)
-- **PR #81985** (closed): [BugFix][RB-912] Fix tenann compile issue (@starrocks-bot[bot])
-- **PR #81981** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (backport #81979) (@mergify[bot])
-- **PR #81980** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (backport #81979) (@mergify[bot])
-- **PR #81979** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (@starrocks-bot[bot])
-- **PR #81977** (2026-10-31): [Tool] release-freeze: a patch branch takes no merges without QA approval (@huailiu1122)
+- **PR #82319** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
+- **PR #82318** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
+- **PR #82317** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
+- **PR #82316** (2026-11-03): [BugFix] Unload the primary index before a recovery that may fail to remove it (backport #81265) (@mergify[bot])
+- **PR #82315** (2026-11-03): [BugFix] Unload the primary index before a recovery that may fail to remove it (backport #81265) (@mergify[bot])
+- **PR #82314** (2026-11-03): [Tool] release-notes skill: start the PR body from a copy of the template (@huailiu1122)
 
 ---
 
@@ -2219,32 +2416,56 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invert
+## X. [BugFix][RB-723] Journal a reshard job's version reservation before releasing it
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec9a17ed`: [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (#81979). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c65d4db1`: [BugFix][RB-723] Journal a reshard job's version reservation before releasing its lock (#81922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    // Don't support years/months add/sub: they clamp to the month end, so they are not invertible, e.g.
-    // months_add(c, 1) = '2024-02-29' holds for c in 2024-01-29..31, not only for months_sub('2024-02-29', 1)
+        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
+        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
+        // the reserved version would never be published.
+            // 4. Add new tablets to inverted index
+            addTabletsToInvertedIndex();
+            // 5. Register resharding tablets
+            registerReshardingTablets();
+            // 6. Set job state to PREPARING
+            setJobState(JobState.PREPARING);
+        }
+            // Never move nextVersion backwards. runPendingJob journals the reservation before it
+            // releases the table lock, but a journal written by an FE without that ordering can
+            // still carry a load that committed between the reservation and its PREPARING entry.
+            // A replaying FE applies that load first, so the load has already carried nextVersion
+            // past the version reserved here, and assigning commitVersion + 1 unconditionally
+            // would drag it back, handing the same version out twice.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-            .put(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB)
-            .put(FunctionSet.YEARS_SUB, FunctionSet.YEARS_ADD)
-            .put(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB)
-            .put(FunctionSet.MONTHS_SUB, FunctionSet.MONTHS_ADD)
+        }
+        // 4. Add new tablets to inverted index
+        addTabletsToInvertedIndex();
+        // 5. Register resharding tablets
+        registerReshardingTablets();
+        // 6. Set job state to PREPARING
+        setJobState(JobState.PREPARING);
+            // Never move nextVersion backwards. The commit version is reserved here, in
+            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
+            // few steps later -- so a load transaction that commits in between journals its own
+            // entry first, and a replaying FE applies that entry before this one. By then the
+            // transaction has already carried nextVersion past the version reserved here, and
+            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
+            // version out twice.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec9a17ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c65d4db1` are properly handled with clean fallback behavior.
