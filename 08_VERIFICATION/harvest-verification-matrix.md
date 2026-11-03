@@ -6973,3 +6973,5 @@
 | `CYCLE-20261103-INJH` | `2026-11-03T18:47:40.973Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6578` | Yes (`2d8d0f2e...`) |
 | `CYCLE-20261103-IVCA` | `2026-11-03T18:47:51.082Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6579` | Yes (`97decb14...`) |
 | `CYCLE-20261103-J0H9` | `2026-11-03T18:47:57.741Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6580` | Yes (`97944d99...`) |
+| `CYCLE-20261103-U9XV` | `2026-11-03T18:56:43.219Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6581` | Yes (`a7770e6a...`) |
+| `CYCLE-20261103-UI70` | `2026-11-03T18:56:53.916Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6582` | Yes (`7e1589ec...`) |

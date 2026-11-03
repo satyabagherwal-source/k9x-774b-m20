@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `ea99cfaf`  
+> **Source Version**: `630068f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:22:54.942Z  
+> **Timestamp**: 2026-11-03T18:56:42.347Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:22:54.936Z  
+> **Harvest Timestamp**: 2026-11-03T18:56:41.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -959,11 +959,19 @@ class ScopedSigmask {
 inline ScopedSigmask::ScopedSigmask() noexcept {
   sigset_t set;
   sigfillset(&set);
-  Setmask(SIG_SETMASK, &set, &old_set_);
+  Setmask(SIG_BLOCK, &set, &old_set_);
 }
 
 inline ScopedSigmask::~ScopedSigmask() noexcept {
-  Setmask(SIG_SETMASK, &old_set_, nullptr);
+  // pthread_sigmask filters libc-internal signals (such as glibc's SIGTIMER)
+  // out of the new mask, so SIG_SETMASK would unblock them on threads that
+  // blocked them with a raw syscall.  Unblock only what was unblocked on entry.
+  sigset_t unblock;
+  sigemptyset(&unblock);
+  for (int sig = 1; sig < NSIG; ++sig) {
+    if (sigismember(&old_set_, sig) == 0) sigaddset(&unblock, sig);
+  }
+  Setmask(SIG_UNBLOCK, &unblock, nullptr);
 }
 
 inline void ScopedSigmask::Setmask(int how, sigset_t* set, sigset_t* old) {
@@ -1222,13 +1230,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1783** (2026-10-29): **Account for in-flight unbacks in HugeCache::ShrinkCache and HugePageFiller::HandleFullyFreedTracker.**
-  *Symptoms*: Account for in-flight unbacks in HugeCache::ShrinkCache and HugePageFiller::HandleFullyFreedTracker.  Both HugeCache::ShrinkCache and HugePageFiller::HandleFullyFreedTracker drop the page heap lock around their madvise unback calls after removing the pages from their free counts, but before the underlying hugepage allocator records the range as unbacked. Track those in-flight unback ranges in unmapped bytes during the unlocked window so concurrent stats and limit checks do not see a transient drop in free plus unmapped bytes.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
+- **Issue #1823** (2026-11-03): **No public description**
+  *Symptoms*: No public description 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1783/checks?check_run_id=123668358242) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1823/checks?check_run_id=125715878440) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1777** (2026-10-29): **Fix signed overflow in Sampler::RecordAllocationSlow for huge requests.**
-  *Symptoms*: Fix signed overflow in Sampler::RecordAllocationSlow for huge requests.  TryRecordAllocationFast subtracts k + 1 from bytes_until_sample_ with unsigned wraparound.  For k > numeric_limits<ssize_t>::max() the counter wraps past zero back to a non-negative value instead of going negative, and RecordAllocationSlow then computes bytes_until_sample_ + kIntervalOffset, which overflows when the wrapped counter is exactly the largest ssize_t (k == bytes_until_sample_ + 2^63).  Found by memory_errors_fuzz with realloc(nullptr, 2^63 + 2^27) under UBSan.  Such a request cannot be satisfied, so clamp the weight instead of deriving it from the wrapped counter.  The fast path is unchanged. 
+- **Issue #1822** (2026-11-03): **No public description**
+  *Symptoms*: No public description 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1822/checks?check_run_id=125699411396) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,197 +1255,96 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea99cfaf` (2026-10-30)
-**Commit Message**: Ignore invalid duration parameter updates and init tc_globals in hard-limit getter.
+### Incident Patch 1: `88e6e2f8` (2026-11-02)
+**Commit Message**: Add regression test for retained capacities in percpu_tcmalloc_fuzz.
 
-`Parameters::heap_size_hard_limit()` read `tc_globals.page_allocator()` without
-calling `tc_globals.InitIfNecessary()`, and the `skip_subrelease_*_interval` and
-`background_process_sleep_interval` setters accepted negative (or non-positive
-sleep) durations instead of logging and ignoring them.
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1012290269
 
-PiperOrigin-RevId: 1010803325
-
-**File**: `tcmalloc/parameters.cc` (modified, +21/-0)
+**File**: `tcmalloc/internal/percpu_tcmalloc_fuzz.cc` (modified, +14/-0)
 ```diff
-@@ -182,6 +182,7 @@ void Parameters::InitializeFromExperiments() {
+@@ -781,6 +781,20 @@ TEST(PercpuTcmallocTest, FuzzPercpuTcmallocRegression) {
+        UncacheCpuSlab{}, CacheCpuSlab{}, SwitchCpu{.cpu_index = 1},
+        StopCpu{.cpu_index = 1}, StartCpu{.cpu_index = 1}},
+       {kMaxCapacity, kMaxCapacity, kMaxCapacity, kMaxCapacity});
++
++  FuzzPercpuTcmalloc(
++      {StopCpu{.cpu_index = 50}, Pop{.size_class = 4294967295},
++       StartCpu{.cpu_index = 8}, Grow{.size_class = 2147483647, .len = 143},
++       Push{.size_class = 0},
++       GrowOtherClass{.cpu_index = 55, .size_class = 468428499, .len = 90},
++       CacheCpuSlab{}, PopBatch{.size_class = 2147483647, .count = 167},
++       PushBatch{.size_class = 1975813631, .count = 252},
++       PushBatch{.size_class = 4294967295, .count = 222}, Drain{.cpu_index = 6},
++       ReleasePerCPUSlabMetadata{.madvise_fail = false},
++       UpdateMaxCapacities{.size_class = 1, .new_max_capacity = 204},
++       SwitchCpu{.cpu_index = 237}, Push{.size_class = 0},
++       PushBatch{.size_class = 4294967295, .count = 15}},
++      {166, 109, 102, 186});
  }
  
- uint64_t Parameters::heap_size_hard_limit() {
-+  tc_globals.InitIfNecessary();
-   return tc_globals.page_allocator().limit(PageAllocator::kHard);
- }
- 
-@@ -711,6 +712,11 @@ void TCMalloc_Internal_GetHugePageFillerSkipSubreleaseShortInterval(
- 
- void TCMalloc_Internal_SetHugePageFillerSkipSubreleaseShortInterval(
-     absl::Duration v) {
-+  if (v < absl::ZeroDuration()) {
-+    TC_LOG("Ignoring negative skip_subrelease_short_interval: %v ns",
-+           absl::ToInt64Nanoseconds(v));
-+    return;
-+  }
-   tc_globals.InitIfNecessary();
-   Parameters::skip_subrelease_short_interval_ns_.store(
-       absl::ToInt64Nanoseconds(v), std::memory_order_relaxed);
-@@ -724,6 +730,11 @@ void TCMalloc_Internal_GetHugePageFillerSkipSubreleaseLongInterval(
- 
- void TCMalloc_Internal_SetHugePageFillerSkipSubreleaseLongInterval(
-     absl::Duration v) {
-+  if (v < absl::ZeroDuration()) {
-+    TC_LOG("Ignoring negative skip_subrelease_long_interval: %v ns",
-+           absl::ToInt64Nanoseconds(v));
-+    return;
-+  }
-   tc_globals.InitIfNecessary();
-   Parameters::skip_subrelease_long_interval_ns_.store(
-       absl::ToInt64Nanoseconds(v), std::memory_order_relaxed);
-@@ -737,6 +748,11 @@ void TCMalloc_Internal_GetHugePageFillerSkipSubreleaseColdShortInterval(
- 
- void TCMalloc_Internal_SetHugePageFillerSkipSubreleaseColdShortInterval(
-     absl::Duration v) {
-+  if (v < absl::ZeroDuration()) {
-+    TC_LOG("Ignoring negative skip_subrelease_cold_short_interval: %v ns",
-+           absl::ToInt64Nanoseconds(v));
-+    return;
-+  }
-   tc_globals.InitIfNecessary();
-   Parameters::skip_subrelease_cold_short_interval_ns_.store(
-       absl::ToInt64Nanoseconds(v), std::memory_order_relaxed);
-@@ -750,6 +766,11 @@ void TCMalloc_Internal_GetHugePageFillerSkipSubreleaseColdLongInterval(
- 
- void TCMalloc_Internal_SetHugePageFillerSkipSubreleaseColdLongInterval(
-     absl::Duration v) {
-+  if (v < absl::ZeroDuration()) {
-+    TC_LOG("Ignoring negative skip_subrelease_cold_long_interval: %v ns",
-+           absl::ToInt64Nanoseconds(v));
-+    return;
-+  }
-   tc_globals.InitIfNecessary();
-   Parameters::skip_subrelease_cold_long_interval_ns_.store(
-       absl::ToInt64Nanoseconds(v), std::memory_order_relaxed);
+ TEST(PercpuTcmallocTest, ResizeSlabsMaxCapacities) {
 ```
 
-**File**: `tcmalloc/parameters.h` (modified, +13/-0)
+---
+
+### Incident Patch 2: `630068f9` (2026-11-03)
+**Commit Message**: Revert: Adding an ablation study for understanding the performance trade-offs of using a shorter demand cycle.
+
+PiperOrigin-RevId: 1013093793
+
+**File**: `tcmalloc/experiment_config.h` (modified, +0/-2)
 ```diff
-@@ -220,11 +220,18 @@ class Parameters {
-         background_process_sleep_interval_ns_.load(std::memory_order_relaxed));
-   }
-   static void set_background_process_sleep_interval(absl::Duration value) {
-+    if (value <= absl::ZeroDuration()) {
-+      TC_LOG("Ignoring non-positive background_process_sleep_interval: %v ns",
-+             absl::ToInt64Nanoseconds(value));
-+      return;
-+    }
-     background_process_sleep_interval_ns_.store(absl::ToInt64Nanoseconds(value),
-                                                 std::memory_order_relaxed);
-   }
- 
-   static void set_filler_skip_subrelease_short_interval(absl::Duration value) {
-+    if (value >= absl::ZeroDuration()) {
-+    }
-     TCMalloc_Internal_SetHugePageFillerSkipSubreleaseShortInterval(value);
-   }
- 
-@@ -234,6 +241,8 @@ class Parameters {
-   }
- 
-   static void set_filler_skip_subrelease_long_interval(absl::Duration value) {
-+    if (value >= absl::ZeroDuration()) {
-+    }
-     TCMalloc_Internal_SetHugePageFillerSkipSubreleaseLongInterval(value);
-   }
- 
-@@ -244,6 +253,8 @@ class Parameters {
- 
-   static void set_filler_skip_subrelease_cold_short_interval(
-       absl::Duration value) {
-+    if (value >= absl::ZeroDuration()) {
-+    }
-     TCMalloc_Internal_SetHugePageFillerSkipSubreleaseColdShortInterval(value);
-   }
- 
-@@ -255,6 +266,8 @@ class Parameters {
- 
-   static void set_filler_skip_subrelease_cold_long_interval(
-       absl::Duration value) {
-+    if (value >= absl::ZeroDuration()) {
-+    }
-     TCMalloc_Internal_SetHugePageFillerSkipSubreleaseColdLongInterval(value);
-   }
- 
+@@ -24,7 +24,6 @@ enum class Experiment : int {
+   // clang-format off
+   // go/keep-sorted start
+   TCMALLOC_CFL_PRIORITIZATION_ABLATION,  // TODO: b/567166830 - Complete experiment.
+-  TCMALLOC_DEMAND_CYCLE_120S,  // TODO: b/540987155 - Complete experiment.
+   TCMALLOC_PGHO_EXPERIMENT,  // TODO: b/460486507 - Complete experiment.
+   TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION,  // TODO: b/205153285 - Complete experiment.
+   TCMALLOC_RELEASE_FREE_STALE,  // TODO: b/527473378 - Complete experiment.
+@@ -58,7 +57,6 @@ struct ExperimentConfig {
+ inline constexpr ExperimentConfig experiments[] = {
+     // go/keep-sorted start
+     {Experiment::TCMALLOC_CFL_PRIORITIZATION_ABLATION, "TCMALLOC_CFL_PRIORITIZATION_ABLATION"},
+-    {Experiment::TCMALLOC_DEMAND_CYCLE_120S, "TCMALLOC_DEMAND_CYCLE_120S"},
+     {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
+     {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
+     {Experiment::TCMALLOC_RELEASE_FREE_STALE, "TCMALLOC_RELEASE_FREE_STALE"},
 ```
 
-**File**: `tcmalloc/testing/default_parameters_test.cc` (modified, +46/-0)
+**File**: `tcmalloc/parameters.cc` (modified, +0/-14)
 ```diff
-@@ -171,6 +171,51 @@ bool TestBackgroundProcessParameters() {
-   return true;
+@@ -126,20 +126,6 @@ static std::atomic<bool>& hpaa_subrelease_ptr() {
  }
  
-+bool TestInvalidDurationParameters() {
-+  const absl::Duration initial_sleep =
-+      MallocExtension::GetBackgroundProcessSleepInterval();
-+  MallocExtension::SetBackgroundProcessSleepInterval(absl::Seconds(-1));
-+  if (MallocExtension::GetBackgroundProcessSleepInterval() != initial_sleep) {
-+    absl::FPrintF(stderr,
-+                  "BackgroundProcessSleepInterval after -1s: got %d, want %d\n",
-+                  absl::ToInt64Seconds(
-+                      MallocExtension::GetBackgroundProcessSleepInterval()),
-+                  absl::ToInt64Seconds(initial_sleep));
-+    return false;
-+  }
-+  MallocExtension::SetBackgroundProcessSleepInterval(absl::ZeroDuration());
-+  if (MallocExtension::GetBackgroundProcessSleepInterval() != initial_sleep) {
-+    absl::FPrintF(stderr,
-+                  "BackgroundProcessSleepInterval after 0s: got %d, want %d\n",
-+                  absl::ToInt64Seconds(
-+                      MallocExtension::GetBackgroundProcessSleepInterval()),
-+                  absl::ToInt64Seconds(initial_sleep));
-+    return false;
-+  }
-+
-+  MallocExtension::SetSkipSubreleaseShortInterval(absl::Seconds(-1));
-+  if (MallocExtension::GetSkipSubreleaseShortInterval() !=
-+      kDefaultSkipSubreleaseShortInterval) {
-+    absl::FPrintF(
-+        stderr, "SkipSubreleaseShortInterval after -1s: got %d, want %d\n",
-+        absl::ToInt64Seconds(MallocExtension::GetSkipSubreleaseShortInterval()),
-+        absl::ToInt64Seconds(kDefaultSkipSubreleaseShortInterval));
-+    return false;
-+  }
-+
-+  MallocExtension::SetSkipSubreleaseLongInterval(absl::Seconds(-1));
-+  if (MallocExtension::GetSkipSubreleaseLongInterval() !=
-+      kDefaultSkipSubreleaseLongInterval) {
-+    absl::FPrintF(
-+        stderr, "SkipSubreleaseLongInterval after -1s: got %d, want %d\n",
-+        absl::ToInt64Seconds(MallocExtension::GetSkipSubreleaseLongInterval()),
-+        absl::ToInt64Seconds(kDefaultSkipSubreleaseLongInterval));
-+    return false;
-+  }
-+
-+  return true;
-+}
-+
- }  // namespace
- }  // namespace tcmalloc
+ void Parameters::InitializeFromExperiments() {
+-#if !defined(TCMALLOC_INTERNAL_SMALL_BUT_SLOW)
+-  if (IsExperimentActive(Experiment::TCMALLOC_DEMAND_CYCLE_120S)) {
+-    skip_subrelease_short_interval_ns_.store(
+-        absl::ToInt64Nanoseconds(absl::Seconds(60)), std::memory_order_relaxed);
+-    skip_subrelease_long_interval_ns_.store(
+-        absl::ToInt64Nanoseconds(absl::Seconds(300)),
+-        std::memory_order_relaxed);
+-    skip_subrelease_cold_short_interval_ns_.store(
+-        absl::ToInt64Nanoseconds(absl::Seconds(60)), std::memory_order_relaxed);
+-    skip_subrelease_cold_long_interval_ns_.store(
+-        absl::ToInt64Nanoseconds(absl::Seconds(300)),
+-        std::memory_order_relaxed);
+-  }
+-#endif
  
-@@ -185,6 +230,7 @@ int main() {
-   success = success & tcmalloc::TestMaxPerCpuCacheSize();
-   success = success & tcmalloc::TestMaxTotalThreadCacheBytes();
-   success = success & tcmalloc::TestBackgroundProcessParameters();
-+  success = success & tcmalloc::TestInvalidDurationParameters();
- 
-   if (success) {
-     fprintf(stderr, "PASS");
+   if (IsExperimentActive(Experiment::TCMALLOC_SONIC_TRACK_BROKEN_HUGEPAGES)) {
+     track_broken_hugepages_.store(TrackBrokenHugepages::kEnabled,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1783** (closed): Account for in-flight unbacks in HugeCache::ShrinkCache and HugePageFiller::HandleFullyFreedTracker. (@copybara-service[bot])
-- **PR #1777** (2026-10-29): Fix signed overflow in Sampler::RecordAllocationSlow for huge requests. (@copybara-service[bot])
-- **PR #1774** (2026-10-29): Template and extract `MinMaxTracker` into its own internal header. (@copybara-service[bot])
-- **PR #1773** (2026-10-30): Bound HugeRegionSet's free-backed count in the HPAA fuzzer. (@copybara-service[bot])
-- **PR #1772** (2026-10-30): Check HugeRegionSet invariants during unback in fuzz test. (@copybara-service[bot])
-- **PR #1771** (2026-10-30): Test HugeRegionSet operations that run during ReleasePages' unback. (@copybara-service[bot])
+- **PR #1823** (closed): No public description (@copybara-service[bot])
+- **PR #1822** (closed): No public description (@copybara-service[bot])
+- **PR #1816** (2026-11-03): Do not unblock libc-internal signals in `tcmalloc_internal::ScopedSigmask`. (@copybara-service[bot])
+- **PR #1813** (2026-11-03): Revert: Adding an ablation study for understanding the performance trade-offs of using a shorter demand cycle. (@copybara-service[bot])
+- **PR #1812** (2026-11-02): Internal change. (@copybara-service[bot])
+- **PR #1807** (closed): No public description (@copybara-service[bot])
 
 ---
 
@@ -1455,41 +1364,34 @@ PiperOrigin-RevId: 1010803325
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Ignore invalid duration parameter updates and init tc_globals in hard-limit gett
+## X. Add regression test for retained capacities in percpu_tcmalloc_fuzz.
 
 **RULE**:
-When implementing operations in `tcmalloc/parameters.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/internal/percpu_tcmalloc_fuzz.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea99cfaf`: Ignore invalid duration parameter updates and init tc_globals in hard-limit getter.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88e6e2f8`: Add regression test for retained capacities in percpu_tcmalloc_fuzz.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/parameters.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/percpu_tcmalloc_fuzz.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  tc_globals.InitIfNecessary();
-  if (v < absl::ZeroDuration()) {
-    TC_LOG("Ignoring negative skip_subrelease_short_interval: %v ns",
-           absl::ToInt64Nanoseconds(v));
-    return;
-  }
-  if (v < absl::ZeroDuration()) {
-    TC_LOG("Ignoring negative skip_subrelease_long_interval: %v ns",
-           absl::ToInt64Nanoseconds(v));
-    return;
-  }
-  if (v < absl::ZeroDuration()) {
-    TC_LOG("Ignoring negative skip_subrelease_cold_short_interval: %v ns",
-           absl::ToInt64Nanoseconds(v));
-    return;
-  }
-  if (v < absl::ZeroDuration()) {
-    TC_LOG("Ignoring negative skip_subrelease_cold_long_interval: %v ns",
-           absl::ToInt64Nanoseconds(v));
-    return;
-  }
+
+  FuzzPercpuTcmalloc(
+      {StopCpu{.cpu_index = 50}, Pop{.size_class = 4294967295},
+       StartCpu{.cpu_index = 8}, Grow{.size_class = 2147483647, .len = 143},
+       Push{.size_class = 0},
+       GrowOtherClass{.cpu_index = 55, .size_class = 468428499, .len = 90},
+       CacheCpuSlab{}, PopBatch{.size_class = 2147483647, .count = 167},
+       PushBatch{.size_class = 1975813631, .count = 252},
+       PushBatch{.size_class = 4294967295, .count = 222}, Drain{.cpu_index = 6},
+       ReleasePerCPUSlabMetadata{.madvise_fail = false},
+       UpdateMaxCapacities{.size_class = 1, .new_max_capacity = 204},
+       SwitchCpu{.cpu_index = 237}, Push{.size_class = 0},
+       PushBatch{.size_class = 4294967295, .count = 15}},
+      {166, 109, 102, 186});
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1499,4 +1401,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea99cfaf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88e6e2f8` are properly handled with clean fallback behavior.

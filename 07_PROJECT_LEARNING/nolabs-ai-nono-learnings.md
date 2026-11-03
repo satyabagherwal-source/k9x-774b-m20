@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `48774760`  
+> **Source Version**: `9297e2c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:25:09.426Z  
+> **Timestamp**: 2026-11-03T18:56:53.036Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:25:08.143Z  
+> **Harvest Timestamp**: 2026-11-03T18:56:53.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4819 stars
+- **Stars / Engagement**: 4821 stars
 
 ---
 
@@ -2980,766 +2980,166 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa63c36b` (2026-11-02)
-**Commit Message**: fix(policy): keep exact-file directory bypasses literal (#2142)
+### Incident Patch 1: `9297e2c3` (2026-11-03)
+**Commit Message**: refactor(cli): simplify remote session display and selector layout (#2260)
 
-* fix(policy): keep exact-file directory bypasses literal
+Remove raw session ID columns from `nono ps` tables and interactive selector cards to keep the UI clean and scannable. Fall back to using the global session ID as the display name when no explicit session name is recorded by the runtime.
 
-An allow_file grant of a directory is an exact path. bypass_protection
-of that path now emits a literal Seatbelt hole and leaves child denies
-in place. A directory grant of the same path still opens the subtree.
+- Omit binary paths from agent metadata display to filter out internal activation scripts
+- Display the platform or console host label across section headers and target selection outputs
+- Reduce selector card height from 3 to 2 lines per session to fit more items on screen
 
-Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
-* fix(policy): match exact-file bypasses stored as symlinks
-
-A user-intent exact-file grant can name the expanded symlink path
-instead of the canonical path. Seatbelt kept that hole as a subtree.
-Match either form, and still open a subtree when the same path is a
-directory grant.
-
-Tests cover a symlink-form lock file that keeps its child deny, and a
-symlink-form directory grant that still removes child denies.
-
-Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
-
-* test(policy): cover why and Seatbelt for an exact-file directory bypass
-
-read_file of a directory plus bypass_protection of that path is an
-exact grant. why allows the directory and denies a nested file with
-path_not_granted, and dry-run lists the grant as a file. The Seatbelt
-hole stays literal, so the sandbox does not open that subtree.
-
-
-
-**File**: `crates/nono-cli/src/capability_ext.rs` (modified, +155/-0)
+**File**: `crates/nono-cli/src/connect_client.rs` (modified, +151/-89)
 ```diff
-@@ -1365,6 +1365,16 @@ mod tests {
-         SandboxArgs::default()
+@@ -37,7 +37,7 @@ const DEFAULT_DETACH_SEQUENCE: &[u8] = &[0x1d, b'd'];
+ const WEBSOCKET_CONNECT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
+ const TERMINAL_PROTOCOL_V1: &str = "nono.terminal.v1";
+ const SELECTOR_HEADER_ROWS: u16 = 7;
+-const SELECTOR_ROWS_PER_SESSION: u16 = 3;
++const SELECTOR_ROWS_PER_SESSION: u16 = 2;
+ static REMOTE_EXIT_CODE: AtomicI32 = AtomicI32::new(0);
+ 
+ #[derive(Debug, Deserialize)]
+@@ -218,13 +218,7 @@ pub(crate) fn run_remote_ps(args: &PsArgs) -> Result<()> {
+         return Ok(());
      }
  
-+    #[cfg(target_os = "macos")]
-+    struct RemoveDir<'a>(&'a Path);
-+
-+    #[cfg(target_os = "macos")]
-+    impl Drop for RemoveDir<'_> {
-+        fn drop(&mut self) {
-+            let _ = std::fs::remove_dir_all(self.0);
-+        }
-+    }
-+
-     #[test]
-     fn test_from_args_basic() {
-         let dir = tempdir().expect("Failed to create temp dir");
-@@ -1665,6 +1675,151 @@ mod tests {
-         );
-     }
- 
-+    /// `read_file` of a directory plus `bypass_protection` of that directory.
-+    /// Dry-run lists the grant as `(file)`. `why` allows that directory and
-+    /// denies a nested file with `path_not_granted`. The Seatbelt hole stays
-+    /// `literal`, so the sandbox does not open the subtree those diagnostics deny.
-+    #[cfg(target_os = "macos")]
-+    #[test]
-+    fn test_read_file_directory_bypass_matches_why_and_seatbelt() {
-+        // `/tmp` resolves under `/private`, which `system_read_macos` grants,
-+        // so `why` allows a child there. This shape is a path no system grant covers.
-+        let home = std::env::var_os("HOME").expect("HOME");
-+        let dir = Path::new(&home).join(format!(
-+            ".nono-exact-bypass-{}-{}",
-+            std::process::id(),
-+            std::time::SystemTime::now()
-+                .duration_since(std::time::UNIX_EPOCH)
-+                .expect("clock")
-+                .as_nanos()
-+        ));
-+        let _cleanup = RemoveDir(&dir);
-+        std::fs::create_dir_all(&dir).expect("create fixture root");
-+        let granted = dir.join("dir");
-+        std::fs::create_dir_all(&granted).expect("create dir");
-+        let nested = granted.join("sub");
-+        std::fs::create_dir_all(&nested).expect("create nested dir");
-+        let child = nested.join("leaf");
-+        std::fs::write(&child, "hidden").expect("write child");
-+        let resolved = granted.canonicalize().expect("canonicalize dir");
-+
-+        let profile_path = dir.join("repro.json");
-+        std::fs::write(
-+            &profile_path,
-+            format!(
-+                r#"{{
-+                "meta": {{ "name": "repro", "version": "0.0.1" }},
-+                "filesystem": {{
-+                    "read_file": ["{}"],
-+                    "bypass_protection": ["{}"]
-+                }}
-+            }}"#,
-+                granted.display(),
-+                granted.display()
-+            ),
-+        )
-+        .expect("write profile");
-+
-+        let profile = crate::profile::load_profile_from_path(&profile_path).expect("load profile");
-+        let workdir = tempdir().expect("workdir");
-+        let args = sandbox_args();
-+        let prepared =
-+            with_env_lock(|| CapabilitySet::from_profile(&profile, workdir.path(), &args))
-+                .expect("build caps");
-+
-+        assert!(
-+            prepared.caps.fs_capabilities().iter().any(|cap| {
-+                cap.is_file
-+                    && cap.access == AccessMode::Read
-+                    && cap.resolved == resolved
-+                    && cap.source.is_user_intent()
-+            }),
-+            "dry-run must list the directory grant as (file)"
-+        );
-+        assert!(
-+            prepared
-+                .applied_bypass_paths
-+                .iter()
-+                .any(|bypass| bypass.is_file && bypass.path == resolved),
-+            "bypass hole must stay literal, got: {:?}",
-+            prepared.applied_bypass_paths
-+        );
-+        assert!(
-+            !prepared.caps.path_covered(&child),
-+            "exact-file grant must not cover the nested file"
-+        );
-+
-+        // Same order as `run_why`: a covering deny wins, otherwise query grants.
-+        let policy = crate::policy::EffectiveDenyPolicy::from_applied_bypasses(
-+            &prepared.deny_paths,
-+            &prepared.applied_bypass_paths,
-+        );
-+        assert!(
-+            policy
-+                .matching_deny_for_access(&resolved, AccessMode::Read)
-+                .is_none(),
-+            "the granted directory is not under filesystem.deny"
-+        );
-+        let dir_result = crate::query_ext::query_path(
-+            &resolved,
-+            AccessMode::Read,
-+            &prepared.caps,
-+            policy.bypass_paths(),
-+        )
-+        .expect("why dir");
-+        let resolved_display = resolved.display().to_string();
-+        assert!(
-+            matches!(
-+                dir_result,
-+                crate::query_ext::QueryResult::Allowed {
-+                    ref reason,
-+                    granted_path: Some(ref granted_path),
-+                    source: Some(ref source),
-+                    ..
-+                } if reason == "granted_path"
-+                    && granted_path == &resolved_display
-+                    && source == "profile"
-+            ),
-+            "why must allow the directory via the exact profile grant, got {dir_result:?}"
-+        );
-+        assert!(
-+            policy
-+                .match
-```
-
-**File**: `crates/nono-cli/src/policy.rs` (modified, +263/-7)
-```diff
-@@ -1821,6 +1821,54 @@ fn emit_macos_socket_bypass_rules(
+-    let enrollment = crate::platform_client::load_state()?;
+-    print_remote_sessions(
+-        &sessions,
+-        args.all,
+-        &console,
+-        enrollment.as_ref().map(|state| state.platform_url.as_str()),
+-    );
++    print_remote_sessions(&sessions, args.all, &remote_host_label(&access, &console));
      Ok(())
  }
  
-+/// Seatbelt hole shape for one bypass path.
-+///
-+/// Non-directories stay exact: regular files, pathname sockets, and missing
-+/// paths. `Path::is_file()` is false for sockets, so this uses `!is_dir()`.
-+///
-+/// A directory stays exact when a user-intent exact-file grant names that
-+/// path and no directory grant names that same path. `allow_file` stores a
-+/// directory used as a lock file with `is_file: true`. A directory grant of
-+/// the bypass path itself still opens `subpath`. A parent directory grant
-+/// does not widen an exact-file bypass. The grant may name either the
-+/// canonical path or the expanded symlink path.
-+fn bypass_hole_is_literal(caps: &CapabilitySet, canonical: &Path, expanded: &Path) -> bool {
-+    if !canonical.is_dir() {
-+        return true;
-+    }
-+    let mut saw_exact_file = false;
-+    let mut saw_directory_grant = false;
-+    for cap in caps.fs_capabilities() {
-+        if !cap.source.is_user_intent() {
-+            continue;
-+        }
-+        let names_bypass = cap.resolved == canonical
-+            || cap.original == canonical
-+            || cap.resolved == expanded
-+            || cap.original == expanded;
-+        if !names_bypass {
-+            continue;
-+        }
-+        if cap.is_file {
-+            saw_exact_file = true;
-+        } else {
-+            saw_directory_grant = true;
-+        }
-+    }
-+    saw_exact_file && !saw_directory_grant
-+}
-+
-+/// True when `deny` is covered by this bypass and should leave `deny_paths`.
-+///
-+/// A subtree hole covers the bypass path and its descendants. A literal hole
-+/// covers only the bypass path, so a child `filesystem.deny` stays in force.
-+fn bypass_removes_deny(deny: &Path, canonical: &Path, expanded: &Path, literal: bool) -> bool {
-+    if literal {
-+        return deny == canonical || deny == expanded;
-+    }
-+    deny.starts_with(canonical) || deny.starts_with(expanded)
-+}
-+
- /// Apply deny overrides for specific paths, punching targeted holes through deny groups.
- ///
- /// For each override path:
-@@ -1917,7 +1965,7 @@ pub fn apply_deny_overrides(
-             canonical.display()
-         );
+@@ -244,6 +238,8 @@ pub(crate) fn take_remote_exit_code() -> Option<i32> {
+ pub(crate) struct ConsoleAccess {
+     pub(crate) credential: ApiCredential,
+     pub(crate) session_console: Option<Url>,
++    /// The platform a `nono login` session is signed in to. Display only.
++    pub(crate) session_platform: Option<String>,
+ }
  
--        let is_file = !canonical.is_dir();
-+        let is_file = bypass_hole_is_literal(caps, &canonical, &expanded);
+ /// Choose the console credential: an explicit token file or
+@@ -256,6 +252,7 @@ pub(crate) fn console_access(token_file: Option<&Path>) -> Result<ConsoleAccess>
+         return Ok(ConsoleAccess {
+             credential: session.credential,
+             session_console: session.console_url,
++            session_platform: Some(session.platform_url),
+         });
+     }
+     if !explicit && crate::platform_oauth::org_override()?.is_some() {
+@@ -267,6 +264,7 @@ pub(crate) fn console_access(token_file: Option<&Path>) -> Result<ConsoleAccess>
+     Ok(ConsoleAccess {
+         credential: load_token(token_file)?,
+         session_console: None,
++        session_platform: None,
+     })
+ }
  
-         // On macOS: emit Seatbelt allow rules to punch through deny.
-         // Only emit rules matching the effective access mode from the union
-@@ -1953,14 +2001,16 @@ pub fn apply_deny_overrides(
-             emit_macos_socket_bypass_rules(caps, &canonical, &expanded, is_file)?;
-         }
- 
--        // Remove deny entries that the override covers (equal or child of the override path).
--        // Check both the canonical and expanded (symlink) forms so that deny entries
--        // recorded for either the symlink or its target are removed.
--        // Do NOT remove broader deny entries when the override is a child — e.g.,
--        // overriding ~/.aws must not remove a deny on the entire home directory.
-+        // Remove deny entries that the override covers. Check both the
-+        // canonical and expanded (symlink) forms so that deny entries recorded
-+        // for either the symlink or its target are removed. A subtree hole
-+        // also removes descendants. A literal hole removes only the bypass
-+        // path, so a child deny stays. Do NOT remove a broader parent deny
-+        // when the override is a child: overriding ~/.aws must not remove a
-+        // deny on the entire home directory.
-         let mut removed_denies = Vec::new();
-         deny_paths.retain(|dp| {
--            if dp.starts_with(&canonical) || dp.starts_with(&expanded) {
-+            if bypass_removes_deny(dp, &canonical, &expanded, is_file) {
-                 removed_denies.push(dp.clone());
-                 false
-             } else {
-@@ -4931,6 +4981,212 @@ mod tests {
-         assert_eq!(deny_paths[0], dir_canonical);
+@@ -296,11 +294,12 @@ fn resolve_attach_url(
      }
  
-+    #[test]
-+    fn test_exact_file_directory_bypass_stays_literal_and_keeps_child_denies() {
-+        let dir = tempfile::tempdir().expect("tmpdir");
-+        let lock_dir = dir.path().join("claude.lock");
-+        std::fs::create_dir_all(&lock_dir).expect("mkdir lock dir");
-+        let child = lock_dir.join("secret");
-+        std::fs::write(&child, "hidden").expect("write child");
-+
-+        let lock_canonical = lock_dir.canonicalize().expect("canonicalize lock dir");
-+        let child_canonical = child.canonicalize().expect("canonicalize child");
-+        let parent_canonical = dir.path().canonicalize().expect("canonicalize parent");
-+
-+        let mut deny_paths = vec![
-+            parent_canonical.clone(),
-+            lock_canonical.clone(),
-+            child_canonical.clone(),
-+        ];
-+        let mut caps = CapabilitySet::new();
-+        // Parent directory grant must not widen the exact-file hole.
-+        caps.add_fs(
-+            FsCapability::new_dir(dir.path(), AccessMode::ReadWrite).ex
-```
-
----
-
-### Incident Patch 2: `ef107f94` (2026-11-02)
-**Commit Message**: fix(proxy): fail upstream connections that go silent (#2237)
-
-A CONNECT tunnel is relayed with copy_bidirectional, which has no idle
-timeout, and nothing sets keepalive or TCP_USER_TIMEOUT on the upstream
-socket. When an upstream stops answering without a FIN or RST (a
-middlebox drops the flow, the peer vanishes), the tunnel is held for as
-long as the kernel keeps trying: with data in flight, tcp_retries2
-retransmissions (about 15 minutes on Linux); with none, forever. The
-client behind it hangs as long. Seen on CI runners behind `nono proxy`:
-about 1 in 100 connections to Azure blob storage completed its
-handshake, then had nothing acknowledged, and @actions/cache waited 10
-minutes before abandoning the upload.
-
-Every upstream connection now gets TCP keepalive (30 s idle, 10 s
-between probes, 3 probes) and, where the platform has it,
-TCP_USER_TIMEOUT of 60 s, set once the connection is established, so
-the connect timeout is unchanged. On Linux a silent upstream then fails
-the tunnel at about 60 s, with or without data in flight. On macOS,
-which has no user timeout, an idle one fails at about 60 s through
-keepalive, and one with data in flight at the system's retransmission
-limit.
-
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -2769,6 +2769,7 @@ dependencies = [
-  "serde_json",
-  "sha1 0.11.0",
-  "sha2 0.11.1",
-+ "socket2",
-  "spiffe",
-  "subtle",
-  "tempfile",
-```
-
-**File**: `crates/nono-proxy/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -38,6 +38,8 @@ subtle = "2"
- url.workspace = true
- urlencoding = "2"
- globset.workspace = true
-+# Keepalive and TCP_USER_TIMEOUT on upstream sockets (upstream_socket.rs).
-+socket2 = { version = "0.6", features = ["all"] }
+     let console_url = resolve_console(console, access)?;
++    let host = remote_host_label(access, &console_url);
+     let session = match target {
+         Some(value) => select_named_session(&list_live_sessions(&console_url, token)?, value)?,
+-        None => select_interactively(&list_live_sessions(&console_url, token)?)?,
++        None => select_interactively(&list_live_sessions(&console_url, token)?, &host)?,
+     };
+-    print_connect_target(&session, &console_url);
++    print_connect_target(&session, &host);
+     terminal_url(&console_url, &session.global_session_id)
+ }
  
- # AWS SigV4 signing support (smithy-rs, no service SDK required)
- # `credentials-login` is required to resolve an active `aws login` session
-```
-
-**File**: `crates/nono-proxy/src/connect.rs` (modified, +14/-1)
-```diff
-@@ -609,7 +609,10 @@ async fn connect_to_resolved(addrs: &[SocketAddr], host: &str) -> Result<TcpStre
-     let mut last_err = None;
-     for addr in addrs {
-         match tokio::time::timeout(UPSTREAM_CONNECT_TIMEOUT, TcpStream::connect(addr)).await {
--            Ok(Ok(stream)) => return Ok(stream),
-+            Ok(Ok(stream)) => {
-+                crate::upstream_socket::set_liveness(&stream);
-+                return Ok(stream);
-+            }
-             Ok(Err(e)) => {
-                 debug!("Connect to {} failed: {}", addr, e);
-                 last_err = Some(e.to_string());
-@@ -710,6 +713,16 @@ async fn write_upstream_failure<S: AsyncWrite + Unpin>(
- mod tests {
-     use super::*;
+@@ -901,7 +900,6 @@ fn filter_remote_sessions(mut sessions: Vec<RemoteSession>, all: bool) -> Vec<Re
+ }
  
-+    #[tokio::test]
-+    async fn connect_to_resolved_sets_liveness() {
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let addrs = [listener.local_addr().unwrap()];
-+
-+        let stream = connect_to_resolved(&addrs, "upstream.test").await.unwrap();
-+
-+        crate::upstream_socket::assert_liveness(&stream);
-+    }
-+
-     #[test]
-     fn test_parse_connect_with_port() {
-         let (host, port) = parse_connect_target("CONNECT api.openai.com:443 HTTP/1.1").unwrap();
-```
-
-**File**: `crates/nono-proxy/src/external.rs` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ pub async fn connect_via_proxy(
-             proxy_addr, e
-         ))
-     })?;
-+    crate::upstream_socket::set_liveness(&proxy_stream);
- 
-     let mut connect_req = format!(
-         "CONNECT {}:{} HTTP/1.1\r\nHost: {}:{}\r\n",
-```
-
-**File**: `crates/nono-proxy/src/forward.rs` (modified, +59/-1)
-```diff
-@@ -232,7 +232,10 @@ async fn connect_to_resolved(addrs: &[SocketAddr], host: &str) -> Result<TcpStre
-     let mut last_err = None;
-     for addr in addrs {
-         match tokio::time::timeout(UPSTREAM_CONNECT_TIMEOUT, TcpStream::connect(addr)).await {
--            Ok(Ok(stream)) => return Ok(stream),
-+            Ok(Ok(stream)) => {
-+                crate::upstream_socket::set_liveness(&stream);
-+                return Ok(stream);
-+            }
-             Ok(Err(e)) => {
-                 debug!("Connect to {} failed: {}", addr, e);
-                 last_err = Some(e.to_string());
-@@ -609,6 +612,61 @@ mod tests {
+ struct RemoteDisplayRow {
+-    session: String,
+     name: String,
+     status: String,
+     agent: String,
+@@ -912,36 +910,36 @@ struct RemoteDisplayRow {
+ impl RemoteDisplayRow {
+     fn from_session(session: &RemoteSession) -> Self {
+         Self {
+-            session: terminal_text(&session.global_session_id),
+-            name: terminal_text(remote_name(session)),
++            name: terminal_text(remote_display_name(session)),
+             status: terminal_text(remote_status(session)),
+             agent: terminal_text(remote_agent(session)),
+             repo: terminal_text(&remote_repo(session)),
+             live: is_live_session(session),
          }
      }
- 
-+    #[tokio::test]
-+    async fn open_tcp_upstream_sets_liveness_on_both_strategies() {
-+        let config = rustls::ClientConfig::builder_with_provider(std::sync::Arc::new(
-+            rustls::crypto::ring::default_provider(),
-+        ))
-+        .with_safe_default_protocol_versions()
-+        .unwrap()
-+        .with_root_certificates(rustls::RootCertStore::empty())
-+        .with_no_client_auth();
-+        let connector = TlsConnector::from(std::sync::Arc::new(config));
 +
-+        let upstream = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let resolved_addrs = [upstream.local_addr().unwrap()];
-+        let direct = UpstreamSpec {
-+            scheme: UpstreamScheme::Http,
-+            host: "upstream.test",
-+            port: 80,
-+            strategy: UpstreamStrategy::Direct {
-+                resolved_addrs: &resolved_addrs,
-+            },
-+            tls_connector: &connector,
-+        };
-+        let stream = open_tcp_upstream(&direct).await.unwrap();
-+        crate::upstream_socket::assert_liveness(&stream);
-+
-+        // An enterprise proxy that accepts the CONNECT and holds the tunnel.
-+        let proxy = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let proxy_addr = proxy.local_addr().unwrap().to_string();
-+        tokio::spawn(async move {
-+            let (mut sock, _) = proxy.accept().await.unwrap();
-+            let mut request = Vec::new();
-+            while !request.ends_with(b"\r\n\r\n") {
-+                let mut byte = [0u8; 1];
-+                sock.read_exact(&mut byte).await.unwrap();
-+                request.push(byte[0]);
-+            }
-+            sock.write_all(b"HTTP/1.1 200 Connection established\r\n\r\n")
-+                .await
-+                .unwrap();
-+            let _ = sock.read_to_end(&mut Vec::new()).await;
-+        });
-+        let via_proxy = UpstreamSpec {
-+            scheme: UpstreamScheme::Http,
-+            host: "upstream.test",
-+            port: 80,
-+            strategy: UpstreamStrategy::ExternalProxy {
-+                proxy_addr: &proxy_addr,
-+                proxy_auth_header: None,
-+            },
-+            tls_connector: &connector,
-+        };
-+        let stream = open_tcp_upstream(&via_proxy).await.unwrap();
-+        crate::upstream_socket::assert_liveness(&stream);
++    /// `agent · repo`, omitting fields the console did not report.
++    fn metadata(&self) -> Option<String> {
++        let parts = [self.agent.as_str(), self.repo.as_str()]
++            .into_iter()
++            .filter(|part| *part != "-")
++            .collect::<Vec<_>>();
++        (!parts.is_empty()).then(|| parts.join(" · "))
 +    }
-+
-     #[test]
-     fn rewrite_http1_response_rejects_content_encoded_body_for_all_statuses() {
-         let raw =
-```
-
-**File**: `crates/nono-proxy/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -42,6 +42,7 @@ pub mod server;
- pub mod spiffe;
- pub mod tls_intercept;
- pub mod token;
-+pub(crate) mod upstream_socket;
+ }
  
- #[cfg(test)]
- pub mod test_env;
-```
-
-**File**: `crates/nono-proxy/src/pool.rs` (modified, +6/-0)
-```diff
-@@ -197,6 +197,12 @@ fn build_pooled_client(
+ #[derive(Debug, Eq, PartialEq)]
+ struct RemoteTableLayout {
+-    widths: [usize; 5],
++    widths: [usize; 4],
+     compact: bool,
+ }
  
-     let mut http = HttpConnector::new_with_resolver(resolver);
-     http.enforce_http(false);
-+    // As on the CONNECT path (`upstream_socket`): fail a silent upstream fast.
-+    http.set_keepalive(Some(crate::upstream_socket::KEEPALIVE_IDLE));
-+    http.set_keepalive_interval(Some(crate::upstream_socket::KEEPALIVE_INTERVAL));
-+    http.set_keepalive_retries(Some(crate::upstream_socket::KEEPALIVE_RETRIES));
-+    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
-+    http.set_tcp_user_timeout(Some(crate::upstream_socket::USER_TIMEOUT));
- 
-     let builder = hyper_rustls::HttpsConnectorBuilder::new()
-         .with_tls_config(tls_config)
-```
-
-**File**: `crates/nono-proxy/src/upstream_socket.rs` (added, +137/-0)
-```diff
-@@ -0,0 +1,137 @@
-+//! Liveness options for upstream TCP connections.
-+//!
-+//! A CONNECT tunnel is relayed with `copy_bidirectional`, which has no idle
-+//! timeout of its own. When an upstream stops answering without a FIN or RST
-+//! (a middlebox drops the flow, the peer vanishes), the kernel alone decides
-+//! when the tunnel fails: with data in flight, after `tcp_retries2`
-+//! retransmissions (about 15 minutes on Linux); with none, never. The client
-+//! behind the tunnel hangs for as long.
-+//!
-+//! Two socket options bound that, set on every upstream connection once it is
-+//! established (the connect timeout is unchanged):
-+//!
-+//! - TCP keepalive: an idle connection is probed, and fails when the probes go
-+//!   unanswered: after about 60 s (30 s idle, then 3 probes 10 s apart).
-+//! - `TCP_USER_TIMEOUT` (Linux, Android, Fuchsia): data left unacknowledged
-+//!   this long fails the socket.
-+//!
-+//! The user timeout is the keepalive's whole span, not shorter. With
-+//! keepalive on, Linux closes the connection once a probe is out and the user
-+//! timeout has passed since the peer was last heard from, whatever
-+//! `TCP_KEEPCNT` says; a shorter timeout would end an idle connection at the
-+//! second probe. Matching the two (as Cloudflare's "When TCP sockets refuse to
-+//! die" recommends) ends a silent upstream at about 60 s whether or not data
-+//! is in flight.
-+//!
-+//! On macOS there is no user timeout: an idle connection fails through
-+//! keepalive at about 60 s, and one with data in flight at the system's
-+//! retransmission limit.
-+//!
-+//! A live peer acknowledges data and answers probes however long the
-+//! connection stays idle, so neither option shortens it. The exception is a
-+//! peer that holds a zero receive window: Linux applies the user timeout to
-+//! zero-window probing too, so one that stays closed for longer than 60 s
-+//! fails.
-+
-+use std::time::Duration;
-+use tokio::net::TcpStream;
-+use tracing::warn;
-+
-+/// Idle time before the first keepalive probe.
-+pub(crate) const KEEPALIVE_IDLE: Duration = Duration::from_secs(30);
-+/// Time between unanswered keepalive probes.
-+pub(crate) const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(10);
-+/// Unanswered probes before the connection fails.
-+pub(crate) const KEEPALIVE_RETRIES: u32 = 3;
-+/// How long sent data may go unacknowledged before the connection fails.
-+///
-+/// The keepalive's whole span: Linux closes a probed connection once this has
-+/// passed, so anything shorter would override `KEEPALIVE_RETRIES`.
-+#[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
-+pub(crate) const USER_TIMEOUT: Duration =
-+    KEEPALIVE_IDLE.saturating_add(KEEPALIVE_INTERVAL.saturating_mul(KEEPALIVE_RETRIES));
-+
-+/// Set the liveness options on an established upstream connection.
-+///
-+/// Best effort: a connection without them still works, it only fails slowly
-+/// if the upstream goes silent, so an error is logged rather than returned.
-+pub(crate) fn set_liveness(stream: &TcpStream) {
-+    if let Err(e) = apply(stream) {
-+        warn!("Failed to set upstream TCP liveness options: {}", e);
-+    }
-+}
-+
-+fn apply(stream: &TcpStream) -> std::io::Result<()> {
-+    let socket = socket2::SockRef::from(stream);
-+    let keepalive = socket2::TcpKeepalive::new().with_time(KEEPALIVE_IDLE);
-+    #[cfg(any(
-+        target_os = "android",
-+        target_os = "freebsd",
-+        target_os = "fuchsia",
-+        target_os = "linux",
-+        target_os = "netbsd",
-+        target_vendor = "apple",
-+        windows,
-+    ))]
-+    let keepalive = keepalive
-+        .with_interval(KEEPALIVE_INTERVAL)
-+        .with_retries(KEEPALIVE_RETRIES);
-+    socket.set_tcp_keepalive(&keepalive)?;
-+    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
-+    socket.set_tcp_user_timeout(Some(USER_TIMEOUT))?;
-+    Ok(())
-+}
-+
-+/// Assert that `stream` carries every option [`set_liveness`] sets.
-+///
-+/// Shared by the tests of each upstream open site, so each proves its own
-+/// call, not only this module's.
-+#[cfg(test)]
-+#[allow(clippy::unwrap_used)]
-+#[track_caller]
-+pub(crate) fn assert_liveness(stream: &TcpStream) {
-+    let socket = socket2::SockRef::from(stream);
-+    assert!(socket.keepalive().unwrap(), "SO_KEEPALIVE not set");
-+    assert_eq!(socket.tcp_keepalive_time().unwrap(), KEEPALIVE_IDLE);
-+    #[cfg(any(
-+        target_os = "android",
-+        target_os = "freebsd",
-+        target_os = "fuchsia",
-+        target_os = "linux",
-+        target_os = "netbsd",
-+        target_vendor = "apple",
-+    ))]
-+    {
-+        assert_eq!(socket.tcp_keepalive_interval().unwrap(), KEEPALIVE_INTERVAL);
-+        assert_eq!(socket.tcp_keepalive_retries().unwrap(), KEEPALIVE_RETRIES);
-+    }
-+    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
-+    assert_eq!(socket.tcp_user_timeout().unwrap(), Some(USER_TIMEOUT));
-+}
-+
-+#[cfg(test)]
-+#[allow(clippy::unwrap_used)]
-+mod tests {
-+    use
-```
-
----
-
-### Incident Patch 3: `48774760` (2026-11-03)
-**Commit Message**: fix(proxy): strip hop headers when the colon is spaced (#2254)
-
-Detection already trims the header name, so a spaced
-Transfer-Encoding is decoded. The forward filters only
-dropped a name glued to the colon, then forwarded the
-trimmed field beside a new Content-Length.
-
-Match stripping to that split-and-trim check for the hop
-headers and the credential header. Drop an empty name.
-
-Closes #2253
-
-Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-proxy/src/reverse.rs` (modified, +109/-48)
-```diff
-@@ -2033,74 +2033,70 @@ fn validate_phantom_token_basic(
- 
- /// Filter headers, removing hop-by-hop and proxy-internal headers.
- ///
-+/// Names are split on `:` and trimmed, the same match used by
-+/// [`has_chunked_transfer_encoding`] and [`extract_content_length`].
-+/// A space or tab before the colon is still that header.
-+///
- /// Always strips:
- /// - `Host` (rewritten to upstream)
- /// - `Content-Length` (re-added after body is read)
- /// - `Transfer-Encoding` (body is decoded and re-framed upstream)
-+/// - `Connection` and `Proxy-Connection`
- /// - `Proxy-Authorization` (hop-by-hop, contains session token)
- ///
--/// When `cred_header` is non-empty, also strips that header (it contains
--/// the phantom token that must not be forwarded alongside the real credential).
--/// When `cred_header` is empty (no-credential route), all other headers
--/// including `Authorization` are passed through to the upstream.
-+/// `strip` names are removed the same way. A line with no colon, or an
-+/// empty name, is not forwarded.
- pub(crate) fn filter_headers_multi(header_bytes: &[u8], strip: &[&str]) -> Vec<(String, String)> {
--    let prefixes: Vec<String> = strip
--        .iter()
--        .filter(|h| !h.is_empty())
--        .map(|h| format!("{}:", h.to_lowercase()))
--        .collect();
--    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
--    let mut headers = Vec::new();
--    for line in header_str.lines() {
--        let lower = line.to_lowercase();
--        if lower.starts_with("host:")
--            || lower.starts_with("content-length:")
--            || lower.starts_with("transfer-encoding:")
--            || lower.starts_with("connection:")
--            || lower.starts_with("proxy-connection:")
--            || lower.starts_with("proxy-authorization:")
--            || prefixes.iter().any(|p| lower.starts_with(p.as_str()))
--            || line.trim().is_empty()
--        {
--            continue;
--        }
--        if let Some((name, value)) = line.split_once(':') {
--            headers.push((name.trim().to_string(), value.trim().to_string()));
--        }
+-fn print_remote_sessions(
+-    sessions: &[RemoteSession],
+-    all: bool,
+-    console: &Url,
+-    platform_url: Option<&str>,
+-) {
+-    if let Some(platform_url) = platform_url {
+-        println!("  Platform: {}", terminal_text(platform_url));
 -    }
--    headers
-+    collect_forwarded_headers(header_bytes, strip)
++fn print_remote_sessions(sessions: &[RemoteSession], all: bool, host: &str) {
+     if sessions.is_empty() {
+         if all {
+-            eprintln!("No remote sessions found.");
++            eprintln!("No remote sessions found on {host}.");
+         } else {
+-            eprintln!("No live remote sessions. Use --all to include inactive sessions.");
++            eprintln!("No live remote sessions on {host}. Use --all to include inactive sessions.");
+         }
+         return;
+     }
+@@ -960,8 +958,8 @@ fn print_remote_sessions(
+     println!(
+         "  {}  {}  {}",
+         "REMOTE SESSIONS".bold(),
++        host.bold(),
+         summary.dimmed(),
+-        console_label(console).dimmed(),
+     );
+     println!();
+ 
+@@ -975,12 +973,12 @@ fn print_remote_sessions(
  }
  
-+/// Same stripping as [`filter_headers_multi`] for one credential header.
-+///
-+/// When `cred_header` is non-empty, that header is removed. It carries the
-+/// phantom token and must not be forwarded next to the real credential.
-+/// When `cred_header` is empty, other headers, including `Authorization`,
-+/// are passed through.
- pub(crate) fn filter_headers(header_bytes: &[u8], cred_header: &str) -> Vec<(String, String)> {
--    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
--    let cred_header_lower = if cred_header.is_empty() {
--        String::new()
-+    if cred_header.is_empty() {
-+        collect_forwarded_headers(header_bytes, &[])
-     } else {
--        format!("{}:", cred_header.to_lowercase())
--    };
--    let mut headers = Vec::new();
-+        collect_forwarded_headers(header_bytes, &[cred_header])
-+    }
-+}
- 
-+fn collect_forwarded_headers(header_bytes: &[u8], extra: &[&str]) -> Vec<(String, String)> {
-+    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
-+    let mut headers = Vec::new();
-     for line in header_str.lines() {
--        let lower = line.to_lowercase();
--        if lower.starts_with("host:")
--            || lower.starts_with("content-length:")
--            || lower.starts_with("transfer-encoding:")
--            || lower.starts_with("connection:")
--            || lower.starts_with("proxy-connection:")
--            || lower.starts_with("proxy-authorization:")
--            || (!cred_header_lower.is_empty() && lower.starts_with(&cred_header_lower))
--            || line.trim().is_empty()
--        {
-+        if line.trim().is_empty() {
-             continue;
-         }
--        if let Some((name, value)) = line.split_once(':') {
--            headers.push((name.trim().to_string(), value.trim().to_string()));
-+        let Some((name, value)) = split_header_name_value(line) else {
-+            continue;
-+        };
-+        if is_stripped_request_header(name, extra) {
-+            continue;
-         }
-+        headers.push((name.to_string(), value.trim().to_string()));
-     }
--
-     headers
- }
- 
-+fn is_stripped_request_header(name: &str, extra: &[&str]) -> bool {
-+    const HOP: &[&str] = &[
-+        "host",
-+        "content-length",
-+        "transfer-encoding",
-+        "connection",
-+        "proxy-connection",
-+        "proxy-authorization",
-+    ];
-+    HOP.iter().any(|hop| name.eq_ignore_ascii_case(hop))
-+        || extra
-+            .iter()
-+            .any(|item| !item.is_empty() && name.eq_ignore_ascii_case(item))
-+}
-+
- /// Filter headers for an outbound WebSocket upgrade request.
- ///
- /// Like [`filter_headers`], but does **not** strip `Connection` or
-@@ -3461,6 +3457,71 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_filter_headers_strips_spaced_framing_headers() {
-+        let header = b"Tr
+ fn remote_table_layout(rows: &[RemoteDisplayRow], columns: usize) -> RemoteTableLayout {
+-    const HEADERS: [&str; 5] = ["NAME", "STATUS", "AGENT", "R
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2260** (2026-11-03): refactor(cli): simplify remote session display and selector layout (@lukehinds)
 - **PR #2254** (2026-11-03): fix(proxy): strip hop headers when the colon is spaced (@SebTardif)
 - **PR #2251** (2026-11-02): chore(deps): bump the routine-rust group with 6 updates (@dependabot[bot])
 - **PR #2250** (2026-11-03): feat(cli): add nono login and logout commands (@lukehinds)
 - **PR #2249** (2026-11-02): docs(neps): update implementation status and pre-1.0 compatibility guidance (@SequeI)
 - **PR #2245** (2026-11-02): docs(nep): propose nep-0009 for cli oauth login and device enrollment (@lukehinds)
-- **PR #2240** (2026-11-02): feat(approval): unix-socket webhook transport and network approvals in `nono proxy` (@panga)
 
 ---
 
@@ -3759,56 +3159,77 @@ Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. policy): keep exact-file directory bypasses literal (#2142)
+## X. cli): simplify remote session display and selector layout (#2260)
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/capability_ext.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/connect_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa63c36b`: policy): keep exact-file directory bypasses literal (#2142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9297e2c3`: cli): simplify remote session display and selector layout (#2260). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/capability_ext.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/connect_client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[cfg(target_os = "macos")]
-    struct RemoveDir<'a>(&'a Path);
+const SELECTOR_ROWS_PER_SESSION: u16 = 2;
+    print_remote_sessions(&sessions, args.all, &remote_host_label(&access, &console));
+    /// The platform a `nono login` session is signed in to. Display only.
+    pub(crate) session_platform: Option<String>,
+            session_platform: Some(session.platform_url),
+        session_platform: None,
+    let host = remote_host_label(access, &console_url);
+        None => select_interactively(&list_live_sessions(&console_url, token)?, &host)?,
+    print_connect_target(&session, &host);
+            name: terminal_text(remote_display_name(session)),
 
-    #[cfg(target_os = "macos")]
-    impl Drop for RemoveDir<'_> {
-        fn drop(&mut self) {
-            let _ = std::fs::remove_dir_all(self.0);
-        }
+    /// `agent · repo`, omitting fields the console did not report.
+    fn metadata(&self) -> Option<String> {
+        let parts = [self.agent.as_str(), self.repo.as_str()]
+            .into_iter()
+            .filter(|part| *part != "-")
+            .collect::<Vec<_>>();
+        (!parts.is_empty()).then(|| parts.join(" · "))
     }
-
-    /// `read_file` of a directory plus `bypass_protection` of that directory.
-    /// Dry-run lists the grant as `(file)`. `why` allows that directory and
-    /// denies a nested file with `path_not_granted`. The Seatbelt hole stays
-    /// `literal`, so the sandbox does not open the subtree those diagnostics deny.
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn test_read_file_directory_bypass_matches_why_and_seatbelt() {
-        // `/tmp` resolves under `/private`, which `system_read_macos` grants,
-        // so `why` allows a child there. This shape is a path no system grant covers.
-        let home = std::env::var_os("HOME").expect("HOME");
-        let dir = Path::new(&home).join(format!(
-            ".nono-exact-bypass-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .expect("clock")
-                .as_nanos()
-        ));
-        let _cleanup
+    widths: [usize; 4],
+fn print_remote_sessions(sessions: &[RemoteSession], all: bool, host: &str) {
+            eprintln!("No remote sessions found on {host}.");
+            eprintln!("No live remote sessions on {host}. Use --all to include inactive sessions.");
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+const SELECTOR_ROWS_PER_SESSION: u16 = 3;
+    let enrollment = crate::platform_client::load_state()?;
+    print_remote_sessions(
+        &sessions,
+        args.all,
+        &console,
+        enrollment.as_ref().map(|state| state.platform_url.as_str()),
+    );
+        None => select_interactively(&list_live_sessions(&console_url, token)?)?,
+    print_connect_target(&session, &console_url);
+    session: String,
+            session: terminal_text(&session.global_session_id),
+            name: terminal_text(remote_name(session)),
+    widths: [usize; 5],
+fn print_remote_sessions(
+    sessions: &[RemoteSession],
+    all: bool,
+    console: &Url,
+    platform_url: Option<&str>,
+) {
+    if let Some(platform_url) = platform_url {
+        println!("  Platform: {}", terminal_text(platform_url));
+    }
+            eprintln!("No remote sessions found.");
+            eprintln!("No live remote sessions. Use --all to include inactive sessions.");
+        console_label(console).dimmed(),
+    const HEADERS: [&str; 5] = ["NAME", "STATUS", "AGENT", "R
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa63c36b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9297e2c3` are properly handled with clean fallback behavior.

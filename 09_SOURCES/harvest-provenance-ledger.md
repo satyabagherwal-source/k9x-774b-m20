@@ -6982,3 +6982,5 @@ Every entry in this ledger must capture:
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `07758a25` | Multi-dimensional audit evidence | 2026-11-03T18:47:40.976Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `72da9dc9` | Multi-dimensional audit evidence | 2026-11-03T18:47:51.086Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `f9446abf` | Multi-dimensional audit evidence | 2026-11-03T18:47:57.745Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `630068f9` | Multi-dimensional audit evidence | 2026-11-03T18:56:43.223Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `9297e2c3` | Multi-dimensional audit evidence | 2026-11-03T18:56:53.920Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T18:47:57.659Z",
+  "last_updated": "2026-11-03T18:56:53.818Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15719,8 +15719,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "ea99cfaf",
-      "content_hash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
+      "source_version": "630068f9",
+      "content_hash": "a7770e6affd4ca7da10a53c45887089dac1115a0e9cf06c7f78118d12de250ef",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -15783,6 +15783,11 @@
           "number": 6264,
           "title": "Ignore invalid duration parameter updates and init tc_globals in hard-limit gett",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6581,
+          "title": "Add regression test for retained capacities in percpu_tcmalloc_fuzz.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15790,7 +15795,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:22:55.529Z",
+      "verified_at": "2026-11-03T18:56:43.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43231,8 +43236,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "48774760",
-      "content_hash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
+      "source_version": "9297e2c3",
+      "content_hash": "7e1589ecc81e8a513af164aac8c1233b904a0d64eaad37800be60202aca5ee9b",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -43320,6 +43325,11 @@
           "number": 6521,
           "title": "policy): keep exact-file directory bypasses literal (#2142)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6582,
+          "title": "cli): simplify remote session display and selector layout (#2260)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43327,7 +43337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:25:09.870Z",
+      "verified_at": "2026-11-03T18:56:53.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169718,6 +169728,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T18:47:57.641Z"
+    },
+    "rule-6581": {
+      "learning_id": "rule-6581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6581,
+      "title": "Add regression test for retained capacities in percpu_tcmalloc_fuzz.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "630068f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:56:43.089Z"
+    },
+    "rule-6582": {
+      "learning_id": "rule-6582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6582,
+      "title": "cli): simplify remote session display and selector layout (#2260)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "9297e2c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T18:56:53.785Z"
     }
   },
   "aliases": {

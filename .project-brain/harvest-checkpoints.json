@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T18:47:57.753Z",
+  "last_updated": "2026-11-03T18:56:53.932Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
-      "verified_at": "2026-11-03T12:25:09.941Z",
+      "content_hash": "7e1589ecc81e8a513af164aac8c1233b904a0d64eaad37800be60202aca5ee9b",
+      "verified_at": "2026-11-03T18:56:53.931Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:25:09.941Z"
+      "last_updated": "2026-11-03T18:56:53.931Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
-      "verified_at": "2026-10-31T17:22:55.643Z",
+      "content_hash": "a7770e6affd4ca7da10a53c45887089dac1115a0e9cf06c7f78118d12de250ef",
+      "verified_at": "2026-11-03T18:56:43.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:22:55.643Z"
+      "last_updated": "2026-11-03T18:56:43.234Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
