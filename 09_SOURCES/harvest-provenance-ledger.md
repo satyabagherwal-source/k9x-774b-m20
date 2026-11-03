@@ -7020,3 +7020,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-03T21:17:07.491Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `54140784` | Multi-dimensional audit evidence | 2026-11-03T21:17:16.236Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `4ffb3b68` | Multi-dimensional audit evidence | 2026-11-03T21:17:23.251Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `ee80665d` | Multi-dimensional audit evidence | 2026-11-03T21:28:33.030Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `2fd7bd0f` | Multi-dimensional audit evidence | 2026-11-03T21:28:35.515Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `786978fd` | Multi-dimensional audit evidence | 2026-11-03T21:28:35.877Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `280986c1` | Multi-dimensional audit evidence | 2026-11-03T21:29:05.534Z |

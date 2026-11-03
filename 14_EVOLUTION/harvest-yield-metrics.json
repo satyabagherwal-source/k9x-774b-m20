@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T21:17:23.255Z",
-  "total_cycles_completed": 6988,
-  "total_learnings_persisted": 6988,
-  "total_rules_promoted": 6633,
+  "last_updated": "2026-11-03T21:29:05.540Z",
+  "total_cycles_completed": 6992,
+  "total_learnings_persisted": 6992,
+  "total_rules_promoted": 6637,
   "history": [
-    {
-      "timestamp": "2026-11-02T15:08:18.922Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:08:22.220Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:15:27.632Z",
-      "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T15:15:29.082Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T15:15:31.458Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-03T21:17:23.255Z",
       "repository": "sweetpad-dev/sweetpad",
       "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:28:33.035Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:28:35.523Z",
+      "repository": "NirDiamant/RAG_Techniques",
+      "learningId": "learn-github-nirdiamant-rag_techniques",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:28:35.883Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T21:29:05.540Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

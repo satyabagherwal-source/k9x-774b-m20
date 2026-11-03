@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "2c04fb37",
+    "sourceVersion": "786978fd",
     "license": "NOASSERTION",
-    "contentHash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
-    "lastHarvestedAt": "2026-10-31T18:53:42.557Z",
+    "contentHash": "32e699b10636cf615d68e68a61d74d4890a0ed316d52a6adb8833926a58e509a",
+    "lastHarvestedAt": "2026-11-03T21:28:35.877Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -6903,10 +6903,10 @@
     "repository": "NirDiamant/RAG_Techniques",
     "platform": "github",
     "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "sourceVersion": "4fea9188",
+    "sourceVersion": "2fd7bd0f",
     "license": "NOASSERTION",
-    "contentHash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
-    "lastHarvestedAt": "2026-10-31T06:38:35.950Z",
+    "contentHash": "566ab5aea10a753592125ea39902e2f26b0fd9a13f5da3031428d726f7cbc32f",
+    "lastHarvestedAt": "2026-11-03T21:28:35.515Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
   },
   "medialab-xan": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "d46ed799",
+    "sourceVersion": "ee80665d",
     "license": "MIT",
-    "contentHash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
-    "lastHarvestedAt": "2026-10-30T10:40:53.284Z",
+    "contentHash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
+    "lastHarvestedAt": "2026-11-03T21:28:33.030Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "3184116c",
+    "sourceVersion": "280986c1",
     "license": "MIT",
-    "contentHash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
-    "lastHarvestedAt": "2026-10-30T21:13:08.699Z",
+    "contentHash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
+    "lastHarvestedAt": "2026-11-03T21:29:05.534Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

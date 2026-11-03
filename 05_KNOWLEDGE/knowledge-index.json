@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T21:17:23.202Z",
+  "last_updated": "2026-11-03T21:29:05.446Z",
   "total_verified_learnings": 1200,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38876,8 +38876,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "2c04fb37",
-      "content_hash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
+      "source_version": "786978fd",
+      "content_hash": "32e699b10636cf615d68e68a61d74d4890a0ed316d52a6adb8833926a58e509a",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -38940,6 +38940,11 @@
           "number": 6288,
           "title": "Inspection-Mutation Parity Contract (State Leak Shield)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6618,
+          "title": "list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38947,7 +38952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:53:42.454Z",
+      "verified_at": "2026-11-03T21:28:35.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43170,8 +43175,8 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "4fea9188",
-      "content_hash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
+      "source_version": "2fd7bd0f",
+      "content_hash": "566ab5aea10a753592125ea39902e2f26b0fd9a13f5da3031428d726f7cbc32f",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
@@ -43199,6 +43204,11 @@
           "number": 5767,
           "title": "Add a follow-the-author-on-Amazon line to the book footer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6617,
+          "title": "Mistral OCR notebook: OCR 4 to OCR 4.1 (#214)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43206,7 +43216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:38:35.876Z",
+      "verified_at": "2026-11-03T21:28:35.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59400,13 +59410,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "3184116c",
-      "content_hash": "eb6062760e0dce1df1c479a61081e750099d9eb298e4b45db9c4c6b6dccb0f55",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "280986c1",
+      "content_hash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -59452,6 +59462,11 @@
           "number": 5879,
           "title": "🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6619,
+          "title": "🤖): post main-thread tasks without calling into Java (#4364)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59459,7 +59474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:32:06.260Z",
+      "verified_at": "2026-11-03T21:29:05.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73838,8 +73853,8 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "d46ed799",
-      "content_hash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
+      "source_version": "ee80665d",
+      "content_hash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
@@ -73863,6 +73878,11 @@
           "number": 5730,
           "title": "Require patched Autobahn WebSocket decompression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6616,
+          "title": "Verify directory ZIP downloads retain bounded ASGI memory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73870,7 +73890,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:40:53.182Z",
+      "verified_at": "2026-11-03T21:28:32.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170421,6 +170441,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T21:17:23.189Z"
+    },
+    "rule-6616": {
+      "learning_id": "rule-6616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6616,
+      "title": "Verify directory ZIP downloads retain bounded ASGI memory",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "ee80665d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:28:32.918Z"
+    },
+    "rule-6617": {
+      "learning_id": "rule-6617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6617,
+      "title": "Mistral OCR notebook: OCR 4 to OCR 4.1 (#214)",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "2fd7bd0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:28:35.401Z"
+    },
+    "rule-6618": {
+      "learning_id": "rule-6618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6618,
+      "title": "list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "786978fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:28:35.765Z"
+    },
+    "rule-6619": {
+      "learning_id": "rule-6619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6619,
+      "title": "🤖): post main-thread tasks without calling into Java (#4364)",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "280986c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:29:05.424Z"
     }
   },
   "aliases": {

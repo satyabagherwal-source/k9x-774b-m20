@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source**: github ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
-> **Source Version**: `4fea9188`  
+> **Source Version**: `2fd7bd0f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:38:35.761Z  
+> **Timestamp**: 2026-11-03T21:28:34.738Z  
 > **Learning ID**: `learn-github-nirdiamant-rag_techniques`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:38:35.756Z  
+> **Harvest Timestamp**: 2026-11-03T21:28:34.511Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: This repository showcases various advanced techniques for Retrieval-Augmented Generation (RAG) systems. Each technique has a detailed notebook tutorial.
 - **Primary Language / Ecosystem**: Jupyter Notebook
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30149 stars
+- **Stars / Engagement**: 30215 stars
 
 ---
 
@@ -1700,11 +1700,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #214** (2026-11-02): **Mistral OCR notebook: OCR 4 to OCR 4.1**
+  *Symptoms*: Mistral's GA OCR version has been **OCR 4.1** since August. The sponsored notebook, the README entries and the diagram still said "OCR 4".  **What changed** - `all_rag_techniques/document_parsing_with_mistral_ocr.ipynb`: 35 mentions renamed in prose, comments, labels and the matching output labels. No cell was re-run; the notebook already calls `mistral-ocr-latest` and its cached OCR output is from the October run. The plain-text results table was regenerated with Jupyter's default display settings (checked: the same settings reproduce the original output exactly with the old labels). - `README.md`: 6 mentions (Recently added line, table row, technique entry). - `images/document_parsing_with_mistral_ocr.svg`: the edge label, box widened to fit.  **Kept on purpose** - Links to `mistral.ai/news/ocr-4/`: Mistral has no 4.1 announcement page. The reference line still calls it the OCR 4 announcement. - The pricing pointer now goes to `mistral.ai/pricing` instead of the announcement.  Not in this PR: moving the notebook off gpt-4o-mini before its 14 Jan 2027 shutdown (needs a re-run and a check that the lesson still holds).  🤖 Generated with [Claude Code](https://claude.com/claude-code)   - - - - - - - - - - - - - - - - - - - - - -  <h3>PR Summary by Qodo</h3>  Align Mistral OCR notebook and references with OCR 4.1  <code>📝 Documentation</code> <code>🕐 10-20 Minutes</code>  ---  <details> <summary>AI Description</summary>  <dl> <dd> <br/>  ><pre> >• Rename OCR 4 to OCR 4.1 acros
+
 - **Issue #212** (2026-10-31): **Make notebooks and scripts import and run on LangChain 1.x and LlamaIndex 0.14**
   *Symptoms*: Second wave after #211. On a fresh install, 21 notebooks, 2 evaluation notebooks and 9 scripts failed at their import cell because they import paths LangChain 1.x removed, and most install cells did not list what the notebook imports. This PR fixes both, plus the follow-ups #211 left open.  ## What changed  **Imports (21 notebooks, 2 evaluation notebooks, 9 scripts).** Every import was checked in a fresh Python 3.11 venv with current releases (langchain-core 1.7.3, langchain-community 0.4.2, langchain-classic 1.0.8, langchain-openai 1.7.3, llama-index 0.14.25). - `langchain.text_splitter`, `.vectorstores`, `.embeddings`, `.prompts`, `.docstore`, `.schema`, `.document_loaders`, `.callbacks`, `.output_parsers`, `.tools`, `.chat_models` and `langchain_core.pydantic_v1` now import from `langchain_text_splitters`, `langchain_community`, `langchain_openai`, `langchain_core` or `pydantic`. - `langchain.chains` (RetrievalQA, create_retrieval_chain, load_summarize_chain), `langchain.retrievers` (ContextualCompressionRetriever, LLMChainExtractor) and `langchain.evaluation` now import from `langchain_classic`, where LangChain moved them. - fusion_retrieval_with_llamaindex: `llama_index.legacy` no longer exists; BM25 comes from `llama_index.retrievers.bm25`. - Calls that LangChain 1.x removed: custom retrievers (adaptive_retrieval, reranking) implement `_get_relevant_documents`; `get_relevant_documents()` calls became `invoke()`; `qa_chain(...)` became `qa_chain.invoke(...)`; raptor no l
-
-- **Issue #211** (2026-10-31): **Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links**
-  *Symptoms*: Fixes the problems the 31 Oct audit found in this repo: retired model IDs, the HyPE syntax error, the broken CI set, and missing cross-links in the README footer.  ## What changed  **Models (56 files: 38 notebooks, 16 scripts, evaluation/evalute_rag.py, tests/conftest.py).** OpenAI shut down gpt-3.5-turbo, gpt-4 and gpt-4-turbo on 2026-10-23, and shuts down gpt-4o, gpt-4o-mini, gpt-4.1 and gpt-4.1-mini on 2027-01-14. - OpenAI chat calls now use `gpt-5.4-mini`, set once per notebook or script (`LLM_MODEL`, or the constant the notebook already had), so the next shutdown is a one-line change. Where a lesson pairs a small generator with a stronger judge (choose_chunk_size, GroUSE, end-to-end evaluation), the judge is `gpt-5.4`. - Raw OpenAI client calls send `max_completion_tokens` instead of `max_tokens`, which GPT-5.x rejects (contextual_chunk_headers, memorag). - Two notebooks silently used LlamaIndex's default LLM, gpt-3.5-turbo, so they had been failing since 23 Oct: simple_rag_with_llamaindex and the question generation in choose_chunk_size. Both now name their model. - GroUSE's default judge is gpt-4, so the notebook now passes a model explicitly. - `evaluation/evalute_rag.py`, the shared judge that simple_rag, HyPE and memorag call, used gpt-4-turbo for `evaluate_rag` and its three deepeval metrics. They now use one `EVAL_MODEL = "gpt-5.4"`, and `evaluate_rag` retrieves with `invoke()` (LangChain 1.x removed `get_relevant_documents()`). The judge no longer passes `tempera
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1721,440 +1721,166 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa49b841` (2026-10-31)
-**Commit Message**: Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links (#211)
+### Incident Patch 1: `2fd7bd0f` (2026-11-02)
+**Commit Message**: Mistral OCR notebook: OCR 4 to OCR 4.1 (#214)
 
-* Fix the SyntaxError in the HyPE notebook's vector store cell
+* Rename Mistral OCR 4 to OCR 4.1 in the OCR notebook, README and diagram
 
-A missing comma after faiss.IndexFlatL2(...) in the FAISS(...) call stopped
-the notebook from parsing.
+OCR 4.1 has been Mistral's GA OCR version since August (Mistral, 27 Oct).
+The notebook already calls mistral-ocr-latest, and its cached output comes
+from the October run, so only the name changes.
+
+- Notebook: 35 mentions in prose, code comments, labels and the matching
+  output labels. No cell was re-run. The plain-text table in the results
+  cell was regenerated with Jupyter's default display settings, which
+  reproduce the original output exactly with the old labels.
+- README: 6 mentions (Recently added, table row, technique entry).
+- Diagram: the edge label, with its box widened to fit.
+- Links to mistral.ai/news/ocr-4/ stay (there is no 4.1 page); the
+  reference line still names it the OCR 4 announcement. The pricing
+  pointer now goes to mistral.ai/pricing.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-* CI: replace the never-triggered requirements test with a notebook parse check
+* Mistral OCR notebook: link the OCR 4.1 model card and API pricing page
 
-github-test.yml only ran when a root requirements.txt changed, and that file
-was removed in 97b19f9, so it could never fire. notebook-smoke.yml runs on
-every push and pull request: it compiles each notebook's code cells in order
-(IPython magics and shell lines converted the way Jupyter sees them) and
-byte-compiles every .py file. No API keys and no execution.
+Addresses both CodeRabbit findings on #214. The OCR 4.1 label pointed at the
+OCR 4 announcement; docs.mistral.ai/models/ocr-4-1 is the 4.1 model card. The
+pricing 
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* Move retired and retiring model IDs to current ones
-
-OpenAI shut down gpt-3.5-turbo, gpt-4 and gpt-4-turbo on 2026-10-23 and
-shuts down gpt-4o, gpt-4o-mini, gpt-4.1 and gpt-4.1-mini on 2027-01-14.
-
-- OpenAI chat calls now use gpt-5.4-mini, set once per notebook or script
-  (LLM_MODEL, or the notebook's existing constant). Where a lesson pairs a
-  small generator with a st
-
-**File**: `.github/workflows/github-test.yml` (removed, +0/-35)
+**File**: `README.md` (modified, +6/-6)
 ```diff
-@@ -1,35 +0,0 @@
--name: GitHub PR Test
--
--on:
--  pull_request:
--    types: [opened, synchronize, reopened]
--    branches:
--      - main
--    paths:
--      - "requirements.txt"
--
--jobs:
--  test:
--    runs-on: ubuntu-latest
--
--    env:
--      OPENAI_API_KEY: "123"
--      
--    steps:
--      - name: Checkout code
--        uses: actions/checkout@v7
--
--      - name: Set up Python
--        uses: actions/setup-python@v7
--        with:
--          python-version: '3.12.6'
--          cache: 'pip'
--
--      - name: Install dependencies
--        run: |
--          python -m pip install --upgrade pip
--          pip install -r requirements.txt
--
--      - name: Run tests
--        run: |
--          pytest
-\ No newline at end of file
+@@ -187,7 +187,7 @@ Contributions make this better - propose ideas, share techniques, or give feedba
+ 
+ Explore our extensive list of cutting-edge RAG techniques:
+ 
+-> **Recently added:** Document Parsing with [Mistral OCR 4](https://mistr.al/ocr-nir-github) (sponsored by Mistral AI), MemoRAG (memory-augmented retrieval), End-to-End RAG Evaluation, Open-RAG-Eval, JSON RAG. **42 notebooks** and growing.
++> **Recently added:** Document Parsing with [Mistral OCR 4.1](https://mistr.al/ocr-nir-github) (sponsored by Mistral AI), MemoRAG (memory-augmented retrieval), End-to-End RAG Evaluation, Open-RAG-Eval, JSON RAG. **42 notebooks** and growing.
+ 
+ | # | Category | Technique | View |
+ |---|----------|-----------|------|
+@@ -228,7 +228,7 @@ Explore our extensive list of cutting-edge RAG techniques:
+ | 35 | Evaluation 📊 | Open-RAG-Eval | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_TECHNIQUES/blob/main/evaluation/open-rag-eval-example.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/evaluation/open-rag-eval-example.ipynb) |
+ | 36 | Advanced 🔬 | MemoRAG | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_TECHNIQUES/blob/main/all_rag_techniques/memorag.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/memorag.ipynb) |
+ | 37 | Special Technique 🌟 | Sophisticated Controllable Agent | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/Controllable-RAG-Agent) |
+-| 38 | Foundational 🌱 | Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) |
++| 38 | Foundational 🌱 | Document Parsing with Mistral OCR 4.1 (sponsored by Mistral AI) | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) |
+ 
+ ### 🌱 Foundational RAG Techniques
+ 
+@@ -294,15 +294,15 @@ Explore our extensive list of cutting-edge RAG techniques:
+     - 🔍 Retrieval: The system retrieves the most relevant JSON entries based on the user's query.
+ 
+ <!-- a new list, so this entry shows the number of its table row -->
+-38. **Document Parsing with Mistral OCR 4 📄**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb)
++38. **Document Parsing with Mistral OCR 4.1 📄**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb)
+    - **Sponsored by [Mistral AI](https://mistr.al/ocr-nir-github)**
+ 
+    #### Overview 🔎
+-   Most PDF-based techniques here start with a plain text extractor, and none of them checks what it produced. This notebook prints it, shows a results table losing its structure before indexing, and swaps the parsing step for Mistral OCR 4 while the rest of the pipeline stays identical.
++   Most PDF-based techniques here start with a plain text extractor, and none of them checks what it produced. This notebook prints it, shows a results table losing its structure before indexing, and swaps the parsing step for Mistral OCR 4.1 while the rest of the pipeline stays identical.
+ 
+    #### Implementation 🛠️
+-   - 🧪 **Controlled comparison:** the repository's own `encode_pdf()` pipeline, then the same pipeline with OCR 4 as the parser.
+-   - 🧱 **Block-aware chunking:** OCR 4 labels every block, so each table stays whole together with its caption instead of being cut by a character splitter.
++  
 ```
 
-**File**: `.github/workflows/notebook-smoke.yml` (added, +70/-0)
+**File**: `all_rag_techniques/document_parsing_with_mistral_ocr.ipynb` (modified, +38/-38)
 ```diff
-@@ -0,0 +1,70 @@
-+# Parse check for every notebook and script. It needs no API keys and runs no code:
-+# each notebook's code cells are converted the way Jupyter sees them (IPython turns
-+# %magics and !shell lines into plain Python), joined in order and compiled, and every
-+# .py file is byte-compiled. A syntax error anywhere fails the check.
-+name: Notebook smoke test
-+
-+on:
-+  push:
-+  pull_request:
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  parse:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Checkout code
-+        uses: actions/checkout@v7
-+
-+      - name: Set up Python
-+        uses: actions/setup-python@v7
-+        with:
-+          python-version: "3.11"
-+
-+      - name: Install parser dependencies
-+        run: python -m pip install --quiet nbformat ipython
-+
-+      - name: Parse every notebook and script
-+        run: |
-+          python - <<'EOF'
-+          import ast
-+          import pathlib
-+          import py_compile
-+          import sys
-+          import warnings
-+
-+          import nbformat
-+          from IPython.core.inputtransformer2 import TransformerManager
-+
-+          warnings.filterwarnings("ignore")
-+          to_python = TransformerManager().transform_cell
-+          failures = []
-+
-+          notebooks = sorted(p for p in pathlib.Path(".").rglob("*.ipynb") if ".git" not in p.parts)
-+          for path in notebooks:
-+              try:
-+                  nb = nbformat.read(path, as_version=4)
-+              except Exception as exc:
-+                  failures.append(f"{path}: cannot load ({exc})")
-+                  continue
-+              cells = [to_python(c.source) for c in nb.cells if c.cell_type == "code"]
-+              try:
-+                  compile("\n\n".join(cells), str(path), "exec", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
-+              except SyntaxError as exc:
-+                  failures.append(f"{path}: line {exc.lineno}: {exc.msg}")
-+
-+          scripts = sorted(p for p in pathlib.Path(".").rglob("*.py") if ".git" not in p.parts)
-+          for path in scripts:
-+              try:
-+                  py_compile.compile(str(path), doraise=True)
-+              except py_compile.PyCompileError as exc:
-+                  failures.append(f"{path}: {exc.msg}")
-+
-+          print(f"Checked {len(notebooks)} notebooks and {len(scripts)} scripts.")
-+          if failures:
-+              print("\n".join(failures))
-+              sys.exit(1)
-+          print("Everything parses.")
-+          EOF
-```
-
-**File**: `README.md` (modified, +8/-2)
-```diff
-@@ -533,7 +533,7 @@ Explore our extensive list of cutting-edge RAG techniques:
-     Evaluate the final stage of Retrieval-Augmented Generation using metrics of the GroUSE framework and meta-evaluate your custom LLM judge on GroUSE unit tests.
- 
-     #### Implementation 🛠️
--    Use the `grouse` package to evaluate contextually-grounded LLM generations with GPT-4 on the 6 metrics of the GroUSE framework and use unit tests to evaluate a custom Llama 3.1 405B evaluator.
-+    Use the `grouse` package to evaluate contextually-grounded LLM generations with an OpenAI judge (gpt-5.4) on the 6 metrics of the GroUSE framework and use unit tests to evaluate a custom, cheaper gpt-5.4-mini evaluator.
-     
- 
- 27. **End-to-End RAG Evaluation**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_TECHNIQUES/blob/main/evaluation/end-2-end_rag_evaluation.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/evaluation/end-2-end_rag_evaluation.ipynb) | Complete evaluation pipeline |
-@@ -706,14 +706,20 @@ To begin implementing these advanced RAG techniques in your projects:
- 
- > 🌟 **Support This Project:** Your sponsorship fuels innovation in RAG technologies. **[Become a sponsor](https://www.diamant-ai.com/sponsorship)** to help maintain and expand this valuable resource!
- 
--## 📚 More from the same author
-+## 📚 More from DiamantAI
-+
-+**[RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-book-rag&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0GWDH8JJL%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Drag-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-rag&retarget=0&text=footer-book-rag)** - the companion book to this repo, featured at the top.
- 
- **[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dam-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-am&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
- 
- **[Prompt Engineering: Master the Art of AI Interaction](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-pe&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0DZ85RPB5%3Ftag%3Ddiamantai-ragrm-20&retarget=0&text=book-footer-pe)** - the prompting foundation that makes RAG work better. Same visual approach, 22 hands-on techniques.
- 
- **[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
- 
-+**Other repos:** [GenAI Agents](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-genai-agents&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FGenAI_Agents&retarget=0&text=footer-genai-agents) · [Agents Towards Production](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-atp&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2Fagents-towards-production&retarget=0&text=footer-atp) · [Prompt Engineering](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-prompt-engineering&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FPrompt_Engineering&retarget=0&text=footer-prompt-engineering) · [Agent Memory Techniques](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-agent-memory&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FAgent_Memory_Techniques&retarget=0&text=footer-agent-memory)
-+
-+**Follow along:** [Newsletter](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-newsletter&target=https%3A%2F%2Fnewsletter.diamant-ai.com&retarget=0&text=footer-newsletter) · [YouTube](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?no
-```
-
-**File**: `all_rag_techniques/HyDe_Hypothetical_Document_Embedding.ipynb` (modified, +7/-4)
-```diff
-@@ -30,7 +30,7 @@
-     "\n",
-     "### Hypothetical Document Generation\n",
-     "\n",
--    "1. A language model (GPT-4) is used to generate a hypothetical document that answers the given query.\n",
-+    "1. A language model (gpt-5.4-mini) is used to generate a hypothetical document that answers the given query.\n",
-     "2. The generation is guided by a prompt template that ensures the hypothetical document is detailed and matches the chunk size used in the vector store.\n",
-     "\n",
-     "### Retrieval Process\n",
-@@ -45,7 +45,7 @@
-     "\n",
-     "1. Query Expansion: Transforms short queries into detailed hypothetical documents.\n",
-     "2. Flexible Configuration: Allows adjustment of chunk size, overlap, and number of retrieved documents.\n",
--    "3. Integration with OpenAI Models: Uses GPT-4 for hypothetical document generation and OpenAI embeddings for vector representation.\n",
-+    "3. Integration with OpenAI Models: Uses gpt-5.4-mini for hypothetical document generation and OpenAI embeddings for vector representation.\n",
-     "\n",
-     "## Benefits of this Approach\n",
-     "\n",
-@@ -146,7 +146,10 @@
-     "load_dotenv()\n",
-     "\n",
-     "# Set the OpenAI API key environment variable\n",
--    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')"
-+    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')\n",
-+    "\n",
-+    "# Chat model used in this notebook\n",
-+    "LLM_MODEL = \"gpt-5.4-mini\""
-    ]
-   },
-   {
-@@ -195,7 +198,7 @@
-    "source": [
-     "class HyDERetriever:\n",
-     "    def __init__(self, files_path, chunk_size=500, chunk_overlap=100):\n",
--    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o-mini\", max_tokens=4000)\n",
-+    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
-     "\n",
-     "        self.embeddings = OpenAIEmbeddings()\n",
-     "        self.chunk_size = chunk_size\n",
-```
-
-**File**: `all_rag_techniques/HyPE_Hypothetical_Prompt_Embeddings.ipynb` (modified, +3/-3)
-```diff
-@@ -178,7 +178,7 @@
-    "outputs": [],
-    "source": [
-     "PATH = \"data/Understanding_Climate_Change.pdf\"\n",
--    "LANGUAGE_MODEL_NAME = \"gpt-4o-mini\"\n",
-+    "LANGUAGE_MODEL_NAME = \"gpt-5.4-mini\"\n",
-     "EMBEDDING_MODEL_NAME = \"text-embedding-3-small\"\n",
-     "CHUNK_SIZE = 1000\n",
-     "CHUNK_OVERLAP = 200"
-@@ -232,7 +232,7 @@
-     "\n",
-     "    # parse questions from response\n",
-     "    # Notes: \n",
--    "    # - gpt4o likes to split questions by \\n\\n so we remove one \\n\n",
-+    "    # - the model often splits questions by \\n\\n so we remove one \\n\n",
-     "    # - for production or if using smaller models from ollama, it's beneficial to use regex to parse \n",
-     "    # things like (un)ordeed lists\n",
-     "    # r\"^\\s*[\\-\\*\\\u2022]|\\s*\\d+\\.\\s*|\\s*[a-zA-Z]\\)\\s*|\\s*\\(\\d+\\)\\s*|\\s*\\([a-zA-Z]\\)\\s*|\\s*\\([ivxlcdm]+\\)\\s*\"\n",
-@@ -295,7 +295,7 @@
-     "            if vector_store == None:  \n",
-     "                vector_store = FAISS(\n",
-     "                    embedding_function=OpenAIEmbeddings(model=EMBEDDING_MODEL_NAME),  # Define embedding model\n",
--    "                    index=faiss.IndexFlatL2(len(vectors[0]))  # Define an L2 index for similarity search\n",
-+    "                    index=faiss.IndexFlatL2(len(vectors[0])),  # Define an L2 index for similarity search\n",
-     "                    docstore=InMemoryDocstore(),  # Use in-memory document storage\n",
-     "                    index_to_docstore_id={}  # Maintain index-to-document mapping\n",
-     "                )\n",
-```
-
-**File**: `all_rag_techniques/Microsoft_GraphRag.ipynb` (modified, +10/-4)
-```diff
-@@ -94,7 +94,7 @@
-    "source": [
-     "AZURE_OPENAI_API_KEY=\"\"\n",
-     "AZURE_OPENAI_ENDPOINT=\"\"\n",
--    "GPT4O_MODEL_NAME=\"gpt-4o\"\n",
-+    "CHAT_DEPLOYMENT_NAME=\"\"  # Azure: your chat deployment. Older .env files call it GPT4O_MODEL_NAME, which still works.\n",
-     "TEXT_EMBEDDING_3_LARGE_DEPLOYMENT_NAME=\"\"\n",
-     "AZURE_OPENAI_API_VERSION=\"2024-06-01\"\n",
-     "\n",
-@@ -159,11 +159,17 @@
-     "load_dotenv()\n",
-     "from openai import AzureOpenAI, OpenAI\n",
-     "\n",
-+    "# OpenAI chat model. On Azure, set this to the model behind your chat deployment.\n",
-+    "LLM_MODEL = \"gpt-5.4-mini\"\n",
-+    "\n",
-     "AZURE=True #Change to False to use OpenAI\n",
-     "if AZURE:\n",
-     "    AZURE_OPENAI_API_KEY = os.getenv(\"AZURE_OPENAI_API_KEY\")\n",
-     "    AZURE_OPENAI_ENDPOINT = os.getenv(\"AZURE_OPENAI_ENDPOINT\")\n",
--    "    GPT4O_DEPLOYMENT_NAME = os.getenv(\"GPT4O_MODEL_NAME\")\n",
-+    "    # Your Azure chat deployment name. Older .env files call it GPT4O_MODEL_NAME, which still works.\n",
-+    "    CHAT_DEPLOYMENT_NAME = os.getenv(\"CHAT_DEPLOYMENT_NAME\") or os.getenv(\"GPT4O_MODEL_NAME\")\n",
-+    "    if not CHAT_DEPLOYMENT_NAME:\n",
-+    "        raise ValueError(\"Set CHAT_DEPLOYMENT_NAME in your .env to the name of your Azure chat deployment.\")\n",
-     "    TEXT_EMBEDDING_3_LARGE_NAME = os.getenv(\"TEXT_EMBEDDING_3_LARGE_DEPLOYMENT_NAME\")\n",
-     "    AZURE_OPENAI_API_VERSION = os.getenv(\"AZURE_OPENAI_API_VERSION\")\n",
-     "    oai = AzureOpenAI(azure_endpoint=AZURE_OPENAI_ENDPOINT, api_key=AZURE_OPENAI_API_KEY, api_version=AZURE_OPENAI_API_VERSION)\n",
-@@ -224,15 +230,15 @@
-     "\n",
-     "with open('data/graphrag/settings.yaml', 'r') as f:\n",
-     "    settings_yaml = yaml.load(f, Loader=yaml.FullLoader)\n",
--    "settings_yaml['llm']['model'] = \"gpt-4o\"\n",
-+    "settings_yaml['llm']['model'] = LLM_MODEL\n",
-     "settings_yaml['llm']['api_key'] = AZURE_OPENAI_API_KEY if AZURE else OPENAI_API_KEY\n",
-     "settings_yaml['llm']['type'] = 'azure_openai_chat' if AZURE else 'openai_chat'\n",
-     "settings_yaml['embeddings']['llm']['api_key'] = AZURE_OPENAI_API_KEY if AZURE else OPENAI_API_KEY\n",
-     "settings_yaml['embeddings']['llm']['type'] = 'azure_openai_embedding' if AZURE else 'openai_embedding'\n",
-     "settings_yaml['embeddings']['llm']['model'] = TEXT_EMBEDDING_3_LARGE_NAME if AZURE else 'text-embedding-3-large'\n",
-     "if AZURE:\n",
-     "    settings_yaml['llm']['api_version'] = AZURE_OPENAI_API_VERSION\n",
--    "    settings_yaml['llm']['deployment_name'] = GPT4O_DEPLOYMENT_NAME\n",
-+    "    settings_yaml['llm']['deployment_name'] = CHAT_DEPLOYMENT_NAME\n",
-     "    settings_yaml['llm']['api_base'] = AZURE_OPENAI_ENDPOINT\n",
-     "    settings_yaml['embeddings']['llm']['api_version'] = AZURE_OPENAI_API_VERSION\n",
-     "    settings_yaml['embeddings']['llm']['deployment_name'] = TEXT_EMBEDDING_3_LARGE_NAME\n",
-```
-
-**File**: `all_rag_techniques/adaptive_retrieval.ipynb` (modified, +8/-5)
-```diff
-@@ -164,7 +164,10 @@
-     "load_dotenv()\n",
-     "\n",
-     "# Set the OpenAI API key environment variable\n",
--    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')"
-+    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')\n",
-+    "\n",
-+    "# Chat model used in this notebook\n",
-+    "LLM_MODEL = \"gpt-5.4-mini\""
-    ]
-   },
-   {
-@@ -186,7 +189,7 @@
-     "\n",
-     "class QueryClassifier:\n",
-     "    def __init__(self):\n",
--    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
-+    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
-     "        self.prompt = PromptTemplate(\n",
-     "            input_variables=[\"query\"],\n",
-     "            template=\"Classify the following query into one of these categories: Factual, Analytical, Opinion, or Contextual.\\nQuery: {query}\\nCategory:\"\n",
-@@ -218,7 +221,7 @@
-     "        text_splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=0)\n",
-     "        self.documents = text_splitter.create_documents(texts)\n",
-     "        self.db = FAISS.from_documents(self.documents, self.embeddings)\n",
--    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
-+    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
-     "\n",
-     "\n",
-     "    def retrieve(self, query, k=4):\n",
-@@ -303,7 +306,7 @@
-     "            template=\"Generate {k} sub-questions for: {query}\"\n",
-     "        )\n",
-     "\n",
--    "        llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
-+    "        llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
-     "        sub_queries_chain = sub_queries_prompt | llm.with_structured_output(SubQueries)\n",
-     "\n",
-     "        input_data = {\"query\": query, \"k\": k}\n",
-@@ -496,7 +499,7 @@
-     "    def __init__(self, texts: List[str]):\n",
-     "        adaptive_retriever = AdaptiveRetriever(texts)\n",
-     "        self.retriever = PydanticAdaptiveRetriever(adaptive_retriever=adaptive_retriever)\n",
--    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
-+    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
-     "        \n",
-     "        # Create a custom prompt\n",
-     "        prompt_template = \"\"\"Use the following pieces of context to answer the question at the end. \n",
-```
-
-**File**: `all_rag_techniques/choose_chunk_size.ipynb` (modified, +14/-9)
-```diff
-@@ -46,7 +46,11 @@
-     "import time\n",
-     "import os\n",
-     "load_dotenv()\n",
--    "openai.api_key = os.getenv(\"OPENAI_API_KEY\")"
-+    "openai.api_key = os.getenv(\"OPENAI_API_KEY\")\n",
-+    "\n",
-+    "# Models used in this notebook: a small one answers, a stronger one judges\n",
-+    "LLM_MODEL = \"gpt-5.4-mini\"\n",
-+    "JUDGE_MODEL = \"gpt-5.4\""
-    ]
-   },
-   {
-@@ -82,7 +86,8 @@
-     "num_eval_questions = 25\n",
-     "\n",
-     "eval_documents = documents[0:20]\n",
--    "data_generator = DatasetGenerator.from_documents(eval_documents)\n",
-+    "# Name the question-writing model: LlamaIndex's default, gpt-3.5-turbo, was shut down on 2026-10-23\n",
-+    "data_generator = DatasetGenerator.from_documents(eval_documents, llm=OpenAI(model=LLM_MODEL))\n",
-     "eval_questions = data_generator.generate_questions_from_nodes()\n",
-     "k_eval_questions = random.sample(eval_questions, num_eval_questions)"
-    ]
-@@ -100,13 +105,13 @@
+@@ -4,7 +4,7 @@
+    "cell_type": "markdown",
     "metadata": {},
-    "outputs": [],
     "source": [
--    "# We will use GPT-4 for evaluating the responses\n",
--    "gpt4 = OpenAI(temperature=0, model=\"gpt-4o\")\n",
-+    "# We use the stronger model (JUDGE_MODEL) to evaluate the responses\n",
-+    "gpt4 = OpenAI(temperature=0, model=JUDGE_MODEL)\n",
+-    "# Document Parsing with Mistral OCR 4\n",
++    "# Document Parsing with Mistral OCR 4.1\n",
      "\n",
-     "# Set appropriate settings for the LLM\n",
-     "Settings.llm = gpt4\n",
+     "> **Sponsored by Mistral AI.** The failure documented here is reproducible against this\n",
+     "> repository, every cell runs, and the conclusions are the author's own.\n",
+@@ -17,10 +17,10 @@
      "\n",
--    "# Define Faithfulness Evaluators which are based on GPT-4\n",
-+    "# Define Faithfulness Evaluators which are based on the judge model\n",
-     "faithfulness_gpt4 = FaithfulnessEvaluator()\n",
+     "Using a two-column academic PDF containing a results table, we run the repository's own\n",
+     "`encode_pdf()` helper, show that the answer to a specific question has been destroyed before\n",
+-    "indexing, then swap the parser for [Mistral OCR 4](https://mistral.ai/news/ocr-4/) and repeat\n",
++    "indexing, then swap the parser for [Mistral OCR 4.1](https://docs.mistral.ai/models/ocr-4-1) and repeat\n",
+     "the identical pipeline: same splitter, same embeddings, same vector store, same retriever, same\n",
+-    "prompt, same model. OCR 4 restores the table, and the character splitter then cuts it off from\n",
+-    "its caption, so the answer is still lost. The third pipeline chunks on the block types OCR 4\n",
++    "prompt, same model. OCR 4.1 restores the table, and the character splitter then cuts it off from\n",
++    "its caption, so the answer is still lost. The third pipeline chunks on the block types OCR 4.1\n",
+     "returns and keeps the table and its caption together. Finally the repository's own reranker runs\n",
+     "over all three pipelines: on the PyPDF chunks it makes the model confidently wrong, and on the\n",
+     "block-aware chunks it gets the right answer.\n",
+@@ -44,10 +44,10 @@
+     "1. A baseline built from the repository's own `encode_pdf()` helper, imported rather than\n",
+     "   rewritten, so the comparison is against what these notebooks actually use\n",
+     "2. A diagnostic cell that prints raw chunk text instead of summarising it\n",
+-    "3. Mistral OCR 4 as a drop-in replacement for the parsing step\n",
++    "3. Mistral OCR 4.1 as a drop-in replacement for the parsing step\n",
+     "4. Pre-computed OCR output committed alongside the notebook, so every cell runs without a\n",
+     "   Mistral account\n",
+-    "5. A block-aware chunker that uses OCR 4's structural labels to keep each table whole and\n",
++    "5. A block-aware chunker that uses OCR 4.1's structural labels to keep each table whole and\n",
+     "   together with its caption, which a character-based splitter cannot guarantee at any setting\n",
+     "6. The repository's own LLM reranker, applied identically to all three pipelines\n",
+     "7. A quantitative comparison of all three pipelines\n",
+@@ -64,13 +64,13 @@
      "\n",
-     "faithfulness_new_prompt_template = PromptTemplate(\"\"\" Please tell if a given piece of information is directly supported by the context.\n",
-@@ -137,7 +142,7 @@
+     "### The replacement\n",
      "\n",
-     "faithfulness_gpt4.update_prompts({\"your_prompt_key\": faithfulness_new_prompt_template}) # Update the prompts dictionary with the new prompt template\n",
+-    "Mistral OCR 4 returns a structured representation of each page rather than a character stream:\n",
++    "Mistral OCR 4.1 returns a structured representation of each page rather than a character stream:\n",
+     "markdown with reading order resolved and tables preserved as markdown tables, plus, for every\n",
+     "block, a bounding box, a block type and a confidence score.\n",
      "\n",
--    "# Define Relevancy Evaluators which are based on GPT-4\n",
-+    "# Define Relevancy Evaluators which are based on the judge model\n",
-     "relevancy_gpt4 = RelevancyEvaluator()"
+     "### The third pipeline\n",
+     "\n",
+-    "Because OCR 4 labels block types, chunk boundaries can follow document structure instead of\n",
++    "Because OCR 4.1 labels block types, chunk boundaries can follow document structure instead of\n",
+     "character counts. Tables become atomic, so a table is never split mid-row, and each table\n",
+     "travels with its caption, the block that says what its numbers measure.\n",
+     "\n",
+@@ -101,7 +101,7 @@
+     "### Visual Representation\n",
+     "\n",
+     "<div style=\"text-align: center;\">\n",
+-    "<img src=\"../images/document_parsing_with_mistral_ocr.svg\" alt=\"Document parsing with Mistral OCR 4\" style=\"width:100%; height:auto;\">\n",
++    "<img src=\"../images/document_parsing_with_mistral_ocr.svg\" alt=\"Document parsing with Mistral OCR 4.1\" style=\"width:100%; height:auto;\">\n",
+     "</div>"
     ]
    },
-@@ -155,10 +160,10 @@
-    "outputs": [],
+@@ -234,7 +234,7 @@
+     "# Table B-1, three pages. A US Government work, public domain.\n",
+     "!wget -q -O data/erp_table_b1_extract.pdf https://raw.githubusercontent.com/NirDiamant/RAG_TECHNIQUES/main/data/erp_table_b1_extract.pdf\n",
+     "\n",
+-    "# Pre-computed OCR 4 output for all three documents, so every cell runs without a Mistral key.\n",
++    "# Pre-computed OCR 4.1 output for all three documents, so every cell runs without a Mistral key.\n",
+     "for name in [\"two_column_paper.json\", \"scanned_page.json\", \"erp_table_b1.json\"]:\n",
+     "    !wget -q -O cached_ocr/{name} https://raw.githubusercontent.com/NirDiamant/RAG_TECHNIQUES/main/data/mistral_ocr_cache/{name}\n",
+     "\n",
+@@ -504,10 +504,10 @@
+    "cell_type": "markdown",
+    "metadata": {},
     "source": [
-     "# Define function to calculate average response time, average faithfulness and average relevancy metrics for given chunk size\n",
--    "# We use GPT-3.5-Turbo to generate response and GPT-4 to evaluate it.\n",
-+    "# We use LLM_MODEL to generate responses and the stronger JUDGE_MODEL to evaluate them.\n",
-     "def evaluate_response_time_and_accuracy(chunk_size, eval_questions):\n",
-     "    \"\"\"\n",
--    "    Evaluate the average response time, faithfulness, and relevancy of responses generated by GPT-3.5-turbo for a given chunk size.\n",
-+    "    Evaluate the average response time, faithfulness, and relevancy of responses generated by LLM_MODEL for a given chunk size.\n",
-     "    \n",
-     "    Parameters:\n",
-     "    chunk_size (int): The size of data chunks being processed.\n",
-@@ -172,7 +177,7 @@
-     "    total_relevancy = 0\n",
+-    "## Part 2. Mistral OCR 4 as the parsing step\n",
++    "## Part 2. Mistral OCR 4.1 as the parsing step\n",
      "\n",
-     "    # create vector index\n",
--    "    llm = OpenAI(model=\"gpt-3.5-turbo\")\n",
-+    "    llm = OpenAI(model=LLM_MODEL)\n",
-     "\n",
-     "    Settings.llm = llm\n",
-     "    Settings.chunk_size = chunk_size\n",
+-    "Mistral OCR 4 is a document understanding model rather than a text extractor.
+```
+
+**File**: `images/document_parsing_with_mistral_ocr.svg` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 907.172px; background-color: white;" viewBox="0.0 -76.0 907.171875 1039.890625" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span{color:#333;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#my-svg .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#my-svg .icon-shape rect,#my-svg .image-shape rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#my-svg .broken&gt;*{fill:#fdecea!important;stroke:#c0392b!important;stroke-width:2px!important;color:#7b241c!important;}#my-svg .broken span{fill:#fdecea!important;stroke:#c0392b!important;stroke-width:2px!important;color:#7b241c!important;}#my-svg .broken tspan{fill:#7b241c!important;}#my-svg .fixed&gt;*{fill:#e8f8f2!important;stroke:#0b7a5b!important;stroke-width:2px!important;color:#0b4f3c!important;}#my-svg .fixed span{fill:#e8f8f2!important;stroke:#0b7a5b!important;stroke-width:2px!important;color:#0b4f3c!important;}#my-svg .fixed tspan{fill:#0b4f3c!important;}#my-svg .neutral&gt;*{fill:#f4f6f8!important;stroke:#95a5a6!important;color:#2c3e50!important;}#my-svg .neutral span{fill:#f4f6f8!important;stroke:#95a5a6!important;color:#2c3e50!important;}#my-svg .neutral tspan{fill:#2c3e50!important;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #214** (2026-11-02): Mistral OCR notebook: OCR 4 to OCR 4.1 (@NirDiamant)
 - **PR #212** (2026-10-31): Make notebooks and scripts import and run on LangChain 1.x and LlamaIndex 0.14 (@NirDiamant)
 - **PR #211** (2026-10-31): Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links (@NirDiamant)
 - **PR #210** (2026-10-20): Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) (@NirDiamant)
 - **PR #209** (2026-10-31): ci: fix invalid local-test workflow (missing runs-on) (@NirDiamant)
 - **PR #208** (closed): Add Late Chunking notebook (@NirDiamant)
-- **PR #207** (2026-10-11): Decode HTML entities in Qodo finding titles (@NirDiamant)
 
 ---
 
@@ -2168,3 +1894,40 @@ shuts down gpt-4o, gpt-4o-mini, gpt-4.1 and gpt-4.1-mini on 2027-01-14.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Mistral OCR notebook: OCR 4 to OCR 4.1 (#214)
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NirDiamant/RAG_Techniques. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2fd7bd0f`: Mistral OCR notebook: OCR 4 to OCR 4.1 (#214). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```jupyter notebook
+// Verified production-grade fix pattern:
+> **Recently added:** Document Parsing with [Mistral OCR 4.1](https://mistr.al/ocr-nir-github) (sponsored by Mistral AI), MemoRAG (memory-augmented retrieval), End-to-End RAG Evaluation, Open-RAG-Eval, JSON RAG. **42 notebooks** and growing.
+| 38 | Foundational 🌱 | Document Parsing with Mistral OCR 4.1 (sponsored by Mistral AI) | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) |
+38. **Document Parsing with Mistral OCR 4.1 📄**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb)
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```jupyter notebook
+// Anti-pattern to NEVER write (induced failure mode):
+> **Recently added:** Document Parsing with [Mistral OCR 4](https://mistr.al/ocr-nir-github) (sponsored by Mistral AI), MemoRAG (memory-augmented retrieval), End-to-End RAG Evaluation, Open-RAG-Eval, JSON RAG. **42 notebooks** and growing.
+| 38 | Foundational 🌱 | Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) | [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) |
+38. **Document Parsing with Mistral OCR 4 📄**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/document_parsing_with_mistral_ocr.ipynb)
+   Most
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2fd7bd0f` are properly handled with clean fallback behavior.

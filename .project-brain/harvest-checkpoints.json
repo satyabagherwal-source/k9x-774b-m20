@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T21:17:23.257Z",
+  "last_updated": "2026-11-03T21:29:05.545Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
-      "verified_at": "2026-10-31T18:53:42.566Z",
+      "content_hash": "32e699b10636cf615d68e68a61d74d4890a0ed316d52a6adb8833926a58e509a",
+      "verified_at": "2026-11-03T21:28:35.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:53:42.566Z"
+      "last_updated": "2026-11-03T21:28:35.887Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "eb6062760e0dce1df1c479a61081e750099d9eb298e4b45db9c4c6b6dccb0f55",
-      "verified_at": "2026-10-31T06:32:06.386Z",
+      "content_hash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
+      "verified_at": "2026-11-03T21:29:05.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:32:06.386Z"
+      "last_updated": "2026-11-03T21:29:05.544Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -10416,14 +10416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nirdiamant-rag_techniques",
-      "content_hash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
-      "verified_at": "2026-10-31T06:38:35.957Z",
+      "content_hash": "566ab5aea10a753592125ea39902e2f26b0fd9a13f5da3031428d726f7cbc32f",
+      "verified_at": "2026-11-03T21:28:35.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:38:35.957Z"
+      "last_updated": "2026-11-03T21:28:35.527Z"
     },
     "medialab/xan": {
       "repository": "medialab/xan",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
-      "verified_at": "2026-10-30T10:40:53.298Z",
+      "content_hash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
+      "verified_at": "2026-11-03T21:28:33.039Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:40:53.298Z"
+      "last_updated": "2026-11-03T21:28:33.039Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",
