@@ -7006,3 +7006,5 @@ Every entry in this ledger must capture:
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `84e92a33` | Multi-dimensional audit evidence | 2026-11-03T20:01:01.979Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `99b7ccaf` | Multi-dimensional audit evidence | 2026-11-03T20:12:20.819Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `bff57fd2` | Multi-dimensional audit evidence | 2026-11-03T20:13:01.473Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `31be4133` | Multi-dimensional audit evidence | 2026-11-03T20:27:38.926Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `1cee5900` | Multi-dimensional audit evidence | 2026-11-03T20:27:39.018Z |

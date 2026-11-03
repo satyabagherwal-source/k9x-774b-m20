@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T20:13:04.040Z",
-    "lastVerified": "2026-11-03T20:13:04.040Z",
+    "lastChecked": "2026-11-03T20:27:41.582Z",
+    "lastVerified": "2026-11-03T20:27:41.582Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -240,22 +240,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T19:37:46.440Z",
-    "lastVerified": "2026-11-03T19:37:46.440Z",
+    "lastChecked": "2026-11-03T20:27:36.622Z",
+    "lastVerified": "2026-11-03T20:27:36.622Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
+    "contentHash": "7641d053682a0633a0f84e0c070a7c591620a04b24dd8c740032385b2e492894",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e38898bf"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -360,9 +359,9 @@
   "lapce-lapce": {
     "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
-    "lastChecked": "2026-10-31T18:15:17.355Z",
+    "lastChecked": "2026-11-03T20:27:16.806Z",
     "revisionIdentifier": "f66ffaa9",
-    "lastVerified": "2026-10-31T18:15:17.355Z"
+    "lastVerified": "2026-11-03T20:27:16.806Z"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -529,14 +528,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T22:31:26.431Z",
-    "lastVerified": "2026-10-31T22:31:26.431Z",
+    "lastChecked": "2026-11-03T20:27:37.624Z",
+    "lastVerified": "2026-11-03T20:27:37.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "0df77a610a203481c21b201dae4a649f8ac29fbaeb38d69b31707c21db54e17c",
+    "contentHash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1322,8 +1321,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T16:09:11.576Z",
-    "lastVerified": "2026-11-03T16:09:11.576Z",
+    "lastChecked": "2026-11-03T20:27:27.254Z",
+    "lastVerified": "2026-11-03T20:27:27.254Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2969,9 +2968,9 @@
   "openkruise-kruise": {
     "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
-    "lastChecked": "2026-10-31T23:16:03.375Z",
+    "lastChecked": "2026-11-03T20:27:24.971Z",
     "revisionIdentifier": "4fdf516e",
-    "lastVerified": "2026-10-31T23:16:03.375Z"
+    "lastVerified": "2026-11-03T20:27:24.971Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -10324,9 +10323,9 @@
   "scrapy-plugins-scrapy-zyte-api": {
     "name": "scrapy-zyte-api",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-    "lastChecked": "2026-10-30T09:27:05.134Z",
+    "lastChecked": "2026-11-03T20:27:19.349Z",
     "revisionIdentifier": "9b63ad94",
-    "lastVerified": "2026-10-30T09:27:05.134Z"
+    "lastVerified": "2026-11-03T20:27:19.349Z"
   },
   "krzysztofzablocki-inject": {
     "name": "Inject",
@@ -11523,9 +11522,9 @@
   "mijick-popups": {
     "name": "Popups",
     "officialUrl": "https://github.com/Mijick/Popups",
-    "lastChecked": "2026-10-30T20:21:58.111Z",
+    "lastChecked": "2026-11-03T20:27:22.175Z",
     "revisionIdentifier": "3aa55233",
-    "lastVerified": "2026-10-30T20:21:58.111Z"
+    "lastVerified": "2026-11-03T20:27:22.175Z"
   },
   "devexpress-testcafe": {
     "name": "DevExpress/testcafe",

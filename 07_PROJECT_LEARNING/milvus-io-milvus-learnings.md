@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `5f7e1124`  
+> **Source Version**: `1cee5900`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T22:31:27.104Z  
+> **Timestamp**: 2026-11-03T20:27:38.256Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T22:31:26.431Z  
+> **Harvest Timestamp**: 2026-11-03T20:27:37.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46542 stars
+- **Stars / Engagement**: 46574 stars
 
 ---
 
@@ -1412,14 +1412,11 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54939** (2026-10-31): **feat: prototype independent MultiSearch requests through Proxy**
-  *Symptoms*: > Superseded by #54940, which implements the actual `MilvusService.MultiSearch` RPC and `MilvusClient.multi_search()` across databases, with v3.0.5 standalone/Kubernetes tests and CPU-contention measurements. This earlier separate-service/adapter prototype is retained for history and is no longer the proposed implementation.  ## What this prototype demonstrates  A retrieval stage can need dozens of independent searches across collections with different schemas, vector dimensions, metrics, filters, and topK values. Today the client has to orchestrate those calls. This prototype adds **MultiSearch**: one external RPC carrying a bag of complete `SearchRequest` messages, with Proxy executing each item through the ordinary Search entry path and returning separate outcomes.  The purpose of this draft is to demonstrate feasibility with running code and reproducible evidence, and to support an API/Proxy design discussion. It is not proposed as a production-ready API release.  issue: #41791  **[Design document](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/docs/design-docs/multisearch.md) · [Engineering report (PDF)](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/artifacts/multisearch-prototype-report.pdf) · [HTML report](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/artifacts/multisearch-prototype-report.html) · [Build, test, and deployment instructions](https://github.
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **liliu-z** after the PR has been reviewed. You can assign the PR to them by writing `/assign @liliu-z` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["liliu-z"]} -->
-  > @codingjaguar This is a feature PR (`feat:`). Please provide a design document.  **How to resolve:** Add a design document under `docs/design-docs/design_docs/` in this PR, or link an existing in-repo design document in the PR description: ``` design doc: docs/design-docs/design_docs/YYYYMMDD-your_design.md ``` 
+- **Issue #55064** (2026-11-03): **fix: [hotfix-3.0.5] prefer safe JSON indexes over stats**
+  *Symptoms*: issue: #55001 pr: #55006  JSON predicates on segments with shredding stats currently bypass usable path indexes. Backport #55006 to `hotfix-3.0.5`, adapting its execution-path fallback and tests to this branch's existing index interfaces.  Ordinary unary comparisons, IN, binary ranges, and EXISTS prefer a usable index, then fall back to JSON stats. Keep three safeguards before scalar-index pinning:  - JSON string pattern predicates retain the existing stats path when eligible, avoiding the flat-index regex failure on keys such as `(`. - Precision-sensitive numeric bounds and IN literals retain exact stats comparisons before any scalar-index pin, including floating values at ±2^53 that numeric indexes can confuse with adjacent integers. Every IN literal is checked, even when the first literal is small. - JSON_CONTAINS / ANY / ALL retain their existing stats path when eligible. This preserves null/missing/non-array semantics and avoids loading an index that would subsequently be rejected.  EXISTS now passes paths relative to the flat index root, matching the other scalar-index executors; a query on `/a/b` uses `/b` when the index is rooted at `/a`.  This hotfix intentionally keeps contains and pattern predicates conservative instead of importing master's index-capability selector. It does not fix Tantivy's underlying regex handling or the existing array-index validity gap on segments without eligible stats. NGRAM's existing execution path is unchanged.  Validation: - `git diff 
 
-- **Issue #54936** (2026-10-31): **fix(ci): stop macOS Conan recipe auto-updates**
-  *Symptoms*: ## Summary - Stop automatic Conan recipe updates on macOS, matching the Linux CI install policy. - Remove only the known-incompatible cached aws-c-event-stream/0.7.1 recipe revision left by the old update behavior.  ## Incident The master macOS checker failed from build #159 onward after Conan Center recipe revision 7efb08d7203c90891cc0a2a36d38f4ce introduced aws-c-common/0.14.5 while the SDK graph uses 0.14.0. The internal Conan remote carries a compatible revision.  ## Validation - bash -n scripts/3rdparty_build.sh - git diff --check - Isolated Conan 2.25.1 macOS arm64 graph: 134 nodes resolved with internal recipe revision 2cff773a69a926fe775dfe21f6c15650. - Importing the incompatible revision reproduces the exact 0.14.5 versus 0.14.0 conflict; removing only that revision restores graph resolution. - Production Jenkins Mac build remains to be verified after merge.
+- **Issue #55063** (2026-11-03): **fix: [hotfix-3.0.5] preserve candidate masks in logical and GIS filters**
+  *Symptoms*: Backport of #55057 via the 3.0 backport #55060 to hotfix-3.0.5 for issue #55018 items 01, 05 and 07.  Preserve inherited candidate masks during nested logical evaluation and restore them on exit. Refine indexed GIS candidates within the active batch and skip masked raw geometry work.  Also fix an existing cursor mismatch for nonnullable scalar IS NULL / IS NOT NULL: a skipped batch must advance the constant-result cursor so the final partial batch has the correct length. This is item 01 and is independent of the inherited-mask change.  This includes the 3.0 backport and the subsequent master ownership-transfer update.  pr: #55057  Move the inherited bitmap into local ownership after the first child returns and restore it on exit, avoiding an additional deep copy.  issue: #55018  Validation: no hotfix build or test run was completed; the earlier validation job was cancelled before test execution. The ownership-transfer update was verified on master commit 01b9fdcadc with 348 targeted C++ tests, with no separate Dev CLI validation on this hotfix branch.  Suggested reading order: ConjunctExpr/EvalCtx mask scope and ownership transfer, NullExpr skipped-batch cursor handling, then GISFunctionFilterExpr raw/indexed evaluation. The remaining changes are focused regressions. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,733 +1433,1301 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `059b8466` (2026-10-31)
-**Commit Message**: fix: map every available collection to its DB in QuotaCenter (#54890)
-
-issue: #54858
-
-## What
-
-- Build the collection-to-database mapping from the same RootCoord
-metadata snapshot as the limiter tree, so WAL lag protection also
-reaches unloaded or unflushed collections.
-- Remove redundant `collectionIDToDBID` writes from `collectMetrics`,
-leaving metadata as the single source for this mapping.
-- Preserve collection identity in quota-state metrics by falling back to
-`collection_id_<id>` when node metrics do not provide a collection name.
-
-This is an independent implementation and does not modify #54859.
-
-## Test
-
-- [x] Focused RED/GREEN RootCoord regression tests
-  - `TestQuotaCenterDeniesWritingToWALLaggingCollectionWithoutMetrics`
-  - `TestQuotaCenterRecordMetricsFallsBackToCollectionID`
-- [x] Formatting and diff checks
-- [ ] Full RootCoord package suite: the changed tests pass, but the
-suite is currently blocked by the unrelated existing
-`TestBroadcastCreateCollectionV1RollbackFileResourcesWhenTaskNotCreated`
-failure. The same test fails on master commit `822665400f` with the same
-unmet `DecFileResourceRefCnt` mock expectation.
-
-Signed-off-by: MrPresent-Han <[REDACTED_EMAIL]>
-Co-
-
-**File**: `internal/rootcoord/quota_center.go` (modified, +15/-6)
-```diff
-@@ -459,7 +459,6 @@ func (q *QuotaCenter) collectMetrics() error {
- 			}
- 			collIDToPartIDs[collectionID] = append(collIDToPartIDs[collectionID],
- 				lo.Map(coll.Partitions, func(part *model.Partition, _ int) int64 { return part.PartitionID })...)
--			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
- 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
- 			if numEntity, ok := numEntitiesLoaded[collectionID]; ok {
- 				metrics.RootCoordNumEntities.WithLabelValues(coll.DBName, coll.Name, metrics.LoadedLabel).Set(float64(numEntity))
-@@ -516,7 +515,6 @@ func (q *QuotaCenter) collectMetrics() error {
- 			}
- 			collIDToPartIDs[collectionID] = append(collIDToPartIDs[collectionID],
- 				lo.Map(coll.Partitions, func(part *model.Partition, _ int) int64 { return part.PartitionID })...)
--			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
- 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
- 			if collectionMetrics == nil {
- 				return true
-@@ -540,16 +538,14 @@ func (q *QuotaCenter) collectMetrics() error {
- 		})
- 
- 		for _, collectionID := range datacoordQuotaCollections {
--			_, ok := q.collectionIDToDBID.Get(collectionID)
--			if ok {
-+			if collections.Contain(collectionID) {
- 				continue
- 			}
- 			coll, getErr := q.meta.GetCollectionByIDWithMaxTs(context.TODO(), collectionID)
- 			if getErr != nil {
- 				// skip limit check if the collection meta has been removed from rootcoord meta
- 				continue
- 			}
--			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
- 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
- 		}
- 
-@@ -1413,6 +1409,14 @@ func (q *QuotaCenter) resetAllCurrentRates() error {
- 		}
- 	}
- 	partitions := q.meta.ListAllAvailPartitions(q.ctx)
-+	// Build the collection-to-DB mapping from the same metadata snapshot as the
-+	// limiter tree. Node metrics omit unloaded or unflushed collections, while
-+	// WAL lag protection still covers every collection on a pchannel.
-+	for dbID, collections := range partitions {
-+		for collectionID := range collections {
-+			q.collectionIDToDBID.Insert(collectionID, dbID)
-+		}
-+	}
- 	initLimiters(partitions)
- 	return nil
- }
-@@ -1714,7 +1718,12 @@ func (q *QuotaCenter) recordMetrics() {
- 				case internalpb.RateScope_Database:
- 					name = "db_" + dbIDs[node.GetID()]
- 				case internalpb.RateScope_Collection:
--					name = "collection_" + collectionIDs[node.GetID()]
-+					collectionID := node.GetID()
-+					if collectionName, ok := collectionIDs[collectionID]; ok {
-+						name = "collection_" + collectionName
-+					} else {
-+						name = "collection_id_" + strconv.FormatInt(collectionID, 10)
-+					}
- 				default:
- 					return false
- 				}
-```
-
-**File**: `internal/rootcoord/quota_center_test.go` (modified, +89/-0)
-```diff
-@@ -25,21 +25,25 @@ import (
- 	"time"
- 
- 	"github.com/cockroachdb/errors"
-+	"github.com/prometheus/client_golang/prometheus/testutil"
- 	"github.com/samber/lo"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
- 	"github.com/stretchr/testify/suite"
- 
- 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
- 	"github.com/milvus-io/milvus/internal/metastore/model"
- 	"github.com/milvus-io/milvus/internal/mocks"
- 	mockrootcoord "github.com/milvus-io/milvus/internal/rootcoord/mocks"
-+	"github.com/milvus-io/milvus/internal/streamingcoord/server/balancer/channel"
- 	"github.com/milvus-io/milvus/internal/util/proxyutil"
- 	rlinternal "github.com/milvus-io/milvus/internal/util/ratelimitutil"
- 	"github.com/milvus-io/milvus/pkg/v3/common"
- 	"github.com/milvus-io/milvus/pkg/v3/metrics"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/util/types"
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
- 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-@@ -1074,6 +1078,91 @@ func TestQuotaCenter(t *testing.T) {
- 	})
- }
- 
-+// A collection that is neither loaded nor has a healthy segment is named by no
-+// node metric, but the WAL lag check still covers it through its pchannel. Its
-+// DB must come from RootCoord meta, or the write deny is never applied to it.
-+func TestQuotaCenterDeniesWritingToWALLaggingCollectionWithoutMetrics(t *testing.T) {
-+	paramtable.Init()
-+	for key, value := range map[string]string{
-+		Params.QuotaConfig.DMLLimitEnabled.Key:     "true",
-+		Params.QuotaConfig.TtProtectionEnabled.Key: "true",
-+		Params.QuotaConfig.MaxTimeTickDelay.Key:    "10.0",
-+		Params.QuotaConfig.ForceDenyWriting.Key:    "false",
-+	} {
-+		paramtable.Get().Save(key, value)
-+		defer paramtable.Get().Reset(key)
-+	}
-+
-+	const (
-+		dbID         = int64(1)
-+		collectionID = int64(100)
-+		pchannel     = "quota-dml_0"
-+	)
-+	channel.ResetStaticPChannelStatsManager()
-+	channel.RecoverPChannelStatsManager([]string{fmt.Sprintf("%s_%dv0", pchannel, collectionID)})
-+	t.Cleanup(channel.ResetStaticPChannelStatsManager)
-+
-+	meta := mockrootcoord.NewIMetaTable(t)
-+	meta.EXPECT().ListAllAvailPartitions(mock.Anything).Return(map[int64]map[int64][]int64{
-+		dbID: {collectionID: {1000}},
-+	})
-+	meta.EXPECT().GetCollectionByIDWithMaxTs(mock.Anything, collectionID).
-+		Return(&model.Collection{CollectionID: collectionID, DBID: dbID}, nil).Maybe()
-+	meta.EXPECT().GetDatabaseByID(mock.Anything, mock.Anything, mock.Anything).Return(nil, merr.ErrDatabaseNotFound).Maybe()
-+
-+	alloc := newMockTsoAllocator()
-+	walTimeTick := tsoutil.ComposeTSByTime(time.Now())
-+	alloc.GenerateTSOF = func(count uint32) (typeutil.Timestamp, error) {
-+		return tsoutil.ComposeTSByTime(time.Now().Add(time.Minute)), nil
-+	}
-+	quotaCenter := NewQuotaCenter(proxyutil.NewMockProxyClientManager(t), mocks.NewMixCoord(t), alloc, meta)
-+	// Only a streaming node reports, and only its WAL lag: no collection IDs.
-+	quotaCenter.queryNodeMetrics = map[UniqueID]*metricsinfo.QueryNodeQuotaMetrics{
-+		1: {StreamingQuota: &metricsinfo.StreamingQuotaMetrics{WALs: []metricsinfo.WALMetrics{
-+			{Channel: types.ChannelID{Name: pchannel}, RecoveryTimeTick: walTimeTick},
-+		}}},
-+	}
-+
-+	require.NoError(t, quotaCenter.resetAllCurrentRates())
-+	gotDBID, ok := quotaCenter.collectionIDToDBID.Get(collectionID)
-+	require.True(t, ok)
-+	assert.Equal(t, dbID, gotDBID)
-+
-+	require.NoError(t, quotaCenter.calculateWriteRates())
-+	limiter := quotaCenter.rateLimiter.GetCollectionLimiters(dbID, collectionID)
-+	require.NotNil(t, limiter)
-+	state, ok := limiter.GetQuotaStates().Get(milvuspb.QuotaState_DenyToWrite)
-+	require.True(t, ok)
-+	assert.Equal(t, commonpb.ErrorCode_TimeTickLongDelay, state.ErrorCode)
-+}
-+
-+func TestQuotaCenterRecordMetricsFallsBackToCollectionID(t *testing.T) {
-+	paramtable.Init()
-+
-+	const (
-+		dbID         = int64(1)
-+		collectionID = int64(100)
-+	)
-+	meta := mockrootcoord.NewIMetaTable(t)
-+	meta.EXPECT().ListAllAvailPartitions(mock.Anything).Return(map[int64]map[int64][]int64{
-+		dbID: {collectionID: nil},
-+	})
-+	meta.EXPECT().GetCollectionByIDWithMaxTs(mock.Anything, collectionID).
-+		Return(&model.Collection{CollectionID: collectionID, DBID: dbID}, nil).Maybe()
-+
-+	quotaCenter := NewQuotaCenter(proxyutil.NewMockProxyClientManager(t), mocks.NewMixCoord(t), newMockTsoAllocator(), meta)
-+	require.NoError(t, quotaCenter.resetAllCurrentRates())
-+	limiter := quotaCenter.rateLimiter.GetCollectionLimiters(dbID, collectionID)
-+	require.NotNil(t, limiter)
-+	limiter.GetQuotaStates().Insert(milvuspb.QuotaState_DenyToWrite, &rlinternal.QuotaStateInfo{
-+		ErrorCode: commonpb.ErrorCode_TimeTickLongDelay,
-+	})
-+
-+	quotaCenter.recordMetrics()
-+	assert.Equal(t, 1.0, testutil.ToFloat64(metrics.RootCoordQuotaStates.WithLabelValues(
-+		commonpb.ErrorCode_TimeTickLongDelay.String(), "col
-```
-
----
-
-### Incident Patch 2: `5f7e1124` (2026-10-31)
-**Commit Message**: fix: build JSON indexes over valid rows with empty bytes and reject invalid JSON on write (#54898)
-
-issue: #54868
-
-Takes over #54873 (its commit is kept) and fixes the crash it introduced
-in JSON ARRAY indexes on HYBRID / STL_SORT: rows whose path is absent or
-holds an empty array read an unset document, a SIGSEGV in
-`ArrayProjectedMaterializer::Add`. `Locate` now always returns the
-`dom_doc()` result; a valid row with empty bytes keeps its error, which
-`ExtractArray` treats as no array.
-`ArrayCastsSelectBitmapAndSortWithParentRows` gains an empty-bytes row.
-
-C++ unit tests were not run locally.
-
----------
-
-Signed-off-by: xiaofanluan <[REDACTED_EMAIL]>
-Signed-off-by: sunby <[REDACTED_EMAIL]>
-Signed-off-by: Li Liu <[REDACTED_EMAIL]>
-Co-authored-by: xiaofanluan <[REDACTED_EMAIL]>
-Co-authored-by: Li Liu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `internal/core/src/common/JsonUtils.cpp` (modified, +9/-0)
-```diff
-@@ -80,4 +80,13 @@ path_exists(const simdjson::dom::element& root,
-     }
-     return true;
- }
-+
-+bool
-+path_exists(const simdjson::simdjson_result<simdjson::dom::element>& root,
-+            const std::vector<std::string>& tokens) {
-+    if (root.error() != simdjson::SUCCESS) {
-+        return false;
-+    }
-+    return path_exists(root.value_unsafe(), tokens);
-+}
- }  // namespace milvus
-```
-
-**File**: `internal/core/src/common/JsonUtils.h` (modified, +8/-0)
-```diff
-@@ -25,4 +25,12 @@ parse_json_pointer(const std::string& pointer);
- bool
- path_exists(const simdjson::dom::element& root,
-             const std::vector<std::string>& tokens);
-+
-+// Check if a JSON Pointer path exists in the result of Json::dom_doc(). A
-+// valid row whose stored bytes are empty has no document (dom_doc() returns an
-+// error result instead of throwing), so no path exists in it. Taking the result
-+// keeps callers from converting it to an element, which would throw.
-+bool
-+path_exists(const simdjson::simdjson_result<simdjson::dom::element>& root,
-+            const std::vector<std::string>& tokens);
- }  // namespace milvus
-\ No newline at end of file
-```
-
-**File**: `internal/core/src/index/scalar/json/JsonFlatIndexBuilder.cpp` (modified, +3/-7)
-```diff
-@@ -244,11 +244,6 @@ JsonFlatIndexBuilder::AddBatch(
-         }
- 
-         const auto raw = batch.values[i];
--        if (raw.empty()) {
--            ThrowInfo(DataFormatBroken,
--                      "JSON flat input at offset {} is empty",
--                      offset);
--        }
-         if (raw.find('\0') != std::string_view::npos) {
-             ThrowInfo(DataFormatBroken,
-                       "JSON flat input at offset {} contains an embedded "
-@@ -260,9 +255,10 @@ JsonFlatIndexBuilder::AddBatch(
- 
-         // Parsing happens before the writer sees this row. The reusable
-         // scratch owns the padded bytes; Json borrows them only across the
--        // synchronous parse and FFI call. No caller view is retained.
-+        // synchronous parse and FFI call. No caller view is retained. A valid
-+        // row with empty bytes has no document, so no path exists in it.
-         auto dom = document.dom_doc();
--        const bool exists = path_exists(dom.value(), path_tokens_) &&
-+        const bool exists = path_exists(dom, path_tokens_) &&
-                             document.exist(params_.nested_path);
-         if (!exists) {
-             AddEmptyDocument(*engine_, offset);
-```
-
-**File**: `internal/core/src/index/scalar/json/JsonProjectedHybridIndexBuilderTest.cpp` (modified, +9/-4)
-```diff
-@@ -272,7 +272,7 @@ CheckProjectedArrayIndexes(std::string_view type_name,
-                         dynamic_cast<const INullReader*>(resolved.get());
-                     ASSERT_NE(nulls, nullptr);
-                     ExpectHits(nulls->IsNotNull(), raw.size(), {0, 1, 2, 6, 7});
--                    ExpectHits(nulls->IsNull(), raw.size(), {3, 4, 5});
-+                    ExpectHits(nulls->IsNull(), raw.size(), {3, 4, 5, 8});
-                     ExpectHits(
-                         predicate->NotIn(1, &first), raw.size(), {1, 2, 7});
-                 }
-@@ -283,6 +283,8 @@ CheckProjectedArrayIndexes(std::string_view type_name,
- 
- TEST(JsonProjectedHybridIndexBuilderTest,
-      ArrayCastsSelectBitmapAndSortWithParentRows) {
-+    // The last row is valid but its stored bytes are empty: it has no
-+    // document, so no array either.
-     CheckProjectedArrayIndexes<bool>("Bool",
-                                      DataType::BOOL,
-                                      "ARRAY_BOOL",
-@@ -293,7 +295,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
-                                       R"({"a":null})",
-                                       R"({"a":3})",
-                                       R"({"a":[false,3,"ignored",null,{}]})",
--                                      R"({"a":[null,{},[]]})"},
-+                                      R"({"a":[null,{},[]]})",
-+                                      ""},
-                                      false,
-                                      true);
-     CheckProjectedArrayIndexes<double>(
-@@ -307,7 +310,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
-          R"({"a":null})",
-          R"({"a":true})",
-          R"({"a":[1.0,false,"ignored",null,{}]})",
--         R"({"a":[null,{},[]]})"},
-+         R"({"a":[null,{},[]]})",
-+         ""},
-         1,
-         100);
-     CheckProjectedArrayIndexes<std::string_view>(
-@@ -321,7 +325,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
-          R"({"a":null})",
-          R"({"a":true})",
-          R"({"a":["a",false,3,null,{}]})",
--         R"({"a":[null,{},[]]})"},
-+         R"({"a":[null,{},[]]})",
-+         ""},
-         "a",
-         "z");
- }
-```
-
-**File**: `internal/core/src/indexbuilder/JsonBuildMaterializer.cpp` (modified, +7/-8)
-```diff
-@@ -238,14 +238,12 @@ RowPresence
- Locate(const JsonBatch& batch,
-        size_t row,
-        const ProjectionParams& params,
--       simdjson::dom::element& root) {
-+       value_result<simdjson::dom::element>& root) {
-     if (!batch.IsValid(row))
-         return RowPresence::FieldNull;
-     const auto& document = batch.Document(row);
--    AssertInfo(!document.data().empty(),
--               "valid JSON row {} has an empty document",
--               row);
--    root = document.dom_doc().value();
-+    // A valid row with empty bytes has no document, so no path exists in it.
-+    root = document.dom_doc();
-     if (!path_exists(root, params.path_tokens) ||
-         !document.exist(params.json_path)) {
-         return RowPresence::NoValue;
-@@ -255,7 +253,7 @@ Locate(const JsonBatch& batch,
- 
- RowPresence
- Locate(const JsonBatch& batch, size_t row, const ProjectionParams& params) {
--    simdjson::dom::element root;
-+    value_result<simdjson::dom::element> root;
-     return Locate(batch, row, params, root);
- }
- 
-@@ -628,7 +626,7 @@ class ArrayProjectedMaterializer final : public ProjectedBase<ArrayView> {
-             std::vector<size_t> non_exist;
-             for (size_t i = 0; i < count; ++i) {
-                 const auto row = begin + i;
--                simdjson::dom::element root;
-+                value_result<simdjson::dom::element> root;
-                 const auto presence = Locate(source, row, Params(), root);
-                 batch->validity[i] = presence != RowPresence::FieldNull;
-                 if (presence != RowPresence::Present)
-@@ -664,7 +662,8 @@ class ArrayProjectedMaterializer final : public ProjectedBase<ArrayView> {
- 
-  private:
-     bool
--    ExtractArray(const simdjson::dom::element& root, Row& row) const {
-+    ExtractArray(const value_result<simdjson::dom::element>& root,
-+                 Row& row) const {
-         auto array = root.at_pointer(Params().json_path).get_array();
-         if (array.error() != simdjson::SUCCESS)
-             return false;
-```
-
-**File**: `internal/core/src/indexbuilder/ScalarBuildSessionTest.cpp` (modified, +96/-3)
-```diff
-@@ -9,6 +9,7 @@
- // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- // or implied. See the License for the specific language governing permissions and limitations under the License
- 
-+#include <arrow/builder.h>
- #include <gtest/gtest.h>
- 
- #include <array>
-@@ -117,10 +118,14 @@ class ScalarBuildSessionTest : public ::testing::Test {
-         const auto resolved_family =
-             index::ResolvePackedLoadFamily(family, source.Metadata(), params);
-         // Cold-load planning annotates typed JSON completeness, as the sealed
--        // index translator does before opening the reader.
-+        // index translator does before opening the reader. A JSON flat index
-+        // is not a typed projection, so the translator skips it.
-         storage::LoadOptions options;
--        options.params = index::AnnotateJsonProjectionCompleteness(
--            params, source.Directory(), source.Metadata());
-+        options.params = params;
-+        if (family != index::families::kJsonFlat) {
-+            options.params = index::AnnotateJsonProjectionCompleteness(
-+                params, source.Directory(), source.Metadata());
-+        }
-         return index::LoaderRegistry::Instance()
-             .Lookup(resolved_family)
-             .Load({index::OpenedIndexSource{std::move(source)},
-@@ -513,5 +518,93 @@ TEST_F(ScalarBuildSessionTest, NgramJsonIndexOnFieldRoot) {
-     }
- }
- 
-+// Older clients could store a valid nullable JSON row whose bytes are empty.
-+// Such a row has no document: every JSON index must still build and treat it
-+// as a row where no path exists, distinct from a null row.
-+TEST_F(ScalarBuildSessionTest, JsonIndexBuildsWithEmptyValidDocument) {
-+    constexpr int64_t rows = 12;
-+    constexpr int64_t empty_row = 0;
-+    constexpr int64_t null_row = 1;
-+    arrow::BinaryBuilder builder;
-+    for (int64_t row = 0; row < rows; ++row) {
-+        arrow::Status status;
-+        if (row == empty_row) {
-+            status = builder.Append("");
-+        } else if (row == null_row) {
-+            status = builder.AppendNull();
-+        } else if (row % 2 == 0) {
-+            status = builder.Append("{\"a\":" + std::to_string(row) + "}");
-+        } else {
-+            status = builder.Append("\"apple " + std::to_string(row) + "\"");
-+        }
-+        ASSERT_TRUE(status.ok()) << status.ToString();
-+    }
-+    std::shared_ptr<arrow::Array> array;
-+    ASSERT_TRUE(builder.Finish(&array).ok());
-+
-+    struct Case {
-+        const char* index_type;
-+        const char* cast;
-+        const char* path;
-+    };
-+    for (const auto& [index_type, cast, path] :
-+         {Case{index::INVERTED_INDEX_TYPE, "JSON", ""},
-+          Case{index::INVERTED_INDEX_TYPE, "DOUBLE", "/a"},
-+          Case{index::ASCENDING_SORT, "DOUBLE", "/a"},
-+          Case{index::NGRAM_INDEX_TYPE, "VARCHAR", ""}}) {
-+        SCOPED_TRACE(::testing::Message()
-+                     << index_type << "/" << cast << "/" << path);
-+        auto info = Info(DataType::JSON, index_type);
-+        info.set_num_rows(rows);
-+        info.mutable_field_schema()->set_nullable(true);
-+        std::vector<std::pair<std::string, std::string>> params{
-+            {JSON_CAST_TYPE, cast}, {JSON_PATH, path}};
-+        if (std::string_view(index_type) == index::NGRAM_INDEX_TYPE) {
-+            params.emplace_back(index::MIN_GRAM, "2");
-+            params.emplace_back(index::MAX_GRAM, "3");
-+        }
-+        for (const auto& [key, value] : params) {
-+            auto* param = info.add_index_params();
-+            param->set_key(key);
-+            param->set_value(value);
-+        }
-+        auto prepared = AdaptBuildIndexInfo(info, BuildPurpose::ScalarIndex);
-+        auto data = std::make_shared<FieldData<Json>>(DataType::JSON, true);
-+        data->FillFieldData(array);
-+        ASSERT_EQ(data->get_null_count(), 1);
-+        info.add_insert_files(WriteBinlog(prepared.file_manager_context, data));
-+        prepared = AdaptBuildIndexInfo(info, BuildPurpose::ScalarIndex);
-+        auto reader = BuildAndLoad(std::move(prepared));
-+        ASSERT_NE(reader, nullptr);
-+        EXPECT_EQ(reader->Count(), rows);
-+        const auto* json =
-+            dynamic_cast<const index::IJsonIndexReader*>(reader.get());
-+        ASSERT_NE(json, nullptr);
-+        const auto exists = json->Exists(path);
-+        ASSERT_EQ(exists.size(), rows);
-+        EXPECT_FALSE(exists[empty_row]);
-+        EXPECT_FALSE(exists[null_row]);
-+        if (std::string_view(path) == "/a") {
-+            // Only the even object rows from 2 on carry "a".
-+            EXPECT_EQ(exists.count(), rows / 2 - 1);
-+            const auto resolved =
-+                json->Resolve(path, JsonCastType::FromString(cast));
-+            ASSERT_TRUE(static_cast<bool>(resolved));
-+            const auto* predicate =
-+                dynamic_cast<const index::IScalarPredicateReader<double>*>(
-+                    resolved.get());
-+            ASSERT_NE(predicate
-```
-
-**File**: `internal/proxy/dml/task_upsert.go` (modified, +19/-1)
-```diff
-@@ -1877,7 +1877,25 @@ func (it *UpsertTask) insertPreExecute(ctx context.Context) error {
- 		}
- 	}
- 
--	if err := fieldvalidator.NewValidateUtil(fieldvalidator.WithNANCheck(), fieldvalidator.WithOverflowCheck(), fieldvalidator.WithMaxLenCheck(), fieldvalidator.WithMaxCapCheck()).
-+	validateOpts := []fieldvalidator.ValidateOption{fieldvalidator.WithNANCheck(), fieldvalidator.WithOverflowCheck(), fieldvalidator.WithMaxLenCheck(), fieldvalidator.WithMaxCapCheck()}
-+	if it.req.GetPartialUpdate() {
-+		// The merge filled the fields the request omits from the stored rows.
-+		// A request may name the dynamic field "" (REST does); it is $meta here.
-+		requested := typeutil.NewSet(lo.Map(it.partialUpdateOriginalFields, func(f *schemapb.FieldData, _ int) string {
-+			if f.GetIsDynamic() {
-+				return common.MetaFieldName
-+			}
-+			return f.GetFieldName()
-+		})...)
-+		var stored []string
-+		for _, f := range it.upsertMsg.InsertMsg.GetFieldsData() {
-+			if !requested.Contain(f.GetFieldName()) {
-+				stored = append(stored, f.GetFieldName())
-+			}
-+		}
-+		validateOpts = append(validateOpts, fieldvalidator.WithStoredFields(stored...))
-+	}
-+	if err := fieldvalidator.NewValidateUtil(validateOpts...).
- 		Validate(it.upsertMsg.InsertMsg.GetFieldsData(), it.schema.SchemaHelper, it.upsertMsg.InsertMsg.NRows()); err != nil {
- 		return err
- 	}
-```
-
-**File**: `internal/proxy/dml/task_upsert_json_stored_test.go` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package dml
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/bytedance/mockey"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
-+	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/allocator"
-+	"github.com/milvus-io/milvus/internal/distributed/streaming"
-+	"github.com/milvus-io/milvus/internal/util/segcore"
-+	"github.com/milvus-io/milvus/pkg/v3/common"
-+	"github.com/milvus-io/milvus/pkg/v3/mq/msgstream"
-+	"github.com/milvus-io/milvus/pkg/v3/util/commonpbutil"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-+)
-+
-+func partialUpdateJSONTestFieldData(rows [][]byte) *schemapb.FieldData {
-+	return &schemapb.FieldData{
-+		FieldName: "meta", FieldId: 102, Type: schemapb.DataType_JSON,
-+		Field: &schemapb.FieldData_Scalars{Scalars: &schemapb.ScalarField{Data: &schemapb.ScalarField_JsonData{JsonData: &schemapb.JSONArray{Data: rows}}}},
-+	}
-+}
-+
-+func partialUpdateValueTestFieldData(rows []int32) *schemapb.FieldData {
-+	return &schemapb.FieldData{
-+		FieldName: "value", FieldId: 101, Type: schemapb.DataType_Int32,
-+		Field: &schemapb.FieldData_Scalars{Scalars: &schemapb.ScalarField{Data: &schemapb.ScalarField_IntData{IntData: &schemapb.IntArray{Data: rows}}}},
-+	}
-+}
-+
-+// partialUpdateJSONTestTask builds a two-row partial upsert over a schema with
-+// a non-nullable JSON field; requestFields are the fields after the PK that the
-+// request itself carries.
-+func partialUpdateJSONTestTask(t *testing.T, requestFields ...*schemapb.FieldData) *UpsertTask {
-+	t.Helper()
-+	pk := partialUpdateCASPKFieldData([]int64{1, 2})
-+	pk.FieldName = "id"
-+	pk.FieldId = 100
-+	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
-+		Name: "test_partial_update_stored_json",
-+		Fields: []*schemapb.FieldSchema{
-+			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
-+			{FieldID: 101, Name: "value", DataType: schemapb.DataType_Int32},
-+			{FieldID: 102, Name: "meta", DataType: schemapb.DataType_JSON},
-+		},
-+	})
-+	fields := append([]*schemapb.FieldData{pk}, requestFields...)
-+	task := &UpsertTask{
-+		baseTask: baseTask{MetaCache: newTestCache()},
-+		ctx:      context.Background(), schema: schema, idAllocator: &allocator.IDAllocator{}, collectionID: 100,
-+		req: &milvuspb.UpsertRequest{Base: commonpbutil.NewMsgBase(), FieldsData: fields, NumRows: 2, PartialUpdate: true, CollectionName: schema.GetName()},
-+		upsertMsg: &msgstream.UpsertMsg{
-+			InsertMsg: &msgstream.InsertMsg{InsertRequest: &msgpb.InsertRequest{
-+				Base:           commonpbutil.NewMsgBase(),
-+				CollectionName: schema.GetName(), CollectionID: 100, PartitionName: "_default",
-+				FieldsData: fields, NumRows: 2, Version: msgpb.InsertDataVersion_ColumnBased,
-+			}},
-+			DeleteMsg: &msgstream.DeleteMsg{DeleteRequest: &msgpb.DeleteRequest{Base: commonpbutil.NewMsgBase(), CollectionName: schema.GetName(), CollectionID: 100, PartitionName: "_default"}},
-+		},
-+		node: &mockUpsertNode{}, result: &milvuspb.MutationResult{},
-+		partialUpdateOriginalFields: cloneFieldDataList(fields),
-+	}
-+	task.SetTs(12345)
-+	setPartialUpdateCASTestChannels(task, partialUpdateCASTestVChannels)
-+	return task
-+}
-+
-+// A row stored before the proxy validated JSON documents may hold empty bytes.
-+// A partial upsert that leaves that JSON field out must still succeed (the
-+// stored row is carried over, not re-judged), while a request that itself
-+// supplies empty bytes for the JSON field must be rejected.
-+func TestPartialUpdateStoredInvalidJSONIsNotRejudged(t *testing.T) {
-+	storedMeta := [][]byte{[]byte(`{"a":1}`), {}}
-+	for _, testCase := range []struct {
-+		name        string
-+		request     []*schemapb.FieldData
-+		wantErr     bool
-+		wantMetaOut [][]byte
-+	}{
-+		{
-+			name:        "request omits the JSON field",
-+			request:     []*schemapb.FieldData{partialUpdateValueTestFieldData([]int32{100, 200})},
-+			wantMetaOut: storedMeta,
-+		},
-+		{
-+			name: "request supplies a valid JSON document",
-+			request: []*schemapb.FieldData{
-+				partialUpdateValueTestFi
-```
-
----
-
-### Incident Patch 3: `eb1bb266` (2026-10-31)
-**Commit Message**: fix(ci): stop macOS Conan recipe auto-updates (#54936)
+### Incident Patch 1: `20d2246e` (2026-11-03)
+**Commit Message**: fix: prevent CDC replicator panic after source scanner termination (#54663)
 
 ## Summary
-- Stop automatic Conan recipe updates on macOS, matching the Linux CI
-install policy.
-- Remove only the known-incompatible cached aws-c-event-stream/0.7.1
-recipe revision left by the old update behavior.
 
-## Incident
-The master macOS checker failed from build #159 onward after Conan
-Center recipe revision 7efb08d7203c90891cc0a2a36d38f4ce introduced
-aws-c-common/0.14.5 while the SDK graph uses 0.14.0. The internal Conan
-remote carries a compatible revision.
+Prevent the CDC ChannelReplicator from dereferencing a nil message after
+the source scanner terminates and closes its message channel.
 
-## Validation
-- bash -n scripts/3rdparty_build.sh
-- git diff --check
-- Isolated Conan 2.25.1 macOS arm64 graph: 134 nodes resolved with
-internal recipe revision 2cff773a69a926fe775dfe21f6c15650.
-- Importing the incompatible revision reproduces the exact 0.14.5 versus
-0.14.0 conflict; removing only that revision restores graph resolution.
-- Production Jenkins Mac build remains to be verified after merge.
+## Root Cause
 
-Signed-off-by: Zhikun Yao <[REDACTED_EMAIL]>
+`startConsumeLoop` previously ignored the channel receive status and did
+not observe scanner completion. A receive from a closed channel returned
+a nil `message.ImmutableMessage`, which was then dereferenced through
+`MessageType()`.
 
-**File**: `scripts/3rdparty_build.sh` (modified, +15/-1)
+Transient scanner and broker failures are already handled by the
+existing resumable consumer. The ChannelReplicator should handle an
+outer scanner termination safely without introducing a second recovery
+loop.
+
+## Changes
+
+- Check the channel receive status before processing a message.
+- Observe scanner completion and propagate scanner errors.
+- Exit cleanly when replication or scanner context is canceled.
+- Log an unexpected scanner termination and let the existing cleanup
+path close the scanner and replication stream.
+- Add regression tests for closed channels, scanner errors, and
+cancellation.
+
+## Testing
+
+- `gofmt -d
+internal/cdc/replication/replicatemanager/channel_replicator.go
+internal/cdc/replication/replicat
+
+**File**: `internal/cdc/replication/replicatemanager/channel_replicator.go` (modified, +38/-5)
 ```diff
-@@ -214,7 +214,21 @@ case "${unameOut}" in
-     export CMAKE_CXX_COMPILER_LAUNCHER=ccache
-     echo "Using CXX: $CXX"
-     echo "Using CC: $CC"
--    CONAN_ARGS="--output-folder conan --build=missing -s build_type=${BUILD_TYPE} -s compiler=clang -s compiler.version=${llvm_version} -s compiler.libcxx=libc++ -s compiler.cppstd=20 -u"
-+    # Match Linux CI: do not refresh every recipe revision during a normal build.
-+    # An upstream recipe revision can change transitive requirements without a
-+    # Milvus source change, making a previously valid dependency graph fail.
-+    CONAN_ARGS="--output-folder conan --build=missing -s build_type=${BUILD_TYPE} -s compiler=clang -s compiler.version=${llvm_version} -s compiler.libcxx=libc++ -s compiler.cppstd=20"
-+
-+    # Recover caches updated by the old -u behavior. This Conan Center recipe
-+    # requires aws-c-common/0.14.5, conflicting with the SDK's 0.14.0 graph.
-+    # Remove only the known-bad revision; the internal remote has a compatible
-+    # revision, so no unrelated Conan packages or binaries are discarded.
-+    bad_event_stream_revision=7efb08d7203c90891cc0a2a36d38f4ce
-+    bad_event_stream_ref="aws-c-event-stream/0.7.1#${bad_event_stream_revision}"
-+    if "$CONAN" list "$bad_event_stream_ref" -c -f json | grep -Fq "\"${bad_event_stream_revision}\":"; then
-+        echo "Removing incompatible cached Conan recipe: ${bad_event_stream_ref}"
-+        "$CONAN" remove "$bad_event_stream_ref" --confirm
-+    fi
+@@ -51,6 +51,8 @@ type Replicator interface {
  
-     # On macOS, Conan packages with shared libraries (protobuf, grpc) produce
-     # binaries (protoc, grpc_cpp_plugin) whose install rpaths don't include
+ var _ Replicator = (*channelReplicator)(nil)
+ 
++var errScannerClosed = errors.New("replication source scanner closed")
++
+ // channelReplicator is the implementation of ChannelReplicator.
+ type channelReplicator struct {
+ 	channel       *meta.ReplicateChannel
+@@ -106,7 +108,11 @@ func (r *channelReplicator) StartReplication() {
+ 				break INIT_LOOP
+ 			}
+ 		}
+-		r.startConsumeLoop()
++		if err := r.startConsumeLoop(); err != nil &&
++			!errors.Is(err, context.Canceled) &&
++			!errors.Is(err, replicatestream.ErrReplicationRemoved) {
++			logger.Warn(context.TODO(), "replication source scanner stopped", mlog.Err(err))
++		}
+ 	}()
+ }
+ 
+@@ -170,16 +176,25 @@ func (r *channelReplicator) init() error {
+ }
+ 
+ // startConsumeLoop starts the replicate loop.
+-func (r *channelReplicator) startConsumeLoop() {
++func (r *channelReplicator) startConsumeLoop() error {
+ 	logger := mlog.With(mlog.String("key", r.channel.Key), mlog.Int64("modRevision", r.channel.ModRevision))
+ 	logger.Info(context.TODO(), "start consume loop")
++	var scannerDone <-chan struct{}
++	if r.msgScanner != nil {
++		scannerDone = r.msgScanner.Done()
++	}
+ 
+ 	for {
+ 		select {
+ 		case <-r.asyncNotifier.Context().Done():
+ 			logger.Info(context.TODO(), "consume loop stopped")
+-			return
+-		case msg := <-r.msgChan:
++			return nil
++		case <-scannerDone:
++			return r.scannerStoppedError(true)
++		case msg, ok := <-r.msgChan:
++			if !ok {
++				return r.scannerStoppedError(false)
++			}
+ 			// A topology change older than this task describes a past state, not an
+ 			// instruction. Forwarding it would make the secondary act on it — a
+ 			// configuration that no longer lists the secondary turns it back into a
+@@ -207,13 +222,31 @@ func (r *channelReplicator) startConsumeLoop() {
+ 					// series. Deleting after BlockUntilFinish ensures no
+ 					// in-flight confirm re-creates the series afterwards.
+ 					replicatestream.DeleteLastReplicatedTimeTick(r.channel.Value)
+-					return
++					return replicatestream.ErrReplicationRemoved
+ 				}
+ 			}
+ 		}
+ 	}
+ }
+ 
++func (r *channelReplicator) scannerStoppedError(scannerDone bool) error {
++	if r.msgScanner == nil {
++		return errScannerClosed
++	}
++
++	if !scannerDone {
++		select {
++		case <-r.msgScanner.Done():
++		case <-r.asyncNotifier.Context().Done():
++			return r.asyncNotifier.Context().Err()
++		}
++	}
++	if err := r.msgScanner.Error(); err != nil {
++		return errors.Wrap(err, "replication source scanner stopped")
++	}
++	return errScannerClosed
++}
++
+ func (r *channelReplicator) getReplicateCheckpoint() (*utility.ReplicateCheckpoint, error) {
+ 	logger := mlog.With(mlog.String("key", r.channel.Key), mlog.Int64("modRevision", r.channel.ModRevision))
+ 
+```
+
+**File**: `internal/cdc/replication/replicatemanager/channel_replicator_test.go` (modified, +135/-0)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/apache/pulsar-client-go/pulsar"
++	"github.com/cockroachdb/errors"
+ 	"github.com/prometheus/client_golang/prometheus/testutil"
+ 	"github.com/stretchr/testify/assert"
+ 	mock "github.com/stretchr/testify/mock"
+@@ -65,6 +66,7 @@ func TestChannelReplicator_StartReplicateChannel(t *testing.T) {
+ 
+ 	scanner := mock_streaming.NewMockScanner(t)
+ 	scanner.EXPECT().Close().Return()
++	scanner.EXPECT().Done().Return(make(chan struct{})).Once()
+ 	wal := mock_streaming.NewMockWALAccesser(t)
+ 	wal.EXPECT().Read(mock.Anything, mock.Anything).Return(scanner)
+ 	streaming.SetWALForTest(wal)
+@@ -159,6 +161,139 @@ func TestChannelReplicatorConsumeLoopDeletesLagSeriesOnRemoval(t *testing.T) {
+ 	assert.False(t, metrics.CDCLastReplicatedTimeTick.DeleteLabelValues(source, target))
+ }
+ 
++func TestChannelReplicatorConsumeLoopStopsOnClosedMessageChannel(t *testing.T) {
++	replicator := &channelReplicator{
++		channel:       &meta.ReplicateChannel{},
++		msgChan:       make(adaptor.ChanMessageHandler),
++		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
++	}
++
++	done := make(chan error, 1)
++	go func() {
++		done <- replicator.startConsumeLoop()
++	}()
++	close(replicator.msgChan)
++
++	select {
++	case err := <-done:
++		assert.ErrorIs(t, err, errScannerClosed)
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not stop after message channel was closed")
++	}
++}
++
++func TestChannelReplicatorConsumeLoopReturnsScannerError(t *testing.T) {
++	scannerDone := make(chan struct{})
++	scannerErr := errors.New("source scanner failed")
++	scanner := mock_streaming.NewMockScanner(t)
++	scanner.EXPECT().Done().Return(scannerDone).Once()
++	scanner.EXPECT().Error().Return(scannerErr).Once()
++
++	replicator := &channelReplicator{
++		channel:       &meta.ReplicateChannel{},
++		msgChan:       make(adaptor.ChanMessageHandler),
++		msgScanner:    scanner,
++		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
++	}
++
++	done := make(chan error, 1)
++	go func() {
++		done <- replicator.startConsumeLoop()
++	}()
++	close(scannerDone)
++
++	select {
++	case err := <-done:
++		assert.ErrorIs(t, err, scannerErr)
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not stop after scanner was done")
++	}
++}
++
++func TestChannelReplicatorConsumeLoopClosedMessageChannelWithScanner(t *testing.T) {
++	scannerDone := make(chan struct{})
++	scannerDoneCalls := make(chan struct{}, 2)
++	scannerErr := errors.New("source scanner failed")
++	scanner := mock_streaming.NewMockScanner(t)
++	scanner.EXPECT().Done().
++		Run(func() { scannerDoneCalls <- struct{}{} }).
++		Return(scannerDone).Twice()
++	scanner.EXPECT().Error().Return(scannerErr).Once()
++
++	replicator := &channelReplicator{
++		channel:       &meta.ReplicateChannel{},
++		msgChan:       make(adaptor.ChanMessageHandler),
++		msgScanner:    scanner,
++		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
++	}
++
++	done := make(chan error, 1)
++	go func() {
++		done <- replicator.startConsumeLoop()
++	}()
++
++	select {
++	case <-scannerDoneCalls:
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not initialize scanner completion channel")
++	}
++	close(replicator.msgChan)
++	select {
++	case <-scannerDoneCalls:
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not wait for scanner completion after channel close")
++	}
++	close(scannerDone)
++
++	select {
++	case err := <-done:
++		assert.ErrorIs(t, err, scannerErr)
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not return the scanner error")
++	}
++}
++
++func TestChannelReplicatorConsumeLoopClosedMessageChannelCancellation(t *testing.T) {
++	scannerDone := make(chan struct{})
++	scannerDoneCalls := make(chan struct{}, 2)
++	scanner := mock_streaming.NewMockScanner(t)
++	scanner.EXPECT().Done().
++		Run(func() { scannerDoneCalls <- struct{}{} }).
++		Return(scannerDone).Twice()
++
++	replicator := &channelReplicator{
++		channel:       &meta.ReplicateChannel{},
++		msgChan:       make(adaptor.ChanMessageHandler),
++		msgScanner:    scanner,
++		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
++	}
++
++	done := make(chan error, 1)
++	go func() {
++		done <- replicator.startConsumeLoop()
++	}()
++
++	select {
++	case <-scannerDoneCalls:
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not initialize scanner completion channel")
++	}
++	close(replicator.msgChan)
++	select {
++	case <-scannerDoneCalls:
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not wait for scanner completion after channel close")
++	}
++	replicator.asyncNotifier.Cancel()
++
++	select {
++	case err := <-done:
++		assert.ErrorIs(t, err, context.Canceled)
++	case <-time.After(time.Second):
++		t.Fatal("consume loop did not stop after cancellation")
++	}
++}
++
+ func TestChannelReplicatorInitMetricFromInitializedCheckpoint(t *testing.T) {
+ 	source, target := "TestInitMetric-source", "TestInitMetric-target"
+ 	checkpoint := tsoutil.ComposeTSByTime(time.Now().Add(-5 * time.Minute))
+```
+
+---
+
+### Incident Patch 2: `92a260c3` (2026-11-02)
+**Commit Message**: fix: address post-merge review comments on the SegIdx refactor (#54826)
+
+issue: #53567
+
+Follow-up to #54182. Fixes four review comments posted after it merged.
+
+- `fix: avoid draining an exhausted growing load channel`
+([r4400447632](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400447632)):
+when the producer of a StorageV2 growing load fails, the consumer has
+already taken the close marker, and the unwind guard added in #51180
+popped the empty channel again and blocked forever. The guard now skips
+the drain once the channel is exhausted. This bug predates the SegIdx
+refactor. A regression test loads a parquet file with a damaged data
+page and expects the original StorageError instead of a hang.
+- `fix: classify invalid MARISA key ids`
+([r4400445984](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400445984)):
+ReverseKey checks a persisted key id against the trie key count and
+throws DataFormatBroken, instead of letting MARISA throw an untyped
+exception that surfaces as UnexpectedError.
+- `fix: classify invalid sorted index coordinates`
+([r4400446533](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400446533)):
+the five sorted-reader checks on 
+
+**File**: `internal/core/src/index/scalar/marisa/MarisaIndexReader.cpp` (modified, +14/-4)
+```diff
+@@ -70,7 +70,17 @@ SetRowsForKey(const MarisaIndexStorage& data,
+ }
+ 
+ std::string_view
+-ReverseKey(const marisa::Trie& trie, size_t key_id, marisa::Agent& agent) {
++ReverseKey(const marisa::Trie& trie,
++           size_t key_id,
++           marisa::Agent& agent,
++           int64_t row = -1) {
++    if (key_id >= trie.num_keys()) {
++        ThrowInfo(DataFormatBroken,
++                  "marisa key id {} exceeds key count {} for row {}",
++                  key_id,
++                  trie.num_keys(),
++                  row);
++    }
+     agent.set_query(key_id);
+     trie.reverse_lookup(agent);
+     return {agent.key().ptr(), agent.key().length()};
+@@ -320,7 +330,7 @@ MarisaIndexReader::Lookup(int64_t offset) const {
+     }
+     marisa::Agent agent;
+     const auto value =
+-        ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent);
++        ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent, offset);
+     return std::string(value);
+ }
+ 
+@@ -346,8 +356,8 @@ MarisaIndexReader::Gather(
+             out(i, nullptr, false);
+             continue;
+         }
+-        const auto value =
+-            ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent);
++        const auto value = ReverseKey(
++            *storage_->trie, static_cast<size_t>(key_id), agent, offset);
+         out(i, &value, true);
+     }
+ }
+```
+
+**File**: `internal/core/src/index/scalar/sort/SortedIndexReader.cpp` (modified, +30/-20)
+```diff
+@@ -381,21 +381,25 @@ PrefixRange(const SortedStringLayout& layout, std::string_view prefix) {
+ 
+ void
+ SetNumericRow(TargetBitmap& result, size_t row, bool value) {
+-    AssertInfo(row < result.size(),
+-               "sorted numeric row {} exceeds count {}",
+-               row,
+-               result.size());
++    if (row >= result.size()) {
++        ThrowInfo(DataFormatBroken,
++                  "sorted numeric row {} exceeds count {}",
++                  row,
++                  result.size());
++    }
+     result[row] = value;
+ }
+ 
+ void
+ SetPosting(TargetBitmap& result, const SortedStringPostingView& posting) {
+     for (size_t i = 0; i < posting.size; ++i) {
+         const auto row = posting.At(i);
+-        AssertInfo(static_cast<size_t>(row) < result.size(),
+-                   "sorted string row {} exceeds count {}",
+-                   row,
+-                   result.size());
++        if (static_cast<size_t>(row) >= result.size()) {
++            ThrowInfo(DataFormatBroken,
++                      "sorted string row {} exceeds count {}",
++                      row,
++                      result.size());
++        }
+         result.set(row);
+     }
+ }
+@@ -404,10 +408,12 @@ void
+ ClearPosting(TargetBitmap& result, const SortedStringPostingView& posting) {
+     for (size_t i = 0; i < posting.size; ++i) {
+         const auto row = posting.At(i);
+-        AssertInfo(static_cast<size_t>(row) < result.size(),
+-                   "sorted string row {} exceeds count {}",
+-                   row,
+-                   result.size());
++        if (static_cast<size_t>(row) >= result.size()) {
++            ThrowInfo(DataFormatBroken,
++                      "sorted string row {} exceeds count {}",
++                      row,
++                      result.size());
++        }
+         result.reset(row);
+     }
+ }
+@@ -860,10 +866,12 @@ SortedIndexReader<T>::Lookup(int64_t offset) const {
+                "sorted offset map does not cover row {}",
+                row);
+     const auto index = state_.idx_to_offsets[row];
+-    AssertInfo(storage_.ValidReverseIndex(index),
+-               "sorted value offset {} is invalid for row {}",
+-               index,
+-               row);
++    if (!storage_.ValidReverseIndex(index)) {
++        ThrowInfo(DataFormatBroken,
++                  "sorted value offset {} is invalid for row {}",
++                  index,
++                  row);
++    }
+     return owned_t<T>(storage_.ValueAt(static_cast<size_t>(index)));
+ }
+ 
+@@ -896,10 +904,12 @@ SortedIndexReader<T>::Gather(
+                    "sorted offset map does not cover row {}",
+                    row);
+         const auto index = state_.idx_to_offsets[coordinate];
+-        AssertInfo(storage_.ValidReverseIndex(index),
+-                   "sorted value offset {} is invalid for row {}",
+-                   index,
+-                   row);
++        if (!storage_.ValidReverseIndex(index)) {
++            ThrowInfo(DataFormatBroken,
++                      "sorted value offset {} is invalid for row {}",
++                      index,
++                      row);
++        }
+         const auto value = storage_.ValueAt(static_cast<size_t>(index));
+         out(i, &value, true);
+     }
+```
+
+**File**: `internal/core/src/indexbuilder/BuildSession.cpp` (modified, +10/-8)
+```diff
+@@ -749,14 +749,16 @@ BuildSession::RunToArtifact() {
+             AssertInfo(missing_rows >= 0,
+                        "index-build missing row count {} is negative",
+                        missing_rows);
+-            AssertInfo(
+-                missing_rows == 0 || field_spec_.nullable ||
+-                    file_manager_context_.fieldDataMeta.field_schema
+-                        .has_default_value(),
+-                "index-build source is missing {} rows for non-nullable field "
+-                "{} without a default value",
+-                missing_rows,
+-                req_.field_id.get());
++            if (missing_rows > 0 && !field_spec_.nullable &&
++                !file_manager_context_.fieldDataMeta.field_schema
++                     .has_default_value()) {
++                ThrowInfo(DataFormatBroken,
++                          "index-build source is missing {} rows for "
++                          "non-nullable field "
++                          "{} without a default value",
++                          missing_rows,
++                          req_.field_id.get());
++            }
+             while (missing_rows > 0) {
+                 const auto batch_rows = MissingBatchRows(
+                     field_spec_.estimated_missing_row_bytes, missing_rows);
+```
+
+**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +10/-4)
+```diff
+@@ -2212,12 +2212,16 @@ SegmentGrowingImpl::load_column_group_data_internal(
+         // pushing into the bounded channel. If the consumer loop below
+         // throws, unblock the task and wait for it before unwinding
+         // (see #46958).
++        bool channel_exhausted = false;
+         auto drain_on_unwind = folly::makeGuard([&]() {
+-            try {
+-                std::shared_ptr<milvus::ArrowDataWrapper> discard;
+-                while (column_group_info.arrow_reader_channel->pop(discard)) {
++            if (!channel_exhausted) {
++                try {
++                    std::shared_ptr<milvus::ArrowDataWrapper> discard;
++                    while (
++                        column_group_info.arrow_reader_channel->pop(discard)) {
++                    }
++                } catch (...) {
+                 }
+-            } catch (...) {
+             }
+             storage::DrainFuture(load_future);
+         });
+@@ -2279,6 +2283,8 @@ SegmentGrowingImpl::load_column_group_data_internal(
+                 }
+             }
+         }
++        // The loop consumed the close marker, even if the producer failed.
++        channel_exhausted = true;
+         // access underlying feature to get exception if any
+         load_future.get();
+         drain_on_unwind.dismiss();
+```
+
+**File**: `internal/core/src/segcore/SegmentGrowingStorageV2Test.cpp` (modified, +84/-0)
+```diff
+@@ -21,9 +21,11 @@
+ #include <arrow/record_batch.h>
+ #include <arrow/util/key_value_metadata.h>
+ #include <parquet/properties.h>
++#include <unistd.h>
+ #include <stdlib.h>
+ #include <algorithm>
+ #include <cstdint>
++#include <csignal>
+ #include <iostream>
+ #include <map>
+ #include <memory>
+@@ -44,6 +46,7 @@
+ #include "common/Types.h"
+ #include "common/Utils.h"
+ #include "common/protobuf_utils.h"
++#include "folly/ScopeGuard.h"
+ #include "gtest/gtest.h"
+ #include "knowhere/comp/index_param.h"
+ #include "milvus-storage/common/config.h"
+@@ -202,6 +205,87 @@ TEST_F(TestGrowingStorageV2, LoadFieldData) {
+     segment->LoadFieldData(load_info);
+ }
+ 
++TEST_F(TestGrowingStorageV2, ProducerReadFailurePreservesErrorWithoutHanging) {
++    const auto directory = path_ + "/growing-producer-read-failure";
++    auto cleanup = folly::makeGuard([&] { (void)fs_->DeleteDir(directory); });
++    const auto check_failure = [&] {
++        ASSERT_TRUE(fs_->CreateDir(directory).ok());
++        const auto path = directory + "/1";
++        std::vector<std::string> paths{path};
++        milvus_storage::StorageConfig config{};
++        std::vector<std::vector<int>> column_groups{{0, 1, 2}};
++        auto result = milvus_storage::PackedRecordBatchWriter::Make(
++            fs_, paths, schema_, config, column_groups, 16 * 1024 * 1024);
++        auto writer = result.ValueOrDie();
++        ASSERT_TRUE(writer->Write(record_batch_).ok());
++        ASSERT_TRUE(writer->Close().ok());
++
++        auto reader =
++            milvus_storage::FileRowGroupReader::Make(fs_, path).ValueOrDie();
++        auto metadata = reader->file_metadata()->GetParquetMetadata();
++        const auto column = metadata->RowGroup(0)->ColumnChunk(0);
++        const auto data_offset = column->data_page_offset();
++        const auto chunk_start = column->has_dictionary_page()
++                                     ? column->dictionary_page_offset()
++                                     : data_offset;
++        ASSERT_GE(data_offset, 4);
++        ASSERT_LE(data_offset + 16,
++                  chunk_start + column->total_compressed_size());
++        ASSERT_TRUE(reader->Close().ok());
++        auto input = fs_->OpenInputFile(path).ValueOrDie();
++        const auto size = input->GetSize().ValueOrDie();
++        auto damaged = input->ReadAt(0, size).ValueOrDie()->ToString();
++        ASSERT_LE(data_offset + 16, damaged.size());
++        ASSERT_TRUE(input->Close().ok());
++        std::fill_n(damaged.begin() + data_offset, 16, '\xff');
++        auto output = fs_->OpenOutputStream(path).ValueOrDie();
++        ASSERT_TRUE(output->Write(damaged.data(), damaged.size()).ok());
++        ASSERT_TRUE(output->Close().ok());
++
++        auto schema = std::make_shared<Schema>();
++        schema->AddDebugField("ts", DataType::INT64, true);
++        const auto pk = schema->AddDebugField("pk", DataType::INT64, false);
++        schema->AddDebugField("str", DataType::VARCHAR, true);
++        schema->set_primary_field_id(pk);
++        auto segment = CreateGrowingSegment(schema, empty_index_meta);
++        const auto rows = record_batch_->num_rows();
++        LoadFieldDataInfo info;
++        info.storage_version = 2;
++        info.field_infos = {
++            {0, FieldBinlogInfo{0, rows, {rows}, {rows}, false, "", {path}}}};
++        try {
++            segment->LoadFieldData(info);
++            FAIL() << "expected producer read failure";
++        } catch (const SegcoreError& error) {
++            EXPECT_EQ(error.get_error_code(), StorageError);
++            const auto prefix =
++                "[StorageV2] Failed to read row group 0 from file " + path;
++            EXPECT_NE(std::string(error.what()).find(prefix),
++                      std::string::npos);
++        }
++    };
++
++    const auto previous_style = ::testing::FLAGS_gtest_death_test_style;
++    auto restore_style = folly::makeGuard(
++        [&] { ::testing::FLAGS_gtest_death_test_style = previous_style; });
++    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
++    ASSERT_EXIT(
++        {
++            sigset_t signals;
++            if (std::signal(SIGALRM, SIG_DFL) == SIG_ERR ||
++                ::sigemptyset(&signals) != 0 ||
++                ::sigaddset(&signals, SIGALRM) != 0 ||
++                ::sigprocmask(SIG_UNBLOCK, &signals, nullptr) != 0) {
++                std::_Exit(2);
++            }
++            ::alarm(15);
++            check_failure();
++            std::_Exit(::testing::Test::HasFailure() ? 1 : 0);
++        },
++        ::testing::ExitedWithCode(0),
++        "");
++}
++
+ // Regression for add-field + legacy StorageV2 data: a growing segment written
+ // by StorageV2 can have a TEXT field added to its schema afterwards (AddField)
+ // while its binlogs carry no TEXT column and it has no StorageV3 manifest. The
+```
+
+---
+
+### Incident Patch 3: `21ee765c` (2026-11-03)
+**Commit Message**: enhance: [ElemNull 4] row-level and element-level filters on element-nullable struct sub-fields, with search tests and struct sub-field fixes (#54792)
+
+Fourth layer (EN4) of the element-null / nested-Array stack. Base:
+`Element-Null-3` (#54791).
+
+issue: https://github.com/milvus-io/milvus/issues/51162
+
+## Row-level filters on element-nullable struct sub-fields
+
+### What changes
+
+Row-level filters now evaluate element-nullable and nested struct
+sub-fields. These native-list Arrays are read through `ArrayValueView`,
+which exposes per-element validity. No plan proto change.
+
+- **C3, subscript comparisons** (`s[i][b] op v`, `in`, `like`, range,
+arithmetic): a null element or an out-of-bounds subscript gives UNKNOWN,
+which stays UNKNOWN under `NOT`.
+- Subscripts are parsed with a range check, so an overflowing index
+counts as out of bounds and does not raise an error.
+- An empty set is FALSE for every row, as `x IN ()` is in SQL: `arr[i]
+in []` and `s[i][b] in []` are FALSE on an out-of-bounds subscript, a
+null element and a null row, and `not (... in [])` is TRUE. This is the
+behavior from before element-nullable sub-fields.
+- **C7**: in `array_contains` / `_any` / `_all` on `s[b]`, a 
+
+**File**: `internal/core/src/common/ArrayValue.h` (modified, +59/-0)
+```diff
+@@ -263,6 +263,65 @@ class ArrayValueView {
+             *type_, *child_, static_cast<size_t>(begin_ + index));
+     }
+ 
++    // Whether this scalar Array equals the literal. Null is an ordinary value
++    // and a literal cannot spell it, so a value holding a null element never
++    // equals one. Mirrors ArrayView::is_same_array.
++    bool
++    is_same_array(const proto::plan::Array& literal) const {
++        const auto length = size();
++        if (static_cast<size_t>(literal.array_size()) != length) {
++            return false;
++        }
++        if (length == 0) {
++            return true;
++        }
++        if (!literal.same_type()) {
++            return false;
++        }
++        const auto type = element_type();
++        const auto expected_val_case =
++            array_detail::ExpectedLiteralValCase(type);
++        if (expected_val_case ==
++            proto::plan::GenericValue::ValCase::VAL_NOT_SET) {
++            return false;
++        }
++        for (size_t i = 0; i < length; ++i) {
++            const auto& expected = literal.array(static_cast<int>(i));
++            if (!is_valid(i) || expected.val_case() != expected_val_case) {
++                return false;
++            }
++            bool same = false;
++            switch (type) {
++                case DataType::BOOL:
++                    same = get_data_unchecked<bool>(i) == expected.bool_val();
++                    break;
++                case DataType::INT8:
++                case DataType::INT16:
++                case DataType::INT32:
++                case DataType::INT64:
++                    same =
++                        get_data_unchecked<int64_t>(i) == expected.int64_val();
++                    break;
++                case DataType::FLOAT:
++                    same = get_data_unchecked<float>(i) ==
++                           static_cast<float>(expected.float_val());
++                    break;
++                case DataType::DOUBLE:
++                    same =
++                        get_data_unchecked<double>(i) == expected.float_val();
++                    break;
++                default:
++                    same = get_data_unchecked<std::string_view>(i) ==
++                           expected.string_val();
++                    break;
++            }
++            if (!same) {
++                return false;
++            }
++        }
++        return true;
++    }
++
+     void
+     output_data(ScalarFieldProto& output) const {
+         assert(type_ != nullptr && child_ != nullptr);
+```
+
+**File**: `internal/core/src/common/ArrayValueTest.cpp` (modified, +11/-2)
+```diff
+@@ -1176,8 +1176,17 @@ TEST(ArrayValue, GrowingSegmentRetrievesNullableScalarElements) {
+         segment->bulk_subscript(nullptr, array_field, &result_offset, 1);
+     ASSERT_EQ(result->scalars().array_data().data_size(), 1);
+     AssertProtoEqual(*row, result->scalars().array_data().data(0));
+-    EXPECT_ANY_THROW(segment->chunk_view<ArrayValueView>(
+-        nullptr, array_field, 0, std::make_pair(0, 1)));
++    // Row filters read element-nullable rows as ArrayValueView, which
++    // exposes element validity.
++    auto views = segment->chunk_view<ArrayValueView>(
++        nullptr, array_field, 0, std::make_pair(0, 1));
++    const auto& [view_rows, view_valid] = views.get();
++    ASSERT_EQ(view_rows.size(), 1);
++    ASSERT_EQ(view_rows[0].size(), 3);
++    EXPECT_TRUE(view_rows[0].is_valid(0));
++    EXPECT_FALSE(view_rows[0].is_valid(1));
++    EXPECT_TRUE(view_rows[0].is_valid(2));
++    EXPECT_EQ(view_rows[0].get_data_unchecked<int64_t>(2), 16);
+     auto offsets = segment->GetStructElementOffsets(array_field);
+     ASSERT_NE(offsets, nullptr);
+     EXPECT_EQ(offsets->GetRowCount(), 1);
+```
+
+**File**: `internal/core/src/exec/expression/BinaryArithOpEvalRangeExpr.cpp` (modified, +461/-427)
+```diff
+@@ -119,16 +119,14 @@ PhyBinaryArithOpEvalRangeExpr::Eval(EvalCtx& context, VectorPtr& result) {
+             switch (value_type) {
+                 case proto::plan::GenericValue::ValCase::kInt64Val: {
+                     if (is_array_length) {
+-                        if (is_nested_array) {
+-                            if (expr_->column_.element_level_) {
+-                                result = ExecArrayLength<ArrayValueView,
+-                                                         int64_t,
+-                                                         true>(input);
+-                            } else {
+-                                result = ExecArrayLength<ArrayValueView,
+-                                                         int64_t,
+-                                                         false>(input);
+-                            }
++                        if (is_nested_array && expr_->column_.element_level_) {
++                            result =
++                                ExecArrayLength<ArrayValueView, int64_t, true>(
++                                    input);
++                        } else if (is_native_list_array_) {
++                            result =
++                                ExecArrayLength<ArrayValueView, int64_t, false>(
++                                    input);
+                         } else {
+                             result = ExecArrayLength<ArrayView, int64_t, false>(
+                                 input);
+@@ -140,16 +138,14 @@ PhyBinaryArithOpEvalRangeExpr::Eval(EvalCtx& context, VectorPtr& result) {
+                 }
+                 case proto::plan::GenericValue::ValCase::kFloatVal: {
+                     if (is_array_length) {
+-                        if (is_nested_array) {
+-                            if (expr_->column_.element_level_) {
+-                                result = ExecArrayLength<ArrayValueView,
+-                                                         double,
+-                                                         true>(input);
+-                            } else {
+-                                result = ExecArrayLength<ArrayValueView,
+-                                                         double,
+-                                                         false>(input);
+-                            }
++                        if (is_nested_array && expr_->column_.element_level_) {
++                            result =
++                                ExecArrayLength<ArrayValueView, double, true>(
++                                    input);
++                        } else if (is_native_list_array_) {
++                            result =
++                                ExecArrayLength<ArrayValueView, double, false>(
++                                    input);
+                         } else {
+                             result = ExecArrayLength<ArrayView, double, false>(
+                                 input);
+@@ -791,10 +787,7 @@ PhyBinaryArithOpEvalRangeExpr::ExecRangeVisitorImplForArray(
+     TargetBitmapView res(res_vec->GetRawData(), real_batch_size);
+     TargetBitmapView valid_res(res_vec->GetValidRawData(), real_batch_size);
+ 
+-    int index = -1;
+-    if (expr_->column_.nested_path_.size() > 0) {
+-        index = std::stoi(expr_->column_.nested_path_[0]);
+-    }
++    int index = ParseArraySubscript(expr_->column_.nested_path_);
+     auto op_type = expr_->op_type_;
+     auto arith_type = expr_->arith_op_type_;
+     auto value = value_arg_.GetValue<ValueType>();
+@@ -821,20 +814,27 @@ PhyBinaryArithOpEvalRangeExpr::ExecRangeVisitorImplForArray(
+                 valid_res[i] = false;                                     \
+                 continue;                                                 \
+             }                                                             \
+-            if (index >= data[offset].length()) {                         \
++            if (!HasArrayElementAt(data[offset], index)) {                \
+                 res[i] = false;                                           \
+                 valid_res[i] = false;                                     \
+                 continue;                                                 \
+             }                                                             \
+-            auto value = data[offset].get_data_unchecked<GetType>(index); \
++            auto value =                                                  \
++                data[offset].template get_data_unchecked<GetType>(index); \
+             res[i] = (cmp);                                               \
+         }                                                                 \
+     } while (false)
+ 
+-    auto execute_sub_batch =
+-        [ op_type,
+-          arith_type ]<FilterType filter_type = FilterType::sequential>(
+-            const ArrayView* data,
++    if (is_nested_array_field_) {
++        ThrowInfo(ErrorCode::Unsupported,
++                  "nested ARRAY field {} does not support 
+```
+
+**File**: `internal/core/src/exec/expression/BinaryRangeExpr.cpp` (modified, +104/-99)
+```diff
+@@ -366,10 +366,9 @@ PhyBinaryRangeFilterExpr::PreCheckOverflow(HighPrecisionType& val1,
+         [this, batch_size](OffsetVector* input) -> ColumnVectorPtr {
+         TargetBitmap valid_res;
+         if (expr_->column_.element_level_) {
+-            valid_res = TargetBitmap(batch_size, true);
+-            if (input == nullptr) {
+-                MoveCursor();
+-            }
++            // A null element stays UNKNOWN. Without input this consumes the
++            // batch.
++            valid_res = ProcessElementValidity(input, batch_size);
+         } else if (input != nullptr) {
+             valid_res =
+                 ProcessChunksForValidByOffsets<T>(UseIndexCursor(), *input);
+@@ -1030,16 +1029,23 @@ PhyBinaryRangeFilterExpr::ExecRangeVisitorImplForArray(EvalCtx& context) {
+     const ValueType& val1 = lower_arg_.GetValue<ValueType>();
+     const ValueType& val2 = upper_arg_.GetValue<ValueType>();
+ 
+-    int index = -1;
+-    if (expr_->column_.nested_path_.size() > 0) {
+-        index = std::stoi(expr_->column_.nested_path_[0]);
+-    }
++    int index = ParseArraySubscript(expr_->column_.nested_path_);
+ 
++    if (is_nested_array_field_) {
++        ThrowInfo(ErrorCode::Unsupported,
++                  "nested ARRAY field {} does not support element range "
++                  "predicates",
++                  field_id_.get());
++    }
+     size_t processed_cursor = 0;
+-    auto execute_sub_batch =
+-        [ lower_inclusive, upper_inclusive, &processed_cursor, &
+-          bitmap_input ]<FilterType filter_type = FilterType::sequential>(
+-            const milvus::ArrayView* data,
++    auto make_sub_batch = [&]<typename ArrayType>() {
++        return [
++            lower_inclusive,
++            upper_inclusive,
++            &processed_cursor,
++            &bitmap_input
++        ]<FilterType filter_type = FilterType::sequential>(
++            const ArrayType* data,
+             ValidityView valid_data,
+             const int32_t* offsets,
+             const int size,
+@@ -1048,96 +1054,95 @@ PhyBinaryRangeFilterExpr::ExecRangeVisitorImplForArray(EvalCtx& context) {
+             const ValueType& val1,
+             const ValueType& val2,
+             int index) {
+-        AssertInfo(index >= 0,
+-                   "array element range predicate requires nested path");
+-        // If data is nullptr, this chunk was skipped by SkipIndex.
+-        // We only need to update processed_cursor for bitmap_input indexing.
+-        if (data == nullptr) {
+-            processed_cursor += size;
+-            return;
+-        }
+-        if (lower_inclusive && upper_inclusive) {
+-            BinaryRangeElementFuncForArray<ValueType, true, true, filter_type>
+-                func;
+-            func(val1,
+-                 val2,
+-                 index,
+-                 data,
+-                 valid_data,
+-                 size,
+-                 res,
+-                 valid_res,
+-                 bitmap_input,
+-                 processed_cursor,
+-                 offsets);
+-        } else if (lower_inclusive && !upper_inclusive) {
+-            BinaryRangeElementFuncForArray<ValueType, true, false, filter_type>
+-                func;
+-            func(val1,
+-                 val2,
+-                 index,
+-                 data,
+-                 valid_data,
+-                 size,
+-                 res,
+-                 valid_res,
+-                 bitmap_input,
+-                 processed_cursor,
+-                 offsets);
+-
+-        } else if (!lower_inclusive && upper_inclusive) {
+-            BinaryRangeElementFuncForArray<ValueType, false, true, filter_type>
+-                func;
+-            func(val1,
+-                 val2,
+-                 index,
+-                 data,
+-                 valid_data,
+-                 size,
+-                 res,
+-                 valid_res,
+-                 bitmap_input,
+-                 processed_cursor,
+-                 offsets);
++            AssertInfo(index >= 0,
++                       "array element range predicate requires nested path");
++            // If data is nullptr, this chunk was skipped by SkipIndex.
++            // We only need to update processed_cursor for bitmap_input indexing.
++            if (data == nullptr) {
++                processed_cursor += size;
++                return;
++            }
++            if (lower_inclusive && upper_inclusive) {
++                BinaryRangeElementFuncForArray<ValueType,
++                                               true,
++                                               true,
++                                               filter_type,
++                                               ArrayType>
++                    func;
++                func(val1,
++                     val2,
++                     index,
++                     data,
++                     valid_data,
++                     size,
++                     res,
++                     valid_res,
++                     bitmap_input,
++                     processed_cursor
+```
+
+**File**: `internal/core/src/exec/expression/BinaryRangeExpr.h` (modified, +6/-4)
+```diff
+@@ -190,7 +190,8 @@ struct BinaryRangeElementFuncForJson {
+ template <typename ValueType,
+           bool lower_inclusive,
+           bool upper_inclusive,
+-          FilterType filter_type = FilterType::sequential>
++          FilterType filter_type = FilterType::sequential,
++          typename ArrayType = milvus::ArrayView>
+ struct BinaryRangeElementFuncForArray {
+     using GetType = std::conditional_t<std::is_same_v<ValueType, std::string>,
+                                        std::string_view,
+@@ -199,7 +200,7 @@ struct BinaryRangeElementFuncForArray {
+     operator()(const ValueType& val1,
+                const ValueType& val2,
+                int index,
+-               const milvus::ArrayView* src,
++               const ArrayType* src,
+                ValidityView valid_data,
+                size_t n,
+                TargetBitmapView res,
+@@ -222,12 +223,13 @@ struct BinaryRangeElementFuncForArray {
+                 res[i] = valid_res[i] = false;
+                 continue;
+             }
+-            if (index >= src[offset].length()) {
++            if (!HasArrayElementAt(src[offset], index)) {
+                 res[i] = false;
+                 valid_res[i] = false;
+                 continue;
+             }
+-            auto value = src[offset].get_data_unchecked<GetType>(index);
++            auto value =
++                src[offset].template get_data_unchecked<GetType>(index);
+             if constexpr (lower_inclusive && upper_inclusive) {
+                 res[i] = val1 <= value && value <= val2;
+             } else if constexpr (lower_inclusive && !upper_inclusive) {
+```
+
+**File**: `internal/core/src/exec/expression/Expr.h` (modified, +336/-63)
+```diff
+@@ -18,9 +18,11 @@
+ 
+ #include <algorithm>
+ #include <bit>
++#include <charconv>
+ #include <chrono>
+ #include <cmath>
+ #include <exception>
++#include <limits>
+ #include <memory>
+ #include <mutex>
+ #include <optional>
+@@ -86,6 +88,81 @@ CanUseSkipFilter(bool is_nullable, bool null_rejecting) {
+ using SkipChunkFn =
+     std::function<bool(const FieldSkipMetricsView&, int64_t chunk_id)>;
+ 
++// Logical element count of one ARRAY row, null elements included.
++template <typename ArrayType>
++inline size_t
++ArrayRowLength(const ArrayType& row) {
++    if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
++        return row.size();
++    } else {
++        return static_cast<size_t>(row.length());
++    }
++}
++
++// Subscript of an ARRAY operand (`a[i]`, `s[i][x]`), parsed from
++// nested_path[0]. kWholeArrayOperand: no subscript, the operand is the whole
++// row.
++inline constexpr int kWholeArrayOperand = -1;
++// A subscript that names no element: above INT_MAX or negative. It is never
++// kWholeArrayOperand, and HasArrayElementAt / NestedArrayElementAt treat it as
++// out of bounds, so the operand is UNKNOWN.
++inline constexpr int kArraySubscriptOutOfRange =
++    std::numeric_limits<int>::max();
++
++inline int
++ParseArraySubscript(const std::vector<std::string>& nested_path) {
++    if (nested_path.empty()) {
++        return kWholeArrayOperand;
++    }
++    const auto& text = nested_path[0];
++    const char* last = text.data() + text.size();
++    int index = 0;
++    const auto [end, ec] = std::from_chars(text.data(), last, index);
++    // The plan parser emits only decimal digits here.
++    AssertInfo(ec != std::errc::invalid_argument && end == last,
++               "invalid array subscript '{}'",
++               text);
++    if (ec == std::errc::result_out_of_range || index < 0) {
++        return kArraySubscriptOutOfRange;
++    }
++    return index;
++}
++
++// Whether row[index] is a non-null element. A subscript that misses (out of
++// bounds or a null element) evaluates to UNKNOWN.
++template <typename ArrayType>
++inline bool
++HasArrayElementAt(const ArrayType& row, int index) {
++    if (index < 0 || index == kArraySubscriptOutOfRange ||
++        static_cast<size_t>(index) >= ArrayRowLength(row)) {
++        return false;
++    }
++    if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
++        return row.is_valid(index);
++    } else {
++        return true;
++    }
++}
++
++// `s[i][tags]` on a nested Array field: the inner Array of struct element i,
++// or nullopt (NULL) when element i is missing or null.
++inline std::optional<ArrayValueView>
++NestedArrayElementAt(const ArrayValueView& row, int index) {
++    if (index < 0 || index == kArraySubscriptOutOfRange ||
++        static_cast<size_t>(index) >= row.size()) {
++        return std::nullopt;
++    }
++    auto inner = row.array_at(index);
++    if (inner.is_null()) {
++        return std::nullopt;
++    }
++    return inner;
++}
++
++// ElementType of an element-level visit that reads element validity only.
++// Its batches carry a placeholder data pointer that must not be read.
++struct ElementValidityOnly {};
++
+ // IndexPathSelection.h owns ExprExecPath and metadata-only path selection.
+ // Capability inspection must not pin a cold reader to choose an execution path.
+ 
+@@ -518,7 +595,10 @@ class SegmentExpr : public Expr {
+         auto field_meta = segment_->get_field_meta(field_id_);
+         field_type_ = field_meta.get_data_type();
+         is_nullable_ = field_meta.is_nullable();
+-        has_nullable_array_element_ = field_meta.has_nullable_array_element();
++        is_native_list_array_ = field_meta.get_data_type() == DataType::ARRAY &&
++                                field_meta.is_native_list_array();
++        is_nested_array_field_ = field_meta.is_nested_array();
++        is_element_nullable_ = field_meta.is_element_nullable();
+ 
+         if (segment_->is_primary_field(field_id_) &&
+             IsPrimaryKeyDataType(field_meta.get_data_type())) {
+@@ -2079,18 +2159,27 @@ class SegmentExpr : public Expr {
+         }
+     }
+ 
++    // std::vector<bool> has no data(), so bool elements use FixedVector.
++    template <typename ElementType>
++    using ElementValueBuffer =
++        std::conditional_t<std::is_same_v<ElementType, bool>,
++                           FixedVector<bool>,
++                           std::vector<ElementType>>;
++
+     // Normalize one physical ARRAY row into batches of logical ElementType.
+     // Scalar ARRAY rows expose their leaf payload, while recursive ARRAY rows
+     // expose their child ArrayValueView values. The caller only sees the
+-    // uniform (data, valid_data, size) batch contract.
++    // uniform (data, valid_data, size) batch contract. A null element is
++    // reported through valid_data; its value slot is a default value.
+     template <typename ElementType, typename RowType, typename Consumer>
+     static void
+     VisitArrayElementRun(const RowType& row,
+                          int32_t first_element,
+                          
+```
+
+**File**: `internal/core/src/exec/expression/JsonContainsExpr.cpp` (modified, +76/-17)
+```diff
+@@ -136,7 +136,10 @@ PhyJsonContainsFilterExpr::Eval(EvalCtx& context, VectorPtr& result) {
+     const bool is_element_level_array =
+         expr_->column_.data_type_ == DataType::ARRAY &&
+         expr_->column_.element_level_;
+-    if (expr_->vals_.empty() && !is_element_level_array) {
++    // array_contains*(s[i][tags], []) still yields UNKNOWN for a missing or
++    // null element, so it takes the data path.
++    if (expr_->vals_.empty() && !is_element_level_array &&
++        !IsNestedArrayElementOperand()) {
+         auto real_batch_size =
+             has_offset_input_ ? input->size() : GetNextBatchSize();
+         if (real_batch_size == 0) {
+@@ -333,6 +336,10 @@ PhyJsonContainsFilterExpr::ExecArrayContains(EvalCtx& context) {
+         return ExecArrayContainsImpl<ArrayValueView, ExprValueType, true>(
+             context);
+     }
++    if (is_native_list_array_) {
++        return ExecArrayContainsImpl<ArrayValueView, ExprValueType, false>(
++            context);
++    }
+     return ExecArrayContainsImpl<ArrayView, ExprValueType, false>(context);
+ }
+ 
+@@ -375,8 +382,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
+                "ARRAY contains element-level mismatch: plan={}, executor={}",
+                expr_->column_.element_level_,
+                ElementLevel);
+-    AssertInfo(expr_->column_.nested_path_.size() == 0,
+-               "[ExecArrayContains]nested path must be null");
++    const int nested_index =
++        ArrayContainsNestedIndex<ArrayType, ElementLevel>();
+ 
+     auto res_vec =
+         std::make_shared<ColumnVector>(TargetBitmap(real_batch_size, false),
+@@ -397,8 +404,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
+ 
+     int processed_cursor = 0;
+     auto execute_sub_batch =
+-        [&processed_cursor, &
+-         bitmap_input ]<FilterType filter_type = FilterType::sequential>(
++        [&processed_cursor, &bitmap_input,
++         nested_index ]<FilterType filter_type = FilterType::sequential>(
+             const ArrayType* data,
+             ValidityView valid_data,
+             const int32_t* offsets,
+@@ -412,10 +419,15 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
+             processed_cursor += size;
+             return;
+         }
+-        auto executor = [&](size_t i) {
+-            const auto& array = data[i];
++        // Null elements match no value.
++        auto executor = [&](const ArrayType& array) {
+             const auto array_size = GetArrayRowSize(array);
+             for (size_t j = 0; j < array_size; ++j) {
++                if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
++                    if (!array.is_valid(j)) {
++                        continue;
++                    }
++                }
+                 if (elements.find(array.template get_data_unchecked<GetType>(
+                         j)) != elements.end()) {
+                     return true;
+@@ -436,7 +448,19 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
+             if (has_bitmap_input && !bitmap_input[processed_cursor + i]) {
+                 continue;
+             }
+-            res[i] = executor(offset);
++            if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
++                if (nested_index >= 0) {
++                    auto inner =
++                        NestedArrayElementAt(data[offset], nested_index);
++                    if (!inner.has_value()) {
++                        res[i] = valid_res[i] = false;
++                        continue;
++                    }
++                    res[i] = executor(*inner);
++                    continue;
++                }
++            }
++            res[i] = executor(data[offset]);
+         }
+         processed_cursor += size;
+     };
+@@ -977,6 +1001,10 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAll(EvalCtx& context) {
+         return ExecArrayContainsAllImpl<ArrayValueView, ExprValueType, true>(
+             context);
+     }
++    if (is_native_list_array_) {
++        return ExecArrayContainsAllImpl<ArrayValueView, ExprValueType, false>(
++            context);
++    }
+     return ExecArrayContainsAllImpl<ArrayView, ExprValueType, false>(context);
+ }
+ 
+@@ -989,8 +1017,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAllImpl(EvalCtx& context) {
+                            ExprValueType>;
+     auto* input = context.get_offset_input();
+     const auto& bitmap_input = context.get_bitmap_input();
+-    AssertInfo(expr_->column_.nested_path_.size() == 0,
+-               "[ExecArrayContainsAll]nested path must be null");
++    const int nested_index =
++        ArrayContainsNestedIndex<ArrayType, ElementLevel>();
+     auto next_batch_size = GetNextRealBatchSize(input, ElementLevel);
+     if (!next_batch_size.has_value()) {
+         return nullptr;
+@@ -1028,8 +1056,13 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAllImpl(EvalCtx& context) {
+     std::vector<uint64_t> found_large(
+         matcher.use_small() ? 0 : matcher.num_words()
+```
+
+**File**: `internal/core/src/exec/expression/JsonContainsExpr.h` (modified, +25/-1)
+```diff
+@@ -519,7 +519,8 @@ class PhyJsonContainsFilterExpr : public SegmentExpr {
+             return;
+         }
+         if (expr_->column_.data_type_ == DataType::ARRAY &&
+-            (expr_->column_.element_level_ || expr_->vals_.empty())) {
++            (expr_->column_.element_level_ || expr_->vals_.empty() ||
++             is_native_list_array_)) {
+             exec_path_ = ExprExecPath::RawData;
+             return;
+         }
+@@ -562,6 +563,29 @@ class PhyJsonContainsFilterExpr : public SegmentExpr {
+     VectorPtr
+     ExecArrayContainsImpl(EvalCtx& context);
+ 
++    // Struct element index i for array_contains*(s[i][tags], ...) on a
++    // nested Array field, or kWholeArrayOperand when the row itself is the
++    // operand.
++    template <typename ArrayType, bool ElementLevel>
++    int
++    ArrayContainsNestedIndex() const {
++        if constexpr (std::is_same_v<ArrayType, ArrayValueView> &&
++                      !ElementLevel) {
++            if (IsNestedArrayElementOperand()) {
++                return ParseArraySubscript(expr_->column_.nested_path_);
++            }
++            if (is_nested_array_field_) {
++                ThrowInfo(ErrorCode::Unsupported,
++                          "array_contains on nested ARRAY field {} requires "
++                          "a struct element index",
++                          field_id_.get());
++            }
++        }
++        AssertInfo(expr_->column_.nested_path_.empty(),
++                   "[ExecArrayContains]nested path must be null");
++        return kWholeArrayOperand;
++    }
++
+     template <typename ExprValueType>
+     VectorPtr
+     ExecJsonContainsAll(EvalCtx& context);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54939** (closed): feat: prototype independent MultiSearch requests through Proxy (@codingjaguar)
-- **PR #54936** (2026-10-31): fix(ci): stop macOS Conan recipe auto-updates (@zhikunyao)
-- **PR #54933** (closed): fix: return typed empty columns from PresizeAppendFieldData so empty reduced results keep the primary field (@xixi-box)
-- **PR #54928** (closed): fix: return typed empty columns from PresizeAppendFieldData so empty reduced results keep the primary field (@xixi-box)
-- **PR #54927** (closed): fix: keep typed empty columns when QueryNode reduce yields no rows (@czs007)
-- **PR #54926** (closed): fix: [Bug]: Search with rerank/function_chain fails with 1100 "can't find data for primary field" when the result is empty and QueryNode reduces multiple sub-results (@xixi-box)
+- **PR #55064** (2026-11-03): fix: [hotfix-3.0.5] prefer safe JSON indexes over stats (@sparknack)
+- **PR #55063** (2026-11-03): fix: [hotfix-3.0.5] preserve candidate masks in logical and GIS filters (@zhengbuqian)
+- **PR #55060** (2026-11-03): fix: [3.0] preserve candidate masks in logical and GIS filters (@zhengbuqian)
+- **PR #55058** (2026-11-03): fix: [2.6] preserve candidate masks in logical and GIS filters (@zhengbuqian)
+- **PR #55057** (2026-11-03): fix: preserve candidate masks in logical and GIS filters (@zhengbuqian)
+- **PR #55042** (closed): fix: [3.0] keep array-index JSON paths off a flat index on the whole field (@xiaofan-luan)
 
 ---
 
@@ -2182,47 +2747,69 @@ Signed-off-by: Zhikun Yao <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. map every available collection to its DB in QuotaCenter (#54890)
+## X. prevent CDC replicator panic after source scanner termination (#54663)
 
 **RULE**:
-When implementing operations in `internal/rootcoord/quota_center.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/cdc/replication/replicatemanager/channel_replicator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `059b8466`: map every available collection to its DB in QuotaCenter (#54890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20d2246e`: prevent CDC replicator panic after source scanner termination (#54663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/rootcoord/quota_center.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cdc/replication/replicatemanager/channel_replicator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if collections.Contain(collectionID) {
-	// Build the collection-to-DB mapping from the same metadata snapshot as the
-	// limiter tree. Node metrics omit unloaded or unflushed collections, while
-	// WAL lag protection still covers every collection on a pchannel.
-	for dbID, collections := range partitions {
-		for collectionID := range collections {
-			q.collectionIDToDBID.Insert(collectionID, dbID)
+var errScannerClosed = errors.New("replication source scanner closed")
+
+		if err := r.startConsumeLoop(); err != nil &&
+			!errors.Is(err, context.Canceled) &&
+			!errors.Is(err, replicatestream.ErrReplicationRemoved) {
+			logger.Warn(context.TODO(), "replication source scanner stopped", mlog.Err(err))
+		}
+func (r *channelReplicator) startConsumeLoop() error {
+	var scannerDone <-chan struct{}
+	if r.msgScanner != nil {
+		scannerDone = r.msgScanner.Done()
+	}
+			return nil
+		case <-scannerDone:
+			return r.scannerStoppedError(true)
+		case msg, ok := <-r.msgChan:
+			if !ok {
+				return r.scannerStoppedError(false)
+			}
+					return replicatestream.ErrReplicationRemoved
+func (r *channelReplicator) scannerStoppedError(scannerDone bool) error {
+	if r.msgScanner == nil {
+		return errScannerClosed
+	}
+
+	if !scannerDone {
+		select {
+		case <-r.msgScanner.Done():
+		case <-r.asyncNotifier.Context().Done():
+			return r.asyncNotifier.Context().Err()
 		}
 	}
-					collectionID := node.GetID()
-					if collectionName, ok := collectionIDs[collectionID]; ok {
-						name = "collection_" + collectionName
-					} else {
-						name = "collection_id_" + strconv.FormatInt(collectionID, 10)
-					}
+	if err := r.msgScanner.Error(); err != nil {
+		return errors.Wrap(err, "replication source scanner stopped")
+	}
+	return errScannerClosed
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
-			_, ok := q.collectionIDToDBID.Get(collectionID)
-			if ok {
-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
-					name = "collection_" + collectionIDs[node.GetID()]
+		r.startConsumeLoop()
+func (r *channelReplicator) startConsumeLoop() {
+			return
+		case msg := <-r.msgChan:
+					return
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `059b8466` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20d2246e` are properly handled with clean fallback behavior.

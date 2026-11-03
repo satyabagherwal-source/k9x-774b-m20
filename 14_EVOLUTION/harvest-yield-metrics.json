@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T20:13:01.479Z",
-  "total_cycles_completed": 6974,
-  "total_learnings_persisted": 6974,
-  "total_rules_promoted": 6620,
+  "last_updated": "2026-11-03T20:27:39.024Z",
+  "total_cycles_completed": 6976,
+  "total_learnings_persisted": 6976,
+  "total_rules_promoted": 6622,
   "history": [
-    {
-      "timestamp": "2026-11-02T14:32:05.569Z",
-      "repository": "burner22/numbat",
-      "learningId": "learn-huggingface-burner22-numbat",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T14:32:11.006Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T14:39:14.874Z",
       "repository": "telemt/telemt",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T20:13:01.479Z",
       "repository": "TypeWhisper/typewhisper-mac",
       "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T20:27:38.932Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T20:27:39.024Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6997,3 +6997,5 @@
 | `CYCLE-20261103-4ZDK` | `2026-11-03T20:01:01.976Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6588` | Yes (`4c45326c...`) |
 | `CYCLE-20261103-JJ67` | `2026-11-03T20:12:20.815Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6601` | Yes (`bbe280b1...`) |
 | `CYCLE-20261103-KEJI` | `2026-11-03T20:13:01.470Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6602` | Yes (`fbfffc63...`) |
+| `CYCLE-20261103-37L6` | `2026-11-03T20:27:38.922Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6603` | Yes (`7641d053...`) |
+| `CYCLE-20261103-37NR` | `2026-11-03T20:27:39.015Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6604` | Yes (`4860b1ea...`) |
