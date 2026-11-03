@@ -7031,3 +7031,8 @@
 | `CYCLE-20261103-MLNR` | `2026-11-03T22:06:42.471Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6634` | Yes (`93b54521...`) |
 | `CYCLE-20261103-MNC8` | `2026-11-03T22:06:44.648Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6635` | Yes (`3ade3e62...`) |
 | `CYCLE-20261103-MP1N` | `2026-11-03T22:06:46.859Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6636` | Yes (`e3473e4e...`) |
+| `CYCLE-20261103-XN9R` | `2026-11-03T22:15:17.775Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6637` | Yes (`fcfe6170...`) |
+| `CYCLE-20261103-XNEZ` | `2026-11-03T22:15:17.963Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6638` | Yes (`e11dcbcb...`) |
+| `CYCLE-20261103-XRIS` | `2026-11-03T22:15:23.284Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6639` | Yes (`1dfc1778...`) |
+| `CYCLE-20261103-XTFD` | `2026-11-03T22:15:25.753Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6640` | Yes (`e7d8656a...`) |
+| `CYCLE-20261103-XW2M` | `2026-11-03T22:15:29.182Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6580` | Yes (`dc97f39e...`) |

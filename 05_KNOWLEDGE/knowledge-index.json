@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:06:46.775Z",
+  "last_updated": "2026-11-03T22:15:29.088Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46479,8 +46479,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "c78633d8",
-      "content_hash": "ac76ae613700dd74e0307b282d8c570aa02ede374e2772c7c5bf66cdb6378f4c",
+      "source_version": "edc9c419",
+      "content_hash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -46533,6 +46533,11 @@
           "number": 5821,
           "title": "mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6639,
+          "title": "clickhouse): normalize tables added to a running mirror through their column set",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46540,7 +46545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:07:08.391Z",
+      "verified_at": "2026-11-03T22:15:23.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51569,8 +51574,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "8b14e8dc",
-      "content_hash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
+      "source_version": "cc4e40fa",
+      "content_hash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -51613,6 +51618,11 @@
           "number": 5940,
           "title": "Merge pull request #2202 from meop/ci/windows-arm64-gnullvm",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6637,
+          "title": "docs: do not list the targets jemalloc is built for",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51620,7 +51630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:44:47.207Z",
+      "verified_at": "2026-11-03T22:15:17.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55078,8 +55088,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "697bdea5",
-      "content_hash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
+      "source_version": "ca4e1972",
+      "content_hash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -55237,6 +55247,11 @@
           "number": 6555,
           "title": "cmd/pgproxy: delete, leave README stub",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6640,
+          "title": "tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55244,7 +55259,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:30:17.578Z",
+      "verified_at": "2026-11-03T22:15:25.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57476,13 +57491,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "f9446abf",
-      "content_hash": "97944d9903aa8551151e715c209020871dc0d377c9502ad7afcbcf5e1eaa3eae",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -57617,7 +57632,7 @@
         {
           "number": 6580,
           "title": "core/security: Add role catalog",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57625,7 +57640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:47:57.641Z",
+      "verified_at": "2026-11-03T22:15:29.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74196,8 +74211,8 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "8402e101",
-      "content_hash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
+      "source_version": "30da29ba",
+      "content_hash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
@@ -74230,6 +74245,11 @@
           "number": 5755,
           "title": "WHATWG Attribute Escaping Minimality Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6638,
+          "title": "end attribute names when missing whitespace (#1908)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74237,7 +74257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:11:07.750Z",
+      "verified_at": "2026-11-03T22:15:17.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169961,14 +169981,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6580,
       "title": "core/security: Add role catalog",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "f9446abf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T18:47:57.641Z"
+      "verified_at": "2026-11-03T22:15:29.066Z"
     },
     "rule-6581": {
       "learning_id": "rule-6581",
@@ -170848,6 +170868,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:06:46.752Z"
+    },
+    "rule-6637": {
+      "learning_id": "rule-6637",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6637,
+      "title": "docs: do not list the targets jemalloc is built for",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "cc4e40fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:15:17.666Z"
+    },
+    "rule-6638": {
+      "learning_id": "rule-6638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6638,
+      "title": "end attribute names when missing whitespace (#1908)",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "30da29ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:15:17.858Z"
+    },
+    "rule-6639": {
+      "learning_id": "rule-6639",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6639,
+      "title": "clickhouse): normalize tables added to a running mirror through their column set",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "edc9c419",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:15:23.177Z"
+    },
+    "rule-6640": {
+      "learning_id": "rule-6640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6640,
+      "title": "tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "ca4e1972",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:15:25.647Z"
     }
   },
   "aliases": {

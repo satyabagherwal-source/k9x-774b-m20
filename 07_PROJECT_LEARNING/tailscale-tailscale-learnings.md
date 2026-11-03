@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `697bdea5`  
+> **Source Version**: `ca4e1972`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:30:17.151Z  
+> **Timestamp**: 2026-11-03T22:15:25.014Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:30:16.755Z  
+> **Harvest Timestamp**: 2026-11-03T22:15:24.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38578 stars
+- **Stars / Engagement**: 38586 stars
 
 ---
 
@@ -821,369 +821,677 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `697bdea5` (2026-11-03)
-**Commit Message**: cmd/pgproxy: delete, leave README stub
+### Incident Patch 1: `ca4e1972` (2026-11-03)
+**Commit Message**: tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145)
 
-Fixes tailscale/corp#50889
+portmapper.go was introduced for UPnP in commit
+8ed43f1f2a30e2811b642037cdd9faa501fa3614.
 
-Change-Id: I9ea45c14ea305fb3e5cd5adee5f64701db054f8e
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+This also adds a unit test which exercises the incomplete
+natlab server implementation of these portmapping protocols.
 
-**File**: `cmd/pgproxy/README.md` (modified, +8/-36)
+Updates #21713
+
+Change-Id: I33b61ccbe8c1d8d99d56aa357ae24777be3f5739
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+
+**File**: `tstest/natlab/vnet/portmapper.go` (modified, +343/-0)
 ```diff
-@@ -1,42 +1,14 @@
- # pgproxy
+@@ -5,11 +5,33 @@ package vnet
  
--The pgproxy server is a proxy for the Postgres wire protocol. [Read
--more in our blog
--post](https://tailscale.com/blog/introducing-pgproxy/) about it!
-+The pgproxy server was our old Tailscale proxy for the Postgres wire
-+protocol. See our [Introducing pgproxy blog post]
-+post](https://tailscale.com/blog/introducing-pgproxy/).
+ import (
+ 	"bytes"
++	"encoding/binary"
+ 	"encoding/xml"
+ 	"fmt"
+ 	"io"
++	"maps"
++	"math/rand/v2"
+ 	"net/http"
+ 	"net/netip"
++	"time"
++
++	"tailscale.com/util/mak"
++)
++
++// PxP packets
++const (
++	opcodeANNOUNCE = 0 // external address lookup in NAT-PMP
++	opcodeMAP      = 1 // MAP UDP in NAT-PMP
++
++	protocolUDP = 17
++
++	versionNATPMP = 0
++	versionPCP    = 2
++
++	resultSuccess       = 0
++	resultUnsuppVersion = 1
++
++	opcodeResponseBit = 128
+ )
  
--The proxy runs an in-process Tailscale instance, accepts postgres
--client connections over Tailscale only, and proxies them to the
--configured upstream postgres server.
-+We changed our internal infrastructure such that we no longer depend on it.
-+Rather than pretend it's still maintained, we deleted it.
- 
--This proxy exists because postgres clients default to very insecure
--connection settings: either they "prefer" but do not require TLS; or
--they set sslmode=require, which merely requires that a TLS handshake
--took place, but don't verify the server's TLS certificate or the
--presented TLS hostname.  In other words, sslmode=require enforces that
--a TLS session is created, but that session can trivially be
--machine-in-the-middled to steal credentials, data, inject malicious
--queries, and so forth.
-+If community fork(s) emerge, we'll link from here.
- 
--Because this flaw is in the client's validation of the TLS session,
--you have no way of reliably detecting the misconfiguration
--server-side. You could fix the configuration of all the clients you
--know of, but the default makes it very easy to accidentally regress.
-+If you want the old code, it's [still in git](https://raw.githubusercontent.com/tailscale/tailscale/d45c5ddfbbc1bb6ded8e3e9a15af9ece78bb4744/cmd/pgproxy/pgproxy.go)
-+or installable via `go install tailscale.com/cmd/pgproxy@d45c5ddfbbc1b`.
- 
--Instead of trying to verify client configuration over time, this proxy
--removes the need for postgres clients to be configured correctly: the
--upstream database is configured to only accept connections from the
--proxy, and the proxy is only available to clients over Tailscale.
--
--Therefore, clients must use the proxy to connect to the database. The
--client<>proxy connection is secured end-to-end by Tailscale, which the
--proxy enforces by verifying that the connecting client is a known
--current Tailscale peer. The proxy<>server connection is established by
--the proxy itself, using strict TLS verification settings, and the
--client is only allowed to communicate with the server once we've
--established that the upstream connection is safe to use.
--
--A couple side benefits: because clients can only connect via
--Tailscale, you can use Tailscale ACLs as an extra layer of defense on
--top of the postgres user/password authentication. And, the proxy can
--maintain an audit log of who connected to the database, complete with
--the strongly authenticated Tailscale identity of the client.
+ // router's UPnP HTTP server, as advertised in its SSDP responses
+@@ -134,3 +156,324 @@ func (n *network) handleUPnPControl(w http.ResponseWriter, r *http.Request) {
+ 		`<s:Body><u:%sResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:2">%s</u:%sResponse></s:Body></s:Envelope>`,
+ 		name, out, name)
+ }
++
++func (n *network) handlePxPRequest(req UDPPacket) {
++	if req.Payload[1]&opcodeResponseBit != 0 {
++		n.logf("vnet: ignoring NAT-PMP/PCP packet with response bit set % 02x", req.Payload)
++		return
++	}
++	switch req.Payload[0] {
++	case versionNATPMP:
++		switch {
++		case n.svcs.Contains(NATPMP):
++			n.handleNATPMPRequest(req)
++		case n.svcs.Contains(PCP):
++			n.writePCPUnsuppVersion(req)
++		}
++	case versionPCP:
++		switch {
++		case n.svcs.Contains(PCP):
++			n.handlePCPRequest(req)
++		case n.svcs.Contains(NATPMP):
++			n.writeNATPMPUnsuppVersion(req)
++		}
++	default:
++		n.logf("vnet: ignoring NAT-PMP/PCP packet with unknown version % 02x", req.Payload)
++	}
++}
++
++func (n *network) writeNATPMPUnsuppVersion(req UDPPacket) {
++	res := make([]byte, 0, 8)
++	res = append(res,
++		versionNATPMP,
++		0, // opcode is 0 as per https://www.rfc-editor.org/rfc/rfc6886#section-3.5
++		0, resultUnsuppVersion,
++	)
++	epoch := uint32(time.Now().Unix())
++	res = binary.BigEndian.AppendUint32(res, epoch)
++	n.WriteUDPPacketNoNAT(UDPPacket{
++		Src:     req.Dst,
++		Dst:     req.Src,
++		Payload: res,
++	})
++}
++
++func (n *network) writePCPUnsuppVersion(req UDPPacket) {
++	opcode := req.Payload[1]
++	res := make([]byte, 0, 24)
++	res = append(res,
++		versionPCP,
++		opcodeResponseBit|opcode,
++		0, // reserved
++		resultUnsuppVersion,
++	)
++	lifetimeSec := uint32(1800) // 30 min
++	res = binary.BigEndian.AppendUint32(res, lifetimeSec)
++	epoch := uint32(time.Now().Unix())
++	res = binary.BigEndian.AppendUint32(res, epoch)
++	res = append(res, make([]byte, 12)...) // reserved (96 bits)
++	n.WriteUDPPacketNoNAT(UDPPacket{
++		Src:     req.Dst,
++		Dst:     req.Src,
++		Payload: res,
++	})
++}
++
++func (n *network) handleNATPMPRequest(req UDPPacket) {
++	if !n.svcs.Contains(NATPMP) {
++		return
++	}
++	if len(req.Payload) < 2 || req.Payload[0] != versionNATPMP {
++		n.logf("vnet: ignoring invalid NAT-PMP packet % 02x", req.Payload)
++		return
++	}
++
++	if len(req.Payload) == 2 && req.Payload[1] == opcodeANNOUNCE {
++		// https://www.rfc-editor.org/rfc/rfc6886#section-3.2
++
++		res := make([]byte, 0, 12)
++		res = append(res,
++			versionNATPMP,
++			opcodeResponseBit|opcodeANNOUNCE,
++			0, resultSuccess,
++		)
++		epoch := uint32(time.Now().Unix())
++		res = binary.BigEndian.AppendUint32(res, epoch)
++		wan4 := n.wanIP4.As4()
++		res = append(res, wan4[:]...)
++		n.WriteUDPPacketNoNAT(UDPPacket{
++			Src:     req.Dst,
++			Dst:     req.Src,
++			Payload: res,
++		})
++		return
++	}
++
++	if len(req.Payload) == 12 && req.Payload[1] == opcodeMAP {
++		// https://www.rfc-editor.org/rfc/rfc6886#section-3.3
++		// "00 01 00 00 ed 40 00 00 00 00 1c 20" =>
++		//   00 ver
++		//   01 op=map UDP
++		//   00 00 reserved  (0 in request; in response, this is the result code)
++		//   ed 40 internal port 60736
++		//   00 00 suggested external port
++		//   00 00 1c 20 suggested lifetime in seconds (7200 sec = 2 hours)
++		internalPort := binary.BigEndian.Uint16(req.Payload[4:6])
++		wantExtPort := binary.BigEndian.Uint16(req.Payload[6:8])
++		lifetimeSec := binary.BigEndian.Uint32(req.Payload[8:12])
++		gotPort, ok := n.doPortMap(req.Src.Addr(), internalPort, wantExtPort, int(lifetimeSec), NATPMP)
++		if !ok {
++			// TODO(fmarier): handle portmap releases properly
++			n.logf("NAT-PMP map request for %v:%d failed", req.Src.Addr(), internalPort)
++			return
++		}
++		res := make([]byte, 0, 16)
++		res = append(res,
++			versionNATPMP,
++			opcodeResponseBit|opcodeMAP,
++			0, resultSuccess,
++		)
++		epoch := uint32(time.Now().Unix())
++		res = binary.BigEndian.AppendUint32(res, epoch)
++		res = binary.BigEndian.AppendUint16(res, internalPort)
++		res = binary.BigEndian.AppendUint16(res, gotPort)
++		res = binary.BigEndian.AppendUint32(res, lifetimeSec)
++		n.WriteUDPPacketNoNAT(UDPPacket{
++			Src:     req.Dst,
++			Dst:     req.Src,
++			Payload: res,
++		})
++		return
++	}
++
++	n.logf("TODO: handle NAT-PMP packet % 02x", req.Payload)
++}
++
++func (n *network) handlePCPRequest(req UDPPacket) {
++	if !n.svcs.Contains(PCP) {
++		return
++	}
++
++	if len(req.Payload) < 24 || req.Payload[0] != versionPCP {
++		n.logf("vnet: ignoring invalid PCP packet % 02x", req.Payload)
++		return
++	}
++	// TODO(fmarier): check that client address in the packet matches req.Src
++
++	if len
 ```
 
-**File**: `cmd/pgproxy/pgproxy.go` (removed, +0/-362)
+**File**: `tstest/natlab/vnet/portmapper_test.go` (added, +200/-0)
 ```diff
-@@ -1,362 +0,0 @@
--// Copyright (c) Tailscale Inc & contributors
--// SPDX-License-Identifier: BSD-3-Clause
+@@ -0,0 +1,200 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++// These unit tests exist to catch regressions in the natlab portmapping server
++// implementations. See tstest/natlab/vmtest/portmapper_test.go for the VM
++// tests which verify that the tailscale client works.
++
++package vnet
++
++import (
++	"bufio"
++	"bytes"
++	"encoding/binary"
++	"encoding/hex"
++	"encoding/xml"
++	"fmt"
++	"mime"
++	"net/http"
++	"net/http/httptest"
++	"net/netip"
++	"strings"
++	"testing"
++
++	"tailscale.com/util/must"
++)
++
++func newPortmapNetwork(t *testing.T, svc NetworkService) (*Server, *network) {
++	t.Helper()
++	var c Config
++	nw := c.AddNetwork("2.1.1.1", "192.168.0.1/24", svc)
++	c.AddNode(nw)
++	s, err := New(&c)
++	if err != nil {
++		t.Fatal(err)
++	}
++	s.StopUnsolicitedRAsForTest()
++	t.Cleanup(s.Close)
++	return s, nw.network
++}
++
++func mustHex(s string) []byte {
++	return must.Get(hex.DecodeString(strings.ReplaceAll(s, " ", "")))
++}
++
++// checkReply checks that got matches want, which is in "% x" format.
++// Bytes written as "??" in want vary between runs (e.g. epoch, allocated
++// port) and aren't compared.
++func checkReply(t *testing.T, got []byte, want string) {
++	t.Helper()
++	gotHex, wantHex := strings.Fields(fmt.Sprintf("% x", got)), strings.Fields(want)
++	if len(gotHex) != len(wantHex) {
++		t.Fatalf("got  % x\nwant %s", got, want)
++	}
++	for i, w := range wantHex {
++		if w != "??" && w != gotHex[i] {
++			t.Errorf("got  % x\nwant %s", got, want)
++			return
++		}
++	}
++}
++
++func checkMapping(t *testing.T, n *network, extPort uint16, want netip.AddrPort) {
++	t.Helper()
++	n.natMu.Lock()
++	defer n.natMu.Unlock()
++	if m := n.portMap[netip.AddrPortFrom(n.wanIP4, extPort)]; m.dst != want {
++		t.Errorf("mapping for external port %d is to %v, want %v", extPort, m.dst, want)
++	}
++}
++
++type soapResponse struct {
++	ExternalIP   netip.Addr `xml:"NewExternalIPAddress"`
++	ReservedPort uint16     `xml:"NewReservedPort"`
++}
++
++func soapRequest(t *testing.T, n *network, action, args string) soapResponse {
++	t.Helper()
++	body := fmt.Sprintf(`<?xml version="1.0"?>
++<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
++  <s:Body>
++    <u:%[1]s xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:2">%[2]s</u:%[1]s>
++  </s:Body>
++</s:Envelope>`, action, args)
++	rec := httptest.NewRecorder()
++	n.upnpHandler().ServeHTTP(rec, httptest.NewRequest("POST", "/ctl/IPConn", strings.NewReader(body)))
++	if rec.Code != http.StatusOK {
++		t.Fatalf("%s: status %d; body:\n%s", action, rec.Code, rec.Body)
++	}
++
++	var env struct {
++		XMLName xml.Name `xml:"http://schemas.xmlsoap.org/soap/envelope/ Envelope"`
++		Body    struct {
++			Response soapResponse `xml:",any"`
++		} `xml:"http://schemas.xmlsoap.org/soap/envelope/ Body"`
++	}
++	if err := xml.Unmarshal(rec.Body.Bytes(), &env); err != nil {
++		t.Fatalf("%s: parsing response: %v\n%s", action, err, rec.Body)
++	}
++	return env.Body.Response
++}
++
++var (
++	pcpAnnounceReq = mustHex("02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff c0 a8 00 65") // PCP ANNOUNCE from 192.168.0.101
++	natpmpAddrReq  = mustHex("00 00")                                                                   // NAT-PMP external address request
++)
++
++func TestNATPMP(t *testing.T) {
++	s, n := newPortmapNetwork(t, NATPMP)
++	t.Run("external-address", func(t *testing.T) {
++		got := sendUDPToRouter(t, s, pxpPort, natpmpAddrReq)
++		// success, external address 2.1.1.1
++		checkReply(t, got, "00 80 00 00 ?? ?? ?? ?? 02 01 01 01")
++	})
++	t.Run("map-udp", func(t *testing.T) {
++		// MAP UDP of int port 60736 to any ext port for 7200s
++		got := sendUDPToRouter(t, s, pxpPort, mustHex("00 01 00 00 ed 40 00 00 00 00 1c 20"))
++		// success, MAP UDP of int port 60736 for 7200s
++		checkReply(t, got, "00 81 00 00 ?? ?? ?? ?? ed 40 ?? ?? 00 00 1c 20")
++		checkMapping(t, n, binary.BigEndian.Uint16(got[10:12]), netip.AddrPortFrom(clientIPv4(1), 60736))
++	})
++	t.Run("request-unsupported", func(t *testing.T) {
++		got := sendUDPToRouter(t, s, pxpPort, pcpAnnounceReq)
++		// NAT-PMP unsupported version
++		checkReply(t, got, "00 00 00 01 ?? ?? ?? ??")
++	})
++}
++
++func TestPCP(t *testing.T) {
++	s, n := newPortmapNetwork(t, PCP)
++	t.Run("announce", func(t *testing.T) {
++		got := sendUDPToRouter(t, s, pxpPort, pcpAnnounceReq)
++		// ANNOUNCE success
++		checkReply(t, got, "02 80 00 00 00 00 00 00 ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00")
++	})
++	t.Run("map-udp", func(t *testing.T) {
++		// MAP UDP of int 192.168.0.101:40768 to any ext IP and port for 7200s, with nonce 95bcb5d93d07ecbbc8b3bd4f
++		got := sendUDPToRouter(t, s, pxpPort, mustHex("02 01 00 00 00 00 1c 20 00 00 00 00 00 00 00 00 00 00 ff ff c0 a8 00 65 "+
++			"95 bc b5 d9 3d 07 ec bb c8 b3 bd 4f 11 00 00 00 9f 40 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00"))
++		// success, MAP UDP of int port 40768 to ext IP 2.1.1.1 for 7200s, same nonce
++		checkReply(t, got, "02 81 00 00 00 00 1c 20 ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 "+
++			"9
+```
+
+**File**: `tstest/natlab/vnet/vnet.go` (modified, +0/-337)
+```diff
+@@ -83,22 +83,6 @@ const (
+ 	ssdpPort = 1900
+ )
+ 
+-// PxP packets
+-const (
+-	opcodeANNOUNCE = 0 // external address lookup in NAT-PMP
+-	opcodeMAP      = 1 // MAP UDP in NAT-PMP
 -
--// The pgproxy server is a proxy for the Postgres wire protocol.
--package main
+-	protocolUDP = 17
 -
--import (
--	"context"
--	"crypto/ecdsa"
--	"crypto/elliptic"
--	crand "crypto/rand"
--	"crypto/tls"
--	"crypto/x509"
--	"crypto/x509/pkix"
--	"expvar"
--	"flag"
--	"fmt"
--	"io"
--	"log"
--	"math/big"
--	"net"
--	"net/http"
--	"os"
--	"strings"
--	"time"
+-	versionNATPMP = 0
+-	versionPCP    = 2
 -
--	"tailscale.com/client/local"
--	"tailscale.com/metrics"
--	"tailscale.com/tsnet"
--	"tailscale.com/tsweb"
+-	resultSuccess       = 0
+-	resultUnsuppVersion = 1
+-
+-	opcodeResponseBit = 128
 -)
 -
--var (
--	hostname     = flag.String("hostname", "", "Tailscale hostname to serve on")
--	port         = flag.Int("port", 5432, "Listening port for client connections")
--	debugPort    = flag.Int("debug-port", 80, "Listening port for debug/metrics endpoint")
--	upstreamAddr = flag.String("upstream-addr", "", "Address of the upstream Postgres server, in host:port format")
--	upstreamCA   = flag.String("upstream-ca-file", "", "File containing the PEM-encoded CA certificate for the upstream server")
--	tailscaleDir = flag.String("state-dir", "", "Directory in which to store the Tailscale auth state")
--)
--
--func main() {
--	flag.Parse()
--	if *hostname == "" {
--		log.Fatal("missing --hostname")
--	}
--	if *upstreamAddr == "" {
--		log.Fatal("missing --upstream-addr")
--	}
--	if *upstreamCA == "" {
--		log.Fatal("missing --upstream-ca-file")
--	}
--	if *tailscaleDir == "" {
--		log.Fatal("missing --state-dir")
--	}
--
--	ts := &tsnet.Server{
--		Dir:      *tailscaleDir,
--		Hostname: *hostname,
--	}
--
--	if os.Getenv("TS_AUTHKEY") == "" {
--		log.Print("Note: you need to run this with TS_AUTHKEY=... the first time, to join your tailnet of choice.")
--	}
--
--	tsclient, err := ts.LocalClient()
--	if err != nil {
--		log.Fatalf("getting tsnet API client: %v", err)
--	}
--
--	p, err := newProxy(*upstreamAddr, *upstreamCA, tsclient)
--	if err != nil {
--		log.Fatal(err)
--	}
--	expvar.Publish("pgproxy", p.Expvar())
--
--	if *debugPort != 0 {
--		mux := http.NewServeMux()
--		tsweb.Debugger(mux)
--		srv := &http.Server{
--			Handler: mux,
--		}
--		dln, err := ts.Listen("tcp", fmt.Sprintf(":%d", *debugPort))
--		if err != nil {
--			log.Fatal(err)
--		}
--		go func() {
--			log.Fatal(srv.Serve(dln))
--		}()
--	}
--
--	ln, err := ts.Listen("tcp", fmt.Sprintf(":%d", *port))
--	if err != nil {
--		log.Fatal(err)
--	}
--	log.Printf("serving access to %s on port %d", *upstreamAddr, *port)
--	log.Fatal(p.Serve(ln))
+ func (s *Server) PopulateDERPMapIPs() error {
+ 	out, err := exec.Command("tailscale", "debug", "derp-map").Output()
+ 	if err != nil {
+@@ -674,23 +658,6 @@ func (m MAC) String() string {
+ 	return fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", m[0], m[1], m[2], m[3], m[4], m[5])
+ }
+ 
+-type PortMapping struct {
+-	dst     netip.AddrPort // LAN IP:port
+-	expiry  time.Time
+-	Service NetworkService
 -}
 -
--// proxy is a postgres wire protocol proxy, which strictly enforces
--// the security of the TLS connection to its upstream regardless of
--// what the client's TLS configuration is.
--type proxy struct {
--	upstreamAddr     string // "my.database.com:5432"
--	upstreamHost     string // "my.database.com"
--	upstreamCertPool *x509.CertPool
--	downstreamCert   []tls.Certificate
--	client           *local.Client
--
--	activeSessions  expvar.Int
--	startedSessions expvar.Int
--	errors          metrics.LabelMap
--}
--
--// newProxy returns a proxy that forwards connections to
--// upstreamAddr. The upstream's TLS session is verified using the CA
--// cert(s) in upstreamCAPath.
--func newProxy(upstreamAddr, upstreamCAPath string, client *local.Client) (*proxy, error) {
--	bs, err := os.ReadFile(upstreamCAPath)
--	if err != nil {
--		return nil, err
--	}
--	upstreamCertPool := x509.NewCertPool()
--	if !upstreamCertPool.AppendCertsFromPEM(bs) {
--		return nil, fmt.Errorf("invalid CA cert in %q", upstreamCAPath)
--	}
--
--	h, _, err := net.SplitHostPort(upstreamAddr)
--	if err != nil {
--		return nil, err
--	}
--	downstreamCert, err := mkSelfSigned(h)
--	if err != nil {
--		return nil, err
--	}
--
--	return &proxy{
--		upstreamAddr:     upstreamAddr,
--		upstreamHost:     h,
--		upstreamCertPool: upstreamCertPool,
--		downstreamCert:   []tls.Certificate{downstreamCert},
--		client:           client,
--		errors:           metrics.LabelMap{Label: "kind"},
--	}, nil
--}
--
--// Expvar returns p's monitoring metrics.
--func (p *proxy) Expvar() expvar.Var {
--	ret := &metrics.Set{}
--	ret.Set("sessions_active", &p.activeSessions)
--	ret.Set("sessions_started", &p.startedSessions)
--	ret.Set("session_errors", &p.errors)
+-func (n *network) portMappings() map[netip.AddrPort]PortMapping {
+-	n.natMu.Lock()
+-	defer n.natMu.Unlock()
+-	now := time.Now()
+-	ret := maps.Clone(n.portMap)
+-	maps.DeleteFunc(ret, func(_ netip.AddrPort, pm PortMapping) bool {
+-		return now.After(pm.expiry)
+-	})
 -	return ret
 -}
 -
--// Serve accepts postgres client connections on ln and proxies them to
--// the configured upstream. ln can be any net.Listener, but all client
--// connections must originate from tailscale IPs that can be verified
--// with WhoIs.
--func (p *proxy) Serve(ln net.Listener) error {
--	var lastSessionID int64
--	for {
--		c, err := ln.Accept()
--		if err != nil {
--			return err
+ // writerFunc is a function that writes an Ethernet frame to a connected client.
+ //
+ // ethFrame is the Ethernet frame to write.
+@@ -2766,58 +2733,6 @@ func (n *network) IsPublicPortUsed(ap netip.AddrPort) bool {
+ 	return ok
+ }
+ 
+-func (n *network) doPortMap(src netip.Addr, dstLANPort, wantExtPort uint16, sec int, service NetworkService) (gotPort uint16, ok bool) {
+-	n.natMu.Lock()
+-	defer n.natMu.Unlock()
+-
+-	if !n.svcs.Contains(service) {
+-		return 0, false
+-	}
+-
+-	wanAP := netip.AddrPortFrom(n.wanIP4, wantExtPort)
+-	dst := netip.AddrPortFrom(src, dstLANPort)
+-
+-	if sec == 0 {
+-		lanAP, ok := n.portMap[wanAP]
+-		if ok && lanAP.dst.Addr() == src {
+-			n.logf("vnet: released %v mapping from %v to %v", service, wanAP, dst)
+-			delete(n.portMap, wanAP)
 -		}
--		id := time.Now().UnixNano()
--		if id == lastSessionID {
--			// Bluntly enforce SID uniqueness, even if collisions are
--			// fantastically unlikely (but OSes vary in how much timer
--			// precision they expose to the OS, so id might be rounded
--			// e.g. to the same millisecond)
--			id++
--		}
--		lastSessionID = id
--		go func(sessionID int64) {
--			if err := p.serve(sessionID, c); err != nil {
--				log.Printf("%d: session ended with error: %v", sessionID, err)
+-		return 0, false
+-	}
+-
+-	// See if they already have a mapping and extend expiry if so.
+-	// TODO(fmarier): renewing with a different protocol overwrites the
+-	// service that created the mapping, so PortMappings only reports the
+-	// most recent one.
+-	for k, v := range n.portMap {
+-		if v.dst == dst {
+-			n.portMap[k] = PortMapping{
+-				dst:     dst,
+-				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
+-				Service: service,
 -			}
--		}(id)
+-			n.logf("vnet: renewed %v mapping from %v to %v", service, wanAP, dst)
+-			return k.Port(), true
+-		}
+-	}
+-
+-	for range 20_000 {
+-		if wanAP.Port() > 0 && !n.natTable.IsPublicPortUsed(wanAP) {
+-			mak.Set(&n.portMap, wanAP, PortMapping{
+-				dst:     dst,
+-				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
+-				Service: service,
+-			})
+-			n.logf("vnet: allocated %v mapping from %v to %v", service, wanAP, dst)
+-			return wanAP.Port(), true
+-		}
+-		wantExtPort = rand.N(uint16(32<<10)) + 32<<10
+-		wanAP = netip.AddrPortFrom(n.wanIP4, wantExtPort)
+-	}
+-	return 0, false
+-}
+-
+ func (n *network) createARPResponse(pkt gopacket.Packet) ([]byte, error) {
+ 	ethLayer, ok := pkt.Layer(layers.LayerTypeEthernet).(*layers.Ethernet)
+ 	if !ok {
+@@ -2867,258 +2782,6 @@ func (n *network) createARPResponse(pkt gopacket.Packet) ([]byte, error) {
+ 	return buffer.Bytes(), nil
+ }
+ 
+-func (n *network) handlePxPRequest(req UDPPacket) {
+-	if req.Payload[1]&opcodeResponseBit != 0 {
+-		n.logf("vnet: ignoring NAT-PMP/PCP packet with response bit set % 02x", req.Payload)
+-		return
+-	}
+-	switch req.Payload[0] {
+-	case versionNATPMP:
+-		switch {
+-		case n.svcs.Contains(NATPMP):
+-			n.handleNATPMPRequest(req)
+-		case n.svcs.Contains(PCP):
+-			n.writePCPUnsuppVersion(req)
+-		}
+-	case versionPCP:
+-		switch {
+-		case n.svcs.Contains(PCP):
+-			n.handlePCPRequest(req)
+-		case n.svcs.Contains(NATPMP):
+-			n.writeNATPMPUnsuppVersion(req)
+-		}
+-	default:
+-		n.logf("vnet: ignoring NAT-PMP/PCP packet with unknown version % 02x", req.Payload)
 -	}
 -}
 -
--var (
--	
+-func (n *network) writeNATPMPUnsuppVersion(req UDPPacket) {
+-	res := make([]byte, 0, 8)
+-	res = append(res,
+-		versionNATPMP,
+-		0, // opcode is 0 as per https://www.rfc-editor.org/rfc/rfc6886#section-3.5
+-		0, resultUnsuppVersion,
+-	)
+-	epoch := uint32(time.Now().Unix())
+-	res = binary.BigEndian.AppendUint32(res, epoch)
+-	n.WriteUDPPacketNoNAT(UDPPacket{
+-		Src:     req.Dst,
+-		Dst:     req.Src,
+-		Payload: res,
+-	})
+-}
+-
+-func (n *network) writePCPUnsuppVersion(req UDPPacket) {
+-	opcode := req.Payload[1]
+-	res := make([]byte, 0, 24)
+-	res = append(res,
+-		versionPCP,
+-		opcodeResponseBit|opcode,
+-		0, // reserved
+-		resultUnsuppVersion,
+-	)
+-	lifetimeSec := uint32(1800) // 30 min
+-	res = binary.BigEndian.AppendUint32(res, lifetimeSec)
+-	epoch := uint32(time.Now().Unix())
+-	res = binary.BigEndian.AppendUint32(res, epoch)
+-	res = append(res, make([]byte, 12)...) // reserved (96 bits)
+-	n.WriteUDPPacketNoNAT(UDPPacket{
+-		Src:     req.Dst,
+-		Dst:     req.Src,
+-		Payload: res,
+-	})
+-}
+-
+-func (n *network) handleNATPMPRequest(req UDPPacket) {
+-	if !n.svcs.Contains(NATPMP) {
+-		return
+-	}
+-	if len(req.Payload) < 2 || req.Payload[0] != versionNATPMP {
+-		n.logf("vnet: ignoring invalid NAT-PMP packet % 02x", 
+```
+
+**File**: `tstest/natlab/vnet/vnet_test.go` (modified, +31/-0)
+```diff
+@@ -507,6 +507,37 @@ func (se *sideEffects) logf(format string, args ...any) {
+ 	se.logs = append(se.logs, fmt.Sprintf(format, args...))
+ }
+ 
++// sendUDPToRouter sends payload from node 1 to the router's LAN IP on dstPort
++// and returns the payload of the router's reply.
++func sendUDPToRouter(t *testing.T, s *Server, dstPort uint16, payload []byte) []byte {
++	t.Helper()
++	se := newSideEffects(s)
++	routerIP := s.nodes[0].net.lanIP4.Addr()
++	eth := &layers.Ethernet{SrcMAC: nodeMac(1).HWAddr(), DstMAC: routerMac(1).HWAddr()}
++	ip := mkIPLayer(layers.IPProtocolUDP, clientIPv4(1), routerIP)
++	udp := &layers.UDP{SrcPort: 40000, DstPort: layers.UDPPort(dstPort)}
++	if err := s.handleEthernetFrameFromVM(mustPacket(eth, ip, udp, gopacket.Payload(payload))); err != nil {
++		t.Fatal(err)
++	}
++	if len(se.got) != 1 {
++		t.Fatalf("got %d reply packets, want 1; logs:\n%s", len(se.got), strings.Join(se.logs, "\n"))
++	}
++	pkt := gopacket.NewPacket(se.got[0].eth, layers.LayerTypeEthernet, gopacket.Default)
++	ip4, _ := pkt.Layer(layers.LayerTypeIPv4).(*layers.IPv4)
++	res, _ := pkt.Layer(layers.LayerTypeUDP).(*layers.UDP)
++	if ip4 == nil || res == nil {
++		t.Fatalf("reply is not IPv4/UDP:\n%v", pkt)
++	}
++	if src, _ := netip.AddrFromSlice(ip4.SrcIP); src != routerIP || uint16(res.SrcPort) != dstPort {
++		// The client drops replies that don't come from the gateway's port.
++		t.Errorf("reply from %v:%d, want %v:%d", src, res.SrcPort, routerIP, dstPort)
++	}
++	if dst, _ := netip.AddrFromSlice(ip4.DstIP); dst != clientIPv4(1) || res.DstPort != udp.SrcPort {
++		t.Errorf("reply to %v:%d, want %v:%d", dst, res.DstPort, clientIPv4(1), udp.SrcPort)
++	}
++	return res.Payload
++}
++
+ // all aggregates several side effects checkers into one.
+ func all(checks ...func(*sideEffects) error) func(*sideEffects) error {
+ 	return func(se *sideEffects) error {
 ```
 
 ---
 
-### Incident Patch 2: `d45c5ddf` (2026-11-03)
-**Commit Message**: cmd/tailscale/cli: check the requested port before enabling Funnel (#22120)
+### Incident Patch 2: `6fa10dae` (2026-11-03)
+**Commit Message**: ssh/tailssh: accept an empty --groups= in the incubator
 
-The funnel command checked Funnel access with a hardcoded port 443, so
-any requested port passed and the CLI reported it as available on the
-internet. Check the port the user asked for instead. Turning Funnel
-off skips the check so existing configs on other ports can still be
-removed.
+Fixes #22158
 
-Fixes #10742
-Fixes #21989
+Change-Id: I238244c34c96c444c258b9e006c0084f4aa8db27
+Signed-off-by: Philip Taron <[REDACTED_EMAIL]>
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
-
-**File**: `cmd/tailscale/cli/serve_v2.go` (modified, +6/-7)
+**File**: `ssh/tailssh/incubator.go` (modified, +9/-5)
 ```diff
-@@ -407,13 +407,6 @@ func (e *serveEnv) runServeCombined(subcmd serveMode) execFunc {
- 			return errors.New("Error: --service flag is not supported with funnel")
- 		}
+@@ -355,12 +355,16 @@ func parseIncubatorArgs(args []string) (incubatorArgs, error) {
+ 	flags.IntVar(&ia.envFD, "env-fd", -1, "file descriptor to read the forwarded environment from (JSON array of KEY=VALUE pairs)")
+ 	flags.Parse(args)
  
--		if funnel {
--			// verify node has funnel capabilities
--			if err := e.verifyFunnelEnabled(ctx, 443); err != nil {
--				return err
--			}
--		}
--
- 		if forService && !e.bg.Value {
- 			return errors.New("Error: --service flag is only compatible with background mode")
- 		}
-@@ -460,6 +453,12 @@ func (e *serveEnv) runServeCombined(subcmd serveMode) execFunc {
- 		parentSC := sc
- 
- 		turnOff := len(args) > 0 && "off" == args[len(args)-1]
-+		if funnel && !turnOff {
-+			// Verify the node can use Funnel on the requested port.
-+			if err := e.verifyFunnelEnabled(ctx, srvPort); err != nil {
-+				return err
+-	for g := range strings.SplitSeq(groups, ",") {
+-		gid, err := strconv.Atoi(g)
+-		if err != nil {
+-			return ia, fmt.Errorf("unable to parse group id %q: %w", g, err)
++	// A user without supplementary groups gets an empty --groups=, which is
++	// no groups rather than a single empty group ID.
++	if groups != "" {
++		for g := range strings.SplitSeq(groups, ",") {
++			gid, err := strconv.Atoi(g)
++			if err != nil {
++				return ia, fmt.Errorf("unable to parse group id %q: %w", g, err)
 +			}
-+		}
- 		if !turnOff && srvType == serveTypeHTTPS {
- 			// Running serve with https requires that the tailnet has enabled
- 			// https cert provisioning. Send users through an interactive flow
++			ia.gids = append(ia.gids, gid)
+ 		}
+-		ia.gids = append(ia.gids, gid)
+ 	}
+ 
+ 	// envFD comes from an ExtraFiles entry, so it must never name stdin/out/err
 ```
 
-**File**: `cmd/tailscale/cli/serve_v2_test.go` (modified, +45/-0)
+**File**: `ssh/tailssh/incubator_test.go` (modified, +28/-0)
 ```diff
-@@ -893,6 +893,51 @@ func TestServeDevConfigMutations(t *testing.T) {
- 				},
- 			},
- 		},
-+		{
-+			// The fake status only allows Funnel on ports 443 and 8443.
-+			name: "funnel_port_not_allowed",
-+			steps: []step{
-+				{
-+					command: cmd("funnel --bg --https=10000 3000"),
-+					wantErr: func(err error) (badErrMsg string) {
-+						if err == nil || !strings.Contains(err.Error(), "not allowed for funnel") {
-+							return fmt.Sprintf("want a port-not-allowed error; got %v", err)
-+						}
-+						return ""
-+					},
-+				},
-+				{
-+					command: cmd("funnel --bg --tcp=10000 tcp://localhost:5432"),
-+					wantErr: func(err error) (badErrMsg string) {
-+						if err == nil || !strings.Contains(err.Error(), "not allowed for funnel") {
-+							return fmt.Sprintf("want a port-not-allowed error; got %v", err)
-+						}
-+						return ""
-+					},
-+				},
-+			},
-+		},
-+		{
-+			// Turning Funnel off on a port that is no longer allowed must
-+			// still work, so users can clean up configs made before the
-+			// port check applied to the requested port.
-+			name: "funnel_off_on_disallowed_port",
-+			initialState: fakeLocalServeClient{
-+				config: &ipn.ServeConfig{
-+					TCP: map[uint16]*ipn.TCPPortHandler{10000: {HTTPS: true}},
-+					Web: map[ipn.HostPort]*ipn.WebServerConfig{
-+						"foo.test.ts.net:10000": {Handlers: map[string]*ipn.HTTPHandler{
-+							"/": {Proxy: "http://127.0.0.1:3000"},
-+						}},
-+					},
-+					AllowFunnel: map[ipn.HostPort]bool{"foo.test.ts.net:10000": true},
-+				},
-+			},
-+			steps: []step{{
-+				command: cmd("funnel --https=10000 off"),
-+				want:    &ipn.ServeConfig{},
-+			}},
-+		},
- 		{
- 			name: "no_http_with_funnel",
- 			steps: []step{
+@@ -261,6 +261,34 @@ func TestParseIncubatorArgsEnvFD(t *testing.T) {
+ 	}
+ }
+ 
++// TestParseIncubatorArgsGroups verifies that --groups accepts an empty list,
++// which a user with no supplementary groups yields, but still rejects empty
++// entries within a list.
++func TestParseIncubatorArgsGroups(t *testing.T) {
++	for _, tt := range []struct {
++		groups string
++		want   []int
++	}{
++		{"", nil},
++		{"1000", []int{1000}},
++		{"1000,1001", []int{1000, 1001}},
++	} {
++		ia, err := parseIncubatorArgs([]string{"--groups=" + tt.groups})
++		if err != nil {
++			t.Errorf("--groups=%s: got error %v, want nil", tt.groups, err)
++			continue
++		}
++		if !slices.Equal(ia.gids, tt.want) {
++			t.Errorf("--groups=%s: got gids %v, want %v", tt.groups, ia.gids, tt.want)
++		}
++	}
++	for _, groups := range []string{"1000,x", "1000,,1001", "1000,"} {
++		if _, err := parseIncubatorArgs([]string{"--groups=" + groups}); err == nil {
++			t.Errorf("--groups=%s: got nil error, want rejection", groups)
++		}
++	}
++}
++
+ // TestLoadForwardedEnvLegacyEncodedEnv covers the deprecated --encoded-env
+ // compatibility path: an outdated parent tailscaled passes the accepted
+ // environment as a quoted JSON argv flag, and the child must still decode it
+```
+
+**File**: `ssh/tailssh/sessmonitor_test.go` (modified, +3/-4)
+```diff
+@@ -214,10 +214,9 @@ func newMonitorSessionServerFor(
+ 	if rule != nil {
+ 		sc.mappedLocalUser = rule.SSHUsers["test"]
+ 	}
+-	// The bound user's groups, like clientAuth would have captured them
+-	// (the incubator argv's --groups must be non-empty): for a conn bound
+-	// to another uid use that user's own primary group, not the test
+-	// process's (root-run) groups.
++	// The bound user's groups, like clientAuth would have captured them:
++	// for a conn bound to another uid use that user's own primary group,
++	// not the test process's (root-run) groups.
+ 	if um.Uid == strconv.Itoa(os.Getuid()) {
+ 		for _, g := range testGroups(t) {
+ 			sc.userGroupIDs = append(sc.userGroupIDs, strconv.Itoa(g))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
 - **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
+- **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
 - **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
 - **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
 - **PR #22148** (closed): Proposed picks for 1.104.5 (@raggi)
-- **PR #22147** (2026-11-02): feature/conn25: block destinations inside the magic and transit IP pools (@mazdakn)
-- **PR #22146** (2026-11-02): magicsock: handle UDP read feedback (@illotum)
 
 ---
 
@@ -1203,54 +1511,81 @@ Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/pgproxy: delete, leave README stub
+## X. tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145)
 
 **RULE**:
-When implementing operations in `cmd/pgproxy/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tstest/natlab/vnet/portmapper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `697bdea5`: cmd/pgproxy: delete, leave README stub. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ca4e1972`: tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/pgproxy/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/natlab/vnet/portmapper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-The pgproxy server was our old Tailscale proxy for the Postgres wire
-protocol. See our [Introducing pgproxy blog post]
-post](https://tailscale.com/blog/introducing-pgproxy/).
-We changed our internal infrastructure such that we no longer depend on it.
-Rather than pretend it's still maintained, we deleted it.
-If community fork(s) emerge, we'll link from here.
-If you want the old code, it's [still in git](https://raw.githubusercontent.com/tailscale/tailscale/d45c5ddfbbc1bb6ded8e3e9a15af9ece78bb4744/cmd/pgproxy/pgproxy.go)
-or installable via `go install tailscale.com/cmd/pgproxy@d45c5ddfbbc1b`.
+	"encoding/binary"
+	"maps"
+	"math/rand/v2"
+	"time"
+
+	"tailscale.com/util/mak"
+)
+
+// PxP packets
+const (
+	opcodeANNOUNCE = 0 // external address lookup in NAT-PMP
+	opcodeMAP      = 1 // MAP UDP in NAT-PMP
+
+	protocolUDP = 17
+
+	versionNATPMP = 0
+	versionPCP    = 2
+
+	resultSuccess       = 0
+	resultUnsuppVersion = 1
+
+	opcodeResponseBit = 128
+
+func (n *network) handlePxPRequest(req UDPPacket) {
+	if req.Payload[1]&opcodeResponseBit != 0 {
+		n.logf("vnet: ignoring NAT-PMP/PCP packet with response bit set % 02x", req.Payload)
+		return
+	}
+	switch req.Payload[0] {
+	case versionNATPMP:
+		switch {
+		case n.svcs.Contains(NATPMP):
+			n.handleNATPMPRequest(req)
+		case n.svcs.Contains(PCP):
+			n.writePCPUnsuppVersion(req)
+		}
+	case versionPCP:
+		switch {
+		case n.svcs.Contains(PCP):
+			n.handlePCPRequest(req)
+		case n.svcs.Contains(NATPMP):
+			n.writeNATPMPUnsuppVersion(req)
+		}
+	default:
+		n.logf("vnet: ignoring NAT-PMP/PCP packet with unknown version % 02x", req.Payload)
+	}
+}
+
+func (n *network) writeNATPMPUnsuppVersion(req UDPPacket) {
+	res := make([]byte, 0, 8)
+	res = append(res,
+		versionNATPMP,
+		0, // opcode is 0 as per https://www.rfc-editor.org/rfc/rfc6886#section-3.5
+		0, resultUnsuppVersi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-The pgproxy server is a proxy for the Postgres wire protocol. [Read
-more in our blog
-post](https://tailscale.com/blog/introducing-pgproxy/) about it!
-The proxy runs an in-process Tailscale instance, accepts postgres
-client connections over Tailscale only, and proxies them to the
-configured upstream postgres server.
-This proxy exists because postgres clients default to very insecure
-connection settings: either they "prefer" but do not require TLS; or
-they set sslmode=require, which merely requires that a TLS handshake
-took place, but don't verify the server's TLS certificate or the
-presented TLS hostname.  In other words, sslmode=require enforces that
-a TLS session is created, but that session can trivially be
-machine-in-the-middled to steal credentials, data, inject malicious
-queries, and so forth.
-Because this flaw is in the client's validation of the TLS session,
-you have no way of reliably detecting the misconfiguration
-server-side. You could fix the configuration of all the clients you
-know of, but the default makes it very easy to accidentally regress.
-Instead of trying to verify client configuration over time, this proxy
-removes the need for postgres clients to be configured 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `697bdea5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ca4e1972` are properly handled with clean fallback behavior.

@@ -7040,3 +7040,8 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `0a744fdf` | Multi-dimensional audit evidence | 2026-11-03T22:06:42.474Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ab78e911` | Multi-dimensional audit evidence | 2026-11-03T22:06:44.652Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0028d79e` | Multi-dimensional audit evidence | 2026-11-03T22:06:46.863Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `cc4e40fa` | Multi-dimensional audit evidence | 2026-11-03T22:15:17.779Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `30da29ba` | Multi-dimensional audit evidence | 2026-11-03T22:15:17.967Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `edc9c419` | Multi-dimensional audit evidence | 2026-11-03T22:15:23.288Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `ca4e1972` | Multi-dimensional audit evidence | 2026-11-03T22:15:25.757Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `f9446abf` | Multi-dimensional audit evidence | 2026-11-03T22:15:29.185Z |

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-BKTX",
-    "timestamp": "2026-10-31T10:27:16.917Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-JZ5U",
-    "timestamp": "2026-10-31T10:33:48.738Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-K5UF",
-    "timestamp": "2026-10-31T10:33:57.399Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-SDAG",
-    "timestamp": "2026-10-31T10:40:20.296Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-SJP5",
-    "timestamp": "2026-10-31T10:40:28.601Z",
-    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-    "contentHash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-SK94",
     "timestamp": "2026-10-31T10:40:29.320Z",
     "repository": "dosco/graphjin",
@@ -7490,6 +7415,81 @@
     "repository": "clockworklabs/SpacetimeDB",
     "learningId": "learn-github-clockworklabs-spacetimedb",
     "contentHash": "e3473e4ef1289497c425a3cf338726e5dfa11f5968c7d90f58b62234bc6e8516",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-XN9R",
+    "timestamp": "2026-11-03T22:15:17.775Z",
+    "repository": "sharkdp/fd",
+    "learningId": "learn-github-sharkdp-fd",
+    "contentHash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-XNEZ",
+    "timestamp": "2026-11-03T22:15:17.963Z",
+    "repository": "inikulin/parse5",
+    "learningId": "learn-github-inikulin-parse5",
+    "contentHash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-XRIS",
+    "timestamp": "2026-11-03T22:15:23.284Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-XTFD",
+    "timestamp": "2026-11-03T22:15:25.753Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-XW2M",
+    "timestamp": "2026-11-03T22:15:29.182Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

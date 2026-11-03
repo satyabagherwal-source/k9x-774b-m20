@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "8b14e8dc",
+    "sourceVersion": "cc4e40fa",
     "license": "Apache-2.0",
-    "contentHash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
-    "lastHarvestedAt": "2026-10-30T23:44:47.307Z",
+    "contentHash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
+    "lastHarvestedAt": "2026-11-03T22:15:17.779Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -3573,20 +3573,20 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "c78633d8",
+    "sourceVersion": "edc9c419",
     "license": "AGPL-3.0",
-    "contentHash": "ac76ae613700dd74e0307b282d8c570aa02ede374e2772c7c5bf66cdb6378f4c",
-    "lastHarvestedAt": "2026-10-30T18:07:08.488Z",
+    "contentHash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
+    "lastHarvestedAt": "2026-11-03T22:15:23.288Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "697bdea5",
+    "sourceVersion": "ca4e1972",
     "license": "BSD-3-Clause",
-    "contentHash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
-    "lastHarvestedAt": "2026-11-03T17:30:17.650Z",
+    "contentHash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
+    "lastHarvestedAt": "2026-11-03T22:15:25.757Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "31315b3d",
+    "sourceVersion": "f9446abf",
     "license": "MIT",
-    "contentHash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
-    "lastHarvestedAt": "2026-10-31T23:49:59.398Z",
+    "contentHash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
+    "lastHarvestedAt": "2026-11-03T22:15:29.185Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "8402e101",
+    "sourceVersion": "30da29ba",
     "license": "MIT",
-    "contentHash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
-    "lastHarvestedAt": "2026-10-30T13:11:07.848Z",
+    "contentHash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
+    "lastHarvestedAt": "2026-11-03T22:15:17.967Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {

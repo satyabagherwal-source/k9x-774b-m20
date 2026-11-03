@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `c78633d8`  
+> **Source Version**: `edc9c419`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:07:07.838Z  
+> **Timestamp**: 2026-11-03T22:15:22.513Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:07:06.831Z  
+> **Harvest Timestamp**: 2026-11-03T22:15:21.986Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3312 stars
+- **Stars / Engagement**: 3313 stars
 
 ---
 
@@ -1861,221 +1861,398 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc196b24` (2026-10-29)
-**Commit Message**: fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
+### Incident Patch 1: `f150824c` (2026-11-02)
+**Commit Message**: fix(clickhouse): normalize tables added to a running mirror through their column settings (#4998)
 
-This PR removes `NO_BACKSLASH_ESCAPES` from the MySQL connector's
-session sql_mode.
+## Problem
 
-MySQL parses stored expressions again with the session's mode, and their
-canonical form escapes quotes as `\'`. In our session, a generated
-column with a quote therefore failed every query on its table with
-`ERROR 1064 (42000)`.
+We hit this on ClickHouse Cloud ClickPipes: a MongoDB pipe with
+structured ingestion stopped syncing
+after tables were added to it. Every normalize batch failed with
 
-With this PR, backslash is is an escape character again and generated
-column with escape syntax is now supported. And it's safe to uses
-`mysql.Escape`.
-
-Testing: add e2e test and repro-ed failure. 
-
-Fixes:  DBI-1282
-
-**File**: `flow/connectors/mysql/mysql.go` (modified, +1/-7)
-```diff
-@@ -275,7 +275,7 @@ func (c *MySqlConnector) connect(ctx context.Context) (*client.Conn, error) {
- 
- func (c *MySqlConnector) setSessionSettings() error {
- 	conn := c.conn.Load()
--	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
-+	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
- 		return fmt.Errorf("failed to set sql_mode to ANSI: %w", err)
- 	}
- 
-@@ -318,12 +318,6 @@ func (c *MySqlConnector) setSessionSettings() error {
- 	return nil
- }
- 
--func escapeWithNoBackslashEscapes(s string) string {
--	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
--	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
--	return strings.ReplaceAll(s, "'", "''")
--}
--
- // withRetries return an iterable over connections,
- // consumer should break out of loop on success or error,
- // to retry for mysql.ErrBadConn
+```
+Code: 26. Cannot parse quoted string: expected opening quote ''', got '{':
+while converting source column attendees to destination column attendees:
+while executing 'FUNCTION _CAST(attendees, Array(Nullable(JSON)))'
 ```
 
-**File**: `flow/connectors/mysql/qrep.go` (modified, +2/-2)
-```diff
-@@ -370,8 +370,8 @@ func (c *MySqlConnector) PullQRepRecords(
- 			rangeStart = "'" + x.TimestampRange.Start.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
- 			rangeEnd = "'" + x.TimestampRange.End.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
- 		case *protos.PartitionRange_StringRange:
--			rangeStart = "'" + escapeWithNoBackslashEscapes(x.StringRange.Start) + "'"
--			rangeEnd = "'" + escapeWithNoBackslashEscapes(x.StringRange.End) + "'"
-+			rangeStart = "'" + mysql.Escape(x.StringRange.Start) + "'"
-+			rangeEnd = "'" + mysql.Escape(x.StringRange.End) + "'"
- 			if config.Query != "" {
- 				// custom query is only possible for standalone QRepFlowWorkflow;
- 				// this is a legacy feature and string partitioning is not supported
-```
+and since a batch normalizes all its tables at once, the error stalled
+every table of the pipe, not just
+the added one. The source documents were fine (real arrays of documents,
+`$type` = `array`); the initial
+load of the same table had landed them correctly.
 
-**File**: `flow/connectors/mysql/qrep_partition.go` (modified, +3/-3)
-```diff
-@@ -306,7 +306,7 @@ func (c *MySqlConnector) fetchNextRealKey(
- ) (string, bool, error) {
- 	query := fmt.Sprintf(
- 		"SELECT %[1]s FROM %[2]s WHERE %[1]s >= '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s LIMIT 1",
--		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
-+		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
- 	return c.fetchRealKey(ctx, query)
- }
- 
-@@ -319,7 +319,7 @@ func (c *MySqlConnector) fetchPrevRealKey(
- ) (string, bool, error) {
- 	query := fmt.Sprintf(
- 		"SELECT %[1]s FROM %[2]s WHERE %[1]s < '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s DESC LIMIT 1",
--		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
-+		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
- 	return c.fetchRealKey(ctx, query)
- }
- 
-@@ -356,7 +356,7 @@ func (c *MySqlConnector) estimateRowsInRange(
- ) (uint64, error) {
- 	query := fmt.Sprintf(
- 		"EXPLAIN FORMAT=TRADITIONAL SELECT 1 FROM %[1]s WHERE %[2]s >= '%[3]s' AND %[2]s < '%[4]s'",
--		tableName, quotedCol, escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
-+		tableName, quotedCol, mysql.Escape(start), mysql.Escape(end))
- 	rs, err := c.Execute(ctx, query)
- 	if err != nil {
- 		return 0, err
-```
+## Cause
 
-**File**: `flow/connectors/mysql/qrep_partition_test.go` (modified, +0/-19)
-```diff
-@@ -238,25 +238,6 @@ func TestBase95RoundTrip(t *testing.T) {
- 	}
- }
- 
--func TestEscapeStringValue(t *testing.T) {
--	cases := []struct {
--		name     string
--		in       string
--		expected string
--	}{
--		{"plain", "key_0042", "key_0042"},
--		{"backslash untouched", `Z:\tmp`, `Z:\tmp`},
--		{"quotes doubled", `x' OR '1'='1`, `x'' OR ''1''=''1`},
--		{"midpoint-synthesized quotes", "'''", "''''''"},
--		{"control bytes raw", "a\x00b\nc\td", "a\x00b\nc\td"},
--	}
--	for _, tc := range cases {
--		t.Run(tc.name, func(t *testing.T) {
--			assert.Equal(t, tc.expected, escapeWithNoBackslashEscapes(tc.in))
--		})
--	}
--}
--
- func TestStringPartitionHeapPopsLargest(t *testing.T) {
- 	h := &stringPartitionHeap{}
- 	heap.Init(h)
-```
+`SyncFlow(cfg, state.SyncFlowOptions)` gives normalize
+`cfg.TableMappings`
+(`flowable_core.go`, the only `NormalizeRecordsRequest`). Adding tables
+appends them to
+`state.SyncFlowOptions.TableMappings` only (`cdc_flow.go`); `cfg` keeps
+the mappings the mirror started
+with across `ContinueAsNew`, and is only rebuilt from the state on
+resync.
 
-**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +6/-0)
-```diff
-@@ -221,6 +221,12 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
- 	jsonColumns := []string{"json"}
- 	createStmt := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON);`, srcFullName)
- 	insertStmt := func(v string) string { return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, v) }
-+	if _, isMySQL := s.source.(*MySqlSource); isMySQL {
-+		// test values are standard SQL literals, but MySQL reads backslash as an escape character
-+		insertStmt = func(v string) string {
-+			return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, strings.ReplaceAll(v, `\`, `\\`))
-+		}
-+	}
- 	if _, isPostgres := s.source.(*PostgresSource); isPostgres {
- 		jsonColumns = []string{"json", "jsonb"}
- 		createStmt = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON, jsonb JSONB);`, srcFullName)
-```
+The added table's DDL and initial load run in the child flow with the
+added mapping
 
-**File**: `flow/e2e/mysql_clickhouse/mysql_test.go` (modified, +47/-5)
+**File**: `flow/activities/flowable.go` (modified, +7/-0)
 ```diff
-@@ -3082,10 +3082,52 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Arbitrary_Parallel
- 	e2e.RequireEnvCanceled(s.T(), env)
- }
+@@ -364,6 +364,13 @@ func (a *FlowableActivity) SyncFlow(
+ 	ctx, cancelCtx := context.WithCancel(ctx)
+ 	defer cancelCtx()
  
--// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot guards against
--// silent endpoint data loss when a watermark value contains a backslash, which
--// the session sql_mode (NO_BACKSLASH_ESCAPES) treats as literal but mysql.Escape
--// would wrongly escape it (\ -> \\), potentially sorting below the real max value
-+// Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot snapshots a generated column containing a quote.
-+func (s MySQLClickHouseSuite) Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot() {
-+	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
-+		s.T().Skip("only applies to mysql")
++	// config keeps the table mappings the mirror started with, options also the tables added since:
++	// normalize must see the column settings of added tables too
++	if options != nil {
++		config = proto.CloneOf(config)
++		config.TableMappings = options.TableMappings
 +	}
 +
-+	srcTable := "test_gcol_escapes"
-+	srcFullName := e2e.AttachSchema(s, srcTable)
-+	dstTable := "test_gcol_escapes_dst"
+ 	ctx = context.WithValue(ctx, shared.FlowNameKey, config.FlowJobName)
+ 	// This is kept here and not deeper as we can have errors during SetupReplConn
+ 	ctx = internal.WithOperationContext(ctx, protos.FlowOperation_FLOW_OPERATION_SYNC)
+```
+
+**File**: `flow/e2e/clickhouse_suite.go` (modified, +92/-0)
+```diff
+@@ -226,6 +226,98 @@ func (s ClickHouseSuite) Test_Addition_Removal() {
+ 	RequireEnvCanceled(s.t, env)
+ }
+ 
++// Test_Addition_Column_Settings adds a table with column settings to a running mirror: its CDC rows must
++// land through them, as its initial load does
++func (s ClickHouseSuite) Test_Addition_Column_Settings() {
++	tc := NewTemporalClient(s.t)
 +
-+	require.NoError(s.T(), s.Source().Exec(s.T().Context(), fmt.Sprintf(
-+		`CREATE TABLE %s (id INT PRIMARY KEY, name VARCHAR(100) NOT NULL,
-+			name_quote VARCHAR(200) AS (concat(lower(name), '\'s')))`,
-+		srcFullName)))
-+	// hex literals keep the inserted values independent of escaping
-+	names := []string{`O'Brien`, `C:\tmp\x`, `plain`, `a\'b`}
-+	values := make([]string, len(names))
-+	for i, name := range names {
-+		values[i] = fmt.Sprintf("(%d, X'%s')", i+1, hex.EncodeToString([]byte(name)))
++	srcTableName := s.attachSchemaSuffix("test_addition_settings")
++	addedSrcTableName := s.attachSchemaSuffix("test_addition_settings_added")
++	dstTableName := "test_addition_settings_dst"
++	addedDstTableName := "test_addition_settings_added_dst"
++
++	for _, tableName := range []string{srcTableName, addedSrcTableName} {
++		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++			`CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY, note TEXT, amount INT)`, tableName)))
 +	}
-+	require.NoError(s.T(), s.Source().Exec(s.T().Context(),
-+		fmt.Sprintf("INSERT INTO %s (id, name) VALUES %s", srcFullName, strings.Join(values, ","))))
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`INSERT INTO %s (id, note, amount) VALUES (1, 'snapshot', 10)`, addedSrcTableName)))
 +
-+	connectionGen := e2e.FlowConnectionGenerationConfig{
-+		FlowJobName:   e2e.AddSuffix(s, "gcol_escapes"),
-+		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
-+		Destination:   s.Peer().Name,
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      s.attachSuffix("ch_addition_settings"),
++		TableNameMapping: map[string]string{srcTableName: dstTableName},
++		Destination:      s.Peer().Name,
 +	}
 +	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
 +	flowConnConfig.DoInitialSnapshot = true
-+	// more than one partition so the min/max partitioning query runs against the table
-+	flowConnConfig.SnapshotNumPartitionsOverride = 2
 +
-+	tc := e2e.NewTemporalClient(s.T())
-+	env := e2e.ExecutePeerflow(s.T(), tc, flowConnConfig)
-+	e2e.SetupCDCFlowStatusQuery(s.T(), env, flowConnConfig)
++	env := ExecutePeerflow(s.t, tc, flowConnConfig)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`INSERT INTO %s (id, note, amount) VALUES (1, 'cdc', 1)`, srcTableName)))
++	EnvWaitForCount(env, s, "cdc into the original table", dstTableName, "id", 1)
 +
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTable, dstTable, "id,name,name_quote")
++	SignalWorkflow(s.t.Context(), env, model.FlowSignal, model.PauseSignal)
++	EnvWaitFor(s.t, env, 4*time.Minute, "pausing for add table", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
++	})
 +
-+	env.Cancel(s.T().Context())
-+	e2e.RequireEnvCanceled(s.T(), env)
++	if pgconn, ok := s.source.Connector().(*connpostgres.PostgresConnector); ok {
++		conn := pgconn.Conn()
++		_, err := conn.Exec(s.t.Context(),
++			fmt.Sprintf(`SELECT pg_terminate_backend(pid) FROM pg_stat_activity
++				WHERE query LIKE '%%START_REPLICATION%%' AND query LIKE '%%%s%%' AND backend_type='walsender'`,
++				s.attachSuffix("ch_addition_settings")))
++		require.NoError(s.t, err)
++
++		EnvWaitFor(s.t, env, 3*time.Minute, "waiting for replication to stop", func() bool {
++			rows, err := conn.Query(s.t.Context(),
++				fmt.Sprintf(`SELECT pid FROM pg_stat_activity
++					WHERE query LIKE '%%START_REPLICATION%%' AND query LIKE '%%%s%%' AND backend_type='walsender'`,
++					s.attachSuffix("ch_addition_settings")))
++			require.NoError(s.t, err)
++			defer rows.Close()
++			return !rows.Next()
++		})
++	}
++
++	// the added table renames a column, makes it nullable, and widens another one
++	runID := EnvGetRunID(s.t, env)
++	SignalWorkflow(s.t.Context(), env, model.CDCDynamicPropertiesSignal, &protos.CDCFlowConfigUpdate{
++		AdditionalTables: []*protos.TableMapping{{
++			SourceTableIdentifier:      addedSrcTableName,
++			DestinationTableIdentifier: addedDstTableName,
++			ShardingKey:                "id",
++			Columns: []*protos.ColumnSetting{
++				{SourceName: "note", DestinationName: "memo", NullableEnabled: true},
++				{SourceName: "amount", DestinationType: "Int64"},
++			},
++		}},
++	})
++	EnvWaitFor(s.t, env, 4*time.Minute, "adding table", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
++	})
++	EnvWaitFor(s.t, env, time.Minute, "ContinueAsNew", func() bool {
++		return runID != EnvGetRunID(s.t, env)
++	})
++	EnvWaitForCount(env, s, "initial load of the added table", addedDstTableName, "id,memo", 1)
++
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`INSERT INTO %s (id, note, amount) VALUES (2, 'cdc', 20), (3, NULL, 30)`, addedSrcTableName)))
++	EnvWaitForCount(env, s, "cdc into the added table", addedDstTableName, "id,memo", 3)
++
++	rows, err := s.GetRows(addedDstTableName, "id,memo,amount")
++	require.NoError(s.t, err)
++	require.Len(s.t, rows.Records, 3)
++	require.Equal(s.t, "snapshot", rows.Records[0][1].Value())
++	require.Equal(s.t, "cdc", rows.Records[1][1].Value())
++	require.Nil(s.t, rows.Records[2][1].Value(), "a NULL lands as NULL in the nullable column")
++	require.Equal(s.t, int64(30), rows.Records[2][2].Value())
++
++	env.Cancel(s.t.Context())
++	RequireEnvCanceled(s.t, env)
 +}
 +
-+// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot checks that a max key containing a backslash
-+// is not dropped. If the boundary literal is escaped for the wrong sql_mode, `key_99\max` is read back as
-+// `key_99\\max`, which sorts below the real max, so the last partition silently misses that row.
- func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot() {
- 	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
- 		s.T().Skip("only applies to mysql")
-@@ -3105,7 +3147,7 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Para
- 	for i := range numRows - 1 {
- 		keys[i] = fmt.Sprintf("key_%02d", i)
+ // Removing one of several source tables feeding a shared destination must keep
+ // that destination's raw rows & catalog schema mapping intact, otherwise the
+ // surviving source can no longer normalize into it. Disjoint id ranges keep the
+```
+
+**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +93/-0)
+```diff
+@@ -460,6 +460,99 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
+ 	e2e.RequireEnvCanceled(t, env)
+ }
+ 
++// Test_Structured_Ingestion_Table_Addition adds a structured ingestion table to a running mirror: its CDC
++// rows must land through its column settings, as its initial load does
++func (s MongoClickhouseSuite) Test_Structured_Ingestion_Table_Addition() {
++	t := s.T()
++	srcDatabase := e2e.GetTestDatabase(s.Suffix())
++	srcTable := "test_structured_addition"
++	dstTable := "test_structured_addition_dst"
++	addedSrcTable := "test_structured_addition_added"
++	addedDstTable := "test_structured_addition_added_dst"
++
++	connectionGen := e2e.FlowConnectionGenerationConfig{
++		FlowJobName:   e2e.AddSuffix(s, srcTable),
++		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
++		Destination:   s.Peer().Name,
++	}
++	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
++	flowConnConfig.DoInitialSnapshot = true
++
++	db := s.Source().(*e2e.MongoSource).AdminClient().Database(srcDatabase)
++	require.NoError(t, db.CreateCollection(t.Context(), srcTable))
++	addedCollection := db.Collection(addedSrcTable)
++	insertMeetings := func(prefix string) {
++		for i := range 5 {
++			res, err := addedCollection.InsertOne(t.Context(), bson.D{
++				{Key: "name", Value: fmt.Sprintf("%s_%d", prefix, i)},
++				{Key: "title", Value: fmt.Sprintf("title_%s_%d", prefix, i)},
++				{Key: "attendees", Value: bson.A{
++					bson.D{{Key: "email", Value: fmt.Sprintf("a_%s_%d", prefix, i)}, {Key: "internal", Value: true}},
++					bson.D{{Key: "email", Value: fmt.Sprintf("b_%s_%d", prefix, i)}, {Key: "internal", Value: false}},
++				}},
++			}, options.InsertOne())
++			require.NoError(t, err)
++			require.True(t, res.Acknowledged)
++		}
++	}
++	insertMeetings("init")
++
++	tc := e2e.NewTemporalClient(t)
++	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
++	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
++
++	insertRes, err := db.Collection(srcTable).InsertOne(t.Context(), bson.D{{Key: "key", Value: "val"}}, options.InsertOne())
++	require.NoError(t, err)
++	require.True(t, insertRes.Acknowledged)
++	e2e.EnvWaitForCount(env, s, "cdc into the original table", dstTable, "_id", 1)
++
++	e2e.SignalWorkflow(t.Context(), env, model.FlowSignal, model.PauseSignal)
++	e2e.EnvWaitFor(t, env, time.Minute, "paused for table addition", func() bool {
++		return env.GetFlowStatus(t) == protos.FlowStatus_STATUS_PAUSED
++	})
++
++	// the added table renames a column and lands arrays of documents in an array of JSON
++	addedTableMappings := e2e.TableMappings(s, addedSrcTable, addedDstTable)
++	addedTableMappings[0].StructuredIngestionConfig = &protos.StructuredIngestionTableConfig{Enabled: true}
++	addedTableMappings[0].Columns = []*protos.ColumnSetting{
++		{SourceName: "name", DestinationType: "Nullable(String)"},
++		{SourceName: "title", DestinationName: "headline", DestinationType: "Nullable(String)"},
++		{SourceName: "attendees", DestinationType: "Array(Nullable(JSON))"},
++	}
++	runID := e2e.EnvGetRunID(t, env)
++	e2e.SignalWorkflow(t.Context(), env, model.CDCDynamicPropertiesSignal, &protos.CDCFlowConfigUpdate{
++		AdditionalTables: addedTableMappings,
++	})
++	e2e.EnvWaitFor(t, env, 4*time.Minute, "adding table", func() bool {
++		return env.GetFlowStatus(t) == protos.FlowStatus_STATUS_RUNNING
++	})
++	e2e.EnvWaitFor(t, env, time.Minute, "ContinueAsNew", func() bool {
++		return runID != e2e.EnvGetRunID(t, env)
++	})
++	e2e.EnvWaitForCount(env, s, "initial load of the added table", addedDstTable, "_id,name", 5)
++
++	insertMeetings("cdc")
++	e2e.EnvWaitForCount(env, s, "cdc into the added table", addedDstTable, "_id,name", 10)
++
++	peer := s.Peer()
++	ch, err := connclickhouse.Connect(t.Context(), nil, peer.GetClickhouseConfig())
++	require.NoError(t, err)
++	defer ch.Close()
++	for _, prefix := range []string{"init", "cdc"} {
++		var headline, secondAttendee string
++		var attendeesLength uint64
++		require.NoError(t, ch.QueryRow(t.Context(), fmt.Sprintf(
++			`SELECT ifNull(headline, ''), length(attendees), toString(attendees[2]) FROM "%s"."%s" FINAL WHERE name = '%s_3'`,
++			peer.GetClickhouseConfig().Database, addedDstTable, prefix)).Scan(&headline, &attendeesLength, &secondAttendee))
++		require.Equal(t, "title_"+prefix+"_3", headline)
++		require.Equal(t, uint64(2), attendeesLength)
++		require.JSONEq(t, fmt.Sprintf(`{"email": "b_%s_3", "internal": false}`, prefix), secondAttendee)
++	}
++
++	env.Cancel(t.Context())
++	e2e.RequireEnvCanceled(t, env)
++}
++
+ // Test_Structured_Ingestion_Scalars_And_Typed_Arrays covers the destination types the other structured
+ // ingestion tests leave out, on both the initial load and CDC: floats, integers widened into floats, booleans,
+ // dates, typed arrays of integers, floats and booleans, the scalars mapping to strings, and the ones mapping
+```
+
+---
+
+### Incident Patch 2: `0b20038f` (2026-11-02)
+**Commit Message**: Revert "clickhouse: drop the 25.3 check for PEERDB_CLICKHOUSE_ENABLE_JSON" (#5000) (#5010)
+
+Reverts #5000, which removed the mirror validation that rejects
+`PEERDB_CLICKHOUSE_ENABLE_JSON` on a ClickHouse below 25.3.
+
+For OSS, a clear rejection at creation with a user-facing fix beats the
+alternative, where a mirror created against an old server silently
+switches its JSON columns from String to JSON on the next resync after a
+server upgrade, and the only fix is editing internal flags.
+
+The MongoDB toggle tooltip and OpenAPI description in control-plane
+still promise a String fallback and will be updated separately. (in
+Clickpipes)
+
+**File**: `flow/connectors/clickhouse/validate.go` (modified, +25/-0)
+```diff
+@@ -7,8 +7,11 @@ import (
+ 	"slices"
+ 	"strings"
+ 
++	chproto "github.com/ClickHouse/clickhouse-go/v2/lib/proto"
++
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ 	"github.com/PeerDB-io/peerdb/flow/internal"
++	"github.com/PeerDB-io/peerdb/flow/model/qvalue"
+ 	chvalidate "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
+ 	"github.com/PeerDB-io/peerdb/flow/shared"
+ )
+@@ -48,6 +51,10 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
+ 		}
  	}
--	// wrongly escaped, `key_99\\max` sorts before `key_99\max` under binary collation:
-+	// a raw string, so this is one literal backslash (0x5C); under binary collation the wrongly escaped form sorts first:
- 	// key_99\max bytes:  6B 65 79 5F 39 39 5C 6D 61 78
- 	// key_99\\max bytes: 6B 65 79 5F 39 39 5C 5C 6D 61 78
- 	keys[numRows-1] = `key_99\max`
+ 
++	if err := checkNativeJSONSetting(ctx, cfg.Env, c.chVersion); err != nil {
++		return err
++	}
++
+ 	destinationTables := make([]string, 0, len(cfg.TableMappings))
+ 	for _, tableMapping := range cfg.TableMappings {
+ 		destinationTable := tableMapping.DestinationTableIdentifier
+@@ -164,3 +171,21 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
+ 	}
+ 	return nil
+ }
++
++// checkNativeJSONSetting rejects a mirror that turns PEERDB_CLICKHOUSE_ENABLE_JSON on against a ClickHouse
++// without the native JSON type, which would otherwise silently fall back to String columns.
++func checkNativeJSONSetting(ctx context.Context, env map[string]string, chVersion *chproto.Version) error {
++	enabled, err := internal.PeerDBEnableClickHouseJSON(ctx, env)
++	if err != nil {
++		return fmt.Errorf("failed to read PEERDB_CLICKHOUSE_ENABLE_JSON: %w", err)
++	}
++	if enabled && !qvalue.NativeJSONTypeSupported(chVersion) {
++		version := "unknown"
++		if chVersion != nil {
++			version = chVersion.String()
++		}
++		return fmt.Errorf("PEERDB_CLICKHOUSE_ENABLE_JSON needs ClickHouse 25.3 or newer for the native JSON type, "+
++			"the destination runs %s; turn the setting off to map JSON columns to String", version)
++	}
++	return nil
++}
+```
+
+**File**: `flow/connectors/clickhouse/validate_test.go` (modified, +25/-0)
+```diff
+@@ -3,7 +3,9 @@ package connclickhouse
+ import (
+ 	"testing"
+ 
++	chproto "github.com/ClickHouse/clickhouse-go/v2/lib/proto"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ )
+@@ -14,3 +16,26 @@ func TestEngineToStringExhaustive(t *testing.T) {
+ 		assert.NoErrorf(t, err, "engineToString(%v) failed", protos.TableEngine(enumVal))
+ 	}
+ }
++
++// TestCheckNativeJSONSetting checks that PEERDB_CLICKHOUSE_ENABLE_JSON is rejected on a ClickHouse without the
++// native JSON type instead of silently mapping JSON columns to String.
++func TestCheckNativeJSONSetting(t *testing.T) {
++	t.Parallel()
++
++	on := map[string]string{"PEERDB_CLICKHOUSE_ENABLE_JSON": "true"}
++	off := map[string]string{"PEERDB_CLICKHOUSE_ENABLE_JSON": "false"}
++	v25_2 := &chproto.Version{Major: 25, Minor: 2, Patch: 1}
++	v25_3 := &chproto.Version{Major: 25, Minor: 3}
++	v26_6 := &chproto.Version{Major: 26, Minor: 6}
++
++	require.NoError(t, checkNativeJSONSetting(t.Context(), on, v25_3))
++	require.NoError(t, checkNativeJSONSetting(t.Context(), on, v26_6))
++	require.NoError(t, checkNativeJSONSetting(t.Context(), off, v25_2))
++	require.NoError(t, checkNativeJSONSetting(t.Context(), off, nil))
++
++	err := checkNativeJSONSetting(t.Context(), on, v25_2)
++	require.ErrorContains(t, err, "25.3 or newer")
++	require.ErrorContains(t, err, "25.2.1")
++	err = checkNativeJSONSetting(t.Context(), on, nil)
++	require.ErrorContains(t, err, "unknown")
++}
+```
+
+**File**: `flow/internal/dynamicconf.go` (modified, +3/-4)
+```diff
+@@ -374,10 +374,9 @@ var DynamicSettings = [...]*protos.DynamicSetting{
+ 	},
+ 	{
+ 		Name: "PEERDB_CLICKHOUSE_ENABLE_JSON",
+-		Description: "Map JSON datatype from source to JSON in ClickHouse instead of String; below ClickHouse 25.3 " +
+-			"JSON columns stay String. Postgres/MySQL values that are not objects (scalars, arrays) are wrapped as " +
+-			"{\"_value\": ...}, since ClickHouse JSON only accepts objects at the top level; a JSON null lands as {} " +
+-			"because ClickHouse JSON drops null paths",
++		Description: "Map JSON datatype from source to JSON in ClickHouse instead of String. Postgres/MySQL values that " +
++			"are not objects (scalars, arrays) are wrapped as {\"_value\": ...}, since ClickHouse JSON only accepts " +
++			"objects at the top level; a JSON null lands as {} because ClickHouse JSON drops null paths",
+ 		DefaultValue:     "false",
+ 		ValueType:        protos.DynconfValueType_BOOL,
+ 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4995** (closed): perf(clickhouse): load multiple staged batches per raw table insert (@dtunikov)
-- **PR #4994** (2026-10-30): log topology attribute to differentiate replica set vs. sharded cluster (@jgao54)
-- **PR #4993** (2026-10-30): remove mongodb server-side commit lag metrics (@jgao54)
-- **PR #4988** (closed): perf(avro): replace hamba/avro with twmb/avro (@pfcoperez)
-- **PR #4985** (2026-10-29): fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (@jgao54)
-- **PR #4984** (2026-10-28): fix(deps): update gomod dependencies (@renovate[bot])
+- **PR #5016** (closed): mongo: kill change stream cursor leaked on context timeout (@dtunikov)
+- **PR #5015** (2026-11-03): classify DocumentDB too many cursors error as recoverable (@dtunikov)
+- **PR #5014** (2026-11-03): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
+- **PR #5011** (closed): fix(mysql): render GTID sets as strings in replication logs (@ilidemi)
+- **PR #5010** (2026-11-02): Revert "clickhouse: drop the 25.3 check for PEERDB_CLICKHOUSE_ENABLE_JSON" (#5000) (@gheorghepucea)
+- **PR #5004** (2026-11-02): Snapshot only columns that existed at the snapshot (@iskakaushik)
 
 ---
 
@@ -2095,34 +2272,34 @@ Fixes:  DBI-1282
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
+## X. clickhouse): normalize tables added to a running mirror through their column set
 
 **RULE**:
-When implementing operations in `flow/connectors/mysql/mysql.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/activities/flowable.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc196b24`: mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f150824c`: clickhouse): normalize tables added to a running mirror through their column settings (#4998). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/mysql.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/activities/flowable.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
+	// config keeps the table mappings the mirror started with, options also the tables added since:
+	// normalize must see the column settings of added tables too
+	if options != nil {
+		config = proto.CloneOf(config)
+		config.TableMappings = options.TableMappings
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
-func escapeWithNoBackslashEscapes(s string) string {
-	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
-	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
-	return strings.ReplaceAll(s, "'", "''")
-}
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc196b24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f150824c` are properly handled with clean fallback behavior.

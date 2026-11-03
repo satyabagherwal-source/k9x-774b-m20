@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T22:06:46.874Z",
+  "last_updated": "2026-11-03T22:15:29.196Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
-      "verified_at": "2026-10-30T23:44:47.316Z",
+      "content_hash": "fcfe61700e6c3bfd912a53eae4c312342c76b6455e741044922d4dd4e270071b",
+      "verified_at": "2026-11-03T22:15:17.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:44:47.316Z"
+      "last_updated": "2026-11-03T22:15:17.788Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "ac76ae613700dd74e0307b282d8c570aa02ede374e2772c7c5bf66cdb6378f4c",
-      "verified_at": "2026-10-30T18:07:08.497Z",
+      "content_hash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
+      "verified_at": "2026-11-03T22:15:23.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:07:08.497Z"
+      "last_updated": "2026-11-03T22:15:23.299Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
-      "verified_at": "2026-11-03T17:30:17.657Z",
+      "content_hash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
+      "verified_at": "2026-11-03T22:15:25.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:30:17.657Z"
+      "last_updated": "2026-11-03T22:15:25.767Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "97944d9903aa8551151e715c209020871dc0d377c9502ad7afcbcf5e1eaa3eae",
-      "verified_at": "2026-11-03T18:47:57.752Z",
+      "content_hash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
+      "verified_at": "2026-11-03T22:15:29.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:47:57.752Z"
+      "last_updated": "2026-11-03T22:15:29.196Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
-      "verified_at": "2026-10-30T13:11:07.856Z",
+      "content_hash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
+      "verified_at": "2026-11-03T22:15:17.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:11:07.856Z"
+      "last_updated": "2026-11-03T22:15:17.976Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",

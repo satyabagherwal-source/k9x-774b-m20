@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `8b14e8dc`  
+> **Source Version**: `cc4e40fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:44:46.585Z  
+> **Timestamp**: 2026-11-03T22:15:16.974Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:44:45.587Z  
+> **Harvest Timestamp**: 2026-11-03T22:15:13.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44909 stars
+- **Stars / Engagement**: 44936 stars
 
 ---
 
@@ -1382,15 +1382,76 @@ pub fn absolute_path(path: &Path) -> io::Result<PathBuf> {
     let path_buf = path_absolute_form(path)?;
 
     #[cfg(windows)]
-    let path_buf = Path::new(
-        path_buf
-            .as_path()
-            .to_string_lossy()
-            .trim_start_matches(r"\\?\"),
-    )
-    .to_path_buf();
+    let path_buf = strip_verbatim_prefix(&path_buf);
 
     Ok(path_buf)
+}
+
+/// Remove the `\\?\` verbatim prefix from a path without turning it into a
+/// relative path.
+///
+/// The prefix is dropped by rewriting the path *component by component*, so
+/// that the meaning of the remaining components is preserved:
+///
+/// * `\\?\C:\foo`              -> `C:\foo`            (verbatim disk path)
+/// * `\\?\UNC\server\share\foo` -> `\\server\share\foo` (verbatim UNC path)
+///
+/// Verbatim paths that cannot be expressed without the prefix (for example
+/// `\\?\Volume{GUID}\foo`, where `Volume{GUID}` is a device name and not a
+/// relative file name) are returned unchanged, and so are all non-verbatim
+/// paths such as `\\server\share\foo` or `\\.\COM1`.
+///
+/// Unlike the previous string trimming, this never goes through
+/// `to_string_lossy()`, so paths that are not valid UTF-8 survive unchanged.
+#[cfg(windows)]
+fn strip_verbatim_prefix(path: &Path) -> PathBuf {
+    use std::ffi::OsString;
+    use std::path::{Component, Prefix};
+
+    let mut components = path.components();
+    let Some(Component::Prefix(prefix)) = components.next() else {
+        return path.to_path_buf();
+    };
+
+    let has_root = matches!(components.clone().next(), Some(Component::RootDir));
+    let mut base = OsString::new();
+    // `Prefix::Disk` / `Prefix::UNC` cannot rebuild this prefix: a `Prefix` is a
+    // parse label, not the bytes of the path, and `PrefixComponent` has no stable
+    // constructor. Writing it out by hand is the only way to drop `\\?\`.
+    match prefix.kind() {
+        Prefix::VerbatimDisk(drive) => {
+            base.push(format!("{}:", drive as char));
+            if has_root {
+                base.push(r"\");
+            }
+        }
+        Prefix::VerbatimUNC(server, share) => {
+            base.push(r"\\");
+            base.push(server);
+            base.push(r"\");
+            base.push(share);
+            if has_root {
+                base.push(r"\");
+            }
+        }
+        // `Prefix::Verbatim(_)` (device paths like `\\?\Volume{GUID}`) and
+        // `Prefix::DeviceNS(_)` cannot be written without their prefix.
+        _ => return path.to_path_buf(),
+    }
+
+    if has_root {
+        // The root separator is already part of `base`, and `join` would append
+        // it again; skipping the root component keeps the prefix we just built
+        // instead of letting `join` replace it.
+        let _ = components.next();
+    }
+    if components.as_path().is_empty() {
+        // `\\?\C:` and `\\?\UNC\server\share`: the verbatim form is the whole
+        // path, and joining an empty tail would append a separator the input
+        // did not have.
+        return PathBuf::from(base);
+    }
+    Path::new(&base).join(components)
 }
 
 pub fn is_existing_directory(path: &Path) -> bool {
@@ -1496,6 +1557,117 @@ mod tests {
         );
     }
 }
+
+#[cfg(all(test, windows))]
+mod windows_tests {
+    use super::{absolute_path, strip_verbatim_prefix};
+    use std::ffi::OsString;
+    use std::os::windows::ffi::OsStringExt;
+    use std::path::{Path, PathBuf};
+
+    #[test]
+    fn strip_verbatim_prefix_verbatim_disk() {
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\C:\foo\bar")),
+            Path::new(r"C:\foo\bar")
+        );
+        // A bare drive root keeps its root separator.
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\C:\")),
+            Path::new(r"C:\")
+        );
+        // Drive-relative verbatim path (`\\?\C:`) must not gain a root.
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\C:")),
+            Path::new(r"C:")
+        );
+    }
+
+    #[test]
+    fn strip_verbatim_prefix_verbatim_unc() {
+        let stripped = strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share\foo"));
+        assert_eq!(stripped, Path::new(r"\\server\share\foo"));
+        // The whole point of the bug: the result must stay absolute.
+        assert!(stripped.is_absolute());
+        assert_eq!(
+            stripped.components().next(),
+            Path::new(r"\\server\share\foo").components().next()
+        );
+
+        // The shape produced by the old `trim_start_matches(r"\\?\")` code.
+        assert_ne!(stripped, Path::new(r"UNC\server\share\foo"));
+        assert_ne!(stripped, Path::new(r"\server\share\foo"));
+    }
+
+    #[test]
+    fn strip_verbatim_prefix_verbatim_unc_without_trailing_path() {
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share")),
+            Path::new(r"\\server\share")
+        );
+        // ... and keeps the exact bytes: joining an empty tail would have
+        // appended a separator the input did not have.
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share"))
+                .as_os_str()
+                .as_encoded_bytes(),
+            Path::new(r"\\server\share").as_os_str().as_encoded_bytes()
+        );
+        assert_eq!(
+            strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share\")),
+            Path::new(r"\\server\share\")
+        );
+    }
+
+    #[test]
+    fn strip_verbatim_prefix_leaves_other_paths_alone() {
+        // Verbatim device paths cannot be expressed without the prefix.
+        let volume = Path::new(r"\\?\Volume{2b1e7a6b-1f2c-4c66-8c47-9b0e0e2f3a11}\foo");
+        assert_eq!(strip_verbatim_prefix(volume), volume);
+        let pipe = Path::new(r"\\?\pipe\fd");
+        assert_eq!(strip_verbatim_prefix(pipe), pipe);
+
+        // Non-verbatim paths are untouched.
+        for path in [
+            r"C:\foo\bar",
+            r"\\server\share\foo",
+            r"\\.\COM1",
+            r"C:",
+            r"foo\bar",
+        ] {
+            assert_eq!(strip_verbatim_prefix(Path::new(path)), Path::new(path));
+        }
+    }
+
+    #[test]
+    fn absolute_path_keeps_unc_absolute() {
+        assert_eq!(
+            absolute_path(Path::new(r"\\?\UNC\server\share\foo")).unwrap(),
+            Path::new(r"\\server\share\foo")
+        );
+        assert_eq!(
+            absolute_path(Path::new(r"\\?\C:\foo")).unwrap(),
+            Path::new(r"C:\foo")
+        );
+        assert_eq!(
+            absolute_path(Path::new(r"\\server\share\foo")).unwrap(),
+            Path::new(r"\\server\share\foo")
+        );
+    }
+
+    #[test]
+    fn absolute_path_preserves_non_utf8_paths() {
+        // A lone surrogate is not valid UTF-8 but is a valid UTF-16 code unit,
+        // and therefore a valid Windows path component. `to_string_lossy()`
+        // used to replace it with U+FFFD.
+        let mut wide: Vec<u16> = r"\\?\D:\".encode_utf16().collect();
+        wide.push(0xD800);
+        wide.extend("x".encode_utf16());
+        let path = PathBuf::from(OsString::from_wide(&wide));
+
+        let expected = {
+            let mut wide: Vec<u16> = r"D:\".encode_utf16().collect();
+            wide.push(0xD800);
 
 ```
 
@@ -1642,207 +1814,230 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b14e8dc` (2026-10-30)
-**Commit Message**: Merge pull request #2202 from meop/ci/windows-arm64-gnullvm
+### Incident Patch 1: `d44b6556` (2026-10-30)
+**Commit Message**: docs: do not list the targets jemalloc is built for
 
-ci: release a Windows ARM64 GNU-family (gnullvm) build
+The list goes stale as soon as the cfg in Cargo.toml changes, and "There"
+did not say whether it meant the targets that have jemalloc or the ones
+that do not.
 
-**File**: `.github/workflows/CICD.yml` (modified, +22/-0)
+**File**: `README.md` (modified, +2/-3)
 ```diff
-@@ -107,6 +107,7 @@ jobs:
-           - { target: x86_64-pc-windows-gnu       , os: windows-2025                  }
-           - { target: x86_64-pc-windows-msvc      , os: windows-2025                  }
-           - { target: aarch64-pc-windows-msvc     , os: windows-11-arm                }
-+          - { target: aarch64-pc-windows-gnullvm  , os: windows-11-arm                }
-           - { target: x86_64-unknown-linux-gnu    , os: ubuntu-24.04, use-cross: true }
-           - { target: x86_64-unknown-linux-musl   , os: ubuntu-24.04, use-cross: true }
-     env:
-@@ -119,6 +120,27 @@ jobs:
-       with:
-         persist-credentials: false
+@@ -451,9 +451,8 @@ Depending on your shell, you may need to quote the placeholders (`{}`, `{/}`, `{
  
-+    - name: Install Windows ARM64 GNU-family linker
-+      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-+      id: msys2
-+      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
-+      with:
-+        msystem: CLANGARM64
-+        update: true
-+        install: mingw-w64-clang-aarch64-clang
-+
-+    - name: Expose Windows ARM64 GNU-family linker
-+      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-+      shell: bash
-+      env:
-+        MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
-+      run: |
-+        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
-+        echo "${bin_dir}" >> $GITHUB_PATH
-+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
-+        # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
-+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
-+
-     - name: Install prerequisites
-       shell: bash
-       run: |
+ ### `fd` crashes when another memory allocator is preloaded
+ 
+-The released Linux binaries use jemalloc, through the `use-jemalloc` feature. It is on by default, but
+-it is only compiled in on some targets: not on Windows, macOS, FreeBSD, OpenBSD, illumos, Android,
+-32-bit musl or riscv64. There, preloading a different allocator is not supported, for example
++The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
++some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
+ 
+ ``` bash
+ > LD_PRELOAD=/usr/bin/mimalloc fd
 ```
 
 ---
 
-### Incident Patch 2: `31f36c87` (2026-10-29)
-**Commit Message**: ci: pin setup-msys2 and use bash for the gnullvm linker step
+### Incident Patch 2: `cc4e40fa` (2026-11-01)
+**Commit Message**: Merge pull request #2164 from paoValle/fix/2121-mimalloc-ld-preload
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+docs: a preloaded allocator conflicts with the bundled jemalloc
 
-**File**: `.github/workflows/CICD.yml` (modified, +6/-5)
+**File**: `README.md` (modified, +17/-0)
 ```diff
-@@ -123,22 +123,23 @@ jobs:
-     - name: Install Windows ARM64 GNU-family linker
-       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-       id: msys2
--      uses: msys2/setup-msys2@v2.33.0
-+      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
-       with:
-         msystem: CLANGARM64
-         update: true
-         install: mingw-w64-clang-aarch64-clang
+@@ -449,6 +449,23 @@ a (temporary) shell script.
+ Depending on your shell, you may need to quote the placeholders (`{}`, `{/}`, `{//}`,
+ `{.}`, `{/.}`) to prevent the shell from interpreting them before `fd` sees them.
  
-     - name: Expose Windows ARM64 GNU-family linker
-       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
--      shell: pwsh
-+      shell: bash
-       env:
-         MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
-       run: |
--        echo "$env:MSYS2_LOCATION\clangarm64\bin" >> $env:GITHUB_PATH
--        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=$env:MSYS2_LOCATION\clangarm64\bin\clang.exe" >> $env:GITHUB_ENV
-+        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
-+        echo "${bin_dir}" >> $GITHUB_PATH
-+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
-         # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
--        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $env:GITHUB_ENV
-+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
++### `fd` crashes when another memory allocator is preloaded
++
++The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
++some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
++
++``` bash
++> LD_PRELOAD=/usr/bin/mimalloc fd
++```
++
++makes the two disagree about which of them owns an allocation, and `fd` crashes. `fd` cannot detect
++this and report it, because the preloaded library is already answering its first allocation. To run
++with a preloaded allocator, build without jemalloc:
++
++``` bash
++> cargo build --release --no-default-features
++```
++
+ ## Integration with other programs
  
-     - name: Install prerequisites
-       shell: bash
+ ### Using fd with `fzf`
 ```
 
 ---
 
-### Incident Patch 3: `90f6adad` (2026-10-27)
-**Commit Message**: fix: pattern-specific case checking
+### Incident Patch 3: `e40fab1f` (2026-11-01)
+**Commit Message**: Merge pull request #2208 from Duo-ee/fix-2207-verbatim-prefix
 
-Check for uppercase characters differently based on what kind of pattern
-we have. This fixes a bug where if the pattern wasn't a valid regex,
-then we didn't correctly detect if it had an uppercase character.
+fix: keep verbatim Windows paths absolute in --absolute-path
 
-**File**: `src/main.rs` (modified, +7/-17)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -37,8 +37,9 @@ use crate::filetypes::FileTypes;
- #[cfg(unix)]
- use crate::filter::OwnerFilter;
- use crate::filter::TimeFilter;
--use crate::patterns::build_patterns;
--use crate::regex_helper::{pattern_has_uppercase_char, pattern_matches_strings_with_leading_dot};
-+use crate::patterns::{
-+    build_patterns, pattern_has_uppercase_char, patterns_match_strings_with_leading_dots,
-+};
+@@ -4,6 +4,7 @@
+ -
  
- // We use jemalloc for performance reasons, see https://github.com/sharkdp/fd/pull/481
- // FIXME: re-enable jemalloc on macOS, see comment in Cargo.toml file for more infos
-@@ -103,7 +104,10 @@ fn run() -> Result<ExitCode> {
-     // The search will be case-sensitive if the command line flag is set or
-     // if any of the patterns has an uppercase character (smart case).
-     let ignore_case = opts.ignore_case
--        || !(opts.case_sensitive || patterns.iter().any(|pat| pattern_has_uppercase_char(pat)));
-+        || !(opts.case_sensitive
-+            || patterns
-+                .iter()
-+                .any(|pat| pattern_has_uppercase_char(pattern_type, pat)));
- 
-     let config = construct_config(opts)?;
- 
-@@ -501,17 +505,3 @@ fn ensure_use_hidden_option_for_leading_dot_pattern(
-         Ok(())
-     }
- }
--
--fn patterns_match_strings_with_leading_dots(
--    patterns: &[String],
--    pattern_type: PatternType,
--) -> bool {
--    let mut iter = patterns.iter();
--    match pattern_type {
--        PatternType::Regex => iter.any(|pat| pattern_matches_strings_with_leading_dot(pat)),
--        // fixed strings aren't anchored so always false
--        PatternType::Fixed => false,
--        // globs and exact just check if it starts with a .
--        PatternType::Glob | PatternType::Exact => patterns.iter().any(|pat| pat.starts_with(".")),
--    }
--}
+ ## Bugfixes
++- Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
+ - Make `--ignore` and `--no-hidden` after `-u` override only their half of `-u`, see #2192 (@NavpreetSSidhu)
+ - Fix inline case-insensitive regex flags incorrectly making other `--and` patterns case-sensitive, see #2184 (@mabunemeh)
+ - Accept `--format` templates that start with `-` when passed as a separate argument, see #2126 (@vulragrag-star)
 ```
 
-**File**: `src/patterns.rs` (modified, +24/-0)
+**File**: `src/filesystem.rs` (modified, +189/-7)
 ```diff
-@@ -5,6 +5,8 @@ use globset::{Glob, GlobBuilder, GlobMatcher, GlobSet, GlobSetBuilder};
- use memchr::memmem;
- use regex::bytes::{RegexSet, RegexSetBuilder};
+@@ -22,17 +22,78 @@ pub fn absolute_path(path: &Path) -> io::Result<PathBuf> {
+     let path_buf = path_absolute_form(path)?;
  
-+use crate::regex_helper::{self, pattern_matches_strings_with_leading_dot};
-+
- pub trait Matcher {
-     fn matches_path(&self, path: &OsStr) -> bool;
+     #[cfg(windows)]
+-    let path_buf = Path::new(
+-        path_buf
+-            .as_path()
+-            .to_string_lossy()
+-            .trim_start_matches(r"\\?\"),
+-    )
+-    .to_path_buf();
++    let path_buf = strip_verbatim_prefix(&path_buf);
+ 
+     Ok(path_buf)
  }
-@@ -99,6 +101,28 @@ pub fn build_patterns(
+ 
++/// Remove the `\\?\` verbatim prefix from a path without turning it into a
++/// relative path.
++///
++/// The prefix is dropped by rewriting the path *component by component*, so
++/// that the meaning of the remaining components is preserved:
++///
++/// * `\\?\C:\foo`              -> `C:\foo`            (verbatim disk path)
++/// * `\\?\UNC\server\share\foo` -> `\\server\share\foo` (verbatim UNC path)
++///
++/// Verbatim paths that cannot be expressed without the prefix (for example
++/// `\\?\Volume{GUID}\foo`, where `Volume{GUID}` is a device name and not a
++/// relative file name) are returned unchanged, and so are all non-verbatim
++/// paths such as `\\server\share\foo` or `\\.\COM1`.
++///
++/// Unlike the previous string trimming, this never goes through
++/// `to_string_lossy()`, so paths that are not valid UTF-8 survive unchanged.
++#[cfg(windows)]
++fn strip_verbatim_prefix(path: &Path) -> PathBuf {
++    use std::ffi::OsString;
++    use std::path::{Component, Prefix};
++
++    let mut components = path.components();
++    let Some(Component::Prefix(prefix)) = components.next() else {
++        return path.to_path_buf();
++    };
++
++    let has_root = matches!(components.clone().next(), Some(Component::RootDir));
++    let mut base = OsString::new();
++    // `Prefix::Disk` / `Prefix::UNC` cannot rebuild this prefix: a `Prefix` is a
++    // parse label, not the bytes of the path, and `PrefixComponent` has no stable
++    // constructor. Writing it out by hand is the only way to drop `\\?\`.
++    match prefix.kind() {
++        Prefix::VerbatimDisk(drive) => {
++            base.push(format!("{}:", drive as char));
++            if has_root {
++                base.push(r"\");
++            }
++        }
++        Prefix::VerbatimUNC(server, share) => {
++            base.push(r"\\");
++            base.push(server);
++            base.push(r"\");
++            base.push(share);
++            if has_root {
++                base.push(r"\");
++            }
++        }
++        // `Prefix::Verbatim(_)` (device paths like `\\?\Volume{GUID}`) and
++        // `Prefix::DeviceNS(_)` cannot be written without their prefix.
++        _ => return path.to_path_buf(),
++    }
++
++    if has_root {
++        // The root separator is already part of `base`, and `join` would append
++        // it again; skipping the root component keeps the prefix we just built
++        // instead of letting `join` replace it.
++        let _ = components.next();
++    }
++    if components.as_path().is_empty() {
++        // `\\?\C:` and `\\?\UNC\server\share`: the verbatim form is the whole
++        // path, and joining an empty tail would append a separator the input
++        // did not have.
++        return PathBuf::from(base);
++    }
++    Path::new(&base).join(components)
++}
++
+ pub fn is_existing_directory(path: &Path) -> bool {
+     // Note: we do not use `.exists()` here, as `.` always exists, even if
+     // the CWD has been deleted.
+@@ -136,3 +197,124 @@ mod tests {
+         );
      }
  }
- 
-+pub fn patterns_match_strings_with_leading_dots(
-+    patterns: &[String],
-+    pattern_type: PatternType,
-+) -> bool {
-+    let mut iter = patterns.iter();
-+    match pattern_type {
-+        PatternType::Regex => iter.any(|pat| pattern_matches_strings_with_leading_dot(pat)),
-+        // fixed strings aren't anchored so always false
-+        PatternType::Fixed => false,
-+        // globs and exact just check if it starts with a .
-+        PatternType::Glob | PatternType::Exact => patterns.iter().any(|pat| pat.starts_with(".")),
-+    }
-+}
 +
-+pub fn pattern_has_uppercase_char(pattern_type: PatternType, pattern: &str) -> bool {
-+    match pattern_type {
-+        PatternType::Regex => regex_helper::pattern_has_uppercase_char(pattern),
-+        // For everything else it's sufficient to just check if there are any uppercase letters
-+        _ => pattern.chars().any(char::is_uppercase),
-+    }
-+}
++#[cfg(all(test, windows))]
++mod windows_tests {
++    use super::{absolute_path, strip_verbatim_prefix};
++    use std::ffi::OsString;
++    use std::os::windows::ffi::OsStringExt;
++    use std::path::{Path, PathBuf};
 +
- fn build_glob_matcher(patterns: Vec<String>, ignore_case: bool) -> Result<Patterns> {
-     Ok(if patterns.len() == 1 {
-         Box::new(build_glob(&patterns[0], ignore_case)?.compile_matcher())
-```
-
-**File**: `tests/tests.rs` (modified, +1/-0)
-```diff
-@@ -649,6 +649,7 @@ fn test_smart_case_glob_searches() {
-     );
- 
-     te.assert_output(&["--glob", "C.Foo*"], "one/two/C.Foo2");
-+    te.assert_output(&["--glob", "*.Foo*"], "one/two/C.Foo2");
- }
- 
- /// Glob-based searches (--glob) in combination with --case-sensitive
++    #[test]
++    fn strip_verbatim_prefix_verbatim_disk() {
++        assert_eq!(
++            strip_verbatim_prefix(Path::new(r"\\?\C:\foo\bar")),
++            Path::new(r"C:\foo\bar")
++        );
++        // A bare drive root keeps its root separator.
++        assert_eq!(
++            strip_verbatim_prefix(Path::new(r"\\?\C:\")),
++            Path::new(r"C:\")
++        );
++        // Drive-relative verbatim path (`\\?\C:`) must not gain a root.
++        assert_eq!(
++            strip_verbatim_prefix(Path::new(r"\\?\C:")),
++            Path::new(r"C:")
++        );
++    }
++
++    #[test]
++    fn strip_verbatim_prefix_verbatim_unc() {
++        let stripped = strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share\foo"));
++        assert_eq!(stripped, Path::new(r"\\server\share\foo"));
++        // The whole point of the bug: the result must stay absolute.
++        assert!(stripped.is_absolute());
++        assert_eq!(
++            stripped.components().next(),
++            Path::new(r"\\server\share\foo").components().next()
++        );
++
++        // The shape produced by the old `trim_start_matches(r"\\?\")` code.
++        assert_ne!(stripped, Path::new(r"UNC\server\share\foo"));
++        assert_ne!(stripped, Path::new(r"\server\share\foo"));
++    }
++
++    #[test]
++    fn strip_verbatim_prefix_verbatim_unc_without_trailing_path() {
++        assert_eq!(
++            str
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2208** (2026-11-01): fix: keep verbatim Windows paths absolute in --absolute-path (@Duo-ee)
 - **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
 - **PR #2202** (2026-10-30): ci: release a Windows ARM64 GNU-family (gnullvm) build (@meop)
 - **PR #2196** (2026-10-28): Fix integer overflow when parsing size constraints with large values. (@parneetsingh022)
 - **PR #2193** (2026-10-28): fix: let --ignore and --no-hidden override only their half of -u (@NavpreetSSidhu)
 - **PR #2191** (2026-10-29): refactor: different pattern types (@tmccombs)
-- **PR #2190** (2026-10-24): docs: fix spacing of --type values in the man page (@NavpreetSSidhu)
 
 ---
 
@@ -1862,49 +2057,31 @@ then we didn't correctly detect if it had an uppercase character.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2202 from meop/ci/windows-arm64-gnullvm
+## X. docs: do not list the targets jemalloc is built for
 
 **RULE**:
-When implementing operations in `.github/workflows/CICD.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b14e8dc`: Merge pull request #2202 from meop/ci/windows-arm64-gnullvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d44b6556`: docs: do not list the targets jemalloc is built for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          - { target: aarch64-pc-windows-gnullvm  , os: windows-11-arm                }
-    - name: Install Windows ARM64 GNU-family linker
-      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-      id: msys2
-      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
-      with:
-        msystem: CLANGARM64
-        update: true
-        install: mingw-w64-clang-aarch64-clang
-
-    - name: Expose Windows ARM64 GNU-family linker
-      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-      shell: bash
-      env:
-        MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
-      run: |
-        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
-        echo "${bin_dir}" >> $GITHUB_PATH
-        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
-        # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
-        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
-
+The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
+some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The released Linux binaries use jemalloc, through the `use-jemalloc` feature. It is on by default, but
+it is only compiled in on some targets: not on Windows, macOS, FreeBSD, OpenBSD, illumos, Android,
+32-bit musl or riscv64. There, preloading a different allocator is not supported, for example
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b14e8dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d44b6556` are properly handled with clean fallback behavior.
