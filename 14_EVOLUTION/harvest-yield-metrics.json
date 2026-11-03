@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T20:01:01.983Z",
-  "total_cycles_completed": 6972,
-  "total_learnings_persisted": 6972,
-  "total_rules_promoted": 6618,
+  "last_updated": "2026-11-03T20:13:01.479Z",
+  "total_cycles_completed": 6974,
+  "total_learnings_persisted": 6974,
+  "total_rules_promoted": 6620,
   "history": [
-    {
-      "timestamp": "2026-11-02T14:31:51.461Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T14:31:53.913Z",
-      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T14:32:05.569Z",
       "repository": "burner22/numbat",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T20:01:01.983Z",
       "repository": "pathwaycom/serviette",
       "learningId": "learn-github-pathwaycom-serviette",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T20:12:20.825Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T20:13:01.479Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -7004,3 +7004,5 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `583dce38` | Multi-dimensional audit evidence | 2026-11-03T20:00:55.663Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ecab5ce6` | Multi-dimensional audit evidence | 2026-11-03T20:01:00.165Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `84e92a33` | Multi-dimensional audit evidence | 2026-11-03T20:01:01.979Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `99b7ccaf` | Multi-dimensional audit evidence | 2026-11-03T20:12:20.819Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `bff57fd2` | Multi-dimensional audit evidence | 2026-11-03T20:13:01.473Z |

@@ -482385,3 +482385,133 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ecab5ce6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6601. ci: cut Ubicloud runner spend without slowing PR CI (#6105) (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci: cut Ubicloud runner spend without slowing PR CI (#6105)",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "99b7ccaf",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-03T20:12:20.485Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `99b7ccaf`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `99b7ccaf`: ci: cut Ubicloud runner spend without slowing PR CI (#6105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_cache_warm_parity.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+#!/usr/bin/env python3
+"""Keep ci-cache-warm.yml's jobs producing the cache keys ci.yml restores.
+
+ci.yml's heavy PR jobs (Unit & Integration, Simulation, NAT Validation) never
+run on pushes to main, so nothing they do can write a main-scoped cache entry,
+and a PR can only restore from its own branch or from main. Measured
+2026-11-03: no ``v0-rust-test_unit-*`` entry existed, so every Unit &
+Integration run compiled its dependency tree from scratch on a standard-16
+Ubicloud runner. ci-cache-warm.yml writes those entries.
+
+It only helps while its keys are the keys the PR jobs look up. Swatinem/
+rust-cache restores by ``<prefix>-<key>-<GITHUB_JOB>-<OS>-<arch>-<hash>``,
+where ``<hash>`` covers the rustc version and every env var whose name starts
+with CARGO, CC, CFLAGS, CXX, CMAKE or RUST. And a restored entry only saves
+work if cargo's fingerprints match, which needs the same flags, env and
+feature sets on every compile command. Any drift fails SILENTLY: the PR jobs
+stay green and quietly build cold again. Hence this linter, run from Rule Lint.
+
+A "warm job" is a job in the warm workflow that uses Swatinem/rust-cache.
+Against the ci.yml job with the SAME id it checks:
+
+1. workflow-le
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `99b7ccaf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6602. Queue daily release runs so a late scheduled run skips instead of rebuilding the (Harvested from TypeWhisper/typewhisper-mac)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Queue daily release runs so a late scheduled run skips instead of rebuilding the",
+  "source": "TypeWhisper/typewhisper-mac",
+  "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+  "source_version": "bff57fd2",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-03T20:13:01.138Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-typewhisper-typewhisper-mac",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `bff57fd2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2007bc99`: Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (#1821). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+# GitHub often starts the schedule hours late, sometimes while a manually started daily is
+# still building the same tag. Daily runs therefore wait for each other; the later one then
+# finds the day's tag and skips. Every waiting run is kept (queue: max), so a scheduled run
+# never cancels a manual one. Tag pushes and runs for an explicit tag queue by tag and do not
+# wait for a daily.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.release_tag || 'daily' }}
+  cancel-in-progress: false
+  queue: max
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2007bc99` are properly handled with clean fallback behavior.

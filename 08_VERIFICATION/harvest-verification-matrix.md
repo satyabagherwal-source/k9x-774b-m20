@@ -6995,3 +6995,5 @@
 | `CYCLE-20261103-4UI4` | `2026-11-03T20:00:55.660Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6599` | Yes (`4cc11417...`) |
 | `CYCLE-20261103-4XZ6` | `2026-11-03T20:01:00.162Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6600` | Yes (`8871c680...`) |
 | `CYCLE-20261103-4ZDK` | `2026-11-03T20:01:01.976Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6588` | Yes (`4c45326c...`) |
+| `CYCLE-20261103-JJ67` | `2026-11-03T20:12:20.815Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6601` | Yes (`bbe280b1...`) |
+| `CYCLE-20261103-KEJI` | `2026-11-03T20:13:01.470Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6602` | Yes (`fbfffc63...`) |

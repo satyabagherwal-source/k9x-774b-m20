@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T20:01:01.918Z",
+  "last_updated": "2026-11-03T20:13:01.386Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14008,8 +14008,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "f988a147",
-      "content_hash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
+      "source_version": "99b7ccaf",
+      "content_hash": "bbe280b196a506f80670d618bb3cf3bdb4a05068471f76995868f718be653fd9",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14197,6 +14197,11 @@
           "number": 6534,
           "title": "transport): add a QUIC crash-loop breaker for Windows by counting short runs (#6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6601,
+          "title": "ci: cut Ubicloud runner spend without slowing PR CI (#6105)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14204,7 +14209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:01:31.376Z",
+      "verified_at": "2026-11-03T20:12:20.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57810,8 +57815,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "4620bb59",
-      "content_hash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
+      "source_version": "bff57fd2",
+      "content_hash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -57834,6 +57839,11 @@
           "number": 5859,
           "title": "Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcript",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6602,
+          "title": "Queue daily release runs so a late scheduled run skips instead of rebuilding the",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57841,7 +57851,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:15:14.162Z",
+      "verified_at": "2026-11-03T20:13:01.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170126,6 +170136,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T20:01:00.094Z"
+    },
+    "rule-6601": {
+      "learning_id": "rule-6601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6601,
+      "title": "ci: cut Ubicloud runner spend without slowing PR CI (#6105)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "99b7ccaf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:12:20.711Z"
+    },
+    "rule-6602": {
+      "learning_id": "rule-6602",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6602,
+      "title": "Queue daily release runs so a late scheduled run skips instead of rebuilding the",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "bff57fd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T20:13:01.364Z"
     }
   },
   "aliases": {

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "f988a147",
+    "sourceVersion": "99b7ccaf",
     "license": "NOASSERTION",
-    "contentHash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
-    "lastHarvestedAt": "2026-11-03T16:01:31.471Z",
+    "contentHash": "bbe280b196a506f80670d618bb3cf3bdb4a05068471f76995868f718be653fd9",
+    "lastHarvestedAt": "2026-11-03T20:12:20.819Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "4620bb59",
+    "sourceVersion": "bff57fd2",
     "license": "GPL-3.0",
-    "contentHash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
-    "lastHarvestedAt": "2026-10-30T20:15:14.244Z",
+    "contentHash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
+    "lastHarvestedAt": "2026-11-03T20:13:01.473Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {
