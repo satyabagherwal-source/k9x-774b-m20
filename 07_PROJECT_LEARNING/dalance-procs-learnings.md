@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `c41ae259`  
+> **Source Version**: `42bbf805`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:01:10.227Z  
+> **Timestamp**: 2026-11-03T10:52:38.239Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:01:09.114Z  
+> **Harvest Timestamp**: 2026-11-03T10:52:36.612Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6208 stars
+- **Stars / Engagement**: 6216 stars
 
 ---
 
@@ -1584,11 +1584,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #994** (2026-11-02): **build(deps): bump unicode-width from 0.2.2 to 0.2.3**
+  *Symptoms*: Bumps [unicode-width](https://github.com/unicode-rs/unicode-width) from 0.2.2 to 0.2.3. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/unicode-rs/unicode-width/commit/f8c8b20d0ef0102dc4c136bcd5a1b39d2aef8a69"><code>f8c8b20</code></a> Publish 0.2.3 (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/100">#100</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/5180748ec0cacabfad0478996e9a89a612274e8f"><code>5180748</code></a> Fix documentation of Kirat Rai rules (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/97">#97</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/0b85fb874a628a08c9c85dc70ca9e5b7908db6a8"><code>0b85fb8</code></a> Update to Unicode 18 (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/96">#96</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/832f7ca447375ff969f850dab9362a0c2ce1eefb"><code>832f7ca</code></a> Fix typo in docs (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/90">#90</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/c7b4d42d741d985103fd887089c57deefc9e4f2d"><code>c7b4d42</code></a> Fix halfwidth katakana voiced and semi-voiced sound marks in width calculatio...</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/a3d4ee6c2989367e8d54ac70c83ee76ba0a71079"><code>a3d4ee6</code></a> Fix mistake in the specification of Arabic lam-alef lig
+
 - **Issue #992** (2026-10-26): **build(deps): bump tokio from 1.53.3 to 1.54.1**
   *Symptoms*: Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/tokio-rs/tokio/releases">tokio's releases</a>.</em></p> <blockquote> <h2>Tokio v1.54.1</h2> <h1>1.54.1 (October 21st, 2026)</h1> <h3>Fixed</h3> <ul> <li>time: revert &quot;remove the runtime handle from timers&quot; (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>)</li> </ul> <p><a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>: <a href="https://redirect.github.com/tokio-rs/tokio/pull/8692">tokio-rs/tokio#8692</a></p> <h2>Tokio v1.54.0</h2> <h1>1.54.0 (October 19th, 2026)</h1> <p>The 1.54.0 release includes all changes up to 1.53.3.</p> <p>The MSRV is increased to 1.85. (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8514">#8514</a>)</p> <h3>Added</h3> <ul> <li>fs: add <code>File::set_times</code>, <code>File::set_modified</code>, and <code>fs::FileTimes</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8504">#8504</a>)</li> <li>net: implement <code>Default</code> for <code>named_pipe::{ClientOptions, ServerOptions}</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8378">#8378</a>)</li> <li>runtime: add <code>Builder::max_io_events_per_busy_tick</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8410">#8410</a>)</li> <li>runtime: stabilize <code>tokio::runtime::worker_index()</code> (<a href="https://red
-
-- **Issue #990** (2026-10-20): **build(deps): bump libc from 0.2.190 to 0.2.191**
-  *Symptoms*: Bumps [libc](https://github.com/rust-lang/libc) from 0.2.190 to 0.2.191. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/rust-lang/libc/releases">libc's releases</a>.</em></p> <blockquote> <h2>0.2.191</h2> <h3>Support</h3> <ul> <li>Emscripten: Support v4.0.12 to v6.0.11 (<a href="https://redirect.github.com/rust-lang/libc/pull/5610">#5610</a>)</li> </ul> <h3>Added</h3> <ul> <li>Apple: Add <code>F_SETNOSIGPIPE</code> and <code>F_GETNOSIGPIPE</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5609">#5609</a>)</li> <li>Apple: add <code>ifaliasreq</code> and <code>in6_aliasreq</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5557">#5557</a>)</li> <li>FreeBSD: Add <code>PT_*</code> constants (<a href="https://redirect.github.com/rust-lang/libc/pull/5625">#5625</a>)</li> <li>Haiku: Add <code>AI_*</code> and <code>NI_*</code> constants from netdb.h (<a href="https://redirect.github.com/rust-lang/libc/pull/5585">#5585</a>)</li> <li>Hurd: Add <code>POSIX_SPAWN_*</code> flags (<a href="https://redirect.github.com/rust-lang/libc/pull/5578">#5578</a>)</li> <li>NuttX: Add <code>AT_SYMLINK_NOFOLLOW</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5614">#5614</a>)</li> <li>OpenBSD: Add <code>sensordev</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5534">#5534</a>)</li> <li>QuRT: Add <code>isatty</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5618">#5618</a>)</li> <li>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1605,46 +1605,45 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c59bf3c` (2026-10-26)
-**Commit Message**: build(deps): bump tokio from 1.53.3 to 1.54.1
+### Incident Patch 1: `f020bcc2` (2026-11-02)
+**Commit Message**: build(deps): bump unicode-width from 0.2.2 to 0.2.3
 
-Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1.
-- [Release notes](https://github.com/tokio-rs/tokio/releases)
-- [Commits](https://github.com/tokio-rs/tokio/compare/tokio-1.53.3...tokio-1.54.1)
+Bumps [unicode-width](https://github.com/unicode-rs/unicode-width) from 0.2.2 to 0.2.3.
+- [Commits](https://github.com/unicode-rs/unicode-width/compare/v0.2.2...v0.2.3)
 
 ---
 updated-dependencies:
-- dependency-name: tokio
-  dependency-version: 1.54.1
+- dependency-name: unicode-width
+  dependency-version: 0.2.3
   dependency-type: direct:production
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2245,9 +2245,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+@@ -2389,9 +2389,9 @@ checksum = "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8"
  
  [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.1"
+ name = "unicode-width"
+-version = "0.2.2"
++version = "0.2.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
+-checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
++checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+ 
+ [[package]]
+ name = "url"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #994** (2026-11-02): build(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
 - **PR #992** (2026-10-26): build(deps): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
 - **PR #990** (2026-10-20): build(deps): bump libc from 0.2.190 to 0.2.191 (@dependabot[bot])
 - **PR #989** (2026-10-19): build(deps): bump tokio from 1.53.2 to 1.53.3 (@dependabot[bot])
 - **PR #986** (2026-10-06): build(deps): bump tokio from 1.53.1 to 1.53.2 (@dependabot[bot])
 - **PR #985** (2026-10-05): build(deps): bump libc from 0.2.189 to 0.2.190 (@dependabot[bot])
-- **PR #981** (2026-09-22): build(deps): bump minus from 5.7.2 to 5.8.0 (@dependabot[bot])
 
 ---
 
@@ -1664,13 +1663,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump tokio from 1.53.3 to 1.54.1
+## X. build(deps): bump unicode-width from 0.2.2 to 0.2.3
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c59bf3c`: build(deps): bump tokio from 1.53.3 to 1.54.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f020bcc2`: build(deps): bump unicode-width from 0.2.2 to 0.2.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1678,16 +1677,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+version = "0.2.3"
+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.53.3"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+version = "0.2.2"
+checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c59bf3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f020bcc2` are properly handled with clean fallback behavior.

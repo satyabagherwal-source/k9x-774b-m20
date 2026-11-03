@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-55OC",
-    "timestamp": "2026-10-31T00:34:25.404Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-56WI",
-    "timestamp": "2026-10-31T00:34:26.994Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-E3VH",
-    "timestamp": "2026-10-31T00:41:22.973Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-E69I",
     "timestamp": "2026-10-31T00:41:26.070Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7445,51 @@
     "repository": "alexpasmantier/television",
     "learningId": "learn-github-alexpasmantier-television",
     "contentHash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-JR2W",
+    "timestamp": "2026-11-03T10:52:38.744Z",
+    "repository": "dalance/procs",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-JX1P",
+    "timestamp": "2026-11-03T10:52:46.477Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-JY5H",
+    "timestamp": "2026-11-03T10:52:47.909Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

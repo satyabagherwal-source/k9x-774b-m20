@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T10:46:21.789Z",
-    "lastVerified": "2026-11-03T10:46:21.789Z",
+    "lastChecked": "2026-11-03T10:52:50.458Z",
+    "lastVerified": "2026-11-03T10:52:50.458Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-02T21:43:40.788Z",
-    "lastVerified": "2026-11-02T21:43:40.788Z",
+    "lastChecked": "2026-11-03T10:52:47.143Z",
+    "lastVerified": "2026-11-03T10:52:47.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "eca2269a"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -2091,14 +2092,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T15:15:30.742Z",
-    "lastVerified": "2026-11-02T15:15:30.742Z",
+    "lastChecked": "2026-11-03T10:52:46.725Z",
+    "lastVerified": "2026-11-03T10:52:46.725Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
+    "contentHash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4996,9 +4997,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-10-31T15:49:47.117Z",
+    "lastChecked": "2026-11-03T10:52:44.608Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-10-31T15:49:47.118Z"
+    "lastVerified": "2026-11-03T10:52:44.608Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -6552,11 +6553,21 @@
     "lastVerified": "2026-10-31T19:23:51.422Z"
   },
   "dalance-procs": {
-    "name": "procs",
+    "name": "dalance/procs",
     "officialUrl": "https://github.com/dalance/procs",
-    "lastChecked": "2026-10-31T12:22:34.621Z",
-    "revisionIdentifier": "c41ae259",
-    "lastVerified": "2026-10-31T12:22:34.621Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-03T10:52:36.612Z",
+    "lastVerified": "2026-11-03T10:52:36.612Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -6583,22 +6594,21 @@
     "lastVerified": "2026-10-31T13:13:56.040Z"
   },
   "rook-rook": {
-    "name": "rook",
+    "name": "rook/rook",
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T16:50:29.158Z",
-    "lastVerified": "2026-10-31T16:50:29.158Z",
+    "lastChecked": "2026-11-03T10:52:44.257Z",
+    "lastVerified": "2026-11-03T10:52:44.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
+    "contentHash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "285e01eb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "startrail-org-leann": {
     "name": "LEANN",
@@ -9439,9 +9449,9 @@
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
     "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
-    "lastChecked": "2026-10-29T23:41:23.897Z",
+    "lastChecked": "2026-11-03T10:52:34.605Z",
     "revisionIdentifier": "9b22241e56",
-    "lastVerified": "2026-10-29T23:41:23.897Z"
+    "lastVerified": "2026-11-03T10:52:34.605Z"
   },
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
@@ -10385,9 +10395,9 @@
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
     "officialUrl": "https://github.com/yannickl/DynamicColor",
-    "lastChecked": "2026-10-30T10:54:02.394Z",
+    "lastChecked": "2026-11-03T10:52:37.071Z",
     "revisionIdentifier": "cf7c6eed",
-    "lastVerified": "2026-10-30T10:54:02.394Z"
+    "lastVerified": "2026-11-03T10:52:37.071Z"
   },
   "lxml-lxml": {
     "name": "lxml",

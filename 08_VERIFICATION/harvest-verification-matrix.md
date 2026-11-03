@@ -6877,3 +6877,6 @@
 | `CYCLE-20261103-B2V6` | `2026-11-03T10:45:54.114Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6495` | Yes (`bb829ee5...`) |
 | `CYCLE-20261103-B45E` | `2026-11-03T10:45:55.778Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`3b65625d...`) |
 | `CYCLE-20261103-BM8U` | `2026-11-03T10:46:19.230Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6496` | Yes (`dcaf7b70...`) |
+| `CYCLE-20261103-JR2W` | `2026-11-03T10:52:38.744Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6497` | Yes (`1894d733...`) |
+| `CYCLE-20261103-JX1P` | `2026-11-03T10:52:46.477Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6498` | Yes (`e4480195...`) |
+| `CYCLE-20261103-JY5H` | `2026-11-03T10:52:47.909Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6499` | Yes (`072f8eb4...`) |

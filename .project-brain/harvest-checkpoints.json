@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T10:46:19.240Z",
+  "last_updated": "2026-11-03T10:52:47.917Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
-      "verified_at": "2026-11-02T15:15:31.462Z",
+      "content_hash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
+      "verified_at": "2026-11-03T10:52:47.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:15:31.462Z"
+      "last_updated": "2026-11-03T10:52:47.917Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
-      "verified_at": "2026-10-31T01:21:28.856Z",
+      "content_hash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
+      "verified_at": "2026-11-03T10:52:46.485Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:21:28.856Z"
+      "last_updated": "2026-11-03T10:52:46.485Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "898a8fb65959104790de4bb6a974bbcf44639b11e94c333a6d24355e22afe056",
-      "verified_at": "2026-10-27T15:01:10.690Z",
+      "content_hash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
+      "verified_at": "2026-11-03T10:52:38.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:01:10.690Z"
+      "last_updated": "2026-11-03T10:52:38.753Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",

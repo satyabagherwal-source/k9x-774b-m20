@@ -6886,3 +6886,6 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `3d048690` | Multi-dimensional audit evidence | 2026-11-03T10:45:54.117Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3703f13a` | Multi-dimensional audit evidence | 2026-11-03T10:45:55.780Z |
 | `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `13e831d5` | Multi-dimensional audit evidence | 2026-11-03T10:46:19.233Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `42bbf805` | Multi-dimensional audit evidence | 2026-11-03T10:52:38.747Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `bcf59e98` | Multi-dimensional audit evidence | 2026-11-03T10:52:46.479Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `47446103` | Multi-dimensional audit evidence | 2026-11-03T10:52:47.911Z |

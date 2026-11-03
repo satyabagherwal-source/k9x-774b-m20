@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T10:46:19.237Z",
-  "total_cycles_completed": 6854,
-  "total_learnings_persisted": 6854,
-  "total_rules_promoted": 6507,
+  "last_updated": "2026-11-03T10:52:47.915Z",
+  "total_cycles_completed": 6857,
+  "total_learnings_persisted": 6857,
+  "total_rules_promoted": 6510,
   "history": [
-    {
-      "timestamp": "2026-10-31T18:40:42.420Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T18:45:47.531Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T18:52:36.623Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:53:42.562Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T10:46:19.237Z",
       "repository": "alexpasmantier/television",
       "learningId": "learn-github-alexpasmantier-television",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T10:52:38.750Z",
+      "repository": "dalance/procs",
+      "learningId": "learn-github-dalance-procs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T10:52:46.483Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T10:52:47.915Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
