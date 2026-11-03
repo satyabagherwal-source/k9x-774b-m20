@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `d465cc82`  
+> **Source Version**: `25f50f10`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:45:51.125Z  
+> **Timestamp**: 2026-11-03T17:14:22.126Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:50.651Z  
+> **Harvest Timestamp**: 2026-11-03T17:14:21.829Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32560 stars
+- **Stars / Engagement**: 32562 stars
 
 ---
 
@@ -1446,411 +1446,642 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fc87e6b` (2026-11-02)
-**Commit Message**: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
+### Incident Patch 1: `be40690a` (2026-11-03)
+**Commit Message**: fix(headless): fail requests whose URL net/url cannot parse
 
-fix: bump govaluate and antchfx/xpath so malformed expressions error instead of panicking
+With a request modification action (setheader, addheader, deleteheader,
+setmethod or setbody), routingRuleHandler replays every browser request
+through nuclei's Go HTTP client. go-rod builds that request with
+url.Parse and drops the error, so a URL that Chrome accepts but net/url
+rejects, such as a path ending in "100%.png", arrived with a nil URL.
+The cookie jar sync then panicked, or httputil.DumpRequestOut did when
+cookies were disabled, and the panic killed the whole scan.
 
-**File**: `go.mod` (modified, +3/-3)
-```diff
-@@ -20,9 +20,9 @@ require (
- 	github.com/alitto/pond v1.9.2
- 	github.com/andybalholm/brotli v1.2.0
- 	github.com/andygrunwald/go-jira v1.16.1
--	github.com/antchfx/htmlquery v1.3.5
-+	github.com/antchfx/htmlquery v1.3.7
- 	github.com/antchfx/xmlquery v1.4.4
--	github.com/antchfx/xpath v1.3.6
-+	github.com/antchfx/xpath v1.3.9
- 	github.com/aws/aws-sdk-go-v2 v1.41.5
- 	github.com/aws/aws-sdk-go-v2/config v1.31.16
- 	github.com/aws/aws-sdk-go-v2/credentials v1.18.20
-@@ -88,7 +88,7 @@ require (
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
- 	github.com/projectdiscovery/gologger v1.1.73
- 	github.com/projectdiscovery/gostruct v0.0.2
--	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
-+	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
- 	github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76
- 	github.com/projectdiscovery/hmap v0.0.102
- 	github.com/projectdiscovery/httpx v1.12.0
-```
+Check the URL once on entry and fail such requests in the browser. The
+Go client cannot send them, and continuing them in the browser would
+drop the template's modification rules and, with -cdp-endpoint, skip
+the dial-time address checks of nuclei's network policy.
 
-**File**: `go.sum` (modified, +8/-7)
-```diff
-@@ -180,14 +180,13 @@ github.com/andygrunwald/go-jira v1.16.1 h1:WoQEar5XoDRAibOgKzTFELlPNlKAtnfWr296R
- github.com/andygrunwald/go-jira v1.16.1/go.mod h1:UQH4IBVxIYWbgagc0LF/k9FRs9xjIiQ8hIcC6HfLwFU=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
--github.com/antchfx/htmlquery v1.3.5 h1:aYthDDClnG2a2xePf6tys/UyyM/kRcsFRm+ifhFKoU0=
--github.com/antchfx/htmlquery v1.3.5/go.mod h1:5oyIPIa3ovYGtLqMPNjBF2Uf25NPCKsMjCnQ8lvjaoA=
-+github.com/antchfx/htmlquery v1.3.7 h1:KCUklE1EO/xm6iS3CWx6iatFlcnENBk4I4UYa2pBmLU=
-+github.com/antchfx/htmlquery v1.3.7/go.mod h1:/uBTMnFEl6LaBlIgw3KZ+c061tAQdlfbCXObZoxwQf4=
- github.com/antchfx/xmlquery v1.4.4 h1:mxMEkdYP3pjKSftxss4nUHfjBhnMk4imGoR96FRY2dg=
- github.com/antchfx/xmlquery v1.4.4/go.mod h1:AEPEEPYE9GnA2mj5Ur2L5Q5/2PycJ0N9Fusrx9b12fc=
- github.com/antchfx/xpath v1.3.3/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
--github.com/antchfx/xpath v1.3.5/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
--github.com/antchfx/xpath v1.3.6 h1:s0y+ElRRtTQdfHP609qFu0+c6bglDv20pqOViQjjdPI=
--github.com/antchfx/xpath v1.3.6/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
-+github.com/antchfx/xpath v1.3.9 h1:muXJSod6jRzhsiUjvduNSxsRSptFZ2GOJ1oMD1QkPSA=
-+github.com/antchfx/xpath v1.3.9/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
-@@ -957,8 +956,10 @@ github.com/projectdiscovery/gologger v1.1.73 h1:WX2nzq29cL7HdvOHqIttacoid/5lMwap
- github.com/projectdiscovery/gologger v1.1.73/go.mod h1:mJwODZcFDg70ihINpOvZevmBtgvpP8H9/l8Y+OPhZPY=
- github.com/projectdiscovery/gostruct v0.0.2 h1:s8gP8ApugGM4go1pA+sVlPDXaWqNP5BBDDSv7VEdG1M=
- github.com/projectdiscovery/gostruct v0.0.2/go.mod h1:H86peL4HKwMXcQQtEa6lmC8FuD9XFt6gkNR0B/Mu5PE=
--github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e h1:vxzgQlz2Cy/YvizYDQx9OhucBcmBotfDhbQ4yCY2vfA=
--github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e/go.mod h1:xH7bPwHxUlz1yx9UlVeTF+UVCUaKhTnZgaxHb5z362E=
-+github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e h1:0vaevfTiQeRCkX2xbY/mR38422kHAxGzpVV8FQJVfoc=
-+github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
-+github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2 h1:aSLbDvrJQPlp4HvojU+bTU5XV8xdAVCjoc5gX1Wfbw4=
-+github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
- github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76 h1:AN70bbi6BBs7KpIM9w0LxygUN7uzT/oH+owDIQ+Fz/k=
- github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76/go.mod h1:cWHYnRXoYWHtTpOYyAp5laGYX8GH8ITUhgQaP8G/8FA=
- github.com/projectdiscovery/hmap v0.0.102 h1:ybPuf7UQvuOLiHLOUbVMvd+PSlItQU5iQpP1Erl8kaU=
-```
-
-**File**: `pkg/operators/extractors/compile_test.go` (modified, +9/-0)
-```diff
-@@ -130,3 +130,12 @@ func TestCompileExtractorsIgnoresXPathOnOtherTypes(t *testing.T) {
- 	}
- 	require.NoError(t, e.CompileExtractors())
- }
-+
-+func TestCompileExtractorsXPathUndeclaredVariable(t *testing.T) {
-+	// Regression test: this expression used to compile and then panic
-+	// with a nil pointer dereference inside antchfx/xpath when the
-+	// first response was evaluated. It must fail at compile time.
-+	var operator Extractor
-+	require.NoError(t, yaml.Unmarshal([]byte("type: xpath\nxpath:\n  - \"******$A\"\n"), &operator))
-+	require.ErrorContains(t, operator.CompileExtractors(), "undeclared variable")
-+}
-```
-
-**File**: `pkg/operators/matchers/compile_test.go` (modified, +9/-0)
-```diff
-@@ -53,3 +53,12 @@ func TestCompileMatchersAllowsEmptyStringValue(t *testing.T) {
- 	matched, _ := m.MatchWords("body", nil)
- 	require.True(t, matched)
- }
-+
-+func TestCompileMatchersDSLTrailingBackslash(t *testing.T) {
-+	// Regression test: a DSL expression whose string literal ends in a
-+	// backslash used to panic the govaluate lexer (index out of range)
-+	// while a template was loading. It must surface as a compile error.
-+	var operator Matcher
-+	require.NoError(t, yaml.Unmarshal([]byte("type: dsl\ndsl:\n  - \"body == 'x\\\\'\"\n"), &operator))
-+	require.ErrorContains(t, operator.CompileMatchers(), "Unclosed string literal")
-+}
-```
-
----
-
-### Incident Patch 2: `be678d9d` (2026-11-02)
-**Commit Message**: fix(templates): keep -eid exclusions independent of -etags
-
-NewTagFilter added an -eid value to the excluded IDs only when -etags
-did not list the same value. The check came from the tag loops in
-#1448, which changed the map it writes but not the map it reads. With
--eid dup -etags dup, the filter excluded nothing by ID. Workflow steps
-still go through this filter, so a workflow ran the template that a -t
-scan with the same flags excluded.
-
-Build each filter set from its own flag with one helper, so no set
-reads another flag's values. The insert-if-absent checks go too:
-writing an existing map key is a no-op, and the one check that changed
-anything was the wrong one. -itags stops deleting from the -etags set,
-because Match already lets an included tag override its exclusion.
-
-Fixes: #8004
+Fixes: #8015
+Reported-by: @l4rm4nd
 Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
-**File**: `pkg/templates/compile_test.go` (modified, +57/-0)
+**File**: `pkg/protocols/headless/engine/page_actions_test.go` (modified, +71/-1)
 ```diff
-@@ -617,6 +617,63 @@ func (w *warningRecorder) contain(parts ...string) bool {
+@@ -5,6 +5,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"math/rand"
++	"net"
+ 	"net/http"
+ 	"net/http/cookiejar"
+ 	"net/http/httptest"
+@@ -15,6 +16,7 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -319,6 +321,58 @@ func TestActionHeadersChange(t *testing.T) {
  	})
  }
  
-+func Test_ParseWorkflowExcludesIdListedInExcludeTags(t *testing.T) {
-+	dir := t.TempDir()
-+	templatePath := filepath.Join(dir, "dup.yaml")
-+	err := os.WriteFile(templatePath, []byte(`id: dup
++// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
++// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
++// hands the modification-rules hijack handler a request with a nil URL (#8015).
++//
++//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
++func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
++	for _, disableCookie := range []bool{false, true} {
++		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
++			// Count connections, not requests: net/http rejects the request line
++			// before any handler runs. TLS makes the headless proxy tunnel the
++			// request with CONNECT instead of rejecting the unparsable path itself.
++			var imageConns atomic.Int32
 +
-+info:
-+  name: dup
-+  author: pdteam
-+  severity: info
++			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
++			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
++				if state == http.StateNew {
++					imageConns.Add(1)
++				}
++			}
 +
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+`), 0o600)
-+	require.NoError(t, err)
++			imageServer.StartTLS()
++			defer imageServer.Close()
 +
-+	workflowPath := filepath.Join(dir, "workflow.yaml")
-+	err = os.WriteFile(workflowPath, fmt.Appendf(nil, `id: wf
++			actions := []*Action{
++				{
++					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
++					Data:       map[string]string{"part": "request", "key": "Test", "value": "Hello"},
++				},
++				{ActionType: ActionTypeHolder{ActionType: ActionNavigate}, Data: map[string]string{"url": "{{BaseURL}}"}},
++				{ActionType: ActionTypeHolder{ActionType: ActionWaitLoad}},
++			}
++			handler := func(w http.ResponseWriter, r *http.Request) {
++				if r.Header.Get("Test") == "Hello" {
++					_, _ = fmt.Fprintf(w, `<html><body>found<img src="%s/100%%.png"></body></html>`, imageServer.URL)
++				}
++			}
++			options := &Options{Timeout: 20 * time.Second, DisableCookie: disableCookie}
 +
-+info:
-+  name: wf
-+  author: pdteam
++			testHeadlessWithOptions(t, actions, options, handler, func(page *Page, err error, _ ActionData) {
++				require.NoError(t, err)
 +
-+workflows:
-+  - template: %q
-+`, templatePath), 0o600)
-+	require.NoError(t, err)
++				body := page.Page().MustElement("body").MustText()
++				require.Equal(t, "found", strings.TrimSpace(body), "modification rules were not applied")
++				require.Zero(t, imageConns.Load(), "unparsable request reached the image server")
 +
-+	tests := []struct {
-+		name        string
-+		excludeTags []string
-+	}{
-+		{name: "exclude id"},
-+		{name: "exclude id and same tag", excludeTags: []string{"dup"}},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			setup()
-+
-+			options := executerOpts.Options.Copy()
-+			options.ExcludeIds, options.ExcludeTags = []string{"dup"}, tc.excludeTags
-+			executerOpts.Options = options
-+			workflowLoader, err := workflow.NewLoader(executerOpts)
-+			require.NoError(t, err)
-+
-+			executerOpts.WorkflowLoader = workflowLoader
-+
-+			got, err := templates.Parse(workflowPath, nil, executerOpts)
-+			require.NoError(t, err)
-+			require.NotNil(t, got.CompiledWorkflow)
-+			require.Len(t, got.CompiledWorkflow.Workflows, 1)
-+			require.Empty(t, got.CompiledWorkflow.Workflows[0].Executers)
++				imageDone := page.Page().MustEval(`() => document.querySelector("img").complete`).Bool()
++				require.True(t, imageDone, "unparsable request is still paused")
++			})
 +		})
 +	}
 +}
 +
- func Test_ParseWorkflowLoadsTemplateWithUnknownMatcherCondition(t *testing.T) {
- 	setup()
- 	dir := t.TempDir()
+ func TestActionScreenshot(t *testing.T) {
+ 	response := `
+ 		<html>
+@@ -1003,6 +1057,21 @@ func TestMain(m *testing.M) {
+ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handler func(w http.ResponseWriter, r *http.Request), assert func(page *Page, pageErr error, extractedData ActionData)) {
+ 	t.Helper()
+ 
++	options := &Options{Timeout: timeout} //nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
++	testHeadlessWithOptions(t, actions, options, handler, assert)
++}
++
++// testHeadlessWithOptions is testHeadless with caller-chosen page options. It
++// overwrites options.Options with the test scan options.
++func testHeadlessWithOptions(
++	t *testing.T,
++	actions []*Action,
++	options *Options,
++	handler func(w http.ResponseWriter, r *http.Request),
++	assert func(page *Page, pageErr error, extractedData ActionData),
++) {
++	t.Helper()
++
+ 	lfa := envutil.GetEnvOrDefault("LOCAL_FILE_ACCESS", true)
+ 	rna := envutil.GetEnvOrDefault("RESTRICTED_LOCAL_NETWORK_ACCESS", false)
+ 
+@@ -1027,7 +1096,8 @@ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handle
+ 	input.CookieJar, err = cookiejar.New(nil)
+ 	require.Nil(t, err)
+ 
+-	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
++	options.Options = opts // allow file access in test
++	extractedData, page, err := instance.Run(input, actions, nil, options)
+ 	assert(page, err, extractedData)
+ 
+ 	if page != nil {
 ```
 
-**File**: `pkg/templates/tag_filter.go` (modified, +30/-82)
+**File**: `pkg/protocols/headless/engine/rules.go` (modified, +24/-12)
 ```diff
-@@ -366,85 +366,20 @@ type TagFilterConfig struct {
- // It takes into account Tags, Severities, ExcludeSeverities, Authors, IncludeTags, ExcludeTags, Conditions.
- func NewTagFilter(config *TagFilterConfig) (*TagFilter, error) {
- 	filter := &TagFilter{
--		allowedTags:       make(map[string]struct{}),
--		authors:           make(map[string]struct{}),
--		severities:        make(map[severity.Severity]struct{}),
--		excludeSeverities: make(map[severity.Severity]struct{}),
--		block:             make(map[string]struct{}),
--		matchAllows:       make(map[string]struct{}),
--		types:             make(map[types.ProtocolType]struct{}),
--		excludeTypes:      make(map[types.ProtocolType]struct{}),
--		allowedIds:        make(map[string]struct{}),
--		excludeIds:        make(map[string]struct{}),
-+		allowedTags:       splitCommaTrimSet(config.Tags),
-+		authors:           splitCommaTrimSet(config.Authors),
-+		severities:        toMap(config.Severities),
-+		excludeSeverities: toMap(config.ExcludeSeverities),
-+		block:             splitCommaTrimSet(config.ExcludeTags),
-+		matchAllows:       splitCommaTrimSet(config.IncludeTags),
-+		types:             toMap(config.Protocols),
-+		excludeTypes:      toMap(config.ExcludeProtocols),
-+		// an included ID does not lift its exclusion: exclusions apply
-+		// however a template is selected
-+		allowedIds:        splitCommaTrimSet(config.IncludeIds),
-+		excludeIds:        splitCommaTrimSet(config.ExcludeIds),
- 		includeConditions: make(map[string]*govaluate.EvaluableExpression),
- 	}
--	for _, tag := range config.ExcludeTags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.block[val]; !ok {
--				filter.block[val] = struct{}{}
--			}
--		}
--	}
--	for _, tag := range config.Severities {
--		if _, ok := filter.severities[tag]; !ok {
--			filter.severities[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.ExcludeSeverities {
--		if _, ok := filter.excludeSeverities[tag]; !ok {
--			filter.excludeSeverities[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.Authors {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.authors[val]; !ok {
--				filter.authors[val] = struct{}{}
--			}
--		}
--	}
--	for _, tag := range config.Tags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.allowedTags[val]; !ok {
--				filter.allowedTags[val] = struct{}{}
--			}
--			// Note: only tags specified in IncludeTags should be removed from the block list
--			// not normal tags like config.Tags
--		}
--	}
--	for _, tag := range config.IncludeTags {
--		for _, val := range splitCommaTrim(tag) {
--			if _, ok := filter.matchAllows[val]; !ok {
--				filter.matchAllows[val] = struct{}{}
--			}
--			delete(filter.block, val)
--		}
--	}
--	for _, tag := range config.Protocols {
--		if _, ok := filter.types[tag]; !ok {
--			filter.types[tag] = struct{}{}
--		}
--	}
--	for _, tag := range config.ExcludeProtocols {
--		if _, ok := filter.excludeTypes[tag]; !ok {
--			filter.excludeTypes[tag] = struct{}{}
--		}
--	}
--	for _, id := range config.ExcludeIds {
--		for _, val := range splitCommaTrim(id) {
--			if _, ok := filter.block[val]; !ok {
--				filter.excludeIds[val] = struct{}{}
--			}
--		}
--	}
--	// an included id does not lift its exclusion: exclusions apply however a
--	// template is selected
--	for _, id := range config.IncludeIds {
--		for _, val := range splitCommaTrim(id) {
--			if _, ok := filter.allowedIds[val]; !ok {
--				filter.allowedIds[val] = struct{}{}
--			}
--		}
--	}
- 	for _, includeCondition := range config.IncludeConditions {
- 		compiled, err := govaluate.NewEvaluableExpressionWithFunctions(includeCondition, dsl.HelperFunctions)
- 		if err != nil {
-@@ -472,12 +407,25 @@ func splitCommaTrim(value string) []string {
- 	return final
- }
- 
--func toMap(slice []string) map[string]struct{} {
--	result := make(map[string]struct{}, len(slice))
--	for _, value := range slice {
--		if _, ok := result[value]; !ok {
--			result[value] = struct{}{}
-+// splitCommaTrimSet returns the set of values, each split by splitCommaTrim.
-+func splitCommaTrimSet(values []string) map[string]struct{} {
-+	set := make(map[string]struct{}, len(values))
+@@ -15,8 +15,21 @@ import (
+ // routingRuleHandler handles proxy rule for actions related to request/response modification
+ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack) {
+ 	return func(ctx *rod.Hijack) {
++		req := ctx.Request.Req()
++		// go-rod discards url.Parse errors, so a URL that Chrome accepts but
++		// net/url rejects, such as "/100%.png", arrives as nil. Fail the request:
++		// the Go client cannot send it, and continuing it in the browser would
++		// drop the modification rules and, with -cdp-endpoint (no headless
++		// proxy), the network policy's dial-time address checks.
++		if req.URL == nil {
++			gologger.Verbose().Msgf("headless: failed %s request with a URL that net/url cannot parse", req.Method)
++			ctx.Response.Fail(proto.NetworkErrorReasonFailed)
 +
-+	for _, value := range values {
-+		for _, val := range splitCommaTrim(value) {
-+			set[val] = struct{}{}
++			return
++		}
++
+ 		// usually browsers don't use chunked transfer encoding, so we set the content-length nevertheless
+-		ctx.Request.Req().ContentLength = int64(len(ctx.Request.Body()))
++		req.ContentLength = int64(len(ctx.Request.Body()))
+ 		// snapshot the rules once: ExecuteActions may still be appending rules
+ 		// from another goroutine while this hijack handler runs.
+ 		rules := p.rulesSnapshot()
+@@ -28,39 +41,39 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
+ 			switch rule.Action {
+ 			case ActionSetMethod:
+ 				rule.Do(func() {
+-					ctx.Request.Req().Method = rule.Args["method"]
++					req.Method = rule.Args["method"]
+ 				})
+ 			case ActionAddHeader:
+-				ctx.Request.Req().Header.Add(rule.Args["key"], rule.Args["value"])
++				req.Header.Add(rule.Args["key"], rule.Args["value"])
+ 			case ActionSetHeader:
+-				ctx.Request.Req().Header.Set(rule.Args["key"], rule.Args["value"])
++				req.Header.Set(rule.Args["key"], rule.Args["value"])
+ 			case ActionDeleteHeader:
+-				ctx.Request.Req().Header.Del(rule.Args["key"])
++				req.Header.Del(rule.Args["key"])
+ 			case ActionSetBody:
+ 				body := rule.Args["body"]
+-				ctx.Request.Req().ContentLength = int64(len(body))
++				req.ContentLength = int64(len(body))
+ 				ctx.Request.SetBody(body)
+ 			}
  		}
- 	}
-+
-+	return set
-+}
-+
-+func toMap[T comparable](slice []T) map[T]struct{} {
-+	result := make(map[T]struct{}, len(slice))
-+
-+	for _, value := range slice {
-+		result[value] = struct{}{}
-+	}
-+
- 	return result
- }
-```
-
-**File**: `pkg/templates/tag_filter_test.go` (modified, +11/-0)
-```diff
-@@ -195,6 +195,17 @@ func TestTagBasedFilter(t *testing.T) {
- 		matched, _ := filter.Match(dummyTemplate, nil)
- 		require.False(t, matched, "an excluded id must not match when it is also included")
- 	})
-+	t.Run("match-exclude-id-also-excluded-as-tag", func(t *testing.T) {
-+		filter, err := NewTagFilter(&TagFilterConfig{
-+			ExcludeTags: []string{"dup"},
-+			ExcludeIds:  []string{"dup"},
-+		})
-+		require.NoError(t, err)
-+
-+		dummyTemplate := newDummyTemplate("dup", nil, []string{"pdteam"}, severity.Info, types.HTTPProtocol)
-+		matched, _ := filter.Match(dummyTemplate, nil)
-+		require.False(t, matched, "could not get correct match")
-+	})
- 	t.Run("match-exclude-type", func(t *testing.T) {
- 		filter, err := NewTagFilter(&TagFilterConfig{
- 			ExcludeProtocols: []types.ProtocolType{types.HTTPProtocol},
+ 
+ 		// each http request is performed via the native go http client
+ 		// we first inject the shared cookies
+ 		if !p.options.DisableCookie {
+-			if cookies := p.ctx.CookieJar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
+-				httpClient.Jar.SetCookies(ctx.Request.URL(), cookies)
++			if cookies := p.ctx.CookieJar.Cookies(req.URL); len(cookies) > 0 {
++				httpClient.Jar.SetCookies(req.URL, cookies)
+ 			}
+ 		}
+ 
+ 		// perform the request
+ 		if err := ctx.LoadResponse(httpClient, true); err != nil {
+-			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", ctx.Request.URL(), err)
++			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", req.URL, err)
+ 		}
+ 
+ 		if !p.options.DisableCookie {
+ 			// retrieve the updated cookies from the native http client and inject them into the shared cookie jar
+ 			// keeps existing one if not present
+-			if cookies := httpClient.Jar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
+-				p.ctx.CookieJar.SetCookies(ctx.Request.URL(), cookies)
++			if cookies := httpClient.Jar.Cookies(req.URL); len(cookies) > 0 {
++				p.ctx.CookieJar.SetCookies(req.URL, cookies)
+ 			}
+ 		}
+ 
+@@ -84,7 +97,6 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
+ 		}
+ 
+ 		// store history
+-		req := ctx.Request.Req()
+ 		var rawReq string
+ 		if raw, err := httputil.DumpRequestOut(req, true); err == nil {
+ 			rawReq = string(raw)
 ```
 
 ---
 
-### Incident Patch 3: `6903f2d5` (2026-11-02)
-**Commit Message**: websocket: reject CR/LF in subprotocols; require negotiation in test
+### Incident Patch 2: `22aedebe` (2026-11-03)
+**Commit Message**: fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982)
 
-Address review feedback:
-- Skip Sec-WebSocket-Protocol values containing CR or LF before negotiating
-  them, since gobwas/ws writes subprotocols into the handshake request line and
-  a line break could smuggle extra handshake headers.
-- Tighten the test server to reject the upgrade unless the client offers the
-  vite-hmr subprotocol, so the test fails if negotiation does not happen.
+Normalize hostnames and IPv4-mapped IPv6 addresses (e.g. ::ffff:127.0.0.1,
+::ffff:7f00:1, and bracketed variants) before validating against NetworkPolicy
+and ExcludeTargets in headless execution. Also expand CDP blocked patterns
+in SetupHeadlessNetworkPolicy to match mapped IPv6 representations.
 
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
+Signed-off-by: TassioSales <[REDACTED_EMAIL]>
 
-**File**: `pkg/protocols/websocket/websocket.go` (modified, +4/-1)
+**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +57/-26)
 ```diff
-@@ -216,7 +216,10 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
+@@ -102,33 +102,24 @@ func isValidHost(options *types.Options, targetUrl string) bool {
+ 	if !stringsutil.HasPrefixAny(normalized, "http:", "https:", "ws:", "wss:") {
+ 		return true
+ 	}
+-
+-	dialers, ok := dialers.Get(options.ExecutionId)
+-	if !ok {
++	if options == nil {
+ 		return true
+ 	}
+-
+-	np := dialers.NetworkPolicy
+-	if np == nil {
+-		// no policy present: deny rather than allow.
+-		return false
+-	}
+-
+-	urlx, err := urlutil.Parse(targetUrl)
+-	if err != nil {
+-		// not a valid url
+-		return false
+-	}
+-	targetUrl = urlx.Hostname()
+-	_, ok = np.ValidateHost(targetUrl)
+-	return ok
++	return IsHostAllowed(options.ExecutionId, targetUrl)
+ }
  
- 		if http.CanonicalHeaderKey(key) == "Sec-Websocket-Protocol" {
- 			for _, proto := range strings.Split(result.Text, ",") {
--				if trimmed := strings.TrimSpace(proto); trimmed != "" {
-+				// Subprotocol values are written into the handshake request line by
-+				// gobwas/ws, so a CR or LF would smuggle extra handshake headers;
-+				// reject any such value instead of negotiating it.
-+				if trimmed := strings.TrimSpace(proto); trimmed != "" && !strings.ContainsAny(trimmed, "\r\n") {
- 					subprotocols = append(subprotocols, trimmed)
- 				}
- 			}
+ // CanonicalizeHost normalizes a hostname or IP string:
+ // - strips surrounding whitespace and brackets (e.g. "[::1]" -> "::1")
+ // - maps IPv4-mapped IPv6 literals (e.g. "::ffff:127.0.0.1" or "0:0:0:0:0:ffff:127.0.0.1") to canonical IPv4 ("127.0.0.1")
+ func CanonicalizeHost(host string) string {
+ 	h := strings.TrimSpace(host)
++	if strings.Contains(h, "://") {
++		if parsed, err := urlutil.Parse(h); err == nil && parsed.Hostname() != "" {
++			h = parsed.Hostname()
++		}
++	} else if sh, _, err := net.SplitHostPort(h); err == nil {
++		h = sh
++	}
+ 	h = strings.TrimPrefix(h, "[")
+ 	h = strings.TrimSuffix(h, "]")
+ 	if ip := net.ParseIP(h); ip != nil {
+@@ -221,14 +212,35 @@ func SetupHeadlessNetworkPolicy(options *types.Options, page *rod.Page) error {
+ 			target = parsed.Hostname()
+ 		}
+ 		if !strings.Contains(target, "/") {
+-			blockedPatterns = append(blockedPatterns,
+-				"*://"+target+"/*",
+-				"*://"+target+":*/*",
+-				"ws://"+target+"/*",
+-				"ws://"+target+":*/*",
+-				"wss://"+target+"/*",
+-				"wss://"+target+":*/*",
+-			)
++			addPatterns := func(t string) {
++				t = strings.TrimPrefix(strings.TrimSuffix(t, "]"), "[")
++				blockedPatterns = append(blockedPatterns,
++					"*://"+t+"/*",
++					"*://"+t+":*/*",
++					"ws://"+t+"/*",
++					"ws://"+t+":*/*",
++					"wss://"+t+"/*",
++					"wss://"+t+":*/*",
++				)
++				if ip := net.ParseIP(t); ip != nil {
++					if ipv4 := ip.To4(); ipv4 != nil {
++						v6mapped := "[::ffff:" + ipv4.String() + "]"
++						blockedPatterns = append(blockedPatterns,
++							"*://"+v6mapped+"/*",
++							"*://"+v6mapped+":*/*",
++							"ws://"+v6mapped+"/*",
++							"ws://"+v6mapped+":*/*",
++							"wss://"+v6mapped+"/*",
++							"wss://"+v6mapped+":*/*",
++						)
++					}
++				}
++			}
++			addPatterns(target)
++			canon := CanonicalizeHost(target)
++			if canon != "" && canon != target {
++				addPatterns(canon)
++			}
+ 		}
+ 	}
+ 
+@@ -255,13 +267,32 @@ func SetupHeadlessNetworkPolicy(options *types.Options, page *rod.Page) error {
+ 			"wss://10.*/*", "wss://10.*:*/*",
+ 			"wss://192.168.*/*", "wss://192.168.*:*/*",
+ 			"wss://169.254.*/*", "wss://169.254.*:*/*",
++			"*://[::ffff:127.*]/*", "*://[::ffff:127.*]:*/*",
++			"*://[::ffff:0.0.0.0]/*", "*://[::ffff:0.0.0.0]:*/*",
++			"*://[::ffff:10.*]/*", "*://[::ffff:10.*]:*/*",
++			"*://[::ffff:192.168.*]/*", "*://[::ffff:192.168.*]:*/*",
++			"*://[::ffff:169.254.*]/*", "*://[::ffff:169.254.*]:*/*",
++			"ws://[::ffff:127.*]/*", "ws://[::ffff:127.*]:*/*",
++			"ws://[::ffff:0.0.0.0]/*", "ws://[::ffff:0.0.0.0]:*/*",
++			"ws://[::ffff:10.*]/*", "ws://[::ffff:10.*]:*/*",
++			"ws://[::ffff:192.168.*]/*", "ws://[::ffff:192.168.*]:*/*",
++			"ws://[::ffff:169.254.*]/*", "ws://[::ffff:169.254.*]:*/*",
++			"wss://[::ffff:127.*]/*", "wss://[::ffff:127.*]:*/*",
++			"wss://[::ffff:0.0.0.0]/*", "wss://[::ffff:0.0.0.0]:*/*",
++			"wss://[::ffff:10.*]/*", "wss://[::ffff:10.*]:*/*",
++			"wss://[::ffff:192.168.*]/*", "wss://[::ffff:192.168.*]:*/*",
++			"wss://[::ffff:169.254.*]/*", "wss://[::ffff:169.254.*]:*/*",
+ 		}
+ 		for i := 16; i <= 31; i++ {
+ 			prefix := fmt.Sprintf("172.%d.*", i)
++			v6prefix := fmt.Sprintf("[::ffff:172.%d.*]", i)
+ 			localPatterns = append(localPatterns,
+ 				"*://"+prefix+"/*", "*://"+prefix+":*/*",
++				"*://"+v6prefix+"/*", "*://"+v6prefix+":*/*",
+ 				"ws://"+prefix+"/*", "ws://"+prefix+":*/*",
++				"ws://"+v6prefix+"/*", "ws://"+v6prefix+":*/*",
+ 				"wss://"+prefix+"/*", "wss://"+prefix+":*/*",
++				"wss://"+v6prefix+"/*", "wss://"+v6prefix+":*/*",
+ 			)
+ 		}
+ 		blockedPatterns = append(blockedPatterns, localPatterns...)
 ```
 
-**File**: `pkg/protocols/websocket/websocket_test.go` (modified, +13/-0)
+**File**: `pkg/protocols/common/protocolstate/headless_test.go` (modified, +43/-3)
 ```diff
-@@ -515,6 +515,19 @@ func requireWebsocketDurationField(t *testing.T, event output.InternalEvent, key
- // rejects the server-echoed protocol and the handshake fails.
- func TestWebSocketSubprotocolNegotiation(t *testing.T) {
- 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		// Require the client to offer the vite-hmr subprotocol: reject the upgrade
-+		// otherwise, so the test fails if the subprotocol is not negotiated.
-+		offered := false
-+		for _, proto := range strings.Split(r.Header.Get("Sec-WebSocket-Protocol"), ",") {
-+			if strings.TrimSpace(proto) == "vite-hmr" {
-+				offered = true
-+				break
+@@ -19,7 +19,8 @@ func TestIsValidHost(t *testing.T) {
+ 	require.NoError(t, err)
+ 
+ 	d := &Dialers{
+-		NetworkPolicy: np,
++		NetworkPolicy:  np,
++		ExcludeTargets: []string{"192.168.1.50"},
+ 	}
+ 	err = dialers.Set(opts.ExecutionId, d)
+ 	require.NoError(t, err)
+@@ -31,18 +32,57 @@ func TestIsValidHost(t *testing.T) {
+ 	require.True(t, isValidHost(opts, "ws://example.com:9999"))
+ 	require.True(t, isValidHost(opts, "wss://example.com:9999"))
+ 
+-	// Blocked hosts (127.0.0.1)
++	// Blocked hosts (127.0.0.1 in DenyList)
+ 	require.False(t, isValidHost(opts, "http://127.0.0.1:8080"))
+ 	require.False(t, isValidHost(opts, "https://127.0.0.1:8443"))
+ 	require.False(t, isValidHost(opts, "ws://127.0.0.1:9999"))
+ 	require.False(t, isValidHost(opts, "wss://127.0.0.1:9999"))
+ 
++	// Blocked IPv4-mapped IPv6 forms of 127.0.0.1
++	require.False(t, isValidHost(opts, "http://[::ffff:127.0.0.1]:8080"))
++	require.False(t, isValidHost(opts, "https://[::ffff:127.0.0.1]:8443"))
++	require.False(t, isValidHost(opts, "http://[::ffff:7f00:1]:8080"))
++	require.False(t, isValidHost(opts, "http://[0:0:0:0:0:ffff:127.0.0.1]:8080"))
++	require.False(t, isValidHost(opts, "http://[0000:0000:0000:0000:0000:ffff:7f00:0001]:8080"))
++	require.False(t, isValidHost(opts, "ws://[::ffff:127.0.0.1]:9999"))
++
++	// Blocked hosts via ExcludeTargets (IPv4 and IPv4-mapped IPv6)
++	require.False(t, isValidHost(opts, "http://192.168.1.50:8080"))
++	require.False(t, isValidHost(opts, "http://[::ffff:192.168.1.50]:8080"))
++	require.False(t, isValidHost(opts, "http://[::ffff:c0a8:132]:8080"))
++
+ 	require.True(t, IsHostAllowed(opts.ExecutionId, "ws://example.com:9999"))
+ 	require.False(t, IsHostAllowed(opts.ExecutionId, "ws://127.0.0.1:9999"))
++	require.False(t, IsHostAllowed(opts.ExecutionId, "ws://[::ffff:127.0.0.1]:9999"))
++	require.False(t, IsHostAllowed(opts.ExecutionId, "http://[::ffff:192.168.1.50]:8080"))
++}
++
++func TestCanonicalizeHost_IPv4MappedIPv6(t *testing.T) {
++	cases := map[string]string{
++		"127.0.0.1":                                 "127.0.0.1",
++		"127.0.0.1:8080":                            "127.0.0.1",
++		"http://127.0.0.1:8080/path":                "127.0.0.1",
++		"::ffff:127.0.0.1":                          "127.0.0.1",
++		"[::ffff:127.0.0.1]":                        "127.0.0.1",
++		"[::ffff:127.0.0.1]:8080":                   "127.0.0.1",
++		"http://[::ffff:127.0.0.1]:8080/test":       "127.0.0.1",
++		"::ffff:7f00:1":                             "127.0.0.1",
++		"[::ffff:7f00:1]:8443":                      "127.0.0.1",
++		"0:0:0:0:0:ffff:127.0.0.1":                  "127.0.0.1",
++		"0000:0000:0000:0000:0000:ffff:7f00:0001":  "127.0.0.1",
++		"example.com":                               "example.com",
++		"example.com:443":                           "example.com",
++		"https://example.com:443/foo":               "example.com",
++		"::1":                                       "::1",
++		"[::1]:8080":                                "::1",
++	}
++
++	for input, expected := range cases {
++		require.Equal(t, expected, CanonicalizeHost(input), "input: %s", input)
++	}
+ }
+ 
+ func TestSetupHeadlessNetworkPolicy_Nil(t *testing.T) {
+ 	require.NoError(t, SetupHeadlessNetworkPolicy(nil, nil))
+ 	require.NoError(t, SetupHeadlessNetworkPolicy(&types.Options{}, nil))
+ }
+-
+```
+
+---
+
+### Incident Patch 3: `f9446e92` (2026-11-03)
+**Commit Message**: Merge pull request #8016 from projectdiscovery/dwisiswant0/fix/headless/fail-requests-whose-url-net-url-cannot-parse
+
+fix(headless): fail requests whose URL net/url cannot parse
+
+**File**: `pkg/protocols/headless/engine/page_actions_test.go` (modified, +71/-1)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"math/rand"
++	"net"
+ 	"net/http"
+ 	"net/http/cookiejar"
+ 	"net/http/httptest"
+@@ -15,6 +16,7 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -319,6 +321,58 @@ func TestActionHeadersChange(t *testing.T) {
+ 	})
+ }
+ 
++// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
++// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
++// hands the modification-rules hijack handler a request with a nil URL (#8015).
++//
++//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
++func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
++	for _, disableCookie := range []bool{false, true} {
++		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
++			// Count connections, not requests: net/http rejects the request line
++			// before any handler runs. TLS makes the headless proxy tunnel the
++			// request with CONNECT instead of rejecting the unparsable path itself.
++			var imageConns atomic.Int32
++
++			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
++			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
++				if state == http.StateNew {
++					imageConns.Add(1)
++				}
 +			}
-+		}
-+		if !offered {
-+			http.Error(w, "vite-hmr subprotocol required", http.StatusBadRequest)
++
++			imageServer.StartTLS()
++			defer imageServer.Close()
++
++			actions := []*Action{
++				{
++					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
++					Data:       map[string]string{"part": "request", "key": "Test", "value": "Hello"},
++				},
++				{ActionType: ActionTypeHolder{ActionType: ActionNavigate}, Data: map[string]string{"url": "{{BaseURL}}"}},
++				{ActionType: ActionTypeHolder{ActionType: ActionWaitLoad}},
++			}
++			handler := func(w http.ResponseWriter, r *http.Request) {
++				if r.Header.Get("Test") == "Hello" {
++					_, _ = fmt.Fprintf(w, `<html><body>found<img src="%s/100%%.png"></body></html>`, imageServer.URL)
++				}
++			}
++			options := &Options{Timeout: 20 * time.Second, DisableCookie: disableCookie}
++
++			testHeadlessWithOptions(t, actions, options, handler, func(page *Page, err error, _ ActionData) {
++				require.NoError(t, err)
++
++				body := page.Page().MustElement("body").MustText()
++				require.Equal(t, "found", strings.TrimSpace(body), "modification rules were not applied")
++				require.Zero(t, imageConns.Load(), "unparsable request reached the image server")
++
++				imageDone := page.Page().MustEval(`() => document.querySelector("img").complete`).Bool()
++				require.True(t, imageDone, "unparsable request is still paused")
++			})
++		})
++	}
++}
++
+ func TestActionScreenshot(t *testing.T) {
+ 	response := `
+ 		<html>
+@@ -1003,6 +1057,21 @@ func TestMain(m *testing.M) {
+ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handler func(w http.ResponseWriter, r *http.Request), assert func(page *Page, pageErr error, extractedData ActionData)) {
+ 	t.Helper()
+ 
++	options := &Options{Timeout: timeout} //nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
++	testHeadlessWithOptions(t, actions, options, handler, assert)
++}
++
++// testHeadlessWithOptions is testHeadless with caller-chosen page options. It
++// overwrites options.Options with the test scan options.
++func testHeadlessWithOptions(
++	t *testing.T,
++	actions []*Action,
++	options *Options,
++	handler func(w http.ResponseWriter, r *http.Request),
++	assert func(page *Page, pageErr error, extractedData ActionData),
++) {
++	t.Helper()
++
+ 	lfa := envutil.GetEnvOrDefault("LOCAL_FILE_ACCESS", true)
+ 	rna := envutil.GetEnvOrDefault("RESTRICTED_LOCAL_NETWORK_ACCESS", false)
+ 
+@@ -1027,7 +1096,8 @@ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handle
+ 	input.CookieJar, err = cookiejar.New(nil)
+ 	require.Nil(t, err)
+ 
+-	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
++	options.Options = opts // allow file access in test
++	extractedData, page, err := instance.Run(input, actions, nil, options)
+ 	assert(page, err, extractedData)
+ 
+ 	if page != nil {
+```
+
+**File**: `pkg/protocols/headless/engine/rules.go` (modified, +24/-12)
+```diff
+@@ -15,8 +15,21 @@ import (
+ // routingRuleHandler handles proxy rule for actions related to request/response modification
+ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack) {
+ 	return func(ctx *rod.Hijack) {
++		req := ctx.Request.Req()
++		// go-rod discards url.Parse errors, so a URL that Chrome accepts but
++		// net/url rejects, such as "/100%.png", arrives as nil. Fail the request:
++		// the Go client cannot send it, and continuing it in the browser would
++		// drop the modification rules and, with -cdp-endpoint (no headless
++		// proxy), the network policy's dial-time address checks.
++		if req.URL == nil {
++			gologger.Verbose().Msgf("headless: failed %s request with a URL that net/url cannot parse", req.Method)
++			ctx.Response.Fail(proto.NetworkErrorReasonFailed)
++
 +			return
 +		}
- 		upgrader := ws.HTTPUpgrader{
- 			Protocol: func(p string) bool { return p == "vite-hmr" },
++
+ 		// usually browsers don't use chunked transfer encoding, so we set the content-length nevertheless
+-		ctx.Request.Req().ContentLength = int64(len(ctx.Request.Body()))
++		req.ContentLength = int64(len(ctx.Request.Body()))
+ 		// snapshot the rules once: ExecuteActions may still be appending rules
+ 		// from another goroutine while this hijack handler runs.
+ 		rules := p.rulesSnapshot()
+@@ -28,39 +41,39 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
+ 			switch rule.Action {
+ 			case ActionSetMethod:
+ 				rule.Do(func() {
+-					ctx.Request.Req().Method = rule.Args["method"]
++					req.Method = rule.Args["method"]
+ 				})
+ 			case ActionAddHeader:
+-				ctx.Request.Req().Header.Add(rule.Args["key"], rule.Args["value"])
++				req.Header.Add(rule.Args["key"], rule.Args["value"])
+ 			case ActionSetHeader:
+-				ctx.Request.Req().Header.Set(rule.Args["key"], rule.Args["value"])
++				req.Header.Set(rule.Args["key"], rule.Args["value"])
+ 			case ActionDeleteHeader:
+-				ctx.Request.Req().Header.Del(rule.Args["key"])
++				req.Header.Del(rule.Args["key"])
+ 			case ActionSetBody:
+ 				body := rule.Args["body"]
+-				ctx.Request.Req().ContentLength = int64(len(body))
++				req.ContentLength = int64(len(body))
+ 				ctx.Request.SetBody(body)
+ 			}
  		}
+ 
+ 		// each http request is performed via the native go http client
+ 		// we first inject the shared cookies
+ 		if !p.options.DisableCookie {
+-			if cookies := p.ctx.CookieJar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
+-				httpClient.Jar.SetCookies(ctx.Request.URL(), cookies)
++			if cookies := p.ctx.CookieJar.Cookies(req.URL); len(cookies) > 0 {
++				httpClient.Jar.SetCookies(req.URL, cookies)
+ 			}
+ 		}
+ 
+ 		// perform the request
+ 		if err := ctx.LoadResponse(httpClient, true); err != nil {
+-			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", ctx.Request.URL(), err)
++			gologger.Verbose().Msgf("headless: failed to load response for %s: %s", req.URL, err)
+ 		}
+ 
+ 		if !p.options.DisableCookie {
+ 			// retrieve the updated cookies from the native http client and inject them into the shared cookie jar
+ 			// keeps existing one if not present
+-			if cookies := httpClient.Jar.Cookies(ctx.Request.URL()); len(cookies) > 0 {
+-				p.ctx.CookieJar.SetCookies(ctx.Request.URL(), cookies)
++			if cookies := httpClient.Jar.Cookies(req.URL); len(cookies) > 0 {
++				p.ctx.CookieJar.SetCookies(req.URL, cookies)
+ 			}
+ 		}
+ 
+@@ -84,7 +97,6 @@ func (p *Page) routingRuleHandler(httpClient *http.Client) func(ctx *rod.Hijack)
+ 		}
+ 
+ 		// store history
+-		req := ctx.Request.Req()
+ 		var rawReq string
+ 		if raw, err := httputil.DumpRequestOut(req, true); err == nil {
+ 			rawReq = string(raw)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8019** (closed): fix(headless): prevent nil pointer dereference on invalid URL in cookie jar (#8015) (@TassioSales)
+- **PR #8016** (2026-11-03): fix(headless): fail requests whose URL net/url cannot parse (@dwisiswant0)
+- **PR #8014** (2026-11-03): fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982) (@TassioSales)
+- **PR #8013** (2026-11-03): test(expressions): add regression case for govaluate concat bug (follow-up to #7998) (@0xABCD01)
+- **PR #8012** (2026-11-03): fix(flow): prevent global state leakage in shared JS runtime pool (#7986) (@TassioSales)
 - **PR #8010** (2026-11-02): websocket: negotiate Sec-WebSocket-Protocol via the dialer (@Ayham970)
-- **PR #8009** (2026-11-02): fix(templates): keep -eid exclusions independent of -etags (@dwisiswant0)
-- **PR #8006** (2026-11-02): fix(workflow): keep exclusions from silently emptying workflows (@dwisiswant0)
-- **PR #8005** (2026-11-02): fix(workflow)!: load tags steps when a subtemplate passes the filters (@dwisiswant0)
-- **PR #8003** (2026-11-02): add har input mode (@dogancanbakir)
-- **PR #8000** (2026-11-02): honour -jsonl in -tl and drop the listing banner from json output (@dogancanbakir)
 
 ---
 
@@ -1870,32 +2101,56 @@ Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
+## X. headless): fail requests whose URL net/url cannot parse
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/headless/engine/page_actions_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fc87e6b`: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be40690a`: headless): fail requests whose URL net/url cannot parse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/headless/engine/page_actions_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/antchfx/htmlquery v1.3.7
-	github.com/antchfx/xpath v1.3.9
-	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
+	"net"
+	"sync/atomic"
+// Chrome keeps malformed percent-escapes such as "100%.png" in request paths,
+// as the WHATWG URL Standard requires, but net/url rejects them, so go-rod
+// hands the modification-rules hijack handler a request with a nil URL (#8015).
+//
+//nolint:exhaustruct,exhaustruct_v5,paralleltest // like the other action tests, which share browser and dialer state
+func TestRoutingRuleHandlerFailsRequestNetHTTPCannotParse(t *testing.T) {
+	for _, disableCookie := range []bool{false, true} {
+		t.Run(fmt.Sprintf("DisableCookie=%t", disableCookie), func(t *testing.T) {
+			// Count connections, not requests: net/http rejects the request line
+			// before any handler runs. TLS makes the headless proxy tunnel the
+			// request with CONNECT instead of rejecting the unparsable path itself.
+			var imageConns atomic.Int32
+
+			imageServer := httptest.NewUnstartedServer(http.NotFoundHandler())
+			imageServer.Config.ConnState = func(_ net.Conn, state http.ConnState) {
+				if state == http.StateNew {
+					imageConns.Add(1)
+				}
+			}
+
+			imageServer.StartTLS()
+			defer imageServer.Close()
+
+			actions := []*Action{
+				{
+					ActionType: ActionTypeHolder{ActionType: ActionSetHeader},
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/antchfx/htmlquery v1.3.5
-	github.com/antchfx/xpath v1.3.6
-	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
+	extractedData, page, err := instance.Run(input, actions, nil, &Options{Timeout: timeout, Options: opts}) // allow file access in test
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fc87e6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be40690a` are properly handled with clean fallback behavior.

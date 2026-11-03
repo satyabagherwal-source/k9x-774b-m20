@@ -6938,3 +6938,5 @@
 | `CYCLE-20261103-MTOX` | `2026-11-03T16:58:57.105Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6546` | Yes (`88a8eed0...`) |
 | `CYCLE-20261103-WGLA` | `2026-11-03T17:06:26.686Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6547` | Yes (`399267ba...`) |
 | `CYCLE-20261103-WJ2P` | `2026-11-03T17:06:29.905Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6548` | Yes (`268cd29a...`) |
+| `CYCLE-20261103-6HAN` | `2026-11-03T17:14:14.159Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6549` | Yes (`18b09878...`) |
+| `CYCLE-20261103-6O0B` | `2026-11-03T17:14:22.859Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6550` | Yes (`dcd924db...`) |

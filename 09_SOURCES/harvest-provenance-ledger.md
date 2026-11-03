@@ -6947,3 +6947,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f5663037` | Multi-dimensional audit evidence | 2026-11-03T16:58:57.108Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `189cf90a` | Multi-dimensional audit evidence | 2026-11-03T17:06:26.689Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `26d69186` | Multi-dimensional audit evidence | 2026-11-03T17:06:29.909Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `f4978e8f` | Multi-dimensional audit evidence | 2026-11-03T17:14:14.163Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `25f50f10` | Multi-dimensional audit evidence | 2026-11-03T17:14:22.863Z |

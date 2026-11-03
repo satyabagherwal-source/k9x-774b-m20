@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `785f7d0d`  
+> **Source Version**: `f4978e8f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T15:36:28.621Z  
+> **Timestamp**: 2026-11-03T17:14:13.432Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T15:36:28.614Z  
+> **Harvest Timestamp**: 2026-11-03T17:14:11.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41159 stars
+- **Stars / Engagement**: 41163 stars
 
 ---
 
@@ -272,6 +272,56 @@ impl ChildGrant {
             // profile and explicit scope do all the narrowing.
             FleetRole::Builder | FleetRole::Worker | FleetRole::Custom => {
                 (FileGrant::Write, She
+```
+
+### Core Architecture Module: `crates/app-server-protocol/src/lifecycle.rs`
+```
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::collections::HashMap;
+use std::path::PathBuf;
+
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InitializeParams {
+    pub client_info: ClientInfo,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub capabilities: Option<InitializeCapabilities>,
+}
+
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientInfo {
+    pub name: String,
+    pub title: Option<String>,
+    pub version: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InitializeCapabilities {
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub explicit_gateway_oauth: bool,
+    #[serde(default)]
+    pub experimental_api: bool,
+    #[serde(default)]
+    pub request_attestation: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub mcp_server_openai_form_elicitation: bool,
+    pub opt_out_notification_methods: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extensions: Option<HashMap<String, Value>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InitializeResponse {
+    pub user_agent: String,
+    pub codex_home: PathBuf,
+    pub platform_family: String,
+    pub platform_os: String,
+}
+
 ```
 
 ### Core Architecture Module: `crates/config/src/hooks.rs`
@@ -1768,251 +1818,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `crates/core/src/prefix_cache.rs`
-```
-//! Prefix-cache stability manager (inspired by Reasonix's Pillar 1).
-//!
-//! DeepSeek's automatic prefix caching activates only when the *exact*
-//! byte prefix of a request matches the prior request. Any system-prompt
-//! drift, tool-list reordering, or message-rewriting busts the cache
-//! for every token after the changed byte.
-//!
-//! This module provides a `PrefixStabilityManager` that:
-//!
-//! 1. **Fingerprints** the immutable prefix (system prompt + tool specs)
-//!    at session start, using SHA-256 for strong collision resistance.
-//! 2. **Verifies** the current prefix against the pinned fingerprint before
-//!    every request.
-//! 3. **Attributes** every change: a header change the engine declared
-//!    (`/model`, `/mode`, goal edits, MCP or deferred-tool activation,
-//!    session sync) re-pins under a logged reason; an undeclared change is
-//!    *drift* — it is recorded and reported, and the original pin stays so
-//!    later checks keep counting the miss instead of quietly adopting it.
-//! 4. **Emits events** so the TUI can surface stability to the user.
-//!
-//! The invariant this guards: after session start, system and tools are
-//! frozen bytes; history only grows; a miss is allowed only when we log why.
-//!
-//! ## Three-region model (from Reasonix)
-//!
-//! ```text
-//! ┌─────────────────────────────────────────┐
-//! │ IMMUTABLE PREFIX                        │ ← fixed for session
-//! │   system + tool_specs                    │   cache hit candidate
-//! ├─────────────────────────────────────────┤
-//! │ APPEND-ONLY HISTORY                     │ ← grows monotonically
-//! │   [assistant₁][tool₁][assistant₂]...    │   preserves prefix of prior turns
-//! ├─────────────────────────────────────────┤
-//! │ LATEST USER TURN                        │ ← the only new content per request
-//! └─────────────────────────────────────────┘
-//! ```
-
-use std::collections::hash_map::DefaultHasher;
-use std::collections::{HashMap, VecDeque};
-use std::hash::{Hash, Hasher};
-
-use serde::{Deserialize, Serialize};
-
-use crate::request::{SystemPrompt, Tool};
-
-/// A snapshot of the immutable prefix's fingerprint.
-///
-/// Matching hashes show stable system text and the normalized OpenAI-style
-/// tool catalog. They do not measure provider cache hits or fingerprint every
-/// provider-specific wire transformation; request replay tests cover those.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PrefixFingerprint {
-    /// SHA-256 of the system prompt text.
-    pub system_sha256: String,
-    /// SHA-256 of the full tool catalog JSON (names, descriptions, schemas).
-    pub tools_sha256: String,
-    /// SHA-256 of system_sha256 ++ tools_sha256 (combined).
-    pub combined_sha256: String,
-}
-
-impl PrefixFingerprint {
-    /// Compute a fingerprint from system prompt text and tool list.
-    ///
-    /// Tools are serialized to the same JSON shape the chat API receives
-    /// (`type`, `name`, `description`, `parameters`, `strict`) **in provider
-    /// wire order**, then SHA-256 hashed. Order is load-bearing: the provider
-    /// KV cache is order-sensitive, so sorting before hashing could read a
-    /// false-green while the real prefix cache misses every turn (ops C1,
-    /// DSH invariant). This also catches schema/description drift that
-    /// actually affects the API prefix, while ignoring internal-only fields
-    /// like `allowed_callers` (#2264).
-    ///
-    /// This entry point shares a process-local [`ToolCatalogCache`] with
-    /// every other call, so a stable tool set (the common case after the
-    /// first turn of a session) avoids the per-tool JSON serialization
-    /// and join entirely. Callers that hold their own cache — e.g.
-    /// [`PrefixStabilityManager`] — should use
-    /// [`Self::compute_with_tool_cache`] to share *that* cache instead
-    /// and avoid the thread-local lookup.
-    #[cfg(test)]
-    pub fn compute(system_text: &str, tools: Option<&[Tool]>) -> Self {
-        let mut cache = ToolCatalogCache::new();
-        Self::compute_with_tool_cache(system_text, tools, &mut cache)
-    }
-
-    /// Compute a fingerprint while reusing a [`ToolCatalogCache`] for the
-    /// tool-side work. The cache holds the joined+SHA-256'd catalog
-    /// under a content-derived identity so the per-tool JSON serialization
-    /// and the join only run on the first call for a given tool set.
-    ///
-    /// On a cache hit this function avoids the entire tool serialization
-    /// path, which can be 100+ microseconds for a 60-tool catalog.
-    pub fn compute_with_tool_cache(
-        system_text: &str,
-        tools: Option<&[Tool]>,
-        cache: &mut ToolCatalogCache,
-    ) -> Self {
-        let system_sha256 = sha256_hex(system_text.as_bytes());
-
-        let tools_sha256 = match tools {
-            Some(tools) if !tools.is_empty() => {
-                // `fingerprint_for` consults the cache first; on a hit
-                // it returns the pre-computed hex digest directly.
-                cache.fingerprint_for(tools).sha256_hex
-            }
-            _ => sha256_hex(b""),
-        };
-
-        let combined = format!("{system_sha256}:{tools_sha256}");
-        let combined_sha256 = sha256_hex(combined.as_bytes());
-        Self {
-            system_sha256,
-            tools_sha256,
-            combined_sha256,
-        }
-    }
-}
-
-/// A change record describing what drifted in the prefix.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PrefixChange {
-    /// The old fingerprint (before the change).
-    pub old: PrefixFingerprint,
-    /// The new fingerprint (after the change).
-    pub new: PrefixFingerprint,
-    /// Whether the system prompt component changed.
-    pub system_changed: bool,
-    /// Whether the tool set component changed.
-    pub tools_changed: bool,
-}
-
-impl PrefixChange {
-    /// Returns a human-readable description of what changed.
-    pub fn description(&self) -> String {
-        let mut parts = Vec::new();
-        if self.system_changed {
-            parts.push("system prompt");
-        }
-        if self.tools_changed {
-            parts.push("tool set");
-        }
-        if parts.is_empty() {
-            return "unknown (fingerprint mismatch but no component detected)".to_string();
-        }
-        format!("prefix cache invalidated: {} changed", parts.join(" and "))
-    }
-
-    /// Returns a short label for TUI chip display.
-    pub fn label(&self) -> &'static str {
-        if self.system_changed && self.tools_changed {
-            "sys+tools"
-        } else if self.system_changed {
-            "sys"
-        } else if self.tools_changed {
-            "tools"
-        } else {
-            "prefix"
-        }
-    }
-}
-
-/// Monitors and manages prefix-cache stability across turns.
-///
-/// This is the core abstraction, mirroring Reasonix's `ImmutablePrefix`
-/// concept but adapted to CodeWhale's existing architecture where the
-/// system prompt is rebuilt each turn and tools are registered at startup.
-///
-/// Usage:
-/// ```ignore
-/// let mgr = PrefixStabilityManager::new(system_text, tools);
-/// if mgr.check_and_update(system_text, tools) {
-///     println!("Prefix is stable (cache-friendly)");
-/// } else {
-///     let change = mgr.last_change().unwrap();
-///     println!("Prefix drifted: {}", change.description());
-/// }
-/// ```
-#[derive(Debug, Clone)]
-pub struct PrefixStabilityManager {
-    /// The pinned fingerprint from session start or last stabilization.
-    pinned: Option<PrefixFingerprint>,
-    /// The most recent fingerprint (computed during last check).
-    current: Option<PrefixFingerprint>,
-    /// The last detected change, if any.
-    last_change: Option<PrefixChange>,
-    /// Total number of prefix changes detected this session.
-    change_count: u64,
-    /// Total number of stability checks performed.
-    check_count: u64,
-    /// Why the current pin exists: `initial`, `resume`, or `change:<what>`.
-    pin_reason: Option<String>,
-    /// Bounded log of every attributed change and every undeclared drift.
-    history: VecDeque<PrefixHistoryEntry>,
-    /// Explanation of the most recent expected cache miss (a declared header
-    /// change, a history reset such as compaction, or undeclared drift).
-    last_miss_reason: Option<String>,
-    /// `<context_update>` snapshots appended this session (workspace drift
-    /// delivered as history, with the pinned header untouched).
-    context_update_count: u64,
-    /// Process-local cache for the tool-catalog JSON serialization. Avoids
-    /// re-running `tool_to_api_json` + join on every `check_and_update`
-    /// when the tool set is unchanged (the common case once tools are
-    /// registered at session start).
-    tool_catalog_cache: ToolCatalogCache,
-}
-
-/// Maximum retained [`PrefixHistoryEntry`] records per session.
-const PREFIX_HISTORY_CAP: usize = 32;
-
-/// One attributed prefix event: a declared header change (re-pinned) or an
-/// undeclared drift (pin kept).
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct PrefixHistoryEntry {
-    /// `change:<what>` for declared header changes, `drift:<component>` for
-    /// undeclared changes, `reset:<what>` for history resets.
-    pub reason: String,
-    /// Whether the pin was replaced by this event.
-    pub repinned: bool,
-    /// Combined SHA-256 before the event.
-    pub from_sha256: String,
-    /// Combined SHA-256 the request actually carried.
-    pub to_sha256: String,
-}
-
-/// Outcome of [`PrefixStabilityManager::check`].
-#[derive(Debug, Clone)]
-pub enum PrefixCheck {
-    /// The request prefix matches the pin byte-for-byte.
-    Stable,
-    /// The prefix changed and the engine declared why; the pin moved.
-    Repinned {
-        reason: String,
-        change: PrefixChange,
-    },
-    /// The prefix changed with no declared reason. The pin did NOT move.
-    Drift { change: PrefixChange },
-}
-
-/// Default capacity for the tool-catalog serialization cache. Sized for
-/// "session + 1 or 2 forked subagent catalogs" without unbounded growth.
-const TOOL_CATALOG_CACHE_CA
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2040,821 +1845,931 @@ const TOOL_CATALOG_CACHE_CA
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20f091d6` (2026-10-31)
-**Commit Message**: fix(cli): remove the marked PATH block and Codewhale completions on uninstall
+### Incident Patch 1: `eb17ae0e` (2026-11-03)
+**Commit Message**: fix(runtime): bind file rewind to the selected reviewed range [skip ci]
 
-A receipted release copy of `codewhale uninstall --yes` removed its program
-files but left the user to hand-delete the PATH lines and completion files the
-installer had told them to create. #7091 asks for a complete, verifiable
-uninstall; this completes the shell half of it.
+Refs CW-7670, CW-6966. patch-undo ignored turn_id and undid the latest turn. Reuse the selected-user-turn preparer already used by conversation undo, retain restore admission through file changes and fork publication, and advertise thread_patch_undo_turn_id. GET previews share the physical restore planner; POST can require the exact dropped turn IDs and affected paths so changed selections fail before writes. Existing trust, owned-snapshot attribution, safety backup and later-edit refusal stay authoritative. Default depth and public restore helper behavior remain compatible. Generated protocol/SDK contracts and feature docs are updated.
 
-Uninstall now plans and applies two extra removals, both scoped to this
-install and gated on the same receipted copy that owns the program files:
+Verified 22 distinct focused existing checks, 0 failed: 14 AppServer/protocol after the file-plan amendment; 8 Engine fork/restore cases reused against the exact same built binary. All 4,249 inputs matched the guarded native26 build and frozen source. Actual native macOS development CLI: five tool-write turns plus stale/foreign/range/path/later-edit/active-work refusals, named selection overriding depth, exact restoration/deletion, retained source and restart passed. Mounted E
 
-- This install's exact three-line `# >>> codewhale PATH >>>` block, in the
-  same profile list the old report walked. The block is only matched when its
-  middle line names this install directory, so another copy's block and a bare
-  `export PATH=…` line the user wrote are never touched. The profile is edited
-  by staging replacement bytes and renaming the original aside, so a failure
-  installing the replacement restores the user's own file by name; a symlinked,
-  unreadable or non-UTF-8 profile is reported and skipped. The profile's mode
-  is adopted before the guard captures it, since `GuardedFile` pins ctime.
-- The Codewhale-generated completion files at their documented paths, honour
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `crates/app-server-protocol/schema/json/runtime.schema.json` (modified, +5/-0)
 ```diff
-@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`exec` and `doctor` follow the TUI onto local Ollama:** with no cloud key and no explicit route, `codewhale exec` uses a running local Ollama chat model and says so, and `codewhale doctor --probe-local` checks that route. Nothing is saved. (#7115)
- - **Thinking starts at auto:** new configurations and the built-in default use `reasoning_effort = "auto"` instead of `max`; an effort you set is never changed.
- - **DSH Git review scopes:** the extension host brokers bounded, read-only Git metadata to reviewed DSH plugins through a new `git_review_scope` action (extension-host policy v8).
--- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
-+- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
- - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
- - **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take a `patch` holding hunks of the one path in `paths` and apply only those hunks through `git apply`, under the same `expect` preconditions as whole-path writes. A patch that no longer applies fails with git's message and writes nothing; renames, mode changes and binary patches are refused. The tasks tool can also `suggest` a task, shown as a Start/Hide card, without starting anything.
- - **Live `/models` ceilings reach the route:** a provider that states per-model context and output limits in its own `/models` body now keeps them instead of falling back to the legacy 128K window. OpenAI `limit` blocks, flat `context_length` / `context_window` / `max_model_len` / `max_context_length` fields, `max_output_tokens` / `max_completion_tokens`, and a relay `metadata` block (`context_limit`, `context_budget`, `output_budget`) are read; `metadata.context_limit` outranks `context_budget` because the first is the model capability and the second the share one deployment accepts. Each field is parsed on its own, so an unreadable one costs only its own candidate instead of hiding the readable fields below it.
+@@ -281,6 +281,10 @@
+           "type": "boolean",
+           "default": false
+         },
++        "thread_patch_undo_turn_id": {
++          "type": "boolean",
++          "default": false
++        },
+         "thread_shell_consent": {
+           "type": "boolean",
+           "description": "Explicit per-thread shell opt-in is checked against loaded policy and\ncannot broaden a conversation while it has an active turn.",
+@@ -444,6 +448,7 @@
+         "threads",
+         "thread_create_idempotency",
+         "thread_idle_precondition",
++        "thread_patch_undo_turn_id",
+         "thread_shell_consent",
+         "turns",
+         "turn_operation_idempotency",
 ```
 
-**File**: `crates/cli/src/update/uninstall.rs` (modified, +294/-13)
+**File**: `crates/app-server-protocol/schema/typescript/runtime.d.ts` (modified, +1/-0)
 ```diff
-@@ -163,7 +163,7 @@ fn remove(yes: bool) -> Result<bool> {
-     let method = InstallMethod::detect(&identity.path);
-     println!("Selected executable: {}", identity.path.display());
-     println!(
--        "Program removal preserves user state, credentials, sessions, workspaces and services. Uninstall never edits shell profiles; for a receipted release copy it reports recognizable Codewhale PATH blocks in accessible profiles for you to remove."
-+        "Program removal preserves user state, credentials, sessions, workspaces and services. For a receipted release copy it also removes this install's exact Codewhale PATH block from your shell profiles and Codewhale-generated completion files at the documented paths; nothing else in a profile is touched."
-     );
-     if !method.supports_self_update() {
-         println!(
-@@ -275,7 +275,7 @@ fn remove(yes: bool) -> Result<bool> {
-             directory.join(file.name()).display()
+@@ -47,6 +47,7 @@ export type RuntimeCapabilities = {
+   threads: boolean
+   thread_create_idempotency: boolean
+   thread_idle_precondition: boolean
++  thread_patch_undo_turn_id: boolean
+   thread_shell_consent: boolean
+   turns: boolean
+   turn_operation_idempotency: boolean
+```
+
+**File**: `crates/app-server-protocol/src/runtime.rs` (modified, +14/-0)
+```diff
+@@ -86,6 +86,8 @@ pub struct RuntimeCapabilities {
+     pub thread_create_idempotency: bool,
+     #[serde(default)]
+     pub thread_idle_precondition: bool,
++    #[serde(default)]
++    pub thread_patch_undo_turn_id: bool,
+     /// Explicit per-thread shell opt-in is checked against loaded policy and
+     /// cannot broaden a conversation while it has an active turn.
+     #[serde(default)]
+@@ -495,6 +497,7 @@ mod tests {
+             threads: true,
+             thread_create_idempotency: true,
+             thread_idle_precondition: true,
++            thread_patch_undo_turn_id: true,
+             thread_shell_consent: true,
+             turns: true,
+             turn_operation_idempotency: true,
+@@ -543,6 +546,17 @@ mod tests {
+                 .client_token_intents
          );
-     }
--    report_path_blocks(&directory);
-+    let shell = ShellIntegration::plan(&directory, &identity.path, yes);
-     validate_primary_update_identity(&identity)?;
-     if !yes {
-         println!(
-@@ -359,6 +359,7 @@ fn remove(yes: bool) -> Result<bool> {
-             );
-         }
-     }
-+    let shell_failures = shell.apply();
-     println!(
-         "Removed this receipted release installation. Other installations were not removed. {}",
-         if cfg!(windows) {
-@@ -367,17 +368,76 @@ fn remove(yes: bool) -> Result<bool> {
-             "Run hash -r in your shell."
-         }
-     );
-+    if !shell_failures.is_empty() {
-+        bail!(
-+            "The program files were removed, but shell integration cleanup is incomplete: {}",
-+            shell_failures.join("; ")
-+        );
-+    }
-     Ok(true)
- }
- 
- const PATH_BLOCK_START: &str = "# >>> codewhale PATH >>>";
- const PATH_BLOCK_END: &str = "# <<< codewhale PATH <<<";
- const MAX_PROFILE: usize = 1024 * 1024;
-+const MAX_COMPLETION: usize = 1024 * 1024;
- 
--fn report_path_blocks(directory: &Path) {
--    let Some(home) = dirs::home_dir() else {
--        return;
--    };
-+struct ProfileEdit {
-+    profile: PathBuf,
-+    file: GuardedFile,
-+    updated: Vec<u8>,
-+    #[cfg(unix)]
-+    mode: u32,
-+}
-+
-+#[derive(Default)]
-+struct ShellIntegration {
-+    edits: Vec<ProfileEdit>,
-+    completions: Vec<(PathBuf, GuardedFile)>,
-+}
-+
-+impl ShellIntegration {
-+    fn plan(directory: &Path, selected: &Path, yes: bool) -> Self {
-+        let Some(home) = dirs::home_dir() else {
-+            return Self::default();
-+        };
-+        let verb = if yes { "Remove" } else { "Would remove" };
-+        Self {
-+            edits: plan_path_blocks(&home, directory, verb),
-+            completions: plan_completions(&home, directory, selected, verb),
-+        }
-+    }
-+
-+    fn apply(self) -> Vec<String> {
-+        let mut failures = Vec::new();
-+        for edit in self.edits {
-+            let profile = edit.profile.clone();
-+            match apply_profile_edit(edit) {
-+                Ok(()) => println!(
-+                    "Removed the Codewhale PATH block from {}",
-+                    profile.display()
-+                ),
-+                Err(error) => failures.push(format!(
-+                    "{} was not changed ({error:#}); delete its Codewhale PATH block by hand",
-+                    profile.display()
-+                )),
-+            }
-+        }
-+        for (path, mut file) in self.completions {
-+            let mut unlinked = false;
-+            match file.remove_checked(&mut unlinked) {
-+                Ok(()) => println!("Removed completion file {}", path.display()),
-+                Err(error) => failures.push(format!(
-+                    "{} was not removed ({error}); delete it by hand",
-+                    path.display()
-+                )),
-+            }
-+        }
-+        failures
-+    }
-+}
-+
-+fn plan_path_blocks(home: &Path, directory: &Path, verb: &str) -> Vec<ProfileEdit> {
-     let zdotdir = std::env::var_os("ZDOTDIR").map(PathBuf::from);
-     let mut profiles: Vec<PathBuf> = [
-         ".zshrc",
-@@ -419,6 +479,7 @@ fn report_path_blocks(directory: &Path) {
-                     rest == format!("{value}\" $PATH") && names_directory(value)
-                 })
-     };
-+    let mut edits = Vec::new();
-     for profile in profiles {
-         let (Some(parent), Some(name)) = (
-             profile.parent(),
-@@ -438,27 +499,37 @@ fn report_path_blocks(directory: &Path) {
-                 continue;
-             }
-         };
--        let text = match file.read_bounded(MAX_PROFILE).map(String::from_utf8) {
--            Ok(Ok(text)) => text,
--            _ => {
-+        let bytes = match file.read_bounded(MAX_PROFILE) {
-+            Ok(bytes) => bytes,
-+            Err(error) => {
-                 println!(
--                    "Not read: {} is not a UTF-8 file within the size limit.",
-+                    "Not read: {} ({error}). If it holds a Codewhale PATH block, remove that block by hand.",
-                  
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`exec` and `doctor` follow the TUI onto local Ollama:** with no cloud key and no explicit route, `codewhale exec` uses a running local Ollama chat model and says so, and `codewhale doctor --probe-local` checks that route. Nothing is saved. (#7115)
- - **Thinking starts at auto:** new configurations and the built-in default use `reasoning_effort = "auto"` instead of `max`; an effort you set is never changed.
- - **DSH Git review scopes:** the extension host brokers bounded, read-only Git metadata to reviewed DSH plugins through a new `git_review_scope` action (extension-host policy v8).
--- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
-+- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
- - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
- - **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take a `patch` holding hunks of the one path in `paths` and apply only those hunks through `git apply`, under the same `expect` preconditions as whole-path writes. A patch that no longer applies fails with git's message and writes nothing; renames, mode changes and binary patches are refused. The tasks tool can also `suggest` a task, shown as a Start/Hide card, without starting anything.
- - **Live `/models` ceilings reach the route:** a provider that states per-model context and output limits in its own `/models` body now keeps them instead of falling back to the legacy 128K window. OpenAI `limit` blocks, flat `context_length` / `context_window` / `max_model_len` / `max_context_length` fields, `max_output_tokens` / `max_completion_tokens`, and a relay `metadata` block (`context_limit`, `context_budget`, `output_budget`) are read; `metadata.context_limit` outranks `context_budget` because the first is the model capability and the second the share one deployment accepts. Each field is parsed on its own, so an unreadable one costs only its own candidate instead of hiding the readable fields below it.
-```
-
-**File**: `docs/INSTALL.md` (modified, +10/-6)
-```diff
-@@ -64,7 +64,7 @@ still need an available release asset source.
- curl -fsSL https://codewhale.net/install.sh | sh
- 
- # 2. Make sure ~/.local/bin is on your PATH, now and in future terminals.
--echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc    # zsh: use ~/.zshrc
-+printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc    # zsh: use ~/.zshrc
- export PATH="$HOME/.local/bin:$PATH"
- codewhale --version          # -> codewhale 0.10.0 (1be1a703b975)
- 
-@@ -194,7 +194,8 @@ Installed checksummed release commands:
- PATH selects no codewhale command; this install is /home/you/.local/bin/codewhale
- …
- Put /home/you/.local/bin first on PATH in future shells (run once; this installer does not edit shell profiles):
--  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-+  printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc
-+The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched.
- Then run: . ~/.bashrc   (or open a new terminal)
- …
- ```
-@@ -234,13 +235,16 @@ prints only the current-shell `export` line. On Ubuntu and Debian, `~/.profile`
- Fix it once:
- 
- ```bash
--echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
--# echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc  # zsh
-+printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
-+# printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc  # zsh
- # fish_add_path ~/.local/bin                               # fish (untested on this VM)
- export PATH="$HOME/.local/bin:$PATH"; hash -r
- command -v codewhale codew
- ```
- 
-+The three-line block is marked so `codewhale uninstall` can remove exactly it later. A bare
-+`export PATH=…` line is yours: uninstall never touches it, because other tools share `~/.local/bin`.
-+
- ### Options
- 
- ```bash
-@@ -1038,7 +1042,7 @@ Not sure which one you have? Run `codewhale doctor --installs`: it lists every c
- 
- The Unix installers and the Windows archive installer write `.codewhale-install.sha256` beside the commands. Uninstall accepts only existing regular, single-link files whose bytes match that receipt. On Unix, receipts, selected files and their retained parent directory must belong to the current user and must not be writable by group or others. Optional compiled-host files use their existing release receipt. All selected files pass preflight before any removal; the executing command is removed last. Modified files, symlinks, ambiguous receipts, shared writable directories, legacy unreceipted installs and unrelated files are preserved. No recursive directory removal is performed. A failed removal reports which entries were unlinked, any remaining recovery paths, and any durability failure. If the command receipt was unlinked while the executable remains, recovery republishes it only to a vacant receipt name.
- 
--The command runs before configuration, credential migration and telemetry, so malformed config does not block it. It preserves data, credentials, workspaces, shell profiles, completions and services. It never edits a shell profile; for a receipted release copy, it reports recognizable Codewhale PATH blocks in accessible profiles so you can delete those lines yourself. Package-managed copies get removal guidance; custom Cargo roots with local Cargo metadata are recognized. Other command copies still on PATH are listed without running them. Refresh the shell command cache with `hash -r` and inspect the remaining entries.
-+The command runs before configuration, credential migration and telemetry, so malformed config does not block it. It preserves data, credentials, workspaces and services. For a receipted release copy it also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles, and the Codewhale-generated completion files at the documented paths (`~/.local/share/bash-completion/completions/codewhale`, `~/.zfunc/_codewhale`, `~/.config/fish/completions/codewhale.fish`, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). Nothing else in a profile is touched, a symlinked or unreadable profile is left for you to edit by hand, and the completion files are kept while another Codewhale copy remains on PATH. If any of that cleanup fails, the command says so and exits non-zero even though the program is already gone. Package-managed copies get removal guidance; custom Cargo roots with local Cargo metadata are recognized. Other command copies still on PATH are listed without running them. Refresh the shell command cache with `hash -r` and inspect the remaining entries.
- 
- Successful self-update renews an existing
-```
-
-**File**: `docs/zh_hans/INSTALL.md` (modified, +18/-9)
-```diff
-@@ -46,7 +46,7 @@ target/release/codewhale --version
- curl -fsSL https://codewhale.net/install.sh | sh
- 
- # 2. Make sure ~/.local/bin is on your PATH, now and in future terminals.
--echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc    # zsh: use ~/.zshrc
-+printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc    # zsh: use ~/.zshrc
- export PATH="$HOME/.local/bin:$PATH"
- codewhale --version          # -> codewhale 0.10.0 (1be1a703b975)
- 
-@@ -150,7 +150,8 @@ Installed checksummed release commands:
- PATH selects no codewhale command; this install is /home/you/.local/bin/codewhale
- …
- Put /home/you/.local/bin first on PATH in future shells (run once; this installer does not edit shell profiles):
--  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-+  printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc
-+The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched.
- Then run: . ~/.bashrc   (or open a new terminal)
- …
- ```
-@@ -173,13 +174,16 @@ Then run: . ~/.bashrc   (or open a new terminal)
- 一次性修复：
- 
- ```bash
--echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
--# echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc  # zsh
-+printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
-+# printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc  # zsh
- # fish_add_path ~/.local/bin                               # fish (untested on this VM)
- export PATH="$HOME/.local/bin:$PATH"; hash -r
- command -v codewhale codew
- ```
- 
-+这个三行块带有标记，`codewhale uninstall` 之后可以精确地移除它。你自己加的裸 `export PATH=…`
-+行归你自己管理：卸载从不改动它，因为 `~/.local/bin` 也被其他工具共用。
-+
- ### 选项
- 
- ```bash
-@@ -690,9 +694,14 @@ codewhale auth clear --provider <id>
- | Homebrew | `brew uninstall codewhale`；不再使用该 tap 时才执行 untap。 |
- | 旧 curl 安装或其他手动副本 | 已知旧安装目录内、与当前程序字节完全一致且确属当前用户的文件可建立收据后移除；其他来源不明的文件会保留，需先核实具体路径和来源。 |
- 
--卸载只移除所选安装收据拥有的命令、宿主文件和收据。它不会修改 shell 配置；
--匹配的 PATH 行会列出供手动核对。Windows 正在运行的程序会先改名，退出后由
--辅助进程删除。Windows 分支已通过编译检查，仍需在真实 Windows 主机上验证。
-+卸载移除所选安装收据拥有的命令、宿主文件和收据；对带收据的发布版安装，还会移除
-+该安装在 shell 配置文件中的精确三行 `# >>> codewhale PATH >>>` 块，以及文档中
-+约定路径上由 Codewhale 生成的补全文件（`~/.local/share/bash-completion/completions/codewhale`、
-+`~/.zfunc/_codewhale`、`~/.config/fish/completions/codewhale.fish`，并遵循
-+`XDG_DATA_HOME` 和 `XDG_CONFIG_HOME`）。配置文件中的其他内容一概不动；符号链接或
-+无法读取的配置文件留给你手动修改；只要 PATH 上还有其他 Codewhale 副本，补全文件
-+就会保留。这部分清理若有失败，命令会如实报告并以非零状态退出，即使程序本身已经删除。
-+Windows 正在运行的程序会先改名，退出后由辅助进程删除。Windows 分支已通过编译检查，仍需在真实 Windows 主机上验证。
- 重复卸载不会取得其他副本的所有权；重新安装会创建新的收据。
- 
- ### 第 3 步：可选的数据清理
-@@ -708,8 +717,8 @@ codewhale auth clear --provider <id>
- 清理会删除这些目标内的会话、工作区快照和恢复副本；确认前应先核对预览并保留
- 仍需使用的内容。重新安装程序不能恢复已清理的数据。
- 
--每个工作区的 `.codewhale`、系统钥匙串、shell PATH 行和补全文件不在自动清理
--范围内。请逐项检查已知路径；卸载不会扫描整个主目录。远程服务和桌面应用也有
-+每个工作区的 `.codewhale` 和系统钥匙串不在自动清理范围内；你自己加的裸 `export PATH=…`
-+行，以及约定路径之外的补全文件，也由你自己检查。请逐项检查已知路径；卸载不会扫描整个主目录。远程服务和桌面应用也有
- 各自的安装所有权，不由所选 CLI 安装的收据代管。
- 
- ---
-```
-
-**File**: `web/lib/public-installer-contract.test.ts` (modified, +9/-7)
-```diff
-@@ -182,11 +182,11 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
-   });
- 
-   it.each([
--    ["/bin/zsh", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.zshrc`, ". ~/.zshrc"],
--    ["/bin/bash", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.bashrc`, ". ~/.bashrc"],
--    ["/bin/bash", "Darwin", `echo 'export PATH="INSTALL:$PATH"' >> ~/.bash_profile`, ". ~/.bash_profile"],
-+    ["/bin/zsh", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc`, ". ~/.zshrc"],
-+    ["/bin/bash", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc`, ". ~/.bashrc"],
-+    ["/bin/bash", "Darwin", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bash_profile`, ". ~/.bash_profile"],
-     ["/usr/bin/fish", "Linux", `fish_add_path "INSTALL"`, "this fish shell"],
--    ["/bin/dash", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.profile`, ". ~/.profile"],
-+    ["/bin/dash", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.profile`, ". ~/.profile"],
-   ] as const)(
-     "prints the persistent PATH line for %s on %s without editing a profile",
-     (shell, os, persist, reload) => {
-@@ -204,7 +204,7 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
- 
-   it.skipIf(!existsSync("/bin/dash"))("the printed profile and reload commands work in dash", () => {
-     const { installDir, result } = installFixture(false, { shell: "/bin/dash", os: "Linux" });
--    const persist = result.stdout.split("\n").find((line) => line.trim().startsWith("echo 'export PATH="));
-+    const persist = result.stdout.split("\n").find((line) => line.trim().startsWith("printf '%s\\n' '# >>> codewhale PATH >>>'"));
-     const reload = result.stdout.match(/Then run: (.+?)   \(or open a new terminal\)/)?.[1];
-     expect(persist).toBeDefined();
-     expect(reload).toBeDefined();
-@@ -221,7 +221,9 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
-   it("writes the default directory as $HOME/.local/bin in the persistent line", () => {
-     const { result } = installFixture(false, { installUnderHome: true });
- 
--    expect(result.stdout).toContain(`echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`);
-+    expect(result.stdout).toContain(
-+      `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc`,
-+    );
-   });
- 
-   it.each([
-@@ -231,7 +233,7 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
-   ] as const)("keeps macOS login bash reading %j by naming %s", (homeFiles, profile) => {
-     const { result } = installFixture(false, { shell: "/bin/bash", os: "Darwin", homeFiles: [...homeFiles] });
- 
--    expect(result.stdout).toContain(`:$PATH"' >> ${profile}\n`);
-+    expect(result.stdout).toContain(`'# <<< codewhale PATH <<<' >> ${profile}\n`);
-   });
- 
-   it.each(["/bin/tcsh", "/usr/bin/nu"])("prints no POSIX line for the unrecognised shell %s", (shell) => {
-```
-
-**File**: `web/public/install.sh` (modified, +2/-1)
-```diff
-@@ -567,7 +567,8 @@ if [ "$path_selected" -eq 0 ]; then
-         *) profile=".profile" ;;
-       esac
-       say "Put $install_dir first on PATH in future shells (run once; this installer does not edit shell profiles):"
--      say "  echo 'export PATH=\"$path_dir:\$PATH\"' >> ~/$profile"
-+      say "  printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH=\"$path_dir:\$PATH\"' '# <<< codewhale PATH <<<' >> ~/$profile"
-+      say "The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched."
-       say "Then run: . ~/$profile   (or open a new terminal)"
-       say "Or for this shell only:"
-       say "  export PATH=\"$path_dir:\$PATH\"; hash -r"
-```
-
----
-
-### Incident Patch 2: `1a49316f` (2026-10-28)
-**Commit Message**: fix(settings): retry a settings write whose destination is held
-
-`/config pet_mode --save` answered "无法删除要被替换的文件。(os error 1175)":
-`ReplaceFileW` must delete the destination before it can publish the
-replacement, and a handle that holds that destination without
-`FILE_SHARE_DELETE` refuses the deletion. The previous fix covered
-`atomic_write`'s `MoveFileExW` and its three contention codes; `settings.toml`
-goes through `ReplaceFileW`, which reports its own fourth.
-
-Retry the same way, over one allow-list now shared by both calls:
-
-- 5  `ERROR_ACCESS_DENIED`
-- 32 `ERROR_SHARING_VIOLATION`
-- 33 `ERROR_LOCK_VIOLATION`
-- 1175 `ERROR_UNABLE_TO_REMOVE_REPLACED`
-
-Six attempts, `n * 50ms`, 750ms in total — up from 225ms, which a reviewer
-called short for the scanned or slow filesystem this exists for.
-
-Why 1175 belongs on the list and 1176/1177 do not: `ReplaceFileW` documents
-1175 as "the destination file is not modified, and the replacement file still
-exists under its original name", so a retry starts from the state it just read.
-1176 and 1177 can leave the replacement renamed away, or holding the old file's
-streams with its contents no longer guaranteed, so those surface at once.
-
-Also: `
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -125,8 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Fixed
- 
- - **Notes stop swallowing a backslash:** a transcript note is machine-generated and names paths, but it went through the markdown renderer, where CommonMark §2.4 reads a backslash before ASCII punctuation as an escape. A note naming `C:\Users\asus\.codewhale\setup_state.json` therefore printed as `C:\Users\asus.codewhale\setup_state.json` — a directory that does not exist, in the one line a user would copy to find the real one. Notes are now escaped where they are rendered. Fenced blocks, and lines carrying inline code, emphasis or a table row, are passed through untouched, because the renderer already copies those verbatim and doubling a backslash inside one would print it doubled.
--- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
-+- **Setup and settings writes survive a held destination:** two running Codewhale windows share one home, and both rewrite `setup_state.json` or `settings.toml` when the provider, model or pet mode changes. The replacing call is now retried briefly when the destination cannot be displaced — Windows refuses it outright while another handle holds the file — instead of reporting a write the caller could have made. `setup_state.json` goes through `MoveFileExW` and `settings.toml` through `ReplaceFileW`, so each retries its own call, over the same allow-list: `ERROR_ACCESS_DENIED` (5), `ERROR_SHARING_VIOLATION` (32), `ERROR_LOCK_VIOLATION` (33) and `ERROR_UNABLE_TO_REMOVE_REPLACED` (1175). Six attempts, `n * 50ms`, 750ms in total. Every other refusal — a missing directory, a full disk, a real permission bit — still surfaces at once, and `ReplaceFileW`'s other two failure codes (1176, 1177) are deliberately not retried because they can leave the replacement consumed or altered. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
- - **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
-+- **Computer Use is installed, not bundled:** the Computer Use plugin is no longer vendored into the binary. Install it from the `codewhale` marketplace, which points at its independent release; its consent tools load on first use, and decisions still require a human approval card. (CW-6732)
- 
- - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
- - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
-```
-
-**File**: `crates/config/src/persistence.rs` (modified, +13/-5)
-```diff
-@@ -95,17 +95,22 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
- /// How many times the replacing rename is attempted before the error surfaces.
- const PERSIST_ATTEMPTS: u32 = 6;
- 
--/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 75ms.
--const PERSIST_RETRY_STEP_MS: u64 = 15;
-+/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 250ms and the
-+/// whole budget is 750ms. A setup checkpoint is written on a user action, so it
-+/// can afford to outlast a scanner or a second instance holding the file for a
-+/// moment; it cannot afford to hang.
-+const PERSIST_RETRY_STEP_MS: u64 = 50;
- 
- /// Whether a failed rename is worth retrying: another process holds the
- /// destination open, which is a momentary condition rather than a refusal the
- /// caller should hear about.
- #[cfg(windows)]
- fn rename_is_retryable(error: &std::io::Error) -> bool {
-     // 5 = ERROR_ACCESS_DENIED, 32 = ERROR_SHARING_VIOLATION,
--    // 33 = ERROR_LOCK_VIOLATION. A reader holding the file raises 5 or 32.
--    matches!(error.raw_os_error(), Some(5 | 32 | 33))
-+    // 33 = ERROR_LOCK_VIOLATION, 1175 = ERROR_UNABLE_TO_DELETE_FILE (what
-+    // `ReplaceFileW` raises when it cannot displace the destination it must
-+    // delete first). A reader holding the file raises 5 or 32.
-+    matches!(error.raw_os_error(), Some(5 | 32 | 33 | 1175))
- }
- 
- #[cfg(not(windows))]
-@@ -336,7 +341,10 @@ mod tests {
-         // being retried five more times.
-         #[cfg(windows)]
-         {
--            for code in [5, 32, 33] {
-+            // 1175 is the code `ReplaceFileW` raises when it cannot displace the
-+            // destination it must delete first — the same contention as 32, one
-+            // API further along. The pet-mode save hit it.
-+            for code in [5, 32, 33, 1175] {
-                 assert!(
-                     rename_is_retryable(&std::io::Error::from_raw_os_error(code)),
-                     "os error {code}"
-```
-
-**File**: `crates/runtime/src/settings.rs` (modified, +81/-17)
-```diff
-@@ -2430,6 +2430,31 @@ fn atomically_replace_settings_file(path: &Path, body: &[u8]) -> Result<()> {
-     Ok(())
- }
- 
-+/// How many times a refused replacement is attempted before the error surfaces.
-+#[cfg(windows)]
-+const SETTINGS_REPLACE_ATTEMPTS: u32 = 6;
-+
-+/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 250ms and
-+/// the whole budget is 750ms. A `settings.toml` save is a user action (a mode
-+/// toggle, a `/config ... --save`), so it can afford to outlast a scanner or a
-+/// second instance holding the file for a moment; it cannot afford to hang.
-+#[cfg(windows)]
-+const SETTINGS_REPLACE_RETRY_STEP_MS: u64 = 50;
-+
-+/// Whether a refused `ReplaceFileW` is worth retrying.
-+///
-+/// The destination being held open — by another Codewhale instance's reader, a
-+/// virus scanner, or an editor's preview pane — is momentary, and every code
-+/// below says exactly that: 5 `ERROR_ACCESS_DENIED`, 32
-+/// `ERROR_SHARING_VIOLATION`, 33 `ERROR_LOCK_VIOLATION` and 1175
-+/// `ERROR_UNABLE_TO_DELETE_FILE`, the one `ReplaceFileW` raises when it cannot
-+/// displace the destination it must delete first. A permission bit or a full
-+/// disk is not momentary and must surface at once.
-+#[cfg(windows)]
-+fn settings_replace_is_transient(error: &std::io::Error) -> bool {
-+    matches!(error.raw_os_error(), Some(5 | 32 | 33 | 1175))
-+}
-+
- #[cfg(windows)]
- fn replace_existing_settings_file(path: &Path, replacement: &Path) -> std::io::Result<()> {
-     use std::os::windows::ffi::OsStrExt as _;
-@@ -2443,31 +2468,45 @@ fn replace_existing_settings_file(path: &Path, replacement: &Path) -> std::io::R
- 
-     let path_wide = wide_path(path);
-     let replacement_wide = wide_path(replacement);
--    // SAFETY: both paths are NUL-terminated and live; reserved params are null.
--    unsafe {
--        // NamedTempFile marks its source with the temporary caching hint.
--        // Clear it before publication, matching tempfile's persistence path.
--        if SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_NORMAL) == 0 {
--            return Err(std::io::Error::last_os_error());
--        }
-+    let mut attempt: u32 = 0;
-+    loop {
-+        // SAFETY: both paths are NUL-terminated and live; reserved params are null.
-+        let error = unsafe {
-+            // NamedTempFile marks its source with the temporary caching hint.
-+            // Clear it before publication, matching tempfile's persistence path.
-+            // A refusal here is about the *source*, so it is never retried: the
-+            // retry below exists to outlast a held *destination*.
-+            if SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_NORMAL) == 0 {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+
-+            if ReplaceFileW(
-+                path_wide.as_ptr(),
-+                replacement_wide.as_ptr(),
-+                std::ptr::null(),
-+                0,
-+                std::ptr::null(),
-+                std::ptr::null(),
-+            ) != 0
-+            {
-+                return Ok(());
-+            }
- 
--        if ReplaceFileW(
--            path_wide.as_ptr(),
--            replacement_wide.as_ptr(),
--            std::ptr::null(),
--            0,
--            std::ptr::null(),
--            std::ptr::null(),
--        ) == 0
--        {
-             let error = std::io::Error::last_os_error();
-             // Restore the hint so TempPath retains its normal cleanup behavior
-             // when replacement fails and the source still exists.
-             let _ = SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_TEMPORARY);
-+            error
-+        };
-+
-+        attempt += 1;
-+        if attempt >= SETTINGS_REPLACE_ATTEMPTS || !settings_replace_is_transient(&error) {
-             return Err(error);
-         }
-+        std::thread::sleep(std::time::Duration::from_millis(
-+            u64::from(attempt) * SETTINGS_REPLACE_RETRY_STEP_MS,
-+        ));
-     }
--    Ok(())
- }
- 
- /// Per-settings-path transaction mutexes.
-@@ -3023,6 +3062,31 @@ fn env_truthy(name: &str) -> bool {
- mod tests {
-     use super::*;
- 
-+    /// A refused `ReplaceFileW` is retried only when the destination is being
-+    /// held, never when the platform is refusing the write itself.
-+    ///
-+    /// 1175 is the one this module was reported against: `ReplaceFileW` cannot
-+    /// displace a destination that another handle has open without
-+    /// `FILE_SHARE_DELETE`, so `/config pet_mode --save` answered
-+    /// "无法删除要被替换的文件。(os error 1175)" for a write it could have made a
-+    /// moment later.
-+    #[cfg(windows)]
-+    #[test]
-+    fn only_a_held_destination_is_retried() {
-+        for code in [5, 32, 33, 1175] {
-+            assert!(
-+                settings_replace_is_transient(&std::io::Error::from_raw_os_error(code)),
-+                "os error {code} is contention and must be retried"
-+            );
-+        }
-+        for code in [2, 3, 112, 87] {
-+            assert!(
-+                !sett
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -125,8 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Fixed
- 
- - **Notes stop swallowing a backslash:** a transcript note is machine-generated and names paths, but it went through the markdown renderer, where CommonMark §2.4 reads a backslash before ASCII punctuation as an escape. A note naming `C:\Users\asus\.codewhale\setup_state.json` therefore printed as `C:\Users\asus.codewhale\setup_state.json` — a directory that does not exist, in the one line a user would copy to find the real one. Notes are now escaped where they are rendered. Fenced blocks, and lines carrying inline code, emphasis or a table row, are passed through untouched, because the renderer already copies those verbatim and doubling a backslash inside one would print it doubled.
--- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
-+- **Setup and settings writes survive a held destination:** two running Codewhale windows share one home, and both rewrite `setup_state.json` or `settings.toml` when the provider, model or pet mode changes. The replacing call is now retried briefly when the destination cannot be displaced — Windows refuses it outright while another handle holds the file — instead of reporting a write the caller could have made. `setup_state.json` goes through `MoveFileExW` and `settings.toml` through `ReplaceFileW`, so each retries its own call, over the same allow-list: `ERROR_ACCESS_DENIED` (5), `ERROR_SHARING_VIOLATION` (32), `ERROR_LOCK_VIOLATION` (33) and `ERROR_UNABLE_TO_REMOVE_REPLACED` (1175). Six attempts, `n * 50ms`, 750ms in total. Every other refusal — a missing directory, a full disk, a real permission bit — still surfaces at once, and `ReplaceFileW`'s other two failure codes (1176, 1177) are deliberately not retried because they can leave the replacement consumed or altered. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
- - **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
-+- **Computer Use is installed, not bundled:** the Computer Use plugin is no longer vendored into the binary. Install it from the `codewhale` marketplace, which points at its independent release; its consent tools load on first use, and decisions still require a human approval card. (CW-6732)
- 
- - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
- - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
-```
-
----
-
-### Incident Patch 3: `2668c4bb` (2026-10-27)
-**Commit Message**: fix(setup): keep the setup checkpoint when a second instance is running
-
-Two Codewhale windows share one home and both rewrite `setup_state.json` when
-the provider or model changes. `atomic_write` staged the write correctly and
-then failed at the replacing rename, because the loser of that race finds the
-destination held open for a read and Windows refuses the rename outright while
-the reader's handle lives (no `FILE_SHARE_DELETE`). The user saw
-"Setup provider/model state was not saved" for a write that was momentary.
-
-Retry only that condition, briefly: six attempts, `n * 15ms`, giving up after
-75ms. A missing directory or a full disk still surfaces at once. On Windows the
-retryable codes are 5 (access denied), 32 (sharing violation) and 33 (lock
-violation); elsewhere it is `PermissionDenied`.
-
-Two related defects found in the same report:
-
-- The message used `{err}`, which prints only the outermost context and drops
-  the cause, so the path was the only thing left to look at. It now uses
-  `{err:#}`.
-- `doctor`'s `stale_setup_temp_files` check matched any name starting with
-  `.tmp`, so a user's own scratch logs (`.tmp-build-release.log`) made a clean
-  home report as half-appli
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -124,6 +124,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
-+- **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
-+
- - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
- - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
- - **`/undo`, retry and fork-at-turn work on large and attachment-heavy conversations again (#7147):** a fork was measured by the shape it is stored in (a saved session repeats its conversation while it carries a journal, so the file can be twice the history) against the 8 MiB bound the reader judges by what the conversation carries, so a conversation the runtime kept opening and extending could still refuse `/undo` with "full history exceeds byte transport bound". The saved-history boundary also counted MCP-server notices, shell-completion handoffs, the deferred-toolbox snapshot and `<image>` attachment tags as prompts you typed, so a conversation that had received one refused with "Cannot identify an exact saved-history boundary". Both now use what the conversation carries. Thanks [@gaord](https://github.com/gaord).
-```
-
-**File**: `crates/config/src/persistence.rs` (modified, +74/-4)
-```diff
-@@ -67,10 +67,50 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
-     tmp.as_file()
-         .sync_all()
-         .with_context(|| format!("failed to sync temp file for {}", path.display()))?;
--    tmp.persist(path)
--        .map_err(|e| e.error)
--        .with_context(|| format!("failed to persist {}", path.display()))?;
--    Ok(())
-+
-+    // Two Codewhale instances share one home. The loser of a race can find the
-+    // destination held open for a read — Windows refuses the replacing rename
-+    // for as long as that handle lives, because the reader does not pass
-+    // `FILE_SHARE_DELETE`. That refusal is transient, so retry briefly instead
-+    // of reporting a write the caller could have made.
-+    let mut attempt: u32 = 0;
-+    loop {
-+        match tmp.persist(path) {
-+            Ok(_) => return Ok(()),
-+            Err(error) if attempt + 1 < PERSIST_ATTEMPTS && rename_is_retryable(&error.error) => {
-+                attempt += 1;
-+                tmp = error.file;
-+                std::thread::sleep(std::time::Duration::from_millis(
-+                    u64::from(attempt) * PERSIST_RETRY_STEP_MS,
-+                ));
-+            }
-+            Err(error) => {
-+                return Err(error.error)
-+                    .with_context(|| format!("failed to persist {}", path.display()));
-+            }
-+        }
-+    }
-+}
-+
-+/// How many times the replacing rename is attempted before the error surfaces.
-+const PERSIST_ATTEMPTS: u32 = 6;
-+
-+/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 75ms.
-+const PERSIST_RETRY_STEP_MS: u64 = 15;
-+
-+/// Whether a failed rename is worth retrying: another process holds the
-+/// destination open, which is a momentary condition rather than a refusal the
-+/// caller should hear about.
-+#[cfg(windows)]
-+fn rename_is_retryable(error: &std::io::Error) -> bool {
-+    // 5 = ERROR_ACCESS_DENIED, 32 = ERROR_SHARING_VIOLATION,
-+    // 33 = ERROR_LOCK_VIOLATION. A reader holding the file raises 5 or 32.
-+    matches!(error.raw_os_error(), Some(5 | 32 | 33))
-+}
-+
-+#[cfg(not(windows))]
-+fn rename_is_retryable(error: &std::io::Error) -> bool {
-+    matches!(error.kind(), std::io::ErrorKind::PermissionDenied)
- }
- 
- /// Atomically write `value` as pretty-printed JSON to `path`.
-@@ -288,6 +328,36 @@ mod tests {
-         assert!(leftovers.is_empty(), "stray temp files: {leftovers:?}");
-     }
- 
-+    #[test]
-+    fn only_a_contended_rename_is_retried() {
-+        // The retry exists for one situation: another instance holds the
-+        // destination open while it reads the same sidecar. Anything else —
-+        // a missing directory, a full disk — must surface at once instead of
-+        // being retried five more times.
-+        #[cfg(windows)]
-+        {
-+            for code in [5, 32, 33] {
-+                assert!(
-+                    rename_is_retryable(&std::io::Error::from_raw_os_error(code)),
-+                    "os error {code}"
-+                );
-+            }
-+            assert!(!rename_is_retryable(&std::io::Error::from_raw_os_error(2)));
-+            assert!(!rename_is_retryable(&std::io::Error::from_raw_os_error(
-+                112
-+            )));
-+        }
-+        #[cfg(not(windows))]
-+        {
-+            assert!(rename_is_retryable(&std::io::Error::from(
-+                std::io::ErrorKind::PermissionDenied
-+            )));
-+            assert!(!rename_is_retryable(&std::io::Error::from(
-+                std::io::ErrorKind::NotFound
-+            )));
-+        }
-+    }
-+
-     #[test]
-     fn transaction_preview_writes_nothing() {
-         let tmp = tempfile::tempdir().unwrap();
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -124,6 +124,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
-+- **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
-+
- - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
- - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
- - **`/undo`, retry and fork-at-turn work on large and attachment-heavy conversations again (#7147):** a fork was measured by the shape it is stored in (a saved session repeats its conversation while it carries a journal, so the file can be twice the history) against the 8 MiB bound the reader judges by what the conversation carries, so a conversation the runtime kept opening and extending could still refuse `/undo` with "full history exceeds byte transport bound". The saved-history boundary also counted MCP-server notices, shell-completion handoffs, the deferred-toolbox snapshot and `<image>` attachment tags as prompts you typed, so a conversation that had received one refused with "Cannot identify an exact saved-history boundary". Both now use what the conversation carries. Thanks [@gaord](https://github.com/gaord).
-```
-
-**File**: `crates/tui/src/lib.rs` (modified, +36/-1)
-```diff
-@@ -7471,7 +7471,16 @@ fn doctor_home_has_stale_setup_temp_files() -> bool {
-         return false;
-     };
-     entries.flatten().any(|entry| {
--        entry.file_name().to_string_lossy().starts_with(".tmp")
-+        let name = entry.file_name();
-+        let Some(name) = name.to_str() else {
-+            return false;
-+        };
-+        // `tempfile` stages a write as `.tmpXXXXXX` beside its target: no dot
-+        // after the prefix because it is not an extension. Requiring that keeps
-+        // a user's own `.tmp-build.log`-style scratch files out of the verdict,
-+        // so only a staged write that never landed matches.
-+        name.starts_with(".tmp")
-+            && !name[4..].contains('.')
-             && entry.file_type().is_ok_and(|kind| kind.is_file())
-     })
- }
-@@ -16092,6 +16101,32 @@ mod doctor_setup_state_tests {
-         );
-     }
- 
-+    #[test]
-+    fn doctor_setup_consistency_ignores_the_user_own_tmp_named_logs() {
-+        // The verdict is about a staged write that never landed, not about
-+        // every file whose name starts with `.tmp`. User scratch logs such as
-+        // `.tmp-build-release.log` carry an extension and are none of its
-+        // business; flagging them made a clean home report as half-applied.
-+        let _guard = crate::test_support::lock_test_env();
-+        let tmp = TempDir::new().expect("tempdir");
-+        let (_home_guard, codewhale_home) = prepare_env(&tmp);
-+        let _key = crate::test_support::EnvVarGuard::remove("DEEPSEEK_API_KEY");
-+        let _source = crate::test_support::EnvVarGuard::remove("DEEPSEEK_API_KEY_SOURCE");
-+        let workspace = tmp.path().join("workspace");
-+        fs::create_dir_all(&workspace).expect("workspace");
-+        fs::write(codewhale_home.join(".tmp-build-release.log"), b"user log").expect("user log");
-+        fs::write(codewhale_home.join(".tmp-wt-clippy.log"), b"user log").expect("user log");
-+
-+        let report = doctor_setup_report_json(&Config::default(), &workspace);
-+
-+        assert_eq!(report["consistency"]["status"], "consistent");
-+        let issues = report["consistency"]["issues"].to_string();
+         assert_eq!(obj.get("threads").unwrap(), &json!(true));
++        assert_eq!(obj.get("thread_patch_undo_turn_id"), Some(&json!(true)));
++        let mut legacy_patch_undo = value.clone();
++        legacy_patch_undo
++            .as_object_mut()
++            .unwrap()
++            .remove("thread_patch_undo_turn_id");
 +        assert!(
-+            !issues.contains("stale_setup_temp_files_in_codewhale_home"),
-+            "{issues}"
++            !serde_json::from_value::<RuntimeCapabilities>(legacy_patch_undo)
++                .unwrap()
++                .thread_patch_undo_turn_id
 +        );
-+    }
-+
-     #[test]
-     fn doctor_setup_consistency_reports_consistent_for_clean_home() {
-         let _guard = crate::test_support::lock_test_env();
+         assert_eq!(obj.get("thread_shell_consent"), Some(&json!(true)));
+         assert!(
+             serde_json::from_value::<RuntimeCapabilities>(value.clone())
 ```
 
-**File**: `crates/tui/src/tui/ui/provider_routes.rs` (modified, +1/-1)
+**File**: `crates/app-server/src/runtime_api.rs` (modified, +163/-34)
 ```diff
-@@ -1218,7 +1218,7 @@ pub(crate) fn clear_active_provider_api_key_from_memory(
+@@ -1569,6 +1569,7 @@ fn default_runtime_capabilities() -> RuntimeCapabilities {
+         threads: true,
+         thread_create_idempotency: true,
+         thread_idle_precondition: true,
++        thread_patch_undo_turn_id: true,
+         thread_shell_consent: true,
+         turns: true,
+         turn_operation_idempotency: true,
+@@ -3081,7 +3082,10 @@ pub fn build_router(state: RuntimeApiState) -> Router {
+         .route("/v1/threads/{id}/fork", post(fork_thread))
+         .route("/v1/threads/{id}/undo", post(undo_thread_turn))
+         .route("/v1/threads/{id}/fork-at-turn", post(fork_thread_at_turn))
+-        .route("/v1/threads/{id}/patch-undo", post(patch_undo_thread_turn))
++        .route(
++            "/v1/threads/{id}/patch-undo",
++            get(preview_patch_undo_thread_turn).post(patch_undo_thread_turn),
++        )
+         .route("/v1/threads/{id}/file-revert", post(revert_thread_file))
+         .route("/v1/threads/{id}/retry", post(retry_thread_turn))
+         .route(
+@@ -8703,6 +8707,10 @@ struct UndoTurnRequest {
+     /// The user turn to undo, with every turn after it. Wins over `depth`.
+     #[serde(default)]
+     turn_id: Option<String>,
++    #[serde(default)]
++    expected_turn_ids: Option<Vec<String>>,
++    #[serde(default)]
++    expected_paths: Option<Vec<String>>,
+ }
  
- pub(crate) fn record_provider_model_setup_progress(app: &mut App, config: &Config) {
-     if let Err(err) = crate::tui::setup::record_provider_model_setup_state_for_app(app, config) {
--        let note = format!("Setup provider/model state was not saved: {err}");
-+        let note = format!("Setup provider/model state was not saved: {err:#}");
-         if let Some(status) = app.status_message.as_mut() {
-             status.push_str(" · ");
-             status.push_str(&note);
+ #[derive(Debug, Serialize)]
+@@ -8814,12 +8822,92 @@ struct PatchUndoResponse {
+     original_user_images: Vec<codewhale_app_server_protocol::runtime::RuntimeImageInput>,
+ }
+ 
++async fn prepare_patch_undo(
++    state: &RuntimeApiState,
++    id: &str,
++    req: &UndoTurnRequest,
++) -> Result<codewhale_engine::runtime_threads::manager::PreparedThreadFork, ApiError> {
++    let prepared = match req.turn_id.as_deref() {
++        Some(turn_id) => {
++            state
++                .runtime_threads
++                .prepare_fork_dropping_user_turn_in_sessions_dir(id, turn_id, &state.sessions_dir)
++                .await
++        }
++        None => {
++            state
++                .runtime_threads
++                .prepare_fork_at_user_message_in_sessions_dir(
++                    id,
++                    req.depth.unwrap_or(0),
++                    &state.sessions_dir,
++                )
++                .await
++        }
++    }
++    .map_err(map_thread_err)?;
++    if let Some(expected) = &req.expected_turn_ids {
++        let actual: Vec<_> = prepared
++            .dropped_turns()
++            .iter()
++            .map(|turn| &turn.turn_id)
++            .collect();
++        if actual != expected.iter().collect::<Vec<_>>() {
++            return Err(ApiError::conflict(
++                "The selected turn range changed; review it again before undoing files.",
++            )
++            .with_code("undo_selection_changed"));
++        }
++    }
++    Ok(prepared)
++}
++
++#[derive(Debug, Serialize)]
++struct PatchUndoPreview {
++    turn_ids: Vec<String>,
++    paths: Vec<String>,
++    summary: Option<String>,
++}
++
++async fn preview_patch_undo_thread_turn(
++    State(state): State<RuntimeApiState>,
++    Path(id): Path<String>,
++    Query(req): Query<UndoTurnRequest>,
++) -> Result<Json<PatchUndoPreview>, ApiError> {
++    let (_reservation, thread) = state
++        .runtime_threads
++        .thread_restore_guard(&id)
++        .await
++        .map_err(map_thread_err)?;
++    let prepared = prepare_patch_undo(&state, &id, &req).await?;
++    let dropped_turns = prepared.dropped_turns().to_vec();
++    let turn_ids = dropped_turns
++        .iter()
++        .map(|turn| turn.turn_id.clone())
++        .collect();
++    let trusted = thread.trust_mode || thread.auto_approve;
++    #[cfg(any(test, feature = "test-support"))]
++    let env_ticket = codewhale_engine::test_support::env_scope_ticket();
++    let (result, paths) = tokio::task::spawn_blocking(move || {
++        let _reservation = _reservation;
++        #[cfg(any(test, feature = "test-support"))]
++        let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
++        patch_undo_workspace_files_impl(&thread.workspace, &dropped_turns, trusted, true, None)
++    })
++    .await
++    .map_err(|error| ApiError::internal(format!("Patch undo preview failed: {error}")))??;
++    Ok(Json(PatchUndoPreview {
++        turn_ids,
++        paths,
++        summary: result.summary,
++    }))
++}
++
+ async fn patch_undo_thread_turn(
+     State(state): State<RuntimeApiState>,
+     Path(id): Path<String>,
+     Json(req): Json<UndoTurnRequest>,
+ ) -> Result<(StatusCode, Json<PatchUndoResponse>), ApiError> {
+-    let depth = req.depth.unwrap_or(0);
+     // Admission first, then the thread record under it: trust, session
+     // binding and workspace are the values that hold while files change.
+     // Active turns in an overlapping workspace are rejected (409). The wait
+@@ -8838,13 +8926,9 @@ async fn patch_undo_thread_turn(
+     let env_ticket = codewhale_engine::test_support::env_scope_ticket();
+     tokio::spawn(async move {
+         let reservation = reservation;
+-        // Validate de
+```
+
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +52/-0)
+```diff
+@@ -7917,6 +7917,36 @@ async fn patch_undo_endpoint_refuses_turns_it_cannot_prove() -> Result<()> {
+         create_seeded_thread(&addr, &runtime_threads, &root, "Roll back the patch").await?;
+     let client = codewhale_release::tls::reqwest_client();
+ 
++    let info: serde_json::Value = client
++        .get(format!("http://{addr}/v1/runtime/info"))
++        .send()
++        .await?
++        .error_for_status()?
++        .json()
++        .await?;
++    assert_eq!(info["capabilities"]["thread_patch_undo_turn_id"], true);
++    let resp = client
++        .get(format!(
++            "http://{addr}/v1/threads/{thread_id}/patch-undo?turn_id=foreign_turn"
++        ))
++        .send()
++        .await?;
++    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
++    let resp = client
++        .post(format!("http://{addr}/v1/threads/{thread_id}/patch-undo"))
++        .json(&json!({"turn_id": "foreign_turn", "depth": 0}))
++        .send()
++        .await?;
++    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
++    let resp = client
++        .post(format!("http://{addr}/v1/threads/{thread_id}/patch-undo"))
++        .json(&json!({"expected_turn_ids": []}))
++        .send()
++        .await?;
++    assert_eq!(resp.status(), StatusCode::CONFLICT);
++    let refused: serde_json::Value = resp.json().await?;
++    assert_eq!(refused["error"]["code"], "undo_selection_changed");
++
+     // A workspace directory that is not available proves nothing about the
+     // files a turn changed: the undo is refused instead of forking the
+     // conversation away from them.
+@@ -8055,6 +8085,28 @@ fn patch_undo_helper_restores_only_the_dropped_turns_changes() -> Result<()> {
+         true,
+         shell_turn_receipts(&repo, &pre, &post, "thr_a"),
+     );
++    let snapshot_count = repo.list(usize::MAX)?.len();
++    let (preview, paths) =
++        patch_undo_workspace_files_impl(&workspace, std::slice::from_ref(&turn), true, true, None)
++            .expect("a trusted preview should succeed");
++    assert!(!preview.files_restored);
++    assert_eq!(paths, vec!["a.txt", "made/new.txt"]);
++    let refused = patch_undo_workspace_files_impl(
++        &workspace,
++        std::slice::from_ref(&turn),
++        true,
++        false,
++        Some(&[]),
++    )
++    .expect_err("an unreviewed file plan must refuse before restoring");
++    assert_eq!(refused.status, StatusCode::CONFLICT);
++    assert_eq!(refused.code, Some("undo_selection_changed"));
++
++    assert_eq!(fs::read_to_string(&a)?, "second write");
++    assert!(workspace.join("made/new.txt").is_file());
++    assert_eq!(fs::read_to_string(&other)?, "later work");
++    assert_eq!(repo.list(usize::MAX)?.len(), snapshot_count);
++
+     let restored = patch_undo_workspace_files(&workspace, std::slice::from_ref(&turn), true)
+         .expect("a trusted rollback should succeed");
+     assert!(restored.files_restored, "{:?}", restored.summary);
+```
+
+**File**: `crates/engine/src/runtime_threads/manager.rs` (modified, +15/-5)
+```diff
+@@ -9984,12 +9984,8 @@ impl RuntimeThreadManager {
+         let dir = sessions_dir.to_path_buf();
+         tokio::spawn(async move {
+             let _admission = admission;
+-            let turns = runtime.store.list_turns_for_thread(&id)?;
+-            let items_by_turn = runtime.prepared_items_for_turns(&turns)?;
+-            let (_, _, depth_from_tail) =
+-                runtime.fork_cut_for_user_turn(&turns, &items_by_turn, &turn_id)?;
+             let prepared = runtime
+-                .prepare_fork_at_user_message_in_sessions_dir(&id, depth_from_tail, &dir)
++                .prepare_fork_dropping_user_turn_in_sessions_dir(&id, &turn_id, &dir)
+                 .await?;
+             runtime.publish_prepared_fork(prepared).await
+         })
+@@ -10126,6 +10122,20 @@ impl RuntimeThreadManager {
+         )
+     }
+ 
++    pub async fn prepare_fork_dropping_user_turn_in_sessions_dir(
++        &self,
++        id: &str,
++        turn_id: &str,
++        sessions_dir: &Path,
++    ) -> Result<PreparedThreadFork> {
++        let turns = self.store.list_turns_for_thread(id)?;
++        let items_by_turn = self.prepared_items_for_turns(&turns)?;
++        let (_, _, depth_from_tail) =
++            self.fork_cut_for_user_turn(&turns, &items_by_turn, turn_id)?;
++        self.prepare_fork_at_user_message_in_sessions_dir(id, depth_from_tail, sessions_dir)
++            .await
++    }
++
+     pub async fn prepare_fork_at_user_turn_in_sessions_dir(
+         &self,
+         id: &str,
+```
+
+**File**: `docs/RUNTIME_API.md` (modified, +5/-2)
+```diff
+@@ -1451,7 +1451,8 @@ latest turn and publishes a `thread.permissions_changed` event (`from`, `to`,
+ - `POST /v1/threads/{id}/compact` (manual compaction)
+ - `POST /v1/threads/{id}/undo` - fork the thread with the last N turns removed (`{"depth": N}`, default 0 = last turn only); returns the forked thread plus `original_user_text` so a GUI can pre-populate the input box. `{"turn_id": "turn_…"}` instead names the user turn to remove, together with every turn after it, and wins over `depth`; the Runtime resolves it under the thread's restore guard, so a turn another client appends meanwhile cannot move the cut. `400` when the turn is not a user turn of that thread
+ - `POST /v1/threads/{id}/fork-at-turn` - fork at one named user turn (`{"turn_id": "turn_…"}`, as `GET /v1/threads/{id}` reports it). The fork *keeps* that turn and every turn before it, and drops the turns after it; naming the last turn therefore keeps the whole conversation. The receipt is `/undo`'s (`thread`, `original_user_text`, `original_user_images`), carrying the *first dropped* user turn's prompt — what was asked next, even when a prompt-less turn such as a manual `/compact` sits between — so a client can put it back in the composer for editing. The source thread, its session document and the workspace are untouched, and there is no file rollback: a fork is a sibling conversation, and rewinding the workspace would rewind the branch left behind with it. Clients should name the turn instead of computing a `depth` — the transcript they render and the turn list this cuts are not the same list (steers, image-only prompts and injected handoffs each sit on one side only), and a client-side count that is off by one forks the wrong prefix while answering `201`. `400` when the turn is not a user turn of that thread.
+-- `POST /v1/threads/{id}/patch-undo` - rolls back the files the dropped turns changed, then the same fork (`{"depth": N}`); returns `patch_result` (`files_restored`, `summary`, `snapshot_label`) alongside the forked thread. See [Workspace restore endpoints](#workspace-restore-endpoints) for ownership, the trust, admission and abort rules, and the `error.code` values of a refusal.
++- `GET /v1/threads/{id}/patch-undo?turn_id=turn_…` - validates the selected restore without changing files or publishing a fork; returns `turn_ids`, the exact dropped range, `paths` needing restoration and an optional no-change `summary`. Requires the `thread_patch_undo_turn_id` capability.
++- `POST /v1/threads/{id}/patch-undo` - rolls back the files the dropped turns changed, then the same fork (`{"depth": N}` or `{"turn_id": "turn_…"}`, with `turn_id` taking precedence); returns `patch_result` (`files_restored`, `summary`, `snapshot_label`) alongside the forked thread. See [Workspace restore endpoints](#workspace-restore-endpoints) for ownership, the trust, admission and abort rules, and the `error.code` values of a refusal.
+ - `POST /v1/threads/{id}/file-revert` - restore exactly one file from one restore point the thread owns (`{"path", "snapshot_id", "expected_hash"}`); never forks the conversation. See [Workspace restore endpoints](#workspace-restore-endpoints).
+ - `POST /v1/threads/{id}/retry` - fork with the last N turns removed and immediately start a new turn (`{"depth": N, "prompt": "..."}`; `prompt` overrides the original user text, which is re-used when omitted)
+ 
+@@ -1845,7 +1846,9 @@ For `file-revert` the backup is mandatory: if it cannot be written, or the
+ requested file is excluded from it (for example by `.gitignore`), the request
+ fails and nothing is changed.
+ 
+-**`patch-undo`.** Undoes whole turns. For each dropped turn's `pre_turn` →
++**`patch-undo`.** Undoes whole turns. A named `turn_id` removes that user turn and every turn after it, under the same restore admission as `/undo`. Clients must require `thread_patch_undo_turn_id` before sending selected-turn requests: older Engines may ignore that field. Preview with `GET`, then send its exact `turn_ids` as `expected_turn_ids` and `paths` as `expected_paths` on `POST`; `409 undo_selection_changed` refuses an altered range or file plan before file changes. A preview does not reserve future execution or promise idempotency. The mutation is not automatically retryable after a lost response.
++
++ For each dropped turn's `pre_turn` →
+ `post_turn` window, the paths that differ between the two snapshots must all be
+ the turn's own: changed only in the span of one of the turn's tool calls (a
+ `tool` → `post_tool` span, or a shell turn's whole window), and, inside a file
+```
+
+**File**: `docs/features.toml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@
+ [[feature]]
+ id = "undo-range"
+ name = "Request range undo"
+-summary = "Select a request with /undo select to restore its file changes and later requests with visible progress."
++summary = "Select a request with /undo select to restore its file changes and later requests with visible progress; Runtime clients can preview and confirm an exact named-turn range."
+ status = "experimental"
+ surfaces = { tui = "preview" }
+ since = "unreleased"
+```
+
+---
+
+### Incident Patch 2: `daae24cd` (2026-11-03)
+**Commit Message**: fix(app-server): omit the disabled goal setter from discovery [skip ci]
+
+Refs CW-7704. Compatibility goal execution stays closed, so do not advertise thread/goal/set as available in either global or thread discovery. Keep the typed refusal for older clients calling the known method and keep goal read/clear discovery. Update both language docs and existing capability expectations. Correct the existing goal-read fixture to seed its fake owner through the captured Runtime API: its former direct compatibility setter is deliberately refused after the native owner migration. Production still uses no self-HTTP.
+
+Verified 4 focused existing checks, 0 failed, after the fixture repair. The first three passed in v1; the fourth exposed that stale seeding path (runtime_unavailable: goal execution requires the canonical Runtime interaction API). All 4,249 inputs matched the guarded native28 build. Actual native stdio initialize/capability/closed-gate probe passed with 0 model POSTs and clean shutdown; its capability payloads differ from native26 only by removal of goal/set. No new repository tests or code comments.
+
+Separately compared actual native responses with the immutable Codex rust-v0.166
+
+**File**: `crates/app-server/src/stdio.rs` (modified, +2/-4)
+```diff
+@@ -827,7 +827,6 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
+                 "thread/read",
+                 "thread/name/set",
+                 "thread/set_name",
+-                "thread/goal/set",
+                 "thread/goal/get",
+                 "thread/goal/clear",
+                 "thread/archive",
+@@ -887,11 +886,10 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
+                     "thread/resume",
+                     "thread/fork",
+                     "thread/list",
+-                "thread/loaded/list",
++                    "thread/loaded/list",
+                     "thread/read",
+                     "thread/name/set",
+-                "thread/set_name",
+-                    "thread/goal/set",
++                    "thread/set_name",
+                     "thread/goal/get",
+                     "thread/goal/clear",
+                     "thread/archive",
+```
+
+**File**: `crates/app-server/src/tests.rs` (modified, +15/-8)
+```diff
+@@ -1785,7 +1785,7 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
+         .unwrap();
+     assert_eq!(capabilities.result["goal_execution"], false);
+     assert!(
+-        capabilities.result["methods"]
++        !capabilities.result["methods"]
+             .as_array()
+             .unwrap()
+             .iter()
+@@ -1810,12 +1810,20 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
+         set.wire.data.unwrap()["error"],
+         "interactive_execution_unsupported"
+     );
+-    thread_control::handle(
+-        &state,
+-        serde_json::from_value(json!({"kind":"goal_set","thread_id":id,"objective":"Release 0.10.1","token_budget":59000})).unwrap(),
+-    )
+-    .await
+-    .unwrap();
++    let (endpoint, token) = {
++        let shared = state.runtime_bridge.lock().await.clone().unwrap();
++        let bridge = shared.lock().await;
++        (bridge.base_url.clone(), bridge.auth_token.clone().unwrap())
++    };
++    codewhale_release::tls::reqwest_client()
++        .put(format!("{endpoint}/v1/threads/{id}/goal"))
++        .bearer_auth(token)
++        .json(&json!({"objective":"Release 0.10.1","token_budget":59000}))
++        .send()
++        .await
++        .unwrap()
++        .error_for_status()
++        .unwrap();
+     let got = dispatch_stdio_request(&state, "thread/goal/get", json!({"thread_id":id}))
+         .await
+         .unwrap();
+@@ -3038,7 +3046,6 @@ const EXPECTED_CAPABILITY_METHODS: &[&str] = &[
+     "thread/read",
+     "thread/name/set",
+     "thread/set_name",
+-    "thread/goal/set",
+     "thread/goal/get",
+     "thread/goal/clear",
+     "thread/archive",
+```
+
+**File**: `docs/RUNTIME_API.md` (modified, +6/-3)
+```diff
+@@ -479,7 +479,9 @@ native frontend directly; they do not make loopback HTTP requests.
+ `prompt/*`) and the full method list; `thread/capabilities`,
+ `app/capabilities`, and `prompt/capabilities` scope it per family. The method
+ set is pinned by a drift test in `crates/app-server/src/tests.rs`, so SDK and
+-local integration clients can rely on it not changing silently.
++local integration clients can rely on it not changing silently. The permanently
++refused compatibility goal setter is omitted from discovery while
++`goal_execution` is false; goal reads and clears remain advertised.
+ 
+ ### Daemon socket: `codewhale app-server --socket`
+ 
+@@ -561,8 +563,9 @@ HTTP reports 400 with `error.code: "invalid_request"`, `error.jsonrpc_code: -326
+ and the same detail in `error.data`. Compatibility `thread/goal/set` and
+ `ThreadRequest::GoalSet` also refuse before changing the goal: setting an active
+ goal starts background Engine work. Reading and clearing existing goals remain
+-available; starting goals uses the full Runtime HTTP API. The known method
+-remains dispatchable so older clients get this actionable refusal. For example:
++available; starting goals uses the full Runtime HTTP API. The known setter
++remains recognized for older clients to get this actionable refusal, but it is
++not advertised as an available method. For example:
+ 
+ ```json
+ {"jsonrpc":"2.0","id":3,"method":"thread/message","params":{"thread_id":"thr_...","input":"Summarize this conversation","allowed_tools":[]}}
+```
+
+**File**: `docs/zh_hans/RUNTIME_API.md` (modified, +5/-3)
+```diff
+@@ -365,7 +365,8 @@ printf '%s\n' \
+ `prompt/*`）以及完整的方法清单；`thread/capabilities`、
+ `app/capabilities` 与 `prompt/capabilities` 则按族缩小范围。方法集合由
+ `crates/app-server/src/tests.rs` 中的一个漂移测试钉住，因此 SDK 与本地集成客户端
+-可以依赖它不会悄悄变化。
++可以依赖它不会悄悄变化。`goal_execution` 为 false 时，始终拒绝执行的兼容目标设置
++不会出现在方法清单中；读取和清除现有目标仍会声明。
+ 
+ ### 兼容执行限制
+ 
+@@ -375,13 +376,14 @@ HTTP 兼容路由、stdio 和 socket 均声明 `interactive_execution: false`、
+ `thread/message`、`thread/request` 的 message、`prompt/run`、`prompt/request`
+ 以及 HTTP `/prompt`、`/thread` 的 message 必须显式提供 `allowed_tools: []`。
+ 省略、null 或非空列表返回 `interactive_execution_unsupported`，不会创建 Runtime
+-线程或启动回合；错误类型的值也会被拒绝。桥在实际回合请求中继续传递空工具列表，
++线程或启动回合；错误类型的值也会被拒绝。捕获的原生 owner 在实际回合请求中继续传递空工具列表，
+ 只转发助手文本和最终状态；意外的审批或澄清请求会报错并中断该回合。
+ 工具客户端须迁移到带 bearer 认证的完整 HTTP/SSE API。
+ JSON-RPC 返回 `-32602` 和 `data.error: "interactive_execution_unsupported"`；
+ HTTP 返回 400，`error.code` 为 `invalid_request`，同一详情位于 `error.data`。
+ 兼容 `thread/goal/set` 以及 `ThreadRequest::GoalSet` 也在修改目标前拒绝，
+-因为设为活动目标会启动后台工作。读取、清除现有目标仍可用；开始目标请用完整 HTTP API。
++因为设为活动目标会启动后台工作。它不会列为可用方法，但旧客户端直接调用仍得到明确拒绝。
++读取、清除现有目标仍可用；开始目标请用完整 HTTP API。
+ 
+ `@codewhale/runtime-sdk` 当前只封装 Fleet 和线程事件读取，未封装线程创建、
+ 回合开始/引导/中断、审批、澄清或模型发现。完整集成请使用
+```
+
+---
+
+### Incident Patch 3: `f4978e8f` (2026-11-03)
+**Commit Message**: fix(fleet): preserve reviewed profiles and drafts on concurrent saves [skip ci]
+
+Both legacy TUI profile writers now use the same bounded, confined writer.
+A directory-wide cross-process lock covers exact preimage comparison, profile
+validation, duplicate identity checking and pinned atomic replacement. Keep
+create-only semantics and classify uncertain replacement outcomes separately.
+Route-assignment reads reuse the same bounded confined reader; model drafts
+preview the actual sanitized filename rather than the original role filename.
+
+A refused save keeps the original editor, exact draft and reviewed preimage.
+Reuse the view's UUID to reject events after cancellation or reopening, reset
+the replacement confirmation and show the failure inline. Close only after a
+confirmed save; retain provider readiness, project scope and roster controls.
+
+Verified: 54 existing Fleet setup cases passed on the final frozen batch;
+35 existing Engine profile cases reused from the exact same test-binary hash
+(89 total, zero failures). Native33 ordinary macOS arm64 CLI built with all
+4,249 inputs unchanged, default Engine and no test-support. Two actual TUI
+processes proved stale-save refusal, model-d
+
+**File**: `crates/engine/src/fleet/profile.rs` (modified, +179/-1)
+```diff
+@@ -70,6 +70,180 @@ pub fn agent_profile_dir_for_scope(scope: FleetProfileScope, workspace: &Path) -
+     }
+ }
+ 
++pub const MAX_PROFILE_DOCUMENT_BYTES: usize = 1024 * 1024;
++
++#[derive(Debug, thiserror::Error)]
++#[error("Profile source changed; reopen {} before saving", path.display())]
++pub struct AgentProfileWriteConflict {
++    pub path: PathBuf,
++}
++
++#[derive(Debug, thiserror::Error)]
++#[error("Profile {id} is already defined in {}", path.display())]
++pub struct AgentProfileIdentityConflict {
++    pub id: String,
++    pub path: PathBuf,
++}
++
++#[derive(Debug, thiserror::Error)]
++#[error("Profile save outcome is unconfirmed for {}; read the file before saving again: {source}", path.display())]
++pub struct AgentProfileWriteUnconfirmed {
++    pub path: PathBuf,
++    #[source]
++    source: std::io::Error,
++}
++
++fn profile_document_location(
++    scope: FleetProfileScope,
++    workspace: &Path,
++    path: &Path,
++) -> Result<(PathBuf, PathBuf)> {
++    let directory = agent_profile_dir_for_scope(scope, workspace)?;
++    let root = match scope {
++        FleetProfileScope::Project => workspace.to_path_buf(),
++        FleetProfileScope::Personal => directory
++            .parent()
++            .context("Personal profile directory has no state root")?
++            .to_path_buf(),
++    };
++    anyhow::ensure!(
++        root.is_absolute()
++            && path.parent() == Some(directory.as_path())
++            && path.extension().and_then(|value| value.to_str()) == Some("toml"),
++        "Profile source is outside its selected directory"
++    );
++    let relative = path.strip_prefix(&root)?.to_path_buf();
++    anyhow::ensure!(
++        codewhale_util::files::path_is_confined(&relative),
++        "Profile source is outside its selected directory"
++    );
++    Ok((root, relative))
++}
++
++fn read_profile_document_file(
++    file: &codewhale_util::files::WorkspaceFile,
++) -> Result<Option<String>> {
++    use std::io::Read as _;
++    let handle = match file.open_file_shared() {
++        Ok(file) => file,
++        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
++        Err(error) => return Err(error.into()),
++    };
++    let mut raw = String::new();
++    handle
++        .take((MAX_PROFILE_DOCUMENT_BYTES + 1) as u64)
++        .read_to_string(&mut raw)?;
++    anyhow::ensure!(
++        raw.len() <= MAX_PROFILE_DOCUMENT_BYTES,
++        "Profile document exceeds the one MiB editing limit"
++    );
++    Ok(Some(raw))
++}
++
++pub fn read_agent_profile_document(
++    scope: FleetProfileScope,
++    workspace: &Path,
++    path: &Path,
++) -> Result<Option<String>> {
++    let (root, relative) = profile_document_location(scope, workspace, path)?;
++    let file = match codewhale_util::files::WorkspaceFile::open(&root, &relative, false) {
++        Ok(file) => file,
++        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
++        Err(error) => return Err(error.into()),
++    };
++    read_profile_document_file(&file)
++}
++
++pub fn save_agent_profile_document(
++    scope: FleetProfileScope,
++    workspace: &Path,
++    path: &Path,
++    expected: Option<&str>,
++    id: &str,
++    text: &str,
++) -> Result<()> {
++    anyhow::ensure!(
++        text.len() <= MAX_PROFILE_DOCUMENT_BYTES,
++        "Profile document exceeds the one MiB editing limit"
++    );
++    anyhow::ensure!(
++        scope != FleetProfileScope::Project || super::roster::project_agent_profiles_enabled(),
++        "Project profiles are disabled for this launch"
++    );
++    let (root, relative) = profile_document_location(scope, workspace, path)?;
++    let file = match scope {
++        FleetProfileScope::Project => {
++            codewhale_util::files::WorkspaceFile::open_shared(&root, &relative, true)?
++        }
++        FleetProfileScope::Personal => {
++            codewhale_util::files::WorkspaceFile::open(&root, &relative, true)?
++        }
++    };
++    let lock_relative = relative
++        .parent()
++        .context("Profile source has no directory")?
++        .join(".codewhale-profile-write.lock");
++    let lock_entry = file.sibling(".codewhale-profile-write.lock")?;
++    let lock_file = lock_entry.open_update(true, false)?;
++    codewhale_config::private_directory::tighten_mode_of(
++        &lock_file,
++        &root.join(&lock_relative),
++        0o600,
++    )?;
++    let mut lock = fd_lock::RwLock::new(lock_file);
++    let guard = lock.write()?;
++    anyhow::ensure!(
++        codewhale_util::files::same_file(
++            &guard,
++            &codewhale_util::files::WorkspaceFile::open(&root, &lock_relative, false)?
++                .open_file()?,
++        )?,
++        "Profile write lock changed; reopen the source"
++    );
++    let current = read_profile_document_file(&file)?;
++    if current.as_deref() != expected {
++        return Err(AgentProfileWriteConflict {
++            path: path.to_path_buf(),
++        }
++        .into());
++    }
++    let profile = parse_agent_profile_text(path, text)?;
++    anyhow::e
+```
+
+**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +116/-131)
+```diff
+@@ -2641,89 +2641,63 @@ pub(crate) async fn handle_view_events(
+                 }
+                 app.needs_redraw = true;
+             }
+-            ViewEvent::FleetProfileDraftCommitRequested { draft, scope } => {
+-                // A project-scope save is refused (never silently redirected)
+-                // when project profiles are disabled for this launch: the file
+-                // would be written where nothing loads it.
+-                if scope == codewhale_engine::fleet::profile::FleetProfileScope::Project
+-                    && !codewhale_engine::fleet::roster::project_agent_profiles_enabled()
+-                {
+-                    app.set_sticky_status(
+-                        tr(app.ui_locale, MessageId::FleetDestProjectDisabledSave).into_owned(),
+-                        StatusToastLevel::Error,
+-                        None,
+-                    );
+-                    app.needs_redraw = true;
++            ViewEvent::FleetProfileDraftCommitRequested {
++                editor_id,
++                draft,
++                scope,
++                expected,
++            } => {
++                if app.view_stack.top_kind() != Some(ModalKind::FleetSetup) {
+                     continue;
+                 }
+-                // The TOML is rendered deterministically from the validated
+-                // draft and written atomically; the target path is derived
+-                // from the sanitized id, never model-chosen.
+-                let profile_dir =
+-                    match codewhale_engine::fleet::profile::agent_profile_dir_for_scope(
+-                        scope,
+-                        &app.workspace,
+-                    ) {
+-                        Ok(dir) => dir,
+-                        Err(err) => {
+-                            app.set_sticky_status(
+-                                format!("Team {} scope is unavailable: {err:#}", scope.label()),
+-                                StatusToastLevel::Error,
+-                                None,
+-                            );
+-                            app.needs_redraw = true;
+-                            continue;
+-                        }
+-                    };
+-                let target = profile_dir.join(draft.file_name());
+-                // A ratified profile must not silently clobber a differently
+-                // named existing profile that shares this id (which would also
+-                // make the whole agents dir fail to load on the duplicate).
+-                // Overwriting the SAME file is fine — that is an intentional
+-                // re-draft of this profile.
+-                // The collision gate only needs file identities. Accept
+-                // otherwise legacy profile fields here so an old, unrelated
+-                // profile cannot block saving a current one. Malformed TOML,
+-                // unreadable files, and invalid ids still fail closed because
+-                // then we cannot prove there is no collision.
+-                let existing_profiles =
+-                    if scope == codewhale_engine::fleet::profile::FleetProfileScope::Project {
+-                        codewhale_engine::fleet::profile::load_workspace_agent_profile_identities(
+-                            &app.workspace,
+-                        )
+-                    } else {
+-                        codewhale_engine::fleet::profile::load_agent_profile_identities_from_dir(
+-                            &profile_dir,
+-                        )
+-                    };
+-                if let Err(err) = &existing_profiles {
+-                    let message = tr(app.ui_locale, MessageId::FleetProfileIdentityVerifyFailed)
+-                        .replace("{error}", &format!("{err:#}"));
+-                    app.set_sticky_status(message, StatusToastLevel::Error, None);
+-                    app.needs_redraw = true;
++                let Some(mut boxed) = app.view_stack.pop() else {
+                     continue;
+-                }
+-                let id_conflict = existing_profiles
+-                    .into_iter()
+-                    .flatten()
+-                    .find(|p| p.id.eq_ignore_ascii_case(&draft.id) && p.source != target);
+-                if let Some(existing) = id_conflict {
+-                    let message = tr(app.ui_locale, MessageId::FleetProfileIdConflict)
+-                        .replace("{id}", &draft.id)
+-                        .replace("{path}", &existing.source.display().to_string());
+-                    app.set_sticky_status(message, StatusToastLevel::Error, None);
+-                    app.needs_redraw = true;
++                };
++                let matches = boxed
++                    .as_any_mut()
++                    .downcast_mut::<crate::tui::views::fleet_setup::FleetSetupView>()
++                    .is_some_and(|view| view.profile_commit_matches(editor_id));
++                if !matches {
++                    app.view_stack.push_boxed(boxed);
+                     continue;
+      
+```
+
+**File**: `crates/tui/src/tui/views/fleet_setup.rs` (modified, +169/-86)
+```diff
+@@ -542,6 +542,7 @@ struct DestinationStatus {
+     target: PathBuf,
+     /// Whether `target` already exists (saving would replace it).
+     target_exists: bool,
++    original: Option<String>,
+ }
+ 
+ /// Which control on the Review step owns keyboard focus.
+@@ -698,7 +699,6 @@ fn deterministic_composition_advisory(
+ /// A role assignment edits only route keys in the original document. The
+ /// source and possible destinations are captured before opening the picker.
+ struct RouteAssignment {
+-    editor_id: uuid::Uuid,
+     id: String,
+     template: toml::Table,
+     original_member: codewhale_engine::fleet::profile::AgentProfile,
+@@ -718,15 +718,8 @@ struct ModelDraftRequest {
+     reasoning_effort: Option<String>,
+ }
+ 
+-fn assignment_source(path: &Path) -> Result<Option<String>, String> {
+-    match std::fs::read_to_string(path) {
+-        Ok(text) => Ok(Some(text)),
+-        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
+-        Err(err) => Err(format!("Cannot read {}: {err}", path.display())),
+-    }
+-}
+-
+ pub struct FleetSetupView {
++    editor_id: uuid::Uuid,
+     snapshot: FleetSetupSnapshot,
+     assignment: Option<RouteAssignment>,
+     step: Step,
+@@ -803,6 +796,7 @@ impl FleetSetupView {
+     /// validates a dormant external-consent route so the same row becomes
+     /// Ready without closing and reopening the modal.
+     pub fn refresh_from_snapshot(&mut self, snapshot: FleetSetupSnapshot) {
++        let old_editor_id = self.editor_id;
+         let old_step = self.step;
+         let old_role_idx = self.role_idx;
+         let old_model_idx = self.model_idx;
+@@ -820,6 +814,7 @@ impl FleetSetupView {
+ 
+         *self = Self::from_snapshot(snapshot);
+ 
++        self.editor_id = old_editor_id;
+         self.step = old_step;
+         self.role_idx = old_role_idx;
+         self.model_idx = old_model_idx.min(self.filtered_model_indices().len().saturating_sub(1));
+@@ -898,11 +893,16 @@ impl FleetSetupView {
+             }
+             _ => None,
+         };
+-        let source = if source_scope.is_some() {
++        let source = if let Some(scope) = source_scope {
+             Some((
+                 member.source.clone(),
+-                assignment_source(&member.source)?
+-                    .ok_or_else(|| "The saved role disappeared. Reopen Fleet.".to_string())?,
++                codewhale_engine::fleet::profile::read_agent_profile_document(
++                    scope,
++                    &app.workspace,
++                    &member.source,
++                )
++                .map_err(|err| err.to_string())?
++                .ok_or_else(|| "The saved role disappeared. Reopen Fleet.".to_string())?,
+             ))
+         } else {
+             None
+@@ -924,7 +924,6 @@ impl FleetSetupView {
+             toml::from_str::<toml::Table>(&draft.render_toml()).map_err(|err| err.to_string())?
+         };
+         view.assignment = Some(RouteAssignment {
+-            editor_id: uuid::Uuid::new_v4(),
+             id: member.id.clone(),
+             template,
+             original_member: member.clone(),
+@@ -942,26 +941,29 @@ impl FleetSetupView {
+             .into_iter()
+             .flatten()
+             .filter(|destination| destination.unavailable_reason.is_none())
+-            .map(|destination| {
+-                Ok((
+-                    destination.target.clone(),
+-                    assignment_source(&destination.target)?,
+-                ))
+-            })
+-            .collect::<Result<Vec<_>, String>>()?;
++            .map(|destination| (destination.target.clone(), destination.original.clone()))
++            .collect();
+         view.assignment.as_mut().unwrap().destinations = targets;
+         view.step = Step::Destination;
+         Ok(view)
+     }
+ 
+     pub(crate) fn route_pick_request(&self) -> ViewAction {
+-        self.assignment
+-            .as_ref()
+-            .map_or(ViewAction::None, |assignment| {
+-                ViewAction::Emit(ViewEvent::FleetProfileRoutePickRequested {
+-                    editor_id: assignment.editor_id,
+-                })
++        self.assignment.as_ref().map_or(ViewAction::None, |_| {
++            ViewAction::Emit(ViewEvent::FleetProfileRoutePickRequested {
++                editor_id: self.editor_id,
+             })
++        })
++    }
++
++    pub(crate) fn profile_commit_matches(&self, editor_id: uuid::Uuid) -> bool {
++        self.editor_id == editor_id && self.assignment.is_none() && self.step == Step::Review
++    }
++
++    pub(crate) fn profile_save_failed(&mut self, reason: String) {
++        self.notice = Some(reason);
++        self.replace_armed = false;
++        self.review_scroll = 0;
+     }
+ 
+     pub(crate) fn assignment_context(&self) -> (String, String) {
+@@ -975,7 +977,7 @@ impl FleetSetupView {
+         let assignment = self
+             .assignment
+             .as_ref()
+-            .filter(|assignment| assignment.editor_id == editor_id)?;
++            .filter(|_| self.editor_id == editor_id)?;
+         Some(super::flee
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +2/-0)
+```diff
+@@ -1077,8 +1077,10 @@ pub enum ViewEvent {
+     /// renders TOML deterministically from the validated draft and persists it
+     /// atomically in the explicitly selected project or personal scope.
+     FleetProfileDraftCommitRequested {
++        editor_id: uuid::Uuid,
+         draft: Box<codewhale_engine::fleet::profile::FleetProfileDraft>,
+         scope: codewhale_engine::fleet::profile::FleetProfileScope,
++        expected: Option<String>,
+     },
+     /// Emitted by the Fleet setup Model step when the user selects a route that
+     /// has structurally valid external-consent credentials but is not the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7158** (2026-10-31): fix(tui): end a bare URL at full-width punctuation (@Lstarsky0)
-- **PR #7157** (2026-10-31): fix(tui): keep asterisks that don't open emphasis (@Lstarsky0)
-- **PR #7156** (2026-10-31): fix(tui): render ~~~ fences as code blocks (@Lstarsky0)
-- **PR #7155** (closed): test: repair three tests broken on main by catalog and context-window changes (@luochen211)
-- **PR #7152** (2026-10-31): fix(tui): drop the engine's status reply to a fleet roster refresh (@Lstarsky0)
-- **PR #7151** (2026-10-31): Native HarmonyOS: fix the documented build, and ship a signed arm64 release (@gaord)
+- **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
+- **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
+- **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
+- **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
+- **PR #7198** (2026-11-03): fix(tui): stop math with non-ASCII text from crashing the TUI (@Lstarsky0)
+- **PR #7197** (2026-11-03): fix(tui): size table columns from their content (@Lstarsky0)
 
 ---
 
@@ -2874,28 +2789,32 @@ Two related defects found in the same report:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): remove the marked PATH block and Codewhale completions on uninstall
+## X. runtime): bind file rewind to the selected reviewed range [skip ci]
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/app-server-protocol/schema/json/runtime.schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20f091d6`: cli): remove the marked PATH block and Codewhale completions on uninstall. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb17ae0e`: runtime): bind file rewind to the selected reviewed range [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server-protocol/schema/json/runtime.schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
+        "thread_patch_undo_turn_id": {
+          "type": "boolean",
+          "default": false
+        },
+        "thread_patch_undo_turn_id",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20f091d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb17ae0e` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:06:29.824Z",
+  "last_updated": "2026-11-03T17:14:22.773Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7931,13 +7931,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "ecd256c9",
-      "content_hash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "f4978e8f",
+      "content_hash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8033,6 +8033,11 @@
           "number": 6232,
           "title": "cli): remove the marked PATH block and Codewhale completions on uninstall",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6549,
+          "title": "runtime): bind file rewind to the selected reviewed range [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8040,7 +8045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:40:49.239Z",
+      "verified_at": "2026-11-03T17:14:14.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47388,8 +47393,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "d465cc82",
-      "content_hash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
+      "source_version": "25f50f10",
+      "content_hash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -47492,6 +47497,11 @@
           "number": 6494,
           "title": "Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6550,
+          "title": "headless): fail requests whose URL net/url cannot parse",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47499,7 +47509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:45:51.556Z",
+      "verified_at": "2026-11-03T17:14:22.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169110,6 +169120,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:06:29.803Z"
+    },
+    "rule-6549": {
+      "learning_id": "rule-6549",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6549,
+      "title": "runtime): bind file rewind to the selected reviewed range [skip ci]",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "f4978e8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:14:14.054Z"
+    },
+    "rule-6550": {
+      "learning_id": "rule-6550",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6550,
+      "title": "headless): fail requests whose URL net/url cannot parse",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "25f50f10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:14:22.751Z"
     }
   },
   "aliases": {

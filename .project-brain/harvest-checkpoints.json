@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T17:06:29.918Z",
+  "last_updated": "2026-11-03T17:14:22.873Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
-      "verified_at": "2026-10-31T19:40:49.356Z",
+      "content_hash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
+      "verified_at": "2026-11-03T17:14:14.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:40:49.356Z"
+      "last_updated": "2026-11-03T17:14:14.172Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
-      "verified_at": "2026-11-03T10:45:51.632Z",
+      "content_hash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
+      "verified_at": "2026-11-03T17:14:22.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:45:51.632Z"
+      "last_updated": "2026-11-03T17:14:22.872Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

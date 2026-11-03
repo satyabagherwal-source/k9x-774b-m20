@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T17:06:29.914Z",
-  "total_cycles_completed": 6915,
-  "total_learnings_persisted": 6915,
-  "total_rules_promoted": 6564,
+  "last_updated": "2026-11-03T17:14:22.869Z",
+  "total_cycles_completed": 6917,
+  "total_learnings_persisted": 6917,
+  "total_rules_promoted": 6566,
   "history": [
-    {
-      "timestamp": "2026-10-31T22:33:05.507Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T22:39:51.948Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T22:40:02.000Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T17:06:29.914Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:14:14.169Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T17:14:22.869Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T17:06:32.471Z",
-    "lastVerified": "2026-11-03T17:06:32.471Z",
+    "lastChecked": "2026-11-03T17:14:25.429Z",
+    "lastVerified": "2026-11-03T17:14:25.429Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T16:40:32.826Z",
+    "lastChecked": "2026-11-03T17:14:21.030Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T16:40:32.826Z"
+    "lastVerified": "2026-11-03T17:14:21.030Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1546,9 +1546,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-10-31T20:38:50.712Z",
+    "lastChecked": "2026-11-03T17:14:13.566Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-10-31T20:38:50.712Z"
+    "lastVerified": "2026-11-03T17:14:13.566Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -1996,14 +1996,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T10:45:50.651Z",
-    "lastVerified": "2026-11-03T10:45:50.651Z",
+    "lastChecked": "2026-11-03T17:14:21.829Z",
+    "lastVerified": "2026-11-03T17:14:21.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
+    "contentHash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 8,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6693,9 +6693,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-10-31T19:40:55.141Z",
+    "lastChecked": "2026-11-03T17:14:18.695Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-10-31T19:40:55.141Z"
+    "lastVerified": "2026-11-03T17:14:18.695Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -7943,14 +7943,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:36:28.614Z",
-    "lastVerified": "2026-10-31T15:36:28.614Z",
+    "lastChecked": "2026-11-03T17:14:11.950Z",
+    "lastVerified": "2026-11-03T17:14:11.950Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
+    "contentHash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9959,9 +9959,9 @@
   "giuucmp-seoaudit": {
     "name": "seoaudit",
     "officialUrl": "https://github.com/giuucmp/seoaudit",
-    "lastChecked": "2026-10-30T06:01:41.050Z",
+    "lastChecked": "2026-11-03T17:14:08.522Z",
     "revisionIdentifier": "9d5b0d4f",
-    "lastVerified": "2026-10-30T06:01:41.050Z"
+    "lastVerified": "2026-11-03T17:14:08.522Z"
   },
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
@@ -11014,12 +11014,12 @@
     "lastVerified": "2026-10-30T17:20:50.799Z"
   },
   "iziz-libphonenumber-ios": {
-    "name": "iziz/libPhoneNumber-iOS",
+    "name": "libPhoneNumber-iOS",
     "officialUrl": "https://github.com/iziz/libPhoneNumber-iOS",
     "sourceType": "github",
     "technology": "Objective-C",
-    "lastChecked": "2026-10-30T17:20:59.033Z",
-    "lastVerified": "2026-10-30T17:20:59.033Z",
+    "lastChecked": "2026-11-03T17:14:11.002Z",
+    "lastVerified": "2026-11-03T17:14:11.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iziz-libphonenumber-ios",
@@ -11028,7 +11028,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "15df36de"
   },
   "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism": {
     "name": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",

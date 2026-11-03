@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "d465cc82",
+    "sourceVersion": "25f50f10",
     "license": "MIT",
-    "contentHash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
-    "lastHarvestedAt": "2026-11-03T10:45:51.624Z",
+    "contentHash": "dcd924db40ff2ba149fa00950e270ba66d467d2b880d5b6f60e662795a73d2fa",
+    "lastHarvestedAt": "2026-11-03T17:14:22.863Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "785f7d0d",
+    "sourceVersion": "f4978e8f",
     "license": "MIT",
-    "contentHash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
-    "lastHarvestedAt": "2026-10-31T15:36:29.221Z",
+    "contentHash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
+    "lastHarvestedAt": "2026-11-03T17:14:14.163Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
