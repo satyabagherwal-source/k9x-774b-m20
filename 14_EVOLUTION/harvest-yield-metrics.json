@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:25:12.093Z",
-  "total_cycles_completed": 6888,
-  "total_learnings_persisted": 6888,
-  "total_rules_promoted": 6536,
+  "last_updated": "2026-11-03T12:32:12.235Z",
+  "total_cycles_completed": 6889,
+  "total_learnings_persisted": 6889,
+  "total_rules_promoted": 6537,
   "history": [
-    {
-      "timestamp": "2026-10-31T20:46:49.392Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T20:53:08.848Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-03T12:25:12.093Z",
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:32:12.235Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

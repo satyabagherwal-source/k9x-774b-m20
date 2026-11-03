@@ -6920,3 +6920,4 @@ Every entry in this ledger must capture:
 | `learn-github-alfa546-crawler` | `https://github.com/alfa546/Crawler` | `8d10a017` | Multi-dimensional audit evidence | 2026-11-03T12:25:01.716Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `48774760` | Multi-dimensional audit evidence | 2026-11-03T12:25:09.935Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `8ddaf495` | Multi-dimensional audit evidence | 2026-11-03T12:25:12.089Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `4eaaeb8a` | Multi-dimensional audit evidence | 2026-11-03T12:32:12.229Z |

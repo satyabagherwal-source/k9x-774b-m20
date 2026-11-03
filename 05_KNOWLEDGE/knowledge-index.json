@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T12:25:12.038Z",
+  "last_updated": "2026-11-03T12:32:12.135Z",
   "total_verified_learnings": 1196,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61633,8 +61633,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "e1f93d25",
-      "content_hash": "487dda396690ef5d3840f5bdbda0ba84d160b38a2584e0eab7c7103123baf018",
+      "source_version": "4eaaeb8a",
+      "content_hash": "12dce603748b214626daeeb9c9c16a81fee8a644f08ba2e51e843b007f2b8258",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -61707,6 +61707,11 @@
           "number": 5818,
           "title": "Strict Metric Denominator and Division Invariant for Benchmark Sensitivity Analysis",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6523,
+          "title": "npm): deduplicate installed native payload files (#356)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61714,7 +61719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:45:17.477Z",
+      "verified_at": "2026-11-03T12:32:12.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168560,6 +168565,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T12:25:12.026Z"
+    },
+    "rule-6523": {
+      "learning_id": "rule-6523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6523,
+      "title": "npm): deduplicate installed native payload files (#356)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "4eaaeb8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:32:12.111Z"
     }
   },
   "aliases": {
