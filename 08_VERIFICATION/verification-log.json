@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-X52E",
-    "timestamp": "2026-10-31T06:32:06.374Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "eb6062760e0dce1df1c479a61081e750099d9eb298e4b45db9c4c6b6dccb0f55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-X73D",
-    "timestamp": "2026-10-31T06:32:09.002Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "81044e7e1a7151b5f59521cc33103032c78d3ec2ff0b670b652078b61fd948fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-X9NP",
-    "timestamp": "2026-10-31T06:32:12.325Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-57L4",
     "timestamp": "2026-10-31T06:38:22.888Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7445,51 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "e5baa034c76dcfb1f6d84e269274727e90242d4a97ea2d02c9f5fe3376afdfd3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-TQOB",
+    "timestamp": "2026-11-03T19:52:17.483Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "db4b4bf284fec7a03f0b4641777b1d48279c72ba3129649d5bd673e007af4f3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-TWEM",
+    "timestamp": "2026-11-03T19:52:24.910Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-U4PG",
+    "timestamp": "2026-11-03T19:52:35.668Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

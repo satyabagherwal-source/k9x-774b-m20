@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T19:37:49.152Z",
+  "last_updated": "2026-11-03T19:52:35.584Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34757,8 +34757,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "653afb21",
-      "content_hash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
+      "source_version": "ca8a1dad",
+      "content_hash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -34821,6 +34821,11 @@
           "number": 6354,
           "title": "Merge pull request #8004 from zhzhuang-zju/releasenote-new",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6596,
+          "title": "Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34828,7 +34833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T22:53:44.144Z",
+      "verified_at": "2026-11-03T19:52:24.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39294,8 +39299,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "3a8f3f35",
-      "content_hash": "52fc2ef9768e3a31713dc4592e6fa8e3fe2667f1b13af709edf861495ecb2a88",
+      "source_version": "fccb3537",
+      "content_hash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -39333,6 +39338,11 @@
           "number": 5732,
           "title": "Merge pull request #6700 from meilisearch/fix-ignored-nested-fields-mk2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6597,
+          "title": "Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39340,7 +39350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:41:00.768Z",
+      "verified_at": "2026-11-03T19:52:35.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50040,8 +50050,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "41e69122",
-      "content_hash": "5c0a210851fd1cb1f1f6c307ca97676c724f417dfbfde3364413c05613ba3d8d",
+      "source_version": "63b8c3e2",
+      "content_hash": "db4b4bf284fec7a03f0b4641777b1d48279c72ba3129649d5bd673e007af4f3f",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -50099,6 +50109,11 @@
           "number": 6270,
           "title": "ruff): keep a leading `--` verbatim and read help/version first",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6595,
+          "title": "test(init): pin the builtin list and the dropped safety promise",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50106,7 +50121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:50:10.811Z",
+      "verified_at": "2026-11-03T19:52:17.372Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170012,6 +170027,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T19:37:49.134Z"
+    },
+    "rule-6595": {
+      "learning_id": "rule-6595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6595,
+      "title": "test(init): pin the builtin list and the dropped safety promise",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "63b8c3e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:52:17.373Z"
+    },
+    "rule-6596": {
+      "learning_id": "rule-6596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6596,
+      "title": "Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "ca8a1dad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:52:24.797Z"
+    },
+    "rule-6597": {
+      "learning_id": "rule-6597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6597,
+      "title": "Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "fccb3537",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:52:35.561Z"
     }
   },
   "aliases": {

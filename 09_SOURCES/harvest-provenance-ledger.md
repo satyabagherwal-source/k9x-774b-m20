@@ -6997,3 +6997,6 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-plugins-scrapy-playwright` | `https://github.com/scrapy-plugins/scrapy-playwright` | `3d513d6b` | Multi-dimensional audit evidence | 2026-11-03T19:37:40.589Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `9a930787` | Multi-dimensional audit evidence | 2026-11-03T19:37:41.645Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `f31b5adf` | Multi-dimensional audit evidence | 2026-11-03T19:37:49.222Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `63b8c3e2` | Multi-dimensional audit evidence | 2026-11-03T19:52:17.487Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `ca8a1dad` | Multi-dimensional audit evidence | 2026-11-03T19:52:24.914Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `fccb3537` | Multi-dimensional audit evidence | 2026-11-03T19:52:35.672Z |

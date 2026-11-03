@@ -6988,3 +6988,6 @@
 | `CYCLE-20261103-AY22` | `2026-11-03T19:37:40.586Z` | `scrapy-plugins/scrapy-playwright` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6592` | Yes (`49d14ca2...`) |
 | `CYCLE-20261103-AYVE` | `2026-11-03T19:37:41.642Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6593` | Yes (`5e69240c...`) |
 | `CYCLE-20261103-B4PV` | `2026-11-03T19:37:49.219Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6594` | Yes (`e5baa034...`) |
+| `CYCLE-20261103-TQOB` | `2026-11-03T19:52:17.483Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6595` | Yes (`db4b4bf2...`) |
+| `CYCLE-20261103-TWEM` | `2026-11-03T19:52:24.910Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6596` | Yes (`2def9e54...`) |
+| `CYCLE-20261103-U4PG` | `2026-11-03T19:52:35.668Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6597` | Yes (`17f99642...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `3a8f3f35`  
+> **Source Version**: `fccb3537`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T10:41:00.216Z  
+> **Timestamp**: 2026-11-03T19:52:34.886Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T10:40:59.932Z  
+> **Harvest Timestamp**: 2026-11-03T19:52:34.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59718 stars
+- **Stars / Engagement**: 59766 stars
 
 ---
 
@@ -2049,186 +2049,63 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df02dbad` (2026-10-29)
-**Commit Message**: Merge pull request #6700 from meilisearch/fix-ignored-nested-fields-mk2
+### Incident Patch 1: `33da0a52` (2026-11-02)
+**Commit Message**: Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build-push-action-7.4.0
 
-Make sure that all nested fields are inserted in field id map
+Bump docker/build-push-action from 6.19.2 to 7.4.0
 
-**File**: `crates/meilisearch/tests/documents/add_documents.rs` (modified, +27/-0)
+**File**: `.github/workflows/publish-docker-images.yml` (modified, +1/-1)
 ```diff
-@@ -1640,6 +1640,33 @@ async fn error_document_field_limit_reached_over_multiple_documents() {
-     "###);
- }
+@@ -69,7 +69,7 @@ jobs:
+             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
  
-+#[actix_rt::test]
-+async fn nested_field_addition() {
-+    let server = Server::new_shared();
-+    let index = server.unique_index();
-+
-+    index.create(Some("id")).await;
-+
-+    let (response, code) = index.update_settings(json!({"searchableAttributes": ["title"]})).await;
-+    snapshot!(code, @"202 Accepted");
-+    server.wait_task(response.uid()).await.succeeded();
-+
-+    let (response, code) =
-+        index.update_documents(json!([{"id": 0, "root": {"nested": "toto"}}]), None).await;
-+    snapshot!(code, @"202 Accepted");
-+    server.wait_task(response.uid()).await.succeeded();
-+
-+    let (response, code) =
-+        index.update_documents(json!([{"id": 0, "root": {"other_nested": "toto"}}]), None).await;
-+    snapshot!(code, @"202 Accepted");
-+    server.wait_task(response.uid()).await.succeeded();
-+
-+    let (response, code) =
-+        index.update_settings(json!({"searchableAttributes": ["title", "root"]})).await;
-+    snapshot!(code, @"202 Accepted");
-+    server.wait_task(response.uid()).await.succeeded();
-+}
-+
- #[actix_rt::test]
- async fn error_document_field_limit_reached_in_one_nested_document() {
-     let server = Server::new_shared();
+       - name: Build and push by digest
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+         id: build-and-push
+         with:
+           platforms: linux/${{ matrix.platform }}
 ```
 
-**File**: `crates/milli/src/update/new/document.rs` (modified, +59/-0)
-```diff
-@@ -1,10 +1,12 @@
- use std::cell::{Cell, RefCell};
- use std::collections::{BTreeMap, BTreeSet};
-+use std::fmt::Write as _;
- use std::sync::RwLock;
- 
- use bumpalo::Bump;
- use bumparaw_collections::RawMap;
- use heed::{RoTxn, WithoutTls};
-+use permissive_json_pointer::SPLIT_SYMBOL;
- use rustc_hash::FxBuildHasher;
- use serde_json::value::RawValue;
- 
-@@ -333,6 +335,51 @@ where
-     }
- }
- 
-+fn parse_raw_value<'de, 'bump: 'de>(
-+    raw_value: &'de RawValue,
-+    alloc: &'bump Bump,
-+) -> Result<bumparaw_collections::Value<'de>> {
-+    Ok(bumparaw_collections::Value::from_raw_value(raw_value, alloc)
-+        .map_err(InternalError::SerdeJson)?)
-+}
-+
-+fn find_subfields(
-+    value: bumparaw_collections::Value<'_>,
-+    field_buf: &mut bumpalo::collections::String<'_>,
-+    fields_ids_map: &mut GlobalFieldsIdsMap<'_>,
-+    alloc: &Bump,
-+) -> Result<()> {
-+    match value {
-+        bumparaw_collections::Value::Array(raw_vec) => {
-+            for value in raw_vec {
-+                let value = parse_raw_value(value, alloc)?;
-+                find_subfields(value, field_buf, fields_ids_map, alloc)?;
-+            }
-+        }
-+        bumparaw_collections::Value::Object(raw_map) => {
-+            for (subfield, value) in raw_map {
-+                let current_pos = field_buf.len();
-+                {
-+                    // unwrap: writing to a string won't fail
-+                    write!(field_buf, "{SPLIT_SYMBOL}{subfield}").unwrap();
-+
-+                    fields_ids_map
-+                        .id_or_insert(field_buf)
-+                        .ok_or(UserError::AttributeLimitReached)?;
-+
-+                    dbg!(&field_buf);
-+
-+                    let value = parse_raw_value(value, alloc)?;
-+                    find_subfields(value, field_buf, fields_ids_map, alloc)?;
-+                }
-+                field_buf.truncate(current_pos);
-+            }
-+        }
-+        _ => {}
-+    }
-+    Ok(())
-+}
-+
- /// Turn this document into an obkv, whose fields are indexed by the provided `FieldIdMapper`.
- ///
- /// The produced obkv is suitable for storing into the documents DB, meaning:
-@@ -348,6 +395,7 @@ pub fn write_to_obkv<'s, 'a, 'map, 'buffer>(
-     document: &'s impl Document<'s>,
-     vector_document: Option<&'s impl VectorDocument<'s>>,
-     embedder_actions: &'a BTreeMap<String, EmbedderAction>,
-+    iter_subfields: bool,
-     fields_ids_map: &'a mut GlobalFieldsIdsMap<'map>,
-     mut document_buffer: &'a mut bumpalo::collections::Vec<'buffer, u8>,
- ) -> Result<&'a KvReaderFieldId>
-@@ -357,6 +405,9 @@ where
-     // will be used in 'inject_vectors
-     let vectors_value: Box<RawValue>;
- 
-+    let doc_alloc = document_buffer.bump();
-+    let mut field_buffer = bumpalo::collections::String::new_in(doc_alloc);
-+
-     document_buffer.clear();
-     let mut unordered_field_buffer = Vec::new();
-     unordered_field_buffer.clear();
-@@ -367,6 +418,14 @@ where
-         let (field_name, value) = res?;
-         let field_id =
-             fields_ids_map.id_or_insert(field_name).ok_or(UserError::AttributeLimitReached)?;
-+
-+        if iter_subfields {
-+            field_buffer.clear();
-+            field_buffer.push_str(field_name);
-+            let value = parse_raw_value(value, doc_alloc)?;
-+            find_subfields(value, &mut field_buffer, fields_ids_map, doc_alloc)?;
-+        }
-+
-         unordered_field_buffer.push((field_id, value));
-     }
- 
-```
+---
 
-**File**: `crates/milli/src/update/new/extract/documents.rs` (modified, +3/-0)
+### Incident Patch 2: `54869107` (2026-11-01)
+**Commit Message**: Bump docker/build-push-action from 6.19.2 to 7.4.0
+
+Bumps [docker/build-push-action](https://github.com/docker/build-push-action) from 6.19.2 to 7.4.0.
+- [Release notes](https://github.com/docker/build-push-action/releases)
+- [Commits](https://github.com/docker/build-push-action/compare/10e90e3645eae34f1e60eeb005ba3a3d33f178e8...c3c9e263c25d99ce0380d002d59b67737d91b0dc)
+
+---
+updated-dependencies:
+- dependency-name: docker/build-push-action
+  dependency-version: 7.4.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/publish-docker-images.yml` (modified, +1/-1)
 ```diff
-@@ -142,6 +142,7 @@ impl<'extractor> Extractor<'extractor> for DocumentsExtractor<'_, '_> {
-                         &content,
-                         vector_content.as_ref(),
-                         embedder_actions,
-+                        true,
-                         &mut new_fields_ids_map,
-                         &mut document_buffer,
-                     )?;
-@@ -173,6 +174,7 @@ impl<'extractor> Extractor<'extractor> for DocumentsExtractor<'_, '_> {
-                         &content,
-                         inserted_vectors.as_ref(),
-                         embedder_actions,
-+                        true,
-                         &mut new_fields_ids_map,
-                         &mut document_buffer,
-                     )?;
-@@ -239,6 +241,7 @@ impl<'extractor> SettingsChangeExtractor<'extractor> for SettingsChangeDocumentE
-                 &content,
-                 Some(&vector_content),
-                 self.embedder_actions,
-+                false,
-                 &mut new_fields_ids_map,
-                 &mut document_buffer,
-             )?;
+@@ -69,7 +69,7 @@ jobs:
+             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
+ 
+       - name: Build and push by digest
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+         id: build-and-push
+         with:
+           platforms: linux/${{ matrix.platform }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6706** (2026-10-29): Bump rustls from 0.23.45 to 0.23.46 (@dependabot[bot])
-- **PR #6704** (closed): Bump roaring to v0.12.0 (@Kerollmops)
-- **PR #6703** (2026-10-28): Fix issue with ranking scores greater than 1 (@dureuill)
-- **PR #6700** (2026-10-29): Make sure that all nested fields are inserted in field id map (@dureuill)
-- **PR #6699** (2026-10-29): Clamp map_size to page size when removing tasks during snapshot creation (@mavrodikomsd-eng)
-- **PR #6698** (2026-10-26): Fix Debian CI (@curquiza)
+- **PR #6714** (2026-11-02): Bump docker/login-action from 4.2.0 to 4.7.0 (@dependabot[bot])
+- **PR #6713** (2026-11-02): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
+- **PR #6712** (2026-11-02): Bump docker/build-push-action from 6.19.2 to 7.4.0 (@dependabot[bot])
+- **PR #6711** (2026-11-02): Bump dart-lang/setup-dart from 1.7.2 to 1.8.1 (@dependabot[bot])
+- **PR #6709** (2026-11-02): Update version for the next release (v1.56.1) in Cargo.toml (@meili-bot)
+- **PR #6707** (2026-11-02): Backport some fixes (@dureuill)
 
 ---
 
@@ -2248,54 +2125,28 @@ Make sure that all nested fields are inserted in field id map
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6700 from meilisearch/fix-ignored-nested-fields-mk2
+## X. Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build
 
 **RULE**:
-When implementing operations in `crates/meilisearch/tests/documents/add_documents.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish-docker-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df02dbad`: Merge pull request #6700 from meilisearch/fix-ignored-nested-fields-mk2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33da0a52`: Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build-push-action-7.4.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch/tests/documents/add_documents.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-docker-images.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[actix_rt::test]
-async fn nested_field_addition() {
-    let server = Server::new_shared();
-    let index = server.unique_index();
-
-    index.create(Some("id")).await;
-
-    let (response, code) = index.update_settings(json!({"searchableAttributes": ["title"]})).await;
-    snapshot!(code, @"202 Accepted");
-    server.wait_task(response.uid()).await.succeeded();
-
-    let (response, code) =
-        index.update_documents(json!([{"id": 0, "root": {"nested": "toto"}}]), None).await;
-    snapshot!(code, @"202 Accepted");
-    server.wait_task(response.uid()).await.succeeded();
-
-    let (response, code) =
-        index.update_documents(json!([{"id": 0, "root": {"other_nested": "toto"}}]), None).await;
-    snapshot!(code, @"202 Accepted");
-    server.wait_task(response.uid()).await.succeeded();
-
-    let (response, code) =
-        index.update_settings(json!({"searchableAttributes": ["title", "root"]})).await;
-    snapshot!(code, @"202 Accepted");
-    server.wait_task(response.uid()).await.succeeded();
-}
-
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df02dbad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33da0a52` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T19:37:49.227Z",
-  "total_cycles_completed": 6965,
-  "total_learnings_persisted": 6965,
-  "total_rules_promoted": 6611,
+  "last_updated": "2026-11-03T19:52:35.678Z",
+  "total_cycles_completed": 6968,
+  "total_learnings_persisted": 6968,
+  "total_rules_promoted": 6614,
   "history": [
-    {
-      "timestamp": "2026-11-01T02:07:49.041Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T02:15:55.343Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T02:16:04.811Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-01T02:22:44.564Z",
       "repository": "tencent/Hy-Memory-30B-A3B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T19:37:49.227Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:52:17.493Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:52:24.920Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:52:35.678Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

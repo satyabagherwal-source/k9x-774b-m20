@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "653afb21",
+    "sourceVersion": "ca8a1dad",
     "license": "Apache-2.0",
-    "contentHash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
-    "lastHarvestedAt": "2026-10-31T22:53:44.252Z",
+    "contentHash": "2def9e548d03de38583c110b64664063526124b4e87fd38e1fc63f77aa7264b8",
+    "lastHarvestedAt": "2026-11-03T19:52:24.914Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "3a8f3f35",
+    "sourceVersion": "fccb3537",
     "license": "NOASSERTION",
-    "contentHash": "52fc2ef9768e3a31713dc4592e6fa8e3fe2667f1b13af709edf861495ecb2a88",
-    "lastHarvestedAt": "2026-10-30T10:41:00.866Z",
+    "contentHash": "17f99642447b8eb1a1f237bfd68c263f6b6e28af62ce09020dc2bd063ca440e3",
+    "lastHarvestedAt": "2026-11-03T19:52:35.672Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "41e69122",
+    "sourceVersion": "63b8c3e2",
     "license": "Apache-2.0",
-    "contentHash": "5c0a210851fd1cb1f1f6c307ca97676c724f417dfbfde3364413c05613ba3d8d",
-    "lastHarvestedAt": "2026-10-31T17:50:10.911Z",
+    "contentHash": "db4b4bf284fec7a03f0b4641777b1d48279c72ba3129649d5bd673e007af4f3f",
+    "lastHarvestedAt": "2026-11-03T19:52:17.487Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
