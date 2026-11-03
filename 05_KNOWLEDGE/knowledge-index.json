@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:15:29.088Z",
+  "last_updated": "2026-11-03T22:23:42.340Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7981,13 +7981,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "f4978e8f",
-      "content_hash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "b0fa7d904b29c8a23fa2439232bf194b2528955f8d3e79e5697d730516d46233",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8087,7 +8087,7 @@
         {
           "number": 6549,
           "title": "runtime): bind file rewind to the selected reviewed range [skip ci]",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8095,7 +8095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:14:14.054Z",
+      "verified_at": "2026-11-03T22:23:36.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35513,8 +35513,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "0462edd7",
-      "content_hash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
+      "source_version": "da7b0e35",
+      "content_hash": "9e56bdb82e11d6a4bd332e5fa22d7af9b409512138e497142aa0d7c5b8215122",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -35552,6 +35552,11 @@
           "number": 5274,
           "title": "Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6643,
+          "title": "Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35559,7 +35564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T12:02:04.083Z",
+      "verified_at": "2026-11-03T22:23:42.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68150,8 +68155,8 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "8accd9cb",
-      "content_hash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
+      "source_version": "da2a26e8",
+      "content_hash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
@@ -68174,6 +68179,11 @@
           "number": 5914,
           "title": "Show swap under memory and add opt-in swap and memory pressure alerts (#261)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6642,
+          "title": "Add Turkish localization (#247)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68181,7 +68191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:10:24.854Z",
+      "verified_at": "2026-11-03T22:23:38.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74274,8 +74284,8 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "6e4c7a63",
-      "content_hash": "b4b9408b0c8d31ae2e48cd953e3ec33bb1e7eb722d1ab98c677257a9d911d664",
+      "source_version": "9a76fe0e",
+      "content_hash": "e70ad226f76dbf0833db59b1b71efbc66817069e9738eb9000de1c98fa5dbdb7",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
@@ -74293,6 +74303,11 @@
           "number": 4754,
           "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1925)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6641,
+          "title": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1927)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74300,7 +74315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:38:27.999Z",
+      "verified_at": "2026-11-03T22:23:37.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169547,14 +169562,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6549,
       "title": "runtime): bind file rewind to the selected reviewed range [skip ci]",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "f4978e8f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T17:14:14.054Z"
+      "verified_at": "2026-11-03T22:23:36.867Z"
     },
     "rule-6550": {
       "learning_id": "rule-6550",
@@ -170924,6 +170939,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:15:25.647Z"
+    },
+    "rule-6641": {
+      "learning_id": "rule-6641",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6641,
+      "title": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1927)",
+      "source_url": "https://github.com/fb55/css-select",
+      "source_version": "9a76fe0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:23:37.265Z"
+    },
+    "rule-6642": {
+      "learning_id": "rule-6642",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6642,
+      "title": "Add Turkish localization (#247)",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "da2a26e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:23:38.935Z"
+    },
+    "rule-6643": {
+      "learning_id": "rule-6643",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6643,
+      "title": "Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "da7b0e35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:23:42.327Z"
     }
   },
   "aliases": {

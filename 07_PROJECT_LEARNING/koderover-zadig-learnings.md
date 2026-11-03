@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `0462edd7`  
+> **Source Version**: `da7b0e35`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:02:03.497Z  
+> **Timestamp**: 2026-11-03T22:23:41.906Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:02:03.490Z  
+> **Harvest Timestamp**: 2026-11-03T22:23:41.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3263 stars
+- **Stars / Engagement**: 3269 stars
 
 ---
 
@@ -1158,362 +1158,111 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0462edd7` (2026-10-28)
-**Commit Message**: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name
+### Incident Patch 1: `da7b0e35` (2026-11-03)
+**Commit Message**: Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql
 
-fix: improve rollback image checks and error logging
+fix: use /rest/api/2/search/jql for Jira Cloud issue search
 
-**File**: `pkg/microservice/aslan/core/common/service/registry/service.go` (modified, +23/-2)
+**File**: `pkg/tool/jira/issue.go` (modified, +71/-0)
 ```diff
-@@ -273,13 +273,19 @@ func (c *authClient) listTags(repoName string) (tags []string, err error) {
- func (c *authClient) tagExists(repoName, tag string) (bool, error) {
- 	repo, err := c.getRepository(repoName)
- 	if err != nil {
-+		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
- 		return false, err
- 	}
+@@ -19,7 +19,9 @@ package jira
+ import (
+ 	"fmt"
+ 	"net/http"
++	"net/url"
+ 	"strconv"
++	"strings"
  
- 	_, err = repo.Tags(c.ctx).Get(c.ctx, tag)
- 	if err == nil {
- 		return true, nil
- 	}
-+	details, marshalErr := json.Marshal(err)
-+	if marshalErr != nil {
-+		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
-+	}
-+	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
- 	if isRegistryImageNotFound(err) {
- 		return false, nil
- 	}
-@@ -575,27 +581,39 @@ func (s *v2RegistryService) GetImageInfo(option GetRepoImageDetailOption, log *z
- func (s *v2RegistryService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
- 	cli, err := s.createClient(option.Endpoint, log)
- 	if err != nil {
-+		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
- 		return false, err
- 	}
- 
- 	repoName := strings.Trim(strings.Join([]string{option.Namespace, option.Image}, "/"), "/")
- 	if option.Digest == "" {
--		return cli.tagExists(repoName, option.Tag)
-+		exists, err := cli.tagExists(repoName, option.Tag)
-+		if err != nil {
-+			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
-+		}
-+		return exists, err
- 	}
- 
- 	dgst, err := digest.Parse(option.Digest)
- 	if err != nil {
-+		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
- 		return false, err
- 	}
- 	repo, err := cli.getRepository(repoName)
- 	if err != nil {
-+		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
- 		return false, err
- 	}
- 	manifestService, err := repo.Manifests(cli.ctx)
- 	if err != nil {
-+		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
- 		return false, err
- 	}
--	return manifestService.Exists(cli.ctx, dgst)
-+	exists, err := manifestService.Exists(cli.ctx, dgst)
-+	if err != nil {
-+		log.Errorf("failed to check registry manifest %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
-+	}
-+	return exists, err
- }
- 
- type ReverseStringSlice []string
-@@ -783,6 +801,7 @@ func (s *swrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
- 	}
- 	repoTags, err := swrCli.ListRepositoryTags(request)
- 	if err != nil {
-+		log.Errorf("failed to list SWR image tags (registry: %s, namespace: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
- 		return false, err
- 	}
- 	if repoTags.Body == nil {
-@@ -933,6 +952,7 @@ func (s *ecrService) GetImageInfo(option GetRepoImageDetailOption, log *zap.Suga
- func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
- 	svc, err := s.getECRService(option.Endpoint, log)
- 	if err != nil {
-+		log.Errorf("failed to create ECR client for image %s/%s (tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
- 		return false, err
- 	}
- 	imageID := &ecr.ImageIdentifier{}
-@@ -946,6 +966,7 @@ func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
- 		RepositoryName: aws.String(option.Image),
- 	})
- 	if err != nil {
-+		log.Errorf("failed to describe ECR image (registry: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
- 		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == ecr.ErrCodeImageNotFoundException {
- 			return false, nil
- 		}
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +19/-14)
-```diff
-@@ -308,6 +308,7 @@ type CheckRollbackEnvServiceVersionResponse struct {
- func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredLogger) ([]string, error) {
- 	registryInfos, err := ListRegistryNamespaces("", false, log)
- 	if err != nil {
-+		log.Errorf("failed to list registries for rollback image check: %v", err)
- 		return nil, fmt.Errorf("failed to list registries for rollback image check: %w", err)
- 	}
- 
-@@ -320,7 +321,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- 	for _, registryInfo := range registryInfos {
- 		registryAddress, err := registryInfo.GetRegistryAddress()
- 		if err != nil {
--			log.Warnf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
-+			log.Errorf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
- 			continue
- 		}
- 
-@@ -341,16 +342,17 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- 
- 		named, err := reference.ParseNormalizedNamed(container.Image)
- 		if err != nil {
-+			log.Errorf("invalid rollback image %s: %v", container.Image, err)
- 			missingImages = append(missingImages, container.Image)
- 			continue
- 		}
--		imageRegistry, err := ExtractImageRegistry(container.Image)
--		if err != nil {
--			missingImages = append(missingImages, container.Image)
--			continue
-+		imageRegistry := reference.Domain(named)
-+		imagePath := reference.Path(named)
-+		imageNamespace := ""
-+		if i := strings.LastIndex(imagePath, "/"); i >= 0 {
-+			imageNamespace = imagePath[:i]
- 		}
--		imageRegistry = strings.Split(strings.Trim(imageRegistry, "/"), "/")[0]
--		imageNamespace := strings.Trim(ExtractRegistryNamespace(container.Image), "/")
-+		log.Infof("checking rollback image %s (normalized: %s)", container.Image, named.String())
- 		var matchedRegistry *rollbackImageRegistry
- 		for _, registry := range registries {
- 			if !strings.EqualFold(imageRegistry, registry.host) {
-@@ -365,7 +367,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- 			}
- 		}
- 		if matchedRegistry == nil {
--			log.Warnf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
-+			log.Errorf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
- 			continue
- 		}
- 
-@@ -374,21 +376,21 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- 		if !ok {
- 			registryInfo, err = FindRegistryById(registryID, true, log)
- 			if err != nil {
--				log.Warnf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
-+				log.Errorf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
- 				continue
- 			}
- 			credentialRegistries[registryID] = registryInfo
- 		}
- 
--		repositoryName := reference.Path(named)
-+		repositoryName := imagePath
- 		namespace := strings.Trim(registryInfo.Namespace, "/")
- 		if namespace != "" {
- 			repositoryName = strings.TrimPrefix(repositoryName, namespace+"/")
- 		}
- 
--		tag := ExtractImageTag(container.Image)
--		if tag == "" {
--			tag = "latest"
-+		tag := "latest"
-+		if tagged, ok := named.(reference.Tagged); ok {
-+			tag = tagged.Tag()
- 		}
- 
- 		tlsEnabled, tlsCert := true, ""
-@@ -409,10 +411,11 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- 			Tag:   tag,
- 		}, log)
- 		if err != nil {
--			log.Warnf("failed to check whether rollback image %s exists: %v", container.Image, err)
-+			log.Errorf("failed to check whether rollback image %s exists: %v", container.Image, err)
- 			continue
- 		}
- 		if !exists {
-+			log.Errorf("rollback image %s does not exist", container.Image)
- 			missingImages = append(missingImages, container.Image)
- 		}
- 	}
-@@ -423,6 +426,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
- func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, revision int64, isHelmChart, isProduction bool, log *zap.SugaredLogger) (*CheckRollbackEnvServiceVersionResponse, error) {
- 	envSvcVersion, err := mongodb.NewEnvServiceVersionColl().Find(projectName, envName, serviceName, isHelmChart, isProduction, revision)
- 	if err != nil {
-+		log.Errorf("failed to find service version for rollback image check: %v", err)
- 		if mongodb.IsErrNoDocuments(err) {
- 			return nil, fmt.Errorf("历史版本 %d 不存在", revision)
- 		}
-@@ -431,6 +435,7 @@ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, re
- 
- 	unavailableImages, err := checkRollbackImages(envSvcVersion.Service.Containers, log)
- 	if err != nil {
-+		log.Errorf("rollback image check failed: %v", err)
- 		return nil, err
- 	}
- 	return &CheckRollbackEnvServiceVersionResponse{
-```
-
----
-
-### Incident Patch 2: `e145a8e5` (2026-10-28)
-**Commit Message**: Merge pull request #5034 from huanghongbo-hhb/fix/host-build-registry-validation
-
-fix(workflow): allow host builds without registry
-
-**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_build.go` (modified, +32/-10)
-```diff
-@@ -30,6 +30,7 @@ import (
- 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
- 	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
- 	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
-+	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
- 	commonservice "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service"
- 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/repository"
- 	templ "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/template"
-@@ -324,9 +325,17 @@ func (j BuildJobController) ClearSelection() {
- func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error) {
- 	logger := log.SugaredLogger()
- 	resp := make([]*commonmodels.JobTask, 0)
--	registry, err := commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
-+	project, err := templaterepo.NewProductColl().Find(j.workflow.Project)
- 	if err != nil {
--		return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
-+		return nil, fmt.Errorf("failed to find project %s, err: %v", j.workflow.Project, err)
-+	}
-+	needRegistry := !project.IsCVMProduct() || j.jobSpec.DockerRegistryID != ""
-+	registry := &commonmodels.RegistryNamespace{}
-+	if needRegistry {
-+		registry, err = commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
-+		if err != nil {
-+			return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
-+		}
- 	}
- 
- 	registries, err := commonservice.ListRegistryNamespaces("", true, logger)
-@@ -352,20 +361,26 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
- 	for jobSubTaskID, build := range j.jobSpec.ServiceAndBuilds {
- 		imageTag := commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "image")
- 
--		image := fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
--		if len(registry.Namespace) > 0 {
--			image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
--		}
-+		image := ""
-+		if needRegistry {
-+			image = fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
-+			if len(registry.Namespace) > 0 {
-+				image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
-+			}
- 
--		image = strings.TrimPrefix(image, "http://")
--		image = strings.TrimPrefix(image, "https://")
-+			image = strings.TrimPrefix(image, "http://")
-+			image = strings.TrimPrefix(image, "https://")
-+		}
- 
- 		pkgFile := fmt.Sprintf("%s.tar.gz", commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "tar"))
- 
- 		buildInfo, err := buildSvc.GetBuild(build.BuildName, build.ServiceName, build.ServiceModule)
- 		if err != nil {
- 			return nil, fmt.Errorf("find build: %s error: %v", build.BuildName, err)
- 		}
-+		if !needRegistry && buildInfo.PostBuild != nil && buildInfo.PostBuild.DockerBuild != nil {
-+			return nil, fmt.Errorf("build %s/%s has docker build configured but no docker registry selected", build.ServiceName, build.ServiceModule)
-+		}
- 		basicImage, err := commonrepo.NewBasicImageColl().Find(buildInfo.PreBuild.ImageID)
- 		if err != nil {
- 			return nil, fmt.Errorf("find base image: %s error: %v", buildInfo.PreBuild.ImageID, err)
-@@ -567,7 +582,10 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
- 		if jobTask.Infrastructure == setting.JobVMInfrastructure {
- 			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
- 		} else {
--			scripts = append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
-+			if needRegistry {
-+				scripts = append(scripts, dockerLoginCmd)
-+			}
-+			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
- 			scripts = append(scripts, outputScript(outputs, jobTask.Infrastructure)...)
- 		}
- 		scriptStep := &commonmodels.StepTask{
-@@ -719,7 +737,11 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
- 
- 		// init post build shell step
- 		if buildInfo.PostBuild != nil && buildInfo.PostBuild.Scripts != "" {
--			scripts := append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
-+			scripts := make([]string, 0)
-+			if needRegistry {
-+				scripts = append(scripts, dockerLoginCmd)
-+			}
-+			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
- 			shellStep := &commonmodels.StepTask{
- 				Name:     build.ServiceName + "-post-shell",
- 				JobName:  jobTask.Name,
-```
-
----
-
-### Incident Patch 3: `e15828ec` (2026-10-28)
-**Commit Message**: Merge pull request #5031 from PetrusZ/fix/build_vars
-
-fix: isolate cached build and template configurations
-
-**File**: `pkg/microservice/aslan/core/common/service/build.go` (modified, +15/-2)
-```diff
-@@ -31,6 +31,7 @@ import (
- 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
- 	"github.com/koderover/zadig/v2/pkg/tool/log"
- 	"github.com/koderover/zadig/v2/pkg/types"
-+	"github.com/koderover/zadig/v2/pkg/util"
+ 	"github.com/pkg/errors"
  )
- 
- func CreateBuild(username string, build *commonmodels.Build, log *zap.SugaredLogger) error {
-@@ -271,10 +272,15 @@ func (c *BuildService) GetBuild(buildName, serviceName, serviceModule string) (*
- 		buildInfo = buildMapValue.(*commonmodels.Build)
- 	}
- 
--	if err := FillBuildDetail(buildInfo, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
-+	// Deep copy so service overrides and caller mutations cannot change the cached Build.
-+	buildCopy := new(commonmodels.Build)
-+	if err := util.DeepCopy(buildCopy, buildInfo); err != nil {
-+		return nil, fmt.Errorf("copy build %s: %w", buildName, err)
-+	}
-+	if err := FillBuildDetail(buildCopy, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
- 		return nil, err
- 	}
--	return buildInfo, nil
-+	return buildCopy, nil
+@@ -134,6 +136,10 @@ func (s *IssueService) GetTypes(project string) ([]*IssueTypeWithStatus, error)
  }
  
- func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule string, cacheMap *sync.Map) error {
-@@ -307,6 +313,13 @@ func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule
- 		}
- 	}
- 
-+	// Build copying does not cover template pointers assigned below; copy the template to keep its cache immutable.
-+	templateCopy := new(commonmodels.BuildTemplate)
-+	if err := util.DeepCopy(templateCopy, buildTemplate); err != nil {
-+		return fmt.Errorf("copy build template %s: %w", moduleBuild.TemplateID, err)
+ func (s *IssueService) SearchByJQL(jql string, findAll bool) ([]*Issue, error) {
++	// Jira Cloud removed /rest/api/2/search (CHANGE-2046), Server and Data Center still serve it
++	if isJiraCloud(s.client.Host) {
++		return s.searchByJQLCloud(jql, findAll)
 +	}
-+	buildTemplate = templateCopy
+ 	var re []*Issue
+ 	start := 0
+ 	for {
+@@ -178,6 +184,71 @@ func (s *IssueService) searchByJQL(jql string, start int) ([]*Issue, int, error)
+ 	return re.Issues, next, nil
+ }
+ 
++func (s *IssueService) searchByJQLCloud(jql string, findAll bool) ([]*Issue, error) {
++	var re []*Issue
++	token := ""
++	for {
++		list, next, err := s.searchByJQLWithToken(jql, token)
++		if err != nil {
++			return nil, err
++		}
++		re = append(re, list...)
++		if next == "" || !findAll {
++			return re, nil
++		}
++		token = next
++	}
++}
 +
- 	moduleBuild.Timeout = buildTemplate.Timeout
- 	moduleBuild.PreBuild = buildTemplate.PreBuild
- 	moduleBuild.JenkinsBuild = buildTemplate.JenkinsBuild
++// searchByJQLWithToken https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-jql-get
++func (s *IssueService) searchByJQLWithToken(jql, token string) ([]*Issue, string, error) {
++	url := s.client.Host + "/rest/api/2/search/jql"
++	params := map[string]string{
++		"jql":    jql,
++		"fields": "*navigable",
++	}
++	if token != "" {
++		params["nextPageToken"] = token
++	}
++	resp, err := s.client.R().SetQueryParams(params).Get(url)
++	if err != nil {
++		return nil, "", err
++	}
++	if resp.GetStatusCode()/100 != 2 {
++		return nil, "", errors.Errorf("unexpected Jira status code %d, body: %s", resp.GetStatusCode(), resp.String())
++	}
++	type tmp struct {
++		NextPageToken string   `json:"nextPageToken"`
++		IsLast        bool     `json:"isLast"`
++		Issues        []*Issue `json:"issues"`
++	}
++	var re tmp
++	if err = resp.UnmarshalJson(&re); err != nil {
++		return nil, "", errors.Wrap(err, "unmarshal")
++	}
++	next := re.NextPageToken
++	if re.IsLast {
++		next = ""
++	}
++	return re.Issues, next, nil
++}
++
++// isJiraCloud reports whether host is a Jira Cloud site (*.atlassian.net or api.atlassian.com/ex/jira)
++func isJiraCloud(host string) bool {
++	u, err := url.Parse(host)
++	if err == nil && u.Host == "" {
++		u, err = url.Parse("https://" + host)
++	}
++	if err != nil {
++		return false
++	}
++	hostname := strings.ToLower(u.Hostname())
++	if strings.HasSuffix(hostname, ".atlassian.net") {
++		return true
++	}
++	return hostname == "api.atlassian.com" && (u.Path == "/ex/jira" || strings.HasPrefix(u.Path, "/ex/jira/"))
++}
++
+ type updateBody struct {
+ 	Transition struct {
+ 		ID string `json:"id"`
 ```
 
-**File**: `pkg/microservice/aslan/core/common/service/build_test.go` (added, +90/-0)
+**File**: `pkg/tool/jira/issue_test.go` (added, +192/-0)
 ```diff
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,192 @@
 +/*
 +Copyright 2026 The KodeRover Authors.
 +
@@ -1530,89 +1279,561 @@ fix: isolate cached build and template configurations
 +limitations under the License.
 +*/
 +
-+package service
++package jira
 +
 +import (
-+	"reflect"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"slices"
 +	"testing"
-+
-+	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
-+	"github.com/koderover/zadig/v2/pkg/util"
 +)
 +
-+func TestGetBuildDoesNotMutateCaches(t *testing.T) {
-+	for _, templateID := range []string{"", "template"} {
-+		t.Run("template="+templateID, func(t *testing.T) {
-+			cached := &commonmodels.Build{
-+				TemplateID: templateID,
-+				PreBuild: &commonmodels.PreBuild{Envs: commonmodels.KeyValList{
-+					{Key: "ENV", Value: "default", ChoiceOption: []string{"default", "A"}},
-+				}},
-+				Targets: []*commonmodels.ServiceModuleTarget{
-+					{
-+						ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "A", ServiceModule: "a"},
-+						Envs:              commonmodels.KeyValList{{Key: "ENV", Value: "A"}},
-+					},
-+					{ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "B", ServiceModule: "b"}},
-+				},
-+			}
-+			template := &commonmodels.BuildTemplate{PreBuild: cached.PreBuild}
-+			svc := NewBuildService()
-+			svc.BuildMap.Store("build", cached)
-+			svc.BuildTemplateMap.Store(templateID, template)
-+			originalBuild := new(commonmodels.Build)
-+			originalTemplate := new(commonmodels.BuildTemplate)
-+			if err := util.DeepCopy(originalBuild, cached); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := util.DeepCopy(originalTemplate, template); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			a, err := svc.GetBuild("build", "A", "a")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			wantA := "default"
-+			if templateID != "" {
-+				wantA = "A"
-+			}
-+			if got := a.PreBuild.Envs[0].Value; got != wantA {
-+				t.Fatalf("A ENV = %q, want %q", got, wantA)
-+			}
-+			b, err := svc.GetBuild("build", "B", "b")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if got := b.PreBuild.Envs[0].Value; got != "default" {
-+				t.Errorf("B inherited A's ENV: got %q, want default", got)
-+			}
-+			if got := a.PreBuild.Envs[0].Value; got != wantA {
-+				t.Errorf("reading B changed A's ENV: got %q, want %q", got, wantA)
-+			}
-+			a.PreBuild.Envs[0].Value = "caller mutation"
-+			a.PreBuild.Envs[0].ChoiceOption[0] = "caller mutation"
-+			if got := b.PreBuild.Envs[0].Value; got != "default" {
-+				t.Errorf("mutating A changed B's ENV: %q", got)
-+			}
-+			if !reflect.DeepEqual(cached, originalBuild) {
-+				t.Error("cached build was mutated")
-+			}
-+			if !reflect.DeepEqual(template, originalTemplate) {
-+				t.Error("cached template was mutated")
-+			}
-+		})
++func TestIsJiraCloud(t *testing.T) {
++	cases := []struct {
++		host string
++		want bool
++	}{
++		{"acme.atlassian.net", true},
++		{"https://acme.atlassian.net", true},
++		{"https://acme.atlassian.net:443/", true},
++		{"https://ACME.Atlassian.NET", true},
++		{"https://api.atlassian.com/ex/jira/11223344-a1b2-c3d4-e5f6-123456abcdef", true},
++		{"api.atlassian.com/ex/jira/11223344-a1b2-c3d4-e5f6-123456abcdef", true},
++		{"https://api.atlassian.com/ex/jira", true},
++		{"https://api.atlassian.com/ex/jiraX/11223344-a1b2-c3d4-e5f6-123456abcdef", false},
++		{"https://api.atlassian.com/oauth/token", false},
++		{"https://jira.example.com", false},
++		{"http://jira.internal:8080/jira", false},
++		{"https://evilatlassian.net", false},
++		{"https://atlassian.net.example.com", false},
++		{"", false},
++		{"://bad host", false},
 +	}
++	for _, c := range cases {
++		if got := isJiraCloud(c.host); got != c.want {
++			t.Errorf("isJiraCloud(%q) = %v, want %v", c.host, got, c.want)
++		}
++	}
++}
++
++// cloudSearch serves /rest/api/2/search/jql with one page per nextPageToken and records the
++// tokens it was asked for.
++func cloudSearch(t *testing.T, pages map[string]string, tokens *[]string) *httptest.Server {
++	t.Helper()
++	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/rest/api/2/search/jql" {
++			t.Errorf("path = %s, want /rest/api/2/search/jql", r.URL.Path)
++		}
++		if got := r.URL.Query().Get("fields"); got != "*navigable" {
++			t.Errorf("fields = %q, want *navigable", got)
++		}
++		token := r.URL.Query().Get("nextPageToken")
++		*tokens = append(*tokens, token)
++		page, ok := pages[token]
++		if !ok {
++			http.Error(w, `{"errorMessages":["unknown token"]}`, http.StatusBadRequest)
++			return
++		}
++		w.Header().Set("Content-Type", "application/json")
++		fmt.Fprint(w, page)
++	}))
++}
++
++func issueKeys(issues []*Issue) []string {
++	keys := make([]string, 0, len(issues))
++	for _, issue := range issues {
++		keys = append(keys, issue.Key)
++	}
++	return keys
++}
++
++func TestSearchByJQLCloudFollowsNextPageTokenUntilIsLast(t *testing.T) {
++	var tokens []string
++	server := cloudSearch(t, map[string]string{
++		"":       `{"issues":[{"key":"HELP-1"},{"key":"HELP-2"}],"nextPageToken":"page-2","isLast":false}`,
++		"page-2": `{"issues":[{"key":"HELP-3"}],"nextPageToken":"page-3","isLast":true}`,
++	}, &tokens)
++	defer server.Close()
++	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
++
++	issues, err := client.Issue.searchByJQLCloud("project = HELP", true)
++	if err != nil {
++		t.Fatalf("searchByJQLCloud: %v", err)
++	}
++	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1", "HELP-2", "HELP-3"}) {
++		t.Errorf("issues = %v, want HELP-1, HELP-2 and HELP-3", keys)
++	}
++	// isLast ends the search even when the last page still carries a nextPageToken.
++	if !slices.Equal(tokens, []string{"", "page-2"}) {
++		t.Errorf("tokens requested = %q, want the first page and page-2 only", tokens)
++	}
++}
++
++func TestSearchByJQLCloudStopsWithoutANextPageToken(t *testing.T) {
++	var tokens []string
++	server := cloudSearch(t, map[string]string{
++		"": `{"issues":[{"key":"HELP-1"}]}`,
++	}, &tokens)
++	defer server.Close()
++	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
++
++	issues, err := client.Issue.searchByJQLCloud("project = HELP", true)
++	if err != nil {
++		t.Fatalf("searchByJQLCloud: %v", err)
++	}
++	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1"}) {
++		t.Errorf("issues = %v, want HELP-1", keys)
++	}
++	if len(tokens) != 1 {
++		t.Errorf("requests = %d, want 1", len(tokens))
++	}
++}
++
++func TestSearchByJQLCloudReadsOnePageUnlessFindAll(t *testing.T) {
++	var tokens []string
++	server := cloudSearch(t, map[string]string{
++		"": `{"issues":[{"key":"HELP-1"}],"nextPageToken":"page-2","isLast":false}`,
++	}, &tokens)
++	defer server.Close()
++	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
++
++	issues, err := client.Issue.searchByJQLCloud("project = HELP", false)
++	if err != nil {
++		t.Fatalf("searchByJQLCloud: %v", err)
++	}
++	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1"}) {
++		t.Errorf("issues = %v, want HELP-1", keys)
++	}
++	if len(tokens) != 1 {
++		t.Errorf("requests = %d, want 1", len(tokens))
++	}
++}
++
++func TestSearchByJQ
+```
+
+---
+
+### Incident Patch 2: `110de3dd` (2026-11-03)
+**Commit Message**: Merge pull request #5050 from Cynthia-0203/fix/build-pod-hide-git-credentials
+
+feat: mask git tokens in build pod logs
+
+**File**: `pkg/microservice/jobexecutor/core/service/job.go` (modified, +13/-2)
+```diff
+@@ -35,6 +35,7 @@ import (
+ 	"github.com/koderover/zadig/v2/pkg/setting"
+ 	"github.com/koderover/zadig/v2/pkg/tool/log"
+ 	"github.com/koderover/zadig/v2/pkg/types/job"
++	"github.com/koderover/zadig/v2/pkg/util"
+ )
+ 
+ type Job struct {
+@@ -141,6 +142,16 @@ func (j *Job) getUserEnvs() []string {
+ }
+ 
+ func (j *Job) Run(ctx context.Context) error {
++	gitTokens, err := meta.CollectGitTokens(j.Ctx.Steps)
++	if err != nil {
++		return err
++	}
++	// Add Git credentials only to log masking, not to the subprocess environment.
++	logSecretEnvs := make([]string, 0, len(gitTokens)+len(j.Ctx.SecretEnvs))
++	for i, token := range gitTokens {
++		logSecretEnvs = append(logSecretEnvs, fmt.Sprintf("ZADIG_GIT_TOKEN_%d=%s", i, token))
++	}
++	logSecretEnvs = append(logSecretEnvs, j.Ctx.SecretEnvs...)
+ 	if err := os.MkdirAll(job.JobOutputDir, os.ModePerm); err != nil {
+ 		return err
+ 	}
+@@ -150,9 +161,9 @@ func (j *Job) Run(ctx context.Context) error {
+ 		if hasFailed && !stepInfo.Onfailure {
+ 			continue
+ 		}
+-		if err := step.RunStep(ctx, stepInfo, j.ActiveWorkspace, j.Ctx.Paths, j.getUserEnvs(), j.Ctx.SecretEnvs, j.ConfigMapUpdater); err != nil {
++		if err := step.RunStep(ctx, stepInfo, j.ActiveWorkspace, j.Ctx.Paths, j.getUserEnvs(), logSecretEnvs, j.ConfigMapUpdater); err != nil {
+ 			hasFailed = true
+-			respErr = err
++			respErr = fmt.Errorf("%s", util.MaskSecretEnvs(err.Error(), logSecretEnvs))
+ 		}
+ 	}
+ 	return respErr
+```
+
+**File**: `pkg/microservice/jobexecutor/core/service/meta/git_log.go` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++/*
++Copyright 2022 The KodeRover Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package meta
++
++import (
++	"encoding/base64"
++	"fmt"
++	"net/url"
++	"sort"
++	"strings"
++
++	"gopkg.in/yaml.v2"
++
++	"github.com/koderover/zadig/v2/pkg/types"
++	"github.com/koderover/zadig/v2/pkg/types/step"
++)
++
++// CollectGitTokens gathers repository authentication secrets and their URL-escaped forms for log masking.
++func CollectGitTokens(steps []*Step) ([]string, error) {
++	var tokens []string
++	for _, info := range steps {
++		if info.StepType != "git" {
++			continue
++		}
++		yamlBytes, err := yaml.Marshal(info.Spec)
++		if err != nil {
++			return nil, fmt.Errorf("marshal spec %+v failed", info.Spec)
++		}
++		var spec *step.StepGitSpec
++		if err := yaml.Unmarshal(yamlBytes, &spec); err != nil {
++			return nil, fmt.Errorf("unmarshal spec %s to git spec failed", yamlBytes)
++		}
++		if spec == nil {
++			return nil, fmt.Errorf("git spec is empty")
++		}
++		hasSubmodules := false
++		for _, repo := range spec.Repos {
++			if repo != nil {
++				tokens = append(tokens, repo.OauthToken)
++				if repo.Source == types.ProviderGerrit {
++					tokens = append(tokens, repo.Password)
++					// Gerrit clone URLs contain the HTTP password decoded from the access token.
++					if userpass, err := base64.StdEncoding.DecodeString(repo.OauthToken); err == nil {
++						if _, password, ok := strings.Cut(string(userpass), ":"); ok {
++							tokens = append(tokens, password)
++						}
++					}
++				}
++				hasSubmodules = hasSubmodules || repo.SubModules
++			}
++		}
++		if !hasSubmodules {
++			continue
++		}
++		for _, host := range spec.CodeHosts {
++			if host != nil {
++				tokens = append(tokens, host.AccessToken)
++				if host.Type == types.ProviderGerrit {
++					tokens = append(tokens, host.Password)
++				}
++			}
++		}
++	}
++	var values []string
++	for _, token := range tokens {
++		if token != "" {
++			values = append(values, token, strings.TrimPrefix(url.UserPassword("", token).String(), ":"))
++		}
++	}
++	// Match longer credentials first when secrets share a prefix.
++	sort.Slice(values, func(i, j int) bool { return len(values[i]) > len(values[j]) })
++	return values, nil
 +}
 ```
 
+**File**: `pkg/microservice/jobexecutor/core/service/step/step.go` (modified, +4/-3)
+```diff
+@@ -128,6 +128,7 @@ func RunStep(ctx context.Context, step *meta.Step, workspace, paths string, envs
+ 		return err
+ 	}
+ 	if err := stepInstance.Run(ctx); err != nil {
++		err = fmt.Errorf("%s", util.MaskSecretEnvs(err.Error(), secretEnvs))
+ 		log.Error(err)
+ 		return err
+ 	}
+@@ -161,11 +162,11 @@ func handleCmdOutput(pipe io.ReadCloser, needPersistentLog bool, logFile string,
+ 			break
+ 		}
+ 
+-		fmt.Printf("%s   %s", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(string(lineBytes), secretEnvs))
++		lineBytes = []byte(util.MaskSecretEnvs(string(lineBytes), secretEnvs))
++		fmt.Printf("%s   %s", time.Now().Format(setting.WorkflowTimeFormat), lineBytes)
+ 
+ 		if needPersistentLog {
+-			err := util.WriteFile(logFile, lineBytes, 0700)
+-			if err != nil {
++			if err := util.WriteFile(logFile, lineBytes, 0700); err != nil {
+ 				log.Warnf("Failed to write file when processing cmd output: %s", err)
+ 			}
+ 		}
+```
+
+**File**: `pkg/microservice/jobexecutor/core/service/step/step_git.go` (modified, +10/-4)
+```diff
+@@ -59,6 +59,9 @@ func NewGitStep(spec interface{}, workspace string, envs, secretEnvs []string) (
+ 	if err := yaml.Unmarshal(yamlBytes, &gitStep.spec); err != nil {
+ 		return gitStep, fmt.Errorf("unmarshal spec %s to git spec failed", yamlBytes)
+ 	}
++	if gitStep.spec == nil {
++		return gitStep, fmt.Errorf("git spec is empty")
++	}
+ 	return gitStep, nil
+ }
+ 
+@@ -151,6 +154,9 @@ func (s *GitStep) runGitCmds() error {
+ 	if err := writeSSHConfigFile(hostNames, s.spec.Proxy); err != nil {
+ 		return err
+ 	}
++	maskOutput := func(message string) string {
++		return util.MaskSecret(tokens, util.MaskSecretEnvs(message, s.secretEnvs))
++	}
+ 
+ 	for _, c := range cmds {
+ 		cmdOutReader, err := c.Cmd.StdoutPipe()
+@@ -161,7 +167,7 @@ func (s *GitStep) runGitCmds() error {
+ 		outScanner := bufio.NewScanner(cmdOutReader)
+ 		go func() {
+ 			for outScanner.Scan() {
+-				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecret(tokens, outScanner.Text()))
++				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(outScanner.Text()))
+ 			}
+ 		}()
+ 
+@@ -173,17 +179,17 @@ func (s *GitStep) runGitCmds() error {
+ 		errScanner := bufio.NewScanner(cmdErrReader)
+ 		go func() {
+ 			for errScanner.Scan() {
+-				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecret(tokens, errScanner.Text()))
++				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(errScanner.Text()))
+ 			}
+ 		}()
+ 
+ 		c.Cmd.Env = envs
+ 		if !c.DisableTrace {
+-			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), strings.Join(c.Cmd.Args, " "))
++			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(strings.Join(c.Cmd.Args, " ")))
+ 		}
+ 
+ 		if err := c.Run(); err != nil {
+-			return err
++			return fmt.Errorf("%s", maskOutput(err.Error()))
+ 		}
+ 	}
+ 	return nil
+```
+
+**File**: `pkg/microservice/jobexecutor/core/service/step/step_tool_install.go` (modified, +18/-4)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	"path"
+ 	"path/filepath"
+ 	"strings"
++	"sync"
+ 	"time"
+ 
+ 	"github.com/google/uuid"
+@@ -21,6 +22,7 @@ import (
+ 	"github.com/koderover/zadig/v2/pkg/tool/log"
+ 	s3tool "github.com/koderover/zadig/v2/pkg/tool/s3"
+ 	"github.com/koderover/zadig/v2/pkg/types/step"
++	"github.com/koderover/zadig/v2/pkg/util"
+ )
+ 
+ type ToolInstallStep struct {
+@@ -139,10 +141,16 @@ func (s *ToolInstallStep) runIntallationScripts(tool *step.Tool) error {
+ 		return err
+ 	}
+ 
++	var wg sync.WaitGroup
+ 	outScanner := bufio.NewScanner(cmdOutReader)
++	wg.Add(1)
+ 	go func() {
++		defer wg.Done()
+ 		for outScanner.Scan() {
+-			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), outScanner.Text())
++			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(outScanner.Text(), s.secretEnvs))
++		}
++		if err := outScanner.Err(); err != nil {
++			log.Warnf("Failed to read tool installation stdout: %s", util.MaskSecretEnvs(err.Error(), s.secretEnvs))
+ 		}
+ 	}()
+ 
+@@ -152,20 +160,26 @@ func (s *ToolInstallStep) runIntallationScripts(tool *step.Tool) error {
+ 	}
+ 
+ 	errScanner := bufio.NewScanner(cmdErrReader)
++	wg.Add(1)
+ 	go func() {
++		defer wg.Done()
+ 		for errScanner.Scan() {
+-			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), errScanner.Text())
++			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(errScanner.Text(), s.secretEnvs))
++		}
++		if err := errScanner.Err(); err != nil {
++			log.Warnf("Failed to read tool installation stderr: %s", util.MaskSecretEnvs(err.Error(), s.secretEnvs))
+ 		}
+ 	}()
+ 
+ 	cmd.Dir = s.workspace
+ 	cmd.Env = s.envs
+ 
+-	if err := cmd.Run(); err != nil {
++	if err := cmd.Start(); err != nil {
+ 		return err
+ 	}
+ 
+-	return nil
++	wg.Wait()
++	return cmd.Wait()
+ }
+ 
+ func Environs(envs []string) []string {
+```
+
+**File**: `pkg/microservice/podexec/core/service/workflow_debug.go` (modified, +9/-1)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
+ 	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
+ 	auditservice "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/terminalaudit"
++	"github.com/koderover/zadig/v2/pkg/microservice/jobexecutor/core/service/meta"
+ 	internalhandler "github.com/koderover/zadig/v2/pkg/shared/handler"
+ 	"github.com/koderover/zadig/v2/pkg/tool/clientmanager"
+ 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
+@@ -65,7 +66,14 @@ FOR:
+ 		return e.ErrGetDebugShell.AddDesc(fmt.Sprintf("启动调试终端意外失败: parse job spec: %v", err))
+ 	}
+ 
+-	var credValues []string
++	steps := make([]*meta.Step, 0, len(jobTaskSpec.Steps))
++	for _, taskStep := range jobTaskSpec.Steps {
++		steps = append(steps, &meta.Step{StepType: string(taskStep.StepType), Spec: taskStep.Spec})
++	}
++	credValues, err := meta.CollectGitTokens(steps)
++	if err != nil {
++		return e.ErrGetDebugShell.AddDesc("启动调试终端失败: 无法获取 Git 凭证脱敏配置")
++	}
+ 	for _, v := range jobTaskSpec.Properties.Envs {
+ 		if v.IsCredential {
+ 			credValues = append(credValues, v.Value)
+```
+
+**File**: `pkg/util/variables.go` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ func MaskSecretEnvs(message string, secretEnvs []string) string {
+ 		if len(val) == 0 {
+ 			continue
+ 		}
+-		sl := strings.Split(val, "=")
++		sl := strings.SplitN(val, "=", 2)
+ 
+ 		if len(sl) != 2 {
+ 			continue
+```
+
+---
+
+### Incident Patch 3: `55ac9058` (2026-11-03)
+**Commit Message**: fix: skip CRDs from disabled Helm subcharts (#5051)
+
+* fix: skip CRDs from disabled Helm subcharts
+
+* refactor: simplify Helm CRD dependency filtering
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+**File**: `pkg/tool/helmclient/helmclient.go` (modified, +41/-2)
+```diff
+@@ -570,7 +570,7 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
+ 		upgrade.Version = ">0.0.0-0"
+ 	}
+ 
+-	helmChart, _, err := hClient.getChart(spec.ChartName, &upgrade.ChartPathOptions)
++	helmChart, chartPath, err := hClient.getChart(spec.ChartName, &upgrade.ChartPathOptions)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -587,8 +587,12 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
+ 	}
+ 
+ 	if !spec.SkipCRDs && spec.UpgradeCRDs {
++		crdChart, err := hClient.loadChartForCRDUpgrade(chartPath, spec.ReleaseName, values)
++		if err != nil {
++			return nil, err
++		}
+ 		c.DebugLog("upgrading crds")
+-		err = hClient.upgradeCRDs(ctx, helmChart)
++		err = hClient.upgradeCRDs(ctx, crdChart)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -602,6 +606,41 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
+ 	return rel, nil
+ }
+ 
++// loadChartForCRDUpgrade filters dependencies on a separate chart so Helm can
++// still process aliases and imported values on the original chart during upgrade.
++// ponytail: callers use default value options; add reuse/reset handling if enabled.
++func (hClient *HelmClient) loadChartForCRDUpgrade(chartPath, releaseName string, values map[string]interface{}) (*chart.Chart, error) {
++	helmChart, err := loader.Load(chartPath)
++	if err != nil {
++		return nil, err
++	}
++
++	// Helm implicitly reuses the current release's config when input is empty.
++	if len(values) == 0 {
++		current, err := hClient.ActionConfig.Releases.Last(releaseName)
++		if err != nil {
++			return nil, err
++		}
++		if current.Info.Status != release.StatusDeployed {
++			deployed, err := hClient.ActionConfig.Releases.Deployed(releaseName)
++			if err != nil {
++				if !errors.Is(err, driver.ErrNoDeployedReleases) ||
++					(current.Info.Status != release.StatusFailed && current.Info.Status != release.StatusSuperseded) {
++					return nil, err
++				}
++			} else {
++				current = deployed
++			}
++		}
++		values = current.Config
++	}
++
++	if err := helmchartutil.ProcessDependenciesWithMerge(helmChart, values); err != nil {
++		return nil, err
++	}
++	return helmChart, nil
++}
++
+ // InstallOrUpgradeChart install or upgrade helm chart, use the same rule with helm to determine weather to install or upgrade
+ func (hClient *HelmClient) InstallOrUpgradeChart(ctx context.Context, spec *hc.ChartSpec, opts *hc.GenericHelmOptions) (*release.Release, error) {
+ 	operationSpec := *spec
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5055** (2026-11-03): fix(workflow): validate freestyle variables by job type (@Cynthia-0203)
+- **PR #5051** (2026-11-03): fix: skip CRDs from disabled Helm subcharts (@Cynthia-0203)
+- **PR #5050** (2026-11-03): feat: mask git tokens in build pod logs (@Cynthia-0203)
+- **PR #5049** (2026-11-03): fix: use /rest/api/2/search/jql for Jira Cloud issue search (@torrresagus)
+- **PR #5048** (2026-11-03): feat: add system integration permissions (@Cynthia-0203)
 - **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
-- **PR #5046** (2026-10-28): feat(codehost): support bot identities on project codehosts (@huanghongbo-hhb)
-- **PR #5045** (2026-10-26): perf: batch test report queries in workflow task history (@PetrusZ)
-- **PR #5044** (2026-10-26): cherry pick #5041 to release 5.0.0 (@PetrusZ)
-- **PR #5042** (2026-10-28): feat: enhance basic image deletion logic and error handling. (@leozhang2018)
-- **PR #5041** (2026-10-23): fix: use target Kubernetes version when rendering Helm charts (@PetrusZ)
 
 ---
 
@@ -1632,46 +1853,68 @@ fix: isolate cached build and template configurations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-
+## X. Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/registry/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/tool/jira/issue.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0462edd7`: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da7b0e35`: Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/registry/service.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/tool/jira/issue.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
-	details, marshalErr := json.Marshal(err)
-	if marshalErr != nil {
-		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
+	"net/url"
+	"strings"
+	// Jira Cloud removed /rest/api/2/search (CHANGE-2046), Server and Data Center still serve it
+	if isJiraCloud(s.client.Host) {
+		return s.searchByJQLCloud(jql, findAll)
 	}
-	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
-		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
-		exists, err := cli.tagExists(repoName, option.Tag)
+func (s *IssueService) searchByJQLCloud(jql string, findAll bool) ([]*Issue, error) {
+	var re []*Issue
+	token := ""
+	for {
+		list, next, err := s.searchByJQLWithToken(jql, token)
 		if err != nil {
-			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
+			return nil, err
 		}
-		return exists, err
-		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
-		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
-		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
-	exists, err := manifestService.Exists(cli.ctx, dgst)
+		re = append(re, list...)
+		if next == "" || !findAll {
+			return re, nil
+		}
+		token = next
+	}
+}
+
+// searchByJQLWithToken https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-jql-get
+func (s *IssueService) searchByJQLWithToken(jql, token string) ([]*Issue, string, error) {
+	url := s.client.Host + "/rest/api/2/search/jql"
+	params := map[string]string{
+		"jql":    jql,
+		"fields": "*navigable",
+	}
+	if token != "" {
+		params["nextPageToken"] = token
+	}
+	resp, err := s.client.R().SetQueryParams(params).Get(url)
 	if err != nil {
-		log.Er
+		return nil, "", err
+	}
+	if resp.GetStatusCode()/100 != 2 {
+		return nil, "", errors.Errorf("unexpected Jira status code %d, body: %s", resp.GetStatusCode(), resp.String())
+	}
+	type tmp struct {
+		Ne
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return cli.tagExists(repoName, option.Tag)
-	return manifestService.Exists(cli.ctx, dgst)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0462edd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da7b0e35` are properly handled with clean fallback behavior.

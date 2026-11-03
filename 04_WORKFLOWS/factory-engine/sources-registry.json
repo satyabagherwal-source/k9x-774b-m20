@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T22:15:31.746Z",
-    "lastVerified": "2026-11-03T22:15:31.746Z",
+    "lastChecked": "2026-11-03T22:23:44.926Z",
+    "lastVerified": "2026-11-03T22:23:44.926Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T21:44:52.905Z",
-    "lastVerified": "2026-11-03T21:44:52.905Z",
+    "lastChecked": "2026-11-03T22:23:42.857Z",
+    "lastVerified": "2026-11-03T22:23:42.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1361,14 +1361,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T19:40:48.630Z",
-    "lastVerified": "2026-10-31T19:40:48.630Z",
+    "lastChecked": "2026-11-03T22:23:34.669Z",
+    "lastVerified": "2026-11-03T22:23:34.669Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
+    "contentHash": "b0fa7d904b29c8a23fa2439232bf194b2528955f8d3e79e5697d730516d46233",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1424,9 +1424,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-10-31T23:56:39.640Z",
+    "lastChecked": "2026-11-03T22:23:40.771Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-10-31T23:56:39.640Z"
+    "lastVerified": "2026-11-03T22:23:40.771Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
@@ -2244,12 +2244,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T17:38:22.632Z",
-    "lastVerified": "2026-11-03T17:38:22.632Z",
+    "lastChecked": "2026-11-03T22:23:38.353Z",
+    "lastVerified": "2026-11-03T22:23:38.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2258,7 +2258,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2f682f3a"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3653,22 +3654,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "koderover-zadig": {
-    "name": "zadig",
+    "name": "koderover/zadig",
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T00:42:36.796Z",
-    "lastVerified": "2026-11-01T00:42:36.796Z",
+    "lastChecked": "2026-11-03T22:23:41.491Z",
+    "lastVerified": "2026-11-03T22:23:41.491Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
-    "contentHash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
+    "contentHash": "9e56bdb82e11d6a4bd332e5fa22d7af9b409512138e497142aa0d7c5b8215122",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0462edd7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -10590,11 +10590,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "fb55-css-select": {
-    "name": "css-select",
+    "name": "fb55/css-select",
     "officialUrl": "https://github.com/fb55/css-select",
-    "lastChecked": "2026-10-30T13:22:11.148Z",
-    "revisionIdentifier": "6e4c7a63",
-    "lastVerified": "2026-10-30T13:22:11.148Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-03T22:23:36.258Z",
+    "lastVerified": "2026-11-03T22:23:36.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "e70ad226f76dbf0833db59b1b71efbc66817069e9738eb9000de1c98fa5dbdb7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "louis-cfm-coucou": {
     "name": "Louis-CFM/coucou",
@@ -11840,14 +11850,14 @@
     "officialUrl": "https://github.com/iliyami/MacSai",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T22:10:22.909Z",
-    "lastVerified": "2026-10-30T22:10:22.909Z",
+    "lastChecked": "2026-11-03T22:23:37.638Z",
+    "lastVerified": "2026-11-03T22:23:37.638Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
+    "contentHash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -7045,3 +7045,7 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `edc9c419` | Multi-dimensional audit evidence | 2026-11-03T22:15:23.288Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `ca4e1972` | Multi-dimensional audit evidence | 2026-11-03T22:15:25.757Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `f9446abf` | Multi-dimensional audit evidence | 2026-11-03T22:15:29.185Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `f4978e8f` | Multi-dimensional audit evidence | 2026-11-03T22:23:36.955Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `9a76fe0e` | Multi-dimensional audit evidence | 2026-11-03T22:23:37.330Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `da2a26e8` | Multi-dimensional audit evidence | 2026-11-03T22:23:38.999Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `da7b0e35` | Multi-dimensional audit evidence | 2026-11-03T22:23:42.391Z |

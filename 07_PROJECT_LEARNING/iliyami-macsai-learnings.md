@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `8accd9cb`  
+> **Source Version**: `da2a26e8`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:10:24.260Z  
+> **Timestamp**: 2026-11-03T22:23:38.509Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:10:22.909Z  
+> **Harvest Timestamp**: 2026-11-03T22:23:37.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2032 stars
+- **Stars / Engagement**: 2073 stars
 
 ---
 
@@ -1819,543 +1819,674 @@ public extension TipAction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8accd9cb` (2026-10-29)
-**Commit Message**: Show swap under memory and add opt-in swap and memory pressure alerts (#261)
+### Incident Patch 1: `da2a26e8` (2026-11-03)
+**Commit Message**: Add Turkish localization (#247)
 
-The menu bar widget shows swap in use under the Memory card instead of an
-unlabeled icon in the bottom row. A new Alerts section in Settings turns
-the existing memory pressure alert on or off and adds a swap alert at
-2, 4 or 8 GB. It is off by default, fires once when swap crosses the
-threshold, and re-arms only after swap falls below 75% of it, with the
-latch persisted so a widget restart does not repeat it. Translated in
-every language.
+Adds Turkish as an interface language (part of #12): the full dictionary, locale mapping, kept tr.lproj folders, Info.plist localizations, cleanup counts, and test coverage. Includes the supporters strings and version 1.28.6.
 
-**File**: `Sources/MacClean/Views/Settings/SettingsPageView.swift` (modified, +39/-0)
+**File**: `Sources/MacCleanKit/CleanupStrings.swift` (modified, +3/-0)
 ```diff
-@@ -24,6 +24,8 @@ struct SettingsPageView: View {
-     @AppStorage("lastUpdateCheckDate") private var lastUpdateCheckTimestamp: Double = 0
-     @AppStorage(AppearanceManager.defaultsKey) private var appearanceRaw = AppearanceMode.dark.rawValue
-     @AppStorage(AppLanguage.defaultsKey, store: SharedAppState.defaults) private var appLanguageRaw = AppLanguage.system.rawValue
-+    @AppStorage(HealthAlertSettings.memoryPressureAlertKey, store: SharedAppState.defaults) private var memoryPressureAlert = true
-+    @AppStorage(HealthAlertSettings.swapAlertThresholdKey, store: SharedAppState.defaults) private var swapAlertThresholdGB = 0
-     @State private var launcher = MenuBarLauncher.shared
-     @State private var loginLauncher = LaunchAtLoginManager.shared
-     @State private var updateState: UpdateUIState = .idle
-@@ -48,6 +50,7 @@ struct SettingsPageView: View {
-         Form {
-             headerSection
-             generalSection
-+            alertsSection
-             interfaceLanguageSection
-             appearanceSection
-             languageSection
-@@ -276,6 +279,42 @@ struct SettingsPageView: View {
-         }
-     }
- 
-+    // MARK: - Alerts
-+
-+    private var alertsSection: some View {
-+        Section(HealthAlertStrings.sectionTitle) {
-+            Toggle(isOn: $memoryPressureAlert) {
-+                VStack(alignment: .leading, spacing: 2) {
-+                    Text(HealthAlertStrings.memoryPressureToggle)
-+                    Text(HealthAlertStrings.memoryPressureCaption)
-+                        .font(.caption)
-+                        .foregroundStyle(.secondary)
-+                }
-+            }
-+            .toggleStyle(.switch)
-+            Picker(selection: $swapAlertThresholdGB) {
-+                ForEach(HealthAlertSettings.swapThresholdChoices, id: \.self) { gigabytes in
-+                    Text(gigabytes == 0 ? HealthAlertStrings.swapOff : FileSizeFormatter.format(HealthAlertSettings.bytes(forGB: gigabytes)))
-+                        .tag(gigabytes)
-+                }
-+            } label: {
-+                VStack(alignment: .leading, spacing: 2) {
-+                    Text(HealthAlertStrings.swapPicker)
-+                    Text(HealthAlertStrings.swapCaption)
-+                        .font(.caption)
-+                        .foregroundStyle(.secondary)
-+                }
-+            }
-+            .pickerStyle(.menu)
-+            if !showMenuBarWidget {
-+                Label(HealthAlertStrings.widgetRequired, systemImage: "info.circle")
-+                    .font(.caption)
-+                    .foregroundStyle(.secondary)
-+            }
-+        }
-+        .disabled(!showMenuBarWidget)
-+    }
-+
-     // MARK: - Interface Language
- 
-     private var interfaceLanguageHelp: String {
+@@ -22,6 +22,7 @@ public enum CleanupStrings {
+         case .ptBR: return "\(selectedText) de \(totalText) \(total == 1 ? "item" : "itens") \(selected == 1 ? "selecionado" : "selecionados")"
+         case .ja: return "\(selectedText) / \(totalText) 項目を選択済み"
+         case .ko: return "\(totalText)개 항목 중 \(selectedText)개 선택됨"
++        case .tr: return "\(totalText) öğeden \(selectedText) öğe seçildi"
+         case .ru:
+             return "Выбрано \(selectedText) из \(totalText) \(L10n.russianPlural(total, one: "объекта", few: "объектов", many: "объектов"))"
+         case .zhHans: return "已选择 \(selectedText) / \(totalText) 项"
+@@ -40,6 +41,7 @@ public enum CleanupStrings {
+         case .ptBR: return "Limpar \(number) \(count == 1 ? "item" : "itens")?"
+         case .ja: return "\(number) 項目をクリーンアップしますか？"
+         case .ko: return "\(number)개 항목을 정리할까요?"
++        case .tr: return "\(number) öğe temizlensin mi?"
+         case .ru:
+             return "Очистить \(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))?"
+         case .zhHans: return "清理 \(number) 项？"
+@@ -58,6 +60,7 @@ public enum CleanupStrings {
+         case .ptBR: return "\(number) \(count == 1 ? "item" : "itens")"
+         case .ja: return "\(number) 項目"
+         case .ko: return "\(number)개 항목"
++        case .tr: return "\(number) öğe"
+         case .ru:
+             return "\(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))"
+         case .zhHans: return "\(number) 项"
 ```
 
-**File**: `Sources/MacCleanKit/Constants.swift` (modified, +1/-1)
+**File**: `Sources/MacCleanKit/Constants.swift` (modified, +2/-1)
 ```diff
-@@ -232,5 +232,5 @@ public enum MCConstants {
+@@ -205,6 +205,7 @@ public enum MCConstants {
+         "ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj",
+         "it.lproj", "it-IT.lproj", "it_IT.lproj", "it-CH.lproj", "it_CH.lproj", "Italian.lproj",
+         "ja.lproj", "ja-JP.lproj", "ja_JP.lproj", "Japanese.lproj",
++        "tr.lproj", "tr-TR.lproj", "tr_TR.lproj", "Turkish.lproj",
+     ]
+ 
+     // MARK: - Log File Path
+@@ -239,5 +240,5 @@ public enum MCConstants {
      // plugin was tried (commit history) but doesn't work under multi-arch
      // `swift build --arch arm64 --arch x86_64` because xcbuild doesn't
      // execute plugins.
--    public static let appVersion = "1.27.5"
-+    public static let appVersion = "1.28.0"
+-    public static let appVersion = "1.28.5"
++    public static let appVersion = "1.28.6"
  }
 ```
 
-**File**: `Sources/MacCleanKit/HealthAlerts.swift` (added, +126/-0)
+**File**: `Sources/MacCleanKit/Localization.swift` (modified, +710/-1)
 ```diff
-@@ -0,0 +1,126 @@
-+import Foundation
-+
-+/// User choices for the menu bar widget's health alerts. Stored in the
-+/// shared suite: Settings writes them in the main app and the widget's
-+/// `HealthMonitor` reads them on every tick.
-+public enum HealthAlertSettings {
-+    public static let memoryPressureAlertKey = "memoryPressureAlertEnabled"
-+    public static let swapAlertThresholdKey = "swapAlertThresholdGB"
-+
-+    /// Offered swap thresholds in GB; 0 means the alert is off. Decimal GB
-+    /// so the size reads "4 GB" through `FileSizeFormatter`, like the swap
-+    /// figure the widget shows.
-+    public static let swapThresholdChoices = [0, 2, 4, 8]
-+
-+    public static func bytes(forGB gigabytes: Int) -> UInt64 {
-+        UInt64(max(gigabytes, 0)) * 1_000_000_000
-+    }
-+
-+    /// On by default, as it was before the setting existed.
-+    public static var memoryPressureAlertEnabled: Bool {
-+        SharedAppState.defaults.object(forKey: memoryPressureAlertKey) as? Bool ?? true
-+    }
-+
-+    /// nil when the swap alert is off (the default).
-+    public static var swapAlertThreshold: UInt64? {
-+        let gigabytes = SharedAppState.defaults.integer(forKey: swapAlertThresholdKey)
-+        return gigabytes > 0 ? bytes(forGB: gigabytes) : nil
-+    }
-+}
-+
-+/// Decides when a swap alert fires: once when swap crosses the threshold,
-+/// then not again until swap has fallen well below it. macOS releases swap
-+/// slowly, so without that gap the alert would repeat every time usage
-+/// wobbles around the line.
-+public struct SwapAlertLatch: Codable, Equatable, Sendable {
-+    /// Swap must drop under this fraction of the threshold to re-arm.
-+    public static let rearmFraction = 0.75
-+
-+    /// The threshold the alert last fired at; nil while armed.
-+    public private(set) var firedAtThreshold: UInt64?
-+
-+    public init(firedAtThreshold: UInt64? = nil) {
-+        self.firedAtThreshold = firedAtThreshold
-+    }
-+
-+    /// Feeds one swap sample and returns whether to notify now. A changed
-+    /// threshold re-arms, so lowering it below current usage alerts once.
-+    public mutating func shouldAlert(swapUsed: UInt64, threshold: UInt64?) -> Bool {
-+        guard let threshold, threshold > 0 else {
-+            firedAtThreshold = nil
-+            return false
-+        }
-+        if let fired = firedAtThreshold {
-+            if fired == threshold {
-+                if Double(swapUsed) < Double(threshold) * Self.rearmFraction {
-+                    firedAtThreshold = nil
-+                }
-+                return false
-+            }
-+            firedAtThreshold = nil
-+        }
-+        guard swapUsed >= threshold else { return false }
-+        firedAtThreshold = threshold
-+        return true
-+    }
-+}
-+
-+/// Copy for the alert settings, the widget's swap line and the swap
-+/// notification. Whole sentences with placeholders, so every language
-+/// can match its translation key.
-+public enum HealthAlertStrings {
-+    public static var sectionTitle: String {
-+        L10n.tr("提醒", "Alerts", "Уведомления")
-+    }
-+
-+    public static var memoryPressureToggle: String {
-+        L10n.tr("内存压力提醒", "Memory pressure alert", "Уведомление о нагрузке на память")
-+    }
-+
-+    public static var memoryPressureCaption: String {
-+        L10n.tr("内存压力持续偏高时通知你。", "Notifies you when memory pressure stays high.", "Сообщает, когда нагрузка на память долго остаётся высокой.")
-+    }
-+
-+    public static var swapPicker: String {
-+        L10n.tr("交换空间提醒", "Swap usage alert", "Уведомление о файле подкачки")
-+    }
-+
-+    public static var swapCaption: String {
-+        L10n.tr(
-+            "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。",
-+            "Notifies you once when swap goes above the chosen size, and again only after it has dropped well below it.",
-+            "Сообщает один раз, когда подкачка превышает выбранный объём, и снова только после того, как она заметно уменьшится."
-+        )
-+    }
-+
-+    public static var swapOff: String {
-+        L10n.tr("不提醒", "Off", "Выкл.")
-+    }
-+
-+    public static var widgetRequired: String {
-+        L10n.tr(
-+            "提醒由菜单栏小组件发送，需要保持开启。",
-+            "Alerts are sent by the menu bar widget, so it needs to be on.",
-+            "Уведомления отправляет виджет в строке меню, поэтому он должен быть включён."
-+        )
-+    }
-+
-+    public static func swapLine(_ used: UInt64) -> String {
-+        L10n.tr("交换空间 {size}", "Swap {size}", "Подкачка {size}")
-+            .replacingOccurrences(of: "{size}", with: FileSizeFormatter.format(used))
-+    }
-+
-+    public static var swapAlertTitle: String {
-+        L10n.tr("交换空间使用过高", "Swap usage high", "Подкачка слишком велика")
-+    }
-+
-+    public static func swapAlertBody(used: UInt64, threshold: UInt64) -> String {
-+        L10n.tr(
-+            "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。",
-+            "Your Mac is using {used} of swap, above your {limit} alert. Quitting apps you aren't using eases memory pressure.",
-+        
-```
-
-**File**: `Sources/MacCleanKit/Localization.swift` (modified, +44/-0)
-```diff
-@@ -290,6 +290,17 @@ public enum L10n {
- 
-         "无法开启登录时启动：{message}": "無法開啟登入時啟動：{message}",
-         "无法关闭登录时启动：{message}": "無法關閉登入時啟動：{message}",
-+        // Swap and memory alerts
-+        "提醒": "提醒",
-+        "内存压力提醒": "記憶體壓力提醒",
-+        "内存压力持续偏高时通知你。": "記憶體壓力持續偏高時通知你。",
-+        "交换空间提醒": "交換空間提醒",
-+        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "交換空間超過所選大小時通知一次，降到明顯低於該值後才會再次提醒。",
-+        "不提醒": "不提醒",
-+        "提醒由菜单栏小组件发送，需要保持开启。": "提醒由選單列小工具傳送，需要保持開啟。",
-+        "交换空间 {size}": "交換空間 {size}",
-+        "交换空间使用过高": "交換空間使用過高",
-+        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "你的 Mac 正在使用 {used} 交換空間，超過了你設定的 {limit} 提醒值。結束不用的 App 可以減輕記憶體壓力。",
-         // Post-clean support card and Settings link
-         "这次清理，你没花一分钱。": "這次清理，你沒花一分錢。",
-         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "沒有訂閱，沒有廣告，沒有追蹤。Mac Sai 是我和幾位志願者在業餘時間做的。如果它幫你省下了買清理軟體的錢，請我喝杯咖啡，讓它對所有人繼續免費。",
-@@ -922,6 +933,17 @@ public enum L10n {
- 
-         "无法开启登录时启动：{message}": "Impossible d'activer le lancement au démarrage : {message}",
-         "无法关闭登录时启动：{message}": "Impossible de désactiver le lancement au démarrage : {message}",
-+        // Swap and memory alerts
-+        "提醒": "Alertes",
-+        "内存压力提醒": "Alerte de pression mémoire",
-+        "内存压力持续偏高时通知你。": "Vous avertit lorsque la pression mémoire reste élevée.",
-+        "交换空间提醒": "Alerte d'utilisation du swap",
-+        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Vous avertit une fois lorsque le swap dépasse la taille choisie, puis seulement après qu'il est nettement redescendu.",
-+        "不提醒": "Désactivée",
-+        "提醒由菜单栏小组件发送，需要保持开启。": "Les alertes sont envoyées par le widget de la barre des menus, qui doit donc rester activé.",
-+        "交换空间 {size}": "Swap {size}",
-+        "交换空间使用过高": "Utilisation du swap élevée",
-+        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Votre Mac utilise {used} de swap, au-delà de votre seuil d'alerte de {limit}. Quitter les apps inutilisées réduit la pression mémoire.",
-         // Post-clean support card and Settings link
-         "这次清理，你没花一分钱。": "Ce nettoyage ne vous a rien coûté.",
-         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "Pas d'abonnement, pas de pub, pas de pistage. Je développe Mac Sai le soir et le week-end, avec quelques bénévoles. S'il vous a évité de payer un nettoyeur, un café le garde gratuit pour tout le monde.",
-@@ -1578,6 +1600,17 @@ public enum L10n {
- 
-         "无法开启登录时启动：{message}": "„Beim Anmelden starten“ konnte nicht aktiviert werden: {message}",
-         "无法关闭登录时启动：{message}": "„Beim Anmelden starten“ konnte nicht deaktiviert werden: {message}",
-+        // Swap and memory alerts
-+        "提醒": "Hinweise",
-+        "内存压力提醒": "Hinweis bei hoher Speicherauslastung",
-+        "内存压力持续偏高时通知你。": "Benachrichtigt dich, wenn die Speicherauslastung dauerhaft hoch bleibt.",
-+        "交换空间提醒": "Hinweis bei Swap-Nutzung",
-+        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Benachrichtigt dich einmal, wenn der Swap die gewählte Größe überschreitet, und erst wieder, nachdem er deutlich darunter gefallen ist.",
-+        "不提醒": "Aus",
-+        "提醒由菜单栏小组件发送，需要保持开启。": "Hinweise kommen vom Menüleisten-Widget, es muss also eingeschaltet sein.",
-+        "交换空间 {size}": "Swap {size}",
-+        "交换空间使用过高": "Hohe Swap-Nutzung",
-+        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Dein Mac nutzt {used} Swap und liegt damit über deiner Grenze von {limit}. Beende Apps, die du nicht brauchst, um den Speicher zu entlasten.",
-         // Post-clean support card and Settings link
-         "这次清理，你没花一分钱。": "Diese Reinigung hat dich nichts gekostet.",
-         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "Kein Abo, keine Werbung, kein Tracking. Ich entwickle Mac Sai abends und am Wochenende, zusammen mit ein paar Freiwilligen. Wenn es dir ein bezahltes Reinigungsprogramm erspart hat, hält ein Kaffee es für alle kostenlos.",
-@@ -2267,6 +2300,17 @@ public enum L10n {
- 
-         "无法开启登录时启动：{message}": "Impossibile attivare l'apertura al login: {message}",
-         "无法关闭登录时启动：{message}": "Impossibile disattivare l'apertura al login: {message}",
-+        // Swap and memory alerts
-+        "提醒": "Avvisi",
-+        "内存压力提醒": "Avviso di pressione della memoria",
-+        "内存压力持续偏高时通知你。": "Ti avvisa quando la pressione della memoria resta alta.",
-+        "交换空间提醒": "Avviso sull'uso dello swap",
-+        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Ti avvisa una volta quando lo swap supera la dimensione scelta, e di nuovo solo dopo che è sceso nettamente sotto.",
-+        "不提醒": "Disattivato",
-+        "提醒由菜单栏小组件发送，需要保持开启。": "Gli avvisi vengono inviati dal widget nella barra dei menu, che quindi deve restare attivo.",
-+        "交换空间 {size}": "Swap {size}",
-+        "交换空间使用过高": "Uso dello swap elevato",
-+        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Il tuo Mac sta usando {used} di sw
-```
-
-**File**: `Sources/MacCleanKit/SharedAppState.swift` (modified, +18/-0)
-```diff
-@@ -94,6 +94,24 @@ public enum SharedAppState {
-         return Date().timeIntervalSince(when) < suppressionWindow
-     }
- 
-+    // MARK: - Swap alert latch
-+
-+    /// Persisted so a widget restart while swap is still high does not
-+    /// repeat an alert the user already saw.
-+    private static let swapAlertLatchKey = "swapAlertLatch"
-+
-+    public static var swapAlertLatch: SwapAlertLatch {
-+        get {
-+            guard let data = defaults.data(forKey: swapAlertLatchKey) else { return SwapAlertLatch() }
-+            return (try? JSONDecoder().decode(SwapAlertLatch.self, from: data)) ?? SwapAlertLatch()
-+        }
-+        set {
-+            if let data = try? JSONEncoder().encode(newValue) {
-+                defaults.set(data, forKey: swapAlertLatchKey)
-+            }
-+        }
-+    }
-+
-     // MARK: - Notification suppression (Phase 4)
- 
-     /// One-time notifications (battery health below threshold, etc.)
-```
-
-**File**: `Sources/MacCleanMenu/MacCleanMenuApp.swift` (modified, +19/-11)
-```diff
-@@ -179,7 +179,8 @@ struct MenuContentView: View {
-                      sub: nil)
-             ringCard(icon: "memorychip", label: L10n.tr("内存", "Memory", "Память"),
-                      value: s.memoryPressure, center: "\(Int((s.memoryPressure*100).rounded()))%",
--                     sub: FileSizeFormatter.format(s.memoryUsed))
-+                     sub: FileSizeFormatter.format(s.memoryUsed),
-+                     detail: s.swapUsed > 0 ? HealthAlertStrings.swapLine(s.swapUsed) : nil)
-             ringCard(icon: "internaldrive", label: L10n.tr("磁盘", "Disk", "Диск"),
-                      value: diskUsed, center: "\(Int((diskUsed*100).rounded()))%",
-                      sub: L10n.tr("\(FileSizeFormatter.format(s.diskFree)) 可用", "\(FileSizeFormatter.format(s.diskFree)) free", "Свободно: \(FileSizeFormatter.format(s.diskFree))"))
-@@ -194,20 +195,31 @@ struct MenuContentView: View {
+@@ -14,6 +14,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+     case it = "it"
+     case ja = "ja"
+     case ru = "ru"
++    case tr = "tr"
+     case zhHans = "zh-Hans"
+     case zhHant = "zh-Hant"
+     case en = "en"
+@@ -45,6 +46,8 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+             "ja"
+         case .ru:
+             "ru"
++        case .tr:
++            "tr"
+         case .zhHans:
+             "zh-Hans"
+         case .zhHant:
+@@ -57,7 +60,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+     public var resolved: AppLanguage {
+         switch self {
+         case .system: Self.systemPreferred
+-        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .zhHans, .zhHant, .en: self
++        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .tr, .zhHans, .zhHant, .en: self
          }
      }
  
--    private func ringCard(icon: String, label: String, value: Double, center: String, sub: String?, forceColor: Color? = nil) -> some View {
-+    private func ringCard(icon: String, label: String, value: Double, center: String, sub: String?, detail: String? = nil, forceColor: Color? = nil) -> some View {
-         let color = forceColor ?? MenuPalette.barColor(value)
-         return VStack(spacing: 12) {
-             statHeader(icon: icon, label: label, tint: color)
-             RingGauge(value: value, color: color, center: center)
-                 .frame(width: 58, height: 58)
-             // Always render the subtitle line (a space when empty) so
-             // every card is the same height and the rings line up.
--            Text(sub ?? " ")
--                .font(.system(size: 10, design: .monospaced))
--                .foregroundStyle(MenuPalette.textSecondary)
--                .lineLimit(1)
-+            VStack(spacing: 3) {
-+                Text(sub ?? " ")
-+                    .font(.system(size: 10, design: .monospaced))
-+                    .foregroundStyle(MenuPalette.textSecondary)
-+                    .lineLimit(1)
-+                if let detail {
-+                    Text(detail)
-+                        .font(.system(size: 10, design: .monospaced))
-+                        .foregroundStyle(MenuPalette.textSecondary)
-+                        .lineLimit(1)
-+                        .minimumScaleFactor(0.8)
-+                }
-+            }
+@@ -77,6 +80,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+         case "it": return .it
+         case "ja": return .ja
+         case "ru": return .ru
++        case "tr": return .tr
+         case "zh":
+             // Traditional markers: Hant script, or Taiwan/Hong Kong/Macau regions.
+             if normalized.contains("hant") || normalized.contains("-tw")
+@@ -102,6 +106,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+         case .it: "Italiano"
+         case .ja: "日本語"
+         case .ru: "Русский"
++        case .tr: "Türkçe"
+         case .zhHans: "简体中文"
+         case .zhHant: "繁體中文"
+         case .en: "English"
+@@ -159,6 +164,7 @@ public enum L10n {
+         case .it: italianFallbacks[zhHans] ?? english()
+         case .ja: japaneseFallbacks[zhHans] ?? english()
+         case .ru: russianFallbacks[zhHans] ?? english()
++        case .tr: turkishFallbacks[zhHans] ?? english()
          }
--        .frame(maxWidth: .infinity, alignment: .top)
-+        // Fill the grid row so a card with a detail line and its neighbour
-+        // stay the same height, rings aligned at the top.
-+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-         .padding(16)
-         .glassCard()
      }
-@@ -246,10 +258,6 @@ struct MenuContentView: View {
-                 divider
+ 
+@@ -177,6 +183,7 @@ public enum L10n {
+         case .it: italianFallbacks[zhHans] ?? english()
+         case .ja: japaneseFallbacks[zhHans] ?? english()
+         case .ru: russian()
++        case .tr: turkishFallbacks[zhHans] ?? english()
+         case .zhHans: zhHans
+         case .zhHant: traditionalChineseFallbacks[zhHans] ?? zhHans
+         }
+@@ -202,6 +209,8 @@ public enum L10n {
+             japaneseFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
+         case .ru:
+             russianFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
++        case .tr:
++            turkishFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
+         case .zhHans:
+             zhHans
+         case .zhHant:
+@@ -5808,6 +5817,706 @@ public enum L10n {
+         "系统": "システム",
+     ]
+ 
++
++    private static let turkishFallbacks: [String: String] = [
++        "清理权限": "Temizleme İzinleri",
++        "允许 Mac Sai 扫描邮件、浏览器数据和其他受保护的文件夹。在系统设置中添加 Mac Sai 并开启权限，然后重新启动应用并重新扫描。": "Mac Sai'nin Mail'i, tarayıcı verilerini ve diğer korumalı klasörleri taramasına izin verir. Sistem Ayarları'nda Mac Sai'yi ekleyip erişimi açın, ardından uygulamayı yeniden başlatıp tekrar tarayın.",
++        "打开完全磁盘访问设置": "Tam Disk Erişimi Ayarlarını Aç",
++        "管理员确认": "Yönetici onayı",
++        "移动受保护的项目时，macOS 可能仍会要求密码或触控 ID。完全磁盘访问权限不能代替管理员确认。Mac Sai 不保存您的密码，也不能提前批准所有操作。": "macOS, korumalı öğeleri taşırken yine de parola veya Touch ID isteyebilir. Tam Disk Erişimi yönetici onayının yerini tutmaz. Mac Sai parolanızı kaydetmez ve tüm işlemleri önceden onaylayamaz.",
++        "批量移到废纸篓": "Çöp Sepetine gruplar halinde taşı",
++        "清理会将选中的项目分组交给 macOS，减少逐项请求。系统决定是否需要再次确认。取消后，当前组会先完成；已移动的项目仍会显示在清理历史中。": "Temizleme, tek tek istekleri azaltmak için seçilen öğeleri macOS'a gruplar halinde gönderir. Ek onay gerekip gerekmediğine sistem karar verir. İptal ederseniz önce geçerli grup tamamlanır; zaten taşınmış öğeler temizleme geçmişinde kalır.",
++        "权限": "İzinler",
++        "另一项清理仍在进行中。": "Başka bir temizleme hâlâ devam ediyor.",
++        "准备清理时文件已更改，请重新扫描。": "Temizleme hazırlanırken öğe değişti. Yeniden tarayın.",
++        "无法确认项目在废纸篓中的位置，请检查访达。": "Öğenin Çöp Sepetindeki konumu doğrulanamadı. Finder'da kontrol edin.",
++        "macOS 未将此项目移到废纸篓。请检查权限并重新扫描。": "macOS bu öğeyi Çöp Sepetine taşımadı. İzinleri kontrol edip yeniden tarayın.",
++        "符号链接改变了清理路径。请在访达中检查。": "Bir sembolik bağlantı bu temizleme yolunu değiştirdi. Finder'da inceleyin.",
++        "符号链接已跳过。": "Sembolik bağlantı atlandı.",
++        "取消后会先完成当前一组。": "İptal ederseniz önce geçerli grup tamamlanır.",
++        "清理已停止": "Temizleme durduruldu",
++        "已处理": "işlendi",
++        "选中的文件夹与其内容计为一项。已经消失的文件会被跳过。": "Seçilen klasörler içerikleriyle birlikte tek öğe sayılır. Artık bulunmayan dosyalar atlanır.",
++        "部分项目未能清理": "Bazı öğeler temizlenemedi",
++        "以上仅显示已完成的操作。移到废纸篓的项目可从清理历史恢复。请重新扫描以查看剩余或重新生成的文件。": "Yukarıda yalnızca tamamlanan işlemler gösterilir. Çöp Sepetine taşınan öğeler temizleme geçmişinden geri yüklenebilir. Kalan veya yeniden oluşturulan dosyaları görmek için yeniden tarayın.",
++        "请逐项检查并选择可能的威胁和社区报告的文件。此复选框只能取消该类别中
+```
+
+**File**: `Tests/MacCleanKitTests/BatchCleanupLocalizationTests.swift` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ final class BatchCleanupLocalizationTests: AppLanguageTestCase {
+         ]
+         // These phrases are written identically in both Chinese scripts.
+         let sameInTraditional: Set<String> = ["清理已停止", "完成", "清理完成"]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant] {
+             AppLanguage.current = language
+             for key in keys {
+                 let value = L10n.tr(key, "MISSING_CLEANUP_TRANSLATION", "RU")
+```
+
+**File**: `Tests/MacCleanKitTests/CleanupLocalizationTests.swift` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
+     ]
+ 
+     func testStaticCleanupCopyIsTranslatedForEveryDictionaryBackedLanguage() {
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant] {
+             AppLanguage.current = language
+             for key in staticKeys {
+                 let value = L10n.tr(key, "UNTRANSLATED", "Russian")
+@@ -29,7 +29,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
+         AppLanguage.current = .en
+         let english = [CleanupStrings.selectionSummary(selected: 2, total: 21),
+                        CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru, .zhHans, .zhHant] {
+             AppLanguage.current = language
+             let localized = [CleanupStrings.selectionSummary(selected: 2, total: 21),
+                              CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
+```
+
+**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (modified, +2/-2)
+```diff
+@@ -84,7 +84,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
+         let english = allStrings()
+         AppLanguage.current = .zhHans
+         let simplified = allStrings()
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
+             AppLanguage.current = language
+             for (index, translated) in allStrings().enumerated() where index != swapLine {
+                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
+@@ -97,7 +97,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
+     }
+ 
+     func testPlaceholdersAreFilledInEveryLanguage() {
+-        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
++        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru, .zhHans, .zhHant] {
+             AppLanguage.current = language
+             let body = HealthAlertStrings.swapAlertBody(used: 6_800_000_000, threshold: 4_000_000_000)
+             XCTAssertFalse(body.contains("{"), "\(language): \(body)")
+```
+
+**File**: `Tests/MacCleanKitTests/LocalizationTests.swift` (modified, +41/-4)
+```diff
+@@ -301,7 +301,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             ("清除", "Clear", "Очистить"),
+             ("这只会忘掉恢复记录，废纸篓里的文件不会被动。之后就不能一键恢复这些清理了。", "This only forgets the restore list. Nothing in the Trash is touched, but these cleans can no longer be restored in one click.", "Это"),
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
+             AppLanguage.current = language
+             for (zh, en, ru) in strings {
+                 let value = L10n.tr(zh, en, ru)
+@@ -376,6 +376,36 @@ final class LocalizationTests: AppLanguageTestCase {
+         }
+     }
+ 
++    func testTurkishLanguageSelectionAndRegionalIdentifiers() {
++        XCTAssertTrue(AppLanguage.allCases.contains(.tr))
++        XCTAssertEqual(AppLanguage.tr.pickerLabel, "Türkçe")
++        XCTAssertEqual(AppLanguage.tr.localeIdentifier, "tr")
++        for identifier in ["tr", "tr-TR", "tr_TR", "TR-cy"] {
++            XCTAssertEqual(AppLanguage.preferredLanguage(for: identifier), .tr)
++        }
++    }
++
++    func testTurkishUsesEveryTranslationOverload() {
++        AppLanguage.current = .tr
++        XCTAssertEqual(L10n.tr("设置", "Settings"), "Ayarlar")
++        XCTAssertEqual(L10n.tr("设置", "Settings", "Настройки"), "Ayarlar")
++        XCTAssertEqual(L10n.tr("设置"), "Ayarlar")
++        XCTAssertEqual(MaintenanceTask.freeUpRAM.title, "RAM'i boşalt")
++        XCTAssertEqual(ScanCategory.userCaches.displayName, "Kullanıcı Önbellek Dosyaları")
++        XCTAssertEqual(FileListSort.sizeDescending.label, "Önce en büyük")
++    }
++
++    func testUntranslatedStringFallsBackToEnglishInTurkish() {
++        AppLanguage.current = .tr
++        XCTAssertEqual(L10n.tr("新功能", "New feature"), "New feature")
++    }
++
++    func testTurkishLanguageResourcesCannotBeOfferedForCleanup() {
++        for folder in ["tr.lproj", "tr-TR.lproj", "tr_TR.lproj", "Turkish.lproj"] {
++            XCTAssertTrue(LanguagePreferences.alwaysKept.contains(folder), folder)
++        }
++    }
++
+     func testJapaneseLanguageSelectionAndRegionalIdentifiers() {
+         XCTAssertTrue(AppLanguage.allCases.contains(.ja))
+         XCTAssertEqual(AppLanguage.ja.rawValue, "ja")
+@@ -409,6 +439,12 @@ final class LocalizationTests: AppLanguageTestCase {
+         }
+     }
+ 
++    func testTurkishUsesAppleTrashTerminology() {
++        AppLanguage.current = .tr
++        XCTAssertEqual(L10n.tr("移到废纸篓", "Move to Trash", "?"), "Çöp Sepetine Taşı")
++        XCTAssertEqual(L10n.tr("清空废纸篓", "Empty Trash", "?"), "Çöp Sepetini Boşalt")
++    }
++
+     func testSupportCardIsTranslatedInEveryLanguage() {
+         let expected: [AppLanguage: String] = [
+             .de: "Spendier mir einen Kaffee",
+@@ -418,6 +454,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             .ptBR: "Me pague um café",
+             .ja: "コーヒーをおごる",
+             .ko: "커피 한 잔 후원하기",
++            .tr: "Bana bir kahve ısmarla",
+             .zhHant: "請我喝杯咖啡",
+             .ru: "Угостить кофе",
+         ]
+@@ -439,7 +476,7 @@ final class LocalizationTests: AppLanguageTestCase {
+         let sameAsSimplified: Set<String> = [
+             "容器", "卷", "大小", "取消", "永久清理", "清理完成", "未能完成", "已停止",
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru] {
+             AppLanguage.current = language
+             for (index, value) in DiskHogsText.all.enumerated() where !sameAsEnglish.contains(english[index]) || language == .ru {
+                 XCTAssertNotEqual(value, english[index], "\(language) is missing: \(english[index])")
+@@ -469,7 +506,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             ("正在查找项目…", "Finding projects…", "Поиск проектов…"),
+             ("正在计算文件夹大小…", "Measuring folders…", "Подсчёт размера папок…"),
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant, .ru] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant, .ru] {
+             AppLanguage.current = language
+             for s in strings {
+                 let text = L10n.tr(s.zh, s.en, s.ru)
+@@ -513,7 +550,7 @@ final class LocalizationTests: AppLanguageTestCase {
+         let sameInTraditional: Set<String> = ["未知"]
+ 
+         for (zh, english) in strings {
+-            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
++            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
+                 AppLanguage.current = language
+                 XCTAssertNotEqual(L10n.tr(zh, english), english, "\(language) is missing \"\(english)\"")
              }
-             netCell(icon: "clock", color: MenuPalette.textSecondary, value: formatUptime(s.uptime))
--            if s.swapUsed > 0 {
--                divider
--                netCell(icon: "arrow.triangle.swap", color: MenuPalette.textSecondary, value: FileSizeFormatter.format(s.swapUsed))
--            }
+```
+
+**File**: `Tests/MacCleanKitTests/SupportersTests.swift` (modified, +2/-2)
+```diff
+@@ -64,7 +64,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
+         let english = allStrings()
+         AppLanguage.current = .zhHans
+         let simplified = allStrings()
+-        for language in [AppLanguage.de, .fr, .it, .ru, .ko, .ja, .ptBR, .es] {
++        for language in [AppLanguage.de, .fr, .it, .ru, .tr, .ko, .ja, .ptBR, .es] {
+             AppLanguage.current = language
+             for (index, translated) in allStrings().enumerated() {
+                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
+@@ -77,7 +77,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
+     }
+ 
+     func testPlaceholderIsFilledInEveryLanguage() {
+-        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ko, .ja, .ptBR, .es] {
++        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .tr, .ko, .ja, .ptBR, .es] {
+             AppLanguage.current = language
+             let caption = SupporterStrings.caption(for: ["Ada"])
+             XCTAssertTrue(caption.contains("Ada"), "\(language): \(caption)")
+```
+
+---
+
+### Incident Patch 2: `15959085` (2026-11-03)
+**Commit Message**: Add Korean localization (#246)
+
+Adds Korean as an interface language (part of #12): the full dictionary, locale mapping, kept ko.lproj folders, Info.plist localizations, cleanup counts, and test coverage. Includes the supporters strings, a clearer wording for the adware name hint, and version 1.28.5.
+
+**File**: `Sources/MacCleanKit/CleanupStrings.swift` (modified, +3/-0)
+```diff
+@@ -21,6 +21,7 @@ public enum CleanupStrings {
+         case .es: return "\(selectedText) de \(totalText) \(total == 1 ? "elemento seleccionado" : "elementos seleccionados")"
+         case .ptBR: return "\(selectedText) de \(totalText) \(total == 1 ? "item" : "itens") \(selected == 1 ? "selecionado" : "selecionados")"
+         case .ja: return "\(selectedText) / \(totalText) 項目を選択済み"
++        case .ko: return "\(totalText)개 항목 중 \(selectedText)개 선택됨"
+         case .ru:
+             return "Выбрано \(selectedText) из \(totalText) \(L10n.russianPlural(total, one: "объекта", few: "объектов", many: "объектов"))"
+         case .zhHans: return "已选择 \(selectedText) / \(totalText) 项"
+@@ -38,6 +39,7 @@ public enum CleanupStrings {
+         case .es: return "¿Limpiar \(number) \(count == 1 ? "elemento" : "elementos")?"
+         case .ptBR: return "Limpar \(number) \(count == 1 ? "item" : "itens")?"
+         case .ja: return "\(number) 項目をクリーンアップしますか？"
++        case .ko: return "\(number)개 항목을 정리할까요?"
+         case .ru:
+             return "Очистить \(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))?"
+         case .zhHans: return "清理 \(number) 项？"
+@@ -55,6 +57,7 @@ public enum CleanupStrings {
+         case .es: return "\(number) \(count == 1 ? "elemento" : "elementos")"
+         case .ptBR: return "\(number) \(count == 1 ? "item" : "itens")"
+         case .ja: return "\(number) 項目"
++        case .ko: return "\(number)개 항목"
+         case .ru:
+             return "\(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))"
+         case .zhHans: return "\(number) 项"
+```
+
+**File**: `Sources/MacCleanKit/Constants.swift` (modified, +2/-1)
+```diff
+@@ -202,6 +202,7 @@ public enum MCConstants {
+         "es.lproj", "es-ES.lproj", "es_ES.lproj", "es-MX.lproj", "es_MX.lproj", "es-419.lproj", "es_419.lproj",
+         "es-US.lproj", "es_US.lproj", "Spanish.lproj",
+         "pt.lproj", "pt-BR.lproj", "pt_BR.lproj", "Portuguese.lproj", "Portuguese (Brazil).lproj", "Brazilian Portuguese.lproj",
++        "ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj",
+         "it.lproj", "it-IT.lproj", "it_IT.lproj", "it-CH.lproj", "it_CH.lproj", "Italian.lproj",
+         "ja.lproj", "ja-JP.lproj", "ja_JP.lproj", "Japanese.lproj",
+     ]
+@@ -238,5 +239,5 @@ public enum MCConstants {
+     // plugin was tried (commit history) but doesn't work under multi-arch
+     // `swift build --arch arm64 --arch x86_64` because xcbuild doesn't
+     // execute plugins.
+-    public static let appVersion = "1.28.4"
++    public static let appVersion = "1.28.5"
+ }
+```
+
+**File**: `Sources/MacCleanKit/Localization.swift` (modified, +709/-1)
+```diff
+@@ -9,6 +9,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+     case de = "de"
+     case es = "es"
+     case ptBR = "pt-BR"
++    case ko = "ko"
+     case fr = "fr"
+     case it = "it"
+     case ja = "ja"
+@@ -34,6 +35,8 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+             "es"
+         case .ptBR:
+             "pt-BR"
++        case .ko:
++            "ko"
+         case .fr:
+             "fr"
+         case .it:
+@@ -54,7 +57,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+     public var resolved: AppLanguage {
+         switch self {
+         case .system: Self.systemPreferred
+-        case .de, .es, .ptBR, .fr, .it, .ja, .ru, .zhHans, .zhHant, .en: self
++        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .zhHans, .zhHant, .en: self
          }
-         .padding(.vertical, 9)
-         .glassCard()
-```
-
-**File**: `Sources/MacCleanMenu/SystemStats/HealthMonitor.swift` (modified, +21/-0)
-```diff
-@@ -31,6 +31,7 @@ public actor HealthMonitor {
-     public func evaluate(stats: SystemStatsCollector.SystemStats) async {
-         await checkLowDisk(stats: stats)
-         await checkMemoryPressure(stats: stats)
-+        await checkSwapUsage(stats: stats)
-         await checkBatteryHealth(stats: stats)
-         await checkBatteryCycles(stats: stats)
-     }
-@@ -50,6 +51,10 @@ public actor HealthMonitor {
      }
  
-     private func checkMemoryPressure(stats: SystemStatsCollector.SystemStats) async {
-+        guard HealthAlertSettings.memoryPressureAlertEnabled else {
-+            memoryPressureSampleStreak = 0
-+            return
-+        }
-         if stats.memoryPressure >= thresholds.memoryPressureSustained {
-             memoryPressureSampleStreak += 1
-         } else {
-@@ -68,6 +73,22 @@ public actor HealthMonitor {
-         )
-     }
+@@ -69,6 +72,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+         case "de": return .de
+         case "es": return .es
+         case "pt": return .ptBR
++        case "ko": return .ko
+         case "fr": return .fr
+         case "it": return .it
+         case "ja": return .ja
+@@ -93,6 +97,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+         case .de: "Deutsch"
+         case .es: "Español"
+         case .ptBR: "Português (Brasil)"
++        case .ko: "한국어"
+         case .fr: "Français"
+         case .it: "Italiano"
+         case .ja: "日本語"
+@@ -149,6 +154,7 @@ public enum L10n {
+         case .de: germanFallbacks[zhHans] ?? english()
+         case .es: spanishFallbacks[zhHans] ?? english()
+         case .ptBR: brazilianPortugueseFallbacks[zhHans] ?? english()
++        case .ko: koreanFallbacks[zhHans] ?? english()
+         case .fr: frenchFallbacks[zhHans] ?? english()
+         case .it: italianFallbacks[zhHans] ?? english()
+         case .ja: japaneseFallbacks[zhHans] ?? english()
+@@ -166,6 +172,7 @@ public enum L10n {
+         case .de: germanFallbacks[zhHans] ?? english()
+         case .es: spanishFallbacks[zhHans] ?? english()
+         case .ptBR: brazilianPortugueseFallbacks[zhHans] ?? english()
++        case .ko: koreanFallbacks[zhHans] ?? english()
+         case .fr: frenchFallbacks[zhHans] ?? english()
+         case .it: italianFallbacks[zhHans] ?? english()
+         case .ja: japaneseFallbacks[zhHans] ?? english()
+@@ -185,6 +192,8 @@ public enum L10n {
+             spanishFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
+         case .ptBR:
+             brazilianPortugueseFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
++        case .ko:
++            koreanFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
+         case .fr:
+             frenchFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
+         case .it:
+@@ -916,6 +925,705 @@ public enum L10n {
+         "响应格式不正确": "resposta malformada",
+     ]
  
-+    /// Off unless the user picked a threshold in Settings. The latch, not a
-+    /// time throttle, keeps this to one alert per crossing.
-+    private func checkSwapUsage(stats: SystemStatsCollector.SystemStats) async {
-+        let threshold = HealthAlertSettings.swapAlertThreshold
-+        let stored = SharedAppState.swapAlertLatch
-+        var latch = stored
-+        let alert = latch.shouldAlert(swapUsed: stats.swapUsed, threshold: threshold)
-+        if latch != stored { SharedAppState.swapAlertLatch = latch }
-+        guard alert, let threshold else { return }
-+        await fire(
-+            kind: "swap_high",
-+            title: HealthAlertStrings.swapAlertTitle,
-+            body: HealthAlertStrings.swapAlertBody(used: stats.swapUsed, threshold: threshold)
-+        )
-+    }
-+
-     private func checkBatteryHealth(stats: SystemStatsCollector.SystemStats) async {
-         guard let health = stats.batteryHealth, health < thresholds.batteryHealthFloor else { return }
-         // Battery health degrades very slowly — once a week is more
++    private static let koreanFallbacks: [String: String] = [
++        "%ld 项": "%ld개 항목",
++        "1 - 3 个月": "1~3개월",
++        "12 个月": "12개월",
++        "3 - 6 个月": "3~6개월",
++        "3 个月": "3개월",
++        "30 天内不再显示": "30일 동안 숨기기",
++        "6 个月": "6개월",
++        "6 个月 - 1 年": "6개월 - 1년",
++        "AI 工具缓存": "AI 도구 캐시",
++        "AI 编码工具的缓存（Claude、Codex）；不含历史与会话。": "AI 코딩 도구(Claude, Codex)의 캐시입니다. 기록 및 세션은 제외됩니다.",
++        "CPU": "CPU",
++        "Chrome 正在运行，因此未删除任何内容。请在 Chrome 中通过“窗口 > 扩展程序”移除此扩展。": "Chrome이 열려 있어 아무것도 삭제하지 않았습니다. Chrome에서 창 > 확장 프로그램으로 이동해 확장 프로그램을 제거하세요.",
++        "Chrome、Brave、Edge、Arc、Firefox 和 Safari 的扩展。名称与已知广告软件家族相符的会标为可疑。": "Chrome, Brave, Edge, Arc, Firefox 및 Safari의 확장 프로그램입니다. 알려진 애드웨어 계열과 일치하는 이름은 의심됨으로 표시됩니다.",
++        "DerivedData 和 Previews 会在下次构建时重建，Device Support 会在连接设备时重新复制。Archives 和模拟器数据无法重新生成；如需旧构建或崩溃符号请保留。": "DerivedData와 Previews는 다음 빌드 때 다시 생성되고 Device Support는 기기를 연결하면 다시 복사됩니다. 아카이브와 시뮬레이터 데이터는 다시 생성할 수 없으므로 이전 빌드나 충돌 분석용 심볼이 필요하면 보관하세요.",
++        "Docker 和 Xcode 模拟器占用的空间。只显示在这台 Mac 上找到的工具，且不会自动勾选任何项目。": "Docker 및 Xcode 시뮬레이터가 사용하는 공간입니다. 이 Mac에 있는 도구만 표시되며 아무것도 미리 선택되지 않습니다.",
++        "Firefox 正在运行，因此未删除任何内容。请在 Firefox 中通过“工具 > 附加组件和主题”移除此扩展。": "Firefox가 열려 있어 아무것도 삭제하지 않았습니다. Firefox에서 도구 > 부가 기능 및 테마로 이동해 확장 프로그램을 제거하세요.",
++        "GPU 使用率": "GPU 사용량",
++        "GitHub 返回了无法识别的响应。": "GitHub에서 예상치 못한 응답을 받았습니다.",
++        "Homebrew 返回了无法识别的响应。": "Homebrew에서 예상치 못한 응답을 받았습니다.",
++        "IDE 与编辑器缓存": "IDE 및 편집기 캐시",
++        "Internet 插件": "인터넷 플러그인",
++        "Mac Sai 无法确认此扩展的文件夹可以安全移除，因此未删除任何内容。": "Mac Sai가 이 확장 프로그램의 폴더를 안전하게 제거할 수 있는지 확인할 수 없어 아무것도 삭제하지 않았습니다.",
++        "PDF": "PDF",
++        "Safari 扩展": "Safari 확장 프로그램",
++        "Safari 扩展不能在本应用内开启、关闭或删除，以免破坏宿主应用的签名。请在 Safari 设置中管理它们。": "여기에서는 Safari 확장 프로그램을 켜거나 끄거나 삭제할 수 없습니다. 그러면 호스트 앱의 서명이 손상될 수 있습니다. Safari 설정에서 관리하세요.",
++        "Safari 扩展随 App 一起安装，由 macOS 管理，因此此列表只读。将改为打开“设置”。": "Safari 확장 프로그램은 앱과 함께 제공되고 macOS에서 관리되므로 이 목록은 읽기 전용입니다. 대신 설정이 열립니다.",
++        "Spotlight 没有应用的使用记录": "Spotlight에 앱 사용 기록이 없습니다",
++        "Spotlight 的整个搜索索引会被清除并重建。数小时内 Spot
 ```
 
-**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (added, +109/-0)
+**File**: `Tests/MacCleanKitTests/BatchCleanupLocalizationTests.swift` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,109 @@
-+import XCTest
-+@testable import MacCleanKit
-+
-+final class SwapAlertLatchTests: XCTestCase {
-+    private let fourGB = HealthAlertSettings.bytes(forGB: 4)
-+
-+    func testAlertsOnceWhenSwapCrossesTheThreshold() {
-+        var latch = SwapAlertLatch()
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 3_000_000_000, threshold: fourGB))
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_200_000_000, threshold: fourGB))
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: fourGB))
-+    }
-+
-+    func testHoveringAroundTheThresholdDoesNotRepeat() {
-+        var latch = SwapAlertLatch()
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_100_000_000, threshold: fourGB))
-+        // Dips just under the line are not "well below" it.
-+        for used: UInt64 in [3_900_000_000, 4_050_000_000, 3_100_000_000, 4_300_000_000] {
-+            XCTAssertFalse(latch.shouldAlert(swapUsed: used, threshold: fourGB), "\(used)")
+@@ -31,7 +31,7 @@ final class BatchCleanupLocalizationTests: AppLanguageTestCase {
+         ]
+         // These phrases are written identically in both Chinese scripts.
+         let sameInTraditional: Set<String> = ["清理已停止", "完成", "清理完成"]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
+             AppLanguage.current = language
+             for key in keys {
+                 let value = L10n.tr(key, "MISSING_CLEANUP_TRANSLATION", "RU")
+```
+
+**File**: `Tests/MacCleanKitTests/CleanupLocalizationTests.swift` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
+     ]
+ 
+     func testStaticCleanupCopyIsTranslatedForEveryDictionaryBackedLanguage() {
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
+             AppLanguage.current = language
+             for key in staticKeys {
+                 let value = L10n.tr(key, "UNTRANSLATED", "Russian")
+@@ -29,7 +29,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
+         AppLanguage.current = .en
+         let english = [CleanupStrings.selectionSummary(selected: 2, total: 21),
+                        CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ru, .zhHans, .zhHant] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
+             AppLanguage.current = language
+             let localized = [CleanupStrings.selectionSummary(selected: 2, total: 21),
+                              CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
+```
+
+**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (modified, +2/-2)
+```diff
+@@ -84,7 +84,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
+         let english = allStrings()
+         AppLanguage.current = .zhHans
+         let simplified = allStrings()
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
+             AppLanguage.current = language
+             for (index, translated) in allStrings().enumerated() where index != swapLine {
+                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
+@@ -97,7 +97,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
+     }
+ 
+     func testPlaceholdersAreFilledInEveryLanguage() {
+-        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ru, .zhHans, .zhHant] {
++        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
+             AppLanguage.current = language
+             let body = HealthAlertStrings.swapAlertBody(used: 6_800_000_000, threshold: 4_000_000_000)
+             XCTAssertFalse(body.contains("{"), "\(language): \(body)")
+```
+
+**File**: `Tests/MacCleanKitTests/LocalizationTests.swift` (modified, +42/-4)
+```diff
+@@ -31,12 +31,49 @@ final class LocalizationTests: AppLanguageTestCase {
+         }
+     }
+ 
++    func testKoreanLanguageSelectionAndRegionalIdentifiers() {
++        XCTAssertTrue(AppLanguage.allCases.contains(.ko))
++        XCTAssertEqual(AppLanguage.ko.rawValue, "ko")
++        XCTAssertEqual(AppLanguage.ko.pickerLabel, "한국어")
++        XCTAssertEqual(AppLanguage.ko.localeIdentifier, "ko")
++        for identifier in ["ko", "ko-KR", "ko_KR", "KO-kr"] {
++            XCTAssertEqual(AppLanguage.preferredLanguage(for: identifier), .ko, identifier)
 +        }
 +    }
 +
-+    func testRearmsOnlyAfterDroppingWellBelowTheThreshold() {
-+        var latch = SwapAlertLatch()
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_500_000_000, threshold: fourGB))
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 2_900_000_000, threshold: fourGB)) // under 75%: re-arms
-+        XCTAssertNil(latch.firedAtThreshold)
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_000_000_000, threshold: fourGB))
-+    }
-+
-+    func testOffNeverAlertsAndClearsTheLatch() {
-+        var latch = SwapAlertLatch(firedAtThreshold: fourGB)
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 9_000_000_000, threshold: nil))
-+        XCTAssertNil(latch.firedAtThreshold)
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 9_000_000_000, threshold: 0))
-+    }
-+
-+    func testChangingTheThresholdRearms() {
-+        var latch = SwapAlertLatch()
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: fourGB))
-+        // Lowering the threshold under current usage alerts once more.
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 2)))
-+        // Raising it above current usage stays quiet until swap reaches it.
-+        XCTAssertFalse(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 8)))
-+        XCTAssertTrue(latch.shouldAlert(swapUsed: 8_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 8)))
-+    }
-+
-+    func testLatchSurvivesARoundTripThroughStorage() throws {
-+        let latch = SwapAlertLatch(firedAtThreshold: fourGB)
-+        let decoded = try JSONDecoder().decode(SwapAlertLatch.self, from: JSONEncoder().encode(latch))
-+        XCTAssertEqual(decoded, latch)
-+    }
-+
-+    func testThresholdChoicesStartWithOffAndUseDecimalGigabytes() {
-+        XCTAssertEqual(HealthAlertSettings.swapThresholdChoices.first, 0)
-+        XCTAssertEqual(HealthAlertSettings.bytes(forGB: 2), 2_000_000_000)
-+        XCTAssertEqual(HealthAlertSettings.bytes(forGB: -1), 0)
-+    }
-+}
-+
-+final class HealthAlertLocalizationTests: AppLanguageTestCase {
-+    private func allStrings() -> [String] {
-+        [
-+            HealthAlertStrings.sectionTitle,
-+            HealthAlertStrings.memoryPressureToggle,
-+            HealthAlertStrings.memoryPressureCaption,
-+            HealthAlertStrings.swapPicker,
-+            HealthAlertStrings.swapCaption,
-+            HealthAlertStrings.swapOff,
-+            HealthAlertStrings.widgetRequired,
-+            HealthAlertStrings.swapLine(1),
-+            HealthAlertStrings.swapAlertTitle,
-+            HealthAlertStrings.swapAlertBody(used: 1, threshold: 2),
-+        ]
-+    }
-+
-+    /// German, French and Italian fall back to English and Traditional
-+    /// Chinese to Simplified when a key is missing, so each must differ,
-+    /// except where the right translation is spelled the same.
-+    func testEveryStringIsTranslatedInEveryLanguage() {
-+        let swapLine = 7 // "Swap 1 byte" is also German, French and Italian.
-+        let sameInTraditional: Set = [0, 5] // 提醒, 不提醒
-+        AppLanguage.current = .en
-+        let english = allStrings()
-+        AppLanguage.current = .zhHans
-+        let simplified = allStrings()
-+        for language in [AppLanguage.de, .fr, .it] {
-+            AppLanguage.current = language
-+            for (index, translated) in allStrings().enumerated() where index != swapLine {
-+                XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
-+            }
-+        }
-+        AppLanguage.current = .zhHant
-+        for (index, translated) in allStrings().enumerated() where !sameInTraditional.contains(index) {
-+            XCTAssertNotEqual(translated, simplified[index], "zh-Hant: \(simplified[index])")
++    func testKoreanTranslationOverloadsAndFallbacks() {
++        AppLanguage.current = .ko
++        XCTAssertEqual(L10n.tr("设置", "Settings"), "설정")
++        XCTAssertEqual(L10n.tr("设置", "Settings", "Настройки"), "설정")
++        XCTAssertEqual(L10n.tr("设置"), "설정")
++        XCTAssertEqual(MaintenanceTask.freeUpRAM.title, "RAM 확보")
++        XCTAssertEqual(ScanCategory.userCaches.displayName, "사용자 캐시 파일")
++        XCTAssertEqual(FileListSort.sizeDescending.label, "큰 파일 먼저")
++        XCTAssertEqual(L10n.tr("未翻译", "New feature"), "New feature")
++        XCTAssertEqual(L10n.tr("未翻译", "New feature", "Russian"), "New feature")
++        XCTAssertEqual(L10n.tr("未翻译"), "未翻译")
++        for count in [1, 2] {
++            let english = "\(count) threat\(count == 1 ? "" : "s") found"
++            XCTAssertEqual(L10n.tr("发现 \(count) 个威胁", english), english)
++            XCTAssertEqual(L10n.tr("发现 \(count) 个威胁", english, "Russian"), english)
 +        }
 +    }
 +
-+    func testPlaceholdersAreFilledInEveryLanguage() {
-+        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant] {
-+            AppLanguage.current = language
-+            let body = HealthAlertStrings.swapA
+     func testBrazilianPortugueseLanguageResourcesCannotBeOfferedForCleanup() {
+         for folder in ["pt.lproj", "pt-BR.lproj", "pt_BR.lproj", "Portuguese.lproj", "Portuguese (Brazil).lproj", "Brazilian Portuguese.lproj"] {
+             XCTAssertTrue(LanguagePreferences.alwaysKept.contains(folder), folder)
+         }
+     }
+ 
++    func testKoreanLanguageResourcesCannotBeOfferedForCleanup() {
++        let original = LanguagePreferences.discoveredLproj
++        defer { LanguagePreferences.discoveredLproj = original }
++        let folders: Set<String> = ["ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj"]
++        LanguagePreferences.discoveredLproj = folders
++        XCTAssertTrue(folders.isSubset(of: LanguagePreferences.alwaysKept))
++        XCTAssertTrue(LanguagePreferences.selectableLanguages().isEmpty)
++    }
++
+     func testGermanLanguageSelectionAndRegionalIdentifiers() {
+         XCTAssertTrue(AppLanguage.allCases.contains(.de))
+         XCTAssertEqual(AppLanguage.de.pickerLabel, "Deutsch")
+@@ -264,7 +301,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             ("清除", "Clear", "Очистить"),
+             ("这只会忘掉恢复记录，废纸篓里的文件不会被动。之后就不能一键恢复这些清理了。", "This only forgets the restore list. Nothing in the Trash is touched, but these cleans can no longer be restored in one click.", "Это"),
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
+             AppLanguage.current = language
+             for (zh, en, ru) in strings {
+                 let value = L10n.tr(zh, en, ru)
+@@ -380,6 +417,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             .es: "Invítame a un café",
+             .ptBR: "Me pague um café",
+             .ja: "コーヒーをおごる",
++            .ko: "커피 한 잔 후원하기",
+             .zhHant: "請我喝杯咖啡",
+             .ru: "Угостить кофе",
+         ]
+@@ -401,7 +439,7 @@ final class LocalizationTests: AppLanguageTestCase {
+         let sameAsSimplified: Set<String> = [
+             "容器", "卷", "大小", "取消", "永久清理", "清理完成", "未能完成", "已停止",
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ru] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru] {
+             AppLanguage.current = language
+             for (index, value) in DiskHogsText.all.enumerated() where !sameAsEnglish.contains(english[index]) || language == .ru {
+                 XCTAssertNotEqual(value, english[index], "\(language) is missing: \(english[index])")
+@@ -431,7 +469,7 @@ final class LocalizationTests: AppLanguageTestCase {
+             ("正在查找项目…", "Finding projects…", "Поиск проектов…"),
+             ("正在计算文件夹大小…", "Measuring folders…", "Подсчёт размера папок…"),
+         ]
+-        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant, .ru] {
++        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant, .ru] {
+             AppLanguage.current = language
+             for s in strings {
+                 let text = L10n.tr(s.zh, s.en, s.ru)
+@@ -475,7 +513,7 @@ final class LocalizationTests: AppLanguageTestCase {
+         let sameInTraditional: Set<String> = ["未知"]
+ 
+         for (zh, english) in strings {
+-            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
++            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
+                 AppLanguage.current = language
+                 XCTA
+```
+
+**File**: `Tests/MacCleanKitTests/SupportersTests.swift` (modified, +2/-2)
+```diff
+@@ -64,7 +64,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
+         let english = allStrings()
+         AppLanguage.current = .zhHans
+         let simplified = allStrings()
+-        for language in [AppLanguage.de, .fr, .it, .ru, .ja, .ptBR, .es] {
++        for language in [AppLanguage.de, .fr, .it, .ru, .ko, .ja, .ptBR, .es] {
+             AppLanguage.current = language
+             for (index, translated) in allStrings().enumerated() {
+                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
+@@ -77,7 +77,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
+     }
+ 
+     func testPlaceholderIsFilledInEveryLanguage() {
+-        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ja, .ptBR, .es] {
++        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ko, .ja, .ptBR, .es] {
+             AppLanguage.current = language
+             let caption = SupporterStrings.caption(for: ["Ada"])
+             XCTAssertTrue(caption.contains("Ada"), "\(language): \(caption)")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #268** (2026-11-03): Add a supporters list for memberships (@iliyami)
 - **PR #265** (closed): Surface OpenClaw logs (~/.openclaw) under User Log Files (@mehdiraized)
 - **PR #264** (closed): Add uv cache to Package Manager Caches (@mehdiraized)
 - **PR #263** (closed): Find pnpm stores and show Docker Desktop disk image (@mehdiraized)
 - **PR #261** (2026-10-29): Show swap under memory and add opt-in swap and memory pressure alerts (@iliyami)
 - **PR #260** (2026-10-28): README: live stats and a sponsor page with audience and rates (@iliyami)
-- **PR #259** (2026-10-28): Keep interface languages accessible in narrow Settings windows (@mrglonin)
 
 ---
 
@@ -2375,43 +2506,23 @@ every language.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show swap under memory and add opt-in swap and memory pressure alerts (#261)
+## X. Add Turkish localization (#247)
 
 **RULE**:
-When implementing operations in `Sources/MacClean/Views/Settings/SettingsPageView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/MacCleanKit/CleanupStrings.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8accd9cb`: Show swap under memory and add opt-in swap and memory pressure alerts (#261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da2a26e8`: Add Turkish localization (#247). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/MacClean/Views/Settings/SettingsPageView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/MacCleanKit/CleanupStrings.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    @AppStorage(HealthAlertSettings.memoryPressureAlertKey, store: SharedAppState.defaults) private var memoryPressureAlert = true
-    @AppStorage(HealthAlertSettings.swapAlertThresholdKey, store: SharedAppState.defaults) private var swapAlertThresholdGB = 0
-            alertsSection
-    // MARK: - Alerts
-
-    private var alertsSection: some View {
-        Section(HealthAlertStrings.sectionTitle) {
-            Toggle(isOn: $memoryPressureAlert) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(HealthAlertStrings.memoryPressureToggle)
-                    Text(HealthAlertStrings.memoryPressureCaption)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .toggleStyle(.switch)
-            Picker(selection: $swapAlertThresholdGB) {
-                ForEach(HealthAlertSettings.swapThresholdChoices, id: \.self) { gigabytes in
-                    Text(gigabytes == 0 ? HealthAlertStrings.swapOff : FileSizeFormatter.format(HealthAlertSettings.bytes(forGB: gigabytes)))
-                        .tag(gigabytes)
-                }
-            } label: {
-                VStack(align
+        case .tr: return "\(totalText) öğeden \(selectedText) öğe seçildi"
+        case .tr: return "\(number) öğe temizlensin mi?"
+        case .tr: return "\(number) öğe"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2421,4 +2532,4 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8accd9cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da2a26e8` are properly handled with clean fallback behavior.
