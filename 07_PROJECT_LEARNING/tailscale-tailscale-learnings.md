@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `57ca6e1e`  
+> **Source Version**: `f5d37847`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:22:29.770Z  
+> **Timestamp**: 2026-11-03T10:59:49.769Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:22:29.463Z  
+> **Harvest Timestamp**: 2026-11-03T10:59:49.318Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38525 stars
+- **Stars / Engagement**: 38566 stars
 
 ---
 
@@ -821,365 +821,251 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `57ca6e1e` (2026-10-14)
-**Commit Message**: cmd/k8s-operator/e2e: test that cleanup finds devices by machine key
+### Incident Patch 1: `f5d37847` (2026-11-03)
+**Commit Message**: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276)
 
-Adds an e2e test for proxy cleanup when the state Secret has no
-device_id, as the unit tests use a fake client and can't show that
-control honours the machineKey filter. It fills the tailnet with other
-devices, checks the filter returns only the proxy's device, then removes
-device_id from the state Secret and unexposes the Service. It checks
-that the proxy's device is deleted and the other devices are left alone.
+* cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift
 
-Updates #18922
+The nameserver ServiceAccount, Deployment, Service and ConfigMap are created
+with an ownerReference to the cluster-scoped DNSConfig and
+blockOwnerDeletion: true. Clusters running the
+OwnerReferencesPermissionEnforcement admission plugin - which OpenShift enables
+by default and upstream Kubernetes does not - require the creating identity to
+hold update on the owner finalizers subresource before accepting such a child.
 
-Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+The operator ClusterRole grants dnsconfigs and dnsconfigs/status but no rule on
+any finalizers subresource, so every nameserver reconcile is rejected:
 
-**File**: `cmd/k8s-operator/e2e/svc_test.go` (modified, +143/-0)
+  serviceaccounts "nameserver" is forbidden: cannot set blockOwnerDeletion if
+  an ownerReference refers to a resource you cannot set finalizers on
+
+It retries forever, the DNSConfig never gets a status, and dns-records-reconciler
+waits indefinitely. Granting the rule lets the reconcile succeed on the next
+attempt; it is inert where the admission plugin is not enabled.
+
+Static manifest regenerated with ./tool/go run ./cmd/k8s-operato
+
+**File**: `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml` (modified, +11/-0)
 ```diff
-@@ -5,17 +5,23 @@ package e2e
- 
- import (
- 	"fmt"
-+	"slices"
- 	"strings"
- 	"testing"
- 	"time"
- 
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 
- 	"tailscale.com/client/tailscale/v2"
-+	"tailscale.com/ipn"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tstest"
-+	"tailscale.com/types/key"
-+	"tailscale.com/util/set"
- )
- 
- // TestHAServiceCleanupOnAnnotationRemoved checks that removing the
-@@ -131,3 +137,140 @@ func isServicePGFinalizerE2E(f string) bool {
- 	_, name, ok := strings.Cut(f, "/")
- 	return ok && name == "service-pg-finalizer"
- }
-+
-+// TestServiceCleanupUnreportedDevice checks that cleaning up a proxy that
-+// registered with control but never reported its device ID deletes its device,
-+// found by machine key, and leaves every other device in the tailnet alone.
-+func TestServiceCleanupUnreportedDevice(t *testing.T) {
-+	if tsClient == nil {
-+		t.Skip("TestServiceCleanupUnreportedDevice requires a working tailnet client")
-+	}
-+	t.Parallel()
-+
-+	// Fill the tailnet, so that if control ignored the machine key filter the
-+	// lookup would return many devices instead of one.
-+	const otherDevices = 25
-+	var otherIDs []string
-+	for range otherDevices {
-+		srv := newTailnetNode(t, tsClient, generateName("other"))
-+		lc, err := srv.LocalClient()
-+		if err != nil {
-+			t.Fatalf("getting local client: %v", err)
-+		}
-+		st, err := lc.StatusWithoutPeers(t.Context())
-+		if err != nil {
-+			t.Fatalf("getting status: %v", err)
-+		}
-+		otherIDs = append(otherIDs, string(st.Self.ID))
-+	}
-+
-+	// The proxy only needs to register, so the Service needs no backends.
-+	svc := &corev1.Service{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      generateName("test-cleanup"),
-+			Namespace: ns,
-+			Annotations: map[string]string{
-+				"tailscale.com/expose": "true",
-+			},
-+		},
-+		Spec: corev1.ServiceSpec{
-+			Selector: map[string]string{
-+				"app.kubernetes.io/name": "none",
-+			},
-+			Ports: []corev1.ServicePort{
-+				{Name: "http", Protocol: "TCP", Port: 80},
-+			},
-+		},
-+	}
-+	createAndCleanup(t, kubeClient, svc)
-+
-+	var sec corev1.Secret
-+	if err := tstest.WaitFor(5*time.Minute, func() error {
-+		var secrets corev1.SecretList
-+		if err := kubeClient.List(t.Context(), &secrets,
-+			client.InNamespace("tailscale"),
-+			client.MatchingLabels{
-+				"tailscale.com/parent-resource":      svc.Name,
-+				"tailscale.com/parent-resource-ns":   ns,
-+				"tailscale.com/parent-resource-type": "svc",
-+			},
-+		); err != nil {
-+			return err
-+		}
-+		if len(secrets.Items) == 0 {
-+			return fmt.Errorf("no state Secret for Service %s yet", svc.Name)
-+		}
-+		sec = secrets.Items[0]
-+		if len(sec.Data[kubetypes.KeyDeviceID]) == 0 {
-+			return fmt.Errorf("state Secret %s has no device_id yet", sec.Name)
-+		}
-+		return nil
-+	}); err != nil {
-+		t.Fatalf("waiting for the proxy to register: %v", err)
-+	}
-+	deviceID := string(sec.Data[kubetypes.KeyDeviceID])
-+
-+	var mk key.MachinePrivate
-+	if err := mk.UnmarshalText(sec.Data[string(ipn.MachineKeyStateKey)]); err != nil {
-+		t.Fatalf("parsing machine key in state Secret %s: %v", sec.Name, err)
-+	}
-+	devices, err := tsClient.Devices().List(t.Context(), tailscale.WithFilter("machineKey", []string{mk.Public().String()}))
-+	if err != nil {
-+		t.Fatalf("listing devices by machine key: %v", err)
-+	}
-+	if len(devices) != 1 || devices[0].NodeID != deviceID {
-+		var ids []string
-+		for _, d := range devices {
-+			ids = append(ids, d.NodeID)
-+		}
-+		t.Fatalf("devices with the proxy's machine key = %v, want [%s]", ids, deviceID)
-+	}
-+
-+	// Mimic a proxy that was shut down before its first netmap. containerboot
-+	// only writes device_id when it changes, so the running proxy won't
-+	// restore it.
-+	secPatch := client.RawPatch(types.MergePatchType, []byte(`{"data":{"device_id":null,"device_fqdn":null,"device_ips":null}}`))
-+	if err := kubeClient.Patch(t.Context(), &sec, secPatch); err != nil {
-+		t.Fatalf("removing device_id from state Secret %s: %v", sec.Name, err)
-+	}
-+	svcPatch := client.RawPatch(types.MergePatchType, []byte(`{"metadata":{"annotations":{"tailscale.com/expose":null}}}`))
-+	if err := kubeClient.Patch(t.Context(), svc, svcPatch); err != nil {
-+		t.Fatalf("removing expose annotation: %v", err)
-+	}
-+
-+	if err := tstest.WaitFor(5*time.Minute, func() error {
-+		cur := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
-+		if err := get(t.Context(), kubeClient, cur); err != nil {
-+			return err
-+		}
-+		if slices.Contains(cur.Finalizers, "tailscale.com/finalizer") {
-+			return fmt.Errorf("Service %s cleanup not finished yet", svc.Name)
-+		}
-+		return nil
-+	}); err != nil {
-+		t.Fatalf("waiting for Service cleanup: %v", err)
-+	}
-+
-+	_, err = tsClient.Devices().Get(t.Context(), deviceID)
-+	switch {
-+	case tailscale.IsNotFound(err):
-+	case err != nil:
-+		t.Fatalf("getting device %s: %v", deviceID, err)
-+	default:
-+		t.Fatalf("device %s is 
+@@ -41,6 +41,17 @@ rules:
+ - apiGroups: ["tailscale.com"]
+   resources: ["dnsconfigs", "dnsconfigs/status"]
+   verbs: ["get", "list", "watch", "update"]
++# Child resources are created with an ownerReference to their owner and
++# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
++# admission plugin (OpenShift does by default) then require update on the owner's
++# finalizers subresource, otherwise every such create is rejected and the owner never
++# reconciles. Inert where the plugin is not enabled.
++- apiGroups: ["tailscale.com"]
++  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
++  verbs: ["update"]
++- apiGroups: [""]
++  resources: ["services/finalizers"]
++  verbs: ["update"]
+ - apiGroups: ["tailscale.com"]
+   resources: ["tailnets", "tailnets/status"]
+   verbs: ["get", "list", "watch", "update"]
+```
+
+**File**: `cmd/k8s-operator/deploy/manifests/operator.yaml` (modified, +14/-0)
+```diff
+@@ -6663,6 +6663,20 @@ rules:
+         - list
+         - watch
+         - update
++    - apiGroups:
++        - tailscale.com
++      resources:
++        - dnsconfigs/finalizers
++        - proxygroups/finalizers
++        - recorders/finalizers
++      verbs:
++        - update
++    - apiGroups:
++        - ""
++      resources:
++        - services/finalizers
++      verbs:
++        - update
+     - apiGroups:
+         - tailscale.com
+       resources:
 ```
 
 ---
 
-### Incident Patch 2: `afb8baf0` (2026-10-16)
-**Commit Message**: cmd/k8s-operator,k8s-operator: test cleanup of HA devices with no device ID
+### Incident Patch 2: `1db86dac` (2026-11-03)
+**Commit Message**: cmd/k8s-operator/e2e: add IP family tests for ingress (#22091)
 
-Adds tests that ProxyGroup scale-down and cleanup, Recorder cleanup and
-PeerRelay cleanup delete the device matching the machine key in a state
-Secret that has no device ID. The Recorder test puts that Secret on
-replica 0, so it also checks that cleanup carries on to the other
-replicas.
+Restructure the L3, L3 HA and L7 ingress e2e tests into IP family subtests
+to cover IPv4 and IPv6, plus DualStack for ProxyGroup.
 
-Updates #18922
+Updates tailscale/corp#38029
 
-Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
 
-**File**: `cmd/k8s-operator/proxygroup_test.go` (modified, +3/-1)
+**File**: `cmd/k8s-operator/e2e/ingress_test.go` (modified, +273/-190)
 ```diff
-@@ -1051,6 +1051,7 @@ func TestProxyGroup(t *testing.T) {
- 	})
+@@ -37,80 +37,93 @@ func TestL3Ingress(t *testing.T) {
+ 	// Apply nginx
+ 	nginx := nginxDeployment(ns)
+ 	createAndCleanup(t, kubeClient, nginx)
+-	// Apply service to expose it as ingress
+-	svc := &corev1.Service{
+-		ObjectMeta: metav1.ObjectMeta{
+-			Name:      generateName("test-ingress"),
+-			Namespace: ns,
+-			Annotations: map[string]string{
+-				"tailscale.com/expose": "true",
+-			},
+-		},
+-		Spec: corev1.ServiceSpec{
+-			Selector: map[string]string{
+-				"app.kubernetes.io/name": nginx.Name,
+-			},
+-			Ports: []corev1.ServicePort{
+-				{
+-					Name:     "http",
+-					Protocol: "TCP",
+-					Port:     80,
+-				},
+-			},
+-		},
+-	}
+-	createAndCleanup(t, kubeClient, svc)
  
- 	t.Run("scale_down_to_1", func(t *testing.T) {
-+		setUnreportedDevice(t, fc, tsClient, pgStateSecretName(pg.Name, 2), "unreported-2")
- 		pg.Spec.Replicas = new(int32(1))
- 		mustUpdate(t, fc, "", pg.Name, func(p *tsapi.ProxyGroup) {
- 			p.Spec = pg.Spec
-@@ -1086,6 +1087,7 @@ func TestProxyGroup(t *testing.T) {
- 	})
+-	if err := tstest.WaitFor(time.Minute, func() error {
+-		maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
+-		if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
+-			return err
+-		}
+-		isReady := kube.SvcIsReady(maybeReadySvc)
+-		if isReady {
+-			t.Log("Service is ready")
+-			return nil
+-		}
+-		return fmt.Errorf("Service is not ready yet")
+-	}); err != nil {
+-		t.Fatalf("error waiting for the Service to become Ready: %v", err)
+-	}
++	// Singleton ingress proxy forwards only the Service's primary ClusterIP family,
++	// Dualstack isn't supported. See https://github.com/tailscale/tailscale/issues/22138.
++	for _, tc := range []struct {
++		name     string
++		families []corev1.IPFamily
++	}{
++		{"IPv4", []corev1.IPFamily{corev1.IPv4Protocol}},
++		{"IPv6", []corev1.IPFamily{corev1.IPv6Protocol}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			skipIfUnsupportedFamilies(t, tc.families)
++			// Apply service to expose it as ingress
++			svc := &corev1.Service{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      generateName("test-ingress"),
++					Namespace: ns,
++					Annotations: map[string]string{
++						"tailscale.com/expose": "true",
++					},
++				},
++				Spec: corev1.ServiceSpec{
++					IPFamilyPolicy: new(ipFamilyPolicy(tc.families)),
++					IPFamilies:     tc.families,
++					Selector: map[string]string{
++						"app.kubernetes.io/name": nginx.Name,
++					},
++					Ports: []corev1.ServicePort{
++						{
++							Name:     "http",
++							Protocol: "TCP",
++							Port:     80,
++						},
++					},
++				},
++			}
++			createAndCleanup(t, kubeClient, svc)
  
- 	t.Run("delete_and_cleanup", func(t *testing.T) {
-+		setUnreportedDevice(t, fc, tsClient, pgStateSecretName(pg.Name, 0), "unreported-0")
- 		if err := fc.Delete(t.Context(), pg); err != nil {
- 			t.Fatal(err)
- 		}
-@@ -1098,7 +1100,7 @@ func TestProxyGroup(t *testing.T) {
- 		}
- 		// 2 nodes should get deleted as part of the scale down, and then finally
- 		// the first node gets deleted with the ProxyGroup cleanup.
--		if diff := cmp.Diff(tsClient.deleted, []string{"nodeid-1", "nodeid-2", "nodeid-0"}); diff != "" {
-+		if diff := cmp.Diff(tsClient.deleted, []string{"nodeid-1", "unreported-2", "unreported-0"}); diff != "" {
- 			t.Fatalf("unexpected deleted devices (-got +want):\n%s", diff)
- 		}
- 		expectMissing[corev1.Service](t, reconciler, "tailscale", metricsResourceName(pg.Name))
-```
-
-**File**: `cmd/k8s-operator/testutils_test.go` (modified, +16/-0)
-```diff
-@@ -39,6 +39,7 @@ import (
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
- 	"tailscale.com/k8s-operator/tsclient"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/types/key"
- 	"tailscale.com/util/mak"
- )
+-	// Get a matching-family Tailscale IP for the Service from the associated Secret.
+-	var proxyIP string
+-	if err := tstest.WaitFor(time.Minute, func() error {
+-		var secrets corev1.SecretList
+-		if err := kubeClient.List(t.Context(), &secrets,
+-			client.InNamespace("tailscale"),
+-			client.MatchingLabels{
+-				"tailscale.com/parent-resource":    svc.Name,
+-				"tailscale.com/parent-resource-ns": ns,
+-			},
+-		); err != nil {
+-			return err
+-		}
+-		if len(secrets.Items) == 0 {
+-			return fmt.Errorf("Service not ready yet")
+-		}
+-		var deviceIPs []string
+-		if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
+-			return fmt.Errorf("decoding device IPs: %w", err)
+-		}
+-		currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
+-		if err := get(t.Context(), kubeClient, currentSvc); err != nil {
+-			return err
+-		}
+-		proxyIP = ipMatchingFamily(deviceIPs, currentSvc.Spec.ClusterIP)
+-		if proxyIP == "" {
+-			return fmt.Errorf("device has no IP matching Service ClusterIP family")
+-		}
+-		return nil
+-	}); err != nil {
+-		t.Fatalf("error waiting for matching-family IP for Service: %v", err)
+-	}
++			if err := tstest.WaitFor(time.Minute, func() error {
++				maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
++				if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
++					return err
++				}
++				if kube.SvcIsReady(maybeReadySvc) {
++					return nil
++				}
++				return fmt.Errorf("Service is not ready yet")
++			}); err != nil {
++				t.Fatalf("error waiting for the Service to become Ready: %v", err)
++			}
  
-@@ -948,6 +949,21 @@ func (m *fakeDevices) Get(_ context.Context, id string) (*tailscale.Device, erro
- 	return nil, tailscale.APIError{Status: http.StatusNotFound}
- }
- 
-+// setUnreportedDevice leaves only a machine key in state Secret name and registers a device with that key, as if
-+// tailscaled registered with control but never reported its device ID.
-+func setUnreportedDevice(t *testing.T, cl client.Client, tsClient *fakeTSClient, name, nodeID string) {
-+	t.Helper()
-+	mk := key.NewMachine()
-+	mkText, err := mk.MarshalText()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	mustUpdate(t, cl, tsNamespace, name, func(s *corev1.Secret) {
-+		s.Data = map[string][]byte{string(ipn.MachineKeyStateKey): mkText}
-+	})
-+	tsClient.devices = append(tsClient.devices, tailscale.Device{NodeID: nodeID, MachineKey: mk.Public().String()})
-+}
-+
- func (c *fakeTSClient) Keys() tsclient.KeyResource {
- 	return &fakeKeys{
- 		keyRequests: &c.keyRequests,
-```
-
-**File**: `cmd/k8s-operator/tsrecorder_test.go` (modified, +3/-1)
-```diff
-@@ -261,6 +261,8 @@ func TestRecorder(t *testing.T) {
- 	})
- 
- 	t.Run("delete_the_Recorder_and_observe_cleanup", func(t *testing.T) {
-+		// Replica 0 comes first, so an unreported device there must not end cleanup early.
-+		setUnreportedDevice(t, fc, tsClient, "test-0", "unreported-0")
- 		if err := fc.Delete(context.Background(), tsr); err != nil {
- 			t.Fatal(err)
- 		}
-@@ -271,7 +273,7 @@ func TestRecorder(t *testing.T) {
- 		if expected := 0; reconciler.recorders.Len() != expected {
- 			t.Fatalf("expected %d recorders, got %d", expected, reconciler.recorders.Len())
- 		}
--		if diff := cmp.Diff(tsClient.deleted, []string{"node-0", "node-1", "node-2"}); diff != "" {
-+		if diff := cmp.Diff(tsClient.deleted, []string{"unreported-0", "node-1", "node-2"}); diff != "" {
- 			t.Fatalf("unexpected deleted devices (-got +want):\n%s", diff)
- 		}
- 		// The fake client does not clean up objects whose owner has been
-```
-
-**File**: `k8s-operator/reconciler/peerrelay/peerrelay_test.go` (modified, +25/-5)
-```diff
-@@ -35,6 +35,7 @@ import (
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
- 	"tailscale.com/k8s-operator/reconciler/peerrelay"
- 	"tailscale.com/k8s-operator/tsclient"
-+	"tailscale.com/types/key"
- )
- 
- const (
-@@ -1572,6 +1573,7 @@ type fakeTSClient struct {
- 	mu            sync.Mutex
- 	keyCalls      []tailscaleclient.CreateKeyRequest
- 	deviceDeletes []string
-+	devices       []tailscaleclient.Device
- 	nextKey       []string
- }
- 
-@@ -1621,7 +1623,10 @@ func (d *fakeDevices) Delete(_ context.Context, id string) error {
- }
- 
- func (d *fakeDevices) List(_ context.Context, _ ...tailscaleclient.ListDevicesOptions) ([]tailscaleclient.Device, error) {
--	return nil, nil
-+	c := (*fakeTSClient)(d)
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	return slices.Clone(c.devices), nil
- }
- 
- func (d *fakeDevices) Get(_ context.Context, _ string) (*tailscaleclient.Device, error) {
-@@ -1784,8 +1789,17 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
- 				Finalizers:        []string{"tailscale.com/finalizer"},
- 				DeletionTimestamp: new(metav1.Now()),
- 			},
--			Spec: tsapi.PeerRelaySpec{Replicas: new(int32(2))},
-+			Spec: tsapi.PeerRelaySpec{Replicas: new(int32(3))},
-+		}
-+
-+		// Replica 2 registered with control but never reported its device ID.
-+		mk := key.NewMachine()
-+		mkText, err := mk.MarshalText()
-+		if err != nil {
-+			t.Fatal(err)
- 		}
-+		unreported := stateSecret("test", "peerrelay-test-2", 2, "")
-+		unreported.Data = map[string][]byte{string(ipn.MachineKeyStateKey): mkText}
- 
- 		fc := fake.NewClientBuilder().WithInterceptorFuncs(applyPatchInterceptor()).
- 			WithScheme(tsapi.GlobalScheme).
-@@ -1794,11 +1808,15 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
- 				pr,
- 				stateSecret("test", "peerrelay-test-0", 0, "device-aaa"),
- 				stateSecret("test", "peerrelay-test-1", 1, ""), // pod never registered , no device_id
-+				unreported,
- 				stateSecret("other", "peerrelay-other-0", 0, "device-should-not-touch"),
- 			).
- 			Build()
- 
--		tsc := &fakeTSClient{}
-+		tsc := &fakeTSClient{devices: []tailscaleclient.Device{
-+			{NodeID: "device-bbb", MachineKey: mk.Public().String()},
-+			{NodeID: "device-other", MachineKey: key.NewMachine().Public().String()},
-+		}}
- 		r := peerrelay.NewReconciler(peerrelay.ReconcilerOptions{
- 			Client:             fc,
- 			TailscaleNamespace: tailscaleNamespace,
-@@ -1813,12 +1831,14 @@ func TestReconciler_DeletesTailnetDevices(t *testing.T) {
- 			t.Fatal(err)
- 		}
- 
--		if got, want := tsc.DeviceDeletes(), []string{"device-aaa"}; !slices.Equal(got, want) {
-+		got := tsc.DeviceDeletes()
-+		slices.Sort(got)
-+		if want := []string{"device-aaa", "device-bbb"}; !slices.Equal(got, want) {
- 			t.Errorf("expected Devices().Delete calls %v, got %v", want, got)
- 		}
- 
- 		// Our state Secrets should be gone; the unrelated PeerRelay's state Secret should still be present.
--		for _, name := range []string{"peerrelay-test-0", "peerrelay-test-1"} {
-+		for _, name := range []string{"peerrelay-test-0", "peerrelay-test-1", "peerrelay-test-2"} {
- 			var s corev1.Secret
- 			if err = fc.Get(t.Context(), types.NamespacedName{Namespace: tailscaleNamespace, Name: name}, &s); !apierrors.IsNotFound(err) {
- 				t.Errorf("expected state Secret %q gone, got err=%v", name, err)
+-	if err := testIngressIsReachable(t, newHTTPClient(tnClient), "http://"+net.JoinHostPort(proxyIP, "80")); err != nil {
+-		t.Fatal(err)
++			// Get matching-family Tailscale IPs for the Service from the associated Secret.
++			var proxyIP string
++			if err := tstest.WaitFor(time.Minute, func() error {
++				var secrets corev1.SecretList
++				if err := kubeClient.List(t.Context(), &secrets,
++					client.InNamespace("tailscale"),
++					client.MatchingLabels{
++						"tailscale.com/parent-resource":    svc.Name,
++						"tailscale.com/parent-resource-ns": ns,
++					},
++				); err != nil {
++					return err
++				}
++				if len(secrets.Items) == 0 {
++					return fmt.Errorf("Service not ready yet")
++				}
++				var deviceIPs []string
++				if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
++					return fmt.Errorf("decoding device IPs: %w", err)
++				}
++				currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
++				if err := get(t.Context(), kubeClient, currentSvc); err != nil {
++					return err
++				}
++				proxyIP = ipMatchingFamily(deviceIPs, c
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22124** (closed): cmd/pgproxy: support GSSENC, CancelRequest and direct TLS negotiation (@PaarthShah)
-- **PR #22110** (closed): cmd/k8s-operator: gate ProxyGroup ready on rollout (@manuaudio)
-- **PR #22100** (closed): wgengine/magicsock: handle UDP read errors instead of dying (@illotum)
-- **PR #22092** (2026-10-30): wgengine/netstack: disable RACK again (@raggi)
-- **PR #22088** (2026-10-30): ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (@cmol)
-- **PR #22077** (2026-10-30): ssh/tailssh: stop killing session processes on graceful disconnects (@raggi)
+- **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
+- **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
+- **PR #22148** (closed): Proposed picks for 1.104.5 (@raggi)
+- **PR #22147** (2026-11-02): feature/conn25: block destinations inside the magic and transit IP pools (@mazdakn)
+- **PR #22146** (2026-11-02): magicsock: handle UDP read feedback (@illotum)
+- **PR #22143** (2026-11-02): ipn/ipnlocal,cmd/tsnet-proxy: strip underscore variants of identity headers (@andrew-d)
 
 ---
 
@@ -1199,56 +1085,31 @@ Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator/e2e: test that cleanup finds devices by machine key
+## X. cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/e2e/svc_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `57ca6e1e`: cmd/k8s-operator/e2e: test that cleanup finds devices by machine key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5d37847`: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/e2e/svc_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"slices"
-	"k8s.io/apimachinery/pkg/types"
-	"tailscale.com/ipn"
-	"tailscale.com/kube/kubetypes"
-	"tailscale.com/types/key"
-	"tailscale.com/util/set"
-
-// TestServiceCleanupUnreportedDevice checks that cleaning up a proxy that
-// registered with control but never reported its device ID deletes its device,
-// found by machine key, and leaves every other device in the tailnet alone.
-func TestServiceCleanupUnreportedDevice(t *testing.T) {
-	if tsClient == nil {
-		t.Skip("TestServiceCleanupUnreportedDevice requires a working tailnet client")
-	}
-	t.Parallel()
-
-	// Fill the tailnet, so that if control ignored the machine key filter the
-	// lookup would return many devices instead of one.
-	const otherDevices = 25
-	var otherIDs []string
-	for range otherDevices {
-		srv := newTailnetNode(t, tsClient, generateName("other"))
-		lc, err := srv.LocalClient()
-		if err != nil {
-			t.Fatalf("getting local client: %v", err)
-		}
-		st, err := lc.StatusWithoutPeers(t.Context())
-		if err != nil {
-			t.Fatalf("getting status: %v", err)
-		}
-		otherIDs = append(otherIDs, string(st.Self.ID))
-	}
-
-	// The proxy only needs to register, so the Service needs no backends.
-	svc := &corev1.Service{
-		ObjectMeta: metav1
+# Child resources are created with an ownerReference to their owner and
+# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
+# admission plugin (OpenShift does by default) then require update on the owner's
+# finalizers subresource, otherwise every such create is rejected and the owner never
+# reconciles. Inert where the plugin is not enabled.
+- apiGroups: ["tailscale.com"]
+  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
+  verbs: ["update"]
+- apiGroups: [""]
+  resources: ["services/finalizers"]
+  verbs: ["update"]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1258,4 +1119,4 @@ func TestServiceCleanupUnreportedDevice(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `57ca6e1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5d37847` are properly handled with clean fallback behavior.

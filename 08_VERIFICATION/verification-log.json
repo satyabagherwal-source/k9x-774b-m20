@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-E69I",
-    "timestamp": "2026-10-31T00:41:26.070Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-E70U",
-    "timestamp": "2026-10-31T00:41:27.054Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-IOYU",
-    "timestamp": "2026-10-31T00:44:56.934Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-JJD9",
-    "timestamp": "2026-10-31T00:45:36.333Z",
-    "repository": "Michael-A-Kuykendall/shimmy",
-    "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-K9PP",
     "timestamp": "2026-10-31T00:46:10.477Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
@@ -7490,6 +7430,66 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-SXJL",
+    "timestamp": "2026-11-03T10:59:47.025Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "68efc7cbef24df291afc3a90270414e606e562612c7722d45df7062c43378b16",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-T08V",
+    "timestamp": "2026-11-03T10:59:50.527Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-T2R7",
+    "timestamp": "2026-11-03T10:59:53.779Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-T3X3",
+    "timestamp": "2026-11-03T10:59:55.287Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

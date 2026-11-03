@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T10:52:50.458Z",
-    "lastVerified": "2026-11-03T10:52:50.458Z",
+    "lastChecked": "2026-11-03T10:59:57.848Z",
+    "lastVerified": "2026-11-03T10:59:57.848Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,14 +248,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T10:29:40.112Z",
-    "lastVerified": "2026-11-03T10:29:40.112Z",
+    "lastChecked": "2026-11-03T10:59:53.915Z",
+    "lastVerified": "2026-11-03T10:59:53.915Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "2b3f90a8673ccd4ff83e10fdc78300c770827bf1cbff798a8777ad846afdb0d9",
+    "contentHash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2174,12 +2174,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T15:22:29.463Z",
-    "lastVerified": "2026-11-02T15:22:29.463Z",
+    "lastChecked": "2026-11-03T10:59:49.318Z",
+    "lastVerified": "2026-11-03T10:59:49.318Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "573005542acce425695c5e0df433ed0b26a8cb86db8c4c5273c41ebcd8dcd8ae",
+    "contentHash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5070,11 +5070,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
-    "name": "gluesql",
+    "name": "gluesql/gluesql",
     "officialUrl": "https://github.com/gluesql/gluesql",
-    "lastChecked": "2026-10-31T15:56:48.296Z",
-    "revisionIdentifier": "42a4b418",
-    "lastVerified": "2026-10-31T15:56:48.297Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-03T10:59:51.963Z",
+    "lastVerified": "2026-11-03T10:59:51.963Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ekzhang-rustpad": {
     "name": "rustpad",
@@ -6631,9 +6641,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-10-31T12:29:34.946Z",
+    "lastChecked": "2026-11-03T10:59:34.606Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-10-31T12:29:34.946Z"
+    "lastVerified": "2026-11-03T10:59:34.606Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -6662,9 +6672,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-10-31T16:57:13.350Z",
+    "lastChecked": "2026-11-03T10:59:42.104Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-10-31T16:57:13.350Z"
+    "lastVerified": "2026-11-03T10:59:42.104Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -9463,9 +9473,9 @@
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
     "officialUrl": "https://github.com/janreges/siteone-crawler",
-    "lastChecked": "2026-10-29T23:56:57.532Z",
+    "lastChecked": "2026-11-03T10:59:37.109Z",
     "revisionIdentifier": "f3d967b190",
-    "lastVerified": "2026-10-29T23:56:57.532Z"
+    "lastVerified": "2026-11-03T10:59:37.109Z"
   },
   "jellyfin-swiftfin": {
     "name": "jellyfin/Swiftfin",
@@ -10411,14 +10421,14 @@
     "officialUrl": "https://github.com/RevenueCat/purchases-ios",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T11:12:24.115Z",
-    "lastVerified": "2026-10-30T11:12:24.115Z",
+    "lastChecked": "2026-11-03T10:59:44.561Z",
+    "lastVerified": "2026-11-03T10:59:44.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
+    "contentHash": "68efc7cbef24df291afc3a90270414e606e562612c7722d45df7062c43378b16",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

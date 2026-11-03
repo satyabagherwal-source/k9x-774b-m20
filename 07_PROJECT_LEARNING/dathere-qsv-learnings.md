@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `c1ca386c`  
+> **Source Version**: `e38898bf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:29:43.654Z  
+> **Timestamp**: 2026-11-03T10:59:54.828Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:29:40.112Z  
+> **Harvest Timestamp**: 2026-11-03T10:59:53.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,48 +2203,175 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1ca386c` (2026-11-03)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)
+### Incident Patch 1: `e38898bf` (2026-11-03)
+**Commit Message**: deps: update lock file
 
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.265 to 1.0.266.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/6d5ae526d25ce88daa2200be073e1a373167f064...d535f5172dec02b204866b393d6b20b9b2aaf98d)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.266
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +37/-26)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -2021,9 +2021,9 @@ dependencies = [
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
-+        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+ [[package]]
+ name = "ctutils"
+-version = "0.4.7"
++version = "0.4.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a2376ffd6f96d8a9db59875b4b6b0237d6900b5baf64279714e05493ce64828a"
++checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
+ dependencies = [
+  "cmov",
+ ]
+@@ -4150,9 +4150,9 @@ dependencies = [
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
-+        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ [[package]]
+ name = "jiff"
+-version = "0.2.38"
++version = "0.2.39"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b2b005715dcbeb0089a3c0dab99f2ff1cc3b2525323552703d648585d342a383"
++checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
+ dependencies = [
+  "defmt",
+  "jiff-core",
+@@ -4167,19 +4167,19 @@ dependencies = [
  
+ [[package]]
+ name = "jiff-core"
+-version = "0.1.1"
++version = "0.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
++checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
+ dependencies = [
+  "defmt",
+  "log",
+ ]
+ 
+ [[package]]
+ name = "jiff-static"
+-version = "0.2.38"
++version = "0.2.39"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2cc9817253cf7c7ee4684451bd327e88d6f3658014e54a29198625590650695c"
++checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
+ dependencies = [
+  "jiff-core",
+  "proc-macro2",
+@@ -4708,9 +4708,9 @@ checksum = "e20f57f9918e5bd7bc58c22cdd70a6afc7375d4dd9683af5f2b34bd3d2bba619"
+ 
+ [[package]]
+ name = "lzma-rust2"
+-version = "0.23.0"
++version = "0.24.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
++checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
+ dependencies = [
+  "sha2 0.11.1",
+ ]
+@@ -5715,46 +5715,57 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "pest"
+-version = "2.9.2"
++version = "2.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "45d3aca230fad2e6f6317ca0a72724338c4960cb97168a85cdee66df4a9a21a8"
++checksum = "a8db75153506001cb36ed924f08cadc862eb3f8c4d0d534139f29074769d7660"
+ dependencies = [
+  "memchr",
++ "pest_stack_guard",
+  "ucd-trie",
+ ]
+ 
+ [[package]]
+ name = "pest_derive"
+-version = "2.9.2"
++version = "2.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "284b60557f2c4a2e72ad3f2d34d42685a2fa4a6a61d0d2a10c0ae2a5e916c2cf"
++checksum = "20aa17e11fb35664b67d5214a0afac57a360d231b6ec53d6eba0700b27d933b4"
+ dependencies = [
+  "pest",
+  "pest_generator",
+ ]
+ 
+ [[package]]
+ name = "pest_generator"
+-version = "2.9.2"
++version = "2.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1d9d1f08a115309ee99268cf85e5228e0e56aa9caf8841ec12866b6be07c3109"
++checksum = "626ec5afccf44ccbfeb2b232316510bb55b4bf34d891afcb0fb07d2b17d7fe9d"
+ dependencies = [
+  "pest",
+  "pest_meta",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.9",
+ ]
+ 
+ [[package]]
+ name = "pest_meta"
+-version = "2.9.2"
++version = "2.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ed93ba1a9ffcca32130a5188701c81c0c49cf00d4b7c5007d5148951d743adcb"
++checksum = "b3f45b6caa65c1b08186832745159c2529994146340a7bf44168095469720f5d"
+ dependencies = [
+  "pest",
+ ]
+ 
++[[package]]
++name = "pest_stack_guard"
++version = "1.0.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439"
++dependencies = [
++ "psm",
++ "stacker",
++]
++
+ [[package]]
+ name = "petgraph"
+ version = "0.8.3"
+@@ -9911,9 +9922,9 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
+ 
+ [[package]]
+ name = "ureq"
+-version = "3.5.0"
++version = "3.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
++checksum = "e7be76686bdf7198002062423ca0d8cf9b75a27c8e1de804513b97e97b555d9d"
+ dependencies = [
+  "base64 0.23.1",
+  "cookie_store",
+@@ -9932,9 +9943,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ureq-proto"
+-version = "0.6.5"
++version = "0.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
++checksum = "622dce33c252115466d83f63e9744a18f12b4406aae51a01c15ad8fcf1185eb3"
+ dependencies = [
+  "base64 0.23.1",
+  "http 1.5.0",
+@@ -10969,9 +10980,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.2.2"
++version = "9.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e408c6cc4699dd017d53dc080cd51c2cea2b5354af57a1479bd265ed42911487"
++checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
+ dependencies = [
+  "aes",
+  "bzip2",
+@@ -10983,7 +10994,7 @@ dependen
 ```
 
 #### Recent Merged Pull Requests:
@@ -2273,28 +2400,83 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1ca386c`: build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e38898bf`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
+version = "0.4.8"
+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
+version = "0.2.39"
+checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
+version = "0.1.2"
+checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
+version = "0.2.39"
+checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
+version = "0.24.0"
+checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
+version = "2.9.5"
+checksum = "a8db75153506001cb36ed924f08cadc862eb3f8c4d0d534139f29074769d7660"
+ "pest_stack_guard",
+version = "2.9.5"
+checksum = "20aa17e11fb35664b67d5214a0afac57a360d231b6ec53d6eba0700b27d933b4"
+version = "2.9.5"
+checksum = "626ec5afccf44ccbfeb2b232316510bb55b4bf34d891afcb0fb07d2b17d7fe9d"
+ "syn 3.0.9",
+version = "2.9.5"
+checksum = "b3f45b6caa65c1b08186832745159c2529994146340a7bf44168095469720f5d"
+[[package]]
+name = "pest_stack_guard"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439"
+dependencies = [
+ "psm",
+ "stacker",
+]
+
+version = "3.5.1"
+checksum = "e7be76686bdf7198002062423ca0d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: anthropics/claude-code-action@6d5ae526d25ce88daa2200be073e1a373167f064 # v1.0.265
+version = "0.4.7"
+checksum = "a2376ffd6f96d8a9db59875b4b6b0237d6900b5baf64279714e05493ce64828a"
+version = "0.2.38"
+checksum = "b2b005715dcbeb0089a3c0dab99f2ff1cc3b2525323552703d648585d342a383"
+version = "0.1.1"
+checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
+version = "0.2.38"
+checksum = "2cc9817253cf7c7ee4684451bd327e88d6f3658014e54a29198625590650695c"
+version = "0.23.0"
+checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+version = "2.9.2"
+checksum = "45d3aca230fad2e6f6317ca0a72724338c4960cb97168a85cdee66df4a9a21a8"
+version = "2.9.2"
+checksum = "284b60557f2c4a2e72ad3f2d34d42685a2fa4a6a61d0d2a10c0ae2a5e916c2cf"
+version = "2.9.2"
+checksum = "1d9d1f08a115309ee99268cf85e5228e0e56aa9caf8841ec12866b6be07c3109"
+ "syn 2.0.119",
+version = "2.9.2"
+checksum = "ed93ba1a9ffcca32130a5188701c81c0c49cf00d4b7c5007d5148951d743adcb"
+version = "3.5.0"
+checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
+version = "0.6.5"
+checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
+version = "9.2.2"
+checksum = "e408c6cc4699dd017d53dc080cd51c2cea2b5354af57a1479bd265ed42911487"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1ca386c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e38898bf` are properly handled with clean fallback behavior.

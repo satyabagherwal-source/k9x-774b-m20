@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T10:52:47.858Z",
+  "last_updated": "2026-11-03T10:59:55.200Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9177,8 +9177,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c1ca386c",
-      "content_hash": "2b3f90a8673ccd4ff83e10fdc78300c770827bf1cbff798a8777ad846afdb0d9",
+      "source_version": "e38898bf",
+      "content_hash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9523,7 +9523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:29:44.316Z",
+      "verified_at": "2026-11-03T10:59:55.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14939,17 +14939,23 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "42a4b418",
-      "content_hash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
+      "source_version": "83109877",
+      "content_hash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6502,
+          "title": "Plan custom functions before execution (#2053)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:35:11.430Z",
+      "verified_at": "2026-11-03T10:59:53.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49193,8 +49199,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "373c6305",
-      "content_hash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
+      "source_version": "8205ba61",
+      "content_hash": "68efc7cbef24df291afc3a90270414e606e562612c7722d45df7062c43378b16",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -49217,6 +49223,11 @@
           "number": 5742,
           "title": "build: don't block releases on CocoaPods publishing (#8125)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6500,
+          "title": "diagnostics timestamp overflow on 32-bit watchOS (#8170)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49224,7 +49235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T11:12:25.964Z",
+      "verified_at": "2026-11-03T10:59:46.922Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54626,8 +54637,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "57ca6e1e",
-      "content_hash": "573005542acce425695c5e0df433ed0b26a8cb86db8c4c5273c41ebcd8dcd8ae",
+      "source_version": "f5d37847",
+      "content_hash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -54775,6 +54786,11 @@
           "number": 6433,
           "title": "cmd/k8s-operator/e2e: test that cleanup finds devices by machine key",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6501,
+          "title": "cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54782,7 +54798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:22:30.295Z",
+      "verified_at": "2026-11-03T10:59:50.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115876,13 +115892,13 @@
       "rule_number": 3143,
       "title": "deps: update lock file",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6fee7dae",
+      "source_version": "e38898bf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T12:39:42.061Z"
+      "verified_at": "2026-11-03T10:59:55.180Z"
     },
     "rule-3144": {
       "learning_id": "rule-3144",
@@ -168107,6 +168123,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T10:52:47.844Z"
+    },
+    "rule-6500": {
+      "learning_id": "rule-6500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6500,
+      "title": "diagnostics timestamp overflow on 32-bit watchOS (#8170)",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "8205ba61",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:59:46.922Z"
+    },
+    "rule-6501": {
+      "learning_id": "rule-6501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6501,
+      "title": "cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f5d37847",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:59:50.424Z"
+    },
+    "rule-6502": {
+      "learning_id": "rule-6502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6502,
+      "title": "Plan custom functions before execution (#2053)",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "83109877",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:59:53.677Z"
     }
   },
   "aliases": {

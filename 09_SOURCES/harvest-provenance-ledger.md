@@ -6889,3 +6889,7 @@ Every entry in this ledger must capture:
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `42bbf805` | Multi-dimensional audit evidence | 2026-11-03T10:52:38.747Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `bcf59e98` | Multi-dimensional audit evidence | 2026-11-03T10:52:46.479Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `47446103` | Multi-dimensional audit evidence | 2026-11-03T10:52:47.911Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `8205ba61` | Multi-dimensional audit evidence | 2026-11-03T10:59:47.028Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f5d37847` | Multi-dimensional audit evidence | 2026-11-03T10:59:50.531Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `83109877` | Multi-dimensional audit evidence | 2026-11-03T10:59:53.782Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e38898bf` | Multi-dimensional audit evidence | 2026-11-03T10:59:55.291Z |

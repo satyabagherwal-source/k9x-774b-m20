@@ -6880,3 +6880,7 @@
 | `CYCLE-20261103-JR2W` | `2026-11-03T10:52:38.744Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6497` | Yes (`1894d733...`) |
 | `CYCLE-20261103-JX1P` | `2026-11-03T10:52:46.477Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6498` | Yes (`e4480195...`) |
 | `CYCLE-20261103-JY5H` | `2026-11-03T10:52:47.909Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6499` | Yes (`072f8eb4...`) |
+| `CYCLE-20261103-SXJL` | `2026-11-03T10:59:47.025Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6500` | Yes (`68efc7cb...`) |
+| `CYCLE-20261103-T08V` | `2026-11-03T10:59:50.527Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6501` | Yes (`d9f74952...`) |
+| `CYCLE-20261103-T2R7` | `2026-11-03T10:59:53.779Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6502` | Yes (`64c42121...`) |
+| `CYCLE-20261103-T3X3` | `2026-11-03T10:59:55.287Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`c83fe9c6...`) |

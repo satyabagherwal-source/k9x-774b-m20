@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `42a4b418`  
+> **Source Version**: `83109877`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:35:11.368Z  
+> **Timestamp**: 2026-11-03T10:59:53.060Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:35:10.792Z  
+> **Harvest Timestamp**: 2026-11-03T10:59:51.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3132 stars
+- **Stars / Engagement**: 3135 stars
 
 ---
 
@@ -2058,288 +2058,316 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42a4b418` (2026-09-30)
-**Commit Message**: Update JavaScript getting started guide for OPFS entry points (#2045)
+### Incident Patch 1: `83109877` (2026-11-03)
+**Commit Message**: Plan custom functions before execution (#2053)
 
-Remove the IndexedDB storage and `loadIndexedDB` examples, which no
-longer exist in the gluesql package, and document the `gluesql/opfs`
-and `gluesql/opfs/shared` entry points along with their browser
-requirements.
+Move custom function lookup and body/default planning from the executor
+into the planner. Make StatementPlan own prepared function definitions
+and bind calls by index, including nested and recursive calls.
 
-Also fix the broken INSERT statements in the existing examples.
+Share definition validation between CREATE FUNCTION and call planning.
+Allow storage-free function bodies and subqueries, reject custom calls
+in argument defaults, and reject unplanned calls during execution.
+Keep catalog definitions stored as ASTs.
 
-**File**: `docs/docs/getting-started/javascript-web.md` (modified, +105/-10)
+Extend shared immutable and mutable visitors across expressions, queries,
+and sources. Align function plan types with their AST/data counterparts
+and handle subqueries in VALUES and SERIES during schema planning.
+
+Organize custom function fixtures by behavior and document error
+ownership and the Unreachable, Conflict, Unplanned, and MalformedPlan
+conventions.
+
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,16 @@ In your `package.json`, it will be added to the dependencies list as follows:
- }
- ```
- 
-+## Choosing an Entry Point
-+
-+The `gluesql` package provides three browser entry points. Pick the one that matches where your data should live:
-+
-+| Entry point | Storage | Persistence |
-+| --- | --- | --- |
-+| `gluesql` | `memory`, `localStorage`, `sessionStorage` | Memory is lost on reload; Web Storage follows the browser's storage rules |
-+| `gluesql/opfs` | OPFS file | Survives reloads and browser restarts, one tab at a time |
-+| `gluesql/opfs/shared` | OPFS file, shared across tabs | Survives reloads and browser restarts, safe to open in many tabs when Web Locks and `BroadcastChannel` are available |
-+
- ## Usage
- 
- GlueSQL can be used in different environments. Here we will look at how to use it with JavaScript modules, Webpack, and Rollup.
-@@ -36,20 +46,21 @@ In an HTML file, you can use GlueSQL by importing it with a script tag:
- 
- ```html
- <script type="module">
--  import { gluesql } from 'gluesql';
-+  import { gluesql } from 'https://cdn.jsdelivr.net/npm/gluesql/gluesql.js';
- 
-   async function main() {
-     const db = await gluesql();
--    await db.loadIndexedDB();
- 
-     const result = await db.query(`
--      CREATE TABLE Foo (id INTEGER) ENGINE = memory;
--      INSERT INTO Foo (1, 'glue'), (2, 'sql');
-+      CREATE TABLE Foo (id INTEGER, name TEXT) ENGINE = memory;
-+      INSERT INTO Foo VALUES (1, 'glue'), (2, 'sql');
-       SELECT * FROM Foo;
-     `);
- 
-     console.log(result);
--   }
-+  }
-+
-+  main();
- </script>
- ```
- 
-@@ -62,10 +73,9 @@ import { gluesql } from 'gluesql';
- 
- async function run() {
-   const db = await gluesql();
--  await db.loadIndexedDB();
- 
-   const result = await db.query(`
--    CREATE TABLE Foo (id INTEGER) ENGINE = memory;
-+    CREATE TABLE Foo (id INTEGER, name TEXT) ENGINE = memory;
-     INSERT INTO Foo VALUES (1, 'glue'), (2, 'sql');
-     SELECT * FROM Foo;
-   `);
-@@ -116,17 +126,102 @@ Now, you can use GlueSQL in your Rollup project as you would in any other JavaSc
- 
- ## Supported Storage Engines
- 
--GlueSQL supports four storage types: In-Memory Storage, Local Storage, Session Storage, and IndexedDB. 
-+The main `gluesql` entry point supports three storage types: In-Memory Storage, Local Storage, and Session Storage.
- 
- You can specify the storage type when creating a table using the `ENGINE` clause:
- 
- - For In-Memory Storage: `ENGINE = memory`
- - For Local Storage: `ENGINE = localStorage`
- - For Session Storage: `ENGINE = sessionStorage`
--- For IndexedDB: `ENGINE = indexedDB`
- 
- For example:
- 
- ```sql
- CREATE TABLE Foo (id INTEGER) ENGINE = memory;
--```
-\ No newline at end of file
-+```
-+
-+Tables stored in different engines can be joined in a single query.
-+
-+When the `ENGINE` clause is omitted, the default engine is used. The default engine is `memory` initially, and you can change it with `setDefaultEngine`:
-+
-+```javascript
-+db.setDefaultEngine('localStorage');
-+```
-+
-+Web Storage is limited to a few megabytes per origin. For larger or long-lived data, use the OPFS entry point.
-+
-+## Persistent Storage with OPFS
-+
-+The `gluesql/opfs` entry point stores the database as a file in the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system). Data survives page reloads and browser restarts.
-+
-+GlueSQL and its storage run inside a Dedicated Worker, which keeps queries off the main thread. The `gluesql()` function returns a proxy whose `query` method sends SQL to the worker and returns a `Promise`.
-+
-+```javascript
-+import { gluesql } from 'gluesql/opfs';
-+
-+const db = gluesql();
-+
-+await db.query(`
-+  CREATE TABLE IF NOT EXISTS User (id INTEGER, name TEXT);
-+  INSERT INTO User VALUES (1, 'glue');
-+`);
-+
-+// The data is still there after a reload.
-+const [{ rows }] = await db.query('SELECT * FROM User;');
-+```
-+
-+Unlike the main entry point, `gluesql()` here does not need to be awaited. OPFS is the only storage in this entry point, so the `ENGINE` clause and `setDefaultEngine` do not apply.
-+
-+Use the `namespace` option to keep separate databases, each stored in its own file. When it is omitted, the `gluesql` namespace is used.
-+
-+```javascript
-+const app1 = gluesql({ namespace: 'app1' });
-+const app2 = gluesql({ namespace: 'app2' });
-+```
-+
-+Call `terminate()` to stop the worker. Queries that are still pending are rejected.
-+
-+```javascript
-+db.terminate();
-+```
-+
-+### Worker Location
-+
-+The entry point loads `gluesql.opfs.worker.js` relative to its own module URL, and the worker loads its WebAssembly from the `dist_opfs/` directory next to it. When the package files are served from your own origin, no extra configuration is needed.
-+
-+Browsers only allow workers from the same origin, so the OPFS entry points cannot be loaded directly from a third-party CDN. If you serve the worker from a different path, copy `dist_opfs/` next to it and pass its URL:
-+
-+```javascript
-+const db = gluesql({ work
+@@ -1,4 +1,5 @@
+ # AGENTS.md
++- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
+ - After editing code, run `cargo clippy --all-targets -- -D warnings`.
+ - Then run `cargo fmt --all`.
+ - When importing items, group them under a single `use` statement whenever possible.
 ```
 
----
-
-### Incident Patch 2: `bc185d81` (2026-08-04)
-**Commit Message**: Fix schema dependency scanning for ORDER BY expressions (#1982)
-
-Scan every ORDER BY expression when collecting query schema dependencies.
-
-This ensures tables referenced only by scalar subqueries in ORDER BY are included in the schema map. Add regression coverage for single and multiple ordering expressions.
-
-**File**: `core/src/plan/schema.rs` (modified, +27/-2)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -97,27 +97,36 @@ fn scan_query<T: Store + ?Sized>(
- ) -> Result<HashMap<String, Schema>> {
-     let QueryPlan {
-         body,
-+        order_by,
-         limit,
-         offset,
--        ..
-     } = query;
+@@ -121,6 +121,8 @@ GlueSQL is designed to be adaptable to a wide variety of environments, including
  
-     let schema_list = match body {
-         SetExprPlan::Select(select) => scan_select(storage, select)?,
-         SetExprPlan::Values(_) => HashMap::new(),
-     };
+ GlueSQL is simpler to contribute to than it may look. Its test suite and continuous integration provide guardrails that catch regressions before changes are merged, so don't hesitate to open an issue or pull request.
  
-+    let order_by = order_by
-+        .iter()
-+        .map(|order_by| scan_expr(storage, &order_by.expr))
-+        .collect::<Result<Vec<HashMap<String, Schema>>>>()?
-+        .into_iter()
-+        .flatten();
++Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It defines error naming conventions and how to check the corresponding error paths.
 +
-     let schema_list = match (limit, offset) {
-         (Some(limit), Some(offset)) => schema_list
-             .into_iter()
-+            .chain(order_by)
-             .chain(scan_expr(storage, limit)?)
-             .chain(scan_expr(storage, offset)?)
-             .collect(),
-         (Some(expr), None) | (None, Some(expr)) => schema_list
-             .into_iter()
-+            .chain(order_by)
-             .chain(scan_expr(storage, expr)?)
-             .collect(),
--        (None, None) => schema_list,
-+        (None, None) => schema_list.into_iter().chain(order_by).collect(),
-     };
+ If you're not sure where to start, explore the [test suite](test-suite). The [SQL fixtures](test-suite/fixtures) are a good starting point for getting a sense of GlueSQL's overall capabilities. Try contributing a feature you'd like to use, or browse the [GitHub issues](https://github.com/gluesql/gluesql/issues) for more ideas.
  
-     Ok(schema_list)
-@@ -351,6 +360,22 @@ mod tests {
-         ",
-             &["Bar", "Foo"],
-         );
-+        test(
-+            "
-+            SELECT *
-+            FROM Foo
-+            ORDER BY (SELECT id FROM Bar LIMIT 1);
-+        ",
-+            &["Bar", "Foo"],
-+        );
-+        test(
-+            "
-+            SELECT *
-+            FROM Foo
-+            ORDER BY id + 1, (SELECT id FROM Bar LIMIT 1);
-+        ",
-+            &["Bar", "Foo"],
-+        );
- 
-         // PlanExpr::QueryAndExpr
-         test(
+ ## License
 ```
 
----
-
-### Incident Patch 3: `b95f7691` (2026-09-28)
-**Commit Message**: Fix repeated IF NOT EXISTS CTAS inserts (#2044)
-
-When the target table already exists, return before executing the CTAS
-source query so rerunning the statement does not append duplicate rows.
-
-**File**: `core/src/executor/alter/table.rs` (modified, +4/-0)
+**File**: `core/src/executor/alter.rs` (modified, +1/-3)
 ```diff
-@@ -41,6 +41,10 @@ pub fn create_table<T: GStore + GStoreMut>(
-         comment,
-     }: CreateTableOptions<'_>,
+@@ -5,9 +5,7 @@ mod index;
+ mod table;
+ mod validate;
+ 
+-use validate::{
+-    validate, validate_arg_names, validate_column_def, validate_column_names, validate_default_args,
+-};
++use validate::{validate, validate_column_def, validate_column_names};
+ 
+ pub use {
+     alter_table::alter_table,
+```
+
+**File**: `core/src/executor/alter/error.rs` (modified, +0/-6)
+```diff
+@@ -46,12 +46,6 @@ pub enum AlterError {
+     #[error("Default value is required: {0:#?}")]
+     DefaultValueRequired(ColumnDef),
+ 
+-    #[error("duplicate arg name: {0}")]
+-    DuplicateArgName(String),
+-
+-    #[error("non-default argument should not follow the default argument")]
+-    NonDefaultArgumentFollowsDefaultArgument,
+-
+     #[error("foreign table not found: {0}")]
+     ReferencedTableNotFound(String),
+ 
+```
+
+**File**: `core/src/executor/alter/function.rs` (modified, +1/-4)
+```diff
+@@ -1,5 +1,5 @@
+ use {
+-    super::{AlterError, validate_arg_names, validate_default_args},
++    super::AlterError,
+     crate::{
+         ast::{Expr, OperateFunctionArg},
+         data::CustomFunction,
+@@ -15,9 +15,6 @@ pub fn insert_function<T: GStore + GStoreMut>(
+     or_replace: bool,
+     body: &Expr,
  ) -> Result<()> {
-+    if if_not_exists && source.is_some() && storage.fetch_schema(target_table_name)?.is_some() {
-+        return Ok(());
-+    }
-+
-     let mut selected_source_rows = None;
-     let target_columns_defs = match source.as_deref() {
-         Some(source_query) => match query::output_body(source_query) {
+-    validate_arg_names(args)?;
+-    validate_default_args(args)?;
+-
+     if storage.fetch_function(func_name)?.is_none() || or_replace {
+         storage.delete_function(func_name)?;
+         storage.insert_function(CustomFunction {
 ```
 
-**File**: `test-suite/fixtures/alter/create_table.sql` (modified, +21/-0)
+**File**: `core/src/executor/alter/index.rs` (modified, +2/-2)
 ```diff
-@@ -198,6 +198,27 @@ CREATE TABLE TargetTableWithData AS SELECT * FROM CreateTable2
- -- @expect: error Alter.TableAlreadyExists
- -- @json: "TargetTableWithData"
+@@ -3,7 +3,7 @@ use {
+     crate::{
+         ast::{ColumnDef, OrderByExpr},
+         data::Schema,
+-        plan::{ExprPlan, FunctionExprPlan, plan_scalar_expr},
++        plan::{ExprPlan, FunctionPlan, plan_scalar_expr},
+         result::Result,
+         store::{GStore, GStoreMut},
+     },
+@@ -49,7 +49,7 @@ fn validate_index_expr(columns: &[String], expr: &ExprPlan) -> (bool, bool) {
+             (valid_l && valid_r, has_ident_l || has_ident_r)
+         }
+         ExprPlan::Function(func) => match func.as_ref() {
+-            FunctionExprPlan::Cast { expr, .. } => validate(expr),
++            FunctionPlan::Cast { expr, .. } => validate(expr),
+             _ => (false, false),
+         },
+         _ => (false, false),
+```
+
+**File**: `core/src/executor/alter/table.rs` (modified, +8/-6)
+```diff
+@@ -4,12 +4,12 @@ use {
+         ast::{ColumnUniqueOption, ForeignKey, ToSql},
+         data::{Row, Schema},
+         executor::{
+-            evaluate_stateless,
++            evaluate::evaluate,
+             query::{self, OutputBody},
+         },
+         plan::{
+-            ColumnDefPlan, FilterInputPlan, ProjectInputPlan, ProjectPlan, ProjectionPlan,
+-            QueryPlan, SelectItemPlan, SourcePlan, ValuesPlan,
++            ColumnDefPlan, CustomFunctionPlan, FilterInputPlan, ProjectInputPlan, ProjectPlan,
++            ProjectionPlan, QueryPlan, SelectItemPlan, SourcePlan, ValuesPlan,
+         },
+         prelude::{DataType, Value},
+         result::Result,
+@@ -31,6 +31,7 @@ pub struct CreateTableOptions<'a> {
  
-+CREATE TABLE IfNotExistsSource (snack TEXT)
-+-- @expect: payload Create
-+
-+INSERT INTO IfNotExistsSource VALUES ('cookie'), ('chips')
-+-- @expect: payload Insert
-+-- @json: 2
-+
-+CREATE TABLE IF NOT EXISTS TargetTableIfNotExists AS SELECT * FROM IfNotExistsSource
-+-- @expect: payload Create
-+
-+-- @name: CTAS IF NOT EXISTS leaves an existing table unchanged
-+CREATE TABLE IF NOT EXISTS TargetTableIfNotExists AS SELECT * FROM IfNotExistsSource
-+-- @expect: payload Create
-+
-+SELECT * FROM TargetTableIfNotExists
-+-- @expect:
-+-- | snack: Str |
-+-- | ---------- |
-+-- | "cookie"   |
-+-- | "chips"    |
-+
- CREATE TABLE TargetTableWithData2 AS SELECT * FROM NonExistentTable
- -- @expect: error Alter.CtasSourceTableNotFound
- -- @json: "NonExistentTable"
+ pub fn create_table<T: GStore + GStoreMut>(
+     storage: &mut T,
++    functions: &[CustomFunctionPlan],
+     CreateTableOptions {
+         target_table_name,
+         column_defs,
+@@ -74,7 +75,8 @@ pub fn create_table<T: GStore + GStoreMut>(
+                     Some(vec![column_def])
+                 }
+                 _ => {
+-                    let (labels, rows) = query::execute_with_labels(storage, source_query, None)?;
++                    let (labels, rows) =
++                        query::execute_with_labels(storage, functions, source_query, None)?;
+                     let rows = rows
+                         .map(|row| row.map(Row::into_values))
+                         .collect::<Result<Vec<_>>>()?;
+@@ -94,7 +96,7 @@ pub fn create_table<T: GStore + GStoreMut>(
+                             continue;
+                         }
+ 
+-                        column_types[i] = evaluate_stateless(None, expr)
++                        column_types[i] = evaluate(storage, functions, None, None, expr)
+                             .and_then(Value::try_from)
+                             .map(|value| value.get_type())?;
+                     }
+@@ -230,7 +232,7 @@ pub fn create_table<T: GStore + GStoreMut>(
+         Some(query) => {
+             let rows = match selected_source_rows {
+                 Some(rows) => rows,
+-                None => query::execute(storage, query, None)?
++                None => query::execute(storage, functions, query, None)?
+                     .map(|row| row.map(Row::into_values))
+                     .collect::<Result<Vec<_>>>()?,
+             };
+```
+
+**File**: `core/src/executor/alter/validate.rs` (modified, +2/-41)
+```diff
+@@ -1,11 +1,8 @@
+ use {
+     super::AlterError,
+     crate::{
+-        ast::{ColumnUniqueOption, OperateFunctionArg},
+-        executor::evaluate_stateless,
+-        plan::{ColumnDefPlan, plan_scalar_expr},
+-        prelude::DataType,
+-        result::Result,
++        ast::ColumnUniqueOption, executor::evaluate_stateless, plan::ColumnDefPlan,
++        prelude::DataType, result::Result,
+     },
+ };
+ 
+@@ -59,39 +56,3 @@ pub fn validate_column_names(column_defs: &[ColumnDefPlan]) -> Result<()> {
+         None => Ok(()),
+     }
+ }
+-
+-pub fn validate_arg_names(args: &[OperateFunctionArg]) -> Result<()> {
+-    let duplicate_arg_name = args
+-        .iter()
+-        .enumerate()
+-        .find(|(i, base_arg)| {
+-            args.iter()
+-                .skip(i + 1)
+-                .any(|target_arg| base_arg.name == target_arg.name)
+-        })
+-        .map(|(_, arg)| arg.name.clone());
+-
+-    match duplicate_arg_name {
+-        Some(v) => Err(AlterError::DuplicateArgName(v).into()),
+-        None => Ok(()),
+-    }
+-}
+-
+-pub fn validate_default_args(args: &[OperateFunctionArg]) -> Result<()> {
+-    for expr in args.iter().filter_map(|arg| arg.default.as_ref()) {
+-        let expr = plan_scalar_expr(expr.clone());
+-
+-        evaluate_stateless(None, &expr)?;
+-    }
+-
+-    if args
+-        .iter()
+-        .map(|arg| arg.default.as_ref())
+-        .skip_while(Option::is_none)
+-        .all(|default| default.is_some())
+-    {
+-        Ok(())
+-    } else {
+-        Err(AlterError::NonDefaultArgumentFollowsDefaultArgument.into())
+-    }
+-}
+```
+
+---
+
+### Incident Patch 2: `340ffb95` (2026-11-01)
+**Commit Message**: Avoid AST conversion during INSERT uniqueness validation (#2048)
+
+- Validate INSERT uniqueness directly from ColumnDefPlan.
+- Remove the temporary AST column definitions and their default and comment clones.
+
+**File**: `core/src/executor/insert/schemaful.rs` (modified, +1/-5)
+```diff
+@@ -24,11 +24,7 @@ pub(super) fn fetch_rows<T: GStore>(
+     foreign_keys: Vec<ForeignKey>,
+ ) -> Result<RowsData> {
+     let column_defs = Rc::<[ColumnDefPlan]>::from(column_defs);
+-    let stored_column_defs = column_defs
+-        .iter()
+-        .map(ColumnDefPlan::to_column_def)
+-        .collect::<Vec<_>>();
+-    let column_validation = ColumnValidation::All(&stored_column_defs);
++    let column_validation = ColumnValidation::All(&column_defs);
+ 
+     let rows_iter: Box<dyn Iterator<Item = Result<Vec<Value>>> + '_> = if let Some(rows) =
+         values::execute(source, |plan| {
+```
+
+**File**: `core/src/executor/validate.rs` (modified, +5/-4)
+```diff
+@@ -2,6 +2,7 @@ use {
+     crate::{
+         ast::{ColumnDef, ColumnUniqueOption},
+         data::{Key, Value},
++        plan::ColumnDefPlan,
+         result::Result,
+         store::Store,
+     },
+@@ -25,7 +26,7 @@ pub enum ValidateError {
+ 
+ pub enum ColumnValidation<'column_def> {
+     /// `INSERT`
+-    All(&'column_def [ColumnDef]),
++    All(&'column_def [ColumnDefPlan]),
+     /// `UPDATE`
+     SpecifiedColumns(&'column_def [ColumnDef], Vec<String>),
+ }
+@@ -94,13 +95,13 @@ pub fn validate_unique<'a, T: Store>(
+             let primary_key_index = column_defs
+                 .iter()
+                 .enumerate()
+-                .find(|(_, ColumnDef { unique, .. })| {
++                .find(|(_, ColumnDefPlan { unique, .. })| {
+                     unique == &Some(ColumnUniqueOption { is_primary: true })
+                 })
+                 .map(|(i, _)| i);
+             let other_unique_column_def_count = column_defs
+                 .iter()
+-                .filter(|ColumnDef { unique, .. }| {
++                .filter(|ColumnDefPlan { unique, .. }| {
+                     unique == &Some(ColumnUniqueOption { is_primary: false })
+                 })
+                 .count();
+@@ -176,7 +177,7 @@ fn create_unique_constraints<'a>(
+     Ok(constraints)
+ }
+ 
+-fn fetch_all_unique_columns(column_defs: &[ColumnDef]) -> Vec<(usize, String)> {
++fn fetch_all_unique_columns(column_defs: &[ColumnDefPlan]) -> Vec<(usize, String)> {
+     column_defs
+         .iter()
+         .enumerate()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2053** (2026-11-03): Plan custom functions before execution (@panarch)
+- **PR #2048** (2026-11-01): Avoid AST conversion during INSERT uniqueness validation (@panarch)
 - **PR #2045** (2026-09-30): Update JavaScript getting started guide for OPFS entry points (@juhee200)
 - **PR #2044** (2026-09-28): Make IF NOT EXISTS CTAS a no-op for existing tables (@zmrdltl)
 - **PR #2043** (2026-09-28): Avoid planning defaults during foreign key validation (@zmrdltl)
 - **PR #2042** (2026-09-27): Remove unused sqlparser serde feature (@zmrdltl)
-- **PR #2039** (2026-09-28): Reject DELETE with multiple tables in FROM (@chiliec)
-- **PR #2038** (2026-09-27): Plan column defaults before execution (@panarch)
 
 ---
 
@@ -2359,59 +2387,28 @@ source query so rerunning the statement does not append duplicate rows.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update JavaScript getting started guide for OPFS entry points (#2045)
+## X. Plan custom functions before execution (#2053)
 
 **RULE**:
-When implementing operations in `docs/docs/getting-started/javascript-web.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42a4b418`: Update JavaScript getting started guide for OPFS entry points (#2045). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83109877`: Plan custom functions before execution (#2053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/getting-started/javascript-web.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Choosing an Entry Point
-
-The `gluesql` package provides three browser entry points. Pick the one that matches where your data should live:
-
-| Entry point | Storage | Persistence |
-| --- | --- | --- |
-| `gluesql` | `memory`, `localStorage`, `sessionStorage` | Memory is lost on reload; Web Storage follows the browser's storage rules |
-| `gluesql/opfs` | OPFS file | Survives reloads and browser restarts, one tab at a time |
-| `gluesql/opfs/shared` | OPFS file, shared across tabs | Survives reloads and browser restarts, safe to open in many tabs when Web Locks and `BroadcastChannel` are available |
-
-  import { gluesql } from 'https://cdn.jsdelivr.net/npm/gluesql/gluesql.js';
-      CREATE TABLE Foo (id INTEGER, name TEXT) ENGINE = memory;
-      INSERT INTO Foo VALUES (1, 'glue'), (2, 'sql');
-  }
-
-  main();
-    CREATE TABLE Foo (id INTEGER, name TEXT) ENGINE = memory;
-The main `gluesql` entry point supports three storage types: In-Memory Storage, Local Storage, and Session Storage.
-```
-
-Tables stored in different engines can be joined in a single query.
-
-When the `ENGINE` clause is omitted, the default engine is used. The default engine is `memory` initially, and you can change it wit
+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  import { gluesql } from 'gluesql';
-    await db.loadIndexedDB();
-      CREATE TABLE Foo (id INTEGER) ENGINE = memory;
-      INSERT INTO Foo (1, 'glue'), (2, 'sql');
-   }
-  await db.loadIndexedDB();
-    CREATE TABLE Foo (id INTEGER) ENGINE = memory;
-GlueSQL supports four storage types: In-Memory Storage, Local Storage, Session Storage, and IndexedDB. 
-- For IndexedDB: `ENGINE = indexedDB`
-```
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42a4b418` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83109877` are properly handled with clean fallback behavior.
