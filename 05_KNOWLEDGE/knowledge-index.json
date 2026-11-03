@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T20:50:04.547Z",
+  "last_updated": "2026-11-03T21:00:11.934Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32747,8 +32747,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "b2854791",
-      "content_hash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
+      "source_version": "d1dd672e",
+      "content_hash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -32806,6 +32806,11 @@
           "number": 6280,
           "title": "sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6607,
+          "title": "lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#242",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32813,7 +32818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:29:00.324Z",
+      "verified_at": "2026-11-03T21:00:04.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55433,14 +55438,19 @@
       "slug": "taubyte-tau",
       "platform": "github",
       "source_url": "https://github.com/taubyte/tau",
-      "source_version": "d9841668",
-      "content_hash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
+      "source_version": "374537fb",
+      "content_hash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
       "dossier_path": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "promoted_rules": [
         {
           "number": 1797,
           "title": "vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (#519)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6609,
+          "title": "http-auto): resolve a host's project from its own links key (#521)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -55449,7 +55459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:41:54.656Z",
+      "verified_at": "2026-11-03T21:00:09.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58366,8 +58376,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "2e0f4dd3",
-      "content_hash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
+      "source_version": "646deeb6",
+      "content_hash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -58420,6 +58430,11 @@
           "number": 5752,
           "title": "Upstream Parameter Sanitization for Layered Subprocess Runtimes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6610,
+          "title": "flash): sequential parse holds one page at a time instead of the whole document",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58427,7 +58442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:10:12.052Z",
+      "verified_at": "2026-11-03T21:00:11.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73692,8 +73707,8 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "20bf53e0",
-      "content_hash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
+      "source_version": "66d3b69a",
+      "content_hash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
@@ -73721,6 +73736,11 @@
           "number": 4716,
           "title": "Stream-Chunk Boundary Realignment in Binary Chunk Parsers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6608,
+          "title": "Bump the minor-and-patch group in /pywb/vueui with 5 updates (#1066)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73728,7 +73748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:39:02.146Z",
+      "verified_at": "2026-11-03T21:00:07.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170222,6 +170242,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T20:50:04.516Z"
+    },
+    "rule-6607": {
+      "learning_id": "rule-6607",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6607,
+      "title": "lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#242",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "d1dd672e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:00:04.838Z"
+    },
+    "rule-6608": {
+      "learning_id": "rule-6608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6608,
+      "title": "Bump the minor-and-patch group in /pywb/vueui with 5 updates (#1066)",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "66d3b69a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:00:07.668Z"
+    },
+    "rule-6609": {
+      "learning_id": "rule-6609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6609,
+      "title": "http-auto): resolve a host's project from its own links key (#521)",
+      "source_url": "https://github.com/taubyte/tau",
+      "source_version": "374537fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:00:09.178Z"
+    },
+    "rule-6610": {
+      "learning_id": "rule-6610",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6610,
+      "title": "flash): sequential parse holds one page at a time instead of the whole document",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "646deeb6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T21:00:11.912Z"
     }
   },
   "aliases": {

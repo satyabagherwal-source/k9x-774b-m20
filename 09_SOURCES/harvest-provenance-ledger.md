@@ -7010,3 +7010,7 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `1cee5900` | Multi-dimensional audit evidence | 2026-11-03T20:27:39.018Z |
 | `learn-github-surrealdb-surrealdb` | `https://github.com/surrealdb/surrealdb` | `9577ac5f` | Multi-dimensional audit evidence | 2026-11-03T20:49:45.109Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `714b5043` | Multi-dimensional audit evidence | 2026-11-03T20:50:04.637Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `d1dd672e` | Multi-dimensional audit evidence | 2026-11-03T21:00:04.944Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `66d3b69a` | Multi-dimensional audit evidence | 2026-11-03T21:00:07.776Z |
+| `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `374537fb` | Multi-dimensional audit evidence | 2026-11-03T21:00:09.286Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `646deeb6` | Multi-dimensional audit evidence | 2026-11-03T21:00:12.020Z |

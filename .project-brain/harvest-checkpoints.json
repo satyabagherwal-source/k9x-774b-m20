@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T20:50:04.646Z",
+  "last_updated": "2026-11-03T21:00:12.030Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
-      "verified_at": "2026-10-31T18:29:00.418Z",
+      "content_hash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
+      "verified_at": "2026-11-03T21:00:04.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:29:00.418Z"
+      "last_updated": "2026-11-03T21:00:04.953Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -4761,14 +4761,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taubyte-tau",
-      "content_hash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
-      "verified_at": "2026-10-18T22:41:54.698Z",
+      "content_hash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
+      "verified_at": "2026-11-03T21:00:09.296Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:41:54.698Z"
+      "last_updated": "2026-11-03T21:00:09.296Z"
     },
     "build-trust/ockam": {
       "repository": "build-trust/ockam",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
-      "verified_at": "2026-10-30T13:10:12.155Z",
+      "content_hash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
+      "verified_at": "2026-11-03T21:00:12.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:10:12.155Z"
+      "last_updated": "2026-11-03T21:00:12.029Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -13896,14 +13896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-pywb",
-      "content_hash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
-      "verified_at": "2026-10-30T10:09:25.893Z",
+      "content_hash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
+      "verified_at": "2026-11-03T21:00:07.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:09:25.893Z"
+      "last_updated": "2026-11-03T21:00:07.786Z"
     },
     "Kruszoneq/macUSB": {
       "repository": "Kruszoneq/macUSB",

@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "b2854791",
+    "sourceVersion": "d1dd672e",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
-    "lastHarvestedAt": "2026-10-31T18:29:00.410Z",
+    "contentHash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
+    "lastHarvestedAt": "2026-11-03T21:00:04.944Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3093,10 +3093,10 @@
     "repository": "taubyte/tau",
     "platform": "github",
     "sourceUrl": "https://github.com/taubyte/tau",
-    "sourceVersion": "d9841668",
+    "sourceVersion": "374537fb",
     "license": "BSD-3-Clause",
-    "contentHash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
-    "lastHarvestedAt": "2026-10-18T22:41:54.692Z",
+    "contentHash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
+    "lastHarvestedAt": "2026-11-03T21:00:09.286Z",
     "learningId": "learn-github-taubyte-tau"
   },
   "build-trust-ockam": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "2e0f4dd3",
+    "sourceVersion": "646deeb6",
     "license": "MIT",
-    "contentHash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
-    "lastHarvestedAt": "2026-10-30T13:10:12.146Z",
+    "contentHash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
+    "lastHarvestedAt": "2026-11-03T21:00:12.020Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "65db40a0",
+    "sourceVersion": "66d3b69a",
     "license": "GPL-3.0",
-    "contentHash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
-    "lastHarvestedAt": "2026-10-30T10:09:25.883Z",
+    "contentHash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
+    "lastHarvestedAt": "2026-11-03T21:00:07.776Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
