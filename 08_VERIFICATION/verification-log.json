@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-X17J",
-    "timestamp": "2026-10-31T05:36:02.143Z",
-    "repository": "wasm-bindgen/wasm-pack",
-    "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-X4PE",
-    "timestamp": "2026-10-31T05:36:06.674Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-9BAG",
-    "timestamp": "2026-10-31T05:45:35.080Z",
-    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-IABU",
-    "timestamp": "2026-10-31T05:52:33.738Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-IEU2",
     "timestamp": "2026-10-31T05:52:39.578Z",
     "repository": "milvus-io/milvus",
@@ -7490,6 +7430,66 @@
     "repository": "tickernelz/opencode-mem",
     "learningId": "learn-github-tickernelz-opencode-mem",
     "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HJVU",
+    "timestamp": "2026-11-03T19:14:49.194Z",
+    "repository": "Pika-Labs/Pika-H3-Flex",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+    "contentHash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-HQ53",
+    "timestamp": "2026-11-03T19:14:57.303Z",
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+    "contentHash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-I213",
+    "timestamp": "2026-11-03T19:15:12.711Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-I556",
+    "timestamp": "2026-11-03T19:15:16.746Z",
+    "repository": "pathwaycom/serviette",
+    "learningId": "learn-github-pathwaycom-serviette",
+    "contentHash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

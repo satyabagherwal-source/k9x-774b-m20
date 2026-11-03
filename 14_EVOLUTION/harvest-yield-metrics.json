@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T19:06:07.824Z",
-  "total_cycles_completed": 6955,
-  "total_learnings_persisted": 6955,
-  "total_rules_promoted": 6602,
+  "last_updated": "2026-11-03T19:15:16.756Z",
+  "total_cycles_completed": 6959,
+  "total_learnings_persisted": 6959,
+  "total_rules_promoted": 6605,
   "history": [
-    {
-      "timestamp": "2026-11-01T01:33:36.927Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T01:40:30.182Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T01:40:30.581Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T01:47:02.966Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-01T01:53:59.162Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-03T19:06:07.824Z",
       "repository": "tickernelz/opencode-mem",
       "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:14:49.211Z",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:14:57.315Z",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:15:12.721Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T19:15:16.756Z",
+      "repository": "pathwaycom/serviette",
+      "learningId": "learn-github-pathwaycom-serviette",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

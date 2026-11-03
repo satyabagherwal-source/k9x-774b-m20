@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T19:06:07.828Z",
+  "last_updated": "2026-11-03T19:15:16.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2331,14 +2331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pathwaycom-serviette",
-      "content_hash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
-      "verified_at": "2026-10-19T06:38:45.778Z",
+      "content_hash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
+      "verified_at": "2026-11-03T19:15:16.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:38:45.778Z"
+      "last_updated": "2026-11-03T19:15:16.759Z"
     },
     "EverMind-AI/Raven": {
       "repository": "EverMind-AI/Raven",
@@ -4071,14 +4071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goodrain-rainbond",
-      "content_hash": "beb2939ea99c6c717460d98968af8ffdb03ce0e73d8f6e62a7d805f2a92f95e9",
-      "verified_at": "2026-10-30T15:08:21.202Z",
+      "content_hash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
+      "verified_at": "2026-11-03T19:15:12.725Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:08:21.202Z"
+      "last_updated": "2026-11-03T19:15:12.725Z"
     },
     "bee-san/Ciphey": {
       "repository": "bee-san/Ciphey",
@@ -17376,14 +17376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
-      "content_hash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
-      "verified_at": "2026-10-30T08:04:02.173Z",
+      "content_hash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
+      "verified_at": "2026-11-03T19:14:49.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:04:02.173Z"
+      "last_updated": "2026-11-03T19:14:49.214Z"
     },
     "LiquidAI/LFM3-Audio-2B": {
       "repository": "LiquidAI/LFM3-Audio-2B",
@@ -17759,6 +17759,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-03T15:34:30.449Z"
+    },
+    "unsloth/DeepSeek-V4.1-Flash-1017-GGUF": {
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+      "content_hash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
+      "verified_at": "2026-11-03T19:14:57.319Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-03T19:14:57.319Z"
     }
   },
   "repos": {

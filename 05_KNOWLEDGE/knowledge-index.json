@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T19:06:07.731Z",
-  "total_verified_learnings": 1198,
+  "last_updated": "2026-11-03T19:15:16.663Z",
+  "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -15551,8 +15551,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "7e2467b9",
-      "content_hash": "beb2939ea99c6c717460d98968af8ffdb03ce0e73d8f6e62a7d805f2a92f95e9",
+      "source_version": "95970c18",
+      "content_hash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -15575,6 +15575,11 @@
           "number": 5780,
           "title": "record v6.10.2-release in upgrade feed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6587,
+          "title": "release): stop archiving past versions in the docs version table (#2739)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15582,7 +15587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:08:21.090Z",
+      "verified_at": "2026-11-03T19:15:12.606Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68700,8 +68705,8 @@
       "slug": "pathwaycom-serviette",
       "platform": "github",
       "source_url": "https://github.com/pathwaycom/serviette",
-      "source_version": "e2a7a09b",
-      "content_hash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
+      "source_version": "84e92a33",
+      "content_hash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
       "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
       "promoted_rules": [
@@ -68714,6 +68719,11 @@
           "number": 2220,
           "title": "adapt Pathway's contribution guide and template",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6588,
+          "title": "use fused order for MMR relevance after query decomposition",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68721,7 +68731,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:38:45.743Z",
+      "verified_at": "2026-11-03T19:15:16.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156132,7 +156142,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
+      "content_hash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "promoted_rules": [
@@ -156152,7 +156162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:04:02.069Z",
+      "verified_at": "2026-11-03T19:14:49.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169813,6 +169823,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T19:06:07.708Z"
+    },
+    "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf": {
+      "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "slug": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
+      "content_hash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6586,
+          "title": "Quantization Variant Naming & Versioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-03T19:14:57.197Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6586": {
+      "learning_id": "rule-6586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6586,
+      "title": "Quantization Variant Naming & Versioning Invariant",
+      "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:14:57.197Z"
+    },
+    "rule-6587": {
+      "learning_id": "rule-6587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6587,
+      "title": "release): stop archiving past versions in the docs version table (#2739)",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "95970c18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:15:12.606Z"
+    },
+    "rule-6588": {
+      "learning_id": "rule-6588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6588,
+      "title": "use fused order for MMR relevance after query decomposition",
+      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_version": "84e92a33",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:15:16.641Z"
     }
   },
   "aliases": {

@@ -20143,5 +20143,17 @@
     "qualityScore": 7369,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-03T15:30:51.694Z"
+  },
+  {
+    "name": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "fullName": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/DeepSeek-V4.1-Flash-1017-GGUF (324 likes, 596039 downloads)",
+    "likes": 324,
+    "downloads": 596039,
+    "qualityScore": 5240,
+    "discoveredAt": "2026-11-03T19:12:31.996Z"
   }
 ]

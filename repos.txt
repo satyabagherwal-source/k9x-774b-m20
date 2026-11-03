@@ -4798,3 +4798,7 @@ https://github.com/nduckmink/arkon
 # --- Automatically Discovered by AI Scout Engine [2026-11-03T15:34:23.778Z] ---
 # [AI-AGENTS] seleniumbase/SeleniumBase (7369 score) - 📊 APIs for Web Scraping, Browser Automation, and E2E Testing. CDP Mode bypasses
 https://github.com/seleniumbase/SeleniumBase
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-03T19:14:40.626Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/DeepSeek-V4.1-Flash-1017-GGUF (5240 score) - Verified Hugging Face Model: unsloth/DeepSeek-V4.1-Flash-1017-GGUF (324 likes, 5
+https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF

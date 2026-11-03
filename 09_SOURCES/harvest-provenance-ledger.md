@@ -6987,3 +6987,7 @@ Every entry in this ledger must capture:
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `d8039f36` | Multi-dimensional audit evidence | 2026-11-03T19:05:56.185Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `14318705` | Multi-dimensional audit evidence | 2026-11-03T19:06:02.863Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `f2163b51` | Multi-dimensional audit evidence | 2026-11-03T19:06:07.818Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-03T19:14:49.205Z |
+| `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-03T19:14:57.307Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `95970c18` | Multi-dimensional audit evidence | 2026-11-03T19:15:12.715Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `84e92a33` | Multi-dimensional audit evidence | 2026-11-03T19:15:16.750Z |

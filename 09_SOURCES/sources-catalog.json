@@ -1503,10 +1503,10 @@
     "repository": "pathwaycom/serviette",
     "platform": "github",
     "sourceUrl": "https://github.com/pathwaycom/serviette",
-    "sourceVersion": "e2a7a09b",
+    "sourceVersion": "84e92a33",
     "license": "MIT",
-    "contentHash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
-    "lastHarvestedAt": "2026-10-19T06:38:45.774Z",
+    "contentHash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
+    "lastHarvestedAt": "2026-11-03T19:15:16.750Z",
     "learningId": "learn-github-pathwaycom-serviette"
   },
   "evermind-ai-raven": {
@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "7e2467b9",
+    "sourceVersion": "95970c18",
     "license": "NOASSERTION",
-    "contentHash": "beb2939ea99c6c717460d98968af8ffdb03ce0e73d8f6e62a7d805f2a92f95e9",
-    "lastHarvestedAt": "2026-10-30T15:08:21.191Z",
+    "contentHash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
+    "lastHarvestedAt": "2026-11-03T19:15:12.715Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
-    "lastHarvestedAt": "2026-10-30T08:04:02.164Z",
+    "contentHash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
+    "lastHarvestedAt": "2026-11-03T19:14:49.205Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {
@@ -11798,5 +11798,15 @@
     "contentHash": "b2052b81e3aa7ee5b1fb0cc8b55e88f55a605e85f7a6bfaec692bf00d48dd565",
     "lastHarvestedAt": "2026-11-03T15:34:30.439Z",
     "learningId": "learn-github-seleniumbase-seleniumbase"
+  },
+  "hf-unsloth-deepseek-v4.1-flash-1017-gguf": {
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
+    "license": "Open-Source",
+    "contentHash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
+    "lastHarvestedAt": "2026-11-03T19:14:57.307Z",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   }
 }
