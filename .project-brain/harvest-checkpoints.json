@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T19:24:25.799Z",
+  "last_updated": "2026-11-03T19:37:49.230Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
-      "verified_at": "2026-10-31T05:21:18.647Z",
+      "content_hash": "e5baa034c76dcfb1f6d84e269274727e90242d4a97ea2d02c9f5fe3376afdfd3",
+      "verified_at": "2026-11-03T19:37:49.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:21:18.647Z"
+      "last_updated": "2026-11-03T19:37:49.230Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -13701,14 +13701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-plugins-scrapy-playwright",
-      "content_hash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
-      "verified_at": "2026-10-19T21:24:06.249Z",
+      "content_hash": "49d14ca2c24fcbcccffaf49f9fcf8b83e7e7f81144a822653fc9a6b71d05ca6e",
+      "verified_at": "2026-11-03T19:37:40.597Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:24:06.249Z"
+      "last_updated": "2026-11-03T19:37:40.597Z"
     },
     "rechsteiner/Parchment": {
       "repository": "rechsteiner/Parchment",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
-      "verified_at": "2026-10-30T19:42:44.369Z",
+      "content_hash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
+      "verified_at": "2026-11-03T19:37:41.653Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:42:44.369Z"
+      "last_updated": "2026-11-03T19:37:41.653Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",

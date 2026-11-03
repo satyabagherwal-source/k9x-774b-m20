@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "9caf2b4c",
+    "sourceVersion": "f31b5adf",
     "license": "MIT",
-    "contentHash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
-    "lastHarvestedAt": "2026-10-31T05:21:18.639Z",
+    "contentHash": "e5baa034c76dcfb1f6d84e269274727e90242d4a97ea2d02c9f5fe3376afdfd3",
+    "lastHarvestedAt": "2026-11-03T19:37:49.222Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -9103,10 +9103,10 @@
     "repository": "scrapy-plugins/scrapy-playwright",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy-plugins/scrapy-playwright",
-    "sourceVersion": "2658f86a",
+    "sourceVersion": "3d513d6b",
     "license": "BSD-3-Clause",
-    "contentHash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
-    "lastHarvestedAt": "2026-10-19T21:24:06.243Z",
+    "contentHash": "49d14ca2c24fcbcccffaf49f9fcf8b83e7e7f81144a822653fc9a6b71d05ca6e",
+    "lastHarvestedAt": "2026-11-03T19:37:40.589Z",
     "learningId": "learn-github-scrapy-plugins-scrapy-playwright"
   },
   "rechsteiner-parchment": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "c799e2cb",
+    "sourceVersion": "9a930787",
     "license": "NOASSERTION",
-    "contentHash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
-    "lastHarvestedAt": "2026-10-30T19:42:44.360Z",
+    "contentHash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
+    "lastHarvestedAt": "2026-11-03T19:37:41.645Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T19:24:25.700Z",
+  "last_updated": "2026-11-03T19:37:49.152Z",
   "total_verified_learnings": 1199,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35128,8 +35128,8 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "c799e2cb",
-      "content_hash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
+      "source_version": "9a930787",
+      "content_hash": "5e69240cbc7a5d05d4582abd0fca98cd3662a6f39af068b7165d2b54fe863774",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [
@@ -35147,6 +35147,11 @@
           "number": 5844,
           "title": "Update package to 11.1.5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6593,
+          "title": "Update package to 11.1.6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35154,7 +35159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:42:44.236Z",
+      "verified_at": "2026-11-03T19:37:41.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40839,8 +40844,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "9caf2b4c",
-      "content_hash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
+      "source_version": "f31b5adf",
+      "content_hash": "e5baa034c76dcfb1f6d84e269274727e90242d4a97ea2d02c9f5fe3376afdfd3",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -40903,6 +40908,11 @@
           "number": 6081,
           "title": "filter ineligible Lance candidates before reranking (#6908)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6594,
+          "title": "use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40910,7 +40920,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:21:18.539Z",
+      "verified_at": "2026-11-03T19:37:49.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73337,8 +73347,8 @@
       "slug": "scrapy-plugins-scrapy-playwright",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-playwright",
-      "source_version": "2658f86a",
-      "content_hash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
+      "source_version": "3d513d6b",
+      "content_hash": "49d14ca2c24fcbcccffaf49f9fcf8b83e7e7f81144a822653fc9a6b71d05ca6e",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
       "promoted_rules": [
@@ -73347,6 +73357,11 @@
           "number": 2819,
           "title": "duplicated word in memory-size FAQ",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6592,
+          "title": "Bump actions/setup-python (#403)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73354,7 +73369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:24:06.173Z",
+      "verified_at": "2026-11-03T19:37:40.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169955,6 +169970,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T19:24:25.678Z"
+    },
+    "rule-6592": {
+      "learning_id": "rule-6592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6592,
+      "title": "Bump actions/setup-python (#403)",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-playwright",
+      "source_version": "3d513d6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:37:40.500Z"
+    },
+    "rule-6593": {
+      "learning_id": "rule-6593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6593,
+      "title": "Update package to 11.1.6",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "9a930787",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:37:41.556Z"
+    },
+    "rule-6594": {
+      "learning_id": "rule-6594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6594,
+      "title": "use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "f31b5adf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T19:37:49.134Z"
     }
   },
   "aliases": {

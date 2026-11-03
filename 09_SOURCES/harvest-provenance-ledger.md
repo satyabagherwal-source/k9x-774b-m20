@@ -6994,3 +6994,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `c7606f50` | Multi-dimensional audit evidence | 2026-11-03T19:24:11.981Z |
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `2d22bf9a` | Multi-dimensional audit evidence | 2026-11-03T19:24:15.008Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `5760af6f` | Multi-dimensional audit evidence | 2026-11-03T19:24:25.789Z |
+| `learn-github-scrapy-plugins-scrapy-playwright` | `https://github.com/scrapy-plugins/scrapy-playwright` | `3d513d6b` | Multi-dimensional audit evidence | 2026-11-03T19:37:40.589Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `9a930787` | Multi-dimensional audit evidence | 2026-11-03T19:37:41.645Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `f31b5adf` | Multi-dimensional audit evidence | 2026-11-03T19:37:49.222Z |

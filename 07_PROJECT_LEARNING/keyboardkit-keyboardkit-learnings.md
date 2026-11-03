@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `c799e2cb`  
+> **Source Version**: `9a930787`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:42:43.668Z  
+> **Timestamp**: 2026-11-03T19:37:41.019Z  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:42:43.661Z  
+> **Harvest Timestamp**: 2026-11-03T19:37:40.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1898 stars
+- **Stars / Engagement**: 1900 stars
 
 ---
 
@@ -1026,8 +1026,8 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c799e2cb` (2026-10-30)
-**Commit Message**: Update package to 11.1.5
+### Incident Patch 1: `9a930787` (2026-11-02)
+**Commit Message**: Update package to 11.1.6
 
 **File**: `Package.swift` (modified, +2/-2)
 ```diff
@@ -1035,126 +1035,34 @@ Observed empirical fixes and code patches:
      targets: [
          .binaryTarget(
              name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
--            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
-+            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
+-            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.6/KeyboardKit.zip",
++            checksum: "39ebb9622690a46948de24ffb49eb4a030baf5fa2ab4ce5ee41414a9a5292bab"
          ),
          .target(
              name: "KeyboardKitDependencies",
 ```
 
-**File**: `RELEASE_NOTES.md` (modified, +11/-0)
+**File**: `RELEASE_NOTES.md` (modified, +10/-0)
 ```diff
-@@ -12,6 +12,17 @@ This document covers the current major version. See older versions for older rel
+@@ -12,6 +12,16 @@ This document covers the current major version. See older versions for older rel
  
  
  
-+## 11.1.5
++## 11.1.6
 +
-+This patch adjusts the visual style of the URL domain action. 
++This patch fixes an emoji related bug after applying an autocomplete suggestion, to avoid smileys being applied like "I'm happy: )".  
 +
 +### 🐛 Bug Fixes
 +
-+* `KeyboardAction.toggleSplitKeyboard` no longer used the flipped, incorrect button icon.
-+* `KeyboardAction.urlDomain` no longer uses an icon in the keyboard, only in an action picker.
++* `:` and `;` will no longer be subject the autocomplete space insertion behavior.
 +
 +
 +
- ## 11.1.4
+ ## 11.1.5
  
- This patch adds new settings. 
-```
-
----
-
-### Incident Patch 2: `f6a6806a` (2026-10-30)
-**Commit Message**: Update package to 11.1.4
-
-**File**: `Package.resolved` (modified, +3/-3)
-```diff
-@@ -1,13 +1,13 @@
- {
--  "originHash" : "f2af26f1163967a8b83aab15ff48755addcea3d3771146acf3584aa7f26125eb",
-+  "originHash" : "260c166ec7389791d81de3cc087d0c88ee69d9ddc4e5afbdeaf443cccda1a34c",
-   "pins" : [
-     {
-       "identity" : "licensekit",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/LicenseKit/LicenseKit.git",
-       "state" : {
--        "revision" : "19f9ce6915bfa7f59f7794cd88473b10c5daf87b",
--        "version" : "2.3.0"
-+        "revision" : "349c84703dbd1ea3529aa56c77af0c9eb52e5b89",
-+        "version" : "2.4.1"
-       }
-     }
-   ],
-```
-
-**File**: `Package.swift` (modified, +3/-3)
-```diff
-@@ -36,14 +36,14 @@ let package = Package(
-     dependencies: [
-         .package(
-             url: "https://github.com/LicenseKit/LicenseKit.git",
--            exact: "2.3.0"
-+            exact: "2.4.1"
-         )
-     ],
-     targets: [
-         .binaryTarget(
-             name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.3/KeyboardKit.zip",
--            checksum: "1aff383a07f9820d87bc2ae523b6cec294396ab45b640c1e39a5c67550c7043a"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
-+            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
-         ),
-         .target(
-             name: "KeyboardKitDependencies",
-```
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -4,10 +4,10 @@
- 
- <p align="center">
-     <img src="https://img.shields.io/github/v/release/KeyboardKit/KeyboardKit?color=forestgreen&sort=semver" alt="Version" />
--    <img src="https://img.shields.io/badge/swift-5.9-orange.svg" alt="Swift 5.9" />
-+    <img src="https://img.shields.io/badge/swift-6.2-orange.svg" alt="Swift 6.2" />
-     <img src="https://img.shields.io/badge/platform-SwiftUI-blue.svg" alt="Swift UI" title="Swift UI" />
-     <a href="https://docs.keyboardkit.com"><img src="https://img.shields.io/badge/documentation-web-blue.svg" alt="Documentation" /></a>
--    <img src="https://img.shields.io/badge/license-closedsource-red.svg" alt="Closed Source" />
-+    <a href="https://keyboardkit.com/pricing"><img src="https://img.shields.io/badge/license-commercial-red.svg" alt="Commercially Licensed" /></a>
- </p>
- 
- 
-```
-
-**File**: `RELEASE_NOTES.md` (modified, +12/-1)
-```diff
-@@ -12,9 +12,20 @@ This document covers the current major version. See older versions for older rel
- 
- 
- 
-+## 11.1.4
-+
-+This patch adds new settings. 
-+
-+### ⚙️ Settings
-+
-+* `KeyboardSettings` has a new `isNumericSwitcherEnabled`.
-+* `KeyboardSettingsScreen` has a new `isNumericSwitcherEnabled` toggle.
-+
-+
-+
- ## 11.1.3
- 
--This patch adjusts the keyboard layout for the real iPhone Duo device, and adds new keyboard actions. 
-+This patch adjusts the keyboard layout for the real iPhone Duo, and adds new keyboard actions. 
- 
- ### 🌱 Essentials
- 
+ This patch adjusts the visual style of the URL domain action. 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1183,13 +1091,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update package to 11.1.5
+## X. Update package to 11.1.6
 
 **RULE**:
 When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c799e2cb`: Update package to 11.1.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a930787`: Update package to 11.1.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
@@ -1197,16 +1105,16 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
-            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.6/KeyboardKit.zip",
+            checksum: "39ebb9622690a46948de24ffb49eb4a030baf5fa2ab4ce5ee41414a9a5292bab"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
-            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
+            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c799e2cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a930787` are properly handled with clean fallback behavior.

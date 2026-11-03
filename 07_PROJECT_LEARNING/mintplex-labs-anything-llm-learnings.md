@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `9caf2b4c`  
+> **Source Version**: `f31b5adf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T05:21:17.963Z  
+> **Timestamp**: 2026-11-03T19:37:48.600Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T05:21:17.956Z  
+> **Harvest Timestamp**: 2026-11-03T19:37:47.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67774 stars
+- **Stars / Engagement**: 67900 stars
 
 ---
 
@@ -1288,11 +1288,11 @@ module.exports = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6951** (2026-11-02): **Browser extension API keys keep working after the owner is demoted to the default role**
+  *Symptoms*: ### Bug  In multi-user mode, only admins and managers can create browser extension API keys. If an admin or manager with a key is later demoted to the `default` role, the key keeps working. They can still use the extension's `upload-content` and `embed-content` endpoints for workspaces they belong to, even though their normal session can no longer do this.  `validBrowserExtensionApiKey` checks that the key's owner exists and is not suspended. It does not check the owner's role.  Deleting or suspending a user already disables their keys. Deleting removes them through the database cascade, and the middleware rejects keys whose owner is suspended. Only a role change leaves them working.  ### Steps to reproduce 1. In multi-user mode, create a manager and add them to a workspace. 2. As the manager, create a browser extension API key. 3. As an admin, change the manager's role to `default`. 4. Use the key to call `POST /api/browser-extension/embed-content` for that workspace. The call succeeds.  ### Expected The key stops working once its owner no longer has a role that is allowed to create keys. 
+
 - **Issue #6854** (2026-10-27): **[BUG]: OpenAI fallback model gpt-4.1-nano was shut down**
   *Symptoms*: ### How are you running AnythingLLM?  All versions  ### What happened?  `gpt-4.1-nano` and `gpt-4` were shut down on October 23, 2026 (https://developers.openai.com/api/docs/deprecations). `gpt-4.1-nano` is still the fallback model when no OpenAI model is set, for both chat and agents:  - `server/models/systemSettings.js` - `server/utils/AiProviders/openAi/index.js` - `server/utils/agents/aibitat/providers/openai.js` - `server/utils/agents/ephemeral.js` - `server/utils/agents/index.js` (2 places) - `# OPEN_MODEL_PREF` in `server/.env.example` and `docker/.env.example`  OpenAI's listed replacement is `gpt-5.6-luna`. The generic OpenAI agent provider also defaults to `gpt-4.1-nano` in `server/utils/agents/aibitat/providers/genericOpenAi.js`.  ### Are there known steps to reproduce?  Select OpenAI as the LLM provider without picking a model, then send a chat or run an agent. The request goes out with `gpt-4.1-nano`, which OpenAI no longer serves.  ### LLM Provider & Model (if applicable)  OpenAI / `gpt-4.1-nano` (default fallback)  ### Embedder Provider & Model (if applicable)  _No response_ 
-
-- **Issue #6852** (2026-10-27): **[FEAT]: Make wide markdown tables horizontally scrollable on narrow screens**
-  *Symptoms*: ### What would you like to see?  ### What would you like to see?  Wide markdown tables in chat should be horizontally scrollable on small screens instead of being clipped at the message width.  ### Problem  On a phone or a narrow browser window, a markdown table with more than a few columns is cut off: columns beyond the message width are not visible and cannot be reached. The content is present in the response, but there is no horizontal scroll container.  This is not model-specific; it happens with any response that contains a wide table.  Reproduction:  1. Open AnythingLLM in a narrow viewport (phone or resized browser). 2. Ask for a markdown table with 5+ columns. 3. The table is clipped at the message width; there is no horizontal    scrollbar/swipe.  ### Proposed fix  Wrap rendered tables in a scroll container and let the table keep its natural width.  `frontend/src/utils/chat/markdown.js`:  ``` js markdown.renderer.rules.table_open = () => '<div class="table-scroll"><table>'; markdown.renderer.rules.table_close = () => '</table></div>'; ``` ``` css .markdown .table-scroll {   max-width: 100%;   overflow-x: auto;   -webkit-overflow-scrolling: touch; }  .markdown .table-scroll table {   width: max-content;   min-width: 100%;   overflow: visible; } ```  This keeps wide tables readable, scrolls only the table (not the whole message), and leaves the desktop layout unchanged.  A CSS-only alternative is display: block; overflow-x: auto on .markdown table, but the wrapper is c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1309,172 +1309,274 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9caf2b4c` (2026-10-30)
-**Commit Message**: fix: filter ineligible Lance candidates before reranking (#6908)
+### Incident Patch 1: `cca9756a` (2026-11-02)
+**Commit Message**: fix: use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)
 
-* fix: filter ineligible Lance candidates before reranking
+* fix outlook thread
 
-* chore: drop narrow lance rerank test, tighten comment
+* chore: drop unused webLink mapping and narrow outlook permalink tests
 
----------
-
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/utils/vectorDbProviders/lance/index.js` (modified, +16/-10)
-```diff
-@@ -105,7 +105,6 @@ class LanceDb extends VectorDatabase {
-     similarityThreshold = 0.25,
-     filterIdentifiers = [],
-   }) {
--    const reranker = new NativeEmbeddingReranker();
-     const collection = await client.openTable(namespace);
-     const totalEmbeddings = await this.namespaceCount(namespace);
-     const result = {
-@@ -137,19 +136,26 @@ class LanceDb extends VectorDatabase {
-       .limit(searchLimit)
-       .toArray();
- 
-+    // Drop pinned and below-threshold chunks first so they cannot take the reranker's topK slots.
-+    const eligibleResults = vectorSearchResults.filter((item) => {
-+      if (this.distanceToSimilarity(item._distance) < similarityThreshold)
-+        return false;
-+      if (filterIdentifiers.includes(sourceIdentifier(item))) {
-+        this.logger(
-+          "A source was filtered from context as it's parent document is pinned."
-+        );
-+        return false;
-+      }
-+      return true;
-+    });
-+    if (eligibleResults.length === 0) return result;
-+
-+    const reranker = new NativeEmbeddingReranker();
-     await reranker
--      .rerank(query, vectorSearchResults, { topK: topN })
-+      .rerank(query, eligibleResults, { topK: topN })
-       .then((rerankResults) => {
-         rerankResults.forEach((item) => {
--          if (this.distanceToSimilarity(item._distance) < similarityThreshold)
--            return;
-           const { vector: _, ...rest } = item;
--          if (filterIdentifiers.includes(sourceIdentifier(rest))) {
--            this.logger(
--              "A source was filtered from context as it's parent document is pinned."
--            );
--            return;
--          }
-           const score =
-             item?.rerank_score || this.distanceToSimilarity(item._distance);
- 
-```
-
----
-
-### Incident Patch 2: `575ffbb4` (2026-10-30)
-**Commit Message**: fix: honor max response tokens in native KoboldCPP agent requests (#6902)
-
-* fix(koboldcpp): honor max tokens in native agent requests
-
-* test: drop narrow KoboldCPP max_tokens test
+* chore: drop unused webLink field from mapGraphMessage
 
 ---------
 
+Co-authored-by: Bensonbenyi <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/utils/agents/aibitat/providers/koboldcpp.js` (modified, +2/-2)
+**File**: `server/utils/agents/aibitat/plugins/outlook/lib.js` (modified, +3/-1)
 ```diff
-@@ -94,7 +94,7 @@ class KoboldCPPProvider extends InheritMultiple([Provider, UnTooled]) {
-         messages,
-         functions,
-         eventHandler,
--        { provider: this }
-+        { provider: this, maxTokens: this.maxTokens }
-       );
-     } catch (error) {
-       console.error(error.message, error);
-@@ -129,7 +129,7 @@ class KoboldCPPProvider extends InheritMultiple([Provider, UnTooled]) {
-         messages,
-         functions,
-         this.getCost.bind(this),
--        { provider: this }
-+        { provider: this, maxTokens: this.maxTokens }
-       );
- 
-       if (result.retryWithError) {
-```
-
----
-
-### Incident Patch 3: `fd4de400` (2026-10-30)
-**Commit Message**: fix: encode file paths when re-syncing GitHub documents (#6901)
-
-**File**: `collector/__tests__/utils/extensions/RepoLoader/GithubRepo.test.js` (modified, +29/-0)
-```diff
-@@ -428,6 +428,35 @@ describe("GitHubRepoLoader request urls", () => {
-     }
-   );
- 
-+  test.each([
-+    ["docs/a#b.md", "docs/a%23b.md"],
-+    ["docs/a?b.md", "docs/a%3Fb.md"],
-+    ["docs/literal%23.md", "docs/literal%2523.md"],
-+    ["docs#v1/a?b.md", "docs%23v1/a%3Fb.md"],
-+    ["docs/read me.md", "docs/read%20me.md"],
-+  ])(
-+    "file requests preserve the path %s",
-+    async (filePath, encodedFilePath) => {
-+      const branch = "feature/#42-login";
-+      const fetchMock = mockGithubApi({
-+        branches: [{ name: branch }],
-+        files: { [filePath]: "# requested file" },
-+      });
-+      const loader = new GitHubRepoLoader({
-+        repo: "https://github.com/org/repo",
-+        branch,
-+      });
-+      await loader.init();
-+
-+      await expect(loader.fetchSingleFile(filePath)).resolves.toBe(
-+        "# requested file"
-+      );
-+      expect(requestedUrls(fetchMock)).toContain(
-+        `https://api.github.com/repos/org/repo/contents/${encodedFilePath}?ref=feature%2F%2342-login`
-+      );
-+    }
-+  );
-+
-   test("an Enterprise Server host uses the same endpoint paths under /api/v3", async () => {
-     const fetchMock = mockGithubApi({ files: { "README.md": "# hello" } });
-     const loader = new GitHubRepoLoader({
-```
-
-**File**: `collector/utils/extensions/RepoLoader/GithubRepo/RepoLoader/index.js` (modified, +5/-1)
-```diff
-@@ -300,10 +300,14 @@ class GitHubRepoLoader {
+@@ -1018,7 +1018,7 @@ class OutlookBridge {
+    * @returns {Promise<{success: boolean, data?: object, error?: string}>}
     */
-   async fetchSingleFile(sourceFilePath) {
-     try {
-+      const encodedFilePath = String(sourceFilePath)
-+        .split("/")
-+        .map((segment) => encodeURIComponent(segment))
-+        .join("/");
-       return fetch(
-         `${this.apiBase}/repos/${this.author}/${
-           this.project
--        }/contents/${sourceFilePath}?ref=${encodeURIComponent(this.branch)}`,
-+        }/contents/${encodedFilePath}?ref=${encodeURIComponent(this.branch)}`,
-         {
-           method: "GET",
-           headers: {
+   async readThread(conversationId) {
+-    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,attachments&$expand=attachments`;
++    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,webLink,attachments&$expand=attachments`;
+ 
+     const result = await this.request(endpoint);
+     if (!result.success) return result;
+@@ -1042,6 +1042,8 @@ class OutlookBridge {
+         conversationId,
+         subject: messages[0]?.subject || "No Subject",
+         messageCount: messages.length,
++        permalink:
++          messages[messages.length - 1]?.webLink || messages[0]?.webLink,
+         messages: messages.map((msg) =>
+           mapGraphMessage(msg, { includeBody: true, includeAttachments: true })
+         ),
+```
+
+**File**: `server/utils/agents/aibitat/plugins/outlook/search/outlook-read-thread.js` (modified, +1/-9)
+```diff
+@@ -100,7 +100,7 @@ module.exports.OutlookReadThread = {
+                 id: `outlook-thread-${thread.conversationId}`,
+                 title: thread.subject,
+                 text: `Subject: "${thread.subject}"\n\n${messagesFormatted}`,
+-                chunkSource: `outlook-thread://${this._generatePermalink(thread.conversationId)}`,
++                chunkSource: `outlook-thread://${thread.permalink}`,
+                 score: null,
+               });
+ 
+@@ -116,14 +116,6 @@ module.exports.OutlookReadThread = {
+               return handleSkillError(this, "outlook-read-thread", e);
+             }
+           },
+-          _generatePermalink: function (conversationId) {
+-            if (!conversationId) return null;
+-            let encodedId = encodeURIComponent(conversationId);
+-            // For outlook, this needs to be specifically encoded
+-            // as the webpage does not respect it like traditional URL encoding
+-            encodedId = encodedId.replace(/-/g, "%2F");
+-            return `https://outlook.live.com/mail/inbox/id/${encodedId}`;
+-          },
+         });
+       },
+     };
+```
+
+---
+
+### Incident Patch 2: `978cf588` (2026-11-02)
+**Commit Message**: feat: configurable per-server MCP tool call timeout (#6948)
+
+Adds anythingllm.timeout (seconds) to MCP server config. Defaults to 60s
+when unset or invalid. Resolves #6788
+
+**File**: `server/utils/MCP/hypervisor/index.js` (modified, +16/-0)
+```diff
+@@ -190,6 +190,22 @@ class MCPHypervisor {
+     return config?.server?.anythingllm?.suppressedTools || [];
+   }
+ 
++  /**
++   * Get the tool call timeout for an MCP server in milliseconds.
++   * Set per server via `anythingllm.timeout` (in seconds) in the MCP config file.
++   * Falls back to 60 seconds when unset or not a positive number.
++   * @param {string} serverName - The name of the MCP server
++   * @returns {number} - Timeout in milliseconds
++   */
++  getToolCallTimeout(serverName) {
++    const DEFAULT_TIMEOUT_SECONDS = 60;
++    const config = this.mcpServerConfigs.find((s) => s.name === serverName);
++    const timeout = Number(config?.server?.anythingllm?.timeout);
++    if (!Number.isFinite(timeout) || timeout <= 0)
++      return DEFAULT_TIMEOUT_SECONDS * 1000;
++    return timeout * 1000;
++  }
++
+   /**
+    * Reload the MCP servers - can be used to reload the MCP servers without restarting the server or app
+    * and will also apply changes to the config file if any where made.
+```
+
+**File**: `server/utils/MCP/index.js` (modified, +5/-4)
+```diff
+@@ -133,10 +133,11 @@ class MCPCompatibilityLayer extends MCPHypervisor {
+                     aibitat.introspect(
+                       `Executing MCP server: ${name} with ${JSON.stringify(args, null, 2)}`
+                     );
+-                    const result = await currentMcp.callTool({
+-                      name: tool.name,
+-                      arguments: args,
+-                    });
++                    const result = await currentMcp.callTool(
++                      { name: tool.name, arguments: args },
++                      undefined,
++                      { timeout: mcpLayer.getToolCallTimeout(name) }
++                    );
+                     aibitat.handlerProps.log(
+                       `MCP server: ${name}:${tool.name} completed successfully`,
+                       result
+```
+
+---
+
+### Incident Patch 3: `b8c8aafa` (2026-11-03)
+**Commit Message**: fix: enforce daily message limit on agent session follow-ups (#6918)
+
+* fix: enforce daily message limit on agent session follow-ups
+
+Added a function to enforce a 24-hour message limit for agent follow-ups in WebSocket sessions. The function checks user permissions and quota before allowing follow-up messages.
+
+* test: cover daily message limit on agent session follow-ups
+
+* use plugin userId for quota check and send refusal as wssFailure so it renders for streaming providers
+
+---------
+
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/__tests__/utils/agents/aibitat/plugins/websocket.test.js` (modified, +64/-0)
+```diff
+@@ -5,6 +5,9 @@ jest.mock("../../../../../models/telemetry", () => ({
+ jest.mock("../../../../../models/systemSettings", () => ({
+   SystemSettings: { isMultiUserMode: jest.fn().mockResolvedValue(false) },
+ }));
++jest.mock("../../../../../models/workspaceChats", () => ({
++  WorkspaceChats: { count: jest.fn() },
++}));
+ 
+ const {
+   websocket,
+@@ -218,3 +221,64 @@ describe("websocket plugin session reasoning effort", () => {
+     expect(aibitat.continue).not.toHaveBeenCalled();
+   });
+ });
++
++describe("websocket plugin follow-up chat quota", () => {
++  const { SystemSettings } = require("../../../../../models/systemSettings");
++  const { WorkspaceChats } = require("../../../../../models/workspaceChats");
++  const { User } = require("../../../../../models/user");
++
++  const overLimitUser = { id: 7, role: "default", dailyMessageLimit: 3 };
++
++  /** Runs one interrupt round trip for an invocation owned by user 7. */
++  async function replyWithQuota(feedback = "next") {
++    const { socket, aibitat } = setupPlugin({ userId: 7 });
++    aibitat.continue = jest.fn(async () => {});
++
++    const onInterrupt = aibitat.onInterrupt.mock.calls[0][0];
++    const done = onInterrupt({ from: "USER", to: "@agent" });
++    await flushPromises();
++    await socket.handleFeedback(
++      JSON.stringify({ type: "awaitingFeedback", feedback })
++    );
++    await done;
++    return { socket, aibitat };
++  }
++
++  beforeEach(() => {
++    SystemSettings.isMultiUserMode.mockResolvedValue(true);
++    WorkspaceChats.count.mockResolvedValue(5);
++    jest.spyOn(User, "get").mockResolvedValue(overLimitUser);
++  });
++
++  afterEach(() => {
++    jest.restoreAllMocks();
++    SystemSettings.isMultiUserMode.mockResolvedValue(false);
++  });
++
++  it("refuses the follow-up and ends the session once the 24-hour quota is met", async () => {
++    const { socket, aibitat } = await replyWithQuota();
++
++    expect(aibitat.continue).not.toHaveBeenCalled();
++    const sent = JSON.parse(socket.send.mock.calls.at(-1)[0]);
++    expect(sent.type).toBe("wssFailure");
++    expect(sent.content).toBe(
++      "You have met your maximum 24 hour chat quota of 3 chats. Try again later."
++    );
++    expect(socket.close).toHaveBeenCalled();
++  });
++
++  it("continues the session while the user is under quota", async () => {
++    WorkspaceChats.count.mockResolvedValue(1);
++    const { aibitat } = await replyWithQuota();
++
++    expect(aibitat.continue).toHaveBeenCalledWith("next", []);
++  });
++
++  it("does not enforce the quota in single-user mode", async () => {
++    SystemSettings.isMultiUserMode.mockResolvedValue(false);
++    const { aibitat } = await replyWithQuota();
++
++    expect(User.get).not.toHaveBeenCalled();
++    expect(aibitat.continue).toHaveBeenCalledWith("next", []);
++  });
++});
+```
+
+**File**: `server/utils/agents/aibitat/plugins/websocket.js` (modified, +28/-0)
+```diff
+@@ -22,6 +22,25 @@ async function userCanToggleTools(userId = null) {
+   return user?.role === ROLES.admin;
+ }
+ 
++/**
++ * Agent follow-ups arrive over the socket rather than the HTTP chat routes, so
++ * the 24-hour message limit is checked here before each of the agent's turns.
++ * Returns the quota message when the user is over their limit, otherwise null.
++ * Single-user mode, admins, and users without a limit always pass.
++ * @param {number|null} userId - User id from the agent invocation.
++ * @returns {Promise<string|null>}
++ */
++async function chatQuotaExceededMessage(userId = null) {
++  if (!userId) return null;
++  const { SystemSettings } = require("../../../../models/systemSettings");
++  if (!(await SystemSettings.isMultiUserMode())) return null;
++
++  const { User } = require("../../../../models/user");
++  const user = await User.get({ id: Number(userId) });
++  if (!user || (await User.canSendChat(user))) return null;
++  return `You have met your maximum 24 hour chat quota of ${user.dailyMessageLimit} chats. Try again later.`;
++}
++
+ /**
+  * Returns the timeout in ms for agent tool-call approval prompts.
+  * Reads from `TOOL_CALL_APPROVAL_TIMEOUT_MS` env var; defaults to 120 000 ms (2 min).
+@@ -455,6 +474,15 @@ const websocket = {
+             return;
+           }
+ 
++          const quotaMessage = await chatQuotaExceededMessage(userId);
++          if (quotaMessage) {
++            socket.send(
++              JSON.stringify({ type: "wssFailure", content: quotaMessage })
++            );
++            socket.close();
++            return;
++          }
++
+           // The chat session's reasoning effort can change between messages -
+           // apply it before the agent's next turn.
+           if (reasoningEffort !== undefined)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6912** (2026-10-30): feat: add DISABLE_METRICS_ENDPOINT opt-out for /api/utils/metrics (@timothycarambat)
-- **PR #6911** (2026-10-30): Add DeepSeek as an agent web search provider (@timothycarambat)
-- **PR #6910** (2026-10-30): Add vision support to DeepSeek provider (@timothycarambat)
-- **PR #6908** (2026-10-30): fix: filter ineligible Lance candidates before reranking (@Max-Reisinger)
-- **PR #6904** (2026-10-30): fix: pptx section sub-agent provider instance and call arguments (@rtmalikian)
-- **PR #6902** (2026-10-30): fix: honor max response tokens in native KoboldCPP agent requests (@clean99)
+- **PR #6955** (2026-11-03): Fix contextual save bar colors in light mode (@shatfield4)
+- **PR #6954** (2026-11-02): fix: re-check user and workspace access when an agent invocation connects (@timothycarambat)
+- **PR #6953** (2026-11-02): fix: compare filesystem agent paths case-insensitively on Windows (@timothycarambat)
+- **PR #6952** (2026-11-02): fix: reject browser extension API keys whose owner is no longer an admin or manager (@timothycarambat)
+- **PR #6950** (2026-11-02): fix: keep static agent flow variables out of flow results and status messages (@timothycarambat)
+- **PR #6948** (2026-11-02): feat: configurable per-server MCP tool call timeout (@timothycarambat)
 
 ---
 
@@ -1494,52 +1596,30 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filter ineligible Lance candidates before reranking (#6908)
+## X. use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)
 
 **RULE**:
-When implementing operations in `server/utils/vectorDbProviders/lance/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/agents/aibitat/plugins/outlook/lib.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9caf2b4c`: filter ineligible Lance candidates before reranking (#6908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cca9756a`: use Microsoft Graph webLink for Outlook thread citation permalinks (#6923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/vectorDbProviders/lance/index.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/agents/aibitat/plugins/outlook/lib.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    // Drop pinned and below-threshold chunks first so they cannot take the reranker's topK slots.
-    const eligibleResults = vectorSearchResults.filter((item) => {
-      if (this.distanceToSimilarity(item._distance) < similarityThreshold)
-        return false;
-      if (filterIdentifiers.includes(sourceIdentifier(item))) {
-        this.logger(
-          "A source was filtered from context as it's parent document is pinned."
-        );
-        return false;
-      }
-      return true;
-    });
-    if (eligibleResults.length === 0) return result;
-
-    const reranker = new NativeEmbeddingReranker();
-      .rerank(query, eligibleResults, { topK: topN })
+    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,webLink,attachments&$expand=attachments`;
+        permalink:
+          messages[messages.length - 1]?.webLink || messages[0]?.webLink,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    const reranker = new NativeEmbeddingReranker();
-      .rerank(query, vectorSearchResults, { topK: topN })
-          if (this.distanceToSimilarity(item._distance) < similarityThreshold)
-            return;
-          if (filterIdentifiers.includes(sourceIdentifier(rest))) {
-            this.logger(
-              "A source was filtered from context as it's parent document is pinned."
-            );
-            return;
-          }
+    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,attachments&$expand=attachments`;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9caf2b4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cca9756a` are properly handled with clean fallback behavior.

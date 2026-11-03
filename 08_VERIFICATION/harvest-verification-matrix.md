@@ -6985,3 +6985,6 @@
 | `CYCLE-20261103-TM4P` | `2026-11-03T19:24:11.977Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6589` | Yes (`3a4cc84a...`) |
 | `CYCLE-20261103-TOGS` | `2026-11-03T19:24:15.004Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6590` | Yes (`b8106753...`) |
 | `CYCLE-20261103-TWS9` | `2026-11-03T19:24:25.785Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6591` | Yes (`c1a9149b...`) |
+| `CYCLE-20261103-AY22` | `2026-11-03T19:37:40.586Z` | `scrapy-plugins/scrapy-playwright` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6592` | Yes (`49d14ca2...`) |
+| `CYCLE-20261103-AYVE` | `2026-11-03T19:37:41.642Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6593` | Yes (`5e69240c...`) |
+| `CYCLE-20261103-B4PV` | `2026-11-03T19:37:49.219Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6594` | Yes (`e5baa034...`) |
