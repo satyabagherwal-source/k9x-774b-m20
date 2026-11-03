@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `ab16bef9`  
+> **Source Version**: `48774760`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:33:32.822Z  
+> **Timestamp**: 2026-11-03T12:25:09.426Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:33:31.985Z  
+> **Harvest Timestamp**: 2026-11-03T12:25:08.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4806 stars
+- **Stars / Engagement**: 4819 stars
 
 ---
 
@@ -622,6 +622,289 @@ impl Drop for EnvFileGuard {
 }
 
 ///
+```
+
+### Core Architecture Module: `crates/nono-cli/src/platform_oauth/loopback.rs`
+```
+//! One-shot loopback redirect receiver for the authorization code flow
+//! ([RFC 8252] §7.3).
+//!
+//! The listener binds `127.0.0.1` on an OS-chosen port and serves exactly one
+//! successful `GET /callback`: the first one carrying the expected `state`.
+//! Anything else, from a stray browser connection or another local process
+//! (including a sandboxed agent with localhost access), gets a minimal error
+//! and is otherwise ignored, so it cannot end or hijack the sign-in. A
+//! bounded number of rejected requests aborts the login to fail closed.
+//!
+//! The accepted callback's connection is held open while the CLI redeems the
+//! code, so the browser's next page reflects the real outcome.
+//!
+//! [RFC 8252]: https://www.rfc-editor.org/rfc/rfc8252
+
+use nono::{NonoError, Result};
+use std::io::{ErrorKind, Read, Write};
+use std::net::{Ipv4Addr, SocketAddr, TcpListener, TcpStream};
+use std::time::{Duration, Instant};
+use url::Url;
+use zeroize::Zeroizing;
+
+const CALLBACK_PATH: &str = "/callback";
+const MAX_REQUEST_BYTES: usize = 8 * 1024;
+const MAX_REJECTED_REQUESTS: usize = 64;
+const PER_CONNECTION_TIMEOUT: Duration = Duration::from_secs(2);
+const ACCEPT_POLL_INTERVAL: Duration = Duration::from_millis(50);
+
+pub(crate) struct LoopbackListener {
+    listener: TcpListener,
+    port: u16,
+}
+
+/// What the authorization server sent back to the redirect URI.
+pub(crate) enum CallbackResult {
+    Code(Zeroizing<String>),
+    Error(String),
+}
+
+impl std::fmt::Debug for CallbackResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Code(_) => f.write_str("Code(<redacted>)"),
+            Self::Error(code) => f.debug_tuple("Error").field(code).finish(),
+        }
+    }
+}
+
+/// An accepted callback whose browser response is still pending.
+pub(crate) struct PendingCallback {
+    pub(crate) responder: CallbackResponder,
+    pub(crate) result: CallbackResult,
+}
+
+/// The held browser connection for an accepted callback.
+pub(crate) struct CallbackResponder {
+    stream: TcpStream,
+}
+
+impl LoopbackListener {
+    pub(crate) fn bind() -> std::io::Result<Self> {
+        let listener = TcpListener::bind(SocketAddr::from((Ipv4Addr::LOCALHOST, 0)))?;
+        let port = listener.local_addr()?.port();
+        listener.set_nonblocking(true)?;
+        Ok(Self { listener, port })
+    }
+
+    pub(crate) fn redirect_uri(&self) -> String {
+        format!("http://127.0.0.1:{}{CALLBACK_PATH}", self.port)
+    }
+
+    /// Wait for the callback that matches `expected_state` and comes from
+    /// `expected_issuer` (RFC 9207), until `deadline`.
+    pub(crate) fn wait_for_callback(
+        &self,
+        expected_state: &str,
+        expected_issuer: &str,
+        deadline: Instant,
+    ) -> Result<PendingCallback> {
+        let mut rejected = 0usize;
+        loop {
+            if Instant::now() >= deadline {
+                return Err(NonoError::ActionRequired(
+                    "sign-in timed out waiting for the browser; run `nono login` again".to_string(),
+                ));
+            }
+            let stream = match self.listener.accept() {
+                Ok((stream, peer)) if peer.ip().is_loopback() => stream,
+                Ok(_) => continue,
+                Err(error) if error.kind() == ErrorKind::WouldBlock => {
+                    std::thread::sleep(ACCEPT_POLL_INTERVAL);
+                    continue;
+                }
+                Err(error) if error.kind() == ErrorKind::Interrupted => continue,
+                Err(error) => {
+                    return Err(NonoError::ConfigParse(format!(
+                        "loopback listener failed: {error}"
+                    )));
+                }
+            };
+            match handle_connection(stream, expected_state, expected_issuer)? {
+                Some(callback) => return Ok(callback),
+                None => {
+                    rejected = rejected.saturating_add(1);
+                    if rejected >= MAX_REJECTED_REQUESTS {
+                        return Err(NonoError::ActionRequired(
+                            "sign-in aborted: too many unexpected requests reached the loopback \
+                             listener"
+                                .to_string(),
+                        ));
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl CallbackResponder {
+    /// Answer the held browser request with a redirect to `location`.
+    pub(crate) fn redirect(mut self, location: &Url) {
+        let response = format!(
+            "HTTP/1.1 302 Found\r\nLocation: {location}\r\nCache-Control: no-store\r\n\
+             Referrer-Policy: no-referrer\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        );
+        // Best effort: the browser may have gone away, and the CLI has already
+        // reported the real outcome in the terminal.
+        let _ = self.stream.write_all(response.as_bytes());
+        let _ = self.stream.flush();
+    }
+}
+
+/// Serve one connection. Returns `Ok(Some)` only for the genuine callback;
+/// `Ok(None)` for anything rejected; `Err` for a callback that has the right
+/// `state` but fails a security check, which aborts the login.
+fn handle_connection(
+    mut stream: TcpStream,
+    expected_state: &str,
+    expected_issuer: &str,
+) -> Result<Option<PendingCallback>> {
+    if stream.set_nonblocking(false).is_err()
+        || stream
+            .set_read_timeout(Some(PER_CONNECTION_TIMEOUT))
+            .is_err()
+        || stream
+            .set_write_timeout(Some(PER_CONNECTION_TIMEOUT))
+            .is_err()
+    {
+        return Ok(None);
+    }
+    let Some(target) = read_request_target(&mut stream) else {
+        respond(&mut stream, "400 Bad Request");
+        return Ok(None);
+    };
+    let Some(params) = parse_callback_target(&target) else {
+        respond(&mut stream, "404 Not Found");
+        return Ok(None);
+    };
+    let Some(state) = params.get("state") else {
+        respond(&mut stream, "400 Bad Request");
+        return Ok(None);
+    };
+    if aws_lc_rs::constant_time::verify_slices_are_equal(
+        state.as_bytes(),
+        expected_state.as_bytes(),
+    )
+    .is_err()
+    {
+        respond(&mut stream, "400 Bad Request");
+        return Ok(None);
+    }
+
+    // From here the request carries the secret state, so it is the real
+    // authorization response. A failed check is an attack, not noise.
+    if params.get("iss").map(String::as_str) != Some(expected_issuer) {
+        respond(&mut stream, "400 Bad Request");
+        return Err(NonoError::ConfigParse(
+            "sign-in aborted: the authorization response came from an unexpected issuer"
+                .to_string(),
+        ));
+    }
+    let result = match (params.get("code"), params.get("error")) {
+        (Some(code), None) => CallbackResult::Code(super::client::validate_token_value(
+            "authorization code",
+            code.clone(),
+        )?),
+        (None, Some(error)) => CallbackResult::Error(
+            super::client::validate_error_code(error)
+                .unwrap_or_else(|_| "invalid_request".to_string()),
+        ),
+        _ => {
+            respond(&mut stream, "400 Bad Request");
+            return Err(NonoError::ConfigParse(
+                "sign-in aborted: malformed authorization response".to_string(),
+            ));
+        }
+    };
+    Ok(Some(PendingCallback {
+        responder: CallbackResponder { stream },
+        result,
+    }))
+}
+
+/// Read the request head and return the target of a `GET` request.
+fn read_request_target(stream: &mut TcpStream) -> Option<String> {
+    let mut buffer = Vec::with_capacity(1024);
+    let mut chunk = [0u8; 1024];
+    while !buffer.windows(4).any(|window| window == b"\r\n\r\n") {
+        if buffer.len() >= MAX_REQUEST_BYTES {
+            return None;
+        }
+        let read = stream.read(&mut chunk).ok()?;
+        if read == 0 {
+            return None;
+        }
+        buffer.extend_from_slice(&chunk[..read]);
+    }
+    let head = std::str::from_utf8(&buffer).ok()?;
+    let request_line = head.split("\r\n").next()?;
+    let mut parts = request_line.split(' ');
+    match (parts.next(), parts.next(), parts.next(), parts.next()) {
+        (Some("GET"), Some(target), Some(version), None) if version.starts_with("HTTP/1.") => {
+            Some(target.to_string())
+        }
+        _ => None,
+    }
+}
+
+/// Parse `/callback?…` into its query parameters. Returns `None` for any
+/// other path or a query that repeats a parameter (a confusion attempt).
+fn parse_callback_target(target: &str) -> Option<std::collections::HashMap<String, String>> {
+    let (path, query) = target.split_once('?').unwrap_or((target, ""));
+    if path != CALLBACK_PATH {
+        return None;
+    }
+    let mut params = std::collections::HashMap::new();
+    for (key, value) in url::form_urlencoded::parse(query.as_bytes()) {
+        if params
+            .insert(key.into_owned(), value.into_owned())
+            .is_some()
+        {
+            return None;
+        }
+    }
+    Some(params)
+}
+
+fn respond(stream: &mut TcpStream, status: &str) {
+    let body = "nono login: request rejected\n";
+    let response = format!(
+        "HTTP/1.1 {status}\r\nContent-Type: text/plain; charset=utf-8\r\nCache-Control: no-store\r\n\
+         Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
+        body.len()
+    );
+    let _ = stream.write_all(response.as_bytes());
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use super::*;
+
+    const ISSUER: &str = "https://nono.example.com";
+
+    fn send(port: u16, request: &str) -> String {
+        let mut stream = TcpStream::connect(("127.0.0.1", port)).unwrap();
+        stream.write_all(request.as_bytes()).unwrap();
+        let mut response = String::new();
+        let _ = stream.read_to_string(&mut response);
+        response
+    }
+
+    fn get(port: u16, target: &str) -> String {
+        send(
+            port,
+            &format!("GET {target} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\n\r\n"),
+        )
+    }
+
+    fn
 ```
 
 ### Core Architecture Module: `crates/nono-cli/src/sandbox_state.rs`
@@ -2670,286 +2953,17 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `bindings/c/src/fs_capability.rs`
-```
-//! Index-based accessors for filesystem capabilities within a `CapabilitySet`.
-
-use std::os::raw::c_char;
-
-use crate::capability_set::NonoCapabilitySet;
-use crate::rust_string_to_c;
-use crate::types::{NONO_ACCESS_MODE_INVALID, NonoCapabilitySourceTag, access_mode_to_raw};
-
-/// Get the number of filesystem capabilities in the set.
-///
-/// Returns 0 if `caps` is NULL.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_count(caps: *const NonoCapabilitySet) -> usize {
-    if caps.is_null() {
-        return 0;
-    }
-    let caps = unsafe { &*caps };
-    caps.inner.fs_capabilities().len()
-}
-
-/// Get the original (pre-canonicalization) path of the capability at `index`.
-///
-/// Caller must free the returned string with `nono_string_free()`.
-/// Returns NULL if `caps` is NULL or `index` is out of bounds.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_original(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> *mut c_char {
-    if caps.is_null() {
-        return std::ptr::null_mut();
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => rust_string_to_c(cap.original.display().to_string()),
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the resolved (canonicalized) path of the capability at `index`.
-///
-/// Caller must free the returned string with `nono_string_free()`.
-/// Returns NULL if `caps` is NULL or `index` is out of bounds.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_resolved(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> *mut c_char {
-    if caps.is_null() {
-        return std::ptr::null_mut();
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => rust_string_to_c(cap.resolved.display().to_string()),
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the access mode of the capability at `index`.
-///
-/// Returns `NONO_ACCESS_MODE_INVALID` if `caps` is NULL or `index` is out of
-/// bounds (also sets the last error). Check `nono_capability_set_fs_count()`
-/// first to avoid out-of-bounds access.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_access(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> u32 {
-    if caps.is_null() {
-        crate::set_last_error("caps pointer is NULL");
-        return NONO_ACCESS_MODE_INVALID;
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => access_mode_to_raw(cap.access),
-        None => {
-            crate::set_last_error(&format!("index {index} out of bounds"));
-            NONO_ACCESS_MODE_INVALID
-        }
-    }
-}
-
-/// Get whether the capability at `index` is a single-file capability.
-///
-/// Returns `false` if `caps` is NULL or `index` is out of bounds.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_is_file(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> bool {
-    if caps.is_null() {
-        return false;
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => cap.is_file,
-        None => false,
-    }
-}
-
-/// Get the source tag of the capability at `index`.
-///
-/// Returns `NonoCapabilitySourceTag::User` and sets the last error if `caps`
-/// is NULL or `index` is out of bounds. Check `nono_capability_set_fs_count()`
-/// first to avoid out-of-bounds access.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_source_tag(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> NonoCapabilitySourceTag {
-    if caps.is_null() {
-        crate::set_last_error("caps pointer is NULL");
-        return NonoCapabilitySourceTag::User;
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => match &cap.source {
-            nono::CapabilitySource::User => NonoCapabilitySourceTag::User,
-            nono::CapabilitySource::Profile => NonoCapabilitySourceTag::Profile,
-            nono::CapabilitySource::Group(_) => NonoCapabilitySourceTag::Group,
-            nono::CapabilitySource::System => NonoCapabilitySourceTag::System,
-        },
-        None => {
-            crate::set_last_error(&format!("index {index} out of bounds"));
-            NonoCapabilitySourceTag::User
-        }
-    }
-}
-
-/// Get the group name of the capability at `index`.
-///
-/// Returns NULL if the source is not `Group`, or if `caps` is NULL,
-/// or if `index` is out of bounds.
-///
-/// Caller must free the returned string with `nono_string_free()`.
-///
-/// # Safety
-///
-/// `caps` must be a valid pointer or NULL.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn nono_capability_set_fs_source_group_name(
-    caps: *const NonoCapabilitySet,
-    index: usize,
-) -> *mut c_char {
-    if caps.is_null() {
-        return std::ptr::null_mut();
-    }
-    let caps = unsafe { &*caps };
-    match caps.inner.fs_capabilities().get(index) {
-        Some(cap) => match &cap.source {
-            nono::CapabilitySource::Group(name) => rust_string_to_c(name.clone()),
-            _ => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::capability_set::{
-        nono_capability_set_allow_path, nono_capability_set_free, nono_capability_set_new,
-    };
-    use std::ffi::CString;
-
-    #[test]
-    fn test_fs_count_empty() {
-        let caps = nono_capability_set_new();
-        // SAFETY: caps is valid.
-        unsafe {
-            assert_eq!(nono_capability_set_fs_count(caps), 0);
-            nono_capability_set_free(caps);
-        }
-    }
-
-    #[test]
-    fn test_fs_count_null_safe() {
-        // SAFETY: deliberate NULL.
-        unsafe {
-            assert_eq!(nono_capability_set_fs_count(std::ptr::null()), 0);
-        }
-    }
-
-    #[test]
-    fn test_fs_accessors_after_add() {
-        let caps = nono_capability_set_new();
-        let path = CString::new("/tmp").unwrap_or_default();
-        // SAFETY: caps and path are valid.
-        unsafe {
-            let rc = nono_capability_set_allow_path(
-                caps,
-                path.as_ptr(),
-                crate::types::NONO_ACCESS_MODE_READ_WRITE,
-            );
-            assert_eq!(rc, crate::types::NonoErrorCode::Ok);
-            assert_eq!(nono_capability_set_fs_count(caps), 1);
-
-            let original = nono_capability_set_fs_original(caps, 0);
-            assert!(!original.is_null());
-            crate::nono_string_free(original);
-
-            let resolved = nono_capability_set_fs_resolved(caps, 0);
-            assert!(!resolved.is_null());
-            crate::nono_string_free(resolved);
-
-            assert_eq!(
-                nono_capability_set_fs_access(caps, 0),
-                crate::types::NONO_ACCESS_MODE_READ_WRITE,
-            );
-            assert!(!nono_capability_set_fs_is_file(caps, 0));
-            assert_eq!(
-                nono_capability_set_fs_source_tag(caps, 0),
-                NonoCapabilitySourceTag::User,
-            );
-            assert!(nono_capability_set_fs_source_group_name(caps, 0).is_null());
-
-            nono_capability_set_free(caps);
-        }
-    }
-
-    #[test]
-    fn test_fs_out_of_bounds() {
-        let caps = nono_capability_set_new();
-        // SAFETY: caps is valid, index is out of bounds.
-        unsafe {
-            assert!(nono_capability_set_fs_original(caps, 99).is_null());
-            assert!(nono_capability_set_fs_resolved(caps, 99).is_null());
-            assert_eq!(
-                nono_capability_set_fs_access(caps, 99),
-                crate::types::NONO_ACCESS_MODE_INVALID,
-            );
-            assert!(nono_capability_set_fs_source_group_name(caps, 99).is_null());
-            nono_capability_set_free(caps);
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2254** (2026-11-03): **fix(proxy): strip hop headers when the colon is spaced**
+  *Symptoms*: ## Linked Issue  Closes #2253  ## Summary  Hop-header detection splits on the colon and trims the name. The forward filters only dropped a line when the name sat against the colon. `Transfer-Encoding : chunked` was decoded, then forwarded as a normal `Transfer-Encoding` next to the `Content-Length` the raw builders write for the decoded body. Those builders also send `Connection: close`.  Stripping now uses that same split-and-trim name match for `Host`, `Content-Length`, `Transfer-Encoding`, `Connection`, `Proxy-Connection`, `Proxy-Authorization`, and the configured credential header. An ordinary header with a space before the colon is still forwarded. An empty name is not forwarded.  The docs already say these headers are stripped. This pull does not change that contract, and it does not add a capability, so there is no NEP.  The trim on detection landed in [#1687](https://github.com/nolabs-ai/nono/pull/1687) ([`05727c51`](https://github.com/nolabs-ai/nono/commit/05727c51)). The prefix strip stayed as it was.  ## Test Plan  Before the strip change, `cargo test -p nono-proxy --lib -- test_filter_headers_strips_spaced_framing_headers test_filter_headers_strips_tab_before_colon_on_transfer_encoding test_filter_headers_strips_spaced_credential_header test_filter_headers_multi_strips_spaced_hop_headers test_filter_headers_drops_empty_header_name` failed all 5 tests. A spaced `Transfer-Encoding` was forwarded as `("Transfer-Encoding", "chunked")`.  After the change, those tests a
+
 - **Issue #2239** (2026-11-02): **fix(cli): support kitty release and repeat events in detach matcher**
   *Symptoms*: Handle advanced kitty keyboard protocol sequences in the PTY proxy and detach matchers. Non-press events (repeats and releases) for keys that are part of a pending match prefix are now ignored instead of invalidating the partial detach sequence.  - Refactor CSI-u escape parsing to handle full subfield formats for modifiers and event types - Strip Lock modifier bits from incoming reports to prevent state mismatches - Add `is_enhanced_key_echo` to identify non-press events for pending match sequences - Add test coverage for kitty release reports and lock modifiers during detach matching  ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  Closes #  ## Summary  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the 
-
-- **Issue #2234** (2026-10-30): **fix(cli): pause the PTY relay for network approval prompts**
-  *Symptoms*: ## Linked Issue  Closes #2232  ## Summary  Network approval prompts (`network.approval_backends` with a `terminal` backend) were unreadable inside a `nono run` session. Every prompt line started in the column where the previous one ended, a staircase layout, and the session could hang after the user answered.  **Root cause.** During a session the PTY relay keeps the user's terminal in raw mode (`cfmakeraw`, so `OPOST` is off) and forwards stdin to the child. Filesystem approvals already pause the relay before prompting (`request_approval_with_relay_paused`). Network and proxy endpoint approvals run on proxy worker threads (`connect.rs`, `reverse.rs` and `tls_intercept` via `spawn_blocking`), which can't reach the relay. So:  1. The prompt was printed with bare `\n` into a raw terminal, which produced the staircase. 2. The relay kept reading stdin while the prompt was up. When the prompt consumed the user's answer first, the relay's `poll()` had already reported input, and its blocking `read()` then hung the supervisor loop until the user typed again (confirmed with `sample` on macOS).  **Fix.**  - **New `relay_prompt_gate` module.** While a relay is active, a terminal prompt raised off the supervisor thread waits until the supervisor loop pauses the relay. The relay resumes once the last pending prompt finishes. If the pause doesn't arrive before the request deadline, the request times out and is **denied** (fail closed). Prompts on the supervisor thread skip t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2966,697 +2980,766 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff42f91d` (2026-11-02)
-**Commit Message**: fix(cli): support kitty release and repeat events in detach matcher (#2239)
+### Incident Patch 1: `aa63c36b` (2026-11-02)
+**Commit Message**: fix(policy): keep exact-file directory bypasses literal (#2142)
 
-Handle advanced kitty keyboard protocol sequences in the PTY proxy and detach matchers. Non-press events (repeats and releases) for keys that are part of a pending match prefix are now ignored instead of invalidating the partial detach sequence.
+* fix(policy): keep exact-file directory bypasses literal
 
-- Refactor CSI-u escape parsing to handle full subfield formats for modifiers and event types
-- Strip Lock modifier bits from incoming reports to prevent state mismatches
-- Add `is_enhanced_key_echo` to identify non-press events for pending match sequences
-- Add test coverage for kitty release reports and lock modifiers during detach matching
+An allow_file grant of a directory is an exact path. bypass_protection
+of that path now emits a literal Seatbelt hole and leaves child denies
+in place. A directory grant of the same path still opens the subtree.
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
 
-**File**: `crates/nono-cli/src/connect_client.rs` (modified, +16/-1)
+* fix(policy): match exact-file bypasses stored as symlinks
+
+A user-intent exact-file grant can name the expanded symlink path
+instead of the canonical path. Seatbelt kept that hole as a subtree.
+Match either form, and still open a subtree when the same path is a
+directory grant.
+
+Tests cover a symlink-form lock file that keeps its child deny, and a
+symlink-form directory grant that still removes child denies.
+
+Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
+
+* test(policy): cover why and Seatbelt for an exact-file directory bypass
+
+read_file of a directory plus bypass_protection of that path is an
+exact grant. why allows the directory and denies a nested file with
+path_not_granted, and dry-run lists the grant as a file. The Seatbelt
+hole stays literal, so the sandbox does not open that subtree.
+
+
+
+**File**: `crates/nono-cli/src/capability_ext.rs` (modified, +155/-0)
 ```diff
-@@ -1853,7 +1853,13 @@ impl DetachMatcher {
-                         }
-                     }
-                     crate::pty_proxy::EnhancedKeyMatch::Invalid => {
--                        self.flush_pending(&mut forward);
-+                        if self.sequence[..self.pending_match_len].iter().any(|&key| {
-+                            crate::pty_proxy::is_enhanced_key_echo(&self.pending_escape, key)
-+                        }) {
-+                            self.pending_escape.clear();
-+                        } else {
-+                            self.flush_pending(&mut forward);
-+                        }
-                     }
-                 }
-                 continue;
-@@ -2169,6 +2175,15 @@ mod tests {
-         assert!(third.detach);
+@@ -1365,6 +1365,16 @@ mod tests {
+         SandboxArgs::default()
      }
  
-+    #[test]
-+    fn detach_matcher_ignores_kitty_release_of_matched_prefix() {
-+        let mut matcher = DetachMatcher::new(vec![0x1d, b'd']);
-+        let matched = matcher.push(b"\x1b[93;5u\x1b[93;5:3ud");
-+        assert!(matched.forward.is_empty());
-+        assert!(matched.detach);
-+        assert!(!matcher.pending_bytes());
++    #[cfg(target_os = "macos")]
++    struct RemoveDir<'a>(&'a Path);
++
++    #[cfg(target_os = "macos")]
++    impl Drop for RemoveDir<'_> {
++        fn drop(&mut self) {
++            let _ = std::fs::remove_dir_all(self.0);
++        }
 +    }
 +
      #[test]
-     fn detach_matcher_forwards_unrelated_csi_u_input() {
-         let mut matcher = DetachMatcher::new(vec![0x1d, b'd']);
+     fn test_from_args_basic() {
+         let dir = tempdir().expect("Failed to create temp dir");
+@@ -1665,6 +1675,151 @@ mod tests {
+         );
+     }
+ 
++    /// `read_file` of a directory plus `bypass_protection` of that directory.
++    /// Dry-run lists the grant as `(file)`. `why` allows that directory and
++    /// denies a nested file with `path_not_granted`. The Seatbelt hole stays
++    /// `literal`, so the sandbox does not open the subtree those diagnostics deny.
++    #[cfg(target_os = "macos")]
++    #[test]
++    fn test_read_file_directory_bypass_matches_why_and_seatbelt() {
++        // `/tmp` resolves under `/private`, which `system_read_macos` grants,
++        // so `why` allows a child there. This shape is a path no system grant covers.
++        let home = std::env::var_os("HOME").expect("HOME");
++        let dir = Path::new(&home).join(format!(
++            ".nono-exact-bypass-{}-{}",
++            std::process::id(),
++            std::time::SystemTime::now()
++                .duration_since(std::time::UNIX_EPOCH)
++                .expect("clock")
++                .as_nanos()
++        ));
++        let _cleanup = RemoveDir(&dir);
++        std::fs::create_dir_all(&dir).expect("create fixture root");
++        let granted = dir.join("dir");
++        std::fs::create_dir_all(&granted).expect("create dir");
++        let nested = granted.join("sub");
++        std::fs::create_dir_all(&nested).expect("create nested dir");
++        let child = nested.join("leaf");
++        std::fs::write(&child, "hidden").expect("write child");
++        let resolved = granted.canonicalize().expect("canonicalize dir");
++
++        let profile_path = dir.join("repro.json");
++        std::fs::write(
++            &profile_path,
++            format!(
++                r#"{{
++                "meta": {{ "name": "repro", "version": "0.0.1" }},
++                "filesystem": {{
++                    "read_file": ["{}"],
++                    "bypass_protection": ["{}"]
++                }}
++            }}"#,
++                granted.display(),
++                granted.display()
++            ),
++        )
++        .expect("write profile");
++
++        let profile = crate::profile::load_profile_from_path(&profile_path).expect("load profile");
++        let workdir = tempdir().expect("workdir");
++        let args = sandbox_args();
++        let prepared =
++            with_env_lock(|| CapabilitySet::from_profile(&profile, workdir.path(), &args))
++                .expect("build caps");
++
++        assert!(
++            prepared.caps.fs_capabilities().iter().any(|cap| {
++                cap.is_file
++                    && cap.access == AccessMode::Read
++                    && cap.resolved == resolved
++                    && cap.source.is_user_intent()
++            }),
++            "dry-run must list the directory grant as (file)"
++        );
++        assert!(
++            prepared
++                .applied_bypass_paths
++                .iter()
++                .any(|bypass| bypass.is_file && bypass.path == resolved),
++            "bypass hole must stay literal, got: {:?}",
++            prepared.applied_bypass_paths
++        );
++        assert!(
++            !prepared.caps.path_covered(&child),
++            "exact-file grant must not cover the nested file"
++        );
++
++        // Same order as `run_why`: a covering deny wins, otherwise query grants.
++        let policy = crate::policy::EffectiveDenyPolicy::from_applied_bypasses(
++            &prepared.deny_paths,
++            &prepared.applied_bypass_paths,
++        );
++        assert!(
++            policy
++                .matching_deny_for_access(&resolved, AccessMode::Read)
++                .is_none(),
++            "the granted directory is not under filesystem.deny"
++        );
++        let dir_result = crate::query_ext::query_path(
++            &resolved,
++            AccessMode::Read,
++            &prepared.caps,
++            policy.bypass_paths(),
++        )
++        .expect("why dir");
++        let resolved_display = resolved.display().to_string();
++        assert!(
++            matches!(
++                dir_result,
++                crate::query_ext::QueryResult::Allowed {
++                    ref reason,
++                    granted_path: Some(ref granted_path),
++                    source: Some(ref source),
++                    ..
++                } if reason == "granted_path"
++                    && granted_path == &resolved_display
++                    && source == "profile"
++            ),
++            "why must allow the directory via the exact profile grant, got {dir_result:?}"
++        );
++        assert!(
++            policy
++                .match
 ```
 
-**File**: `crates/nono-cli/src/pty_proxy.rs` (modified, +117/-18)
+**File**: `crates/nono-cli/src/policy.rs` (modified, +263/-7)
 ```diff
-@@ -1391,7 +1391,16 @@ impl PtyProxy {
-                     );
-                 }
-             }
--            EnhancedKeyMatch::Invalid => self.flush_pending_detach_escape(forwarded),
-+            EnhancedKeyMatch::Invalid => {
-+                if self.detach_sequence[..self.pending_detach_match_len]
-+                    .iter()
-+                    .any(|&key| is_enhanced_key_echo(&self.pending_detach_escape, key))
-+                {
-+                    self.pending_detach_escape.clear();
-+                } else {
-+                    self.flush_pending_detach_escape(forwarded);
-+                }
-+            }
+@@ -1821,6 +1821,54 @@ fn emit_macos_socket_bypass_rules(
+     Ok(())
+ }
+ 
++/// Seatbelt hole shape for one bypass path.
++///
++/// Non-directories stay exact: regular files, pathname sockets, and missing
++/// paths. `Path::is_file()` is false for sockets, so this uses `!is_dir()`.
++///
++/// A directory stays exact when a user-intent exact-file grant names that
++/// path and no directory grant names that same path. `allow_file` stores a
++/// directory used as a lock file with `is_file: true`. A directory grant of
++/// the bypass path itself still opens `subpath`. A parent directory grant
++/// does not widen an exact-file bypass. The grant may name either the
++/// canonical path or the expanded symlink path.
++fn bypass_hole_is_literal(caps: &CapabilitySet, canonical: &Path, expanded: &Path) -> bool {
++    if !canonical.is_dir() {
++        return true;
++    }
++    let mut saw_exact_file = false;
++    let mut saw_directory_grant = false;
++    for cap in caps.fs_capabilities() {
++        if !cap.source.is_user_intent() {
++            continue;
++        }
++        let names_bypass = cap.resolved == canonical
++            || cap.original == canonical
++            || cap.resolved == expanded
++            || cap.original == expanded;
++        if !names_bypass {
++            continue;
++        }
++        if cap.is_file {
++            saw_exact_file = true;
++        } else {
++            saw_directory_grant = true;
++        }
++    }
++    saw_exact_file && !saw_directory_grant
++}
++
++/// True when `deny` is covered by this bypass and should leave `deny_paths`.
++///
++/// A subtree hole covers the bypass path and its descendants. A literal hole
++/// covers only the bypass path, so a child `filesystem.deny` stays in force.
++fn bypass_removes_deny(deny: &Path, canonical: &Path, expanded: &Path, literal: bool) -> bool {
++    if literal {
++        return deny == canonical || deny == expanded;
++    }
++    deny.starts_with(canonical) || deny.starts_with(expanded)
++}
++
+ /// Apply deny overrides for specific paths, punching targeted holes through deny groups.
+ ///
+ /// For each override path:
+@@ -1917,7 +1965,7 @@ pub fn apply_deny_overrides(
+             canonical.display()
+         );
+ 
+-        let is_file = !canonical.is_dir();
++        let is_file = bypass_hole_is_literal(caps, &canonical, &expanded);
+ 
+         // On macOS: emit Seatbelt allow rules to punch through deny.
+         // Only emit rules matching the effective access mode from the union
+@@ -1953,14 +2001,16 @@ pub fn apply_deny_overrides(
+             emit_macos_socket_bypass_rules(caps, &canonical, &expanded, is_file)?;
          }
  
-         true
-@@ -1440,25 +1449,14 @@ pub(crate) fn match_enhanced_key_sequence(bytes: &[u8], expected_key: u8) -> Enh
-     };
- 
-     if last == b'u' {
--        if body.is_empty()
--            || !body
--                .iter()
--                .all(|b| b.is_ascii_digit() || matches!(b, b';' | b':'))
--        {
--            return EnhancedKeyMatch::Invalid;
--        }
--        let mut fields = body.split(|b| matches!(b, b';' | b':'));
--        let Some(first_field) = fields.next() else {
-+        let Some(report) = parse_csi_u_key_report(body) else {
-             return EnhancedKeyMatch::Invalid;
-         };
--        if first_field.is_empty() {
--            return EnhancedKeyMatch::Invalid;
--        }
--        let Some(codepoint) = parse_ascii_u32(first_field) else {
--            return EnhancedKeyMatch::Invalid;
--        };
--        let modifiers = fields.find_map(parse_ascii_u32).unwrap_or(1);
--        return if enhanced_key_matches(expected_key, codepoint, modifiers) {
-+        // Only a press advances a detach match. Repeat and release reports
-+        // (kitty "report event types") are handled by is_enhanced_key_echo.
-+        return if report.event_type == KITTY_EVENT_PRESS
-+            && enhanced_key_matches(expected_key, report.codepoint, report.modifiers)
-+        {
-             EnhancedKeyMatch::Matched
-         } else {
-             EnhancedKeyMatch::Invalid
-@@ -1497,6 +1495,75 @@ pub(crate) fn match_enhanced_key_sequence(bytes: &[u8], expected_key: u8) -> Enh
-     EnhancedKeyMatch::Invalid
- }
- 
-+/// Returns true when `bytes` is a complete kitty CSI-u repeat or release
-+/// report for `key`.
-+///
-+/// Applications that enable kitty event reporting (e.g. pi pushes flags 7)
-+/// make the terminal send `\x1b[93;5:3u` after the `\x1b[93;5u` press of
-+/// Ctrl-]. Detach matchers use this to swallow those reports for keys already
-+/// matched instead of letting them reset a partial detach sequence.
-+pub(crate) fn is_enhanced_key_echo(bytes: &[u8], key: u8) -> bool {
-+    let Some(body) = bytes
-+        .strip_prefix(b"\x1b[")
-+        .and_then(|rest| rest.strip_suffix(b"u"))
-+    else {
-+        return false;
-+    };
-+    parse_csi_u_key_report(body).is_some_and(|report| {
-+        report.event_type != KITTY_EVENT_PRESS
-+            && enhanced_key_matches(key, report.codepoint, report.modifiers)
-+    })
-+}
-+
-+const KITTY_EVENT_PRESS: u32 = 1;
-+/// Caps Lock and Num Lock bits of a kitty modifier mask; they do not change
-+/// which key was pressed.
-+const KITTY_LOCK_MODIFIER_BITS: u32 = 64 | 128;
-+
-+struct CsiUKeyReport {
-+    codepoint: u32,
-+    modifiers: u32,
-+    event_type: u32,
-+}
-+
-+/// Parse the body of `CSI key[:shifted[:base]] [; modifiers[:event] [; text]] u`.
-+fn parse_csi_u_key_report(body: &[u8]) -> Option<CsiUKeyReport> {
-+    if body.is_empty()
-+        || !body
-+            .iter()
-+            .all(|b| b.is_ascii_digit() || matches!(b, b';' | b':'))
-+    {
-+        return None;
-+    }
-+    let mut fields = body.split(|b| *b == b';');
-+    let codepoint = parse_ascii_u32(fields.next()?.split(|b| *b == b':').next()?)?;
-+
-+    let (modifiers, event_type) = match fields.next() {
-+        None => (1, KITTY_EVENT_PRESS),
-+        Some(field) => {
-+            let mut parts = field.split(|b| *b == b':');
-+            let modifiers = match parts.next() {
-+                Some(m) if !m.is_empty() => parse_ascii_u32(m)?,
-+                _ => 1,
-+            };
-+            let event_type = match parts.next() {
-+                Some(e) if !e.is_empty() => parse_ascii_u32(e)?,
-+                _ => KITTY_EVENT_PRESS,
-+            };
-+            (modifiers, event_type)
-+        }
-+    };
-+    let modifiers = modifiers
-+        .checked_sub(1)
-+        .map(|bits| (bits & !KITTY_LOCK_MODIFIER_BITS).saturating_add(1))?;
-+
-+    Some(CsiUKeyReport {
-+        codepoint,
-+        modifiers,
-+        event_type,
-+    })
-+}
-+
- fn parse_ascii_u32(bytes: &[u8]) -> Option<u32> {
-     std::str::from_utf8(bytes).ok()?.parse::<u32>().ok()
- }
-@@ -3483,6 +3550,38 @@ mod tests {
-         assert!(proxy.take_detach_request());
+-        // Remove deny entries that the override covers (equal or child of the override path).
+-        // Check both the canonical and expanded (symlink) forms so that deny entries
+-        // recorded for either the symlink or its target are removed.
+-        // Do NOT remove broader deny entries when the override is a child — e.g.,
+-        // overriding ~/.aws must not remove a deny on the entire home directory.
++        // Remove deny entries that the override covers. Check both the
++        // canonical and expanded (symlink) forms so that deny entries recorded
++        // for either the symlink or its target are removed. A subtree hole
++        // also removes descendants. A literal hole removes only the bypass
++        // path, so a child deny stays. Do NOT remove a broader parent deny
++        // when the override is a child: overriding ~/.aws must not remove a
++        // deny on the entire home directory.
+         let mut removed_denies = Vec::new();
+         deny_paths.retain(|dp| {
+-            if dp.starts_with(&canonical) || dp.starts_with(&expanded) {
++            if bypass_removes_deny(dp, &canonical, &expanded, is_file) {
+                 removed_denies.push(dp.clone());
+                 false
+             } else {
+@@ -4931,6 +4981,212 @@ mod tests {
+         assert_eq!(deny_paths[0], dir_canonical);
      }
  
 +    #[test]
-+    fn filter_client_input_detaches_with_kitty_event_type_reports() {
-+        // pi pushes kitty flags 7, so Ctrl-] arrives as a press then a release
-+        // (and repeats when held). These must not reset the partial match.
-+        let mut
++    fn test_exact_file_directory_bypass_stays_literal_and_keeps_child_denies() {
++        let dir = tempfile::tempdir().expect("tmpdir");
++        let lock_dir = dir.path().join("claude.lock");
++        std::fs::create_dir_all(&lock_dir).expect("mkdir lock dir");
++        let child = lock_dir.join("secret");
++        std::fs::write(&child, "hidden").expect("write child");
++
++        let lock_canonical = lock_dir.canonicalize().expect("canonicalize lock dir");
++        let child_canonical = child.canonicalize().expect("canonicalize child");
++        let parent_canonical = dir.path().canonicalize().expect("canonicalize parent");
++
++        let mut deny_paths = vec![
++            parent_canonical.clone(),
++            lock_canonical.clone(),
++            child_canonical.clone(),
++        ];
++        let mut caps = CapabilitySet::new();
++        // Parent directory grant must not widen the exact-file hole.
++        caps.add_fs(
++            FsCapability::new_dir(dir.path(), AccessMode::ReadWrite).ex
 ```
 
 ---
 
-### Incident Patch 2: `ab16bef9` (2026-11-02)
-**Commit Message**: docs(neps): update implementation status and pre-1.0 compatibility guidance (#2249)
+### Incident Patch 2: `ef107f94` (2026-11-02)
+**Commit Message**: fix(proxy): fail upstream connections that go silent (#2237)
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+A CONNECT tunnel is relayed with copy_bidirectional, which has no idle
+timeout, and nothing sets keepalive or TCP_USER_TIMEOUT on the upstream
+socket. When an upstream stops answering without a FIN or RST (a
+middlebox drops the flow, the peer vanishes), the tunnel is held for as
+long as the kernel keeps trying: with data in flight, tcp_retries2
+retransmissions (about 15 minutes on Linux); with none, forever. The
+client behind it hangs as long. Seen on CI runners behind `nono proxy`:
+about 1 in 100 connections to Azure blob storage completed its
+handshake, then had nothing acknowledged, and @actions/cache waited 10
+minutes before abandoning the upload.
 
-**File**: `ROADMAP.md` (modified, +18/-17)
+Every upstream connection now gets TCP keepalive (30 s idle, 10 s
+between probes, 3 probes) and, where the platform has it,
+TCP_USER_TIMEOUT of 60 s, set once the connection is established, so
+the connect timeout is unchanged. On Linux a silent upstream then fails
+the tunnel at about 60 s, with or without data in flight. On macOS,
+which has no user timeout, an idle one fails at about 60 s through
+keepalive, and one with data in flight at the system's retransmission
+limit.
+
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -8,40 +8,41 @@ This roadmap lists the major and security-consequential changes tracked as
- do not need a NEP and are not listed here. A proposal's position reflects
- its NEP status, not a delivery date.
- 
--Next major release: **1.0**. NEPs flagged as API-breaking require a major
--version increase and are targeted at 1.0. Within each section they are
--listed first, then NEPs whose impact has not yet been assessed, then
--non-breaking NEPs.
-+Next major release: **1.0**. Before 1.0, scoped breaking changes may ship
-+after review. From 1.0, incompatible changes to the stable public API require
-+a major version increase. Breaking labels describe compatibility impact.
-+Within each section, breaking NEPs are listed first, then unassessed NEPs,
-+then non-breaking NEPs.
- 
--## Accepted
-+## Shipped
- 
--_Approved; implementation may proceed._
-+_Accepted and implemented._
- 
--- **[NEP-0000: NEP process](neps/0000-nep-process.md)** — _Breaking: not yet assessed_
--  Establish `neps/` at the repo root as the place for design proposals on changes too large or security-consequential for a plain PR description.
--- **[NEP-0003: Move macOS keychain authorisation to `nono-cli`](neps/0003-keychain-authorisation-to-cli.md)** — _Breaking: not yet assessed_
-+- **[NEP-0003: Move macOS keychain authorisation to `nono-cli`](neps/0003-keychain-authorisation-to-cli.md)** — _Breaking_
-   Move the decision about whether a sandboxed process may reach the macOS keychain out of the `nono` library and into `nono-cli` and make that decision require an explicit `filesystem.bypass_protection` entry when a deny group covers the keychain.
-+- **[NEP-0000: NEP process](neps/0000-nep-process.md)** — _Non-breaking_
-+  Establish `neps/` at the repo root as the place for design proposals on changes too large or security-consequential for a plain PR description.
- 
--## Proposed
-+## Accepted
- 
--_Complete and awaiting a maintainer decision._
-+_Approved; implementation may proceed._
- 
--- **[NEP-0001: Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup](neps/0001-1-0-0-tech-debt-cleanup.md)** — _Breaking: not yet assessed_
-+- **[NEP-0001: Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup](neps/0001-1-0-0-tech-debt-cleanup.md)** — _Breaking_
-   Before nono reaches 1.0.0, we should remove the deprecations, dead code, backward-compat aliases, and library/CLI boundary drift that have built up since the project started.
--- **[NEP-0004: Opt-in Linux namespace isolation](neps/0004-opt-in-linux-namespace-isolation.md)** — _Breaking: not yet assessed_
-+- **[NEP-0004: Opt-in Linux namespace isolation](neps/0004-opt-in-linux-namespace-isolation.md)** — _Non-breaking_
-   Add an opt-in, permanently default-off Linux isolation layer that runs the sandboxed workload inside a set of unprivileged namespaces (user + network, later a minimal mount-mask), layered on top of the existing Landlock and seccomp enforcement.
- 
- ## Draft
- 
- _Under active authoring; not yet ready for a decision._
- 
--- **[NEP-0002: Tool Sandbox invocation-scoped filesystem approvals](neps/0002-invocation-scoped-commands.md)** — _Breaking: not yet assessed_
--  Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
--- **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Breaking: not yet assessed_
--  Add a third OS enforcement backend to nono for Windows, alongside Linux (Landlock) and macOS (Seatbelt).
- - **[NEP-0007: Supervisor decisions, audit and credentials outside a microVM guest](neps/0007-remote-supervisor-decisions-over-vsock.md)** — _Breaking: not yet assessed_
-   Let nono split its supervisor across a virtual-machine boundary.
- - **[NEP-0008: Session flight recorder](neps/0008-session-flight-recorder.md)** — _Breaking: not yet assessed_
-   Make the audit log a complete, self-describing record of an agent session: every access nono denied, from every enforcement layer, with the reason and the process responsible; every grant the agent held; every allowed access to paths an operator marked as sensitive; and a statement of which sources were live, so an operator can tell "nothing happened" apart from "nono could not see it".
-+- **[NEP-0002: Tool Sandbox invocation-scoped filesystem approvals](neps/0002-invocation-scoped-commands.md)** — _Non-breaking_
-+  Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
-+- **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Non-breaking_
-+  Add a third OS enforcement backend to nono for Windows, alongside Linux (Landlock) and macOS (Seatbelt).
- - **[NEP-0009: OAuth 2.0 login and device enrollment from the CLI (`nono login`)](neps/0009-cli-login.md)** — _Non-breaking_
-   Add `nono log
+@@ -2769,6 +2769,7 @@ dependencies = [
+  "serde_json",
+  "sha1 0.11.0",
+  "sha2 0.11.1",
++ "socket2",
+  "spiffe",
+  "subtle",
+  "tempfile",
 ```
 
-**File**: `neps/0000-nep-process.md` (modified, +8/-2)
+**File**: `crates/nono-proxy/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -2,9 +2,10 @@
- nep: 0000
- title: NEP process
- authors:
--  - johndoe
--status: accepted
-+  - Aleksy Siek
-+status: implemented
- created: 2026-08-28
-+breaking: false
- superseded-by:
- ---
+@@ -38,6 +38,8 @@ subtle = "2"
+ url.workspace = true
+ urlencoding = "2"
+ globset.workspace = true
++# Keepalive and TCP_USER_TIMEOUT on upstream sockets (upstream_socket.rs).
++socket2 = { version = "0.6", features = ["all"] }
  
-@@ -15,6 +16,11 @@ superseded-by:
- Establish `neps/` at the repo root as the place for design proposals on
- changes too large or security-consequential for a plain PR description.
- 
-+## Implementation status
-+
-+Implemented in [#1743](https://github.com/nolabs-ai/nono/pull/1743).
-+The index and roadmap are generated by `make roadmap` (#2144).
-+
- ## Motivation
- 
- nono's core changes (capability semantics, policy resolution, sandbox
+ # AWS SigV4 signing support (smithy-rs, no service SDK required)
+ # `credentials-login` is required to resolve an active `aws login` session
 ```
 
-**File**: `neps/0001-1-0-0-tech-debt-cleanup.md` (modified, +32/-13)
+**File**: `crates/nono-proxy/src/connect.rs` (modified, +14/-1)
 ```diff
-@@ -3,8 +3,9 @@ nep: 0001
- title: Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup
- authors:
-   - Aleksy Siek
--status: proposed
-+status: accepted
- created: 2026-08-31
-+breaking: true
- superseded-by:
- ---
+@@ -609,7 +609,10 @@ async fn connect_to_resolved(addrs: &[SocketAddr], host: &str) -> Result<TcpStre
+     let mut last_err = None;
+     for addr in addrs {
+         match tokio::time::timeout(UPSTREAM_CONNECT_TIMEOUT, TcpStream::connect(addr)).await {
+-            Ok(Ok(stream)) => return Ok(stream),
++            Ok(Ok(stream)) => {
++                crate::upstream_socket::set_liveness(&stream);
++                return Ok(stream);
++            }
+             Ok(Err(e)) => {
+                 debug!("Connect to {} failed: {}", addr, e);
+                 last_err = Some(e.to_string());
+@@ -710,6 +713,16 @@ async fn write_upstream_failure<S: AsyncWrite + Unpin>(
+ mod tests {
+     use super::*;
  
-@@ -22,20 +23,39 @@ a pile of decisions we already know are wrong.
- The guiding rule for this NEP is that 1.0.0 is a clean slate. Anything
- marked deprecated, legacy, or `remove_by="indefinite"` gets removed. A
- tag of "indefinite" was never really a decision, it just meant nobody
--had scheduled one yet (see `crates/nono/src/trust/types.rs:48` for an
--example of the marker convention). 1.0.0 is the point where that gets
-+had scheduled one yet. 1.0.0 is the point where that gets
- resolved by removing the thing, not by deferring it again. If
- something genuinely needs to stay, that has to be an explicit,
- argued-for exception written into this NEP's discussion, not the
- default outcome.
- 
-+## Implementation status
++    #[tokio::test]
++    async fn connect_to_resolved_sets_liveness() {
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let addrs = [listener.local_addr().unwrap()];
 +
-+Partially implemented as of 2026-11-02:
++        let stream = connect_to_resolved(&addrs, "upstream.test").await.unwrap();
 +
-+- Legacy aliases, `deprecated_schema.rs` and `deprecated_policy.rs` were
-+  removed in [#1826](https://github.com/nolabs-ai/nono/pull/1826).
-+- Deprecated diagnostic, trust-policy and credential APIs were removed in
-+  [#1871](https://github.com/nolabs-ai/nono/pull/1871); legacy Claude hook
-+  cleanup was removed in [#1973](https://github.com/nolabs-ai/nono/pull/1973).
-+- The stale AGENTS.md capability claims are gone. Main `apply_auto`
-+  entrypoints have `#[must_use]`; other apply helpers still need review.
-+- Remaining: keystore policy placement, public API review, socket-state
-+  typing and compatibility, command-blocking removal, dead-code cleanup,
-+  hidden-command review and the `endpoint_rules` decision.
++        crate::upstream_socket::assert_liveness(&stream);
++    }
 +
-+The inventory below records the original 0.74.0 audit; counts and line
-+references are historical. Recheck callers before removing API:
-+`nono-proxy` now uses `scrub_value`, and `CapabilityRequest` is still part
-+of the library's supervisor message types.
-+
- ## Motivation
- 
--The project is currently at 0.74.0. A number of deprecations across
--`nono`, `nono-cli`, and `nono-proxy` are already marked "removed in
-+At the time of the 0.74.0 audit, a number of deprecations across
-+`nono`, `nono-cli`, and `nono-proxy` were already marked "removed in
- 1.0.0" in code comments and `#[deprecated(since = ...)]` attributes
- (for example `crates/nono/src/diagnostic/codes.rs:72`), but they
--haven't actually been removed yet. Others were never formally marked
-+had not been removed. Others were never formally marked
- deprecated but are clearly meant to be temporary: aliases, fields
- commented "legacy," and compat shims tagged `remove_by="indefinite"`.
- 
-@@ -120,15 +140,14 @@ NEP. Nothing here requires bundling everything into one change.
-    a different concern from general command policy") to survive
-    review.
- 
--3. **Remove public API in `nono` that has no known caller.** None of
--   these are referenced anywhere else in the workspace:
-+3. **Review public API identified as unused by the original audit.**
-+   Revalidate these candidates against current workspace and downstream use:
-    - `CapabilityRequest` in `crates/nono/src/supervisor/types.rs:21`
-    - `SessionObservationInput` in
-      `crates/nono/src/diagnostic/observation.rs:14`
-    - `scrub_value`, `scrub_env_name`, `scrub_env_value`, `scrub_argv`,
-      `scrub_header` in `crates/nono/src/scrub.rs:213,233,249,273,329`,
--     which are thin wrappers around the `..._with_policy` versions and
--     have no callers of their own
-+     which are thin wrappers around the `..._with_policy` versions
-    Public-and-unused doesn't carry forward into a frozen 1.0.0 API by
-    default. If one of these turns out to be part of a documented
-    contract for some downstream consumer, that should be called out
-@@ -197,9 +216,9 @@ NEP. Nothing here requires bundling everything into one change.
-    `crates/nono-cli/src/profile/mod.rs`, and
-    `crates/nono-cli/src/profile_cmd.rs`.
- 
--4. **Resolve all 15 `#[allow(dead_code)]` sites in `nono-cli`.**
--   AGENTS.md says this attribute shouldn't exist in the codebase.
--   Sites: `crates/nono-cli/src/setup.rs:14`,
-+4. **Review `#[allow(dead_code)]` sites in `nono-cli`.**
-+   The original audit identified 15 sites; refresh this inventory before
-+   cleanup. Sites: `crates/nono-cli/src/setup.rs:14`,
-    `crates/nono-cli/src/policy.rs:21,32,34,41`,
-    `crates/nono-cli/src/test_env.rs:9`,
-    `crates/nono-cli/src/network_policy.rs:20,32,34,41`,
+     #[test]
+     fn test_parse_connect_with_port() {
+         let (host, port) = parse_connect_target("CONNECT api.openai.com:443 HTTP/1.1").unwrap();
 ```
 
-**File**: `neps/0002-invocation-scoped-commands.md` (modified, +8/-0)
+**File**: `crates/nono-proxy/src/external.rs` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@ authors:
-   - Luke Hinds
- status: draft
- created: 2026-09-21
-+breaking: false
- superseded-by:
- ---
+@@ -43,6 +43,7 @@ pub async fn connect_via_proxy(
+             proxy_addr, e
+         ))
+     })?;
++    crate::upstream_socket::set_liveness(&proxy_stream);
  
-@@ -24,6 +25,13 @@ Sandbox features—wildcard command mediation, caller-declared environment
- forwarding, and Unix-domain socket grants—provide the controlled execution
- context in which this expansion operates.
- 
-+## Implementation status
-+
-+As of 2026-11-02, caller policies, `export_env`, `session_export_env`,
-+`unix_socket_bind` and `@git:fsmonitor-socket` are implemented. The central
-+`approval_fs` flow, `NONO_TOOL_SANDBOX_FS_REQUEST` channel and
-+`commands."*"` mediation remain proposed. This NEP remains draft.
-+
- ## Motivation
- 
- Tool Sandbox policies currently require every filesystem capability to be
+     let mut connect_req = format!(
+         "CONNECT {}:{} HTTP/1.1\r\nHost: {}:{}\r\n",
 ```
 
-**File**: `neps/0003-keychain-authorisation-to-cli.md` (modified, +18/-3)
+**File**: `crates/nono-proxy/src/forward.rs` (modified, +59/-1)
 ```diff
-@@ -3,8 +3,9 @@ nep: 0003
- title: Move macOS keychain authorisation to `nono-cli`
- authors:
-   - Kurtis Charnock
--status: accepted
-+status: implemented
- created: 2026-09-23
-+breaking: true
- superseded-by:
- ---
- 
-@@ -17,6 +18,20 @@ keychain out of the `nono` library and into `nono-cli` and make that decision
- require an explicit `filesystem.bypass_protection` entry when a deny group
- covers the keychain.
- 
-+## Implementation status
-+
-+Implemented in [#2019](https://github.com/nolabs-ai/nono/pull/2019) and
-+shipped in v0.79.0, including shared deny-policy evaluation and regression
-+tests. The design and security considerations below record that decision.
-+
-+Later, [#2093](https://github.com/nolabs-ai/nono/pull/2093) added explicit
-+command-scoped `keychain_access` grants. These authorise a mediated child
-+while leaving the agent denied. The original restriction still applies to
-+ordinary command filesystem grants; the explicit delegation is a separately
-+reviewed extension. Current usage is documented in
-+[Tool Sandbox](../docs/cli/features/tool-sandbox.mdx) and
-+[Claude Code](../docs/cli/clients/claude.mdx).
-+
- ## Motivation
- 
- See issue #1932:
-@@ -55,7 +70,7 @@ launcher has to forward specifically to keep that inference working.
- 
- ### Non-Goals
- 
--- No changes to the Landlock/Linux implementation..
-+- No changes to the Landlock/Linux implementation.
- - No change to which paths `deny_keychains_macos` covers.
- 
- ## Proposal
-@@ -188,6 +203,6 @@ launcher has to forward specifically to keep that inference working.
- 
- ## Open Questions
- 
--- Does the same bug class apply on Linux?.
-+- Does the same bug class apply on Linux?
- - How is the version skew between a released CLI and the `nolabs-ai/claude`
-   registry pack handled?
-```
-
-**File**: `neps/0004-opt-in-linux-namespace-isolation.md` (modified, +30/-18)
-```diff
-@@ -3,8 +3,9 @@ nep: 0004
- title: Opt-in Linux namespace isolation
- authors:
-   - lukehinds
--status: proposed
-+status: accepted
- created: 2026-09-29
-+breaking: false
- superseded-by:
- ---
- 
-@@ -20,6 +21,19 @@ seccomp enforcement. This structurally removes the local-IPC escape classes
- pathname AF_UNIX endpoints such as the D-Bus session bus and the systemd
- user manager) instead of mediating them syscall-by-syscall.
- 
-+## Implementation status
-+
-+Partially implemented as of 2026-11-02:
-+
-+- Phase 1 and private TCP loopback shipped in v0.81.0
-+  ([#2145](https://github.com/nolabs-ai/nono/pull/2145)): user/network/IPC/UTS
-+  namespaces, the passed-listener proxy bridge and startup validation.
-+- Landlock ABI detection and reporting through V9 shipped separately in
-+  [#2217](https://github.com/nolabs-ai/nono/pull/2217); enforcement stays at V6.
-+- Pending: Phase 2 mount masks and private `/tmp`, SOCKS5, packaged AppArmor
-+  support, external-namespace detection and isolation audit metadata.
-+  Reverse forwarding remains deferred; WSL2 support remains unverified.
-+
- ## Motivation
- 
- We have had a few escape classes reported against nono on Linux where 
-@@ -114,8 +128,7 @@ rule. Opt-in keeps nono completely userland-purposed by default.
- 
- ### Phasing
- 
--**Phase 1 — network isolation (`user` + `net`, with `ipc` and `uts` as
--free riders).**
-+**Phase 1 — network isolation (`user` + `net`, with optional `ipc` and `uts`).**
- 
- The workload runs in a new user namespace (single-uid/gid identity
- mapping; the enabler for everything else while unprivileged) and a new
-@@ -276,9 +289,9 @@ across platforms (`require_isolation`) remains out of scope (see Resolved
- Questions).
- 
- `ipc` (SysV shm/sem/msg, POSIX MQs no longer shared with the host) and
--`uts` (hostname immutable from the host's perspective) namespaces are
--included in Phase 1 because they are one flag each at the same `unshare`
--call site and break almost nothing.
-+`uts` (hostname immutable from the host's perspective) are available in
-+Phase 1. Each requires explicit selection and can be requested independently
-+of `network`; `--isolate net` does not enable either automatically.
- 
- **Phase 2 — minimal mount mask (`user` + `mnt`).**
- 
-@@ -310,15 +323,13 @@ rules it already inherited, so nesting does not weaken enforcement.
- The `landlock` crate nono already ships (0.4.7) exposes ABI V7
- (Linux 6.15: audit flags), V8 (Linux 7.0: `TSYNC` all-threads restrict)
- and V9 (Linux 7.1: `AccessFs::ResolveUnix`); only ABI 10 (UDP) and 11
--still need upstream crate work. The lag is in nono's own code
--(`DetectedAbi` and the feature listing stop at V6), so adoption can start
--immediately and proceeds in risk order:
--
--1. **Detection and reporting** (routine, no NEP): extend `DetectedAbi`
--   through V9, surface kernel-vs-enforced ABI per class in `nono why` and
--   diagnostics (including the crate's errata signal). Also yields field
--   data on how fast V9 kernels arrive — the number that decides when the
--   fallbacks below can be demoted.
-+still need upstream crate work. Detection and reporting now reach V9
-+(#2217), while enforcement remains capped at V6. Adoption proceeds in
-+risk order:
-+
-+1. **Detection and reporting** (shipped, #2217): `DetectedAbi` and
-+   diagnostics distinguish detected support through V9 from enforced V6.
-+   Per-class backend reporting remains part of the composition work below.
- 2. **ABI 8 `TSYNC`** (routine): apply-path hygiene; most valuable for
-    `nono wrap`'s multi-threaded self-sandboxing; best-effort below V8.
- 3. **ABI 7 audit flags** (routine, opt-in diagnostics): kernel-logged
-@@ -387,18 +398,19 @@ existing `linux.af_unix_mediation` precedent):
- {
-   "linux": {
-     "isolate": {
--      "network": true,        // Phase 1: user+net (+ipc+uts)
-+      "network": true,        // Phase 1: user+net
-       "loopback": true,       // Phase 1 follow-up: TCP on the namespace's own lo; requires network
-       "ipc": true,            // may also be set without network
-       "uts": true,
-       "mounts": true,         // Phase 2: user+mnt, default mask list
--      "extra_masks": ["/opt/corp/agent.sock"]  // additive only
-+      "extra_masks": ["/opt/corp/agent.sock"]  // Phase 2: additive only
+@@ -232,7 +232,10 @@ async fn connect_to_resolved(addrs: &[SocketAddr], host: &str) -> Result<TcpStre
+     let mut last_err = None;
+     for addr in addrs {
+         match tokio::time::timeout(UPSTREAM_CONNECT_TIMEOUT, TcpStream::connect(addr)).await {
+-            Ok(Ok(stream)) => return Ok(stream),
++            Ok(Ok(stream)) => {
++                crate::upstream_socket::set_liveness(&stream);
++                return Ok(stream);
++            }
+             Ok(Err(e)) => {
+                 debug!("Connect to {} failed: {}", addr, e);
+                 last_err = Some(e.to_string());
+@@ -609,6 +612,61 @@ mod tests {
+         }
      }
-   }
+ 
++    #[tokio::test]
++    async fn open_tcp_upstream_sets_liveness_on_both_strategies() {
++        let config = rustls::ClientConfig::builder_with_provider(std::sync::Arc::new(
++            rustls::crypto::ring::default_provider(),
++        ))
++        .with_safe_default_protocol_versions()
++        .unwrap()
++        .with_root_certificates(rustls::RootCertStore::empty())
++        .with_no_client_auth();
++        let connector = TlsConnector::from(std::sync::Arc::new(config));
++
++        let upstream = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let resolved_addrs = [upstream.local_addr().unwrap()];
++        let direct = UpstreamSpec {
++            scheme: UpstreamScheme::Http,
++            host: "upstream.test",
++            port: 80,
++            strategy: UpstreamStrategy::Direct {
++                resolved_addrs: &resolved_addrs,
++            },
++            tls_connector: &connector,
++        };
++        let stream = open_tcp_upstream(&direct).await.unwrap();
++        crate::upstream_socket::assert_liveness(&stream);
++
++        // An enterprise proxy that accepts the CONNECT and holds the tunnel.
++        let proxy = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let proxy_addr = proxy.local_addr().unwrap().to_string();
++        tokio::spawn(async move {
++            let (mut sock, _) = proxy.accept().await.unwrap();
++            let mut request = Vec::new();
++            while !request.ends_with(b"\r\n\r\n") {
++                let mut byte = [0u8; 1];
++                sock.read_exact(&mut byte).await.unwrap();
++                request.push(byte[0]);
++            }
++            sock.write_all(b"HTTP/1.1 200 Connection established\r\n\r\n")
++                .await
++                .unwrap();
++            let _ = sock.read_to_end(&mut Vec::new()).await;
++        });
++        let via_proxy = UpstreamSpec {
++            scheme: UpstreamScheme::Http,
++            host: "upstream.test",
++            port: 80,
++            strategy: UpstreamStrategy::ExternalProxy {
++                proxy_addr: &proxy_addr,
++                proxy_auth_header: None,
++            },
++            tls_connector: &connector,
++        };
++        let stream = open_tcp_upstream(&via_proxy).await.unwrap();
++        crate::upstream_socket::assert_liveness(&stream);
++    }
++
+     #[test]
+     fn rewrite_http1_response_rejects_content_encoded_body_for_all_statuses() {
+         let raw =
+```
+
+**File**: `crates/nono-proxy/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -42,6 +42,7 @@ pub mod server;
+ pub mod spiffe;
+ pub mod tls_intercept;
+ pub mod token;
++pub(crate) mod upstream_socket;
+ 
+ #[cfg(test)]
+ pub mod test_env;
+```
+
+**File**: `crates/nono-proxy/src/pool.rs` (modified, +6/-0)
+```diff
+@@ -197,6 +197,12 @@ fn build_pooled_client(
+ 
+     let mut http = HttpConnector::new_with_resolver(resolver);
+     http.enforce_http(false);
++    // As on the CONNECT path (`upstream_socket`): fail a silent upstream fast.
++    http.set_keepalive(Some(crate::upstream_socket::KEEPALIVE_IDLE));
++    http.set_keepalive_interval(Some(crate::upstream_socket::KEEPALIVE_INTERVAL));
++    http.set_keepalive_retries(Some(crate::upstream_socket::KEEPALIVE_RETRIES));
++    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
++    http.set_tcp_user_timeout(Some(crate::upstream_socket::USER_TIMEOUT));
+ 
+     let builder = hyper_rustls::HttpsConnectorBuilder::new()
+         .with_tls_config(tls_config)
+```
+
+**File**: `crates/nono-proxy/src/upstream_socket.rs` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++//! Liveness options for upstream TCP connections.
++//!
++//! A CONNECT tunnel is relayed with `copy_bidirectional`, which has no idle
++//! timeout of its own. When an upstream stops answering without a FIN or RST
++//! (a middlebox drops the flow, the peer vanishes), the kernel alone decides
++//! when the tunnel fails: with data in flight, after `tcp_retries2`
++//! retransmissions (about 15 minutes on Linux); with none, never. The client
++//! behind the tunnel hangs for as long.
++//!
++//! Two socket options bound that, set on every upstream connection once it is
++//! established (the connect timeout is unchanged):
++//!
++//! - TCP keepalive: an idle connection is probed, and fails when the probes go
++//!   unanswered: after about 60 s (30 s idle, then 3 probes 10 s apart).
++//! - `TCP_USER_TIMEOUT` (Linux, Android, Fuchsia): data left unacknowledged
++//!   this long fails the socket.
++//!
++//! The user timeout is the keepalive's whole span, not shorter. With
++//! keepalive on, Linux closes the connection once a probe is out and the user
++//! timeout has passed since the peer was last heard from, whatever
++//! `TCP_KEEPCNT` says; a shorter timeout would end an idle connection at the
++//! second probe. Matching the two (as Cloudflare's "When TCP sockets refuse to
++//! die" recommends) ends a silent upstream at about 60 s whether or not data
++//! is in flight.
++//!
++//! On macOS there is no user timeout: an idle connection fails through
++//! keepalive at about 60 s, and one with data in flight at the system's
++//! retransmission limit.
++//!
++//! A live peer acknowledges data and answers probes however long the
++//! connection stays idle, so neither option shortens it. The exception is a
++//! peer that holds a zero receive window: Linux applies the user timeout to
++//! zero-window probing too, so one that stays closed for longer than 60 s
++//! fails.
++
++use std::time::Duration;
++use tokio::net::TcpStream;
++use tracing::warn;
++
++/// Idle time before the first keepalive probe.
++pub(crate) const KEEPALIVE_IDLE: Duration = Duration::from_secs(30);
++/// Time between unanswered keepalive probes.
++pub(crate) const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(10);
++/// Unanswered probes before the connection fails.
++pub(crate) const KEEPALIVE_RETRIES: u32 = 3;
++/// How long sent data may go unacknowledged before the connection fails.
++///
++/// The keepalive's whole span: Linux closes a probed connection once this has
++/// passed, so anything shorter would override `KEEPALIVE_RETRIES`.
++#[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
++pub(crate) const USER_TIMEOUT: Duration =
++    KEEPALIVE_IDLE.saturating_add(KEEPALIVE_INTERVAL.saturating_mul(KEEPALIVE_RETRIES));
++
++/// Set the liveness options on an established upstream connection.
++///
++/// Best effort: a connection without them still works, it only fails slowly
++/// if the upstream goes silent, so an error is logged rather than returned.
++pub(crate) fn set_liveness(stream: &TcpStream) {
++    if let Err(e) = apply(stream) {
++        warn!("Failed to set upstream TCP liveness options: {}", e);
++    }
++}
++
++fn apply(stream: &TcpStream) -> std::io::Result<()> {
++    let socket = socket2::SockRef::from(stream);
++    let keepalive = socket2::TcpKeepalive::new().with_time(KEEPALIVE_IDLE);
++    #[cfg(any(
++        target_os = "android",
++        target_os = "freebsd",
++        target_os = "fuchsia",
++        target_os = "linux",
++        target_os = "netbsd",
++        target_vendor = "apple",
++        windows,
++    ))]
++    let keepalive = keepalive
++        .with_interval(KEEPALIVE_INTERVAL)
++        .with_retries(KEEPALIVE_RETRIES);
++    socket.set_tcp_keepalive(&keepalive)?;
++    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
++    socket.set_tcp_user_timeout(Some(USER_TIMEOUT))?;
++    Ok(())
++}
++
++/// Assert that `stream` carries every option [`set_liveness`] sets.
++///
++/// Shared by the tests of each upstream open site, so each proves its own
++/// call, not only this module's.
++#[cfg(test)]
++#[allow(clippy::unwrap_used)]
++#[track_caller]
++pub(crate) fn assert_liveness(stream: &TcpStream) {
++    let socket = socket2::SockRef::from(stream);
++    assert!(socket.keepalive().unwrap(), "SO_KEEPALIVE not set");
++    assert_eq!(socket.tcp_keepalive_time().unwrap(), KEEPALIVE_IDLE);
++    #[cfg(any(
++        target_os = "android",
++        target_os = "freebsd",
++        target_os = "fuchsia",
++        target_os = "linux",
++        target_os = "netbsd",
++        target_vendor = "apple",
++    ))]
++    {
++        assert_eq!(socket.tcp_keepalive_interval().unwrap(), KEEPALIVE_INTERVAL);
++        assert_eq!(socket.tcp_keepalive_retries().unwrap(), KEEPALIVE_RETRIES);
++    }
++    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
++    assert_eq!(socket.tcp_user_timeout().unwrap(), Some(USER_TIMEOUT));
++}
++
++#[cfg(test)]
++#[allow(clippy::unwrap_used)]
++mod tests {
++    use
+```
+
+---
+
+### Incident Patch 3: `48774760` (2026-11-03)
+**Commit Message**: fix(proxy): strip hop headers when the colon is spaced (#2254)
+
+Detection already trims the header name, so a spaced
+Transfer-Encoding is decoded. The forward filters only
+dropped a name glued to the colon, then forwarded the
+trimmed field beside a new Content-Length.
+
+Match stripping to that split-and-trim check for the hop
+headers and the credential header. Drop an empty name.
+
+Closes #2253
+
+Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-proxy/src/reverse.rs` (modified, +109/-48)
+```diff
+@@ -2033,74 +2033,70 @@ fn validate_phantom_token_basic(
+ 
+ /// Filter headers, removing hop-by-hop and proxy-internal headers.
+ ///
++/// Names are split on `:` and trimmed, the same match used by
++/// [`has_chunked_transfer_encoding`] and [`extract_content_length`].
++/// A space or tab before the colon is still that header.
++///
+ /// Always strips:
+ /// - `Host` (rewritten to upstream)
+ /// - `Content-Length` (re-added after body is read)
+ /// - `Transfer-Encoding` (body is decoded and re-framed upstream)
++/// - `Connection` and `Proxy-Connection`
+ /// - `Proxy-Authorization` (hop-by-hop, contains session token)
+ ///
+-/// When `cred_header` is non-empty, also strips that header (it contains
+-/// the phantom token that must not be forwarded alongside the real credential).
+-/// When `cred_header` is empty (no-credential route), all other headers
+-/// including `Authorization` are passed through to the upstream.
++/// `strip` names are removed the same way. A line with no colon, or an
++/// empty name, is not forwarded.
+ pub(crate) fn filter_headers_multi(header_bytes: &[u8], strip: &[&str]) -> Vec<(String, String)> {
+-    let prefixes: Vec<String> = strip
+-        .iter()
+-        .filter(|h| !h.is_empty())
+-        .map(|h| format!("{}:", h.to_lowercase()))
+-        .collect();
+-    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
+-    let mut headers = Vec::new();
+-    for line in header_str.lines() {
+-        let lower = line.to_lowercase();
+-        if lower.starts_with("host:")
+-            || lower.starts_with("content-length:")
+-            || lower.starts_with("transfer-encoding:")
+-            || lower.starts_with("connection:")
+-            || lower.starts_with("proxy-connection:")
+-            || lower.starts_with("proxy-authorization:")
+-            || prefixes.iter().any(|p| lower.starts_with(p.as_str()))
+-            || line.trim().is_empty()
+-        {
+-            continue;
+-        }
+-        if let Some((name, value)) = line.split_once(':') {
+-            headers.push((name.trim().to_string(), value.trim().to_string()));
+-        }
+-    }
+-    headers
++    collect_forwarded_headers(header_bytes, strip)
  }
- ```
  
--CLI: `--isolate net,loopback,ipc,uts,mounts` (comma list) as sugar for the same.
-+Current CLI: `--isolate net,loopback,ipc,uts` (comma list).
-+`mounts` and `extra_masks` are planned Phase 2 fields and are not accepted yet.
++/// Same stripping as [`filter_headers_multi`] for one credential header.
++///
++/// When `cred_header` is non-empty, that header is removed. It carries the
++/// phantom token and must not be forwarded next to the real credential.
++/// When `cred_header` is empty, other headers, including `Authorization`,
++/// are passed through.
+ pub(crate) fn filter_headers(header_bytes: &[u8], cred_header: &str) -> Vec<(String, String)> {
+-    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
+-    let cred_header_lower = if cred_header.is_empty() {
+-        String::new()
++    if cred_header.is_empty() {
++        collect_forwarded_headers(header_bytes, &[])
+     } else {
+-        format!("{}:", cred_header.to_lowercase())
+-    };
+-    let mut headers = Vec::new();
++        collect_forwarded_headers(header_bytes, &[cred_header])
++    }
++}
  
- **Merge semantics.** The boolean `isolate` fields merge like `network.block`:
- logical OR across every profile layer, packs and the CLI. Any layer can turn
-```
-
-**File**: `neps/0005-windows-enforcement-backend.md` (modified, +20/-9)
-```diff
-@@ -5,6 +5,7 @@ authors:
-   - lukehinds
- status: draft
- created: 2026-09-29
-+breaking: false
- superseded-by:
- ---
++fn collect_forwarded_headers(header_bytes: &[u8], extra: &[&str]) -> Vec<(String, String)> {
++    let header_str = std::str::from_utf8(header_bytes).unwrap_or("");
++    let mut headers = Vec::new();
+     for line in header_str.lines() {
+-        let lower = line.to_lowercase();
+-        if lower.starts_with("host:")
+-            || lower.starts_with("content-length:")
+-            || lower.starts_with("transfer-encoding:")
+-            || lower.starts_with("connection:")
+-            || lower.starts_with("proxy-connection:")
+-            || lower.starts_with("proxy-authorization:")
+-            || (!cred_header_lower.is_empty() && lower.starts_with(&cred_header_lower))
+-            || line.trim().is_empty()
+-        {
++        if line.trim().is_empty() {
+             continue;
+         }
+-        if let Some((name, value)) = line.split_once(':') {
+-            headers.push((name.trim().to_string(), value.trim().to_string()));
++        let Some((name, value)) = split_header_name_value(line) else {
++            continue;
++        };
++        if is_stripped_request_header(name, extra) {
++            continue;
+         }
++        headers.push((name.to_string(), value.trim().to_string()));
+     }
+-
+     headers
+ }
  
-@@ -25,6 +26,12 @@ unprivileged user namespaces) that have no Windows equivalent nono
- targets. Admin is a setup step only; every run stays unprivileged, and
- enforcement fails secure if the install is absent.
- 
-+## Implementation status
++fn is_stripped_request_header(name: &str, extra: &[&str]) -> bool {
++    const HOP: &[&str] = &[
++        "host",
++        "content-length",
++        "transfer-encoding",
++        "connection",
++        "proxy-connection",
++        "proxy-authorization",
++    ];
++    HOP.iter().any(|hop| name.eq_ignore_ascii_case(hop))
++        || extra
++            .iter()
++            .any(|item| !item.is_empty() && name.eq_ignore_ascii_case(item))
++}
 +
-+Unimplemented as of 2026-11-02. The library has Linux and macOS enforcement
-+backends only. This draft still needs a consistent identity and launch model
-+connecting the preferred AppContainer design to the WFP fence before acceptance.
-+
- ## Motivation
+ /// Filter headers for an outbound WebSocket upgrade request.
+ ///
+ /// Like [`filter_headers`], but does **not** strip `Connection` or
+@@ -3461,6 +3457,71 @@ mod tests {
+         );
+     }
  
- nono today runs only on Linux and macOS. Its own reason for existing —
-@@ -136,12 +143,12 @@ mechanism in `nono`. Concretely, anything that writes persistent machine
- state (a WFP filter set, a local account, ACL grants) is a `nono-cli`
- install/broker action, not a library call a random embedder can trip.
- 
--From here we can delivery the NEP over several PRs / phases.
-+The proposal is divided into phases.
- 
- ### Phase 1 — network fence
- 
- `nono-proxy` runs on the host and binds a loopback port (as it does today). 
--Windows enforcement then consists of:
-+The dedicated-user candidate consists of:
- 
- - a **WFP permit** filter for loopback to the proxy port(s) at
-   `ALE_AUTH_CONNECT_V4/V6`, and
-@@ -180,9 +187,10 @@ closest to nono's per-invocation model. The dedicated-user + restricted-
- token + ACL model is a **documented fallback only** — used where
- AppContainer cannot express a specific confinement need (handle
- isolation, job limits) with acceptable robustness, and only for that need,
--not as the default posture. The residual unknown is not *which model we
--prefer* but *whether AppContainer proves sufficient in practice*; see Open
--Questions.
-+not as the default posture. The account-free AppContainer design still needs
-+an identity contract for the WFP fence and an unprivileged launch path. The
-+user-SID fence above and Secondary Logon example below describe the
-+dedicated-user candidate, not a completed design for AppContainer.
- 
- ### The privilege model: elevated install
- 
-@@ -227,11 +235,11 @@ dependency. Fail-secure is unchanged and non-negotiable — if the install
- has not been performed or the fence is not present at run time, nono
- refuses to run the workload rather than running it unconfined.
- 
--### Why per-run stays unprivileged
-+### Dedicated-user reference: unprivileged run path
- 
--"Admin once, never per run" is not just a policy we assert — it is
--achievable because nothing in the run path needs a privileged operation,
--and the reference (`srt-win`) is built exactly this way:
-+The dedicated-user reference (`srt-win`) implements the proposed
-+"admin once, never per run" constraint as follows. The preferred AppContainer
-+design must demonstrate the same property before this NEP is accepted.
- 
- - **WFP filters are persistent and SID-keyed.** They are installed once
-   (`FWPM_FILTER_FLAG_PERSISTENT`, machine-wide) and match by the sandbox
-@@ -357,6 +365,9 @@ secure, per the rule below.
- 
- ## Open Questions
- 
-+- **Fence identity and launch model.** How does the preferred AppContainer
-+  design bind the workload and its descendants to the WFP fence without a
-+  dedicated account? Resolve this before acceptance.
- - **Does AppContainer hold up?** This NEP commits to AppContainer as the
-   primary FS/process mechanism; the open part is empirical — whether it
-   can express the handle isolation and job limits the confinement needs
-```
-
-**File**: `neps/0007-remote-supervisor-decisions-over-vsock.md` (modified, +13/-4)
-```diff
-@@ -5,6 +5,7 @@ authors:
-   - Luke Hinds
- status: draft
- created: 2026-10-16
-+breaking:
- superseded-by:
- ---
- 
-@@ -19,19 +20,27 @@ injection move to a host-side nono component reached over vsock. The guest
- never holds the policy authority, the audit history or the credentials, so a
- full guest compromise does not yield them.
- 
-+## Implementation status
-+
-+As of 2026-11-02, the spike described below has not landed in this workspace.
-+The remote protocol, vsock backend, concurrent dispatch, shared audit chains
-+and host component remain proposed. Audit-format compatibility must be
-+assessed before acceptance; `breaking` remains unset.
-+
- ## Motivation
- 
--To date we have recommended nono be combined with a nicroVM for hostile-code and multi-tenant deployments ("Composing with an outer boundary"). At present that
--composition is all-or-nothing: the whole supervisor runs in the guest. If an
--attacker escapes Landlock and seccomp through a guest kernel bug, they own the guest, and with it:
-+We recommend combining nono with a microVM for hostile-code and multi-tenant
-+deployments ("Composing with an outer boundary"). Currently the whole
-+supervisor runs in the guest. A guest kernel compromise therefore exposes:
- 
- - the credentials the supervisor or its proxy hold (in guest memory, and in
-   every memory snapshot of the guest);
- - the network egress policy (the attacker controls the guest network stack);
- - the audit log (it can be rewritten or suppressed before it leaves the guest);
- - every approval decision (the attacker can answer its own requests).
- 
--This is not a suprise as we modelled nono on the premise of trusting userspace, not agent space, but a MicroVM swaps things around and now the entire guest can be argued to be 'untrusted'.
-+The current model trusts the supervisor's userspace. In a microVM deployment,
-+the entire guest may instead need to be treated as untrusted.
- 
- The VM still protects the host, but the assets worth stealing from an agent deployment — credentials, egress and an honest record — are lost.
- 
++    #[test]
++    fn test_filter_headers_strips_spaced_framing_headers() {
++        let header = b"Tr
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2254** (2026-11-03): fix(proxy): strip hop headers when the colon is spaced (@SebTardif)
+- **PR #2251** (2026-11-02): chore(deps): bump the routine-rust group with 6 updates (@dependabot[bot])
+- **PR #2250** (2026-11-03): feat(cli): add nono login and logout commands (@lukehinds)
 - **PR #2249** (2026-11-02): docs(neps): update implementation status and pre-1.0 compatibility guidance (@SequeI)
 - **PR #2245** (2026-11-02): docs(nep): propose nep-0009 for cli oauth login and device enrollment (@lukehinds)
-- **PR #2239** (2026-11-02): fix(cli): support kitty release and repeat events in detach matcher (@lukehinds)
-- **PR #2238** (2026-11-02): feat(cli): support approval elevation for AF_UNIX pathname sockets (@lukehinds)
-- **PR #2235** (2026-10-30): feat(cli): record proxy audit events live to audit log (@lukehinds)
-- **PR #2234** (2026-10-30): fix(cli): pause the PTY relay for network approval prompts (@panga)
+- **PR #2240** (2026-11-02): feat(approval): unix-socket webhook transport and network approvals in `nono proxy` (@panga)
 
 ---
 
@@ -3676,43 +3759,56 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): support kitty release and repeat events in detach matcher (#2239)
+## X. policy): keep exact-file directory bypasses literal (#2142)
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/connect_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/capability_ext.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff42f91d`: cli): support kitty release and repeat events in detach matcher (#2239). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa63c36b`: policy): keep exact-file directory bypasses literal (#2142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/connect_client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/capability_ext.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        if self.sequence[..self.pending_match_len].iter().any(|&key| {
-                            crate::pty_proxy::is_enhanced_key_echo(&self.pending_escape, key)
-                        }) {
-                            self.pending_escape.clear();
-                        } else {
-                            self.flush_pending(&mut forward);
-                        }
-    #[test]
-    fn detach_matcher_ignores_kitty_release_of_matched_prefix() {
-        let mut matcher = DetachMatcher::new(vec![0x1d, b'd']);
-        let matched = matcher.push(b"\x1b[93;5u\x1b[93;5:3ud");
-        assert!(matched.forward.is_empty());
-        assert!(matched.detach);
-        assert!(!matcher.pending_bytes());
+    #[cfg(target_os = "macos")]
+    struct RemoveDir<'a>(&'a Path);
+
+    #[cfg(target_os = "macos")]
+    impl Drop for RemoveDir<'_> {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(self.0);
+        }
     }
 
+    /// `read_file` of a directory plus `bypass_protection` of that directory.
+    /// Dry-run lists the grant as `(file)`. `why` allows that directory and
+    /// denies a nested file with `path_not_granted`. The Seatbelt hole stays
+    /// `literal`, so the sandbox does not open the subtree those diagnostics deny.
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn test_read_file_directory_bypass_matches_why_and_seatbelt() {
+        // `/tmp` resolves under `/private`, which `system_read_macos` grants,
+        // so `why` allows a child there. This shape is a path no system grant covers.
+        let home = std::env::var_os("HOME").expect("HOME");
+        let dir = Path::new(&home).join(format!(
+            ".nono-exact-bypass-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        let _cleanup
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        self.flush_pending(&mut forward);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff42f91d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa63c36b` are properly handled with clean fallback behavior.

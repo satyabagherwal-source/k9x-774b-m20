@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:18:33.485Z",
-  "total_cycles_completed": 6885,
-  "total_learnings_persisted": 6885,
-  "total_rules_promoted": 6533,
+  "last_updated": "2026-11-03T12:25:12.093Z",
+  "total_cycles_completed": 6888,
+  "total_learnings_persisted": 6888,
+  "total_rules_promoted": 6536,
   "history": [
-    {
-      "timestamp": "2026-10-31T20:46:37.628Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T20:46:38.524Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T20:46:44.116Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T20:46:49.392Z",
       "repository": "rustls/rustls",
@@ -1403,6 +1382,27 @@
       "repository": "crate-ci/typos",
       "learningId": "learn-github-crate-ci-typos",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:25:01.720Z",
+      "repository": "alfa546/Crawler",
+      "learningId": "learn-github-alfa546-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:25:09.939Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T12:25:12.093Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

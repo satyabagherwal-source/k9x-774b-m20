@@ -6917,3 +6917,6 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `caebd2cf` | Multi-dimensional audit evidence | 2026-11-03T12:13:35.343Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `8d71a376` | Multi-dimensional audit evidence | 2026-11-03T12:13:39.357Z |
 | `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `4c8b7f51` | Multi-dimensional audit evidence | 2026-11-03T12:18:33.476Z |
+| `learn-github-alfa546-crawler` | `https://github.com/alfa546/Crawler` | `8d10a017` | Multi-dimensional audit evidence | 2026-11-03T12:25:01.716Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `48774760` | Multi-dimensional audit evidence | 2026-11-03T12:25:09.935Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `8ddaf495` | Multi-dimensional audit evidence | 2026-11-03T12:25:12.089Z |

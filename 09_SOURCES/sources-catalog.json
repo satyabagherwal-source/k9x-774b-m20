@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "ab16bef9",
+    "sourceVersion": "48774760",
     "license": "Apache-2.0",
-    "contentHash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
-    "lastHarvestedAt": "2026-11-02T16:33:33.552Z",
+    "contentHash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
+    "lastHarvestedAt": "2026-11-03T12:25:09.935Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "bcdefac9",
+    "sourceVersion": "8ddaf495",
     "license": "Apache-2.0",
-    "contentHash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
-    "lastHarvestedAt": "2026-10-31T01:05:00.805Z",
+    "contentHash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
+    "lastHarvestedAt": "2026-11-03T12:25:12.089Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -11768,5 +11768,15 @@
     "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
     "lastHarvestedAt": "2026-11-02T21:30:10.543Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
+  },
+  "alfa546-crawler": {
+    "repository": "alfa546/Crawler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alfa546/Crawler",
+    "sourceVersion": "8d10a017",
+    "license": "MIT",
+    "contentHash": "0a318f0dffec92e39d6c2594ed6ac62d1b98990b92609d380babf18c0d766945",
+    "lastHarvestedAt": "2026-11-03T12:25:01.716Z",
+    "learningId": "learn-github-alfa546-crawler"
   }
 }

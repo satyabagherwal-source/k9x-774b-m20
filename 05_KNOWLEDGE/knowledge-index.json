@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T12:18:33.371Z",
-  "total_verified_learnings": 1195,
+  "last_updated": "2026-11-03T12:25:12.038Z",
+  "total_verified_learnings": 1196,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2597,8 +2597,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "bcdefac9",
-      "content_hash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
+      "source_version": "8ddaf495",
+      "content_hash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2646,6 +2646,11 @@
           "number": 5978,
           "title": "DD: bulkdump only targets the remote DC when it is usable (#14380)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6522,
+          "title": "[backup] Bound restore dispatch and adapt oversized transactions (#14288)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2653,7 +2658,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:05:00.701Z",
+      "verified_at": "2026-11-03T12:25:12.026Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43091,8 +43096,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "ab16bef9",
-      "content_hash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
+      "source_version": "48774760",
+      "content_hash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -43175,6 +43180,11 @@
           "number": 6457,
           "title": "cli): support kitty release and repeat events in detach matcher (#2239)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6521,
+          "title": "policy): keep exact-file directory bypasses literal (#2142)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43182,7 +43192,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:33:33.445Z",
+      "verified_at": "2026-11-03T12:25:09.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71977,20 +71987,35 @@
     "learn-github-alfa546-crawler": {
       "learning_id": "learn-github-alfa546-crawler",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alfa546/Crawler",
       "repository": "alfa546/Crawler",
       "slug": "alfa546-crawler",
       "platform": "github",
       "source_url": "https://github.com/alfa546/Crawler",
-      "source_version": "65a7b32f96",
-      "content_hash": "3899d3857ea6abc89295984a0d84d7ca79331fe0f1da28d7e661b205b3e78175",
+      "source_version": "8d10a017",
+      "content_hash": "0a318f0dffec92e39d6c2594ed6ac62d1b98990b92609d380babf18c0d766945",
       "dossier_path": "07_PROJECT_LEARNING/alfa546-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alfa546-crawler-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6520,
+          "title": "Enhance README description for developer emphasis",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:12:57.837Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-03T12:25:01.641Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lifesciforge-seo-auditor": {
       "learning_id": "learn-github-lifesciforge-seo-auditor",
@@ -168493,6 +168518,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T12:06:24.672Z"
+    },
+    "rule-6520": {
+      "learning_id": "rule-6520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6520,
+      "title": "Enhance README description for developer emphasis",
+      "source_url": "https://github.com/alfa546/Crawler",
+      "source_version": "8d10a017",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:25:01.641Z"
+    },
+    "rule-6521": {
+      "learning_id": "rule-6521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6521,
+      "title": "policy): keep exact-file directory bypasses literal (#2142)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "48774760",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:25:09.870Z"
+    },
+    "rule-6522": {
+      "learning_id": "rule-6522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6522,
+      "title": "[backup] Bound restore dispatch and adapt oversized transactions (#14288)",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "8ddaf495",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T12:25:12.026Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-QF94",
-    "timestamp": "2026-10-31T01:46:56.824Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "b5cc2aa96264e9b861571ce460bec93cd2b0a5137d6ec1230c7267641cb15d44",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-Z45F",
-    "timestamp": "2026-10-31T01:53:42.339Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "37014a40916a3f87d7c1f483fbf55f26d34e4d7337408ba17ada4ac928590e29",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-Z49K",
-    "timestamp": "2026-10-31T01:53:42.488Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-ZAL8",
     "timestamp": "2026-10-31T01:53:50.684Z",
     "repository": "linkerd/linkerd2",
@@ -7492,6 +7447,51 @@
     "contentHash": "07a67f6feff551640fac4e14f0da75d45bb59410959968c2cfed920d8ac0cc29",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UK28",
+    "timestamp": "2026-11-03T12:25:01.712Z",
+    "repository": "alfa546/Crawler",
+    "learningId": "learn-github-alfa546-crawler",
+    "contentHash": "0a318f0dffec92e39d6c2594ed6ac62d1b98990b92609d380babf18c0d766945",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UQEK",
+    "timestamp": "2026-11-03T12:25:09.932Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-US2F",
+    "timestamp": "2026-11-03T12:25:12.087Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
