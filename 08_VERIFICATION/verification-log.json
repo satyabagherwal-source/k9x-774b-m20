@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-GPF7",
-    "timestamp": "2026-10-31T02:35:22.675Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-GRL8",
     "timestamp": "2026-10-31T02:35:25.484Z",
     "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-FO3D",
+    "timestamp": "2026-11-03T16:25:23.641Z",
+    "repository": "bahdotsh/wrkflw",
+    "learningId": "learn-github-bahdotsh-wrkflw",
+    "contentHash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

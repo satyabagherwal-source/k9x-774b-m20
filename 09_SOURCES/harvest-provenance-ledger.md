@@ -6939,3 +6939,4 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `b506147f` | Multi-dimensional audit evidence | 2026-11-03T16:09:17.883Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8deb3872` | Multi-dimensional audit evidence | 2026-11-03T16:09:23.501Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `fc82aedd` | Multi-dimensional audit evidence | 2026-11-03T16:18:05.948Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `b4628bc8` | Multi-dimensional audit evidence | 2026-11-03T16:25:23.645Z |

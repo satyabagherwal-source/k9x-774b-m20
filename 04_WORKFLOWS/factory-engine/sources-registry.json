@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:18:08.500Z",
-    "lastVerified": "2026-11-03T16:18:08.500Z",
+    "lastChecked": "2026-11-03T16:25:27.351Z",
+    "lastVerified": "2026-11-03T16:25:27.351Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T15:54:39.054Z",
-    "lastVerified": "2026-11-03T15:54:39.054Z",
+    "lastChecked": "2026-11-03T16:25:27.339Z",
+    "lastVerified": "2026-11-03T16:25:27.339Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1039,8 +1039,8 @@
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T19:40:50.221Z",
-    "lastVerified": "2026-10-31T19:40:50.221Z",
+    "lastChecked": "2026-11-03T16:25:19.872Z",
+    "lastVerified": "2026-11-03T16:25:19.872Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -1483,9 +1483,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-02T21:23:00.387Z",
+    "lastChecked": "2026-11-03T16:25:22.526Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-02T21:23:00.387Z"
+    "lastVerified": "2026-11-03T16:25:22.526Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -6325,9 +6325,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-10-31T18:40:49.496Z",
+    "lastChecked": "2026-11-03T16:25:24.919Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-10-31T18:40:49.496Z"
+    "lastVerified": "2026-11-03T16:25:24.919Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -7659,14 +7659,14 @@
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:39:25.127Z",
-    "lastVerified": "2026-10-31T14:39:25.127Z",
+    "lastChecked": "2026-11-03T16:25:18.822Z",
+    "lastVerified": "2026-11-03T16:25:18.822Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
+    "contentHash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9841,9 +9841,9 @@
   "crawlcove-crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "lastChecked": "2026-10-30T05:09:46.289Z",
+    "lastChecked": "2026-11-03T16:25:14.818Z",
     "revisionIdentifier": "0d91d23a",
-    "lastVerified": "2026-10-30T05:09:46.289Z"
+    "lastVerified": "2026-11-03T16:25:14.818Z"
   },
   "shifthackz-stable-diffusion-kmp": {
     "name": "Stable-Diffusion-KMP",
@@ -10898,9 +10898,9 @@
   "jasonjmcghee-rem": {
     "name": "rem",
     "officialUrl": "https://github.com/jasonjmcghee/rem",
-    "lastChecked": "2026-10-30T16:12:34.746Z",
+    "lastChecked": "2026-11-03T16:25:17.361Z",
     "revisionIdentifier": "f4f68049",
-    "lastVerified": "2026-10-30T16:12:34.746Z"
+    "lastVerified": "2026-11-03T16:25:17.361Z"
   },
   "mobile-next-mobile-mcp": {
     "name": "mobile-next/mobile-mcp",

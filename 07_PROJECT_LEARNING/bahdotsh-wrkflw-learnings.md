@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `153b8ee0`  
+> **Source Version**: `b4628bc8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:39:25.136Z  
+> **Timestamp**: 2026-11-03T16:25:22.908Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:39:25.127Z  
+> **Harvest Timestamp**: 2026-11-03T16:25:18.822Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3337 stars
+- **Stars / Engagement**: 3339 stars
 
 ---
 
@@ -44,7 +44,7 @@ use bollard::Docker;
 use futures::future;
 use once_cell::sync::Lazy;
 use serde_yaml::Value;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
@@ -57,6 +57,7 @@ use crate::action_resolver;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
+use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
 use crate::kubernetes::{self, KubernetesConfig};
 use crate::podman;
 use wrkflw_logging;
@@ -124,7 +125,6 @@ async fn execute_github_workflow(
     mut config: ExecutionConfig,
 ) -> Result<ExecutionResult, ExecutionError> {
     config.runtime_type = detect_runtime(config.runtime_type);
-    warn_if_overrides_unused(&config);
     // 1. Parse workflow file
     let workflow = parse_workflow(workflow_path)?;
 
@@ -140,70 +140,21 @@ async fn execute_github_workflow(
     };
 
     // 3. Initialize appropriate runtime
-    let runtime = initialize_runtime(
+    let (runtime, effective_runtime) = initialize_runtime(
         config.runtime_type.clone(),
         config.preserve_containers_on_failure,
         &config.kubernetes,
     )?;
+    config.runtime_type = effective_runtime;
+    warn_if_overrides_unused(&config);
 
     // Create a temporary workspace directory
     let workspace_dir = tempfile::tempdir()
         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
 
     // 4. Set up GitHub-like environment
-    let mut env_context = environment::create_github_context(&workflow, workspace_dir.path());
-    // Track the user-declared slice of env separately so `toJSON(env)` only
-    // dumps what the user actually wrote in YAML (and later, what steps write
-    // to `$GITHUB_ENV`). Starts empty — `create_github_context` only seeds
-    // runner-internal vars.
-    let mut user_env: HashMap<String, String> = HashMap::new();
-
-    // Add workflow-level environment variables (lowest precedence — does not override
-    // built-in GITHUB_*/RUNNER_* vars; job and step env override these later).
-    // Resolve ${{ }} expressions (e.g. ${{ github.repository }}) in values.
-    {
-        // At this point workflow.env hasn't been merged yet — user_env is empty.
-        let wf_expr_ctx = crate::expression::ExpressionContext {
-            env_context: &env_context,
-            step_outputs: &HashMap::new(),
-            matrix_combination: &None,
-            step_statuses: &HashMap::new(),
-            job_status: "success",
-            secrets_context: &HashMap::new(),
-            needs_context: &HashMap::new(),
-            needs_results: &HashMap::new(),
-            user_env: &user_env,
-        };
-        let cwd = std::env::current_dir().map_err(|e| {
-            ExecutionError::Execution(format!("Failed to get current directory: {}", e))
-        })?;
-        let resolved_env: Vec<(String, String)> = workflow
-            .env
-            .iter()
-            .map(|(key, value)| {
-                let resolved =
-                    crate::substitution::preprocess_expressions(value, &cwd, &wf_expr_ctx)
-                        .unwrap_or_else(|_| value.clone());
-                (key.clone(), resolved)
-            })
-            .collect();
-        for (key, value) in resolved_env {
-            // `or_insert` semantics: workflow.env does not override runner-seeded
-            // vars. user_env mirrors the same precedence — a workflow.env key that
-            // collides with a runner var is dropped from env_context AND not added
-            // to user_env (real GHA doesn't let workflow.env shadow runner vars).
-            env_context.entry(key.clone()).or_insert_with(|| {
-                user_env.insert(key, value.clone());
-                value
-            });
-        }
-    }
-
-    // Add runtime mode to environment
-    env_context.insert(
-        "WRKFLW_RUNTIME_MODE".to_string(),
-        config.runtime_type.mode_name().to_string(),
-    );
+    let (mut env_context, user_env) =
+        github_run_env(&workflow, workspace_dir.path(), &config.runtime_type)?;
 
     // show=true means hide=false (inverted for the env var)
     env_context.insert(
@@ -284,7 +235,7 @@ async fn execute_github_workflow(
 
         // Check for job failures and collect details
         for job_result in &job_results {
-            if job_result.status == JobStatus::Failure {
+            if job_result.fails_run() {
                 has_failures = true;
                 failure_details.push_str(&format!(
                     "\n{} Job failed: {}\n",
@@ -297,7 +248,63 @@ async fn execute_github_workflow(
                     if step.status == StepStatus::Failure {
                         failure_details.push_str(&format!(
                             "  {} {}: {}\n",
-                           
+                            wrkflw_logging::symbols::FAILURE,
+                            step.name,
+                            step.output
+                        ));
+                    }
+                }
+            }
+        }
+
+        results.extend(job_results);
+    }
+
+    // If there were failures, add detailed failure information to the result
+    if has_failures {
+        wrkflw_logging::error(&format!("Workflow execution failed:{}", failure_details));
+    }
+
+    Ok(ExecutionResult {
+        jobs: results,
+        failure_details: if has_failures {
+            Some(failure_details)
+        } else {
+            None
+        },
+    })
+}
+
+/// Record one batch's results for downstream jobs' `needs.*` context.
+///
+/// A matrix job yields one `JobResult` per combination, all sharing a
+/// `canonical_name`. Outputs follow GitHub Actions: the last combination to set
+/// a key wins, which is non-deterministic across combinations. The result is
+/// the aggregate, as on GitHub: `failure` if any combination failed, otherwise
+/// `success` if any succeeded, otherwise `skipped`.
+fn record_job_results(
+    job_results: &[JobResult],
+    all_job_outputs: &mut HashMap<String, HashMap<String, String>>,
+    all_job_results: &mut HashMap<String, String>,
+) {
+    let mut aggregate: HashMap<&str, &JobStatus> = HashMap::new();
+    for job_result in job_results {
+        // Dependents treat an allowed failure as success, so they still run.
+        // GitHub documents that the run passes, but not what
+        // `needs.<job>.result` reads. `success` is the reported behaviour:
+        // https://www.kenmuse.com/blog/how-to-handle-step-and-job-errors-in-github-actions/
+        let status = if job_result.failure_allowed {
+            &JobStatus::Success
+        } else {
+            &job_result.status
+        };
+        if all_job_outputs.contains_key(&job_result.canonical_name)
+            && job_result.name != job_result.canonical_name
+        {
+            wrkflw_logging::warning(&format!(
+                "Matrix job '{}' overwrites outputs for '{}' — \
+                 needs.{}.outputs will reflect the last combination only",
+                job_result.name, job_result.canonical_name, job_result.
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -351,6 +358,9 @@ fn start_availability_probe(
 }
 
 /// Application state
+/// Runs loaded into the Runs tab.
+const MAX_RUNS_SHOWN: usize = 200;
+
 pub struct App {
     pub workflows: Vec<Workflow>,
     pub workflow_list_state: ListState,
@@ -388,6 +398,9 @@ pub struct App {
 
     // Help tab scrolling
     pub help_scroll: usize, // Scrolling position for help content
+    pub selection: Option<crate::selection::Selection>, // Mouse text selection
+    pub runs: Vec<wrkflw_runs::RunRecord>,
+    pub runs_selected: usize,
 
     // Background log processing
     pub log_processor: LogProcessor,
@@ -498,11 +511,7 @@ pub struct App {
     /// Selected row in the secrets list.
     pub secrets_list_state: ListState,
 
-    // ── Tweaks overlay ────────────────────────────────────────────
-    /// When true, the Tweaks panel overlays the current tab. Toggled
-    /// with `,` (mirrors the design's edit-mode entry point).
-    pub tweaks_open: bool,
-
+    //
 ```
 
 ### Core Architecture Module: `crates/ui/src/utils/mod.rs`
@@ -1036,7 +1045,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use wrkflw_models::ValidationResult;
-use wrkflw_validators::{validate_env, validate_jobs, validate_triggers};
+use wrkflw_validators::{validate_env, validate_expressions, validate_jobs, validate_triggers};
 
 pub fn evaluate_workflow_file(path: &Path, verbose: bool) -> Result<ValidationResult, String> {
     let content = fs::read_to_string(path).map_err(|e| format!("Failed to read file: {}", e))?;
@@ -1050,7 +1059,11 @@ pub fn evaluate_workflow_file(path: &Path, verbose: bool) -> Result<ValidationRe
 
     // Check for required structure
     if !workflow.is_mapping() {
-        result.add_issue("Workflow file is not a valid YAML mapping".to_string());
+        result.report(
+            "workflow-not-mapping",
+            "Workflow file is not a valid YAML mapping",
+        );
+        result.locate_lines(&content);
         return Ok(result);
     }
 
@@ -1061,30 +1074,39 @@ pub fn evaluate_workflow_file(path: &Path, verbose: bool) -> Result<ValidationRe
     // Check if jobs section exists
     match workflow.get("jobs") {
         Some(jobs) if jobs.is_mapping() => {
-            validate_jobs(jobs, repo_root.as_deref(), &mut result);
+            result.scoped("jobs", |r| validate_jobs(jobs, repo_root.as_deref(), r));
         }
         Some(_) => {
-            result.add_issue("'jobs' section is not a mapping".to_string());
+            result.report_at(
+                "jobs-not-mapping",
+                "jobs",
+                "'jobs' section is not a mapping",
+            );
         }
         None => {
-            result.add_issue("Workflow is missing 'jobs' section".to_string());
+            result.report("missing-jobs", "Workflow is missing 'jobs' section");
         }
     }
 
     // Validate top-level env is a mapping
     if let Some(env) = workflow.get("env") {
-        validate_env(env, "Top-level", &mut result);
+        result.scoped("env", |r| validate_env(env, "Top-level", r));
     }
 
     // Check for valid triggers
     match workflow.get("on") {
         Some(on) => {
-            validate_triggers(on, &mut result);
+            result.scoped("on", |r| validate_triggers(on, r));
         }
         None => {
-            result.add_issue("Workflow is missing 'on' section (triggers)".to_string());
+            result.report(
+                "missing-triggers",
+                "Workflow is missing 'on' section (triggers)",
+            );
         }
     }
+
+    validate_expressions(&workflow, &mut result);
 
     if verbose && result.is_valid {
         println!(
@@ -1094,6 +1116,7 @@ pub fn evaluate_workflow_file(path: &Path, verbose: bool) -> Result<ValidationRe
         );
     }
 
+    result.locate_lines(&content);
     Ok(result)
 }
 
@@ -1111,6 +1134,243 @@ fn find_repo_root(workflow_path: &Path) -> Option<PathBuf> {
     None
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use wrkflw_models::UNCLASSIFIED_RULE;
+
+    /// A throwaway repository, removed on drop. `.git` makes `find_repo_root`
+    /// stop here, so local action checks run against this directory.
+    struct Repo(PathBuf);
+
+    impl Repo {
+        fn new() -> Self {
+            static NEXT: AtomicUsize = AtomicUsize::new(0);
+            let dir = std::env::temp_dir().join(format!(
+                "wrkflw-evaluator-{}-{}",
+                std::process::id(),
+                NEXT.fetch_add(1, Ordering::Relaxed)
+            ));
+            fs::create_dir_all(dir.join(".git")).unwrap();
+            Repo(dir)
+        }
+
+        fn action(&self, name: &str, definition: Option<&str>) {
+            let dir = self.0.join(name);
+            fs::create_dir_all(&dir).unwrap();
+            if let Some(definition) = definition {
+                fs::write(dir.join("action.yml"), definition).unwrap();
+            }
+        }
+
+        fn evaluate(&self, workflow: &str) -> ValidationResult {
+            let path = self.0.join("ci.yml");
+            fs::write(&path, workflow).unwrap();
+            evaluate_workflow_file(&path, false).unwrap()
+        }
+    }
+
+    impl Drop for Repo {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.0);
+        }
+    }
+
+    fn assert_structured(result: &ValidationResult) {
+        assert_eq!(result.issues.len(), result.details.len());
+        for (message, issue) in result.issues.iter().zip(&result.details) {
+            assert_eq!(message, &issue.message);
+            assert_ne!(
+                issue.rule, UNCLASSIFIED_RULE,
+                "unclassified: {}",
+                issue.message
+            );
+        }
+    }
+
+    fn assert_issue(
+        result: &ValidationResult,
+        rule: &str,
+        path: Option<&str>,
+        line: Option<usize>,
+    ) {
+        assert!(
+            result
+                .details
+                .iter()
+                .any(|i| i.rule == rule && i.path.as_deref() == path && i.line == line),
+            "no {rule} at {path:?} line {line:?} in {:#?}",
+            result.details
+        );
+    }
+
+    const DEFECTS: &str = r#"name: ci
+on:
+  push:
+  nonsense:
+  schedule:
+    - cron: "99 * * * *"
+env: NOPE
+jobs:
+  build:
+    steps:
+      - name: only a name
+      - uses: actions/checkout
+      - uses: ./missing-action
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ghost
+    strategy:
+      matrix:
+        os: [linux, 3]
+        include: nope
+    steps:
+      - run: echo hi
+        env: BAD
+"#;
+
+    #[test]
+    fn issues_carry_rule_path_and_line() {
+        let result = Repo::new().evaluate(DEFECTS);
+
+        assert_structured(&result);
+        assert_eq!(result.details.len(), 11, "{:#?}", result.details);
+        for (rule, path, line) in [
+            ("unknown-trigger", "on.nonsense", 4),
+            ("invalid-cron", "on.schedule[0].cron", 6),
+            ("env-not-mapping", "env", 7),
+            // Missing key: the line stops at the job that should hold it.
+            ("missing-runs-on", "jobs.build.runs-on", 9),
+            ("step-missing-action", "jobs.build.steps[0]", 11),
+            ("action-missing-version", "jobs.build.steps[1].uses", 12),
+            ("action-local-path-missing", "jobs.build.steps[2].uses", 13),
+            ("undefined-need", "jobs.deploy.needs", 16),
+            (
+                "matrix-inconsistent-types",
+                "jobs.deploy.strategy.matrix.os[1]",
+                19,
+            ),
+            (
+                "matrix-section-not-array",
+                "jobs.deploy.strategy.matrix.include",
+                20,
+            ),
+            ("env-not-mapping", "jobs.deploy.steps[0].env", 23),
+        ] {
+            assert_issue(&result, rule, Some(path), Some(line));
+        }
+    }
+
+    #[test]
+    fn missing_sections_have_no_scope_and_scopes_stay_balanced() {
+        let result = Repo::new().evaluate("name: ci\n");
+        assert_structured(&result);
+        assert_issue(&result, "missing-jobs", None, None);
+        assert_issue(&result, "missing-triggers", None, None);
+
+        // `on` is checked after every job, so any scope left open by the
+        // defects above would show up in this path.
+        let result = Repo::new().evaluate(&DEFECTS.replace("on:\n", "ignored:\n"));
+        assert_structured(&result);
+        assert_issue(&result, "missing-triggers", None, None);
+    }
+
+    #[test]
+    fn non_mapping_workflow_is_classified() {
+        let result = Repo::new().evaluate("- a\n- b\n");
+        assert_structured(&result);
+        assert_issue(&result, "workflow-not-mapping", None, None);
+    }
+
+    #[test]
+    fn every_github_check_is_classified() {
+        let repo = Repo::new();
+        repo.action("no-metadata", None);
+        repo.action("bad-metadata", Some("a: [unclosed"));
+        repo.action(
+            "needs-input",
+            Some("inputs:\n  token:\n    required: true\n"),
+        );
+
+        let result = repo.evaluate(
+            r#"on: [push, nonsense]
+jobs:
+  a:
+    runs-on: x
+    needs: b
+    env: [a]
+    strategy:
+      matrix: 3
+    steps:
+      - uses: nope
+      - uses: actions/checkout@
+      - run: echo
+        uses: actions/checkout@v4
+        id: same
+      - run: echo
+        id: same
+      - just-a-string
+  b:
+    runs-on: x
+    needs: [a]
+    steps: []
+  c:
+    runs-on: x
+    steps: nope
+  d: nope
+  e:
+    uses: nope
+  f:
+    runs-on: x
+    strategy:
+      matrix:
+        max-parallel: nope
+        fail-fast: nope
+        include: [1]
+        exclude: nope
+        axis: [a, 1]
+    steps:
+      - uses: ./no-metadata
+      - uses: ./bad-metadata
+      - uses: ./needs-input
+      - uses: ./needs-input
+        with:
+          other: 1
+"#,
+        );
+        assert_structured(&result);
+        for (rule, path, line) in [
+            ("unknown-trigger", "on[1]", 1),
+            ("env-not-mapping", "jobs.a.env", 6),
+            ("matrix-not-mapping", "jobs.a.strategy.matrix", 8),
+            ("action-invalid-reference", "jobs.a.steps[0].uses", 10),
+            ("action-invalid-version", "jobs.a.steps[1].uses", 11),
+            ("step-uses-and-run", "jobs.a.steps[2]", 12),
+            ("duplicate-step-id", "jobs.a.steps[3].id", 16),
+            ("step-not-mapping", "jobs.a.steps[4]", 17),
+            ("circular-needs", "jobs.a.needs", 5),
+            ("empty-steps", "jobs.b.steps", 21),
+            ("steps-not-sequence", "jobs.c.steps", 24),
+            ("job-not-mapping", "jobs.d", 25),
+            ("invalid-reusable-workflow", "jobs.e.uses", 27),
+            (
+                "matrix-invalid-max-parallel",
+                "jobs.f.strategy.matrix.max-parallel",
+                32,
+            ),
+            (
+                "matrix-invalid-fail-fast",
+                "jobs.f.strategy.matrix.fail-fast",
+                33,
+            ),
+            (
+                "matrix-item-not-object",
+                "jobs.f.strategy.matrix.include[0]",
+                34,
+            ),
+            (
+                "m
 ```
 
 ### Core Architecture Module: `crates/executor/src/action_resolver.rs`
@@ -1411,10 +1671,14 @@ fn parse_using(using: &str, runs: &serde_yaml::Value) -> Result<ActionType, Stri
 //! `actions/download-artifact` emulation.
 //!
 //! Artifacts are stored as plain files under a per-workflow-run temporary
-//! directory, preserving directory structure relative to the workspace.
+//! directory, laid out relative to where the `path:` search started, as
+//! `actions/upload-artifact` does.
 
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::borrow::Cow;
+use std::collections::hash_map::Entry;
+use std::collections::{BTreeSet, HashMap};
+use std::ffi::OsStr;
+use std::path::{Component, Path, PathBuf};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -1443,251 +1707,235 @@ fn sanitize_artifact_name(name: &str) -> Result<String, String> {
     Ok(name.to_string())
 }
 
-/// Recursively collect all regular files under `dir`, skipping symlinks.
-fn walk_files(dir: &Path) -> Result<Vec<PathBuf>, String> {
-    let mut files = Vec::new();
-    let entries = std::fs::read_dir(dir)
-        .map_err(|e| format!("Failed to read directory '{}': {}", dir.display(), e))?;
-    for entry in entries.flatten() {
-        let path = entry.path();
-        // Skip symlinks to prevent following links outside the artifact tree
-        if path.is_symlink() {
-            continue;
-        }
-        if path.is_dir() {
-            files.extend(walk_files(&path)?);
-        } else {
-            files.push(path);
+/// Resolve `.` and `..` lexically, so that paths from the same `path:` line
+/// compare equal however they were spelled.
+fn normalize(path: &Path) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => match normalized.components().next_back() {
+                Some(Component::Normal(_)) => {
+                    normalized.pop();
+                }
+                Some(Component::ParentDir) | None => normalized.push(".."),
+                _ => {}
+            },
+            other => normalized.push(other),
         }
     }
-    Ok(files)
+    normalized
 }
 
-struct ArtifactMetadata {
-    /// Path to the artifact directory on disk.
+/// One glob or path from a `path:` input, resolved against the workspace.
+struct PathLine<'a> {
+    /// The line without trailing slashes, unless it is only slashes. An absolute
+    /// line inside the canonical workspace is made relative to it, so that every
+    /// path compared later shares one spelling of the workspace.
+    text: Cow<'a, str>,
+    /// The line joined to the workspace. Absolute lines stay as written.
     path: PathBuf,
+    /// Whether the line names an existing directory.
+    is_dir: bool,
 }
 
-/// Manages artifact storage for a single workflow run.
-#[derive(Clone)]
-pub struct ArtifactStore {
-    root: PathBuf,
-    index: Arc<RwLock<HashMap<String, ArtifactMetadata>>>,
-}
-
-impl ArtifactStore {
-    /// Create a new artifact store under `run_dir/artifacts/`.
-    pub fn new(run_dir: &Path) -> std::io::Result<Self> {
-        let root = run_dir.join("artifacts");
-        std::fs::create_dir_all(&root)?;
-        Ok(Self {
-            root,
-            index: Arc::new(RwLock::new(HashMap::new())),
-        })
+impl<'a> PathLine<'a> {
+    fn parse(workspace: &Path, canonical_workspace: &Path, line: &'a str) -> Self {
+        let trimmed = line.trim_end_matches('/');
+        let text = if trimmed.is_empty() { line } else { trimmed };
+        let text = match normalize(Path::new(text)).strip_prefix(canonical_workspace) {
+            Ok(rest) if rest.as_os_str().is_empty() => Cow::Borrowed("."),
+            Ok(rest) => Cow::Owned(rest.to_string_lossy().into_owned()),
+            Err(_) => Cow::Borrowed(text),
+        };
+        let path = workspace.join(text.as_ref());
+        let is_dir = path.is_dir();
+        Self { text, path, is_dir }
     }
 
-    /// Upload files matching a glob pattern into a named artifact.
-    ///
-    /// Files are copied from `workspace` preserving their relative paths.
-    /// Returns the number of files uploaded.
-    pub async fn upload(
+    /// The components before the first wildcard, and the rest as a pattern.
+    /// Only the line itself is searched, as the workspace path may contain
+    /// wildcard characters.
+    fn split_at_wildcard(&self) -> (PathBuf, Option<String>) {
+        let components: Vec<_> = Path::new(self.text.as_ref()).components().collect();
+        let wildcard = components
+            .iter()
+            .position(|c| c.as_os_str().to_string_lossy().contains(['*', '?', '[']));
+        match wildcard {
+            Some(index) if !self.is_dir => {
+                let pattern: Vec<_> = components[index..]
+                    .iter()
+                    .map(|c| c.as_os_str().to_string_lossy())
+                    .collect();
+                (
+                    components[..index].iter().collect(),
+                    Some(pattern.join("/")),
+                )
+            }
+            _ => (components.iter().collect(), None),
+        }
+    }
+}
+
+/// Whether a file or directory is hidden, by the rule of upload-artifact.
+fn is_hidden(name: &OsStr) -> bool {
+    name.to_string_lossy().starts_with('.')
+}
+
+/// The directory a `path:` line starts from: the directory it names, its part
+/// before the first wildcard, or the parent of a single file.
+fn search_root(workspace: &Path, line: &PathLine<'_>) -> PathBuf {
+    let root = match line.split_at_wildcard() {
+        (base, Some(_)) => workspace.join(base),
+        (_, None) if line.is_dir => line.path.clone(),
+        (_, None) => line
+            .path
+            .parent()
+            .map_or_else(|| line.path.clone(), Path::to_path_buf),
+    };
+    normalize(&root)
+}
+
+/// A recursive search below one directory. Symlinked directories are followed
+/// as upload-artifact follows them, unless they leave the workspace or lead
+/// back to a directory the search is already inside.
+///
+/// A directory matching the pattern selects everything below it, as
+/// upload-artifact searches with implicit descendants: `out/*` includes
+/// `out/sub/a.txt`, and `!**/node_modules` excludes what is inside.
+#[derive(Clone, Copy)]
+struct Search<'a> {
+    pattern: Option<&'a glob::Pattern>,
+    /// How deep the pattern can match. `None` when it holds a `**`.
+    max_depth: Option<usize>,
+    include_hidden: bool,
+    canonical_workspace: &'a Path,
+}
+
+impl Search<'_> {
+    fn visit(&self, dir: &Path, relative: &Path, chain: &mut Vec<PathBuf>, out: &mut Vec<PathBuf>) {
+        let Ok(entries) = std::fs::read_dir(dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let name = entry.file_name();
+            if !self.include_hidden && is_hidden(&name) {
+                continue;
+            }
+            let Ok(kind) = entry.file_type() else {
+                continue;
+            };
+            let path = dir.join(&name);
+            let relative = relative.join(&name);
+            // Only a symlink needs another stat. Symlinked files are not uploaded.
+            if kind.is_dir() || (kind.is_symlink() && path.is_dir()) {
+                if self.matches(&relative) {
+                    self.everything().descend(&path, &relative, chain, out);
+                } else {
+                    self.descend(&path, &relative, chain, out);
+                }
+            } else if kind.is_file() && self.matches(&relative) {
+                out.push(path);
+            }
+        }
+    }
+
+    fn descend(
         &self,
-        name: &str,
-        path_pattern: &str,
-        workspace: &Path,
-    ) -> Result<usize, String> {
-        let safe_name = sanitize_artifact_name(name)?;
-        let artifact_dir = self.root.join(&safe_name);
-        let workspace = workspace.to_path_buf();
-        let pattern = path_pattern.to_string();
-
-        let ad = artifact_dir.clone();
-        let ws = workspace.clone();
-        let count = tokio::task::spawn_blocking(move || -> Result<usize, String> {
-            std::fs::create_dir_all(&ad)
-                .map_err(|e| format!("Failed to create artifact directory: {}", e))?;
-
-            let canonical_workspace = ws
-                .canonicalize()
-                .map_err(|e| format!("Failed to canonicalize workspace: {}", e))?;
-            let full_pattern = ws.join(&pattern).to_string_lossy().to_string();
-            // Collect (original, canonical) pairs in one pass to avoid
-            // double-canonicalize per file.
-            let entries: Vec<(PathBuf, PathBuf)> = glob::glob(&full_pattern)
-                .map_err(|e| format!("Invalid glob pattern '{}': {}", pattern, e))?
-                .filter_map(|e| e.ok())
-                .filter(|p| p.is_file() && !p.is_symlink())
-                .filter_map(|p| {
-                    p.canonicalize()
-                        .ok()
-                        .filter(|c| c.starts_with(&canonical_workspace))
-                        .map(|c| (p, c))
-                })
-                .collect();
-
-            if entries.is_empty() {
-                return Err(format!(
-                    "No files found matching pattern '{}' in {}",
-                    pattern,
-                    ws.display()
-                ));
-            }
-
-            let mut count = 0;
-            for (entry, canonical_entry) in &entries {
-                let rel = canonical_entry
-                    .strip_prefix(&canonical_workspace)
-                    .map_err(|_| {
-                        format!(
-                            "File '{}' is not within workspace '{}'",
-                            entry.display(),
-                            ws.display()
-                        )
-                    })?;
-                let dest = ad.join(rel);
-                if let Some(parent) = dest.parent() {
-                    std::fs::create_dir_all(parent)
-                        .map_err(|e| format!("Failed to create directory: {}", e))?;
-                }
-                std::fs::copy(entry, &dest)
-                    .map_err(|e| format!("Failed to copy '{}': {}", entry.display(), e))?;
-                count += 1;
-            }
-            Ok(count)
-        })
-        .await
-        .map_err(|e| format!("Upload task panicked: {}", e))??;
-
-        let mut idx = self.index.write().await;
-        idx.insert(
-            safe_name.to_string(),
-            ArtifactMetadata { path: artifact_dir },
-        );
-
-        Ok(count)
+        dir: &Path,
+        relative: &Path,
+        chain: &mut Vec<PathBuf>,
+        out: &mut Vec<PathBuf>,
+    ) {
+        if self
+            .max_depth
+            .is_some_and(|depth| relative.components().count() >= depth)
+        {
+            return;
+        }
+        let Ok(canonical) = dir.canonicalize() else {
+            return;
+        };
+        if !canonical.starts_with(self.canonical_workspace) || chain.contains(&canonical) {
+            return;
+        }
+        chain.push(canonical);
+        self.visit(dir, relative, chain, out);
+        chain.pop();
     }
 
-    /// Download a named artifact into `target_dir`.
-    ///
-    /// Returns the number of files downloaded.
-    pub async fn download(&self, name: &str, target_dir: &Path) -> Result<usize, String> {
-        let safe_name = sanitize_artifact_name(name)?;
-        let idx = self.index.read().await;
-        let meta = idx
-            .get(&safe_name)
-            .ok_or_else(|| format!("Artifact '{}' not found", name))?;
-
-        let artifact_dir = meta.path.clone();
-        let target = target_dir.to_path_buf();
-        drop(idx);
-
-        tokio::task::spawn_blocking(move || -> Result<usize, String> {
-            let mut count = 0;
-            for file_path in walk_files(&artifact_dir)? {
-                let rel = file_path.strip_prefix(&artifact_dir).map_err(|_| {
-                    format!(
-                        "Artifact file '{}' is outside artifact directory '{}'",
-                        file_path.display(),
-                        artifact_dir.display()
-                    )
-                })?;
-                let dest = target.join(rel);
-                if let Some(parent) = dest.parent() {
-                    std::fs::create_dir_all(parent)
-                        .map_err(|e| format!("Failed to create directory: {}", e))?;
-                }
-                std::fs::copy(&file_path, &dest)
-                    .map_err(|e| format!("Failed to copy '{}': {}", file_path.display(), e))?;
-                count += 1;
-            }
-            Ok(count)
-        })
-        .await
-        .map_err(|e| format!("Download task panicked: {}", e))?
+    /// This search without its pattern, for what is below a matched directory.
+    fn everything(&self) -> Self {
+        Self {
+            pattern: None,
+            max_depth: None,
+            ..*self
+        }
     }
 
-    /// List all available artifact names.
-    pub async fn list(&self) -> Vec<String> {
-        let idx = self.index.read().await;
-        idx.keys().cloned().collect()
+    fn matches(&self, relative: &Path) -> bool {
+        let options = glob::MatchOptions {
+            require_literal_separator: true,
+            ..glob::MatchOptions::new()
+        };
+        self.pattern
+            .is_none_or(|pattern| pattern.matches_path_with(relative, options))
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use tempfile::tempdir;
-
-    #[tokio::test]
-    async fn upload_and_download() {
-        let run_dir = tempdir().unwrap();
-        let workspace = tempdir().unwrap();
-
-        // Create test files
-        std::fs::write(workspace.path().join("file1.txt"), "hello").unwrap();
-        std::fs::create_dir_all(workspace.path().join("sub")).unwrap();
-        std::fs::write(workspace.path().join("sub/file2.txt"), "world").unwrap();
-
-        let store = ArtifactStore::new(run_dir.path()).unwrap();
-
-        // Upload
-        let count = store
-            .upload("my-artifact", "**/*.txt", workspace.path())
-            .await
-            .unwrap();
-        assert_eq!(count, 2);
-
-        // List
-        let names = store.list().await;
-        assert_eq!(names, vec!["my-artifact"]);
-
-        // Download to a different directory
-        let download_dir = tempdir().unwrap();
-        let count = store
-            .download("my-artifact", download_dir.path())
-            .await
-            .unwrap();
-        assert_eq!(count, 2);
-        assert_eq!(
-            std::fs::read_to_string(download_dir.path().join("file1.txt")).unwrap(),
-            "hello"
-        );
-        assert_eq!(
-            std::fs::read_to_string(download_dir.path().join("sub/file2.txt")).unwrap(),
-            "world"
-        );
+/// Files within the workspace matching a path line, under the normalized path
+/// that names them in the artifact. A file reached through a symlinked directory
+/// keeps the path it was found at.
+///
+/// Unless `include_hidden` is set, hidden files and directories are skipped,
+/// including the line's own file or search directory. Only names that are
+/// visited count, as in upload-artifact: `.config/*` selects nothing, while
+/// `.config/sub/*` searches from `sub` and selects its files. The workspace
+/// itself is exempt, as its name is not the user's choice: temporary directories
+/// start with a dot.
+fn matching_files(
+    workspace: &Path,
+    canonical_workspace: &Path,
+    line: &PathLine<'_>,
+    include_hidden: bool,
+) -> Result<Vec<PathBuf>, String> {
+    let hidden = |path: &Path| !include_hidden && path.file_name().is_some_and(is_hidden);
+    let (_, wildcards) = line.split_at_wildcard();
+    if !line.is_dir && wildcards.is_none() {
+        let file = normalize(&line.path);
+        let selected = !hidden(&file)
+            && file.is_file()
+            && !file.is_symlink()
+            && file
+                .canonicalize()
+                .is_ok_and(|c| c.starts_with(canonical_workspace));
+        return Ok(selected.then_some(file).into_iter().collect());
     }
 
-    #[tokio::test]
-    async fn download_missing_artifact() {
-        let run_dir = tempdir().unwrap();
-        let store = ArtifactStore::new(run_dir.path()).unwrap();
-        let dl_dir = tempdir().unwrap();
-        let result = store.download("nonexistent", dl_dir.path()).await;
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("not found"));
+    let pattern = wildcards
+        .as_deref()
+        .map(glob::Pattern::new)
+        .transpose()
+        .map_err(|e| format!("Invalid glob pattern '{}': {}", line.text, e))?;
+
+    let root = search_root(workspace, line);
+    let normalized_workspace = normalize(workspace);
+    if !root.starts_with(&normalized_workspace) || (root != normalized_workspace && hidden(&root)) {
+        return Ok(Vec::new());
     }
+    let canonical_root = match root.canonicalize() {
+        Ok(canonical) if canonical.starts_with(canonical_workspace) => canonical,
+        _ => return Ok(Vec::new()),
+    };
+    let max_depth = wildcards
+        .as_deref()
+        .filter(|wildcards| !wildcards.contains("**"))
+        .map(|wildcards| wildcards.split('/').count());
 
-    #[tokio::test]
-    async fn upload_no_matching_files() {
-        let run_dir = tempdir().unwrap();
-        let workspace = tempdir().unwrap();
-        let store = ArtifactStore::new(run_dir.path()).unwrap();
-        let result = store
-            .upload("empty", "*.nonexistent", workspace.path())
-            .await;
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("No files found"));
-    }
-
-    #[tokio::test]
-    async fn rejects_path_traversal_in_artifact_name() {
-        let run_dir = tempdir().unwrap();
-        let workspace = tempdir().unwrap();
-        std::fs::write(workspace.path().join("f.txt"), "data").unwrap();
-        let store = ArtifactStore::new(run_dir.path()).unwrap();
-
-        let res
+    let search = Search {
+        pattern: pattern.as_ref(),
+        max_depth,
+        include_hidd
 ```
 
 ### Core Architecture Module: `crates/executor/src/cache.rs`
@@ -1949,307 +2197,185 @@ impl CacheStore {
                
 ```
 
-### Core Architecture Module: `crates/executor/src/dependency.rs`
+### Core Architecture Module: `crates/executor/src/container_guard.rs`
 ```
-use std::collections::{HashMap, HashSet, VecDeque};
-use wrkflw_parser::workflow::{Job, WorkflowDefinition};
+use std::process::{Command, Stdio};
 
-pub fn resolve_dependencies(workflow: &WorkflowDefinition) -> Result<Vec<Vec<String>>, String> {
-    let jobs = &workflow.jobs;
-
-    // Build adjacency list with String keys
-    let mut dependencies: HashMap<String, HashSet<String>> = HashMap::new();
-    let mut dependents: HashMap<String, HashSet<String>> = HashMap::new();
-
-    // Initialize with empty dependencies
-    for job_name in jobs.keys() {
-        dependencies.insert(job_name.clone(), HashSet::new());
-        dependents.insert(job_name.clone(), HashSet::new());
-    }
-
-    // Populate dependencies
-    for (job_name, job) in jobs {
-        if let Some(needs) = &job.needs {
-            for needed_job in needs {
-                if !jobs.contains_key(needed_job) {
-                    return Err(format!(
-                        "Job '{}' depends on non-existent job '{}'",
-                        job_name, needed_job
-                    ));
-                }
-                // Get mutable reference to the dependency set for this job, with error handling
-                if let Some(deps) = dependencies.get_mut(job_name) {
-                    deps.insert(needed_job.clone());
-                } else {
-                    return Err(format!(
-                        "Internal error: Failed to update dependencies for job '{}'",
-                        job_name
-                    ));
-                }
-
-                // Get mutable reference to the dependents set for the needed job, with error handling
-                if let Some(deps) = dependents.get_mut(needed_job) {
-                    deps.insert(job_name.clone());
-                } else {
-                    return Err(format!(
-                        "Internal error: Failed to update dependents for job '{}'",
-                        needed_job
-                    ));
-                }
-            }
-        }
-    }
-
-    // Implement topological sort for execution ordering
-    let mut result = Vec::new();
-    let mut no_dependencies: HashSet<String> = dependencies
-        .iter()
-        .filter(|(_, deps)| deps.is_empty())
-        .map(|(job, _)| job.clone())
-        .collect();
-
-    // Process levels of the dependency graph
-    while !no_dependencies.is_empty() {
-        // Current level becomes a batch of jobs that can run in parallel
-        let current_level: Vec<String> = no_dependencies.iter().cloned().collect();
-        result.push(current_level);
-
-        // For the next level
-        let mut next_no_dependencies = HashSet::new();
-
-        for job in &no_dependencies {
-            // For each dependent job of the current job
-            // Get the set of dependents with error handling
-            let dependent_jobs = match dependents.get(job) {
-                Some(deps) => deps.clone(),
-                None => {
-                    return Err(format!(
-                        "Internal error: Failed to find dependents for job '{}'",
-                        job
-                    ));
-                }
-            };
-
-            for dependent in dependent_jobs {
-                // Remove the current job from its dependencies
-                if let Some(deps) = dependencies.get_mut(&dependent) {
-                    deps.remove(job);
-
-                    // Check if it's empty now to determine if it should be in the next level
-                    if deps.is_empty() {
-                        next_no_dependencies.insert(dependent);
-                    }
-                } else {
-                    return Err(format!(
-                        "Internal error: Failed to find dependencies for job '{}'",
-                        dependent
-                    ));
-                }
-            }
-        }
-
-        no_dependencies = next_no_dependencies;
-    }
-
-    // Check for circular dependencies
-    let processed_jobs: HashSet<String> = result
-        .iter()
-        .flat_map(|level| level.iter().cloned())
-        .collect();
-
-    if processed_jobs.len() < jobs.len() {
-        let unprocessed: Vec<&String> = jobs
-            .keys()
-            .filter(|j| !processed_jobs.contains(*j))
-            .collect();
-        return Err(format!(
-            "Circular dependency detected in workflow jobs: {}",
-            unprocessed
-                .iter()
-                .map(|s| s.as_str())
-                .collect::<Vec<_>>()
-                .join(", ")
-        ));
-    }
-
-    Ok(result)
-}
-
-/// Collect a job and all its transitive dependencies via `needs` edges.
-pub fn collect_transitive_deps(target_job: &str, jobs: &HashMap<String, Job>) -> HashSet<String> {
-    let mut deps = HashSet::new();
-    let mut queue = VecDeque::new();
-
-    deps.insert(target_job.to_string());
-    queue.push_back(target_job.to_string());
-
-    while let Some(job_name) = queue.pop_front() {
-        if let Some(job) = jobs.get(&job_name) {
-            if let Some(needs) = &job.needs {
-                for needed in needs {
-                    if deps.insert(needed.clone()) {
-                        queue.push_back(needed.clone());
-                    }
-                }
-            }
-        }
-    }
-
-    deps
-}
-
-/// Filter an execution plan to only include a target job and its transitive
-/// dependencies. Returns an error if the target job doesn't exist.
-pub fn filter_plan_to_job(
-    plan: Vec<Vec<String>>,
-    target_job: &str,
-    jobs: &HashMap<String, Job>,
-    kind: &str,
-) -> Result<Vec<Vec<String>>, String> {
-    if !jobs.contains_key(target_job) {
-        return Err(job_not_found_error(target_job, jobs, kind));
-    }
-
-    let needed = collect_transitive_deps(target_job, jobs);
-
-    Ok(plan
-        .into_iter()
-        .map(|batch| {
-            batch
-                .into_iter()
-                .filter(|j| needed.contains(j))
-                .collect::<Vec<_>>()
-        })
-        .filter(|batch| !batch.is_empty())
-        .collect())
-}
-
-/// Filter a stage-ordered execution plan to only include the target job and all
-/// jobs in preceding stages (implicit dependencies). This is appropriate for
-/// GitLab CI/CD where stage ordering defines implicit dependencies — all jobs in
-/// earlier stages must complete before later stages run.
+/// Cleans up a container when dropped while still armed.
 ///
-/// In the target job's own stage batch, only the target job is kept; all earlier
-/// stage batches are preserved in full.
-pub fn filter_plan_to_job_by_stage(
-    plan: Vec<Vec<String>>,
-    target_job: &str,
-    jobs: &HashMap<String, Job>,
-    kind: &str,
-) -> Result<Vec<Vec<String>>, String> {
-    if !jobs.contains_key(target_job) {
-        return Err(job_not_found_error(target_job, jobs, kind));
-    }
+/// A timed-out step drops the future driving its container, which would
+/// otherwise leave the container running after wrkflw has moved on or exited.
+/// Dropping can't await, so this goes through the CLI, and the cleanup carries
+/// on by itself if wrkflw exits straight afterwards. Docker therefore needs the
+/// `docker` CLI on `PATH`, even though it otherwise talks to the daemon through
+/// bollard. Kubernetes has the equivalent `PodGuard`.
+pub(crate) struct ContainerGuard {
+    cli: &'static str,
+    id: String,
+    armed: bool,
+    /// Kill the container but keep it for debugging, rather than removing it.
+    preserve: bool,
+    /// Drops the container from its runtime's exit sweep.
+    untrack: fn(&str),
+}
 
-    let mut result = Vec::new();
-    for batch in plan {
-        if batch.contains(&target_job.to_string()) {
-            // Target's stage: only keep the target job itself
-            result.push(vec![target_job.to_string()]);
-            break;
+impl ContainerGuard {
+    pub(crate) fn new(cli: &'static str, id: &str, preserve: bool, untrack: fn(&str)) -> Self {
+        Self {
+            cli,
+            id: id.to_string(),
+            armed: true,
+            preserve,
+            untrack,
         }
-        // Earlier stage: keep all jobs (implicit dependencies)
-        result.push(batch);
     }
 
-    Ok(result)
+    /// The run finished normally, so its usual cleanup applies.
+    pub(crate) fn disarm(&mut self) {
+        self.armed = false;
+    }
 }
 
-fn job_not_found_error(target_job: &str, jobs: &HashMap<String, Job>, kind: &str) -> String {
-    let mut available: Vec<&String> = jobs.keys().collect();
-    available.sort();
-    format!(
-        "Job '{}' not found in {}. Available jobs: {}",
-        target_job,
-        kind,
-        available
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<Vec<_>>()
-            .join(", ")
-    )
+impl Drop for ContainerGuard {
+    fn drop(&mut self) {
+        if !self.armed {
+            return;
+        }
+        (self.untrack)(&self.id);
+        let args: &[&str] = if self.preserve {
+            wrkflw_logging::info(&format!(
+                "Step cancelled, killing container {} and keeping it for debugging. \
+                 Use '{} logs {}' to inspect it.",
+                self.id, self.cli, self.id
+            ));
+            &["kill"]
+        } else {
+            wrkflw_logging::debug(&format!("Removing abandoned container {}", self.id));
+            &["rm", "-f"]
+        };
+        let spawned = Command::new(self.cli)
+            .args(args)
+            .arg(&self.id)
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn();
+        match spawned {
+            // Only reaps it. If wrkflw exits first, the cleanup still finishes.
+            Ok(mut child) => {
+                std::thread::spawn(move || {
+                    let _ = child.wait();
+                });
+            }
+            Err(e) => {
+                wrkflw_logging::warning(&format!("Failed to clean up container {}: {}", self.id, e))
+            }
+        }
+    }
 }
 
-#[cfg(test)]
+#[cfg(all(test, unix))]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::os::unix::fs::PermissionsExt;
+    use std::sync::Mutex;
 
-    fn job_with_needs(needs: Option<Vec<&str>>) -> Job {
-        Job {
-            runs_on: None,
-            needs: needs.map(|v| v.into_iter().map(String::from).collect()),
-            container: None,
-            steps: vec![],
-            env: HashMap::new(),
-            strategy: None,
-            services: HashMap::new(),
-            if_condition: None,
-            outputs: None,
-            permissions: None,
-            uses: None,
-            with: None,
-            secrets: None,
-            timeout_minutes: None,
-            defaults: None,
+    static UNTRACKED: Mutex<Vec<String>> = Mutex::new(Vec::new());
+
+    fn record_untrack(id: &str) {
+        UNTRACKED.lock().unwrap().push(id.to_string());
+    }
+
+    fn was_untracked(id: &str) -> bool {
+        UNTRACKED.lock().unwrap().iter().any(|u| u == id)
+    }
+
+    /// A fake CLI that records its arguments, so nothing real is removed.
+    fn fake_cli(dir: &std::path::Path) -> (&'static str, std::path::PathBuf) {
+        let log = dir.join("calls");
+        let cli = dir.join("fake-cli");
+        fs::write(
+            &cli,
+            format!(
+                "#!/bin/sh\n[ \"$1\" = probe ] && exit 0\necho \"$@\" >> {}\n",
+                log.display()
+            ),
+        )
+        .unwrap();
+        fs::set_permissions(&cli, fs::Permissions::from_mode(0o755)).unwrap();
+        // A fork on another test thread can briefly inherit the write handle,
+        // and exec then fails with ETXTBSY. The guard only spawns once, so
+        // wait here until the script can be executed.
+        for _ in 0..200 {
+            match Command::new(&cli).arg("probe").status() {
+                Err(e) if e.raw_os_error() == Some(ETXTBSY) => {
+                    std::thread::sleep(std::time::Duration::from_millis(5));
+                }
+                _ => break,
+            }
         }
+        (Box::leak(cli.display().to_string().into_boxed_str()), log)
+    }
+
+    /// The same number on every Unix wrkflw builds for.
+    const ETXTBSY: i32 = 26;
+
+    fn wait_for(path: &std::path::Path) -> Option<String> {
+        for _ in 0..100 {
+            // The shell creates the file before it writes to it.
+            match fs::read_to_string(path) {
+                Ok(calls) if !calls.is_empty() => return Some(calls),
+                _ => {}
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        None
     }
 
     #[test]
-    fn test_collect_transitive_deps_no_deps() {
-        let mut jobs = HashMap::new();
-        jobs.insert("build".to_string(), job_with_needs(None));
-        jobs.insert("test".to_string(), job_with_needs(None));
-
-        let deps = collect_transitive_deps("build", &jobs);
-        assert_eq!(deps, HashSet::from(["build".to_string()]));
+    fn an_armed_guard_removes_the_container_when_dropped() {
+        let dir = tempfile::tempdir().unwrap();
+        let (cli, log) = fake_cli(dir.path());
+        drop(ContainerGuard::new(cli, "removed", false, record_untrack));
+        assert_eq!(wait_for(&log).as_deref(), Some("rm -f removed\n"));
+        assert!(was_untracked("removed"));
     }
 
     #[test]
-    fn test_collect_transitive_deps_linear_chain() {
-        let mut jobs = HashMap::new();
-        jobs.insert("setup".to_string(), job_with_needs(None));
-        jobs.insert("build".to_string(), job_with_needs(Some(vec!["setup"])));
-        jobs.insert("deploy".to_string(), job_with_needs(Some(vec!["build"])));
-
-        let deps = collect_transitive_deps("deploy", &jobs);
-        assert_eq!(
-            deps,
-            HashSet::from([
-                "setup".to_string(),
-                "build".to_string(),
-                "deploy".to_string(),
-            ])
-        );
+    fn a_preserving_guard_kills_the_container_without_removing_it() {
+        let dir = tempfile::tempdir().unwrap();
+        let (cli, log) = fake_cli(dir.path());
+        drop(ContainerGuard::new(cli, "preserved", true, record_untrack));
+        assert_eq!(wait_for(&log).as_deref(), Some("kill preserved\n"));
+        assert!(was_untracked("preserved"));
     }
 
     #[test]
-    fn test_collect_transitive_deps_diamond() {
-        let mut jobs = HashMap::new();
-        jobs.insert("a".to_string(), job_with_needs(None));
-        jobs.insert("b".to_string(), job_with_needs(Some(vec!["a"])));
-        jobs.insert("c".to_string(), job_with_needs(Some(vec!["a"])));
-        jobs.insert("d".to_string(), job_with_needs(Some(vec!["b", "c"])));
-
-        let deps = collect_transitive_deps("d", &jobs);
-        assert_eq!(
-            deps,
-            HashSet::from([
-                "a".to_string(),
-                "b".to_string(),
-                "c".to_string(),
-                "d".to_string(),
-            ])
-        );
+    fn a_disarmed_guard_leaves_the_container_alone() {
+        let dir = tempfile::tempdir().unwrap();
+        let (cli, log) = fake_cli(dir.path());
+        let mut guard = ContainerGuard::new(cli, "disarmed", false, record_untrack);
+        guard.disarm();
+        drop(guard);
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        assert!(!log.exists());
+        assert!(!was_untracked("disarmed"));
     }
 
     #[test]
-    fn test_collect_transitive_deps_partial_graph() {
-        let mut jobs = HashMap::new();
-        jobs.insert("a".to_string(), job_with_needs(None));
-        jobs.insert("b".to_string(), job_with_needs(Some(vec!["a"])));
-        jobs.insert("unrelated".to_string(), job_with_needs(None));
+    fn a_missing_cli_still_untracks_the_container() {
+        let missing = "/nonexistent/wrkflw-fake-cli";
+        drop(ContainerGuard::new(
+            missing,
+            "no-cli",
+            false,
+            record_untrack,
+        ));
+        assert!(was_untracked("no-cli"));
+    }
+}
 
-        let de
 ```
 
 
@@ -2258,11 +2384,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #142** (2026-10-31): **feat(runtime): add a Kubernetes runtime backend**
-  *Symptoms*: Adds `--runtime kubernetes`, which runs each workflow step as a pod in the cluster `kubectl` points at. Closes #66.  ```bash wrkflw run --runtime kubernetes --k8s-context gpu --k8s-namespace ci \   --k8s-node-selector accelerator=a100 \   --k8s-resource nvidia.com/gpu=1 \   .github/workflows/train.yml ```  ## How it works  Each step gets one pod. An init container waits while the mounts are streamed into `emptyDir` volumes as tar. The step then runs, and a sidecar keeps the pod alive so the mounts can be streamed back. That is how `GITHUB_OUTPUT`, artifacts and workspace changes reach the next step.  It shells out to `kubectl`, so existing kubeconfigs, auth plugins and proxies keep working and there is no new client dependency. The runtime is never auto-detected and never falls back to emulation, because a GPU job silently running on a laptop is worse than a failed run.  ## Worth a close look  - **`$` escaping.** Kubernetes expands `$(VAR)` and collapses `$$` in args and env values, so `echo $$` reached the shell as `echo $`. Every `$` is now doubled in the manifest. - **Copy-out mirrors the pod.** A step's `rm` has to stay deleted, so this code removes host files based on what a workflow left in a pod. It rejects paths that leave the target, never follows symlinks, and prunes only after the whole archive has unpacked. Only the job's own workspace and `GITHUB_*` directories are pruned. User `container.volumes` directories only gain files, and a single-path volume stays in the
+- **Issue #155** (2026-11-02): **feat(tui): select text with the mouse and copy it on release**
+  *Symptoms*: ## What  Drag with the mouse in the TUI to highlight text, and it is copied to the clipboard on release, with a status bar confirmation. This supersedes #154, which left selection to the terminal: that selection ran across panes and borders, and copying was a manual step.  - **Selection** works on the rendered frame, so every tab gets it. A drag stays inside the bordered pane it started in, and what is highlighted is what gets copied. - **Clipboard**: text goes out through OSC 52 and through `pbcopy`, `wl-copy`, `xclip` or `xsel`. Native tools are skipped over SSH, where they would fill the remote clipboard. - **Status message**: says "Copied" only when a native tool confirmed it. OSC 52 gives no acknowledgement, so that case says the text was sent to the terminal. - **Wheel**: mapped to Up/Down, because capturing the mouse stops the terminal from doing that translation. - **Clearing**: a click or any key clears the selection. Esc clears it without quitting. - **Native selection**: still available with the terminal's bypass modifier (usually Shift, or Option in iTerm2).  ## Testing  - `cargo fmt --check`, CI's clippy, check and test commands, plus new unit tests in `crates/ui/src/selection.rs`. - Drove the real binary under tmux with raw SGR mouse events, using a stub `pbcopy`:   - Text arrived through the stub and through OSC 52 (tmux buffer).   - Highlight during and after the drag, cleared by a click.   - Esc didn't quit, wheel moved in both directions, mouse mode was off 
 
-- **Issue #141** (2026-10-31): **feat: override runs-on images with --platform (#113)**
-  *Symptoms*: Closes #113  ## What  Adds `-P`/`--platform LABEL=IMAGE`, the same idea as act's flag, so `runs-on` labels can run in an image of your choice without editing the workflow:  ```bash wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest ```  Image order is job `container:`, then `--platform`, then the built-in table. The default stays `ubuntu:latest`, because the act image is about 1.6 GB against about 130 MB.  The option is global, because bare `wrkflw` opens the TUI with no subcommand. It applies to `run`, `watch`, the TUI, matrix jobs and reusable workflows.  ## Two bugs the feature exposed  **Steps on act images never ran.** `docker.rs` treated any image matching `catthehacker` and `act-` as macOS emulation and wrapped commands in `bash -l -c`, which discarded them. With the override, `run: exit 7` reported success. This also affected `ubuntu-*-medium` runners today. The macOS runners map to `rust:latest`, so the heuristic was stale, and it is removed. See `BREAKING_CHANGES.md`.  **`setup-node` was shadowed.** The act image puts its bundled Node first on `PATH`, so `setup-node` with version 20 still ran v24. Combined images now put `/usr/local/bin` and `/usr/bin` first. This changes the Dockerfile hash, so existing combined images rebuild once.  ## Decisions for review  - `runs-on: ${{ matrix.os }}` is resolved for override matching only. The built-in table still sees the raw l
+- **Issue #154** (2026-11-02): **fix(tui): stop capturing the mouse so text selection and copy work**
+  *Symptoms*: Dragging the mouse over the TUI did nothing useful: the text could not be selected, so there was no way to copy a log line or a path out of it without quitting. This PR makes mouse selection and copy work the way they do in Claude Code and most other TUIs.  ## Cause  `run_wrkflw_tui` enabled crossterm's `EnableMouseCapture` at startup, which asks the terminal to send every click and drag to the application instead of handling it itself. The event loop only ever matched `Event::Key`, so those mouse events were read and dropped. The only observable effect of the capture was that the terminal's native drag-to-select and copy stopped working.  ## Fix  - Leave mouse capture off. The terminal keeps handling selection, so dragging highlights text and the usual copy shortcut (Cmd+C, Ctrl+Shift+C, …) copies it. - Drop the matching `DisableMouseCapture` on teardown. - README notes that the TUI does not capture the mouse.  No in-app selection or clipboard code is needed for this: the terminal does the work, which is also how Claude Code behaves.  ## Testing  - `cargo fmt --check`, `cargo clippy -p wrkflw-ui --all-features -- -D warnings` and `cargo check -p wrkflw-ui --no-default-features` are clean. - `cargo test -p wrkflw-ui --all-features`: 75 passed, 0 failed. - Drove the old and new binaries in a pseudo-terminal and compared the bytes they write at startup. The old binary emits the mouse-tracking enables (`?1000h`, `?1002h`, `?1003h`, `?1006h`); the new one emits none of them and s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2279,716 +2405,384 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `153b8ee0` (2026-10-31)
-**Commit Message**: feat(runtime): add a Kubernetes runtime backend (#142)
+### Incident Patch 1: `0bf6a27c` (2026-11-01)
+**Commit Message**: fix(gitlab): honor image, rules, when and stage failures (#150)
 
-* feat(runtime): add a Kubernetes runtime backend
+* fix(gitlab): honor image, rules, when and stage failures
 
-People with GPUs in a cluster and a self-hosted forge want wrkflw to
-parse the workflow and dispatch it to Kubernetes, not to their
-laptop. Every runtime so far assumes the host and the container share
-a filesystem. A cluster doesn't, and that's the whole problem here.
+Pipelines ran every job in the default image: rules, when: manual and
+when: never were ignored, a failed stage didn't stop later ones, and
+default: before_script and after_script weren't applied.
 
-Add --runtime kubernetes. Each step becomes one pod, driven through
-kubectl, so any kubeconfig, auth plugin or proxy that already works
-keeps working and we grow no client library. An init container waits
-while the mounts are streamed into emptyDirs as tar, the step runs,
-and a sidecar keeps the pod alive so the mounts can be streamed back.
-That is what makes GITHUB_OUTPUT, artifacts and workspace changes
-reach the next step.
+* fix(gitlab): stop guessing when deciding which jobs run
 
-Copy-out mirrors instead of merging, because a step's rm has to stay
-deleted. That code writes to the host based on what a workflow left
-in a pod, so it refuses to leave the target directory, never follows
-a symlink, and prunes only after the whole archive unpacked.
+The first pass at job selection fixed the headline problem and then
+guessed in all the places that matter. A guarded deploy is exactly
+what this code exists to protect, so a guess that runs it is a bug.
 
-It turns out Kubernetes expands $(VAR) and collapses $$ in args and
-env values, so "echo $$" reached the shell as "echo $".
+It turns out a detached HEAD reported itself as main, because the
+branch came from a helper whose fallback was only ever meant for a
+display value. So a tag checkout happily passed a main-only guard.
+Meanwhile CI_DEFAULT_BRANCH was never set, so the most common rule
+in all of GitLab quietly dropped its job. Report the branch as
+absent when there isn't one, and take the default from origin/HEAD.
 
-**File**: `README.md` (modified, +65/-1)
+The rules:if evaluator was string splitting, which fell over on
+operators inside quotes and on parentheses, and answered "match"
+whenever it got confused. Replace it with a small tokenizer and
+recursive descent, with
+
+**File**: `README.md` (modified, +3/-0)
 ```diff
-@@ -14,6 +14,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - **TUI interface** — interactive terminal UI with Workflows, Execution, DAG, Logs, Trigger, Secrets, and Help tabs
- - **Workflow validation** — syntax checks, structural validation, and composite action input cross-checking with CI/CD-friendly exit codes
- - **Local execution** — Docker, Podman, emulation, or sandboxed **secure emulation** (no containers)
-+- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
- - **Diff-aware filtering** — skip workflows whose `on:` block doesn't match the simulated event and changed file set
- - **Watch mode** — rerun workflows automatically on file changes, with trigger-aware filtering
- - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
-@@ -114,6 +115,9 @@ wrkflw run --runtime docker .github/workflows/ci.yml
- # Run with Podman
- wrkflw run --runtime podman .github/workflows/ci.yml
+@@ -128,6 +128,9 @@ wrkflw run --runtime secure-emulation .github/workflows/ci.yml
+ # Run a specific job
+ wrkflw run --job build .github/workflows/ci.yml
  
-+# Run each step as a pod in a Kubernetes cluster
-+wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
++# Set GitLab pipeline variables, which rules and scripts both see
++wrkflw run --variable CI_COMMIT_TAG=v1.0.0 .gitlab-ci.yml
 +
- # Run in emulation mode (no containers)
- wrkflw run --runtime emulation .github/workflows/ci.yml
+ # List jobs in a workflow
+ wrkflw run --jobs .github/workflows/ci.yml
  
-@@ -217,7 +221,7 @@ The TUI follows your terminal's background and uses a light or dark palette to m
- | `a` / `n` | Select all / deselect all |
- | `Shift+R` | Reset workflow status |
- | `Shift+J` | View jobs in workflow |
--| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
-+| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
- | `v` | Toggle Execution / Validation mode |
- | `d` / `D` | Toggle diff-aware filter / cycle simulated event |
- | `t` | Trigger remote workflow |
-@@ -246,9 +250,69 @@ wrkflw trigger-gitlab --branch main --variable key=value
- | **Auto** (default) | Detects Docker, then Podman, then falls back to emulation | Most users |
- | **Docker** | Full container isolation, closest to GitHub runners | Production, CI/CD |
- | **Podman** | Rootless containers, no daemon required | Security-conscious environments |
-+| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
- | **Emulation** | Runs directly on host, no containers needed | Quick local testing |
- | **Secure Emulation** | Sandboxed host processes with filesystem/network restrictions | Running untrusted workflows without a container runtime |
- 
-+### Kubernetes runtime
-+
-+`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
-+
-+```bash
-+# Pick the cluster and namespace, then run as usual
-+wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
-+
-+# Land on GPU nodes and request an accelerator for every step
-+wrkflw run --runtime kubernetes \
-+  --k8s-node-selector accelerator=a100 \
-+  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
-+  .github/workflows/train.yml
-+
-+# Private registry, and a registry wrkflw can push locally built images to
-+wrkflw run --runtime kubernetes --k8s-image-pull-secret regcred \
-+  --k8s-registry registry.example.com/ci .github/workflows/ci.yml
-+
-+# Every flag has a WRKFLW_K8S_* environment variable, so set them once
-+export WRKFLW_K8S_NAMESPACE=ci WRKFLW_K8S_RESOURCE=nvidia.com/gpu=1
-+```
-+
-+| Flag | Environment variable | Purpose |
-+|------|----------------------|---------|
-+| `--k8s-context NAME` | `WRKFLW_K8S_CONTEXT` | kubeconfig context (default: current) |
-+| `--k8s-namespace NAME` | `WRKFLW_K8S_NAMESPACE` | Namespace pods are created in (default: current) |
-+| `--k8s-node-selector KEY=VALUE` | `WRKFLW_K8S_NODE_SELECTOR` | `nodeSelector` for every pod; repeatable |
-+| `--k8s-resource NAME=QUANTITY` | `WRKFLW_K8S_RESOURCE` | Limits and requests for the step container, e.g. `nvidia.com/gpu=1`; repeatable |
-+| `--k8s-image-pull-secret NAME` | `WRKFLW_K8S_IMAGE_PULL_SECRET` | `imagePullSecrets` for every pod; repeatable |
-+| `--k8s-registry REGISTRY` | `WRKFLW_K8S_REGISTRY` | Where images built locally are pushed so the cluster can pull them |
-+| `--k8s-helper-image IMAGE` | `WRKFLW_K8S_HELPER_IMAGE` | Image for the sync helpers (default `busybox:1.36`, pinned by digest; needs `sh` and `tar`) |
-+| `--k8s-timeout SECONDS` | `WRKFLW_K8S_TIMEOUT` | Per-step limit, pod creation to sync-back (default 21600, the engine's job timeout) |
-+| `--k8s-schedule-timeout SECONDS` | `WRKFLW_K8S_SCHEDULE_TIMEOUT` | How long a pod may stay unschedulable before the step fails (default 600) |
-+
-+How a step runs:
-+
-+1. A pod is created with one `emptyDir` per mount, an init container that waits for a ready marker, the step container, and a small sidecar. Pods are labelled `app.kubernetes.io/managed-by=wrkflw` and `wrkflw.dev/session=<id>`.
-+2. The work
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +465/-47)
+**File**: `crates/executor/src/engine.rs` (modified, +568/-9)
 ```diff
-@@ -16,6 +16,7 @@ use crate::action_resolver;
- use crate::dependency;
- use crate::docker;
- use crate::environment;
-+use crate::kubernetes::{self, KubernetesConfig};
- use crate::podman;
- use wrkflw_logging;
- use wrkflw_matrix::MatrixCombination;
-@@ -101,6 +102,7 @@ async fn execute_github_workflow(
-     let runtime = initialize_runtime(
-         config.runtime_type.clone(),
-         config.preserve_containers_on_failure,
-+        &config.kubernetes,
-     )?;
+@@ -292,13 +292,28 @@ async fn execute_gitlab_pipeline(
+     wrkflw_logging::info("Executing GitLab CI/CD pipeline");
  
-     // Create a temporary workspace directory
-@@ -159,13 +161,7 @@ async fn execute_github_workflow(
-     // Add runtime mode to environment
-     env_context.insert(
-         "WRKFLW_RUNTIME_MODE".to_string(),
--        match config.runtime_type {
--            RuntimeType::Auto => "auto".to_string(),
--            RuntimeType::Emulation => "emulation".to_string(),
--            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
--            RuntimeType::Docker => "docker".to_string(),
--            RuntimeType::Podman => "podman".to_string(),
--        },
-+        config.runtime_type.mode_name().to_string(),
-     );
+     // 1. Parse the GitLab pipeline file
+-    let pipeline = parse_pipeline(pipeline_path)
++    let mut pipeline = parse_pipeline(pipeline_path)
+         .map_err(|e| ExecutionError::Parse(format!("Failed to parse GitLab pipeline: {}", e)))?;
++    // From here on `pipeline.variables` holds what every job sees.
++    seed_gitlab_predefined_variables(
++        &mut pipeline,
++        &gitlab_predefined_variables(pipeline_path, &config.variables),
++    );
++    apply_gitlab_variable_overrides(&mut pipeline, &config.variables);
  
-     // show=true means hide=false (inverted for the env var)
-@@ -365,6 +361,7 @@ async fn execute_gitlab_pipeline(
-     let runtime = initialize_runtime(
-         config.runtime_type.clone(),
-         config.preserve_containers_on_failure,
-+        &config.kubernetes,
-     )?;
+     // 2. Convert the GitLab pipeline to a format compatible with the workflow executor
+-    let workflow = gitlab::convert_to_workflow_format(&pipeline);
++    let mut workflow = gitlab::convert_to_workflow_format(&pipeline);
  
-     // Create a temporary workspace directory
-@@ -377,13 +374,7 @@ async fn execute_gitlab_pipeline(
-     // Add runtime mode to environment
-     env_context.insert(
-         "WRKFLW_RUNTIME_MODE".to_string(),
--        match config.runtime_type {
--            RuntimeType::Auto => "auto".to_string(),
--            RuntimeType::Emulation => "emulation".to_string(),
--            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
--            RuntimeType::Docker => "docker".to_string(),
--            RuntimeType::Podman => "podman".to_string(),
--        },
-+        config.runtime_type.mode_name().to_string(),
-     );
+     // 3. Resolve job dependencies based on stages
++    let job_decisions = gitlab_job_decisions(&pipeline);
++    apply_rule_allow_failure(&mut workflow, &job_decisions);
++    let mut job_conditions: HashMap<String, gitlab::JobWhen> = job_decisions
++        .into_iter()
++        .map(|(name, decision)| (name, decision.when))
++        .collect();
++    if let Some(target_job) = &config.target_job {
++        force_target_job(&mut job_conditions, target_job);
++    }
+     let execution_plan = resolve_gitlab_dependencies(&pipeline, &workflow)?;
  
-     // Setup environment files
-@@ -612,11 +603,13 @@ pub fn detect_runtime(runtime_type: RuntimeType) -> RuntimeType {
- fn initialize_runtime(
-     runtime_type: RuntimeType,
-     preserve_containers_on_failure: bool,
-+    kubernetes: &KubernetesConfig,
- ) -> Result<Box<dyn ContainerRuntime>, ExecutionError> {
-     match runtime_type {
-         RuntimeType::Auto => initialize_runtime(
-             detect_runtime(RuntimeType::Auto),
-             preserve_containers_on_failure,
-+            kubernetes,
-         ),
-         RuntimeType::Docker => {
-             if docker::is_available() {
-@@ -645,6 +638,15 @@ fn initialize_runtime(
-                 Ok(Box::new(emulation::EmulationRuntime::new()))
-             }
-         }
-+        // Kubernetes is never auto-detected and never silently replaced:
-+        // a job meant for a GPU node must not quietly run on the laptop.
-+        RuntimeType::Kubernetes => {
-+            kubernetes::check_available(kubernetes).map_err(ExecutionError::Runtime)?;
-+            Ok(Box::new(kubernetes::KubernetesRuntime::new(
-+                kubernetes.clone(),
-+                preserve_containers_on_failure,
-+            )))
+     // Filter to target job and its stage-based dependencies if specified.
+@@ -315,6 +330,35 @@ async fn execute_gitlab_pipeline(
+         execution_plan
+     };
+ 
++    // A pipeline `workflow:rules` wouldn't create has nothing to run, unless
++    // a job was asked for by name.
++    let pipeline_variables = pipeline.variables.clone().unwrap_or_default();
++    if let Some(reason) = gitlab::pipeline_exclusion(&pipeline, &pipeline_variables) {
++        let reason = gitlab::JobWhen::Skip(reason)
++            .skip_reason(false)
++            .unwrap_or_default();
++        if config.target_job.is_some() {
++            wrkflw_logging::warning(&format!(
++                "Running --job and the stages before it although workflow:rules excludes this \
++                 pipeline: {}",
++                reason
++            ));
++        } else {
++            wrkflw_logging::info(&format!("Pipeline skipped by workflow:rules: {}", reason));
++            return Ok(ExecutionResult {
++                jobs: execution_plan
++                    .into_iter()
++                    .flatten()
++                    .map(|job_name| {
++                        let logs = format!("Skipped: workflow:rules: {}", reason);
++                        JobResult::skipped(job_name.clone(), job_name, logs)
++                    })
++                    .collect(),
++                failure_details: None,
++            });
 +        }
-         RuntimeType::Emulation => Ok(Box::new(emulation::EmulationRuntime::new())),
-         RuntimeType::SecureEmulation => Ok(Box::new(
-             wrkflw_runtime::secure_emulation::SecureEmulationRuntime::new(),
-@@ -659,10 +661,27 @@ pub enum RuntimeType {
-     Auto,
-     Docker,
-     Podman,
-+    /// Run each step as a pod in a Kubernetes cluster. Selected explicitly
-+    /// only; see `--k8s-*` flags and [`KubernetesConfig`].
-+    Kubernetes,
-     Emulation,
-     SecureEmulation,
++    }
++
+     // 4. Initialize appropriate runtime
+     let (runtime, effective_runtime) = initialize_runtime(
+         config.runtime_type.clone(),
+@@ -373,8 +417,38 @@ async fn execute_gitlab_pipeline(
+     let mut results = Vec::new();
+     let mut has_failures = false;
+     let mut failure_details = String::new();
++    let mut blocked = false;
+ 
+     for job_batch in execution_plan {
++        // Naming a job is how to get past a gate, so it doesn't wait for one.
++        // After a failure a manual job is skipped instead of waiting.
++        let stage_blocks = config.target_job.is_none()
++            && !has_failures
++            && job_batch.iter().any(|job_name| {
++                job_conditions
++                    .get(job_name)
++                    .is_some_and(|when| when.blocks_later_stages())
++            });
++        let (job_batch, skipped) =
++            select_stage_jobs(job_batch, &job_conditions, has_failures, blocked);
++        blocked |= stage_blocks;
++        for (job_name, reason) in skipped {
++            wrkflw_logging::info(&format!(
++                "  {} Skipping job '{}': {}",
++                wrkflw_logging::symbols::SKIPPED,
++                job_name,
++                reason
++            ));
++            results.push(JobResult::skipped(
++                job_name.clone(),
++                job_name,
++                format!("Skipped: {}", reason),
++            ));
++        }
++        if job_batch.is_empty() {
++            continue;
++        }
++
+         // Execute jobs in parallel if they don't depend on each other.
+         // GitLab CI uses artifacts/variables for inter-job communication, not `needs.*`
+         // context, so we pass empty maps here.
+@@ -439,14 +513,183 @@ async fn execute_gitlab_pipeline(
+     })
  }
  
-+impl RuntimeType {
-+    /// The value steps see in `WRKFLW_RUNTIME_MODE`.
-+    pub fn mode_name(&self) -> &'static str {
++/// Make `--variable` values win over the pipeline's and the job's own, as
++/// variables given for a run do on GitLab. Rules, images and scripts all read
++/// the pipeline, so this reaches every one of them.
++fn apply_gitlab_variable_overrides(pipeline: &mut Pipeline, overrides: &HashMap<String, String>) {
++    if overrides.is_empty() {
++        return;
++    }
++    pipeline
++  
+```
+
+**File**: `crates/executor/src/environment.rs` (modified, +37/-12)
+```diff
+@@ -340,20 +340,45 @@ fn get_current_sha() -> String {
+     "0000000000000000000000000000000000000000".to_string()
+ }
+ 
+-fn get_current_ref() -> String {
+-    if let Ok(output) = std::process::Command::new("git")
+-        .args(["symbolic-ref", "--short", "HEAD"])
++/// Run a git query in `directory`, or `None` if it fails.
++fn git_output(directory: &Path, args: &[&str]) -> Option<String> {
++    let output = std::process::Command::new("git")
++        .args(args)
++        .current_dir(directory)
+         .output()
+-    {
+-        if output.status.success() {
+-            return format!(
+-                "refs/heads/{}",
+-                String::from_utf8_lossy(&output.stdout).trim()
+-            );
+-        }
+-    }
++        .ok()?;
++    output
++        .status
++        .success()
++        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
++}
++
++/// The branch checked out in `directory`, or `None` on a detached HEAD or
++/// outside a repository.
++pub(crate) fn current_branch(directory: &Path) -> Option<String> {
++    git_output(directory, &["symbolic-ref", "--short", "HEAD"])
++}
+ 
+-    "refs/heads/main".to_string()
++/// The tag exactly at HEAD in `directory`, if there is one.
++pub(crate) fn exact_tag(directory: &Path) -> Option<String> {
++    git_output(directory, &["describe", "--tags", "--exact-match", "HEAD"])
++}
++
++/// The branch `origin/HEAD` points at, falling back to `main`.
++pub(crate) fn default_branch(directory: &Path) -> String {
++    git_output(
++        directory,
++        &["symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
++    )
++    .and_then(|name| name.strip_prefix("origin/").map(str::to_string))
++    .unwrap_or_else(|| "main".to_string())
++}
++
++fn get_current_ref() -> String {
++    format!(
++        "refs/heads/{}",
++        current_branch(Path::new(".")).unwrap_or_else(|| "main".to_string())
++    )
+ }
+ 
+ fn get_runner_os() -> String {
+```
+
+**File**: `crates/models/src/lib.rs` (modified, +9/-0)
+```diff
+@@ -376,6 +376,15 @@ pub mod gitlab {
+         /// Variables to set if condition is true
+         #[serde(skip_serializing_if = "Option::is_none")]
+         pub variables: Option<HashMap<String, String>>,
++        /// Overrides the job's `allow_failure` when this rule matches
++        #[serde(skip_serializing_if = "Option::is_none")]
++        pub allow_failure: Option<AllowFailure>,
++        /// Files whose changes the rule depends on. Not evaluated.
++        #[serde(skip_serializing_if = "Option::is_none")]
++        pub changes: Option<serde_yaml::Value>,
++        /// Files whose presence the rule depends on. Not evaluated.
++        #[serde(skip_serializing_if = "Option::is_none")]
++        pub exists: Option<serde_yaml::Value>,
+     }
+ 
+     /// Only/except configuration
+```
+
+**File**: `crates/parser/src/gitlab.rs` (modified, +1259/-11)
+```diff
+@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
+ use std::path::Path;
+ use thiserror::Error;
+ use wrkflw_matrix::MatrixConfig;
+-use wrkflw_models::gitlab::{Parallel, Pipeline};
++use wrkflw_models::gitlab::{AllowFailure, Except, Image, Job, Only, Parallel, Pipeline, Rule};
+ use wrkflw_models::ValidationResult;
+ 
+ #[derive(Error, Debug)]
+@@ -121,6 +121,725 @@ pub fn validate_pipeline_structure(pipeline: &Pipeline) -> ValidationResult {
+     result
+ }
+ 
++/// Runs a job's scripts in bash when its image has it and in `sh` otherwise,
++/// as GitLab does. An internal value for `defaults.run.shell`: `execute_step`
++/// must match it before its custom-shell fallback, and it never reaches the
++/// GitHub workflow schema, whose shell enum doesn't list it.
++pub const SHELL_BASH_OR_SH: &str = "wrkflw-bash-or-sh";
++
++/// When a job runs relative to the outcome of the stages before it.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum JobWhen {
++    OnSuccess,
++    OnFailure,
++    Always,
++    /// Excluded from the pipeline whatever the earlier stages did.
++    Skip(SkipReason),
++}
++
++/// Why a job is excluded from the pipeline.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum SkipReason {
++    /// `when: never`.
++    Never,
++    /// `when: manual`: nobody can press play on a local run.
++    Manual,
++    /// A manual job that later stages wait for, which here never happens.
++    BlockingManual,
++    /// The job has `rules:` and none of them matched.
++    NoRuleMatched,
++    /// `only:` doesn't select this run, or `except:` excludes it.
++    RefFilter,
++    /// A `rules:if` or `only:`/`except:` condition couldn't be evaluated.
++    InvalidCondition,
++    /// A condition reads a `parallel:matrix` variable. Conditions are decided
++    /// once per job, so no single answer holds for every instance.
++    MatrixCondition,
++    /// A `when:` value that isn't one of GitLab's.
++    UnknownWhen,
++}
++
++/// What a job's rules decided for this run.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct JobDecision {
++    pub when: JobWhen,
++    /// The matched rule's `allow_failure`, which overrides the job's own.
++    pub allow_failure: Option<bool>,
++}
++
++impl JobWhen {
++    fn parse(when: Option<&str>) -> Self {
++        match when {
++            None | Some("on_success") | Some("delayed") => JobWhen::OnSuccess,
++            Some("on_failure") => JobWhen::OnFailure,
++            Some("always") => JobWhen::Always,
++            Some("never") => JobWhen::Skip(SkipReason::Never),
++            Some("manual") => JobWhen::Skip(SkipReason::Manual),
++            Some(_) => JobWhen::Skip(SkipReason::UnknownWhen),
++        }
++    }
++
++    /// Whether later stages wait for this job, as they do for a manual job
++    /// that isn't allowed to fail.
++    pub fn blocks_later_stages(self) -> bool {
++        self == JobWhen::Skip(SkipReason::BlockingManual)
++    }
++
++    /// Why this job doesn't run given the outcome of the earlier stages, or
++    /// `None` if it does.
++    pub fn skip_reason(self, earlier_failure: bool) -> Option<&'static str> {
 +        match self {
-+            RuntimeType::Auto => "auto",
-+            RuntimeType::Emulation => "emulation",
-+            RuntimeType::SecureEmulation => "secure_emulation",
-+            RuntimeType::Docker => "docker",
-+            RuntimeType::Podman => "podman",
-+            RuntimeType::Kubernetes => "kubernetes",
++            JobWhen::Always => None,
++            JobWhen::OnSuccess if earlier_failure => Some("an earlier stage failed"),
++            JobWhen::OnSuccess => None,
++            JobWhen::OnFailure if earlier_failure => None,
++            JobWhen::OnFailure => Some("when: on_failure and no earlier stage failed"),
++            JobWhen::Skip(SkipReason::Never) => Some("when: never"),
++            JobWhen::Skip(SkipReason::Manual) => {
++                Some("when: manual jobs can't be started on a local run")
++            }
++            JobWhen::Skip(SkipReason::BlockingManual) => {
++                Some("when: manual jobs can't be started on a local run, so later stages wait")
++            }
++            JobWhen::Skip(SkipReason::MatrixCondition) => {
++                Some("a condition reads a parallel:matrix variable, which isn't evaluated")
++            }
++            JobWhen::Skip(SkipReason::NoRuleMatched) => Some("no rule matched"),
++            JobWhen::Skip(SkipReason::RefFilter) => Some("only/except excludes this run"),
++            JobWhen::Skip(SkipReason::InvalidCondition) => {
++                Some("a condition couldn't be evaluated")
++            }
++            JobWhen::Skip(SkipReason::UnknownWhen) => Some("unknown when value"),
 +        }
 +    }
 +}
 +
- #[derive(Debug, Clone, Default)]
- pub struct ExecutionConfig {
-     pub runtime_type: RuntimeType,
-@@ -676,6 +695,8 @@ pub struct ExecutionConfig {
-     /// lowercase, as [`parse_platform_override`] returns them, because labels
-     /// match case-insensitively.
-     pub platform_overrides: HashMap<String, String>,
-+    /// Cluster settings used when `runtime_type` is [`RuntimeType::Kubernetes`].
-+    pub kubernetes: KubernetesConfig,
- }
- 
- /// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
-@@ -942,10 +963,7 @@ async fn prepare_action(
-         let dockerfile = action_dir.join("Dockerfile");
-         if dockerfile.exists() {
-             // It's a Docker action, build it
--            let tag = format!("wrkflw-local-action:{}", uuid::Uuid::new_v4());
--
--            runtime
--                .build_image(&do
++/// Decide when a job runs. The first matching rule wins and a job whose rules
++/// all miss is excluded, as in GitLab. A job without `rules:` goes through its
++/// `only:`/`except:`. A condition that can't be evaluated excludes the job,
++/// because guessing could run a guarded deploy. `variables` are the job's CI
++/// variables.
++pub fn job_decision(job_name: &str, job: &Job, variables: &HashMap<String, String>) -> JobDecision {
++    let excluded = |reason| JobDecision {
++        when: JobWhen::Skip(reason),
++        allow_failure: None,
++    };
++    let owner = format!("Job '{}'", job_name);
++   
 ```
 
-**File**: `crates/executor/src/environment.rs` (modified, +46/-0)
+**File**: `crates/runtime/src/container.rs` (modified, +6/-0)
 ```diff
-@@ -25,6 +25,32 @@ pub fn setup_github_environment_files(workspace_dir: &Path) -> io::Result<()> {
-     Ok(())
- }
- 
-+/// Point `job_env` at a fresh set of `GITHUB_*` files owned by one job.
-+///
-+/// The run-level files are shared, but each step's env file updates are read
-+/// back and truncated by the engine, so parallel jobs sharing them would eat
-+/// each other's `GITHUB_ENV` and `GITHUB_OUTPUT` entries. The returned
-+/// directory must outlive the job.
-+pub fn isolate_github_environment_files(
-+    job_env: &mut HashMap<String, String>,
-+) -> io::Result<tempfile::TempDir> {
-+    let dir = tempfile::tempdir()?;
-+    setup_github_environment_files(dir.path())?;
-+    let github_dir = dir.path().join("github");
-+    for (key, file) in [
-+        ("GITHUB_OUTPUT", "output"),
-+        ("GITHUB_ENV", "env"),
-+        ("GITHUB_PATH", "path"),
-+        ("GITHUB_STEP_SUMMARY", "step_summary"),
-+    ] {
-+        job_env.insert(
-+            key.to_string(),
-+            github_dir.join(file).to_string_lossy().to_string(),
-+        );
-+    }
-+    Ok(dir)
-+}
-+
- pub fn create_github_context(
-     workflow: &WorkflowDefinition,
-     workspace_dir: &Path,
-@@ -429,4 +455,24 @@ mod tests {
-     fn extract_repo_from_invalid_url() {
-         assert_eq!(extract_repo_from_url("not-a-url"), None);
+@@ -55,6 +55,12 @@ pub trait ContainerRuntime {
+     fn mounts_are_copies(&self) -> bool {
+         false
      }
 +
-+    #[test]
-+    fn each_job_gets_its_own_empty_github_files() {
-+        let mut first = HashMap::new();
-+        let mut second = HashMap::new();
-+        let first_dir = isolate_github_environment_files(&mut first).unwrap();
-+        let second_dir = isolate_github_environment_files(&mut second).unwrap();
-+
-+        for key in [
-+            "GITHUB_OUTPUT",
-+            "GITHUB_ENV",
-+            "GITHUB_PATH",
-+            "GITHUB_STEP_SUMMARY",
-+        ] {
-+            assert_ne!(first[key], second[key], "{} is shared", key);
-+            assert_eq!(fs::read_to_string(&first[key]).unwrap(), "");
-+        }
-+        assert!(Path::new(&first["GITHUB_ENV"]).starts_with(first_dir.path()));
-+        assert!(Path::new(&second["GITHUB_ENV"]).starts_with(second_dir.path()));
-+    }
- }
-```
-
-**File**: `crates/executor/src/kubernetes/manifest.rs` (added, +551/-0)
-```diff
-@@ -0,0 +1,551 @@
-+//! The pod a step runs in: which mounts it gets and how its manifest reads.
-+//! Everything here is pure, so it is tested without a cluster.
-+
-+use super::{
-+    KubernetesConfig, DEADLINE_MARGIN_SECS, MAIN_CONTAINER, MANAGED_BY_LABEL, READY_MARKER,
-+    SESSION_ID, SESSION_LABEL, SYNC_CONTAINER, SYNC_DIR, SYNC_VOLUME, WAIT_CONTAINER,
-+};
-+use serde_json::{json, Value};
-+use std::path::{Path, PathBuf};
-+
-+/// Container paths backed by directories the executor created for this job.
-+/// Nothing else on those host directories can be lost, so only these are
-+/// mirrored. `/github/action` is left out: a local action lives in the user's
-+/// repository. Exact paths, so a user volume nested below one does not qualify.
-+const MIRRORED_MOUNTS: &[&str] = &["/github/workspace", "/github/workflow"];
-+
-+/// One host directory and the container path it is exposed at. An empty
-+/// `host` is a volume that exists only in the pod.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(super) struct Mount {
-+    pub(super) host: PathBuf,
-+    pub(super) container: PathBuf,
-+}
-+
-+impl Mount {
-+    /// True when the host directory must end up exactly as the pod left it,
-+    /// deletions included. Any other mount belongs to the user and may hold
-+    /// files the pod never saw, so copy-out only adds to it.
-+    pub(super) fn mirrored(&self) -> bool {
-+        MIRRORED_MOUNTS
-+            .iter()
-+            .any(|path| self.container == Path::new(path))
-+    }
-+}
-+
-+/// Turn the caller's `(host, container)` pairs into an ordered mount plan.
-+///
-+/// Mounts are sorted by container path so a parent mount is populated before
-+/// a mount nested inside it, and a container path requested twice keeps its
-+/// first host directory, as a `docker run` with duplicate `-v` flags would.
-+pub(super) fn plan_mounts(volumes: &[(&Path, &Path)]) -> Vec<Mount> {
-+    let mut mounts: Vec<Mount> = Vec::new();
-+    for (host, container) in volumes {
-+        // An emptyDir cannot stand in for a file or a host socket such as
-+        // /var/run/docker.sock, and a bare name is a Docker named volume.
-+        if host.exists() && !host.is_dir() {
-+            wrkflw_logging::warning(&format!(
-+                "Kubernetes: skipping mount of {}: only directories can be synced into a pod",
-+                host.display()
-+            ));
-+            continue;
-+        }
-+        if !host.is_absolute() && !host.as_os_str().is_empty() {
-+            wrkflw_logging::warning(&format!(
-+                "Kubernetes: mounting {} empty: host path '{}' is not absolute, \
-+                 and named volumes do not exist on a cluster",
-+                container.display(),
-+                host.display()
-+            ));
-+        }
-+        if mounts.iter().any(|m| m.container == *container) {
-+            wrkflw_logging::warning(&format!(
-+                "Kubernetes: container path {} is mounted twice; keeping the first mapping",
-+                container.display()
-+            ));
-+            continue;
-+        }
-+        mounts.push(Mount {
-+            host: host.to_path_buf(),
-+            container: container.to_path_buf(),
-+        });
-+    }
-+    mounts.sort_by(|a, b| a.container.cmp(&b.container));
-+    mounts
-+}
-+
-+/// Paths nested inside `mount` that belong to other mounts, relative to
-+/// `mount.container` and prefixed with `./` the way `tar -C dir .` names
-+/// them. They are excluded when the parent is streamed back out so a nested
-+/// emptyDir is not copied into the parent's host directory.
-+pub(super) fn nested_excludes(mount: &Mount, all: &[Mount]) -> Vec<String> {
-+    all.iter()
-+        .filter(|other| other.container != mount.container)
-+        .filter_map(|other| other.container.strip_prefix(&mount.container).ok())
-+        .map(|rel| {
-+            let parts: Vec<_> = rel
-+                .components()
-+                .map(|c| c.as_os_str().to_string_lossy())
-+                .collect();
-+            format!("./{}", parts.join("/"))
-+        })
-+        .collect()
-+}
-+
-+/// True when `mount` sits inside another mount. The parent's archive writes
-+/// straight through into it, where Docker's bind mount would hide those files.
-+pub(super) fn is_nested(mount: &Mount, all: &[Mount]) -> bool {
-+    all.iter().any(|other| {
-+        other.container != mount.container && mount.container.starts_with(&other.container)
-+    })
-+}
-+
-+/// Everything that goes into one pod, independent of the cluster.
-+pub(super) struct PodInput<'a> {
-+    pub(super) name: &'a str,
-+    pub(super) image: &'a str,
-+    pub(super) cmd: &'a [&'a str],
-+    pub(super) env_vars: &'a [(&'a str, &'a str)],
-+    pub(super) working_dir: &'a Path,
-+    pub(super) mounts: &'a [Mount],
-+    pub(super) entrypoint: Option<&'a str>,
-+}
-+
-+/// Build the pod manifest. Pure, so it is unit-tested without a cluster.
-+pub(super) fn build_pod_manifest(config: &KubernetesConfig, input: &PodInput<'_>) -> Value {
-+    let volume_name = |i: usize| format!("vol-{}", i);
-+
-+
-```
-
-**File**: `crates/executor/src/kubernetes/mod.rs` (added, +2033/-0)
-```diff
-@@ -0,0 +1,2033 @@
-+//! Kubernetes runtime backend.
-+//!
-+//! Every [`ContainerRuntime::run_container`] call becomes one short-lived pod
-+//! in the configured cluster. The pod carries one `emptyDir` per requested
-+//! volume and three containers:
-+//!
-+//! * `wrkflw-wait`, an init container that blocks until a ready marker
-+//!   appears. While it runs, every host volume is streamed into it as a tar
-+//!   archive, so the workspace, GitHub env files and action checkouts are in
-+//!   place before the step starts.
-+//! * `main`, the step itself: the requested image, command, env and
-+//!   working directory.
-+//! * `wrkflw-sync`, a sidecar that keeps the pod alive after `main` exits so
-+//!   the volumes can be streamed back to the host. That is how
-+//!   `GITHUB_OUTPUT`, artifacts and workspace changes reach the executor and
-+//!   the next step.
-+//!
-+//! Only `kubectl` is required on the host. Images the executor builds itself
-+//! (combined runtime images, Dockerfile actions) additionally need Docker or
-+//! Podman locally and a registry the cluster can pull from, given with
-+//! `--k8s-registry`.
-+
-+mod manifest;
-+mod sync;
-+
-+use async_trait::async_trait;
-+use manifest::{build_pod_manifest, is_nested, nested_excludes, plan_mounts, Mount, PodInput};
-+use once_cell::sync::Lazy;
-+use serde_json::Value;
-+use std::collections::{BTreeMap, HashSet};
-+use std::ffi::{OsStr, OsString};
-+use std::path::Path;
-+use std::process::Stdio;
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use std::sync::{Arc, Mutex};
-+use std::time::Duration;
-+use sync::{copy_dir_into_pod, copy_dir_out_of_pod};
-+use tokio::process::Command;
-+use wrkflw_runtime::container::{
-+    ContainerError, ContainerOutput, ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
-+};
-+
-+/// Image used for the wait and sync helper containers. Anything with `sh`,
-+/// `tar`, `mkdir` and `touch` works.
-+///
-+/// Pinned by digest because this image runs as root with every mount attached.
-+pub const DEFAULT_HELPER_IMAGE: &str =
-+    "busybox:1.36@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662";
-+
-+/// Upper bound for one step, from pod creation to volume sync-back. Matches
-+/// the engine's default job timeout, so `timeout-minutes` governs as it does
-+/// on Docker and a long training step is not cut short.
-+pub const DEFAULT_TIMEOUT_SECS: u64 = 6 * 60 * 60;
-+
-+/// How long a pod may stay unschedulable. Long enough for an autoscaler to
-+/// bring up a node, short enough that a mistyped selector does not take the
-+/// whole step timeout to report.
-+pub const DEFAULT_SCHEDULE_TIMEOUT_SECS: u64 = 10 * 60;
-+
-+/// Added to the step timeout for `activeDeadlineSeconds`, so the client's own
-+/// timeout normally fires first and reports the failure properly.
-+const DEADLINE_MARGIN_SECS: u64 = 30;
-+
-+const AVAILABILITY_TIMEOUT: Duration = Duration::from_secs(5);
-+
-+const MAIN_CONTAINER: &str = "main";
-+const WAIT_CONTAINER: &str = "wrkflw-wait";
-+const SYNC_CONTAINER: &str = "wrkflw-sync";
-+const SYNC_VOLUME: &str = "wrkflw-sync";
-+const SYNC_DIR: &str = "/wrkflw-sync";
-+const READY_MARKER: &str = "/wrkflw-sync/ready";
-+const MANAGED_BY_LABEL: &str = "app.kubernetes.io/managed-by";
-+const SESSION_LABEL: &str = "wrkflw.dev/session";
-+
-+/// Waiting reasons that never resolve on their own. Anything else (plain
-+/// `ContainerCreating`, `PodInitializing`) is waited out.
-+const FATAL_WAITING_REASONS: &[&str] = &[
-+    "ErrImageNeverPull",
-+    "InvalidImageName",
-+    "CreateContainerConfigError",
-+    "CreateContainerError",
-+];
-+
-+/// Waiting reasons of a pull the kubelet is still retrying. A bad image and a
-+/// registry blip look the same here: both go from `ErrImagePull` to
-+/// `ImagePullBackOff` within seconds. Only time tells them apart.
-+const PULL_RETRY_REASONS: &[&str] = &["ErrImagePull", "ImagePullBackOff"];
-+
-+/// How long a pull may keep failing before the step gives up. The kubelet
-+/// retries after 10, 20 and 40 seconds, so this covers two or three attempts.
-+const PULL_RETRY_GRACE: Duration = Duration::from_secs(60);
-+
-+/// How long `kubectl get pod` may keep failing before a step gives up. A remote
-+/// API server can drop a request at any time, and one lost poll must not cost
-+/// a long step its work.
-+const POLL_FAILURE_GRACE: Duration = Duration::from_secs(60);
-+
-+/// Passed to every status poll. Without it a request lost on the network
-+/// hangs instead of failing, and no failure would ever be counted.
-+const POLL_REQUEST_TIMEOUT: &str = "--request-timeout=30s";
-+
-+/// One id per process, stamped on every pod as a label so a crashed run's
-+/// pods can be found with `kubectl get pods -l wrkflw.dev/session=<id>`.
-+static SESSION_ID: Lazy<String> = Lazy::new(|| uuid::Uuid::new_v4().simple().to_string());
-+
-+/// Pods created by this process that have not been deleted yet.
-+static RUNNING_PODS: Lazy<Mutex<Vec<PodRef>>> = Lazy::new(|| Mutex::new(Vec::new()));
-+
-+/// Registry references pushed by this process. Global so
-```
-
-**File**: `crates/executor/src/kubernetes/sync.rs` (added, +845/-0)
-```diff
-@@ -0,0 +1,845 @@
-+//! Streaming mounts between the host and a pod as tar archives.
-+//!
-+//! The way back deserves the care it gets here: for mounts the executor owns
-+//! it deletes host files based on what a workflow left in a pod.
-+
-+use super::manifest::Mount;
-+use super::{SYNC_CONTAINER, WAIT_CONTAINER};
-+use std::collections::HashSet;
-+use std::ffi::OsStr;
-+use std::io::{self, Read};
-+use std::path::{Component, Path, PathBuf};
-+use std::process::Stdio;
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use wrkflw_runtime::container::ContainerError;
-+
-+/// How much of a sync's stderr is kept for its error message.
-+const MAX_STDERR_BYTES: usize = 64 * 1024;
-+
-+/// Read `child`'s stderr to the end on its own thread, keeping the first
-+/// [`MAX_STDERR_BYTES`].
-+///
-+/// Whoever is busy with the child's stdin or stdout cannot also read stderr.
-+/// A child that fills that pipe would block with us blocked on it in turn,
-+/// until `--k8s-timeout` ended the step.
-+pub(super) fn drain_stderr(child: &mut std::process::Child) -> std::thread::JoinHandle<String> {
-+    let stderr = child.stderr.take();
-+    std::thread::spawn(move || {
-+        let Some(mut stderr) = stderr else {
-+            return String::new();
-+        };
-+        let mut kept = Vec::new();
-+        let mut buf = [0u8; 8192];
-+        while let Ok(n) = stderr.read(&mut buf) {
-+            if n == 0 {
-+                break;
-+            }
-+            let room = MAX_STDERR_BYTES - kept.len();
-+            kept.extend_from_slice(&buf[..n.min(room)]);
-+        }
-+        String::from_utf8_lossy(&kept).trim().to_string()
-+    })
-+}
-+
-+/// Blocking: tar `mount.host` and pipe it into `tar -x` in the wait container.
-+pub(super) fn copy_dir_into_pod(
-+    kubectl: &OsStr,
-+    kubectl_args: &[String],
-+    pod: &str,
-+    mount: &Mount,
-+) -> Result<(), ContainerError> {
-+    let dest = mount.container.to_string_lossy().to_string();
-+    let mut command = std::process::Command::new(kubectl);
-+    command.args(kubectl_args).args([
-+        "exec",
-+        "-i",
-+        pod,
-+        "-c",
-+        WAIT_CONTAINER,
-+        "--",
-+        "tar",
-+        "-C",
-+        &dest,
-+        "-xof",
-+        "-",
-+    ]);
-+    stream_dir_into(command, mount)?;
-+    wrkflw_logging::debug(&format!(
-+        "Kubernetes: synced {} -> {}:{}",
-+        mount.host.display(),
-+        pod,
-+        dest
-+    ));
-+    Ok(())
-+}
-+
-+/// Blocking: write `mount.host` as a tar archive to `command`'s stdin.
-+pub(super) fn stream_dir_into(
-+    mut command: std::process::Command,
-+    mount: &Mount,
-+) -> Result<(), ContainerError> {
-+    let mut child = command
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::null())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .map_err(|e| {
-+            ContainerError::ContainerStart(format!("Failed to spawn kubectl exec: {}", e))
-+        })?;
-+    let stderr = drain_stderr(&mut child);
-+
-+    let stdin = child.stdin.take().ok_or_else(|| {
-+        ContainerError::ContainerExecution("kubectl exec stdin was not captured".to_string())
-+    })?;
-+    let mut builder = tar::Builder::new(stdin);
-+    // Keep mtimes and modes so tools comparing timestamps behave as they would
-+    // on a bind mount. The host's uid means nothing in the pod, so `tar -xo`
-+    // discards it. Symlinks are shipped as symlinks, not followed.
-+    builder.mode(tar::HeaderMode::Complete);
-+    builder.follow_symlinks(false);
-+    let archived = append_tree(&mut builder, &mount.host)
-+        .and_then(|_| builder.into_inner())
-+        .map(drop);
-+
-+    let status = child.wait().map_err(|e| {
-+        ContainerError::ContainerExecution(format!("kubectl exec did not complete: {}", e))
-+    })?;
-+    let stderr = stderr.join().unwrap_or_default();
-+    if !status.success() {
-+        return Err(ContainerError::ContainerExecution(format!(
-+            "syncing {} into the pod failed: {}",
-+            mount.host.display(),
-+            stderr
-+        )));
-+    }
-+    archived.map_err(|e| {
-+        ContainerError::ContainerExecution(format!(
-+            "failed to archive {}: {}",
-+            mount.host.display(),
-+            e
-+        ))
-+    })
-+}
-+
-+/// Archive everything under `root` as `./...`, like `append_dir_all`, except
-+/// that a socket is skipped: tar cannot carry one, and one left behind by a
-+/// dev server must not fail the step. Copy-out leaves host sockets alone too.
-+fn append_tree<W: io::Write>(builder: &mut tar::Builder<W>, root: &Path) -> io::Result<()> {
-+    builder.append_path_with_name(root, ".")?;
-+    let mut pending = vec![PathBuf::new()];
-+    while let Some(rel) = pending.pop() {
-+        for entry in std::fs::read_dir(root.join(&rel))? {
-+            let entry = entry?;
-+            let file_type = entry.file_type()?;
-+            let child = rel.join(entry.file_name());
-+            #[cfg(unix)]
-+            {
-+                use std::os::unix::fs::FileTypeExt;
-+                if file_type.is_socket() {
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -11,6 +11,7 @@ pub mod engine;
- pub mod environment;
- pub mod expression;
- pub mod github_env_files;
-+pub mod kubernetes;
- pub mod podman;
- pub mod substitution;
- pub(crate) mod workflow_commands;
-@@ -21,3 +22,4 @@ pub use engine::{
-     detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
-     JobStatus, RuntimeType, StepResult, StepStatus,
- };
-+pub use kubernetes::{parse_key_value as parse_k8s_key_value, KubernetesConfig};
-```
-
-**File**: `crates/runtime/src/container.rs` (modified, +9/-1)
-```diff
-@@ -45,8 +45,16 @@ pub trait ContainerRuntime {
-         additional_packages: Option<Vec<String>>,
-     ) -> Result<String, ContainerError>;
- 
--    /// Check whether a Docker/OCI image exists locally.
-+    /// Check whether a Docker/OCI image is usable by this runtime without
-+    /// building it. A cheap, read-only check; callers may repeat it.
-     async fn image_exists(&self, tag: &str) -> Result<bool, ContainerError>;
-+
-+    /// True when `run_container` copies volumes to the step and back instead
-+    /// of sharing them with the host, so a volume's contents end up on the
-+    /// host whether or not the step meant them to.
-+    fn mounts_are_copies(&self) -> bool {
++    /// True when `run_container` joins `cmd` into one string for a shell, so
++    /// an argument holding a multi-line script doesn't survive as one argument.
++    fn flattens_commands(&self) -> bool {
 +        false
 +    }
  }
@@ -2996,454 +2790,858 @@ env values, so "echo $$" reached the shell as "echo $".
  #[derive(Debug)]
 ```
 
+**File**: `crates/runtime/src/secure_emulation.rs` (modified, +4/-0)
+```diff
+@@ -48,6 +48,10 @@ impl SecureEmulationRuntime {
+ 
+ #[async_trait]
+ impl ContainerRuntime for SecureEmulationRuntime {
++    fn flattens_commands(&self) -> bool {
++        true
++    }
++
+     async fn run_container(
+         &self,
+         image: &str,
+```
+
+**File**: `crates/ui/src/handlers/workflow.rs` (modified, +2/-0)
+```diff
+@@ -218,6 +218,7 @@ pub async fn execute_workflow_cli(
+         target_job: None,
+         platform_overrides,
+         kubernetes,
++        variables: Default::default(),
+     };
+ 
+     match wrkflw_executor::execute_workflow(path, config).await {
+@@ -653,6 +654,7 @@ pub fn start_next_workflow_execution(
+                         target_job,
+                         platform_overrides,
+                         kubernetes,
++                        variables: Default::default(),
+                     };
+ 
+                     let execution_result = wrkflw_utils::fd::with_stderr_to_null(|| {
+```
+
 ---
 
-### Incident Patch 2: `6a3eae53` (2026-10-31)
-**Commit Message**: feat: override runs-on images with --platform (#113) (#141)
+### Incident Patch 2: `380291eb` (2026-11-01)
+**Commit Message**: fix(artifacts): match upload-artifact path handling (#148)
 
-* feat: override runs-on images with --platform (#113)
+* fix(artifacts): match upload-artifact path handling
 
-runs-on labels map to a hardcoded image table, so a workflow needing the
-tools of a real runner had to be edited to use a bigger image.
+Directory paths and multi-line path inputs found no files, so the step
+failed. Add directories, multiple lines and ! exclusions, make artifact
+paths relative to the search root, and honor if-no-files-found, which
+defaults to warn.
 
-Add a global -P/--platform LABEL=IMAGE option, also read from
-WRKFLW_PLATFORM. It sits between a job's container: and the built-in
-table, and reaches run, watch, the TUI, matrix jobs and reusable
-workflows.
+* fix(artifacts): lay out uploads lexically and handle dir/**
 
-Remove the macOS emulation heuristic from the Docker runtime. It matched
-the act images and discarded step commands, so `exit 7` reported success.
+The new upload-artifact layout took the relative path from canonical
+paths. It turns out that falls over on any symlinked directory that
+points elsewhere in the workspace: the file passes the containment
+check, its canonical path isn't under the search root, and the whole
+step dies claiming the file is outside the workspace. It isn't.
 
-Put /usr/local/bin and /usr/bin first on PATH in combined images, because
-the act image's bundled Node shadowed the version from setup-node.
+Canonical paths are for deciding what may be uploaded, not for naming
+things. Name files by the normalized path they were found at, like
+upload-artifact does, and keep the canonical path for the containment
+check alone. Dedup and exclusions use the same key, so excluding a
+link no longer takes the real file down with it.
 
-* fix(cli): make --platform labels deterministic and reject bad images
+The other thing is that `dist/**` matched nothing, because the glob
+crate's trailing `**` only yields directories. With `warn` a
 
-The override map was keyed by whatever case the user typed, while
-lookups compared case-insensitively by scanning it. So with
-"-P ubuntu-latest=a -P Ubuntu-Latest=b" you got whichever entry the
-HashMap felt like yielding first. Random image per run. This is not
-great.
-
-Lowercase the label when parsing, so both spellings land on the same
-key, the last one wins, and the looku
-
-**File**: `BREAKING_CHANGES.md` (modified, +24/-0)
+**File**: `BREAKING_CHANGES.md` (modified, +26/-0)
 ```diff
-@@ -1,5 +1,29 @@
+@@ -1,5 +1,31 @@
  # Breaking Changes
  
-+## `ExecutionConfig` gained a `platform_overrides` field (unreleased)
++## `actions/upload-artifact` follows GitHub's layout and rules (unreleased)
 +
-+Code that builds `wrkflw_executor::ExecutionConfig` as a struct literal must set
-+the new field, or it no longer compiles. `ExecutionConfig` and `RuntimeType` now
-+implement `Default`, so end a literal with `..Default::default()` to stay
-+compatible with later additions. The default runtime is `RuntimeType::Auto`.
++Artifact paths are now relative to where the `path:` search started, as on
++GitHub. After uploading `out/*` or `out/f.txt` and downloading into `got/`, the
++file is at `got/f.txt`, not `got/out/f.txt`. Update steps that read the old path.
 +
-+## Jobs on act images now report real step results (unreleased)
++A step that matches no files now passes with a warning. Set
++`if-no-files-found: error` to keep failing, or `ignore` to silence the warning.
++A missing artifact otherwise shows up at download, or not at all.
 +
-+Under the Docker runtime, any image name containing both `catthehacker` and
-+`act-` was treated as macOS emulation. Each step's command was discarded, so
-+steps on `ubuntu-*-medium` runners passed without running. Those steps now run
-+and can fail. Workflows that were passing there may start failing for real.
++`!` lines apply in order, so a later line can re-include a file. A `path:` line
++outside the workspace now fails the step instead of being skipped.
 +
-+This also affected `uses:` steps on any runner label, because actions such as
-+`actions/cache` and the `actions/setup-*` family are sent to
-+`catthehacker/ubuntu:act-latest`. Their commands now run too, including those
-+derived from a `with.command` input, such as `npm run`, `cargo` and `pip`.
++Hidden files are skipped unless `include-hidden-files: true` is set, as in
++upload-artifact v4. A file or directory is hidden if its name starts with a dot,
++so `path: .` no longer uploads `.git`, and `path: .config/` matches nothing.
 +
-+`RUNNER_OS`, `PATH` and `HOME` are also no longer overridden for those images.
++Uploading to an existing artifact name now fails the step, as on GitHub. Files
++used to be merged into the earlier upload. Give each matrix job its own name, or
++set `overwrite: true` to replace the artifact. With `overwrite: true`, parallel
++jobs sharing a name keep exactly one job's files, and which one is not defined.
 +
-+Combined images for `actions/setup-*` jobs now put `/usr/local/bin` and
-+`/usr/bin` first on `PATH`, so they are rebuilt once on the next run.
++A wildcard line that matches a directory now selects everything below it, as on
++GitHub. `packages/*/dist` uploads the contents of each `dist`, `!**/node_modules`
++excludes the contents, and `out/*` includes files in subdirectories of `out`.
 +
- ## `~/.wrkflw` moved to the platform base directories (unreleased)
+ ## `ExecutionConfig` gained a `platform_overrides` field (unreleased)
  
- wrkflw no longer writes to a hardcoded `~/.wrkflw/`. The new locations follow
+ Code that builds `wrkflw_executor::ExecutionConfig` as a struct literal must set
 ```
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,7 @@ wrkflw-watcher = { path = "crates/watcher", version = "0.8.0" }
- wrkflw-validators = { path = "crates/validators", version = "0.8.0" }
- 
- # External dependencies
--clap = { version = "4.3", features = ["derive"] }
-+clap = { version = "4.3", features = ["derive", "env"] }
- colored = "2.0"
- serde = { version = "1.0", features = ["derive"] }
- serde_yaml = "0.9"
+@@ -45,7 +45,7 @@ futures-util = "0.3"
+ futures = "0.3"
+ chrono = "0.4"
+ uuid = { version = "1.3", features = ["v4"] }
+-tempfile = "3.6"
++tempfile = "3.20"
+ tar = "0.4"
+ dirs = "5.0"
+ thiserror = "1.0"
 ```
 
-**File**: `README.md` (modified, +19/-0)
+**File**: `crates/executor/src/artifacts.rs` (modified, +1194/-74)
 ```diff
-@@ -130,6 +130,25 @@ wrkflw run --jobs .github/workflows/ci.yml
- wrkflw run --preserve-containers-on-failure .github/workflows/ci.yml
- ```
+@@ -2,10 +2,14 @@
+ //! `actions/download-artifact` emulation.
+ //!
+ //! Artifacts are stored as plain files under a per-workflow-run temporary
+-//! directory, preserving directory structure relative to the workspace.
++//! directory, laid out relative to where the `path:` search started, as
++//! `actions/upload-artifact` does.
  
-+### Custom runner images
-+
-+By default `runs-on` maps to a small built-in image, so `ubuntu-latest` runs in `ubuntu:latest`, which has few of the tools a GitHub runner has. Use `-P`/`--platform` to pick the image for a label, for example the larger images made for [act](https://github.com/nektos/act):
-+
-+```bash
-+wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml
-+
-+# Repeat the flag or separate entries with commas
-+wrkflw run -P ubuntu-latest=my/image:1 -P ubuntu-22.04=my/image:2 .github/workflows/ci.yml
-+
-+# Set it once for every command, including the TUI and watch mode
-+export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
-+```
-+
-+- A job-level `container:` still wins over `--platform`, which wins over the built-in image.
-+- Labels match case-insensitively, and the last value given for a label wins. Every label in `runs-on: [self-hosted, linux]` is tried, and `runs-on: ${{ matrix.os }}` is resolved per matrix combination.
-+- Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
-+- `--platform` replaces `WRKFLW_PLATFORM` entirely when both are set. It has no effect in emulation mode.
-+
- ### Trigger-aware execution
+-use std::collections::HashMap;
+-use std::path::{Path, PathBuf};
++use std::borrow::Cow;
++use std::collections::hash_map::Entry;
++use std::collections::{BTreeSet, HashMap};
++use std::ffi::OsStr;
++use std::path::{Component, Path, PathBuf};
+ use std::sync::Arc;
+ use tokio::sync::RwLock;
  
- Skip workflows whose `on:` block wouldn't fire for a given event/change set. Strict mode is on by default: `wrkflw run --event …` without `--diff` or `--changed-files` is rejected up front rather than silently skipping every `paths:`-gated workflow.
-```
-
-**File**: `crates/executor/README.md` (modified, +1/-3)
-```diff
-@@ -21,10 +21,8 @@ use wrkflw_executor::{execute_workflow, ExecutionConfig, RuntimeType};
- let cfg = ExecutionConfig {
-     runtime_type: RuntimeType::Docker,
-     verbose: true,
--    preserve_containers_on_failure: false,
--    secrets_config: None,
--    show_action_messages: false,
-     target_job: Some("build".to_string()), // run a single job
-+    ..Default::default()
- };
- 
- let workflow_path = std::path::Path::new(".github/workflows/ci.yml");
-```
-
-**File**: `crates/executor/src/docker.rs` (modified, +101/-52)
-```diff
-@@ -867,6 +867,42 @@ impl ContainerRuntime for DockerRuntime {
+@@ -34,6 +38,347 @@ fn sanitize_artifact_name(name: &str) -> Result<String, String> {
+     Ok(name.to_string())
  }
  
- // Move the actual implementation to internal methods
-+/// Build the create-container config for a step.
-+///
-+/// The image name must not change how a step's command runs. Wrapping `cmd`
-+/// in an entrypoint for particular images is how act images once lost every
-+/// step's command while reporting success.
-+fn build_container_config(
-+    image: &str,
-+    cmd: Vec<String>,
-+    env: Vec<String>,
-+    working_dir: &Path,
-+    host_config: HostConfig,
-+    is_windows_image: bool,
-+    entrypoint: Option<&str>,
-+) -> Config<String> {
-+    Config {
-+        image: Some(image.to_string()),
-+        // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
-+        cmd: if cmd.is_empty() { None } else { Some(cmd) },
-+        env: Some(env),
-+        working_dir: Some(working_dir.to_string_lossy().to_string()),
-+        host_config: Some(host_config),
-+        // Windows containers need specific configuration
-+        user: if is_windows_image {
-+            Some("ContainerAdministrator".to_string())
-+        } else {
-+            None
-+        },
-+        // An explicit entrypoint from action.yml wins. Otherwise keep the
-+        // image's own, which an empty cmd relies on.
-+        entrypoint: entrypoint
-+            .filter(|s| !s.is_empty())
-+            .map(|ep| vec![ep.to_string()]),
-+        ..Default::default()
++/// Resolve `.` and `..` lexically, so that paths from the same `path:` line
++/// compare equal however they were spelled.
++fn normalize(path: &Path) -> PathBuf {
++    let mut normalized = PathBuf::new();
++    for component in path.components() {
++        match component {
++            Component::CurDir => {}
++            Component::ParentDir => match normalized.components().next_back() {
++                Some(Component::Normal(_)) => {
++                    normalized.pop();
++                }
++                Some(Component::ParentDir) | None => normalized.push(".."),
++                _ => {}
++            },
++            other => normalized.push(other),
++        }
++    }
++    normalized
++}
++
++/// One glob or path from a `path:` input, resolved against the workspace.
++struct PathLine<'a> {
++    /// The line without trailing slashes, unless it is only slashes. An absolute
++    /// line inside the canonical workspace is made relative to it, so that every
++    /// path compared later shares one spelling of the workspace.
++    text: Cow<'a, str>,
++    /// The line joined to the workspace. Absolute lines stay as written.
++    path: PathBuf,
++    /// Whether the line names an existing directory.
++    is_dir: bool,
++}
++
++impl<'a> PathLine<'a> {
++    fn parse(workspace: &Path, canonical_workspace: &Path, line: &'a str) -> Self {
++        let trimmed = line.trim_end_matches('/');
++        let text = if trimmed.is_empty() { line } else { trimmed };
++        let text = match normalize(Path::new(text)).strip_prefix(canonical_workspace) {
++            Ok(rest) if rest.as_os_str().is_empty() => Cow::Borrowed("."),
++            Ok(rest) => Cow::Owned(rest.to_string_lossy().into_owned()),
++            Err(_) => Cow::Borrowed(text),
++        };
++        let path = workspace.join(text.as_ref());
++        let is_dir = path.is_dir();
++        Self { text, path, is_dir }
++    }
++
++    /// The components before the first wildcard, and the rest as a pattern.
++    /// Only the line itself is searched, as the workspace path may contain
++    /// wildcard characters.
++    fn split_at_wildcard(&self) -> (PathBuf, Option<String>) {
++        let components: Vec<_> = Path::new(self.text.as_ref()).components().collect();
++        let wildcard = components
++            .iter()
++            .position(|c| c.as_os_str().to_string_lossy().contains(['*', '?', '[']));
++        match wildcard {
++            Some(index) if !self.is_dir => {
++                let pattern: Vec<_> = components[index..]
++                    .iter()
++                    .map(|c| c.as_os_str().to_string_lossy())
++                    .collect();
++                (
++                    components[..index].iter().collect(),
++                    Some(pattern.join("/")),
++                )
++            }
++            _ => (components.iter().collect(), None),
++        }
 +    }
 +}
 +
- impl DockerRuntime {
-     async fn run_container_inner(
-         &self,
-@@ -889,7 +925,7 @@ impl DockerRuntime {
++/// Whether a file or directory is hidden, by the rule of upload-artifact.
++fn is_hidden(name: &OsStr) -> bool {
++    name.to_string_lossy().starts_with('.')
++}
++
++/// The directory a `path:` line starts from: the directory it names, its part
++/// before the first wildcard, or the parent of a single file.
++fn search_root(workspace: &Path, line: &PathLine<'_>) -> PathBuf {
++    let root = match line.split_at_wildcard() {
++        (base, Some(_)) => workspace.join(base),
++        (_, None) if line.is_dir => line.path.clone(),
++        (_, None) => line
++            .path
++            .parent()
++            .map_or_else(|| line.path.clone(), Path::to_path_buf),
++    };
++    normalize(&root)
++}
++
++/// A recursive search below one directory. Symlinked directories are followed
++/// as upload-artifact follows them, unless they leave the workspace or lead
++/// back to a directory the search is already inside.
++///
++/// A directory matching the pattern selects everything below it, as
++/// upload-artifact searches with implicit descendants: `out/*` includes
++/// `out/sub/a.txt`, and `!**/node_modules` excludes what is inside.
++#[derive(Clone, Copy)]
++struct Search<'a> {
++    pattern: Option<&'a glob::Pattern>,
++    /// How deep the pattern can match. `None` when it holds a `**`.
++    max_depth: Option<usize>,
++    include_hidden: bool,
++    canonical_workspace: &'a Path,
++}
++
++impl Searc
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +235/-10)
+```diff
+@@ -3376,6 +3376,34 @@ fn preprocess_with_value(value: &str, ctx: &StepExecutionContext<'_>) -> String
+         .unwrap_or_default()
+ }
+ 
++/// The `if-no-files-found` input of `actions/upload-artifact`.
++#[derive(Clone, Copy)]
++enum IfNoFilesFound {
++    Warn,
++    Error,
++    Ignore,
++}
++
++impl IfNoFilesFound {
++    fn parse(value: &str) -> Option<Self> {
++        match value {
++            "warn" => Some(Self::Warn),
++            "error" => Some(Self::Error),
++            "ignore" => Some(Self::Ignore),
++            _ => None,
++        }
++    }
++}
++
++/// A boolean action input, accepting the spellings of `core.getBooleanInput`.
++fn parse_boolean_input(value: &str) -> Option<bool> {
++    match value {
++        "true" | "True" | "TRUE" => Some(true),
++        "false" | "False" | "FALSE" => Some(false),
++        _ => None,
++    }
++}
++
+ /// Handle `actions/upload-artifact` emulation.
+ async fn handle_upload_artifact(
+     step_name: &str,
+@@ -3399,12 +3427,67 @@ async fn handle_upload_artifact(
+         ));
+     }
+ 
++    // `core.getInput` trims what it returns.
++    let input = |key: &str, default: &str| {
++        with.and_then(|w| w.get(key))
++            .map(|s| preprocess_with_value(s, ctx).trim().to_string())
++            .unwrap_or_else(|| default.to_string())
++    };
++
++    let if_no_files_input = input("if-no-files-found", "warn");
++    let Some(if_no_files) = IfNoFilesFound::parse(&if_no_files_input) else {
++        return Ok(StepResult::new(
++            step_name.to_string(),
++            StepStatus::Failure,
++            format!(
++                "Unrecognized if-no-files-found input. Provided: {}. Available options: warn, error, ignore",
++                if_no_files_input
++            ),
++        ));
++    };
++
++    let boolean = |key: &str| {
++        let value = input(key, "false");
++        parse_boolean_input(&value).ok_or_else(|| {
++            StepResult::new(
++                step_name.to_string(),
++                StepStatus::Failure,
++                format!(
++                    "Unrecognized {} input. Provided: {}. Available options: true, false",
++                    key, value
++                ),
++            )
++        })
++    };
++    let options = crate::artifacts::UploadOptions {
++        include_hidden: match boolean("include-hidden-files") {
++            Ok(value) => value,
++            Err(result) => return Ok(result),
++        },
++        overwrite: match boolean("overwrite") {
++            Ok(value) => value,
++            Err(result) => return Ok(result),
++        },
++    };
++
+     match ctx
+         .services
+         .artifact_store
+-        .upload(&name, &path_pattern, ctx.working_dir)
++        .upload(&name, &path_pattern, ctx.working_dir, options)
+         .await
+     {
++        Ok(0) => {
++            let message = format!("No files were found with the path: {}", path_pattern);
++            let status = match if_no_files {
++                IfNoFilesFound::Error => StepStatus::Failure,
++                IfNoFilesFound::Ignore => StepStatus::Success,
++                IfNoFilesFound::Warn => {
++                    wrkflw_logging::warning(&message);
++                    StepStatus::Success
++                }
++            };
++            Ok(StepResult::new(step_name.to_string(), status, message))
++        }
+         Ok(count) => {
+             wrkflw_logging::info(&format!(
+                 "  Uploaded artifact '{}': {} file(s)",
+@@ -10657,6 +10740,152 @@ runs:
+ 
+     // ---- Integration tests for artifact, cache, and needs.* wiring ----
+ 
++    /// Run an upload-artifact step in an empty workspace.
++    async fn upload_matching_nothing(if_no_files_found: Option<&str>) -> (StepResult, Vec<String>) {
++        let mut with = HashMap::new();
++        if let Some(value) = if_no_files_found {
++            with.insert("if-no-files-found".to_string(), value.to_string());
++        }
++        upload_step(with, "nothing/here", &[]).await
++    }
++
++    /// Run an upload-artifact step over a workspace holding `files`.
++    async fn upload_step(
++        mut with: HashMap<String, String>,
++        path: &str,
++        files: &[&str],
++    ) -> (StepResult, Vec<String>) {
++        let runtime = MockContainerRuntime::default();
++        let workflow = minimal_workflow();
++        let working_dir = tempfile::tempdir().unwrap();
++        let artifact_dir = tempfile::tempdir().unwrap();
++        let artifact_store = crate::artifacts::ArtifactStore::new(artifact_dir.path()).unwrap();
++        let cache_dir = tempfile::tempdir().unwrap();
++        let cache_store =
++            crate::cache::CacheStore::with_root(cache_dir.path().to_path_buf()).unwrap();
++        let pending = std::sync::Mutex::new(Vec::<PendingCacheSave>::new());
++
++        for file in files {
++            std::fs::write(working_dir.path().join(file), "x").unwrap();
++        }
++
++        with.insert("name".to_string(), "missing".to_string());
++        with.insert("path".to_string(), path.to_string());
++        let step = make_
+```
+
+---
+
+### Incident Patch 3: `87e74053` (2026-11-01)
+**Commit Message**: fix(runtime): stop capping steps and leaking timed-out containers (#151)
+
+* fix(runtime): stop capping steps and leaking timed-out containers
+
+Docker stopped waiting on a step after 5 minutes and Podman after 6,
+whatever timeout-minutes said, so long builds failed. The caps guarded
+against hangs, but job and step timeouts already cover that, except that
+a timed-out step left its container running after wrkflw exited.
+
+Remove the caps, and force-remove a container whose run is abandoned.
+
+* fix(docker): report the real exit code of a failed step
+
+Every Docker step that failed reported an exit code of -1, no
+matter what it actually exited with. A step doing "exit 42" gets -1.
+This is not great.
+
+It turns out that bollard hands a non-zero exit back as an *error*,
+DockerContainerWaitError, with the code tucked inside it. We only
+looked at the Ok case and threw everything else into a catch-all.
+That same catch-all also ate real failures, like the daemon going
+away, without saying a word.
+
+Pull the code out of the error, so Docker agrees with Podman. Only
+a wait that really failed yields -1 now, and that gets logged.
+
+* fix(runtime): finish the job when a timed-out container is cleaned u
+
+**File**: `crates/executor/src/container_guard.rs` (added, +159/-0)
+```diff
+@@ -0,0 +1,159 @@
++use std::process::{Command, Stdio};
++
++/// Cleans up a container when dropped while still armed.
++///
++/// A timed-out step drops the future driving its container, which would
++/// otherwise leave the container running after wrkflw has moved on or exited.
++/// Dropping can't await, so this goes through the CLI, and the cleanup carries
++/// on by itself if wrkflw exits straight afterwards. Docker therefore needs the
++/// `docker` CLI on `PATH`, even though it otherwise talks to the daemon through
++/// bollard. Kubernetes has the equivalent `PodGuard`.
++pub(crate) struct ContainerGuard {
++    cli: &'static str,
++    id: String,
++    armed: bool,
++    /// Kill the container but keep it for debugging, rather than removing it.
++    preserve: bool,
++    /// Drops the container from its runtime's exit sweep.
++    untrack: fn(&str),
++}
++
++impl ContainerGuard {
++    pub(crate) fn new(cli: &'static str, id: &str, preserve: bool, untrack: fn(&str)) -> Self {
++        Self {
++            cli,
++            id: id.to_string(),
++            armed: true,
++            preserve,
++            untrack,
++        }
++    }
++
++    /// The run finished normally, so its usual cleanup applies.
++    pub(crate) fn disarm(&mut self) {
++        self.armed = false;
++    }
++}
++
++impl Drop for ContainerGuard {
++    fn drop(&mut self) {
++        if !self.armed {
++            return;
++        }
++        (self.untrack)(&self.id);
++        let args: &[&str] = if self.preserve {
++            wrkflw_logging::info(&format!(
++                "Step cancelled, killing container {} and keeping it for debugging. \
++                 Use '{} logs {}' to inspect it.",
++                self.id, self.cli, self.id
++            ));
++            &["kill"]
++        } else {
++            wrkflw_logging::debug(&format!("Removing abandoned container {}", self.id));
++            &["rm", "-f"]
++        };
++        let spawned = Command::new(self.cli)
++            .args(args)
++            .arg(&self.id)
++            .stdin(Stdio::null())
++            .stdout(Stdio::null())
++            .stderr(Stdio::null())
++            .spawn();
++        match spawned {
++            // Only reaps it. If wrkflw exits first, the cleanup still finishes.
++            Ok(mut child) => {
++                std::thread::spawn(move || {
++                    let _ = child.wait();
++                });
++            }
++            Err(e) => {
++                wrkflw_logging::warning(&format!("Failed to clean up container {}: {}", self.id, e))
++            }
++        }
++    }
++}
++
++#[cfg(all(test, unix))]
++mod tests {
++    use super::*;
++    use std::fs;
++    use std::os::unix::fs::PermissionsExt;
++    use std::sync::Mutex;
++
++    static UNTRACKED: Mutex<Vec<String>> = Mutex::new(Vec::new());
++
++    fn record_untrack(id: &str) {
++        UNTRACKED.lock().unwrap().push(id.to_string());
++    }
++
++    fn was_untracked(id: &str) -> bool {
++        UNTRACKED.lock().unwrap().iter().any(|u| u == id)
++    }
++
++    /// A fake CLI that records its arguments, so nothing real is removed.
++    fn fake_cli(dir: &std::path::Path) -> (&'static str, std::path::PathBuf) {
++        let log = dir.join("calls");
++        let cli = dir.join("fake-cli");
++        fs::write(
++            &cli,
++            format!("#!/bin/sh\necho \"$@\" >> {}\n", log.display()),
++        )
++        .unwrap();
++        fs::set_permissions(&cli, fs::Permissions::from_mode(0o755)).unwrap();
++        (Box::leak(cli.display().to_string().into_boxed_str()), log)
++    }
++
++    fn wait_for(path: &std::path::Path) -> Option<String> {
++        for _ in 0..100 {
++            // The shell creates the file before it writes to it.
++            match fs::read_to_string(path) {
++                Ok(calls) if !calls.is_empty() => return Some(calls),
++                _ => {}
++            }
++            std::thread::sleep(std::time::Duration::from_millis(10));
++        }
++        None
++    }
++
++    #[test]
++    fn an_armed_guard_removes_the_container_when_dropped() {
++        let dir = tempfile::tempdir().unwrap();
++        let (cli, log) = fake_cli(dir.path());
++        drop(ContainerGuard::new(cli, "removed", false, record_untrack));
++        assert_eq!(wait_for(&log).as_deref(), Some("rm -f removed\n"));
++        assert!(was_untracked("removed"));
++    }
++
++    #[test]
++    fn a_preserving_guard_kills_the_container_without_removing_it() {
++        let dir = tempfile::tempdir().unwrap();
++        let (cli, log) = fake_cli(dir.path());
++        drop(ContainerGuard::new(cli, "preserved", true, record_untrack));
++        assert_eq!(wait_for(&log).as_deref(), Some("kill preserved\n"));
++        assert!(was_untracked("preserved"));
++    }
++
++    #[test]
++    fn a_disarmed_guard_leaves_the_container_alone() {
++        let dir = tempfile::tempdir().unwrap();
++        let (cli, log) = fake_cli(dir.path());
++        let mut guard = ContainerGuard::new(cli, "disarmed", false, record_untrack);
++        guard.disarm();
++        drop(guard);
++    
+```
+
+**File**: `crates/executor/src/docker.rs` (modified, +73/-38)
+```diff
+@@ -1,7 +1,8 @@
++use crate::container_guard::ContainerGuard;
+ use async_trait::async_trait;
+ use bollard::{
+     container::{Config, CreateContainerOptions},
+-    models::HostConfig,
++    models::{ContainerWaitResponse, HostConfig},
+     network::CreateNetworkOptions,
+     Docker,
+ };
+@@ -420,6 +421,25 @@ pub fn is_available() -> bool {
+     false
+ }
+ 
++/// The exit code of a finished container, or -1 if it can't be determined.
++fn wait_exit_code(
++    wait_result: Option<&Result<ContainerWaitResponse, bollard::errors::Error>>,
++) -> i32 {
++    match wait_result {
++        Some(Ok(exit)) => exit.status_code as i32,
++        // bollard reports a non-zero exit as an error
++        Some(Err(bollard::errors::Error::DockerContainerWaitError { code, .. })) => *code as i32,
++        Some(Err(e)) => {
++            wrkflw_logging::warning(&format!("Failed to wait for container: {}", e));
++            -1
++        }
++        None => {
++            wrkflw_logging::warning("Container wait returned no result");
++            -1
++        }
++    }
++}
++
+ // Add container to tracking
+ pub fn track_container(id: &str) {
+     if let Ok(mut containers) = RUNNING_CONTAINERS.lock() {
+@@ -643,24 +663,10 @@ impl ContainerRuntime for DockerRuntime {
+         // Print detailed debugging info
+         wrkflw_logging::info(&format!("Docker: Running container with image: {}", image));
+ 
+-        // Add a global timeout for all Docker operations to prevent freezing
+-        let timeout_duration = std::time::Duration::from_secs(360); // Increased outer timeout to 6 minutes
+-
+-        // Run the entire container operation with a timeout
+-        match tokio::time::timeout(
+-            timeout_duration,
+-            self.run_container_inner(image, cmd, env_vars, working_dir, volumes, entrypoint),
+-        )
+-        .await
+-        {
+-            Ok(result) => result,
+-            Err(_) => {
+-                wrkflw_logging::error("Docker operation timed out after 360 seconds");
+-                Err(ContainerError::ContainerExecution(
+-                    "Operation timed out".to_string(),
+-                ))
+-            }
+-        }
++        // A step runs as long as its job or step `timeout-minutes` allows. The
++        // engine enforces those, and dropping this future stops the container.
++        self.run_container_inner(image, cmd, env_vars, working_dir, volumes, entrypoint)
++            .await
+     }
+ 
+     async fn pull_image(&self, image: &str) -> Result<(), ContainerError> {
+@@ -1004,6 +1010,12 @@ impl DockerRuntime {
+ 
+         // Track the container before starting it to ensure cleanup even if starting fails
+         track_container(&container.id);
++        let mut guard = ContainerGuard::new(
++            "docker",
++            &container.id,
++            self.preserve_containers_on_failure,
++            untrack_container,
++        );
+ 
+         // Start container with a timeout
+         let start_result = tokio::time::timeout(
+@@ -1018,37 +1030,27 @@ impl DockerRuntime {
+                 // Clean up the container if start fails
+                 let _ = self.docker.remove_container(&container.id, None).await;
+                 untrack_container(&container.id);
++                guard.disarm();
+                 return Err(ContainerError::ContainerExecution(e.to_string()));
+             }
+             Err(_) => {
+                 // Clean up the container if starting times out
+                 let _ = self.docker.remove_container(&container.id, None).await;
+                 untrack_container(&container.id);
++                guard.disarm();
+                 return Err(ContainerError::ContainerExecution(
+                     "Container start timed out".to_string(),
+                 ));
+             }
          }
  
-         // Collect environment variables
--        let mut env: Vec<String> = env_vars
-+        let env: Vec<String> = env_vars
-             .iter()
-             .map(|(k, v)| format!("{}={}", k, v))
-             .collect();
-@@ -905,7 +941,6 @@ impl DockerRuntime {
- 
-         // Convert command vector to Vec<String>
-         let cmd_vec: Vec<String> = cmd.iter().map(|&s| s.to_string()).collect();
--        let has_cmd = !cmd_vec.is_empty();
- 
-         wrkflw_logging::debug(&format!("Running command in Docker: {:?}", cmd_vec));
-         wrkflw_logging::debug(&format!("Environment: {:?}", env));
-@@ -915,19 +950,6 @@ impl DockerRuntime {
-         let is_windows_image = image.contains("windows")
-             || image.contains("servercore")
-             || image.contains("nanoserver");
--        let is_macos_emu =
--            image.contains("act-") && (image.contains("catthehacker") || image.contains("nektos"));
+-        // Wait for container to finish with a timeout (300 seconds)
+-        let wait_result = tokio::time::timeout(
+-            std::time::Duration::from_secs(300),
+-            self.docker
+-                .wait_container::<String>(&container.id, None)
+-                .collect::<Vec<_>>(),
+-        )
+-        .await;
 -
--        // Add platform-specific environment variables
--        if is_macos_emu {
--            // Add macOS-specific environment variables
--            env.push("RUNNER_OS=macOS".to_string());
--            env.push("RUNNER_ARCH=X64".to_string());
--            env.push("TMPDIR=/tmp".to_string());
--            env.push("HOME=/root".to_string());
--            env.push("GITHUB_WORKSPACE=/github/workspace".to_string());
--            env.push("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".to_string());
--        }
- 
-         // Create appropriate container options based on platform
-         let options = Some(CreateContainerOptions {
-@@ -953,43 +975,15 @@ impl DockerRuntime {
-             }
-         };
- 
--        // Create container config with platform-specific settings
--        let mut config = Config {
--            image: Some(image.to_string()),
--            // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
--            cmd: if has_cmd { Some(cmd_vec) } else { None },
--            env: Some(env),
--            working_dir: Some(working_dir.to_string_lossy().to_string()),
--            host_config: Some(host_config),
--            // Windows containers need specific configuration
--            user: if is_windows_image {
--                Some("ContainerAdministrator".to_string())
--            } else {
--                None // Don't specify user for macOS emulation - use default root user
+-        let exit_code = match wait_result {
+-            Ok(results) => match results.first() {
+-                Some(Ok(exit)) => exit.status_code as i32,
+-                _ => -1,
 -            },
--            // Map appropriate entrypoint for different platforms.
--            // Priority: explicit entrypoint from action.yml > macOS bash wrapper > image default.
--            // Only apply the macOS bash wrapper when there is an explicit command to wrap;
--            // an empty cmd means "use the image's native ENTRYPOINT/CMD"
--            // and overriding it with bash would hang or discard the real entrypoint.
--            entrypoint: if let Some(ep) = entrypoint.filter(|s| !s.is_empty()) {
--                Some(vec![ep.to_string()])
--            } else if is_macos_emu && has_cmd {
--                // For macOS, ensure we use bash
--                Some(vec!["bash".to_string(), "-l".to_string(), "-c".to_string()])
--            } else {
--                None
--            },
--            ..Default::default()
+-            Err(_) => {
+-                wrkflw_logging::warning("Container wait operation timed out, treating as failure");
+-                -1
+-            }
 -        };
++        // Wait for the container to finish
++        let wait_result = self
++            .docker
++            .wait_container::<String>(&container.id, None)
++            .collect::<Vec<_>>()
++            .await;
++        let exit_code = wait_exit_code(wait_result.first());
+ 
+         // Get logs with a timeout
+         let log_options = Some(bollard::container::LogsOptions::<String> {
+@@ -1100,6 +1102,7 @@ impl DockerRuntime {
+             // Still untrack it from the automatic cleanup system to prevent it from being cleaned up later
+   
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@
+ pub mod action_resolver;
+ pub(crate) mod artifacts;
+ pub(crate) mod cache;
++mod container_guard;
+ pub mod dependency;
+ pub mod docker;
+ pub mod engine;
+```
+
+**File**: `crates/executor/src/podman.rs` (modified, +66/-66)
+```diff
+@@ -1,3 +1,4 @@
++use crate::container_guard::ContainerGuard;
+ use async_trait::async_trait;
+ use once_cell::sync::Lazy;
+ use std::collections::HashMap;
+@@ -148,54 +149,7 @@ impl PodmanRuntime {
+     ) -> Result<ContainerOutput, ContainerError> {
+         let timeout_duration = std::time::Duration::from_secs(360); // 6 minutes timeout
+ 
+-        let result = tokio::time::timeout(timeout_duration, async {
+-            let mut cmd = Command::new("podman");
+-            cmd.args(args);
 -
--        // Run platform-specific container setup
--        if is_macos_emu {
--            // Add special labels for macOS
--            let mut labels = HashMap::new();
--            labels.insert("wrkflw.platform".to_string(), "macos".to_string());
--  
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +335/-17)
-```diff
-@@ -82,6 +82,7 @@ async fn execute_github_workflow(
-     mut config: ExecutionConfig,
- ) -> Result<ExecutionResult, ExecutionError> {
-     config.runtime_type = detect_runtime(config.runtime_type);
-+    warn_if_overrides_unused(&config);
-     // 1. Parse workflow file
-     let workflow = parse_workflow(workflow_path)?;
- 
-@@ -238,6 +239,7 @@ async fn execute_github_workflow(
-             &all_job_results,
-             &artifact_store,
-             &cache_store,
-+            &config.platform_overrides,
-         )
-         .await?;
- 
-@@ -332,6 +334,7 @@ async fn execute_gitlab_pipeline(
-     mut config: ExecutionConfig,
- ) -> Result<ExecutionResult, ExecutionError> {
-     config.runtime_type = detect_runtime(config.runtime_type);
-+    warn_if_overrides_unused(&config);
-     wrkflw_logging::info("Executing GitLab CI/CD pipeline");
- 
-     // 1. Parse the GitLab pipeline file
-@@ -442,6 +445,7 @@ async fn execute_gitlab_pipeline(
-             &HashMap::new(),
-             &artifact_store,
-             &cache_store,
-+            &config.platform_overrides,
-         )
-         .await?;
- 
-@@ -648,24 +652,76 @@ fn initialize_runtime(
+-            if input.is_some() {
+-                cmd.stdin(Stdio::piped());
+-            }
+-            cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
+-
+-            wrkflw_logging::debug(&format!(
+-                "Running Podman command: podman {}",
+-                args.join(" ")
+-            ));
+-
+-            let mut child = cmd.spawn().map_err(|e| {
+-                ContainerError::ContainerStart(format!("Failed to spawn podman command: {}", e))
+-            })?;
+-
+-            // Send input if provided
+-            if let Some(input_data) = input {
+-                if let Some(stdin) = child.stdin.take() {
+-                    use tokio::io::AsyncWriteExt;
+-                    let mut stdin = stdin;
+-                    stdin.write_all(input_data.as_bytes()).await.map_err(|e| {
+-                        ContainerError::ContainerExecution(format!(
+-                            "Failed to write to stdin: {}",
+-                            e
+-                        ))
+-                    })?;
+-                    stdin.shutdown().await.map_err(|e| {
+-                        ContainerError::ContainerExecution(format!("Failed to close stdin: {}", e))
+-                    })?;
+-                }
+-            }
+-
+-            let output = child.wait_with_output().await.map_err(|e| {
+-                ContainerError::ContainerExecution(format!("Podman command failed: {}", e))
+-            })?;
+-
+-            Ok(ContainerOutput {
+-                stdout: String::from_utf8_lossy(&output.stdout).to_string(),
+-                stderr: String::from_utf8_lossy(&output.stderr).to_string(),
+-                exit_code: output.status.code().unwrap_or(-1),
+-            })
+-        })
+-        .await;
+-
+-        match result {
++        match tokio::time::timeout(timeout_duration, self.run_podman_command(args, input)).await {
+             Ok(output) => output,
+             Err(_) => {
+                 wrkflw_logging::error("Podman operation timed out after 360 seconds");
+@@ -205,6 +159,57 @@ impl PodmanRuntime {
+             }
+         }
      }
- }
- 
--#[derive(Debug, Clone, PartialEq)]
-+#[derive(Debug, Clone, Default, PartialEq)]
- pub enum RuntimeType {
-     /// Detect Docker first, then Podman, then fall back to emulation.
-+    #[default]
-     Auto,
-     Docker,
-     Podman,
-     Emulation,
-     SecureEmulation,
- }
- 
--#[derive(Debug, Clone)]
-+#[derive(Debug, Clone, Default)]
- pub struct ExecutionConfig {
-     pub runtime_type: RuntimeType,
-     pub verbose: bool,
-     pub preserve_containers_on_failure: bool,
-     pub secrets_config: Option<SecretConfig>,
-     pub show_action_messages: bool,
-     pub target_job: Option<String>,
-+    /// User-supplied `runs-on` label to image mappings. They win over the
-+    /// built-in table but lose to a job-level `container:`. Keys must be
-+    /// lowercase, as [`parse_platform_override`] returns them, because labels
-+    /// match case-insensitively.
-+    pub platform_overrides: HashMap<String, String>,
-+}
 +
-+/// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
-+///
-+/// The label is lowercased so labels differing only by case share one map key.
-+/// The image is later written to a Dockerfile `FROM` line, so whitespace is
-+/// rejected. No valid image reference contains any.
-+pub fn parse_platform_override(s: &str) -> Result<(String, String), String> {
-+    let (label, image) = s
-+        .split_once('=')
-+        .ok_or_else(|| format!("invalid LABEL=IMAGE: no `=` found in `{}`", s))?;
-+    let (label, image) = (label.trim(), image.trim());
-+    if label.is_empty() || image.is_empty() {
-+        return Err(format!(
-+            "invalid LABEL=IMAGE: label and image must both be set in `{}`",
-+            s
++    /// Run podman to completion, however long that takes.
++    async fn run_podman_command(
++        &self,
++        args: &[&str],
++        input: Option<&str>,
++    ) -> Result<ContainerOutput, ContainerError> {
++        let mut cmd = Command::new("podman");
++        cmd.args(args);
++        // A cancelled `podman run` may still be pulling, with no container for
++        // ContainerGuard to remove yet, and would otherwise start one later.
++        cmd.kill_on_drop(true);
++
++        if input.is_some() {
++            cmd.stdin(Stdio::piped());
++        }
++        cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
++
++        wrkflw_logging::debug(&format!(
++            "Running Podman command: podman {}",
++            args.join(" ")
 +        ));
-+    }
-+    if image.chars().any(char::is_whitespace) {
-+        return Err(format!(
-+            "invalid LABEL=IMAGE: image must not contain whitespace in `{}`",
-+            s
-+        ));
-+    }
-+    Ok((label.to_ascii_lowercase(), image.to_string()))
-+}
 +
-+/// Overrides only change which image a container runs, so they do nothing
-+/// when no container runs. Say so rather than ignoring the flag silently.
-+fn warn_if_overrides_unused(config: &ExecutionConfig) {
-+    if overrides_unused(&config.platform_overrides, &config.runtime_type) {
-+        wrkflw_logging::warning(
-+            "--platform has no effect in emulation mode: steps run on the host, not in an image",
-+        );
-+    }
-+}
++        let mut child = cmd.spawn().map_err(|e| {
++            ContainerError::ContainerStart(format!("Failed to spawn podman command: {}", e))
++        })?;
 +
-+fn overrides_unused(
-+    platform_overrides: &HashMap<String, String>,
-+    runtime_type: &RuntimeType,
-+) -> bool {
-+    !platform_overrides.is_empty()
-+        && matches!(
-+            runtime_type,
-+            RuntimeType::Emulation | RuntimeType::SecureEmulation
-+        )
++        // Send input if provided
++        if let Some(input_data) = input {
++            if let Some(stdin) = child.stdin.take() {
++                use tokio::io::AsyncWriteExt;
++                let mut stdin = stdin;
++                stdin.write_all(input_data.as_bytes()).await.map_err(|e| {
++                    ContainerError::ContainerExecution(format!("Failed to write to stdin: {}", e))
++                })?;
++                stdin.shutdown().await.map_err(|e| {
++                    ContainerError::ContainerExecution(format!("Failed to close stdin: {}", e))
++                })?;
++            }
++        }
++
++        let output = child.wait_with_output().await.map_err(|e| {
++            ContainerError::ContainerExecution(format!("Podman command failed: {}", e))
++        })?;
++
++        Ok(ContainerOutput {
++            stdout: String::from_utf8_lossy(&output.stdout).to_string(),
++            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
++            exit_code: output.status.code().unwrap_or(-1),
++        })
++    }
  }
  
- pub struct ExecutionResult {
-@@ -1692,6 +1748,11 @@ fn generate_combined_dockerfile(runtimes: &[SetupRuntime], base_image: &str) ->
+ pub fn is_available() -> bool {
+@@ -481,23 +486,10 @@ impl ContainerRuntime for PodmanRuntime {
+         // Print detailed debugging info
+         wrkflw_logging::info(&format!("Podman: Running container with image: {}", image));
  
-     dockerfile.push_str(" && \\\n    rm -rf /var/lib/apt/lists/*\n");
- 
-+    // Base images can bundle tools ahead of the system directories. The act
-+    // images do this with Node, which would shadow the version a setup action
-+    // just installed. Every install script lands in one of these directories.
-+    dockerfile.push_str("ENV PATH=/usr/local/bin:/usr/bin:$PATH\n");
-+
-     dockerfile
- }
- 
-@@ -1814,8 +1875,10 @@ async fn resolve_runner_image(
-     job: &Job,
-     steps: &[Step],
-     runtime: &dyn ContainerRuntime,
-+    platform_overrides: &HashMap<String, String>,
-+    matrix: Option<&HashMap<String, Value>>,
- ) -> Result<String, ExecutionError> {
--    let base_image = get_effective_runner_image(job);
-+    let base_image = get_effective_runner_image(job, platform_overrides, matrix);
- 
-     if job.container.is_some() {
-         return Ok(base_image);
-@@ -1845,6 +1908,7 @@ async fn execute_job_batch(
-     all_job_results: &HashMap<String, String>,
-     artifact_store: &crate::artifacts::ArtifactStore,
-     cache_store: &crate::cache::Cach
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +2/-2)
-```diff
-@@ -18,6 +18,6 @@ pub(crate) mod workflow_commands;
- // Re-export public items
- pub use docker::cleanup_resources;
- pub use engine::{
--    detect_runtime, execute_workflow, ExecutionConfig, JobResult, JobStatus, RuntimeType,
--    StepResult, StepStatus,
-+    detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
-+    JobStatus, RuntimeType, StepResult, StepStatus,
- };
-```
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +4/-0)
-```diff
-@@ -14,6 +14,7 @@ use crossterm::{
-     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
- };
- use ratatui::{backend::CrosstermBackend, Terminal};
-+use std::collections::HashMap;
- use std::io::{self, stdout};
- use std::path::PathBuf;
- use std::sync::mpsc;
-@@ -33,6 +34,7 @@ pub async fn run_wrkflw_tui(
-     preserve_containers_on_failure: bool,
-     show_action_messages: bool,
-     theme: Option<ThemePreference>,
-+    platform_overrides: HashMap<String, String>,
- ) -> io::Result<()> {
-     // Picks the palette, which may query the terminal, so it has to
-     // happen before raw mode and the event loop take over the tty.
-@@ -66,6 +68,7 @@ pub async fn run_wrkflw_tui(
-         tx.clone(),
-         preserve_containers_on_failure,
-         show_action_messages,
-+        platform_overrides.clone(),
-     );
- 
-     if app.validation_mode {
-@@ -163,6 +166,7 @@ pub async fn run_wrkflw_tui(
-                         runtime_type,
-                         verbose,
-                         show_action_messages,
-+                        platform_overrides,
-                     )
-                     .await
-                 } else if path.is_dir() {
+-        let timeout_duration = std::time::Duration::from_secs(360); // 6 minutes timeout
+-
+-        // Run the entire container operation with a timeout
+-        match tokio::time::timeout(
+-            timeout_duration,
+-         
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #142** (2026-10-31): feat(runtime): add a Kubernetes runtime backend (@bahdotsh)
-- **PR #141** (2026-10-31): feat: override runs-on images with --platform (#113) (@bahdotsh)
-- **PR #140** (2026-10-30): feat: support Gitea workflows in .gitea/workflows (#132) (@bahdotsh)
-- **PR #139** (2026-10-30): fix(ui): add a light theme for light terminals (#120) (@bahdotsh)
-- **PR #138** (2026-10-30): fix: use platform base directories instead of ~/.wrkflw (#117) (@bahdotsh)
-- **PR #137** (2026-10-30): feat(matrix): support expressions in matrix include and exclude (#112) (@bahdotsh)
+- **PR #155** (2026-11-02): feat(tui): select text with the mouse and copy it on release (@bahdotsh)
+- **PR #154** (2026-11-02): fix(tui): stop capturing the mouse so text selection and copy work (@bahdotsh)
+- **PR #153** (2026-11-02): fix: close the gaps found testing the agent features (@bahdotsh)
+- **PR #152** (2026-11-02): feat: make wrkflw usable by coding agents (@bahdotsh)
+- **PR #151** (2026-11-01): fix(runtime): stop capping steps and leaking timed-out containers (@bahdotsh)
+- **PR #150** (2026-11-01): fix(gitlab): honor image, rules, when and stage failures (@bahdotsh)
 
 ---
 
@@ -3463,13 +3661,13 @@ key, the last one wins, and the looku
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): add a Kubernetes runtime backend (#142)
+## X. gitlab): honor image, rules, when and stage failures (#150)
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `153b8ee0`: runtime): add a Kubernetes runtime backend (#142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bf6a27c`: gitlab): honor image, rules, when and stage failures (#150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -3477,35 +3675,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
-# Run each step as a pod in a Kubernetes cluster
-wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
+# Set GitLab pipeline variables, which rules and scripts both see
+wrkflw run --variable CI_COMMIT_TAG=v1.0.0 .gitlab-ci.yml
 
-| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
-| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
-### Kubernetes runtime
-
-`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
-
-```bash
-# Pick the cluster and namespace, then run as usual
-wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
-
-# Land on GPU nodes and request an accelerator for every step
-wrkflw run --runtime kubernetes \
-  --k8s-node-selector accelerator=a100 \
-  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
-  .github/workflows/train.yml
-
-# Private registry, and a registry wrkflw can push locally built images to
-wrkflw run --runtim
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `153b8ee0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bf6a27c` are properly handled with clean fallback behavior.

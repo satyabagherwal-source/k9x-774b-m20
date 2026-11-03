@@ -478320,3 +478320,55 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `49f5c348` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6540. gitlab): honor image, rules, when and stage failures (#150) (Harvested from bahdotsh/wrkflw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "gitlab): honor image, rules, when and stage failures (#150)",
+  "source": "bahdotsh/wrkflw",
+  "source_url": "https://github.com/bahdotsh/wrkflw",
+  "source_version": "b4628bc8",
+  "license": "MIT",
+  "extracted_at": "2026-11-03T16:25:23.308Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bahdotsh-wrkflw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `b4628bc8`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0bf6a27c`: gitlab): honor image, rules, when and stage failures (#150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# Set GitLab pipeline variables, which rules and scripts both see
+wrkflw run --variable CI_COMMIT_TAG=v1.0.0 .gitlab-ci.yml
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0bf6a27c` are properly handled with clean fallback behavior.

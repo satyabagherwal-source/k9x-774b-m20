@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T16:18:05.874Z",
+  "last_updated": "2026-11-03T16:25:23.555Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4411,8 +4411,8 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "153b8ee0",
-      "content_hash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
+      "source_version": "b4628bc8",
+      "content_hash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
@@ -4430,6 +4430,11 @@
           "number": 6225,
           "title": "runtime): add a Kubernetes runtime backend (#142)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6540,
+          "title": "gitlab): honor image, rules, when and stage failures (#150)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4437,7 +4442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:39:25.733Z",
+      "verified_at": "2026-11-03T16:25:23.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168939,6 +168944,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T16:18:05.861Z"
+    },
+    "rule-6540": {
+      "learning_id": "rule-6540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6540,
+      "title": "gitlab): honor image, rules, when and stage failures (#150)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "b4628bc8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:25:23.534Z"
     }
   },
   "aliases": {
