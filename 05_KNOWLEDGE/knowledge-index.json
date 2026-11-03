@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:38:46.701Z",
+  "last_updated": "2026-11-03T22:52:00.254Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5855,8 +5855,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "0d6c556e",
-      "content_hash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
+      "source_version": "9655d320",
+      "content_hash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -5909,6 +5909,11 @@
           "number": 5491,
           "title": "processes): keep native manager PID file fresh (#3319)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6648,
+          "title": "tui): avoid blocking keyboard capability probes (#3334)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5916,7 +5921,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T02:07:19.133Z",
+      "verified_at": "2026-11-03T22:52:00.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171057,6 +171062,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:38:46.688Z"
+    },
+    "rule-6648": {
+      "learning_id": "rule-6648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6648,
+      "title": "tui): avoid blocking keyboard capability probes (#3334)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "9655d320",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:52:00.227Z"
     }
   },
   "aliases": {

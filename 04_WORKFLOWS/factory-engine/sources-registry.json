@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T22:38:49.884Z",
-    "lastVerified": "2026-11-03T22:38:49.884Z",
+    "lastChecked": "2026-11-03T22:52:07.118Z",
+    "lastVerified": "2026-11-03T22:52:07.118Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -106,12 +106,12 @@
     "lastVerified": "2026-11-03T12:24:59.819Z"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:02:32.145Z",
-    "lastVerified": "2026-11-03T18:02:32.145Z",
+    "lastChecked": "2026-11-03T22:52:02.385Z",
+    "lastVerified": "2026-11-03T22:52:02.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -120,7 +120,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "43f90387"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -436,8 +437,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T22:15:26.307Z",
-    "lastVerified": "2026-11-03T22:15:26.307Z",
+    "lastChecked": "2026-11-03T22:52:07.108Z",
+    "lastVerified": "2026-11-03T22:52:07.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1586,22 +1587,21 @@
     "revisionIdentifier": "f16560b6"
   },
   "cachix-devenv": {
-    "name": "devenv",
+    "name": "cachix/devenv",
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:11:42.011Z",
-    "lastVerified": "2026-10-31T20:11:42.011Z",
+    "lastChecked": "2026-11-03T22:51:57.580Z",
+    "lastVerified": "2026-11-03T22:51:57.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
-    "contentHash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
+    "contentHash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0d6c556e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1656,8 +1656,8 @@
     "officialUrl": "https://github.com/SeaQL/sea-orm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:17:27.689Z",
-    "lastVerified": "2026-11-01T00:17:27.689Z",
+    "lastChecked": "2026-11-03T22:52:04.686Z",
+    "lastVerified": "2026-11-03T22:52:04.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seaql-sea-orm",
@@ -3787,9 +3787,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-01T01:05:11.783Z",
+    "lastChecked": "2026-11-03T22:51:59.635Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-01T01:05:11.783Z"
+    "lastVerified": "2026-11-03T22:51:59.635Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -10673,9 +10673,9 @@
   "rehypejs-rehype": {
     "name": "rehype",
     "officialUrl": "https://github.com/rehypejs/rehype",
-    "lastChecked": "2026-10-30T13:46:16.736Z",
+    "lastChecked": "2026-11-03T22:51:54.584Z",
     "revisionIdentifier": "cae74c7f",
-    "lastVerified": "2026-10-30T13:46:16.736Z"
+    "lastVerified": "2026-11-03T22:51:54.584Z"
   },
   "hmlongco-factory": {
     "name": "Factory",
@@ -11919,9 +11919,9 @@
   "shiguangschedule-shiguangschedule": {
     "name": "shiguangschedule",
     "officialUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
-    "lastChecked": "2026-10-30T22:34:25.128Z",
+    "lastChecked": "2026-11-03T22:51:57.103Z",
     "revisionIdentifier": "feabb68f",
-    "lastVerified": "2026-10-30T22:34:25.128Z"
+    "lastVerified": "2026-11-03T22:51:57.103Z"
   },
   "hf-speridlabs-idol": {
     "name": "speridlabs/idol",

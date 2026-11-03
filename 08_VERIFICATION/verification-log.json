@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-NX3B",
-    "timestamp": "2026-10-31T11:32:51.911Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-X051",
     "timestamp": "2026-10-31T11:39:55.765Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "gauthierpiarrette/highball",
     "learningId": "learn-github-gauthierpiarrette-highball",
     "contentHash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-8US4",
+    "timestamp": "2026-11-03T22:52:00.340Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

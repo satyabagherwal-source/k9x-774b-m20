@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "0d6c556e",
+    "sourceVersion": "9655d320",
     "license": "Apache-2.0",
-    "contentHash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
-    "lastHarvestedAt": "2026-10-29T02:07:19.228Z",
+    "contentHash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
+    "lastHarvestedAt": "2026-11-03T22:52:00.344Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
