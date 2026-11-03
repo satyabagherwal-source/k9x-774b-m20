@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `a1920121`  
+> **Source Version**: `9929d176`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T05:29:32.317Z  
+> **Timestamp**: 2026-11-03T17:45:50.816Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T05:29:31.896Z  
+> **Harvest Timestamp**: 2026-11-03T17:45:49.726Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11440 stars
+- **Stars / Engagement**: 11453 stars
 
 ---
 
@@ -1920,11 +1920,16 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14800** (2026-10-30): **fix: skip EFI variable updates when efivarfs is read-only**
-  *Symptoms*: ## What? (description)  When efivarfs can not be made writable (the kernel refuses the read-write remount with `EINVAL`), the sd-boot installer now logs a warning and skips the EFI variable and boot entry update instead of failing the install/upgrade.  - `efivarfs.NewFilesystemReaderWriter(true)` returns a typed `efivarfs.ErrWriteNotSupported` when the remount fails with `EINVAL`. - `Config.setup()` moves the EFI variable work into `updateEFIVariables()`. If it returns `ErrWriteNotSupported`, `setup()` warns and still runs `ExtraInstallStep` (the overlay install step) and returns the install result. - The "repoint the default entry to the booted one" write during upgrade is skipped the same way.  ## Why? (reasoning)  Fixes #14799. On an ODROID-M1 with U-Boot built without `CONFIG_EFI_RT_VOLATILE_STORE`, `talosctl upgrade` copies the UKI and `systemd-boot` and then fails with `failed to create efivarfs reader/writer: invalid argument`. The board boots fine without the variables (U-Boot finds `\EFI\BOOT\BOOTAA64.EFI`, and systemd-boot picks the newest UKI by version when no default is set).  Not covered, and worth a maintainer decision: without variables there is no one-shot boot and no rollback to the previous entry on a failed boot.  ## Testing  - Compiled, `gofmt` clean, `go vet` and `go test` pass for `./internal/pkg/efivarfs/` and `./internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/` (golang:1.27 container). - Not run: `make conformance`, `make lint`, `make doc
+- **Issue #14833** (2026-11-03): **feat: multi-doc SeccompProfileConfig**
+  *Symptoms*: Relates to https://github.com/siderolabs/talos/issues/14322  Factors out [`.machine.seccompProfiles`](https://docs.siderolabs.com/talos/v1.14/reference/configuration/v1alpha1/config#seccompprofiles) into multi-doc `SeccompProfileConfig` documents. Deprecates `.machine.seccompProfiles`, but keeps backward compatibility. 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
-- **Issue #14799** (2026-10-30): **Upgrade fails on U-Boot board when efivarfs is read-only: failed to create efivarfs reader/writer: invalid argument (ODROID-M1)**
-  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  `talosctl upgrade` on an ODROID-M1 (U-Boot, sd-boot UKI) copies the new UKI and `systemd-boot` to the EFI partition and then fails at the last step, `updating EFI variables`, with `failed to create efivarfs reader/writer: invalid argument` (exit code 7). The node keeps booting the old UKI.  I expected the upgrade to either complete or skip the EFI variable step with a warning, since the board boots fine without those variables (it uses the `\EFI\BOOT\BOOTAA64.EFI` fallback path).  ### Steps to reproduce  1. ODROID-M1 (RK3568), mainline U-Boot 2026.07 (Armbian build) in SPI flash, Talos v1.14.5 installed on NVMe from an imager `metal` image with the `odroid-m1` overlay (`ghcr.io/siderolabs/sbc-rockchip:v0.2.1`). Single-node control plane. 2. Build an installer with the same overlay:    `imager metal --arch arm64 --output-kind installer --overlay-name=odroid-m1 --overlay-image=ghcr.io/siderolabs/sbc-rockchip:v0.2.1` 3. Serve it from a local registry reachable from the node and run:    `talosctl -n <node> upgrade --image 127.0.0.1:5000/m1/installer:v1.14.5-m1 --wait`  I ran this once with that U-Boot and got the failure below. I did not repeat it on other hardware.  ### Logs and diagnostics  Output of the upgrade command (the whole failure; the node stayed up and rebooted normally afterwards):  ``` 192.168.1.104: 2026/10/30 12:34:00 copying /usr/install/arm64/vmlinuz.efi to /boot/EFI/EFI/Linux/Talos-v1.14.5~1.efi 192.168.1.
+- **Issue #14832** (2026-11-03): **fix: added container capabilities for non-root users**
+  *Symptoms*: Resolves: https://github.com/siderolabs/talos/issues/14817  Fixes added container capabilities being ineffective for non-root users.  Capabilities granted through `security.capabilities.add` were only put into the bounding, permitted and effective sets. For a non-root process the kernel recomputes the permitted set on execve from file capabilities and the ambient set, so the added capabilities were lost before the entrypoint ran.  
+  **Post-Mortem & Fix Analysis**:
+  > `integration/qemu` passed on https://github.com/siderolabs/talos/pull/14832/changes/8219d69b10862209814a1180e026a13bb7f023d6 , with the exception of unrelated failures on `TestIntegration/cli.UpgradeSuite/TestIncompatibleMachineConfig`, which is being addressed by https://github.com/siderolabs/talos/pull/14830
+  > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,698 +1946,1044 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1920121` (2026-10-29)
-**Commit Message**: feat: support BGP MD5 authentication password
+### Incident Patch 1: `13f26d6a` (2026-10-08)
+**Commit Message**: feat(security): give privileged containers a SELinux domain of their own
 
-Add an `authPassword` field to `BGPInstanceConfig` neighbors and pass it to GoBGP as the peer `AuthPassword`, enabling TCP MD5 signature authentication (RFC 2385) of the BGP session.
+With a new field in the SecurityProfileConfig, containerd
+labels each container pod_t with two random MCS categories, and clears
+the label of a privileged container, which then fails: the policy has
+no domain for it, and charts written for Fedora request spc_t, a type
+the Talos policy does not define.
 
-GoBGP applies the key to both the outgoing connection and the listening sockets; for VRF-bound instances the peer transport is already bound to the VRF device, so the key is installed with the VRF ifindex and authentication works there as well. The kernel matches keys by peer address (scoped to the VRF, if any, but not to the link), so unnumbered neighbors sharing a link-local address on different links can only have a single key: validation warns when unnumbered neighbors use different passwords (or only some of them have one), and the neighbor resolver logs the exact conflict once the link-local addresses are known.
+A privileged container now enters pod_privileged_t from its pod_file_t
+rootfs. The domain reads the host files and the /proc of every domain,
+writes /run, ignores the MCS categories, and pods may connect to its
+sockets; it never reads STATE, the protected devices or the system
+sockets. spc_t is an alias of it. The contexts file of the CRI gives
+pod_t and pod_file_t as the defaults, and the CRI and the kubelet,
+which create and relabel the files of every pod, ignore the categories.
 
-The password is limited to 80 bytes (TCP_MD5SIG_MAXKEYLEN), redacted from the machine configuration, and only a digest of it is part of the peer key, so changing it replaces the peer without keeping the plaintext around. As the resolved `BGPInstanceConfigs` resource now carries the password, it is marked as sensitive and registered as redac
+pod_t is now built on the pod_domain macro, which carries the rules
+pod_t had beyond pod_p, so that a privileged container keeps the NFS
+volumes, the CNI plugins and the rest of what a pod had before.
 
-**File**: `api/resource/definitions/network/network.proto` (modified, +1/-0)
+Same split domain happens with Talos containers as well, with privileged
+containers as well.
+
+We split whole range 0-1023 into slices
+
+**File**: `Dockerfile` (modified, +2/-0)
 ```diff
-@@ -75,6 +75,7 @@ message BGPNeighborConfigSpec {
-   BGPBFDConfigSpec bfd = 5;
-   uint32 local_asn = 6;
-   bool passive = 7;
-+  string auth_password = 8;
+@@ -837,6 +837,7 @@ COPY --chmod=0644 hack/zoneinfo/Etc/UTC /rootfs/usr/share/zoneinfo/Etc/UTC
+ COPY --chmod=0644 hack/nfsmount.conf /rootfs/etc/nfsmount.conf
+ COPY --chmod=0644 hack/selinux/virtual_domain_context hack/selinux/virtual_image_context /rootfs/etc/selinux/targeted/contexts/
+ COPY --link --chmod=0644 --from=selinux-generate /policy/file_contexts /rootfs/etc/selinux/targeted/contexts/files/file_contexts
++COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
+ COPY --chmod=0644 hack/containerd.toml /rootfs/etc/containerd/config.toml
+ COPY --chmod=0644 hack/cri-containerd.toml /rootfs/etc/cri/containerd.toml
+ COPY --chmod=0644 hack/cri-plugin.part /rootfs/etc/cri/conf.d/00-base.part
+@@ -929,6 +930,7 @@ COPY --chmod=0644 hack/zoneinfo/Etc/UTC /rootfs/usr/share/zoneinfo/Etc/UTC
+ COPY --chmod=0644 hack/nfsmount.conf /rootfs/etc/nfsmount.conf
+ COPY --chmod=0644 hack/selinux/virtual_domain_context hack/selinux/virtual_image_context /rootfs/etc/selinux/targeted/contexts/
+ COPY --link --chmod=0644 --from=selinux-generate /policy/file_contexts /rootfs/etc/selinux/targeted/contexts/files/file_contexts
++COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
+ COPY --chmod=0644 hack/containerd.toml /rootfs/etc/containerd/config.toml
+ COPY --chmod=0644 hack/cri-containerd.toml /rootfs/etc/cri/containerd.toml
+ COPY --chmod=0644 hack/cri-plugin.part /rootfs/etc/cri/conf.d/00-base.part
+```
+
+**File**: `api/resource/definitions/containers/containers.proto` (modified, +3/-0)
+```diff
+@@ -160,6 +160,9 @@ message ContainerSecuritySpec {
+   bool machined_access = 4;
+   // SeccompUnconfined applies no seccomp filter instead of the default profile.
+   bool seccomp_unconfined = 5;
++  // SELinuxLevel is the MCS level the container runs at, stable across restarts so that it keeps
++  // access to the files it writes; empty when containers run without categories.
++  string se_linux_level = 6;
  }
  
- // BGPPeerStatusSpec describes the status of a BGP peering session.
+ // ContainerSpecSpec is the spec for ContainerSpec.
+```
+
+**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +2/-0)
+```diff
+@@ -26,6 +26,8 @@ message APIServerConfigSpec {
+   bool startup_probes_enabled = 14;
+   bool use_authentication_config = 15;
+   repeated string args = 16;
++  // SELinuxLevel is the fixed MCS level of the kube-apiserver pod, empty when pods run without categories.
++  string se_linux_level = 17;
+ }
+ 
+ // AdmissionControlConfigSpec is configuration for kube-apiserver.
+```
+
+**File**: `api/resource/definitions/runtime/runtime.proto` (modified, +2/-0)
+```diff
+@@ -276,6 +276,8 @@ message SecurityStateSpec {
+   // SecureBootAuthorityFingerprints are the fingerprints of the `db` certificates which the
+   // firmware used to authorize the images loaded in this boot, as recorded in PCR 7.
+   repeated string secure_boot_authority_fingerprints = 9;
++  // SELinuxCategories is set when SELinux is enabled and workloads are labeled with MCS categories.
++  bool se_linux_categories = 10;
+ }
+ 
+ // ServicePIDSpec is the spec for the service PID.
 ```
 
 **File**: `hack/release.toml` (modified, +20/-0)
 ```diff
-@@ -925,6 +925,26 @@ Kubeconfigs are redacted from the machine configuration the same way as other se
- As kube-apiserver can't read files from the host, a `KubeAuthorizerConfig` with `webhook.connectionInfo.type: KubeConfigFile` is now rejected,
- as well as `authentication-token-webhook-*` flags in `KubeAPIServerConfig` `extraArgs`.
- The authorizer name should be a valid DNS-1123 subdomain, as required by kube-apiserver.
+@@ -282,6 +282,26 @@ and entering maintenance mode, so that disks enumerated late (SD cards, USB, som
+ 
+ On UEFI systems booted via `systemd-boot` the boot partition comes from the `LoaderDevicePartUUID` EFI variable, while the GRUB configuration
+ now passes the `talos.boot.partuuid=<UUID>` kernel argument (probed by GRUB at boot). The detected boot partition is published as the `bootpartition` resource.
 +"""
 +
-+    [notes.bgp_md5_auth]
-+        title = "BGP MD5 Authentication"
++    [notes.selinux_workloads]
++        title = "SELinux Workload Categories"
 +        description = """\
-+`BGPInstanceConfig` neighbors now accept an `authPassword` to enable TCP MD5 signature authentication (RFC 2385) of the BGP session,
-+including for VRF-bound BGP instances:
++A new `selinuxCategories` field of the `SecurityProfileConfig` document labels workloads with SELinux MCS categories,
++so that workloads sharing an SELinux type still cannot access each other's processes and files. `talosctl gen config`
++sets it for Talos 1.15+; clusters upgraded from older versions keep running their workloads without categories unless it is set.
 +
-+```yaml
-+apiVersion: v1alpha1
-+kind: BGPInstanceConfig
-+name: fabric
-+localASN: 65001
-+neighbors:
-+  - address: 192.0.2.1
-+    peerASN: 65000
-+    authPassword: s3cr3t
-+```
++The categories are split three ways: the CRI labels pods with a random pair from `c0-c767`, containers declared via
++`ContainerConfig` get a stable pair from `c768-c1007` derived from their name, and `c1008-c1023` are reserved for Talos
++(the kube-apiserver static pod runs at `s0:c1022,c1023`, so that it keeps access to its audit log across reboots).
 +
-+The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
++Pods run as `pod_t`, and privileged containers as `pod_privileged_t`, which reads the host files and `/proc` and ignores the
++categories. `spc_t` is an alias of it, so charts written for Fedora and RHEL keep working. The kubelet gets
++`/sys/fs/selinux` and the containers contexts file, so that it labels volumes and its plugin directories.
++
++A pod writing files which outlive it, to a hostPath or a local volume, needs a fixed `securityContext.seLinuxOptions.level`,
++else the pod of the next start cannot read them. The CRI skips the pairs of running containers when it draws one, so
++the pair is exclusive only while the pod runs.
  """
  
- [make_deps]
+     [notes.kubespan_peer_endpoint_filters]
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config.go` (modified, +7/-6)
+**File**: `hack/selinux/containers_contexts` (added, +2/-0)
 ```diff
-@@ -278,12 +278,13 @@ func buildBGPInstanceConfigSpec(cfg talosconfig.NetworkBGPInstanceConfig) networ
- 
- 	for _, neighbor := range cfg.Neighbors() {
- 		neighborSpec := network.BGPNeighborConfigSpec{
--			Address:  neighbor.Address(),
--			Link:     neighbor.Link(),
--			PeerASN:  neighbor.PeerASN(),
--			LocalASN: neighbor.LocalASN(),
--			Passive:  neighbor.Passive(),
--			HoldTime: neighbor.HoldTime(),
-+			Address:      neighbor.Address(),
-+			Link:         neighbor.Link(),
-+			PeerASN:      neighbor.PeerASN(),
-+			LocalASN:     neighbor.LocalASN(),
-+			Passive:      neighbor.Passive(),
-+			HoldTime:     neighbor.HoldTime(),
-+			AuthPassword: neighbor.AuthPassword(),
- 		}
- 
- 		if bfd := neighbor.BFD(); bfd != nil {
+@@ -0,0 +1,2 @@
++process = "system_u:system_r:pod_t:s0"
++file = "system_u:object_r:pod_file_t:s0"
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config_test.go` (modified, +3/-0)
+**File**: `internal/app/debug/debug.go` (modified, +3/-0)
 ```diff
-@@ -54,6 +54,7 @@ func newFabricConfig(holdTime time.Duration) *networkcfg.BGPInstanceConfigV1Alph
- 			NeighborLocalASN:      65004,
- 			NeighborPassive:       true,
- 			NeighborHoldTime:      15 * time.Second,
-+			NeighborAuthPassword:  "secret",
- 		},
+@@ -154,6 +154,9 @@ func createDebugContainer(
+ 		oci.WithHostNamespace(specs.NetworkNamespace),
+ 		oci.WithHostNamespace(specs.PIDNamespace),
+ 		oci.WithHostNamespace(specs.IPCNamespace),
++		// with host IPC, /dev/mqueue is the host's mqueue, which runc of a hostIPC pod relabels with
++		// the MCS categories of the pod
++		oci.WithoutMounts("/dev/mqueue"),
+ 		oci.WithHostDevices,
+ 		oci.WithAllDevicesAllowed,
+ 		oci.WithHostHostsFile,
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/config.go` (modified, +13/-1)
+```diff
+@@ -97,6 +97,12 @@ func (ctrl *ConfigController) reconcile(ctx context.Context, runtime controller.
  	}
  
-@@ -87,6 +88,8 @@ func (suite *BGPInstanceConfigSuite) TestRenderInlineBehaviorAndPreserveConfigur
- 		assertions.True(spec.Neighbors[1].Passive)
- 		assertions.Equal(15*time.Second, spec.Neighbors[1].HoldTime)
- 		assertions.Nil(spec.Neighbors[1].BFD)
-+		assertions.Empty(spec.Neighbors[0].AuthPassword)
-+		assertions.Equal("secret", spec.Neighbors[1].AuthPassword)
- 	}, rtestutils.WithNamespace(network.NamespaceName))
- 
- 	updatedInstance := newFabricConfig(12 * time.Second)
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +6/-0)
-```diff
-@@ -36,6 +36,7 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
- 		Conf: &gobgpapi.PeerConf{
- 			PeerAsn:         peer.Config.PeerASN,
- 			NeighborAddress: peer.Address,
-+			AuthPassword:    peer.Config.AuthPassword,
- 		},
- 		AfiSafis: []*gobgpapi.AfiSafi{
- 			afiSafi(gobgpapi.Family_AFI_IP, multipath),
-@@ -385,6 +386,11 @@ func PeerKey(peer Peer) string {
- 		peer.Config.HoldTime,
- 	)
- 
-+	if peer.Config.AuthPassword != "" {
-+		// Track password changes without keeping the plaintext in the key.
-+		fmt.Fprintf(&builder, "auth[%x]", sha256.Sum256([]byte(peer.Config.AuthPassword)))
-+	}
+ 	if machineConfig != nil {
++		var selinuxLevels map[string]string
 +
- 	if peer.Config.BFD != nil {
- 		fmt.Fprintf(
- 			&builder,
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +17/-4)
-```diff
-@@ -30,10 +30,11 @@ func TestBuildPeer(t *testing.T) {
- 		Address:       "fe80::1%eth0",
- 		BindInterface: "vrf-blue",
- 		Config: network.BGPNeighborConfigSpec{
--			PeerASN:  65002,
--			LocalASN: 65003,
--			Passive:  true,
--			HoldTime: 90 * time.Second,
-+			PeerASN:      65002,
-+			LocalASN:     65003,
-+			Passive:      true,
-+			HoldTime:     90 * time.Second,
-+			AuthPassword: "secret",
- 			BFD: &network.BGPBFDConfigSpec{
- 				TransmitInterval: 300 * time.Millisecond,
- 				ReceiveInterval:  400 * time.Millisecond,
-@@ -46,6 +47,7 @@ func TestBuildPeer(t *testing.T) {
- 	assert.Equal(t, uint32(65002), peer.GetConf().GetPeerAsn())
- 	assert.Equal(t, uint32(65003), peer.GetConf().GetLocalAsn())
- 	assert.True(t, peer.GetConf().GetReplacePeerAsn())
-+	assert.Equal(t, "secret", peer.GetConf().GetAuthPassword())
- 	assert.True(t, peer.GetTransport().GetPassiveMode())
- 	assert.Equal(t, "vrf-blue", peer.GetTransport().GetBindInterface())
- 	assert.Equal(t, uint64(90), peer.GetTimers().GetConfig().GetHoldTime())
-@@ -278,4 +280,15 @@ func TestKeys(t *testing.T) {
- 			BFD:      &network.BGPBFDConfigSpec{DetectMultiplier: 3},
- 		},
- 	}))
-+
-+	// A changed password has to replace the peer, but the key must not carry the plaintext.
-+	authenticated := peer
-+	authenticated.Config.AuthPassword = "secret"
-+
-+	rotated := peer
-+	rotated.Config.AuthPassword = "rotated"
-+
-+	assert.NotEqual(t, internalbgp.PeerKey(peer), internalbgp.PeerKey(authenticated))
-+	assert.NotEqual(t, internalbgp.PeerKey(authenticated), internalbgp.PeerKey(rotated))
-+	assert.NotContains(t, internalbgp.PeerKey(authenticated), "secret")
- }
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/export_test.go` (modified, +6/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"maps"
- 	"net/netip"
- 
-+	"github.com/jsimonetti/rtnetlink/v2"
- 	"github.com/osrg/gobgp/v4/pkg/apiutil"
- 	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
- 	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
-@@ -66,3 +67,8 @@ func ListImportCandidatesForTest(instance *Instance, selectors []netip.Prefix) (
- func SetInstancePeerIfacesForTest(instance *Instance, peerIfaces map[netip.Addr]string) {
- 	instance.peerIfaces = peerIfaces
- }
-+
-+// NewNeighborResolverForTest creates a neighbor resolver backed by a static neighbor snapshot.
-+func NewNeighborResolverForTest(neighbors []rtnetlink.NeighMessage) *NeighborResolver {
-+	return &NeighborResolver{load: func() []rtnetlink.NeighMessage { return neighbors }}
-+}
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +132/-0)
-```diff
-@@ -5,14 +5,18 @@
- package bgp_test
- 
- import (
-+	"net"
- 	"net/netip"
-+	"strconv"
-+	"syscall"
- 	"testing"
- 	"time"
- 
- 	gobgpapi "github.com/osrg/gobgp/v4/api"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"go.uber.org/zap"
-+	"golang.org/x/sys/unix"
- 
- 	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/network"
-@@ -70,6 +74,134 @@ func TestNewInstance(t *testing.T) {
- 	assert.True(t, internalbgp.InstanceMapsInitializedForTest(instance))
- }
- 
-+func TestInstanceAuthPasswordListenerKey(t *testing.T) {
-+	t.Parallel()
-+
-+	skipWithoutTCPMD5(t)
-+
-+	instance := internalbgp.NewInstance()
-+	t.Cleanup(instance.Stop)
-+
-+	port := freeBGPImportTestPort(t)
-+	config := network.BGPInstanceConfigSpec{LocalASN: 65001}
-+	peer := internalbgp.Peer{
-+		Address: "127.0.0.2",
-+		Config: network.BGPNeighborConfigSpec{
-+			Address:      netip.MustParseAddr("127.0.0.2"),
-+			PeerASN:      65002,
-+			Passive:      true,
-+			AuthPassword: "secret",
-+		},
-+	}
-+
-+	ensure := func() {
-+		require.NoError(t, instance.EnsureServer(
-+			t.Context(),
-+			zap.NewNop(),
-+			config,
-+			netip.MustParseAddr("10.0.0.1"),
-+			0,
-+			[]internalbgp.Peer{peer},
-+			nil,
-+			port,
-+			func() {},
-+		))
-+	}
-+
-+	// connect dials the listener from the peer address, signing the connection with the password if set.
-+	connect := func(password string) error {
-+		dialer := net.Dialer{
-+			LocalAddr: &net.TCPAddr{IP: net.ParseIP(peer.Address)},
-+			Timeout:   time.Second,
++		if securityProfile := machineConfig.Config().SecurityProfileConfig(); securityProfile != nil && securityProfile.SELinuxCategories() {
++			selinuxLevels = allocateSELinuxLevels(machineConfig.Config().ContainerConfigs())
 +		}
 +
-+		if password != "" {
-+			dialer.Control = func(_, _ string, conn syscall.RawConn) error {
-+				var sockoptErr error
-+
-+				if err := conn.Control(func(fd uintptr) {
-+					sockoptErr = unix.SetsockoptTCPMD5Sig(int(fd), unix.IPPROTO_TCP, unix.TCP_MD5SIG, tcpMD5Sig(net.IPv4(127, 0, 0, 1), password))
-+				}); err != nil {
-+					return err
-+				}
-+
-+				return sockoptErr
-+			}
-+		}
-+
-+		conn, err := dialer.DialContext(t.Context(), "tcp4", net.JoinHostPort("127.0.0.1", strconv.Itoa(int(port))))
-+		if err != nil {
-+			return err
-+		}
-+
-+		return conn.Close()
-+	}
-+
-+	// The kernel silently drops a SYN with a missing or mismatched MD5 signature for a peer with a key, so the
-+	// dial has to time out rather than fail for any other reason (connection refused, bind error).
-+	requireDropped := func(password string) {
-+		var netErr net.Error
-+
-+		err := connect(password)
-+		require.ErrorAs(t, err, &netErr)
-+		require.True(t, netErr.Timeout(), "SYN with password %q must be dropped, got %v", password, err)
-+	}
-+
-+	ensure()
-+
-+	server := internalbgp.InstanceServerForTest(instance)
-+
-+	requireDropped("")
-+	require.NoError(t, connect("secret"))
-+
-+	// Rotating the password must replace the listener key in place.
-+	peer.Config.AuthPassword = "rotated"
-+
-+	ensure()
-+	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "rotating the password must not restart GoBGP")
-+	require.Eventually(t, func() bool {
-+		return connect("rotated") == nil
-+	}, 5*time.Second, 100*time.Millisecond, "the listener key must be replaced together with the password")
-+	requireDropped("secret")
-+	requireDropped("")
-+
-+	peer.Config.AuthPassword = ""
-+
-+	ensure()
-+	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "removing the password must not restart GoBGP")
-+	require.Eventually(t, func() bool {
-+		return connect("") == nil
-+	}, 5*time.Second, 100*time.Millisecond, "the listener key must be removed together with the password")
-+}
-+
-+// tcpMD5Sig builds the TCP_MD5SIG option for an IPv4 peer.
-+func tcpMD5Sig(addr net.IP, password string) *unix.TCPMD5Sig {
-+	sig := &unix.TCPMD5Sig{Keylen: uint16(len(password))}
-+	sig.Addr.Family = unix.AF_INET
-+	copy(sig.Addr.Data[2:6], addr.To4())
-+	copy(sig.Key[:], password)
-+
-+	return sig
-+}
-+
-+// skipWithoutTCPMD5 skips the test when the kernel is built without CONFIG_TCP_MD5SIG.
-+func skipWithoutTCPMD5(t *testing.T) {
-+	t.Helper()
-+
-+	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_STREAM|unix.SOCK_CLOEXEC, 0)
-+	require.NoError(t, err)
-+
-+	defer unix.Close(fd) //nolint:errcheck
-+
-+	sig := unix.TCPMD5Sig{Keylen: 1}
-+	sig.Addr.Family = unix.AF_INET
-+	sig.Key[0] = 'x'
-+
-+	if err = unix.SetsockoptTCPMD5Sig(fd, unix.IPPROTO_TCP, unix.TCP_MD5SIG, &sig); err != nil {
-+		t.Skipf("kernel does not support TCP MD5 signatures: %v", err)
-+	}
-+}
-+
- func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 	t.Parallel()
+ 		for _, containerConfig := range machineConfig.Config().ContainerConfigs() {
+ 			containerSpecID := containerConfig.Name()
  
+@@ -114,7 +120,13 @@ func (ctrl *ConfigController) reconcile(ctx context.Context, runtime controller.
+ 				ctx, runtime,
+ 				containers.NewContainerSpec(containers.NamespaceName, containerSpecID),
+ 				func(res *containers.ContainerSpec) error {
+-					return applyConfig(res.TypedSpec(), containerConfig)
++					if err := applyConfig(res.TypedSpec(), containerConfig); err != nil {
++						return err
++					}
++
++					res.TypedSpec().Security.SELinuxLevel = selinuxLevels[containerSpecID]
++
++					return nil
+ 				},
+ 			); err != nil {
+ 				return fmt.Errorf("failed to write container spec %q: %w", containerSpecID, err)
 ```
 
 ---
 
-### Incident Patch 2: `42e6ca03` (2026-10-14)
-**Commit Message**: feat: add configFiles property into KubeCredentialProviderConfig
+### Incident Patch 2: `837feeaa` (2026-11-03)
+**Commit Message**: fix: ctr added caps for non-root user
 
-Adding the `configFiles` property for the `KubeCredentialProviderConfig` resource as suggested in https://github.com/siderolabs/extensions/pull/1286.
+Fixes added container capabilities being ineffective for non-root users.
 
-Signed-off-by: Jiri Tyr <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+Capabilities granted through `security.capabilities.add` were only put
+into the bounding, permitted and effective sets. For a non-root process
+the kernel recomputes the permitted set on execve from file capabilities
+and the ambient set, so the added capabilities were lost before the
+entrypoint ran.
 
-**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +4/-0)
+Raise the explicitly added capabilities into the inheritable and ambient
+sets when the final process user is not root. Root containers are left
+unchanged.
+
+Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/containers/containerd_runner.go` (modified, +3/-0)
 ```diff
-@@ -212,6 +212,8 @@ message KubeletConfigSpec {
-   map<string, string> register_with_taints = 16;
-   // KubepodsMemoryLimit is the desired kubepods memory.max in bytes; zero means unset.
-   uint64 kubepods_memory_limit = 17;
-+  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
-+  map<string, string> credential_provider_files = 18;
- }
+@@ -151,6 +151,9 @@ func (r *containerdRunner) Run(
+ 		runner.WithHostNetworkFiles(spec.Network.HostNetwork),
+ 		runner.WithSelinuxLabel(selinuxLabel),
+ 		runner.WithSeccompUnconfined(spec.Security.SeccompUnconfined),
++		// A non-root container (runAs or the image USER) would otherwise lose every capability it
++		// was granted on execve.
++		runner.WithAmbientCapabilitiesForNonRoot(true),
+ 		runner.WithOCISpecOpts(r.ociSpecOpts(spec, image)...),
+ 	)
  
- // KubeletKubeconfigSpec describes the current kubelet client credentials.
-@@ -231,6 +233,8 @@ message KubeletSpecSpec {
-   string expected_nodename = 4;
-   google.protobuf.Struct config = 5;
-   google.protobuf.Struct credential_provider_config = 6;
-+  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
-+  map<string, string> credential_provider_files = 7;
- }
- 
- // KubeletStatusSpec describes the current kubelet state.
 ```
 
-**File**: `hack/release.toml` (modified, +31/-0)
+**File**: `internal/app/machined/pkg/system/runner/containerd/containerd.go` (modified, +7/-0)
 ```diff
-@@ -38,6 +38,37 @@ Enable `console.vnc.enabled` in its `VirtualMachineConfig`; access requires the
- The listener accepts one viewer at a time and supports reconnecting without restarting the command.
- Use a viewer that supports unauthenticated RFB.
- Talos authenticates the tunnel, and no VNC TCP port is opened on the node.
-+"""
-+
-+    [notes.credential_provider_config_files]
-+        title = "Kubelet Credential Provider Config Files"
-+        description = """\
-+The `KubeCredentialProviderConfig` document supports a new `configFiles` field to provide configuration files for the credential provider plugins.
-+Each file is written to the `/etc/kubernetes/credentialproviders` directory, so it can be referenced in the `args` of a credential provider:
-+
-+```yaml
-+apiVersion: v1alpha1
-+kind: KubeCredentialProviderConfig
-+configuration:
-+  apiVersion: kubelet.config.k8s.io/v1
-+  kind: CredentialProviderConfig
-+  providers:
-+    - name: acr-credential-provider
-+      apiVersion: credentialprovider.kubelet.k8s.io/v1
-+      matchImages:
-+        - "*.azurecr.io"
-+      defaultCacheDuration: 10m
-+      args:
-+        - /etc/kubernetes/credentialproviders/azure.json
-+configFiles:
-+  - name: azure.json
-+    content: |
-+      {
-+        "cloud": "AzurePublicCloud",
-+        "tenantId": "<tenant-id>",
-+        "useManagedIdentityExtension": true
-+      }
-+```
- """
+@@ -449,6 +449,13 @@ func (c *containerdRunner) newOCISpecOpts(image oci.Image) []oci.SpecOpts {
+ 		c.opts.OCISpecOpts...,
+ 	)
  
-     [notes.workload_memory_limits]
++	// Applied after every caller option, so that it sees the final process user and capability
++	// sets. Ahead of seccomp is fine: the default profile only looks at the bounding and effective
++	// sets, which this leaves alone.
++	if c.opts.AmbientCapabilitiesForNonRoot {
++		specOpts = append(specOpts, WithAmbientFromPermittedForNonRoot)
++	}
++
+ 	switch {
+ 	case c.opts.SeccompUnconfined:
+ 		specOpts = append(
 ```
 
-**File**: `internal/app/machined/pkg/controllers/k8s/export_test.go` (modified, +4/-3)
+**File**: `internal/app/machined/pkg/system/runner/containerd/opts.go` (modified, +15/-0)
 ```diff
-@@ -6,7 +6,8 @@ package k8s
- 
- // Exported for testing.
- var (
--	AuthorizationConfig         = authorizationConfig
--	APIServerWebhookKubeconfigs = apiServerWebhookKubeconfigs
--	RemoveStaleKubeconfigs      = removeStaleKubeconfigs
-+	AuthorizationConfig                 = authorizationConfig
-+	APIServerWebhookKubeconfigs         = apiServerWebhookKubeconfigs
-+	RemoveStaleKubeconfigs              = removeStaleKubeconfigs
-+	WriteKubeletCredentialProviderFiles = writeKubeletCredentialProviderFiles
+@@ -20,6 +20,21 @@ import (
+ 	specs "github.com/opencontainers/runtime-spec/specs-go"
  )
-```
-
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config.go` (modified, +2/-0)
-```diff
-@@ -102,8 +102,10 @@ func NewKubeletConfigController() *KubeletConfigController {
  
- 				if k8sCredentialProviderConfig := cfgProvider.K8sCredentialProviderConfig(); k8sCredentialProviderConfig != nil {
- 					kubeletConfig.CredentialProviderConfig = k8sCredentialProviderConfig.Configuration()
-+					kubeletConfig.CredentialProviderFiles = k8sCredentialProviderConfig.ConfigFiles()
- 				} else {
- 					kubeletConfig.CredentialProviderConfig = nil
-+					kubeletConfig.CredentialProviderFiles = nil
- 				}
- 
- 				return nil
-```
-
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config_test.go` (modified, +53/-0)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
- 	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
- 	"github.com/siderolabs/talos/pkg/machinery/config/container"
-+	k8scfg "github.com/siderolabs/talos/pkg/machinery/config/types/k8s"
- 	"github.com/siderolabs/talos/pkg/machinery/config/types/meta"
- 	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime"
- 	"github.com/siderolabs/talos/pkg/machinery/config/types/v1alpha1"
-@@ -222,6 +223,58 @@ func (suite *KubeletConfigSuite) TestReconcileKubepodsMemoryLimit() {
- 	})
- }
- 
-+func (suite *KubeletConfigSuite) TestReconcileCredentialProvider() {
-+	u, err := url.Parse("https://foo:6443")
-+	suite.Require().NoError(err)
-+
-+	suite.createStaticPodServerStatus()
-+
-+	v1alpha1Cfg := &v1alpha1.Config{
-+		ConfigVersion: "v1alpha1",
-+		MachineConfig: &v1alpha1.MachineConfig{},
-+		ClusterConfig: &v1alpha1.ClusterConfig{
-+			ControlPlane: &v1alpha1.ControlPlaneConfig{ //nolint:staticcheck // testing deprecated field
-+				Endpoint: &v1alpha1.Endpoint{
-+					URL: u,
-+				},
-+			},
-+			ClusterNetwork: &v1alpha1.ClusterNetworkConfig{ //nolint:staticcheck // testing deprecated field
-+				ServiceSubnet: []string{constants.DefaultIPv4ServiceCIDR},
-+			},
-+		},
++// WithAmbientFromPermittedForNonRoot sets the inheritable and ambient sets of a non-root process to
++// its permitted set.
++func WithAmbientFromPermittedForNonRoot(_ context.Context, _ oci.Client, _ *containers.Container, s *specs.Spec) error {
++	if s.Process == nil || s.Process.User.UID == 0 || s.Process.Capabilities == nil {
++		return nil
 +	}
 +
-+	credentialProviderCfg := k8scfg.NewKubeCredentialProviderConfigV1Alpha1()
-+	credentialProviderCfg.CredentialProviderConfig.Object = map[string]any{
-+		"apiVersion": "kubelet.config.k8s.io/v1",
-+		"kind":       "CredentialProviderConfig",
-+	}
-+	credentialProviderCfg.CredentialProviderConfigFiles = []k8scfg.KubeCredentialProviderConfigFileV1Alpha1{
-+		{
-+			FileName:    "azure.json",
-+			FileContent: "{}",
-+		},
-+	}
++	capabilities := s.Process.Capabilities
 +
-+	ctr, err := container.New(v1alpha1Cfg, credentialProviderCfg)
-+	suite.Require().NoError(err)
-+
-+	suite.Create(config.NewMachineConfig(ctr))
-+
-+	ctest.AssertResource(suite, k8s.KubeletID, func(r *k8s.KubeletConfig, asrt *assert.Assertions) {
-+		spec := r.TypedSpec()
-+
-+		asrt.Equal(
-+			map[string]any{
-+				"apiVersion": "kubelet.config.k8s.io/v1",
-+				"kind":       "CredentialProviderConfig",
-+			},
-+			spec.CredentialProviderConfig,
-+		)
-+		asrt.Equal(map[string]string{"azure.json": "{}"}, spec.CredentialProviderFiles)
-+	})
-+}
-+
- func TestKubeletConfigSuite(t *testing.T) {
- 	t.Parallel()
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service.go` (modified, +66/-0)
-```diff
-@@ -212,6 +212,10 @@ func (ctrl *KubeletServiceController) Run(ctx context.Context, r controller.Runt
- 			return fmt.Errorf("error writing kubelet credential provider configuration: %w", err)
- 		}
- 
-+		if err = writeKubeletCredentialProviderFiles(constants.KubeletCredentialProviderConfigFilesDir, cfgSpec.CredentialProviderFiles); err != nil {
-+			return fmt.Errorf("error writing kubelet credential provider files: %w", err)
-+		}
-+
- 		_, running, err := ctrl.V1Alpha1Services.IsRunning("kubelet")
- 		if err != nil {
- 			ctrl.V1Alpha1Services.Load(&services.Kubelet{})
-@@ -357,6 +361,68 @@ func (ctrl *KubeletServiceController) writeKubeletCredentialProviderConfig(cfgSp
- 	return os.WriteFile(constants.KubeletCredentialProviderConfig, buf.Bytes(), 0o600)
- }
- 
-+// writeKubeletCredentialProviderFiles writes the credential provider config files into dir
-+// and removes any files in dir which are not part of files.
-+func writeKubeletCredentialProviderFiles(dir string, files map[string]string) error {
-+	if len(files) == 0 {
-+		return os.RemoveAll(dir)
-+	}
-+
-+	if err := os.MkdirAll(dir, 0o700); err != nil {
-+		return err
-+	}
-+
-+	entries, err := os.ReadDir(dir)
-+	if err != nil {
-+		return err
-+	}
-+
-+	for _, entry := range entries {
-+		if _, ok := files[entry.Name()]; ok {
-+			continue
-+		}
-+
-+		if err = os.RemoveAll(filepath.Join(dir, entry.Name())); err != nil {
-+			return err
-+		}
-+	}
-+
-+	for name, content := range files {
-+		if err = writeFileAtomic(filepath.Join(dir, name), []byte(content)); err != nil {
-+			return err
-+		}
-+	}
++	capabilities.Inheritable = slices.Clone(capabilities.Permitted)
++	capabilities.Ambient = slices.Clone(capabilities.Permitted)
 +
 +	return nil
 +}
 +
-+// writeFileAtomic writes data to a temporary file in the directory of path and renames it over path,
-+// so that concurrent readers (e.g. credential provider plugins exec'd by kubelet) never observe a partially written file.
-+//
-+// The file is created with permissions 0600.
-+func writeFileAtomic(path string, data []byte) error {
-+	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp-*")
-+	if err != nil {
-+		return err
-+	}
-+
-+	tmpPath := tmp.Name()
-+
-+	defer os.Remove(tmpPath) //nolint:errcheck
-+
-+	if _, err = tmp.Write(data); err != nil {
-+		tmp.Close() //nolint:errcheck
-+
-+		return err
-+	}
-+
-+	if err = tmp.Close(); err != nil {
-+		return err
-+	}
-+
-+	return os.Rename(tmpPath, path)
-+}
-+
- // updateKubeconfig updates the kubeconfig of kubelet with the given endpoint if it exists.
- func (ctrl *KubeletServiceController) updateKubeconfig(newEndpoint *url.URL, newTLSServerName string, acceptedCAs []*talosx509.PEMEncodedCertificate, logger *zap.Logger) error {
- 	config, err := clientcmd.LoadFromFile(constants.KubeletKubeconfig)
+ // WithRootfsPropagation sets the root filesystem propagation.
+ func WithRootfsPropagation(rp string) oci.SpecOpts {
+ 	return func(_ context.Context, _ oci.Client, _ *containers.Container, s *specs.Spec) error {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service_test.go` (added, +64/-0)
+**File**: `internal/app/machined/pkg/system/runner/containerd/opts_test.go` (modified, +117/-0)
 ```diff
-@@ -0,0 +1,64 @@
+@@ -5,6 +5,7 @@
+ package containerd_test
+ 
+ import (
++	"context"
+ 	"testing"
+ 
+ 	ctrdcontainers "github.com/containerd/containerd/v2/core/containers"
+@@ -14,10 +15,126 @@ import (
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
++	containersadapter "github.com/siderolabs/talos/internal/app/machined/pkg/adapters/containers"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/system/runner"
+ 	containerdrunner "github.com/siderolabs/talos/internal/app/machined/pkg/system/runner/containerd"
++	"github.com/siderolabs/talos/pkg/machinery/resources/containers"
+ )
+ 
++func TestOCISpecOptsAmbientCapabilities(t *testing.T) {
++	t.Parallel()
++
++	grantable := []string{"CAP_NET_BIND_SERVICE", "CAP_CHOWN", "CAP_SETFCAP"}
++
++	withUID := func(uid uint32) oci.SpecOpts {
++		return func(_ context.Context, _ oci.Client, _ *ctrdcontainers.Container, s *specs.Spec) error {
++			s.Process.User.UID = uid
++
++			return nil
++		}
++	}
++
++	for _, test := range []struct {
++		name     string
++		uid      uint32
++		security containers.ContainerSecuritySpec
++		// userLast sets the user after the capability options, the way an option appended later
++		// to the caller's chain would.
++		userLast      bool
++		disabled      bool
++		expectAmbient []string
++	}{
++		{
++			name: "non-root with a single added capability",
++			uid:  65534,
++			security: containers.ContainerSecuritySpec{
++				CapabilitiesDrop: []string{"ALL"},
++				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
++			},
++			expectAmbient: []string{"CAP_NET_BIND_SERVICE"},
++		},
++		{
++			name: "non-root user set after the capability options",
++			uid:  65534,
++			security: containers.ContainerSecuritySpec{
++				CapabilitiesDrop: []string{"ALL"},
++				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
++			},
++			userLast:      true,
++			expectAmbient: []string{"CAP_NET_BIND_SERVICE"},
++		},
++		{
++			name:          "non-root privileged",
++			uid:           1000,
++			security:      containers.ContainerSecuritySpec{Privileged: true},
++			expectAmbient: grantable,
++		},
++		{
++			name: "non-root privileged with a partial drop",
++			uid:  1000,
++			security: containers.ContainerSecuritySpec{
++				Privileged:       true,
++				CapabilitiesDrop: []string{"CHOWN"},
++			},
++			expectAmbient: []string{"CAP_NET_BIND_SERVICE", "CAP_SETFCAP"},
++		},
++		{
++			name:          "non-root restricted",
++			uid:           1000,
++			security:      containers.ContainerSecuritySpec{},
++			expectAmbient: []string{},
++		},
++		{
++			name:     "root privileged",
++			uid:      0,
++			security: containers.ContainerSecuritySpec{Privileged: true},
++		},
++		{
++			name: "non-root with the option off",
++			uid:  65534,
++			security: containers.ContainerSecuritySpec{
++				CapabilitiesDrop: []string{"ALL"},
++				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
++			},
++			disabled: true,
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			callerOpts := containersadapter.ContainerSecuritySpec(&test.security).OCISpecOpts(grantable)
++
++			if test.userLast {
++				callerOpts = append(callerOpts, withUID(test.uid))
++			} else {
++				callerOpts = append([]oci.SpecOpts{withUID(test.uid)}, callerOpts...)
++			}
++
++			opts := containerdrunner.OCISpecOpts(
++				&runner.Args{ID: "test", ProcessArgs: []string{"/bin/true"}},
++				runner.WithOCISpecOpts(callerOpts...),
++				runner.WithAmbientCapabilitiesForNonRoot(!test.disabled),
++			)
++
++			spec, err := oci.GenerateSpec(namespaces.WithNamespace(t.Context(), "test"), nil, &ctrdcontainers.Container{ID: "test"}, opts...)
++			require.NoError(t, err)
++
++			capabilities := spec.Process.Capabilities
++			require.NotNil(t, capabilities)
++
++			if test.expectAmbient == nil {
++				assert.Empty(t, capabilities.Ambient)
++
++				return
++			}
++
++			assert.ElementsMatch(t, test.expectAmbient, capabilities.Ambient)
++			assert.ElementsMatch(t, capabilities.Permitted, capabilities.Ambient, "ambient differs from permitted")
++			assert.ElementsMatch(t, capabilities.Permitted, capabilities.Inheritable, "inheritable differs from permitted")
++		})
++	}
++}
++
+ func TestOCISpecOptsSeccomp(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `internal/app/machined/pkg/system/runner/runner.go` (modified, +14/-0)
+```diff
+@@ -101,6 +101,9 @@ type Options struct {
+ 	OverrideSeccompProfile func(*specs.LinuxSeccomp)
+ 	// SeccompUnconfined applies no seccomp profile at all, instead of the default one.
+ 	SeccompUnconfined bool
++	// AmbientCapabilitiesForNonRoot raises the final permitted capabilities of a non-root process
++	// into its inheritable and ambient sets.
++	AmbientCapabilitiesForNonRoot bool
+ 	// DroppedCapabilities is the list of capabilities to drop.
+ 	DroppedCapabilities []string
+ 	// SelinuxLabel is the SELinux label to be assigned
+@@ -276,6 +279,17 @@ func WithSeccompUnconfined(enabled bool) Option {
+ 	}
+ }
+ 
++// WithAmbientCapabilitiesForNonRoot controls whether a non-root process keeps its permitted
++// capabilities across execve, by raising them into the inheritable and ambient sets.
++//
++// Off by default. It is applied after every OCI spec option given through WithOCISpecOpts, so it
++// sees the final process user and the final capability sets.
++func WithAmbientCapabilitiesForNonRoot(enabled bool) Option {
++	return func(args *Options) {
++		args.AmbientCapabilitiesForNonRoot = enabled
++	}
++}
++
+ // WithDroppedCapabilities sets the list of capabilities to drop.
+ func WithDroppedCapabilities(caps map[string]struct{}) Option {
+ 	return func(args *Options) {
+```
+
+**File**: `internal/integration/api/containers.go` (modified, +85/-0)
+```diff
+@@ -640,6 +640,91 @@ func (suite *ContainersSuite) TestCapabilities() {
+ 		suite.Assert().Contains(logs, "CapEff:\t0000000000000000",
+ 			"the restricted profile left capabilities in the effective set")
+ 	})
++
++	// A non-root process loses every capability that is not ambient on execve, so this is the case
++	// that tells an added capability that is merely bounded apart from one that is actually usable.
++	suite.Run("non-root-added-capability-effective", func() {
++		ctx, name, _ := suite.setupContainer("caps-non-root-add")
++
++		var (
++			uid int32 = 65534
++			gid int32 = 65534
++		)
++
++		doc := suite.shellContainer(name, readCapSets)
++		doc.RunAsConfig = &containercfg.ContainerRunAs{
++			RunAsUID: &uid,
++			RunAsGID: &gid,
++		}
++		doc.SecurityConfig = &containercfg.ContainerSecurity{
++			SecurityCapabilities: &containercfg.ContainerCapabilities{
++				CapabilitiesDropConfig: []string{"ALL"},
++				CapabilitiesAddConfig:  []string{"NET_BIND_SERVICE"},
++			},
++		}
++
++		suite.applyContainers(ctx, doc)
++
++		logs := suite.assertContainerLogged(ctx, name, "CapAmb:")
++
++		// CAP_NET_BIND_SERVICE is bit 10. Every set is checked, so that a capability leaking into
++		// bounding or permitted alongside it is caught too, not only a missing one.
++		for _, set := range capSets {
++			suite.Assert().Equal("0000000000000400", suite.capSet(logs, set),
++				"%s is not exactly the added capability for a non-root process", set)
++		}
++	})
++
++	// The privileged profile has no add list at all, so this is what tells a non-root fix tied to
++	// add apart from one covering every capability the container ends up with.
++	suite.Run("non-root-privileged-effective", func() {
++		ctx, name, _ := suite.setupContainer("caps-non-root-privileged")
++
++		var (
++			uid int32 = 65534
++			gid int32 = 65534
++		)
++
++		doc := suite.shellContainer(name, readCapSets)
++		doc.RunAsConfig = &containercfg.ContainerRunAs{
++			RunAsUID: &uid,
++			RunAsGID: &gid,
++		}
++		doc.SecurityConfig = &containercfg.ContainerSecurity{
++			SecurityProfile: configcontainer.ContainerSecurityProfilePrivileged,
++		}
++
++		suite.applyContainers(ctx, doc)
++
++		logs := suite.assertContainerLogged(ctx, name, "CapAmb:")
++
++		// The grantable set depends on the kernel, so compare the sets against one another rather
++		// than against a fixed mask.
++		bounding := suite.capSet(logs, "CapBnd")
++
++		suite.Assert().NotEqual("0000000000000000", bounding, "privileged container has an empty bounding set")
++
++		for _, set := range []string{"CapInh", "CapPrm", "CapEff", "CapAmb"} {
++			suite.Assert().Equal(bounding, suite.capSet(logs, set),
++				"%s differs from the bounding set for a non-root privileged process", set)
++		}
++	})
++}
++
++// readCapSets prints every capability set of the container process.
++const readCapSets = "grep -E '^Cap(Inh|Prm|Eff|Bnd|Amb):' /proc/self/status"
++
++// capSets lists the capability sets readCapSets prints.
++var capSets = []string{"CapInh", "CapPrm", "CapEff", "CapBnd", "CapAmb"}
++
++// capSet extracts the hex mask of the named capability set from the container logs.
++func (suite *ContainersSuite) capSet(logs, set string) string {
++	_, rest, found := strings.Cut(logs, set+":\t")
++	suite.Require().True(found, "no %s line in the container logs:\n%s", set, logs)
++
++	mask, _, _ := strings.Cut(rest, "\n")
++
++	return strings.TrimSpace(mask)
+ }
+ 
+ // TestSeccompProfile verifies that every container is filtered by the default seccomp profile, the
+```
+
+**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
+```diff
+@@ -1784,9 +1784,9 @@
+         "capabilities": {
+           "$ref": "#/$defs/container.ContainerCapabilities",
+           "title": "capabilities",
+-          "description": "Linux capabilities to add or drop on top of the profile.\n",
+-          "markdownDescription": "Linux capabilities to add or drop on top of the profile.",
+-          "x-intellij-html-description": "\u003cp\u003eLinux capabilities to add or drop on top of the profile.\u003c/p\u003e\n"
++          "description": "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through runAs or the image’s USER), the\nresulting capabilities (the profile’s, minus drop, plus add) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.\n",
++          "markdownDescription": "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through `runAs` or the image's `USER`), the\nresulting capabilities (the profile's, minus `drop`, plus `add`) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.",
++          "x-intellij-html-description": "\u003cp\u003eLinux capabilities to add or drop on top of the profile.\u003c/p\u003e\n\n\u003cp\u003eWhen the container runs as a non-root user (through \u003ccode\u003erunAs\u003c/code\u003e or the image\u0026rsquo;s \u003ccode\u003eUSER\u003c/code\u003e), the\nresulting capabilities (the profile\u0026rsquo;s, minus \u003ccode\u003edrop\u003c/code\u003e, plus \u003ccode\u003eadd\u003c/code\u003e) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.\u003c/p\u003e\n"
+         },
+         "machinedAccess": {
+           "type": "boolean",
+```
+
+**File**: `pkg/machinery/config/types/container/container_doc.go` (modified, +1/-1)
+```diff
+@@ -773,7 +773,7 @@ func (ContainerSecurity) Doc() *encoder.Doc {
+ 				Name:        "capabilities",
+ 				Type:        "ContainerCapabilities",
+ 				Note:        "",
+-				Description: "Linux capabilities to add or drop on top of the profile.",
++				Description: "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through `runAs` or the image's `USER`), the\nresulting capabilities (the profile's, minus `drop`, plus `add`) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.",
+ 				Comments:    [3]string{"" /* encoder.HeadComment */, "Linux capabilities to add or drop on top of the profile." /* encoder.LineComment */, "" /* encoder.FootComment */},
+ 			},
+ 			{
+```
+
+---
+
+### Incident Patch 3: `6d2f793b` (2026-11-02)
+**Commit Message**: feat: configurable stop timeout for containers
+
+`ContainerConfig` gets `lifecycle.stopTimeout`: the time a container has to exit after SIGTERM before it is killed with SIGKILL. It defaults to 10 seconds, must be greater than 0, and is used whenever Talos stops the container: on shutdown, reboot and upgrade, when it is replaced after a change or restarted with `talosctl restart`, and when it is removed.
+
+The timeout is limited to 4 minutes, so that stopping the containers,
+and waiting for them to be reaped after SIGKILL, fits into the 5 minutes
+the shutdown sequence gives them; a failed shutdown sequence would roll
+back an upgrade. These limits are named constants now.
+
+Changing the timeout replaces the running container, like any other
+change; it is stopped with the timeout it was started with.
+
+On shutdown, reboot and upgrade, a container is now stopped only once
+the containers depending on it (`lifecycle.dependsOn.containers`) have
+stopped, so that e.g. a service is stopped before the database it uses.
+All other containers are still stopped concurrently.
+
+Calling `talosctl restart --namespace taloscontainers` sends SIGTERM. SIGKILL is sent asynchronously once its stop timeout is 
+
+**File**: `api/resource/definitions/containers/containers.proto` (modified, +9/-0)
+```diff
+@@ -5,6 +5,7 @@ package talos.resource.definitions.containers;
+ option go_package = "github.com/siderolabs/talos/pkg/machinery/api/resource/definitions/containers";
+ option java_package = "dev.talos.api.resource.definitions.containers";
+ 
++import "google/protobuf/duration.proto";
+ import "google/protobuf/timestamp.proto";
+ import "resource/definitions/enums/enums.proto";
+ 
+@@ -82,6 +83,7 @@ message ContainerInstanceSpecSpec {
+   ContainerResourcesSpec resources = 12;
+   // Devices are fully resolved, with host device nodes filled in.
+   repeated ResolvedDeviceSpec devices = 13;
++  google.protobuf.Duration stop_timeout = 14;
+ }
+ 
+ // ContainerInstanceStatusSpec is the spec for ContainerInstanceStatus.
+@@ -104,6 +106,12 @@ message ContainerInstanceStatusSpec {
+   google.protobuf.Timestamp finished_at = 8;
+ }
+ 
++// ContainerLifecycleSpec is the spec for ContainerLifecycle.
++message ContainerLifecycleSpec {
++  // ShutdownDeadline is set when the resource is torn down: all containers have to be stopped by then.
++  google.protobuf.Timestamp shutdown_deadline = 1;
++}
++
+ // ContainerMountSpec is a resolved mount.
+ //
+ // Exactly one of VolumeName, Tmpfs or HostPath describes the source; Kind says which.
+@@ -190,6 +198,7 @@ message ContainerSpecSpec {
+   ContainerResourcesSpec resources = 10;
+   ContainerDependsOnSpec depends_on = 11;
+   repeated ContainerDeviceSpec devices = 12;
++  google.protobuf.Duration stop_timeout = 13;
+ }
+ 
+ // ContainerStatusSpec is the spec for ContainerStatus.
+```
+
+**File**: `hack/release.toml` (modified, +26/-0)
+```diff
+@@ -549,6 +549,32 @@ devices:
+ ```
+ 
+ The container gets a device node at the destination and is allowed to read and write that device only, so it does not need the `privileged` profile. The container waits for the raw volume to be ready, gets the unlocked device for an encrypted raw volume, and the raw volume is not closed while the container runs. A raw volume can be handed to a single container.
++"""
++
++    [notes.container_stop_timeout]
++        title = "Container Stop Timeout"
++        description = """\
++`ContainerConfig` documents can now set how long a container gets to exit after `SIGTERM` before it is killed with `SIGKILL`, with `lifecycle.stopTimeout`:
++
++```yaml
++apiVersion: v1alpha1
++kind: ContainerConfig
++name: database
++image: ghcr.io/example/database:v1.0.0
++lifecycle:
++  stopTimeout: 2m
++```
++
++The timeout applies whenever Talos stops the container: on shutdown, reboot and upgrade, when the container is replaced after a change or restarted with `talosctl restart`, and when it is removed.
++It defaults to 10s, must be greater than 0 and can be at most 4m, so that stopping containers fits into the shutdown sequence.
++"""
++
++    [notes.container_stop_order]
++        title = "Container Shutdown Order"
++        description = """\
++On shutdown, reboot and upgrade, `ContainerConfig` containers are now stopped in the reverse order of `lifecycle.dependsOn.containers`: a container is stopped before the containers it depends on, and independent containers are still stopped concurrently.
++Waiting for a dependent container ends when the container it depends on would otherwise not be stopped in time for the shutdown.
++The order applies to the containers on the same node only.
+ """
+ 
+     [notes.extension_service_configuration]
+```
+
+**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_containers.go` (added, +162/-0)
+```diff
+@@ -0,0 +1,162 @@
 +// This Source Code Form is subject to the terms of the Mozilla Public
 +// License, v. 2.0. If a copy of the MPL was not distributed with this
 +// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+package k8s_test
++package runtime
 +
 +import (
-+	"os"
-+	"path/filepath"
-+	"testing"
++	"cmp"
++	"context"
++	"fmt"
++	"syscall"
++	"time"
 +
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	containerdapi "github.com/containerd/containerd/v2/client"
++	"github.com/containerd/errdefs"
++	"github.com/cosi-project/runtime/pkg/safe"
++	"github.com/cosi-project/runtime/pkg/state"
++	"go.uber.org/zap"
 +
-+	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
++	"github.com/siderolabs/talos/internal/app/internal/ctrhelper"
++	"github.com/siderolabs/talos/pkg/machinery/api/common"
++	"github.com/siderolabs/talos/pkg/machinery/constants"
++	containersres "github.com/siderolabs/talos/pkg/machinery/resources/containers"
 +)
 +
-+func TestWriteKubeletCredentialProviderFiles(t *testing.T) {
-+	t.Parallel()
++// restartContainer stops a container declared with a ContainerConfig as the controllers stop it:
++// SIGTERM, and SIGKILL once its stop timeout is over. It is restarted once it has exited, as after
++// any exit.
++func (s *Server) restartContainer(ctx context.Context, id string) error {
++	stopTimeout, err := s.containerStopTimeout(ctx, id)
++	if err != nil {
++		return err
++	}
 +
-+	dir := filepath.Join(t.TempDir(), "credentialproviders")
-+
-+	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
-+		"azure.json": "foo",
-+		"other.json": "bar",
-+	}))
-+
-+	assertFiles(t, dir, map[string]string{
-+		"azure.json": "foo",
-+		"other.json": "bar",
++	ctx, detachedCtx, c8dClient, err := ctrhelper.ContainerdInstanceHelper(ctx, &common.ContainerdInstance{
++		Driver:    common.ContainerDriver_CONTAINERD,
++		Namespace: common.ContainerdNamespace_NS_TALOSCONTAINERS,
 +	})
++	if err != nil {
++		return err
++	}
 +
-+	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
-+		"azure.json": "baz",
-+	}))
++	task, container, err := loadTask(ctx, c8dClient, id)
++	if err != nil {
++		c8dClient.Close() //nolint:errcheck
 +
-+	assertFiles(t, dir, map[string]string{
-+		"azure.json": "baz",
-+	})
++		return err
++	}
 +
-+	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, nil))
++	waitCtx, cancel := context.WithTimeout(detachedCtx, stopTimeout+constants.TaskKillWaitTimeout)
 +
-+	assert.NoDirExists(t, dir)
++	statusC, err := task.Wait(waitCtx)
++	if err != nil {
++		cancel()
++		c8dClient.Close() //nolint:errcheck
++
++		return fmt.Errorf("failed to wait for container %q: %w", id, err)
++	}
++
++	if err = task.Kill(ctx, syscall.SIGTERM, containerdapi.WithKillAll); err != nil {
++		cancel()
++		c8dClient.Close() //nolint:errcheck
++
++		return fmt.Errorf("failed to stop container %q: %w", id, err)
++	}
++
++	logger := s.Logger.With(zap.String("instance", id), zap.Uint32("pid", task.Pid()))
++
++	go func() {
++		defer c8dClient.Close() //nolint:errcheck
++		defer cancel()
++
++		killAfterStopTimeout(waitCtx, logger, container, task.Pid(), statusC, stopTimeout)
++	}()
++
++	return nil
 +}
 +
-+func assertFiles(t *testing.T, dir string, expected map[string]string) {
-+	t.Helper()
++// containerStopTimeout returns the stop timeout of a container instance.
++func (s *Server) containerStopTimeout(ctx context.Context, id string) (time.Duration, error) {
++	instanceSpec, err := safe.StateGetByID[*containersres.ContainerInstanceSpec](ctx, s.Controller.Runtime().State().V1Alpha2().Resources(), id)
++	if err != nil {
++		if state.IsNotFoundError(err) {
++			return constants.ContainerDefaultStopTimeout, nil
++		}
 +
-+	entries, err := os.ReadDir(dir)
-+	require.NoError(t, err)
-+	assert.Len(t, entries, len(expected))
++		return 0, err
++	}
 +
-+	for name, content := range expected {
-+		path := filepath.Join(dir, name)
++	return cmp.Or(instanceSpec.TypedSpec().StopTimeout, constants.ContainerDefaultStopTimeout), nil
++}
 +
-+		data, err := os.ReadFile(path)
-+		require.NoError(t, err)
-+		assert.Equal(t, content, string(data))
++// killAfterStopTimeout kills the task of the container with SIGKILL if it hasn't exited by the end of its stop timeout.
++func killAfterStopTimeout(
++	ctx context.Context, logger *zap.Logger, container containerdapi.Container, pid uint32, statusC <-chan containerdapi.ExitStatus, stopTimeout time.Duration,
++) {
++	if exitedWithin(ctx, statusC, stopTimeout) {
++		return
++	}
 +
-+		st, err := os.Stat(path)
-+		require.NoError(t, err)
-+		assert.Equal(t, os.FileMode(0o600), st.Mode().Perm())
++	// the instance ID is reused when a container is declared again, so it has to be the same task
++	task, err := container.Task(ctx, nil)
++	if err != nil || task.Pid() != pid {
++		return
++	}
++
++	logger.Info("killing container after its stop timeout", zap.Duration("stop_timeout", stopTimeout))
++
++	if err = task.Kill(ctx, syscall.SIGKILL, containerdapi.WithKillAll); err != nil && !errdefs.IsNotFound(err) {
++		logger.Warn("failed to kill container", zap.Error(err))
++	}
++}
++
++func loadTask(ctx context.Context, c8dClient *containerdapi.Client, id string) (containerdapi.Task, containerdapi.Container, error) {
++	container, err := c8dClient.LoadContainer(ctx, id)
++	if err != nil {
++		if errdefs.IsNotFound(err) {
++			return nil, nil, fmt.Errorf("container %q not found", id)
++		}
++
++		return nil, nil, err
++	}
++
++	task, err := container.Task(ctx, nil)
++	if err != nil {
++		if errdefs.IsNotFound(err) {
++			return nil, nil, fmt.Errorf("container %q not found", id)
++		}
++
++		return nil, nil, err
++	}
++
++	return task, container, nil
++}
++
++// exitedWithin reports whether the task exited within timeout, or ctx was canceled.
++//
++// A failed wait (e.g. containerd restarting) is no exit, the timeout decides then.
++func exitedWithin(ctx context.Context, statusC <-chan containerdapi.ExitStatus, timeout time.Duration) bool {
++	timer := time.NewTimer(timeout)
++	defer timer.Stop()
++
++	for {
++		select {
++		case status, ok := <-statusC:
++			if ok && status.Error() == nil {
++				return true
++			}
++
++			statusC = nil
++		case <-timer.C:
++			select {
++			case status, ok := <-statusC:
++				return ok && status.Error() == nil
++			default:
++				return false
++			}
++		case <-ctx.Done():
++			return true
++		}
 +	}
 +}
 ```
 
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_spec.go` (modified, +1/-0)
+**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_containers_test.go` (added, +103/-0)
 ```diff
-@@ -233,6 +233,7 @@ func (ctrl *KubeletSpecController) Run(ctx context.Context, r controller.Runtime
- 				kubeletSpec.Config = unstructuredConfig
- 				kubeletSpec.ExpectedNodename = expectedNodename
- 				kubeletSpec.CredentialProviderConfig = cfgSpec.CredentialProviderConfig
-+				kubeletSpec.CredentialProviderFiles = cfgSpec.CredentialProviderFiles
+@@ -0,0 +1,103 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package runtime //nolint:testpackage // to test the unexported kill after the stop timeout
++
++import (
++	"context"
++	"errors"
++	"syscall"
++	"testing"
++	"time"
++
++	containerdapi "github.com/containerd/containerd/v2/client"
++	"github.com/containerd/containerd/v2/pkg/cio"
++	"github.com/containerd/errdefs"
++	"github.com/stretchr/testify/assert"
++	"go.uber.org/zap"
++)
++
++type fakeTask struct {
++	containerdapi.Task
++
++	pid     uint32
++	killErr error
++	killed  []syscall.Signal
++}
++
++func (t *fakeTask) Pid() uint32 {
++	return t.pid
++}
++
++func (t *fakeTask) Kill(_ context.Context, signal syscall.Signal, _ ...containerdapi.KillOpts) error {
++	t.killed = append(t.killed, signal)
++
++	return t.killErr
++}
++
++type fakeContainer struct {
++	containerdapi.Container
++
++	task *fakeTask
++}
++
++func (c *fakeContainer) Task(context.Context, cio.Attach) (containerdapi.Task, error) {
++	if c.task == nil {
++		return nil, errdefs.ErrNotFound
++	}
++
++	return c.task, nil
++}
++
++func TestKillAfterStopTimeout(t *testing.T) {
++	t.Parallel()
++
++	const pid = 42
++
++	for _, test := range []struct {
++		name       string
++		exited     bool
++		waitFailed bool
++		currentPID uint32
++		gone       bool
++		killed     bool
++	}{
++		{name: "running", currentPID: pid, killed: true},
++		{name: "exited", exited: true, currentPID: pid},
++		{name: "wait failed", waitFailed: true, currentPID: pid, killed: true},
++		{name: "replaced", currentPID: pid + 1},
++		{name: "gone", gone: true},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			task := &fakeTask{pid: test.currentPID}
++			container := &fakeContainer{task: task}
++
++			if test.gone {
++				container.task = nil
++			}
++
++			statusC := make(chan containerdapi.ExitStatus, 1)
++
++			switch {
++			case test.exited:
++				statusC <- containerdapi.ExitStatus{}
++			case test.waitFailed:
++				statusC <- *containerdapi.NewExitStatus(containerdapi.UnknownExitStatus, time.Time{}, errors.New("containerd is gone"))
++			}
++
++			start := time.Now()
++
++			killAfterStopTimeout(t.Context(), zap.NewNop(), container, pid, statusC, 100*time.Millisecond)
++
++			if test.killed {
++				assert.Equal(t, []syscall.Signal{syscall.SIGKILL}, task.killed)
++				assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
++			} else {
++				assert.Empty(t, task.killed)
++			}
++		})
++	}
++}
+```
+
+**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_server.go` (modified, +12/-0)
+```diff
+@@ -1736,6 +1736,18 @@ func (s *Server) Stats(ctx context.Context, in *machine.StatsRequest) (reply *ma
  
- 				return nil
- 			},
+ // Restart implements the machine.MachineServer interface.
+ func (s *Server) Restart(ctx context.Context, in *machine.RestartRequest) (*machine.RestartResponse, error) {
++	if in.Driver == common.ContainerDriver_CONTAINERD && in.Namespace == constants.TalosContainersContainerdNamespace {
++		if err := s.restartContainer(ctx, in.Id); err != nil {
++			return nil, err
++		}
++
++		return &machine.RestartResponse{
++			Messages: []*machine.Restart{
++				{},
++			},
++		}, nil
++	}
++
+ 	inspector, err := getContainerInspector(ctx, in.Namespace, in.Driver)
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/config.go` (modified, +2/-0)
+```diff
+@@ -208,6 +208,8 @@ func applyConfig(containerSpecSpec *containers.ContainerSpecSpec, containerConfi
+ 		Containers: dependsOn.Containers(),
+ 	}
+ 
++	containerSpecSpec.StopTimeout = containerConfig.StopTimeout()
++
+ 	return nil
+ }
+ 
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/config_test.go` (modified, +4/-1)
+```diff
+@@ -61,12 +61,13 @@ func (suite *ConfigSuite) TestNormalizesImageAndResolvesDefaults() {
+ 		// canonical string.
+ 		asrt.Equal("index.docker.io/library/nginx:latest", spec.TypedSpec().Image.Ref)
+ 
+-		// Defaults: restricted, default seccomp profile, no host network, no limits.
++		// Defaults: restricted, default seccomp profile, no host network, no limits, the default stop timeout.
+ 		asrt.False(spec.TypedSpec().Security.Privileged)
+ 		asrt.False(spec.TypedSpec().Security.SeccompUnconfined)
+ 		asrt.False(spec.TypedSpec().Network.HostNetwork)
+ 		asrt.Zero(spec.TypedSpec().Resources.MemoryLimit)
+ 		asrt.Nil(spec.TypedSpec().Resources.SwapLimit)
++		asrt.Equal(10*time.Second, spec.TypedSpec().StopTimeout)
+ 
+ 		// no SecurityProfileConfig: no categories
+ 		asrt.Empty(spec.TypedSpec().Security.SELinuxLevel)
+@@ -182,6 +183,7 @@ func (suite *ConfigSuite) TestResolvesSecurityNetworkAndResources() {
+ 			NetworkConfig: []string{"addresses"},
+ 			TimeConfig:    new(true),
+ 		},
++		StopTimeoutConfig: new(30 * time.Second),
+ 	}
+ 	doc.RunAsConfig = &containercfg.ContainerRunAs{
+ 		RunAsUID: new(int32(1000)),
+@@ -207,6 +209,7 @@ func (suite *ConfigSuite) TestResolvesSecurityNetworkAndResources() {
+ 		asrt.Equal([]string{"/var/mnt/data"}, spec.TypedSpec().DependsOn.Paths)
+ 		asrt.Equal([]string{"addresses"}, spec.TypedSpec().DependsOn.Networks)
+ 		asrt.True(spec.TypedSpec().DependsOn.Time)
++		asrt.Equal(30*time.Second, spec.TypedSpec().StopTimeout)
+ 
+ 		if asrt.NotNil(spec.TypedSpec().RunAs.UID) {
+ 			asrt.Equal(int32(1000), *spec.TypedSpec().RunAs.UID)
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/containerd_runner.go` (modified, +2/-7)
+```diff
+@@ -5,6 +5,7 @@
+ package containers
+ 
+ import (
++	"cmp"
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
+@@ -14,7 +15,6 @@ import (
+ 	"slices"
+ 	"strconv"
+ 	"strings"
+-	"time"
+ 
+ 	containerdapi "github.com/containerd/containerd/v2/client"
+ 	ctrdcontainers "github.com/containerd/containerd/v2/core/containers"
+@@ -37,11 +37,6 @@ import (
+ )
+ 
+ const (
+-	// gracefulShutdownTimeout is how long a container gets after SIGTERM before SIGKILL.
+-	//
+-	// Internal and not configurable, matching the containerd service runner's existing default.
+-	gracefulShutdownTimeout = 10 * time.Second
+-
+ 	// oomScoreAdj matches what extension services get. Containers must be killed before apid and
+ 	// trustd, which sit at -998, so that the API stays reachable on a node under memory pressure.
+ 	oomScoreAdj = -600
+@@ -152,7 +147,7 @@ func (r *containerdRunner) Run(
+ 		runner.WithCgroupPath(cgroupPath),
+ 		runner.WithCgroupResources(containersadapter.ContainerResourcesSpec(&spec.Resources).CgroupResources()),
+ 		runner.WithOOMScoreAdj(oomScoreAdj),
+-		runner.WithGracefulShutdownTimeout(gracefulShutdownTimeout),
++		runner.WithGracefulShutdownTimeout(cmp.Or(spec.StopTimeout, constants.ContainerDefaultStopTimeout)),
+ 		runner.WithHostNetworkFiles(spec.Network.HostNetwork),
+ 		runner.WithSelinuxLabel(selinuxLabel),
+ 		runner.WithSeccompUnconfined(spec.Security.SeccompUnconfined),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14800** (closed): fix: skip EFI variable updates when efivarfs is read-only (@excavador)
-- **PR #14797** (2026-10-30): fix: open the files of pkg/xfs roots with O_CLOEXEC (@rducom)
-- **PR #14794** (2026-10-29): fix: ctr `entrypoint`,`arg` replace instead of merge on patch (@majabojarska)
-- **PR #14792** (2026-10-29): fix: rollback alpine version (@shanduur)
-- **PR #14791** (2026-10-30): feat: allow containers to disable seccomp explicitly (@frezbo)
-- **PR #14790** (2026-10-30): feat: add support for kubeconfig in Kubernetes authn & authz configs (@smira)
+- **PR #14833** (2026-11-03): feat: multi-doc SeccompProfileConfig (@majabojarska)
+- **PR #14832** (2026-11-03): fix: added container capabilities for non-root users (@majabojarska)
+- **PR #14830** (2026-11-03): test: run downgrade failure test against several installers (@shanduur)
+- **PR #14827** (closed): Sync main (@martiyardi)
+- **PR #14822** (2026-11-02): fix: generate the Talos client certificate with a skew in the past (@smira)
+- **PR #14820** (2026-11-02): fix: issue trustd server certificate with extended key usage (@smira)
 
 ---
 
@@ -2652,21 +3003,22 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support BGP MD5 authentication password
+## X. security): give privileged containers a SELinux domain of their own
 
 **RULE**:
-When implementing operations in `api/resource/definitions/network/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1920121`: support BGP MD5 authentication password. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13f26d6a`: security): give privileged containers a SELinux domain of their own. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/resource/definitions/network/network.proto`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  string auth_password = 8;
+COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
+COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2676,4 +3028,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1920121` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13f26d6a` are properly handled with clean fallback behavior.

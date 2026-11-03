@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:38:24.394Z",
+  "last_updated": "2026-11-03T17:45:55.467Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3684,8 +3684,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "23a16fa0",
-      "content_hash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
+      "source_version": "5a85f9b0",
+      "content_hash": "ece8775414cc65616cd7add324768a1c5df127eb944cba4337a1df1c021914d1",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3728,6 +3728,11 @@
           "number": 6241,
           "title": "[ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6559,
+          "title": "[`flake8-bugbear`] Make `B014` example error out-of-the-box (#29941)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3735,7 +3740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:20:20.662Z",
+      "verified_at": "2026-11-03T17:45:45.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14560,8 +14565,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "1eb9489f",
-      "content_hash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
+      "source_version": "d372a646",
+      "content_hash": "a7ffd918852f50a718892314c37723fbfd369ccd68ca4fbcfaac648214ff6be4",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -14624,6 +14629,11 @@
           "number": 6051,
           "title": "py)!: rename GenkitError.original_message to message (#6639)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6561,
+          "title": "py): log the model or tool exception that generate boxes as internal error (#703",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14631,7 +14641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:23:17.406Z",
+      "verified_at": "2026-11-03T17:45:55.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51713,8 +51723,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "a1920121",
-      "content_hash": "27dd85d7bd9a7d2cd25a1fbdf51de82b6c412b63e38820d13e608960cc783246",
+      "source_version": "9929d176",
+      "content_hash": "bb45e845583d519a375299a1f7ef9c46b03673858b85947e7bfd58e3fb7a3ec8",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -51772,6 +51782,11 @@
           "number": 6082,
           "title": "support BGP MD5 authentication password",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6560,
+          "title": "security): give privileged containers a SELinux domain of their own",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51779,7 +51794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:29:32.892Z",
+      "verified_at": "2026-11-03T17:45:51.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169300,6 +169315,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:38:24.368Z"
+    },
+    "rule-6559": {
+      "learning_id": "rule-6559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6559,
+      "title": "[`flake8-bugbear`] Make `B014` example error out-of-the-box (#29941)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "5a85f9b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:45:45.650Z"
+    },
+    "rule-6560": {
+      "learning_id": "rule-6560",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6560,
+      "title": "security): give privileged containers a SELinux domain of their own",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "9929d176",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:45:51.218Z"
+    },
+    "rule-6561": {
+      "learning_id": "rule-6561",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6561,
+      "title": "py): log the model or tool exception that generate boxes as internal error (#703",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "d372a646",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:45:55.455Z"
     }
   },
   "aliases": {

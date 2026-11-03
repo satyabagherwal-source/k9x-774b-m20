@@ -6959,3 +6959,6 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `8a47b351` | Multi-dimensional audit evidence | 2026-11-03T17:38:17.576Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `71592e74` | Multi-dimensional audit evidence | 2026-11-03T17:38:24.420Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `2f682f3a` | Multi-dimensional audit evidence | 2026-11-03T17:38:24.525Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `5a85f9b0` | Multi-dimensional audit evidence | 2026-11-03T17:45:45.713Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9929d176` | Multi-dimensional audit evidence | 2026-11-03T17:45:51.281Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `d372a646` | Multi-dimensional audit evidence | 2026-11-03T17:45:55.518Z |

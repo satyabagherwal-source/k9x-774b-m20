@@ -6950,3 +6950,6 @@
 | `CYCLE-20261103-1F1G` | `2026-11-03T17:38:17.572Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6557` | Yes (`fc17b305...`) |
 | `CYCLE-20261103-1KBJ` | `2026-11-03T17:38:24.415Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6558` | Yes (`06bdd11d...`) |
 | `CYCLE-20261103-1KEH` | `2026-11-03T17:38:24.521Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6558` | Yes (`501f6bc8...`) |
+| `CYCLE-20261103-B0TP` | `2026-11-03T17:45:45.709Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6559` | Yes (`ece87754...`) |
+| `CYCLE-20261103-B54F` | `2026-11-03T17:45:51.279Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6560` | Yes (`bb45e845...`) |
+| `CYCLE-20261103-B8E3` | `2026-11-03T17:45:55.515Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6561` | Yes (`a7ffd918...`) |
