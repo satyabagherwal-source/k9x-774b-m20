@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `99e571f4`  
+> **Source Version**: `cced2a35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T09:36:48.767Z  
+> **Timestamp**: 2026-11-02T15:57:16.825Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T09:36:47.382Z  
+> **Harvest Timestamp**: 2026-11-02T15:57:14.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3919 stars
+- **Stars / Engagement**: 3949 stars
 
 ---
 
@@ -2276,1691 +2276,445 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0925800d` (2026-10-31)
-**Commit Message**: fix(cutile): validate full tensor shapes before allocation (#1452)
+### Incident Patch 1: `cced2a35` (2026-11-02)
+**Commit Message**: fix(cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (#1703)
 
-Closes #1451 
+Fix NVBug 7013424 (`shared_memory_helper` failing barrier assertion on
+H200 `sm_90a`, B200/GB200 `sm_100a`, and R100 `sm_107a` with `left: 2,
+right: 1`):
 
-`api::full` currently uses unchecked multiplication to calculate its
-flattened element count. Invalid shapes can panic during construction or
-wrap before allocation and initialization, with shape validation
-occurring later during `reshape`.
+1. Add `thread::sync_threads()` after `mbarrier_init(full, 1)` and
+   `mbarrier_inval(full)` after phase completion per PTX ISA `mbarrier`
+   lifecycle requirements.
+2. Guard `mbarrier_arrive(full)` on `if pending` so `ptxas` predicates
+   `SYNCS.ARRIVE.TRANS64.A1T0` on `@!P0` and waits on the `TRYWAIT`
+   scoreboard barrier (`SB2`) before issuing the arrival. Without a
+   dependency on `pending`, `ptxas` issues `SYNCS.ARRIVE.TRANS64.A1T0`
+   immediately after `SYNCS.PHASECHK.TRANS64.TRYWAIT P0` with wait mask
+   `0x000`, completing phase 0 while the pre-arrival `TRYWAIT` is still
+   suspended in the SYNCS unit and causing it to report `P0 = true`
+   (`pending = false`).
 
-Validate the element count with checked multiplication and reject zero
-dimensions and flattened lengths above `i32::MAX`. Invalid inputs return
-`DeviceError::Internal` when the operation executes, before GPU
-allocation or kernel execution. `zeros` and `ones` inherit the
-validation through `full`.
+Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
 
-Add five host tests and three GPU tests covering overflow, zero
-dimensions, the `i32` boundary, construction without panics, and valid
-tensor shapes and values. Preserve scalar shape `[]`.
-
-### Validation
-
-Run from `cutile-rs`:
-
-```bash
-cargo fmt --all -- --check
-git diff --check
-cargo test -p cutile --lib api::full_shape_tests
-cargo test -p cutile --release --lib api::full_shape_tests
-cargo test -p cutile --test gpu tensor_guards::full_
-cargo test -p cutile --release --test gpu tensor_guards::full_
-cargo clippy -p cutile --lib --test gpu -- -D warnings
-RUST_TEST_THREAD
-
-**File**: `cutile-rs/cutile/src/api.rs` (modified, +99/-8)
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs` (modified, +5/-1)
 ```diff
-@@ -534,6 +534,12 @@ pub fn ones<T: DType + cuda_core::DeviceCopy>(
- /// Allocates GPU memory and fills it with the specified value. This uses a GPU kernel
- /// to initialize the memory efficiently.
- ///
-+/// ## Errors
+@@ -18,8 +18,11 @@ macro_rules! shared_probe_body {
+             let full = smem.add(1024).cast::<cuda_device::barrier::Barrier>();
+             let data = smem.add(offset).cast::<u64>();
+             cuda_device::barrier::mbarrier_init(full, 1);
++            cuda_device::thread::sync_threads();
+             let pending = !cuda_device::barrier::mbarrier_try_wait_parity(full, 0);
+-            let _token = cuda_device::barrier::mbarrier_arrive(full);
++            if pending {
++                let _token = cuda_device::barrier::mbarrier_arrive(full);
++            }
+             // A failed barrier must report failure rather than hang the GPU.
+             let mut complete = 0u64;
+             let mut attempts = 0u32;
+@@ -30,6 +33,7 @@ macro_rules! shared_probe_body {
+                 }
+                 attempts += 1;
+             }
++            cuda_device::barrier::mbarrier_inval(full);
+             let value = core::ptr::read_volatile(data);
+             core::ptr::write_volatile(data, value.wrapping_mul(3) ^ 0x1234_5678);
+             complete
+```
+
+---
+
+### Incident Patch 2: `ab440d71` (2026-11-02)
+**Commit Message**: fix(cuda-oxide): resolve SWQA v0.5.0 failures on A100, R100, and ARM64 (#1702)
+
+## What This PR Does
+
+Fixes five `cuda-oxide` failures uncovered during SWQA v0.5.0
+pre-release testing across **A100 (`sm_80`)**, **R100 (`sm_107` /
+`sm_107a`)**, and **GB200 (`aarch64`)** (tracked under umbrella NVBug
+`7011200`):
+
+| NVBug | Platform | Issue | Fix |
+
+|:--------|:--------------------|:--------------------------------------------------------------|:---------------------------------------------------------------|
+| 7019265 | R100 (`sm_107`) | 22 NVVM examples +
+`interop_cubin_identity` reject `sm_107*` | Admit
+`sm_107`/`sm_107a`/`sm_107f` in NVVM target resolution |
+| 7016387 | A100, R100 | `device_global` packed-pointer init aborts
+`llc` on `sm_80` | Detect packed-pointer globals (`<{ ... }>`) ->
+require `+ptx71`|
+| 7016497 | A100 (`sm_80`) | `generated_intrinsics` checks `major < 8`
+for `sm_86` PTX | Require `(major, minor) >= (8, 6)` before loading
+module |
+| 7024178 | GB200 (`aarch64`) | GNU `ld` discards `.oxart` sections
+under `--gc-sections` | Stamp `EI_OSABI = ELFOSABI_GNU (3)` on `.oxart`
+ELF objects |
+| 7024210 | GB200 (`aarch64`) | `libm_math` fails on AArch64 `frintn`
+inline a
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/pipeline.rs` (modified, +21/-1)
+```diff
+@@ -275,7 +275,27 @@ pub fn compile_translated_module(
+         && validated.device_arch.is_some()
+         && has_iket_operations(ctx, module)
+     {
+-        validated.options.target_arch = validated.device_arch.map(|arch| arch.as_ref().sm());
++        let requested_nvvm_ir = matches!(
++            request.output_policy,
++            OutputPolicy::ExternalLinkAllowed {
++                request_nvvm_ir: true
++            }
++        );
++        validated.options.target_arch = validated.device_arch.map(|arch| {
++            let arch = arch.as_ref();
++            if !requested_nvvm_ir
++                && cuda_target_spec::recorded_ptx_floor(arch).is_err()
++                && arch.capability() == 107
++            {
++                match arch.suffix() {
++                    Some('a') => "sm_100a".to_string(),
++                    Some('f') => "sm_100f".to_string(),
++                    _ => "sm_100".to_string(),
++                }
++            } else {
++                arch.sm()
++            }
++        });
+         validated.options.target_arch_source = "the detected GPU, pinned by IKET materialization";
+     }
+     let backend = validated.options();
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/arch.rs` (modified, +15/-15)
+```diff
+@@ -4,7 +4,7 @@
+  */
+ 
+ use super::features::DetectedFeatures;
+-use cuda_target_spec::{CudaArch, recorded_ptx_floor};
++use cuda_target_spec::{CudaArch, is_known_nvvm_target};
+ 
+ /// Does `arch` (e.g. `"sm_120a"`, `"sm_90"`) support the kernel's detected
+ /// features?
+@@ -22,7 +22,7 @@ use cuda_target_spec::{CudaArch, recorded_ptx_floor};
+ /// IR requires instead.
+ pub fn arch_satisfies(arch: &CudaArch, features: DetectedFeatures) -> bool {
+     let (capability, suffix) = (arch.capability(), arch.suffix());
+-    if recorded_ptx_floor(arch).is_err() {
++    if !is_known_nvvm_target(arch) {
+         return false;
+     }
+     features
+@@ -74,54 +74,54 @@ fn supports_tcgen_target(capability: u32, suffix: Option<char>) -> bool {
+     match suffix {
+         // Architecture-specific targets are exact, not numerically forward
+         // compatible. `sm_101a` is the PTX 8.x spelling later renamed to
+-        // `sm_110a`; accept both spellings plus the distinct sm_103 target.
+-        Some('a') => matches!(capability, 100 | 101 | 103 | 110),
+-        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
++        // `sm_110a`; accept both spellings plus the distinct sm_103/sm_107 targets.
++        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110),
++        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
+         _ => false,
+     }
+ }
+ 
+ fn supports_blackwell_accelerated_target(capability: u32, suffix: Option<char>) -> bool {
+     match suffix {
+-        Some('a') => matches!(capability, 100 | 101 | 103 | 110),
+-        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
++        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110),
++        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
+         _ => false,
+     }
+ }
+ 
+ fn supports_blackwell_family_target(capability: u32, suffix: Option<char>) -> bool {
+     match suffix {
+-        Some('a') => matches!(capability, 100 | 101 | 110 | 120),
+-        Some('f') => matches!(capability, 100 | 101 | 103 | 110 | 120 | 121),
++        Some('a') => matches!(capability, 100 | 101 | 107 | 110 | 120),
++        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121),
+         _ => false,
+     }
+ }
+ 
+ fn supports_blackwell_matrix_target(capability: u32, suffix: Option<char>) -> bool {
+     // LLVM's sm_101 aliases stop selecting these instructions at PTX 9.0.
+     match suffix {
+-        Some('a' | 'f') => matches!(capability, 100 | 103 | 110 | 120 | 121),
++        Some('a' | 'f') => matches!(capability, 100 | 103 | 107 | 110 | 120 | 121),
+         _ => false,
+     }
+ }
+ 
+-/// Floating-point `redux.sync` is scoped to the sm_100/sm_103 family.
++/// Floating-point `redux.sync` is scoped to the sm_100/sm_103/sm_107 family.
+ fn supports_redux_f32_target(capability: u32, suffix: Option<char>) -> bool {
+-    matches!(suffix, Some('a' | 'f')) && matches!(capability, 100 | 103)
++    matches!(suffix, Some('a' | 'f')) && matches!(capability, 100 | 103 | 107)
+ }
+ 
+ /// FP8 / f16-accumulator multimem forms span several Blackwell architecture
+ /// targets, but consumer family (`f`) targets do not support the sm_120 line.
+ fn supports_multimem_fp8_target(capability: u32, suffix: Option<char>) -> bool {
+     match suffix {
+-        Some('a') => matches!(capability, 100 | 101 | 103 | 110 | 120 | 121),
+-        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
++        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121),
++        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
+         _ => false,
+     }
+ }
+ 
+ fn is_known_blackwell_capability(capability: u32) -> bool {
+-    matches!(capability, 100 | 101 | 103 | 110 | 120 | 121)
++    matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121)
+ }
+ 
+ /// Extract the compute-capability *major* version from an `sm_…` target string.
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/detect.rs` (modified, +36/-4)
+```diff
+@@ -731,6 +731,38 @@ fn contains_dynamic_stack_features(contents: &str) -> bool {
+         || contains_llvm_pointer_intrinsic_call(contents, "@llvm.stackrestore")
+ }
+ 
++/// Detect packed aggregate global initializers that contain symbol addresses.
 +///
-+/// Returns an error on execution if a dimension is zero, the element count
-+/// overflows `usize`, or the flattened element count exceeds `i32::MAX`.
-+/// Invalid shapes are rejected before GPU allocation or kernel execution.
-+///
- /// ## Examples
- ///
- /// ```rust,ignore
-@@ -547,15 +553,40 @@ pub fn full<T: DType + cuda_core::DeviceCopy>(
-     val: T,
-     shape: &[usize],
- ) -> impl DeviceOp<Output = Tensor<T>> {
-+    let len = match checked_full_len(shape) {
-+        Ok(len) => len,
-+        Err(message) => return fail::<Tensor<T>>(message).boxed(),
-+    };
-     let shape = shape.to_vec();
--    let len = shape.iter().product::<usize>();
--    Tensor::<T>::uninitialized(len).then(move |t| {
--        // TODO (hme): It's awkward to assume_init this before actually initializing it.
--        let partition_size = 128;
--        let result = unsafe { t.assume_init() }.partition([partition_size]);
--        let (_, res) = value((val, result)).then(full_apply).unzip();
--        res.unpartition().reshape(&shape)
--    })
-+    Tensor::<T>::uninitialized(len)
-+        .then(move |t| {
-+            // TODO (hme): It's awkward to assume_init this before actually initializing it.
-+            let partition_size = 128;
-+            let result = unsafe { t.assume_init() }.partition([partition_size]);
-+            let (_, res) = value((val, result)).then(full_apply).unzip();
-+            res.unpartition().reshape(&shape)
-+        })
-+        .boxed()
++/// LLVM's `NVPTXAsmPrinter::printModuleLevelGV` lowers pointers inside a packed
++/// struct initializer (`<{ ... }>`) using PTX byte-mask expressions
++/// (`mask(0xFF)`), which require PTX ISA 7.1 (`+ptx71`) and abort `llc` when
++/// targeting `sm_80` at its default PTX 7.0 floor.
++fn contains_packed_pointer_global_initializer(contents: &str) -> bool {
++    contents.lines().any(|line| {
++        if !line.contains("<{") {
++            return false;
++        }
++        let code = llvm_code_without_comments_or_strings(line);
++        let trimmed = code.trim_start();
++        if !trimmed.starts_with('@')
++            || !(contains_llvm_keyword(trimmed, "global")
++                || contains_llvm_keyword(trimmed, "constant"))
++        {
++            return false;
++        }
++        let Some((_, after_first_open)) = trimmed.split_once("<{") else {
++            return false;
++        };
++        let Some((_, initializer_region)) = after_first_open.split_once("<{") else {
++            return false;
++        };
++        initializer_region.contains('@')
++            || contains_llvm_keyword(initializer_region, "ptrtoint")
++            || contains_llvm_keyword(initializer_region, "addrspacecast")
++            || contains_llvm_keyword(initializer_region, "getelementptr")
++    })
 +}
 +
-+// `full` initializes a flat tensor before reshaping it. Its element count
-+// must fit that tensor's i32 dimension, which also bounds every positive
-+// target dimension and contiguous stride. An empty shape remains a scalar.
-+fn checked_full_len(shape: &[usize]) -> Result<usize, String> {
-+    let len = shape
-+        .iter()
-+        .try_fold(1usize, |len, &dim| len.checked_mul(dim))
-+        .ok_or_else(|| format!("full: shape {shape:?} element count overflows usize"))?;
-+    if len == 0 {
-+        return Err(format!("full: shape {shape:?} contains a zero dimension"));
-+    }
-+    if i32::try_from(len).is_err() {
-+        return Err(format!(
-+            "full: shape {shape:?} element count {len} exceeds i32::MAX ({})",
-+            i32::MAX
-+        ));
-+    }
-+    Ok(len)
+ /// Detect every architecture requirement in exported LLVM text.
+ ///
+ /// Both the ordinary PTX path and automatic libdevice mode use this exact
+@@ -837,10 +869,10 @@ pub(super) fn detect_module_requirements_in_llvm_text(contents: &str) -> ModuleR
+     {
+         ptx_isa = ptx_isa.max(PtxIsaRequirement::new(70));
+     }
+-    if contains_mbarrier_ptx71_features(contents) {
+-        ptx_isa = ptx_isa.max(PtxIsaRequirement::new(71));
+-    }
+-    if contains_b1_and_mma_features(contents) {
++    if contains_mbarrier_ptx71_features(contents)
++        || contains_b1_and_mma_features(contents)
++        || contains_packed_pointer_global_initializer(contents)
++    {
+         ptx_isa = ptx_isa.max(PtxIsaRequirement::new(71));
+     }
+     if contains_dynamic_stack_features(contents) {
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/generated_requirements.rs` (modified, +7/-5)
+```diff
+@@ -11,7 +11,7 @@ use crate::generated_intrinsic_targets::{
+     GeneratedHardwareAlternative, GeneratedHardwareTarget, GeneratedTargetContract,
+     GeneratedTargetRequirement,
+ };
+-use cuda_target_spec::{CudaArch, PtxSpelling, recorded_ptx_floor};
++use cuda_target_spec::{CudaArch, PtxSpelling, is_known_nvvm_target};
+ 
+ /// Convert catalog PTX floors to the discrete `llc` feature spellings this
+ /// compiler supports. A floor between two spellings rounds upward; a future
+@@ -175,7 +175,7 @@ fn resolved_hardware_satisfied(arch: &CudaArch, requirement: GeneratedResolvedRe
+ 
+ fn generated_hardware_satisfied(arch: &CudaArch, hardware: GeneratedHardwareTarget) -> bool {
+     let (capability, suffix) = (arch.capability(), arch.suffix());
+-    if recorded_ptx_floor(arch).is_err() {
++    if !is_known_nvvm_target(arch) {
+         return false;
+     }
+ 
+@@ -194,7 +194,7 @@ fn generated_hardware_satisfied(arch: &CudaArch, hardware: GeneratedHardwareTarg
+ 
+ fn generated_contract_satisfied(arch: &CudaArch, contract: &GeneratedTargetContract) -> bool {
+     let (capability, suffix) = (arch.capability(), arch.suffix());
+-    recorded_ptx_floor(arch).is_ok()
++    is_known_nvvm_target(arch)
+         && contract.alternatives.iter().any(|alternative| {
+             generated_hardware_alternative_satisfied(capability, suffix, alternative.hardware)
+         })
+@@ -278,7 +278,7 @@ pub(super) fn generated_requirement_ptx_floor(
+     requirement: GeneratedTargetRequirement,
+ ) -> Option<u16> {
+     let (capability, suffix) = (arch.capability(), arch.suffix());
+-    if recorded_ptx_floor(arch).is_err() {
++    if !is_known_nvvm_target(arch) {
+         return None;
+     }
+     match requirement.hardware {
+@@ -310,7 +310,9 @@ fn resolved_requirement_ptx_floor(
+         }
+         GeneratedResolvedRequirement::Contract(contract) => {
+             let (capability, suffix) = (arch.capability(), arch.suffix());
+-            recorded_ptx_floor(arch).ok()?;
++            if !is_known_nvvm_target(arch) {
++                return None;
++            }
+             contract
+                 .alternatives
+                 .iter()
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/select.rs` (modified, +3/-1)
+```diff
+@@ -201,7 +201,9 @@ pub(crate) fn resolve_ptx_target_with_generated(
+     }
+ 
+     if let Some(device) = device_hint.filter(|target| {
+-        arch_satisfies(target, detected) && generated_target_satisfied(target, generated)
++        recorded_ptx_floor(target).is_ok()
++            && arch_satisfies(target, detected)
++            && generated_target_satisfied(target, generated)
+     }) {
+         return Ok((device.clone(), "detected GPU"));
+     }
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/generated_floors.rs` (modified, +31/-0)
+```diff
+@@ -228,6 +228,37 @@ fn dynamic_stack_mentions_without_calls_do_not_raise_requirements() {
+     );
  }
  
- pub fn fill<T: DType + cuda_core::DeviceCopy>(
-@@ -973,3 +1004,63 @@ pub trait DeviceOpReshapeShared<T: DType + Send>:
- }
- 
- impl<T: DType + Send, DI: DeviceOp<Output = Arc<Tensor<T>>>> DeviceOpReshapeShared<T> for DI {}
++#[test]
++fn packed_pointer_global_initializers_require_ptx71() {
++    let packed_relocation = concat!(
++        "@target = addrspace(1) global [4 x i8] c\"\\01\\02\\03\\04\", align 4\n",
++        "@packed = local_unnamed_addr addrspace(1) global <{ [3 x i8], i64, [2 x i8] }> ",
++        "<{ [3 x i8] c\"\\11\\223\", i64 ptrtoint (ptr addrspacecast (ptr addrspace(1) @target to ptr) to i64), [2 x i8] c\"UD\" }>, align 1\n",
++    );
++    let requirements = detect_module_requirements_in_llvm_text(packed_relocation);
++    assert_eq!(requirements.ptx_isa, PtxIsaRequirement::new(71));
++    assert_eq!(
++        required_ptx_feature(&"sm_80".parse().unwrap(), requirements.ptx_isa).unwrap(),
++        Some("+ptx71")
++    );
++    assert_eq!(
++        required_ptx_feature(&"sm_86".parse().unwrap(), requirements.ptx_isa).unwrap(),
++        None
++    );
 +
-+#[cfg(test)]
-+mod full_shape_tests {
-+    use super::{checked_full_len, full, ones, zeros};
-+
-+    #[test]
-+    fn accepts_valid_shapes_and_i32_boundary() {
-+        assert_eq!(checked_full_len(&[]), Ok(1));
-+        assert_eq!(checked_full_len(&[1024]), Ok(1024));
-+        assert_eq!(checked_full_len(&[3, 5]), Ok(15));
-+        assert_eq!(checked_full_len(&[2, 3, 4]), Ok(24));
++    for non_packed_or_scalar in [
++        "@unpacked = addrspace(1) global { i64 } { i64 ptrtoint (ptr addrspacecast (ptr addrspace(1) @target to ptr) to i64) }, align 8\n",
++        "@packed_bytes = addrspace(1) global <{ [3 x i8], i32 }> <{ [3 x i8] c\"abc\", i32 7 }>, align 1\n",
++        "; @commented = addrspace(1) global <{ [1 x i8], i64 }> <{ [1 x i8] c\"x\", i64 ptrtoint (ptr @target to i64) }>\n",
++    ] {
 +        assert_eq!(
-+            checked_full_len(&[i32::MAX as usize]),
-+            Ok(i32::MAX as usize)
++            detect_module_requirements_in_llvm_text(non_packed_or_scalar).ptx_isa,
++            PtxIsaRequirement::Default,
++            "{non_packed_or_scalar}"
 +        );
 +    }
-+
-+    #[test]
-+    fn rejects_zero_dimensions() {
-+        for shape in [&[0][..], &[3, 0][..], &[0, usize::MAX][..]] {
-+            let error = checked_full_len(shape).expect_err("zero dimension must fail");
-+            assert!(error.contains("zero dimension"), "{error}");
-+        }
-+    }
-+
-+    #[test]
-+    fn rejects_usize_product_overflow() {
-+        // The first product wraps to 1 without overflow checks. The second
-+        // overflows even though every individual dimension fits in i32.
-+        for shape in [&[usize::MAX, usize::MAX][..], &[i32::MAX as usize; 3][..]] {
-+            let error = checked_full_len(shape).expect_err("shape product must fail");
-+            assert!(error.contains("overflows usize"), "{error}");
-+        }
-+    }
-+
-+    #[test]
-+    fn rejects_flattened_length_above_i32_max() {
-+        // Both products fit usize on 32-bit and 64-bit hosts.
-+        for shape in [&[i32::MAX as usize + 1][..], &[32768, 65536][..]] {
-+            let error = checked_full_len(shape).expect_err("flat dimension must fail");
-+            assert!(error.contains("exceeds i32::MAX"), "{error}");
-+        }
-+    }
-+
-+    #[test]
-+    fn invalid_shapes_do_not_panic_during_construction() {
-+        // Only construct the lazy operations: this must not need a CUDA
-+        // context, panic on arithmetic, or reach the zero-length assertion.
-+        for shape in [
-+            &[usize::MAX, usize::MAX][..],
-+            &[i32::MAX as usize + 1][..],
-+            &[32768, 65536][..],
-+            &[0][..],
-+        ] {
-+            let _ = full(7.0f32, shape);
-+            let _ = zeros::<f32>(shape);
-+            let _ = ones::<f32>(shape);
-+        }
-+    }
 +}
++
+ #[test]
+ fn ptx73_feature_is_requested_only_when_the_target_default_is_older() {
+     assert_eq!(
 ```
 
-**File**: `cutile-rs/cutile/tests/gpu/tensor_guards.rs` (modified, +67/-0)
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/selection.rs` (modified, +22/-0)
 ```diff
-@@ -9,6 +9,7 @@
- 
- use std::panic::{self, AssertUnwindSafe};
- 
-+use cuda_async::error::DeviceError;
- use cutile::api;
- use cutile::prelude::*;
- 
-@@ -104,3 +105,69 @@ fn oversized_allocation_is_an_error_not_a_panic() {
-         .expect("allocation after OOM");
-     assert_eq!(t.shape(), &[16]);
+@@ -464,6 +464,28 @@ fn valid_device_hints_and_explicit_compute_targets_preserve_selection() {
+                 .unwrap();
+         assert_eq!(nvvm.sm(), expected);
+     }
++
++    // R100 (`sm_107a`) is supported by libNVVM/nvJitLink, while the pinned LLVM
++    // 23 `llc` backend has no `-mcpu=sm_107a` entry and must fall back to the
++    // feature floor when given `sm_107a` as an advisory device hint.
++    let r100_hint = "sm_107a".parse::<cuda_target_spec::DeviceArch>().unwrap();
++    let (ptx_on_r100, ptx_provenance) = resolve_ptx_target(
++        None,
++        "test override",
++        Some(&r100_hint),
++        DetectedFeatures::Basic,
++    )
++    .unwrap();
++    assert_eq!(ptx_on_r100.sm(), "sm_80");
++    assert_eq!(ptx_provenance, "feature requirement");
++    let nvvm_on_r100 =
++        crate::export::resolve_nvvm_target(None, Some(&r100_hint), Some(DetectedFeatures::Basic))
++            .unwrap();
++    assert_eq!(nvvm_on_r100.sm(), "sm_107a");
++    let explicit_nvvm_r100 =
++        crate::export::resolve_nvvm_target(Some("sm_107"), None, Some(DetectedFeatures::Sm80))
++            .unwrap();
++    assert_eq!(explicit_nvvm_r100.sm(), "sm_107");
  }
+ 
+ #[test]
+```
+
+**File**: `cuda-oxide/crates/cuda-target-spec/src/lib.rs` (modified, +16/-0)
+```diff
+@@ -480,6 +480,16 @@ pub fn recorded_ptx_floor(arch: &CudaArch) -> Result<u16, UnsupportedTargetError
+         })
+ }
+ 
++/// Whether `arch` is a known CUDA target supported by the NVVM IR / toolkit pipeline.
++///
++/// Includes every target with a recorded LLVM 23 PTX floor plus CUDA 13.4+
++/// Rubin (`sm_107`, `sm_107a`, `sm_107f`) targets that `libNVVM` and `nvJitLink`
++/// compile natively before the pinned `llc` backend gains `-mcpu=sm_107*`.
++pub fn is_known_nvvm_target(arch: &CudaArch) -> bool {
++    recorded_ptx_floor(arch).is_ok()
++        || (arch.capability == 107 && matches!(arch.suffix, None | Some('a' | 'f')))
++}
 +
-+const INVALID_FULL_SHAPES: &[(&[usize], &str)] = &[
-+    (&[usize::MAX, usize::MAX], "overflows usize"),
-+    (&[i32::MAX as usize; 3], "overflows usize"),
-+    (&[i32::MAX as usize + 1], "exceeds i32::MAX"),
-+    (&[32768, 65536], "exceeds i32::MAX"),
-+    (&[0], "zero dimension"),
-+    (&[3, 0], "zero dimension"),
-+];
-+
-+fn assert_full_shape_error(error: DeviceError, expected: &str) {
-+    match error {
-+        DeviceError::Internal(message) => {
-+            assert!(message.starts_with("full: "), "{message}");
-+            assert!(message.contains(expected), "{message}");
+ /// Discrete PTX ISA feature spellings supported by the pinned LLVM backend.
+ pub const PTX_ISA_SPELLINGS: &[u16] = &[62, 65, 70, 71, 73, 78, 80, 86, 87, 88, 90, 91];
+ 
+@@ -583,6 +593,12 @@ mod tests {
+         ] {
+             assert!(raw.parse::<DeviceArch>().is_err(), "{raw}");
+         }
++        for nvvm_only in ["sm_107", "sm_107a", "sm_107f"] {
++            let arch: CudaArch = nvvm_only.parse().unwrap();
++            assert!(is_known_nvvm_target(&arch), "{nvvm_only}");
++            assert!(recorded_ptx_floor(&arch).is_err(), "{nvvm_only}");
 +        }
-+        other => panic!("expected full shape validation error, got: {other:?}"),
-+    }
-+}
-+
-+#[test]
-+fn full_reports_invalid_shapes_as_errors() {
-+    // Check the specific error, not just is_err(): in release builds the
-+    // old product could wrap, allocate and fill, then fail during reshape.
-+    for &(shape, expected) in INVALID_FULL_SHAPES {
-+        let error = api::full(7.0f32, shape)
-+            .sync()
-+            .expect_err("invalid full shape must fail");
-+        assert_full_shape_error(error, expected);
-+    }
-+}
-+
-+#[test]
-+fn full_wrappers_report_invalid_shapes_as_errors() {
-+    for &(shape, expected) in INVALID_FULL_SHAPES {
-+        let zeros_error = api::zeros::<f32>(shape)
-+            .sync()
-+            .expect_err("invalid zeros shape must fail");
-+        assert_full_shape_error(zeros_error, expected);
-+
-+        let ones_error = api::ones::<f32>(shape)
-+            .sync()
-+            .expect_err("invalid ones shape must fail");
-+        assert_full_shape_error(ones_error, expected);
-+    }
-+}
-+
-+#[test]
-+fn full_and_wrappers_preserve_shape_and_values() {
-+    // Exercise a matrix reshape and a partial edge tile of the fill kernel.
-+    for (shape, expected_shape) in [
-+        (&[2usize, 3][..], &[2i32, 3][..]),
-+        (&[129usize][..], &[129i32][..]),
-+    ] {
-+        let tensors = [
-+            (api::full(3.25f32, shape).sync().expect("valid full"), 3.25),
-+            (api::zeros::<f32>(shape).sync().expect("valid zeros"), 0.0),
-+            (api::ones::<f32>(shape).sync().expect("valid ones"), 1.0),
-+        ];
-+        for (tensor, expected) in tensors {
-+            assert_eq!(tensor.shape(), expected_shape);
-+            let host: Vec<f32> = tensor.to_host_vec().sync().expect("copy");
-+            assert_eq!(host, vec![expected; shape.iter().product()]);
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `2d47e43e` (2026-10-31)
-**Commit Message**: fix(cuda-bindings): preserve complete struct layouts with libclang 22 (#1684)
-
-Older bindgen can emit a one-byte placeholder instead of the fields of a
-forward-declared C struct when using libclang 22. This produces
-incorrect CUDA bindings and failing layout checks. Upgrade
-`cuda-bindings` to bindgen 0.72.1, which includes the upstream
-type-completeness fix in
-[rust-lang/rust-bindgen#3278](https://github.com/rust-lang/rust-bindgen/pull/3278).
-
-The regression test uses a self-contained C typedef chain and verifies
-that both fields of the completed struct survive binding generation.
-With bindgen 0.69.5 and libclang 22 it fails because only `_address` is
-emitted; with 0.72.1 it passes. It runs as part of the existing
-`cuda-bindings` test suite. Use libclang 22 to exercise the original
-failure.
-
-The large diff is generated lockfile maintenance: 263 affected
-workspace/example lockfiles now resolve the updated shared bindings
-dependency. Package additions are limited to the new bindgen and its
-required rustc-hash version; obsolete transitive dependencies disappear.
-Archived benchmarks that use separately published crates are unchanged.
-
-Validation:
-
-- The regression fails with bindgen 0.
-
-**File**: `Cargo.lock` (modified, +6/-144)
-```diff
-@@ -19,25 +19,22 @@ checksum = "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3"
++        assert!(!is_known_nvvm_target(&"sm_102a".parse().unwrap()));
+     }
  
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-  "quote",
-  "regex",
-- "rustc-hash 1.1.0",
-+ "rustc-hash",
-  "shlex",
-  "syn",
-- "which",
- ]
- 
- [[package]]
-@@ -135,7 +132,7 @@ dependencies = [
-  "half",
-  "loom",
-  "once_cell",
-- "rustc-hash 2.1.2",
-+ "rustc-hash",
-  "thiserror",
- ]
- 
-@@ -204,16 +201,6 @@ version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
- 
--[[package]]
--name = "errno"
--version = "0.3.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "find-msvc-tools"
- version = "0.1.9"
-@@ -368,15 +355,6 @@ version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "indexmap"
- version = "2.14.0"
-@@ -408,12 +386,6 @@ version = "1.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
- 
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -430,12 +402,6 @@ dependencies = [
-  "windows-link",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "lock_api"
- version = "0.4.14"
-@@ -501,7 +467,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -616,31 +582,12 @@ version = "0.8.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
- 
--[[package]]
--name = "rustc-hash"
--version = "1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
- [[package]]
- name = "rustc-hash"
- version = "2.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "94300abf3f1ae2e2b8ffb7b58043de3d399c73fa6f4b73826402a5c457614dbe"
- 
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys",
-- "windows-sys 0.59.0",
--]
--
- [[package]]
- name = "rustversion"
- version = "1.0.22"
-@@ -907,25 +854,13 @@ version = "0.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
- 
--[[package]]
--name = "which"
--version = "4.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
--dependencies = [
-- "either",
-- "home",
-- "once_cell",
-- "rustix",
--]
--
- [[package]]
- name = "winapi-util"
- version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -943,15 +878,6 @@ dependencies = [
-  "windows-link",
- ]
- 
--[[package]]
--name = "windows-sys"
--version = "0.59.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
--dependencies = [
-- "windows-targets",
--]
--
- [[package]]
- name = "windows-sys"
- version = "0.61.2"
-@@ -961,70 +887,6 @@ dependencies = [
-  "windows-link",
- ]
- 
--[[package]]
--name = "windows-targets"
--version = "0.52.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b724
-```
-
-**File**: `cuda-bindings/Cargo.toml` (modified, +5/-1)
-```diff
-@@ -16,12 +16,16 @@ doctest = false
- libloading = "0.8"
- 
- [build-dependencies]
--bindgen = "0.69.4"
-+bindgen = "0.72.1"
- prettyplease = "0.2.35"
- proc-macro2 = { version = "1", features = ["span-locations"] }
- quote = "1.0.35"
- syn = { version = "2.0", features = ["full", "extra-traits", "visit", "visit-mut", "fold"] }
- 
-+[dev-dependencies]
-+bindgen = "0.72.1"
-+syn = { version = "2.0", features = ["full"] }
-+
- [lints.rust]
- unexpected_cfgs = { level = "warn", check-cfg = ['cfg(loom)'] }
- 
-```
-
-**File**: `cuda-bindings/tests/forward_declared_struct.rs` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+
-+//! libclang 22 returns a forward declaration where older versions returned the
-+//! definition. Bindgen must follow it to the definition before emitting fields.
-+
-+#[test]
-+fn typedef_chain_preserves_forward_declared_struct_fields() {
-+    let bindings = bindgen::builder()
-+        .header_contents(
-+            "forward_declared_struct.h",
-+            r#"
-+                typedef struct Packet_st Packet_v1;
-+                typedef Packet_v1 Packet;
-+                struct Packet_st {
-+                    unsigned long long address;
-+                    unsigned long long count;
-+                };
-+            "#,
-+        )
-+        .generate()
-+        .expect("generate bindings for the forward-declared struct");
-+    let file = syn::parse_file(&bindings.to_string()).expect("parse generated bindings");
-+    let packet = file
-+        .items
-+        .iter()
-+        .find_map(|item| match item {
-+            syn::Item::Struct(item) if item.ident == "Packet_st" => Some(item),
-+            _ => None,
-+        })
-+        .expect("emit the complete struct definition");
-+    let fields: Vec<_> = packet
-+        .fields
-+        .iter()
-+        .map(|field| field.ident.as_ref().expect("named field").to_string())
-+        .collect();
-+    assert_eq!(fields, ["address", "count"]);
-+}
-```
-
-**File**: `cuda-oxide/Cargo.lock` (modified, +18/-152)
-```diff
-@@ -53,7 +53,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -64,7 +64,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -155,25 +155,22 @@ dependencies = [
- 
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-  "quote",
-  "regex",
-- "rustc-hash 1.1.0",
-+ "rustc-hash",
-  "shlex",
-  "syn 2.0.117",
-- "which",
- ]
- 
- [[package]]
-@@ -407,7 +404,7 @@ dependencies = [
-  "futures",
-  "half",
-  "once_cell",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "thiserror 1.0.69",
- ]
- 
-@@ -697,7 +694,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -900,15 +897,6 @@ dependencies = [
-  "wide",
- ]
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "iket-lower"
- version = "0.1.0"
-@@ -958,18 +946,6 @@ version = "1.0.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
--[[package]]
--name = "lazy_static"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
--
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -1015,12 +991,6 @@ dependencies = [
-  "syn 3.0.9",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "linux-raw-sys"
- version = "0.12.1"
-@@ -1042,7 +1012,7 @@ dependencies = [
-  "pliron-derive",
-  "pliron-llvm",
-  "reserved-oxide-symbols",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "thiserror 2.0.21",
- ]
- 
-@@ -1092,7 +1062,7 @@ dependencies = [
-  "pliron",
-  "pliron-derive",
-  "reserved-oxide-symbols",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "thiserror 2.0.21",
- ]
- 
-@@ -1109,7 +1079,7 @@ dependencies = [
-  "pliron",
-  "pliron-derive",
-  "reserved-oxide-symbols",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "thiserror 2.0.21",
- ]
- 
-@@ -1120,7 +1090,7 @@ dependencies = [
-  "dialect-mir",
-  "pliron",
-  "reserved-oxide-symbols",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "thiserror 2.0.21",
- ]
- 
-@@ -1250,7 +1220,7 @@ dependencies = [
-  "once_vec",
-  "pliron-derive",
-  "regex",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "rustc_apfloat",
-  "slotmap",
-  "smallvec",
-@@ -1270,7 +1240,7 @@ dependencies = [
-  "indexmap",
-  "proc-macro2",
-  "quote",
-- "rustc-hash 2.1.3",
-+ "rustc-hash",
-  "syn 3.0.9",
- ]
- 
-@@ -1402,12 +1372,6 @@ version = "0.1.28"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b74b56ffa8bb2830709a538c2cbcae9aa062db0d2a42563bfb09bdaae44020eb"
- 
--[[package]]
--name = "rustc-hash"
--version = "1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
- [[package]]
- name = "rustc-hash"
- version = "2.1.3"
-@@ -1424,19 +1388,6 @@ dependencies = [
-  "smallvec",
- ]
- 
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys 0.4.15",
-- "windows-sys 0.59.0",
--]
--
- [[package]]
- name = "rustix"
- version = "1.1.4"
-@@ -1446,8 +1397,8 @@ dependencies = [
-  "bitflags",
-  "errno",
-  "libc",
-- "linux-raw-sys 0.12.1",
-- "windows-sys 0.61.2",
-+ "linux-raw-sys",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -1613,8 +1564,8 @@ dependencies = [
-  "fastrand",
-  "getrandom",
-  "once_cell",
-- "rustix 1.1.4",
-- "windows-sys 0.61.2",
-+ "rustix",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -1768,18 +1719,6 @@ version = "0.9.5"
- source = "registry+https://githu
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/abi_hmm/Cargo.lock` (modified, +4/-157)
-```diff
-@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
- 
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -46,7 +44,6 @@ dependencies = [
-  "rustc-hash",
-  "shlex",
-  "syn",
-- "which",
- ]
- 
- [[package]]
-@@ -255,16 +252,6 @@ version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
- 
--[[package]]
--name = "errno"
--version = "0.3.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "foldhash"
- version = "0.1.5"
-@@ -314,15 +301,6 @@ version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "indexmap"
- version = "2.14.0"
-@@ -348,18 +326,6 @@ version = "1.0.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
--[[package]]
--name = "lazy_static"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
--
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -385,12 +351,6 @@ dependencies = [
-  "thiserror",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "log"
- version = "0.4.29"
-@@ -439,12 +399,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "oxide-artifacts"
- version = "0.2.1"
-@@ -530,22 +484,9 @@ version = "0.2.1"
- 
- [[package]]
- name = "rustc-hash"
--version = "1.1.0"
-+version = "2.1.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys",
-- "windows-sys 0.59.0",
--]
-+checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
- 
- [[package]]
- name = "serde"
-@@ -656,106 +597,12 @@ version = "0.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
- 
--[[package]]
--name = "which"
--version = "4.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
--dependencies = [
-- "either",
-- "home",
-- "once_cell",
-- "rustix",
--]
--
- [[package]]
- name = "windows-link"
- version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
- 
--[[package]]
--name = "windows-sys"
--version = "0.59.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
--dependencies = [
-- "windows-targets",
--]
--
--[[package]]
--name = "windows-sys"
--version = "0.61.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
--dependencies = [
-- "windows-link",
--]
--
--[[package]]
--name = "windows-targets"
--version = "0.52.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
--dependencies = [
-- "windows_aarch64_gnullvm",
-- "windows_aarch64_msvc",
-- "windows_i686_gnu",
-- "windows_i686_gnullvm",
-- "
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/addressof_sharedarray/Cargo.lock` (modified, +4/-157)
-```diff
-@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
- 
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -46,7 +44,6 @@ dependencies = [
-  "rustc-hash",
-  "shlex",
-  "syn",
-- "which",
- ]
- 
- [[package]]
-@@ -255,16 +252,6 @@ version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
- 
--[[package]]
--name = "errno"
--version = "0.3.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "foldhash"
- version = "0.1.5"
-@@ -314,15 +301,6 @@ version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "indexmap"
- version = "2.14.0"
-@@ -348,18 +326,6 @@ version = "1.0.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
--[[package]]
--name = "lazy_static"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
--
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -385,12 +351,6 @@ dependencies = [
-  "thiserror",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "log"
- version = "0.4.29"
-@@ -439,12 +399,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "oxide-artifacts"
- version = "0.2.1"
-@@ -530,22 +484,9 @@ version = "0.2.1"
- 
- [[package]]
- name = "rustc-hash"
--version = "1.1.0"
-+version = "2.1.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys",
-- "windows-sys 0.59.0",
--]
-+checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
- 
- [[package]]
- name = "serde"
-@@ -656,106 +597,12 @@ version = "0.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
- 
--[[package]]
--name = "which"
--version = "4.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
--dependencies = [
-- "either",
-- "home",
-- "once_cell",
-- "rustix",
--]
--
- [[package]]
- name = "windows-link"
- version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
- 
--[[package]]
--name = "windows-sys"
--version = "0.59.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
--dependencies = [
-- "windows-targets",
--]
--
--[[package]]
--name = "windows-sys"
--version = "0.61.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
--dependencies = [
-- "windows-link",
--]
--
--[[package]]
--name = "windows-targets"
--version = "0.52.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
--dependencies = [
-- "windows_aarch64_gnullvm",
-- "windows_aarch64_msvc",
-- "windows_i686_gnu",
-- "windows_i686_gnullvm",
-- "
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/aligned_field_loads/Cargo.lock` (modified, +4/-157)
-```diff
-@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
- 
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -46,7 +44,6 @@ dependencies = [
-  "rustc-hash",
-  "shlex",
-  "syn",
-- "which",
- ]
- 
- [[package]]
-@@ -255,16 +252,6 @@ version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
- 
--[[package]]
--name = "errno"
--version = "0.3.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "foldhash"
- version = "0.1.5"
-@@ -314,15 +301,6 @@ version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "indexmap"
- version = "2.14.0"
-@@ -348,18 +326,6 @@ version = "1.0.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
--[[package]]
--name = "lazy_static"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
--
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -385,12 +351,6 @@ dependencies = [
-  "thiserror",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "log"
- version = "0.4.29"
-@@ -439,12 +399,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "oxide-artifacts"
- version = "0.2.1"
-@@ -530,22 +484,9 @@ version = "0.2.1"
- 
- [[package]]
- name = "rustc-hash"
--version = "1.1.0"
-+version = "2.1.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys",
-- "windows-sys 0.59.0",
--]
-+checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
- 
- [[package]]
- name = "serde"
-@@ -656,106 +597,12 @@ version = "0.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
- 
--[[package]]
--name = "which"
--version = "4.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
--dependencies = [
-- "either",
-- "home",
-- "once_cell",
-- "rustix",
--]
--
- [[package]]
- name = "windows-link"
- version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
- 
--[[package]]
--name = "windows-sys"
--version = "0.59.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
--dependencies = [
-- "windows-targets",
--]
--
--[[package]]
--name = "windows-sys"
--version = "0.61.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
--dependencies = [
-- "windows-link",
--]
--
--[[package]]
--name = "windows-targets"
--version = "0.52.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
--dependencies = [
-- "windows_aarch64_gnullvm",
-- "windows_aarch64_msvc",
-- "windows_i686_gnu",
-- "windows_i686_gnullvm",
-- "
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/aligned_field_stores/Cargo.lock` (modified, +4/-157)
-```diff
-@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
- 
- [[package]]
- name = "bindgen"
--version = "0.69.5"
-+version = "0.72.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
-+checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
- dependencies = [
-  "bitflags",
-  "cexpr",
-  "clang-sys",
-  "itertools",
-- "lazy_static",
-- "lazycell",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -46,7 +44,6 @@ dependencies = [
-  "rustc-hash",
-  "shlex",
-  "syn",
-- "which",
- ]
- 
- [[package]]
-@@ -255,16 +252,6 @@ version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
- 
--[[package]]
--name = "errno"
--version = "0.3.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "foldhash"
- version = "0.1.5"
-@@ -314,15 +301,6 @@ version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
- 
--[[package]]
--name = "home"
--version = "0.5.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
--dependencies = [
-- "windows-sys 0.61.2",
--]
--
- [[package]]
- name = "indexmap"
- version = "2.14.0"
-@@ -348,18 +326,6 @@ version = "1.0.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
--[[package]]
--name = "lazy_static"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
--
--[[package]]
--name = "lazycell"
--version = "1.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
--
- [[package]]
- name = "libc"
- version = "0.2.186"
-@@ -385,12 +351,6 @@ dependencies = [
-  "thiserror",
- ]
- 
--[[package]]
--name = "linux-raw-sys"
--version = "0.4.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
--
- [[package]]
- name = "log"
- version = "0.4.29"
-@@ -439,12 +399,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "oxide-artifacts"
- version = "0.2.1"
-@@ -530,22 +484,9 @@ version = "0.2.1"
- 
- [[package]]
- name = "rustc-hash"
--version = "1.1.0"
-+version = "2.1.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
--
--[[package]]
--name = "rustix"
--version = "0.38.44"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
--dependencies = [
-- "bitflags",
-- "errno",
-- "libc",
-- "linux-raw-sys",
-- "windows-sys 0.59.0",
--]
-+checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
- 
- [[package]]
- name = "serde"
-@@ -656,106 +597,12 @@ version = "0.9.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
- 
--[[package]]
--name = "which"
--version = "4.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
--dependencies = [
-- "either",
-- "home",
-- "once_cell",
-- "rustix",
--]
--
- [[package]]
- name = "windows-link"
- version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
- 
--[[package]]
--name = "windows-sys"
--version = "0.59.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
--dependencies = [
-- "windows-targets",
--]
--
--[[package]]
--name = "windows-sys"
--version = "0.61.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
--dependencies = [
-- "windows-link",
--]
--
--[[package]]
--name = "windows-targets"
--version = "0.52.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
--dependencies = [
-- "windows_aarch64_gnullvm",
-- "windows_aarch64_msvc",
-- "windows_i686_gnu",
-- "windows_i686_gnullvm",
-- "
-```
-
----
-
-### Incident Patch 3: `dfea1169` (2026-10-30)
-**Commit Message**: cuda-core: safe element casts require AnyBitPattern; bool is DeviceCopy (#1516)
-
-Closes #1506. First change under #1460; implements the `bool` decision
-recorded there and in #1461 and #1503.
-
-Safe element casts previously checked size and alignment but could turn
-a byte containing `2` into a Rust `bool`. This PR rejects those casts,
-supports initialized `bool` buffers, and closes the host-side
-initialization, atomic-reference, kernel-argument, and pinned-alignment
-holes found during review and follow-up auditing.
-
-## Element validity
-
-`DeviceBuffer::cast_elem`, `cast_chunks`, `can_cast_chunks`, and
-`Tensor::reinterpret` require `bytemuck::AnyBitPattern` on the target.
-Casting into `bool` is therefore a compile error.
-
-The two safe buffer casts also require `T: bytemuck::NoUninit` on their
-source: padding or `MaybeUninit` bytes must not become initialized
-destination values. `can_cast_chunks` remains a layout query. These
-bounds do not restrict `DeviceCopy` itself, and bool-to-byte casts
-remain supported.
-
-`bool` implements `DeviceCopy`: valid values can be copied between host
-and device, and its all-zero representation is valid. `DeviceCopy` does
-not promise that every bit pattern 
-
-**File**: `.github/workflows/book.yml` (modified, +2/-1)
-```diff
-@@ -15,7 +15,8 @@ on:
-   # only ever built after merge, so a PR that broke it could not be caught by
-   # review or by CI.
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - 'cuda-oxide/cuda-oxide-book/**'
-       - 'cutile-rs/cutile-book/**'
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-1)
-```diff
-@@ -12,17 +12,20 @@ on:
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-       - '.github/workflows/**'
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - 'cuda-oxide/**'
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-```
-
-**File**: `.github/workflows/codeql.yml` (modified, +2/-1)
-```diff
-@@ -15,7 +15,8 @@ on:
-       - '**/*.sh'
-       - '**/*.py'
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - '**/*.rs'
-       - '**/Cargo.toml'
-```
-
-**File**: `.github/workflows/cutile-rs.yml` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ jobs:
-               - 'cuda-bindings/**'
-               - 'cuda-core/**'
-               - 'cuda-core-derive/**'
-+              - 'cuda-repr/**'
-               - 'cuda-async/**'
-               - 'Cargo.toml'
-               - 'Cargo.lock'
-```
-
-**File**: `.github/workflows/docs.yml` (modified, +4/-1)
-```diff
-@@ -10,17 +10,20 @@ on:
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-       - '.github/workflows/**'
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - 'cuda-oxide/**'
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-```
-
-**File**: `.github/workflows/examples-compile.yml` (modified, +4/-1)
-```diff
-@@ -10,17 +10,20 @@ on:
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-       - '.github/workflows/**'
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - 'cuda-oxide/**'
-       - 'cuda-bindings/**'
-       - 'cuda-core/**'
-       - 'cuda-core-derive/**'
-+      - 'cuda-repr/**'
-       - 'cuda-async/**'
-       - 'Cargo.toml'
-       - 'Cargo.lock'
-```
-
-**File**: `.github/workflows/naming-guard.yml` (modified, +2/-1)
-```diff
-@@ -16,7 +16,8 @@ on:
-       - 'cuda-oxide/scripts/check-reserved-prefixes.sh'
-       - '.github/workflows/naming-guard.yml'
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
-     paths:
-       - 'cuda-oxide/crates/**'
-       - 'cuda-oxide/scripts/check-reserved-prefixes.sh'
-```
-
-**File**: `.github/workflows/status-guard.yml` (modified, +2/-1)
-```diff
-@@ -5,7 +5,8 @@ on:
-   push:
-     branches: [main]
-   pull_request:
--    branches: [main]
-+    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
-+    branches: [main, "pull-request/[0-9]+"]
- 
- # Each commit on main gets its own group, so it starts at once. Any other ref
- # still shares one group and cancels the older run.
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1684** (2026-10-31): fix(cuda-bindings): preserve complete struct layouts with libclang 22 (@elibol)
-- **PR #1683** (2026-10-30): test(cutile): skip FP8 execution on unsupported targets (@elibol)
-- **PR #1672** (2026-10-30): feat(cute-rs): complete SM120a CuTeDSL parity, TiledCopy, BF16/NVFP4 TiledMma, and workload migrations (@nihalpasham)
-- **PR #1671** (2026-10-30): feat(cute-rs): add CuTeDSL-aligned SM100 pipelines, TmemAllocator, and arch forwarders (@nihalpasham)
-- **PR #1665** (2026-10-29): Put the Rust row inside the prerequisites table (@CanReader)
-- **PR #1663** (2026-10-27): perf(cuda-oxide): 7-stage SMEM pipeline and wave-tail tile balancing in gemm_sol_final (@nihalpasham)
+- **PR #1703** (2026-11-02): fix(cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (@nihalpasham)
+- **PR #1702** (2026-11-02): fix(cuda-oxide): resolve SWQA v0.5.0 failures on A100, R100, and ARM64 (@nihalpasham)
+- **PR #1701** (2026-11-02): refactor(cute-rs): unify layout algebra in cute-layout and eliminate hand-rolled kernel index math (@nihalpasham)
+- **PR #1697** (2026-11-01): perf(gemm_sol_final): restore 1.857 PFLOP/s 4096³ throughput on B200 (@nihalpasham)
+- **PR #1696** (2026-10-31): docs(cuda-oxide): unify SVG dark-mode palette, relocate gemm_sol_final to examples/, and tighten READMEs (@nihalpasham)
+- **PR #1686** (2026-10-31): feat(cute-rs): add SM100 fused QKV + RMSNorm + FP8 + Paged KV Scatter on Blackwell (@nihalpasham)
 
 ---
 
@@ -3980,63 +2734,32 @@ not promise that every bit pattern
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cutile): validate full tensor shapes before allocation (#1452)
+## X. cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_me
 
 **RULE**:
-When implementing operations in `cutile-rs/cutile/src/api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0925800d`: cutile): validate full tensor shapes before allocation (#1452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cced2a35`: cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (#1703). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/cutile/src/api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// ## Errors
-///
-/// Returns an error on execution if a dimension is zero, the element count
-/// overflows `usize`, or the flattened element count exceeds `i32::MAX`.
-/// Invalid shapes are rejected before GPU allocation or kernel execution.
-///
-    let len = match checked_full_len(shape) {
-        Ok(len) => len,
-        Err(message) => return fail::<Tensor<T>>(message).boxed(),
-    };
-    Tensor::<T>::uninitialized(len)
-        .then(move |t| {
-            // TODO (hme): It's awkward to assume_init this before actually initializing it.
-            let partition_size = 128;
-            let result = unsafe { t.assume_init() }.partition([partition_size]);
-            let (_, res) = value((val, result)).then(full_apply).unzip();
-            res.unpartition().reshape(&shape)
-        })
-        .boxed()
-}
-
-// `full` initializes a flat tensor before reshaping it. Its element count
-// must fit that tensor's i32 dimension, which also bounds every positive
-// target dimension and contiguous stride. An empty shape remains a scalar.
-fn checked_full_len(shape: &[usize]) -> Result<usize, String> {
-    let len = shape
-        .iter()
-        .try_fold(1usize, |len, &dim| len.checked_mul(dim))
-
+            cuda_device::thread::sync_threads();
+            if pending {
+                let _token = cuda_device::barrier::mbarrier_arrive(full);
+            }
+            cuda_device::barrier::mbarrier_inval(full);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let len = shape.iter().product::<usize>();
-    Tensor::<T>::uninitialized(len).then(move |t| {
-        // TODO (hme): It's awkward to assume_init this before actually initializing it.
-        let partition_size = 128;
-        let result = unsafe { t.assume_init() }.partition([partition_size]);
-        let (_, res) = value((val, result)).then(full_apply).unzip();
-        res.unpartition().reshape(&shape)
-    })
+            let _token = cuda_device::barrier::mbarrier_arrive(full);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0925800d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cced2a35` are properly handled with clean fallback behavior.

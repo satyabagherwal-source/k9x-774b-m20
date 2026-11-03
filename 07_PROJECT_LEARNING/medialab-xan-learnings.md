@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `15b46b5a`  
+> **Source Version**: `4a795ca6`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:27:44.666Z  
+> **Timestamp**: 2026-11-03T11:51:57.043Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:27:44.660Z  
+> **Harvest Timestamp**: 2026-11-03T11:51:55.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4540 stars
+- **Stars / Engagement**: 4546 stars
 
 ---
 
@@ -1930,14 +1930,14 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1211** (2026-10-21): **xan select incorrectly parses the number of arguments?**
+  *Symptoms*: I'm using `xan select` with `fmt` function to convert the format of an input file:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid={}", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid, Ensembl_tsid)' ```  This gives the error:  ``` xan select: got 9 arguments. Cannot exceed 8. ```  If I remove one of the interpolated strings, it works. E.g removing Ensembl_tsid:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid=", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid)'  chr10 47061 10:47061:G:A G A . . ESM1b_proteomics_variant_classification=Intermediate;Ensembl_geneid=ENSG00000261456;Ensembl_tsid= ```  Is this a bug or expected?   xan v0.61.0
+  **Post-Mortem & Fix Analysis**:
+  > So, this is not a bug of the `select` bug per-se but a limitation of the evaluation language itself (under the hood, function arguments remain stack allocated and so are limited to 8, which I thought was large enough for most use-cases, but evidently you just showed me that is not the case ;) ). So it's not a bug, it is expected, but we can still discuss the issue.  Now I could do things to improve the situation:  * This fact should be clearly documented (I don't think it is) * The error message should be clearer so people understand it is not the command itself which is the culprit but the expression language * I should be able to mitigate this by unfolding calls to variadic functions like `fmt` when parsing the expression so you can actually use it with more than 8 args. (As a workaround I think fmt is also able to accept a list of arguments as variables to use in the interpolated string `fmt("{}", something)` and `fmt("{}", [something])` are in fact semantically equivalent (albeit n
+  > @dariober a batch of commits made the following changes:  - the fmt function should be more robust - the fmt function should be faster - the fmt function should now accept more than 8 arguments if required - error messages have been made clearer
+
 - **Issue #1202** (2026-10-16): **cat rows --intersection has a different behavior depending on file order**
   *Symptoms*: Hello !  Here is what I get when I use several wildcards (*) with xan cat rows:  `xan cat rows fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_*  --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 original_index 38 resolved_url 39 http_status 40 datetime_utc 41 fetch_error 42 path 43 mimetype 44 encoding 45 body_size  `xan cat rows fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_* fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 year 38 original_index 39 resolved_url 40 http_status 41 datetime_utc 42 fetch_error 43 path 44 mimetype 45 encoding 46 body_size  
-
-- **Issue #1201** (2026-10-14): **round() adds tiny floating-point error**
-  *Symptoms*: Version: 0.61.0  To reproduce: ```bash echo -e "n\n0.141" | xan transform n 'round(_, 0.001)' ``` prints:  n 0.14100000000000001  What I expect:  n 0.141 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @logust79,  I am not sure what I could do about this. IEEE 754 `f64` has this kind of issue and in this particular case there is no silver bullet to make sure the result of the operation comes out unscathed, precision-wise. The function is basically doing:  ``` round(operand / unit) * unit; ```   So, in your case, and using `f64`:  ``` round(0.141 / 0.001) * 0.001 => 0.14100000000000001 ```  If you want to force the result to have a fixed number of decimal places you can always use the `to_fixed` function.  Or do you know a way to perform this operation with better `f64` precision (that would not be either too hard on performance nor making very specific assumptions about your inputs)?
-  > Hi @Yomguithereal  Thank you for the response. A possible solution could be to get a reciprocal if the unit is less than 1, and reverse the operations. ```rust let reciprocal = 1.0 / unit; // reciprocal = 1000 if unit is 0.001 let rounded_reciprocal = reciprocal.round(); ... ``` And then you can do the reverse: `op(operand * rounded_reciprocal) / rounded_reciprocal`, where `op` could be one of `round`, `ceil` and `floor`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1954,152 +1954,203 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15b46b5a` (2026-10-20)
-**Commit Message**: Tighter xan view record process loop
+### Incident Patch 1: `0b952754` (2026-10-27)
+**Commit Message**: Fix fractional_days panicking on identical points in time
 
-**File**: `src/cmd/view.rs` (modified, +22/-14)
+jiff panics when totaling a zero span in days relative to a date, so
+return 0.0 early for dates, datetimes and zoned datetimes.
+
+**File**: `src/moonblade/interpreter.rs` (modified, +23/-0)
 ```diff
-@@ -591,34 +591,42 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+@@ -1597,6 +1597,29 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_fractional_days() {
++        assert_eq!(
++            eval_code("fractional_days('2023-10-09', '2023-10-11')"),
++            Ok(DynamicValue::from(2.0))
++        );
++
++        assert_eq!(
++            eval_code("fractional_days('2023-10-09T00:00:00', '2023-10-09T12:00:00')"),
++            Ok(DynamicValue::from(0.5))
++        );
++
++        // Identical points in time used to panic inside jiff
++        for code in [
++            "fractional_days('2023-10-09', '2023-10-09')",
++            "fractional_days('2023-10-09T10:00:00', '2023-10-09T10:00:00')",
++            "fractional_days('2023-10-09T10:00:00Z'.datetime(), '2023-10-09T10:00:00Z'.datetime())",
++            "fractional_days('10:00:00', '10:00:00')",
++        ] {
++            assert_eq!(eval_code(code), Ok(DynamicValue::from(0.0)), "{code}");
++        }
++    }
++
+     #[test]
+     fn test_date() {
+         let date: Date = "1999-01-31".parse().unwrap();
+```
+
+**File**: `src/temporal.rs` (modified, +22/-3)
+```diff
+@@ -280,19 +280,38 @@ impl AnyTemporal {
+     pub fn relative_total(&self, other: &Self, unit: Unit) -> Result<f64, Error> {
+         match (self, other) {
+             (AnyTemporal::Zoned(a), AnyTemporal::Zoned(b)) => {
+-                let total = b.since(a)?.total((unit, a))?;
++                let span = b.since(a)?;
++
++                // NOTE: jiff panics when totaling a zero span relative to a date
++                if span.is_zero() {
++                    return Ok(0.0);
++                }
++
++                let total = span.total((unit, a))?;
+ 
+                 Ok(total)
              }
  
-             for cell in sel.select(&record) {
--                let mut cell = utils::sanitize_text_for_single_line_printing(cell);
--
--                if let Some(sanitizer) = &emoji_sanitizer_opt {
--                    cell = sanitizer.sanitize(&cell);
--                }
--
-                 if cell.is_empty() {
--                    cell = "<empty>".to_string();
-+                    processed_record.push_field("<empty>");
-+                    data_types.push(DataType::Nullish);
+             (AnyTemporal::DateTime(a), AnyTemporal::DateTime(b)) => {
+-                let total = b.since(*a)?.total((unit, a.date()))?;
++                let span = b.since(*a)?;
 +
-+                    continue;
-                 }
- 
--                let data_type = utils::infer_data_type(&cell);
-+                let data_type = utils::infer_data_type(cell);
-+                data_types.push(data_type);
- 
-                 match data_type {
-                     DataType::Float(f) => {
-                         if let Some(fmt) = number_formatter.as_mut() {
--                            cell = utils::format_number_with_formatter(fmt, f).to_string();
-+                            processed_record
-+                                .push_field(utils::format_number_with_formatter(fmt, f));
-+                        } else {
-+                            processed_record.push_field(cell);
-                         }
-                     }
-                     DataType::Integer(i) => {
-                         if let Some(k) = args.flag_thousands_sep {
--                            cell = utils::format_int(i, k.as_byte() as char)
-+                            processed_record.push_field(&utils::format_int(i, k.as_byte() as char));
-+                        } else {
-+                            processed_record.push_field(cell);
-                         }
-                     }
--                    _ => (),
--                };
-+                    _ => {
-+                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
- 
--                processed_record.push_field(&cell);
--                data_types.push(data_type);
-+                        if let Some(sanitizer) = &emoji_sanitizer_opt {
-+                            cell = sanitizer.sanitize(&cell);
-+                        }
++                if span.is_zero() {
++                    return Ok(0.0);
++                }
 +
-+                        processed_record.push_field(&cell);
-+                    }
-+                };
++                let total = span.total((unit, a.date()))?;
+ 
+                 Ok(total)
              }
  
-             records.push((processed_record, data_types));
+             (AnyTemporal::Date(a), AnyTemporal::Date(b)) => {
+-                let total = b.since(*a)?.total((unit, *a))?;
++                let span = b.since(*a)?;
++
++                if span.is_zero() {
++                    return Ok(0.0);
++                }
++
++                let total = span.total((unit, *a))?;
+ 
+                 Ok(total)
+             }
 ```
 
 ---
 
-### Incident Patch 2: `f05d8bad` (2026-10-20)
-**Commit Message**: Introducing workaround for fmt to accept more than 8 arguments
-Related to #1211
+### Incident Patch 2: `8f0763f0` (2026-11-03)
+**Commit Message**: Upgrading jiff & reverting span zero checks when computing spans
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -25,7 +25,7 @@
- * Adding `xan select -M/--add-missing`.
- * Adding `xan view --no-pager, --ignore-env, -k/--thousands-sep`.
- * Adding `xan flatten --hide-headers`.
--* The `fmt` function now accepts a list as substitutions.
-+* The `fmt` function now accepts a list as substitutions, is more robust to errors and is able to accept more than 8 arguments.
+@@ -1350,9 +1350,9 @@ checksum = "47f142fe24a9c9944451e8349de0a56af5f3e7226dc46f3ed4d4ecc0b85af75e"
  
- *Fixes*
+ [[package]]
+ name = "jiff"
+-version = "0.2.37"
++version = "0.2.39"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0ab1baf72f08796de0260609515130699b890ac25f30e610ad894bc5856cafdb"
++checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
+ dependencies = [
+  "defmt",
+  "jiff-core",
+@@ -1367,19 +1367,19 @@ dependencies = [
  
+ [[package]]
+ name = "jiff-core"
+-version = "0.1.1"
++version = "0.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e52fe76043ccecc9005d2305ebaadf7d7fc0cc89ca6baa10a94d6bc68c7128c"
++checksum = "aee43309eb53bafb8c36d35d6e444769c8f8e6206a9fbf7546f5db9d7d4a0e93"
+ dependencies = [
+  "defmt",
+  "log",
+ ]
+ 
+ [[package]]
+ name = "jiff-static"
+-version = "0.2.37"
++version = "0.2.39"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "378268a1116ad67ae6228701118ac9f491d78fda38a40a1f1a9e1348de6f7212"
++checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
+ dependencies = [
+  "jiff-core",
+  "proc-macro2",
 ```
 
-**File**: `src/moonblade/functions/fmt.rs` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -88,7 +88,7 @@ pub fn fmt(args: BoundArguments) -> FunctionResult {
-     };
- 
-     if (substitution_map.is_some() || substitution_list.is_some()) && args.len() > 2 {
--        return Err("expecting only a single substitution map or list")?;
-+        Err("expecting only a single substitution map or list")?;
-     }
- 
-     let mut formatted = String::with_capacity(pattern.len());
+@@ -93,7 +93,7 @@ idna = "1.1.0"
+ indexmap = "2.14.2"
+ indicatif = "0.18.6"
+ itoa = "1.0.18"
+-jiff = "0.2.37"
++jiff = "0.2.39"
+ lazy_static = "1.4.0"
+ levenshtein_automata = "0.2.1"
+ md5 = "0.8.1"
 ```
 
-**File**: `src/moonblade/interpreter.rs` (modified, +16/-2)
+**File**: `src/temporal.rs` (modified, +3/-22)
 ```diff
-@@ -496,15 +496,25 @@ fn concretize_arguments(
- }
+@@ -280,38 +280,19 @@ impl AnyTemporal {
+     pub fn relative_total(&self, other: &Self, unit: Unit) -> Result<f64, Error> {
+         match (self, other) {
+             (AnyTemporal::Zoned(a), AnyTemporal::Zoned(b)) => {
+-                let span = b.since(a)?;
+-
+-                // NOTE: jiff panics when totaling a zero span relative to a date
+-                if span.is_zero() {
+-                    return Ok(0.0);
+-                }
+-
+-                let total = span.total((unit, a))?;
++                let total = b.since(a)?.total((unit, a))?;
  
- fn concretize_call(
--    call: FunctionCall,
-+    mut call: FunctionCall,
-     headers_index: &HeadersIndex,
-     globals: Option<&GlobalNames>,
- ) -> Result<ConcreteExpr, ConcretizationError> {
-     let function_name = &call.name;
-     let actual_arity = call.args.len();
+                 Ok(total)
+             }
  
-     if actual_arity > BOUND_ARGUMENTS_CAPACITY {
--        return Err(ConcretizationError::TooManyArguments(actual_arity));
-+        if call.name == "fmt" && call.args[1..].iter().all(|(name, _)| name.is_none()) {
-+            let rest = call
-+                .args
-+                .split_off(1)
-+                .into_iter()
-+                .map(|(_, arg)| arg)
-+                .collect();
-+            call.args.push((None, Expr::List(rest)));
-+        } else {
-+            return Err(ConcretizationError::TooManyArguments(actual_arity));
-+        }
-     }
+             (AnyTemporal::DateTime(a), AnyTemporal::DateTime(b)) => {
+-                let span = b.since(*a)?;
+-
+-                if span.is_zero() {
+-                    return Ok(0.0);
+-                }
+-
+-                let total = span.total((unit, a.date()))?;
++                let total = b.since(*a)?.total((unit, a.date()))?;
  
-     // Dealing with special functions
-@@ -1339,6 +1349,10 @@ mod tests {
-             eval_code("fmt('Hello {name} {age}', {name: 'John', age: 45})"),
-             Ok(DynamicValue::from("Hello John 45"))
-         );
-+        assert_eq!(
-+            eval_code("fmt('{}{}{}{}{}{}{}{}', 1, 2, 3, 4, 5, 6, 7, 8)"),
-+            Ok(DynamicValue::from("12345678"))
-+        );
-         assert!(eval_code("fmt('Hello {name} {age}', ['John', 45], 32)").is_err());
-         assert!(eval_code("fmt('Hello {name} {age}', {name: 'John', age: 45}, 32)").is_err());
-     }
+                 Ok(total)
+             }
+ 
+             (AnyTemporal::Date(a), AnyTemporal::Date(b)) => {
+-                let span = b.since(*a)?;
+-
+-                if span.is_zero() {
+-                    return Ok(0.0);
+-                }
+-
+-                let total = span.total((unit, *a))?;
++                let total = b.since(*a)?.total((unit, *a))?;
+ 
+                 Ok(total)
+             }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 - **PR #1204** (2026-10-19): Corrected bug #1190 : hist option -m "sum" now obey given scale (@clothilde-ml)
 - **PR #1203** (closed): Fixing xan cat rows -I header intersection (@paoValle)
 - **PR #1199** (2026-10-16): `view` env override  controls (@solesby)
 - **PR #1198** (2026-10-14): Fixing xan view panicking with a 0x0 terminal or tiny --cols (@solesby)
 - **PR #1197** (2026-10-14): Fixing try() default value with static arguments (@solesby)
-- **PR #1195** (2026-10-09): Adding xan select -M/--add-missing (@solesby)
 
 ---
 
@@ -2119,62 +2170,50 @@ Related to #1211
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Tighter xan view record process loop
+## X. fractional_days panicking on identical points in time
 
 **RULE**:
-When implementing operations in `src/cmd/view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/moonblade/interpreter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15b46b5a`: Tighter xan view record process loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b952754`: fractional_days panicking on identical points in time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/moonblade/interpreter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    processed_record.push_field("<empty>");
-                    data_types.push(DataType::Nullish);
+    #[test]
+    fn test_fractional_days() {
+        assert_eq!(
+            eval_code("fractional_days('2023-10-09', '2023-10-11')"),
+            Ok(DynamicValue::from(2.0))
+        );
 
-                    continue;
-                let data_type = utils::infer_data_type(cell);
-                data_types.push(data_type);
-                            processed_record
-                                .push_field(utils::format_number_with_formatter(fmt, f));
-                        } else {
-                            processed_record.push_field(cell);
-                            processed_record.push_field(&utils::format_int(i, k.as_byte() as char));
-                        } else {
-                            processed_record.push_field(cell);
-                    _ => {
-                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
-                        if let Some(sanitizer) = &emoji_sanitizer_opt {
-                            cell = sanitizer.sanitize(&cell);
-                        }
+        assert_eq!(
+            eval_code("fractional_days('2023-10-09T00:00:00', '2023-10-09T12:00:00')"),
+            Ok(DynamicValue::from(0.5))
+        );
 
-                        processed_record.push_field(&cell);
-                    }
-                };
+        // Identical points in time used to panic inside jiff
+        for code in [
+            "fractional_days('2023-10-09', '2023-10-09')",
+            "fractional_days('2023-10-09T10:00:00', '2023-10-09T10:00:00')",
+            "fractional_days('2023-10-09T10:00:00Z'.datetime(), '2023-10-09T10:00:00Z'.datetime())",
+            "fractional_days('10:00:00', '10:00:00')",
+        ] {
+            assert_eq!(eval_code(code), Ok(DynamicValue::from(0.0)), "{code}");
+        }
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let mut cell = utils::sanitize_text_for_single_line_printing(cell);
-
-                if let Some(sanitizer) = &emoji_sanitizer_opt {
-                    cell = sanitizer.sanitize(&cell);
-                }
-
-                    cell = "<empty>".to_string();
-                let data_type = utils::infer_data_type(&cell);
-                            cell = utils::format_number_with_formatter(fmt, f).to_string();
-                            cell = utils::format_int(i, k.as_byte() as char)
-                    _ => (),
-                };
-                processed_record.push_field(&cell);
-                data_types.push(data_type);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15b46b5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b952754` are properly handled with clean fallback behavior.

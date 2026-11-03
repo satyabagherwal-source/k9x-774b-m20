@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `e38d2e32`  
+> **Source Version**: `16c646c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:03:57.572Z  
+> **Timestamp**: 2026-11-03T12:06:31.492Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:03:57.566Z  
+> **Harvest Timestamp**: 2026-11-03T12:06:30.099Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20816 stars
+- **Stars / Engagement**: 20817 stars
 
 ---
 
@@ -1450,13 +1450,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40437** (2026-10-31): **Initialize PostgreSQL zero-column tables in E2E fixtures**
-  *Symptoms*: 
+- **Issue #40456** (2026-11-03): **Refactor SQL binder handling of DML scopes and projections**
+  *Symptoms*: Related issue: N/A.  Changes proposed in this pull request:   - Consolidate binding of DML `RETURNING` projections and data-modifying common table expressions using the existing binder engines.   - Preserve projection order and repeated output slots, resolve correlated shorthand projections, and retain function-table and CTE aliases.   - Bind nested casts, aggregate filter predicates, `VALUES` rows and conflict columns, and correct INSERT value parameter offsets when preceding clauses contain parameters.   - Add the necessary SQL statement model fields and focused regression tests while preserving shared binder interfaces and source-relative declaration order.   - Simplify the function-table context to a plain owner field with an explicit optional-returning accessor and an owner-aware constructor; remove the delegating constructor, newly introduced HFI/Nullable annotations, and unnecessary blank lines.  Validation: - `./mvnw clean install -B -T1C -Pcheck` - `./mvnw clean install -Prelease -Dmaven.javadoc.skip=true -Djacoco.skip=false -T 1C -Drat.skip=true` - 930 focused AST, binder, affected-consumer and integration test invocations passed. - Exact-file Spotless and Checkstyle checks, plus the root Apache RAT check, passed.  ---  Before submitting this PR, I confirm that: - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [x] I have reviewed my changes. - [x] I have (or in comment I request) ad
   **Post-Mortem & Fix Analysis**:
-  > ### Summary The zero-column fixtures now use the existing scenario initialization mechanism. The original SELECTs and assertions remain unchanged.  ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence Two independent complete reviews and coordinator verification passed. Raw test reports, image provenance, and master baseline comparisons were checked.  ### Coverage All 3 changed files, 4 changed blocks, and the initialization, data reset, concurrent query, and assertion paths were reviewed. The agreed scope preserves startup loading and query regression coverage, excluding dynamic table-creation notification timing. CI was not reviewed.
+  > ### Summary  This change consolidates SQL binding for DML result relations and expressions so that bound statements retain the metadata required by downstream components. It addresses missing binding steps and overly broad name-resolution scopes while retaining the existing binder engines, shared interfaces and source-relative declaration/call order.  ### Result  Review Result: Mergeable  The complete code correctness review passed for commit `49b2cfad43f0fe486d6fd923e4491de723fab439`. No blocking findings or required follow-up changes remain in the reviewed scope.  ### Detailed review  1. **DML result relations and CTEs.** INSERT, UPDATE and DELETE bind their RETURNING projections rather than copying unbound projections into the result. Data-modifying CTEs reuse the existing DML binding engine and expose their returned columns through a temporary relation. The review checked propagation of the parent scope, visibility of preceding CTEs, explicit output-column aliases, column-count mis
 
-- **Issue #40436** (2026-10-31): **Upgrade seven Maven build plugins**
-  *Symptoms*: 
+- **Issue #40455** (2026-11-03): **Support PostgreSQL special timestamp text parameters**
+  *Symptoms*: Fixes #23602
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1473,294 +1473,371 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e41f8ccc` (2026-10-31)
-**Commit Message**: Fix Firebird SRP login failure for mismatched authentication plugins (#40392)
+### Incident Patch 1: `a2c66d56` (2026-11-01)
+**Commit Message**: Remove obsolete Maven build configuration and duplicate rule injection (#40439)
 
-Co-authored-by: jingouzhui <[REDACTED_EMAIL]>
+* Remove obsolete Maven build configuration and duplicate rule injection
 
-**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java` (added, +32/-0)
+* Restore JDK 8 ANTLR build profiles
+
+**File**: `.github/workflows/nightly-check.yml` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,32 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.database.exception.firebird.exception.connection;
-+
-+import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
-+
-+/**
-+ * Login error exception for Firebird.
-+ */
-+public final class LoginErrorException extends SQLDialectException {
-+    
-+    private static final long serialVersionUID = 1L;
-+    
-+    public LoginErrorException() {
-+        super("Error occurred during login");
-+    }
-+}
+@@ -156,7 +156,6 @@ jobs:
+       - uses: ./.github/actions/setup-build-environment
+       - name: Run Dependency Convergence Check
+         run: |
+-          sed -i '/<requireMavenVersion>/i \                                    <dependencyConvergence/>' pom.xml
+           ./mvnw clean install -DskipTests -T1C -Dmaven.enforcer.fail=true
+ 
+   check-owasp:
 ```
 
-**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/mapper/FirebirdDialectExceptionMapper.java` (modified, +4/-0)
+**File**: `distribution/agent/pom.xml` (modified, +0/-12)
+```diff
+@@ -91,18 +91,6 @@
+                     <plugin>
+                         <artifactId>maven-source-plugin</artifactId>
+                     </plugin>
+-                    <plugin>
+-                        <groupId>io.smallrye</groupId>
+-                        <artifactId>jandex-maven-plugin</artifactId>
+-                        <executions>
+-                            <execution>
+-                                <id>make-index</id>
+-                                <goals>
+-                                    <goal>jandex</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+                 </plugins>
+             </build>
+         </profile>
+```
+
+**File**: `distribution/jdbc/pom.xml` (modified, +0/-12)
+```diff
+@@ -90,18 +90,6 @@
+                     <plugin>
+                         <artifactId>maven-source-plugin</artifactId>
+                     </plugin>
+-                    <plugin>
+-                        <groupId>io.smallrye</groupId>
+-                        <artifactId>jandex-maven-plugin</artifactId>
+-                        <executions>
+-                            <execution>
+-                                <id>make-index</id>
+-                                <goals>
+-                                    <goal>jandex</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+                 </plugins>
+             </build>
+         </profile>
+```
+
+**File**: `distribution/proxy/pom.xml` (modified, +0/-12)
+```diff
+@@ -93,18 +93,6 @@
+                     <plugin>
+                         <artifactId>maven-source-plugin</artifactId>
+                     </plugin>
+-                    <plugin>
+-                        <groupId>io.smallrye</groupId>
+-                        <artifactId>jandex-maven-plugin</artifactId>
+-                        <executions>
+-                            <execution>
+-                                <id>make-index</id>
+-                                <goals>
+-                                    <goal>jandex</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+                 </plugins>
+             </build>
+         </profile>
+```
+
+**File**: `pom.xml` (modified, +0/-6)
+```diff
+@@ -169,7 +169,6 @@
+         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
+         <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
+         <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
+-        <jandex-maven-plugin.version>3.1.3</jandex-maven-plugin.version>
+         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
+         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+@@ -861,11 +860,6 @@
+                     <artifactId>maven-jar-plugin</artifactId>
+                     <version>${maven-jar-plugin.version}</version>
+                 </plugin>
+-                <plugin>
+-                    <groupId>io.smallrye</groupId>
+-                    <artifactId>jandex-maven-plugin</artifactId>
+-                    <version>${jandex-maven-plugin.version}</version>
+-                </plugin>
+                 <plugin>
+                     <groupId>org.codehaus.mojo</groupId>
+                     <artifactId>build-helper-maven-plugin</artifactId>
+```
+
+---
+
+### Incident Patch 2: `eed2b9be` (2026-11-01)
+**Commit Message**: Fix ddl metadata lifecycle (#40441)
+
+* Fix empty password expectations in metadata export tests
+
+* Fix metadata publication ordering for cluster table DDL
+
+* Fix subtree deletion in standalone memory repository
+
+* Fix concurrent memory deletion and trim unrelated tests
+
+* Revert cluster metadata lifecycle changes
+
+* Revert export metadata test expectation changes
+
+* Refine concurrent subtree deletion regression test
+
+**File**: `mode/type/standalone/repository/provider/memory/src/main/java/org/apache/shardingsphere/mode/repository/standalone/memory/MemoryRepository.java` (modified, +15/-6)
+```diff
+@@ -19,6 +19,7 @@
+ 
+ import org.apache.shardingsphere.mode.repository.standalone.StandalonePersistRepository;
+ 
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.TreeMap;
+ import java.util.stream.Collectors;
+@@ -33,12 +34,12 @@ public final class MemoryRepository implements StandalonePersistRepository {
+     // CHECKSTYLE:ON
+     
+     @Override
+-    public String query(final String key) {
++    public synchronized String query(final String key) {
+         return metaDataSortedMap.get(key);
+     }
+     
+     @Override
+-    public List<String> getChildrenKeys(final String key) {
++    public synchronized List<String> getChildrenKeys(final String key) {
+         String searchPrefix;
+         if (key.endsWith("/")) {
+             searchPrefix = key;
+@@ -62,25 +63,33 @@ public List<String> getChildrenKeys(final String key) {
+     }
+     
+     @Override
+-    public boolean isExisted(final String key) {
++    public synchronized boolean isExisted(final String key) {
+         return metaDataSortedMap.containsKey(key);
+     }
+     
+     @Override
+-    public void persist(final String key, final String value) {
++    public synchronized void persist(final String key, final String value) {
+         metaDataSortedMap.put(key, value);
+     }
+     
+     @Override
+-    public void update(final String key, final String value) {
++    public synchronized void update(final String key, final String value) {
+         if (metaDataSortedMap.containsKey(key)) {
+             metaDataSortedMap.put(key, value);
+         }
+     }
+     
+     @Override
+-    public void delete(final String key) {
++    public synchronized void delete(final String key) {
+         metaDataSortedMap.remove(key);
++        String prefix = key.endsWith(PATH_SEPARATOR) ? key : key + PATH_SEPARATOR;
++        Iterator<String> iterator = metaDataSortedMap.tailMap(prefix).keySet().iterator();
++        while (iterator.hasNext()) {
++            if (!iterator.next().startsWith(prefix)) {
++                break;
++            }
++            iterator.remove();
++        }
+     }
+     
+     @Override
+```
+
+**File**: `mode/type/standalone/repository/provider/memory/src/test/java/org/apache/shardingsphere/mode/repository/standalone/memory/MemoryRepositoryTest.java` (modified, +106/-1)
+```diff
+@@ -17,19 +17,43 @@
+ 
+ package org.apache.shardingsphere.mode.repository.standalone.memory;
+ 
++import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
++import org.apache.shardingsphere.mode.repository.standalone.StandalonePersistRepository;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.CsvSource;
++import org.mockito.internal.configuration.plugins.Plugins;
+ 
++import java.lang.management.ManagementFactory;
++import java.lang.management.ThreadInfo;
++import java.lang.management.ThreadMXBean;
++import java.time.Duration;
+ import java.util.Arrays;
++import java.util.Collections;
++import java.util.Iterator;
++import java.util.SortedMap;
++import java.util.TreeMap;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.FutureTask;
++import java.util.concurrent.TimeUnit;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertNull;
++import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
++import static org.mockito.Mockito.doReturn;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.spy;
++import static org.mockito.Mockito.when;
+ 
+ class MemoryRepositoryTest {
+     
+-    private final MemoryRepository memoryRepository = new MemoryRepository();
++    private final StandalonePersistRepository memoryRepository = TypedSPILoader.getService(StandalonePersistRepository.class, "Memory");
+     
+     @BeforeEach
+     void setUp() {
+@@ -58,6 +82,87 @@ void assertDelete() {
+         assertThat(memoryRepository.query("/metadata/sharding_db/schemas/sharding_db/tables/t_order/versions/0"), is((String) null));
+     }
+     
++    @ParameterizedTest(name = "{0}, parentExists={1}")
++    @CsvSource({"/metadata/foo_db/schemas/foo_db/tables/foo_tbl,true", "/metadata/foo_db/schemas/foo_db/tables/foo_tbl,false", "/metadata/foo_db/schemas/foo_db/tables/foo_tbl/,true"})
++    void assertDeleteSubtree(final String key, final boolean parentExists) {
++        if (parentExists) {
++            memoryRepository.persist(key, "foo_tbl");
++        }
++        String tableKey = "/metadata/foo_db/schemas/foo_db/tables/foo_tbl";
++        memoryRepository.persist(tableKey + "/active_version", "1");
++        memoryRepository.persist(tableKey + "/versions/0", "foo_version_0");
++        memoryRepository.persist(tableKey + "/versions/1", "foo_version_1");
++        memoryRepository.persist(tableKey + "_extra/versions/0", "foo_sibling");
++        memoryRepository.delete(key);
++        assertNull(memoryRepository.query(key));
++        assertNull(memoryRepository.query(tableKey + "/active_version"));
++        assertNull(memoryRepository.query(tableKey + "/versions/0"));
++        assertNull(memoryRepository.query(tableKey + "/versions/1"));
++        assertTrue(memoryRepository.getChildrenKeys(tableKey + "/").isEmpty());
++        assertThat(memoryRepository.getChildrenKeys("/metadata/foo_db/schemas/foo_db/tables"), is(Collections.singletonList("foo_tbl_extra")));
++        assertThat(memoryRepository.query(tableKey + "_extra/versions/0"), is("foo_sibling"));
++    }
++    
++    @Test
++    void assertDeleteMissingNode() {
++        memoryRepository.delete("/metadata/zzzz_missing");
++        assertFalse(memoryRepository.isExisted("/metadata/zzzz_missing"));
++        assertThat(memoryRepository.getChildrenKeys("/metadata"), is(Arrays.asList("encrypt_db", "sharding_db")));
++        assertThat(memoryRepository.query("/metadata/sharding_db/schemas/sharding_db/tables/t_order/versions/0"), is("t_order"));
++    }
++    
++    @Test
++    void assertConcurrentDelete() throws ReflectiveOperationException, InterruptedException, ExecutionException {
++        SortedMap<String, String> metaDataSortedMap = spy(new TreeMap<>());
++        metaDataSortedMap.put("/foo/child", "foo_child");
++        metaDataSortedMap.put("/bar", "bar_parent");
++        metaDataSortedMap.put("/bar/child", "bar_child");
++        metaDataSortedMap.put("/foo_extra/child", "foo_sibling");
++        Plugins.getMemberAccessor().set(MemoryRepository.class.getDeclaredField("metaDataSortedMap"), memoryRepository, metaDataSortedMap);
++        SortedMap<String, String> subtree = metaDataSortedMap.tailMap("/foo/");
++        SortedMap<?, ?> mockedSubtree = mock(SortedMap.class, RETURNS_DEEP_STUBS);
++        CountDownLatch deleteStarted = new CountDownLatch(1);
++        CountDownLatch continueDelete = new CountDownLatch(1);
++        when(mockedSubtree.keySet().iterator()).thenAnswer(invocation -> {
++            Iterator<String> result = subtree.keySet().iterator();
++            deleteStarted.countDown();
++            assert
+```
+
+---
+
+### Incident Patch 3: `d90a9697` (2026-11-01)
+**Commit Message**: Fix inline expression split failure for trailing escaped dollar sign (#40430)
+
+* Fix inline expression split failure for trailing escaped dollar sign
+
+* Run trailing escaped dollar split cases independently
+
+Each boundary input now executes as its own parameterized case so that a failure in one case does not hide the others.
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
 @@ -26,6 +26,7 @@
- import org.apache.shardingsphere.database.exception.core.exception.syntax.sql.DialectSQLParsingException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.table.TableExistsException;
- import org.apache.shardingsphere.database.exception.core.mapper.SQLDialectExceptionMapper;
-+import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchAlreadyOpenedException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchParametersRequiredException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchTooBigException;
-@@ -64,6 +65,9 @@ public SQLException convert(final SQLDialectException sqlDialectException) {
-         if (sqlDialectException instanceof AccessDeniedException) {
-             return toSQLException(FirebirdVendorError.LOGIN_FAILED);
-         }
-+        if (sqlDialectException instanceof LoginErrorException) {
-+            return toSQLException(FirebirdVendorError.LOGIN_ERROR);
-+        }
-         if (sqlDialectException instanceof InvalidBatchHandleException) {
-             return toSQLException(FirebirdVendorError.INVALID_BATCH_HANDLE);
-         }
+ 1. Infra: Fix stale weights in WEIGHT load balancer after same-size read data source changes - [#39995](https://github.com/apache/shardingsphere/pull/39995)
+ 1. Infra: Fix false table existence check failures for quoted schema names in `SupportedSQLCheckEngine` - [#40069](https://github.com/apache/shardingsphere/pull/40069)
+ 1. Infra: Fix error handling for invalid data source pool properties - [#40199](https://github.com/apache/shardingsphere/pull/40199)
++1. Infra: Fix inline expression split failure for trailing escaped dollar sign - [#40430](https://github.com/apache/shardingsphere/pull/40430)
+ 1. SQL Parser: Preserve unary NOT for scalar-subquery table extraction in PostgreSQL - [#38187](https://github.com/apache/shardingsphere/pull/38187)
+ 1. SQL Parser: Fix wrong parameter index parse in MySQL, Doris - [#38624](https://github.com/apache/shardingsphere/pull/38624)
+ 1. SQL Parser: Fix reversed parameter marker order for openGauss `LIMIT offset, row-count` - [#39242](https://github.com/apache/shardingsphere/pull/39242)
 ```
 
-**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/vendor/FirebirdVendorError.java` (modified, +2/-0)
+**File**: `infra/expr/core/src/main/java/org/apache/shardingsphere/infra/expr/core/GroovyUtils.java` (modified, +2/-2)
 ```diff
-@@ -52,6 +52,8 @@ public enum FirebirdVendorError implements VendorError {
+@@ -75,10 +75,10 @@ private static void handleSplitter(final int bracketsDepth, final StringBuilder
      
-     LOGIN_FAILED(XOpenSQLState.INVALID_AUTHORIZATION_SPECIFICATION, ISCConstants.isc_login, ""),
-     
-+    LOGIN_ERROR(XOpenSQLState.INVALID_AUTHORIZATION_SPECIFICATION, ISCConstants.isc_login_error, ""),
-+    
-     CHARSET_NOT_FOUND(FirebirdState.CHARSET_NOT_FOUND, ISCConstants.isc_charset_not_found, "CHARACTER SET %s is not defined"),
-     
-     INVALID_STATEMENT_HANDLE(FirebirdState.INVALID_STATEMENT_HANDLE, ISCConstants.isc_bad_stmt_handle, ""),
+     private static int handleDollarSign(final String inlineExpression, final int i, final int bracketsDepth, final StringBuilder segment, final char each) {
+         int bracketsDepthResult = bracketsDepth;
+-        if ('{' == inlineExpression.charAt(i + 1)) {
++        if (inlineExpression.startsWith("{", i + 1)) {
+             bracketsDepthResult = bracketsDepthResult + 1;
+         }
+-        if ("->{".equals(inlineExpression.substring(i + 1, i + 4))) {
++        if (inlineExpression.startsWith("->{", i + 1)) {
+             bracketsDepthResult = bracketsDepthResult + 1;
+         }
+         segment.append(each);
 ```
 
-**File**: `database/exception/dialect/firebird/src/test/java/org/apache/shardingsphere/database/exception/firebird/mapper/FirebirdDialectExceptionMapperTest.java` (modified, +10/-0)
+**File**: `infra/expr/core/src/test/java/org/apache/shardingsphere/infra/expr/core/GroovyUtilsTest.java` (modified, +8/-0)
 ```diff
-@@ -28,6 +28,7 @@
- import org.apache.shardingsphere.database.exception.core.exception.syntax.sql.DialectSQLParsingException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.table.TableExistsException;
- import org.apache.shardingsphere.database.exception.core.mapper.SQLDialectExceptionMapper;
-+import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchAlreadyOpenedException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchParametersRequiredException;
- import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchTooBigException;
-@@ -44,6 +45,7 @@
- import org.apache.shardingsphere.database.exception.firebird.vendor.FirebirdVendorError;
- import org.apache.shardingsphere.infra.exception.external.sql.vendor.VendorError;
- import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.firebirdsql.gds.ISCConstants;
+@@ -18,6 +18,8 @@
+ package org.apache.shardingsphere.infra.expr.core;
+ 
  import org.junit.jupiter.api.Test;
- import org.junit.jupiter.params.ParameterizedTest;
- import org.junit.jupiter.params.provider.Arguments;
-@@ -71,6 +73,14 @@ void assertConvert(final String name, final SQLDialectException sqlDialectExcept
-         assertThat(actual.getMessage(), is(String.format(vendorError.getReason(), messageArgs)));
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
+ 
+ import java.util.Arrays;
+ import java.util.Collections;
+@@ -38,4 +40,10 @@ void assertSplit() {
+         assertThat(GroovyUtils.split("t_${[\"new${1+2}\",'old']}_order_${1..2}"), is(Collections.singletonList("t_${[\"new${1+2}\",'old']}_order_${1..2}")));
+         assertThat(GroovyUtils.split("t_$->{[\"new$->{1+2}\",'old']}_order_$->{1..2}"), is(Collections.singletonList("t_$->{[\"new$->{1+2}\",'old']}_order_$->{1..2}")));
      }
-     
-+    @Test
-+    void assertConvertWithLoginError() {
-+        SQLException actual = mapper.convert(new LoginErrorException());
-+        assertThat(actual.getSQLState(), is("28000"));
-+        assertThat(actual.getErrorCode(), is(ISCConstants.isc_login_error));
-+        assertThat(actual.getMessage(), is(""));
-+    }
 +    
-     @Test
-     void assertConvertWithUnknownException() {
-         assertThat(mapper.convert(mock(SQLDialectException.class)).getSQLState(), is("HY000"));
-```
-
-**File**: `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/authentication/FirebirdAuthenticationEngine.java` (modified, +2/-0)
-```diff
-@@ -28,6 +28,7 @@
- import org.apache.shardingsphere.database.exception.core.exception.data.InvalidParameterValueException;
- import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
-+import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
- import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
- import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdAuthenticationMethod;
- import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdConstant;
-@@ -101,6 +102,7 @@ private AuthenticationResult processConnect(final ChannelHandlerContext context,
-         ShardingSphereUser user = rule.findUser(new Grantee(username, "")).orElseThrow(() -> new AccessDeniedException(username, connectPacket.getHost(), true));
-         FirebirdAuthenticationMethod plugin = FirebirdAuthenticationMethod.valueOf(getPluginName(rule, user));
-         if (plugin != connectPacket.getPlugin()) {
-+            ShardingSpherePreconditions.checkState(FirebirdAuthenticationMethod.LEGACY_AUTH == plugin, LoginErrorException::new);
-             acceptPacket.setAcceptDataPacket(new byte[0], "", plugin, 0, "");
-         } else if (FirebirdAuthenticationMethod.LEGACY_AUTH != plugin) {
-             authData = new FirebirdSRPAuthenticationData(plugin.getHashAlgorithm(), username, user.getPassword(), connectPacket.getAuthData());
-```
-
-**File**: `proxy/frontend/dialect/firebird/src/test/java/org/apache/shardingsphere/proxy/frontend/firebird/authentication/FirebirdAuthenticationEngineTest.java` (modified, +32/-1)
-```diff
-@@ -28,6 +28,7 @@
- import org.apache.shardingsphere.database.exception.core.exception.data.InvalidParameterValueException;
- import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
-+import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
- import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
- import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdAuthenticationMethod;
- import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdConstant;
-@@ -186,6 +187,28 @@ void assertAuthenticateConnect(final String name, final String rulePluginType, f
-         verify(charsetAttr).set(FirebirdCharacterSets.findCharacterSet("NONE"));
-     }
-     
 +    @ParameterizedTest(name = "{0}")
-+    @MethodSource("mismatchedPluginArguments")
-+    void assertAuthenticateConnectWithMismatchedPlugin(final String name, final String rulePluginType, final FirebirdAuthenticationMethod connectPlugin) {
-+        AuthorityRule rule = mock(AuthorityRule.class);
-+        ShardingSphereUser user = new ShardingSphereUser("root", "pwd", "");
-+        when(rule.findUser(any(Grantee.class))).thenReturn(Optional.of(user));
-+        when(rule.getAuthenticatorType(user)).thenReturn(rulePluginType);
-+        mockProxyContext(rule, true);
-+        FirebirdProtocol protocol = mock(FirebirdProtocol.class);
-+        when(protocol.getVersion()).thenReturn(FirebirdProtocolVersion.PROTOCOL_VERSION13);
-+        FirebirdPacketPayload payload = mockFirebirdPayload(FirebirdCommandPacketType.CONNECT);
-+        try (MockedConstruction<FirebirdConnectPacket> ignored = mockConstruction(FirebirdConnectPacket.class, (connectPacket, construction) -> {
-+            when(connectPacket.getUserProtocols()).thenReturn(new ArrayList<>(Collections.singletonList(protocol)));
-+            when(connectPacket.getLogin()).thenReturn("root");
-+            when(connectPacket.getPlugin()).thenReturn(connectPlugin);
-+        })) {
-+            LoginErrorException actual = assertThrows(LoginErrorException.class, () -> authenticationEngine.authenticate(context, payload));
-+            assertThat(actual.getMessage(), is("Error occurred during login"));
-+        }
-+        verify(context, never()).writeAndFlush(any());
++    @ValueSource(strings = {"ds_${0..1}.t_order_\\$", "ds_${0..1}.t\\$1", "ds_${0..1}.t\\$ab"})
++    void assertSplitWithTrailingEscapedDollarSign(final String inlineExpression) {
++        assertThat(GroovyUtils.split(inlineExpression), is(Collections.singletonList(inlineExpression)));
 +    }
-+    
-     @SuppressWarnings("rawtypes")
-     @SneakyThrows(ReflectiveOperationException.class)
-     @ParameterizedTest(name = "{0}")
-@@ -363,11 +386,19 @@ private void mockProxyContext(final AuthorityRule rule, final boolean containsDa
-     
-     private static Stream<Arguments> connectArguments() {
-         return Stream.of(
--                Arguments.of("pluginMismatch", "", FirebirdAuthenticationMethod.SRP, FirebirdAuthenticationMethod.SRP256, true, false),
-+                Arguments.of("defaultSrp256Plugin", "", FirebirdAuthenticationMethod.SRP256, FirebirdAuthenticationMethod.SRP256, true, true),
-                 Arguments.of("srpPlugin", "SRP512", FirebirdAuthenticationMethod.SRP512, FirebirdAuthenticationMethod.SRP512, true, true),
-+                Arguments.of("legacyPluginSwitch", "LEGACY_AUTH", FirebirdAuthenticationMethod.SRP, FirebirdAuthenticationMethod.LEGACY_AUTH, true, false),
-                 Arguments.of("legacyPlugin", "LEGACY_AUTH", FirebirdAuthenticationMethod.LEGACY_AUTH, FirebirdAuthenticationMethod.LEGACY_AUTH, false, false));
-     }
-     
-+    private static Stream<Arguments> mismatchedPluginArguments() {
-+        return Stream.of(
-+                Arguments.of("defaultSrp256", "", FirebirdAuthenticationMethod.SRP),
-+                Arguments.of("configuredSrp256", "SRP256", FirebirdAuthenticationMethod.SRP),
-+                Arguments.of("configuredSrp512", "SRP512", FirebirdAuthenticationMethod.SRP256));
-+    }
-+    
-     private static Stream<Arguments> attachArguments() {
-         return Stream.of(
-                 Arguments.of("attachWithUser", true, new ShardingSphereUser("root", "pwd", ""), "root", "db", "UTF8", false, true, true, "db", "root", "cipher_pwd", "client_auth"),
-```
-
----
-
-### Incident Patch 2: `e38d2e32` (2026-10-31)
-**Commit Message**: Initialize PostgreSQL zero-column tables in E2E fixtures (#40437)
-
-**File**: `test/e2e/sql/src/test/resources/cases/dql/cases/passthrough/e2e-dql-select-for-passthrough.xml` (modified, +2/-8)
-```diff
-@@ -31,17 +31,11 @@
-     </test-case>
- 
-     <test-case sql="SELECT * FROM pg_foo_zero_columns" db-types="PostgreSQL" scenario-types="passthrough" adapters="proxy">
--        <assertion expected-data-source-name="expected_dataset">
--            <initial-sql sql="CREATE TABLE pg_foo_zero_columns ()" />
--            <destroy-sql sql="DROP TABLE IF EXISTS pg_foo_zero_columns" />
--        </assertion>
-+        <assertion expected-data-source-name="expected_dataset" />
-     </test-case>
- 
-     <test-case sql="SELECT * FROM foo_zero_columns" db-types="PostgreSQL" scenario-types="passthrough" adapters="proxy">
--        <assertion expected-data-source-name="expected_dataset">
--            <initial-sql sql="CREATE TABLE foo_zero_columns (); INSERT INTO foo_zero_columns DEFAULT VALUES; INSERT INTO foo_zero_columns DEFAULT VALUES" />
--            <destroy-sql sql="DROP TABLE IF EXISTS foo_zero_columns" />
--        </assertion>
-+        <assertion expected-data-source-name="expected_dataset" />
-     </test-case>
- 
-     <test-case sql="SELECT * FROM t_data_type_integer_unsigned" db-types="MySQL" scenario-types="passthrough" scenario-comments="Test ShardingSphere-Proxy MySQL compatibility for unsigned integer data types">
-```
-
-**File**: `test/e2e/sql/src/test/resources/env/scenario/passthrough/data/actual/init-sql/postgresql/50-scenario-actual-init.sql` (modified, +4/-0)
-```diff
-@@ -30,3 +30,7 @@ CREATE TABLE t_data_type_money (id INT PRIMARY KEY, val money);
- CREATE TABLE t_data_type_bytea (id INT PRIMARY KEY, val bytea NOT NULL);
- CREATE TABLE t_data_type_date (id INT PRIMARY KEY, creation_date DATE NOT NULL, update_date TIMESTAMP NOT NULL);
- CREATE TABLE t_data_type_uuid (id INT PRIMARY KEY, val UUID NOT NULL);
-+CREATE TABLE pg_foo_zero_columns ();
-+CREATE TABLE foo_zero_columns ();
-+INSERT INTO foo_zero_columns DEFAULT VALUES;
-+INSERT INTO foo_zero_columns DEFAULT VALUES;
-```
-
-**File**: `test/e2e/sql/src/test/resources/env/scenario/passthrough/data/expected/init-sql/postgresql/60-scenario-expected-init.sql` (modified, +4/-0)
-```diff
-@@ -31,3 +31,7 @@ CREATE TABLE t_data_type_money (id INT PRIMARY KEY, val money);
- CREATE TABLE t_data_type_bytea (id INT PRIMARY KEY, val bytea NOT NULL);
- CREATE TABLE t_data_type_date (id INT PRIMARY KEY, creation_date DATE NOT NULL, update_date TIMESTAMP NOT NULL);
- CREATE TABLE t_data_type_uuid (id INT PRIMARY KEY, val UUID NOT NULL);
-+CREATE TABLE pg_foo_zero_columns ();
-+CREATE TABLE foo_zero_columns ();
-+INSERT INTO foo_zero_columns DEFAULT VALUES;
-+INSERT INTO foo_zero_columns DEFAULT VALUES;
-```
-
----
-
-### Incident Patch 3: `b5ca09ea` (2026-10-31)
-**Commit Message**: Upgrade seven Maven build plugins (#40436)
-
-**File**: `pom.xml` (modified, +7/-7)
-```diff
-@@ -161,17 +161,17 @@
-         <transformer-maven-plugin.version>1.0.0</transformer-maven-plugin.version>
-         
-         <!-- Compile plugin versions -->
--        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
-+        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
-         <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
-         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
--        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
--        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
--        <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
--        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
--        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
-+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
-+        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
-+        <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
-         <jandex-maven-plugin.version>3.1.3</jandex-maven-plugin.version>
-         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
--        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
-+        <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
-         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-         
-         <!-- Release plugin versions -->
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40437** (2026-10-31): Initialize PostgreSQL zero-column tables in E2E fixtures (@terrymanu)
-- **PR #40436** (2026-10-31): Upgrade seven Maven build plugins (@terrymanu)
-- **PR #40435** (2026-10-31): Strengthen cleanup verification for replaced Docker images (@terrymanu)
-- **PR #40434** (closed): Align DQL lifecycle SQL waits with DML E2E tests (@terrymanu)
-- **PR #40433** (2026-10-31): Fix INSERT routing for direct Integer casts (@terrymanu)
-- **PR #40432** (2026-10-31): Use existing engines for dynamic JSON and YAML serialization (@terrymanu)
+- **PR #40456** (2026-11-03): Refactor SQL binder handling of DML scopes and projections (@strongduanmu)
+- **PR #40455** (2026-11-03): Support PostgreSQL special timestamp text parameters (@terrymanu)
+- **PR #40452** (closed): Firebird Proxy returns an error instead of the execution plan of a prepared statement (@makssent)
+- **PR #40451** (2026-11-02): Use HTTPS for project license URL (@terrymanu)
+- **PR #40448** (2026-11-02): Fix signed PostgreSQL identity sequence options (@sandynz)
+- **PR #40447** (2026-11-02): Aggregate license reports and require Maven 3.9 (@terrymanu)
 
 ---
 
@@ -1774,63 +1851,3 @@ Co-authored-by: jingouzhui <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Firebird SRP login failure for mismatched authentication plugins (#40392)
-
-**RULE**:
-When implementing operations in `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e41f8ccc`: Firebird SRP login failure for mismatched authentication plugins (#40392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```java
-// Verified production-grade fix pattern:
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.apache.shardingsphere.database.exception.firebird.exception.connection;
-
-import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
-
-/**
- * Login error exception for Firebird.
- */
-public final class LoginErrorException extends SQLDialectException {
-    
-    private static final long serialVersionUID = 1L;
-    
-    public LoginErrorException() {
-        s
-```
-
-**NEGATIVE CONSTRAINT**:
-```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e41f8ccc` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `7822c1b1`  
+> **Source Version**: `2eca8e44`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:47:24.667Z  
+> **Timestamp**: 2026-11-02T16:47:50.408Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:47:24.661Z  
+> **Harvest Timestamp**: 2026-11-02T16:47:50.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1652 stars
+- **Stars / Engagement**: 1653 stars
 
 ---
 
@@ -1481,544 +1481,579 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `323a5c71` (2026-10-30)
-**Commit Message**: Fix eight bugs found by the skill evals (#1852)
+### Incident Patch 1: `2eca8e44` (2026-11-01)
+**Commit Message**: [PXT-1278] New Catalog locking (#1573)
 
-- `pxt schema update` no longer crashes with `'dict' object has no
-attribute 'substitute'` on a view model with an iterator that takes
-`**kwargs`, such as `pxtf.json.list_iterator(code=...)`.
-- A `@pxt.query` column can now read a column added in the same
-`update_all()`. Before, its backfill failed an internal assert. A query
-that reads a nonexistent column fails at schema update with an
-`INVALID_SCHEMA` error.
-- `pxt.get_table()` inside a UDF raises an `UNSUPPORTED_OPERATION` error
-that points to `@pxt.query`, instead of failing a bare assert.
-- A UDF module that raises partway through its import no longer leaves
-its UDFs registered when a table loads it. Before, every later load
-failed with `A UDF with that name already exists` until a daemon
-restart. Loading the app file already handled this.
-- A UDF, UDA or iterator that modifies a constant dict, list, array or
-image argument no longer changes that value for later rows:
-  - non-built-in functions get a deep copy per call;
-- the built-in provider UDFs (OpenAI, Anthropic, DeepSeek, Groq and
-others) copy `model_kwargs` before writing to it.
-- A UDA called as a window function now re
+Replaces the locking mechanism in Catalog with Postgres table locks
+(LOCK TABLE) on store tables, for both data-versioned and operational
+tables. The tables-row lock (SELECT … FOR UPDATE NOWAIT + UPDATE
+lock_dummy) is gone in all of its uses.
 
-**File**: `AGENTS.md` (modified, +2/-0)
+**The design doc is a part of the pr, and will be merged along with the
+code: docs/design/catalog-locking.md**
+
+# How it works
+
+- Catalog exposes transaction context managers `begin_md_read_xact()`,
+`begin_data_read_xact()`, `begin_data_write_xact()`,
+`begin_md_write_xact()`, `begin_finalize_xact()`, and decorators
+`retry_md_read_loop`, `retry_data_read_loop`, `retry_md_write_loop`,
+each of which acquires the appropriate table locks. This separation by
+purpose is needed for Catalog to use the appropriate lock mode.
+- Held read and write locks do not block each other, for either table
+kind. The exception is a schema change waiting for its lock: Postgres
+queues every later lock request on the table behind it, so readers and
+writers are affected from the moment the schema change is requested (see
+"A waiting schema change blocks later operations" in the design doc).
+- One global lock acquisition order — the
+
+**File**: `docs/design/catalog-locking.md` (added, +219/-0)
 ```diff
-@@ -48,6 +48,8 @@ of longer guides; Codex and Claude do not automatically apply Copilot's path-spe
-   Ordinary Python checks remain valid outside the DSL.
- - UDF annotations determine column types. Non-nullable parameters short-circuit null arguments to null;
-   nullable parameters let the UDF handle null. Review schema semantics even if mypy passes.
-+- Built-in UDFs and aggregates (anything under `pixeltable.`) must not modify their arguments: unlike
-+  user functions, they receive a constant argument's shared value rather than a copy.
- - Application files declare `TableModel` tables and `FastAPIRouter` routes; indexes belong in `__indexes__`.
-   Tests, notebooks and REPLs may use `pxt.create_table()` and incremental schema APIs.
- - Model columns are non-nullable by default (`pxt.String`); nullable columns use `pxt.String | None`.
+@@ -0,0 +1,219 @@
++# Catalog locking
++
++`Catalog` coordinates concurrent reads, writes, and schema changes using Postgres locks on store tables.
++This document explains the rules and why they are needed. The implementation is in
++`pixeltable/catalog/catalog.py` and `pixeltable/catalog/locking.py`.
++
++## 1. Lock store tables before reading metadata
++
++Each table or view with stored data has a Postgres store table: `tbl_<uuid.hex>` for tables and
++`view_<uuid.hex>` for views. Pixeltable locks these tables with `LOCK TABLE`. Postgres releases the locks
++when the transaction ends.
++
++Under REPEATABLE READ, `LOCK TABLE` does not establish the transaction's snapshot. The first query after
++lock acquisition does. This means a metadata read sees changes committed while the transaction was waiting
++for its store table locks.
++
++**Store table locks must precede every statement that establishes a snapshot.** A metadata query, a directory
++row lock, or even `SELECT 1` before `LOCK TABLE` would leave the transaction reading metadata from before the wait.
++
++Acquiring locks first ensures that the metadata read includes changes committed during the wait.
++Directory locks come later and need the retry mechanism described in section 5.
++
++## 2. Lock modes and waiting
++
++The `Catalog.begin_*_xact()` methods and `retry_*_loop()` decorators select an operation class (`TblOpClass`).
++That class and the table's versioning, data-versioned or operational, determine the required lock mode.
++
++| Operation class | Operational table | Data-versioned table | Wait policy |
++| --- | --- | --- | --- |
++| `MD_READ`: catalog metadata | No lock | No lock | N/A |
++| `DATA_READ`: query rows | `ACCESS SHARE` | `ACCESS SHARE` | Wait if any locked table is data-versioned |
++| `DATA_WRITE`: insert/update/delete | `ROW EXCLUSIVE` | `EXCLUSIVE` | Wait if any locked table is data-versioned |
++| `MD_WRITE`: metadata changes and DDL | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
++| `FINALIZE`: complete pending operations | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
++
++Operational writers can hold `ROW EXCLUSIVE` concurrently, so writes to different rows of an operational table
++run in parallel. Writes to the same row are not merged or queued. Instead, Postgres row locks make the later writer
++wait, and if the earlier writer commits, the later one fails.
++
++Data-versioned writers use `EXCLUSIVE`, which allows only one writer at a time, so each write builds on the
++previous version.
++Both modes allow `ACCESS SHARE`, so a held write lock does not block readers.
++
++Lock modes apply per table. For example, a schema change can lock its target with `ACCESS EXCLUSIVE` and
++its bases with `ACCESS SHARE`.
++
++The wait policy applies to the whole transaction. If a data read or write locks only operational tables,
++it uses `NOWAIT` for every table lock. A conflict reports `SCHEMA_CHANGE_IN_PROGRESS`. If any locked table
++is data-versioned, the transaction waits for every required table lock. Schema changes and finalization
++always wait, regardless of versioning.
++
++### A waiting schema change blocks later operations
++
++Postgres grants a table lock only if it conflicts with neither the locks already held nor the requests already
++waiting for that table. A schema change or finalization waiting for `ACCESS EXCLUSIVE` therefore blocks every later
++lock request on the table, although it does not hold the lock yet:
++
++- Operational data reads and writes fail with `SCHEMA_CHANGE_IN_PROGRESS`.
++- Data-versioned data reads and writes wait until the schema change completes.
++
++Pixeltable treats a waiting schema change as in progress, so its effect on other operations starts when it is
++requested, not when it acquires its lock. For example, if `add_computed_column()` is called during a long insert, it
++waits for the insert to finish. For the rest of the insert and the duration of the schema change, other operations on
++the table fail or wait.
++
++### Metadata-only reads
++
++Catalog listings and descriptions read metadata without locking store tables. They don't wait for a schema change
++in progress, so the schema they return may already be out of date by the time the caller uses it. A subsequent data
++operation acquires its own locks and refreshes metadata.
++
++A metadata read can still encounter pending operations while loading a table. It then finalizes those operations
++before continuing; finalization takes locks and may have to wait (section 7).
++
++If an expression reads another table, for example through a `@pxt.query` UDF, the transaction needs a read lock
++on that table too. Section 8 describes a current limitation.
++
++## 3. Which objects to lock
++
++An operation's lock set is the store tables and directory rows that need to be locked before that operation can be
++safely executed:
++
++- A read locks every table in each `TableVersionPath`, including bases. It does not lock descendant views.
++- A data write locks its target and all mutable descendant v
 ```
 
-**File**: `pixeltable/_query_base.py` (modified, +36/-1)
+**File**: `pixeltable/_query.py` (modified, +10/-10)
 ```diff
-@@ -8,9 +8,10 @@
+@@ -629,9 +629,9 @@ def _output_row_iterator(
+         self, args: dict[str, Any] | None = None, *, media_as_urls: bool = False
+     ) -> Generator[list, None, None]:
+         assert self._from_clause.is_local
+-        tbl_ids = self.referenced_tbl_ids()
++        tbl_keys = self.referenced_tbl_keys()
+         tvps = self._from_clause.tvps
+-        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=tbl_ids):
++        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=tbl_keys):
+             try:
+                 planned_exprs = self._compiled_select_list()
+                 if media_as_urls:
+@@ -649,7 +649,7 @@ def _output_row_iterator(
+             except excs.ExprEvalError as e:
+                 self._raise_expr_eval_err(e)
+             except (sql_exc.DBAPIError, sql_exc.OperationalError, sql_exc.InternalError) as e:
+-                single_tbl = next(iter(tbl_ids)) if len(tbl_ids) == 1 else None
++                single_tbl = next(iter(tbl_keys)).tbl_id if len(tbl_keys) == 1 else None
+                 get_runtime().catalog.convert_sql_exc(e, tbl_id=single_tbl)
+                 raise  # just re-raise if not converted to a Pixeltable error
  
- import builtins
- import copy
-+import dataclasses
+@@ -678,7 +678,7 @@ def _collect(self, args: dict[str, Any] | None = None, *, media_as_urls: bool =
+         if not self._from_clause.is_local:
+             return self._exec_proxy(args=args).as_result_set()
+         tvps = self._from_clause.tvps
+-        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=self.referenced_tbl_ids()):
++        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=self.referenced_tbl_keys()):
+             schema = self.schema
+             # url-mode takes the direct path; the cursor path (no args) stays as-is for normal execution
+             if args is None and not media_as_urls:
+@@ -709,7 +709,7 @@ def _collect_content(self, args: dict[str, Any] | None = None) -> bytes:
+         sink = proxy_protocol.InlinePartSink()
+         encode = proxy_protocol.value_encoder(sink)
+         result = bytearray(b'{"schema":')
+-        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=tvps, read_tbl_ids=self.referenced_tbl_ids()):
++        with get_runtime().catalog.begin_data_read_xact(tvps=tvps, tbl_keys=self.referenced_tbl_keys()):
+             # look at the schema inside the transaction
+             schema = self.schema
+             file_ref_idxs = self._file_ref_idxs()
+@@ -793,7 +793,7 @@ def count(self) -> int:
+         is_grouped = self.group_by_clause is not None or self.grouping_tbl_key is not None
+ 
+         assert self._from_clause.is_local
+-        with get_runtime().catalog.begin_xact(for_write=False, read_tvps=self._from_clause.tvps):
++        with get_runtime().catalog.begin_data_read_xact(tvps=self._from_clause.tvps):
+             plan_root = count_query._ensure_plan().exec_root
+             if not isinstance(plan_root, exec.SqlNode):
+                 raise excs.RequestError(
+@@ -981,8 +981,8 @@ def to_coco_dataset(self) -> Path:
+             return data_file_path
+         else:
+             assert self._from_clause.is_local
+-            with get_runtime().catalog.begin_xact(
+-                for_write=False, read_tvps=self._from_clause.tvps, read_tbl_ids=self.referenced_tbl_ids()
++            with get_runtime().catalog.begin_data_read_xact(
++                tvps=self._from_clause.tvps, tbl_keys=self.referenced_tbl_keys()
+             ):
+                 return write_coco_dataset(self, dest_path)
+ 
+@@ -1029,8 +1029,8 @@ def to_pytorch_dataset(self, image_format: str = 'pt') -> 'torch.utils.data.Iter
+             assert dest_path.is_dir()
+         else:
+             assert self._from_clause.is_local
+-            with get_runtime().catalog.begin_xact(
+-                for_write=False, read_tvps=self._from_clause.tvps, read_tbl_ids=self.referenced_tbl_ids()
++            with get_runtime().catalog.begin_data_read_xact(
++                tvps=self._from_clause.tvps, tbl_keys=self.referenced_tbl_keys()
+             ):
+                 # we need the metadata for PixeltablePytorchDataset
+                 export_parquet(self, dest_path, inline_images=True, _write_md=True)
+```
+
+**File**: `pixeltable/_query_base.py` (modified, +11/-17)
+```diff
+@@ -12,7 +12,6 @@
  import itertools
  from abc import ABC
--from typing import Any, Self, Sequence, cast, overload
-+from typing import Any, Callable, Self, Sequence, cast, overload
- from uuid import UUID
+ from typing import Any, Callable, Self, Sequence, cast, overload
+-from uuid import UUID
  
  import pandas as pd
-@@ -295,6 +296,34 @@ def _replace_select_list(self, new_exprs: list[exprs.Expr]) -> Self:
-             sample_clause=copy.deepcopy(self.sample_clause),
+ 
+@@ -52,9 +51,8 @@ class QueryBase(ABC):
+     offset_val: exprs.Expr | None
+     sample_clause: SampleClause | None
+ 
+-    # IDs of all tables referenced by this query (from-clause path + exprs). Computed once on
+-    # first access, then cached: the value depends on the static query shape and never changes.
+-    _referenced_tbl_ids: set[UUID] | None
++    # Table-version keys from the query's FROM paths and expressions, evaluated lazily
++    _referenced_tbl_keys: set[catalog.TableVersionKey] | None
+ 
+     def __init__(
+         self,
+@@ -94,7 +92,7 @@ def __init__(
+         self.limit_val = limit
+         self.offset_val = offset
+         self.sample_clause = sample_clause
+-        self._referenced_tbl_ids = None
++        self._referenced_tbl_keys = None
+ 
+     @classmethod
+     def _normalize_select_list(
+@@ -324,14 +322,10 @@ def _from_query(
+             ),
          )
  
-+    @classmethod
-+    def _from_query(
-+        cls, source: QueryBase, *, from_clause: FromClause, substitution_fn: Callable[[exprs.Expr], exprs.Expr]
-+    ) -> Self:
-+        # join predicates belong to from_clause
-+        assert len(source._from_clause.join_clauses) == 0
-+        return cls(
-+            from_clause=from_clause,
-+            select_list=None
-+            if source.select_list is None
-+            else [(substitution_fn(e), n) for e, n in source.select_list],
-+            where_clause=None if source.where_clause is None else substitution_fn(source.where_clause),
-+            group_by_clause=None
-+            if source.group_by_clause is None
-+            else [substitution_fn(e) for e in source.group_by_clause],
-+            grouping_tbl_key=source.grouping_tbl_key,
-+            order_by_clause=None
-+            if source.order_by_clause is None
-+            else [(substitution_fn(e), asc) for e, asc in source.order_by_clause],
-+            limit=None if source.limit_val is None else substitution_fn(source.limit_val),
-+            offset=None if source.offset_val is None else substitution_fn(source.offset_val),
-+            sample_clause=None
-+            if source.sample_clause is None
-+            else dataclasses.replace(
-+                source.sample_clause, stratify_exprs=[substitution_fn(e) for e in source.sample_clause.stratify_exprs]
-+            ),
-+        )
-+
-     def referenced_tbl_ids(self) -> set[UUID]:
-         """Returns the IDs of all tables referenced by this query.
+-    def referenced_tbl_ids(self) -> set[UUID]:
+-        """Returns the IDs of all tables referenced by this query.
+-
+-        Walks the query's static structure (exprs + from-clause path) on first call and caches
+-        the result; the value depends on the static query shape and never changes.
+-        """
+-        if self._referenced_tbl_ids is not None:
+-            return self._referenced_tbl_ids
++    def referenced_tbl_keys(self) -> set[catalog.TableVersionKey]:
++        """Return table-version keys referenced by the query's expressions and FROM paths, including bases."""
++        if self._referenced_tbl_keys is not None:
++            return self._referenced_tbl_keys
  
-@@ -430,6 +459,7 @@ def select(self, *items: Any, **named_items: Any) -> Self:
-             expr = exprs.Expr.from_object(raw_expr)
-             if expr is None:
-                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression: {raw_expr}')
-+            expr.check_method_refs()
-             if expr.col_type.is_invalid_type() and not (isinstance(expr, exprs.Literal) and expr.val is None):
-                 raise excs.RequestError(excs.ErrorCode.UNSUPPORTED_OPERATION, f'Invalid type: {raw_expr}')
-             if len(self._from_clause.tbls) == 1 and self._from_clause.is_local:
-@@ -507,6 +537,7 @@ def where(self, pred: exprs.Expr) -> Self:
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_EXPRESSION, f'where() expects a Pixeltable expression; got: {pred}'
-             )
-+        pred.check_method_refs()
-         if not pred.col_type.is_bool_type():
-             raise excs.RequestError(
-                 excs.ErrorCode.UNSUPPORTED_OPERATION,
-@@ -533,6 +564,7 @@ def _create_join_predicate(
-         if isinstance(on, exprs.ColumnRef):
-             on = [on]
-         elif isinstance(on, exprs.Expr):
-+            on.check_method_refs()
-             if not on.is_bound_by(joined_tbls):
-                 raise excs.RequestError(
-                     excs.ErrorCode.UNSUPPORTED_OPERATION,
-@@ -773,6 +805,7 @@ def group_by(self, *grouping_items: exprs.Expr | catalog.Table) -> Self:
-                 break
-             if not isinstance(item, exprs.Expr):
-                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression in group_by(): {item}')
-+            item.check_method_refs()
-         if grouping_tbl_key is None:
-             # no Table item was found, so every item passed the Expr check above
-             group_by_clause = cast('list[exprs.Expr]', list(grouping_items))
-@@ -853,6 +886,7 @@ def order_by(self, *expr_list: exprs.Expr, asc: bool = True) -> Self:
-         for e in expr_list:
-             if not isinstance(e, exprs.Expr):
-                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression in order_by(): {e}')
-+            e.check_method_refs()
-         order_by_clause = self.order_by_clause if self.order_by_clause is not None else []
-         order_by_clause.extend((e.copy(), asc) for e in expr_list)
-         return type(self)(
-@@ -1025,6 +1059,7 @@ def sample(
-             for expr in stratify_by:
-                 if expr is None or not isinstance(expr, exprs.Expr):
-                     raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression: {expr}')
-+                expr.check_method_refs()
-                 if not expr.col_type.is_scalar_type():
-                     raise excs.RequestError(
-                         excs.ErrorCode.INVALID_ARGUMENT,
+         all_exprs = itertools.chain(
+             # _select_list_exprs is None: no external ColumnRefs without an explicit select list
+@@ -340,12 +334,12 @@ def referenced_tbl_ids(self) -> set[UUID]:
+             self.group_by_clause or [],
+             [] if self.order_by_clause is None else (e for e, _ in self.order_by_clause),
+         )
+-        tbl_ids = exprs.Expr.list_tbl_ids(all_exprs)
++        tbl_keys = exprs.Expr.list_tbl_keys(all_exprs)
+         for tp in self._from_clause.tbls:
+-            tbl_ids.update(tp.tbl_ids)
++            tbl_keys.update(tp.tbl_keys)
+ 
+-        self._referenced_tbl_ids = tbl_ids
+-        return tbl_ids
++        self._referenced_tbl_keys = tbl_keys
++        return tbl_keys
+ 
+     def _descriptors(self) -> DescriptionHelper:
+         helper = DescriptionHelper()
 ```
 
-**File**: `pixeltable/catalog/catalog.py` (modified, +9/-3)
+**File**: `pixeltable/catalog/__init__.py` (modified, +8/-1)
 ```diff
-@@ -140,7 +140,12 @@ def loop(*args: Any, **kwargs: Any) -> T:
+@@ -1,6 +1,13 @@
+ # ruff: noqa: F401
+ 
+-from .catalog import Catalog, ProhibitedWriteError, retry_loop, retrying_read
++from .catalog import (
++    Catalog,
++    ProhibitedWriteError,
++    retry_data_read_loop,
++    retry_md_read_loop,
++    retry_md_write_loop,
++    retrying_read,
++)
+ from .catalog_base import CatalogBase
+ from .catalog_proxy import CatalogProxy
+ from .column import Column
+```
+
+**File**: `pixeltable/catalog/catalog.py` (modified, +619/-548)
+```diff
+@@ -24,7 +24,6 @@
+ from pixeltable.runtime import get_runtime
+ from pixeltable.types import ColumnSpec
+ from pixeltable.utils import fault_injection
+-from pixeltable.utils.exception_handler import run_cleanup
+ from pixeltable.utils.fault_injection import FaultLocation
+ from pixeltable.utils.object_stores import PXT_BUCKETS_DIR
+ 
+@@ -34,6 +33,18 @@
+ from .globals import DirEntry, IfExistsParam, IfNotExistsParam, IndexSpec, MediaValidation, fold_identifier
+ from .insertable_table import InsertableTable
+ from .local_table import LocalTable
++from .locking import (
++    LockNotAvailableError,
++    LockRequest,
++    StaleLockSetError,
++    TblLockMode,
++    TblOpClass,
++    XactLocks,
++    active_tbl_clause,
++    finalized_view_base_id,
++    lookup_dir_md,
++    lookup_dir_path,
++)
+ from .model import IndexDefinition, TableSchemaChangeSet, prepare_model, prepare_model_updates
+ from .path import ROOT_PATH, Path
+ from .schema_object import SchemaObject
+@@ -108,35 +119,62 @@ def _is_retryable_exc(e: BaseException) -> bool:
+     if not isinstance(e, sql_exc.DBAPIError):
+         return False
+     # connection_invalidated: the connection was terminated by the server (eg, by pg_terminate_backend)
+-    # TODO: Investigate whether DeadlockDetected points to a bug in our locking protocol, which is
+-    # supposed to be deadlock-free.
+-    return e.connection_invalidated or isinstance(
+-        e.orig, (psycopg.errors.SerializationFailure, psycopg.errors.LockNotAvailable, psycopg.errors.DeadlockDetected)
+-    )
++    return e.connection_invalidated or isinstance(e.orig, psycopg.errors.SerializationFailure)
++
++
++def retry_md_read_loop(
++    *, tbl_keys: Collection[TableVersionKey] | None = None
++) -> Callable[[Callable[..., T]], Callable[..., T]]:
++    """Retry an operation that reads catalog metadata without reading table rows.
++
++    `tbl_keys` identifies tables to refresh before running the operation. Any pending operations on those tables
++    are finalized first.
++    """
++    return _retry_loop(LockRequest(TblOpClass.MD_READ, read_tbl_keys=tbl_keys))
++
++
++def retry_data_read_loop(
++    *, tvps: Collection[TableVersionPath] | None = None, tbl_keys: Collection[TableVersionKey] | None = None
++) -> Callable[[Callable[..., T]], Callable[..., T]]:
++    """Retry a data read, taking read locks on every table in the supplied paths and their bases."""
++    return _retry_loop(LockRequest(TblOpClass.DATA_READ, read_tvps=tvps, read_tbl_keys=tbl_keys))
+ 
+ 
+-def retry_loop(
++def retry_md_write_loop(
+     *,
+-    for_write: bool = False,
+-    read_tvps: Collection[TableVersionPath] | None = None,
+-    read_tbl_ids: Collection[UUID] | None = None,
+-    write_tvps: Collection[TableVersionPath] | None = None,
+-    write_tbl_ids: Collection[UUID] | None = None,
++    tvps: Collection[TableVersionPath] | None = None,
++    tbl_ids: Collection[UUID] | None = None,
+     lock_mutable_tree: bool = False,
+-    isolation_level: Literal['READ COMMITTED', 'REPEATABLE READ', 'SERIALIZABLE'] | None = None,
++    paths: Collection[Path] | None = None,
++    lock_path_subtree: bool = False,
+ ) -> Callable[[Callable[..., T]], Callable[..., T]]:
++    """Retry a metadata write or DDL operation, taking exclusive locks on its targets."""
++    return _retry_loop(
++        LockRequest(
++            TblOpClass.MD_WRITE,
++            write_tvps=tvps,
++            write_tbl_ids=tbl_ids,
++            lock_mutable_tree=lock_mutable_tree,
++            write_paths=paths,
++            lock_path_subtree=lock_path_subtree,
++        )
++    )
++
++
++def _retry_loop(request: LockRequest) -> Callable[[Callable[..., T]], Callable[..., T]]:
+     def decorator(op: Callable[..., T]) -> Callable[..., T]:
+         @functools.wraps(op)
+         def loop(*args: Any, **kwargs: Any) -> T:
+             cat = get_runtime().catalog
+-            # retry_loop() is reentrant
++            # a retry loop is reentrant
+             if cat._in_retry_loop:
+-                cat._check_write_locks(write_tvps or [], write_tbl_ids or [], lock_mutable_tree)
++                # TODO(PXT-1278): restore _check_write_locks()'s check that the enclosing transaction holds all
++                # required locks.
+                 return op(*args, **kwargs)
+-
+             num_retries = 0
+             while True:
+                 cat._in_retry_loop = True
++                cat._roll_forward_ids.clear()
                  try:
                      # in order for retry to work, we need to make sure that there aren't any prior db updates
                      # that are part of an ongoing transaction
--                    assert not get_runtime().in_xact
-+                    if get_runtime().in_xact:
-+                        raise excs.RequestError(
-+                            excs.ErrorCode.UNSUPPORTED_OPERATION,
-+                            'Catalog functions such as pxt.get_table() cannot run while a query or update executes, '
-+                            'for example inside a UDF. Use a @pxt.query UDF to query another table.',
-+                        )
+@@ -148,21 +186,11 @@ def loop(*args: Any, **kwargs: Any) -> T:
+                         )
                      with (
                          cat._allow_tbl_md_read(),
-                         cat.begin_xact(
-@@ -1897,7 +1902,8 @@ def update_from_model(self, change_sets: list[TableSchemaChangeSet]) -> None:
-         If the table does not exist, raises NotFoundError. If the model is incompatible with the existing table,
-         raises RequestError.
- 
--        Requires that change_sets is ordered topologically, ie, base tables precede their views.
-+        Requires that change_sets is ordered topologically: base tables precede their views, and a queried table
-+        precedes the tables that query it.
- 
-         The change sets are applied in three passes:
- 
-@@ -1943,7 +1949,7 @@ def update_fn() -> None:
- 
-             # Record the metadata per table in forward order (base tables first), so a view's new column can
-             # reference a base's new column: the view's resolution sees the base's already-mutated columns through
--            # tvp.columns().
-+            # tvp.columns(). A query in a new column can likewise reference a queried table's new column.
-             updated_tbl_ids = {tvp.tbl_id for tvp, _, _ in tbl_info}
-             applied_tbl_ids: set[UUID] = set()
-             # TableVersions that need to be validated: the changed tables and their mutable views. Schema changes are
+-                        cat.begin_xact(
+-                            for_write=for_write,
+-                            read_tvps=read_tvps,
+-                            read_tbl_ids=read_tbl_ids,
+-                            write_tvps=write_tvps,
+-            
 ```
 
-**File**: `pixeltable/catalog/column.py` (modified, +4/-6)
+**File**: `pixeltable/catalog/dir.py` (modified, +2/-2)
 ```diff
-@@ -242,16 +242,13 @@ def create(cls, name: str, spec: ts.ColumnType | TypeForm | ColumnSpec | exprs.E
-         elif isinstance(spec, dict):
-             stored = spec.get('stored', True)
-             cls._validate_column_spec(name, spec)
--            value_expr = spec.get('value')
--            if value_expr is not None and isinstance(value_expr, exprs.Expr):
-+            if spec.get('value') is not None:
-+                value_expr = exprs.Expr.from_object(spec['value'])
-+                assert value_expr is not None, type(spec['value'])
-                 # create copy so we can modify it
-                 value_expr = value_expr.copy()
-                 value_expr.bind_rel_paths()
-                 sa_col_type = value_expr.col_type.to_sa_type() if stored else None
--            elif value_expr is not None and stored:
--                expr = exprs.Expr.from_object(value_expr)
--                assert expr is not None, type(value_expr)
--                sa_col_type = expr.col_type.to_sa_type()
-             if 'type' in spec:
-                 col_type = ts.ColumnType.normalize_type(spec['type'], allow_builtin_types=False)
-                 sa_col_type = col_type.to_sa_type() if stored else None
-@@ -513,6 +510,7 @@ def set_value_expr(self, value_expr: exprs.Expr) -> None:
+@@ -37,12 +37,12 @@ def _display_name(self) -> str:
  
-     def check_value_expr(self) -> None:
-         assert self._value_expr is not None
-+        self._value_expr.check_method_refs(f'Column {self.name!r}: ')
-         self._value_expr.validate_storable(f'Computed column {self.name!r}')
-         for e in self._value_expr.subexprs(expr_class=exprs.ColumnPropertyRef, traverse_matches=False):
-             if e.is_cellmd_prop():
+     def _name(self) -> str:
+         cat = get_runtime().catalog
+-        with cat.begin_xact(for_write=False):
++        with cat.begin_md_read_xact():
+             return cat.read_dir_record(self._id).md['name']
+ 
+     def _dir_id(self) -> UUID | None:
+         cat = get_runtime().catalog
+-        with cat.begin_xact(for_write=False):
++        with cat.begin_md_read_xact():
+             return cat.read_dir_record(self._id).parent_id
+ 
+     def _path(self) -> Path:
 ```
 
-**File**: `pixeltable/catalog/model/base.py` (modified, +4/-1)
+**File**: `pixeltable/catalog/insertable_table.py` (modified, +6/-16)
 ```diff
-@@ -160,8 +160,11 @@ def _update_all(catalog_dir: str = '', *, allow_destructive: bool = False) -> di
-             )
+@@ -15,7 +15,7 @@
+ from .local_table import LocalTable
+ from .table_path import TableVersionPath
+ from .table_version_handle import TableVersionHandle
+-from .tbl_ops import CreateStoreTableOp, CreateTableMdOp, TableOp, TableOpsBuilder
++from .tbl_ops import CreateTableMdOp, TableOp, TableOpsBuilder
+ from .types import TableVersionMd
+ from .update_status import UpdateStatus
+ from .utils import create_table_version_md
+@@ -76,8 +76,7 @@ def _create(
  
-         # Apply column/index changes to existing tables. New tables are handled by _create_all() below.
-+        # update_from_model() needs each queried table ahead of the tables that query it.
-         update_diffs = [
--            (name, d) for name, d in diffs.items() if d.resolution in ('update_additive', 'update_destructive')
-+            (name, diffs[name])
-+            for name, _ in _creation_order(registered_models)
-+            if diffs[name].resolution in ('update_additive', 'update_destructive')
-         ]
- 
-         pending_creates = {name for name, d in diffs.items() if d.resolution == 'create'}
-```
-
-**File**: `pixeltable/catalog/model/definition.py` (modified, +10/-26)
-```diff
-@@ -47,6 +47,8 @@
- from .resolution import prepare_model
- 
- if TYPE_CHECKING:
-+    from pixeltable._query_base import QueryBase
-+
-     from .query import ModelQuery
- 
- # the model each defined path was synthesized for, keyed by its synthesized table id; a query over a model
-@@ -452,36 +454,18 @@ def apply_decl_order(self) -> None:
- 
- 
- def bind_query_templates(e: exprs.Expr, catalog_dir: str | None) -> exprs.Expr:
--    """Rebind QueryTemplateFunction calls of ModelQuery instances to the equivalent Query of the bound model.
-+    """Replace each ModelQuery template in e's QueryTemplateFunction calls with ModelQuery.bind_unresolved(catalog_dir).
- 
--    With `catalog_dir=None`, each Query is over its model's defined shape rather than over a table.
-+    With `catalog_dir=None`, the replacement is ModelQuery.to_defined_query().
-     """
-     from .query import ModelQuery
- 
--    subst: exprs.ExprDict[exprs.Expr] = exprs.ExprDict()
--    for fn_call in e.subexprs(exprs.FunctionCall):
--        fn = fn_call.fn
--        if not isinstance(fn, func.QueryTemplateFunction) or not isinstance(fn.template_query, ModelQuery):
--            continue
--        assert fn_call.group_by_start_idx == fn_call.group_by_stop_idx  # a query udf takes no window clause
--        rebound = func.QueryTemplateFunction(
--            fn.template_query.to_defined_query() if catalog_dir is None else fn.template_query.bind(catalog_dir),
--            list(fn.signature.parameters.values()),
--            path=fn.self_path,
--            name=fn.self_name,
--            comment=fn.comment(),
--        )
--        # we need to substitute the FunctionCall itself, not just the Function instance
--        subst[fn_call] = rebound(*fn_call.args, **fn_call.kwargs)
--    if len(subst) == 0:
--        return e
--    result = e.substitute(subst)
--    # substitute() returns a replacement without descending into it, so a call nested in another one is missed
--    assert not any(
--        isinstance(c.fn, func.QueryTemplateFunction) and isinstance(c.fn.template_query, ModelQuery)
--        for c in result.subexprs(exprs.FunctionCall)
--    )
--    return result
-+    def bound_query(template_query: QueryBase) -> pxt.Query | None:
-+        if not isinstance(template_query, ModelQuery):
-+            return None
-+        return template_query.to_defined_query() if catalog_dir is None else template_query.bind_unresolved(catalog_dir)
-+
-+    return func.substitute_template_queries(e, bound_query)
- 
- 
- class TableModelMeta(type):
-```
-
-**File**: `pixeltable/catalog/model/query.py` (modified, +8/-23)
-```diff
-@@ -2,7 +2,6 @@
- 
- from __future__ import annotations
- 
--import dataclasses
- from typing import Any, Self
- 
- import pixeltable as pxt
-@@ -12,6 +11,7 @@
- from pixeltable.query_clauses import FromClause
- 
- from .definition import MODEL_BY_DEFINED_TBL_ID, TableModelMeta, bind_query_templates
-+from .resolution import resolve_query_columns
- 
- 
- class ModelQuery(QueryBase):
-@@ -102,15 +102,16 @@ def to_defined_query(self) -> pxt.Query:
-         return self._substituted(defined_path, subst, None)
- 
-     def bind(self, catalog_dir: str) -> pxt.Query:
--        """The equivalent query over the table this query's model resolves to under catalog_dir."""
-+        """The equivalent Query over the table of this query's model under catalog_dir."""
-+        return resolve_query_columns(self.bind_unresolved(catalog_dir))
-+
-+    def bind_unresolved(self, catalog_dir: str) -> pxt.Query:
-+        """The Query over the table of this query's model under catalog_dir, with each ColumnRefByName left in place."""
-         # _resolve_tbl() rather than _bind(): binding the model here would fix its columns to the schema the
-         # table has now, and update_all() may still be about to migrate it.
-         tbl = self.model_cls._resolve_tbl(catalog.Path.dir_prefix(catalog_dir), if_not_exists='error')
-         assert tbl is not None
--        subst: exprs.ExprDict[exprs.Expr] = exprs.ExprDict()
--        for col_name in tbl.columns():
--            subst[ColumnRefByName(col_name)] = getattr(tbl, col_name)
--        return self._substituted(tbl._tbl_path, subst, catalog_dir)
-+        return self._substituted(tbl._tbl_path, exprs.ExprDict(), catalog_dir)
- 
-     def _substituted(
-         self, path: catalog.TablePath, subst: exprs.ExprDict[exprs.Expr], catalog_dir: str | None
-@@ -141,23 +142,7 @@ def _substituted(
-         def rebound(e: exprs.Expr) -> exprs.Expr:
-             return bind_query_templates(e.copy().substitute(subst), catalog_dir)
- 
--        return pxt.Query(
--            from_clause=FromClause(tbls=[path]),
--            select_list=None if self.select_list is None else [(rebound(e), n) for e, n in self.select_list],
--            where_clause=None if self.where_clause is None else rebound(self.where_clause),
--            group_by_clause=None if self.group_by_clause is None else [rebound(e) for e in self.group_by_clause],
--            grouping_tbl_key=self.grouping_tbl_key,
--            order_by_clause=None
--            if self.order_by_clause is None
--            else [(rebound(e), asc) for e, asc in self.order_by_clause],
--            limit=None if self.limit_val is None else rebound(self.limit_val),
--            offset=None if self.offset_val is None else rebound(self.offset_val),
--            sample_clause=None
--            if self.sample_clause is None
--            else dataclasses.replace(
--                self.sample_clause, stratify_exprs=[rebound(e) for e in self.sample_clause.stratify_exprs]
--            ),
--        )
-+        return pxt.Query._from_query(self, from_clause=FromClause(tbls=[path]), substitution_fn=rebound)
- 
-     def join(self, *args: Any, **kwargs: Any) -> Self:
-         raise excs.RequestError(
-```
-
-**File**: `pixeltable/catalog/model/resolution.py` (modified, +77/-7)
-```diff
-@@ -5,16 +5,16 @@
- from typing import TYPE_CHECKING, Literal, Mapping, NamedTuple, TypedDict
- from uuid import UUID
- 
-+import pixeltable as pxt
- from pixeltable import catalog, exceptions as excs, exprs, func, index
- from pixeltable.types import ColumnSpec
- 
- from ..globals import MediaValidation, fold_mapping_keys
- from ..table_version_handle import TableVersionHandle
- 
- if TYPE_CHECKING:
--    import pixeltable as pxt
-+    from pixeltable._query_base import QueryBase
- 
--if TYPE_CHECKING:
-     from .definition import IndexDefinition
- 
- 
-@@ -67,7 +67,9 @@ def prepare_model(
+         ops = (
+             TableOpsBuilder(md.tbl_md.tbl_id, tbl_version=md.tbl_md.current_version)
+-            .add(CreateTableMdOp)
+-            .add(CreateStoreTableOp)
++            .add(CreateTableMdOp, is_view=False)
+             .build()
          )
-         subst_args = [arg.substitute(base_tbl_subst_dict) for arg in iterator.args]
-         subst_kwargs = {k: v.substitute(base_tbl_subst_dict) for k, v in iterator.kwargs.items()}
--        subst_bound_args = {k: v.substitute(base_tbl_subst_dict) for k, v in iterator.bound_args.items()}
-+        # a **kwargs parameter binds to a dict of Exprs, not to an Expr;
-+        # this mirrors GeneratingFunctionCall.from_dict()
-+        subst_bound_args = iterator.it.bind_to_signature(subst_args, subst_kwargs)
-         iterator = func.GeneratingFunctionCall(
-             iterator.it, subst_args, subst_kwargs, subst_bound_args, iterator.outputs, iterator.validation_error
-         )
-@@ -118,7 +120,8 @@ def prepare_model(
-     for name, spec in columns.items():
-         subst_spec = spec.copy()
-         if 'value' in subst_spec:
--            subst_spec['value'] = subst_spec['value'].substitute(subst_dict)
-+            subst_spec['value'] = resolve_query_calls(subst_spec['value'].substitute(subst_dict))
-+            _check_query_columns(subst_spec['value'], name, display_name)
-             # whatever is still a ColumnRefByName has to name a column of this table that precedes this one, so that
-             # it has a value by the time this column is computed
-             unresolved = [
-@@ -235,7 +238,10 @@ class ModelUpdates(NamedTuple):
- def resolve_model_value_expr(
-     tbl_path: catalog.TablePath, value_expr: exprs.Expr, origin: Literal['base_query', 'model_body']
- ) -> exprs.Expr:
--    """Replace model column names with catalog column references visible at the declaration site."""
-+    """Replace model column names with catalog column references visible at the declaration site.
-+
-+    A ColumnRefByName in the template query of a QueryTemplateFunction call becomes a ColumnRef to that query's table.
-+    """
-     reference_path = tbl_path.base if origin == 'base_query' else tbl_path
-     assert reference_path is not None
- 
-@@ -249,7 +255,7 @@ def resolve_model_value_expr(
-             )
-             for col in reference_path.columns()
-         )
--        return value_expr.substitute(subst)
-+        return resolve_query_calls(value_expr.substitute(subst))
- 
-     assert isinstance(reference_path, catalog.TableMdPath)
- 
-@@ -266,7 +272,69 @@ def column_ref(col_md: catalog.ColumnVersionMd) -> exprs.ColumnRef:
-         for col_md in reference_path.column_md()
-         if col_md.name is not None
-     )
--    return value_expr.substitute(subst)
-+    return resolve_query_calls(value_expr.substitute(subst))
-+
-+
-+def resolve_query_calls(value_expr: exprs.Expr) -> exprs.Expr:
-+    """Apply resolve_query_columns() to the template queries of value_expr's QueryTemplateFunction calls."""
-+
-+    def resolved_query(template_query: QueryBase) -> pxt.Query | None:
-+        if not isinstance(template_query, pxt.Query) or not _is_unresolved(template_query):
-+            return None
-+        return resolve_query_columns(template_query)
-+
-+    return func.substitute_template_queries(value_expr, resolved_query)
-+
-+
-+def resolve_query_columns(query: pxt.Query) -> pxt.Query:
-+    """Replace each ColumnRefByName in query's clauses with a ColumnRef to the column of that name in query's table.
-+
-+    For a local table, this first clears the cached column metadata of the query's table path.
-+    """
-+    tbl_path = query._from_clause._first_tbl
-+    if query._from_clause.is_local:
-+        # the TableVersionPath's cached ColumnVersionMds don't include columns added to its TableVersion after caching
-+        query._first_tbl.clear_cached_md()
-+    subst = exprs.ExprDict[exprs.Expr](
-+        (exprs.ColumnRefByName(col_md.name), exprs.ColumnRef(col_md, tbl_path.is_validate_on_read(col_md)))
-+        for col_md in tbl_path.column_md()
-+        if col_md.name is not None
-+    )
-+    return pxt.Query._from_query(
-+        query, from_clause=query._from_clause, substitution_fn=lambda e: resolve_query_calls(e.copy().substitute(subst))
-+    )
-+
-+
-+def _is_unresolved(query: pxt.Query) -> bool:
-+    """Returns True if it contains ColumnRefByName instances."""
-+    return exprs.Expr.list_contains(
-+        query._component_exprs(),
-+        filter=lambda e: isinstance(e, exprs.ColumnRefByName)
-+        or (
-+            isinstance(e, exprs.FunctionCall)
-+            and isinstance(e.fn, func.QueryTemplateFunction)
-+            and isinstance(e.fn.template_query, pxt.Query)
-+     
-```
-
----
-
-### Incident Patch 2: `67cbca8e` (2026-10-30)
-**Commit Message**: Build the dashboard SPA for the nightly's from_main install (#1847)
-
-Fixes the two failures in the `from_main` dispatch of the nightly ([run
-40119990499](https://github.com/pixeltable/pixeltable/actions/runs/40119990499)).
-Every test leg failed the same two tests, both with `HTTP Error 404: Not
-Found` on `GET /` from the `pxt` daemon:
-
--
-`tests/pixeltable_cli/test_smoke.py::TestDashboard::test_spa_static_files`
--
-`tests/pixeltable_cli/test_smoke.py::TestDashboardCommand::test_prints_url`
-
-### Cause
-
-Since #1727, `from_main` installs
-`git+https://github.com/pixeltable/pixeltable@<sha>`. The dashboard SPA
-lives in `pixeltable_cli/server/static/`, which is gitignored and
-produced only by `npm run build` in `dashboard/`. A build from a fresh
-clone has no SPA, so `_serve_static()` finds no `index.html` and returns
-404.
-
-Release-mode nightlies pass these tests because the PyPI wheel has the
-SPA: `make release` depends on `make install`, which builds it, and
-hatchling's `artifacts` setting puts it in the wheel. PR CI passes them
-because `pytest.yml` has a "Build dashboard SPA" step. The recent
-dispatched nightlies (Oct 9, 15, 23) all ran in release mode, so this
-run was the first `from_ma
-
-**File**: `.github/workflows/nightly.yml` (modified, +11/-4)
-```diff
-@@ -118,14 +118,19 @@ jobs:
-       - name: Install tools and libraries
-         # cmake is needed for certain CI environments where it is not preinstalled.
-         run: ./scripts/retry.sh 3 30 conda install -y -c conda-forge 'cmake>=3.22' libiconv 'ffmpeg==6.1.1=gpl*'
--      - name: Delete source tree
--        run: rm -rf pixeltable pixeltable_cli  # Ensure we use installed packages for testing, not local source tree
-+      - name: Build dashboard SPA
-+        # The release wheel bundles the SPA, whose build output is gitignored; tests/pixeltable_cli/test_smoke.py
-+        # requests it from the daemon of the installed package
-+        if: ${{ inputs.from_main }}
-+        run: |
-+          ./scripts/retry.sh 3 30 conda install -y -c conda-forge nodejs
-+          cd dashboard && npm install --silent && npm run build
-       - name: Install dependencies
-         run: |
--          # Pin pixeltable to the checkout: the commit itself for main, else the latest version tag at or before it
-+          # Pin pixeltable to the checkout: the source tree for main, else the latest version tag at or before it
-           # (the release tag can sit past its version tag)
-           if [[ '${{ inputs.from_main }}' == 'true' ]]; then
--            PXT="git+https://github.com/pixeltable/pixeltable@$(git rev-parse HEAD)"
-+            PXT='.'
-           else
-             PXT="pixeltable==$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')"
-           fi
-@@ -134,6 +139,8 @@ jobs:
-           ./scripts/retry.sh 3 60 python -m pip install "$PXT" ${{ matrix.package-configs }}
-           # PXT-1714: lift this pin when pytest-benchmark supports pytest 9.2.
-           python -m pip install filelock 'pytest>=9.0.3,<9.2' pytest-xdist pytest-rerunfailures pytest-benchmark
-+      - name: Delete source tree
-+        run: rm -rf pixeltable pixeltable_cli  # Ensure we use installed packages for testing, not local source tree
-       - name: Install spaCy model
-         if: ${{ contains(matrix.package-configs, 'spacy') }}
-         run: python -m spacy download en_core_web_sm
-```
-
-**File**: `tests/test_video.py` (modified, +2/-0)
-```diff
-@@ -275,6 +275,8 @@ def test_frame_iterator_seek(self, db_root: DatabaseRoot) -> None:
-         Loads the first 20 frames of a video with various fps and num_frames settings, then queries for frames at
-         specific positions and checks that the output is pixel-identical.
+         return md, ops
+@@ -157,13 +156,8 @@ def _insert_table_data_source(
+         start_ts = time.perf_counter()
+         status = pxt.UpdateStatus()
+         query = data_source.pxt_query if isinstance(data_source, QueryTableDataConduit) else None
+-        with get_runtime().catalog.begin_xact(
+-            for_write=True,
+-            write_tvps=[self._tbl_version_path],
+-            read_tvps=query._from_clause.tvps if query is not None else None,
+-            read_tbl_ids=query.referenced_tbl_ids() if query is not None else None,
+-            lock_mutable_tree=True,
+-        ):
++        read_tbl_keys = query.referenced_tbl_keys() if query is not None else None
++        with get_runtime().catalog.begin_data_write_xact(read_tbl_keys=read_tbl_keys, tvps=[self._tbl_version_path]):
+             data_source.add_table_info(self)
+             data_source.prepare_for_insert_into_table()
+             # in on_error='abort' mode the exec raises the internal ExprEvalError on the first failing cell;
+@@ -204,9 +198,7 @@ def _insert_sql_source(
          """
-+        if platform.system() == 'Windows' and db_root.id == 'proxy':
-+            pytest.skip('PXT-1715: dropping a video table with an open media file hangs the proxy daemon on Windows')
-         # It's important to run this test for all videos and for many kwargs combinations, since there are so many
-         # edge cases when working with video data.
-         p = db_root.make_catalog_path
+         fail_on_exception = OnErrorParam.fail_on_exception(on_error)
+         start_ts = time.perf_counter()
+-        with get_runtime().catalog.begin_xact(
+-            for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True
+-        ):
++        with get_runtime().catalog.begin_data_write_xact(tvps=[self._tbl_version_path]):
+             status = self._tbl_version.get().insert(
+                 source=sql_source,
+                 query=None,
+@@ -237,9 +229,7 @@ def delete(self, where: 'exprs.Expr' | None = None) -> UpdateStatus:
+         """
+         self._validate_where(where)
+         telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table_id=str(self._id)))
+-        with get_runtime().catalog.begin_xact(
+-            for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True
+-        ):
++        with get_runtime().catalog.begin_data_write_xact(tvps=[self._tbl_version_path]):
+             tv = self._tbl_version.get()
+             status = tv.delete(where=where)
+             telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table=tv.name, version=tv.version))
+```
+
+**File**: `pixeltable/catalog/local_table.py` (modified, +26/-45)
+```diff
+@@ -92,8 +92,6 @@ def __deepcopy__(self, memo: dict[int, Any]) -> 'Table':
+     def _name(self) -> str:
+         from pixeltable.catalog import retrying_read
+ 
+-        # retrying_read(), not begin_xact(): this is also called as a top-level statement (eg while preparing an
+-        # insert), where a dropped connection has to be retried rather than raised
+         return retrying_read(lambda: get_runtime().catalog.read_tbl_record(self._id).md['name'])
+ 
+     def _dir_id(self) -> UUID | None:
+@@ -102,9 +100,9 @@ def _dir_id(self) -> UUID | None:
+         return retrying_read(lambda: get_runtime().catalog.read_tbl_record(self._id).dir_id)
+ 
+     def get_metadata(self) -> 'TableMetadata':
+-        from pixeltable.catalog import retry_loop
++        from pixeltable.catalog import retry_md_read_loop
+ 
+-        @retry_loop(for_write=False)
++        @retry_md_read_loop()
+         def op() -> 'TableMetadata':
+             return self._get_metadata()
+ 
+@@ -216,10 +214,10 @@ def __getitem__(self, name: str) -> 'exprs.ColumnRef':
+         return getattr(self, name)
+ 
+     def list_views(self, *, recursive: bool = True) -> list[str]:
+-        from pixeltable.catalog import retry_loop
++        from pixeltable.catalog import retry_md_read_loop
+ 
+-        # we need retry_loop() here, because we end up loading Tables for the views
+-        @retry_loop(read_tvps=[self._tbl_version_path])
++        # Loading view metadata can encounter pending operations, requiring a retry of the whole listing.
++        @retry_md_read_loop(tbl_keys=self._tbl_version_path.tbl_keys)
+         def op() -> list[str]:
+             paths: list[str] = []
+             for t in self._get_views(recursive=recursive):
+@@ -281,7 +279,7 @@ def compute(
+         path = self._tbl_version_path
+         self._validate_compute()
+         try:
+-            with get_runtime().catalog.begin_xact(read_tbl_ids=path.tbl_ids):
++            with get_runtime().catalog.begin_data_read_xact(tbl_keys=path.tbl_keys):
+                 output_md = self._resolve_compute_outputs(outputs)
+                 # input rows supply values for the base table's columns
+                 base_tbl = self._get_base_tables()[-1] if path.is_view() else self
+@@ -370,7 +368,7 @@ def op() -> DescriptionHelper:
+                 helper.append(f'Custom Metadata: {Formatter.summarize_json(self._get_custom_metadata())}')
+             return helper
+ 
+-        return retrying_read(op, read_tvps=[self._tbl_version_path])
++        return retrying_read(op, tbl_keys=self._tbl_version_path.tbl_keys)
+ 
+     def _col_descriptor(self, columns: list[str] | None = None) -> tuple[pd.DataFrame, list[int] | None]:
+         """Generates column descriptor DataFrame and a list of vertical separators.
+@@ -524,14 +522,14 @@ def add_columns(
+         schema: Mapping[str, TypeForm | ColumnSpec],
+         if_exists: Literal['error', 'ignore', 'replace', 'replace_force'] = 'error',
+     ) -> UpdateStatus:
+-        from pixeltable.catalog import retry_loop
++        from pixeltable.catalog import retry_md_write_loop
+ 
+         self._validate_column_schema(schema)
+         schema = fold_mapping_keys(schema)
+ 
+         # a retry loop is necessary because drop column needs it
+         # lock_mutable_tree=True: we might end up having to drop existing columns, which requires locking the tree
+-        @retry_loop(for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True)
++        @retry_md_write_loop(tvps=[self._tbl_version_path], lock_mutable_tree=True)
+         def do_add_columns() -> list[Column] | None:
+             self._check_mutable('add columns to')
+ 
+@@ -594,10 +592,10 @@ def add_computed_column(
+         if_exists: Literal['error', 'ignore', 'replace'] = 'error',
+         **kwargs: exprs.Expr,
+     ) -> UpdateStatus:
+-        from pixeltable.catalog import retry_loop
++        from pixeltable.catalog import retry_md_write_loop
+ 
+         # a retry loop is necessary because drop column needs it.
+-        @retry_loop(for_write=True, write_tvps=[self._tbl_version_path], lock_mutable_tree=True)
++        @retry_md_write_loop(tvps=[self._tbl_version_path], lock_mutable_tree=True)
+         def do_add_computed_column() -> UpdateStatus:
+             self._check_mutable('add columns to')
+             self._check_single_column_kwarg(
+@@ -670,14 +668,14 @@ def _verify_schema(cls, schema: list[Column]) -> None:
+ 
+     @telemetry.spanned('pixeltable.drop_column', set_current=True)
+     def drop_column(self, column: str | ColumnRef, if_not_exists: Literal['error', 'ignore'] = 'error') -> None:
+-        from pixeltable.catalog import retry_loop
++        from pixeltable.catalog import retry_md_write_loop
+ 
+         telemetry.add_attrs(telemetry.func_span(), **telemetry_schemas.OpAttrs(table_id=str(self._id)))
+ 
+         # Retry loop is necessary because table metadata is loaded inside.
+         # Note: the provided ColumnRef may belong to a different table.
+         # lock_mutable_tree=True: we need to be able to see whether
 ```
 
 #### Recent Merged Pull Requests:
@@ -2047,22 +2082,42 @@ run was the first `from_ma
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. eight bugs found by the skill evals (#1852)
+## X. [PXT-1278] New Catalog locking (#1573)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/catalog-locking.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `323a5c71`: eight bugs found by the skill evals (#1852). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2eca8e44`: [PXT-1278] New Catalog locking (#1573). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/catalog-locking.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Built-in UDFs and aggregates (anything under `pixeltable.`) must not modify their arguments: unlike
-  user functions, they receive a constant argument's shared value rather than a copy.
+# Catalog locking
+
+`Catalog` coordinates concurrent reads, writes, and schema changes using Postgres locks on store tables.
+This document explains the rules and why they are needed. The implementation is in
+`pixeltable/catalog/catalog.py` and `pixeltable/catalog/locking.py`.
+
+## 1. Lock store tables before reading metadata
+
+Each table or view with stored data has a Postgres store table: `tbl_<uuid.hex>` for tables and
+`view_<uuid.hex>` for views. Pixeltable locks these tables with `LOCK TABLE`. Postgres releases the locks
+when the transaction ends.
+
+Under REPEATABLE READ, `LOCK TABLE` does not establish the transaction's snapshot. The first query after
+lock acquisition does. This means a metadata read sees changes committed while the transaction was waiting
+for its store table locks.
+
+**Store table locks must precede every statement that establishes a snapshot.** A metadata query, a directory
+row lock, or even `SELECT 1` before `LOCK TABLE` would leave the transaction reading metadata from before the wait.
+
+Acquiring locks first ensures that the metadata read includes changes committed during the wait.
+Directory locks come later and need the retry mechanism described in section 5.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2072,4 +2127,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `323a5c71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2eca8e44` are properly handled with clean fallback behavior.

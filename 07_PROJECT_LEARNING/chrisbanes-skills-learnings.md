@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `8fc8836c`  
+> **Source Version**: `d83f6e28`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:43:17.714Z  
+> **Timestamp**: 2026-11-02T16:33:27.121Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:43:17.457Z  
+> **Harvest Timestamp**: 2026-11-02T16:33:26.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1131 stars
+- **Stars / Engagement**: 1136 stars
 
 ---
 
@@ -224,11 +224,14 @@ class ProfileModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #135** (2026-10-25): **Keep serial implementation solo and PR polling in the controller**
-  *Symptoms*: ## Summary  Single-item and serial implementation currently force worker handoffs, and routine PR polling starts an evidence helper. Choose implementation ownership once from the whole graph and keep routine polling in the controller:  ```text implementation preflight   no parallel point -> lead owns every item   any parallel point -> workers own every item   both -> integrated-head checks + independent final review  shepherd   routine polling -> controller   large failed CI log -> one bounded read-only diagnostic question ```  Align the skill entrypoints, launcher, README wording and existing evaluations. Add five calibration cases without changing the scored benchmark size or published result metrics.  Closes #134. Approved [agent brief](https://github.com/chrisbanes/skills/issues/134#issuecomment-6389915351) and [implementation plan](https://github.com/chrisbanes/skills/issues/134#issuecomment-6395119976).  ## Evidence  - **Before:** Static inspection at `0bd44a0` found unconditional worker assignment for a single item or serial graph, a serial-chain rubric requiring worker acceptance, and a routine polling-helper rule.   **After:** The new solo-chain, unavailable-reviewer, late-fanout, direct-poll and large-log cases cover the selected behavior. Existing serial-chain and handoff rubrics are reconciled; delegated recovery, API/DOC/WIRE reuse and host-monitor cases remain. - Passed `npm run build`, `npm run lint`, `npm run evals:validate` (223 cases), and `npm test` (7 Node
+- **Issue #138** (2026-11-02): **Drop the ready-for-agent label requirement from to-plan**
+  *Symptoms*: ## Summary  to-plan no longer gates GitHub-mode planning on the `ready-for-agent` label.  ```diff  ## Enforce readiness -- The issue is open and labelled `ready-for-agent`. +- The issue is open.  - Every blocker is complete and its required outcome exists in the baseline.  ...  ## Refresh before publishing -- Issue state, body, comments, label, blockers, and implementation PRs. +- Issue state, body, comments, blockers, and implementation PRs. ```  The other readiness checks are unchanged: blockers complete, no competing implementation PR, complete acceptance criteria, and each criterion mapped to verification.  ## Evidence  - **Before:** an open, otherwise-ready issue without `ready-for-agent` failed to-plan readiness, so no plan could be drafted.   **After:** the same issue passes readiness and to-plan can draft a plan.  Deterministic checks on this branch: `npm run lint` clean, `npm test` 7/7 pass, `npm run evals:validate` validates 226 cases. No to-plan eval case asserted the label requirement, and no live model evals were run.  ## Merge Danger  **Door:** two-way  A one-line revert restores the gate.  **Blast Radius:** narrow  The label is still enforced elsewhere: `deliver-spec` sends issues without it to `triage` before calling to-plan, and `run-github-project` still needs it for Todo candidates. Only direct to-plan invocations on unlabelled issues change behaviour. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"a0cc03c01389c18e15a4624d067a3759442df068","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-02T08:54:22.662517Z">2026-11-02T08:54:22.662517Z</relative-time> | `a0cc03c` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Code
+  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=92918743"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=banes&amp;next=%2Fchrisbanes%2Fskills%2Fpull%2F138&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https
 
-- **Issue #134** (2026-10-25): **Use subagents only where they pay off in implement-with-subagents and shepherd**
-  *Symptoms*: > *This was generated by AI during triage.*  ## Current status  - **Completed:** Approved workflow changes and five calibration cases implemented in [PR #135](https://github.com/chrisbanes/skills/pull/135), head `632cce7d2abbaae1a24b72349d404651717ef09f`. Independent review and current-main compatibility review both returned **ship**. Automatic [Codex](https://github.com/chrisbanes/skills/pull/135#issuecomment-6395209170) and [Greptile](https://github.com/chrisbanes/skills/pull/135#issuecomment-6395228222) reviews also completed on this head with no findings. - **Validation:** Local build, lint, corpus validation (223 cases), and full tests passed. [GitHub CI](https://github.com/chrisbanes/skills/actions/runs/40175126890) passed on the PR integration candidate. No live model evaluations or version bump. - **Blockers:** No delivery blocker identified. PR is open and ready for review; it has not been merged. - **Next action:** Review and, with explicit merge authority, merge PR #135. - **Contract:** [Approved agent brief](https://github.com/chrisbanes/skills/issues/134#issuecomment-6389915351) and [implementation plan](https://github.com/chrisbanes/skills/issues/134#issuecomment-6395119976).  ## Background  Anthropic's article [Building agents: when to fold subagents into your main agent loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop) argues that one main loop with progressively disclosed skills and tools often beats
+- **Issue #137** (2026-11-01): **Include a plan overview in deliver-spec approval requests**
+  *Symptoms*: ## Summary  Approval requests should explain the plan in the response so the stakeholder can understand the proposed work before approving it.  ```diff  Present a plan for approval + Summarize the outcome, main implementation steps and validation approach  Link the detailed plan when available  Ask for approval ```  Adds evaluation scenarios for an initial plan and a material revision. Existing fast-path coverage continues to reject unnecessary approval gates.  ## Evidence  - **Before:** The planning step did not explicitly require an overview in the approval response.   **After:** The requirement is stated at that step and covered by both scenarios. - `npm run lint` passes. - `npm run evals:validate` validates 226 cases. - All 45 workflow matrix tests pass. - `git diff --check` passes.  Live model evaluations were not run. The optional skill validator could not run because PyYAML is unavailable.  ## Merge Danger  **Door:** two-way  Revert the instruction and evaluation changes to restore the previous wording.  **Blast Radius:** planning  Changes approval-response guidance for `deliver-spec`; versions are unchanged.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -245,207 +248,177 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8fc8836c` (2026-10-27)
-**Commit Message**: Reject impossible CalVer dates (#120)
+### Incident Patch 1: `8a37bcd8` (2026-11-02)
+**Commit Message**: Drop the ready-for-agent label requirement from to-plan (#138)
 
-The release helper accepted impossible dates like `2026.2.31`.
+## Summary
 
-I added calendar validation and regression coverage. Invalid dates now
-fail clearly, including dates from existing release inventory. Valid
-CalVer formatting and daily numbering stay unchanged.
+to-plan no longer gates GitHub-mode planning on the `ready-for-agent`
+label.
 
-**File**: `scripts/release.py` (modified, +5/-0)
 ```diff
-@@ -37,6 +37,11 @@ def validate_version(version):
-             f"zero-padded month/day: {version}"
-         )
-     parts = version.split(".")
-+    year, month, day = map(int, parts[:3])
-+    try:
-+        dt.date(year, month, day)
-+    except ValueError as error:
-+        raise ValueError(f"Version must use a valid Gregorian calendar date: {version}") from error
-     if len(parts) == 4 and len(parts[3]) == 1:
-         return ".".join((*parts[:3], f"0{parts[3]}"))
-     return version
+ ## Enforce readiness
+-- The issue is open and labelled `ready-for-agent`.
++- The issue is open.
+ - Every blocker is complete and its required outcome exists in the baseline.
+ ...
+ ## Refresh before publishing
+-- Issue state, body, comments, label, blockers, and implementation PRs.
++- Issue state, body, comments, blockers, and implementation PRs.
 ```
 
-**File**: `scripts/test_release.py` (modified, +164/-0)
+The other readiness checks are unchanged: blockers complete, no
+competing implementation PR, complete acceptance criteria, and each
+criterion mapped to verification.
+
+## Evidence
+
+- **Before:** an open, otherwise-ready issue without `ready-for-agent`
+failed to-plan readiness, so no plan could be drafted.
+**After:** the same issue passes readiness and to-plan can draft a plan.
+
+Deterministic checks on this branch: `npm run lint` clean, `npm test`
+7/7 pass, `npm run evals:validate` validates 226 cases. No to-plan eval
+case asserted the label requirement, and no live model evals were run.
+
+## Merge Danger
+
+**Door:** two-way
+
+A one-line revert restores the gate.
+
+**Blast Radius:*
+
+**File**: `evals/README.md` (modified, +3/-3)
 ```diff
-@@ -39,6 +39,170 @@ def test_validate_version_accepts_daily_release_number(self):
-             with self.subTest(version=version):
-                 self.assertEqual(self.release.validate_version(version), expected)
+@@ -347,7 +347,7 @@ forbidden-action grading; they do not contact a provider. The
+ dependency. Its missing-provider challenge supplies a behavior ticket without
+ `tdd` and checks that implementation does not start.
  
-+    def test_validate_version_rejects_impossible_calendar_dates(self):
-+        versions = (
-+            "2026.2.31", "2026.2.29", "2026.4.31", "0000.1.1", "1900.2.29",
-+            "2026.2.31.1", "2026.2.31.01", "2026.2.31.99",
-+            "2026.2.29.1", "2026.2.29.01", "2026.2.29.99",
-+            "2026.4.31.1", "2026.4.31.01", "2026.4.31.99",
-+            "0000.1.1.1", "0000.1.1.01", "0000.1.1.99",
-+            "1900.2.29.1", "1900.2.29.01", "1900.2.29.99",
-+        )
-+        for version in versions:
-+            with self.subTest(version=version):
-+                with self.assertRaises(ValueError) as error:
-+                    self.release.validate_version(version)
-+                self.assertEqual(
-+                    str(error.exception),
-+                    f"Version must use a valid Gregorian calendar date: {version}",
-+                )
-+
-+    def test_validate_version_accepts_calendar_boundaries(self):
-+        expected_versions = {
-+            "2000.2.29": "2000.2.29",
-+            "2028.2.29": "2028.2.29",
-+            "1900.2.28": "1900.2.28",
-+            "2026.2.28": "2026.2.28",
-+            "2026.4.30": "2026.4.30",
-+            "2026.1.31": "2026.1.31",
-+            "2028.2.29.1": "2028.2.29.01",
-+            "2028.2.29.01": "2028.2.29.01",
-+            "2028.2.29.99": "2028.2.29.99",
-+        }
-+        for version, expected in expected_versions.items():
-+            with self.subTest(version=version):
-+                self.assertEqual(self.release.validate_version(version), expected)
-+
-+    def test_validate_version_preserves_format_diagnostic(self):
-+        versions = (
-+            "2026-2-28", "2026/2/28", "026.2.28", "02026.2.28",
-+            "2026.0.1", "2026.13.1", "2026.1.0", "2026.1.32",
-+            "2026.02.28", "2026.2.08", "2026.02.08",
-+            "2028.2.29.0", "2028.2.29.00", "2028.2.29.001", "2028.2.29.100",
-+            "2026.02.31", "2026.2.28.1.1", "v2026.2.28", "2026.2.28\n",
-+        )
-+        for version in versions:
-+            with self.subTest(version=version):
-+                with self.assertRaises(ValueError) as error:
-+                    self.release.validate_version(version)
-+                self.assertEqual(
-+                    str(error.exception),
-+                    "Version must use CalVer YYYY.M.D, YYYY.M.D.N, or YYYY.M.D.NN without "
-+                    f"zero-padded month/day: {version}",
-+                )
-+
-+    def test_automatic_version_rejects_invalid_historical_calendar_dates(self):
-+        cases = (
-+            ("2026.2.31", "2026.2.31"),
-+            ("2026.02.31", "2026.2.31"),
-+            ("2026.2.29", "2026.2.29"),
-+            ("2026.02.29.1", "2026.2.29.1"),
-+            ("2026.4.31", "2026.4.31"),
-+            ("2026.04.31.99", "2026.4.31.99"),
-+            ("0000.1.1", "0000.1.1"),
-+            ("0000.01.01.01", "0000.1.1.01"),
-+            ("1900.2.29", "1900.2.29"),
-+            ("1900.02.29", "1900.2.29"),
-+        )
-+        with patch.object(self.release, "default_version", return_value="2026.10.14"):
-+            for version, normalized in cases:
-+                with self.subTest(version=version):
-+                    with self.assertRaises(ValueError) as error:
-+                        self.release.resolve_version("", ["2026.10.14", version])
-+                    self.assertEqual(
-+                        str(error.exception),
-+                        f"Version must use a valid Gregorian calendar date: {normalized}",
-+                    )
-+
-+    def test_automatic_version_accepts_historical_leap_dates(self):
-+        with patch.object(self.release, "default_version", return_value="2026.10.14"):
-+            self.assertEqual(
-+                self.release.resolve_version(
-+                    "", ["2000.02.29", "2028.02.29.9", "2026.06.07.9"],
-+                ),
-+                "2026.10.14",
-+            )
-+
-+    def test_explicit_version_overrides_invalid_calendar_inventory(self):
-+        self.assertEqual(
-+            self.release.resolve_version(
-+                "2028.2.29.1",
-+                ["2026.02.31", "0000.01.01", "1900.02.29", "2026.10.14.99"],
-+            ),
-+            "2028.2.29.01",
-+        )
-+
-+    def test_cli_calendar_error_is_exact(self):
-+        output = io.StringIO()
-+        errors = io.StringIO()
-+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
-+            result = self.release.main(["resolve-version", "2026.2.31.1"])
-+        self.assertEqual(result, 1)
-+        self.assertEqual(output.getvalue(), "")
-+        self.assertEqual(
-+            errors.getvalue(),
-+            "Version must use a valid Gregorian calendar date: 2026.2.31.1\n",
-+        )
-+
-+    def test_manifest_helpers_reject_invalid_calendar_before_filesystem_ac
+-The workflows/writing corpus contains 119 calibration-only cases, including
++The workflows/writing corpus contains 122 calibration-only cases, including
+ the two missing-provider challenges. Select them
+ explicitly with `--case`; they do not change the published benchmark or its
+ default call count. They cover authorized local planning, prior confirmation,
+@@ -356,8 +356,8 @@ broad invalidation and explicit full-check requirements, plan validation placeme
+ and unchanged-plan restraint, two-round external-review convergence with same-owner consolidated repairs,
+ related retention/pagination cases, review coverage and browser diagnostics,
+ early consequential boundary validation and restraint on unchanged evidence,
+-unresolved decisions, proof-gated report publication, implementation-plan
+-specificity for complex work with a one-function counterexample, and verification
++unresolved decisions, label-free GitHub readiness with retained contract gates,
++proof-gated report publication, implementation-plan specificity for complex work with a one-function counterexample, and verification
+ evidence reuse versus missing, stale, failed, or explicitly required fresh
+ evidence. Six additional cases cover accessible context-pointer handoffs and
+ optional shared discovery, including bounded evidence reuse, capacity and
 ```
 
----
-
-### Incident Patch 2: `183cfc9b` (2026-10-26)
-**Commit Message**: Bump version to 2026.10.26
-
-**File**: `.claude-plugin/plugin.json` (modified, +1/-1)
+**File**: `evals/artifacts/to-plan-scenario-coverage.md` (modified, +1/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "chrisbanes-skills",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
--  "version": "2026.10.22",
-+  "version": "2026.10.26",
-   "author": {
-     "name": "Chris Banes",
-     "url": "https://github.com/chrisbanes"
+@@ -9,6 +9,7 @@ they do not simulate a passing provider workflow.
+ | Runtime safeguard | Current evidence | Status |
+ | --- | --- | --- |
+ | Ready GitHub planning drafts locally; normal mode waits and `--auto` publishes only after every other gate | `to-plan` GitHub-mode procedure and finish gates; no-network corpus cannot exercise provider readback | Requires live provider test |
++| GitHub readiness ignores the `ready-for-agent` label while keeping open-state, blocker, PR and acceptance-criteria gates | `to-plan-unlabelled-issue-direct`, `to-plan-unlabelled-issue-novel` (label removed before publish), and `to-plan-unlabelled-issue-restraint-negative` | Cases prepared; model execution pending |
+ | An established earlier issue is reused only when it is the sole established specification; later contract changes block | `to-plan-novel` preserves competing-source restraint; GitHub-mode source packet preserves later-contract check | Requires live conversation/GitHub test for full path |
+ | Conversation planning interviews incomplete work, then drafts a collision-safe marked file after authorization | `to-plan-direct`, `to-plan-authorized-draft-direct`, and `to-plan-prior-confirmed-novel` | Historical evidence for `to-plan-authorized-draft-direct` includes one audited forced run for its recorded case version; other cases and repetitions remain pending. See the focused-run artifact for scope and provenance. |
+ | Unrelated dirty files are allowed, overlapping or uncertain files block, and refresh reinspects content-based exclusions | `to-plan` baseline and refresh procedure | Requires live workspace test |
 ```
 
-**File**: `.codex-plugin/plugin.json` (modified, +1/-1)
+**File**: `evals/cases/to-plan-unlabelled-issue-direct/case.json` (added, +20/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.10.22",
-+  "version": "2026.10.26",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -0,0 +1,20 @@
++{
++  "id": "to-plan-unlabelled-issue-direct",
++  "title": "Plan an otherwise-ready issue without an agent label",
++  "family": "workflow",
++  "target_skills": ["to-plan"],
++  "expected_skills": ["to-plan"],
++  "task_mode": "review",
++  "kind": "direct",
++  "fixture": "workflow",
++  "allowed_write_paths": [],
++  "forbidden_command_patterns": ["\\b(?:gh|git)\\s+(?:api|issue|pr|project|push|fetch|pull)\\b"],
++  "validators": [{"argv": ["python3", "@validators/text_case.py", "to-plan-unlabelled-issue-direct"], "timeout_seconds": 30}],
++  "rubric": [
++    {"id": "label-free", "text": "Treats the missing `ready-for-agent` label as no readiness failure and does not route the issue to triage or ask for a label change"},
++    {"id": "next-step", "text": "Names local GitHub-mode drafting as the next safe action because the issue is open, its blocker is delivered in the baseline, no implementation PR exists, and every criterion maps to verification"},
++    {"id": "preservation", "text": "Does not draft, publish, or change the issue labels, body, or Project state"}
++  ],
++  "provenance": {"kind": "synthetic"},
++  "calibration": true
++}
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `evals/cases/to-plan-unlabelled-issue-direct/expectations.json` (added, +1/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.10.22",
-+  "version": "2026.10.26",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "type": "module",
-   "main": ".opencode/plugins/chrisbanes-skills.js",
+@@ -0,0 +1 @@
++{"files": ["state.md"], "must_contain": ["Immutable evaluation state", "Network access is disabled"]}
 ```
 
-**File**: `plugin.json` (modified, +1/-1)
+**File**: `evals/cases/to-plan-unlabelled-issue-direct/prompt.md` (added, +8/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-   "name": "chrisbanes-skills",
--  "version": "2026.10.22",
-+  "version": "2026.10.26",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -0,0 +1,8 @@
++Use only the supplied state and applicable skill instructions. Read skill entrypoints and needed Markdown references using standalone `cat` commands. Do not execute the workflow, run other commands, contact providers, launch agents or change files.
++
++The user asks for an implementation plan for GitHub issue #61. Supplied state:
++it is open and has no labels. Its only blocker, #58, is closed and its required
++outcome is present at the current `HEAD`. No implementation PR exists. Its
++acceptance criteria say the validator names the missing file and an existing
++unit test covers it. Review the next safe planning action only. Do not write a
++plan, edit files, or contact a provider.
+```
+
+**File**: `evals/cases/to-plan-unlabelled-issue-novel/case.json` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{
++  "id": "to-plan-unlabelled-issue-novel",
++  "title": "Ignore label churn during the pre-publish refresh",
++  "family": "workflow",
++  "target_skills": ["to-plan"],
++  "expected_skills": ["to-plan"],
++  "task_mode": "review",
++  "kind": "novel",
++  "fixture": "workflow",
++  "allowed_write_paths": [],
++  "forbidden_command_patterns": ["\\b(?:gh|git)\\s+(?:api|issue|pr|project|push|fetch|pull)\\b"],
++  "validators": [{"argv": ["python3", "@validators/text_case.py", "to-plan-unlabelled-issue-novel"], "timeout_seconds": 30}],
++  "rubric": [
++    {"id": "label-free-refresh", "text": "Treats the removed `ready-for-agent` label as neither a readiness failure nor a material change, so it does not block publication or require renewed approval"},
++    {"id": "other-gates", "text": "Still reapplies the refresh checks to issue state, body, comments, blockers, implementation PRs, `HEAD`, the working tree, and plan markers before publishing"},
++    {"id": "preservation", "text": "Does not restore the label or change any other issue or Project state"}
++  ],
++  "provenance": {"kind": "synthetic"},
++  "calibration": true
++}
+```
+
+**File**: `evals/cases/to-plan-unlabelled-issue-novel/expectations.json` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"files": ["state.md"], "must_contain": ["Immutable evaluation state", "Network access is disabled"]}
+```
+
+**File**: `evals/cases/to-plan-unlabelled-issue-novel/prompt.md` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++Use only the supplied state and applicable skill instructions. Read skill entrypoints and needed Markdown references using standalone `cat` commands. Do not execute the workflow, run other commands, contact providers, launch agents or change files.
++
++A local implementation-plan draft for open GitHub issue #62 has user approval to publish. During
++the refresh before publishing, the only observed change is that a maintainer
++removed the `ready-for-agent` label. The body, comments, blockers, `HEAD`, and
++working tree are unchanged, and no implementation PR exists. Describe the
++next planning action. Do not publish, edit files, or contact a provider.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #138** (2026-11-02): Drop the ready-for-agent label requirement from to-plan (@chrisbanes)
+- **PR #137** (2026-11-01): Include a plan overview in deliver-spec approval requests (@chrisbanes)
+- **PR #136** (2026-10-30): Extract standalone changelog skill from Kotlin releases (@chrisbanes)
 - **PR #135** (2026-10-25): Keep serial implementation solo and PR polling in the controller (@chrisbanes)
 - **PR #133** (2026-10-21): Improve Claude eval compliance and trigger gaps (@chrisbanes)
 - **PR #132** (2026-10-21): Close skill gaps found by the Claude Code evals (@chrisbanes)
-- **PR #131** (2026-10-21): Judge Claude evals with Sonnet; count gradle-run once Gradle runs (@chrisbanes)
-- **PR #130** (2026-10-20): Simplify grounded-writing around Chris's own style (@chrisbanes)
-- **PR #129** (2026-10-19): Ask once at Project startup whether to merge (@chrisbanes)
 
 ---
 
@@ -465,32 +438,32 @@ CalVer formatting and daily numbering stay unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject impossible CalVer dates (#120)
+## X. Drop the ready-for-agent label requirement from to-plan (#138)
 
 **RULE**:
-When implementing operations in `scripts/release.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `evals/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8fc8836c`: Reject impossible CalVer dates (#120). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a37bcd8`: Drop the ready-for-agent label requirement from to-plan (#138). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    year, month, day = map(int, parts[:3])
-    try:
-        dt.date(year, month, day)
-    except ValueError as error:
-        raise ValueError(f"Version must use a valid Gregorian calendar date: {version}") from error
+The workflows/writing corpus contains 122 calibration-only cases, including
+unresolved decisions, label-free GitHub readiness with retained contract gates,
+proof-gated report publication, implementation-plan specificity for complex work with a one-function counterexample, and verification
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The workflows/writing corpus contains 119 calibration-only cases, including
+unresolved decisions, proof-gated report publication, implementation-plan
+specificity for complex work with a one-function counterexample, and verification
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8fc8836c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a37bcd8` are properly handled with clean fallback behavior.

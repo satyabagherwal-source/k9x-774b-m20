@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `df57ae6d`  
+> **Source Version**: `d465cc82`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:05:15.617Z  
+> **Timestamp**: 2026-11-03T10:45:51.125Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:05:14.330Z  
+> **Harvest Timestamp**: 2026-11-03T10:45:50.651Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32473 stars
+- **Stars / Engagement**: 32560 stars
 
 ---
 
@@ -1306,6 +1306,7 @@ type ipOptions struct {
 	ScanAllIPs bool
 	IPV4       bool
 	IPV6       bool
+	Auto       bool // -iv omitted: one unpinned target unless -sa scans every address
 }
 
 ```
@@ -1445,867 +1446,411 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `266593d7` (2026-10-23)
-**Commit Message**: fix(openapi,swagger): skip null spec entries instead of panicking
+### Incident Patch 1: `1fc87e6b` (2026-11-02)
+**Commit Message**: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
 
-A null value in an OpenAPI or Swagger document (an empty list item, or a
-map key with no value) decodes to a nil pointer. Several of these were
-dereferenced without a check, so loading such a spec with -im openapi or
--im swagger crashed nuclei with SIGSEGV.
+fix: bump govaluate and antchfx/xpath so malformed expressions error instead of panicking
 
-openapi (generator.go):
-- a null entry under `servers:` -> nil *Server
-- a null media type under `content:` -> nil *MediaType
-
-swagger (dereferenced inside kin-openapi's openapi2conv.ToV3):
-- a null path item under `paths:` -> nil *PathItem
-- a null item under path/operation `parameters:` or a null top-level
-  parameter -> nil *Parameter
-- a null operation or top-level response -> nil *Response
-
-Skip the nil entries in the generator, and drop them from the decoded
-Swagger document before converting it. Other null entries are already
-rejected by kin-openapi with an error and are left alone.
-
-Also add a go-fuzz harness for the OpenAPI parser with a seed corpus, so
-the weekly fuzz workflow picks it up, and regression tests that panic on
-the pre-fix code.
-
-**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
+**File**: `go.mod` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,20 @@
-+//go:build gofuzz
-+// +build gofuzz
-+
-+package openapi
-+
-+// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-+// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-+// format's Parse, which loads the schema and generates requests from it.
-+func Fuzz(data []byte) int {
-+	if len(data) == 0 {
-+		return 0
-+	}
-+	if len(data) > fuzzMaxInputSize {
-+		return -1
-+	}
-+	if !fuzzOpenAPIParsing(data) {
-+		return 0
-+	}
-+	return 1
-+}
+@@ -20,9 +20,9 @@ require (
+ 	github.com/alitto/pond v1.9.2
+ 	github.com/andybalholm/brotli v1.2.0
+ 	github.com/andygrunwald/go-jira v1.16.1
+-	github.com/antchfx/htmlquery v1.3.5
++	github.com/antchfx/htmlquery v1.3.7
+ 	github.com/antchfx/xmlquery v1.4.4
+-	github.com/antchfx/xpath v1.3.6
++	github.com/antchfx/xpath v1.3.9
+ 	github.com/aws/aws-sdk-go-v2 v1.41.5
+ 	github.com/aws/aws-sdk-go-v2/config v1.31.16
+ 	github.com/aws/aws-sdk-go-v2/credentials v1.18.20
+@@ -88,7 +88,7 @@ require (
+ 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
+ 	github.com/projectdiscovery/gologger v1.1.73
+ 	github.com/projectdiscovery/gostruct v0.0.2
+-	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
++	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
+ 	github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76
+ 	github.com/projectdiscovery/hmap v0.0.102
+ 	github.com/projectdiscovery/httpx v1.12.0
 ```
 
-**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
+**File**: `go.sum` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,32 @@
-+package openapi
-+
-+import (
-+	"bytes"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+)
-+
-+const fuzzMaxInputSize = 64 << 10
-+
-+// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
-+// document and drives request generation. It must never panic for any input;
-+// it returns true when the schema parsed and at least one request was produced.
-+func fuzzOpenAPIParsing(data []byte) bool {
-+	if len(data) == 0 || len(data) > fuzzMaxInputSize {
-+		return false
-+	}
-+
-+	format := New()
-+	format.SetOptions(formats.InputFormatOptions{})
-+
-+	produced := false
-+	cb := func(rr *types.RequestResponse) bool {
-+		produced = true
-+		return true
-+	}
-+	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
-+		return false
-+	}
-+	return produced
-+}
+@@ -180,14 +180,13 @@ github.com/andygrunwald/go-jira v1.16.1 h1:WoQEar5XoDRAibOgKzTFELlPNlKAtnfWr296R
+ github.com/andygrunwald/go-jira v1.16.1/go.mod h1:UQH4IBVxIYWbgagc0LF/k9FRs9xjIiQ8hIcC6HfLwFU=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
+-github.com/antchfx/htmlquery v1.3.5 h1:aYthDDClnG2a2xePf6tys/UyyM/kRcsFRm+ifhFKoU0=
+-github.com/antchfx/htmlquery v1.3.5/go.mod h1:5oyIPIa3ovYGtLqMPNjBF2Uf25NPCKsMjCnQ8lvjaoA=
++github.com/antchfx/htmlquery v1.3.7 h1:KCUklE1EO/xm6iS3CWx6iatFlcnENBk4I4UYa2pBmLU=
++github.com/antchfx/htmlquery v1.3.7/go.mod h1:/uBTMnFEl6LaBlIgw3KZ+c061tAQdlfbCXObZoxwQf4=
+ github.com/antchfx/xmlquery v1.4.4 h1:mxMEkdYP3pjKSftxss4nUHfjBhnMk4imGoR96FRY2dg=
+ github.com/antchfx/xmlquery v1.4.4/go.mod h1:AEPEEPYE9GnA2mj5Ur2L5Q5/2PycJ0N9Fusrx9b12fc=
+ github.com/antchfx/xpath v1.3.3/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
+-github.com/antchfx/xpath v1.3.5/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
+-github.com/antchfx/xpath v1.3.6 h1:s0y+ElRRtTQdfHP609qFu0+c6bglDv20pqOViQjjdPI=
+-github.com/antchfx/xpath v1.3.6/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
++github.com/antchfx/xpath v1.3.9 h1:muXJSod6jRzhsiUjvduNSxsRSptFZ2GOJ1oMD1QkPSA=
++github.com/antchfx/xpath v1.3.9/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
+@@ -957,8 +956,10 @@ github.com/projectdiscovery/gologger v1.1.73 h1:WX2nzq29cL7HdvOHqIttacoid/5lMwap
+ github.com/projectdiscovery/gologger v1.1.73/go.mod h1:mJwODZcFDg70ihINpOvZevmBtgvpP8H9/l8Y+OPhZPY=
+ github.com/projectdiscovery/gostruct v0.0.2 h1:s8gP8ApugGM4go1pA+sVlPDXaWqNP5BBDDSv7VEdG1M=
+ github.com/projectdiscovery/gostruct v0.0.2/go.mod h1:H86peL4HKwMXcQQtEa6lmC8FuD9XFt6gkNR0B/Mu5PE=
+-github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e h1:vxzgQlz2Cy/YvizYDQx9OhucBcmBotfDhbQ4yCY2vfA=
+-github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e/go.mod h1:xH7bPwHxUlz1yx9UlVeTF+UVCUaKhTnZgaxHb5z362E=
++github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e h1:0vaevfTiQeRCkX2xbY/mR38422kHAxGzpVV8FQJVfoc=
++github.com/projectdiscovery/govaluate v0.0.0-20260729205521-4c61bf19382e/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
++github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2 h1:aSLbDvrJQPlp4HvojU+bTU5XV8xdAVCjoc5gX1Wfbw4=
++github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
+ github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76 h1:AN70bbi6BBs7KpIM9w0LxygUN7uzT/oH+owDIQ+Fz/k=
+ github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76/go.mod h1:cWHYnRXoYWHtTpOYyAp5laGYX8GH8ITUhgQaP8G/8FA=
+ github.com/projectdiscovery/hmap v0.0.102 h1:ybPuf7UQvuOLiHLOUbVMvd+PSlItQU5iQpP1Erl8kaU=
 ```
 
-**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +67/-0)
+**File**: `pkg/operators/extractors/compile_test.go` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,67 @@
-+package openapi
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
-+	entries, err := os.ReadDir("testdata/gofuzz-corpus")
-+	require.NoError(t, err)
-+	require.NotEmpty(t, entries)
-+
-+	for _, entry := range entries {
-+		if entry.IsDir() {
-+			continue
-+		}
-+
-+		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
-+		require.NoError(t, err)
-+		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
-+	}
-+}
-+
-+func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
-+	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
-+}
-+
-+// Null entries decode to nil pointers and used to panic during request
-+// generation. The remaining valid entries must still produce requests.
-+func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
-+	specs := map[string]string{
-+		"null server": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`,
-+		"null media type": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-+`,
-+	}
-+
-+	for name, spec := range specs {
-+		t.Run(name, func(t *testing.T) {
-+			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/input/formats/openapi/generator.go` (modified, +10/-0)
-```diff
-@@ -49,6 +49,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
+@@ -130,3 +130,12 @@ func TestCompileExtractorsIgnoresXPathOnOtherTypes(t *testing.T) {
  	}
- 
- 	for _, serverURL := range schema.Servers {
-+		// A null entry in the `servers:` list decodes to a nil *Server, so skip
-+		// it rather than dereferencing it.
-+		if serverURL == nil {
-+			continue
-+		}
- 		pathURL := serverURL.URL
- 		// Split the server URL into baseURL and serverPath
- 		u, err := url.Parse(pathURL)
-@@ -268,6 +273,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 
- 	if opts.op.RequestBody != nil {
- 		for content, value := range opts.op.RequestBody.Value.Content {
-+			// A null media-type entry (e.g. `content: {application/json: }`)
-+			// decodes to a nil *MediaType, so skip it before dereferencing.
-+			if value == nil {
-+				continue
-+			}
- 			cloned := req.Clone(req.Context())
- 
- 			var val interface{}
+ 	require.NoError(t, e.CompileExtractors())
+ }
++
++func TestCompileExtractorsXPathUndeclaredVariable(t *testing.T) {
++	// Regression test: this expression used to compile and then panic
++	// with a nil pointer dereference inside antchfx/xpath when the
++	// first response was evaluated. It must fail at compile time.
++	var operator Extractor
++	require.NoError(t, yaml.Unmarshal([]byte("type: xpath\nxpath:\n  - \"******$A\"\n"), &operator))
++	require.ErrorContains(t, operator.CompileExtractors(), "undeclared variable")
++}
 ```
 
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
+**File**: `pkg/operators/matchers/compile_test.go` (modified, +9/-0)
 ```diff
-@@ -0,0 +1 @@
-+{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
+@@ -53,3 +53,12 @@ func TestCompileMatchersAllowsEmptyStringValue(t *testing.T) {
+ 	matched, _ := m.MatchWords("body", nil)
+ 	require.True(t, matched)
+ }
++
++func TestCompileMatchersDSLTrailingBackslash(t *testing.T) {
++	// Regression test: a DSL expression whose string literal ends in a
++	// backslash used to panic the govaluate lexer (index out of range)
++	// while a template was loading. It must surface as a compile error.
++	var operator Matcher
++	require.NoError(t, yaml.Unmarshal([]byte("type: dsl\ndsl:\n  - \"body == 'x\\\\'\"\n"), &operator))
++	require.ErrorContains(t, operator.CompileMatchers(), "Unclosed string literal")
++}
 ```
 
 ---
 
-### Incident Patch 2: `bdf7e983` (2026-10-30)
-**Commit Message**: Merge pull request #7990 from IBazsecI/fix/openapi-swagger-nil-panics
+### Incident Patch 2: `be678d9d` (2026-11-02)
+**Commit Message**: fix(templates): keep -eid exclusions independent of -etags
 
-fix(openapi,swagger): skip null spec entries instead of panicking
+NewTagFilter added an -eid value to the excluded IDs only when -etags
+did not list the same value. The check came from the tag loops in
+#1448, which changed the map it writes but not the map it reads. With
+-eid dup -etags dup, the filter excluded nothing by ID. Workflow steps
+still go through this filter, so a workflow ran the template that a -t
+scan with the same flags excluded.
 
-**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
+Build each filter set from its own flag with one helper, so no set
+reads another flag's values. The insert-if-absent checks go too:
+writing an existing map key is a no-op, and the one check that changed
+anything was the wrong one. -itags stops deleting from the -etags set,
+because Match already lets an included tag override its exclusion.
+
+Fixes: #8004
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/templates/compile_test.go` (modified, +57/-0)
 ```diff
-@@ -0,0 +1,20 @@
-+//go:build gofuzz
-+// +build gofuzz
+@@ -617,6 +617,63 @@ func (w *warningRecorder) contain(parts ...string) bool {
+ 	})
+ }
+ 
++func Test_ParseWorkflowExcludesIdListedInExcludeTags(t *testing.T) {
++	dir := t.TempDir()
++	templatePath := filepath.Join(dir, "dup.yaml")
++	err := os.WriteFile(templatePath, []byte(`id: dup
 +
-+package openapi
++info:
++  name: dup
++  author: pdteam
++  severity: info
 +
-+// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-+// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-+// format's Parse, which loads the schema and generates requests from it.
-+func Fuzz(data []byte) int {
-+	if len(data) == 0 {
-+		return 0
-+	}
-+	if len(data) > fuzzMaxInputSize {
-+		return -1
-+	}
-+	if !fuzzOpenAPIParsing(data) {
-+		return 0
-+	}
-+	return 1
-+}
-```
-
-**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+package openapi
-+
-+import (
-+	"bytes"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+)
-+
-+const fuzzMaxInputSize = 64 << 10
-+
-+// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
-+// document and drives request generation. It must never panic for any input;
-+// it returns true when the schema parsed and at least one request was produced.
-+func fuzzOpenAPIParsing(data []byte) bool {
-+	if len(data) == 0 || len(data) > fuzzMaxInputSize {
-+		return false
-+	}
-+
-+	format := New()
-+	format.SetOptions(formats.InputFormatOptions{})
-+
-+	produced := false
-+	cb := func(rr *types.RequestResponse) bool {
-+		produced = true
-+		return true
-+	}
-+	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
-+		return false
-+	}
-+	return produced
-+}
-```
-
-**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+package openapi
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
-+	entries, err := os.ReadDir("testdata/gofuzz-corpus")
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}"
++`), 0o600)
 +	require.NoError(t, err)
-+	require.NotEmpty(t, entries)
 +
-+	for _, entry := range entries {
-+		if entry.IsDir() {
-+			continue
-+		}
++	workflowPath := filepath.Join(dir, "workflow.yaml")
++	err = os.WriteFile(workflowPath, fmt.Appendf(nil, `id: wf
 +
-+		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
-+		require.NoError(t, err)
-+		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
++info:
++  name: wf
++  author: pdteam
++
++workflows:
++  - template: %q
++`, templatePath), 0o600)
++	require.NoError(t, err)
++
++	tests := []struct {
++		name        string
++		excludeTags []string
++	}{
++		{name: "exclude id"},
++		{name: "exclude id and same tag", excludeTags: []string{"dup"}},
 +	}
-+}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			setup()
 +
-+func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
-+	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
-+}
++			options := executerOpts.Options.Copy()
++			options.ExcludeIds, options.ExcludeTags = []string{"dup"}, tc.excludeTags
++			executerOpts.Options = options
++			workflowLoader, err := workflow.NewLoader(executerOpts)
++			require.NoError(t, err)
 +
-+// Null entries decode to nil pointers and used to panic during request
-+// generation. The remaining valid entries must still produce requests.
-+func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
-+	specs := map[string]string{
-+		"null server": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`,
-+		"null media type": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-+`,
-+	}
++			executerOpts.WorkflowLoader = workflowLoader
 +
-+	for name, spec := range specs {
-+		t.Run(name, func(t *testing.T) {
-+			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
++			got, err := templates.Parse(workflowPath, nil, executerOpts)
++			require.NoError(t, err)
++			require.NotNil(t, got.CompiledWorkflow)
++			require.Len(t, got.CompiledWorkflow.Workflows, 1)
++			require.Empty(t, got.CompiledWorkflow.Workflows[0].Executers)
 +		})
 +	}
 +}
 +
-+func TestGenerateRequestsOnlyNullServers(t *testing.T) {
-+	spec := `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`
-+	err := New().Parse(strings.NewReader(spec), func(*types.RequestResponse) bool { return false }, "spec.yaml")
-+	require.ErrorContains(t, err, "no servers found in openapi schema")
-+}
+ func Test_ParseWorkflowLoadsTemplateWithUnknownMatcherCondition(t *testing.T) {
+ 	setup()
+ 	dir := t.TempDir()
 ```
 
-**File**: `pkg/input/formats/openapi/generator.go` (modified, +14/-1)
+**File**: `pkg/templates/tag_filter.go` (modified, +30/-82)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"net/http/httputil"
- 	"net/url"
- 	"os"
-+	"slices"
- 	"strings"
- 
- 	"github.com/clbanning/mxj/v2"
-@@ -33,7 +34,9 @@ const (
- 
- // GenerateRequestsFromSchema generates http requests from an OpenAPI 3.0 document object
- func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOptions, callback formats.ParseReqRespCallback) error {
--	if len(schema.Servers) == 0 {
-+	// Null entries in `servers:` are skipped below, so a list of only null
-+	// entries has no usable server, the same as an empty list.
-+	if !slices.ContainsFunc(schema.Servers, func(s *openapi3.Server) bool { return s != nil }) {
- 		return errors.New("no servers found in openapi schema")
+@@ -366,85 +366,20 @@ type TagFilterConfig struct {
+ // It takes into account Tags, Severities, ExcludeSeverities, Authors, IncludeTags, ExcludeTags, Conditions.
+ func NewTagFilter(config *TagFilterConfig) (*TagFilter, error) {
+ 	filter := &TagFilter{
+-		allowedTags:       make(map[string]struct{}),
+-		authors:           make(map[string]struct{}),
+-		severities:        make(map[severity.Severity]struct{}),
+-		excludeSeverities: make(map[severity.Severity]struct{}),
+-		block:             make(map[string]struct{}),
+-		matchAllows:       make(map[string]struct{}),
+-		types:             make(map[types.ProtocolType]struct{}),
+-		excludeTypes:      make(map[types.ProtocolType]struct{}),
+-		allowedIds:        make(map[string]struct{}),
+-		excludeIds:        make(map[string]struct{}),
++		allowedTags:       splitCommaTrimSet(config.Tags),
++		authors:           splitCommaTrimSet(config.Authors),
++		severities:        toMap(config.Severities),
++		excludeSeverities: toMap(config.ExcludeSeverities),
++		block:             splitCommaTrimSet(config.ExcludeTags),
++		matchAllows:       splitCommaTrimSet(config.IncludeTags),
++		types:             toMap(config.Protocols),
++		excludeTypes:      toMap(config.ExcludeProtocols),
++		// an included ID does not lift its exclusion: exclusions apply
++		// however a template is selected
++		allowedIds:        splitCommaTrimSet(config.IncludeIds),
++		excludeIds:        splitCommaTrimSet(config.ExcludeIds),
+ 		includeConditions: make(map[string]*govaluate.EvaluableExpression),
  	}
- 	globalParams, globalSecurityErr := selectSecurityParameters(schema, &schema.Security, opts.Variables)
-@@ -49,6 +52,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
- 	}
- 
- 	for _, serverURL := range schema.Servers {
-+		// A null entry in the `servers:` list decodes to a nil *Server, so skip
-+		// it rather than dereferencing it.
-+		if serverURL == nil {
-+			continue
-+		}
- 		pathURL := serverURL.URL
- 		// Split the server URL into baseURL and serverPath
- 		u, err := url.Parse(pathURL)
-@@ -268,6 +276,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 
- 	if opts.op.RequestBody != nil {
- 		for content, value := range opts.op.RequestBody.Value.Content {
-+			// A null media-type entry (e.g. `content: {application/json: }`)
-+			// decodes to a nil *MediaType, so skip it before dereferencing.
-+			if value == nil {
-+				continue
-+			}
- 			cloned := req.Clone(req.Context())
- 
- 			var val interface{}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
----
-
-### Incident Patch 3: `7b0ca00f` (2026-10-30)
-**Commit Message**: fix(js): check redis reply headers in linear time, skip payloads
-
-The read cap scanned a reply line by line and copied what was left of
-its buffer for every line, so a 1 MiB bulk reply of newlines allocated
-17 GiB. It also checked lines inside bulk payloads as if they were
-headers, so a Lua script returning "a\n*abc" failed with "reply exceeds
-16777216 bytes".
-
-Follow the RESP framing as bytes pass instead: skip a bulk payload by
-its declared length and check only header lines. A rejected header's
-read now ends before its "\n", so go-redis never gets a line to
-allocate from, and nothing is buffered or copied.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `pkg/js/libs/redis/redis.go` (modified, +80/-103)
-```diff
-@@ -3,9 +3,7 @@ package redis
- import (
- 	"bytes"
- 	"context"
--	"errors"
- 	"fmt"
--	"io"
- 	"net"
- 	"strconv"
- 	"time"
-@@ -287,140 +285,119 @@ func newClient(addr, password string) *redis.Client {
- 	return redis.NewClient(opts)
- }
- 
--// limitedConn fails a read once remaining is spent, and withholds a RESP length line whose
--// declared size is over the cap so go-redis never allocates it.
-+// maxHeaderLen fits a type byte, any int64, and "\r". Redis never sends a longer length header.
-+const maxHeaderLen = 32
-+
-+// limitedConn fails a read once remaining is spent, and ends a read before the "\n" of a RESP
-+// length header whose declared size is over the cap, so go-redis never gets the line to allocate
-+// from.
-+//
-+// It follows the reply's framing as the bytes pass: a bulk payload is skipped by its declared
-+// length, so only header lines are checked. A payload line such as "*abc" is data.
- type limitedConn struct {
- 	net.Conn
- 	remaining int64
--	pending   []byte
--	partial   []byte
--	err       error
--	scratch   [32 << 10]byte
-+	// payload is how many bytes of the current bulk payload, "\r\n" included, are still to come.
-+	payload int64
-+	// header is the start of the current header line, without its "\n".
-+	header   []byte
-+	overlong bool
-+	err      error
- }
- 
- func (c *limitedConn) Read(b []byte) (int, error) {
--	if len(b) == 0 {
--		return 0, nil
-+	if c.err != nil {
-+		return 0, c.err
- 	}
--	if len(c.pending) == 0 {
--		if err := c.fill(); err != nil {
--			return 0, err
--		}
-+	if c.remaining <= 0 {
-+		return 0, errReadLimit
- 	}
--	n := copy(b, c.pending)
--	c.pending = c.pending[n:]
--	return n, nil
--}
--
--func (c *limitedConn) fill() error {
--	if len(c.pending) > 0 {
--		return nil
-+	if int64(len(b)) > c.remaining {
-+		b = b[:c.remaining]
- 	}
--	if c.err != nil {
--		return c.err
-+	n, err := c.Conn.Read(b)
-+	c.remaining -= int64(n)
-+	// Errors from the connection, deadlines included, are returned as they come and not kept: a
-+	// read deadline belongs to one call. go-redis peeks for push notifications with a few
-+	// microseconds of deadline, and keeping that timeout would fail the command that follows.
-+	kept, scanErr := c.scan(b[:n])
-+	if scanErr == nil {
-+		return n, err
- 	}
--	for len(c.pending) == 0 {
--		if c.remaining <= 0 {
--			c.err = errReadLimit
--			return c.err
--		}
--		want := int64(len(c.scratch))
--		if want > c.remaining {
--			want = c.remaining
-+	c.err = scanErr
-+	if kept == 0 {
-+		return 0, scanErr
-+	}
-+	return kept, nil
-+}
-+
-+// scan follows the RESP framing of p and returns how many of its bytes may be returned.
-+func (c *limitedConn) scan(p []byte) (int, error) {
-+	for i := 0; i < len(p); {
-+		if c.payload > 0 {
-+			skip := min(c.payload, int64(len(p)-i))
-+			c.payload -= skip
-+			i += int(skip)
-+			continue
- 		}
--		n, err := c.Conn.Read(c.scratch[:want])
--		if n > 0 {
--			c.remaining -= int64(n)
--			if aerr := c.accept(c.scratch[:n]); aerr != nil {
--				c.err = aerr
--				if len(c.pending) > 0 {
--					return nil
--				}
--				return aerr
+-	for _, tag := range config.ExcludeTags {
+-		for _, val := range splitCommaTrim(tag) {
+-			if _, ok := filter.block[val]; !ok {
+-				filter.block[val] = struct{}{}
 -			}
-+		end := bytes.IndexByte(p[i:], '\n')
-+		if end < 0 {
-+			c.keepHeader(p[i:])
-+			return len(p), nil
- 		}
-+		c.keepHeader(p[i : i+end])
-+		payload, err := declaredPayload(c.header, c.overlong)
-+		c.header, c.overlong = c.header[:0], false
+-		}
+-	}
+-	for _, tag := range config.Severities {
+-		if _, ok := filter.severities[tag]; !ok {
+-			filter.severities[tag] = struct{}{}
+-		}
+-	}
+-	for _, tag := range config.ExcludeSeverities {
+-		if _, ok := filter.excludeSeverities[tag]; !ok {
+-			filter.excludeSeverities[tag] = struct{}{}
+-		}
+-	}
+-	for _, tag := range config.Authors {
+-		for _, val := range splitCommaTrim(tag) {
+-			if _, ok := filter.authors[val]; !ok {
+-				filter.authors[val] = struct{}{}
+-			}
+-		}
+-	}
+-	for _, tag := range config.Tags {
+-		for _, val := range splitCommaTrim(tag) {
+-			if _, ok := filter.allowedTags[val]; !ok {
+-				filter.allowedTags[val] = struct{}{}
+-			}
+-			// Note: only tags specified in IncludeTags should be removed from the block list
+-			// not normal tags like config.Tags
+-		}
+-	}
+-	for _, tag := range config.IncludeTags {
+-		for _, val := range splitCommaTrim(tag) {
+-			if _, ok := filter.matchAllows[val]; !ok {
+-				filter.matchAllows[val] = struct{}{}
+-			}
+-			delete(filter.block, val)
+-		}
+-	}
+-	for _, tag := range config.Protocols {
+-		if _, ok := filter.types[tag]; !ok {
+-			filter.types[tag] = struct{}{}
+-		}
+-	}
+-	for _, tag := range config.ExcludeProtocols {
+-		if _, ok := filter.excludeTypes[tag]; !ok {
+-			filter.excludeTypes[tag] = struct{}{}
+-		}
+-	}
+-	for _, id := range config.ExcludeIds {
+-		for _, val := range splitCommaTrim(id) {
+-			if _, ok := filter.block[val]; !ok {
+-				filter.excludeIds[val] = struct{}{}
+-			}
+-		}
+-	}
+-	// an included id does not lift its exclusion: exclusions apply however a
+-	// template is selected
+-	for _, id := range config.IncludeIds {
+-		for _, val := range splitCommaTrim(id) {
+-			if _, ok := filter.allowedIds[val]; !ok {
+-				filter.allowedIds[val] = struct{}{}
+-			}
+-		}
+-	}
+ 	for _, includeCondition := range config.IncludeConditions {
+ 		compiled, err := govaluate.NewEvaluableExpressionWithFunctions(includeCondition, dsl.HelperFunctions)
  		if err != nil {
--			// A read deadline belongs to one call. go-redis peeks for push notifications
--			// with a few microseconds of deadline, and on Windows that peek always runs.
--			// Keeping the timeout fails the command that follows.
--			if timeoutErr(err) {
--				if len(c.pending) > 0 {
--					return nil
--				}
--				return err
--			}
--			c.err = err
--			if len(c.pending) > 0 {
--				return nil
--			}
--			return err
--		}
--		if n == 0 {
--			c.err = io.ErrUnexpectedEOF
--			return c.err
-+			return i + end, err
+@@ -472,12 +407,25 @@ func splitCommaTrim(value string) []string {
+ 	return final
+ }
+ 
+-func toMap(slice []string) map[string]struct{} {
+-	result := make(map[string]struct{}, len(slice))
+-	for _, value := range slice {
+-		if _, ok := result[value]; !ok {
+-			result[value] = struct{}{}
++// splitCommaTrimSet returns the set of values, each split by splitCommaTrim.
++func splitCommaTrimSet(values []string) map[string]struct{} {
++	set := make(map[string]struct{}, len(values))
++
++	for _, value := range values {
++		for _, val := range splitCommaTrim(value) {
++			set[val] = struct{}{}
  		}
-+		c.payload = payload
-+		i += end + 1
  	}
--	return nil
-+	return len(p), nil
++
++	return set
++}
++
++func toMap[T comparable](slice []T) map[T]struct{} {
++	result := make(map[T]struct{}, len(slice))
++
++	for _, value := range slice {
++		result[value] = struct{}{}
++	}
++
+ 	return result
  }
- 
--func (c *limitedConn) accept(p []byte) error {
--	c.partial = append(c.partial, p...)
--	for {
--		i := bytes.IndexByte(c.partial, '\n')
--		if i < 0 {
--			if int64(len(c.partial)) > maxReadBytes {
--				c.partial = nil
--				return errReadLimit
--			}
--			return nil
--		}
--		line := c.partial[:i+1]
--		if lengthTooLarge(line) {
--			c.partial = nil
--			return errReadLimit
--		}
--		copied := make([]byte, len(line))
--		copy(copied, line)
--		c.pending = append(c.pending, copied...)
--		rest := make([]byte, len(c.partial)-(i+1))
--		copy(rest, c.partial[i+1:])
--		c.partial = rest
-+func (c *limitedConn) keepHeader(p []byte) {
-+	if room := maxHeaderLen - len(c.header); len(p) > room {
-+		p = p[:room]
-+		c.overlong = true
- 	}
-+	c.header = append(c.header, p...)
- }
- 
--// lengthTooLarge reports whether line is a RESP length header go-redis would allocate from.
--// Bulk strings allocate the declared byte length. Arrays, sets, maps, attributes, and pushes
--// allocate one interface per declared element.
--func lengthTooLarge(line []byte) bool {
--	if len(line) < 3 {
--		return false
-+// declaredPayload returns how many payload bytes, "\r\n" included, follo
 ```
 
-**File**: `pkg/js/libs/redis/redis_test.go` (modified, +119/-38)
+**File**: `pkg/templates/tag_filter_test.go` (modified, +11/-0)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"bytes"
- 	"context"
- 	"fmt"
-+	"io"
- 	"net"
- 	"runtime"
- 	"strconv"
-@@ -90,37 +91,58 @@ func TestGetServerInfoAuthBoundsAReplyWithoutNewline(t *testing.T) {
- }
- 
- func TestGetServerInfoAuthReadsAnInfoReply(t *testing.T) {
--	listener, err := net.Listen("tcp", "127.0.0.1:0")
--	require.NoError(t, err)
--	t.Cleanup(func() {
--		_ = listener.Close()
--	})
-+	tests := []struct {
-+		name string
-+		info string
-+	}{
-+		{name: "info", info: "# Server\r\nredis_version:7.2.4\r\n"},
-+		// A bulk payload's lines are data, even when they start like a RESP length header.
-+		{name: "header-like lines", info: "# Server\r\n*abc\r\n$ 5 dollars\r\n%x\r\n$99999999999\r\n"},
-+		// Each line used to cost a copy of what was left of the read buffer.
-+		{name: "many short lines", info: strings.Repeat("\n", 1<<20)},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			listener, err := net.Listen("tcp", "127.0.0.1:0")
-+			require.NoError(t, err)
-+			t.Cleanup(func() {
-+				_ = listener.Close()
-+			})
- 
--	const info = "# Server\r\nredis_version:7.2.4\r\n"
--	go func() {
--		for {
--			conn, err := listener.Accept()
--			if err != nil {
--				return
--			}
--			go serveRESP(conn, info)
--		}
--	}()
-+			go func() {
-+				for {
-+					conn, err := listener.Accept()
-+					if err != nil {
-+						return
-+					}
-+					go serveRESP(conn, tt.info)
-+				}
-+			}()
- 
--	executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
--	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
--	t.Cleanup(func() {
--		protocolstate.Close(executionID)
--	})
-+			executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
-+			require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
-+			t.Cleanup(func() {
-+				protocolstate.Close(executionID)
-+			})
- 
--	addr, ok := listener.Addr().(*net.TCPAddr)
--	require.True(t, ok)
-+			addr, ok := listener.Addr().(*net.TCPAddr)
-+			require.True(t, ok)
- 
--	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
--	defer cancel()
--	got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
--	require.NoError(t, err)
--	require.Equal(t, info, got)
-+			var before runtime.MemStats
-+			runtime.ReadMemStats(&before)
-+
-+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+			defer cancel()
-+			got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
-+
-+			var after runtime.MemStats
-+			runtime.ReadMemStats(&after)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.info, got)
-+			growth := int64(after.TotalAlloc - before.TotalAlloc)
-+			require.Less(t, growth, int64(64<<20), "allocated %d MiB reading one reply", growth>>20)
+@@ -195,6 +195,17 @@ func TestTagBasedFilter(t *testing.T) {
+ 		matched, _ := filter.Match(dummyTemplate, nil)
+ 		require.False(t, matched, "an excluded id must not match when it is also included")
+ 	})
++	t.Run("match-exclude-id-also-excluded-as-tag", func(t *testing.T) {
++		filter, err := NewTagFilter(&TagFilterConfig{
++			ExcludeTags: []string{"dup"},
++			ExcludeIds:  []string{"dup"},
 +		})
-+	}
- }
- 
- // serveRESP answers HELLO as a Redis without RESP3 does, so the client falls back to RESP2, and
-@@ -182,26 +204,85 @@ func readRESPCommand(rd *bufio.Reader) (string, error) {
- 	return command, nil
- }
- 
--func TestLengthTooLarge(t *testing.T) {
-+func TestDeclaredPayload(t *testing.T) {
- 	tests := []struct {
--		line string
--		want bool
-+		line     string
-+		overlong bool
-+		payload  int64
-+		tooLarge bool
- 	}{
--		{line: fmt.Sprintf("$%d\r\n", maxReadBytes), want: false},
--		{line: fmt.Sprintf("$%d\r\n", maxReadBytes+1), want: true},
--		{line: "$-1\r\n", want: false},
--		{line: "+OK\r\n", want: false},
--		{line: fmt.Sprintf("*%d\r\n", maxAggregate), want: false},
--		{line: fmt.Sprintf("*%d\r\n", maxAggregate+1), want: true},
--		{line: "$999999999999999999999\r\n", want: true},
-+		{line: fmt.Sprintf("$%d\r", maxReadBytes), payload: maxReadBytes + 2},
-+		{line: fmt.Sprintf("$%d\r", maxReadBytes+1), tooLarge: true},
-+		{line: "=10\r", payload: 12},
-+		{line: "$-1\r"},
-+		{line: "+OK\r"},
-+		{line: "+OK\r", overlong: true},
-+		{line: fmt.Sprintf("*%d\r", maxAggregate)},
-+		{line: fmt.Sprintf("*%d\r", maxAggregate+1), tooLarge: true},
-+		{line: "$999999999999999999999\r", tooLarge: true},
-+		{line: "*abc\r", tooLarge: true},
-+		{line: "$000000000000000000000000000000", overlong: true, tooLarge: true},
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.line, func(t *testing.T) {
--			require.Equal(t, tt.want, lengthTooLarge([]byte(tt.line)))
-+			payload, err := declaredPayload([]byte(tt.line), tt.overlong)
-+			if tt.tooLarge {
-+				require.ErrorIs(t, err, errReadLimit)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Equal(t, tt.payload, payload)
- 		})
- 	}
- }
- 
-+// The check that rejects a length header has to land on the "\n" when the header arrives over
-+// several reads, and payload bytes have to pass whatever they contain.
-+func TestLimitedConnFollowsFramingAcrossReads(t *testing.T) {
-+	const ok = "*2\r\n$5\r\n*abc\n\r\n$-1\r\n+OK\r\n"
-+	tooLarge := fmt.Sprintf("$%d\r\n", maxReadBytes+1)
++		require.NoError(t, err)
 +
-+	tests := []struct {
-+		name    string
-+		stream  string
-+		want    string
-+		wantErr error
-+	}{
-+		{name: "payload passes", stream: ok, want: ok},
-+		{name: "header rejected", stream: ok + tooLarge + "x", want: ok + tooLarge[:len(tooLarge)-1], wantErr:
++		dummyTemplate := newDummyTemplate("dup", nil, []string{"pdteam"}, severity.Info, types.HTTPProtocol)
++		matched, _ := filter.Match(dummyTemplate, nil)
++		require.False(t, matched, "could not get correct match")
++	})
+ 	t.Run("match-exclude-type", func(t *testing.T) {
+ 		filter, err := NewTagFilter(&TagFilterConfig{
+ 			ExcludeProtocols: []types.ProtocolType{types.HTTPProtocol},
+```
+
+---
+
+### Incident Patch 3: `6903f2d5` (2026-11-02)
+**Commit Message**: websocket: reject CR/LF in subprotocols; require negotiation in test
+
+Address review feedback:
+- Skip Sec-WebSocket-Protocol values containing CR or LF before negotiating
+  them, since gobwas/ws writes subprotocols into the handshake request line and
+  a line break could smuggle extra handshake headers.
+- Tighten the test server to reject the upgrade unless the client offers the
+  vite-hmr subprotocol, so the test fails if negotiation does not happen.
+
+Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/websocket/websocket.go` (modified, +4/-1)
+```diff
+@@ -216,7 +216,10 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
+ 
+ 		if http.CanonicalHeaderKey(key) == "Sec-Websocket-Protocol" {
+ 			for _, proto := range strings.Split(result.Text, ",") {
+-				if trimmed := strings.TrimSpace(proto); trimmed != "" {
++				// Subprotocol values are written into the handshake request line by
++				// gobwas/ws, so a CR or LF would smuggle extra handshake headers;
++				// reject any such value instead of negotiating it.
++				if trimmed := strings.TrimSpace(proto); trimmed != "" && !strings.ContainsAny(trimmed, "\r\n") {
+ 					subprotocols = append(subprotocols, trimmed)
+ 				}
+ 			}
+```
+
+**File**: `pkg/protocols/websocket/websocket_test.go` (modified, +13/-0)
+```diff
+@@ -515,6 +515,19 @@ func requireWebsocketDurationField(t *testing.T, event output.InternalEvent, key
+ // rejects the server-echoed protocol and the handshake fails.
+ func TestWebSocketSubprotocolNegotiation(t *testing.T) {
+ 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		// Require the client to offer the vite-hmr subprotocol: reject the upgrade
++		// otherwise, so the test fails if the subprotocol is not negotiated.
++		offered := false
++		for _, proto := range strings.Split(r.Header.Get("Sec-WebSocket-Protocol"), ",") {
++			if strings.TrimSpace(proto) == "vite-hmr" {
++				offered = true
++				break
++			}
++		}
++		if !offered {
++			http.Error(w, "vite-hmr subprotocol required", http.StatusBadRequest)
++			return
++		}
+ 		upgrader := ws.HTTPUpgrader{
+ 			Protocol: func(p string) bool { return p == "vite-hmr" },
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7990** (2026-10-30): fix(openapi,swagger): skip null spec entries instead of panicking (@IBazsecI)
-- **PR #7988** (2026-10-30): fix(js): check redis reply headers in linear time, skip payloads (@gnuletik)
-- **PR #7981** (2026-10-29): Add JS modules for streaming hash and decompression (@kamilikamil)
-- **PR #7975** (2026-10-29): fix(cmd): ignore comments in -exclude-hosts values (@antcybersec)
-- **PR #7972** (2026-10-29): fix(output): encode nested template maps in JSON output (@arththebird)
-- **PR #7970** (2026-10-29): fix(runner): use -resolvers for the httpx probe of non-URL inputs (#7969) (@Eren-Akdag)
+- **PR #8010** (2026-11-02): websocket: negotiate Sec-WebSocket-Protocol via the dialer (@Ayham970)
+- **PR #8009** (2026-11-02): fix(templates): keep -eid exclusions independent of -etags (@dwisiswant0)
+- **PR #8006** (2026-11-02): fix(workflow): keep exclusions from silently emptying workflows (@dwisiswant0)
+- **PR #8005** (2026-11-02): fix(workflow)!: load tags steps when a subtemplate passes the filters (@dwisiswant0)
+- **PR #8003** (2026-11-02): add har input mode (@dogancanbakir)
+- **PR #8000** (2026-11-02): honour -jsonl in -tl and drop the listing banner from json output (@dogancanbakir)
 
 ---
 
@@ -2325,47 +1870,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. openapi,swagger): skip null spec entries instead of panicking
+## X. Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps
 
 **RULE**:
-When implementing operations in `pkg/input/formats/openapi/fuzz.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `266593d7`: openapi,swagger): skip null spec entries instead of panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fc87e6b`: Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/input/formats/openapi/fuzz.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//go:build gofuzz
-// +build gofuzz
-
-package openapi
-
-// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-// format's Parse, which loads the schema and generates requests from it.
-func Fuzz(data []byte) int {
-	if len(data) == 0 {
-		return 0
-	}
-	if len(data) > fuzzMaxInputSize {
-		return -1
-	}
-	if !fuzzOpenAPIParsing(data) {
-		return 0
-	}
-	return 1
-}
+	github.com/antchfx/htmlquery v1.3.7
+	github.com/antchfx/xpath v1.3.9
+	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/antchfx/htmlquery v1.3.5
+	github.com/antchfx/xpath v1.3.6
+	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `266593d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fc87e6b` are properly handled with clean fallback behavior.

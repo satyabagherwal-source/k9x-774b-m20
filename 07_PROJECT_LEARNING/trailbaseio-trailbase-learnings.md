@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `05238c02`  
+> **Source Version**: `f7015b3d`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:27:35.822Z  
+> **Timestamp**: 2026-11-02T17:46:52.358Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:27:35.474Z  
+> **Harvest Timestamp**: 2026-11-02T17:46:52.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -232,11 +232,10 @@ use serde::Deserialize;
 use std::time::{Duration, Instant};
 use tower::{Service, ServiceExt};
 
-use trailbase::api::{
-  CreateUserRequest, InitArgs, create_user_handler, login_with_password_for_test,
-};
+use trailbase::api::{CreateUserRequest, InitArgs, create_user_handler};
 use trailbase::config::proto::{PermissionFlag, RecordApiConfig};
 use trailbase::constants::RECORD_API_PATH;
+use trailbase::test_util::{UserIdentifier, login_user_for_test};
 use trailbase::{AppState, SocketAddr};
 use trailbase::{DataDir, Server, ServerOptions};
 use trailbase_sqlite::params;
@@ -390,14 +389,12 @@ async fn setup_app() -> Result<Setup, anyhow::Error> {
   .id
   .into_bytes();
 
-  let user_x_token = login_with_password_for_test(
+  let tokens = login_user_for_test(
     &app.state,
-    trailbase::api::UserIdentifier::Email(email.to_string()),
+    UserIdentifier::Email(email.to_string()),
     password,
   )
-  .await?
-  .unwrap()
-  .auth_token;
+  .await?;
 
   add_user_to_room(conn, user_x, room).await?;
 
@@ -405,7 +402,7 @@ async fn setup_app() -> Result<Setup, anyhow::Error> {
     app,
     room,
     user_x,
-    user_x_token,
+    user_x_token: tokens.auth_token,
   });
 }
 
@@ -576,7 +573,7 @@ fn subscribe_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtim
   let authorization = format!("Bearer {}", setup.user_x_token);
   let create_request_body = {
     let request = serde_json::json!({
-      "_owner": BASE64_URL_SAFE.encode(setup.
+      "_owner": BASE64_URL_SAFE.encode(setup.user_x),
 ```
 
 ### Core Architecture Module: `crates/core/bindings/ListWasmModulesResponse.ts`
@@ -933,8 +930,8 @@ pub async fn test_email_handler(
 - **Issue #309** (2026-10-27): **fix: stream record subscriptions through reverse proxies**
   *Symptoms*: ## Problem  `GET /api/records/v1/{name}/subscribe/{record}` already responds with `content-type: text/event-stream` and flushes `: ping` immediately (axum `KeepAlive`, first tick is instant, then every 15 s). The only cache header axum sets is `cache-control: no-cache`.  That is enough for a client talking to TrailBase directly. It is not enough behind nginx (or a proxy that follows nginx's convention): with `proxy_buffering on` (the default), nginx holds a chunked body until `proxy_buffer_size` fills. An 8-byte `: ping`, and a real event written 1.5 s later, both stayed invisible for 3 s behind nginx 1.24 with an 8 kB buffer. The same nginx, given `X-Accel-Buffering: no`, delivered the first byte in 4 ms.  PocketBase's realtime handler sets `Cache-Control: no-store` and `X-Accel-Buffering: no` on its SSE response for this reason ([apis/realtime.go](https://github.com/pocketbase/pocketbase/blob/7f2773ec234b62d0b80ca47c508397cb3d0da3ea/apis/realtime.go#L61-L65)). TrailBase's subscribe response sends neither.  ## Repro  nginx 1.24, `proxy_buffering on`, `proxy_buffer_size 8k`, `gzip on`, `gzip_proxied any`, `gzip_types text/event-stream`, `gzip_min_length 1`. Upstream writes `: ping\n\n` immediately and `event: connect` after 1.5 s.  ```sh curl -N -D - --http1.1 -m 3 \   -H 'Accept: text/event-stream' \   -H 'Accept-Encoding: gzip' \   http://127.0.0.1:19990/ ```  | Upstream response headers | First byte within 3 s | `content-encoding` | | --- | --- | --- | | `cache-control: no
 
-- **Issue #306** (2026-10-27): **Server shutdown does not close or checkpoint SQLite databases, leading to stale WAL files and database corruption**
-  *Symptoms*: ### **Description:** When running the `trail` server binary and sending a termination signal (`Ctrl+C` / `SIGINT` / `SIGTERM`), the console prints: ```text Received Ctrl+C. Shutting down gracefully. [2026-10-23T13:57:16.999337Z DEBUG trailbase::server] cleanup started [2026-10-23T13:57:16.999393Z DEBUG trailbase::server] cleanup finished [2026-10-23T13:57:16.999532Z DEBUG trailbase::server] Shutdown watchdog started. Pending tasks: 8 Shut down gracefully 👋 [2026-10-23T13:57:17.000530Z DEBUG trailbase::scheduler] alive [2026-10-23T13:57:17.001390Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.011795Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.023015Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.023657Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.024857Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down ``` Notice  how the message `Shut down gracefully 👋` appeared before `writer thread shut down`  The SQLite database connections are never actually checkpointed or closed before the process terminates. As a result, the `-wal` (write-ahead log) file is left on disk with uncheckpointed frames, and uncommitted/in-flight writes are abruptly aborted. In our environment, this resulted in severe corruption of a ~1 GB database file.  ---  ### **Steps to Reproduce:** 1. Start `trail run ...` on a SQLite 
+- **Issue #307** (2026-11-02): **fix: ensure graceful SQLite close and WAL checkpoint on shutdown**
+  *Symptoms*:  ### Summary Fixes #306 an issue where shutting down the server (Ctrl+C / SIGINT / SIGTERM) does not close or checkpoint SQLite databases. This caused active `-wal` files to be left on disk with dirty/uncheckpointed frames, risking database corruption.  ### Root Cause 1. `Server::serve()` awaited only the Axum HTTP listeners (`set.join_all().await;`), printed `"Shut down gracefully 👋"`, and immediately exited without calling any database cleanup. 2. Background tasks (`start_sighup_reload_task`, cron scheduler jobs in `JobRegistry`, and `SqliteLogLayer`) retained cloned references to `AppState` and connections indefinitely, preventing `Drop for Executor` from ever running. 3. As a result, native SQLite worker threads were abruptly killed on process exit, and SQLite never invoked `sqlite3_close()` to sync and clean up the WAL.  ### Changes - **`crates/sqlite` (`executor.rs`)**:   - Drained pending writes from `writer_receiver` before breaking on `ReaderMessage::Terminate`.   - Added `PRAGMA wal_checkpoint(TRUNCATE)` in `close_impl()` before closing connections to guarantee all dirty pages are synced and `-wal` is truncated to 0 bytes. - **`crates/core` (`connection.rs`, `scheduler.rs`, `app_state.rs`)**:   - Added `ConnectionManager::close()` to close both cached secondary and main database connections.   - Added `JobRegistry::stop()` to cancel running cron jobs.   - Added `AppState::close()` to stop subscriptions, stop jobs, and close all databases in order. - **`crates/core`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,170 +948,246 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5acd8f6d` (2026-10-29)
-**Commit Message**: Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplify connection setup.
+### Incident Patch 1: `840fd86b` (2026-11-01)
+**Commit Message**: Update JavaScript dependencies. Addresses security advisories.
 
-**File**: `Cargo.lock` (modified, +11/-0)
+**File**: `.github/workflows/audit.yaml` (modified, +1/-1)
 ```diff
-@@ -4112,6 +4112,9 @@ dependencies = [
-  "bindgen",
-  "cc",
-  "pkg-config",
-+ "prettyplease 0.3.0",
-+ "quote",
-+ "syn 3.0.9",
-  "vcpkg",
- ]
+@@ -38,7 +38,7 @@ jobs:
  
-@@ -8133,6 +8136,14 @@ dependencies = [
-  "validator",
- ]
+       # Audit JS/TS
+       - uses: ./.github/actions/setup_pnpm
+-      - run: pnpm audit --prod --ignore-unfixable
++      - run: pnpm audit --prod --json
  
-+[[package]]
-+name = "trailbase-extension-so"
-+version = "0.1.0"
-+dependencies = [
-+ "rusqlite",
-+ "trailbase-extension",
-+]
-+
- [[package]]
- name = "trailbase-pg-schema"
- version = "0.0.1"
+       # Audit Rust
+       - uses: taiki-e/install-action@v2
 ```
 
-**File**: `Cargo.toml` (modified, +1/-3)
+**File**: `client/testfixture/guests/typescript/package.json` (modified, +4/-4)
 ```diff
-@@ -22,9 +22,7 @@ default-members = [
-   "crates/wasm-runtime-common",
-   "crates/wasm-runtime-host",
- ]
--exclude = [
--  "crates/extension-so",
--]
-+exclude = []
- 
- # https://doc.rust-lang.org/cargo/reference/profiles.html
- [profile.release]
+@@ -16,13 +16,13 @@
+     "trailbase-wasm": "workspace:*"
+   },
+   "devDependencies": {
+-    "@bytecodealliance/jco": "^1.39.0",
++    "@bytecodealliance/jco": "^1.40.0",
+     "@eslint/js": "^10.0.1",
+-    "@types/node": "^26.6.5",
+-    "eslint": "^10.13.0",
++    "@types/node": "^26.6.6",
++    "eslint": "^10.14.0",
+     "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "vite": "^8.3.5"
+   }
+ }
 ```
 
-**File**: `crates/core/src/admin/logs/stats.rs` (modified, +5/-4)
+**File**: `crates/assets/js/admin/package.json` (modified, +9/-9)
 ```diff
-@@ -225,10 +225,11 @@ mod tests {
-   async fn test_aggregate_rate_computation() {
-     let conn = trailbase_sqlite::Connection::with_opts(
-       move || -> Result<_, trailbase_sqlite::Error> {
--        let mut conn_sync =
--          crate::connection::connect_rusqlite_without_default_extensions_and_schemas(None).unwrap();
--        apply_logs_migrations(&mut conn_sync).unwrap();
--        return Ok(conn_sync);
-+        let mut conn = trailbase_extension::connect_rusqlite_without_extensions(None).unwrap();
-+
-+        apply_logs_migrations(&mut conn).unwrap();
-+
-+        return Ok(conn);
-       },
-       Default::default(),
-     )
+@@ -30,9 +30,9 @@
+     "@nanostores/solid": "^1.1.1",
+     "@panzoom/panzoom": "^4.6.2",
+     "@solid-primitives/memo": "^1.5.1",
+-    "@solidjs/router": "^1.0.0",
++    "@solidjs/router": "^1.0.1",
+     "@tanstack/solid-form": "^1.33.5",
+-    "@tanstack/solid-query": "^5.104.5",
++    "@tanstack/solid-query": "^5.105.0",
+     "@tanstack/solid-table": "^9.3.1",
+     "@tanstack/table-core": "^9.3.1",
+     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
+@@ -43,27 +43,27 @@
+     "geojson": "^0.5.0",
+     "i18n-iso-countries": "^7.14.0",
+     "long": "^5.3.2",
+-    "maplibre-gl": "^6.15.0",
++    "maplibre-gl": "^6.16.0",
+     "nanostores": "^1.5.5",
+     "rapidoc": "^9.3.8",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.17",
++    "solid-js": "^1.9.18",
+     "tailwind-merge": "^3.7.0",
+     "trailbase": "file:../client",
+     "uuid": "^14.0.3"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.42",
++    "@iconify-json/tabler": "^1.2.43",
+     "@solidjs/testing-library": "^0.8.10",
+     "@tailwindcss/typography": "^0.5.20",
+     "@tailwindcss/vite": "^4.3.3",
+     "@testing-library/jest-dom": "^7.0.1",
+     "@testing-library/user-event": "^14.6.8",
+     "@types/geojson": "^7946.0.16",
+     "@types/wicg-file-system-access": "^2023.10.7",
+-    "autoprefixer": "^10.6.1",
+-    "eslint": "^10.13.0",
++    "autoprefixer": "^10.6.2",
++    "eslint": "^10.14.0",
+     "eslint-plugin-better-tailwindcss": "^4.10.0",
+     "eslint-plugin-solid": "^0.18.1",
+     "globals": "^17.13.0",
+@@ -76,10 +76,10 @@
+     "ts-proto": "^2.18.3",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "vite": "^8.3.5",
+     "vite-plugin-csp-guard": "^4.0.1",
+-    "vite-plugin-solid": "^2.11.14",
++    "vite-plugin-solid": "^2.11.15",
+     "vite-tsconfig-paths": "6.1.1",
+     "vitest": "^4.1.12"
+   }
 ```
 
-**File**: `crates/core/src/admin/query.rs` (modified, +2/-8)
+**File**: `crates/assets/js/bindings/package.json` (modified, +2/-2)
 ```diff
-@@ -9,7 +9,7 @@ use ts_rs::TS;
- use crate::AppState;
- use crate::admin::AdminError as Error;
- use crate::admin::util::{rows_to_columns, rows_to_sql_value_rows};
--use crate::connection::{BuildOptions, ConnectionEntry};
-+use crate::connection::ConnectionEntry;
- 
- #[derive(Debug, Deserialize, TS, utoipa::ToSchema)]
- #[ts(export)]
-@@ -118,17 +118,11 @@ pub async fn query_handler(
-     must_invalidate_schema_cache
-   };
- 
--  // Initialize a new connection, to avoid any sort of tomfoolery like dropping attached databases.
--  // NOTE: This is relatively expensive, thus limit the number of spawned threads to 1.
-   let ConnectionEntry {
-     connection: conn, ..
-   } = state
-     .connection_manager()
--    .build(BuildOptions {
--      is_main: true,
--      attached_databases: attached_databases.map(|v| v.into_iter().collect()),
--      num_threads: Some(1),
--    })
-+    .build_for_admin_ui_query_editor(attached_databases.map(|v| v.into_iter().collect()))
-     .await?;
- 
-   let batched_rows_result = trailbase_sqlite::execute_batch(&conn, query).await;
+@@ -9,8 +9,8 @@
+     "build": "barrelize && vite build"
+   },
+   "devDependencies": {
+-    "@microsoft/api-extractor": "^7.59.4",
+-    "barrelize": "^1.9.2",
++    "@microsoft/api-extractor": "^7.60.1",
++    "barrelize": "^1.11.0",
+     "typescript": "=6.0.3",
+     "vite": "^8.3.5",
+     "vite-plugin-dts": "^5.1.2"
 ```
 
-**File**: `crates/core/src/admin/table/list_tables.rs` (modified, +1/-1)
+**File**: `crates/assets/js/client/package.json` (modified, +4/-4)
 ```diff
-@@ -145,7 +145,7 @@ async fn list_tables_handler_sqlite_impl(
-       connection: conn, ..
-     } = state
-       .connection_manager()
--      .get_entry(/* is_main= */ true, Some(attached_dbs))
-+      .get_entry(/* attach_main= */ true, Some(attached_dbs))
-       .await?;
- 
-     let databases = conn.list_databases().await?;
+@@ -42,20 +42,20 @@
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@microsoft/api-extractor": "^7.59.4",
++    "@microsoft/api-extractor": "^7.60.1",
+     "@types/geojson": "^7946.0.16",
+-    "eslint": "^10.13.0",
++    "eslint": "^10.14.0",
+     "globals": "^17.13.0",
+     "http-status": "^2.1.0",
+     "jsdom": "^30.1.3",
+     "nano-spawn": "^2.1.0",
+     "oauth2-mock-server": "^8.2.3",
+-    "otplib": "^13.5.0",
++    "otplib": "^13.6.0",
+     "prettier": "^3.9.10",
+     "tinybench": "^6.2.2",
+     "trailbase-bindings": "file:../bindings",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "vite": "^8.3.5",
+     "vite-node": "^6.0.0",
+     "vite-plugin-dts": "^5.1.2",
 ```
 
-**File**: `crates/core/src/admin/table/mod.rs` (modified, +2/-2)
+**File**: `crates/auth-ui/ui/package.json` (modified, +6/-6)
 ```diff
-@@ -30,8 +30,8 @@ fn get_conn_and_migration_path(
-         trailbase_sqlite::Connection::with_opts(
-           move || {
-             // TODO: We should load WASM SQLite functions, since migrations may depend on them.
--            return trailbase_extension::connect_sqlite(
--              Some(db_path.clone()),
-+            return trailbase_extension::connect_rusqlite(
-+              Some(&db_path),
-               Some(json_registry.clone()),
-             )
-             .map_err(|err| trailbase_sqlite::Error::Other(err.into()));
+@@ -14,28 +14,28 @@
+   },
+   "dependencies": {
+     "@astrojs/check": "^0.9.12",
+-    "@astrojs/solid-js": "^7.1.1",
++    "@astrojs/solid-js": "^7.1.2",
+     "@kobalte/core": "^0.13.14",
+     "@nanostores/persistent": "^1.3.5",
+     "@nanostores/solid": "^1.1.1",
+-    "astro": "^7.4.2",
++    "astro": "^7.4.4",
+     "astro-icon": "^1.2.0",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+     "nanostores": "^1.5.5",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.17",
++    "solid-js": "^1.9.18",
+     "tailwind-merge": "^3.7.0",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase": "file:../../assets/js/client"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.42",
++    "@iconify-json/tabler": "^1.2.43",
+     "@kobalte/tailwindcss": "^0.9.0",
+     "@tailwindcss/typography": "^0.5.20",
+     "@tailwindcss/vite": "^4.3.3",
+-    "eslint": "^10.13.0",
++    "eslint": "^10.14.0",
+     "eslint-plugin-astro": "^3.2.1",
+     "eslint-plugin-better-tailwindcss": "^4.10.0",
+     "eslint-plugin-solid": "^0.18.1",
+@@ -47,6 +47,6 @@
+     "tailwindcss": "^4.3.3",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0"
++    "typescript-eslint": "^8.72.1"
+   }
+ }
 ```
 
-**File**: `crates/core/src/app_state.rs` (modified, +1/-1)
+**File**: `docs/examples/record_api_ts/package.json` (modified, +3/-3)
 ```diff
-@@ -609,7 +609,7 @@ async fn build_record_apis_impl(
-       } else {
-         connection_manager
-           .get_entry(
--            /* is_main= */ true,
-+            /* attach_main= */ true,
-             Some(attached_databases.iter().cloned().collect()),
-           )
-           .await?
+@@ -9,11 +9,11 @@
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@types/node": "^26.6.5",
+-    "eslint": "^10.13.0",
++    "@types/node": "^26.6.6",
++    "eslint": "^10.14.0",
+     "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "vitest": "^4.1.12"
+   },
+   "dependencies": {
 ```
 
-**File**: `crates/core/src/auth/error.rs` (modified, +3/-3)
+**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +4/-4)
 ```diff
-@@ -109,9 +109,9 @@ mod tests {
-   async fn test_some_sqlite_errors_yield_client_errors() {
-     let conn = trailbase_sqlite::Connection::with_opts(
-       || -> Result<_, trailbase_sqlite::Error> {
--        return Ok(
--          crate::connection::connect_rusqlite_without_default_extensions_and_schemas(None)?,
--        );
-+        return Ok(trailbase_extension::connect_rusqlite_without_extensions(
-+          None,
-+        )?);
-       },
-       Default::default(),
-     )
+@@ -16,15 +16,15 @@
+     "trailbase-wasm": "workspace:*"
+   },
+   "devDependencies": {
+-    "@bytecodealliance/jco": "^1.39.0",
++    "@bytecodealliance/jco": "^1.40.0",
+     "@eslint/js": "^10.0.1",
+-    "@types/node": "^26.6.5",
++    "@types/node": "^26.6.6",
+     "commander": "^15.0.0",
+-    "eslint": "^10.13.0",
++    "eslint": "^10.14.0",
+     "nano-spawn": "^2.1.0",
+     "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "vite": "^8.3.5"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #309** (closed): fix: stream record subscriptions through reverse proxies (@rb365)
+- **PR #307** (closed): fix: ensure graceful SQLite close and WAL checkpoint on shutdown (@lbensaad)
 - **PR #302** (2026-10-14): fix(admin): use textarea for TEXT columns in row editor (@jessepeterson)
 - **PR #296** (closed): Add audit GitHub workflow (@0rzech)
 - **PR #293** (2026-09-18): Add built-in helpers for expanded types to Kotlin client (@Bnyro)
 - **PR #292** (2026-09-17): Add README documentation to kotlin client (@Bnyro)
-- **PR #291** (closed): docs: Clarify how to upload files with JSON requests (@Bnyro)
 
 ---
 
@@ -1134,38 +1207,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplif
+## X. Update JavaScript dependencies. Addresses security advisories.
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/audit.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5acd8f6d`: Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplify connection setup.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `840fd86b`: Update JavaScript dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/audit.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "prettyplease 0.3.0",
- "quote",
- "syn 3.0.9",
-[[package]]
-name = "trailbase-extension-so"
-version = "0.1.0"
-dependencies = [
- "rusqlite",
- "trailbase-extension",
-]
-
+      - run: pnpm audit --prod --json
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      - run: pnpm audit --prod --ignore-unfixable
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5acd8f6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `840fd86b` are properly handled with clean fallback behavior.

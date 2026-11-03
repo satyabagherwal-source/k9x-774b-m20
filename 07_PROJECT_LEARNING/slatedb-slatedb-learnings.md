@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `0c22c032`  
+> **Source Version**: `3d048690`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T15:42:53.388Z  
+> **Timestamp**: 2026-11-03T10:45:53.639Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T15:42:53.384Z  
+> **Harvest Timestamp**: 2026-11-03T10:45:53.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3604 stars
+- **Stars / Engagement**: 3609 stars
 
 ---
 
@@ -1416,6 +1416,7 @@ impl SsTableView {
 ```
 use crate::block_iterator::BlockIterator;
 use crate::block_iterator_v2::BlockIteratorV2;
+#[allow(deprecated)] // `CachedObjectStore` is deprecated.
 use crate::cached_object_store::CachedObjectStore;
 use crate::config::PreloadLevel;
 use crate::db_state::SortedRun;
@@ -1720,7 +1721,7 @@ fn compute_lower_bound(prev_block_last_key: &Bytes, this_block_first_key: &Bytes
         return this_block_first_key.clone();
     }
 
-    // if we didn't find a mismatch yet then the prev block's key 
+    // 
 ```
 
 ### Core Architecture Module: `bindings/go/uniffi/cgo_flags.go`
@@ -2347,148 +2348,287 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e62aeeb` (2026-10-30)
-**Commit Message**: Bug fix for issue causing database corruption through panic (#2181)
+### Incident Patch 1: `3d048690` (2026-11-03)
+**Commit Message**: Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `slatedb/src/db_transaction.rs` (modified, +183/-0)
 ```diff
-@@ -150,6 +150,7 @@ See who's using SlateDB.
+@@ -380,6 +380,36 @@ impl DbTransaction {
+         Ok(())
+     }
  
- - [4og.io](https://4og.io)
- - [Atomix](https://www.atomix.com)
-+- [Cloudmersive](https://cloudmersive.com)
- - [Dropbox](https://www.dropbox.com)
- - [Embucket](https://www.embucket.com)
- - [Gadget](https://gadget.dev)
++    /// Put a key-value pair into the transaction using owned [`Bytes`].
++    /// This avoids the buffer copies that [`Self::put`] performs.
++    /// The write stays buffered in the transaction's write batch until commit.
++    ///
++    /// # Panics
++    /// - If the key is empty.
++    /// - If the key or value size is larger than `u32::MAX`.
++    pub fn put_bytes(&self, key: Bytes, value: Bytes) -> Result<(), crate::Error> {
++        self.put_bytes_with_options(key, value, &PutOptions::default())
++    }
++
++    /// Put a key-value pair into the transaction using owned [`Bytes`] with custom options.
++    /// See [`Self::put_bytes`] for the buffer ownership behavior.
++    /// The write stays buffered in the transaction's write batch until commit.
++    ///
++    /// # Panics
++    /// - If the key is empty.
++    /// - If the key or value size is larger than `u32::MAX`.
++    pub fn put_bytes_with_options(
++        &self,
++        key: Bytes,
++        value: Bytes,
++        options: &PutOptions,
++    ) -> Result<(), crate::Error> {
++        self.write_batch
++            .write()
++            .put_bytes_with_options(key, value, options);
++        Ok(())
++    }
++
+     /// Mark keys as read for conflict detection.
+     ///
+     /// This method explicitly tracks read operations for conflict detection. When keys are
+@@ -852,6 +882,159 @@ mod tests {
+         txn.commit().await.unwrap();
+     }
+ 
++    #[rstest]
++    #[case::default_options(false)]
++    #[case::custom_options(true)]
++    #[tokio::test]
++    async fn test_txn_put_bytes_shares_buffers(#[case] with_options: bool) {
++        let db = crate::Db::open("test_db", Arc::new(InMemory::new()))
++            .await
++            .unwrap();
++        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
++        let key = Bytes::from(b"owned_key".to_vec());
++        let value = Bytes::from(b"owned_value".to_vec());
++
++        if with_options {
++            txn.put_bytes_with_options(key.clone(), value.clone(), &PutOptions::default())
++                .unwrap();
++        } else {
++            txn.put_bytes(key.clone(), value.clone()).unwrap();
++        }
++
++        let kv = txn.get_key_value(&key).await.unwrap().unwrap();
++        assert_eq!(kv.key, key);
++        assert_eq!(kv.value, value);
++        assert_eq!(kv.key.as_ptr(), key.as_ptr());
++        assert_eq!(kv.value.as_ptr(), value.as_ptr());
++        txn.rollback();
++        db.close().await.unwrap();
++    }
++
++    #[tokio::test]
++    async fn test_txn_put_bytes_visibility_and_overwrite() {
++        let db = crate::Db::open("test_db", Arc::new(InMemory::new()))
++            .await
++            .unwrap();
++        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
++        let key = Bytes::from_static(b"key");
++        let value = Bytes::from_static(b"value");
++
++        txn.put(&key, b"initial").unwrap();
++        txn.put_bytes(key.clone(), value.clone()).unwrap();
++        assert_eq!(txn.get(&key).await.unwrap(), Some(value.clone()));
++        assert_eq!(db.get(&key).await.unwrap(), None);
++
++        txn.delete(&key).unwrap();
++        assert_eq!(txn.get(&key).await.unwrap(), None);
++        txn.put_bytes_with_options(key.clone(), Bytes::new(), &PutOptions::default())
++            .unwrap();
++        assert_eq!(txn.get(&key).await.unwrap(), Some(Bytes::new()));
++        txn.put_bytes_with_options(key.clone(), value.clone(), &PutOptions::default())
++            .unwrap();
++        assert_eq!(txn.get(&key).await.unwrap(), Some(value.clone()));
++        assert_eq!(db.get(&key).await.unwrap(), None);
++
++        txn.commit().await.unwrap();
++        assert_eq!(db.get(&key).await.unwrap(), Some(value));
++        db.close().await.unwrap();
++    }
++
++    #[tokio::test]
++    async fn test_txn_put_bytes_with_options_ttl() {
++        use crate::config::Ttl;
++        use slatedb_common::clock::MockSystemClock;
++
++        let clock = Arc::new(MockSystemClock::new());
++        let mut settings = test_db_options(0, 1024, None);
++        settings.default_ttl_millis = Some(1000);
++        let db = crate::Db::builder("test_db", Arc::new(InMemory::new()))
++            .with_settings(settings)
++            .with_system_clock(clock.clone())
++            .build()
++            .await
++            .unwrap();
++        clock.set(100);
++        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
++        let value = Bytes::from_static(b"value");
++        txn.put_bytes(Bytes::from_static(b"default"), value.clone())
++            .unwrap();
++        txn.put_bytes_with_options(
++            Bytes::from_static(b"custom"),
++            value.clone(),
++            &PutOptions {
++                ttl: Ttl::ExpireAfterMillis(50),
++            },
++        )
++        .unwrap();
++
++        clock.set(200);
++        assert_eq!(txn.get(b"custom").await.unwrap(), Some(value.clone()));
++        txn.commit().await.unwrap();
++        let kv = db.get_key_value(b"custom").await.unwrap().
 ```
 
-**File**: `slatedb/src/seq_tracker.rs` (modified, +276/-62)
+---
+
+### Incident Patch 2: `66b56724` (2026-11-02)
+**Commit Message**: Bump version to 0.18.0
+
+**File**: `Cargo.lock` (modified, +9/-9)
 ```diff
-@@ -10,8 +10,16 @@ const DEFAULT_CAPACITY: u32 = 8192;
- /// Default reporting interval in seconds (60 seconds)
- const DEFAULT_INTERVAL_SECS: u64 = 60;
+@@ -960,7 +960,7 @@ dependencies = [
  
--/// Version number for the serialization format
--const SERIALIZATION_VERSION: u8 = 1;
-+/// Serialization format version 1. The Gorilla fallback slot holds 32 bits, so this
-+/// version can only store a delta-of-delta in the `i32` range.
-+const SERIALIZATION_VERSION_V1: u8 = 1;
-+
-+/// Serialization format version 2. The Gorilla fallback slot holds 64 bits.
-+///
-+/// The encoder writes version 2 only when a delta-of-delta is outside the `i32` range.
-+/// Version 1 cannot store that data correctly. All other trackers stay in version 1, so
-+/// older readers can still read them.
-+const SERIALIZATION_VERSION_V2: u8 = 2;
+ [[package]]
+ name = "examples"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "anyhow",
+  "object_store",
+@@ -3246,7 +3246,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
  
- #[derive(PartialEq, Clone, Copy)]
- pub(crate) struct TrackedSeq {
-@@ -219,20 +227,31 @@ impl<'de> Deserialize<'de> for SequenceTracker {
- fn encode_sequence_tracker(tracker: &SequenceTracker) -> Vec<u8> {
-     let mut result = Vec::new();
+ [[package]]
+ name = "slatedb"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-channel",
+  "async-trait",
+@@ -3307,7 +3307,7 @@ dependencies = [
  
-+    // Each series is walked once: the delta-of-deltas both choose the format version and feed
-+    // the encoder. The sequence numbers are bit-cast to i64 as they stream through, so no
-+    // converted copy of the array is made.
-+    let sequences = DeltaSeries::new(tracker.sequence_numbers.iter().map(|&x| x as i64));
-+    let timestamps = DeltaSeries::new(tracker.timestamps.iter().copied());
-+
-+    // Use version 2 only when version 1 cannot store a delta-of-delta.
-+    let wide_fallback = sequences.needs_wide_fallback() || timestamps.needs_wide_fallback();
-+
-     // Write version (u8)
--    result.push(SERIALIZATION_VERSION);
-+    result.push(if wide_fallback {
-+        SERIALIZATION_VERSION_V2
-+    } else {
-+        SERIALIZATION_VERSION_V1
-+    });
+ [[package]]
+ name = "slatedb-bencher"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "bytes",
+  "chrono",
+@@ -3325,7 +3325,7 @@ dependencies = [
  
-     // Write length (as u32, little-endian)
-     let len = tracker.sequence_numbers.len() as u32;
-     result.extend_from_slice(&len.to_le_bytes());
+ [[package]]
+ name = "slatedb-cli"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "chrono",
+  "clap",
+@@ -3345,7 +3345,7 @@ dependencies = [
  
-     // Encode sequence numbers using Gorilla encoding
--    let encoded_seqs = encode_sequence_numbers(&tracker.sequence_numbers);
--    result.extend_from_slice(&encoded_seqs);
-+    result.extend_from_slice(&encode_gorilla_i64(&sequences, wide_fallback));
+ [[package]]
+ name = "slatedb-common"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+@@ -3364,7 +3364,7 @@ dependencies = [
  
-     // Encode timestamps using Gorilla encoding
--    let encoded_timestamps = encode_timestamps(&tracker.timestamps);
--    result.extend_from_slice(&encoded_timestamps);
-+    result.extend_from_slice(&encode_gorilla_i64(&timestamps, wide_fallback));
+ [[package]]
+ name = "slatedb-dst"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+@@ -3389,7 +3389,7 @@ dependencies = [
  
-     result
- }
-@@ -247,9 +266,11 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+ [[package]]
+ name = "slatedb-mirror"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-trait",
+  "backon",
+@@ -3412,7 +3412,7 @@ dependencies = [
  
-     // Read version
-     let version = buf[offset];
--    if version != SERIALIZATION_VERSION {
--        return Err(format!("Unsupported version: {}", version));
--    }
-+    let wide_fallback = match version {
-+        SERIALIZATION_VERSION_V1 => false,
-+        SERIALIZATION_VERSION_V2 => true,
-+        _ => return Err(format!("Unsupported version: {}", version)),
-+    };
-     offset += 1;
+ [[package]]
+ name = "slatedb-txn-obj"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+@@ -3429,7 +3429,7 @@ dependencies = [
  
-     // Read length
-@@ -263,7 +284,8 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
-     offset += 4;
+ [[package]]
+ name = "slatedb-uniffi"
+-version = "0.17.0"
++version = "0.18.0"
+ dependencies = [
+  "async-trait",
+  "chrono",
+```
+
+**File**: `Cargo.toml` (modified, +5/-5)
+```diff
+@@ -13,7 +13,7 @@ members = [
+ ]
  
-     // Decode sequence numbers
--    let (encoded_seq_len, sequence_numbers) = decode_sequence_numbers_with_length(&buf[offset..])?;
-+    let (encoded_seq_len, sequence_numbers) =
-+        decode_sequence_numbers_with_length(&buf[offset..], wide_fallback)?;
-     if sequence_numbers.len() != len {
-         return Err(format!(
-             "Expected {} sequence numbers, got {}",
-@@ -274,7 +296,7 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
-     offset += encoded_seq_len;
- 
-     // Decode timestamps
--    let timestamps = decode_timestamps(&buf[offset..])?;
-+    let timestamps = decode_timestamps(&buf[offset..], wide_fallback)?;
-     if timestamps.len() != len {
-         return Err(format!(
-             "Expected {} timestamps, got {}",
-@@ -294,23 +316,74 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
-     Ok(tracker)
- }
- 
-+/// A series prepared for Gorilla encoding: its first value, stored in full, and the
-+/// delta-of-delta of every later value. Built once per series, because the delta-of-deltas both
-+/// choose the format version and feed the encoder.
-+///
-+/// The arithmetic wraps. Sequence numbers are `u64` values cast to `i64`, so a delta can be
-+/// outside the `i64` range. Wrapping keeps the encode and decode round trip exact.
-+struct DeltaSeries {
-+    first: Option<i64>,
-+    dods: Vec<i64>,
-+    /// True when a delta-of-delta is outside the range of the 32-bit fallback slot. Decided
-+    /// while the delta-of-deltas are produced, so no second pass over them is needed.
-+    needs_wide_fallback: bool,
-+}
-+
-+impl DeltaSeries {
-+    fn new(values: impl IntoIterator<Item = i64>) -> Self {
-+        let mut values = values.into_iter();
-+        let Some(first) = values.next() else {
-+            return Self {
-+                first: None,
-+                dods: Vec::new(),
-+                needs_wide_fa
+ [workspace.package]
+-version = "0.17.0"
++version = "0.18.0"
+ edition = "2021"
+ repository = "https://github.com/slatedb/slatedb"
+ license = "Apache-2.0"
+@@ -72,10 +72,10 @@ serde = "1.0"
+ serde_json = "1.0.142"
+ siphasher = "1"
+ smallvec = "1.15.1"
+-slatedb = { path = "slatedb", version = "0.17.0" }
+-slatedb-common = { path = "slatedb-common", version = "0.17.0" }
+-slatedb-mirror = { path = "slatedb-mirror", version = "0.17.0" }
+-slatedb-txn-obj = { path = "slatedb-txn-obj", version = "0.17.0" }
++slatedb = { path = "slatedb", version = "0.18.0" }
++slatedb-common = { path = "slatedb-common", version = "0.18.0" }
++slatedb-mirror = { path = "slatedb-mirror", version = "0.18.0" }
++slatedb-txn-obj = { path = "slatedb-txn-obj", version = "0.18.0" }
+ snap = "1.1.1"
+ sysinfo = "0.35.2"
+ thiserror = "1.0.63"
+```
+
+**File**: `bindings/java/gradle.properties` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-version=0.17.0-SNAPSHOT
++version=0.18.0-SNAPSHOT
+```
+
+**File**: `bindings/node/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@slatedb/uniffi",
+-  "version": "0.17.0",
++  "version": "0.18.0",
+   "description": "Node.js bindings for SlateDB generated from UniFFI and packaged with native libraries.",
+   "license": "Apache-2.0",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2219** (2026-11-03): Add `DbTransaction::put_bytes/put_bytes_with_options` (@criccomini)
+- **PR #2216** (2026-11-02): Close pull requests from unvouched authors with Vouch (@criccomini)
+- **PR #2214** (2026-11-02): Clamp entries in CachedEntry constructors (@hzhou0)
+- **PR #2212** (closed): Clamp entries to allocated size on custom caches (@hzhou0)
 - **PR #2208** (2026-10-30): Drop versions a memtable shadows at flush when the WAL is enabled (@sorenbs)
 - **PR #2207** (2026-10-29): Remove open PR contributions (@criccomini)
-- **PR #2205** (2026-10-30): RFC 0035 Incremental compaction impl (2/2) (@nomiero)
-- **PR #2203** (2026-10-29): Trim per-SST CPU on the point-lookup path (@zach-schoenberger)
-- **PR #2201** (2026-10-27): Regenerate Go bindings for status subscriptions (@criccomini)
-- **PR #2199** (2026-10-27): Defer SST path construction to cache-miss loaders (@zach-schoenberger)
 
 ---
 
@@ -2508,21 +2648,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix for issue causing database corruption through panic (#2181)
+## X. Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/db_transaction.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e62aeeb`: fix for issue causing database corruption through panic (#2181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d048690`: Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/db_transaction.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [Cloudmersive](https://cloudmersive.com)
+    /// Put a key-value pair into the transaction using owned [`Bytes`].
+    /// This avoids the buffer copies that [`Self::put`] performs.
+    /// The write stays buffered in the transaction's write batch until commit.
+    ///
+    /// # Panics
+    /// - If the key is empty.
+    /// - If the key or value size is larger than `u32::MAX`.
+    pub fn put_bytes(&self, key: Bytes, value: Bytes) -> Result<(), crate::Error> {
+        self.put_bytes_with_options(key, value, &PutOptions::default())
+    }
+
+    /// Put a key-value pair into the transaction using owned [`Bytes`] with custom options.
+    /// See [`Self::put_bytes`] for the buffer ownership behavior.
+    /// The write stays buffered in the transaction's write batch until commit.
+    ///
+    /// # Panics
+    /// - If the key is empty.
+    /// - If the key or value size is larger than `u32::MAX`.
+    pub fn put_bytes_with_options(
+        &self,
+        key: Bytes,
+        value: Bytes,
+        options: &PutOptions,
+    ) -> Result<(), crate::Error> {
+        self.write_batch
+            .write()
+            .put_bytes_with_options(key, value, options);
+        Ok(())
+    }
+
+    #[rstest]
+    #[case::default_options(false)]
+    #[c
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2532,4 +2704,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e62aeeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d048690` are properly handled with clean fallback behavior.

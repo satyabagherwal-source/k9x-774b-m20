@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T02:00:52.823Z",
+  "last_updated": "2026-11-03T12:18:33.483Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3588,6 +3588,105 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-agent-field-agentfield"
+    },
+    {
+      "id": "CD-Z8RY",
+      "directive_title": "NUC 73 List and Population Predicate Counts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "13944b95",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-Z8TB",
+      "directive_title": "Empirical Invariant Guard in ci.yml",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "77aa5579",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-9KT3",
+      "directive_title": "Fixed a panic when committing empty terms",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "2b0847bf",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-seekstorm-seekstorm"
+    },
+    {
+      "id": "CD-SOTO",
+      "directive_title": "[PXT-1278] New Catalog locking (#1573)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pixeltable/pixeltable",
+      "source_commit": "2eca8e44",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-pixeltable-pixeltable"
+    },
+    {
+      "id": "CD-47IU",
+      "directive_title": "NUC 74 Final Rest Parameters",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "521c2fe2",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-B45K",
+      "directive_title": "Add ARC run logging and arc-debug agent",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "3703f13a",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-XIP9",
+      "directive_title": "fix!: send the snapshot contract's keys from HostSession and the AGT adapter run",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "microsoft/agent-governance-toolkit",
+      "source_commit": "4aa6ac3d",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-microsoft-agent-governance-toolkit"
+    },
+    {
+      "id": "CD-FUGL",
+      "directive_title": "rules: fix flaky TestUpdateWhenStopped panic",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "caebd2cf",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-prometheus-prometheus"
+    },
+    {
+      "id": "CD-M8I2",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "crate-ci/typos",
+      "source_commit": "4c8b7f51",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-crate-ci-typos"
     }
   ]
 }

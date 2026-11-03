@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `bcdefac9`  
+> **Source Version**: `8ddaf495`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:05:00.116Z  
+> **Timestamp**: 2026-11-03T12:25:11.586Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:05:00.109Z  
+> **Harvest Timestamp**: 2026-11-03T12:25:10.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16828 stars
+- **Stars / Engagement**: 16835 stars
 
 ---
 
@@ -1956,133 +1956,380 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcdefac9` (2026-10-30)
-**Commit Message**: DD: bulkdump only targets the remote DC when it is usable (#14380)
+### Incident Patch 1: `8ddaf495` (2026-11-03)
+**Commit Message**: [backup] Bound restore dispatch and adapt oversized transactions (#14288)
 
-* DD: bulkdump only targets the remote DC when it is usable
+* [backup] Bound restore dispatch and adapt oversized transactions
 
-With DD_BULKDUMP_USE_REMOTE_REGION set and usable_regions == 1, the
-remote DC appears in the region configuration but has no storage
-servers. Every range was then skipped as having no replica in the
-target DC, no task was dispatched, and the job never completed. The
-BulkDumping simulation test hung until timeout whenever BUGGIFY
-enabled the knob under such a config.
+* [backup] Buggify restore dispatch transaction size
 
-Fall back to the primary DC unless usable_regions > 1.
+* [backup] Minimize restore dispatch changes and explain continuations
 
-* DD: unit test for the bulkdump target DC with usable_regions == 1
+* [backup] Test restore writer recovery and defer log metadata reads
 
-* DD: note the usable_regions == 1 exception and resolve the bulkdump target DC once per pass
+* [backup] Fix restore writer test linkage and retry-safe cleanup
 
-Co-authored-by: Shree Chaturvedi <[REDACTED_EMAIL]>
+* [backup] Raise restore dispatch byte target to 4 MiB
 
-**File**: `fdbserver/core/include/fdbserver/core/Knobs.h` (modified, +2/-1)
+* [backup] Address restore dispatch review feedback
+
+* [backup] Reset dispatch task limit for each version window
+
+* [backup] Adapt restore dispatch after transaction age failures
+
+* [backup] Explain serial restore dispatch tradeoff
+
+* [backup] Preserve adaptive limits across dispatch lease handoff
+
+* [backup] Keep task lease updates behind the TaskBucket API
+
+Update persisted task parameters through an ownership-checked TaskBucket method instead of accessing its private timeout subspace. Configure the recovery fixture lease using the existing taskbucket_timeout_versions knob.
+
+* [backup] Fix clang-tidy findings in restore recovery fixtures
+
+**File**: `fdbclient/ClientKnobs.cpp` (modified, +1/-0)
 ```diff
-@@ -485,7 +485,8 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ServerKnobs : public KnobsImpl<ServerKno
- 	                                                       // simulation.
- 	int DD_BULKDUMP_PARALLELISM; // the max number of concurrent bulk dump tasks in DD
- 	bool DD_BULKDUMP_USE_REMOTE_REGION; // dump from the remote region instead of the primary. The dumping server
--	                                    // uploads the files, so its region must reach the destination.
-+	                                    // uploads the files, so its region must reach the destination. Ignored
-+	                                    // with usable_regions == 1, where the remote holds no storage servers.
- 	int SS_SERVE_BULKDUMP_PARALLELISM; // the number of bulk dump tasks that can concurrently happen at a SS
- 	int64_t SS_BULKDUMP_BATCH_BYTES; // the max bytes when SS creates a batch to dump
- 	int SS_BULKLOAD_GETRANGE_BATCH_SIZE; // the max number of keys to scan before do context switch
+@@ -304,6 +304,7 @@ void ClientKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
+ 	init( BACKUP_LOGFILE_BLOCK_SIZE,        1024 * 1024);
+ 	init( BACKUP_DISPATCH_ADDTASK_SIZE,             50 );
+ 	init( RESTORE_DISPATCH_ADDTASK_SIZE,           150 );
++	init( RESTORE_DISPATCH_TX_SIZE,      4 * 1024 * 1024 ); if( randomize && buggify() ) RESTORE_DISPATCH_TX_SIZE = 1 * 1024;
+ 	init( RESTORE_DISPATCH_BATCH_SIZE,           30000 ); if( randomize && buggify() ) RESTORE_DISPATCH_BATCH_SIZE = 20;
+ 	init (RESTORE_PARTITIONED_BATCH_VERSION_SIZE, 10000000); // each step restores 10s worth of data
+ 	init( RESTORE_WRITE_TX_SIZE,            256 * 1024 );
 ```
 
-**File**: `fdbserver/datadistributor/DataDistribution.cpp` (modified, +42/-5)
+**File**: `fdbclient/FileBackupAgent.cpp` (modified, +619/-97)
 ```diff
-@@ -518,10 +518,11 @@ struct DataDistributor : NonCopyable, ReferenceCounted<DataDistributor> {
+@@ -4828,6 +4828,52 @@ struct RestoreFileTaskFuncBase : RestoreTaskFuncBase {
  	}
- 
- 	// The DC whose storage servers perform bulkdump uploads, or empty when the cluster has no
--	// region configuration. Resolved per dispatch rather than cached so it follows a failover.
-+	// region configuration. Resolved per scheduling pass rather than cached so it follows a failover.
- 	std::string bulkDumpTargetDcId() const {
--		const std::vector<Optional<Key>>& dcIds =
--		    SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION ? remoteDcIds : primaryDcId;
-+		// With usable_regions == 1 the remote DC is configured but holds no storage servers.
-+		const bool useRemote = SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION && configuration.usableRegions > 1;
-+		const std::vector<Optional<Key>>& dcIds = useRemote ? remoteDcIds : primaryDcId;
- 		if (!dcIds.empty() && dcIds[0].present()) {
- 			return dcIds[0].get().toString();
- 		}
-@@ -2805,14 +2806,15 @@ Future<Void> scheduleBulkDumpJob(Reference<DataDistributor> self) {
- 				    .detail("BulkDumpRange", bulkDumpRange)
- 				    .detail("BeginKey", bulkDumpResult[bulkDumpResultIndex].key)
- 				    .detail("EndKey", rangeLocations.back().range.end);
-+				const std::string targetDcId = self->bulkDumpTargetDcId();
- 				rangeLocationIndex = 0;
- 				for (; rangeLocationIndex < rangeLocations.size(); ++rangeLocationIndex) {
- 					// Spawn task per shard
- 					taskRange = rangeLocations[rangeLocationIndex].range;
- 					ASSERT(!taskRange.empty());
- 					// Skip rather than fall back to another region: the dumping server uploads the
--					// files, so a DC that cannot reach the destination would fail every task.
--					const std::string targetDcId = self->bulkDumpTargetDcId();
-+					// files, so a DC that cannot reach the destination would fail every task. The
-+					// one exception is usable_regions == 1, handled in bulkDumpTargetDcId().
- 					if (!targetDcId.empty()) {
- 						const auto& servers = rangeLocations[rangeLocationIndex].servers;
- 						auto targetDc = servers.find(targetDcId);
-@@ -5900,6 +5902,19 @@ class AuditTaskMaxBytesGuard {
- 	int64_t saved;
  };
  
-+class BulkDumpUseRemoteRegionGuard {
-+public:
-+	BulkDumpUseRemoteRegionGuard() : saved(SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION) {}
-+	~BulkDumpUseRemoteRegionGuard() { set(saved); }
-+	BulkDumpUseRemoteRegionGuard(BulkDumpUseRemoteRegionGuard const&) = delete;
-+	BulkDumpUseRemoteRegionGuard& operator=(BulkDumpUseRemoteRegionGuard const&) = delete;
++// Optional observer for the deterministic writer recovery simulation. The size limit applies only to
++// writer transactions, so task setup and unrelated cluster activity retain their normal limits.
++struct RestoreWriterTestState {
++	int rejections = 0;
++	int commits = 0;
++	int committedRecords = 0;
++	int lastRejectedLimit = 0;
++	int lastCommittedLimit = 0;
++	std::vector<int> batchLimits;
++	std::vector<int> batchCommits;
 +
-+	void set(bool value) { const_cast<ServerKnobs*>(SERVER_KNOBS)->DD_BULKDUMP_USE_REMOTE_REGION = value; }
++	void beginBatch(int limit) {
++		if (lastCommittedLimit) {
++			ASSERT_EQ(limit, lastCommittedLimit);
++		}
++		batchLimits.push_back(limit);
++		batchCommits.push_back(0);
++	}
 +
-+private:
-+	bool saved;
++	Future<Void> commit(Reference<ReadYourWritesTransaction> tr, int limit, int records) {
++		ASSERT(g_network->isSimulated());
++		int64_t sizeLimit = 4096;
++		tr->setOption(FDBTransactionOptions::SIZE_LIMIT, StringRef((uint8_t*)&sizeLimit, sizeof(sizeLimit)));
++		try {
++			co_await tr->commit();
++		} catch (Error& e) {
++			if (e.code() == error_code_transaction_too_large) {
++				++rejections;
++				lastRejectedLimit = limit;
++			}
++			throw;
++		}
++		ASSERT_GT(rejections, 0);
++		ASSERT_LT(limit, lastRejectedLimit);
++		if (lastCommittedLimit) {
++			ASSERT_LE(limit, lastCommittedLimit);
++		}
++		lastCommittedLimit = limit;
++		++commits;
++		committedRecords += records;
++		if (!batchCommits.empty()) {
++			++batchCommits.back();
++		}
++	}
 +};
 +
- } // namespace
+ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
+ 	static struct : InputParams {
+ 		// The range of data that the (possibly empty) data represented, which is set if it intersects the target
+@@ -4857,7 +4903,8 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
+ 	static Future<Void> _execute(Database cx,
+ 	                             Reference<TaskBucket> taskBucket,
+ 	                             Reference<FutureBucket> futureBucket,
+-	                             Reference<Task> task) {
++	                             Reference<Task> task,
++	                             RestoreWriterTestState* test = nullptr) {
+ 		RestoreConfig restore(task);
  
- TEST_CASE("/DataDistribution/Audit/BoundAuditTaskRange") {
-@@ -5988,6 +6003,28 @@ TEST_CASE("/DataDistribution/Initialization/DcIds") {
- 	return Void();
- }
+ 		RestoreFile rangeFile = Params.inputFile().get(task);
+@@ -4964,8 +5011,8 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
  
-+TEST_CASE("/DataDistribution/BulkDump/TargetDcId") {
-+	Reference<DDSharedContext> context(new DDSharedContext(UID()));
-+	Reference<AsyncVar<ServerDBInfo> const> dbInfo;
-+	Reference<DataDistributor> self(new DataDistributor(dbInfo, UID(), context, ""));
-+	self->primaryDcId = { Optional<Key>("primary"_sr) };
-+	self->remoteDcIds = { Optional<Key>("remote"_sr) };
-+	BulkDumpUseRemoteRegionGuard useRemoteRegion;
+ 			int start = 0;
+ 			int end = data.size();
+-			int dataSizeLimit =
+-			    buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6) : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
++			int dataSizeLimit = !test && buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6)
++			                                       : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
+ 
+ 			tr->reset();
+ 			while (true) {
+@@ -5010,7 +5057,7 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
+ 
+ 					co_await checkLock;
+ 
+-					co_await tr->commit();
++					co_await (test ? test->commit(tr, dataSizeLimit, i - start) : tr->commit());
+ 
+ 					TraceEvent("FileRestoreCommittedRange")
+ 					    .suppressFor(60)
+@@ -5039,10 +5086,12 @@ struct RestoreRangeTaskFunc : RestoreFileTaskFuncBase {
+ 				} catch (Error& e) {
+ 					err = e;
+ 				}
+-				if (err.code() == error_code_transaction_too_large)
++				if (err.code() == error_code_transaction_too_large && dataSizeLimit > 1) {
+ 					dataSizeLimit /= 2;
+-				else
++					tr->reset();
++				} else {
+ 					co_await tr->onError(err);
++				}
+ 			}
+ 		}
+ 		if (!originalFileRanges.empty()) {
+@@ -5299,7 +5348,8 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
+ 	static Future<Void> _execute(Database cx,
+ 	                             Reference<TaskBucket> taskBucket,
+ 	                             Reference<FutureBucket> futureBucket,
+-	                             Reference<Task> task) {
++	                             Reference<Task> task,
++	                             RestoreWriterTestState* test = nullptr) {
+ 		RestoreConfig restore(task);
+ 
+ 		RestoreFile logFile = Params.inputFile().get(task);
+@@ -5353,8 +5403,8 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
+ 
+ 		int start = 0;
+ 		int end = dataFiltered.size();
+-		int dataSizeLimit =
+-		    buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6) : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
++		int dataSizeLimit = !test && buggify() ? deterministicRandom()->randomInt(256 * 1024, 10e6)
++		                                       : CLIENT_KNOBS->RESTORE_WRITE_TX_SIZE;
+ 
+ 		tr->reset();
+ 		while (true) {
+@@ -5383,7 +5433,7 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
+ 				// Add to bytes written count
+ 				restore.bytesWritten().atomicOp(tr, txBytes, MutationRef::Type::AddValue);
+ 
+-				co_await tr->commit();
++				co_await (test ? test->commit(tr, dataSizeLimit, i - start) : tr->commit());
+ 
+ 				TraceEvent("FileRestoreCommittedLog")
+ 				    .suppressFor(60)
+@@ -5408,10 +5458,12 @@ struct RestoreLogDataTaskFunc : RestoreFileTaskFuncBase {
+ 			} catch (Error& e) {
+ 				err = e;
+ 			}
+-			if (err.code() == error_code_transaction_too_large)
++			if (err.code() == error_code_transaction_too_large && dataSizeLimit > 1
+```
+
+**File**: `fdbclient/include/fdbclient/Knobs.h` (modified, +1/-0)
+```diff
+@@ -236,6 +236,7 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ClientKnobs : public KnobsImpl<ClientKno
+ 	int BACKUP_DISPATCH_ADDTASK_SIZE;
+ 	bool BACKUP_ALLOW_DRYRUN;
+ 	int RESTORE_DISPATCH_ADDTASK_SIZE;
++	int RESTORE_DISPATCH_TX_SIZE; // Target bytes for partitioned restore range-task dispatch.
+ 	int RESTORE_DISPATCH_BATCH_SIZE;
+ 	int RESTORE_WRITE_TX_SIZE;
+ 	int RESTORE_PARTITIONED_BATCH_VERSION_SIZE;
+```
+
+**File**: `fdbclient/include/fdbclient/TaskBucket.h` (modified, +13/-0)
+```diff
+@@ -215,6 +215,19 @@ class TaskBucket : public ReferenceCounted<TaskBucket> {
+ 		return runRYWTransaction(cx, [=](Reference<ReadYourWritesTransaction> tr) { return finish(tr, task); });
+ 	}
+ 
++	// Update a persisted parameter without moving the lease key. Hold task->extendMutex through commit
++	// so the ownership check and write address the same lease.
++	Future<Void> updateTaskParam(Reference<ReadYourWritesTransaction> tr,
++	                             Reference<Task> task,
++	                             Key param,
++	                             Value value) {
++		Key paramKey = timeouts.get(task->timeoutVersion).get(task->key).pack(param);
++		return map(keepRunning(tr, task), [=](Void) {
++			tr->set(paramKey, value);
++			return Void();
++		});
++	}
 +
-+	useRemoteRegion.set(true);
-+	self->configuration.usableRegions = 2;
-+	ASSERT_EQ(self->bulkDumpTargetDcId(), "remote");
-+	// The remote DC is configured but holds no storage servers.
-+	self->configuration.usableRegions = 1;
-+	ASSERT_EQ(self->bulkDumpTargetDcId(), "primary");
+ 	// Extend the task's timeout as if it just started and also save any parameter changes made to the task
+ 	Future<Version> extendTimeout(Reference<ReadYourWritesTransaction> tr,
+ 	                              Reference<Task> task,
+```
+
+**File**: `fdbserver/workloads/RestoreWriterRecovery.cpp` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
++/*
++ * RestoreWriterRecovery.cpp
++ *
++ * This source file is part of the FoundationDB open source project
++ *
++ * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+	useRemoteRegion.set(false);
-+	self->configuration.usableRegions = 2;
-+	ASSERT_EQ(self->bulkDumpTargetDcId(), "primary");
++#include "fdbserver/tester/workloads.h"
 +
-+	return Void();
-+}
++namespace fileBackup {
++Future<Void> testRestoreWriterRecovery(Database cx);
++Future<Void> testRestoreDispatchRecovery(Database cx);
++} // namespace fileBackup
 +
- TEST_CASE("/DataDistribution/Initialization/ResumeFromShard") {
- 	Reference<DDSharedContext> context(new DDSharedContext(UID()));
- 	Reference<AsyncVar<ServerDBInfo> const> dbInfo;
++struct RestoreWriterRecoveryWorkload : TestWorkload {
++	static constexpr auto NAME = "RestoreWriterRecovery";
++	explicit RestoreWriterRecoveryWorkload(WorkloadContext const& wcx) : TestWorkload(wcx) {}
++
++	void disableFailureInjectionWorkloads(std::set<std::string>& out) const override { out.insert("all"); }
++	Future<Void> setup(Database const& cx) override { return Void(); }
++	Future<Void> start(Database const& cx) override {
++		return clientId == 0 ? fileBackup::testRestoreWriterRecovery(cx) : Void();
++	}
++	Future<bool> check(Database const& cx) override { return true; }
++	void getMetrics(std::vector<PerfMetric>& m) override {}
++};
++
++WorkloadFactory<RestoreWriterRecoveryWorkload> RestoreWriterRecoveryWorkloadFactory;
++
++struct RestoreDispatchRecoveryWorkload : TestWorkload {
++	static constexpr auto NAME = "RestoreDispatchRecovery";
++	explicit RestoreDispatchRecoveryWorkload(WorkloadContext const& wcx) : TestWorkload(wcx) {}
++
++	void disableFailureInjectionWorkloads(std::set<std::string>& out) const override { out.insert("all"); }
++	Future<Void> setup(Database const& cx) override { return Void(); }
++	Future<Void> start(Database const& cx) override {
++		return clientId == 0 ? fileBackup::testRestoreDispatchRecovery(cx) : Void();
++	}
++	Future<bool> check(Database const& cx) override { return true; }
++	void getMetrics(std::vector<PerfMetric>& m) override {}
++};
++
++WorkloadFactory<RestoreDispatchRecoveryWorkload> RestoreDispatchRecoveryWorkloadFactory;
+```
+
+**File**: `tests/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -276,6 +276,8 @@ if(WITH_PYTHON)
+   add_fdb_test(TEST_FILES fast/ReadHotDetectionCorrectness.toml IGNORE) # TODO re-enable once read hot detection is enabled.
+   add_fdb_test(TEST_FILES fast/ReportConflictingKeys.toml)
+   add_fdb_test(TEST_FILES fast/RESTUnit.toml IGNORE)
++  add_fdb_test(TEST_FILES fast/RestoreDispatchRecovery.toml)
++  add_fdb_test(TEST_FILES fast/RestoreWriterRecovery.toml)
+   add_fdb_test(TEST_FILES fast/SelectorCorrectness.toml)
+   add_fdb_test(TEST_FILES fast/ShardedRocksNondeterministicTest.toml)
+   add_fdb_test(TEST_FILES fast/StaleCoordinatorProtocolMonitor.toml)
+```
+
+**File**: `tests/fast/RestoreDispatchRecovery.toml` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++testClass = "Backup"
++buggify = false
++
++[[knobs]]
++# Let the injected age failures, rather than the byte target, bound dispatch.
++restore_dispatch_tx_size = 4194304
++# Reclaim the abandoned task promptly to exercise persisted limits across lease handoff.
++taskbucket_timeout_versions = 5000000
++
++[configuration]
++tenantModes = ['disabled']
++
++[[test]]
++testTitle = 'RestoreDispatchRecovery'
++
++    [[test.workload]]
++    testName = 'RestoreDispatchRecovery'
+```
+
+**File**: `tests/fast/RestoreWriterRecovery.toml` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++testClass = "Backup"
++
++[[knobs]]
++# The test caps writer transactions at 4 KiB, below their initial 16 KiB budget.
++restore_write_tx_size = 16384
++backup_logfile_block_size = 65536
++mutation_block_size = 10000
++
++[configuration]
++tenantModes = ['disabled']
++
++[[test]]
++testTitle = 'RestoreWriterRecovery'
++
++    [[test.workload]]
++    testName = 'RestoreWriterRecovery'
+```
+
+---
+
+### Incident Patch 2: `c6fb547f` (2026-11-03)
+**Commit Message**: Merge pull request #14400 from tclinkenbeard-oai/dev/tclinkenbeard/audit-grpc-include-localities
+
+Honor locality selectors in the gRPC Include command
+
+**File**: `fdbctl/ControlCommands.cpp` (modified, +6/-2)
+```diff
+@@ -299,7 +299,6 @@ Future<grpc::Status> getWorkers(Reference<IDatabase> db, const GetWorkersRequest
+ 
+ Future<grpc::Status> include(Reference<IDatabase> db, const IncludeRequest* req, IncludeReply* rep) {
+ 	std::vector<AddressExclusion> addresses;
+-	std::vector<std::string> localities;
+ 
+ 	for (const auto& addr_str : req->addresses()) {
+ 		auto a = AddressExclusion::parse(StringRef(addr_str));
+@@ -339,7 +338,12 @@ Future<grpc::Status> include(Reference<IDatabase> db, const IncludeRequest* req,
+ 				}
+ 
+ 				// Include specific localities
+-				for (const auto& l : localities) {
++				for (const auto& l : req->localities()) {
++					if (!StringRef(l).startsWith(LocalityData::ExcludeLocalityPrefix) ||
++					    l.find(':') == std::string::npos) {
++						co_return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
++						                       fmt::format("'{}' is not a valid locality", l));
++					}
+ 					Key locality = req->failed() ? special_keys::failedLocalitySpecialKeyRange.begin.withSuffix(l)
+ 					                             : special_keys::excludedLocalitySpecialKeyRange.begin.withSuffix(l);
+ 					tr->clear(locality);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14400** (2026-11-03): Honor locality selectors in the gRPC Include command (@tclinkenbeard-oai)
 - **PR #14395** (2026-10-30): Release notes 7.3.{80, 81} (@spraza)
 - **PR #14394** (2026-10-30): [release-7.4] build: fix aws-sdk-cpp "crypto" dep, for macOS and arm64 (@ploxiln)
-- **PR #14385** (2026-10-30): [release-7.4] DD: bulkdump only targets the remote DC when it is usable (@saintstack)
-- **PR #14380** (2026-10-30): DD: bulkdump only targets the remote DC when it is usable (@saintstack)
-- **PR #14379** (2026-10-30): [release-7.4] fdbmonitor: free resolved configuration path after symlink changes (@ploxiln)
-- **PR #14378** (closed): Record the true version span of a bulkdump snapshot (@saintstack)
+- **PR #14388** (closed): RocksDB: apply ROCKSDB_COMPACTION_THREAD_PRIORITY to RocksDB's compaction threads (@ShreeChaturvedi)
+- **PR #14387** (2026-11-03): [release-7.4] Fix DataDistributor::initDcInfo bug on region failover (@akshay-v-kaushik)
+- **PR #14386** (2026-10-31): [release-7.4] Fix LocalityData value presence checks (@ploxiln)
 
 ---
 
@@ -2102,29 +2349,28 @@ Co-authored-by: Shree Chaturvedi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. DD: bulkdump only targets the remote DC when it is usable (#14380)
+## X. [backup] Bound restore dispatch and adapt oversized transactions (#14288)
 
 **RULE**:
-When implementing operations in `fdbserver/core/include/fdbserver/core/Knobs.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbclient/ClientKnobs.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcdefac9`: DD: bulkdump only targets the remote DC when it is usable (#14380). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ddaf495`: [backup] Bound restore dispatch and adapt oversized transactions (#14288). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/core/include/fdbserver/core/Knobs.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/ClientKnobs.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	                                    // uploads the files, so its region must reach the destination. Ignored
-	                                    // with usable_regions == 1, where the remote holds no storage servers.
+	init( RESTORE_DISPATCH_TX_SIZE,      4 * 1024 * 1024 ); if( randomize && buggify() ) RESTORE_DISPATCH_TX_SIZE = 1 * 1024;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	                                    // uploads the files, so its region must reach the destination.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcdefac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ddaf495` are properly handled with clean fallback behavior.

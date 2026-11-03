@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `c9dd9650`  
+> **Source Version**: `eca2269a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:42:51.480Z  
+> **Timestamp**: 2026-11-02T21:43:41.493Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:42:51.243Z  
+> **Harvest Timestamp**: 2026-11-02T21:43:40.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2478 stars
+- **Stars / Engagement**: 2479 stars
 
 ---
 
@@ -1799,129 +1799,385 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9dd9650` (2026-10-31)
-**Commit Message**: chore(main): release 1.12.0 (#337)
+### Incident Patch 1: `eca2269a` (2026-11-02)
+**Commit Message**: fix(skills): skills index compactor no longer merges a block into the next one (#351)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+The compactor's block regex matched the description lazily with [\s\S]*?,
+so a <skill> block with any child line beyond name/description/location
+failed at its own </skill>, backtracked, and swallowed the following block:
+the model saw one skill's name with the next skill's location, and the next
+skill disappeared from the index. Descriptions are XML-escaped, so the
+description now matches [^<]*; extra child lines are captured and kept.
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+Found when per-skill <evidence> lines in the skill-prior harness pointed the
+model at the decoy's SKILL.md on every annotated entry.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/agents/system-prompt-skills.test.ts` (modified, +29/-0)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.11.0"
-+  ".": "1.12.0"
+@@ -117,6 +117,35 @@ describe("compactSkillsPrompt", () => {
+     expect(out.length).toBeLessThan(4_000);
+   });
+ 
++  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
++    const annotated = [
++      "  <skill>",
++      "    <name>alpha</name>",
++      "    <description>Use for alpha. Not for beta.</description>",
++      "    <location>/skills/alpha/SKILL.md</location>",
++      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
++      "  </skill>",
++    ].join("\n");
++    const out = compactSkillsPrompt(
++      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
++    );
++    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
++    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
++    expect(alpha).toContain(
++      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
++    );
++    expect(alpha).not.toContain("beta/SKILL.md");
++    expect(alpha).toContain("<description>Use for alpha.</description>");
++    expect(compactSkillsPrompt(out)).toBe(out);
++  });
++
++  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
++    const raw = skill("alpha", "Use when x < y.");
++    const out = compactSkillsPrompt(index([raw, skill("beta", "Use for beta.")]));
++    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta"]);
++    expect(out).toContain("<location>/skills/alpha/SKILL.md</location>");
++  });
++
+   it("is a no-op without skill blocks", () => {
+     expect(compactSkillsPrompt("no skills here")).toBe("no skills here");
+   });
+```
+
+**File**: `src/agents/system-prompt-skills.ts` (modified, +20/-2)
+```diff
+@@ -10,8 +10,16 @@
+ export const SKILLS_PROMPT_BUDGET_CHARS = 4_000;
+ const DESCRIPTION_STEPS = [160, 80, 40];
+ 
++/**
++ * One `<skill>` block. The description is XML-escaped, so it holds no `<` and
++ * cannot run past its own closing tag into the next block. Any further child
++ * lines (an `<evidence>` note, say) are captured and kept as they are; the
++ * old lazy `[\s\S]*?` description let a block with an extra line swallow
++ * the next block whole, pairing one skill's name with the next one's
++ * location.
++ */
+ const SKILL_BLOCK_RE =
+-  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([\s\S]*?)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?[ \t]*<\/skill>/gm;
++  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([^<]*)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?((?:[ \t]*<(?!\/?skill>)[^\n]*\n)*)[ \t]*<\/skill>/gm;
+ 
+ function unescapeXml(text: string): string {
+   return text
+@@ -88,7 +96,14 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
+   const defaultRoot = resolveDefaultSkillsRoot(prompt);
+   const rendered = prompt.replace(
+     SKILL_BLOCK_RE,
+-    (_block, indent: string, name: string, description: string | undefined, location) => {
++    (
++      _block,
++      indent: string,
++      name: string,
++      description: string | undefined,
++      location: string | undefined,
++      extra: string | undefined,
++    ) => {
+       const inner = `${indent}  `;
+       const lines = [`${indent}<skill>`, `${inner}<name>${name}</name>`];
+       if (maxDescriptionChars !== null && description) {
+@@ -104,6 +119,9 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
+       ) {
+         lines.push(`${inner}<location>${location}</location>`);
+       }
++      if (extra) {
++        lines.push(extra.replace(/\n$/, ""));
++      }
+       lines.push(`${indent}</skill>`);
+       return lines.join("\n");
+     },
+```
+
+---
+
+### Incident Patch 2: `41241db2` (2026-11-02)
+**Commit Message**: fix(skills): record skill executions when the agent reads a skill's SKILL.md (#350)
+
+The execution-tracking hook matched skill crystals only when skill_category
+equalled the tool name. Since migration v63 removed the tool-name-keyed
+crystals, nothing matched and skill_executions stayed empty, so the bridge
+maturity gate could never pass and run outcomes had nothing to stamp.
+
+A read of <skill>/SKILL.md now credits that skill's crystal (by folder name
+or crystal path), once per run. The tool-name match is kept.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/memory/skills-pipeline.md` (modified, +26/-17)
+```diff
+@@ -36,18 +36,28 @@ below for each module.
+ 
+ ### What an execution row means (PLAN-45 Phase 1)
+ 
+-`skill_executions` receives one row per tool call that matched a skill
+-crystal by name (`recorded_by = 'after_tool_call'`). The match
+-(`execution-tracking-hook.ts`) requires a chunk with `semantic_type` or
+-`memory_type` of `skill`, a lifecycle of `generated`/`activated`/`frozen`, an
+-origin other than `dream`, and a `skill_category` equal to the normalized
+-tool name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the
+-SKILL.md frontmatter name or folder name (`skill-category.ts`), and the only
+-chunks ever keyed on tool names were the retired crystallizer's, which
+-migration v63 purged. On a post-v63 node the hook therefore never matches:
+-the table stays empty, and the bridge maturity gate below (three run-level
+-executions at a success rate of 0.7 or better) cannot pass, so no crystal
+-auto-publishes. The hook also skips A2A and validation sessions. When a row
++`skill_executions` receives one row per skill a run loaded
++(`recorded_by = 'after_tool_call'`). The hook (`execution-tracking-hook.ts`)
++matches a chunk with `semantic_type` or `memory_type` of `skill`, a lifecycle
++of `generated`/`activated`/`frozen` and an origin other than `dream`, in one
++of two ways:
++
++- **SKILL.md read** (the match that fires in practice): a `read` call whose
++  path ends in `SKILL.md` credits the crystal whose `skill_category` equals
++  the skill's folder name, or whose `path` is that folder. A second read of
++  the same SKILL.md in the same run adds no row, so a run is counted once.
++- **Tool name**: a crystal whose `skill_category` equals the normalized tool
++  name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the SKILL.md
++  frontmatter name or folder name (`skill-category.ts`), and the only chunks
++  ever keyed on tool names were the retired crystallizer's, which migration
++  v63 purged, so on a post-v63 node this match finds nothing. Before the
++  SKILL.md match was added (2026-11-02) the table therefore stayed empty and
++  the bridge maturity gate below could not pass.
++
++Only skills that have a crystal get rows. File-based skills without one
++(bundled skills, most workspace skills) are credited by the SKILL.md read
++crediting pass instead (see "SKILL.md read crediting" below). The hook also
++skips A2A and validation sessions. When a row
+ is written it carries the journal run it happened in (`run_id`,
+ `tool_call_id`) and an `evidence` class:
+ 
+@@ -638,8 +648,8 @@ consolidation cycle (default factor: 0.95).
+ 
+ ### SKILL.md read crediting (PLAN-44 Phase 5a)
+ 
+-The tracker above matches tool names against memory crystals; it never
+-saw a file-based skill. `src/memory/skill-evolution/skill-reads.ts` closes
++The tracker above records only skills that have a memory crystal; most
++file-based skills have none. `src/memory/skill-evolution/skill-reads.ts` closes
+ that: on every housekeeping pass it scans journal runs since a cursor,
+ finds `read` (or exec) tool calls whose path is a live skill's SKILL.md,
+ and records one event per (run, skill) with the run's outcome (ended
+@@ -1080,9 +1090,8 @@ responses (same gate, wire name `response-<query>-<skill>`), and the manual
+    passes AND the `SkillExecutionTracker` reports at least 3 run-level
+    executions with a success rate in `[0.7, 1]`. If either dependency is not
+    wired on the bridge, or a metric is non-finite or above 1, the answer is
+-   "no": missing evidence is never permission to publish. On a post-v63 node
+-   no crystal reaches 3 executions (see "What an execution row means"), so
+-   this leg is currently closed.
++   "no": missing evidence is never permission to publish. Executions count
++   only once the run outcome is stamped (see "What an execution row means").
+ 5. Generates a SKILL.md format with frontmatter
+ 6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+ 
+```
+
+**File**: `src/memory/execution-tracking-hook.test.ts` (modified, +65/-0)
+```diff
+@@ -175,3 +175,68 @@ describe("createExecutionTrackingHook evidence semantics (PLAN-45 Phase 0)", ()
+     expect(rows.map((r) => r.success)).toEqual([1, 0]);
+   });
+ });
++
++describe("createExecutionTrackingHook SKILL.md attribution", () => {
++  function readSetup() {
++    const { db } = setup();
++    db.prepare(
++      `INSERT INTO chunks (
++        id, path, source, start_line, end_line, text, hash, model, embedding,
++        updated_at, created_at, lifecycle, semantic_type, skill_category, origin
++      ) VALUES ('sk2', '/home/u/.bitterbot/skills/public-apis', 'skills', 0, 0, 'skill body', 'h2',
++        'local', '[]', ?, ?, 'frozen', 'skill', 'public-apis', 'indexed')`,
++    ).run(NOW, NOW);
++    const tracker = new SkillExecutionTracker(db);
++    const hook = createExecutionTrackingHook(tracker, db, null);
++    const read = (path: string, runId = "r1", key = "path") =>
++      hook(
++        { toolName: "read", params: { [key]: path }, result: "ok", durationMs: 3 },
++        { toolName: "read", sessionKey: "s1", runId, toolCallId: `tc-${runId}-${path}` },
++      );
++    const rows = () =>
++      db
++        .prepare(`SELECT skill_crystal_id AS id, run_id, tool_name FROM skill_executions`)
++        .all() as Array<{ id: string; run_id: string; tool_name: string }>;
++    return { db, read, rows };
++  }
++
++  it("credits the skill whose SKILL.md the agent read, by folder name", () => {
++    const { read, rows } = readSetup();
++    read("/opt/elsewhere/public-apis/SKILL.md");
++    expect(rows()).toEqual([{ id: "sk2", run_id: "r1", tool_name: "read" }]);
++  });
++
++  it("matches by crystal path and accepts file_path and Windows separators", () => {
++    const { read, rows } = readSetup();
++    read("C:\\Users\\u\\skills\\public-apis\\SKILL.md", "r1", "file_path");
++    read("/home/u/.bitterbot/skills/public-apis/skill.md", "r2");
++    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
++  });
++
++  it("records one row per skill per run when the SKILL.md is read again", () => {
++    const { read, rows } = readSetup();
++    read("/s/public-apis/SKILL.md", "r1");
++    read("/s/public-apis/SKILL.md", "r1");
++    read("/s/public-apis/SKILL.md", "r2");
++    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
++  });
++
++  it("ignores reads of other files and SKILL.md files with no crystal", () => {
++    const { read, rows } = readSetup();
++    read("/s/public-apis/README.md");
++    read("/s/unknown-skill/SKILL.md");
++    read("SKILL.md");
++    expect(rows()).toEqual([]);
++  });
++
++  it("lets the run-outcome back-fill stamp the row", () => {
++    const { db, read } = readSetup();
++    read("/s/public-apis/SKILL.md", "r9");
++    expect(stampExecutionRunOutcome(db, "r9", { label: "pass", level: 1 })).toBe(1);
++    const row = db
++      .prepare(`SELECT run_outcome_label, evidence FROM skill_executions WHERE run_id = 'r9'`)
++      .get() as { run_outcome_label: string; evidence: string };
++    expect(row.run_outcome_label).toBe("pass");
++    expect(row.evidence).not.toBe("tool");
++  });
++});
+```
+
+**File**: `src/memory/execution-tracking-hook.ts` (modified, +79/-6)
+```diff
+@@ -2,11 +2,17 @@
+  * Execution Tracking Hook: an `after_tool_call` plugin hook that feeds
+  * tool execution outcomes into the SkillExecutionTracker.
+  *
+- * What a row here MEANS (PLAN-45 Phase 0): "a tool whose name matches a
+- * skill crystal's category ran and did not report an error". That is
+- * tool-level evidence (`recorded_by = 'after_tool_call'`), never a judgment
+- * that the user's task succeeded. Competence consumers must not read it as
+- * such; Phase 1 back-fills run-level outcomes from the event journal.
++ * What a row here MEANS (PLAN-45 Phase 0): "the agent loaded a skill in this
++ * run" (it read the skill's SKILL.md), or "a tool whose name matches a skill
++ * crystal's category ran". Either way the row is tool-level evidence
++ * (`recorded_by = 'after_tool_call'`), never a judgment that the user's task
++ * succeeded. Competence consumers must not read it as such; Phase 1
++ * back-fills run-level outcomes from the event journal by run id.
++ *
++ * The SKILL.md match is the one that fires in practice. Skill crystals carry
++ * the skill's folder or frontmatter name as `skill_category`, not a tool
++ * name, so after migration v63 removed the tool-name-keyed crystals the
++ * tool-name match found nothing and the table stayed empty.
+  *
+  * `reward_score` is written as NULL. The previous value was a bucket of the
+  * result's character count (0.5-0.8), which also fired the hormonal "reward"
+@@ -68,6 +74,65 @@ function findMatchingSkill(db: DatabaseSync, toolName: string): string | null {
+   }
  }
-```
-
-**File**: `CHANGELOG.md` (modified, +18/-0)
-```diff
-@@ -1,5 +1,23 @@
- # Changelog
  
-+## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
++/**
++ * The skill a `read` call loaded, when it read a SKILL.md: the skill key (its
++ * folder name) and folder. Null for any other call.
++ */
++export function skillReadTarget(
++  toolName: string,
++  params: Record<string, unknown> | undefined,
++): { key: string; dir: string } | null {
++  if (normalizeToolName(toolName) !== "read" || !params) {
++    return null;
++  }
++  const raw = [params.path, params.file_path, params.filePath].find(
++    (v): v is string => typeof v === "string",
++  );
++  if (!raw) {
++    return null;
++  }
++  const parts = raw.replace(/\\/g, "/").split("/");
++  if (parts.length < 2 || parts.at(-1)?.toLowerCase() !== "skill.md") {
++    return null;
++  }
++  const key = parts.at(-2);
++  return key ? { key, dir: parts.slice(0, -1).join("/") } : null;
++}
 +
++/** The skill crystal for a SKILL.md read, by skill key or crystal path. */
++function findSkillForRead(db: DatabaseSync, target: { key: string; dir: string }): string | null {
++  try {
++    const row = db
++      .prepare(
++        `SELECT id FROM chunks
++         WHERE (COALESCE(semantic_type, 'general') = 'skill'
++                OR COALESCE(memory_type, 'plaintext') = 'skill')
++           AND COALESCE(lifecycle, 'generated') IN ('generated', 'activated', 'frozen')
++           AND COALESCE(origin, '') != 'dream'
++           AND (skill_category = ? OR path = ?)
++         ORDER BY created_at DESC
++         LIMIT 1`,
++      )
++      .get(target.key, target.dir) as { id: string } | undefined;
++    return row?.id ?? null;
++  } catch {
++    return null;
++  }
++}
 +
-+### Features
++/** True when this run already has a row for this skill (a re-read). */
++function alreadyRecordedForRun(db: DatabaseSync, skillId: string, runId: string): boolean {
++  try {
++    return (
++      db
++        .prepare(`SELECT 1 FROM skill_executions WHERE skill_crystal_id = ? AND run_id = ? LIMIT 1`)
++        .get(skillId, runId) !== undefined
++    );
++  } catch {
++    return false;
++  }
++}
 +
-+* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
-+* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
-+* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
-+* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
-+
-+
-+### Bug Fixes
-+
-+* **acp:** migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge ([#340](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/340)) ([687e906](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/687e906e3f037e2d91467162a8f80d67e946744a))
-+* **infra:** make batch lanes reach the Batches API and offer beta nodes the stable release ([#345](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/345)) ([9f6fa54](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9f6fa547d0017e2bc7fc95c35c0666adcb28e126))
-+* **memory:** record evidence only for prompt-included facts, owner searches and on an independent retention clock ([#344](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/344)) ([aa0953e](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/aa0953e9805852dd81588818d81414cd8e6f4ae9))
-+* **orchestrator:** reconcile Cargo.lock after the ed25519-dalek and sha2 bumps ([#336](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/336)) ([a776707](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a7767075c83c5dc5feb30f3aac3b0715620f9af1))
-+
- ## [1.11.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.10.1...v1.11.0) (2026-10-30)
+ /**
+  * Publish maturity gate (mirrors checkBountyClaimQuality's execution floor in
+  * skill-network-bridge.ts): re-attempt network publish once a skill has this
+@@ -113,10 +178,18 @@ export function createExecutionTrackingHook(
+         hormonalManager.stimulate("error");
+       }
  
+-      const skillId = findMatchingSkill(db, event.toolName);
++      const readTarget = skillReadTarget(event.toolName, event.params);
++      const skillId = readTarget
++        ? findSkillForRead(db, readTarget)
++        : findMatchingSkill(db, event.toolName);
+       if (!skillId) {
+         return;
+       }
++      // One row per skill per run: the run outcome is stamped by run id, so
++      // a second read of the same SKILL.md would count the run twice.
++      if (readTarget && ctx.runId && alreadyRecordedForRun(db, skillId, ctx.runId)) {
++        return;
++      }
  
-```
-
-**File**: `desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
-```
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
- 
- [[package]]
- name = "bitterbot-desktop"
--version = "1.11.0"
-+version = "1.12.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-desktop"
--version = "1.11.0"
-+version = "1.12.0"
- edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
- 
-```
-
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
-```
-
-**File**: `extensions/discord/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
-```
-
-**File**: `extensions/email/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+       const execId = tracker.startExecution(skillId, ctx.sessionKey, {
+         toolName: event.toolName,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
+- **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
+- **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
+- **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
 - **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
 - **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
-- **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
-- **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
-- **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
-- **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 
 ---
 
@@ -1941,34 +2197,44 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.12.0 (#337)
+## X. skills): skills index compactor no longer merges a block into the next one (#351
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/agents/system-prompt-skills.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9dd9650`: main): release 1.12.0 (#337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eca2269a`: skills): skills index compactor no longer merges a block into the next one (#351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents/system-prompt-skills.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
+  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
+    const annotated = [
+      "  <skill>",
+      "    <name>alpha</name>",
+      "    <description>Use for alpha. Not for beta.</description>",
+      "    <location>/skills/alpha/SKILL.md</location>",
+      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
+      "  </skill>",
+    ].join("\n");
+    const out = compactSkillsPrompt(
+      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
+    );
+    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
+    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
+    expect(alpha).toContain(
+      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
+    );
+    expect(alpha).not.toContain("beta/SKILL.md");
+    expect(alpha).toContain("<description>Use for alpha.</description>");
+    expect(compactSkillsPrompt(out)).toBe(out);
+  });
 
-
-### Features
-
-* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
-* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
-* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
-* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
-
-
-### Bug Fixes
-
-* **acp:** migrate to @agentclientprotoc
+  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
+    const raw = skill("alpha", "Use when x
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1978,4 +2244,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9dd9650` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eca2269a` are properly handled with clean fallback behavior.

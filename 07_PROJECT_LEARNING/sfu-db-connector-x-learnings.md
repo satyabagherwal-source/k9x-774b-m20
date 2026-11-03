@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `6163eb14`  
+> **Source Version**: `c28cd7c3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:27:21.805Z  
+> **Timestamp**: 2026-11-03T11:22:19.684Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:27:21.800Z  
+> **Harvest Timestamp**: 2026-11-03T11:22:19.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2660 stars
+- **Stars / Engagement**: 2659 stars
 
 ---
 
@@ -787,607 +787,268 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6163eb14` (2026-10-31)
-**Commit Message**: Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast
+### Incident Patch 1: `b4f4923f` (2026-11-03)
+**Commit Message**: build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)
 
-feat(arrow_stream)!: report partition errors through the batch iterator
+Bumps [mssql-tds](https://github.com/microsoft/mssql-rs) from 0.2.0 to 0.3.0.
+- [Changelog](https://github.com/microsoft/mssql-rs/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/microsoft/mssql-rs/commits)
 
-**File**: `connectorx-cpp/src/lib.rs` (modified, +5/-1)
+---
+updated-dependencies:
+- dependency-name: mssql-tds
+  dependency-version: 0.3.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Thomas Schmelzer <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -404,7 +404,7 @@ pub unsafe extern "C" fn connectorx_iter_next(
- ) -> *mut CXSlice<CXArray> {
-     let arrow_iter = unsafe { &mut *iter };
-     match arrow_iter.next_batch() {
--        Some(rb) => {
-+        Some(Ok(rb)) => {
-             let mut cols = vec![];
+@@ -5223,9 +5223,9 @@ dependencies = [
  
-             for array in rb.columns() {
-@@ -425,6 +425,10 @@ pub unsafe extern "C" fn connectorx_iter_next(
-             let cx_rb = Box::new(CXSlice::<CXArray>::new_from_vec(cols));
-             Box::into_raw(cx_rb)
-         }
-+        // The C API has no error channel, and a panic cannot unwind through
-+        // `extern "C"`, so this aborts the process like every other failure
-+        // in this crate, as soon as a partition fails.
-+        Some(Err(e)) => panic!("cx writer failed: {}", e),
-         None => std::ptr::null_mut(),
-     }
- }
+ [[package]]
+ name = "mssql-tds"
+-version = "0.2.0"
++version = "0.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b03612dd2098a7b98613b423414afaf3031ff080a24652941abfc1d2e13f6222"
++checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
+ dependencies = [
+  "async-trait",
+  "bigdecimal 0.4.10",
 ```
 
-**File**: `connectorx-python/connectorx/tests/test_mysql.py` (modified, +21/-0)
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -806,3 +806,24 @@ def test_mysql_unconvertible_value_raises(mysql_url: str, protocol: str, column:
-         )
-     # The error names the column's type, not the Option wrapping nullable columns.
-     assert "Option<" not in str(excinfo.value)
-+
-+
-+@pytest.mark.parametrize("protocol", ["binary", "text"])
-+def test_mysql_arrow_stream_unconvertible_value_raises(mysql_url: str, protocol: str) -> None:
-+    # Same values as above, streamed: the batches before the bad row are
-+    # delivered, then iterating raises the same RuntimeError right away instead
-+    # of a PanicException after the whole result set has been fetched.
-+    reader = read_sql(
-+        mysql_url,
-+        "SELECT test_int, test_date FROM test_unconvertible ORDER BY test_int",
-+        protocol=protocol,
-+        return_type="arrow_stream",
-+        batch_size=1,
-+    )
-+
-+    first = reader.read_next_batch()
-+    assert first.num_rows == 1
-+    assert first.column("test_int").to_pylist() == [1]
-+
-+    with pytest.raises(RuntimeError, match=r"Cannot produce a .*column `test_date`"):
-+        reader.read_next_batch()
+@@ -72,7 +72,7 @@ tiberius = { version = "0.7", features = [
+   "chrono",
+   "integrated-auth-gssapi",
+ ], optional = true }
+-mssql-tds = { version = "0.2.0", optional = true }
++mssql-tds = { version = "0.3.0", optional = true }
+ tokio = { version = "1", features = [
+   "rt",
+   "rt-multi-thread",
 ```
 
-**File**: `connectorx-python/src/arrow.rs` (modified, +2/-2)
+---
+
+### Incident Patch 2: `676ced12` (2026-11-01)
+**Commit Message**: build(rust): bump sqlparser from 0.62.0 to 0.63.0
+
+Bumps [sqlparser](https://github.com/apache/datafusion-sqlparser-rs) from 0.62.0 to 0.63.0.
+- [Changelog](https://github.com/apache/datafusion-sqlparser-rs/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/apache/datafusion-sqlparser-rs/compare/v0.62.0...v0.63.0)
+
+---
+updated-dependencies:
+- dependency-name: sqlparser
+  dependency-version: 0.62.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +11/-1)
 ```diff
-@@ -67,12 +67,12 @@ impl PyRecordBatchIterator {
-         py: Python<'py>,
-     ) -> PyResult<Option<Py<PyRecordBatch>>> {
-         match slf.0.next_batch() {
--            Some(rb) => {
-+            Some(Ok(rb)) => {
-                 let wrapped = PyRecordBatch(Some(rb));
-                 let py_obj = Py::new(py, wrapped)?;
-                 Ok(Some(py_obj))
-             }
+@@ -1943,7 +1943,7 @@ dependencies = [
+  "rustc-hash 2.1.3",
+  "serde",
+  "serde_json",
+- "sqlparser 0.62.0",
++ "sqlparser 0.63.0",
+  "testcontainers",
+  "thiserror 2.0.21",
+  "tiberius",
+@@ -8450,6 +8450,16 @@ dependencies = [
+  "sqlparser_derive 0.5.0",
+ ]
+ 
++[[package]]
++name = "sqlparser"
++version = "0.63.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
++dependencies = [
++ "log",
++ "recursive",
++]
++
+ [[package]]
+ name = "sqlparser_derive"
+ version = "0.3.0"
+```
+
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ fehler = "1"
+ itertools = "0.15"
+ log = "0.4"
+ rayon = "1"
+-sqlparser = "0.62"
++sqlparser = "0.63"
+ thiserror = "2"
+ url = "2"
+ owning_ref = "0.4"
+```
+
+---
+
+### Incident Patch 3: `abf1e800` (2026-11-01)
+**Commit Message**: build(rust): bump ureq from 2 to 3 and migrate trino test helper
+
+Port run_trino_statement to the ureq 3 API: .set -> .header,
+.send_string -> .send, .into_json -> .body_mut().read_json().
+
+Supersedes #1039.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +27/-15)
+```diff
+@@ -2030,6 +2030,7 @@ dependencies = [
+  "cookie",
+  "document-features",
+  "idna",
++ "indexmap 2.14.2",
+  "log",
+  "publicsuffix",
+  "serde",
+@@ -9470,20 +9471,34 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
+ 
+ [[package]]
+ name = "ureq"
+-version = "2.12.1"
++version = "3.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "02d1a66277ed75f640d608235660df48c8e3c19f3b4edb6a263315626cc3c01d"
++checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
+ dependencies = [
+- "base64 0.22.1",
++ "base64 0.23.1",
++ "cookie_store",
+  "flate2",
+  "log",
+- "once_cell",
++ "percent-encoding",
+  "rustls 0.23.45",
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+- "url",
+- "webpki-roots 0.26.11",
++ "ureq-proto",
++ "utf8-zero",
++ "webpki-roots 1.0.9",
++]
++
++[[package]]
++name = "ureq-proto"
++version = "0.6.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
++dependencies = [
++ "base64 0.23.1",
++ "http 1.5.0",
++ "httparse",
++ "log",
+ ]
+ 
+ [[package]]
+@@ -9505,6 +9520,12 @@ version = "2.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
+ 
++[[package]]
++name = "utf8-zero"
++version = "0.8.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b8c0a043c9540bae7c578c88f91dda8bd82e59ae27c21baca69c8b191aaf5a6e"
++
+ [[package]]
+ name = "utf8_iter"
+ version = "1.0.4"
+@@ -9731,15 +9752,6 @@ version = "0.25.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5f20c57d8d7db6d3b86154206ae5d8fba62dd39573114de97c2cb0578251f8e1"
+ 
+-[[package]]
+-name = "webpki-roots"
+-version = "0.26.11"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+-dependencies = [
+- "webpki-roots 1.0.9",
+-]
 -
-+            Some(Err(e)) => Err(ConnectorXPythonError::from(e).into()),
-             None => Ok(None),
-         }
-     }
+ [[package]]
+ name = "webpki-roots"
+ version = "1.0.9"
 ```
 
-**File**: `connectorx/examples/batch_test.rs` (modified, +1/-1)
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -49,7 +49,7 @@ fn main() {
-     let mut num_rows = 0;
-     let mut num_batches = 0;
-     for record_batch in batch_iter {
--        let record_batch = record_batch;
-+        let record_batch = record_batch.expect("stream failed");
-         println!("got 1 batch, with {} rows", record_batch.num_rows());
-         num_rows += record_batch.num_rows();
-         num_batches += 1;
+@@ -104,7 +104,7 @@ criterion = "0.8"
+ env_logger = "0.11"
+ iai = "0.1"
+ testcontainers = { version = "0.28", features = ["blocking"] }
+-ureq = { version = "2", features = ["json"] }
++ureq = { version = "3", features = ["json"] }
+ 
+ # pprof depends on nix/pthread and does not build on Windows.
+ [target.'cfg(unix)'.dev-dependencies]
 ```
 
-**File**: `connectorx/src/arrow_batch_iter.rs` (modified, +89/-52)
+**File**: `connectorx/tests/test_db.rs` (modified, +11/-9)
 ```diff
-@@ -1,3 +1,4 @@
-+use crate::errors::OutResult;
- use crate::prelude::*;
- use arrow::record_batch::RecordBatch;
- use itertools::Itertools;
-@@ -32,7 +33,7 @@ where
-     dorder: DataOrder,
-     src_schema: Vec<S::TypeSystem>,
-     dst_schema: Vec<ArrowStreamTypeSystem>,
--    handle: Option<std::thread::JoinHandle<Result<(), TP::Error>>>,
-+    handle: Option<std::thread::JoinHandle<()>>,
-     _phantom: PhantomData<TP>,
- }
- 
-@@ -67,14 +68,17 @@ where
-         })
+@@ -277,22 +277,24 @@ fn run_trino_statement(base_url: &str, statement: &str) {
      }
  
--    fn run(&mut self) {
-+    fn run(&mut self)
-+    where
-+        ConnectorXOutError: From<TP::Error>,
-+    {
-         let src_schema = self.src_schema.clone();
-         let dst_schema = self.dst_schema.clone();
-         let src_partitions = self.src_parts.take().unwrap();
-         let dst_partitions = self.dst_parts.take().unwrap();
-         let dorder = self.dorder;
+     let mut payload: serde_json::Value = ureq::post(&format!("{base_url}/v1/statement"))
+-        .set("X-Trino-User", "test")
+-        .set("X-Trino-Catalog", "test")
+-        .set("X-Trino-Schema", "test")
+-        .send_string(stmt)
++        .header("X-Trino-User", "test")
++        .header("X-Trino-Catalog", "test")
++        .header("X-Trino-Schema", "test")
++        .send(stmt)
+         .expect("execute trino statement")
+-        .into_json()
++        .body_mut()
++        .read_json()
+         .expect("parse trino response");
  
--        self.handle = Some(std::thread::spawn(move || -> Result<(), TP::Error> {
-+        self.handle = Some(std::thread::spawn(move || {
-             let schemas: Vec<_> = src_schema
-                 .iter()
-                 .zip_eq(&dst_schema)
-@@ -83,57 +87,79 @@ where
- 
-             debug!("Start writing");
-             // parse and write
--            dst_partitions
-+            //
-+            // Each partition reports its own error through the record batch
-+            // channel (see `ArrowPartitionWriter::send_error`), so the consumer
-+            // learns about it without joining this thread. `Err(())` only tells
-+            // rayon to stop scheduling the remaining partitions.
-+            let _ = dst_partitions
-                 .into_par_iter()
-                 .zip_eq(src_partitions)
-                 .enumerate()
--                .try_for_each(|(i, (mut dst, mut src))| -> Result<(), TP::Error> {
--                    let mut parser = src.parser()?;
--
--                    match dorder {
--                        DataOrder::RowMajor => loop {
--                            let (n, is_last) = parser.fetch_next()?;
--                            dst.aquire_row(n)?;
--                            for _ in 0..n {
-+                .try_for_each(|(i, (mut dst, mut src))| -> Result<(), ()> {
-+                    let mut parser = match src.parser() {
-+                        Ok(parser) => parser,
-+                        Err(e) => {
-+                            dst.send_error(TP::Error::from(e).into());
-+                            return Err(());
-+                        }
-+                    };
-+
-+                    let result = (|| -> Result<(), TP::Error> {
-+                        match dorder {
-+                            DataOrder::RowMajor => loop {
-+                                let (n, is_last) = parser.fetch_next()?;
-+                                dst.aquire_row(n)?;
-+                                for _ in 0..n {
-+                                    #[allow(clippy::needless_range_loop)]
-+                                    for col in 0..dst.ncols() {
-+                                        {
-+                                            let (s1, s2) = schemas[col];
-+                                            TP::process(s1, s2, &mut parser, &mut dst)?;
-+                                        }
-+                                    }
-+                                }
-+                                if is_last {
-+                                    break;
-+                                }
-+                            },
-+                            DataOrder::ColumnMajor => loop {
-+                                let (n, is_last) = parser.fetch_next()?;
-+                                dst.aquire_row(n)?;
-                                 #[allow(clippy::needless_range_loop)]
-                                 for col in 0..dst.ncols() {
--                                    {
--                                        let (s1, s2) = schemas[col];
--                                        TP::process(s1, s2, &mut parser, &mut dst)?;
-+                                    for _ in 0..n {
-+                                        {
-+                                            let (s1, s2) = schemas[col];
-+                                            TP::process(s1, s2, &mut parser, &mut dst)?;
-+                                        }
-                                     }
-                                 }
--                            }
--                            if is_last {
--                                break;
--                            }
--                        },
--                        DataOrder::ColumnMajor => loop {
--                            let (n, is_last) = parser.fetch_next()?;
--                            dst.aquire_row(n)?;
--                            #[allow(clippy::needless_range_loop)]
--                            for col in 0..dst.ncols() {
--                                for _ in 0..n {
--                                    {
--                                        let (s1, s2) = schemas[col];
--                                        TP::p
-```
-
-**File**: `connectorx/src/destinations/arrowstream/mod.rs` (modified, +50/-13)
-```diff
-@@ -10,6 +10,7 @@ pub use self::typesystem::ArrowTypeSystem;
- use super::{Consume, Destination, DestinationPartition};
- use crate::constants::RECORD_BATCH_SIZE;
- use crate::data_order::DataOrder;
-+use crate::errors::{ConnectorXOutError, OutResult};
- use crate::typesystem::{Realize, TypeAssoc, TypeSystem};
- use anyhow::anyhow;
- use arrow::{datatypes::Schema, record_batch::RecordBatch};
-@@ -28,13 +29,18 @@ use std::{
- type Builder = Box<dyn Any + Send>;
- type Builders = Vec<Builder>;
- 
-+/// A finished batch, or the error that stopped a partition.
-+type Message = OutResult<RecordBatch>;
-+
- pub struct ArrowDestination {
-     schema: Vec<ArrowTypeSystem>,
-     names: Vec<String>,
-     arrow_schema: Arc<Schema>,
-     batch_size: usize,
--    sender: Option<Sender<RecordBatch>>,
--    receiver: Receiver<RecordBatch>,
-+    sender: Option<Sender<Message>>,
-+    /// `None` once an error has been received: the partition writers then fail
-+    /// on their next send instead of buffering batches nobody will read.
-+    receiver: Option<Receiver<Message>>,
- }
- 
- impl Default for ArrowDestination {
-@@ -46,7 +52,7 @@ impl Default for ArrowDestination {
-             arrow_schema: Arc::new(Schema::empty()),
-             batch_size: RECORD_BATCH_SIZE,
-             sender: Some(tx),
--            receiver: rx,
-+            receiver: Some(rx),
-         }
-     }
- }
-@@ -64,7 +70,7 @@ impl ArrowDestination {
-             arrow_schema: Arc::new(Schema::empty()),
-             batch_size,
-             sender: Some(tx),
--            receiver: rx,
-+            receiver: Some(rx),
-         }
-     }
- }
-@@ -128,23 +134,34 @@ impl Destination for ArrowDestination {
- }
- 
- impl ArrowDestination {
--    #[throws(ArrowDestinationError)]
-+    #[throws(ConnectorXOutError)]
-     pub fn arrow(self) -> Vec<RecordBatch> {
-         if self.sender.is_some() {
-             // should not happen since it is dropped after partition
-             // but need to make sure here otherwise recv will be blocked forever
-             std::mem::drop(self.sender);
-         }
-         let mut data = vec![];
--        while let Ok(rb) = self.receiver.recv() {
--            data.push(rb);
-+        if let Some(receiver) = self.receiver {
-+            while let Ok(rb) = receiver.recv() {
-+                data.push(rb?);
-+            }
-         }
-         data
-     }
- 
--    #[throws(ArrowDestinationError)]
--    pub fn record_batch(&mut self) -> Option<RecordBatch> {
--        self.receiver.recv().ok()
-+    /// Blocks until the next record batch is available.
-+    ///
-+    /// Returns `None` once every partition writer is done, or `Some(Err(_))`
-+    /// as soon as a partition fails. After an error the channel is closed, so
-+    /// later calls return `None` and the other partitions stop at their next
-+    /// batch boundary.
-+    pub fn record_batch(&mut self) -> Option<Message> {
-+        let msg = self.receiver.as_ref()?.recv().ok()?;
-+        if msg.is_err() {
-+            self.receiver = None;
-+        }
-+        Some(msg)
-     }
- 
-     pub fn empty_batch(&self) -> RecordBatch {
-@@ -167,7 +184,7 @@ pub struct ArrowPartitionWriter {
-     current_col: usize,
-     arrow_schema: Arc<Schema>,
-     batch_size: usize,
--    sender: Option<Sender<RecordBatch>>,
-+    sender: Option<Sender<Message>>,
- }
- 
- // unsafe impl Sync for ArrowPartitionWriter {}
-@@ -178,7 +195,7 @@ impl ArrowPartitionWriter {
-         schema: Vec<ArrowTypeSystem>,
-         arrow_schema: Arc<Schema>,
-         batch_size: usize,
--        sender: Sender<RecordBatch>,
-+        sender: Sender<Message>,
-     ) -> Self {
-         let mut pw = ArrowPartitionWriter {
-             schema,
-@@ -215,11 +232,31 @@ impl ArrowPartitionWriter {
-             .map(|(builder, &dt)| Realize::<FFinishBuilder>::realize(dt)?(builder))
-             .collect::<std::result::Result<Vec<_>, crate::errors::ConnectorXError>>()?;
-         let rb = RecordBatch::try_new(Arc::clone(&self.arrow_schema), columns)?;
--        self.sender.as_ref().and_then(|s| s.send(rb).ok());
-+        if let Some(sender) = &self.sender {
-+            // The consumer is gone (dropped, or already got an error from
-+            // another partition): stop instead of parsing the rest for nothing.
-+            sender
-+                .send(Ok(rb))
-+                .map_err(|_| anyhow!("record batch receiver dropped"))?;
-+        }
- 
-         self.current_row = 0;
-         self.current_col = 0;
-     }
-+
-+    /// Reports `err` to the consumer and closes this partition's side of the
-+    /// stream. Rows buffered since the last flush are discarded.
-+    ///
-+    /// Call this while the source's query is still alive: some drivers drain
-+    /// the remaining result set when the query is dropped (MySQL does), and
-+    /// the consumer should not have to wait for that.
-+    pub fn send_error(&mut self, err: ConnectorXOutError) {
-+        self.builders = None;
-+        if let Some(sender) = self.sender.take() {
-+            // The consumer may already be gone; nothing else to d
-```
-
-**File**: `connectorx/tests/test_arrow_stream.rs` (modified, +255/-11)
-```diff
-@@ -1,22 +1,19 @@
-+use anyhow::anyhow;
- use connectorx::arrow_batch_iter::ArrowBatchIter;
--use connectorx::destinations::arrowstream::ArrowDestinationError;
- use connectorx::impl_transport;
- use connectorx::prelude::*;
- use connectorx::sources::dummy::DummyTypeSystem;
--
--#[derive(Debug, thiserror::Error)]
--pub enum PanicArrowStreamTransportError {
--    #[error(transparent)]
--    Destination(#[from] ArrowDestinationError),
--    #[error(transparent)]
--    ConnectorX(#[from] ConnectorXError),
--}
-+use connectorx::sources::{PartitionParser, Produce, Source, SourcePartition};
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use std::sync::mpsc::{channel, Receiver};
-+use std::sync::Arc;
-+use std::time::Duration;
- 
- pub struct PanicArrowStreamTransport;
- 
- impl_transport!(
-     name = PanicArrowStreamTransport,
--    error = PanicArrowStreamTransportError,
-+    error = ConnectorXOutError,
-     systems = DummyTypeSystem => ArrowStreamTypeSystem,
-     route = DummySource => ArrowStreamDestination,
-     mappings = {
-@@ -53,7 +50,7 @@ fn producer_panic_propagates() {
-     .unwrap();
-     iter.prepare();
- 
--    let first = iter.next().unwrap();
-+    let first = iter.next().unwrap().unwrap();
-     assert_eq!(first.num_rows(), 2);
- 
-     // Two panic messages are printed during this test, both expected:
-@@ -62,3 +59,250 @@ fn producer_panic_propagates() {
-     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| iter.next()));
-     assert!(result.is_err(), "producer panic must propagate to consumer");
- }
-+
-+/// A single-column source of `i64` values `0, 1, 2, ...` per partition. A
-+/// partition's parser fails when asked for value `fail_at`, if set.
-+///
-+/// A parser given a `release` receiver also blocks in `Drop` until the test
-+/// releases it, which mimics a driver that drains the rest of the result set
-+/// on teardown (MySQL does this) and lets the test check that the error
-+/// reaches the consumer *before* that teardown starts.
-+pub struct FailingSource {
-+    partitions: Vec<FailingSourcePartition>,
-+}
-+
-+impl FailingSource {
-+    fn new(nrows: usize, fail_at: usize, release: Receiver<()>, dropped: Arc<AtomicBool>) -> Self {
-+        Self {
-+            partitions: vec![FailingSourcePartition::new(
-+                nrows,
-+                Some(fail_at),
-+                Some(release),
-+                dropped,
-+            )],
-+        }
-+    }
-+
-+    fn with_partitions(partitions: Vec<FailingSourcePartition>) -> Self {
-+        Self { partitions }
-+    }
-+}
-+
-+impl Source for FailingSource {
-+    const DATA_ORDERS: &'static [DataOrder] = &[DataOrder::RowMajor];
-+    type TypeSystem = DummyTypeSystem;
-+    type Partition = FailingSourcePartition;
-+    type Error = ConnectorXError;
-+
-+    fn set_data_order(&mut self, _data_order: DataOrder) -> Result<(), ConnectorXError> {
-+        Ok(())
-+    }
-+
-+    fn set_queries<Q: ToString>(&mut self, _queries: &[CXQuery<Q>]) {}
-+
-+    fn set_origin_query(&mut self, _query: Option<String>) {}
-+
-+    fn fetch_metadata(&mut self) -> Result<(), ConnectorXError> {
-+        Ok(())
-+    }
-+
-+    fn result_rows(&mut self) -> Result<Option<usize>, ConnectorXError> {
-+        Ok(None)
-+    }
-+
-+    fn names(&self) -> Vec<String> {
-+        vec!["a".to_string()]
-+    }
-+
-+    fn schema(&self) -> Vec<DummyTypeSystem> {
-+        vec![DummyTypeSystem::I64(false)]
-+    }
-+
-+    fn partition(self) -> Result<Vec<FailingSourcePartition>, ConnectorXError> {
-+        Ok(self.partitions)
-+    }
-+}
-+
-+pub struct FailingSourcePartition {
-+    nrows: usize,
-+    fail_at: Option<usize>,
-+    counter: usize,
-+    release: Option<Receiver<()>>,
-+    dropped: Arc<AtomicBool>,
-+}
-+
-+impl FailingSourcePartition {
-+    fn new(
-+        nrows: usize,
-+        fail_at: Option<usize>,
-+        release: Option<Receiver<()>>,
-+        dropped: Arc<AtomicBool>,
-+    ) -> Self {
-+        Self {
-+            nrows,
-+            fail_at,
-+            counter: 0,
-+            release,
-+            dropped,
-+        }
-+    }
-+}
-+
-+impl SourcePartition for FailingSourcePartition {
-+    type TypeSystem = DummyTypeSystem;
-+    type Parser<'a> = FailingSourceParser<'a>;
-+    type Error = ConnectorXError;
-+
-+    fn result_rows(&mut self) -> Result<(), ConnectorXError> {
-+        Ok(())
-+    }
-+
-+    fn parser(&mut self) -> Result<FailingSourceParser<'_>, ConnectorXError> {
-+        Ok(FailingSourceParser { part: self })
-+    }
-+
-+    fn nrows(&self) -> usize {
-+        self.nrows
-+    }
-+
-+    fn ncols(&self) -> usize {
-+        1
-+    }
-+}
-+
-+pub struct FailingSourceParser<'a> {
-+    part: &'a mut FailingSourcePartition,
-+}
-+
-+impl Drop for FailingSourceParser<'_> {
-+    fn drop(&mut self) {
-+        if let Some(release) = self.part.release.take() {
-+            // Give up eventually so a regression fails the test instead of hanging it.
-+            let _ = release.recv_timeout(Duration::from_secs(5));
-+        }
-+        self.part.dropped.store(true, Ordering::SeqCst);
-+    }
-+}
-+
-+impl<'a> PartitionP
-```
-
-**File**: `connectorx/tests/test_mysql.rs` (modified, +58/-1)
-```diff
-@@ -11,11 +11,13 @@ use arrow::{
-     record_batch::RecordBatch,
- };
- use connectorx::{
-+    arrow_batch_iter::ArrowBatchIter,
-     destinations::arrow::ArrowDestination,
-+    errors::OutResult,
-     prelude::*,
-     sources::mysql::{BinaryProtocol, MySQLSource, TextProtocol},
-     sql::CXQuery,
--    transports::{MySQLArrowTransport, MySQLArrowTransportError},
-+    transports::{MySQLArrowStreamTransport, MySQLArrowTransport, MySQLArrowTransportError},
- };
- 
- #[test]
-@@ -734,3 +736,58 @@ fn test_mysql_unconvertible_value_is_error() {
-         }
-     }
- }
-+
-+/// With the streaming destination the conversion failure must show up as an
-+/// `Err` item of the iterator, after the batches that preceded it.
-+fn assert_unconvertible_value_fails_stream(binary: bool) {
-+    let _ = env_logger::builder().is_test(true).try_init();
-+    let dburl = test_db::mysql_url();
-+    // Row 1 is fine, row 2 holds the zero date.
-+    let queries = [CXQuery::naked(
-+        "select test_int, test_date from test_unconvertible order by test_int",
-+    )];
-+    let destination = ArrowStreamDestination::new_with_batch_size(1);
-+
-+    let mut iter: Box<dyn Iterator<Item = OutResult<RecordBatch>>> = if binary {
-+        let source = MySQLSource::<BinaryProtocol>::new(&dburl, 1).unwrap();
-+        let mut iter = ArrowBatchIter::<_, MySQLArrowStreamTransport<BinaryProtocol>>::new(
-+            source,
-+            destination,
-+            None,
-+            &queries,
-+        )
-+        .unwrap();
-+        iter.prepare();
-+        Box::new(iter)
-+    } else {
-+        let source = MySQLSource::<TextProtocol>::new(&dburl, 1).unwrap();
-+        let mut iter = ArrowBatchIter::<_, MySQLArrowStreamTransport<TextProtocol>>::new(
-+            source,
-+            destination,
-+            None,
-+            &queries,
-+        )
-+        .unwrap();
-+        iter.prepare();
-+        Box::new(iter)
-+    };
-+
-+    let first = iter.next().unwrap().unwrap();
-+    assert_eq!(first.num_rows(), 1);
-+
-+    let msg = iter.next().unwrap().unwrap_err().to_string();
-+    assert!(
-+        msg.contains("Cannot produce a") && msg.contains("column `test_date`"),
-+        "unexpected error message: {}",
-+        msg
-+    );
-+
-+    assert!(iter.next().is_none());
-+}
-+
-+#[test]
-+fn test_mysql_unconvertible_value_fails_stream() {
-+    for binary in [true, false] {
-+        assert_unconvertible_value_fails_stream(binary);
-+    }
-+}
+     while let Some(next) = payload.get("nextUri").and_then(|v| v.as_str()) {
+         payload = ureq::get(next)
+-            .set("X-Trino-User", "test")
+-            .set("X-Trino-Catalog", "test")
+-            .set("X-Trino-Schema", "test")
++            .header("X-Trino-User", "test")
++            .header("X-Trino-Catalog", "test")
++            .header("X-Trino-Schema", "test")
+             .call()
+             .expect("poll trino query")
+-            .into_json()
++            .body_mut()
++            .read_json()
+             .expect("parse trino poll response");
+         if payload.get("error").is_some() {
+             panic!("trino query failed: {}", payload);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1034** (2026-10-26): build(deps-dev): bump certifi from 2026.2.25 to 2026.10.19 in /connectorx-python (@dependabot[bot])
-- **PR #1033** (2026-10-26): build(rust): bump serde_json from 1.0.151 to 1.0.154 (@dependabot[bot])
-- **PR #1032** (2026-10-26): build(rust): bump testcontainers from 0.23.3 to 0.28.0 (@dependabot[bot])
-- **PR #1031** (2026-10-26): build(rust): bump tokio-util from 0.7.19 to 0.7.20 (@dependabot[bot])
-- **PR #1028** (2026-10-23): ci(import-test): replace retired macos-10.15 runner (@tschm)
-- **PR #1026** (2026-10-31): feat(arrow_stream)!: report partition errors through the batch iterator (@oystersuki)
+- **PR #1041** (2026-11-03): mssql: make src_mssql default to mssql-tds (step before Phase 4) (@tschm)
+- **PR #1040** (2026-11-01): build(rust): bump ureq from 2 to 3 (@tschm)
+- **PR #1039** (closed): build(rust): bump ureq from 2.12.1 to 3.4.2 (@dependabot[bot])
+- **PR #1038** (2026-11-02): build(deps): bump Gr1N/setup-poetry from 9 to 10 (@dependabot[bot])
+- **PR #1037** (closed): build(rust): bump arrow from 56.2.1 to 60.1.0 (@dependabot[bot])
+- **PR #1036** (2026-11-03): build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (@dependabot[bot])
 
 ---
 
@@ -1407,32 +1068,30 @@ feat(arrow_stream)!: report partition errors through the batch iterator
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast
+## X. build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)
 
 **RULE**:
-When implementing operations in `connectorx-cpp/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6163eb14`: Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4f4923f`: build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-cpp/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Some(Ok(rb)) => {
-        // The C API has no error channel, and a panic cannot unwind through
-        // `extern "C"`, so this aborts the process like every other failure
-        // in this crate, as soon as a partition fails.
-        Some(Err(e)) => panic!("cx writer failed: {}", e),
+version = "0.3.0"
+checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        Some(rb) => {
+version = "0.2.0"
+checksum = "b03612dd2098a7b98613b423414afaf3031ff080a24652941abfc1d2e13f6222"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6163eb14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4f4923f` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `ef31e883`  
+> **Source Version**: `dfc8fb5e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:51:44.943Z  
+> **Timestamp**: 2026-11-03T10:37:12.662Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:51:44.936Z  
+> **Harvest Timestamp**: 2026-11-03T10:37:11.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25740 stars
+- **Stars / Engagement**: 25763 stars
 
 ---
 
@@ -297,7 +297,7 @@ func (m *BgpRoutePolicyStatement) contextValidateMatchFamilies(ctx context.Conte
 		if m.MatchFamilies[i] != nil {
 
 			if typeutils.IsZero(m.MatchFamilies[i]) { // not required
-				return nil
+				continue
 			}
 
 			if err := m.MatchFamilies[i].ContextValidate(ctx, formats); err != nil {
@@ -1259,14 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49715** (2026-10-30): **bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity**
-  *Symptoms*: CIDR_IDENTITY_RANGE_END evaluated to 0x100FFFF, while the allocator can hand out CIDR identities up to identity.MaxLocalIdentity (0x1FFFFFF). Identities above the BPF limit would not be recognized by identity_is_cidr_range() and, as a consequence, by identity_is_world().  Align the constant with identity.MaxLocalIdentity.  Fixes: #49613.
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > > I did a small proof-of-concept doing the above that a while ago. Let me try and see whether I can dust it of and bring it into a PR-ready state.  Let me know when/if you manage to open it, I'm curious! I don't know if what you've been working on would tackle only a subset of BPF macros, but yeah, there are a lot of things that would be lovely to have auto-generated/synced so that they won't drift anymore.  Thanks so much for the review btw 🙏🏼  
+- **Issue #49795** (2026-11-03): **helm: Use preflight.updateStrategy in the pre-flight DaemonSet**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level]. - [x] Thanks for contributing!  `templates/cilium-preflight/daemonset.yaml` ignores `preflight.updateStrategy`, so the pre-flight DaemonSet always rolls one node at a time. This renders it the same way the agent and node-init DaemonSets render theirs. The default (`type: RollingUpdate`) matches the API server default, so the only change with default values is that the field is now explicit.  Fixes: #49794  Testing: - `helm template` with default values: the only diff is `updateStrategy: {type: RollingU
 
-- **Issue #49713** (2026-10-30): **cni-chaining: extend Documentation and warn when lacking route MTU**
-  *Symptoms*: Aligned with what has been done previously for WireGuard, here we:  1. Extend documentation specific for egress gateway. 2. Extend general cni-chaining documentation mentioning features (so far explicitly supported) that would require this to be enabled. 3. Add an Agent warning in case the parameter is not provided.  I've considered making it default and not opt-in, but in chaining mode the other plugin creates the pod's netns, veth and routes, and Cilium rewriting routes there can conflict with the plugin's own MTU management. Other minor reasons are that we've limited testing of chaining in CI (only awscni).  Fixes: #34493.
+- **Issue #49794** (2026-11-03): **helm: preflight.updateStrategy is ignored by the cilium-pre-flight-check DaemonSet**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Version  main, v1.19.10, v1.18.9  ### What happened?  `values.yaml` documents `preflight.updateStrategy` (default `type: RollingUpdate`), but `templates/cilium-preflight/daemonset.yaml` never reads it. Any `rollingUpdate.maxUnavailable` or `type` set there is dropped, and the `cilium-pre-flight-check` DaemonSet always gets the API server default (`maxUnavailable: 1`).  Expected: the DaemonSet uses `preflight.updateStrategy`, the same way the agent (`updateStrategy`) and node-init (`nodeinit.updateStrategy`) DaemonSets use theirs.  Impact: on large clusters the preflight rolls one node at a time. We measured ~30s per node, so a 2,390-node cluster takes ~20h to pre-pull a new image. The agent rolls in percentage batches, so it finishes long before the preflight does.  ### How can we reproduce the issue?  ``` helm template cilium cilium/cilium --version 1.19.10 -n kube-system \   --set preflight.enabled=true --set agent=false --set operator.enabled=false \   --set preflight.updateStrategy.rollingUpdate.maxUnavailable=2 \   | yq 'select(.kind=="DaemonSet" and .metadata.name=="cilium-pre-flight-check") | .spec.updateStrategy' ```  Output is `null`. After installing it on a kind cluster, the live DaemonSet has `{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"}`.  ### Cilium Version  Helm chart 1.18.9 and 1.19.10 (also present on main)  ### Kernel Version  N/A (Helm temp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,267 +1280,383 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef31e883` (2026-10-29)
-**Commit Message**: hubble: fix deleted-pod metrics cleanup with dynamic configuration
+### Incident Patch 1: `72b61a24` (2026-09-04)
+**Commit Message**: pkg/metrics: add cilium_agent_memory_bytes
 
-Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
+process_resident_memory_bytes only accounts for what the agent process
+itself maps, so it misses the kernel memlock charged for Cilium BPF maps
+and programs. That memory is not part of RSS and is not re-attributed to
+the cgroup of a restarted agent, so sizing the agent from RSS alone
+undercounts what a node actually spends on Cilium.
 
-**File**: `pkg/hubble/metrics/dynamic_flow_processor.go` (modified, +9/-0)
+Add cilium_agent_memory_bytes, a gauge broken down by a component label:
+go for Go runtime memory in use (heap, stack and the runtime allocators),
+bpf_maps and bpf_progs for the memlock already reported by the BPF
+collector, and total for the sum of the three. The BPF numbers come from
+getBPFUsage(), so a scrape still walks the kernel once no matter how many
+collectors ask for them.
+
+Signed-off-by: Maxime VISONNEAU <[REDACTED_EMAIL]>
+
+**File**: `Documentation/observability/metrics.rst` (modified, +21/-4)
 ```diff
-@@ -13,6 +13,7 @@ import (
+@@ -644,12 +644,29 @@ Name                                       Labels
+ ``bpf_maps_virtual_memory_max_bytes``                                                                            Enabled    Max memory used by eBPF maps installed in the system
+ ``bpf_progs_virtual_memory_max_bytes``                                                                           Enabled    Max memory used by eBPF programs installed in the system
+ ``bpf_ratelimit_dropped_total``            ``usage``                                                             Enabled    Total drops resulting from BPF ratelimiter, tagged by source of drop
++``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
+ ========================================== ===================================================================== ========== ========================================================
  
- 	flowpb "github.com/cilium/cilium/api/v1/flow"
- 	"github.com/cilium/cilium/pkg/hubble/metrics/api"
-+	"github.com/cilium/cilium/pkg/k8s/types"
- 	"github.com/cilium/cilium/pkg/lock"
- 	"github.com/cilium/cilium/pkg/logging/logfields"
- )
-@@ -88,9 +89,17 @@ func NewDynamicFlowProcessor(reg *prometheus.Registry, logger *slog.Logger, conf
- 	}
- 	watcher := NewMetricConfigWatcher(logger, configFilePath, dynamicFlowProcessor.onConfigReload)
- 	dynamicFlowProcessor.watcher = watcher
-+	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
- 	return dynamicFlowProcessor
- }
+-Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
+-are currently reporting the system-wide memory usage of eBPF that is directly
+-and not directly managed by Cilium. This might change in the future and only
+-report the eBPF memory usage directly managed by Cilium.
++``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
++the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
++the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
++those programs use. Maps that Cilium pins but that no loaded program uses are not
++counted, and a map shared with an eBPF program outside of Cilium is counted in full.
++
++``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
++into a single estimate, which is useful for capacity planning. Its ``component``
++label takes the following values:
++
++- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
++  the runtime allocators.
++- ``bpf_maps``: kernel memlock of the eBPF maps described above.
++- ``bpf_progs``: kernel memlock of the eBPF programs described above.
++- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
++
++The eBPF memlock is not part of the agent's resident set size, and it is not
++re-attributed to the cgroup of a restarted agent, which is why it is worth
++accounting for separately from the process RSS reported by
++``process_resident_memory_bytes``.
  
-+func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
-+	d.mutex.RLock()
-+	defer d.mutex.RUnlock()
-+
-+	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
-+}
-+
- func (d *DynamicFlowProcessor) onConfigReload(ctx context.Context, hash uint64, config api.Config) {
- 	d.mutex.Lock()
- 	defer d.mutex.Unlock()
+ Drops/Forwards (L3/L4)
+ ~~~~~~~~~~~~~~~~~~~~~~
 ```
 
-**File**: `pkg/hubble/metrics/metrics.go` (modified, +11/-9)
+**File**: `Documentation/spelling_wordlist.txt` (modified, +1/-0)
 ```diff
-@@ -32,6 +32,7 @@ import (
- type CiliumEndpointDeletionHandler struct {
- 	gracefulPeriod time.Duration
- 	queue          workqueue.TypedDelayingInterface[*types.CiliumEndpoint]
-+	cleanup        func(*types.CiliumEndpoint)
- }
- 
- var (
-@@ -66,26 +67,27 @@ var (
- )
- 
- func ProcessCiliumEndpointDeletion(pod *types.CiliumEndpoint) error {
--	if endpointDeletionHandler != nil && EnabledMetrics != nil {
-+	if endpointDeletionHandler != nil {
- 		endpointDeletionHandler.queue.AddAfter(pod, endpointDeletionHandler.gracefulPeriod)
- 	}
- 	return nil
- }
- 
--func initEndpointDeletionHandler() {
-+func initEndpointDeletionHandler(cleanup func(*types.CiliumEndpoint)) {
- 	endpointDeletionHandler = &CiliumEndpointDeletionHandler{
- 		gracefulPeriod: time.Minute,
- 		queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
-+		cleanup:        cleanup,
- 	}
--
-+	handler := endpointDeletionHandler
- 	go func() {
- 		for {
--			endpoint, quit := endpointDeletionHandler.queue.Get()
-+			endpoint, quit := handler.queue.Get()
- 			if quit {
- 				return
- 			}
--			api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
--			endpointDeletionHandler.queue.Done(endpoint)
-+			handler.cleanup(endpoint)
-+			handler.queue.Done(endpoint)
- 		}
- 	}()
- }
-@@ -103,7 +105,9 @@ func InitMetrics(logger *slog.Logger, reg *prometheus.Registry, enabled *api.Con
- 	reg.MustRegister(RequestsTotal)
- 	reg.MustRegister(RequestDuration)
- 
--	initEndpointDeletionHandler()
-+	initEndpointDeletionHandler(func(endpoint *types.CiliumEndpoint) {
-+		api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
-+	})
- 
- 	return nil
- }
-@@ -114,8 +118,6 @@ func InitHubbleInternalMetrics(reg *prometheus.Registry, grpcMetrics *grpc_prome
- 	reg.MustRegister(RequestsTotal)
- 	reg.MustRegister(RequestDuration)
- 
--	initEndpointDeletionHandler()
--
- 	return nil
- }
- 
+@@ -593,6 +593,7 @@ mediabot
+ memcache
+ memcached
+ memcd
++memlock
+ microservice
+ microservices
+ minikube
 ```
 
-**File**: `pkg/hubble/metrics/metrics_test.go` (modified, +202/-1)
+**File**: `pkg/metrics/cell.go` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,8 @@ import (
- 	"log/slog"
- 	"net/http"
- 	"net/http/httptest"
-+	"os"
-+	"path/filepath"
- 	"sort"
- 	"testing"
- 	"time"
-@@ -34,25 +36,223 @@ import (
+@@ -52,6 +52,7 @@ var AgentCell = cell.Group(
+ 			// expensive to sample and currently not terrible useful to keep data on.
+ 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newStatusCollector(logger)})
+ 			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newbpfCollector(logger)})
++			reg.inner.MustRegister(pkgmetric.EnabledCollector{C: newAgentMemoryCollector(logger)})
  
- func TestInitializedMetrics(t *testing.T) {
- 	t.Run("Should send pod removal to delayed delivery queue", func(t *testing.T) {
-+		previousEnabledMetrics := EnabledMetrics
-+		previousEndpointDeletionHandler := endpointDeletionHandler
-+		t.Cleanup(func() {
-+			endpointDeletionHandler.queue.ShutDown()
-+			EnabledMetrics = previousEnabledMetrics
-+			endpointDeletionHandler = previousEndpointDeletionHandler
-+		})
+ 			// Resolve the global registry variable for as long as we still have global functions
+ 			registryResolver.Resolve(reg)
+```
+
+**File**: `pkg/metrics/memory.go` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
 +
- 		deletedEndpoint := &types.CiliumEndpoint{
- 			ObjectMeta: slim_metav1.ObjectMeta{
- 				Name: "name",
- 			},
- 		}
--		EnabledMetrics = []api.NamedHandler{}
-+		EnabledMetrics = nil
- 		endpointDeletionHandler = &CiliumEndpointDeletionHandler{
- 			gracefulPeriod: 10 * time.Millisecond,
- 			queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
- 		}
- 
- 		ProcessCiliumEndpointDeletion(deletedEndpoint)
- 
-+		require.Eventually(t, func() bool {
-+			return endpointDeletionHandler.queue.Len() == 1
-+		}, time.Second, 10*time.Millisecond)
- 		received, _ := endpointDeletionHandler.queue.Get()
- 		assert.Equal(t, deletedEndpoint, received)
-+	})
++package metrics
 +
++import (
++	"log/slog"
++	"runtime"
++
++	"github.com/prometheus/client_golang/prometheus"
++
++	"github.com/cilium/cilium/pkg/logging/logfields"
++)
++
++// agentMemoryComponents are the valid values for the agent_memory_bytes component label.
++var agentMemoryComponents = []string{
++	"go",
++	"bpf_maps",
++	"bpf_progs",
++	"total",
 +}
 +
-+func TestDynamicMetricsCleanupOnEndpointDeletion(t *testing.T) {
-+	dfp, reg := newTestDynamicFlowProcessor(t)
-+
-+	processDropFlow(t, dfp, "deleted-source", "live-destination")
-+	processDropFlow(t, dfp, "live-source", "deleted-destination")
-+	processDropFlow(t, dfp, "live-source", "live-destination")
-+	processDropFlow(t, dfp, "live-source", "live-destination")
-+
-+	require.Equal(t, map[string]float64{
-+		"test/deleted-source->test/live-destination": 1,
-+		"test/live-source->test/deleted-destination": 1,
-+		"test/live-source->test/live-destination":    2,
-+	}, gatheredDropMetrics(t, reg))
-+
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-destination", Namespace: "test"},
-+	}))
-+
-+	require.EventuallyWithT(t, func(c *assert.CollectT) {
-+		assert.Equal(c, map[string]float64{
-+			"test/live-source->test/live-destination": 2,
-+		}, gatheredDropMetrics(c, reg))
-+	}, time.Second, 10*time.Millisecond)
-+}
- 
-+func TestStaticMetricsCleanupOnEndpointDeletion(t *testing.T) {
-+	previousEnabledMetrics := EnabledMetrics
-+	previousEndpointDeletionHandler := endpointDeletionHandler
-+	t.Cleanup(func() {
- 		endpointDeletionHandler.queue.ShutDown()
-+		EnabledMetrics = previousEnabledMetrics
-+		endpointDeletionHandler = previousEndpointDeletionHandler
- 	})
- 
-+	reg := prometheus.NewPedanticRegistry()
-+	require.NoError(t, InitMetrics(
-+		hivetest.Logger(t),
-+		reg,
-+		api.ParseStaticMetricsConfig([]string{"drop:sourceContext=pod;destinationContext=pod"}),
-+		grpc_prometheus.NewServerMetrics(),
-+	))
-+	endpointDeletionHandler.gracefulPeriod = 0
-+
-+	processor := NewStaticFlowProcessor(hivetest.Logger(t), EnabledMetrics)
-+	processDropFlow(t, processor, "deleted-source", "live-destination")
-+	processDropFlow(t, processor, "live-source", "live-destination")
-+	require.Equal(t, map[string]float64{
-+		"test/deleted-source->test/live-destination": 1,
-+		"test/live-source->test/live-destination":    1,
-+	}, gatheredDropMetrics(t, reg))
-+
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	require.EventuallyWithT(t, func(c *assert.CollectT) {
-+		assert.Equal(c, map[string]float64{
-+			"test/live-source->test/live-destination": 1,
-+		}, gatheredDropMetrics(c, reg))
-+	}, time.Second, 10*time.Millisecond)
++type agentMemoryCollector struct {
++	logger *slog.Logger
++	desc   *prometheus.Desc
 +}
 +
-+func TestDynamicMetricsCleanupUsesReplacementHandlers(t *testing.T) {
-+	dfp, reg := newTestDynamicFlowProcessor(t)
++func newAgentMemoryCollector(logger *slog.Logger) *agentMemoryCollector {
++	return &agentMemoryCollector{
++		logger: logger,
++		desc: prometheus.NewDesc(
++			prometheus.BuildFQName(Namespace, "", "agent_memory_bytes"),
++			"Estimated memory usage of the Cilium agent in bytes, broken down by component: "+
++				"go for memory in use by the Go runtime, bpf_maps and bpf_progs for the kernel memlock "+
++				"of the eBPF maps and programs loaded by Cilium, and total for the sum of the three. "+
++				"The eBPF memlock is not part of the agent's resident set size.",
++			[]string{"component"}, nil,
++		),
++	}
++}
 +
-+	cleanup := endpointDeletionHandler.cleanup
-+	dequeued := make(chan struct{})
-+	release := make(chan struct{})
-+	released := false
-+	releaseCleanup := func() {
-+		if !released {
-+			close(release)
-+			released = true
++func (c *agentMemoryCollector) Describe(ch chan<- *prometheus.Desc) {
++	ch <- c.desc
++}
++
++func (c *agentMemoryCollector) Collect(ch chan<- prometheus.Metric) {
++	goBytes := goRuntimeInUseBytes()
++
++	var bpfMapBytes, bpfProgBytes uint64
++	bpfUsage, err := getBPFUsage()
++	if err != nil {
++		c.logger.Error("retrieving BPF maps & programs usage", logfields.Error, err)
++	} else {
++		bpfMapBytes = bpfUsage.mapBytes
++		bpfProgBytes = bpfUsage.programBytes
++	}
++	totalBytes := goBytes + bpfMapBytes + bpfProgBytes
++
++	for _, component := range agentMemoryComponents {
++		var value uint64
++		switch component {
++		case "go":
++			value = goBytes
++		case "bpf_maps":
++			value = bpfMapBytes
++		case "bpf_progs":
++			value = bpfProgBytes
++		case "total":
++			value = totalBytes
 +		}
++
++		ch <- prometheus.MustNewConstMetric(
++			c.desc,
++			prometheus.GaugeValue,
++			float64(value),
++			component,
++		)
 +	}
-+	t.Cleanup(releaseCleanup)
-+	endpointDeletionHandler.cleanup = func(endpoint *types.CiliumEndpoint) {
-+		close(dequeued)
-+		<-release
-+		cleanup(endpoint)
++}
++
++// goRuntimeInUseBytes returns memory currently in use by the Go runtime.
++func goRuntimeInUseBytes() uint64 {
++	var ms runtime.MemStats
++	runtime.ReadMemStats(&ms)
++	return uint64(ms.HeapInuse + ms.StackInuse + ms.MSpanInuse + ms.MCacheInuse)
++}
+```
+
+**File**: `pkg/metrics/memory_test.go` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package metrics
++
++import (
++	"runtime"
++	"testing"
++
++	"github.com/cilium/hive/hivetest"
++	"github.com/prometheus/client_golang/prometheus"
++	dto "github.com/prometheus/client_model/go"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/cilium/cilium/pkg/testutils"
++)
++
++func TestGoRuntimeInUseBytes(t *testing.T) {
++	assert.NotZero(t, goRuntimeInUseBytes())
++}
++
++func TestPrivilegedAgentMemoryCollectorCollect(t *testing.T) {
++	testutils.PrivilegedTest(t)
++	if runtime.GOOS != "linux" {
++		t.Skip("requires linux")
 +	}
 +
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	select {
-+	case <-dequeued:
-+	case <-time.After(time.Second):
-+		releaseCleanup()
-+		t.Fatal("endpoint deletion was not dequeued")
++	collector := newAgentMemoryCollector(hivetest.Logger(t))
++	ch := make(chan prometheus.Metric, len(agentMemoryComponents))
++	collector.Collect(ch)
++	close(ch)
++
++	got := make(map[string]float64, len(agentMemoryComponents))
++	for metric := range ch {
++		dm, err := metricToDTO(metric)
++		require.NoError(t, err)
++		require.Len(t, dm.Label, 1)
++		got[dm.Label[0].GetValue()] = dm.GetGauge().GetValue()
 +	}
 +
-+	config := api.Config{Metrics: []*api.MetricConfig{{
-+		Name: "drop",
-+		ContextOptionConfigs: []*api.ContextOptionConfig{
-+			{Name: "sourceContext", Values: []string{"pod"}},
-+			{Name: "destinationContext", Values: []string{"pod"}},
-+		},
-+	}}}
-+	dfp.onConfigReload(t.Context(), 0, api.Config{})
-+	dfp.onConfigReload(t.Context(), 0, config)
++	for _, component := range agentMemoryComponents {
++		value, ok := got[component]
++		require.True(t, ok, "missing component %s", component)
++		assert.GreaterOrEqual(t, value, float64(0), "component %s", component)
++	}
 +
-+	processDropFlow(t, dfp, "deleted-source"
++	assert.Equal(t, got["go"]+got["bpf_maps"]+got["bpf_progs"], got["total"])
++}
++
++func metricToDTO(metric prometheus.Metric) (*dto.Metric, error) {
++	var dm dto.Metric
++	if err := metric.Write(&dm); err != nil {
++		return nil, err
++	}
++	return &dm, nil
++}
+```
+
+---
+
+### Incident Patch 2: `dfc8fb5e` (2026-09-25)
+**Commit Message**: cilium-cli: Fix unschedulable client pod on 2-node clusters
+
+On AKS only 2 of the 4 nodes the workflow creates run Cilium, and both
+client3 and echo-other-node declare a required pod anti-affinity on
+name=client over kubernetes.io/hostname. kube-scheduler enforces those
+symmetrically, binds one pod at a time and never backtracks, so once it
+puts the two of them on different nodes before it binds the client pod,
+the client pod has no candidate node left and the setup dies after the
+5 minute readiness wait:
+
+  client-7b7877766f-q84m2: Unschedulable: 0/4 nodes are available: 2
+  node(s) didn't satisfy existing pods anti-affinity rules, 2 node(s)
+  had untolerated taint(s).
+
+The fixture relies on a binding order Kubernetes does not promise.
+
+This commit gives client3 a required pod affinity on echo-other-node, so
+a single anti-affinity edge points at the client pod and it loses at
+most one candidate node whatever the binding order. client3 lands on
+echo-other-node's node, which echo-other-node's own anti-affinity keeps
+off the client node, so the third client still cannot share a node with
+the first two.
+
+This commit was prepared with AIL:3. I personally checked the pod
+placement dumpe
+
+**File**: `cilium-cli/connectivity/check/deployment.go` (modified, +3/-3)
+```diff
+@@ -1479,7 +1479,7 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
+ 	}
+ 
+ 	if ct.params.MultiCluster == "" && !ct.params.SingleNode {
+-		// 3rd client scheduled on a different node than the first 2 clients
++		// 3rd client colocated with echo-other-node, hence never on the client node
+ 		_, err = ct.clients.src.GetDeployment(ctx, ct.params.TestNamespace, client3DeploymentName, metav1.GetOptions{})
+ 		if err != nil {
+ 			ct.Logf("✨ [%s] Deploying %s deployment...", ct.clients.src.ClusterName(), client3DeploymentName)
+@@ -1491,12 +1491,12 @@ func (ct *ConnectivityTest) deploy(ctx context.Context) error {
+ 				Labels:      map[string]string{"other": "client-other-node"},
+ 				Annotations: ct.params.DeploymentAnnotations.Match(client3DeploymentName),
+ 				Affinity: &corev1.Affinity{
+-					PodAntiAffinity: &corev1.PodAntiAffinity{
++					PodAffinity: &corev1.PodAffinity{
+ 						RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+ 							{
+ 								LabelSelector: &metav1.LabelSelector{
+ 									MatchExpressions: []metav1.LabelSelectorRequirement{
+-										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{clientDeploymentName}},
++										{Key: "name", Operator: metav1.LabelSelectorOpIn, Values: []string{echoOtherNodeDeploymentName}},
+ 									},
+ 								},
+ 								TopologyKey: corev1.LabelHostname,
+```
+
+---
+
+### Incident Patch 3: `27eb0710` (2026-10-28)
+**Commit Message**: helm: Fix SPIRE agent scheduling gap on etcd-tainted nodes
+
+Signed-off-by: weizhoublue <[REDACTED_EMAIL]>
+
+**File**: `Documentation/helm-values.rst` (modified, +1/-1)
+```diff
+@@ -131,7 +131,7 @@
+    * - :spelling:ignore:`authentication.mutual.spire.install.agent.tolerations`
+      - SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+      - list
+-     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
++     - ``[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]``
+    * - :spelling:ignore:`authentication.mutual.spire.install.enabled`
+      - Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true
+      - bool
+```
+
+**File**: `install/kubernetes/cilium/README.md` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ contributors across the globe, there is almost always someone available to help.
+ | authentication.mutual.spire.install.agent.securityContext | object | `{}` | Security context to be added to spire agent containers. SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container |
+ | authentication.mutual.spire.install.agent.serviceAccount | object | `{"create":true,"name":"spire-agent"}` | SPIRE agent service account |
+ | authentication.mutual.spire.install.agent.skipKubeletVerification | bool | `true` | SPIRE Workload Attestor kubelet verification. |
+-| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
++| authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"key":"node-role.kubernetes.io/etcd","operator":"Exists"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
+ | authentication.mutual.spire.install.enabled | bool | `true` | Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true |
+ | authentication.mutual.spire.install.existingNamespace | bool | `false` | SPIRE namespace already exists. Set to true if Helm should not create, manage, and import the SPIRE namespace. |
+ | authentication.mutual.spire.install.initImage | object | `{"digest":"sha256:a46257e06c82ad85242d0d38077d0a52d9896389ca60a1a59d3463db586e5fa4","override":null,"pullPolicy":"Always","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}` | init container image of SPIRE agent and server |
+```
+
+**File**: `install/kubernetes/cilium/values.schema.json` (modified, +10/-0)
+```diff
+@@ -217,6 +217,16 @@
+                                   }
+                                 }
+                               },
++                              {
++                                "properties": {
++                                  "key": {
++                                    "type": "string"
++                                  },
++                                  "operator": {
++                                    "type": "string"
++                                  }
++                                }
++                              },
+                               {
+                                 "properties": {
+                                   "effect": {
+```
+
+**File**: `install/kubernetes/cilium/values.yaml` (modified, +2/-0)
+```diff
+@@ -4508,6 +4508,8 @@ authentication:
+               effect: NoSchedule
+             - key: node-role.kubernetes.io/control-plane
+               effect: NoSchedule
++            - key: node-role.kubernetes.io/etcd
++              operator: Exists
+             - key: node.cloudprovider.kubernetes.io/uninitialized
+               effect: NoSchedule
+               value: "true"
+```
+
+**File**: `install/kubernetes/cilium/values.yaml.tmpl` (modified, +2/-0)
+```diff
+@@ -4553,6 +4553,8 @@ authentication:
+               effect: NoSchedule
+             - key: node-role.kubernetes.io/control-plane
+               effect: NoSchedule
++            - key: node-role.kubernetes.io/etcd
++              operator: Exists
+             - key: node.cloudprovider.kubernetes.io/uninitialized
+               effect: NoSchedule
+               value: "true"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49715** (2026-10-30): bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity (@smagnani96)
-- **PR #49713** (2026-10-30): cni-chaining: extend Documentation and warn when lacking route MTU (@smagnani96)
-- **PR #49712** (2026-10-30): hubble: fix deleted-pod metrics cleanup with dynamic configuration (@alexcastilio)
-- **PR #49709** (2026-10-30): ipsec: improve invalid key format error in loadIPSecKeys (@smagnani96)
-- **PR #49707** (2026-10-29): [v1.19] Backports 2026-10-29 (@aanm)
-- **PR #49706** (2026-10-30): [v1.20] Backports 2026-10-29 (@aanm)
+- **PR #49795** (closed): helm: Use preflight.updateStrategy in the pre-flight DaemonSet (@tbommanxAI)
+- **PR #49793** (2026-11-03): README: Update releases (@joestringer)
+- **PR #49787** (2026-11-02): Prepare for release v1.21.0-pre.4 (@cilium-release-bot[bot])
+- **PR #49779** (2026-11-02): docs(tls-visibility): fix missing abbreviation (@KhooHaoYit)
+- **PR #49777** (2026-11-03): cilium-cli: Retry policy deletes on API server errors (@aanm)
+- **PR #49776** (2026-11-03): cilium-cli: Fix unschedulable client pod on 2-node clusters (@aanm)
 
 ---
 
@@ -1563,36 +1676,48 @@ Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hubble: fix deleted-pod metrics cleanup with dynamic configuration
+## X. pkg/metrics: add cilium_agent_memory_bytes
 
 **RULE**:
-When implementing operations in `pkg/hubble/metrics/dynamic_flow_processor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/observability/metrics.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef31e883`: hubble: fix deleted-pod metrics cleanup with dynamic configuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72b61a24`: pkg/metrics: add cilium_agent_memory_bytes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/hubble/metrics/dynamic_flow_processor.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/observability/metrics.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/cilium/cilium/pkg/k8s/types"
-	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
-func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
-	d.mutex.RLock()
-	defer d.mutex.RUnlock()
+``agent_memory_bytes``                     ``component``                                                         Enabled    Estimated memory usage of the Cilium agent in bytes, broken down by component
+``bpf_maps_virtual_memory_max_bytes``, ``bpf_progs_virtual_memory_max_bytes`` and
+the ``bpf_maps`` and ``bpf_progs`` components of ``agent_memory_bytes`` all report
+the same kernel memlock: that of the eBPF programs loaded by Cilium and of the maps
+those programs use. Maps that Cilium pins but that no loaded program uses are not
+counted, and a map shared with an eBPF program outside of Cilium is counted in full.
 
-	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
-}
+``agent_memory_bytes`` composes that eBPF memlock with the agent's Go runtime usage
+into a single estimate, which is useful for capacity planning. Its ``component``
+label takes the following values:
 
+- ``go``: memory in use by the Go runtime, covering the heap, goroutine stacks and
+  the runtime allocators.
+- ``bpf_maps``: kernel memlock of the eBPF maps described above.
+- ``bpf_progs``: kernel memlock of the eBPF programs described above.
+- ``total``: the sum of ``go``, ``bpf_maps`` and ``bpf_progs``.
+
+The eBPF memlock is not part of the agent's resident set size, and it is
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Both ``bpf_maps_virtual_memory_max_bytes`` and ``bpf_progs_virtual_memory_max_bytes``
+are currently reporting the system-wide memory usage of eBPF that is directly
+and not directly managed by Cilium. This might change in the future and only
+report the eBPF memory usage directly managed by Cilium.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef31e883` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72b61a24` are properly handled with clean fallback behavior.

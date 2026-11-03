@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `69c6653a`  
+> **Source Version**: `1cadf448`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:25:55.075Z  
+> **Timestamp**: 2026-11-03T16:09:08.215Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:25:55.070Z  
+> **Harvest Timestamp**: 2026-11-03T16:09:06.733Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4367 stars
+- **Stars / Engagement**: 4400 stars
 
 ---
 
@@ -1532,433 +1532,215 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69c6653a` (2026-10-30)
-**Commit Message**: Add Zoom to the … menu and remove menu icons (#226)
+### Incident Patch 1: `1cadf448` (2026-11-02)
+**Commit Message**: Retry frame transport when a tmux client attaches (#241)
 
-**File**: `browser/src/session/session.tsx` (modified, +9/-9)
+A browser started in a detached tmux session never hears an answer
+to its frame probe, so it sends inline frames for the rest of its
+life. Those frames are huge, and the page lags once someone attaches.
+
+Probe again when a client shows up. A focus-in retries once, and a
+resize retries at most once a second. Shared memory or file frames
+take over as soon as the terminal answers. Probe replies are taken
+out of the input on their own, so keys typed during a retry still
+arrive.
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/mod.rs` (modified, +1/-0)
 ```diff
-@@ -55,7 +55,6 @@ import { RecordSession } from "../record/session";
- import type { RecordActions } from "../record/types";
- import { Registry } from "../registry";
- import { Chrome } from "../ui/chrome";
--import { ICONS } from "../ui/icons";
- import type {
-   ChromeActions,
-   ChromeLayout,
-@@ -261,7 +260,6 @@ class Session {
-   private grabs = new Map<number, Grab>();
-   private copyWatchers = new Map<number, CopyOnSelect>();
-   private readonly copyOnSelect: boolean;
--  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
-   private readonly agentPanes: AgentPaneFinder;
-   private shownRecord: RecordSession | null = null;
-   private recordStarting = false;
-@@ -325,7 +323,8 @@ class Session {
-         onActiveState: (state, urlChanged) => {
-           if (urlChanged) rememberUrl(state.url);
-           this.ensureCopyWatcher();
--          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
-+          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
-+          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
-           this.lastZoom = state.zoom;
-           this.registry?.update();
-           this.syncTitle();
-@@ -688,6 +687,7 @@ class Session {
-     },
-     pageMenuAction: (id) => this.runPageMenu(id),
-     pageMenuClose: () => this.closePageMenu(),
-+    pageMenuZoom: (direction) => this.applyZoom(direction),
-     settings: this.settings.actions,
-     record: this.recordActions(),
-   };
-@@ -1378,7 +1378,6 @@ class Session {
-       label: this.activeGrab()?.active ? "Stop selection" : "Send to agent",
-       enabled: true,
-       shortcut: this.keymap.label("grab.toggle"),
--      icon: { kind: "path", d: ICONS.select },
-     };
-   }
- 
-@@ -1389,14 +1388,12 @@ class Session {
-         label: this.activeRecord() ? "Complete recording" : "Record",
-         enabled: true,
-         shortcut: this.activeRecord() ? "" : this.keymap.label("record.toggle"),
--        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
-       },
-       {
-         id: "inspect",
-         label: "Inspect",
-         enabled: true,
-         shortcut: this.keymap.label("devtools.toggle"),
--        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
-       },
-     ];
-   }
-@@ -1409,22 +1406,25 @@ class Session {
-         label: CLEAR_DATA_LABEL,
-         enabled: true,
-         shortcut: "",
--        icon: { kind: "path", d: ICONS.trash },
-       },
-       {
-         id: "settings",
-         label: commandLabel("settings.open"),
-         enabled: true,
-         shortcut: this.keymap.label("settings.open"),
--        icon: { kind: "path", d: ICONS.settings },
-       },
-     ];
-   }
- 
-   private pageMenuView(): PageMenuView | null {
-     if (!this.pageMenu || !this.layout) return null;
-     if (this.pageMenu.kind === "toolbar") {
--      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
-+      return {
-+        x: this.layout.width,
-+        y: this.layout.toolbarHeight,
-+        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
-+        items: this.toolbarMenuItems(),
-+      };
+@@ -865,6 +865,7 @@ impl Engine {
+         if window == self.comp.window && cell == self.cell {
+             return Ok(());
+         }
++        self.term.retry_frame_transport(false)?;
+         let estimate = ws.cell_size();
+         logging::info(
+             "engine",
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/terminal.rs` (modified, +261/-29)
+```diff
+@@ -286,6 +286,7 @@ pub struct Terminal {
+     pending: Vec<u8>,
+     lone_escape_since: Option<Instant>,
+     transport: FrameTransport,
++    transport_retry: TransportRetry,
+     herdr: Option<crate::herdr::Herdr>,
+     herdr_target: Option<crate::herdr::HerdrTarget>,
+     herdr_retry: Option<(Instant, Duration)>,
+@@ -556,6 +557,7 @@ impl Terminal {
+             pending: Vec::new(),
+             lone_escape_since: None,
+             transport: FrameTransport::Inline,
++            transport_retry: TransportRetry::Settled,
+             herdr: None,
+             herdr_target,
+             herdr_retry: None,
+@@ -629,13 +631,12 @@ impl Terminal {
+             crate::logging::info("terminal", format!("frame transport forced to {forced:?}"));
+             return Ok(forced);
+         }
+-        if self.probe_shared_memory()? {
+-            crate::logging::info("terminal", "frames go through shared memory");
+-            return Ok(FrameTransport::Shared);
++        let probe = self.probe_frames()?;
++        if probe == FrameProbe::Unanswered && self.wrapper.relayed() && !present::over_ssh(env) {
++            self.transport_retry = TransportRetry::Ready;
+         }
+-        if self.probe_frame_file()? {
+-            crate::logging::info("terminal", "frames go through a file the terminal re-reads");
+-            return Ok(FrameTransport::File);
++        if let FrameProbe::Accepted(transport) = probe {
++            return Ok(transport);
+         }
+         // bad
+         crate::logging::warn(
+@@ -650,10 +651,49 @@ impl Terminal {
+         Ok(FrameTransport::Inline)
      }
-     const items: PageMenuItem[] = [
-       ...(this.pageMenu.selectionText
-```
-
-**File**: `browser/src/ui/context-menu.tsx` (modified, +82/-44)
-```diff
-@@ -1,6 +1,8 @@
--import { Box, Image, Path, Text } from "@zenbu-labs/pixel";
-+import { Box, Text } from "@zenbu-labs/pixel";
-+import { Icon } from "./icons";
-+import type { IconName } from "./icons";
- import type { Theme } from "./theme";
--import type { ChromeActions, ChromeLayout, PageMenuIcon, PageMenuItem, PageMenuView } from "./types";
-+import type { ChromeActions, ChromeLayout, PageMenuItem, PageMenuView } from "./types";
  
- export function PageContextMenu({
-   view,
-@@ -18,16 +20,15 @@ export function PageContextMenu({
-   const menuPad = Math.round(rem * 0.25);
-   const charW = rem * 0.82 * 0.6;
-   const shortcutW = rem * 0.72 * 0.6;
--  const hasIcons = view.items.some((item) => item.icon);
-   const width = Math.round(
-     view.items.reduce((widest, item) => {
-       let row = rem * 1.8 + menuPad * 2 + item.label.length * charW;
--      if (hasIcons) row += rem * 1.5;
-       if (item.shortcut) row += rem * 1 + item.shortcut.length * shortcutW;
-       return Math.max(widest, row);
--    }, rem * 10),
-+    }, view.zoomPercent === undefined ? rem * 10 : rem * 14),
-   );
--  const height = view.items.length * rowH + menuPad * 2;
-+  const dividerH = menuPad * 2 + 1;
-+  const height = view.items.length * rowH + menuPad * 2 + (view.zoomPercent === undefined ? 0 : rowH + dividerH);
-   const x = Math.max(2, Math.min(view.x, layout.width - width - 4));
-   const y = Math.max(2, Math.min(view.y, layout.height - height - 4));
-   return (
-@@ -55,8 +56,14 @@ export function PageContextMenu({
-         }}
-       >
-         {view.items.map((item) => (
--          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} alignIcons={hasIcons} />
-+          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} />
-         ))}
-+        {view.zoomPercent !== undefined && (
-+          <>
-+            <Box style={{ height: 1, margin: { top: menuPad, bottom: menuPad }, background: theme.hairline, flexShrink: 0 }} />
-+            <ZoomRow percent={view.zoomPercent} rowH={rowH} rem={rem} theme={theme} actions={actions} />
-+          </>
-+        )}
-       </Box>
-     </>
-   );
-@@ -68,14 +75,12 @@ function MenuRow({
-   rem,
-   theme,
-   actions,
--  alignIcons,
- }: {
-   item: PageMenuItem;
-   rowH: number;
-   rem: number;
-   theme: Theme;
-   actions: ChromeActions;
--  alignIcons: boolean;
- }) {
-   return (
-     <Box
-@@ -90,11 +95,6 @@ function MenuRow({
-       }}
-       onClick={item.enabled ? () => actions.pageMenuAction(item.id) : undefined}
-     >
--      {item.icon ? (
--        <MenuIcon icon={item.icon} enabled={item.enabled} rem={rem} theme={theme} />
--      ) : (
--        alignIcons && <Box style={{ width: rem * 1, flexShrink: 0 }} />
--      )}
-       <Text
-         style={{
-           flexGrow: 1,
-@@ -123,41 +123,79 @@ function MenuRow({
-   );
- }
- 
--function MenuIcon({
-+function ZoomRow({
-+  percent,
-+  rowH,
-+  rem,
-+  theme,
-+  actions,
-+}: {
-+  percent: number;
-+  rowH: number;
-+  rem: number;
-+  theme: Theme;
-+  actions: ChromeActions;
-+}) {
-+  const controlH = Math.round(rem * 1.3);
-+  const divider = <Box style={{ width: 1, height: controlH, background: theme.fieldBorder, flexShrink: 0 }} />;
-+  return (
-+    <Box
-+      style={{ height: rowH, alignItems: "center", gap: rem * 0.45, padding: { left: rem * 0.4, right: rem * 0.4 }, flexShrink: 0 }}
-+      onClick={() => {}}
-+    >
-+      <Text style={{ flexGrow: 1, flexBasis: 0, fontSize: rem * 0.82, color: theme.fg, wrap: false, selectable: false }}>
-+        Zoom
-+      </Text>
-+      <Box
-+        style={{
-+          height: controlH,
-+          alignItems: "center",
-+          cornerRadius: rem * 0.35,
-+          border: { width: 1, color: theme.fieldBorder },
-+          background: theme.field,
-+          overflow: "hidden",
-+          flexShrink: 0,
-+        }}
-+      >
-+        <ZoomButton icon="minus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(-1)} />
-+        {divider}
-+        <Box style={{ width: rem * 3, height: controlH, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-+          <Text style={{ fontSize: rem * 0.75, color: theme.fg, wrap: false, selectable: false }}>{`${percent}%`}</Text>
-+        </Box>
-+        {divider}
-+        <ZoomButton icon="plus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(1)} />
-+      </Box>
-+    </Box>
-+  );
-+}
+-    fn probe_frame_file(&mut self) -> io::Result<bool> {
++    fn probe_frames(&mut self) -> io::Result<FrameProbe> {
++        let shared = self.probe_shared_memory()?;
++        if shared == Some(true) {
++            crate::logging::info("terminal", "frames go through shared memory");
++            return Ok(FrameProbe::Accepted(FrameTransport::Shared));
++        }
++        let file = self.probe_frame_file()?;
++        if file == Some(true) {
++            crate::logging::info("terminal", "frames go through a file the terminal re-reads");
++            return Ok(FrameProbe::Accepted(FrameTransport::File));
++        }
++        if shared.is_none() && file.is_none() {
++            return Ok(FrameProbe::Unanswered);
++        }
++        Ok(FrameProbe::Refused)
++    }
 +
-+function ZoomButton({
-   icon,
--  enabled,
-+  size,
-   rem,
-   theme,
-+  onClick,
- }: {
--  icon: PageMenuIcon;
--  enabled: boolean;
-+  icon: IconName;
-+  size: number;
-   rem: number;
-   theme: Theme;
-+  onClick(): void;
- }) {
--  switch (icon.kind) {
--    case "image": {
--      const size = rem * 1;
--      return (
--        <Image
--          src={icon.src}
--          error={<Box style={{ width: size, height: size }} />}
--          style={{ width: size, height: size, flexShrink: 0 }}
--        />
--      );
--    }
--    case "path":
--      return (
--        <Path
--          d={ico
++    pub(crate) fn retry_frame_transport(&mut self, client_present: bool) -> io::Result<()> {
++        let due = match self.transport_retry {
++            TransportRetry::Settled => false,
++            TransportRetry::Ready => true,
++            TransportRetry::NotBefore(at) => client_present || Instant::now() >= at,
++        };
++        if !due {
++            return Ok(());
++        }
++        self.transport_retry = match self.probe_frames()? {
++            FrameProbe::Accepted(transport) => {
++                self.transport = transport;
++                TransportRetry::Settled
++            }
++            FrameProbe::Unanswered if !client_present => {
++                TransportRetry::NotBefore(Instant::now() + TRANSPORT_RETRY_GAP)
++            }
++            FrameProbe::Unanswered | FrameProbe::Refused => TransportRetry::Settled,
++        };
++        Ok(())
++    }
++
++    fn probe_frame_file(&mut self) -> io::Result<Option<bool>> {
+         let path = self.frame_path(FRAME_SLOTS, 0);
+         if std::fs::write(&path, [0u8, 0, 0, 255]).is_err() {
+-            return Ok(false);
++            return Ok(Some(false));
+         }
+         let name = path.to_string_lossy().into_owned();
+         self.io.out().write_all(&crate::kitty::kitty_query_medium(
+@@ -665,17 +705,17 @@ impl Terminal {
+             self.wrapper,
+         ))?;
+         self.io.out().flush()?;
+-        let reply = self.read_report(FRAME_PROBE_TIMEOUT_MS, |buf| {
++        let reply = self.read_report_keeping_input(FRAME_PROBE_TIMEOUT_MS, |buf| {
+             parse_probe_reply(buf, b"Gi=300;")
+         })?;
+         let _ = std::fs::remove_file(&path);
+-        Ok(reply.unwrap_or(false))
++        Ok(reply)
+     }
+ 
+-    fn probe_shared_memory(&mut self) -> io::Result<bool> {
+-        let name = format!("/px-{}-q", std::process::id());
++    fn probe_shared_memory(&mut self) -> io::Result<Option<bool>> {
++        let name = self.shm_probe_name();
+         if write_shm(&name, &[0, 0, 0, 255]).is_err() {
+-            return Ok(false);
++            return Ok(Some(false));
+         }
+         self.io.out().write_all(&crate::kitty::kitty_query_medium(
+             SHM_PROBE_ID,
+@@ -686,11 +726,11 @@ impl Terminal {
+             self.wrapper,
+         ))?;
+         self.io.out().flush()?;
+-        let reply = self.read_report(FRAME_PROBE_TIMEOUT_MS, |buf| {
++        let reply = self.read_report_keeping_input(FRAME_PROBE_TIMEOUT_MS, |buf| {
+             parse_probe_reply(buf, b"Gi=299;")
+         })?;
+         let _ = rustix::shm::unlink(&name);
+-        Ok(reply.unwrap_or(false))
++        Ok(reply)
+     }
+ 
+ 
+@@ -953,6 +993,9 @@ impl Term
 ```
 
-**File**: `browser/src/ui/icons.tsx` (modified, +1/-4)
+**File**: `pixel/engine/crates/pixel-core/src/terminal/payload.rs` (modified, +4/-0)
 ```diff
-@@ -41,6 +41,7 @@ export const ICONS = {
-     "M 21 5 L 14 5 M 10 5 L 3 5 M 21 12 L 12 12 M 8 12 L 3 12 M 21 19 L 16 19 M 12 19 L 3 19 " +
-     "M 14 3 L 14 7 M 8 10 L 8 14 M 16 17 L 16 21",
-   plus: "M 12 5.5 L 12 18.5 M 5.5 12 L 18.5 12",
-+  minus: "M 5.5 12 L 18.5 12",
-   reload: `${arcPath(12, 12, 7, 0, 270)} C 13.96 5 15.83 5.78 17.24 7.13 L 19 8.89 M 19 5 L 19 8.89 L 15.11 8.89`,
-   search: `${arcPath(11, 11, 5.75, 0, 360)} M 15.4 15.4 L 19.25 19.25`,
-   download: "M 12 4.5 L 12 14.5 M 7.75 10.5 L 12 14.75 L 16.25 10.5 M 5.5 18.5 L 18.5 18.5",
-@@ -56,7 +57,6 @@ export const ICONS = {
-   oval: arcPath(12, 12, 7.5, 0, 360),
-   text: "M 5.5 6 L 18.5 6 M 12 6 L 12 19",
-   crop: "M 7 3 L 7 17 L 21 17 M 3 7 L 17 7 L 17 21",
--  record: arcPath(12, 12, 4.5, 0, 360),
-   play: "M 9 6.5 L 17.5 12 L 9 17.5 Z",
-   bolt: "M 13.2 3.5 L 6.5 13.5 L 11.2 13.5 L 10.4 20.5 L 17.5 10.2 L 12.4 10.2 Z",
-   camera:
-@@ -108,9 +108,6 @@ export const ICONS = {
-   volumeOff:
-     "M 11 4.7 L 6.4 7.6 L 5.4 8 L 3 8 C 2.45 8 2 8.45 2 9 L 2 15 C 2 15.55 2.45 16 3 16 " +
-     "L 5.4 16 L 6.4 16.4 L 11 19.3 Z M 22 9 L 16 15 M 16 9 L 22 15",
--  trash:
--    "M 3 6 L 21 6 M 19 6 L 19 20 C 19 21 18 22 17 22 L 7 22 C 6 22 5 21 5 20 L 5 6 " +
--    "M 8 6 L 8 4 C 8 3 9 2 10 2 L 14 2 C 15 2 16 3 16 4 L 16 6 M 10 11 L 10 17 M 14 11 L 14 17",
-   monitor:
-     "M 4 4 L 20 4 C 21.1 4 22 4.9 22 6 L 22 15 C 22 16.1 21.1 17 20 17 L 4 17 " +
-     "C 2.9 17 2 16.1 2 15 L 2 6 C 2 4.9 2.9 4 4 4 Z M 8 21 L 16 21 M 12 17 L 12 21",
-```
-
-**File**: `browser/src/ui/types.ts` (modified, +3/-5)
-```diff
-@@ -10,6 +10,7 @@ import type {
-   PointerEvent,
-   WebViewHandle,
-   WebViewState,
-+  ZoomDirection,
- } from "@zenbu-labs/pixel";
- import type { RecordActions } from "../record/types";
- import type { BrowsingDataKind } from "../session/browsing-data";
-@@ -62,16 +63,11 @@ export interface DownloadView {
-   state: "progressing" | "done" | "failed";
- }
+@@ -68,6 +68,10 @@ impl Terminal {
+         format!("/px-{}-{}-{seq}", std::process::id(), self.terminal_id)
+     }
  
--export type PageMenuIcon =
--  | { kind: "path"; d: string; tint?: "red"; weight?: number }
--  | { kind: "image"; src: string };
--
- export interface PageMenuItem {
-   id: string;
-   label: string;
-   enabled: boolean;
-   shortcut: string;
--  icon?: PageMenuIcon;
- }
- 
- export interface ClearDataView {
-@@ -82,6 +78,7 @@ export interface ClearDataView {
- export interface PageMenuView {
-   x: number;
-   y: number;
-+  zoomPercent?: number;
-   items: PageMenuItem[];
- }
- 
-@@ -177,6 +174,7 @@ export interface ChromeActions {
-   devtoolsDividerHover(hovering: boolean): void;
-   pageMenuAction(id: string): void;
-   pageMenuClose(): void;
-+  pageMenuZoom(direction: ZoomDirection): void;
-   permissionDecide(decision: PermissionDecision): void;
-   toastDismiss(): void;
-   clearDataToggle(kind: BrowsingDataKind): void;
-```
-
-**File**: `scripts/release.sh` (modified, +0/-3)
-```diff
-@@ -55,9 +55,6 @@ cp "$ROOT/assets/react-grab/"* "$STAGE/assets/react-grab/"
- mkdir -p "$STAGE/assets/search"
- cp "$ROOT/assets/search/"* "$STAGE/assets/search/"
- 
--mkdir -p "$STAGE/assets/chromium"
--cp "$ROOT/assets/chromium/"* "$STAGE/assets/chromium/"
--
- ELECTRON_DIST="$(node -e '
-   const p = require("path");
-   const lib = require.resolve("@zenbu-labs/pixel/package.json", { paths: [process.argv[1]] });
++    pub(super) fn shm_probe_name(&self) -> String {
++        format!("/px-{}-{}-probe", std::process::id(), self.terminal_id)
++    }
++
+     fn temp_payload_path(&self, seq: u64) -> std::path::PathBuf {
+         std::env::temp_dir().join(format!(
+             "tty-graphics-protocol-px-{}-{}-{seq}.rgba",
 ```
 
 ---
 
-### Incident Patch 2: `2c6ff1c7` (2026-10-30)
-**Commit Message**: Clear cached favicons with Cached images and files (#225)
+### Incident Patch 2: `ecc462fd` (2026-10-31)
+**Commit Message**: Move pixel's darwin-arm64 build off retiring macos-14 (#231)
 
-**File**: `browser/src/session/browsing-data.ts` (modified, +2/-0)
+**File**: `.github/workflows/pixel-release.yml` (modified, +6/-1)
 ```diff
-@@ -1,3 +1,4 @@
-+import { clearFavicons } from "@zenbu-labs/pixel";
- import { session as electronSession } from "electron";
- import type { Session } from "electron";
- 
-@@ -22,6 +23,7 @@ export async function clearBrowsingData(session: Session, kinds: readonly Browsi
-   }
-   if (kinds.includes("cache")) {
-     await session.clearCache();
-+    await clearFavicons();
-     await session.clearCodeCaches({});
-   }
- }
-```
-
-**File**: `pixel/packages/pixel/src/index.ts` (modified, +1/-0)
-```diff
-@@ -27,6 +27,7 @@ export type { DevtoolsDock } from "./web/types";
- export type { ZoomDirection } from "./web/zoom";
- export type { TerminalTheme } from "./web/session";
- export { QUIT_URL, defaultOpenWindow } from "./web/host";
-+export { clearFavicons } from "./web/favicon";
- 
- export {
-   Box,
-```
-
-**File**: `pixel/packages/pixel/src/web/favicon.ts` (modified, +12/-1)
-```diff
-@@ -11,12 +11,19 @@ function isIco(data: Buffer): boolean {
-   return data.length > 4 && data[0] === 0 && data[1] === 0 && data[2] === 1 && data[3] === 0;
- }
- 
-+let clears = 0;
-+
-+export async function clearFavicons(): Promise<void> {
-+  clears++;
-+  await fs.promises.rm(path.join(app.getPath("userData"), "favicons"), { recursive: true, force: true });
-+}
- 
- export class FaviconCache {
-   constructor(private readonly dir: string = path.join(app.getPath("userData"), "favicons")) {}
- 
-   async resolve(urls: string[], ses: Session): Promise<string | null> {
-     if (urls.length === 0) return null;
-+    const clearsBefore = clears;
-     const candidates = [...urls].sort((a, b) => Number(RASTER_URL.test(b)) - Number(RASTER_URL.test(a)));
-     try {
-       const fallback = new URL("/favicon.ico", urls[0]).toString();
-@@ -26,14 +33,18 @@ export class FaviconCache {
-       this.dir,
-       crypto
-         .createHash("sha1")
--        .update(`${ses.storagePath ?? ""}\0${candidates.join("\n")}`)
-+        .update(`${ses.storagePath ?? ""}\0${clearsBefore}\0${candidates.join("\n")}`)
-         .digest("hex")
-         .slice(0, 16),
-     );
-     const cached = [`${stem}.png`, `${stem}.ico`].find((file) => fs.existsSync(file));
-     if (cached) return cached;
-     for (const url of candidates) {
-       const file = await this.fetchDecodable(url, ses, stem);
-+      if (file && clears !== clearsBefore) {
-+        await fs.promises.rm(file, { force: true });
-+        return null;
-+      }
-       if (file) return file;
-     }
-     return null;
+@@ -85,8 +85,9 @@ jobs:
+       fail-fast: false
+       matrix:
+         include:
+-          - os: macos-14
++          - os: macos-15
+             platform: darwin-arm64
++            macos-target: "11.0"
+           - os: macos-15-intel
+             platform: darwin-x64
+           - os: ubuntu-latest
+@@ -109,8 +110,12 @@ jobs:
+       - uses: Swatinem/rust-cache@v2
+         with:
+           workspaces: pixel/engine
++      - if: matrix.macos-target
++        run: echo "MACOSX_DEPLOYMENT_TARGET=${{ matrix.macos-target }}" >> "$GITHUB_ENV"
+       - run: node scripts/build-native.mjs --release
+         working-directory: pixel/packages/pixel
++      - if: matrix.macos-target
++        run: vtool -show-build pixel/packages/native/${{ matrix.platform }}/pixel.node | grep -qE "minos ${{ matrix.macos-target }}$"
+       - if: matrix.container
+         run: objdump -T pixel/packages/native/${{ matrix.platform }}/pixel.node | grep -oE 'GLIBC_[0-9.]+' | sort -Vu | tail -1 | grep -qx GLIBC_2.28
+       - uses: actions/upload-artifact@v4
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #226** (2026-10-30): Add Zoom to the … menu and drop menu icons (@RobPruzan)
-- **PR #225** (2026-10-30): Clear cached favicons with Cached images and files (@RobPruzan)
-- **PR #224** (2026-10-30): Add Clear browsing data (@RobPruzan)
-- **PR #223** (2026-10-30): Fix Continue with Google doing nothing (disable FedCM) (@RobPruzan)
-- **PR #218** (2026-10-29): Implmenet markdown rendering on .md files (@RobPruzan)
-- **PR #217** (2026-10-28): Add flag to remove chrome (@RobPruzan)
+- **PR #241** (2026-11-02): Retry frame transport when a tmux client attaches (@YoanWai)
+- **PR #240** (2026-11-01): Add graphical shell example (@RobPruzan)
+- **PR #239** (2026-11-01): add rex as terminal backend (@RobPruzan)
+- **PR #238** (2026-11-01): detect rex and use patches as default (@RobPruzan)
+- **PR #236** (closed): Install extensions from the Chrome Web Store and the CLI (@RobPruzan)
+- **PR #235** (closed): Add Chrome extension support (@RobPruzan)
 
 ---
 
@@ -1978,44 +1760,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Zoom to the … menu and remove menu icons (#226)
+## X. Retry frame transport when a tmux client attaches (#241)
 
 **RULE**:
-When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/engine/crates/pixel-core/src/engine/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69c6653a`: Add Zoom to the … menu and remove menu icons (#226). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cadf448`: Retry frame transport when a tmux client attaches (#241). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/engine/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
-          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
-    pageMenuZoom: (direction) => this.applyZoom(direction),
-      return {
-        x: this.layout.width,
-        y: this.layout.toolbarHeight,
-        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
-        items: this.toolbarMenuItems(),
-      };
+        self.term.retry_frame_transport(false)?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { ICONS } from "../ui/icons";
-  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
-          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
-      icon: { kind: "path", d: ICONS.select },
-        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
-        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
-        icon: { kind: "path", d: ICONS.trash },
-        icon: { kind: "path", d: ICONS.settings },
-      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69c6653a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cadf448` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `1408ae4a`  
+> **Source Version**: `8c85d41a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:53:49.915Z  
+> **Timestamp**: 2026-11-03T11:22:12.781Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:53:49.907Z  
+> **Harvest Timestamp**: 2026-11-03T11:22:12.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11521 stars
+- **Stars / Engagement**: 11522 stars
 
 ---
 
@@ -1621,207 +1621,87 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1408ae4a` (2026-10-30)
-**Commit Message**: chore: upgrade to network-validator 0.1.10 (#15757)
+### Incident Patch 1: `8c85d41a` (2026-11-03)
+**Commit Message**: fix(inject): inherit beta native sidecar annotation from namespace (#15734)
 
-**File**: `Dockerfile.proxy` (modified, +1/-1)
+Problem
+
+A namespace annotated with `config.beta.linkerd.io/proxy-enable-native-sidecar: "false"` no longer turns native sidecars off: new pods in it get one anyway, because native sidecars are now the default. The same annotation on the pod works. The annotation is deprecated, not removed ([doc](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/cli/cmd/doc.go#L287-L290), [override code](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L429-L445)), and the deprecated alpha key is still inherited.
+
+#15267 replaced the beta key in `ProxyAnnotations` with the GA key, so [the beta key is in neither list](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L85-L90) that [`AppendNamespaceAnnotations`](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L177-L189) copies.
+
+Solution
+
+Add the beta key to `ProxyAlphaConfigAnnotations`, next to the alpha key. It cannot go in `ProxyAnnotations`: the proxy injector builds metric label
+
+**File**: `pkg/inject/inject.go` (modified, +5/-1)
 ```diff
-@@ -28,7 +28,7 @@ RUN --mount=type=secret,id=github \
- RUN echo "$LINKERD2_PROXY_VERSION" > proxy-version
- ARG LINKERD_AWAIT_VERSION=v0.3.3
- RUN bin/scurl -o linkerd-await https://github.com/linkerd/linkerd-await/releases/download/release%2F${LINKERD_AWAIT_VERSION}/linkerd-await-${LINKERD_AWAIT_VERSION}-${TARGETARCH} && chmod +x linkerd-await
--ARG LINKERD_VALIDATOR_VERSION=v0.1.9
-+ARG LINKERD_VALIDATOR_VERSION=v0.1.10
- RUN bin/scurl -O https://github.com/linkerd/linkerd2-proxy-init/releases/download/validator%2F${LINKERD_VALIDATOR_VERSION}/linkerd-network-validator-${LINKERD_VALIDATOR_VERSION}-${TARGETARCH}-linux.tgz
- RUN tar -zxvf linkerd-network-validator-${LINKERD_VALIDATOR_VERSION}-${TARGETARCH}-linux.tgz && mv linkerd-network-validator-${LINKERD_VALIDATOR_VERSION}-${TARGETARCH}-linux/linkerd-network-validator .
+@@ -83,10 +83,14 @@ var (
+ 		k8s.ProxyAdditionalEnvAnnotation,
+ 	}
+ 	// ProxyAlphaConfigAnnotations is the list of all alpha configuration
+-	// (config.alpha prefix) that can be applied to a pod or namespace.
++	// (config.alpha prefix) that can be applied to a pod or namespace. It also
++	// holds the deprecated native sidecar annotations, which are kept out of
++	// ProxyAnnotations because they map to the same metric label as the
++	// current one.
+ 	ProxyAlphaConfigAnnotations = []string{
+ 		k8s.ProxyWaitBeforeExitSecondsAnnotation,
+ 		k8s.ProxyEnableNativeSidecarAnnotationAlpha,
++		k8s.ProxyEnableNativeSidecarAnnotationBeta,
+ 	}
+ )
  
 ```
 
----
-
-### Incident Patch 2: `0d995aa5` (2026-10-30)
-**Commit Message**: chore: bump dev image to v53. (#15756)
-
-Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
-
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
+**File**: `pkg/inject/inject_test.go` (modified, +30/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-     "name": "linkerd2",
--    "image": "ghcr.io/linkerd/dev:v50",
-+    "image": "ghcr.io/linkerd/dev:v53",
-     // "dockerFile": "./Dockerfile",
-     // "context": "..",
-     "features": {
-```
-
-**File**: `.github/actions/helm-publish/action.yml` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ runs:
-   steps:
-   - name: Set up Cloud SDK
-     uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db'
--  - uses: linkerd/dev/actions/setup-tools@v50
-+  - uses: linkerd/dev/actions/setup-tools@v53
-   - shell: bash
-     run: |
-       mkdir -p target/helm
-```
-
-**File**: `.github/workflows/actions.yml` (modified, +2/-2)
-```diff
-@@ -14,13 +14,13 @@ jobs:
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     timeout-minutes: 10
-     steps:
--      - uses: linkerd/dev/actions/setup-tools@v50
-+      - uses: linkerd/dev/actions/setup-tools@v53
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: just-dev lint-actions
- 
-   devcontainer-versions:
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     steps:
--      - uses: linkerd/dev/actions/setup-tools@v50
-+      - uses: linkerd/dev/actions/setup-tools@v53
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: just-dev check-action-images
-```
-
-**File**: `.github/workflows/devcontainer.yml` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ permissions:
- jobs:
-   rust-version:
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - shell: bash
-@@ -39,6 +39,6 @@ jobs:
-   devcontainer-image:
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     steps:
--      - uses: linkerd/dev/actions/setup-tools@v50
-+      - uses: linkerd/dev/actions/setup-tools@v53
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: just-dev pull-dev-image
-```
-
-**File**: `.github/workflows/go.yml` (modified, +3/-3)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-     if: needs.meta.outputs.changed == 'true'
-     timeout-minutes: 10
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-go
-+    container: ghcr.io/linkerd/dev:v53-go
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-@@ -43,7 +43,7 @@ jobs:
-     if: needs.meta.outputs.changed == 'true'
-     timeout-minutes: 10
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-go
-+    container: ghcr.io/linkerd/dev:v53-go
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-@@ -57,7 +57,7 @@ jobs:
-     if: needs.meta.outputs.changed == 'true'
-     timeout-minutes: 30
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-go
-+    container: ghcr.io/linkerd/dev:v53-go
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-```
-
-**File**: `.github/workflows/proto.yml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ jobs:
-   proto-diff:
-     timeout-minutes: 10
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-go
-+    container: ghcr.io/linkerd/dev:v53-go
-     steps:
-       - run: apt update && apt install -y unzip
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-```
-
-**File**: `.github/workflows/rust.yml` (modified, +5/-5)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-   audit:
-     timeout-minutes: 10
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     strategy:
-       matrix:
-         checks:
-@@ -43,7 +43,7 @@ jobs:
-   fmt:
-     timeout-minutes: 5
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: git config --global --add safe.directory "$PWD" # actions/runner#2033
-@@ -52,7 +52,7 @@ jobs:
-   clippy:
-     timeout-minutes: 20
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: git config --global --add safe.directory "$PWD" # actions/runner#2033
-@@ -63,7 +63,7 @@ jobs:
-   check:
-     timeout-minutes: 20
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: git config --global --add safe.directory "$PWD" # actions/runner#2033
-@@ -74,7 +74,7 @@ jobs:
-     name: test
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     timeout-minutes: 15
--    container: ghcr.io/linkerd/dev:v50-rust
-+    container: ghcr.io/linkerd/dev:v53-rust
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: git config --global --add safe.directory "$PWD" # actions/runner#2033
-```
-
-**File**: `.github/workflows/shell.yml` (modified, +1/-1)
-```diff
-@@ -16,6 +16,6 @@ jobs:
-     timeout-minutes: 10
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     steps:
--      - uses: linkerd/dev/actions/setup-tools@v50
-+      - uses: linkerd/dev/actions/setup-tools@v53
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: just sh-lint
+@@ -242,6 +242,36 @@ func TestGetOverriddenValues(t *testing.T) {
+ 				return values
+ 			},
+ 		},
++		{id: "use deprecated beta native sidecar annotation from namespace",
++			nsAnnotations: map[string]string{
++				k8s.ProxyEnableNativeSidecarAnnotationBeta: "false",
++			},
++			spec: appsv1.DeploymentSpec{
++				Template: corev1.PodTemplateSpec{
++					Spec: corev1.PodSpec{},
++				},
++			},
++			expected: func() *l5dcharts.Values {
++				values, _ := l5dcharts.NewValues()
++				values.Proxy.NativeSidecar = false
++				return values
++			},
++		},
++		{id: "use deprecated alpha native sidecar annotation from namespace",
++			nsAnnotations: map[string]string{
++				k8s.ProxyEnableNativeSidecarAnnotationAlpha: "false",
++			},
++			spec: appsv1.DeploymentSpec{
++				Template: corev1.PodTemplateSpec{
++					Spec: corev1.PodSpec{},
++				},
++			},
++			expected: func() *l5dcharts.Values {
++				values, _ := l5dcharts.NewValues()
++				values.Proxy.NativeSidecar = false
++				return values
++			},
++		},
+ 		{id: "use invalid duration for proxy timeouts",
+ 			nsAnnotations: map[string]string{
+ 				k8s.ProxyOutboundConnectTimeout:               "6000",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15761** (2026-11-02): ci: pin k3s images to avoid update.k3s.io lookups (@alpeb)
 - **PR #15757** (2026-10-30): chore: upgrade to network-validator 0.1.10 (@anthoturc)
 - **PR #15756** (2026-10-30): chore: bump dev image to v53. (@toidiu)
 - **PR #15755** (2026-10-30): chore(deps): bump golang.org/x/net to 0.62.0 (@arichardet)
 - **PR #15754** (2026-10-29): chore(deps): upgrade proxy-init to v2.4.11 and cni-plugin to v1.7.1 (@anthoturc)
 - **PR #15753** (closed): test (@toidiu)
-- **PR #15752** (2026-10-28): proxy: v2.372.0 (@l5d-bot)
 
 ---
 
@@ -1841,28 +1721,32 @@ Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. upgrade to network-validator 0.1.10 (#15757)
+## X. inject): inherit beta native sidecar annotation from namespace (#15734)
 
 **RULE**:
-When implementing operations in `Dockerfile.proxy`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/inject/inject.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1408ae4a`: upgrade to network-validator 0.1.10 (#15757). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c85d41a`: inject): inherit beta native sidecar annotation from namespace (#15734). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile.proxy`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/inject/inject.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ARG LINKERD_VALIDATOR_VERSION=v0.1.10
+	// (config.alpha prefix) that can be applied to a pod or namespace. It also
+	// holds the deprecated native sidecar annotations, which are kept out of
+	// ProxyAnnotations because they map to the same metric label as the
+	// current one.
+		k8s.ProxyEnableNativeSidecarAnnotationBeta,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-ARG LINKERD_VALIDATOR_VERSION=v0.1.9
+	// (config.alpha prefix) that can be applied to a pod or namespace.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1408ae4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c85d41a` are properly handled with clean fallback behavior.

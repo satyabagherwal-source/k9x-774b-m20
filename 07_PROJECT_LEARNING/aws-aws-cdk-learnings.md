@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `7a257031`  
+> **Source Version**: `05fb8aef`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:03:21.816Z  
+> **Timestamp**: 2026-11-02T15:36:48.805Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:03:21.672Z  
+> **Harvest Timestamp**: 2026-11-02T15:36:48.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12957 stars
+- **Stars / Engagement**: 12958 stars
 
 ---
 
@@ -1203,295 +1203,258 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a257031` (2026-10-30)
-**Commit Message**: chore(security-guardian): test every rule against a failing and a passing fixture (#39505)
+### Incident Patch 1: `05fb8aef` (2026-11-02)
+**Commit Message**: feat: update L1 CloudFormation resource definitions (#39491)
 
-### Issue # (if applicable)
-
-None.
-
-### Reason for this change
-
-Only 6 of the tool's 23 rules fire on any test fixture, and some "compliant" tests pass on a skip rather than a pass.
-
-### Description of changes
-
-- Add `test/rule-fixtures.test.ts`. Every rule must fail its `non-compliant.json` and pass its `compliant.json`, in both scans. A rule without fixtures fails the suite.
-- Add fixtures for all 23 rules.
-- Six S3, SNS and SQS rules skip every policy today. The test pins that, and #39506 fixes them.
-
-### Describe any new or updated permissions being added
-
-None.
-
-### Description of how you validated changes
-
-- 164 of 164 tests pass with cfn-guard 3.2.1.
-
-### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
-
-----
-
-*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
-
-**File**: `tools/@aws-cdk/security-guardian/README.md` (modified, +2/-0)
+**File**: `packages/@aws-cdk/metrics-facade-alpha/package.json` (modified, +1/-1)
 ```diff
-@@ -149,6 +149,8 @@ The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/c
- yarn test
- ```
+@@ -158,7 +158,7 @@
+     "@aws-cdk/integ-runner": "^2.205.8",
+     "@aws-cdk/integ-tests-alpha": "0.0.0",
+     "@aws-cdk/pkglint": "0.0.0",
+-    "@aws-cdk/service-spec-types": "0.0.288",
++    "@aws-cdk/service-spec-types": "0.0.293",
+     "@aws-cdk/spec2cdk": "0.0.0",
+     "@cdklabs/tskb": "^0.0.4",
+     "@cdklabs/typewriter": "^0.0.16",
+```
+
+**File**: `packages/@aws-cdk/mixins-preview/package.json` (modified, +1/-1)
+```diff
+@@ -314,7 +314,7 @@
+     "@aws-cdk/integ-runner": "^2.205.8",
+     "@aws-cdk/integ-tests-alpha": "0.0.0",
+     "@aws-cdk/pkglint": "0.0.0",
+-    "@aws-cdk/service-spec-types": "0.0.288",
++    "@aws-cdk/service-spec-types": "0.0.293",
+     "@aws-cdk/spec2cdk": "0.0.0",
+     "@cdklabs/tskb": "^0.0.4",
+     "@cdklabs/typewriter": "^0.0.16",
+```
+
+**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
+```diff
+@@ -136,7 +136,7 @@
+   },
+   "devDependencies": {
+     "@aws-cdk/aws-custom-resource-sdk-adapter": "0.0.0",
+-    "@aws-cdk/aws-service-spec": "0.1.222",
++    "@aws-cdk/aws-service-spec": "0.1.227",
+     "@aws-cdk/cdk-build-tools": "0.0.0",
+     "@aws-cdk/check-peer-dependencies": "0.0.0",
+     "@aws-cdk/custom-resource-handlers": "0.0.0",
+```
+
+**File**: `tools/@aws-cdk/spec2cdk/package.json` (modified, +2/-2)
+```diff
+@@ -32,9 +32,9 @@
+   },
+   "license": "Apache-2.0",
+   "dependencies": {
+-    "@aws-cdk/aws-service-spec": "0.1.222",
++    "@aws-cdk/aws-service-spec": "0.1.227",
+     "@aws-cdk/service-spec-importers": "0.0.145",
+-    "@aws-cdk/service-spec-types": "0.0.288",
++    "@aws-cdk/service-spec-types": "0.0.293",
+     "@cdklabs/tskb": "^0.0.4",
+     "@cdklabs/typewriter": "^0.0.16",
+     "camelcase": "^6",
+```
+
+**File**: `yarn.lock` (modified, +9/-9)
+```diff
+@@ -58,12 +58,12 @@
+     "@aws-cdk/service-spec-types" "^0.0.287"
+     "@cdklabs/tskb" "^0.0.4"
  
-+Every rule in `rules/` needs two fixtures in `test/rule-fixtures/<rule path without .guard>/`: `non-compliant.json`, which the rule must fail, and `compliant.json`, which the rule must evaluate and pass. The tests fail for a rule that has no fixtures.
-+
- ---
+-"@aws-cdk/aws-service-spec@0.1.222":
+-  version "0.1.222"
+-  resolved "https://registry.npmjs.org/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.222.tgz#e17b758f00a217fc42eb213084c39d304a34d31d"
+-  integrity sha512-gN3Y/KT/9fEc7hJK3D4ojf6zYRHm/uiAeNWrv7LI+hjQwXwIMJniLu9WLCuRKz46/q5X5lBhUmWivpG8WGzEPw==
++"@aws-cdk/aws-service-spec@0.1.227":
++  version "0.1.227"
++  resolved "https://registry.npmjs.org/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.227.tgz#86b29dcbf087efa267c45d69ba66d6897de388ff"
++  integrity sha512-kYSro1A57ewfcfypEPU+XWq9Blqm0YAD80AbxIwUlEaFQ38oxcXvqN5f3qmHqXyAtMI2Q5F6kjwPV/iP3yUQ2g==
+   dependencies:
+-    "@aws-cdk/service-spec-types" "^0.0.288"
++    "@aws-cdk/service-spec-types" "^0.0.293"
+     "@cdklabs/tskb" "^0.0.4"
  
- ## Output
-```
-
-**File**: `tools/@aws-cdk/security-guardian/test/junit-report.ts` (modified, +15/-0)
-```diff
-@@ -1,6 +1,13 @@
- import { DOMParser } from '@xmldom/xmldom';
- import * as fs from 'fs';
+ "@aws-cdk/cloud-assembly-api@^2.5.0":
+@@ -156,10 +156,10 @@
+     glob "^8"
+     sort-json "^2.0.1"
  
-+export interface GuardTestCase {
-+  /** The rule file cfn-guard evaluated, for example "iam-no-wildcard-actions.guard" */
-+  readonly ruleFile: string;
-+  /** "pass", "skip", or "fail" for a test case that carries a failure instead of a status */
-+  readonly status: string;
-+}
-+
- function readReport(junitFile: string) {
-   const xml = fs.readFileSync(junitFile, 'utf8');
-   if (xml.trim() === '') {
-@@ -19,3 +26,11 @@ export function failedRules(junitFile: string): string[] {
-   return Array.from(readReport(junitFile).getElementsByTagName('failure'))
-     .map(failure => (failure.getAttribute('message') ?? '').replace(/^\[Type: [^\]]*\] /, ''));
- }
-+
-+/** Every test case in a cfn-guard JUnit report, one per rule file and data file. */
-+export function testCases(junitFile: string): GuardTestCase[] {
-+  return Array.from(readReport(junitFile).getElementsByTagName('testcase')).map(testCase => ({
-+    ruleFile: testCase.getAttribute('name') ?? '',
-+    status: testCase.getAttribute('status') ?? 'fail',
-+  }));
-+}
+-"@aws-cdk/service-spec-types@0.0.288", "@aws-cdk/service-spec-types@^0.0.288":
+-  version "0.0.288"
+-  resolved "https://registry.npmjs.org/@aws-cdk/service-spec-types/-/service-spec-types-0.0.288.tgz#435298e7b2568d42e7a7b62b3749c906f404089f"
+-  integrity sha512-BN3imuY6M1x4CgM0wpwqC0kbOweU7PUqdy6MxsqBitF+Ci6E5i0/3roxFaiuMVvZhlssBljQS7pqnlpvgP8ngg==
++"@aws-cdk/service-spec-types@0.0.293", "@aws-cdk/service-spec-types@^0.0.293":
++  version "0.0.293"
++  resolved "https://registry.npmjs.org/@aws-cdk/service-spec-types/-/service-spec-types-0.0.293.tgz#baa0468f98fac4974df6c21694816e5fbfcd170d"
++  integrity sha512-LZR04BZEUUO4TLBa4GDAdXalpcBA3TmdeZa4v1HKYXKWki8bFv3hNP6Ohvlx/v/jp3LP0/9k7wG0tZLUB56/qw==
+   dependencies:
+     "@cdklabs/tskb" "^0.0.4"
+ 
 ```
 
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures.test.ts` (added, +116/-0)
+---
+
+### Incident Patch 2: `910ba247` (2026-11-02)
+**Commit Message**: {{ title }} (#{{ number }})
+
+{{ body }}
+
+**File**: `packages/@aws-cdk/custom-resource-handlers/lib/aws-eks/cluster-resource-handler/cluster.ts` (modified, +15/-34)
 ```diff
-@@ -0,0 +1,116 @@
-+import { preprocessTemplates } from '../src/template-preprocessor';
-+import { runCfnGuardValidation } from '../src/cfn-guard-runner';
-+import { failedRules, testCases } from './junit-report';
-+import * as fs from 'fs';
-+import * as os from 'os';
-+import * as path from 'path';
-+
-+// Every rule file needs a fixture it fires on and a fixture it evaluates and passes,
-+// at test/rule-fixtures/<rule path without .guard>/{non-compliant,compliant}.json.
-+// The fixtures are .json rather than .template.json so that the Security Guardian
-+// action never scans them as changed templates.
-+const rulesDir = path.join(__dirname, '..', 'rules');
-+const fixturesDir = path.join(__dirname, 'rule-fixtures');
-+const fixtures = ['non-compliant.json', 'compliant.json'];
-+// The action fails a pull request when either scan fails, so compliant.json must pass
-+// both; non-compliant.json must fail both, so that neither scan stops evaluating a
-+// rule unnoticed
-+const scans = ['static', 'resolved'];
-+
-+// These rules wrap their checks in `when Principal != "*"`. cfn-guard cannot compare a
-+// map Principal such as { "AWS": "*" } with a string, and a string Principal has no AWS
-+// key, so the rules skip every policy and neither fire nor pass on their fixtures.
-+// Remove a rule from this list once it evaluates its fixtures.
-+const rulesThatSkipEveryPolicy = [
-+  's3/s3-no-world-readable',
-+  's3/s3-no-world-writable',
-+  'sns/sns-no-world-accessible',
-+  'sns/sns-no-world-accessible-inline',
-+  'sqs/sqs-no-world-accessible',
-+  'sqs/sqs-no-world-accessible-inline',
-+];
-+
-+function findFiles(dir: string, extension: string): string[] {
-+  const files: string[] = [];
-+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-+    const fullPath = path.join(dir, entry.name);
-+    if (entry.isDirectory()) {
-+      files.push(...findFiles(fullPath, extension));
-+    } else if (entry.isFile() && entry.name.endsWith(extension)) {
-+      files.push(fullPath);
-+    }
-+  }
-+  return files;
-+}
-+
-+const ruleIds = findFiles(rulesDir, '.guard').map(file => path.relative(rulesDir, file).replace(/\.guard$/, ''));
-+
-+describe('Guard Rule Fixtures', () => {
-+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'security-guardian-rule-fixtures-'));
-+
-+  afterAll(() => {
-+    fs.rmSync(outputDir, { recursive: true, force: true });
-+  });
-+
-+  test('every fixture belongs to a rule file', () => {
-+    const misplaced = findFiles(fixturesDir, '.json')
-+      .map(file => path.relative(fixturesDir, file))
-+      .filter(file => !fixtures.includes(path.basename(file)) || !ruleIds.includes(path.dirname(file)));
-+    expect(misplaced).toEqual([]);
-+  });
-+
-+  describe.each(ruleIds)('rules/%s.guard', (ruleId) => {
-+    const ruleFile = path.join(rulesDir, `${ruleId}.guard`);
-+    const fixtureDir = path.join(fixturesDir, ruleId);
-+    const reportDir = path.join(outputDir, ruleId);
-+    const resolvedDir = path.join(reportDir, 'resolved');
-+    let ruleName: string;
-+
-+    beforeAll(() => {
-+      const ruleNames = [...fs.readFileSync(ruleFile, 'utf8').matchAll(/^rule\s+(\w+)/gm)].map(match => match[1]);
-+      if (ruleNames.length !== 1) {
-+        throw new Error(`rules/${ruleId}.guard must define exactly one rule, found ${JSON.stringify(ruleNames)}`);
-+      }
-+      ruleName = ruleNames[0];
-+
-+      const missing = fixtures.filter(fixture => !fs.existsSync(path.join(fixtureDir, fixture)));
-+      if (missing.length > 0) {
-+        throw new Error(`missing fixtures for rules/${ruleId}.guard: add ${missing.map(fixture => `test/rule-fixtures/${ruleId}/${fixture}`).join(' and ')}`);
-+      }
-+
-+      fs.mkdirSync(reportDir, { recursive: true });
-+      preprocessTemplates(fixtureDir, resolvedDir);
-+    });
-+
-+    async function validate(scan: string, fixture: string) {
-+      const dataFile = path.join(scan === 'static' ? fixtureDir : resolvedDir, fixture);
-+      const report = path.join(reportDir, `${scan}-${path.basename(fixture, '.json')}.xml`);
-+      const success = await runCfnGuardValidation(dataFile, ruleFile, report, scan, new Map(), false);
-+      return { success, report };
-+    }
-+
-+    if (rulesThatSkipEveryPolicy.includes(ruleId)) {
-+      test.each(scans.flatMap(scan => fixtures.map(fixture => [scan, fixture])))('%s: skips %s', async (scan, fixture) => {
-+        const { report } = await validate(scan, fixture);
-+
-+        expect(testCases(report)).toEqual([{ ruleFile: path.basename(ruleFile), status: 'skip' }]);
-+      });
-+      return;
-+    }
-+
-+    test.each(scans)('%s: fires on non-compliant.json', async (scan) => {
-+      const { success, report } = await validate(scan, 'non-compliant.json');
-+
-+      expect(testCases(report)).toEqual([{ ruleFile: path.basename(ruleFile), status: 'fail' }]);
-+      expect(failedRules(report)).toEqual([ruleName]);
-+      expect(success).toBe(false);
-+    });
-+
-+    test.each(scans)('%s: evaluates and passes on compliant.json', async (scan) => {
-+      const { success, r
+@@ -148,42 +148,23 @@ export class ClusterResourceHandler extends ResourceHandler {
+       try {
+         // Describe the cluster to get the ARN for tagging APIs and to make sure Cluster exists
+         const cluster = (await this.eks.describeCluster({ name: this.clusterName })).cluster;
+-        if (this.oldProps.tags) {
+-          if (this.newProps.tags) {
+-            // This means there are old tags as well as new tags so get the difference
+-            // Update existing tag keys and add newly added tags
+-            const tagsToAdd = getTagsToUpdate(this.oldProps.tags, this.newProps.tags);
+-            if (tagsToAdd) {
+-              const tagConfig: EKS.TagResourceCommandInput = {
+-                resourceArn: cluster?.arn,
+-                tags: tagsToAdd,
+-              };
+-              await this.eks.tagResource(tagConfig);
+-            }
+-            // Remove the tags that were removed in newProps
+-            const tagsToRemove = getTagsToRemove(this.oldProps.tags, this.newProps.tags);
+-            if (tagsToRemove.length > 0 ) {
+-              const config: EKS.UntagResourceCommandInput = {
+-                resourceArn: cluster?.arn,
+-                tagKeys: tagsToRemove,
+-              };
+-              await this.eks.untagResource(config);
+-            }
+-          } else {
+-            // This means newProps.tags is empty hence remove all tags
+-            const config: EKS.UntagResourceCommandInput = {
+-              resourceArn: cluster?.arn,
+-              tagKeys: Object.keys(this.oldProps.tags),
+-            };
+-            await this.eks.untagResource(config);
+-          }
+-        } else {
+-          // This means oldProps.tags was empty hence add all tags from newProps.tags
+-          const config: EKS.TagResourceCommandInput = {
++        const oldTags = this.oldProps.tags ?? {};
++        const newTags = this.newProps.tags ?? {};
++        const tagsToAdd = getTagsToUpdate(oldTags, newTags);
++        if (Object.keys(tagsToAdd).length > 0) {
++          const tagConfig: EKS.TagResourceCommandInput = {
++            resourceArn: cluster?.arn,
++            tags: tagsToAdd,
++          };
++          await this.eks.tagResource(tagConfig);
++        }
++        const tagsToRemove = getTagsToRemove(oldTags, newTags);
++        if (tagsToRemove.length > 0) {
++          const config: EKS.UntagResourceCommandInput = {
+             resourceArn: cluster?.arn,
+-            tags: this.newProps.tags,
++            tagKeys: tagsToRemove,
+           };
+-          await this.eks.tagResource(config);
++          await this.eks.untagResource(config);
+         }
+       } catch (e: any) {
+         throw e;
 ```
 
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/documentdb/documentdb-encryption-enabled/compliant.json` (added, +11/-0)
+**File**: `packages/@aws-cdk/custom-resource-handlers/test/aws-eks/cluster-resource-provider.test.ts` (modified, +63/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+{
-+  "Description": "DOCUMENTDB_ENCRYPTION_ENABLED passes: the cluster enables storage encryption",
-+  "Resources": {
-+    "EncryptedCluster": {
-+      "Type": "AWS::DocDB::DBCluster",
-+      "Properties": {
-+        "StorageEncrypted": true
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/documentdb/documentdb-encryption-enabled/non-compliant.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "Description": "DOCUMENTDB_ENCRYPTION_ENABLED fires: the cluster disables storage encryption",
-+  "Resources": {
-+    "UnencryptedCluster": {
-+      "Type": "AWS::DocDB::DBCluster",
-+      "Properties": {
-+        "StorageEncrypted": false
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-ebs-encryption-enabled/compliant.json` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+{
-+  "Description": "EBS_ENCRYPTION_ENABLED passes: the volume enables encryption",
-+  "Resources": {
-+    "EncryptedVolume": {
-+      "Type": "AWS::EC2::Volume",
-+      "Properties": {
-+        "AvailabilityZone": "us-west-2a",
-+        "Size": 8,
-+        "Encrypted": true
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-ebs-encryption-enabled/non-compliant.json` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+{
-+  "Description": "EBS_ENCRYPTION_ENABLED fires: the volume disables encryption",
-+  "Resources": {
-+    "UnencryptedVolume": {
-+      "Type": "AWS::EC2::Volume",
-+      "Properties": {
-+        "AvailabilityZone": "us-west-2a",
-+        "Size": 8,
-+        "Encrypted": false
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-no-open-security-groups/compliant.json` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+  "Description": "EC2_NO_OPEN_SECURITY_GROUPS passes: the security group allows SSH from a private range only",
-+  "Resources": {
-+    "ScopedSecurityGroup": {
-+      "Type": "AWS::EC2::SecurityGroup",
-+      "Properties": {
-+        "GroupDescription": "Allows SSH from the VPC",
-+        "SecurityGroupIngress": [
-+          {
-+            "IpProtocol": "tcp",
-+            "FromPort": 22,
-+            "ToPort": 22,
-+            "CidrIp": "10.0.0.0/16"
-+          }
-+        ]
-+      }
-+    }
-+  }
-+}
+@@ -1093,6 +1093,29 @@ describe('cluster resource provider', () => {
+             tagKeys: ['hello'],
+           });
+         });
++        test('remove some tags while keeping others', async () => {
++          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
++            // this is the new props
++            ...mocks.MOCK_PROPS,
++            tags: {
++              foo: 'bar',
++            },
++          }, {
++            // this is the old props
++            ...mocks.MOCK_PROPS,
++            tags: {
++              foo: 'bar',
++              hello: 'world',
++            },
++          }));
++          await handler.onEvent();
++          // TagResource requires a non-empty tags map; skip it when only removing tags
++          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
++          expect(mocks.actualRequest.untagResourceRequest).toEqual({
++            resourceArn: 'arn:cluster-arn',
++            tagKeys: ['hello'],
++          });
++        });
+         test('remove all tags', async () => {
+           const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
+             // this is the new props
+@@ -1112,6 +1135,46 @@ describe('cluster resource provider', () => {
+             tagKeys: ['foo', 'hello'],
+           });
+         });
++        test('remove all tags when new tags is an empty map', async () => {
++          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
++            ...mocks.MOCK_PROPS,
++            tags: {},
++          }, {
++            ...mocks.MOCK_PROPS,
++            tags: {
++              foo: 'bar',
++              hello: 'world',
++            },
++          }));
++          await handler.onEvent();
++          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
++          expect(mocks.actualRequest.untagResourceRequest).toEqual({
++            resourceArn: 'arn:cluster-arn',
++            tagKeys: ['foo', 'hello'],
++          });
++        });
++        test('does not call tagResource when new tags are an empty map', async () => {
++          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
++            ...mocks.MOCK_PROPS,
++            tags: {},
++          }, {
++            ...mocks.MOCK_PROPS,
++          }));
++          await handler.onEvent();
++          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
++          expect(mocks.actualRequest.untagResourceRequest).toEqual(undefined);
++        });
++        test('does not call untagResource when old tags are an empty map and new tags are unset', async () => {
++          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
++            ...mocks.MOCK_PROPS,
++          }, {
++            ...mocks.MOCK_PROPS,
++            tags: {},
++          }));
++          await handler.onEvent();
++          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
++          expect(mocks.actualRequest.untagResourceRequest).toEqual(undefined);
++        });
+         test('add tags after creation of cluster', async () => {
+           const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
+             // this is the new props
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39593** (2026-11-01): chore: update Contributors File (@aws-cdk-automation)
 - **PR #39544** (2026-10-30): docs: remove ROADMAP.md (@ozelalisen)
 - **PR #39540** (2026-10-28): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
 - **PR #39538** (closed): fix(cloudformation): host StackSetStack templates in the stack of their StackSets (@gudipati)
+- **PR #39534** (2026-11-02): fix(eks): cluster tag updates fail when only removing tags (@bmnizar)
 - **PR #39521** (2026-10-28): chore: add some bisect helper scripts to `scripts/` (@rix0rrr)
-- **PR #39518** (2026-10-27): chore: fix repository NX config (@rix0rrr)
-- **PR #39515** (closed): chore(deps): bump @aws-cdk/lambda-layer-kubectl-v36 to 2.0.1 (@aemada-aws)
 
 ---
 
@@ -1511,29 +1474,28 @@ None.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security-guardian): test every rule against a failing and a passing fixture (#39
+## X. update L1 CloudFormation resource definitions (#39491)
 
 **RULE**:
-When implementing operations in `tools/@aws-cdk/security-guardian/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk/metrics-facade-alpha/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a257031`: security-guardian): test every rule against a failing and a passing fixture (#39505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05fb8aef`: update L1 CloudFormation resource definitions (#39491). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/metrics-facade-alpha/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Every rule in `rules/` needs two fixtures in `test/rule-fixtures/<rule path without .guard>/`: `non-compliant.json`, which the rule must fail, and `compliant.json`, which the rule must evaluate and pass. The tests fail for a rule that has no fixtures.
-
+    "@aws-cdk/service-spec-types": "0.0.293",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "@aws-cdk/service-spec-types": "0.0.288",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a257031` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05fb8aef` are properly handled with clean fallback behavior.

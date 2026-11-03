@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `d1d0ccea`  
+> **Source Version**: `4aa6ac3d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:19:31.012Z  
+> **Timestamp**: 2026-11-03T11:59:19.979Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:19:30.907Z  
+> **Harvest Timestamp**: 2026-11-03T11:59:19.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6498 stars
+- **Stars / Engagement**: 6512 stars
 
 ---
 
@@ -405,310 +405,435 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1d0ccea` (2026-10-30)
-**Commit Message**: fix(examples): india cert-in and sebi policies deny every evaluation (#4480)
+### Incident Patch 1: `4aa6ac3d` (2026-11-02)
+**Commit Message**: fix!: send the snapshot contract's keys from HostSession and the AGT adapter runtime (#4059)
 
-* fix(examples): stop certin and sebi india policies denying every evaluation
+* fix(policy-engine)!: send the snapshot contract's keys from HostSession
 
-Three rules in the India regulatory example pack tested a parameter with a
-negated comparison instead of binding it. A negated comparison against a
-missing path is true, so each fired whenever the parameter was absent.
+HostSession spread the model request over top-level model, messages and tools, sent the model response as response, and the final content as response.content. The snapshot contract, the wire schema and the framework adapters use model_request, model_response and output, so a manifest written from the contract failed closed with runtime_error:path_missing when driven through HostSession, and nothing in the error pointed at the snapshot shape. Send the contract keys: the whole request under model_request, with nothing folded or dropped, the response under model_response and the final content under output.
 
-Since these bundles were bound to runtime intervention points that is not an
-unusual input. acs-result.rego sets params to {} on the output interception,
-and on the input interception when the body is not an object, and maps params
-to the tool call's arguments at pre_tool_call. normalize turns any single
-denial into a deny decision, so certin-2022-directions and sebi-governance
-returned deny on every evaluation, including for benign content.
+Fixes #4047
 
-A rule that fires on an absent field also cannot be contained: it adds a
-denial to every evaluation of its policy, so no other rule in that policy
-could be exercised in isolation.
+Signed-off-by: David Long <[REDACTED_EMAIL]>
 
-certin-2022-directions.rego already contained the correct idiom four lines
-above one of the affected rules: the 180-day retention rule binds the value
-and is therefore undefined when the field is
+* fix!: contract keys in agent_os, agt migrate and the stock libraries
+
+The agent_os adapter runtime, the agt migrate targets and the stock Rego and
+Cedar output rules still used the shape HostSession sent before, so the first
+commit left the monorepo disagreeing with itself and every migrated manifest
+failing closed. IFC result labels at output move to the 
+
+**File**: `BREAKING_CHANGES.md` (modified, +62/-0)
+```diff
+@@ -52,6 +52,68 @@ manifest.
+ 
+ ---
+ 
++## Python `HostSession` and the AGT adapter runtime send the snapshot contract's keys
++
++**Date:** TBD
++
++**Affected**
++
++- Python hosts evaluating `pre_model_call`, `post_model_call` or `output`
++  through `HostSession`, and every `agent_os` framework adapter, which
++  reaches the same points through `NativeAdapterRuntime`
++- Manifests whose policy targets were written against the keys those seams
++  used to send, including every manifest `agt migrate v4-to-v5` produced
++  before this change
++- Rego or Cedar that reads those keys in its body rather than through
++  `policy_target`, and the stock `data.agt.ifc`, `ifc.cedar` and
++  `patterns.cedar` output rules
++
++**What changed**
++
++`HostSession.pre_model_call` sent the request spread over top-level `model`,
++`messages` and `tools`, `post_model_call` sent `response`, and `output` sent
++`response.content`; the `agent_os` adapter runtime did the same. The snapshot
++contract, the wire schema and the framework adapters in every SDK use
++`model_request`, `model_response` and `output`, so a manifest written from the
++contract failed closed with `runtime_error:path_missing` when driven through
++either seam. Both now send the contract keys: the request under
++`model_request` (the adapter runtime nests its `model`, `messages` and `tools`
++there; `HostSession` forwards the caller's request unchanged), the response
++under `model_response`, and the final content under `output`. IFC result
++labels at `output` move from `response.ifc.result_labels` to the top-level
++`ifc.result_labels`, since `output` is the bare content. `agt migrate` emits
++the new targets, the stock libraries read the new paths, and
++`AGT-SNAPSHOT-1.0.md` §2.3, §2.4 and §2.7 document them.
++
++**How to update**
++
++Rewrite policy targets, in hand-written manifests and in anything `agt
++migrate` produced earlier (or re-run the migration, which binds
++`pre_model_call` to `$snap.model_request` and scans every prompt key but
++`model` and `tools`):
++
++| Before | After |
++|---|---|
++| `$snap.messages` at `pre_model_call` | `$snap.model_request.messages` (or `$snap.model_request` to cover `system` and `contents`) |
++| `$snap.model`, `$snap.tools` at `pre_model_call` | `$snap.model_request.model`, `$snap.model_request.tools` |
++| `$snap.response` at `post_model_call` | `$snap.model_response` |
++| `$snap.response.content` at `output` | `$snap.output` |
++
++Rego that reads the snapshot directly needs the same rename:
++`input.snapshot.response.content` → `input.snapshot.output`,
++`input.snapshot.response` → `input.snapshot.model_response`,
++`input.snapshot.messages` → `input.snapshot.model_request.messages`, and
++`input.snapshot.response.ifc.result_labels` → `input.snapshot.ifc.result_labels`
++(the `data.agt.ifc` `result_labels` helper already follows). Cedar reads
++`context.output` and `context.ifc.result_labels` in place of
++`context.response.content` and `context.response.ifc.result_labels`. Check
++these reads before upgrading: a rule under `default verdict := {"decision":
++"allow"}` that reads an old path never fires, so it fails open rather than
++closed. Manifests already written against the adapters or the contract need
++no change.
++
++---
++
+ ## Python manifests declaring annotators require an explicit dispatcher
+ 
+ **Date:** TBD
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **OpenCode audit entries are versioned, and the on-disk schema changed.** Entries written from now on carry `v: 2` and are hashed over a canonical form with keys sorted by UTF-16 code unit (RFC 8785 ordering), so an external verifier can reproduce a hash without knowing property insertion order. Entries without `v` are treated as version 1 and still verify byte for byte, so existing logs keep working and nothing is migrated. The upgrade is one way: once a version 2 entry is written to a file, an older release fails verification on that file and, because a failed chain denies every request, denies everything until the file is moved aside. Two rules close off downgrades: a version 1 entry must carry exactly its six keys, and versions only ever go up within a file (#3668).
+ - **OpenCode direct-resource denials no longer record the matched path or URL.** The persisted `reason` names the rule that matched and its description instead of the value that matched it, so a denied read of a secret-bearing path or a URL with a token in its query no longer writes that value into the tamper-evident log (#3668).
+ - **BREAKING: Rust audit entry and framework event struct literals require the new optional `skill_audit_metadata` field.** JSON deserialization remains compatible with payloads that omit it. This source-breaking API addition is intended for the next Rust SDK major release.
++- **BREAKING: Python `HostSession` and the `agent_os` adapter runtime send the snapshot contract's keys** — `model_request`, `model_response` and `output` instead of top-level `model`/`messages`/`tools`, `response` and `response.content`, so one manifest binds through `HostSession`, the `agent_os` adapters and the framework adapters alike. `agt migrate` emits the new targets, the stock Rego and Cedar output rules read the new paths (IFC result labels move to the top-level `ifc.result_labels`), and `AGT-SNAPSHOT-1.0.md` documents the shape. See BREAKING_CHANGES.md for the path rewrites.
+ - **Python `HostSession` honours the manifest approval timeout** — `AgentControl.approval_config` and `NativeRuntimeClient.approval_config` expose the manifest's top-level `approval` section, and `HostSession` now bounds its approval wait by, in order, the explicit `approval_timeout_seconds` argument, the manifest's `approval.timeout_seconds`, then the 300-second default. A manifest that already declares `timeout_seconds` waited 300 seconds before and is now bounded by its own value. The manifest's `on_timeout` is still not honoured; the session's `approval_on_timeout` decides.
+ - **OpenCode URL policy hardening** — HTTP(S) forms such as `https:host` are canonicalized before existing `urlRules` are evaluated, and HTTP(S) URL authorities containing backslashes are denied regardless of `urlDefaultEffect` to avoid parser ambiguity.
+ - **BREAKING: `acs-generator` is CLI-only in `0.4.0b0`.** Removed top-level library re-exports such as `GenerationEngine` and `FakeLanguageModel`. Reusable manifest and Rego validation now lives under `agent_control_specification.validation`; the Python SDK moves to `0.3.1b1`.
+```
+
+**File**: `agent-governance-python/agent-os/src/agent_os/integrations/_native_adapter_runtime.py` (modified, +12/-8)
+```diff
+@@ -339,11 +339,17 @@ def evaluate_pre_model_call(
+         request_id: str = "req-1",
+         model_vendor: str = "test",
+     ) -> NativeAdapterResult:
++        # The point-specific body rides under the snapshot contract's key
++        # (``model_request``, ``model_response``, ``output``), the same keys
++        # ``HostSession``'s own methods send, so one manifest binds through
++        # either seam.
+         evaluation = self._session_for(ctx).evaluate(
+             "pre_model_call",
+-            model={"name": model_name, "vendor": model_vendor, "params": {}},
+-            messages=messages,
+-            tools=tools or [],
++            model_request={
++                "model": {"name": model_name, "vendor": model_vendor, "params": {}},
++                "messages": messages,
++                "tools": tools or [],
++            },
+             request_id=request_id,
+         )
+         return NativeAdapterResult(evaluation)
+@@ -362,7 +368,7 @@ def evaluate_post_model_call(
+             "post_model_call",
+             model={"name": model_name, "vendor": model_vendor},
+             request_id=request_id,
+-            response=response,
++            model_response=response,
+             usage=usage or {"prompt_tokens": 0, "completion_tokens": 0},
+         )
+         return NativeAdapterResult(evaluation)
+@@ -376,10 +382,8 @@ def evaluate_output(
+     ) -> NativeAdapterResult:
+         evaluation = self._session_for(ctx).evaluate(
+             "output",
+-            response={
+-                "content": content if isinstance(content, str | dict) else str(content),
+-                "ifc": {"result_labels": []},
+-            },
++            output=content if isinstance(content, str | dict) else str(content),
++            ifc={"result_labels": []},
+             message_chain=message_chain or [],
+         )
+         return NativeAdapterResult(evaluation)
+```
+
+**File**: `agent-governance-python/agent-os/tests/test_native_adapter_runtime.py` (modified, +32/-0)
+```diff
+@@ -178,3 +178,35 @@ def test_native_path_charges_attempts_and_records_tokens_once() -> None:
+     assert first["tool_call_count"] == 0
+     assert second["tool_call_count"] == 1
+     assert second["token_count"] == 7
++
++
++def test_model_and_output_envelopes_use_the_snapshot_contract_keys() -> None:
++    """The runtime and ``HostSession``'s own methods must agree on the keys.
++
++    A manifest binds one path per point. If the two seams spell the point
++    body differently, a manifest tested behind one fails closed with
++    ``runtime_error:path_missing`` behind the other.
++    """
++    source = _Runtime(InterventionPointResult(verdict=Verdict(decision=Decision.ALLOW)))
++    runtime = NativeAdapterRuntime(source)
++    context = _Context()
++    messages = [{"role": "user", "content": "hi"}]
++
++    runtime.evaluate_pre_model_call(
++        context, model_name="m", messages=messages, tools=[{"name": "t"}]
++    )
++    runtime.evaluate_post_model_call(context, model_name="m", response={"content": "hello"})
++    runtime.evaluate_output(context, content="hello")
++
++    pre, post, output = source.snapshots
++    assert pre["model_request"] == {
++        "model": {"name": "m", "vendor": "test", "params": {}},
++        "messages": messages,
++        "tools": [{"name": "t"}],
++    }
++    assert post["model_response"] == {"content": "hello"}
++    assert output["output"] == "hello"
++    assert output["ifc"] == {"result_labels": []}
++    for snapshot in (pre, post, output):
++        assert "response" not in snapshot
++    assert "messages" not in pre and "tools" not in pre and "model" not in pre
+```
+
+**File**: `agent-governance-python/agt-policies/src/agt/cli/_migrate_bridge.py` (modified, +22/-10)
+```diff
+@@ -203,14 +203,23 @@ def _render_rego(
+         "# them separate rather than joining preserves whole-string (GLOB) anchors,",
+         "# which against a joined text could only ever match the final leaf.",
+         "policy_texts := [value] if {",
+-        "\tvalue := input.policy_target.value",
++        "\tvalue := policy_scope",
+         "\tis_string(value)",
+         "} else := texts if {",
+-        "\ttarget := input.policy_target.value",
+-        "\tnot is_string(target)",
+-        "\ttexts := [s | walk(target, [_, s]); is_string(s)]",
++        "\tnot is_string(policy_scope)",
++        "\ttexts := [s | walk(policy_scope, [_, s]); is_string(s)]",
+         "}",
+         "",
++        "# v4 scanned the conversation text of a model request, not the model",
++        "# name or tool descriptions. The prompt lives under a provider-specific",
++        "# key (messages, system, contents), so drop the two that aren't prompt",
++        "# text instead of binding one of them.",
++        "policy_scope := object.remove(target, [\"model\", \"tools\"]) if {",
++        '\tinput.intervention_point == "pre_model_call"',
++        "\ttarget := input.policy_target.value",
++        "\tis_object(target)",
++        "} else := input.policy_target.value",
++        "",
+     ]
+     branches: list[str] = []
+     pattern_list = list(blocked_patterns)
+@@ -286,14 +295,17 @@ def _render_rego(
+ # (``runtime_error:intervention_point_unknown``), so a migrated manifest has to
+ # bind every point an adapter evaluates or the agent stops working the moment it
+ # produces output or calls a tool. Each target below is the JSONPath for the
+-# envelope the adapter runtime actually sends for that point; the generated Rego
+-# carries ``default verdict := {"decision": "allow"}``, so binding a point the v4
+-# policy said nothing about permits it rather than inventing a new rule.
++# envelope the adapter runtime actually sends for that point; the model and
++# output points use the snapshot contract's keys (``model_request``,
++# ``model_response``, ``output``), which ``HostSession`` sends as well. The
++# generated Rego carries ``default verdict := {"decision": "allow"}``, so
++# binding a point the v4 policy said nothing about permits it rather than
++# inventing a new rule.
+ _POINT_TARGETS: dict[str, tuple[str, str]] = {
+     "input": ("$.input.body", "user_input"),
+-    "output": ("$.response.content", "assistant_output"),
+-    "pre_model_call": ("$.messages", "model_request"),
+-    "post_model_call": ("$.response", "assistant_output"),
++    "output": ("$.output", "assistant_output"),
++    "pre_model_call": ("$.model_request", "model_request"),
++    "post_model_call": ("$.model_response", "assistant_output"),
+     "pre_tool_call": ("$.tool_call.args", "tool_args"),
+     "post_tool_call": ("$.tool_result.value", "tool_result"),
+     # AGT-SNAPSHOT-1.0 §2.1 names this field `agent_init`, but both SDK seams
+```
+
+**File**: `agent-governance-python/agt-policies/tests/scenarios/test_agentshield_adapter_scenarios.py` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@
+     policy:
+       id: scenario_policy
+   output:
+-    policy_target: $.response.content
++    policy_target: $.output
+     policy_target_kind: assistant_output
+     policy:
+       id: scenario_policy
+```
+
+**File**: `agent-governance-python/agt-policies/tests/scenarios/test_anthropic_adapter_scenarios.py` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@
+     policy:
+       id: scenario_policy
+   output:
+-    policy_target: $.response.content
++    policy_target: $.output
+     policy_target_kind: assistant_output
+     policy:
+       id: scenario_policy
+```
+
+**File**: `agent-governance-python/agt-policies/tests/scenarios/test_crewai_adapter_scenarios.py` (modified, +1/-1)
+```diff
+@@ -97,7 +97,7 @@ def wrap_fn(fn):
+     policy:
+       id: scenario_policy
+   output:
+-    policy_target: $.response.content
++    policy_target: $.output
+     policy_target_kind: assistant_output
+     policy:
+       id: scenario_policy
+```
+
+---
+
+### Incident Patch 2: `9c6907af` (2026-11-02)
+**Commit Message**: fix(agent-sre): report a failed runbook rollback instead of rolled_back (#4478)
+
+When a runbook step failed, RunbookExecutor ran the rollback actions of
+the completed steps and then marked the execution ROLLED_BACK whenever
+any of them had a rollback action, even if that action raised. The
+rolled-back steps also kept SUCCESS; StepStatus.ROLLED_BACK was never
+set.
+
+Mark each step whose rollback succeeds ROLLED_BACK, and mark the
+execution ROLLED_BACK only when every rollback succeeded. A failed
+rollback leaves the execution FAILED and records the error on the step.
+
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `.cspell-repo-terms.txt` (modified, +1/-0)
 ```diff
-@@ -1166,6 +1166,7 @@ usize
- utcfromtimestamp
- utcnow
- uvicorn
-+vapt
- venv
- venvs
- vite
+@@ -1001,6 +1001,7 @@ rrdatas
+ rsplit
+ rstrip
+ run_results
++runbook
+ runbooks
+ runsc
+ rustc
 ```
 
-**File**: `examples/policies/india-regulatory/README.md` (modified, +17/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -28,6 +28,23 @@ output; they do not observe the underlying system action, so they are detection
- examples pack, not compliance controls. Treat them as a starting point, pair them with real
- action-level enforcement, and run your own compliance assessment.
+@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-runtime` `DockerDeployer.logs` returns what the agent writes to stderr.** Containers are started without a TTY, so `docker logs` replays the agent's stderr on its own stderr, and `logs` returned only the captured stdout. An agent that logs through Python's `logging` (stderr by default) got an empty or partial result. `logs` now merges the two streams in the order Docker writes them. `KubernetesDeployer.logs` was not affected, since `kubectl logs` prints both streams on stdout.
+ - **`agent-rag-governance` audits a denied collection with the query's hash.** `RAGGovernor` wrote the `denied` audit entry for a blocked collection with the hash of an empty string, so every denied attempt carried the same `query_hash` and could not be tied to what the agent searched for. The `rate_limited` entry was fixed the same way earlier. The `denied` entry now hashes the actual query (salted by `AGENT_RAG_AUDIT_SALT` when set), for LangChain and LlamaIndex wrappers alike.
+ - **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
++- **`agent-sre` `RunbookExecutor` reports a failed rollback.** When a step failed, the executor ran the rollback actions of the steps before it and then marked the execution `rolled_back` whenever any of them had a rollback action, even if that action raised, so an execution left half undone read as cleanly rolled back. The rolled-back steps also kept `success`, and `StepStatus.ROLLED_BACK` was never set. Each step whose rollback succeeds is now marked `rolled_back`; the execution is `rolled_back` only when every rollback succeeded, and otherwise stays `failed`, with the rollback error recorded on the step.
  
-+## Parameter-based rules need the host to supply the parameters
-+
-+Several rules decide on a declared parameter rather than on the action name or the output
-+text: `log_storage_region` and `ntp_synced` (CERT-In), `storage_region`, `data_class` and
-+`kyc_completed` (RBI), `consent_logged` and `encrypted` (DPDP), `aadhaar_masked` (Aadhaar),
-+and `human_accountable`, `log_storage_region` and `vapt_completed` (SEBI). Those keys reach
-+a policy only if the host puts them into the tool call arguments at `pre_tool_call`, or into
-+`input.body.params` at the input interception. Nothing in this repository sets any of them,
-+so in a default deployment those rules are inert and the pack decides on action names and
-+output text alone.
-+
-+One name collides and is worth knowing about. `agent-mesh` carries a `data_class` field on
-+its TRACE trust records, documented as the highest-sensitivity data class processed in a
-+session and defaulting to `internal`. That is a different field from the RBI rule's
-+`input.params.data_class`, which expects one of `payment_data`, `transaction_data` or
-+`card_data`. Feeding the first into the second would be accepted and would never match.
-+
- ## Not covered (known gaps)
- Material obligations the pack does not represent yet, listed so the example is honest about its scope:
- - DPDP: s.5 notice; s.9 children's data (verifiable parental consent, no behavioural monitoring of minors); ss.11-14 Data Principal rights.
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `examples/policies/india-regulatory/rego/certin-2022-directions.rego` (modified, +10/-1)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/incidents/runbook_executor.py` (modified, +15/-3)
 ```diff
-@@ -1,5 +1,5 @@
- # agt-policies-india - CERT-In Directions 2022 (Rego reference)
--# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). NOT loaded at runtime. RE2.
-+# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). RE2.
- #
- # Input schema:
- #   { "action": "store_logs_offshore",
-@@ -12,6 +12,13 @@ import rego.v1
- 
- _output_text := v if { is_string(input.output); v := input.output } else := ""
- 
-+# Actions that place or configure ICT log storage, and actions that change clock
-+# synchronisation. Both sets use the verbs this pack's policy document already
-+# declared, so a host using different names must extend them.
-+log_storage_actions := {"disable_logging", "store_logs_offshore", "set_log_retention_below_180"}
+@@ -146,8 +146,16 @@ def _rollback(
+         execution: RunbookExecution,
+         incident: Incident,
+     ) -> None:
+-        """Run rollback actions in reverse order for completed steps."""
+-        for step, _result in reversed(completed_steps):
++        """Run rollback actions in reverse order for completed steps.
 +
-+clock_sync_actions := {"disable_ntp", "set_external_untrusted_ntp"}
-+
- # Direction (ii): 6-hour reporting - cannot suppress/delay
- deny contains msg if {
- 	regex.match(`(?i)(don'?t\s+(report|notify)|skip\s+(the\s+)?(cert.?in\s+)?report|suppress\s+(the\s+)?(incident|breach)|delay\s+(the\s+)?(incident|breach)\s+report)`, _output_text)
-@@ -25,13 +32,15 @@ deny contains msg if {
- }
++        Each step whose rollback succeeds is marked ``ROLLED_BACK``. The
++        execution is marked ``ROLLED_BACK`` only when every rollback
++        succeeded; if any rollback fails it stays ``FAILED`` and the
++        step keeps ``SUCCESS`` with the rollback error recorded.
++        """
++        rolled_back = False
++        rollback_failed = False
++        for step, result in reversed(completed_steps):
+             if step.rollback_action is None:
+                 continue
  
- deny contains msg if {
-+	input.action in log_storage_actions
- 	not input.params.log_storage_region == "IN"
- 	region := object.get(input.params, "log_storage_region", "unset")
- 	msg := sprintf("CERT-In 2022 Directions (iv): logs must be retained within India, configured region: '%v'", [region])
- }
+@@ -159,13 +167,17 @@ def _rollback(
+                     )
+                 # String rollback actions are logged but not executed
+                 self._emit_event("rollback_completed", step=step, incident=incident)
++                result.status = StepStatus.ROLLED_BACK
++                rolled_back = True
+             except Exception as exc:
+                 logger.warning("Rollback failed for step '%s': %s", step.name, exc)
+                 self._emit_event(
+                     "rollback_failed", step=step, incident=incident, error=str(exc)
+                 )
++                result.error = f"rollback failed: {exc}"
++                rollback_failed = True
  
- # Direction (i): NTP clock sync - escalate if not synced
- escalate contains msg if {
-+	input.action in clock_sync_actions
- 	not input.params.ntp_synced == true
- 	msg := "CERT-In 2022 Directions (i): synchronise ICT system clocks to NIC/NPL NTP servers or traceable sources"
- }
+-        if any(s.rollback_action is not None for s, _ in completed_steps):
++        if rolled_back and not rollback_failed:
+             execution.status = ExecutionStatus.ROLLED_BACK
+ 
+     def _invoke_with_timeout(
 ```
 
-**File**: `examples/policies/india-regulatory/rego/certin-2022-directions_test.rego` (added, +76/-0)
+**File**: `agent-governance-python/agent-sre/tests/test_runbooks.py` (modified, +42/-0)
 ```diff
-@@ -0,0 +1,76 @@
-+# agt-policies-india - CERT-In Directions 2022 (OPA tests)
-+package agt_policies_india.certin_test
-+
-+import data.agt_policies_india.certin
-+import rego.v1
-+
-+# An action unrelated to logging or clocks, carrying no parameters at all. This is
-+# also the shape the result adapters produce: acs-result.rego sets params to {} on
-+# the output interception and maps params to the tool call's arguments at
-+# pre_tool_call, so an unguarded parameter rule denies every evaluation.
-+unrelated := {"action": "read_file", "params": {}}
-+
-+test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
-+	denials := certin.deny with input as unrelated
-+	count(denials) == 0
-+}
-+
-+# Direction (iv), in-India log storage. A declared logging action with no region
-+# must still deny, which is why the object.get default is kept.
-+test_log_region_denies_a_logging_action_with_no_declared_region if {
-+	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {}}
-+	count(denials) == 1
-+}
-+
-+test_log_region_silent_when_region_is_india if {
-+	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "IN"}}
-+	count(denials) == 0
-+}
-+
-+test_log_region_denies_when_region_is_offshore if {
-+	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "SG"}}
-+	count(denials) == 1
-+}
-+
-+# Direction (iv), 180-day retention. Isolated on a non-logging action so the
-+# region rule cannot contribute a second denial to this assertion.
-+test_only_the_retention_rule_fires_for_short_retention if {
-+	denials := certin.deny with input as {"action": "set_log_retention", "params": {"log_retention_days": 90}}
-+	count(denials) == 1
-+}
-+
-+# Direction (i), NTP clock synchronisation.
-+test_ntp_silent_for_an_unrelated_action if {
-+	escalations := certin.escalate with input as unrelated
-+	count(escalations) == 0
-+}
-+
-+test_ntp_escalates_a_clock_action_with_no_declared_sync_state if {
-+	escalations := certin.escalate with input as {"action": "disable_ntp", "params": {}}
-+	count(escalations) == 1
-+}
-+
-+test_ntp_silent_when_synced if {
-+	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": true}}
-+	count(escalations) == 0
-+}
-+
-+test_ntp_escalates_when_explicitly_not_synced if {
-+	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": false}}
-+	count(escalations) == 1
-+}
-+
-+test_unrelated_action_allows if {
-+	certin.decision == "allow" with input as unrelated
-+}
-+
-+# The paths the runtime actually uses, through the shipped result adapter.
-+test_benign_output_allowed_through_the_adapter if {
-+	result := certin.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
-+	result.decision == "allow"
-+}
-+
-+test_benign_tool_call_allowed_through_the_adapter if {
-+	result := certin.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
-+	result.decision == "allow"
-+}
-```
-
-**File**: `examples/policies/india-regulatory/rego/rbi-data-localization_test.rego` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+# agt-policies-india - RBI payment data localization (OPA tests)
-+# This rule was already guarded on the subject-matter field. The tests pin that
-+# behaviour, since it is the pattern the other packs' region rules now follow.
-+package agt_policies_india.rbi_test
-+
-+import data.agt_policies_india.rbi
-+import rego.v1
-+
-+test_region_silent_when_data_class_absent if {
-+	denials := rbi.deny with input as {"action": "read_file", "params": {}}
-+	count(denials) == 0
-+}
-+
-+test_region_denies_payment_data_with_no_declared_region if {
-+	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data"}}
-+	count(denials) == 1
-+}
-+
-+test_region_silent_for_payment_data_stored_in_india if {
-+	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data", "storage_region": "IN"}}
-+	count(denials) == 0
-+}
-```
-
-**File**: `examples/policies/india-regulatory/rego/sebi-governance.rego` (modified, +6/-1)
-```diff
-@@ -1,5 +1,5 @@
- # agt-policies-india - SEBI CSCRF 2024 + AI/ML Responsibility Amendment Feb 2025 (Rego reference)
--# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. NOT loaded at runtime. RE2.
-+# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. RE2.
- #
- # Input schema:
- #   { "action": "disable_audit_log",
-@@ -15,6 +15,10 @@ _output_text := v if { is_string(input.output); v := input.output } else := ""
- ai_action_targets := {"place_order", "advise_investor", "execute_trade", "manage_portfolio"}
- log_tamper_actions := {"disable_audit_log", "delete_audit_log", "make_log_mutable", "store_audit_log_offshore"}
+@@ -215,6 +215,48 @@ def test_rollback_on_failure(self) -> None:
+         # Should have step results including rolled-back ones
+         assert len(execution.step_results) >= 2
  
-+# Actions that place or configure audit log storage, kept disjoint from
-+# log_tamper_actions above so one action never produces two denials.
-+log_storage_actions := {"configure_audit_log", "store_audit_log"}
++    def test_rollback_marks_rolled_back_steps(self) -> None:
++        rb = Runbook(
++            id="rb-rollback-steps",
++            name="Rollback Steps",
++            steps=[
++                RunbookStep(name="ok", action=_ok_action, rollback_action=_rollback_action),
++                RunbookStep(name="no-undo", action=_ok_action),
++                RunbookStep(name="boom", action=_fail_action),
++            ],
++        )
++        execution = RunbookExecutor().execute(rb, _make_incident())
++        assert execution.status == ExecutionStatus.ROLLED_BACK
++        statuses = {r.step_name: r.status for r in execution.step_results}
++        assert statuses == {
++            "ok": StepStatus.ROLLED_BACK,
++            "no-undo": StepStatus.SUCCESS,
++            "boom": StepStatus.FAILED,
++        }
 +
- # Feb 2025 amendment: RE solely responsible for AI/ML output; cannot disclaim
- deny contains msg if {
- 	input.action in ai_action_targets
-@@ -34,6 +38,7 @@ deny contains msg if {
- }
- 
- deny contains msg if {
-+	input.action in log_storage_actions
- 	not input.params.log_storage_region == "IN"
- 	region := object.get(input.params, "log_storage_region", "unset")
- 	msg := sprintf("SEBI CSCRF 2024: audit logs must be retained within India, configured region: '%v'", [region])
-```
-
-**File**: `examples/policies/india-regulatory/rego/sebi-governance_test.rego` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+# agt-policies-india - SEBI CSCRF 2024 (OPA tests)
-+package agt_policies_india.sebi_test
++    def test_failed_rollback_leaves_execution_failed(self) -> None:
++        def _broken_rollback(incident: Incident) -> str:
++            raise RuntimeError("undo failed")
 +
-+import data.agt_policies_india.sebi
-+import rego.v1
++        rb = Runbook(
++            id="rb-rollback-broken",
++            name="Broken Rollback",
++            steps=[
++                RunbookStep(name="first", action=_ok_action, rollback_action=_rollback_action),
++                RunbookStep(name="second", action=_ok_action, rollback_action=_broken_rollback),
++                RunbookStep(name="boom", action=_fail_action),
++            ],
++        )
++        executor = RunbookExecutor()
++        execution = executor.execute(rb, _make_incident())
++        assert execution.status == ExecutionStatus.FAILED
++        results = {r.step_name: r for r in execution.step_results}
++        assert results["first"].status == StepStatus.ROLLED_BACK
++        assert results["second"].status == StepStatus.SUCCESS
++        assert "undo failed" in results["second"].error
++        events = [e["event"] for e in executor.event_log]
++        assert "rollback_failed" in events
 +
-+unrelated := {"action": "read_file", "params": {}}
-+
-+test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
-+	denials := sebi.deny with input as unrelated
-+	count(denials) == 0
-+}
-+
-+# A declared audit-log storage action with no region must still deny.
-+test_log_region_denies_a_storage_action_with_no_declared_region if {
-+	denials := sebi.deny with input as {"action": "store_audit_log", "params": {}}
-+	count(denials) == 1
-+}
-+
-+test_log_region_silent_when_region_is_india if {
-+	denials := sebi.deny with input as {"action": "store_audit_log", "params": {"log_storage_region": "IN"}}
-+	count(denials) == 0
-+}
-+
-+test_log_region_denies_when_region_is_offshore if {
-+	denials := sebi.deny with input as {"action": "configure_audit_log", "params": {"log_storage_region": "SG"}}
-+	count(denials) == 1
-+}
-+
-+# log_storage_actions and log_tamper_actions are disjoint, so a tamper action
-+# produces exactly one denial rather than two.
-+test_tamper_action_produces_exactly_one_denial if {
-+	denials := sebi.deny with input as {"action": "store_audit_log_offshore", "params": {}}
-+	count(denials) == 1
-+}
-+
-+test_unrelated_action_allows if {
-+	sebi.decision == "allow" with input as unrelated
-+}
-+
-+test_benign_output_allowed_through_the_adapter if {
-+	result := sebi.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
-+	result.decision == "allow"
-+}
-+
-+test_benign_tool_call_allowed_through_the_adapter if {
-+	result := sebi.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
-+	result.decision == "allow"
-+}
+     def test_approval_callback_approved(self) -> None:
+         rb = Runbook(
+             id="rb-approve",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4480** (2026-10-30): fix(examples): india cert-in and sebi policies deny every evaluation (@Mayur021)
+- **PR #4478** (2026-11-02): fix(agent-sre): report a failed runbook rollback instead of rolled_back (@ShivamSharma43)
 - **PR #4476** (2026-10-30): fix(agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (@ShivamSharma43)
 - **PR #4475** (2026-10-29): fix(agent-rag-governance): audit a denied collection with the query's hash (@ShivamSharma43)
 - **PR #4474** (2026-10-29): fix(agent-runtime): include the agent's stderr in DockerDeployer.logs (@ShivamSharma43)
 - **PR #4473** (2026-10-29): fix(agent-sre): reject chaos blackout times that cannot be read (@ShivamSharma43)
-- **PR #4471** (closed): chore: consolidate Functions editor configuration (@erin1sanders)
 
 ---
 
@@ -728,21 +853,46 @@ and is therefore undefined when the field is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. examples): india cert-in and sebi policies deny every evaluation (#4480)
+## X. fix!: send the snapshot contract's keys from HostSession and the AGT adapter run
 
 **RULE**:
-When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `BREAKING_CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1d0ccea`: examples): india cert-in and sebi policies deny every evaluation (#4480). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4aa6ac3d`: fix!: send the snapshot contract's keys from HostSession and the AGT adapter runtime (#4059). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `BREAKING_CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-vapt
+## Python `HostSession` and the AGT adapter runtime send the snapshot contract's keys
+
+**Date:** TBD
+
+**Affected**
+
+- Python hosts evaluating `pre_model_call`, `post_model_call` or `output`
+  through `HostSession`, and every `agent_os` framework adapter, which
+  reaches the same points through `NativeAdapterRuntime`
+- Manifests whose policy targets were written against the keys those seams
+  used to send, including every manifest `agt migrate v4-to-v5` produced
+  before this change
+- Rego or Cedar that reads those keys in its body rather than through
+  `policy_target`, and the stock `data.agt.ifc`, `ifc.cedar` and
+  `patterns.cedar` output rules
+
+**What changed**
+
+`HostSession.pre_model_call` sent the request spread over top-level `model`,
+`messages` and `tools`, `post_model_call` sent `response`, and `output` sent
+`response.content`; the `agent_os` adapter runtime did the same. The snapshot
+contract, the wire schema and the framework adapters in every SDK use
+`model_request`, `model_response` and `output`, so a manifest written from the
+contract failed closed with `runtime_error:path_missing` when driven through
+either seam. Both now send the contract keys: the request under
+`mode
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -752,4 +902,4 @@ vapt
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1d0ccea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4aa6ac3d` are properly handled with clean fallback behavior.

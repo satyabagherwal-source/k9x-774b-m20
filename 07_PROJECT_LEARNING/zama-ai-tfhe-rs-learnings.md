@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `68dbde41`  
+> **Source Version**: `a834a81e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:35:57.192Z  
+> **Timestamp**: 2026-11-02T14:46:31.009Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:35:56.214Z  
+> **Harvest Timestamp**: 2026-11-02T14:46:30.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1676 stars
+- **Stars / Engagement**: 1677 stars
 
 ---
 
@@ -1927,70 +1927,568 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68dbde41` (2026-10-30)
-**Commit Message**: chore: add some missing dependency tracking in dependabot (#4125)
+### Incident Patch 1: `a834a81e` (2026-11-02)
+**Commit Message**: chore(bench): migrate zk benchmark to the spec
 
-- add some rust crates
-- add npm test projects
+* chore(bench): move zk spec tag into the path for more readability
 
-**File**: `.github/dependabot.yaml` (modified, +23/-0)
+* chore(bench): move zk pke bench to tfhe-benchmark crate
+
+* chore(bench): migrate tfhe-zk-pok to the spec
+
+* chore(ci): update ci around zk bench
+
+* chore(bench): rename a zkscheme into zkproofvariantkind for more clarity
+
+**File**: `.github/workflows/generate_svgs.yml` (modified, +5/-5)
 ```diff
-@@ -15,8 +15,11 @@ updates:
-   - package-ecosystem: "cargo"
-     directories:
-       - "/"
-+      - "/apps/princev2"
-       - "/apps/trivium"
-       - "/utils/tfhe-lints"
-+      - "/utils/tfhe-forward-compat-matrices/*"
-+      - "/utils/tfhe-backward-compat-data/crates/*"
-     schedule:
-       # Routine version bumps monthly to limit churn. Security fixes are handled
-       # separately and immediately by Dependabot security updates.
-@@ -32,3 +35,23 @@ updates:
-         update-types:
-           - "minor"
-           - "patch"
-+
-+  - package-ecosystem: "npm"
-+    directories:
-+      - "/tfhe/js_on_wasm_tests"
-+      - "/tfhe/web_wasm_parallel_tests"
-+      - "/tfhe/tests/zk_wasm_x86_test"
-+      - "/tfhe/tests/transciphering_wasm_x86_test"
-+      - "/utils/wasm-par-mq"
-+      - "/utils/wasm-par-mq/web_tests"
-+    schedule:
-+      interval: "monthly"
-+    cooldown:
-+      default-days: 7
-+    groups:
-+      npm-minor-patch:
-+        applies-to: version-updates
-+        group-by: dependency-name
-+        update-types:
-+          - "minor"
-+          - "patch"
+@@ -156,14 +156,15 @@ jobs:
+   # -----------------------------------------------------------
+   # ZK benchmarks tables
+   # -----------------------------------------------------------
++  # All three use the Rust extractor: the Python one cannot parse spec ids.
+ 
+   cpu-zk-server-latency-table:
+     name: generate_documentation_svgs/cpu-zk-server-latency-table
+-    uses: ./.github/workflows/generate_svg_common.yml
++    uses: ./.github/workflows/generate_svg_rust_common.yml
+     if: inputs.generate-cpu-svgs
+     with:
+       backend: cpu
+-      hardware_name: hpc7a.96xlarge
++      hardware_name: hpc8a.96xlarge
+       layer: integer
+       bench_subset: zk
+       pbs_kind: classical
+@@ -177,11 +178,11 @@ jobs:
+ 
+   cpu-zk-server-throughput-table:
+     name: generate_documentation_svgs/cpu-zk-server-throughput-table
+-    uses: ./.github/workflows/generate_svg_common.yml
++    uses: ./.github/workflows/generate_svg_rust_common.yml
+     if: inputs.generate-cpu-svgs
+     with:
+       backend: cpu
+-      hardware_name: hpc7a.96xlarge
++      hardware_name: hpc8a.96xlarge
+       layer: integer
+       bench_subset: zk
+       pbs_kind: classical
+@@ -193,7 +194,6 @@ jobs:
+       DATA_EXTRACTOR_DATABASE_HOST: ${{ secrets.DATA_EXTRACTOR_DATABASE_HOST }}
+       DATA_EXTRACTOR_DATABASE_PASSWORD: ${{ secrets.DATA_EXTRACTOR_DATABASE_PASSWORD }}
+ 
+-  # Uses the Rust extractor: the Python one cannot parse spec ids.
+   cpu-zk-client-latency-table:
+     name: generate_documentation_svgs/cpu-zk-client-latency-table
+     uses: ./.github/workflows/generate_svg_rust_common.yml
 ```
 
----
-
-### Incident Patch 2: `1a4b19c9` (2026-10-30)
-**Commit Message**: chore: upgrade CODEOWNERS to always have reviews (#4124)
-
-**File**: `CODEOWNERS` (modified, +3/-0)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -2,7 +2,10 @@
- # i.e. the `core_crypto` dir is owned and needs owner approval/review, but not the `gpu` sub dir
- # See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#example-of-a-codeowners-file
+@@ -3893,7 +3893,6 @@ dependencies = [
+  "ark-ff",
+  "ark-poly",
+  "bincode",
+- "criterion",
+  "getrandom 0.2.17",
+  "itertools 0.15.0",
+  "num-bigint 0.5.1",
+```
+
+**File**: `Makefile` (modified, +5/-3)
+```diff
+@@ -2372,14 +2372,16 @@ bench_hlapi_erc7984_hpu: install_rs_check_toolchain
+ .PHONY: bench_tfhe_zk_pok # Run benchmarks for the tfhe_zk_pok crate
+ bench_tfhe_zk_pok: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" \
+-	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench -p tfhe-zk-pok --
++	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
++	--bench zk-pke-v1 --bench zk-pke-v2 \
++	--features=zk-pok -p tfhe-benchmark --
  
-+*                                       @zama-ai/tfhe-rs
+ .PHONY: bench_tfhe_zk_pok_gpu # Run benchmarks for the tfhe_zk_pok crate using GPU acceleration
+ bench_tfhe_zk_pok_gpu: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
+ 	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
+-	--package tfhe-zk-pok \
+-	--features=gpu --profile release
++	--bench zk-pke-v1 --bench zk-pke-v2 \
++	--features=gpu-zk -p tfhe-benchmark --profile release
+ 
+ .PHONY: bench_hlapi_noise_squash # Run benchmarks for noise squash operation
+ bench_hlapi_noise_squash: install_rs_check_toolchain
+```
+
+**File**: `tfhe-benchmark/Cargo.toml` (modified, +12/-0)
+```diff
+@@ -253,6 +253,18 @@ path = "benches/zk/msm.rs"
+ harness = false
+ required-features = ["zk-pok"]
+ 
++[[bench]]
++name = "zk-pke-v1"
++path = "benches/zk/pke_v1.rs"
++harness = false
++required-features = ["zk-pok"]
 +
- /backends/tfhe-cuda-backend/            @zama-ai/gpu
-+/backends/tfhe-cuda-common/             @zama-ai/gpu
- /backends/zk-cuda-backend/              @zama-ai/gpu
- /backends/tfhe-hpu-backend/             @zama-ai/hardware
++[[bench]]
++name = "zk-pke-v2"
++path = "benches/zk/pke_v2.rs"
++harness = false
++required-features = ["zk-pok"]
++
+ [[bin]]
+ name = "boolean_key_sizes"
+ path = "src/bin/boolean_key_sizes.rs"
+```
+
+**File**: `tfhe-benchmark/benches/core_crypto/ks_bench.rs` (modified, +31/-15)
+```diff
+@@ -19,7 +19,7 @@ fn keyswitch<Scalar: UnsignedTorus + CastInto<usize> + Serialize>(
+     criterion: &mut Criterion,
+     parameters: &[(String, BenchPbsParams<Scalar>)],
+ ) {
+-    let cc_bench = CoreCryptoBench::Keyswitch;
++    let cc_bench = CoreCryptoBench::Keyswitch(None);
+     let bench_type = get_bench_type();
+     let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
  
+@@ -347,7 +347,8 @@ mod cuda {
+     };
+     use benchmark::BenchPbsParams;
+     use benchmark_spec::{
+-        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, CudaKeyswitchConfig,
++        get_bench_type, BenchmarkSpec, BenchmarkType, CoreCryptoBench, KsIndices, KsVariant,
++        PrecisionTag,
+     };
+     use criterion::{Criterion, Throughput};
+     use itertools::Itertools;
+@@ -365,14 +366,27 @@ mod cuda {
+ 
+     use tfhe::core_crypto::prelude::*;
+ 
++    fn ks_variant(uses_gemm_ks: bool, uses_trivial_indices: bool) -> KsVariant {
++        let indices = if uses_trivial_indices {
++            KsIndices::TrivialIndices
++        } else {
++            KsIndices::ComplexIndices
++        };
++        if uses_gemm_ks {
++            KsVariant::Gemm(indices)
++        } else {
++            KsVariant::Classical(indices)
++        }
++    }
++
+     fn cuda_keyswitch_classical_and_gemm<
+         Scalar: UnsignedTorus + CastInto<usize> + CastFrom<u64> + Serialize,
+         KeyswitchScalar: UnsignedTorus + CastFrom<Scalar>,
+     >(
+         criterion: &mut Criterion,
+         parameters: &[(String, BenchPbsParams<Scalar>)],
+     ) {
+-        let cc_bench = CoreCryptoBench::Keyswitch;
++        let cc_bench = CoreCryptoBench::Keyswitch(None);
+         let bench_type = get_bench_type();
+         let mut bench_group = criterion.benchmark_group(cc_bench.to_string());
+ 
+@@ -473,11 +487,15 @@ mod cuda {
+                     let h_indexes = [Scalar::ZERO];
+                     let cuda_indexes = CudaIndexes::new(&h_indexes, &streams, 0);
+ 
+-                    let ks_config = CudaKeyswitchConfig::new(ks_bits, None, None);
++                    let uses_trivial_indices = true;
++                    let uses_gemm_ks = false;
+                     let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
+-                        cc_bench,
++                        CoreCryptoBench::Keyswitch(Some(ks_variant(
++                            uses_gemm_ks,
++                            uses_trivial_indices,
++                        ))),
+                         name,
+-                        Some(ks_config.into()),
++                        Some(PrecisionTag::Bits(ks_bits).into()),
+                         bench_type,
+                     );
+                     let bench_id = benchmark_spec.to_string();
+@@ -490,9 +508,9 @@ mod cuda {
+                                     &mut output_ct_gpu,
+                                     &cuda_indexes.d_input,
+                                     &cuda_indexes.d_output,
+-                                    true,
++                                    uses_trivial_indices,
+                                     &streams,
+-                                    false,
++                                    uses_gemm_ks,
+                                 );
+ 
+                                 black_box(&mut ct_gpu);
+@@ -515,15 +533,13 @@ mod cuda {
+ 
+                     for uses_gemm_ks in [false, true] {
+                         for uses_trivial_indices in [false, true] {
+-                            let ks_config = CudaKeyswitchConfig::new(
+-                                ks_bits,
+-                                Some(uses_gemm_ks),
+-                                Some(uses_trivial_indices),
+-                            );
+                             let benchmark_spec = BenchmarkSpec::new_cuda_core_crypto(
+-                                cc_bench,
++                                CoreCryptoBench::Keyswitch(Some(ks_variant(
++                                    uses_gemm_ks,
++                                    uses_trivial_indices,
++                                ))),
+                                 name,
+-                                Some(ks_config.into()),
++                                Some(PrecisionTag::Bits(ks_bits).into()),
+                                 bench_type,
+                             );
+                             let bench_id = benchmark_spec.to_string();
+```
+
+**File**: `tfhe-benchmark/benches/integer/zk_pke.rs` (modified, +52/-43)
+```diff
+@@ -2,7 +2,7 @@ use benchmark::params_aliases::*;
+ use benchmark::utilities::{throughput_num_threads, write_to_json, OperatorType};
+ use benchmark_spec::{
+     get_bench_type, BenchmarkMetric, BenchmarkSpec, BenchmarkType, ComputeLoad, CsvResultWriter,
+-    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkScheme,
++    IntegerBench, ZkPkeBench, ZkPkeConfig, ZkProofVariant, ZkProofVariantKind,
+ };
+ use criterion::{criterion_group, Criterion, Throughput};
+ use rand::prelude::*;
+@@ -62,42 +62,37 @@ fn compute_load_config() -> Vec<ZkComputeLoad> {
+     conf
+ }
+ 
+-fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkScheme {
++fn zk_scheme(param_pke: CompactPublicKeyEncryptionParameters) -> ZkProofVariantKind {
+     match param_pke.zk_scheme {
+-        SupportedCompactPkeZkScheme::V1 => ZkScheme::V1,
+-        SupportedCompactPkeZkScheme::V2 => ZkScheme::V2,
++        SupportedCompactPkeZkScheme::V1 => ZkProofVariantKind::V1,
++        SupportedCompactPkeZkScheme::V2 => ZkProofVariantKind::V2,
+         SupportedCompactPkeZkScheme::ZkNotSupported => {
+             panic!("these benches need parameters supporting a zk scheme")
+         }
+     }
+ }
+ 
+-/// The tag of anything measured on a proven list: all four axes are relevant.
+-fn proven_list_tag(
+-    bits: usize,
+-    crs_size: usize,
+-    compute_load: ZkComputeLoad,
+-    scheme: ZkScheme,
+-) -> ZkPkeConfig {
++fn proof_variant(compute_load: ZkComputeLoad, scheme: ZkProofVariantKind) -> ZkProofVariant {
++    ZkProofVariant::new(
++        scheme,
++        match compute_load {
++            ZkComputeLoad::Proof => ComputeLoad::Proof,
++            ZkComputeLoad::Verify => ComputeLoad::Verify,
++        },
++    )
++}
++
++fn proven_list_tag(bits: usize, crs_size: usize) -> ZkPkeConfig {
+     ZkPkeConfig {
+         bits_packed: Some(bits as u32),
+         crs_bits: crs_size as u32,
+-        compute_load: Some(match compute_load {
+-            ZkComputeLoad::Proof => ComputeLoad::Proof,
+-            ZkComputeLoad::Verify => ComputeLoad::Verify,
+-        }),
+-        scheme,
+     }
+ }
+ 
+-/// A CRS is built before anything is packed into a proof or a load is picked,
+-/// and its size depends on neither.
+-fn crs_tag(crs_size: usize, scheme: ZkScheme) -> ZkPkeConfig {
++fn crs_tag(crs_size: usize) -> ZkPkeConfig {
+     ZkPkeConfig {
+         bits_packed: None,
+         crs_bits: crs_size as u32,
+-        compute_load: None,
+-        scheme,
+     }
+ }
+ 
+@@ -185,9 +180,9 @@ fn cpu_pke_zk_proof(c: &mut Criterion) {
+ 
+                 for compute_load in compute_load_config() {
+                     let spec = zk_spec(
+-                        ZkPkeBench::Proof,
++                        ZkPkeBench::Proof(proof_variant(compute_load, scheme)),
+                         param_name,
+-                        proven_list_tag(*bits, crs_size, compute_load, scheme),
++                        proven_list_tag(*bits, crs_size),
+                         get_bench_type(),
+                     );
+                     let bench_id = spec.to_string();
+@@ -298,9 +293,9 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
+             println!("CRS size: {}", crs_data.len());
+ 
+             let crs_spec = zk_spec(
+-                ZkPkeBench::Crs,
++                ZkPkeBench::Crs(scheme),
+                 param_name,
+-                crs_tag(crs_size, scheme),
++                crs_tag(crs_size),
+                 BenchmarkMetric::KeySize,
+             );
+ 
+@@ -318,11 +313,16 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
+                 let shortint_params: PBSParameters = param_fhe.into();
+ 
+                 for compute_load in compute_load_config() {
+-                    let config = proven_list_tag(*bits, crs_size, compute_load, scheme);
+-                    let spec_verify =
+-                        zk_spec(ZkPkeBench::Verify, param_name, config, get_bench_type());
++                    let variant = proof_variant(compute_load, scheme);
++                    let config = proven_list_tag(*bits, crs_size);
++                    let spec_verify = zk_spec(
++                        ZkPkeBench::Verify(variant),
++                        param_name,
++                        config,
++                        get_bench_type(),
++                    );
+                     let spec_verify_and_expand = zk_spec(
+-                        ZkPkeBench::VerifyAndExpand,
++                        ZkPkeBench::VerifyAndExpand(variant),
+                         param_name,
+                         config,
+                         get_bench_type(),
+@@ -350,7 +350,7 @@ fn cpu_pke_zk_verify(c: &mut Criterion, results_file: &Path) {
+                             );
+ 
+                             let proven_list_spec = zk_spec(
+-                                ZkPkeBench::ProvenList,
++                                ZkPkeBench::ProvenList(variant),
+                                 param_name,
+                                 config,
+                                 BenchmarkMetric::KeySize,
+@@ -373
+```
+
+**File**: `tfhe-benchmark/benches/zk/pke_v1.rs` (renamed, +19/-9)
+```diff
+@@ -1,8 +1,10 @@
++use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify};
++use benchmark_spec::Backend;
+ use criterion::{criterion_group, criterion_main, Criterion};
+ use rand::Rng;
+ use tfhe_zk_pok::proofs::pke::{prove, verify};
+ use tfhe_zk_pok::proofs::ComputeLoad;
+-use utils::{write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
++use utils::{pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
+ 
+ #[path = "./utils.rs"]
+ mod utils;
+@@ -24,11 +26,15 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
+         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
+     ] {
+         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
+-        let effective_t = params.t >> 1;
+-        let bits = (params.k as u32) * effective_t.ilog2();
+ 
+         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
+-            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
++            let spec = pke_spec(
++                PkeBench::Proof(PkeProof::V1(spec_compute_load(load))),
++                Backend::Cpu,
++                params,
++                param_name,
++            );
++            let bench_id = spec.to_string();
+ 
+             let seed: u128 = rng.gen();
+ 
+@@ -44,7 +50,7 @@ fn bench_pke_v1_prove(c: &mut Criterion) {
+                 })
+             });
+ 
+-            write_to_json(&bench_id, params, param_name, bench_shortname);
++            write_pke_record(&spec, params, bench_shortname);
+         }
+     }
+ }
+@@ -64,11 +70,15 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
+         (PKEV2_TEST_PARAMS, "PKEV2_TEST_PARAMS"),
+     ] {
+         let (public_param, public_commit, private_commit, metadata) = init_params_v1(params);
+-        let effective_t = params.t >> 1;
+-        let bits = (params.k as u32) * effective_t.ilog2();
+ 
+         for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
+-            let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}");
++            let spec = pke_spec(
++                PkeBench::Verify(PkeVerify::V1(spec_compute_load(load))),
++                Backend::Cpu,
++                params,
++                param_name,
++            );
++            let bench_id = spec.to_string();
+ 
+             let seed: u128 = rng.gen();
+ 
+@@ -86,7 +96,7 @@ fn bench_pke_v1_verify(c: &mut Criterion) {
+                 })
+             });
+ 
+-            write_to_json(&bench_id, params, param_name, bench_shortname);
++            write_pke_record(&spec, params, bench_shortname);
+         }
+     }
+ }
+```
+
+**File**: `tfhe-benchmark/benches/zk/pke_v2.rs` (renamed, +62/-25)
+```diff
+@@ -1,12 +1,32 @@
++use benchmark_spec::zk::pke::{PkeBench, PkeProof, PkeVerify, ZkBound, ZkPairingMode};
++use benchmark_spec::Backend;
+ use criterion::{criterion_group, criterion_main, Criterion};
+ use rand::Rng;
+ use tfhe_zk_pok::proofs::pke_v2::{prove, verify, Bound, VerificationPairingMode};
+ use tfhe_zk_pok::proofs::ComputeLoad;
+-use utils::{init_params_v2, write_to_json, PKEV1_TEST_PARAMS, PKEV2_TEST_PARAMS};
++use utils::{
++    init_params_v2, pke_spec, spec_compute_load, write_pke_record, PKEV1_TEST_PARAMS,
++    PKEV2_TEST_PARAMS,
++};
+ 
+ #[path = "./utils.rs"]
+ mod utils;
+ 
++fn spec_bound(bound: Bound, load: ComputeLoad) -> ZkBound {
++    let load = spec_compute_load(load);
++    match bound {
++        Bound::CS => ZkBound::Cs(load),
++        Bound::GHL => ZkBound::Ghl(load),
++    }
++}
++
++fn spec_pairing_mode(mode: VerificationPairingMode, bound: ZkBound) -> ZkPairingMode {
++    match mode {
++        VerificationPairingMode::TwoSteps => ZkPairingMode::TwoSteps(bound),
++        VerificationPairingMode::Batched => ZkPairingMode::Batched(bound),
++    }
++}
++
+ fn bench_pke_v2_prove(c: &mut Criterion) {
+     let bench_shortname = "pke_zk_proof_v2";
+     let bench_name = format!("tfhe_zk_pok::{bench_shortname}");
+@@ -26,10 +46,14 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
+         [Bound::CS, Bound::GHL]
+     ) {
+         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
+-        let effective_t = params.t >> 1;
+-        let bits = (params.k as u32) * effective_t.ilog2();
+ 
+-        let bench_id = format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
++        let spec = pke_spec(
++            PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
++            Backend::Cpu,
++            params,
++            param_name,
++        );
++        let bench_id = spec.to_string();
+         println!("{bench_id}");
+ 
+         let seed: u128 = rng.gen();
+@@ -46,7 +70,7 @@ fn bench_pke_v2_prove(c: &mut Criterion) {
+             })
+         });
+ 
+-        write_to_json(&bench_id, params, param_name, bench_shortname);
++        write_pke_record(&spec, params, bench_shortname);
+     }
+ }
+ 
+@@ -73,12 +97,17 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
+         ]
+     ) {
+         let (public_param, public_commit, private_commit, metadata) = init_params_v2(params, bound);
+-        let effective_t = params.t >> 1;
+-        let bits = (params.k as u32) * effective_t.ilog2();
+ 
+-        let bench_id = format!(
+-            "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
++        let spec = pke_spec(
++            PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
++                pairing_mode,
++                spec_bound(bound, load),
++            ))),
++            Backend::Cpu,
++            params,
++            param_name,
+         );
++        let bench_id = spec.to_string();
+         println!("{bench_id}");
+ 
+         let seed: u128 = rng.gen();
+@@ -103,11 +132,11 @@ fn bench_pke_v2_verify(c: &mut Criterion) {
+             })
+         });
+ 
+-        write_to_json(&bench_id, params, param_name, bench_shortname);
++        write_pke_record(&spec, params, bench_shortname);
+     }
+ }
+ 
+-#[cfg(feature = "gpu")]
++#[cfg(feature = "gpu-zk")]
+ mod gpu {
+     use super::*;
+     use tfhe_zk_pok::gpu::pke_v2 as gpu_pke_v2;
+@@ -132,11 +161,14 @@ mod gpu {
+         ) {
+             let (public_param, public_commit, private_commit, metadata) =
+                 init_params_v2(params, bound);
+-            let effective_t = params.t >> 1;
+-            let bits = (params.k as u32) * effective_t.ilog2();
+ 
+-            let bench_id =
+-                format!("{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}");
++            let spec = pke_spec(
++                PkeBench::Proof(PkeProof::V2(spec_bound(bound, load))),
++                Backend::Cuda,
++                params,
++                param_name,
++            );
++            let bench_id = spec.to_string();
+             println!("{bench_id}");
+ 
+             let seed: u128 = rng.gen();
+@@ -153,7 +185,7 @@ mod gpu {
+                 })
+             });
+ 
+-            write_to_json(&bench_id, params, param_name, bench_shortname);
++            write_pke_record(&spec, params, bench_shortname);
+         }
+     }
+ 
+@@ -181,12 +213,17 @@ mod gpu {
+         ) {
+             let (public_param, public_commit, private_commit, metadata) =
+                 init_params_v2(params, bound);
+-            let effective_t = params.t >> 1;
+-            let bits = (params.k as u32) * effective_t.ilog2();
+ 
+-            let bench_id = format!(
+-                "{bench_name}::{param_name}_{bits}_bits_packed_{load}_{bound:?}_{pairing_mode:?}"
++            let spec = pke_spec(
++                PkeBench::Verify(PkeVerify::V2(spec_pairing_mode(
++                    pairing_mode,
++                    spec_bound(bound, load),
++                ))),
++                Backend::Cuda,
++                params,
++        
 ```
 
 #### Recent Merged Pull Requests:
@@ -2019,50 +2517,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add some missing dependency tracking in dependabot (#4125)
+## X. bench): migrate zk benchmark to the spec
 
 **RULE**:
-When implementing operations in `.github/dependabot.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/generate_svgs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68dbde41`: add some missing dependency tracking in dependabot (#4125). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a834a81e`: bench): migrate zk benchmark to the spec. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/generate_svgs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - "/apps/princev2"
-      - "/utils/tfhe-forward-compat-matrices/*"
-      - "/utils/tfhe-backward-compat-data/crates/*"
-
-  - package-ecosystem: "npm"
-    directories:
-      - "/tfhe/js_on_wasm_tests"
-      - "/tfhe/web_wasm_parallel_tests"
-      - "/tfhe/tests/zk_wasm_x86_test"
-      - "/tfhe/tests/transciphering_wasm_x86_test"
-      - "/utils/wasm-par-mq"
-      - "/utils/wasm-par-mq/web_tests"
-    schedule:
-      interval: "monthly"
-    cooldown:
-      default-days: 7
-    groups:
-      npm-minor-patch:
-        applies-to: version-updates
-        group-by: dependency-name
-        update-types:
-          - "minor"
-          - "patch"
+  # All three use the Rust extractor: the Python one cannot parse spec ids.
+    uses: ./.github/workflows/generate_svg_rust_common.yml
+      hardware_name: hpc8a.96xlarge
+    uses: ./.github/workflows/generate_svg_rust_common.yml
+      hardware_name: hpc8a.96xlarge
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    uses: ./.github/workflows/generate_svg_common.yml
+      hardware_name: hpc7a.96xlarge
+    uses: ./.github/workflows/generate_svg_common.yml
+      hardware_name: hpc7a.96xlarge
+  # Uses the Rust extractor: the Python one cannot parse spec ids.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68dbde41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a834a81e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `421026a6`  
+> **Source Version**: `47446103`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:37:10.932Z  
+> **Timestamp**: 2026-11-03T10:52:47.427Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:37:10.195Z  
+> **Harvest Timestamp**: 2026-11-03T10:52:46.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28779 stars
+- **Stars / Engagement**: 28826 stars
 
 ---
 
@@ -1140,232 +1140,687 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `421026a6` (2026-10-30)
-**Commit Message**: Recover from detector panics in the verification overlap worker (#5495)
+### Incident Patch 1: `3f15e868` (2026-11-03)
+**Commit Message**: Update module golang.org/x/net to v0.62.0 [SECURITY] (#5492)
 
-A detector panic in FromData during verification overlap killed the
-worker goroutine. Once every overlap worker had died, scanning stalled
-with no error.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-The worker now recovers detector panics, logs them, counts the chunk as
-dropped, and keeps processing.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `pkg/engine/engine.go` (modified, +110/-94)
+**File**: `go.mod` (modified, +6/-6)
 ```diff
-@@ -45,6 +45,8 @@ var errOverlap = errors.New(
- 		"You can override this behavior by using the --allow-verification-overlap flag",
- )
- 
-+var errDetectorPanic = errors.New("detector panicked")
-+
- // Metrics for the scan engine for external consumption.
- type Metrics struct {
- 	BytesScanned           uint64
-@@ -1075,119 +1077,133 @@ func likelyDuplicate(ctx context.Context, val chunkSecretKey, dupes map[chunkSec
- func (e *Engine) verificationOverlapWorker(ctx context.Context) {
- 	var wgDetect sync.WaitGroup
- 
--	// Reuse the same map and slice to avoid allocations.
-+	for chunk := range e.verificationOverlapChunksChan {
-+		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
-+	}
-+
-+	wgDetect.Wait()
-+}
-+
-+func (e *Engine) processVerificationOverlapChunk(
-+	ctx context.Context,
-+	chunk verificationOverlapChunk,
-+	wgDetect *sync.WaitGroup,
-+) {
-+	sourceTypeStr := chunk.chunk.SourceType.String()
-+
-+	defer chunk.verificationOverlapWgDoneFn()
-+	defer common.RecoverWithHandler(ctx, func(error) {
-+		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
-+	})
-+
- 	const avgSecretsPerDetector = 8
- 	detectorKeysWithResults := make(map[ahocorasick.DetectorKey]*ahocorasick.DetectorMatch, avgSecretsPerDetector)
- 	chunkSecrets := make(map[chunkSecretKey]struct{}, avgSecretsPerDetector)
- 
--	for chunk := range e.verificationOverlapChunksChan {
--		sourceTypeStr := chunk.chunk.SourceType.String()
--		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
--		for _, detector := range chunk.detectors {
--			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
--			detectorNameStr := detector.Key.Type().String()
--
--			// DO NOT VERIFY at this stage of the pipeline.
--			matchedBytes := detector.Matches()
--			for _, match := range matchedBytes {
--				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
--				results, err := detector.FromData(ctx, false, match)
--				cancel()
--				if err != nil {
--					ctx.Logger().Error(
--						err, "error finding results in chunk during verification overlap",
--						"detector", detectorNameStr,
--					)
--					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-+	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-+	for _, detector := range chunk.detectors {
-+		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-+		detectorNameStr := detector.Key.Type().String()
-+
-+		// DO NOT VERIFY at this stage of the pipeline.
-+		matchedBytes := detector.Matches()
-+		for _, match := range matchedBytes {
-+			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
-+			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
-+			cancel()
-+			if err != nil {
-+				if !errors.Is(err, errDetectorPanic) {
-+					ctx.Logger().Error(err, "error finding results in chunk during verification overlap")
- 				}
-+				chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-+			}
- 
--				if len(results) == 0 {
--					continue
--				}
--				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
--					detectorKeysWithResults[detector.Key] = detector
--				}
-+			if len(results) == 0 {
-+				continue
-+			}
-+			if _, ok := detectorKeysWithResults[detector.Key]; !ok {
-+				detectorKeysWithResults[detector.Key] = detector
-+			}
- 
--				// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
--				// problem can theoretically occur for any scan, but we've only actually seen it in practice during
--				// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
--				// disable filtration for targeted scans, but if you're here because this problem surfaced for a
--				// non-targeted scan then we'll have to solve it correctly.
--				if chunk.chunk.SecretID == 0 {
--					results = e.filterResults(ctx, "verification_overlap", detector, results)
-+			// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
-+			// problem can theoretically occur for any scan, but we've only actually seen it in practice during
-+			// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
-+			// disable filtration for targeted scans, but if you're here because this problem surfaced for a
-+			// non-targeted scan then we'll have to solve it correctly.
-+			if chunk.chunk.SecretID == 0 {
-+				results = e.filterResults(ctx, "verification_overlap", detector, results)
-+			}
-+
-+			for _, res := range results {
-+				var val []byte
-+				if res.RawV2 != nil {
-+					val = res.RawV2
-+				} else {
-+					val = res.Raw
- 				}
- 
--				for _, res := range results {
--					var val []byte
--					if res.RawV2 != nil {
--						val = res.RawV2
--					} else {
--						val = res.Raw
--					}
-+				// Use levenstein distance to determine if the secret is likely the same.
-+				// Ex
+@@ -107,11 +107,11 @@ require (
+ 	go.uber.org/automaxprocs v1.6.0
+ 	go.uber.org/mock v0.6.0
+ 	go.uber.org/zap v1.27.0
+-	golang.org/x/crypto v0.57.0
+-	golang.org/x/net v0.60.0
++	golang.org/x/crypto v0.58.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.23.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/sync v0.24.0
++	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.14.0
+ 	google.golang.org/api v0.264.0
+ 	google.golang.org/protobuf v1.36.11
+@@ -313,8 +313,8 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
 ```
 
-**File**: `pkg/engine/engine_test.go` (modified, +65/-0)
+**File**: `go.sum` (modified, +14/-14)
 ```diff
-@@ -1852,6 +1852,14 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
- func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
- func (p passthroughDetector) Description() string                { return "fake detector for testing" }
+@@ -789,8 +789,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+@@ -816,8 +816,8 @@ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwY
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+@@ -827,8 +827,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -858,19 +858,19 @@ golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++gol
+```
+
+---
+
+### Incident Patch 2: `73f8635e` (2026-11-03)
+**Commit Message**: Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#5490)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -204,7 +204,7 @@ require (
+ 	github.com/go-asn1-ber/asn1-ber v1.5.8 // indirect
+ 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
+ 	github.com/go-git/go-billy/v5 v5.9.2 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
+ 	github.com/goccy/go-json v0.10.3 // indirect
+```
+
+**File**: `go.sum` (modified, +4/-2)
+```diff
+@@ -302,8 +302,8 @@ github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399 h1:eMj
+ github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod h1:1OCfN199q1Jm3HZlxleg+Dw/mwps2Wbk9frAWm+4FII=
+ github.com/go-git/go-git/v5 v5.19.3 h1:qHttbZ+Am7wEjdTpR1XMQ4rl42FK9SIXzZ4o9x7s6M4=
+ github.com/go-git/go-git/v5 v5.19.3/go.mod h1:Ye4C8dVigkqrv9UsB4NMdSLV4yAIkLiIhW61gcOyhl4=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
+ github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+@@ -884,6 +884,8 @@ golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:EkVYQZoAsY45+roY
+ golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e/go.mod h1:emZCQorbCU4vsT4fOWvOPXz4eW1wZW4PmDk9uLelYpA=
+ golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod h1:emZCQorbCU4vsT4fOWvOPXz4eW1wZW4PmDk9uLelYpA=
+ golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
++golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
++golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
+ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+```
+
+---
+
+### Incident Patch 3: `5d311ce2` (2026-11-03)
+**Commit Message**: Clean up GCS source logging for per-source debug (#5509)
+
+* Clean up GCS source logging for per-source debug
+
+Remove the stored logger and Background contexts, move lines to the right
+levels, log skip reasons and retries, and log real failures as errors.
+
+* Log GCS bucket listing errors where they happen
+
+**File**: `pkg/sources/gcs/README.md` (modified, +12/-0)
+```diff
+@@ -254,6 +254,18 @@ trufflehog gcs --project-id my-gcp-project --cloud-environment --include-buckets
+ trufflehog gcs --project-id my-gcp-project --service-account /path/to/service-account.json --max-object-size 5MB
+ ```
  
-+// panicDetector panics on every FromData call, so tests can check that the verification overlap worker keeps running
-+// and still releases chunk wait groups.
-+type panicDetector struct{ passthroughDetector }
++## Debug Logs
 +
-+func (panicDetector) FromData(aCtx.Context, bool, []byte) ([]detectors.Result, error) {
-+	panic("panicDetector always panics")
-+}
++With debug on for this source (`debug: true` in the config), the scan logs:
 +
- // fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
- // engine passes verdicts through untouched while recording whether verification was attempted.
- type fixedVerdictDetector struct {
-@@ -2218,6 +2226,63 @@ func TestEngine_VerificationOverlapWorker_DetectableChunkHasCorrectVerifyFlag(t
- 	})
++- `V(1)`: `GCS source initialized` with the config choices (the credential type only, never the credentials), the start and end of enumeration with bucket and object counts, the bucket list, and `Resuming from saved progress` when a scan resumes.
++- `V(2)`: `Enumerated bucket` with its object count, and the start and end of listing each bucket's objects, with how many were queued and how many were skipped.
++- `V(3)`: `Scanning object` for each object, with its size.
++- `V(4)`: `Skipping bucket` and `Skipping object` with a `reason` (matches filter, file type is skipped, size out of range, already scanned), and `Retrying GCS request` for each retry.
++- `V(5)`: internal state, such as an empty entry in an object listing.
++
++Lines carry `bucket` and `object` where they apply. Failures to list a bucket or read an object are logged as errors at the default level.
++
+ ## Troubleshooting
+ 
+ ### Common Issues
+```
+
+**File**: `pkg/sources/gcs/gcs.go` (modified, +46/-18)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 
+ 	"cloud.google.com/go/storage"
+ 	"github.com/go-errors/errors"
+-	"github.com/go-logr/logr"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/log"
+ 	"golang.org/x/oauth2"
+ 	"golang.org/x/oauth2/endpoints"
+@@ -69,7 +68,6 @@ type Source struct {
+ 
+ 	gcsManager objectManager
+ 	stats      *attributes
+-	log        logr.Logger
+ 	chunksCh   chan *sources.Chunk
+ 
+ 	mu               sync.Mutex
+@@ -112,8 +110,6 @@ func (c *persistableCache) shouldPersist() (bool, string) {
+ 
+ // Init returns an initialized GCS source.
+ func (s *Source) Init(aCtx context.Context, name string, id sources.JobID, sourceID sources.SourceID, verify bool, connection *anypb.Any, concurrency int) error {
+-	s.log = aCtx.Logger()
+-
+ 	s.name = name
+ 	s.verify = verify
+ 	s.sourceId = sourceID
+@@ -132,14 +128,44 @@ func (s *Source) Init(aCtx context.Context, name string, id sources.JobID, sourc
+ 	}
+ 	s.gcsManager = gcsManager
+ 
+-	s.log.V(2).Info("enumerating buckets and objects")
++	aCtx.Logger().V(1).Info("GCS source initialized",
++		"auth_method", authMethod(&conn),
++		"project_id", conn.ProjectId,
++		"include_buckets", len(conn.GetIncludeBuckets()),
++		"exclude_buckets", len(conn.GetExcludeBuckets()),
++		"include_objects", len(conn.GetIncludeObjects()),
++		"exclude_objects", len(conn.GetExcludeObjects()),
++		"max_object_size", gcsManager.maxObjectSize,
++		"concurrency", gcsManager.concurrency,
++	)
++
+ 	if err := s.enumerate(aCtx); err != nil {
+ 		return fmt.Errorf("error enumerating buckets and objects: %w", err)
+ 	}
+ 
+ 	return nil
  }
  
-+// TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic checks that a detector panicking in FromData neither kills
-+// the verification overlap worker nor leaves the sender's wait group unreleased, and that the other detectors on the
-+// same chunk are still forwarded for verification.
-+func TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic(t *testing.T) {
-+	ctx := context.Background()
-+	data := []byte("keyword ;oahpow8heg;blaisd")
-+
-+	e := &Engine{
-+		detectableChunksChan:          make(chan detectableChunk, 4),
-+		results:                       make(chan detectors.ResultWithMetadata, 4),
-+		retainFalsePositives:          true,
-+		verificationOverlapChunksChan: make(chan verificationOverlapChunk, 2),
++// authMethod names the credential type for logs. It never returns the credential.
++func authMethod(conn *sourcespb.GCS) string {
++	switch conn.Credential.(type) {
++	case *sourcespb.GCS_ApiKey:
++		return "api_key"
++	case *sourcespb.GCS_ServiceAccountFile:
++		return "service_account_file"
++	case *sourcespb.GCS_JsonServiceAccount:
++		return "json_service_account"
++	case *sourcespb.GCS_Adc:
++		return "adc"
++	case *sourcespb.GCS_Unauthenticated:
++		return "unauthenticated"
++	case *sourcespb.GCS_Oauth:
++		return "oauth"
++	default:
++		return "unknown"
 +	}
-+
-+	// Stand in for the detector workers: record what was forwarded and release the overlap worker's wgDetect so its
-+	// final Wait returns.
-+	forwarded := make(chan detector_typepb.DetectorType, 4)
-+	go func() {
-+		for c := range e.detectableChunksChan {
-+			forwarded <- c.detector.Type()
-+			c.wgDoneFn()
-+		}
-+		close(forwarded)
-+	}()
-+
-+	// Queue two chunks so the test also shows the worker keeps going after the first panic.
-+	ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{
-+		panicDetector{passthroughDetector{detectorType: detector_typepb.DetectorType(-1), keywords: []string{"keyw"}}},
-+		passthroughDetector{detectorType: detector_typepb.DetectorType(-2), keywords: []string{"keyword"}},
-+	})
-+	var chunksDone atomic.Int32
-+	for range 2 {
-+		matches := ahcore.FindDetectorMatches(data)
-+		require.Len(t, matches, 2)
-+		e.verificationOverlapChunksChan <- verificationOverlapChunk{
-+			chunk:                       sources.Chunk{Data: data},
-+			detectors:                   matches,
-+			verificationOverlapWgDoneFn: func() { chunksDone.Add(1) },
-+		}
-+	}
-+	close(e.verificationOverlapChunksChan)
-+
-+	e.verificationOverlapWorker(ctx)
-+	close(e.detectableChunksChan)
-+
-+	var forwardedTypes []detector_typepb.DetectorType
-+	for typ := range forwarded {
-+		forwardedTypes = append(forwardedTypes, typ)
-+	}
-+
-+	assert.EqualValues(t, 2, chunksDone.Load(), "every chunk must release its wait group")
-+	assert.Equal(t,
-+		[]detector_typepb.DetectorType{-2, -2}, forwardedTypes,
-+		"the non-panicking detector should still be forwarded for both chunks",
-+	)
 +}
 +
- func TestEngine_IterativeDecoding(t *testing.T) {
- 	t.Parallel()
+ func configureGCSManager(aCtx context.Context, conn *sourcespb.GCS, concurrency int) (*gcsManager, error) {
+ 	if conn == nil {
+ 		return nil, fmt.Errorf("GCS connection is nil, cannot configure GCS manager")
+@@ -162,7 +188,7 @@ func configureGCSManager(aCtx context.Context, conn *sourcespb.GCS, concurrency
+ 	case *sourcespb.GCS_Adc:
+ 		gcsManagerAuthOption = withDefaultADC(aCtx)
+ 	case *sourcespb.GCS_Unauthenticated:
+-		gcsManagerAuthOption = withoutAuthentication()
++		gcsManagerAuthOption = withoutAuthentication(aCtx)
+ 	case *sourcespb.GCS_Oauth:
+ 		client, err := oauth2Client(aCtx, conn.GetOauth())
+ 		if err != nil {
+@@ -186,7 +212,7 @@ func configureGCSManager(aCtx context.Context, conn *sourcespb.GCS, concurrency
+ 		gcsManagerOpts = append(gcsManagerOpts, setGCSManagerObjectOptions(conn))
+ 	}
  
+-	gcsManager, err := newGCSManager(conn.ProjectId, gcsManagerOpts...)
++	gcsManager, err := newGCSManager(aCtx, conn.ProjectId, gcsManagerOpts...)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error creating GCS manager: %w", err)
+ 	}
+@@ -267,24 +293,28 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
+ 	for obj := range objectCh {
+ 		o, ok := obj.(object)
+ 		if !ok {
+-			ctx.Logger().Error(fmt.Errorf("unexpected object type: %T", obj), "GCS source unexpected object type", "name", s.name)
++			ctx.Logger().Error(fmt.Errorf("unexpected object type: %T", obj), "GCS source unexpected object type")
+ 			continue
+ 		}
+ 
+ 		if persistableCache.Exists(o.md5) {
+-			ctx.Logger().V(5).Info("skipping object, object already processed", "name", o.name)
++			ctx.Logger().V(4).Info("Skipping object", "bucket", o.bucket, "object", o.name, "reason", "already scanned")
+ 			continue
+ 		}
+ 
+ 		wg.Add(1)
+ 		go func(obj object) {
+ 			defer wg.Done()
+ 
+-			if err := s.processObject(ctx, o); err != nil {
+-				ctx.Logger().V(1).Info("error setting start progress progress", "name", o.name, "error", err)
++			objCtx := context.WithValues(ctx, "bucket", o.bucket, "object", o.name)
++			objCtx.Logger().V(3).Info("Scanning object", "size", o.size)
++			if err := s.processObject(objCtx, o); err != nil {
++				if objCtx.Err() == nil {
++					objCtx.Logger().Error(err, "Error scanning object")
++				}
+ 				return
+ 			}
+-			s.setProgress(ctx, o.md5, o.name, persistableCache)
++			s.setProgress(o.md5, persistableCache)
+ 		}(o)
+ 	}
+ 	wg.Wait()
+@@ -303,7 +333,7 @@ func (s *Source) setupCache(ctx context.Context) *persistableCache {
+ 		}
+ 
+ 		c = simple.NewCacheWithData[string](entries)
+-		ctx.Logger().V(3).Info("Loaded cache", "num_entries", len(entries))
++		ctx.Logger().V(1).Info("Resuming from saved progress", "num_entries", len(entries))
+ 	} else {
+ 		c = simple.NewCache[string]()
+ 	}
+@@ -313,11 +343,10 @@ func (s *Source) setupCache(ctx context.Context) *persistableCache {
+ 	return persistCache
+ }
+ 
+-func (s *Source) setProgress(ctx context.Context, md
+```
+
+**File**: `pkg/sources/gcs/gcs_manager.go` (modified, +71/-46)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"net/url"
+ 	"runtime"
+ 	"sync"
+ 	"sync/atomic"
+@@ -21,7 +22,6 @@ import (
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
+-	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ 	"golang.org/x/oauth2/google"
+ )
+ 
+@@ -32,6 +32,9 @@ const (
+ 
+ var defaultConcurrency = runtime.NumCPU()
+ 
++// errObjectSkipped means the object was skipped on purpose, not that reading it failed.
++var errObjectSkipped = errors.New("object skipped")
++
+ // bucketManager is a simplified *storage.Client wrapper.
+ // It provides only a subset of methods that are needed by the gcsManager.
+ type bucketManager interface {
+@@ -177,8 +180,8 @@ func withDefaultADC(ctx context.Context) gcsManagerOption {
+ 
+ // withoutAuthentication uses an unauthenticated client when creating a new GCS client.
+ // This can ONLY be used for public buckets.
+-func withoutAuthentication() gcsManagerOption {
+-	client, err := storage.NewClient(aCtx.Background(), option.WithoutAuthentication(), option.WithScopes(storage.ScopeReadOnly))
++func withoutAuthentication(ctx context.Context) gcsManagerOption {
++	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithScopes(storage.ScopeReadOnly))
+ 	return func(m *gcsManager) error {
+ 		if err != nil {
+ 			return err
+@@ -328,7 +331,7 @@ func withBucketOffsets(offsets map[string]offsetInfo) gcsManagerOption {
+ 	}
+ }
+ 
+-func newGCSManager(projectID string, opts ...gcsManagerOption) (*gcsManager, error) {
++func newGCSManager(ctx context.Context, projectID string, opts ...gcsManagerOption) (*gcsManager, error) {
+ 	// Default values for the manager.
+ 	gcs := &gcsManager{
+ 		projectID:     projectID,
+@@ -350,7 +353,7 @@ func newGCSManager(projectID string, opts ...gcsManagerOption) (*gcsManager, err
+ 	// If no client was provided, use the default application credentials.
+ 	// A client is required to perform any operations.
+ 	if gcs.client == nil {
+-		c, err := defaultADC(context.Background())
++		c, err := defaultADC(ctx)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -395,40 +398,43 @@ func (g *gcsManager) Attributes(ctx context.Context) (*attributes, error) {
+ }
+ 
+ func (g *gcsManager) enumerate(ctx context.Context, bkts []bucket) (*attributes, error) {
+-	logger := ctx.Logger().WithValues("phase", "enumeration")
++	ctx = context.WithValues(ctx, "phase", "enumeration")
+ 
+-	logger.V(5).Info("enumerating buckets", "numBuckets", len(bkts))
++	ctx.Logger().V(1).Info("Enumerating buckets", "buckets", len(bkts))
+ 	stats := newStats(len(bkts))
+ 
+ 	defer func(start time.Time) {
+-		logger.V(5).Info("finished enumerating buckets", "duration-seconds", fmt.Sprintf("%.1f", time.Since(start).Seconds()), "num-buckets", len(bkts), "num-objects", stats.numObjects)
++		ctx.Logger().V(1).Info("Finished enumerating buckets", "buckets", len(bkts), "objects", stats.numObjects, "duration", time.Since(start))
+ 	}(time.Now())
+ 
+ 	for _, bkt := range bkts {
+ 		g.workerPool.Go(func() error {
++			bktCtx := context.WithValues(ctx, "bucket", bkt.name)
+ 			// List all the objects in the bucket and calculate attributes.
+-			g.setupBktHandle(&bkt)
++			g.setupBktHandle(bktCtx, &bkt)
+ 
+ 			q, err := setObjectQuery(&bkt)
+ 			if err != nil {
+-				logger.Error(err, "failed to set object query", "bucket", bkt.name)
++				bktCtx.Logger().Error(err, "failed to set object query")
+ 				return nil
+ 			}
+ 
+ 			var count uint64
+-			objs := bkt.Objects(ctx, q)
++			objs := bkt.Objects(bktCtx, q)
+ 			for {
+ 				obj, err := objs.Next()
+ 				if errors.Is(err, iterator.Done) {
+-					logger.V(5).Info("finished listing objects in bucket")
++					bktCtx.Logger().V(2).Info("Enumerated bucket", "objects", count)
+ 					break
+ 				}
+ 				if err != nil {
+-					logger.V(1).Info("failed to list objects", "bucket", bkt.name, "error", err)
++					if bktCtx.Err() == nil {
++						bktCtx.Logger().Error(err, "Failed to list objects in bucket")
++					}
+ 					return nil
+ 				}
+ 				if obj == nil {
+-					logger.V(5).Info("object is nil")
++					bktCtx.Logger().V(5).Info("object is nil")
+ 					continue
+ 				}
+ 
+@@ -470,30 +476,17 @@ func (g *gcsManager) ListObjects(ctx context.Context) (chan io.Reader, error) {
+ 	}
+ 
+ 	go func() {
+-		gcsErrs := sources.NewScanErrors()
+ 		for _, bucket := range g.buckets {
+ 			g.numBuckets++
+ 			g.workerPool.Go(func() error {
+-				objCh, errCh := g.listBucketObjects(ctx, &bucket)
+-				for {
+-					select {
+-					case obj, ok := <-objCh:
+-						if !ok {
+-							return nil
+-						}
+-						ch <- obj
+-					case err := <-errCh:
+-						gcsErrs.Add(err)
+-						return nil
+-					}
++				for obj := range g.listBucketObjects(ctx, &bucket) {
++					ch <- obj
+ 				}
++				return nil
+ 			})
+ 		}
+ 
+ 		_ = g.workerPool.Wait()
+-		if gcsErrs.Count() > 0 {
+-			ctx.Logger().V(2).Info("encountered gcsErrs while scanning GCS buckets", "error-count", gcsErrs.Count(), "gcsErrs", gcsErrs.String())
+-		}
+ 		close(ch)
+ 	}()
+ 
+@@ -506,14 +499,15 @@ func (g *gcs
+```
+
+**File**: `pkg/sources/gcs/gcs_manager_test.go` (modified, +6/-6)
+```diff
+@@ -53,7 +53,7 @@ func TestNewGcsManager(t *testing.T) {
+ 		{
+ 			name:   "new gcs manager, without auth",
+ 			projID: "",
+-			opts:   []gcsManagerOption{withoutAuthentication()},
++			opts:   []gcsManagerOption{withoutAuthentication(ctx)},
+ 			want: &gcsManager{
+ 				concurrency:   defaultConcurrency,
+ 				maxObjectSize: defaultMaxObjectSize,
+@@ -341,7 +341,7 @@ func TestNewGcsManager(t *testing.T) {
+ 
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			got, err := newGCSManager(tc.projID, tc.opts...)
++			got, err := newGCSManager(ctx, tc.projID, tc.opts...)
+ 			if (err != nil) != tc.wantErr {
+ 				t.Errorf("newGCSManager() error = %v, wantErr %v", err, tc.wantErr)
+ 				return
+@@ -417,7 +417,7 @@ func TestGCSManagerStats(t *testing.T) {
+ 
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			gm, err := newGCSManager(tc.projectID, tc.opts...)
++			gm, err := newGCSManager(ctx, tc.projectID, tc.opts...)
+ 			if err != nil {
+ 				t.Fatalf("newGCSManager() error = %v", err)
+ 			}
+@@ -438,7 +438,7 @@ func TestGCSManagerStats_Time(t *testing.T) {
+ 	ctx := context.Background()
+ 
+ 	opts := []gcsManagerOption{withDefaultADC(ctx)}
+-	gm, err := newGCSManager(testProjectID, opts...)
++	gm, err := newGCSManager(ctx, testProjectID, opts...)
+ 	if err != nil {
+ 		t.Fatalf("newGCSManager() error = %v", err)
+ 	}
+@@ -692,7 +692,7 @@ func TestGCSManagerListObjects(t *testing.T) {
+ 
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			mgr, err := newGCSManager(tc.projectID, tc.opts...)
++			mgr, err := newGCSManager(ctx, tc.projectID, tc.opts...)
+ 			assert.Nil(t, err)
+ 
+ 			got, err := mgr.ListObjects(ctx)
+@@ -780,7 +780,7 @@ func TestGCSManagerListObjects_Resuming(t *testing.T) {
+ 
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			mgr, err := newGCSManager(tc.projectID, tc.opts...)
++			mgr, err := newGCSManager(ctx, tc.projectID, tc.opts...)
+ 			assert.Nil(t, err)
+ 
+ 			got, err := mgr.ListObjects(ctx)
+```
+
+**File**: `pkg/sources/gcs/gcs_test.go` (modified, +159/-0)
+```diff
+@@ -1,21 +1,32 @@
+ package gcs
+ 
+ import (
++	"crypto/md5"
++	"encoding/base64"
++	"encoding/json"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"net/http/httptest"
+ 	"sort"
+ 	"strconv"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/go-logr/zapr"
+ 	"github.com/google/go-cmp/cmp"
+ 	"github.com/google/go-cmp/cmp/cmpopts"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zapcore"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+@@ -462,3 +473,151 @@ func TestSource_CachePersistence(t *testing.T) {
+ 	assert.Equal(t, int64(100), source.PercentComplete)
+ 	assert.Equal(t, fmt.Sprintf("GCS source finished processing %d objects", wantObjCnt), source.Message)
+ }
++
++// fakeGCS serves the parts of the GCS JSON and XML APIs the source uses. The first
++// object listing returns a 503, so the retry line shows up.
++func fakeGCS(t *testing.T, bkt string, objects map[string]string, sizes map[string]int64) *httptest.Server {
++	t.Helper()
++
++	var listCalls atomic.Int32
++	attrs := func(name string) map[string]any {
++		size, ok := sizes[name]
++		if !ok {
++			size = int64(len(objects[name]))
++		}
++		sum := md5.Sum([]byte(name))
++		return map[string]any{
++			"name":        name,
++			"bucket":      bkt,
++			"size":        strconv.FormatInt(size, 10),
++			"md5Hash":     base64.StdEncoding.EncodeToString(sum[:]),
++			"contentType": "text/plain",
++		}
++	}
++
++	listPath := "/storage/v1/b/" + bkt + "/o"
++	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.URL.Path == listPath:
++			if listCalls.Add(1) == 1 {
++				w.WriteHeader(http.StatusServiceUnavailable)
++				return
++			}
++			items := make([]map[string]any, 0, len(objects))
++			for name := range objects {
++				items = append(items, attrs(name))
++			}
++			_ = json.NewEncoder(w).Encode(map[string]any{"items": items})
++		case strings.HasPrefix(r.URL.Path, listPath+"/"):
++			_ = json.NewEncoder(w).Encode(attrs(strings.TrimPrefix(r.URL.Path, listPath+"/")))
++		case strings.HasPrefix(r.URL.Path, "/"+bkt+"/"):
++			body := objects[strings.TrimPrefix(r.URL.Path, "/"+bkt+"/")]
++			w.Header().Set("Content-Length", strconv.Itoa(len(body)))
++			_, _ = io.WriteString(w, body)
++		default:
++			http.NotFound(w, r)
++		}
++	}))
++}
++
++func TestSource_DebugLogging(t *testing.T) {
++	const (
++		bkt        = "debug-bkt"
++		testSecret = "gcsdebuglogtestsecret"
++	)
++	srv := fakeGCS(t, bkt,
++		map[string]string{
++			"secret.txt": "token = " + testSecret,
++			"video.mp4":  "not scanned",
++			"big.txt":    "not scanned",
++			"skip/x.txt": "not scanned",
++		},
++		map[string]int64{"big.txt": 500},
++	)
++	defer srv.Close()
++	t.Setenv("STORAGE_EMULATOR_HOST", srv.Listener.Addr().String())
++
++	runSource := func(t *testing.T, ctx context.Context) {
++		t.Helper()
++		s, conn := createTestSource(&sourcespb.GCS{
++			IncludeBuckets: []string{bkt},
++			ExcludeObjects: []string{"skip/*"},
++			MaxObjectSize:  100,
++			Credential:     &sourcespb.GCS_Unauthenticated{},
++		})
++		require.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
++
++		chunksCh := make(chan *sources.Chunk, 10)
++		require.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
++
++		var files []string
++		for chunk := range chunksCh {
++			files = append(files, chunk.SourceMetadata.GetGcs().GetFilename())
++		}
++		assert.Equal(t, []string{"secret.txt"}, files)
++	}
++
++	t.Run("debug on", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		ctx = context.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
++		runSource(t, ctx)
++
++		// lines from each level show up
++		for _, msg := range []string{
++			"GCS source finished processing objects",       // V(0)
++			"GCS source initialized",                       // V(1)
++			"Enumerating buckets",                          // V(1)
++			"Finished enumerating buckets",                 // V(1)
++			"Using configured buckets, listing needs auth", // V(1)
++			"Enumerated bucket",                            // V(2)
++			"Listing objects in bucket",                    // V(2)
++			"Finished listing objects in bucket",           // V(2)
++			"Scanning object",                              // V(3)
++			"Skipping object",                              // V(4)
++			"Retrying GCS request",                         // V(4)
++		} {
++			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++		}
++
++		// each skip says why, and carries the bucket and object
++		reasons := map[string]string{}
++		for _, entry := range logs.FilterMessage("Skipping object").All() {
++			fields := entry.ContextMap()
++			assert.Equal(t, bkt, 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5519** (2026-11-03): Use shared logtest helpers in source debug logging tests (@kashifkhan0771)
+- **PR #5510** (2026-11-03): Clean up Postman source logging for per-source debug (@kashifkhan0771)
+- **PR #5509** (2026-11-03): Clean up GCS source logging for per-source debug (@kashifkhan0771)
+- **PR #5498** (2026-11-02): Verify BoxOauth credentials only when Box issues a token for a subject (@unsmith)
 - **PR #5495** (2026-10-30): [SCAN-317] Recover from detector panics in the verification overlap worker (@dipto-truffle)
 - **PR #5494** (2026-10-29): Clean up Docker source logging for per-source debug (@kashifkhan0771)
-- **PR #5489** (2026-10-29): Close Couchbase clusters after verification and honor the context (@unsmith)
-- **PR #5487** (closed): Ignore. Fat fingered  (@markcunninghamgit)
-- **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
-- **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
 
 ---
 
@@ -1385,87 +1840,38 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Recover from detector panics in the verification overlap worker (#5495)
+## X. Update module golang.org/x/net to v0.62.0 [SECURITY] (#5492)
 
 **RULE**:
-When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `421026a6`: Recover from detector panics in the verification overlap worker (#5495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f15e868`: Update module golang.org/x/net to v0.62.0 [SECURITY] (#5492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var errDetectorPanic = errors.New("detector panicked")
-
-	for chunk := range e.verificationOverlapChunksChan {
-		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
-	}
-
-	wgDetect.Wait()
-}
-
-func (e *Engine) processVerificationOverlapChunk(
-	ctx context.Context,
-	chunk verificationOverlapChunk,
-	wgDetect *sync.WaitGroup,
-) {
-	sourceTypeStr := chunk.chunk.SourceType.String()
-
-	defer chunk.verificationOverlapWgDoneFn()
-	defer common.RecoverWithHandler(ctx, func(error) {
-		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
-	})
-
-	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-	for _, detector := range chunk.detectors {
-		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-		detectorNameStr := detector.Key.Type().String()
-
-		// DO NOT VERIFY at this stage of the pipeline.
-		matchedBytes := detector.Matches()
-		for _, match := range matchedBytes {
-			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
-			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
-			cancel()
-			if err != nil {
-				if !errors.Is(err, errDetectorPa
+	golang.org/x/crypto v0.58.0
+	golang.org/x/net v0.62.0
+	golang.org/x/sync v0.24.0
+	golang.org/x/text v0.43.0
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Reuse the same map and slice to avoid allocations.
-	for chunk := range e.verificationOverlapChunksChan {
-		sourceTypeStr := chunk.chunk.SourceType.String()
-		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-		for _, detector := range chunk.detectors {
-			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-			detectorNameStr := detector.Key.Type().String()
-
-			// DO NOT VERIFY at this stage of the pipeline.
-			matchedBytes := detector.Matches()
-			for _, match := range matchedBytes {
-				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
-				results, err := detector.FromData(ctx, false, match)
-				cancel()
-				if err != nil {
-					ctx.Logger().Error(
-						err, "error finding results in chunk during verification overlap",
-						"detector", detectorNameStr,
-					)
-					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-				if len(results) == 0 {
-					continue
-				}
-				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
-					detectorKeysWithResults[detector.Key] = detector
-				}
-				// If results filtration eliminates a rotated secret, then that rotation will never be reported. Thi
+	golang.org/x/crypto v0.57.0
+	golang.org/x/net v0.60.0
+	golang.org/x/sync v0.23.0
+	golang.org/x/text v0.42.0
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `421026a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f15e868` are properly handled with clean fallback behavior.

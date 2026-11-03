@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `229950e6`  
+> **Source Version**: `12382609`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:14:24.543Z  
+> **Timestamp**: 2026-11-03T11:15:09.698Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:14:24.540Z  
+> **Harvest Timestamp**: 2026-11-03T11:15:09.200Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -245,6 +245,20 @@ impl State {
         }
     }
 
+    pub(crate) fn restore_removed_property(
+        &mut self,
+        object: &ObjectId,
+        property: String,
+        index: usize,
+        before: Value,
+    ) {
+        if let Some(data) = self.objects.get_mut(object) {
+            let (current, _) = data.properties.insert_full(property, before);
+            data.properties
+                .move_index(current, index.min(data.properties.len() - 1));
+        }
+    }
+
     pub(crate) fn restore_object(&mut self, id: ObjectId, before: Option<ObjectData>) {
         match before {
             Some(data) => self.objects.insert(id, data),
@@ -327,7 +341,11 @@ impl Runtime {
         let changed = before
             .as_ref()
             .is_none_or(|before| !before.same_value(&value));
-        self.transaction.record_property(object, property, before);
+        if before.is_some() {
+            self.transaction.record_property(object, property, before);
+        } else {
+            self.transaction.record_property_added(object, property);
+        }
         if changed {
             self.append_history(
                 HistoryKey::Property(object.clone(), property.to_string()),
@@ -335,22 +353,7 @@ impl Runtime {
             );
         }
 
-        if let Some(data) = self.state.object_mut(object) {
-            data.properties.insert(property.to_string(), value);
-        }
-        changed
-    }
-
-    /// `state.delete` for a top-level name, reporting what was there.
-    pub(crate) fn remove_variable(&mut self, name: &str) -> Option<Value> {
-        let before = self.state.variables.get(name).cloned();
-        self.transaction.record_variable(name, before.clone());
-        self.state.variables.shift_remove(name);
-        self.remove_history(HistoryKey::Variable(name.to_string()));
-        before
-    }
-
-    /// `
+        if let Some(da
 ```
 
 ### Core Architecture Module: `src/statement.rs`
@@ -358,11 +361,17 @@ impl Runtime {
 //! Source text to statements: the runtime's entry point to the parser.
 
 use crate::error::Result;
+use crate::lang::ast::lexer::SyntaxOptions;
 use crate::lang::ast::{Program, parser};
 
 /// Compiles a program, reporting the first syntax error.
 pub fn compile(source: &str) -> Result<Program> {
     parser::parse_program(source)
+}
+
+/// Compiles with the same explicit source options as the runtime.
+pub fn compile_with_options(source: &str, options: SyntaxOptions) -> Result<Program> {
+    parser::parse_program_with_options(source, options)
 }
 
 ```
@@ -401,7 +410,10 @@ export async function declarations({ puzzle_id, train_dataset }) {
         role: "user",
         content: `
           train_dataset:
-          ${JSON.stringify(train_dataset)}
+          ${JSON.stringify(train_dataset.dataset.map(({ input_matrix, output_matrix }) => ({
+            input_matrix,
+            output_matrix,
+          })))}
           json_format:
           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
         `,
@@ -434,8 +446,6 @@ export async function instances({
           ${JSON.stringify(input_matrix)}
           output_matrix:
           ${JSON.stringify(output_matrix)}
-          query:
-          Obj;
           json_format:
           {
             "instances": [{
@@ -531,9 +541,10 @@ import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
+import { writeFile } from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "6150a2bd") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -544,7 +555,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       instances: [],
     })),
     declarations: [],
-    output_canvas: "EXACT",
+    output_canvas: undefined,
   };
 
   const startedAt: number = performance.now();
@@ -610,7 +621,6 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const { instances } = await visualizer.instances({
     puzzle_id,
     train_dataset,
-    declarations,
     test_input_matrix,
   });
 
@@ -676,6 +686,18 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   milestone.summary({ difference, duration: performance.now() - startedAt });
 
+  const debug = {
+    puzzle_id,
+    train_dataset,
+    input_instances,
+    test_input_matrix,
+    test_output_matrix,
+    result_matrix,
+    difference,
+  };
+
+  await writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
+
   return difference;
 }
 
@@ -683,40 +705,23 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
 ### Core Architecture Module: `arc/src/dataset/dataset.ts`
 ```
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// The genesis puzzle learns from the shared core, curve, and line datasets;
-// every other puzzle learns only from its own dataset.<puzzle_id>.json.
-const genesis_puzzle_id: string = "3aa6fb7a";
-const genesis_datasets = [
-  "dataset.core.1.json",
-  "dataset.core.2.json",
-  "dataset.curve.1.json",
-  "dataset.line.1.json",
-];
-
-export function document(puzzle_id: string): string {
-  const files =
-    puzzle_id === genesis_puzzle_id
-      ? genesis_datasets
-      : [`dataset.${puzzle_id}.json`];
+export function document(puzzle_id?: string): string {
+  void puzzle_id;
+  const files = readdirSync(__dirname, { withFileTypes: true })
+    .filter((file) => {
+      const name = file.name.toLowerCase();
+      return (
+        file.isFile() && name.endsWith(".json") && !name.startsWith(".env")
+      );
+    })
+    .map((file) => file.name)
+    .sort();
 
   const datasets = files.map((file: string) => {
     const source: string = readFileSync(join(__dirname, file), "utf8");
-
-    try {
-      JSON.parse(source);
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        throw new SyntaxError(
-          `Invalid JSON in instruction dataset ${file}: ${error.message}`,
-          { cause: error }
-        );
-      }
-      throw error;
-    }
-
     return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
   });
 
@@ -968,22 +973,200 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `229950e6` (2026-10-31)
-**Commit Message**: Reset default ARC puzzle to genesis
+### Incident Patch 1: `12382609` (2026-11-03)
+**Commit Message**: Require every agent to pull before starting
 
-Change the default puzzle_id in start() from 9af7a82c to 3aa6fb7a, matching the genesis puzzle noted in the comment above it.
+Update git policy so every agent, coordinators and workers alike, pulls the primary checkout first. The /nuc-proposal caller uses `git pull --no-rebase --autostash`; all other agents use `git pull --ff-only --autostash`. Agents never pull a candidate worktree and must report the commits a pull brings in.
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+Add a pull-first step to the arc-dataset, arc-debug, arc-purposal, nuc-evaluate, nuc-proposal and rust-improver agent profiles. Relax the read-only wording in arc-debug and nuc-evaluate (profiles and skills) to allow that single pull. Update the CLAUDE.md index entry to match.
+
+**File**: `.claude/CLAUDE.md` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ import * as milestone from "./lib/milestone.ts";
- import arc_dataset from "./lib/arc_dataset.ts";
+@@ -17,7 +17,7 @@ not a replacement for the policies it links to.
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+ | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
+-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; pull before agents start (fast-forward only in other flows) and before commit/push, push after every commit, resolve conflicts and push |
++| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; every agent pulls before it starts (fast-forward only, except the `/nuc-proposal` caller), pull before commit/push, push after every commit, resolve conflicts and push |
  
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "9af7a82c") {
-+export async function start(puzzle_id: string = "3aa6fb7a") {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-     await arc_dataset.load(puzzle_id);
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
  
+```
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +4/-0)
+```diff
+@@ -15,6 +15,10 @@ needs instead. Read and follow the [ARC instructions](../rules/arc.instructions.
+ 
+ ## Inputs
+ 
++- Pull first, under the
++  [git synchronization policy](../rules/git.instructions.md#pull-first): run
++  `git pull --ff-only --autostash` in the primary checkout before anything
++  else, and report the commits it brought in.
+ - Require an eight-character lowercase hexadecimal puzzle ID with a file in
+   `arc/data/training/`. Report a missing or unknown ID instead of guessing.
+ - If `dataset.<id>.json` already exists, stop and report it; audit or overwrite
+```
+
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +8/-3)
+```diff
+@@ -13,6 +13,11 @@ You diagnose; you never repair.
+ 
+ ## Inputs
+ 
++- Pull first, under the
++  [git synchronization policy](../rules/git.instructions.md#pull-first): run
++  `git pull --ff-only --autostash` in the primary checkout before reading
++  anything, and report the commits it brought in. Record the Git state below
++  after the pull.
+ - Require an eight-character lowercase hexadecimal puzzle ID. Optional text
+   after it names a suspected problem to examine first; it never shortens the
+   checks below.
+@@ -27,9 +32,9 @@ You diagnose; you never repair.
+ 
+ ## Boundaries
+ 
+-- Read-only. Never edit, create, stage, commit, push, delete or reformat
+-  anything in the repository, including the log, datasets, solver code, docs
+-  and progress records. Put scratch scripts and repaired copies in the OS temp
++- Read-only, apart from that first pull. Never edit, create, stage, commit,
++  push, delete or reformat anything in the repository, including the log,
++  datasets, solver code, docs and progress records. Put scratch scripts and repaired copies in the OS temp
+   directory or your session scratchpad, never in the repository.
+ - Never run the solver (`bun start`, `server.ts`, `app.ts`), any module that
+   calls the LLM (`analyzer.ts`, `visualizer.ts`, `lib/llm.ts`,
+```
+
+**File**: `.claude/agents/arc-purposal.agent.md` (modified, +3/-0)
+```diff
+@@ -13,6 +13,9 @@ Follow `.claude/CLAUDE.md`, the
+ 
+ ## Role
+ 
++- Pull first, before any other step and again before launching each agent,
++  under the [git synchronization policy](../rules/git.instructions.md#pull-first),
++  and report the commits each pull brings in.
+ - You are the caller. Launch the `arc-dataset` agent and, for a requested
+   enhancement, the `nuc-proposal`, `rust-improver`, and `nuc-evaluate` agents
+   as the skill directs. Never do their work yourself or reuse a NUC agent.
+```
+
+**File**: `.claude/agents/nuc-evaluate.agent.md` (modified, +9/-3)
+```diff
+@@ -10,6 +10,11 @@ You independently evaluate exactly one completed NUC revision. Follow
+ 
+ ## Scope
+ 
++- Pull first, under the
++  [git synchronization policy](../rules/git.instructions.md#pull-first): run
++  `git pull --ff-only --autostash` in the primary checkout, never in the
++  candidate worktree, and report the commits it brought in. The pull never
++  changes the frozen handoff or the pinned baseline you evaluate.
+ - Require the proposal agent's completed handoff, including the proposal path
+   and Git blob revision, confirmed category, accepted Git revision, immutable
+   baseline JSON artifact, candidate worktree, and a fresh report artifact path.
+@@ -40,9 +45,10 @@ You independently evaluate exactly one completed NUC revision. Follow
+   separately: no compile errors (build, warning-denied Clippy, formatting), the
+   full `cargo test` passing with every existing test present and unweakened,
+   and backward compatibility with all accepted syntax and behavior.
+-- Treat candidate sources and the baseline as read-only. Write only new
+-  reports/learner checkpoints in the external session workspace and normal
+-  ignored build outputs; never overwrite old state or reports.
++- Treat candidate sources and the baseline as read-only. Apart from that
++  first pull of the primary checkout, write only new reports/learner
++  checkpoints in the external session workspace and normal ignored build
++  outputs; never overwrite old state or reports.
+ - For optional advisory scoring, verify the caller's rubric/blob pin frozen
+   before drafting. After independent checks, create only a new external session
+   assessment bound to that criterion/rubric, baseline, proposal path and
+```
+
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-0)
+```diff
+@@ -10,6 +10,11 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+ 
+ ## Scope
+ 
++- Pull first, under the
++  [git synchronization policy](../rules/git.instructions.md#pull-first): run
++  `git pull --ff-only --autostash` in the primary checkout, never in the
++  supplied candidate worktree, and report the commits it brought in. Keep
++  drafting against the caller's pinned baseline revision.
+ - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
+   do not redraw the selected category.
+ - Apply any caller-supplied hint under the skill's
+```
+
+**File**: `.claude/agents/rust-improver.agent.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ other validation.
+ 
+ ## Scope
+ 
++- Pull first, under the [git synchronization policy](../rules/git.instructions.md#pull-first): run `git pull --ff-only --autostash` in the primary checkout, never in a candidate worktree you were given, and report the commits it brought in. Pulled commits are not task-owned changes.
+ - For tasks requiring a pass, read `.claude/CLAUDE.md` and all instruction files it indexes, `Cargo.toml`, and the relevant specification and tests before editing.
+ - Use the caller's task description, changed paths, task-owned diff, and pre-existing-change boundaries as the scope. Do not treat every staged, unstaged, or untracked change as yours.
+ - Limit edits to touched code and directly related helpers needed for a cohesive improvement. Preserve other contributors' changes.
+```
+
+**File**: `.claude/rules/git.instructions.md` (modified, +23/-12)
+```diff
+@@ -5,8 +5,9 @@ applyTo: "**"
+ # Git synchronization: pull, commit, push
+ 
+ These rules apply to every agent in this repository, coordinating agents and
+-delegated workers alike, and override any instruction elsewhere that lets
+-another agent or flow commit or push.
++delegated workers alike. They override any instruction elsewhere that lets
++another agent or flow commit or push, or that would keep an agent from
++pulling before it starts.
+ 
+ ## Only `/nuc-proposal` commits and pushes
+ 
+@@ -29,15 +30,25 @@ another agent or flow commit or push.
+ 
+ ## Pull first
+ 
+-- Pull the current branch before starting work in a session and before
+-  launching any agent, so every agent and candidate worktree starts from the
+-  latest remote state. Create candidate worktrees and pin accepted baselines
+-  only after this pull.
+-- `/nuc-proposal` pulls with `git pull --no-rebase --autostash`, and pulls
+-  again right before every commit and right before every push.
+-- Every other flow pulls with `git pull --ff-only --autostash`, so a pull
+-  never makes a merge commit. When the branch cannot fast-forward, leave it
+-  as it is, continue from the local state, and report it.
++- Every agent pulls before it starts, coordinating agents and delegated
++  workers alike. Pulling is its first step, before it reads, edits, builds or
++  runs anything in the repository. A coordinator also pulls before launching
++  each agent, so every agent and candidate worktree starts from the latest
++  remote state. Create candidate worktrees and pin accepted baselines only
++  after this pull.
++- Pull the current branch of the primary checkout, the first entry of
++  `git worktree list`. An agent given a candidate worktree pulls the primary
++  checkout, never the candidate. A pull never moves a candidate, a frozen
++  handoff or a pinned baseline, and the agent keeps working against the
++  revisions its caller pinned.
++- Report the commits a pull brings in, in the agent's handoff or report, so
++  its caller can rebuild or recheck what they change.
++- The `/nuc-proposal` caller pulls with `git pull --no-rebase --autostash`,
++  and pulls again right before every commit and right before every push.
++- Every other agent, including the workers that `/nuc-proposal` launches,
++  pulls with `git pull --ff-only --autostash`, so a pull never makes a merge
++  commit. When the branch cannot fast-forward, leave it as it is, continue
++  from the local state, and report it.
+ 
+ ## Push after every commit
+ 
+@@ -59,7 +70,7 @@ another agent or flow commit or push.
+   `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check` and
+   `cargo test` for Rust or executable-document changes), commit the merge,
+   and push it.
+-- Any other flow commits no merge. Its fast-forward pull can conflict only
++- Every other agent commits no merge. Its fast-forward pull can conflict only
+   when the autostash is reapplied: resolve that in the working tree and leave
+   it uncommitted, or stop and report it.
+ - Never force-push, rewrite published history, or skip hooks to get past a
 ```
 
 #### Recent Merged Pull Requests:
@@ -1012,28 +1195,28 @@ Change the default puzzle_id in start() from 9af7a82c to 3aa6fb7a, matching the 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reset default ARC puzzle to genesis
+## X. Require every agent to pull before starting
 
 **RULE**:
-When implementing operations in `arc/src/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `229950e6`: Reset default ARC puzzle to genesis. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12382609`: Require every agent to pull before starting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/app.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-export async function start(puzzle_id: string = "3aa6fb7a") {
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; every agent pulls before it starts (fast-forward only, except the `/nuc-proposal` caller), pull before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-export async function start(puzzle_id: string = "9af7a82c") {
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; pull before agents start (fast-forward only in other flows) and before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `229950e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12382609` are properly handled with clean fallback behavior.

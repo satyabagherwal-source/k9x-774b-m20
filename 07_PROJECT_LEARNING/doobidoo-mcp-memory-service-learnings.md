@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `fef259d7`  
+> **Source Version**: `e0f224ec`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:00:09.845Z  
+> **Timestamp**: 2026-11-02T15:57:29.419Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:00:09.840Z  
+> **Harvest Timestamp**: 2026-11-02T15:57:28.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2056 stars
+- **Stars / Engagement**: 2062 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1723** (2026-10-31): **[Bug]: harvest provider chain sends max_tokens and temperature to gpt-5.x**
-  *Symptoms*: Found while testing LLM provider integrations in agent frameworks: an automated tool flags candidates and each one is reproduced before it is reported. Reproduced on c187ec5.  ### Bug Description With `HARVEST_LLM_PROVIDERS` pointing at OpenAI and a gpt-5.x model, every call from the provider chain is refused, because the request always carries `max_tokens` and `temperature`. #797 fixed exactly this for the quality scorer, where gpt-5.4-mini answered `Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.` The harvest rewriter and classifier build their own payload and did not get that branch.  Harvest rewrite, `memory_distill`, search summaries and the LLM NLI backend all share this chain. For harvest, the whole batch comes back as `None` and nothing is stored. A non dry-run `memory_harvest` still adds the session to the tracker, so those candidates stay skipped until `force_reharvest`.  ### Steps to Reproduce 1. Use the configuration below. 2. Run a rewrite. The endpoint here is a fake that returns the error body from #797 when `max_tokens` is present:  ```python def endpoint(request):     body = json.loads(request.content)     if "max_tokens" in body:         return httpx.Response(400, json={"error": {             "message": "Unsupported parameter: 'max_tokens' is not supported with this model. "                        "Use 'max_completion_tokens' instead.",             "type": "invalid_request_error", "param": "max_token
+- **Issue #1785** (2026-11-02): **[Bug]: Milvus full reads stop at 16384 rows (get_all_memories, time range, tags, export)**
+  *Symptoms*: ### Bug Description  On the Milvus backend, reads that mean "every match" stop at 16384 rows without any error. Once a collection holds more than 16384 memories, `get_all_memories()`, `get_memories_by_time_range()`, tag search, tag counts, timestamps and the JSON export all return 16384.  There are two causes:  1. **The caller slices after draining.** `_query_memories` ([milvus.py#L4575](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4575)) already drains the whole match set with QueryIterator; its docstring says that is to avoid the 16384 truncation. But the callers that mean "all" pass `limit=_MILVUS_MAX_LIMIT`, so it returns `memories[:16384]` anyway ([L4621](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4621)). Affected: `get_all_memories` with no limit ([L3834](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L3834)), `get_memories_by_time_range`, `search_by_tag`, `search_by_tags`, `search_by_tag_chronological` with no limit, `get_by_exact_content`, `get_largest_memories`, and the exact and time/tag-only branches of `search_memories`. 2. **A single `query()` call.** `_scan_tags` (behind `get_all_tags` and `get_all_tags_with_counts`), `get_memory_timestamps`, `purge_deleted` and `get_conflicts` call `client.query(limit=16384)` once, which Milvus caps at 16384.  The sort is newest first, so the rows dropped ar
 
-- **Issue #1708** (2026-10-29): **Milvus: purge_deleted() leaves graph edges of purged memories behind**
-  *Symptoms*: Follow-up to #1703 / #1706.  #1706 made all six Milvus delete paths remove the graph edges of the memories they delete, through `MilvusMemoryStorage._delete_graph_edges()`. `purge_deleted()` was left out on purpose, as noted in the PR: it hard-deletes tombstoned rows by id and leaves their rows in `<collection>_graph` behind, the same leak #1703 fixed for the other paths.  On Milvus this is a narrow case. `delete()` is a hard delete, so a tombstone only exists when something set `metadata.deleted_at` explicitly via `update_memory_metadata()` (see the docstrings of `is_deleted()` and `purge_deleted()` in `storage/milvus.py`). When such a row is purged, its edges survive, including `has_entity`, so `find_memories_by_entity()` can still return the purged hash.  Fix: after the successful `delete` call in `purge_deleted()`, call `await self._delete_graph_edges(to_purge)`. Best-effort, same contract as the other paths.  Test: extend `tests/storage/test_milvus_delete_graph_edges.py`: store a memory with entity linking on, set `deleted_at` in its metadata with a `created_at` older than the threshold, run `purge_deleted()`, and assert no edge touches the hash. 
+- **Issue #1782** (2026-11-02): **[Bug]: Milvus memory_search without a query returns the oldest matches, not the newest**
+  *Symptoms*: ### Bug Description  On the Milvus backend, `memory_search` without a `query` (only `time_expr`, `after`/`before`, or `tags`) returns the **oldest** matching memories instead of the newest. sqlite_vec returns the newest.  The time/tag-only branch of `MilvusMemoryStorage.search_memories` ([milvus.py#L2983-L2997](https://github.com/doobidoo/mcp-memory-service/blob/815ca45b/src/mcp_memory_service/storage/milvus.py#L2983-L2997)) issues one `client.query(filter=..., limit=limit * 3)` and keeps the first `limit` rows. Milvus has no server-side `ORDER BY`, so those are the rows scanned first, which for memories written over time are the oldest. Nothing sorts them afterwards; the MCP handler does not either.  The same branch serves the `fallback=true` tag stage (`_search_tag_fallback` in `server/handlers/memory.py`). REST `/api/search*` is not affected: it does not call `search_memories`.  ### Steps to Reproduce  Through the real MCP handler, on Milvus Lite and sqlite_vec, write 30 memories one hour apart, oldest first, then call `memory_search`:  | call | sqlite_vec (hours old) | Milvus (hours old) | |---|---|---| | `{"time_expr": "last 7 days", "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` | | `{"tags": ["timeline"], "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` |  ### Expected Behavior  The newest matches first, as on sqlite_vec, so the tool's own example `{"time_expr": "last week", "limit": 20}` returns the last 20 memories of the week.  ### Actual Behavio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,969 +2932,1181 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ffe3614` (2026-10-30)
-**Commit Message**: fix(sync): bound the delta-sync event log by compacting update_metadata chains (#1721)
+### Incident Patch 1: `ce80cb53` (2026-11-02)
+**Commit Message**: fix: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726)
 
-* fix(sync): bound the delta-sync event log by compacting update_metadata chains
+* fix: memory_search point-in-time queries with as_of and status flags
 
-The sync_events log is append-only and never compacted. Periodic local
-recomputes (quality/utility) append an update_metadata event per memory
-several times a day; on a 3-week-old production DB that was 1.36M events,
-97% idempotent update_metadata (~53 per memory, ~half the DB file).
+Implements issue #1724: memory_search (MCP + REST) accepts as_of for
+point-in-time queries (knowledge-time semantics), include_superseded
+results carry current/superseded status flags with superseded_by and
+superseded_at, a new superseded_at column records the replacement moment,
+and reasoning/temporal.py is wired into the graph layer instead of dead code.
 
-compact_update_metadata collapses, per content_hash, the update_metadata
-chain into one consolidated event carrying the LWW-resolved state. It
-reuses the apply resolver (_load_live_events + _resolve_md_fields) instead
-of re-implementing LWW, so the compacted log re-materializes identically.
+Tests: tests/storage/test_1724_point_in_time.py (9 tests)
 
-Convergence-preserving:
-- only update_metadata is compacted; create/delete untouched (recreation anchor)
-- nothing above MIN(last_seq_pushed) across peers is touched; cursors left alone
-- per live incarnation (never merges across a create-after-delete boundary)
-- consolidated event carries the winning event's HLC pair (not per-column max),
-  reuses a seq within the collapsed range, deterministic event_id (idempotent)
-- single SAVEPOINT, fail-close
+* fix: memory_search point-in-time queries with as_of and status flags
 
-**File**: `changelog.d/1721.fixed.md` (added, +14/-0)
+Implements issue #1724: memory_search (MCP + REST) accepts as_of for
+point-in-time queries (knowledge-time semantics), include_superseded
+results carry current/superseded status flags with superseded_by and
+superseded_at, a new superseded_at column records the replacement moment,
+and reasoning/temporal.py is wired into the graph layer instead of dead code.
+
+Rebased onto current upstream main; no upstream changes reverted.
+
+Tests: tests/storage/test_1724_point_in_time.py (9 tests)
+
+* fix: address review feedback on point-in-time as_of queri
+
+**File**: `changelog.d/1724.fixed.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,14 @@
-+- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
-+  The event log is append-only and never compacted, so periodic local recomputes
-+  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
-+  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
-+  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
-+  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
-+  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
-+  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
-+  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
-+  peers, so a field whose winning edit is still above the watermark can never be defeated by
-+  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
-+  event's HLC pair and a deterministic id that includes the payload hash (so peers that
-+  compact divergent chains never reuse an identity). The delete is chunked and the whole
-+  batch is fail-closed under a single SAVEPOINT.
+@@ -0,0 +1,5 @@
++- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
++  With `fallback=true`, an `as_of` search returning fewer than three matches could
++  append present-day exact or tag matches. The cascading fallback stages now forward
++  `as_of`, so historical queries only return memories that were current at the
++  requested date.
 ```
 
-**File**: `src/mcp_memory_service/storage/sync/compaction.py` (added, +355/-0)
+**File**: `src/mcp_memory_service/models/memory.py` (modified, +8/-2)
 ```diff
-@@ -0,0 +1,355 @@
-+"""
-+Delta-sync sync_events LOG COMPACTION (Gate G4 implementation).
+@@ -460,12 +460,18 @@ class MemoryQueryResult:
+     memory: Memory
+     relevance_score: float
+     debug_info: Dict[str, Any] = field(default_factory=dict)
+-    
++    # Issue #1724: supersession lineage, populated by backends that track it
++    # (sqlite_vec / hybrid). superseded_at is the exact replacement moment for
++    # rows superseded after migration 021; for older rows it is approximated
++    # with the successor's created_at (see RetrieveMixin.retrieve).
++    superseded_by: Optional[str] = None
++    superseded_at: Optional[float] = None
 +
-+Collapses the idempotent op='update_metadata' chain per content_hash into a single
-+consolidated event that carries the LWW-resolved state, giving the sync_events log a bound
-+without breaking cross-peer convergence.
+     @property
+     def similarity_score(self) -> float:
+         """Alias for relevance_score for backward compatibility."""
+         return self.relevance_score
+-    
 +
-+Design (reuses, never reinvents — G1):
-+  - Field-level LWW is NOT re-implemented here: the winning fields are read back through the
-+    SAME resolver the apply path uses (``_load_live_events`` + ``_resolve_md_fields`` elect the
-+    live incarnation and the per-field winners via ``_winner_key``). The consolidated event is
-+    built so that re-resolving the (now shorter) log yields a byte-identical verdict (T1/T5/T7).
-+  - The consolidated event carries the WINNING update_metadata event's HLC PAIR (the single
-+    smallest ``_winner_key``), never MAX-per-column, so bootstrap._read_snapshot elects the same
-+    (hlc_physical, hlc_logical) pair and _seed_last_hlc_on_first_boot cannot regress (T2).
-+  - Only op='update_metadata' rows are ever removed; op='create'/op='delete' are untouched (T3).
-+  - Watermark frontier: no event with seq > MIN(last_seq_pushed) across push_cursor may be
-+    removed/rewritten. When ``watermark`` is None it is computed as that MIN; when there is NO
-+    push_cursor row at all, no peer depends on the log tail, so the frontier is MAX(seq) (the
-+    whole live chain is collapsible). sync_cursor and push_cursor are never touched (T4).
-+  - The consolidated event_id is DETERMINISTIC (content_hash + winning HLC pair), so a second
-+    run recognises the already-consolidated chain and is a no-op (T6a/T6b).
-+  - Fail-closed: all removals + the insert run inside ONE SAVEPOINT; any error rolls the whole
-+    thing back, leaving the log byte-identical (T6c).
+     def to_dict(self) -> Dict[str, Any]:
+         """Convert to dictionary representation."""
+         return {
+```
+
+**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +27/-2)
+```diff
+@@ -99,7 +99,10 @@ async def handle_memory_graph(server, arguments: dict) -> List[types.TextContent
+ 
+             return await handle_find_connected_memories(server, {
+                 "hash": hash_val,
+-                "max_hops": arguments.get("max_hops", 2)
++                "max_hops": arguments.get("max_hops", 2),
++                # Issue #1724: forward the point-in-time bound — dropping it
++                # here silently disabled as_of for the memory_graph tool.
++                "as_of": arguments.get("as_of"),
+             })
+ 
+         elif action == "path":
+@@ -373,10 +376,32 @@ async def handle_find_connected_memories(
+ 
+     # Get optional parameters
+     max_hops = arguments.get("max_hops", 2)
++    as_of = arguments.get("as_of")
+ 
+     try:
++        # Parse as_of (issue #1724): point-in-time traversal. Invalid values
++        # fail the call rather than silently ignoring the bound.
++        as_of_ts = None
++        if as_of is not None:
++            from ...utils.time_parser import parse_as_of
++            try:
++                as_of_ts = parse_as_of(as_of)
++            except ValueError as e:
++                result = {
++                    "success": False,
++                    "error": f"Invalid as_of value: {e}",
++                    "connected": [],
++                    "count": 0,
++                }
++                return [types.TextContent(
++                    type="text",
++                    text=json.dumps(result, indent=2)
++                )]
 +
-+SPEC: spec-sync-eventlog-compaction.md.
-+"""
-+
-+import hashlib
-+import json
-+import logging
-+import os
+         # Perform graph traversal
+-        connected = await graph.find_connected(memory_hash, max_hops=max_hops)
++        connected = await graph.find_connected(
++            memory_hash, max_hops=max_hops, as_of=as_of_ts
++        )
+ 
+         # Format results
+         result = {
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +20/-5)
+```diff
+@@ -1152,15 +1152,16 @@ async def _collect_cascading_fallback_memories(
+     """Combine exact and tag fallback results while preserving their labels."""
+     seen_hashes = {memory.get("content_hash") for memory in memories}
+     include_superseded = arguments.get("include_superseded", False)
++    as_of = arguments.get("as_of")
+     exact_memories = await _search_exact_fallback(
+-        storage, query, limit, include_superseded
++        storage, query, limit, include_superseded, as_of
+     )
+     _append_unique_fallback_memories(
+         memories, exact_memories, seen_hashes, "exact_fallback"
+     )
+     if len(memories) < limit:
+         tag_memories = await _search_tag_fallback(
+-            storage, query, limit, include_superseded
++            storage, query, limit, include_superseded, as_of
+         )
+         _append_unique_fallback_memories(
+             memories, tag_memories, seen_hashes, "tag_fallback"
+@@ -1173,22 +1174,23 @@ async def _collect_cascading_fallback_memories(
+ 
+ 
+ async def _search_exact_fallback(
+-    storage, query: str, limit: int, include_superseded: bool
++    storage, query: str, limit: int, include_superseded: bool, as_of=None
+ ) -> list[dict]:
+     """Return exact-search candidates, treating a backend error as no matches."""
+     result = await storage.search_memories(
+         query=query,
+         mode="exact",
+         limit=limit,
+         include_superseded=include_superseded,
++        as_of=as_of,
+     )
+     if "error" in result:
+         return []
+     return result.get("memories", [])
+ 
+ 
+ async def _search_tag_fallback(
+-    storage, query: str, limit: int, include_superseded: bool
++    storage, query: str, limit: int, include_superseded: bool, as_of=None
+ ) -> list[dict]:
+     """Return tag-search candidates for tokens extracted from the query."""
+     query_tokens = [
+@@ -1204,6 +1206,7 @@ async def _search_tag_fallback(
+         tags=query_tokens,
+         limit=limit,
+         include_superseded=include_superseded,
++        as_of=as_of,
+     )
+     if "error" in result:
+         return []
+@@ -1243,6 +1246,7 @@ async def _retrieve_search_results(storage, arguments: dict, normalize_tags):
+         ranking_weights=arguments.get("ranking_weights"),
+         store=store,
+         agent_id=arguments.get("agent_id"),
++        as_of=arguments.get("as_of"),
+     )
+     if "error" in result:
+         return result, None
+@@ -1487,10 +1491,21 @@ def _format_search_memory(memory: dict, index: int, fallback_used: bool) -> str:
+     match_info = ""
+     if fallback_used and memory.get("match_method"):
+         match_info = f" (via {memory['match_method']})"
++    # Issue #1724: surface the point-in-time status flag when the backend
++    # attached one (include_superseded=true).
++    status_info = ""
++    if memory.get("status"):
++        status_info = f"   Status: {memory['status']}"
++        if memory.get("superseded_by"):
++            status_info += f" by {memory['superseded_by'][:12]}"
++            if memory.get("superseded_at_iso"):
++                status_info += f" at {memory['superseded_at_iso']}"
++        status_info += "\n"
+     return (
+         f"{index}. {memory.get('content', '')}\n"
+         f"   Hash: {content_hash}\n"
+-        f"   Created: {created_at}{tags_display}{match_info}"
++        f"   Created: {created_at}{tags_display}{match_info}\n"
++        f"{status_info}".rstrip("\n")
+     )
+ 
+ 
+```
+
+**File**: `src/mcp_memory_service/storage/base.py` (modified, +137/-9)
+```diff
+@@ -19,6 +19,7 @@
+ """
+ import asyncio
+ import logging
 +import time
-+from typing import Dict, List, Optional, Tuple
+ from abc import ABC, abstractmethod
+ from typing import List, Optional, Dict, Any, Sequence, Tuple, Set
+ from datetime import datetime, timezone, timedelta, date
+@@ -209,7 +210,7 @@ async def store_batch(self, memories: List[Memory], recreate: Optional[bool] = N
+         return final_results
+ 
+     @abstractmethod
+-    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None) -> List[MemoryQueryResult]:
++    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None, as_of: Optional[float] = None) -> List[MemoryQueryResult]:
+         """Retrieve memories by semantic search.
+ 
+         Args:
+@@ -221,6 +222,9 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
+             min_confidence: Minimum effective confidence score (0.0-1.0).
+                   When > 0, stale memories below threshold are filtered out.
+                   Default 0.0 disables filtering (backward compatible).
++            as_of: Optional epoch seconds for a point-in-time query (issue
++                  #1724): only memories with created_at <= as_of that had not
++                  yet been superseded at as_of are returned. None disables.
+         """
+         pass
+ 
+@@ -240,7 +244,8 @@ async def retrieve_with_quality_boost(
+         quality_boost: Optional[bool] = None,
+         quality_weight: Optional[float] = None,
+         include_superseded: bool = False,
+-        store: Optional[str] = "default"
++        store: Optional[str] = "default",
++        as_of: Optional[float] = None,
+     ) -> List[MemoryQueryResult]:
+         """
+         Retrieve memories with optional quality-based reranking.
+@@ -285,12 +290,12 @@ async def retrieve_with_quality_boost(
+ 
+         if not quality_boost:
+             # Standard retrieval, no reranking
+-            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store)
++            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
+ 
+         # Quality-boosted retrieval
+         # Step 1: Over-fetch (3x) to have pool for reranking
+         oversample_factor = 3
+-        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store)
++        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
+ 
+         if not candidates:
+             return []
+@@ -1219,6 +1224,74 @@ async def get_graph_visualization_data(
+             },
+         }
+ 
++    @staticmethod
++    def _post_filter_as_of(
++        results: List[MemoryQueryResult], as_of_ts: float
++    ) -> List[MemoryQueryResult]:
++        """Best-effort point-in-time post-filter (issue #1724).
 +
-+from ..base import MemoryStorage
-+from ..mixins.base import _sanitize_log_value
-+from .apply import (
-+    _sqlite,
-+    _sync_lock,
-+    _load_live_events,
-+    _ev_winner_key,
-+    _metadata_items,
-+    _top_level_fields,
-+)
++        For backends without SQL-level as_of support (cloudflare, milvus,
++        remote_http): drop memories created after as_of, and drop memories
++        that are superseded without a known replacement moment (their
++        supersede time cannot be proven to be after as_of, so they cannot be
++        shown as current at as_of). Backends with native support (sqlite_vec,
++        hybrid via primary) already filtered; this is a no-op for them.
++        """
++        filtered = []
++        for r in results:
++            created = r.memory.created_at
++            if created is not None and created > as_of_ts:
++                continue
++            sup_by = r.superseded_by
++            sup_at = r.superseded_at
++            if sup_by and (sup_at is None or sup_at <= as_of_ts):
++                continue
++            filtered.append(r)
++        return filtered
 +
-+logger = logging.getLogger(__name__)
++    async def _get_supersession_map(
++        self, content_hashes: List[str], store: Optional[str] = None
++    ) -> Dict[str, Tuple[Optional[str], Optional[float]]]:
++        """Batch supersession-lineage lookup: content_hash -> (superseded_by, superseded_at).
 +
-+# The op of the consolidated event. The protection of free-form vs structured keys is NOT
-+# done here — it comes from reusing apply._top_level_fields / apply._metadata_items, which
-+# already classify the payload fields. This constant only names the op string.
-+_CONSOLIDATED_OP = "update_metadata"
++        Issue #1724 follow-up: exact / time-only / tag-only search paths build
++        results from raw Memory objects that never flow through retrieve(), so
++        their lineage fields are empty. The base implementation returns {}
++        (backend cannot provide it — those paths then get only the created_at
++        bound); SQLite overrides with a single batched query.
++        """
++        return {}
 +
-+
-+def _compaction_agent_id() -> str:
-+    """Stable agent id for consolidated events. A dedicated, single-token id (no slash) keeps
-+    the row a valid, filterable event and makes the consolidated event visibly synthetic without
-+    impersonating a real author."""
-+    return "compaction"
-+
-+
-+def _deterministic_consolidated_event_id(content_hash: str, hlc_physical: int, hlc_logical: int,
-+                                         updates: Dict) -> str:
-+    """Stable id for the consolidated update_metadata event (T6b).
-+
-+    Keyed on (content_hash, winning HLC pair, op, AND a canonical hash of the consolidated
-+    `updates`). Same inputs → same id, so a second run on an unchanged chain produces the
-+    identical identity and is recognised as already-consolidated. Including the payload hash
-+    (Greptile P1#2) ensures two peers that compact DIVERGENT chains sharing the same winning
-+    HLC pair mint DIFFERENT ids — otherwise identical ids with different payloads would be
-+    rejected by apply_remote_event as an altered replay, silently dropping the event and
-+    stalling the pull. Mirrors bootstrap._deterministic_event_id's shape ('prefix-' + sha256[:32]).
-+    """
-+    payload_digest = hashlib.sha256(
-+        json.dumps(updates, sort_keys=True, separators=(",", ":")).encode("utf-8")
-+    ).hexdigest()[:16]
-+    raw = f"compact:{_CONSOLIDATED_OP}:{content_hash}:{hlc_physical}:{hlc_logical}:{payload_digest}".encode("utf-8")
-+    return "cmp-" + hashlib.sha256(raw).hexdigest()[:32]
-+
-+
-+def _frontier(s, watermark: Optional[int]) -> int:
-+    """Compute the compaction frontier (max seq that may be collapsed).
-+
-+    - explicit watermark → use it verbatim (caller caps how far compaction may reach);
-+    - watermark is None  → MIN(last_seq_pushed) across push_cursor; if there is NO push_cursor
-+      row, no peer depends on the log tail, so the frontier is MAX(seq) (collapse everything).
-+    """
-+    if watermark is not None:
-+        return int(watermark)
-+    row = s.conn.execute("SELECT COUNT(*), MIN(last_seq_pushed) FROM push_cursor").fetchone()
-+    has_peers = row is not None and row[0] and row[0] > 0
-+    if has_peers and row[1] is not None:
-+        return int(row[1])
-+    max_row = s.conn.execute("SELECT COALESCE(MAX(seq), 0) FROM sync_events").fetchone()
-+    return int(max_row[0]) if max_row and max_row[0] is not None else 0
-+
-+
-+def _live_hashes_with_update_metadata(s) -> List[str]:
-+
++    async def _enrich_supersession(
++        self, results: List[MemoryQueryResult], store: Optional[str] = None
++    ) -> List[MemoryQueryResult]:
++        """Backfill supersession lineag
 ```
 
-**File**: `tests/sync/test_sync_event_log_compaction.py` (added, +692/-0)
+**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +54/-3)
 ```diff
-@@ -0,0 +1,692 @@
+@@ -1039,7 +1039,7 @@ async def _store_r2_content(self, key: str, content: str) -> None:
+         if response.status_code not in [200, 201]:
+             raise ValueError(f"Failed to store content in R2: {response.status_code}")
+     
+-    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
++    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
+         """Retrieve memories by semantic search."""
+         try:
+             # Generate query embedding
+@@ -1126,13 +1126,64 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
+                 except Exception as e:
+                     logger.warning("Failed to persist access metadata: %s", _sanitize_log_value(e))
+ 
++            # Issue #1724 follow-up: always load the replacement lineage, not
++            # only when as_of is set — include_superseded status flags need it
++            # too. Cloudflare tracks superseded_by in metadata_json but not
++            # the replacement moment, so superseded_at stays None
++            # (conservative in as_of queries).
++            results = self._copy_supersession_from_metadata(results)
++
++            # Issue #1724: best-effort point-in-time filter. The Cloudflare
++            # backend has no superseded_at; superseded rows are conservatively
++            # excluded from as_of queries.
++            if as_of is not None:
++                results = self._post_filter_as_of(results, as_of)
++
+             logger.info("Retrieved %s memories for query", len(results))
+             return results
+-            
++
+         except Exception as e:
+             logger.error("Failed to retrieve memories: %s", _sanitize_log_value(e))
+             return []
+-    
++
++    @staticmethod
++    def _copy_supersession_from_metadata(
++        results: List[MemoryQueryResult],
++    ) -> List[MemoryQueryResult]:
++        """Copy the superseded_by pointer from each result's loaded metadata.
++
++        Issue #1724 follow-up: Cloudflare's D1 schema has no superseded_by /
++        superseded_at columns, so MemoryQueryResult lineage is never populated
++        by the query itself. The replacement pointer, when present, lives in
++        the memory's metadata_json (same convention as the SQLite metadata
++        mirror and the Milvus backend). superseded_at is not tracked, so it
++        stays None and _post_filter_as_of conservatively excludes such rows
++        from as_of queries instead of silently returning them as current.
++        """
++        for r in results:
++            if r.superseded_by is None:
++                r.superseded_by = (r.memory.metadata or {}).get("superseded_by") or None
++        return results
++
++    async def _enrich_supersession(
++        self, results: List[MemoryQueryResult], store: Optional[str] = None
++    ) -> List[MemoryQueryResult]:
++        """Backfill supersession lineage from loaded metadata (issue #1724).
++
++        The exact / tag-only / time-only paths in search_memories() never flow
++        through retrieve(), so they rely on this hook. The base implementation
++        does a batched DB lookup that this backend cannot provide; copy the
++        pointer from the already-loaded metadata instead. Never raises.
++        """
++        try:
++            return self._copy_supersession_from_metadata(results)
++        except Exception as e:
++            logger.warning(
++                "Supersession enrichment failed, continuing without lineage: %s",
++                _sanitize_log_value(str(e)),
++            )
++            return results
++
+     async def _load_memory_from_match(self, match: Dict[str, Any]) -> Optional[Memory]:
+         """Load full memory from a Vectorize match id."""
+         try:
+```
+
+**File**: `src/mcp_memory_service/storage/graph.py` (modified, +67/-2)
+```diff
+@@ -79,6 +79,7 @@ def normalize_entity_id(name: str) -> str:
+         cm.distance < ?  -- Limit recursion depth
+         AND instr(cm.path, ',' || {selected_hash} || ',') = 0  -- Prevent cycles (exact match)
+         {relationship_filter}
++        {temporal_filter}
+ )
+ SELECT DISTINCT hash, distance
+ FROM connected_memories
+@@ -268,7 +269,8 @@ async def find_connected(
+         memory_hash: str,
+         max_hops: int = 2,
+         relationship_type: Optional[str] = None,
+-        direction: str = "both"
++        direction: str = "both",
++        as_of: Optional[float] = None,
+     ) -> List[Tuple[str, int]]:
+         """
+         Find all memories connected within N hops using recursive CTE.
+@@ -281,6 +283,11 @@ async def find_connected(
+             max_hops: Maximum number of hops to traverse (default: 2)
+             relationship_type: Optional filter for specific relationship type
+             direction: Direction to traverse ("outgoing", "incoming", "both")
++            as_of: Optional point-in-time filter (Unix epoch, issue #1724).
++                Edges whose metadata carries valid_from/valid_until
++                (see reasoning.temporal.store_temporal_association) are only
++                traversed when valid at as_of; edges without temporal bounds
++                are always traversed.
+ 
+         Returns:
+             List of (memory_hash, distance) tuples, sorted by distance
+@@ -313,6 +320,18 @@ async def find_connected(
+                 relationship_filter = "AND mg.relationship_type = ?"
+                 params.append(relationship_type)
+ 
++            # Issue #1724: point-in-time traversal. Temporal edges carry
++            # valid_from/valid_until in metadata JSON; untimed edges pass.
++            temporal_filter = ""
++            if as_of is not None:
++                temporal_filter = (
++                    "AND (json_extract(mg.metadata, '$.valid_from') IS NULL "
++                    "OR json_extract(mg.metadata, '$.valid_from') <= ?) "
++                    "AND (json_extract(mg.metadata, '$.valid_until') IS NULL "
++                    "OR json_extract(mg.metadata, '$.valid_until') >= ?)"
++                )
++                params.extend([as_of, as_of])
++
+             # Build join condition and selected hash based on direction
+             if direction == "outgoing":
+                 join_condition = "JOIN memory_graph mg ON cm.hash = mg.source_hash"
+@@ -329,7 +348,8 @@ async def find_connected(
+             query = _QUERY_TEMPLATE_FIND_CONNECTED.format(
+                 selected_hash=selected_hash,
+                 join_condition=join_condition,
+-                relationship_filter=relationship_filter
++                relationship_filter=relationship_filter,
++                temporal_filter=temporal_filter,
+             )
+ 
+             cursor = conn.cursor()
+@@ -348,6 +368,51 @@ async def find_connected(
+             logger.error(f"Failed to find connected memories: {_sanitize_log_value(e)}")
+             return []
+ 
++    async def get_temporal_edges(
++        self,
++        memory_hash: str,
++        as_of: Optional[float] = None,
++    ) -> List["TemporalEdge"]:
++        """Return temporal edges incident to a memory, filtered by as_of.
++
++        Issue #1724: this wires up reasoning/temporal.py (previously dead
++        code). Edges are built from memory_graph rows — valid_from/valid_until
++        come from the metadata JSON written by
++        reasoning.temporal.store_temporal_association — and passed through
++        filter_temporal_edges.
++        """
++        from ..reasoning.temporal import TemporalEdge, filter_temporal_edges
++
++        edges: List[TemporalEdge] = []
++        try:
++            conn = await self._get_connection()
++            cursor = conn.cursor()
++            try:
++                cursor.execute(
++                    "SELECT source_hash, target_hash, metadata FROM memory_graph "
++                    "WHERE source_hash = ? OR target_hash = ?",
++                    (memory_hash, memory_hash),
++                )
++                for row in cursor.fetchall():
++                    try:
++                        meta = json.loads(row["metadata"]) if row["metadata"] else {}
++                    except (json.JSONDecodeError, TypeError):
++                        meta = {}
++                    edges.append(
++                        TemporalEdge(
++                            source=row["source_hash"],
++                            target=row["target_hash"],
++                            valid_from=meta.get("valid_from"),
++                            valid_until=meta.get("valid_until"),
++                        )
++                    )
++            finally:
++                cursor.close()
++        except sqlite3.Error as e:
++            logger.error(f"Failed to get temporal edges: {_sanitize_log_value(e)}")
++            return []
++        return filter_temporal_edges(edges, as_of)
++
+     async def get_relationship_types(self, memory_hash: str) -> Dict[str, int]:
+         """
+ 
+```
+
+**File**: `src/mcp_memory_service/storage/hybrid.py` (modified, +11/-1)
+```diff
+@@ -2200,7 +2200,7 @@ async def store(self, memory: Memory, skip_semantic_dedup: bool = False, store:
+ 
+         return success, message
+ 
+-    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
++    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
+         """Retrieve memories from primary storage (fast)."""
+         return await self.primary.retrieve(
+             query,
+@@ -2211,6 +2211,7 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
+             start_time=start_time,
+             end_time=end_time,
+             store=store,
++            as_of=as_of,
+         )
+ 
+     async def retrieve_hybrid(
+@@ -2221,6 +2222,7 @@ async def retrieve_hybrid(
+         semantic_weight: Optional[float] = None,
+         include_superseded: bool = False,
+         store: Optional[str] = "default",
++        as_of: Optional[float] = None,
+     ) -> List[MemoryQueryResult]:
+         """BM25 + vector search on primary storage (#1576).
+ 
+@@ -2235,6 +2237,7 @@ async def retrieve_hybrid(
+             semantic_weight=semantic_weight,
+             include_superseded=include_superseded,
+             store=store,
++            as_of=as_of,
+         )
+ 
+     async def search(self, query: str, n_results: int = 5, min_similarity: float = 0.0) -> List[MemoryQueryResult]:
+@@ -2335,6 +2338,13 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
+         """Retrieve memories by exact content match from primary storage."""
+         return await self.primary.get_by_exact_content(content, store=store)
+ 
++    async def _get_supersession_map(self, content_hashes, store=None):
++        """Delegate the issue-#1724 lineage lookup to the primary SQLite storage."""
++        delegate = getattr(self.primary, "_get_supersession_map", None)
++        if delegate is not None:
++            return await delegate(content_hashes, store=store)
++        return {}
++
+     async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optional[str] = None) -> Tuple[int, str]:
+         """Delete memories within a specific date range in primary storage and queue for secondary sync."""
+         count, message = await self.primary.delete_by_timeframe(start_date, end_date, tag)
+```
+
+---
+
+### Incident Patch 2: `b9cdb17c` (2026-11-02)
+**Commit Message**: fix(sync): propagate a supersede made after the first sync (#1773) (#1788)
+
+* fix(sync): propagate a supersede made after the first sync (#1773)
+
+mark_superseded_batch, resolve_conflict and update_memory_versioned changed
+superseded_by / superseded_at without logging a sync event, and the
+receiver dropped superseded_by from update_metadata events, so a memory
+replaced after it was first synced stayed current on every other peer.
+
+- All three writers log the supersede as an update_metadata event inside
+  the same savepoint or transaction as the UPDATE (fail-closed, ADR-0008).
+  A retry that changes nothing logs no event.
+- updates carries only superseded_by, which peers without this change
+  already treat as protected; the origin's superseded_at travels at the
+  payload top level, where those peers never read it.
+- The receiver resolves both columns with the existing field-level LWW by
+  _winner_key and writes the origin's superseded_at instead of
+  re-stamping it. update_memory_metadata now carries superseded_at too.
+
+Closes #1773
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(sync): roll back a failed resolve_conflict as a whole; mirror legacy superseded_by
+
+Review fol
+
+**File**: `changelog.d/1773.fixed.md` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++- **A supersede made after a memory was first synced never reached the other delta-sync peers (#1773, ppcvote).**
++  `mark_superseded_batch`, `resolve_conflict` and `update_memory_versioned` changed
++  `superseded_by` / `superseded_at` without logging a sync event, and the receiver dropped
++  `superseded_by` from `update_metadata` events, so a replaced memory stayed current on every
++  other peer, in default search and in `as_of` queries. All three writers now log the
++  supersede inside the same savepoint or transaction as the UPDATE, and the receiver writes both columns
++  with the existing field-level last-writer-wins order, taking `superseded_at` from the
++  origin instead of re-stamping it. Peers that supersede the same memory with different
++  winners converge regardless of arrival order; a peer without this change keeps its
++  current behaviour.
+```
+
+**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +110/-38)
+```diff
+@@ -199,6 +199,10 @@ def _do_update():
+                             'updates': updates,
+                             'updated_at': updated_at,
+                         }
++                        if update_superseded_by:
++                            # Issue #1773: carry the origin's superseded_at (the CASE above
++                            # may have kept an earlier instant) so receivers never re-stamp it.
++                            payload['superseded_at'] = self._read_superseded_at(content_hash)
+                         self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
+                     self.conn.execute(f"RELEASE SAVEPOINT {sp}")
+                 except Exception:
+@@ -337,25 +341,84 @@ def _batch_update():
+             logger.error("Batch update failed: %s\n%s", _sanitize_log_value(str(e)), traceback.format_exc())
+             return [False] * len(memories)
+ 
++    def _read_superseded_at(self, content_hash: str) -> float | None:
++        """Return the row's superseded_at as written by the current transaction."""
++        row = self.conn.execute(
++            "SELECT superseded_at FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
++            (content_hash,),
++        ).fetchone()
++        return row[0] if row else None
++
++    def _append_supersede_event(self, content_hash: str) -> None:
++        """Log a supersede of ``content_hash`` for delta-sync peers (issue #1773).
++
++        Runs inside the caller's transaction/savepoint, so the UPDATE and the event
++        commit or roll back together (ADR-0008). The event is an ``update_metadata``
++        whose ``updates`` holds only ``superseded_by``, a field peers already treat as
++        protected, and whose ``superseded_at`` sits at the payload top level, where a
++        peer without #1773 never reads it. Both values and ``updated_at`` are read back
++        from the row, so receivers write the origin's values instead of re-stamping.
++        """
++        if not hasattr(self, '_append_sync_event'):
++            return
++        row = self.conn.execute(
++            "SELECT superseded_by, superseded_at, updated_at FROM memories "
++            "WHERE content_hash = ? AND deleted_at IS NULL",
++            (content_hash,),
++        ).fetchone()
++        if row is None:
++            return
++        superseded_by, superseded_at, updated_at = row
++        payload = {
++            'content_hash': content_hash,
++            'updates': {'superseded_by': superseded_by},
++            'superseded_at': superseded_at,
++            'updated_at': updated_at,
++        }
++        self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
++
++    def _supersede_with_event(self, winner_hash: str, loser_hash: str, now: float) -> None:
++        """Point ``loser_hash`` at ``winner_hash`` and log the change for sync peers.
++
++        Issue #1724 / follow-up review: stamp superseded_at only on the actual
++        current -> superseded transition. A retried call (same winner) or a re-point
++        keeps the ORIGINAL replacement moment — re-stamping would corrupt the
++        historical instant that point-in-time queries rely on. (CASE sees pre-update
++        values.) A retry that changes nothing logs no event.
++        """
++        before = self.conn.execute(
++            "SELECT superseded_by FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
++            (loser_hash,),
++        ).fetchone()
++        cur = self.conn.execute(
++            "UPDATE memories SET superseded_by = ?, "
++            "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
++            "THEN ? ELSE superseded_at END "
++            "WHERE content_hash = ? AND deleted_at IS NULL",
++            (winner_hash, now, loser_hash),
++        )
++        if cur.rowcount > 0 and before is not None and before[0] != winner_hash:
++            self._append_supersede_event(loser_hash)
++
+     async def mark_superseded_batch(self, pairs: list[tuple[str, str]]) -> int:
+         """Mark memories as superseded in a single transaction."""
+         if not pairs or not self.conn:
+             return 0
+ 
+         def _batch_mark():
+-            # Issue #1724 / follow-up review: stamp superseded_at only on the
+-            # actual current -> superseded transition. A retried batch (same
+-            # winner) or a re-point keeps the ORIGINAL replacement moment —
+-            # re-stamping would corrupt the historical instant that
+-            # point-in-time queries rely on. (CASE sees pre-update values.)
+             now = time.time()
+-            self.conn.executemany(
+-                "UPDATE memories SET superseded_by = ?, "
+-                "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
+-                "THEN ? ELSE superseded_at END "
+-                "WHERE content_hash = ? AND deleted_at IS NULL",
+-                [(winner, now, loser) for winner, loser in pairs],
+-            )
++            # SAVEPOINT: the UPDAT
+```
+
+**File**: `src/mcp_memory_service/storage/sync/apply.py` (modified, +30/-2)
+```diff
+@@ -472,8 +472,29 @@ def _top_level_fields(ev_op, pl):
+                 if vv is not None}
+     # update_metadata
+     upd = (pl.get("updates", {}) or {})
+-    return {kk: vv for kk, vv in upd.items()
+-            if kk in ("tags", "memory_type") and vv is not None}
++    fields = {kk: vv for kk, vv in upd.items()
++              if kk in ("tags", "memory_type") and vv is not None}
++    fields.update(_supersede_fields(upd, pl))
++    return fields
++
++
++def _supersede_fields(upd, pl):
++    """Supersede columns carried by an update_metadata event (issue #1773).
++
++    ``superseded_by`` lives in ``updates`` ("" or None clears it). ``superseded_at`` is the
++    origin's instant at the payload top level, written as-is and never re-stamped here; a
++    clear without one clears it too. An event from a peer without #1773 has no top-level
++    ``superseded_at``, so only ``superseded_by`` is taken from it.
++    """
++    if "superseded_by" not in upd:
++        return {}
++    superseded_by = upd["superseded_by"] or None
++    fields = {"superseded_by": superseded_by}
++    if "superseded_at" in pl:
++        fields["superseded_at"] = pl["superseded_at"]
++    elif superseded_by is None:
++        fields["superseded_at"] = None
++    return fields
+ 
+ 
+ def _take_if_winner(best, best_key, k, key, value):
+@@ -563,6 +584,13 @@ def _write_merged_metadata(s, content_hash, best, meta_best, create_md_keys, lat
+     event_owned = set(meta_best) | create_md_keys
+     merged_md = {kk: vv for kk, vv in current_md.items() if kk not in event_owned}
+     merged_md.update(meta_best)
++    if "superseded_by" in best:
++        # Keep the legacy JSON mirror in step with the column, as update_memory_metadata
++        # does on the origin (#1773): readers such as the contradiction scan check it.
++        if best["superseded_by"] is None:
++            merged_md.pop("superseded_by", None)
++        else:
++            merged_md["superseded_by"] = best["superseded_by"]
+     best = dict(best)
+     best["metadata"] = merged_md
+ 
+```
+
+**File**: `tests/sync/test_1773_supersede_propagation.py` (added, +210/-0)
+```diff
+@@ -0,0 +1,210 @@
 +"""
-+RED tests (Gate G3 / TDD) for the sync_events LOG COMPACTION job — the fix for the
-+unbounded sync_events growth where ~97% of rows are idempotent op='update_metadata'
-+recomputes.
++Issue #1773: a supersede that happens after the first sync must reach the other peers.
 +
-+Target under test (DOES NOT EXIST YET — collection fails with ImportError, valid RED):
-+
-+    from mcp_memory_service.storage.sync.compaction import compact_update_metadata
-+    result = compact_update_metadata(storage, watermark=None)
-+    # -> {"events_removed": int, "bytes_reclaimed": int | None}
-+
-+API / NAME DECISIONS (documented for G4, see subagent_response too):
-+  - Module: mcp_memory_service/storage/sync/compaction.py (sibling of apply.py/bootstrap.py,
-+    matches the package convention: resolver/apply/bootstrap/orchestrator/protocol).
-+  - Public fn: compact_update_metadata(storage, watermark=None) -> dict. Name kept from the
-+    task; it is precise (it compacts ONLY the update_metadata chains, never create/delete).
-+  - watermark semantics (T4): optional int. When None the function MUST compute a safe
-+    internal watermark = MIN(last_seq_pushed) across push_cursor (and never exceed the
-+    live-event frontier). An explicit watermark lets the caller cap how far compaction may
-+    touch. NO event with seq > watermark may be removed or rewritten.
-+  - Return keys: events_removed (int, count of sync_events rows deleted) and bytes_reclaimed
-+    (int | None; None allowed when the backend cannot cheaply measure, e.g. no VACUUM).
-+
-+WHY EACH TEST IS RED TODAY: compaction.py does not exist, so the module import at the top
-+fails at COLLECTION time → every test in the file errors (ImportError). That is a legitimate
-+RED for a not-yet-written function. Each test ALSO specifies real post-compaction BEHAVIOR
-+(not just "import works") so it stays meaningful and turns GREEN only when G4 implements the
-+contract — and would turn RED again on a regression.
-+
-+Reuses the REAL resolution (never re-implements LWW in the test):
-+  - apply._load_live_events + apply._resolve_md_fields  (field-level LWW winners)
-+  - apply._materialize_update_metadata                  (materialized row state)
-+  - bootstrap._read_snapshot                            (HLC pair election per hash)
-+  - store._recreate_of_for / recreate_of SELECT op='delete'  (delete dominance)
++#1726 made the baseline snapshot and the create path carry ``superseded_by`` /
++``superseded_at``, which covers rows that were already superseded when first synced.
++These tests cover a supersede made later through each of the three writers, and two
++peers superseding the same memory with different winners.
 +"""
 +
-+import os
 +import json
++import os
 +import tempfile
-+import time
 +
 +import pytest
 +import pytest_asyncio
 +
 +from mcp_memory_service.models.memory import Memory
 +from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.storage.sync.apply import apply_remote_event
++from mcp_memory_service.storage.sync.orchestrator import _read_local_events_since
 +from mcp_memory_service.utils.hashing import generate_content_hash
-+from mcp_memory_service.storage.sync.apply import (
-+    apply_remote_event,
-+    advance_sync_cursor,
-+    _load_live_events,
-+    _resolve_md_fields,
-+    _materialize_update_metadata,
-+    _sqlite,
-+)
-+from mcp_memory_service.storage.sync.bootstrap import _read_snapshot
 +
-+# The module under test — DOES NOT EXIST YET. This import fails at collection → RED.
-+from mcp_memory_service.storage.sync.compaction import compact_update_metadata
-+
-+
-+# ─────────────────────────────── fixtures / helpers ───────────────────────────────
 +
 +@pytest_asyncio.fixture
-+async def store(monkeypatch):
-+    monkeypatch.setenv("MCP_AGENT_ID", "beta")
++async def peers(monkeypatch):
++    """Two empty sqlite-vec stores with the event log on."""
 +    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
 +    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
 +    with tempfile.TemporaryDirectory() as tmp:
-+        s = SqliteVecMemoryStorage(os.path.join(tmp, "c.db"))
-+        await s.initialize()
-+        yield s
-+        await s.close()
++        a = SqliteVecMemoryStorage(os.path.join(tmp, "a.db"))
++        b = SqliteVecMemoryStorage(os.path.join(tmp, "b.db"))
++        await a.initialize()
++        await b.initialize()
++        yield a, b
++        await a.close()
++        await b.close()
 +
 +
-+async def _mk_store(name="x.db"):
-+    d = tempfile.mkdtemp()
-+    s = SqliteVecMemoryStorage(os.path.join(d, name))
-+    await s.initialize()
-+    return s
++async def _store(storage, content):
++    h = generate_content_hash(content)
++    ok, msg = await storage.store(Memory(content=content, content_hash=h, tags=["t"], memory_type="note"))
++    assert ok, msg
++    return h
 +
 +
-+def _create_event(content_hash, *, content, tags=None, store="default",
-+                  created_at=1000.0, updated_at=1000.0, agent="alpha", event_id="c1",
-+                  hlc_physical=10, hlc_logical=0, memory_type="note", metadata=None):
-+    return {
-+        "agent_id": agent, "event_id": event_id, "op": "create",
-+        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
-+        "embedding_model": None, "embedding_dim": None,
-+        "payload": {
-+            "content_hash": content_hash, "content": content, "memory_type": memory_type,
-+            "tags": tags or [], "created_at": created_at, "updated_at": updated_at,
-+            "metadata": metadata or {}, "store": store,
-+        },
-+    }
++def _sync(src, dst):
++    """Apply every event src has logged to dst (duplicates are idempotent no-ops)."""
++    for event in _read_local_events_since(src, 0, 10_000):
++        result = apply_remote_event(dst, event)
++        assert result.applied or "Duplicate" in result.reason, result.reason
 +
 +
-+def _update_metadata_event(content_hash, *, updates, event_id, agent="alpha",
-+                           hlc_physical, hlc_logical=0, updated_at=2000.0):
-+    return {
-+        "agent_id": agent, "event_id": event_id, "op": "update_metadata",
-+        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
-+        "embedding_model": None, "embedding_dim": None,
-+        "payload": {"content_hash": content_hash, "updates": updates, "updated_at": updated_at},
-+    }
++def _supersede_state(storage, content_hash):
++    return storage.conn.execute(
++        "SELECT superseded_by, superseded_at FROM memories WHERE content_hash = ?",
++        (content_hash,),
++    ).fetchone()
 +
 +
-+def _delete_event(content_hash, *
++async def _supersede(writer, storage, loser, winner_content):
++    """Supersede ``loser`` on ``storage`` through ``writer``; return the winner's hash."""
++    if writer == "versioned":
++        ok, msg, new_hash = await storage.update_memory_versioned(loser, winner_content)
++        assert ok, msg
++        return new_hash
++    winner = await _store(storage, winner_content)
++    if writer == "batch":
++        assert await storage.mark_superseded_batch([(winner, loser)]) == 1
++    else:
++        ok, msg = await storage.resolve_conflict(winner, loser)
++        assert ok, msg
++    return winner
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("writer", ["batch", "resolve_conflict", "versioned"])
++async def test_supersede_after_initial_sync_reaches_peer(peers, monkeypatch, writer):
++    a, b = peers
++    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
++    x = await _store(a, "Memory X: the deploy target is staging")
++    _sync(a, b)
++    assert _supersede_state(b, x) == (None, None)
++
++    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
++    winner = await _supersede(writer, a, x, "Memory Y: the deploy target is production")
++    superseded_by, superseded_at = _supersede_state(a, x)
++    assert superseded_by == winner and superseded_at is not None
++
++    # The event keeps superseded_at out of ``updates``: a peer without #1773 treats
++    # superseded_by there as protected and never reads the top-level field.
++    row = a.conn.execute(
++        "SELECT payload FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
++        (x,),
++    ).fetchone()
++    payload = json.loads(row[0])
++    assert payload["updates"] == {"superseded_by": winner}
++    assert payload["superseded_at"] == superseded_at
++
++    monkeypatch.setenv("MCP_AGENT_ID", "beta")
++    _sync(a, b)
++    # Same value on both peers: the receiver writes the origin's instant, not its own.
++    assert _supersede_state(b, x) == (winner, superseded_at)
++
++
++@pytest.mark.asyncio
++async def test_retried_supersede_logs_no_second_event(peers, monkeypatch):
++    a, _ = peers
++    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
++    x = await _store(a, "Memory X: retry target")
++    y = await _store(a, "Memory Y: retry winner")
++    assert await a.mark_superseded_batch([(y, x)]) == 1
++    assert await a.mark_superseded_batch([(y, x)]) == 1
++    count = a.conn.execute(
++        "SELECT COUNT(*) FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
++        (x,),
++    ).fetchone()[0]
++    assert count == 1
++
++
++@pytest.mark.asyncio
++async def test_conflicting_supersedes_converge_in_both_orders(monkeypatch):
++    """Two peers supersede X with different winners; every arrival order ends the same."""
++    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    with tempfile.TemporaryDirecto
 ```
 
 ---
 
-### Incident Patch 2: `0071ab2a` (2026-10-31)
-**Commit Message**: feat(rerank): per-stage timing of memory_search rerank under include_debug, and honor MCP_QUALITY_LOCAL_DEVICE (#1669) (#1701)
+### Incident Patch 3: `6e8f5f15` (2026-11-01)
+**Commit Message**: fix(deps): patch minimatch in bridge test dependencies (#1767)
 
-* feat(rerank): per-stage timing of memory_search rerank under include_debug (#1669)
+* fix(deps): patch minimatch in bridge test dependencies
 
-With rerank=true and include_debug=true, result["debug"]["rerank_timing"]
-now carries the wall-clock of each stage of the call: search (and pool
-size), filters, scorer resolve (cold or warm, with the to_thread hop),
-scoring (with the hop and one entry per ONNX inference chunk: items,
-padded length, tokenize and run time) and the rerank stage total. The
-debug block prints it; the handler logs one debug line per call.
-
-Without include_debug nothing is measured and the response is unchanged;
-scores and ordering are the same with or without timing. The tail of
-handle_memory_search moved to _finish_memory_search so the handler can
-time the stages before it (behaviour unchanged, complexity budget held).
-
-* fix(rerank): honor MCP_QUALITY_LOCAL_DEVICE for the search reranker (#1669)
-
-The rerank path resolved its scorer with device='auto' no matter what,
-while the quality evaluator already passes MCP_QUALITY_LOCAL_DEVICE. On
-Apple Silicon 'auto' selects the CoreML provider, which 
-
-**File**: `changelog.d/1701.added.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+- **Per-stage timing of the `memory_search` rerank path (#1669, #1701, massimiliano1991).**
-+  With `rerank=true` and `include_debug=true`, `debug.rerank_timing` carries the wall-clock of
-+  each stage of the call — search and pool size, filters, scorer resolve (cold or warm, with the
-+  `to_thread` hop), scoring with one line per ONNX inference chunk (items, padded length,
-+  tokenize and run time) — and the debug block prints it. Without `include_debug` nothing is
-+  measured and the response is unchanged.
-```
-
-**File**: `changelog.d/1701.fixed.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+- **The search reranker ignored `MCP_QUALITY_LOCAL_DEVICE` (#1669, #1701, massimiliano1991).**
-+  It resolved its scorer with `device='auto'` regardless of the setting the quality evaluator
-+  already passes to the same loader; on Apple Silicon `auto` selects the CoreML provider, which
-+  runs the int8 cross-encoder an order of magnitude slower than the CPU provider. The setting
-+  now reaches the reranker; the default (`auto`) is unchanged.
-+- **Under `max_response_chars`, the debug block could displace every result; a zero-hit search printed none (#1701, massimiliano1991).**
-+  With `include_debug=true` the diagnostics now ride after the results as the optional section
-+  of a limited response, so the limiter drops them before it drops a memory; and a search with
-+  no matches prints its debug block (filter counts and the search/filter timing) too, and
-+  keeps it under the limit whether or not a summarization warning precedes it. The non-empty
-+  limited path without a summarization warning budgeted only the memories and appended the
-+  header, the truncation notice and the optional section uncounted; every positive
-+  `max_response_chars` now goes through the bounded formatter, so a limited non-summary search
-+  carries the bounded formatter's truncation notice (result counts, no character counts).
-```
-
-**File**: `src/mcp_memory_service/quality/onnx_ranker.py` (modified, +40/-7)
-```diff
-@@ -9,6 +9,7 @@
- import logging
- import os
- import threading
-+import time
- from pathlib import Path
- from typing import List, Optional, Tuple
- import numpy as np
-@@ -448,6 +449,19 @@ def score_quality(self, query: str, memory_content: str) -> float:
-             logger.error("Error scoring quality with %s: %s", self.model_name, _sanitize_log_value(str(e)))
-             return 0.5  # Return neutral score on error
- 
-+    @staticmethod
-+    def _record_chunk_timing(timing, input_ids, t_start: float, t_tokenized: float) -> None:
-+        """Append one chunk's split (tokenize vs. ``session.run``) when asked (#1669)."""
-+        if timing is None:
-+            return
-+        t_done = time.perf_counter()
-+        timing.append({
-+            "items": int(input_ids.shape[0]),
-+            "max_len": int(input_ids.shape[1]),
-+            "tokenize_ms": round((t_tokenized - t_start) * 1000, 1),
-+            "run_ms": round((t_done - t_tokenized) * 1000, 1),
-+        })
-+
-     def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
-         """Filter the feed to the inputs the loaded graph declares.
- 
-@@ -476,7 +490,8 @@ def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
-     MIN_GPU_BATCH_SIZE = int(os.environ.get("MCP_QUALITY_MIN_GPU_BATCH", "16"))
- 
-     def score_quality_batch(
--        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32
-+        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32,
-+        timing: Optional[List[dict]] = None,
-     ) -> List[float]:
-         """
-         Score multiple (query, memory_content) pairs in batched inference calls.
-@@ -489,6 +504,12 @@ def score_quality_batch(
-         Args:
-             pairs: List of (query, memory_content) tuples
-             max_batch_size: Maximum items per ONNX inference call
-+            timing: Optional list; when given, one dict per inference chunk is
-+                appended with ``items``, ``max_len`` (padded sequence length),
-+                ``tokenize_ms`` and ``run_ms`` (issue #1669). Scores are not
-+                affected. A chunk that fell back to sequential scoring leaves no
-+                entry, so the sum of ``run_ms`` under the caller's total is the
-+                sign of that fallback.
- 
-         Returns:
-             List of quality scores between 0.0 and 1.0
-@@ -512,7 +533,7 @@ def score_quality_batch(
-         for chunk_start in range(0, len(pairs), max_batch_size):
-             chunk = pairs[chunk_start:chunk_start + max_batch_size]
-             try:
--                chunk_scores = self._score_batch_chunk(chunk)
-+                chunk_scores = self._score_batch_chunk(chunk, timing)
-                 all_scores.extend(chunk_scores)
-             except Exception as e:
-                 logger.warning(
-@@ -523,20 +544,25 @@ def score_quality_batch(
- 
-         return all_scores
- 
--    def _score_batch_chunk(self, pairs: List[Tuple[str, str]]) -> List[float]:
-+    def _score_batch_chunk(
-+        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
-+    ) -> List[float]:
-         """Score a single chunk of pairs in one ONNX inference call."""
-         if self.model_config['type'] == 'classifier':
--            return self._score_classifier_batch(pairs)
-+            return self._score_classifier_batch(pairs, timing)
-         elif self.model_config['type'] == 'cross-encoder':
--            return self._score_cross_encoder_batch(pairs)
-+            return self._score_cross_encoder_batch(pairs, timing)
-         else:
-             raise ValueError(f"Unsupported model type: {self.model_config['type']}")
- 
--    def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
-+    def _score_classifier_batch(
-+        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
-+    ) -> List[float]:
-         """Batch score for classifier models (DeBERTa). Uses memory_content only."""
-         texts = [content for _, content in pairs]
-         texts = [t if t else " " for t in texts]  # Avoid empty strings
- 
-+        t_start = time.perf_counter()
-         if self._use_fast_tokenizer:
-             encoded_list = self._tokenizer.encode_batch(texts)
-             max_len = max(len(enc.ids) for enc in encoded_list)
-@@ -557,7 +583,9 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
-             attention_mask = inputs["attention_mask"].astype(np.int64)
- 
-         ort_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
-+        t_tokenized = time.perf_counter()
-         outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
-+        self._record_chunk_timing(timing, input_ids, t_start, t_tokenized)
-         logits = outputs[0]  # Shape: (batch_size, num_classes)
- 
-         # Vectorized softmax + weighted score
-@@ -569,8 +597,11 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
-         scores = probs @ class_values
-         return np.clip(scores, 0.0, 1.0).tolist()
- 
--    def 
-```
-
-**File**: `src/mcp_memory_service/quality/search_rerank.py` (modified, +89/-13)
-```diff
-@@ -32,6 +32,7 @@
- """
- 
- import asyncio
-+import time
- import logging
- import os
- import threading
-@@ -51,6 +52,7 @@
- DEFAULT_RERANK_CANDIDATES = 40
- 
- _TRUTHY = frozenset(('true', '1', 'yes', 'on', 'enabled'))
-+_DEVICES = ('auto', 'cpu', 'cuda', 'mps', 'directml')
- 
- 
- @dataclass(frozen=True)
-@@ -60,10 +62,12 @@ class SearchRerankConfig:
-     enabled: bool = False
-     candidates: int = DEFAULT_RERANK_CANDIDATES
-     model: str = DEFAULT_RERANK_MODEL
-+    device: str = 'auto'
- 
-     @classmethod
-     def from_env(cls) -> 'SearchRerankConfig':
--        """Read the three flags. Junk falls back to defaults, never raises."""
-+        """Read the three flags and the shared quality device. Junk falls back
-+        to defaults, never raises."""
-         raw_candidates = (os.getenv('MCP_RERANK_CANDIDATES') or '').strip()
-         candidates = DEFAULT_RERANK_CANDIDATES
-         if raw_candidates:
-@@ -75,10 +79,21 @@ def from_env(cls) -> 'SearchRerankConfig':
-                     _sanitize_log_value(raw_candidates),
-                     DEFAULT_RERANK_CANDIDATES,
-                 )
-+        # Same knob as the quality evaluator (MCP_QUALITY_LOCAL_DEVICE): the
-+        # reranker went through the loader with device='auto' regardless, so on
-+        # Apple Silicon it always took the CoreML provider (issue #1669).
-+        device = (os.getenv('MCP_QUALITY_LOCAL_DEVICE') or '').strip().lower() or 'auto'
-+        if device not in _DEVICES:
-+            logger.warning(
-+                'Invalid MCP_QUALITY_LOCAL_DEVICE=%s for the reranker. Using auto',
-+                _sanitize_log_value(device),
-+            )
-+            device = 'auto'
-         return cls(
-             enabled=(os.getenv('MCP_RERANK_ENABLED') or '').strip().lower() in _TRUTHY,
-             candidates=candidates,
-             model=(os.getenv('MCP_RERANK_MODEL') or '').strip() or DEFAULT_RERANK_MODEL,
-+            device=device,
-         )
- 
- 
-@@ -113,7 +128,7 @@ def resolve_fetch_limit(arguments: dict, base_limit: int, config: Optional[Searc
- 
- def _build_scorer(config: SearchRerankConfig) -> Any:
-     """Resolve through the existing loader -- the single ONNX path."""
--    model = get_onnx_ranker_model(model_name=config.model)
-+    model = get_onnx_ranker_model(model_name=config.model, device=config.device)
-     if model is None:
-         raise RuntimeError(
-             f"ONNX ranker '{config.model}' could not be resolved through the existing loader"
-@@ -147,48 +162,103 @@ def _log_failure_once(error: Exception) -> None:
- 
- def _resolve_scorer(config: SearchRerankConfig) -> Optional[Any]:
-     """Build once; a load failure latches for the process lifetime so callers
--    neither pay for a re-download nor re-log (EARS 4).
-+    neither pay for a re-download nor re-log (EARS 4)."""
-+    return _resolve_scorer_built(config)[0]
-+
-+
-+def _resolve_scorer_built(config: SearchRerankConfig) -> tuple:
-+    """``_resolve_scorer`` plus whether THIS call built the scorer, decided
-+    inside the lock: of several searches arriving during the first load only
-+    the one that ran ``_build_scorer`` reports ``True`` (issue #1669 timing).
- 
-     The once-log runs OUTSIDE ``_scorer_lock``: ``threading.Lock`` is not
-     reentrant, so logging inside the critical section deadlocked every
-     first-failure caller.
-     """
-     global _scorer
-+    built = False
-     if _load_failed.is_set():
--        return None
-+        return None, built
-     if _scorer is None:
-         failure: Optional[Exception] = None
-         with _scorer_lock:
-             if _scorer is None:
-+                built = True
-                 try:
-                     _scorer = _build_scorer(config)
-                 except Exception as error:
-                     _load_failed.set()
-                     failure = error
-         if failure is not None:
-             _log_failure_once(failure)
--            return None
--    return _scorer
-+            return None, built
-+    return _scorer, built
-+
-+
-+def _on_worker(fn, *args, **kwargs):
-+    """Run ``fn`` on the worker and return (started_at, finished_at, result),
-+    both clocks taken on the worker itself so the caller can tell the time
-+    inside ``fn`` from the time spent waiting for the executor or the loop."""
-+    started = time.perf_counter()
-+    result = fn(*args, **kwargs)
-+    return started, time.perf_counter(), result
-+
-+
-+async def _timed_hop(record: Optional[dict], key: str, fn, *args, **kwargs):
-+    """``asyncio.to_thread`` with, when ``record`` is given, ``<key>_ms`` (time
-+    inside ``fn``, measured on the worker) and ``<key>_hop_ms`` (everything
-+    else: the executor's queueing delay plus the wait for the event loop to
-+    resume after ``fn`` returned) written to it. ``kwargs`` go to ``fn``
-+    untouched (it may take a ``timing`` of its own)."""
-+    if record is None:
-+        return await asyncio.to_thread(fn, *args, **kwargs)
-+    scheduled = time.perf_counter()
-+    started, finished, result = await asyncio.to_thread(_on_w
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +121/-41)
-```diff
-@@ -1440,6 +1440,41 @@ def _format_memory_search_debug(result: dict) -> str:
-                 f"\n  Time range: {time_filter.get('start_timestamp')} - "
-                 f"{time_filter.get('end_timestamp')}"
-             )
-+    text += _format_rerank_timing(debug.get("rerank_timing"))
-+    return text
-+
-+
-+def _format_rerank_timing(timing) -> str:
-+    """One block per stage of the rerank path (issue #1669); empty when the
-+    stage did not run under include_debug."""
-+    if not timing:
-+        return ""
-+    text = "\n  Rerank timing (ms):"
-+    if "search_ms" in timing:
-+        text += f"\n    search: {timing['search_ms']} (pool {timing.get('pool')})"
-+        text += f"\n    filters: {timing['filters_ms']}"
-+    if "resolve_ms" in timing:
-+        text += (
-+            f"\n    scorer resolve: {timing['resolve_ms']}"
-+            f" ({'cold' if timing.get('scorer_cold') else 'warm'},"
-+            f" hop {timing.get('resolve_hop_ms')})"
-+        )
-+    if "score_ms" in timing:
-+        text += (
-+            f"\n    score: {timing['score_ms']} (hop {timing.get('score_hop_ms')},"
-+            f" {timing.get('candidates')} candidates)"
-+        )
-+        for chunk in timing.get("chunks") or ():
-+            text += (
-+                f"\n      chunk of {chunk.get('items')} x {chunk.get('max_len')} tokens:"
-+                f" tokenize {chunk.get('tokenize_ms')}, run {chunk.get('run_ms')}"
-+            )
-+    if "rerank_ms" in timing:
-+        text += f"\n    rerank stage total: {timing['rerank_ms']}"
-+        # The fallback note means the scorer was asked and the baseline order
-+        # was kept; an empty pool never asked it, so it says nothing.
-+        if "candidates" in timing and not timing.get("applied", True):
-+            text += " (fell back to the unreranked order)"
-     return text
- 
- 
-@@ -1464,11 +1499,7 @@ async def _format_truncated_memory_search(
-     fallback_used: bool, max_response_chars: int, summary_warning: str,
- ) -> types.TextContent:
-     """Format search results through the configured response-length limiter."""
--    from ..utils.response_limiter import (
--        format_bounded_response,
--        format_truncated_response,
--        truncate_memories,
--    )
-+    from ..utils.response_limiter import format_bounded_response
- 
-     memory_dicts = [
-         {
-@@ -1480,20 +1511,25 @@ async def _format_truncated_memory_search(
-         }
-         for memory in memories
-     ]
-+    # Under a limit the diagnostics asked for with include_debug ride after
-+    # the results as the optional section, never in the required header: the
-+    # limiter drops an optional section before it drops a memory (Greptile
-+    # on #1701: in the header a long debug block could leave only the header).
-     header = _build_memory_search_header(result, total, fallback_used) + "\n\n"
--    beliefs_section = await _format_beliefs_section(arguments, storage)
--    if summary_warning:
--        response_text = format_bounded_response(
--            memory_dicts,
--            max_response_chars,
--            header=summary_warning + header,
--            footer=beliefs_section,
--        )
--        return types.TextContent(type="text", text=response_text)
--
--    truncated, meta = truncate_memories(memory_dicts, max_response_chars)
--    response_text = (
--        header + format_truncated_response(truncated, meta) + beliefs_section
-+    optional_section = (
-+        _format_memory_search_debug(result)
-+        + await _format_beliefs_section(arguments, storage)
-+    )
-+    # Every positive limit goes through the bounded formatter, with or
-+    # without a summarization warning in front: the no-warning branch used to
-+    # budget only the memories and append the header, the truncation notice
-+    # and the optional section uncounted (doobidoo and ducanhnguyen223 on
-+    # #1701), so a response could exceed the limit by the whole debug block.
-+    response_text = format_bounded_response(
-+        memory_dicts,
-+        max_response_chars,
-+        header=summary_warning + header,
-+        footer=optional_section,
-     )
-     return types.TextContent(type="text", text=response_text)
- 
-@@ -1508,17 +1544,25 @@ async def _format_empty_memory_search(
-     response = "No memories found"
-     if result.get("query"):
-         response += f" for query: '{result['query']}'"
--    beliefs_section = await _format_beliefs_section(arguments, storage)
--    if summary_warning and max_response_chars > 0:
-+    # A zero-hit search still carries the diagnostics the caller asked for
-+    # (filter counts, and the search/filter timing of #1669): a slow empty
-+    # search is the one that needs them (Greptile on #1701).
-+    optional_section = (
-+        _format_memory_search_debug(result)
-+        + await _format_beliefs_section(arguments, storage)
-+    )
-+    # Every positive limit goes through the limiter, with or without a
-+    # summarization warning in front (doobidoo and ducanhnguyen223 on #1701).
-+    if max_response_chars > 0:
-  
-```
-
-**File**: `tests/quality/test_search_rerank_flag.py` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ async def test_reranker_model_env_is_passed_to_the_loader(monkeypatch):
-     monkeypatch.setenv('MCP_RERANK_MODEL', 'ms-marco-MiniLM-L-6-v2')
-     with patch(LOADER, return_value=stub) as loader:
-         await rerank_candidates('q', _memories(2), _enabled_config())
--    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2')
-+    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2', device='auto')
- 
- 
- # --- EARS 4: fail-open -------------------------------------------------------
-```
-
-**File**: `tests/quality/test_search_rerank_timing.py` (added, +583/-0)
-```diff
-@@ -0,0 +1,583 @@
-+"""Per-stage timing of the rerank path (issue #1669).
-+
-+Contract:
-+- Timing rides on ``include_debug``: with it, ``result["debug"]["rerank_timing"]``
-+  carries one wall-clock entry per stage; without it the response is unchanged
-+  (no ``debug`` key is added, the scorer is called exactly as before).
-+- ``scorer_cold`` is True on the call that built the scorer and False after.
-+- The ranker records one entry per ONNX inference call (``items``, ``max_len``,
-+  ``tokenize_ms``, ``run_ms``), so a pool of 40 under the default
-+  ``max_batch_size`` shows as two chunks of 32 and 8.
-+- The handler adds ``search_ms``/``pool``/``filters_ms``/``rerank_ms`` and the
-+  debug block prints them.
-+- Scores and ordering are the same with or without timing.
-+"""
-+
-+import asyncio
-+import logging
-+import threading
-+import time
-+from unittest.mock import AsyncMock, MagicMock, patch
-+
-+import numpy as np
-+import pytest
-+
-+from mcp_memory_service.quality import search_rerank
-+from mcp_memory_service.quality.onnx_ranker import ONNXRankerModel
-+from mcp_memory_service.quality.search_rerank import (
-+    SearchRerankConfig,
-+    apply_search_rerank,
-+    rerank_candidates,
-+    reset_scorer_for_tests,
-+)
-+from mcp_memory_service.server.handlers import memory as memory_handlers
-+
-+LOADER = 'mcp_memory_service.quality.search_rerank.get_onnx_ranker_model'
-+ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
-+STAGE_KEYS = {
-+    'candidates', 'scorer_cold', 'resolve_hop_ms', 'resolve_ms',
-+    'score_hop_ms', 'score_ms', 'chunks', 'applied',
-+}
-+
-+
-+@pytest.fixture(autouse=True)
-+def _clean_state(monkeypatch):
-+    for var in ENV_VARS:
-+        monkeypatch.delenv(var, raising=False)
-+    reset_scorer_for_tests()
-+    yield
-+    reset_scorer_for_tests()
-+
-+
-+class _StubModel:
-+    """Scorer double that records how it was called, timing included."""
-+
-+    def __init__(self, scores, error=None):
-+        self._scores = scores
-+        self._error = error
-+        self.calls = []
-+
-+    def score_quality_batch(self, pairs, max_batch_size=32, timing=None):
-+        self.calls.append((list(pairs), timing))
-+        if self._error is not None:
-+            raise self._error
-+        if timing is not None:
-+            timing.append({'items': len(pairs), 'max_len': 7,
-+                           'tokenize_ms': 0.1, 'run_ms': 0.2})
-+        return list(self._scores)
-+
-+
-+def _memories(n):
-+    return [{'content': f'memory-{i}', 'content_hash': f'hash-{i}'} for i in range(n)]
-+
-+
-+def _config():
-+    return SearchRerankConfig(enabled=True, candidates=40, model='Xenova/bge-reranker-base')
-+
-+
-+# --- timing rides on include_debug ------------------------------------------
-+
-+
-+@pytest.mark.asyncio
-+async def test_timing_attached_only_under_include_debug(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(40)])
-+    memories = _memories(40)
-+    with patch(LOADER, return_value=stub):
-+        result = {'memories': memories, 'total': 40}
-+        out, total = await apply_search_rerank(
-+            {'rerank': True, 'limit': 10, 'include_debug': True}, 'q', memories, 40, result
-+        )
-+    assert total == 10 and len(out) == 10
-+    timing = result['debug']['rerank_timing']
-+    assert STAGE_KEYS <= set(timing)
-+    assert timing['candidates'] == 40
-+    assert timing['applied'] is True
-+    assert timing['chunks'] == [{'items': 40, 'max_len': 7, 'tokenize_ms': 0.1, 'run_ms': 0.2}]
-+    for key in ('resolve_hop_ms', 'resolve_ms', 'score_hop_ms', 'score_ms'):
-+        assert isinstance(timing[key], float) and timing[key] >= 0.0
-+    # The scorer received the chunk list it was asked to fill.
-+    assert stub.calls[0][1] is timing['chunks']
-+
-+
-+@pytest.mark.asyncio
-+async def test_without_include_debug_nothing_is_measured(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(5)])
-+    memories = _memories(5)
-+    result = {'memories': memories, 'total': 5}
-+    with patch(LOADER, return_value=stub):
-+        await apply_search_rerank({'rerank': True, 'limit': 3}, 'q', memories, 5, result)
-+    assert 'debug' not in result
-+    assert stub.calls == [([('q', f'memory-{i}') for i in range(5)], None)]
-+
-+
-+@pytest.mark.asyncio
-+async def test_existing_debug_block_is_extended_not_replaced(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    stub = _StubModel(scores=[0.6 + 0.1 * i for i in range(3)])
-+    memories = _memories(3)
-+    result = {'memories': memories, 'total': 3, 'debug': {'raw_total': 3}}
-+    with patch(LOADER, return_value=stub):
-+        await apply_search_rerank(
-+            {'rerank': True, 'limit': 3, 'include_debug': True}, 'q', memories, 3, result
-+        )
-+    assert result['debug']['raw_total'] == 3
-+    assert result['debug']['rerank_timing']['candidates'] == 3
-+
-+
-+@pytest.mark.asyncio
-+async def test_order_i
-```
-
----
-
-### Incident Patch 3: `fef259d7` (2026-10-31)
-**Commit Message**: fix(harvest): support GPT-5 completion parameters (#1725)
-
-* fix: use GPT-5 compatible harvest completion parameters
-
-* docs: add changelog entry for harvest GPT-5 fix
-
-* test: cover legacy harvest completion parameters
-
-* docs: fix changelog fragment format
+* docs(changelog): record bridge dependency security fixes
 
 ---------
 
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1723.fixed.md` (added, +1/-0)
+**File**: `changelog.d/1767.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- Fix harvest OpenAI-compatible requests for GPT-5 models by using max_completion_tokens.
++- **Patch minimatch in the bridge test dependencies (#1767).** Both JavaScript test projects now lock minimatch 11.0.3 to address GHSA-g3hv-75wg-m249. Update glob alongside it so Mocha can still discover tests through wildcard paths.
 ```
 
-**File**: `src/mcp_memory_service/harvest/classifier.py` (modified, +2/-3)
+**File**: `tests/bridge/package-lock.json` (modified, +57/-58)
 ```diff
-@@ -15,7 +15,7 @@
- 
- from ..compat import _sanitize_log_value
- from .models import HarvestCandidate
--from .rewriter import load_llm_providers, is_usable_provider
-+from .rewriter import build_openai_compatible_payload, load_llm_providers, is_usable_provider
- 
- logger = logging.getLogger(__name__)
- 
-@@ -241,8 +241,7 @@ def _call_openai_compatible(
-                 f"{base_url}/chat/completions",
-                 headers=headers,
-                 # stream is explicit: fm serve streams SSE when it is absent (#1666)
--                json={"model": model, "stream": False, "messages": messages,
--                      "temperature": temperature, "max_tokens": max_tokens},
-+                json=build_openai_compatible_payload(model, messages, max_tokens, temperature),
-             )
-             if resp.status_code == 429:
-                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+@@ -13,6 +13,13 @@
+         "sinon": "^17.0.0"
+       }
+     },
++    "node_modules/@isaacs/nonrecursive-glob-match": {
++      "version": "1.0.3",
++      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
++      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
++      "dev": true,
++      "license": "BlueOak-1.0.0"
++    },
+     "node_modules/@sinonjs/commons": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
+@@ -385,13 +392,6 @@
+         "flat": "cli.js"
+       }
+     },
+-    "node_modules/fs.realpath": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
+-      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
+-      "dev": true,
+-      "license": "ISC"
+-    },
+     "node_modules/fsevents": {
+       "version": "2.3.3",
+       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+@@ -418,21 +418,18 @@
+       }
+     },
+     "node_modules/glob": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
+-      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
+-      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
++      "version": "14.0.3",
++      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
++      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
+       "dev": true,
+-      "license": "ISC",
++      "license": "BlueOak-1.0.0",
+       "dependencies": {
+-        "fs.realpath": "^1.0.0",
+-        "inflight": "^1.0.4",
+-        "inherits": "2",
+-        "minimatch": "^5.0.1",
+-        "once": "^1.3.0"
++        "minimatch": "^11.0.2",
++        "minipass": "^7.1.3",
++        "path-scurry": "^3.0.0"
+       },
+       "engines": {
+-        "node": ">=12"
++        "node": "18 || 20 || >=22"
+       },
+       "funding": {
+         "url": "https://github.com/sponsors/isaacs"
+@@ -471,25 +468,6 @@
+         "he": "bin/he"
+       }
+     },
+-    "node_modules/inflight": {
+-      "version": "1.0.6",
+-      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
+-      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
+-      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
+-      "dev": true,
+-      "license": "ISC",
+-      "dependencies": {
+-        "once": "^1.3.0",
+-        "wrappy": "1"
+-      }
+-    },
+-    "node_modules/inherits": {
+-      "version": "2.0.4",
+-      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+-      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
+-      "dev": true,
+-      "license": "ISC"
+-    },
+     "node_modules/is-binary-path": {
+       "version": "2.1.0",
+       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+@@ -632,14 +610,25 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/lru-cache": {
++      "version": "11.5.3",
++      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
++      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
++      "dev": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
+     "node_modules/minimatch": {
+-      "version": "10.2.4",
+-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
+-      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
++      "version": "11.0.3",
++      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
++      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
+       "dev": true,
+       "license": "BlueOak-1.0.0",
+       "dependencies": {
+-        "brace-expansion": "^5.0.2"
++        "@isaacs/nonrecursive-glob-match": "^1.0.3",
++        "brace-expansion": "^5.0.12"
+       },
+       "engines": {
+         "node": "18 || 20 || >=22"
+@@ -648,6 +637,16 @@
+         "url": "https://github.com/sponsors/isaacs"
+       }
+     },
++    "node_modules/minipass": {
++      "version": "7.1.3",
++      "resolved": "https://registry.n
 ```
 
-**File**: `src/mcp_memory_service/harvest/rewriter.py` (modified, +14/-7)
+**File**: `tests/bridge/package.json` (modified, +2/-1)
 ```diff
-@@ -15,6 +15,17 @@
- 
- VALID_TYPES = {"decision", "bug", "convention", "learning", "context"}
- 
-+
-+def build_openai_compatible_payload(model: str, messages: list, max_tokens: int, temperature: float) -> dict:
-+    """Build a chat-completions payload compatible with GPT-5 reasoning models."""
-+    payload = {"model": model, "stream": False, "messages": messages}
-+    if model.startswith("gpt-5"):
-+        payload["max_completion_tokens"] = max_tokens + 800
-+    else:
-+        payload["temperature"] = temperature
-+        payload["max_tokens"] = max_tokens
-+    return payload
-+
- # Models sometimes echo the literal placeholder word "TYPE" or "<type>" from the prompt
- # instead of substituting the real type, e.g. "TYPE: convention — <text>" or "<type>: text".
- # This strips that leaked wrapper and recovers the real type + content.
-@@ -517,13 +528,9 @@ async def _call_openai_compatible(self, base_url: str, model: str, api_key: str,
-             resp = await client.post(
-                 f"{base_url}/chat/completions",
-                 headers=headers,
--                json={
--                    "model": model,
--                    "stream": False,  # fm serve streams SSE when this is absent (#1666)
--                    "messages": [{"role": "user", "content": prompt}],
--                    "temperature": 0.3,
--                    "max_tokens": 200,
--                },
-+                json=build_openai_compatible_payload(
-+                    model, [{"role": "user", "content": prompt}], 200, 0.3
-+                ),
-             )
-             if resp.status_code == 429:
-                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+@@ -13,7 +13,8 @@
+   },
+   "overrides": {
+     "brace-expansion": "^5.0.12",
+-    "minimatch": "^10.2.3",
++    "glob": "^14.0.3",
++    "minimatch": "^11.0.1",
+     "serialize-javascript": "^7.0.3"
+   },
+   "keywords": ["mcp", "bridge", "testing"],
 ```
 
-**File**: `tests/harvest/test_classifier.py` (modified, +19/-0)
+**File**: `tests/integration/package-lock.json` (modified, +57/-58)
 ```diff
-@@ -375,3 +375,22 @@ def test_payload_disables_streaming_explicitly(self):
- 
-         payload = client.__enter__.return_value.post.call_args.kwargs["json"]
-         assert payload["stream"] is False
-+        assert payload["max_tokens"] == 50
-+        assert payload["temperature"] == 0.0
-+        assert "max_completion_tokens" not in payload
-+
-+    def test_gpt5_uses_completion_tokens_without_temperature(self):
-+        resp = MagicMock(status_code=200)
-+        resp.json.return_value = {"choices": [{"message": {"content": "{}"}}]}
-+        client = MagicMock()
-+        client.__enter__.return_value.post.return_value = resp
-+
-+        with patch("httpx.Client", return_value=client):
-+            _classifier_without_groq_key()._call_openai_compatible(
-+                "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", "system msg", 200, 0.3
-+            )
-+
-+        payload = client.__enter__.return_value.post.call_args.kwargs["json"]
-+        assert payload["max_completion_tokens"] == 1000
-+        assert "max_tokens" not in payload
-+        assert "temperature" not in payload
+@@ -13,6 +13,13 @@
+         "sinon": "^17.0.0"
+       }
+     },
++    "node_modules/@isaacs/nonrecursive-glob-match": {
++      "version": "1.0.3",
++      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
++      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
++      "dev": true,
++      "license": "BlueOak-1.0.0"
++    },
+     "node_modules/@sinonjs/commons": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
+@@ -385,13 +392,6 @@
+         "flat": "cli.js"
+       }
+     },
+-    "node_modules/fs.realpath": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
+-      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
+-      "dev": true,
+-      "license": "ISC"
+-    },
+     "node_modules/fsevents": {
+       "version": "2.3.3",
+       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+@@ -418,21 +418,18 @@
+       }
+     },
+     "node_modules/glob": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
+-      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
+-      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
++      "version": "14.0.3",
++      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
++      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
+       "dev": true,
+-      "license": "ISC",
++      "license": "BlueOak-1.0.0",
+       "dependencies": {
+-        "fs.realpath": "^1.0.0",
+-        "inflight": "^1.0.4",
+-        "inherits": "2",
+-        "minimatch": "^5.0.1",
+-        "once": "^1.3.0"
++        "minimatch": "^11.0.2",
++        "minipass": "^7.1.3",
++        "path-scurry": "^3.0.0"
+       },
+       "engines": {
+-        "node": ">=12"
++        "node": "18 || 20 || >=22"
+       },
+       "funding": {
+         "url": "https://github.com/sponsors/isaacs"
+@@ -471,25 +468,6 @@
+         "he": "bin/he"
+       }
+     },
+-    "node_modules/inflight": {
+-      "version": "1.0.6",
+-      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
+-      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
+-      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
+-      "dev": true,
+-      "license": "ISC",
+-      "dependencies": {
+-        "once": "^1.3.0",
+-        "wrappy": "1"
+-      }
+-    },
+-    "node_modules/inherits": {
+-      "version": "2.0.4",
+-      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+-      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
+-      "dev": true,
+-      "license": "ISC"
+-    },
+     "node_modules/is-binary-path": {
+       "version": "2.1.0",
+       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+@@ -632,14 +610,25 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/lru-cache": {
++      "version": "11.5.3",
++      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
++      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
++      "dev": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
+     "node_modules/minimatch": {
+-      "version": "10.2.4",
+-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
+-      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
++      "version": "11.0.3",
++      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
++      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
+       "dev": true,
+       "license": "BlueOak-1.0.0",
+       "dependencies": {
+-        "brace-expansion": "^5.0.2"
++        "@isaacs/nonrecursive-glob-match": "^1.0.3",
++        "brace-expansion": "^5.0.12"
+       },
+       "engines": {
+         "node": "18 || 20 || >=22"
+@@ -648,6 +637,16 @@
+         "url": "https://github.com/sponsors/isaacs"
+       }
+     },
++    "node_modules/minipass": {
++      "version": "7.1.3",
++      "resolved": "https://registry.n
 ```
 
-**File**: `tests/harvest/test_rewriter.py` (modified, +25/-0)
+**File**: `tests/integration/package.json` (modified, +2/-1)
 ```diff
-@@ -357,3 +357,28 @@ async def post(self, *args, **kwargs):
-             "http://127.0.0.1:1976/v1", "system", "", "prompt", 5.0
-         )
-         assert captured["stream"] is False
-+        assert captured["max_tokens"] == 200
-+        assert captured["temperature"] == 0.3
-+        assert "max_completion_tokens" not in captured
-+
-+    @pytest.mark.asyncio
-+    async def test_gpt5_uses_completion_tokens_without_temperature(self, monkeypatch):
-+        captured = {}
-+
-+        class _FakeAsyncClient:
-+            def __init__(self, timeout): pass
-+            async def __aenter__(self): return self
-+            async def __aexit__(self, *exc): return False
-+            async def post(self, *args, **kwargs):
-+                captured.update(kwargs["json"])
-+                resp = MagicMock(status_code=200)
-+                resp.json.return_value = {"choices": [{"message": {"content": "ok"}}]}
-+                return resp
-+
-+        monkeypatch.setattr(httpx, "AsyncClient", _FakeAsyncClient)
-+        await HarvestRewriter()._call_openai_compatible(
-+            "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", 5.0
-+        )
-+        assert captured["max_completion_tokens"] == 1000
-+        assert "max_tokens" not in captured
-+        assert "temperature" not in captured
+@@ -13,7 +13,8 @@
+   },
+   "overrides": {
+     "brace-expansion": "^5.0.12",
+-    "minimatch": "^10.2.3",
++    "glob": "^14.0.3",
++    "minimatch": "^11.0.1",
+     "serialize-javascript": "^7.0.3"
+   },
+   "keywords": ["mcp", "bridge", "integration", "testing"],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1725** (2026-10-31): fix(harvest): support GPT-5 completion parameters (@mikemikimike)
-- **PR #1721** (2026-10-30): fix(sync): bound the delta-sync event log by compacting update_metadata chains (@filhocf)
-- **PR #1720** (2026-10-30): test(multi-store): assert the isolated memory is absent, not that search is empty (@timkjr)
-- **PR #1719** (2026-10-30): fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (@timkjr)
-- **PR #1718** (2026-10-30): fix(storage): stop loading the Milvus backend on every import (@timkjr)
-- **PR #1717** (2026-10-29): fix(oauth): omit empty members from the client registration response (#1707) (@djimenezm2)
+- **PR #1795** (closed): fix(harvest): _try_evolve returns the evolved hash, so capture() can unpack it (@Esmail-sarhadi)
+- **PR #1792** (2026-11-02): fix(web): reject blank memory content and guard NULL cosine distance (#1791) (@10RZC22)
+- **PR #1790** (2026-11-02): fix(migrations): read migration files as UTF-8 (#1789) (@ppcvote)
+- **PR #1788** (2026-11-02): fix(sync): propagate a supersede made after the first sync (#1773) (@ppcvote)
+- **PR #1787** (2026-11-02): feat(i18n): add Brazilian Portuguese dashboard translation (#1755) (@shyam1017)
+- **PR #1786** (2026-11-02): fix(storage): stop capping Milvus full reads at 16384 rows (#1785) (@henry201605)
 
 ---
 
@@ -3914,34 +4126,25 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sync): bound the delta-sync event log by compacting update_metadata chains (#172
+## X. memory_search point-in-time queries with as_of and status flags (fixes #1724) (#
 
 **RULE**:
-When implementing operations in `changelog.d/1721.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1724.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ffe3614`: sync): bound the delta-sync event log by compacting update_metadata chains (#1721). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce80cb53`: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1721.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1724.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
-  The event log is append-only and never compacted, so periodic local recomputes
-  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
-  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
-  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
-  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
-  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
-  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
-  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
-  peers, so a field whose winning edit is still above the watermark can never be defeated by
-  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
-  event's HLC pair and a deterministic id that includes the payload hash (so peers that
-  compact divergent chains never reuse an identity). The delete is chunked and the whole
-  batch is fail-closed under a single SAVEP
+- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
+  With `fallback=true`, an `as_of` search returning fewer than three matches could
+  append present-day exact or tag matches. The cascading fallback stages now forward
+  `as_of`, so historical queries only return memories that were current at the
+  requested date.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3951,4 +4154,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ffe3614` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce80cb53` are properly handled with clean fallback behavior.

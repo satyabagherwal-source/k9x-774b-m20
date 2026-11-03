@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `514f09ca`  
+> **Source Version**: `f63ad4ae`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:54:17.779Z  
+> **Timestamp**: 2026-11-02T15:29:44.682Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:54:17.775Z  
+> **Harvest Timestamp**: 2026-11-02T15:29:44.675Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2163 stars
+- **Stars / Engagement**: 2164 stars
 
 ---
 
@@ -540,140 +540,435 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bac40d8` (2026-10-29)
-**Commit Message**: support protocol version in ag-ui adapter
+### Incident Patch 1: `f63ad4ae` (2026-11-02)
+**Commit Message**: fix dependency vulnerabilities
 
-**File**: `skills/neuron-laravel-integration/references/reverb.md` (modified, +1/-1)
+**File**: `package-lock.json` (modified, +83/-281)
 ```diff
-@@ -114,7 +114,7 @@ What the subscriber received in the run:
- 
- ```
- POST /runs 202 {"runId":"772d8d73-…"}
--RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…"}
-+RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…","protocolVersion":"1.0"}
- TEXT_MESSAGE_START, TEXT_MESSAGE_CONTENT "Hello!", " You", " said:", …   (one event per token, about 30 ms apart)
- TEXT_MESSAGE_END, RUN_FINISHED
- stream.completed {"workflowId":"user-1-ec5d29d6-…"}
+@@ -39,15 +39,6 @@
+         "zod-to-json-schema": "^3.25.2"
+       }
+     },
+-    "node_modules/@a2ui/web_core/node_modules/zod": {
+-      "version": "3.25.76",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+-      "license": "MIT",
+-      "funding": {
+-        "url": "https://github.com/sponsors/colinhacks"
+-      }
+-    },
+     "node_modules/@ag-ui/a2ui-middleware": {
+       "version": "0.0.10",
+       "resolved": "https://registry.npmjs.org/@ag-ui/a2ui-middleware/-/a2ui-middleware-0.0.10.tgz",
+@@ -86,15 +77,6 @@
+         "zod": "^3.25.76"
+       }
+     },
+-    "node_modules/@ag-ui/client/node_modules/zod": {
+-      "version": "3.25.76",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+-      "license": "MIT",
+-      "funding": {
+-        "url": "https://github.com/sponsors/colinhacks"
+-      }
+-    },
+     "node_modules/@ag-ui/core": {
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/@ag-ui/core/-/core-1.0.2.tgz",
+@@ -175,15 +157,6 @@
+         "zod": "^3.25.76"
+       }
+     },
+-    "node_modules/@ag-ui/proto/node_modules/zod": {
+-      "version": "3.25.76",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+-      "license": "MIT",
+-      "funding": {
+-        "url": "https://github.com/sponsors/colinhacks"
+-      }
+-    },
+     "node_modules/@ai-sdk/anthropic": {
+       "version": "3.0.128",
+       "resolved": "https://registry.npmjs.org/@ai-sdk/anthropic/-/anthropic-3.0.128.tgz",
+@@ -231,9 +204,9 @@
+       }
+     },
+     "node_modules/@ai-sdk/anthropic/node_modules/undici": {
+-      "version": "6.29.0",
+-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
+-      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
++      "version": "6.29.1",
++      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
++      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18.17"
+@@ -354,25 +327,13 @@
+         "zod": "^3.25.76 || ^4.1.8"
+       }
+     },
+-    "node_modules/@ai-sdk/google-vertex/node_modules/@fastify/busboy": {
+-      "version": "2.1.1",
+-      "resolved": "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz",
+-      "integrity": "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">=14"
+-      }
+-    },
+     "node_modules/@ai-sdk/google-vertex/node_modules/undici": {
+-      "version": "5.29.0",
+-      "resolved": "https://registry.npmjs.org/undici/-/undici-5.29.0.tgz",
+-      "integrity": "sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==",
++      "version": "6.29.1",
++      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
++      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+       "license": "MIT",
+-      "dependencies": {
+-        "@fastify/busboy": "^2.0.0"
+-      },
+       "engines": {
+-        "node": ">=14.0"
++        "node": ">=18.17"
+       }
+     },
+     "node_modules/@ai-sdk/google/node_modules/@ai-sdk/provider": {
+@@ -406,9 +367,9 @@
+       }
+     },
+     "node_modules/@ai-sdk/google/node_modules/undici": {
+-      "version": "6.29.0",
+-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
+-      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
++      "version": "6.29.1",
++      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
++      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18.17"
+@@ -494,25 +455,13 @@
+         "zod": "^3.25.76 || ^4.1.8"
+       }
+     },
+-    "node_modules/@ai-sdk/openai-compatible/node_modules/@fastify/busboy": {
+-      "version": "2.1.1",
+-      "resolved": "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz",
+-      "integrity": "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">=14"
+-      }
+-    },
+     "node_modules/@ai-sdk/openai-compatible/node_modules/undici": {
+-      "version": "5.29.0",
+-      "resolved": "https://registry.npmjs.org/undici/-/undici-5.29.0.tgz",
+-      "integrity": "sha512-raqeBD6NQK4
 ```
 
-**File**: `src/Agent/Adapters/AGUIAdapter.php` (modified, +3/-0)
+**File**: `package.json` (modified, +9/-0)
 ```diff
-@@ -68,6 +68,8 @@ class AGUIAdapter implements CustomizableStreamAdapterInterface
- {
-     use MapsStreamEvents;
- 
-+    protected const PROTOCOL_VERSION = '1.0';
-+
-     protected ?string $currentMessageId = null;
- 
-     protected bool $messageStarted = false;
-@@ -471,6 +473,7 @@ public function start(): iterable
-         yield new ProtocolEvent('RUN_STARTED', [
-             'runId' => $this->runId,
-             'threadId' => $this->threadId,
-+            'protocolVersion' => self::PROTOCOL_VERSION,
-         ]);
-     }
- 
-```
-
-**File**: `tests/Agent/Adapters/AgUIProtocolComplianceTest.php` (modified, +2/-1)
-```diff
-@@ -49,7 +49,7 @@ class AgUIProtocolComplianceTest extends TestCase
-     private const REQUIRED_FIELDS = [
-         'STATE_SNAPSHOT' => ['snapshot'],
-         'MESSAGES_SNAPSHOT' => ['messages'],
--        'RUN_STARTED' => ['runId', 'threadId'],
-+        'RUN_STARTED' => ['runId', 'threadId', 'protocolVersion'],
-         'RUN_FINISHED' => ['runId', 'threadId'],
-         'STEP_STARTED' => ['stepName'],
-         'STEP_FINISHED' => ['stepName'],
-@@ -322,6 +322,7 @@ private function assertCompliant(array $events): void
- 
-             switch ($type) {
-                 case 'RUN_STARTED':
-+                    $this->assertSame('1.0', $event['protocolVersion'], 'RUN_STARTED must declare the AG-UI version the adapter speaks');
-                     $runId = $event['runId'];
-                     $threadId = $event['threadId'];
-                     break;
+@@ -17,5 +17,14 @@
+   },
+   "devDependencies": {
+     "typescript": "^7.0.2"
++  },
++  "overrides": {
++    "@ai-sdk/provider-utils@3": {
++      "undici": "^6.29.1"
++    },
++    "@hono/node-server": "^2.1.5",
++    "graphql-scalars": "^2.0.1",
++    "katex": "^0.18.2",
++    "zod": "^4.6.7"
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `2651265a` (2026-10-29)
-**Commit Message**: fix deepeseek reasoning content
+### Incident Patch 2: `81e08ce1` (2026-11-02)
+**Commit Message**: fix weaviate
 
-**File**: `src/RAG/Splitter/DelimiterTextSplitter.php` (modified, +1/-1)
+**File**: `src/RAG/VectorStore/WeaviateVectorStore.php` (modified, +45/-4)
 ```diff
-@@ -6,8 +6,8 @@
- 
- use InvalidArgumentException;
- use NeuronAI\RAG\Document;
--
- use NeuronAI\RAG\Schema\DocumentSchemaException;
-+
+@@ -22,6 +22,7 @@
+ use function array_column;
+ use function array_key_exists;
  use function array_map;
- use function array_slice;
- use function count;
-```
-
----
-
-### Incident Patch 3: `aa8b748d` (2026-10-29)
-**Commit Message**: fix deepeseek reasoning content
-
-**File**: `src/Providers/Deepseek/MessageMapper.php` (modified, +8/-3)
-```diff
-@@ -15,14 +15,19 @@ protected function mapMessage(Message $message): array
-         return $this->withReasoningContent(parent::mapMessage($message), $message);
++use function count;
+ use function implode;
+ use function in_array;
+ use function is_array;
+@@ -118,29 +119,63 @@ public function addDocuments(array $documents): VectorStoreInterface
+         ], $documents);
+ 
+         $chunks = array_chunk($objects, 100);
++        $outcomes = [];
+ 
+         foreach ($chunks as $chunk) {
+-            $this->httpClient->request(
++            $outcomes = [...$outcomes, ...$this->httpClient->request(
+                 HttpRequest::post(
+                     uri: rtrim($this->baseUri, '/') . '/v1/batch/objects',
+                     body: ['objects' => $chunk],
+                     headers: $this->httpHeaders,
+                 )
+-            );
++            )->json()];
+         }
+ 
++        $this->assertStored($outcomes);
++
+         return $this;
      }
  
 +    /**
-+     * Thinking mode refuses a tool call it has no reasoning for, one from another provider
-+     * or from a turn with thinking off, unless the call carries reasoning_content: an empty
-+     * one is accepted.
++     * The batch API answers 200 even when it rejects objects: the rejections are listed in the response.
++     *
++     * @param array<mixed> $outcomes
++     * @throws VectorStoreException
 +     */
-     protected function mapToolCall(ToolCallMessage $message): array
-     {
--        return $this->withReasoningContent(parent::mapToolCall($message), $message);
-+        return $this->withReasoningContent(parent::mapToolCall($message), $message) + ['reasoning_content' => ''];
-     }
- 
-     /**
--     * A reasoner turn must carry the field even when the model returned an empty
--     * string: DeepSeek rejects an assistant message without reasoning_content.
-+     * The reasoning goes back as the model returned it, an empty string included.
-+     * A message that stored no reasoning has none to send.
-      *
-      * @param array<string, mixed> $mapped
-      * @return array<string, mixed>
-```
-
-**File**: `tests/Providers/Deepseek/DeepseekTest.php` (modified, +8/-1)
-```diff
-@@ -108,7 +108,7 @@ public function test_mapper_sends_reasoning_content_back_for_assistant_and_tool_
-         $this->assertArrayNotHasKey('reasoning_content', $mapped[2]);
-     }
- 
--    public function test_mapper_sends_an_empty_reasoning_content_as_the_model_returned_none(): void
-+    public function test_mapper_sends_an_empty_reasoning_content_back(): void
-     {
-         $answer = (new AssistantMessage('Answer'))->addMetadata('reasoning_content', '');
-         $toolCall = (new ToolCallMessage(null, [new ToolCall('clock', 'call_1', [])]))->addMetadata('reasoning_content', '');
-@@ -120,6 +120,13 @@ public function test_mapper_sends_an_empty_reasoning_content_as_the_model_return
-         $this->assertSame('', $mapped[1]['reasoning_content']);
-     }
- 
-+    public function test_mapper_sends_an_empty_reasoning_content_for_a_tool_call_that_stored_none(): void
++    protected function assertStored(array $outcomes): void
 +    {
-+        $toolCall = new ToolCallMessage(null, [new ToolCall('clock', 'call_1', [])]);
++        $rejections = [];
++        foreach ($outcomes as $outcome) {
++            if (isset($outcome['result']['errors'])) {
++                $rejections[] = "[{$outcome['id']}] {$this->errorMessages($outcome['result']['errors'])}";
++            }
++        }
 +
-+        $this->assertSame('', (new MessageMapper())->map([$toolCall])[0]['reasoning_content']);
++        if ($rejections !== []) {
++            throw new VectorStoreException(
++                'Weaviate rejected '.count($rejections).' of '.count($outcomes).' documents: '.implode('; ', $rejections)
++            );
++        }
 +    }
 +
-     public function test_reasoning_blocks_are_not_sent_as_message_content(): void
++    /**
++     * @param array{error: array<int, array{message: string}>} $errors
++     */
++    protected function errorMessages(array $errors): string
++    {
++        return implode(', ', array_column($errors['error'], 'message'));
++    }
++
+     /**
+      * @throws HttpException
+      * @throws DocumentSchemaException
++     * @throws VectorStoreException
+      */
+     public function delete(FilterExpression $filters): VectorStoreInterface
      {
-         $message = new AssistantMessage([new ReasoningContent('Thinking'), new TextContent('Answer')]);
+         $this->validateFilters($filters);
+         $this->initialize();
+-        $this->httpClient->request(
++        $response = $this->httpClient->request(
+             HttpRequest::delete(
+                 uri: rtrim($this->baseUri, '/') . '/v1/batch/objects',
+                 body: [
+@@ -151,7 +186,13 @@ public function delete(FilterExpression $filters): VectorStoreInterface
+                 ],
+                 headers: $this->httpHeaders,
+             )
+-        );
++        )->json();
++
++        // Also a 200, and its counts don't add up (two matches can report one failure), so only the reasons are shown
++        if (($response['results']['failed'] ?? 0) > 0) {
++            $reasons = array_map(fn (array $object): string => $this->errorMessages($object['errors']), $response['results']['objects']);
++            throw new VectorStoreException('Weaviate rejected the delete: ' . implode('; ', $reasons));
++        }
+ 
+         return $this;
+     }
+```
+
+**File**: `tests/RAG/VectorStore/WeaviateTest.php` (modified, +51/-0)
+```diff
+@@ -4,6 +4,9 @@
+ 
+ namespace NeuronAI\Tests\RAG\VectorStore;
+ 
++use NeuronAI\Exceptions\VectorStoreException;
++use NeuronAI\HttpClient\Curl\CurlHttpClient;
++use NeuronAI\HttpClient\HttpRequest;
+ use NeuronAI\RAG\Document;
+ use NeuronAI\RAG\Schema\DocumentField;
+ use NeuronAI\RAG\Schema\DocumentSchema;
+@@ -210,4 +213,52 @@ public function test_top_k_limits_results(): void
+ 
+         $store->destroy();
+     }
++
++    public function test_a_document_rejected_by_the_server_raises_an_exception(): void
++    {
++        $valid = (new Document('Valid'))->setEmbedding([1, 0, 0]);
++        $wrongSize = (new Document('Wrong size'))->setEmbedding([1, 0]);
++        $this->store->addDocument((new Document('Hello World!'))->setEmbedding([0, 1, 0]));
++
++        try {
++            $this->store->addDocuments([$valid, $wrongSize]);
++            $this->fail('The rejected document must raise an exception.');
++        } catch (VectorStoreException $exception) {
++            $this->assertStringStartsWith("Weaviate rejected 1 of 2 documents: [{$wrongSize->getId()}]", $exception->getMessage());
++        }
++
++        $this->assertCount(2, $this->store->search(new SearchRequest([1, 0, 0])));
++    }
++
++    public function test_a_read_only_collection_refuses_additions_and_deletes(): void
++    {
++        $this->store->addDocument((new Document('Hello World!'))->setEmbedding([1, 0, 0]));
++        $this->makeShardsReadOnly();
++
++        try {
++            $this->store->addDocument((new Document('Refused'))->setEmbedding([0, 1, 0]));
++            $this->fail('The rejected document must raise an exception.');
++        } catch (VectorStoreException $exception) {
++            $this->assertStringContainsString('read-only', $exception->getMessage());
++        }
++
++        $this->expectException(VectorStoreException::class);
++        $this->expectExceptionMessage('Weaviate rejected the delete: store is read-only');
++
++        $this->store->delete(Filter::eq('sourceType', 'manual'));
++    }
++
++    protected function makeShardsReadOnly(): void
++    {
++        $client = new CurlHttpClient();
++        $shardsUri = 'http://127.0.0.1:' . self::SERVICE_PORT . '/v1/schema/' . $this->collectionName . '/shards';
++
++        foreach ($client->request(HttpRequest::get($shardsUri))->json() as $shard) {
++            $client->request(HttpRequest::put(
++                uri: $shardsUri . '/' . $shard['name'],
++                body: ['status' => 'READONLY'],
++                headers: ['Content-Type' => 'application/json'],
++            ));
++        }
++    }
+ }
+```
+
+**File**: `tests/RAG/VectorStore/WeaviateVectorStoreTest.php` (modified, +63/-4)
+```diff
+@@ -19,7 +19,10 @@
+ use NeuronAI\Tests\RAG\VectorStore\Stub\RejectsInvalidInputBeforeRemoteCalls;
+ use PHPUnit\Framework\TestCase;
+ 
++use function array_fill;
++use function array_map;
+ use function count;
++use function range;
+ 
+ /**
+  * Offline contract of the Weaviate REST and GraphQL calls; WeaviateTest covers a live server.
+@@ -48,6 +51,11 @@ protected function noObjects(): Response
+         return $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]);
+     }
+ 
++    protected function nothingFailed(): Response
++    {
++        return $this->jsonResponse(['results' => ['failed' => 0, 'objects' => null]]);
++    }
++
+     protected function schema(): DocumentSchema
+     {
+         return DocumentSchema::of(
+@@ -149,7 +157,7 @@ public function test_adds_objects_with_json_metadata_and_declared_properties():
+             ->setSourceName('a.txt')
+             ->setMetadata(['tenant' => 'acme', 'year' => 2026, 'extra' => ['x' => true]]);
+ 
+-        $this->store(null, $this->schema(), new Response(200))->addDocument($document);
++        $this->store(null, $this->schema(), $this->jsonResponse([]))->addDocument($document);
+ 
+         $this->assertSame('POST http://weaviate.test:8080/v1/batch/objects', $this->sentTargets()[1]);
+         $this->assertSame(['objects' => [[
+@@ -174,7 +182,7 @@ public function test_unset_declared_fields_are_not_sent_as_null_properties(): vo
+             ->setEmbedding([1, 0])
+             ->setMetadata(['tenant' => 'acme', 'price' => null]);
+ 
+-        $this->store(null, $this->schema(), new Response(200))->addDocument($document);
++        $this->store(null, $this->schema(), $this->jsonResponse([]))->addDocument($document);
+ 
+         $this->assertSame([
+             'content' => 'Hello',
+@@ -185,6 +193,42 @@ public function test_unset_declared_fields_are_not_sent_as_null_properties(): vo
+         ], $this->sentJson(1)['objects'][0]['properties']);
+     }
+ 
++    public function test_documents_weaviate_rejects_raise_their_errors(): void
++    {
++        $store = $this->store(null, null, $this->jsonResponse([
++            ['id' => 'obj-1', 'result' => ['status' => 'SUCCESS']],
++            ['id' => 'obj-2', 'result' => ['status' => 'FAILED', 'errors' => ['error' => [['message' => 'store is read-only'], ['message' => 'wrong vector length']]]]],
++        ]));
++
++        $this->expectException(VectorStoreException::class);
++        $this->expectExceptionMessage('Weaviate rejected 1 of 2 documents: [obj-2] store is read-only, wrong vector length');
++
++        $store->addDocuments([
++            (new Document('Stored'))->setEmbedding([1, 0]),
++            (new Document('Rejected'))->setEmbedding([0, 1]),
++        ]);
++    }
++
++    public function test_every_batch_is_sent_before_a_rejection_is_raised(): void
++    {
++        $errors = ['error' => [['message' => 'store is read-only']]];
++        $store = $this->store(
++            null,
++            null,
++            $this->jsonResponse([
++                ['id' => 'first-batch', 'result' => ['status' => 'FAILED', 'errors' => $errors]],
++                ...array_fill(0, 99, ['id' => 'stored', 'result' => ['status' => 'SUCCESS']]),
++            ]),
++            $this->jsonResponse([['id' => 'second-batch', 'result' => ['status' => 'FAILED', 'errors' => $errors]]]),
++        );
++        $documents = array_map(fn (int $number): Document => (new Document("Document {$number}"))->setEmbedding([1, 0]), range(1, 101));
++
++        $this->expectException(VectorStoreException::class);
++        $this->expectExceptionMessage('Weaviate rejected 2 of 101 documents: [first-batch] store is read-only; [second-batch] store is read-only');
++
++        $store->addDocuments($documents);
++    }
++
+     public function test_search_renders_a_graphql_query_with_escaped_filter_values(): void
+     {
+         $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]));
+@@ -301,7 +345,7 @@ public function test_a_search_weaviate_rejects_raises_its_errors(): void
+ 
+     public function test_whole_number_filters_on_float_fields_compare_numbers(): void
+     {
+-        $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]), new Response(200));
++        $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]), $this->nothingFailed());
+ 
+         $store->search(new SearchRequest([1.0], Filter::gt('price', 10)));
+         $store->delete(Filter::eq('price', 10));
+@@ -312,7 +356,7 @@ public function test_whole_number_filters_on_float_fields_compare_numbers(): voi
+ 
+     public function test_delete_sends_a_batch_delete_with_the_rest_filter(): void
+     {
+-        $this->store(null, $this->schema(), new Response(200))->delete(FilterGroup::anyOf(
++        $this->store(null, $this->schema(), $this->nothingFailed())->delete(FilterGroup::anyOf(
+             Filter::eq('sourceName', 'a.txt'),
+             Filter::containsAny('tags', ['old
+```
+
+**File**: `tests/Tools/Toolkits/FileSystem/ParseFileToolTest.php` (modified, +1/-1)
+```diff
+@@ -140,7 +140,7 @@ public function test_unsupported_formats_are_refused(string $name, string $exten
+         file_put_contents($this->tempDir . '/' . $name, '<?php echo "hello"; ?>');
+ 
+         $this->assertToolError(
+-            "Unsupported file format '{$extension}'. Supported formats: PDF, HTML. If the file is already in plain text you can access its content directly with other tools like grep_file_content or read_file.",
++            "Unsupported file format '{$extension}'. Supported formats: PDF, HTML. If the file is already in plain text you can access its content directly with other dedicated tools.",
+             ($this->tool)($this->tempDir . '/' . $name)
+         );
+     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -702,28 +997,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support protocol version in ag-ui adapter
+## X. dependency vulnerabilities
 
 **RULE**:
-When implementing operations in `skills/neuron-laravel-integration/references/reverb.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bac40d8`: support protocol version in ag-ui adapter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f63ad4ae`: dependency vulnerabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/neuron-laravel-integration/references/reverb.md`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…","protocolVersion":"1.0"}
+      "version": "6.29.1",
+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+      "version": "6.29.1",
+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+        "node": ">=18.17"
+      "version": "6.29.1",
+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…"}
+    "node_modules/@a2ui/web_core/node_modules/zod": {
+      "version": "3.25.76",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/colinhacks"
+      }
+    },
+    "node_modules/@ag-ui/client/node_modules/zod": {
+      "version": "3.25.76",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/colinhacks"
+      }
+    },
+    "node_modules/@ag-ui/proto/node_modules/zod": {
+      "version": "3.25.76",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/colinhacks"
+      }
+    },
+      "version": "6.29.0",
+      "resolved": "https
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bac40d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f63ad4ae` are properly handled with clean fallback behavior.
