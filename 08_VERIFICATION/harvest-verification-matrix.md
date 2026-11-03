@@ -6884,3 +6884,4 @@
 | `CYCLE-20261103-T08V` | `2026-11-03T10:59:50.527Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6501` | Yes (`d9f74952...`) |
 | `CYCLE-20261103-T2R7` | `2026-11-03T10:59:53.779Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6502` | Yes (`64c42121...`) |
 | `CYCLE-20261103-T3X3` | `2026-11-03T10:59:55.287Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`c83fe9c6...`) |
+| `CYCLE-20261103-3ELU` | `2026-11-03T11:07:55.698Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6503` | Yes (`c0d2cc6a...`) |

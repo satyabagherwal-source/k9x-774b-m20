@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-K9PP",
-    "timestamp": "2026-10-31T00:46:10.477Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-    "contentHash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-SVQ6",
     "timestamp": "2026-10-31T00:52:52.254Z",
     "repository": "krishhgg/Insomnia",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-3ELU",
+    "timestamp": "2026-11-03T11:07:55.698Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

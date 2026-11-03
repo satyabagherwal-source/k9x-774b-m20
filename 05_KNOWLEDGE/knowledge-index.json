@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T10:59:55.200Z",
+  "last_updated": "2026-11-03T11:07:55.615Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44658,8 +44658,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "786d6bf7",
-      "content_hash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
+      "source_version": "f0a4fa6d",
+      "content_hash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -44717,6 +44717,11 @@
           "number": 5995,
           "title": "rego: exclude wasm compile time from context timeout test (#9455)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6503,
+          "title": "build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updat",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44724,7 +44729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:40:02.760Z",
+      "verified_at": "2026-11-03T11:07:55.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168165,6 +168170,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T10:59:53.677Z"
+    },
+    "rule-6503": {
+      "learning_id": "rule-6503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6503,
+      "title": "build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updat",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "f0a4fa6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:07:55.594Z"
     }
   },
   "aliases": {

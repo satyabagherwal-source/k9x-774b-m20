@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T10:59:57.848Z",
-    "lastVerified": "2026-11-03T10:59:57.848Z",
+    "lastChecked": "2026-11-03T11:07:58.268Z",
+    "lastVerified": "2026-11-03T11:07:58.268Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T10:37:09.920Z",
+    "lastChecked": "2026-11-03T11:07:38.711Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T10:37:09.920Z"
+    "lastVerified": "2026-11-03T11:07:38.711Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2247,8 +2247,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-02T15:29:38.463Z",
-    "lastVerified": "2026-11-02T15:29:38.463Z",
+    "lastChecked": "2026-11-03T11:07:33.708Z",
+    "lastVerified": "2026-11-03T11:07:33.708Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -5127,9 +5127,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-10-31T16:03:45.756Z",
+    "lastChecked": "2026-11-03T11:07:36.227Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-10-31T16:03:45.756Z"
+    "lastVerified": "2026-11-03T11:07:36.227Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -6686,9 +6686,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-10-31T12:39:23.935Z",
+    "lastChecked": "2026-11-03T11:07:23.699Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-10-31T12:39:23.935Z"
+    "lastVerified": "2026-11-03T11:07:23.699Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -6725,22 +6725,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-policy-agent-opa": {
-    "name": "opa",
+    "name": "open-policy-agent/opa",
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T17:03:47.376Z",
-    "lastVerified": "2026-10-31T17:03:47.376Z",
+    "lastChecked": "2026-11-03T11:07:36.359Z",
+    "lastVerified": "2026-11-03T11:07:36.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
+    "contentHash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "786d6bf7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mariadb-server": {
     "name": "MariaDB/server",
@@ -9497,9 +9496,9 @@
   "stangirard-seo-audits-toolkit": {
     "name": "seo-audits-toolkit",
     "officialUrl": "https://github.com/StanGirard/seo-audits-toolkit",
-    "lastChecked": "2026-10-30T00:07:51.214Z",
+    "lastChecked": "2026-11-03T11:07:26.193Z",
     "revisionIdentifier": "c3e95fc4bf",
-    "lastVerified": "2026-10-30T00:07:51.214Z"
+    "lastVerified": "2026-11-03T11:07:26.193Z"
   },
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
@@ -10443,9 +10442,9 @@
   "kruszoneq-macusb": {
     "name": "macUSB",
     "officialUrl": "https://github.com/Kruszoneq/macUSB",
-    "lastChecked": "2026-10-30T11:28:04.438Z",
+    "lastChecked": "2026-11-03T11:07:28.703Z",
     "revisionIdentifier": "777ed534",
-    "lastVerified": "2026-10-30T11:28:04.438Z"
+    "lastVerified": "2026-11-03T11:07:28.703Z"
   },
   "fb55-htmlparser2": {
     "name": "fb55/htmlparser2",
