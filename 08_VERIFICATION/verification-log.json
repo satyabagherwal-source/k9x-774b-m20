@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-NF87",
-    "timestamp": "2026-10-31T00:20:37.975Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-NG5N",
-    "timestamp": "2026-10-31T00:20:39.179Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-    "contentHash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-NHGE",
-    "timestamp": "2026-10-31T00:20:40.862Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "9f577e887a0dcb88b76acd68591fcb83cb285da8c6f8553c1610789767d28034",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-WAR3",
-    "timestamp": "2026-10-31T00:27:32.079Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-5166",
-    "timestamp": "2026-10-31T00:34:19.566Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-55OC",
     "timestamp": "2026-10-31T00:34:25.404Z",
     "repository": "mattermost/mattermost",
@@ -7490,6 +7415,81 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "382aca78d484fda680fddfae99e4f032223e2f13c1be42a8e1bc0ed323b1b27e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-AZM2",
+    "timestamp": "2026-11-03T10:45:49.898Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-B0XY",
+    "timestamp": "2026-11-03T10:45:51.622Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-B2V6",
+    "timestamp": "2026-11-03T10:45:54.114Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-B45E",
+    "timestamp": "2026-11-03T10:45:55.778Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-BM8U",
+    "timestamp": "2026-11-03T10:46:19.230Z",
+    "repository": "alexpasmantier/television",
+    "learningId": "learn-github-alexpasmantier-television",
+    "contentHash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `ddf515c5`  
+> **Source Version**: `3c1e052e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:15:09.607Z  
+> **Timestamp**: 2026-11-03T10:45:49.384Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:15:09.261Z  
+> **Harvest Timestamp**: 2026-11-03T10:45:48.277Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14592 stars
+- **Stars / Engagement**: 14618 stars
 
 ---
 
@@ -1155,13 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7785** (2026-10-30): **meta/redis: do not recreate removed dir quotas when flushing usage**
-  *Symptoms*: ### What Redis `doFlushQuotas` recreated the quota of a removed directory (HSetNX -1/-1 + HIncrBy), leaving an unlimited quota with negative usage after `rmr`/`rmdir`.  ### How Skip dir quotas whose record no longer exists, matching the SQL and TKV engines. The dir quota hash is watched, so a concurrent rmdir/rename/quota delete restarts the flush. User/group quotas keep the old behavior.  ### Test `testQuotaFlushAfterRmdir` in the shared `testMeta` suite (Redis, SQL, KV). Fails on main with `MaxSpace:-1 MaxInodes:-1 UsedSpace:-12288 UsedInodes:-3`, passes with the fix.  Fixes #7784
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/juicedata/juicefs?pullRequest=7785) <br/>All committers have signed the CLA.
+- **Issue #7798** (2026-11-03): **cmd/dump: warn when flags are ignored with --binary or --subdir**
+  *Symptoms*: `dump --binary` always exports the whole volume and ignores `--subdir`, `--fast` and `--skip-trash`, but this was only mentioned in `--help`. A user running `dump --binary --subdir /a` got a full-volume dump without any notice. `--fast` is also silently ignored for JSON dumps with `--subdir`.  Log a warning for each ignored flag, and document these interactions in the English and Chinese command references. Dump behavior is unchanged.  Validation: `go vet ./cmd/`, and manual dumps on a SQLite volume covering `--binary` with `--subdir`/`--fast`/`--skip-trash`, JSON `--subdir` with `--fast`, and `--subdir /` (no warning). 
 
-- **Issue #7784** (2026-10-30): **Redis: quota flush recreates deleted directory quotas with negative usage**
-  *Symptoms*: **What happened**:  A Redis quota flush can recreate a removed directory's quota with unlimited limits and negative usage.  On JuiceFS CE v1.4.1 with Valkey 9.1.1, `/acc/proj/gen` held 2,000 files in 20 subdirectories. Its 5 GiB quota recorded **24,997,888 bytes / 2,020 inodes**, excluding `gen` itself.  We ran `juicefs rmr` and kept the deleting client's container alive for four seconds. The parent quota was correct at **4,096 bytes / 1 inode**, but `gen`'s quota fields were back:  ```text dirQuota[<gen inode>]           = ffffffffffffffffffffffffffffffff  (hex) dirQuotaUsedSpace[<gen inode>]  = -24997888 dirQuotaUsedInodes[<gen inode>] = -2020 ```  The 16 bytes of `ff` encode `MaxSpace = -1` and `MaxInodes = -1`. The three hash fields reappeared, not the directory; its inode remained in trash with `--trash-days 7`. This doesn't show an active quota being disabled.  **What you expected to happen**:  Flushing should leave deleted directory quotas absent, update surviving ancestors, and preserve existing user/group record creation.  **How to reproduce it (as minimally and precisely as possible)**:  The Docker tests used local file storage:  1. Format a fresh filesystem with Valkey and `--trash-days 7`. Create `/acc/proj/gen`. 2. Set quotas on `/acc` (10 GiB / 1,000,000 inodes) and `gen` (5 GiB / 500,000 inodes). 3. Create `d0` through `d19` under `gen`, wait two seconds, then create files `f0` through `f1999`. File `i` goes into `d(i % 20)` and contains `1000 + (i * 37 % 20000
+- **Issue #7797** (2026-11-03): **meta: treat .trash as an ordinary name under subdir mounts**
+  *Symptoms*: The `.trash` name reservation in `Mknod`/`Link`/`Unlink`/`Rmdir`/`Rename`/`Clone` was checked before the chroot translation, while `Lookup` checks it after. Under a subdir mount, an ordinary `.trash` directory in the mount root was visible but returned EPERM on create/remove/rename/clone.  Apply `checkRoot` before the reservation checks so the name is reserved only at the real volume root. This matches `Lookup` and the VFS layer, which already drops the `.trash` internal node for subdir mounts.  The change is in `baseMeta`, so all engine families behave the same, and the metadata format does not change. Regression test added in `pkg/meta/subdir_test.go` (fails before the fix); passes on Redis, SQLite, memkv and Badger.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1178,77 +1176,232 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ddf515c5` (2026-10-30)
-**Commit Message**: object/cos: add timeout for cos (#7469)
+### Incident Patch 1: `3c1e052e` (2026-11-03)
+**Commit Message**: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
 
-Signed-off-by: swj <[REDACTED_EMAIL]>
-
-**File**: `pkg/object/cos.go` (modified, +1/-0)
+**File**: `cmd/dump.go` (modified, +12/-1)
 ```diff
-@@ -351,6 +351,7 @@ func newCOS(endpoint, accessKey, secretKey, token string) (ObjectStorage, error)
- 			SessionToken: token,
- 			Transport:    httpClient.Transport,
- 		},
-+		Timeout: httpClient.Timeout,
- 	})
- 	client.UserAgent = UserAgent
- 	disableChecksum := strings.EqualFold(uri.Query().Get("disable-checksum"), "true")
+@@ -164,7 +164,18 @@ func dump(ctx *cli.Context) error {
+ 		threads = 1
+ 	}
+ 
+-	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
++	isBinary := ctx.Bool("binary")
++	if isBinary {
++		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
++			if ctx.IsSet(flag) {
++				logger.Warnf("--%s is ignored with --binary", flag)
++			}
++		}
++	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
++		logger.Warnf("--fast is ignored with --subdir")
++	}
++
++	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
+ 	if err == nil {
+ 		if dst == "" {
+ 			dst = "STDOUT"
+```
+
+**File**: `docs/en/reference/command_reference.mdx` (modified, +3/-3)
+```diff
+@@ -425,11 +425,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
+ |-|-|
+ |`META-URL`|Database URL of the metadata engine. See [JuiceFS supported metadata engines](../reference/how_to_set_up_metadata_engine.md) for details.|
+ |`FILE`|Export file path, if not specified, it will be exported to standard output. If the filename ends with `.gz`, it will be automatically compressed.|
+-|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist.|
++|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist. Ignored with `--binary`, which always exports the whole volume.|
+ |`--keep-secret-key` <VersionAdd>1.1</VersionAdd> |Export object storage authentication information, the default is `false`. Since it is exported in plain text, pay attention to data security when using it. If the export file does not contain object storage authentication information, you need to use [`juicefs config`](#config) to reconfigure object storage authentication information after the subsequent import is completed.|
+ |`--threads=10` <VersionAdd>1.2</VersionAdd>|number of threads to dump metadata. (default: 10)|
+-|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump.|
+-|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash.|
++|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump. Ignored with `--subdir` or `--binary`.|
++|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash. Ignored with `--binary`.|
+ 
+ ### `juicefs load` {#load}
+ 
+```
+
+**File**: `docs/zh_cn/reference/command_reference.mdx` (modified, +3/-3)
+```diff
+@@ -422,11 +422,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
+ |-|-|
+ |`META-URL`|用于元数据存储的数据库 URL，详情查看[「JuiceFS 支持的元数据引擎」](../reference/how_to_set_up_metadata_engine.md)。|
+ |`FILE`|导出文件路径，如果不指定，则会导出到标准输出。如果文件名以 `.gz` 结尾，将会自动压缩。|
+-|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。|
++|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。与 `--binary` 同时使用时会被忽略，始终导出整个文件系统。|
+ |`--keep-secret-key` <VersionAdd>1.1</VersionAdd>|导出对象存储认证信息，默认为 `false`。由于是明文导出，使用时注意数据安全。如果导出文件不包含对象存储认证信息，后续的导入完成后，需要用 [`juicefs config`](#config) 重新配置对象存储认证信息。|
+ |`--threads=10` <VersionAdd>1.2</VersionAdd>|并发线程数，默认 10。|
+-|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。|
+-|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。|
++|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。与 `--subdir` 或 `--binary` 同时使用时会被忽略。|
++|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。与 `--binary` 同时使用时会被忽略。|
+ 
+ ### `juicefs load` {#load}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `f84e1962` (2026-10-30)
-**Commit Message**: fix(object): synchronize delimiter listing stop signal (#7621)
+### Incident Patch 2: `db13db48` (2026-11-03)
+**Commit Message**: meta: treat .trash as an ordinary name under subdir mounts (#7797)
 
-Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
-Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
-
-**File**: `pkg/object/object_storage.go` (modified, +7/-1)
+**File**: `pkg/meta/base.go` (modified, +7/-7)
 ```diff
-@@ -29,6 +29,7 @@ import (
- 	"strconv"
- 	"strings"
- 	"sync"
-+	"sync/atomic"
- 	"time"
+@@ -1675,6 +1675,7 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
+ 	if _type < TypeFile || _type > TypeSocket {
+ 		return syscall.EINVAL
+ 	}
++	parent = m.checkRoot(parent)
+ 	if parent.IsTrash() && m.replay.Load() == nil {
+ 		return syscall.EPERM
+ 	}
+@@ -1692,7 +1693,6 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
+ 	}
  
- 	"github.com/juicedata/juicefs/pkg/utils"
-@@ -247,12 +248,17 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
- 	walk = func(prefix string, entries []Object) error {
- 		var concurrent = 10
- 		var err error
-+		var stopped atomic.Bool
-+		defer stopped.Store(true)
- 		threads := make([]listThread, concurrent)
- 		for c := 0; c < concurrent; c++ {
- 			t := &threads[c]
- 			t.cond = utils.NewCond(t)
- 			go func(c int) {
- 				for i := c; i < len(entries); i += concurrent {
-+					if stopped.Load() {
-+						return
-+					}
- 					key := entries[i].Key()
- 					if end != "" && key >= end {
- 						break
-@@ -269,7 +275,7 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
- 					t.cond.Signal()
- 					for t.ready {
- 						t.cond.WaitWithTimeout(time.Second)
--						if err != nil {
-+						if stopped.Load() {
- 							t.Unlock()
- 							return
- 						}
+ 	defer m.timeit("Mknod", time.Now())
+-	parent = m.checkRoot(parent)
+ 	var space, inodes int64 = align4K(0), 1
+ 	// check group quota in transaction
+ 	if !(parent == TrashInode && _type == TypeDirectory) {
+@@ -1776,6 +1776,7 @@ func (m *baseMeta) Symlink(ctx Context, parent Ino, name string, path string, in
+ }
+ 
+ func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr) syscall.Errno {
++	parent = m.checkRoot(parent)
+ 	if parent.IsTrash() {
+ 		return syscall.EPERM
+ 	}
+@@ -1796,7 +1797,6 @@ func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr)
+ 	if attr == nil {
+ 		attr = &Attr{}
+ 	}
+-	parent = m.checkRoot(parent)
+ 	if st := m.GetAttr(ctx, inode, attr); st != 0 {
+ 		return st
+ 	}
+@@ -1868,6 +1868,7 @@ func (m *baseMeta) ReadLink(ctx Context, inode Ino, path *[]byte) syscall.Errno
+ }
+ 
+ func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash ...bool) syscall.Errno {
++	parent = m.checkRoot(parent)
+ 	if parent == RootInode && name == TrashName || parent.IsTrash() && ctx.Uid() != 0 {
+ 		return syscall.EPERM
+ 	}
+@@ -1876,7 +1877,6 @@ func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash .
+ 	}
+ 
+ 	defer m.timeit("Unlink", time.Now())
+-	parent = m.checkRoot(parent)
+ 	var attr Attr
+ 	err := m.en.doUnlink(ctx, parent, name, &attr, skipCheckTrash...)
+ 	if err == 0 {
+@@ -1899,6 +1899,7 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
+ 	if name == ".." {
+ 		return syscall.ENOTEMPTY
+ 	}
++	parent = m.checkRoot(parent)
+ 	if parent == RootInode && name == TrashName || parent == TrashInode && m.replay.Load() == nil || parent.IsTrash() && ctx.Uid() != 0 {
+ 		return syscall.EPERM
+ 	}
+@@ -1907,7 +1908,6 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
+ 	}
+ 
+ 	defer m.timeit("Rmdir", time.Now())
+-	parent = m.checkRoot(parent)
+ 	var inode Ino
+ 	var oldAttr Attr
+ 	st := m.en.doRmdir(ctx, parent, name, &inode, &oldAttr, skipCheckTrash...)
+@@ -1965,6 +1965,8 @@ func (m *baseMeta) BatchClone(ctx Context, srcParent Ino, dstParent Ino, entries
+ }
+ 
+ func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst Ino, nameDst string, flags uint32, inode *Ino, attr *Attr) syscall.Errno {
++	parentSrc = m.checkRoot(parentSrc)
++	parentDst = m.checkRoot(parentDst)
+ 	if parentSrc == RootInode && nameSrc == TrashName || parentDst == RootInode && nameDst == TrashName {
+ 		return syscall.EPERM
+ 	}
+@@ -1993,8 +1995,6 @@ func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst
+ 	if attr == nil {
+ 		attr = &Attr{}
+ 	}
+-	parentSrc = m.checkRoot(parentSrc)
+-	parentDst = m.checkRoot(parentDst)
+ 	var quotaSrc, quotaDst Ino
+ 	if !parentSrc.IsTrash() {
+ 		quotaSrc, _ = m.getQuotaParent(ctx, parentSrc)
+@@ -3461,6 +3461,7 @@ func (m *baseMeta) ScanDeletedObject(ctx Context, tss trashSliceScan, pss pendin
+ 
+ func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name string, cmode uint8, cumask uint16, concurrency uint8, count, total *uint64) syscall.Errno {
+ 
++	parent = m.checkRoot(parent)
+ 	if srcIno.IsTrash() || srcParentIno.IsTrash() || parent.IsTrash() || (parent == RootInode && name == TrashName) {
+ 		return syscall.EPERM
+ 	}
+@@ -3473,7 +3474,6 @@ func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name str
+ 	}
+ 
+ 	defer m.timeit("Clone", time.Now())
+-	parent = m.checkRoot(parent)
+ 
+ 	var attr Attr
+ 	var eno syscall.Errno
+```
+
+**File**: `pkg/meta/subdir_test.go` (modified, +36/-0)
+```diff
+@@ -353,6 +353,42 @@ func testSubdirOperations(t *testing.T, m Meta) {
+ 				require.Zero(t, base.en.doLookup(ctx, clone, file, &child, &attr))
+ 				assert.Equal(t, uint8(TypeFile), attr.Typ)
+ 			}},
++			{"TrashName", func(t *testing.T, parent, realParent, otherParent Ino) {
++				var got Ino
++				var attr Attr
++				var count, total uint64
++				if realParent == RootInode { // the trash name is reserved only at the real volume root
++					target := create(t, parent, file)
++					var inode Ino
++					assert.Equal(t, syscall.EPERM, m.Mknod(ctx, parent, TrashName, TypeFile, 0644, 0, 0, "", &inode, nil))
++					assert.Equal(t, syscall.EPERM, m.Mkdir(ctx, parent, TrashName, 0755, 0, 0, &inode, nil))
++					assert.Equal(t, syscall.EPERM, m.Link(ctx, target, parent, TrashName, nil))
++					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
++					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, TrashName, parent, dir, 0, nil, nil))
++					assert.Equal(t, syscall.EPERM, m.Unlink(ctx, parent, TrashName))
++					assert.Equal(t, syscall.EPERM, m.Rmdir(ctx, parent, TrashName))
++					assert.Equal(t, syscall.EPERM, m.Clone(ctx, parent, target, parent, TrashName, 0, 0, 1, &count, &total))
++					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
++					assert.Equal(t, TrashInode, got)
++				} else { // under a subdir it is an ordinary name
++					d := mkdir(t, parent, TrashName)
++					lookup(t, realParent, TrashName, d)
++					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
++					assert.Equal(t, d, got)
++					require.Zero(t, m.Rmdir(ctx, parent, TrashName, true))
++					lookup(t, realParent, TrashName, 0)
++					inode := create(t, parent, TrashName)
++					require.Zero(t, m.Rename(ctx, parent, TrashName, parent, file, 0, nil, nil))
++					lookup(t, realParent, file, inode)
++					require.Zero(t, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
++					lookup(t, realParent, TrashName, inode)
++					require.Zero(t, m.Link(ctx, inode, parent, link, nil))
++					require.Zero(t, m.Unlink(ctx, parent, link, true))
++					require.Zero(t, m.Clone(ctx, parent, inode, parent, dir, 0, 0, 1, &count, &total))
++					require.Zero(t, m.Unlink(ctx, parent, TrashName, true))
++					lookup(t, realParent, TrashName, 0)
++				}
++			}},
+ 			{"SummaryQuotaStatFS", func(t *testing.T, parent, realParent, otherParent Ino) {
+ 				var before, after Summary
+ 				require.Zero(t, m.GetSummary(ctx, parent, &before, true, true))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7798** (2026-11-03): cmd/dump: warn when flags are ignored with --binary or --subdir (@jiefenghuang)
+- **PR #7797** (2026-11-03): meta: treat .trash as an ordinary name under subdir mounts (@jiefenghuang)
+- **PR #7795** (closed): pkg/object: fix connection retirement aborting Expect: 100-continue u… (@xiaozhuang-a)
+- **PR #7793** (2026-11-03): meta: respect read-only mode and umask when auto-creating subdir (@jiefenghuang)
+- **PR #7791** (2026-11-02): deps: upgrade go-ceph from v0.18.0 to v0.38.0 (@SandyXSD)
 - **PR #7785** (2026-10-30): meta/redis: do not recreate removed dir quotas when flushing usage (@Ducheved)
-- **PR #7782** (2026-10-30): meta/redis: expose standalone and Sentinel pool metrics (@jiefenghuang)
-- **PR #7781** (2026-10-30): meta/tikv: expose client metrics (@jiefenghuang)
-- **PR #7778** (2026-10-29): meta/clone: count only file lengths in clone parent stats (@jiefenghuang)
-- **PR #7776** (2026-10-29): fs: check file type, symlink target and rename flags first (@myangitzh)
-- **PR #7772** (closed): fs: resolve the last path component (@myangitzh)
 
 ---
 
@@ -1268,28 +1421,39 @@ Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. object/cos: add timeout for cos (#7469)
+## X. cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
 
 **RULE**:
-When implementing operations in `pkg/object/cos.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dump.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ddf515c5`: object/cos: add timeout for cos (#7469). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c1e052e`: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/object/cos.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dump.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Timeout: httpClient.Timeout,
+	isBinary := ctx.Bool("binary")
+	if isBinary {
+		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
+			if ctx.IsSet(flag) {
+				logger.Warnf("--%s is ignored with --binary", flag)
+			}
+		}
+	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
+		logger.Warnf("--fast is ignored with --subdir")
+	}
+
+	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ddf515c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c1e052e` are properly handled with clean fallback behavior.

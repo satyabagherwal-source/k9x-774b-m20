@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "521c2fe2",
+    "sourceVersion": "3703f13a",
     "license": "Apache-2.0",
-    "contentHash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
-    "lastHarvestedAt": "2026-11-02T21:36:44.306Z",
+    "contentHash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
+    "lastHarvestedAt": "2026-11-03T10:45:55.780Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "515b22a3",
+    "sourceVersion": "d465cc82",
     "license": "MIT",
-    "contentHash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
-    "lastHarvestedAt": "2026-11-02T15:08:22.215Z",
+    "contentHash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
+    "lastHarvestedAt": "2026-11-03T10:45:51.624Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "0c22c032",
+    "sourceVersion": "3d048690",
     "license": "Apache-2.0",
-    "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
-    "lastHarvestedAt": "2026-10-31T15:42:53.841Z",
+    "contentHash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
+    "lastHarvestedAt": "2026-11-03T10:45:54.117Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "ddf515c5",
+    "sourceVersion": "3c1e052e",
     "license": "Apache-2.0",
-    "contentHash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
-    "lastHarvestedAt": "2026-10-31T01:15:10.323Z",
+    "contentHash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
+    "lastHarvestedAt": "2026-11-03T10:45:49.901Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -6583,10 +6583,10 @@
     "repository": "alexpasmantier/television",
     "platform": "github",
     "sourceUrl": "https://github.com/alexpasmantier/television",
-    "sourceVersion": "48eeeef3",
+    "sourceVersion": "13e831d5",
     "license": "MIT",
-    "contentHash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
-    "lastHarvestedAt": "2026-10-30T14:45:11.328Z",
+    "contentHash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
+    "lastHarvestedAt": "2026-11-03T10:46:19.233Z",
     "learningId": "learn-github-alexpasmantier-television"
   },
   "insertkoinio-koin": {

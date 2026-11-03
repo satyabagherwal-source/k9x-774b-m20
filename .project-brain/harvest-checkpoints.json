@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T10:37:13.363Z",
+  "last_updated": "2026-11-03T10:46:19.240Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
-      "verified_at": "2026-11-02T21:36:44.313Z",
+      "content_hash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
+      "verified_at": "2026-11-03T10:45:55.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T21:36:44.313Z"
+      "last_updated": "2026-11-03T10:45:55.788Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
-      "verified_at": "2026-11-02T15:08:22.223Z",
+      "content_hash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
+      "verified_at": "2026-11-03T10:45:51.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:08:22.223Z"
+      "last_updated": "2026-11-03T10:45:51.632Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
-      "verified_at": "2026-10-31T15:42:53.847Z",
+      "content_hash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
+      "verified_at": "2026-11-03T10:45:54.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:42:53.847Z"
+      "last_updated": "2026-11-03T10:45:54.123Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
-      "verified_at": "2026-10-31T01:15:10.332Z",
+      "content_hash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
+      "verified_at": "2026-11-03T10:45:49.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:15:10.332Z"
+      "last_updated": "2026-11-03T10:45:49.907Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -9951,14 +9951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alexpasmantier-television",
-      "content_hash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
-      "verified_at": "2026-10-30T14:45:11.337Z",
+      "content_hash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
+      "verified_at": "2026-11-03T10:46:19.239Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:45:11.337Z"
+      "last_updated": "2026-11-03T10:46:19.239Z"
     },
     "InsertKoinIO/koin": {
       "repository": "InsertKoinIO/koin",

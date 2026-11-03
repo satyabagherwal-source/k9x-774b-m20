@@ -6881,3 +6881,8 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c1ca386c` | Multi-dimensional audit evidence | 2026-11-03T10:29:44.429Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `c719b3e7` | Multi-dimensional audit evidence | 2026-11-03T10:37:08.334Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dfc8fb5e` | Multi-dimensional audit evidence | 2026-11-03T10:37:13.354Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `3c1e052e` | Multi-dimensional audit evidence | 2026-11-03T10:45:49.901Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `d465cc82` | Multi-dimensional audit evidence | 2026-11-03T10:45:51.624Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `3d048690` | Multi-dimensional audit evidence | 2026-11-03T10:45:54.117Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3703f13a` | Multi-dimensional audit evidence | 2026-11-03T10:45:55.780Z |
+| `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `13e831d5` | Multi-dimensional audit evidence | 2026-11-03T10:46:19.233Z |

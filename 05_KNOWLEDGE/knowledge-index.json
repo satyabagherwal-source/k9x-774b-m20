@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T10:37:13.270Z",
+  "last_updated": "2026-11-03T10:46:19.180Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1419,8 +1419,8 @@
       "slug": "alexpasmantier-television",
       "platform": "github",
       "source_url": "https://github.com/alexpasmantier/television",
-      "source_version": "48eeeef3",
-      "content_hash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
+      "source_version": "13e831d5",
+      "content_hash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
       "dossier_path": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
       "promoted_rules": [
@@ -1443,6 +1443,11 @@
           "number": 5779,
           "title": "Coalesced Terminal Event Render-Drain Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6496,
+          "title": "ui): cleanup input prompt and header logic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1450,7 +1455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:45:11.231Z",
+      "verified_at": "2026-11-03T10:46:19.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34258,8 +34263,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "ddf515c5",
-      "content_hash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
+      "source_version": "3c1e052e",
+      "content_hash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -34312,6 +34317,11 @@
           "number": 5980,
           "title": "object/cos: add timeout for cos (#7469)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6493,
+          "title": "cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34319,7 +34329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:15:10.218Z",
+      "verified_at": "2026-11-03T10:45:49.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43357,8 +43367,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "521c2fe2",
-      "content_hash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
+      "source_version": "3703f13a",
+      "content_hash": "3b65625d192fc632f5622025a6f3097e0cded1f5e0e9d6cde0fe009c829aeb5e",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43568,7 +43578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T21:36:44.235Z",
+      "verified_at": "2026-11-03T10:45:55.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47237,8 +47247,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "515b22a3",
-      "content_hash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
+      "source_version": "d465cc82",
+      "content_hash": "5c37e0f32eb3af77d5cdfb6c7322ee92920485487a515825c4f843ae29350143",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -47336,6 +47346,11 @@
           "number": 6425,
           "title": "refresh security context (#7996)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6494,
+          "title": "Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47343,7 +47358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:08:22.130Z",
+      "verified_at": "2026-11-03T10:45:51.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52309,8 +52324,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "0c22c032",
-      "content_hash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
+      "source_version": "3d048690",
+      "content_hash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -52343,6 +52358,11 @@
           "number": 6235,
           "title": "fix for issue causing database corruption through panic (#2181)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6495,
+          "title": "Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52350,7 +52370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:42:53.774Z",
+      "verified_at": "2026-11-03T10:45:54.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167974,6 +167994,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T10:37:13.249Z"
+    },
+    "rule-6493": {
+      "learning_id": "rule-6493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6493,
+      "title": "cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "3c1e052e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:45:49.823Z"
+    },
+    "rule-6494": {
+      "learning_id": "rule-6494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6494,
+      "title": "Merge pull request #7998 from 0xABCD01/fix/bump-panicking-deps",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "d465cc82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:45:51.556Z"
+    },
+    "rule-6495": {
+      "learning_id": "rule-6495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6495,
+      "title": "Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "3d048690",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:45:54.049Z"
+    },
+    "rule-6496": {
+      "learning_id": "rule-6496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6496,
+      "title": "ui): cleanup input prompt and header logic",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "13e831d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T10:46:19.168Z"
     }
   },
   "aliases": {

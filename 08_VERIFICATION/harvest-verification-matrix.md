@@ -6872,3 +6872,8 @@
 | `CYCLE-20261103-QAND` | `2026-11-03T10:29:44.425Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6490` | Yes (`2b3f90a8...`) |
 | `CYCLE-20261103-ZT62` | `2026-11-03T10:37:08.330Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6491` | Yes (`f9c7126a...`) |
 | `CYCLE-20261103-ZX1I` | `2026-11-03T10:37:13.350Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6492` | Yes (`382aca78...`) |
+| `CYCLE-20261103-AZM2` | `2026-11-03T10:45:49.898Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6493` | Yes (`6db5fe62...`) |
+| `CYCLE-20261103-B0XY` | `2026-11-03T10:45:51.622Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6494` | Yes (`5c37e0f3...`) |
+| `CYCLE-20261103-B2V6` | `2026-11-03T10:45:54.114Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6495` | Yes (`bb829ee5...`) |
+| `CYCLE-20261103-B45E` | `2026-11-03T10:45:55.778Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`3b65625d...`) |
+| `CYCLE-20261103-BM8U` | `2026-11-03T10:46:19.230Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6496` | Yes (`dcaf7b70...`) |

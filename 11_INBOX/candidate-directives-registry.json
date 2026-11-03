@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T21:36:44.310Z",
+  "last_updated": "2026-11-03T10:45:55.784Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3640,6 +3640,17 @@
       "source_repo": "NucleoidAI/Nucleoid",
       "source_commit": "521c2fe2",
       "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-B45K",
+      "directive_title": "Add ARC run logging and arc-debug agent",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "3703f13a",
+      "date_staged": "2026-11-03",
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
