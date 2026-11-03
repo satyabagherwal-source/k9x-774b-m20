@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:40:44.353Z",
-    "lastVerified": "2026-11-03T16:40:44.353Z",
+    "lastChecked": "2026-11-03T16:50:49.730Z",
+    "lastVerified": "2026-11-03T16:50:49.730Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T16:16:12.609Z",
-    "lastVerified": "2026-11-03T16:16:12.609Z",
+    "lastChecked": "2026-11-03T16:50:42.529Z",
+    "lastVerified": "2026-11-03T16:50:42.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1296,22 +1296,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pingcap-tidb": {
-    "name": "tidb",
+    "name": "pingcap/tidb",
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T20:11:49.553Z",
-    "lastVerified": "2026-10-31T20:11:49.553Z",
+    "lastChecked": "2026-11-03T16:50:40.675Z",
+    "lastVerified": "2026-11-03T16:50:40.675Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+    "contentHash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "49ad4202"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cryfs-cryfs": {
     "name": "cryfs",
@@ -1715,8 +1714,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T21:43:31.197Z",
-    "lastVerified": "2026-11-02T21:43:31.197Z",
+    "lastChecked": "2026-11-03T16:50:37.765Z",
+    "lastVerified": "2026-11-03T16:50:37.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -6491,14 +6490,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T19:14:45.078Z",
-    "lastVerified": "2026-10-31T19:14:45.078Z",
+    "lastChecked": "2026-11-03T16:50:46.013Z",
+    "lastVerified": "2026-11-03T16:50:46.013Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
+    "contentHash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7789,9 +7788,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-10-31T14:59:25.991Z",
+    "lastChecked": "2026-11-03T16:50:27.529Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-10-31T14:59:25.991Z"
+    "lastVerified": "2026-11-03T16:50:27.529Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -9899,9 +9898,9 @@
   "manojahi-serpiq": {
     "name": "serpiq",
     "officialUrl": "https://github.com/manojahi/serpiq",
-    "lastChecked": "2026-10-30T05:39:13.572Z",
+    "lastChecked": "2026-11-03T16:50:30.001Z",
     "revisionIdentifier": "f3330d7e",
-    "lastVerified": "2026-10-30T05:39:13.572Z"
+    "lastVerified": "2026-11-03T16:50:30.001Z"
   },
   "prof18-feed-flow": {
     "name": "prof18/feed-flow",
@@ -10976,9 +10975,9 @@
   "elai950-alerttoast": {
     "name": "AlertToast",
     "officialUrl": "https://github.com/elai950/AlertToast",
-    "lastChecked": "2026-10-30T16:51:21.525Z",
+    "lastChecked": "2026-11-03T16:50:32.471Z",
     "revisionIdentifier": "76a1c179",
-    "lastVerified": "2026-10-30T16:51:21.525Z"
+    "lastVerified": "2026-11-03T16:50:32.471Z"
   },
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",

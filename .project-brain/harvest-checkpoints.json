@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T16:40:41.795Z",
+  "last_updated": "2026-11-03T16:50:47.172Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
-      "verified_at": "2026-10-31T19:14:45.781Z",
+      "content_hash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
+      "verified_at": "2026-11-03T16:50:47.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:14:45.781Z"
+      "last_updated": "2026-11-03T16:50:47.172Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
-      "verified_at": "2026-10-31T04:22:24.079Z",
+      "content_hash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
+      "verified_at": "2026-11-03T16:50:42.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:22:24.079Z"
+      "last_updated": "2026-11-03T16:50:42.470Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

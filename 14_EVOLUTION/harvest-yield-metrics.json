@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T16:40:41.791Z",
-  "total_cycles_completed": 6910,
-  "total_learnings_persisted": 6910,
-  "total_rules_promoted": 6559,
+  "last_updated": "2026-11-03T16:50:47.168Z",
+  "total_cycles_completed": 6912,
+  "total_learnings_persisted": 6912,
+  "total_rules_promoted": 6561,
   "history": [
-    {
-      "timestamp": "2026-10-31T22:12:05.072Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T22:12:05.744Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T22:23:54.115Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1403,6 +1389,20 @@
       "repository": "emberstack/kubernetes-reflector",
       "learningId": "learn-github-emberstack-kubernetes-reflector",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T16:50:42.466Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T16:50:47.168Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

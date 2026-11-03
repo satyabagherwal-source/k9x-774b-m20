@@ -6933,3 +6933,5 @@
 | `CYCLE-20261103-FO3D` | `2026-11-03T16:25:23.641Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6540` | Yes (`56d38d3e...`) |
 | `CYCLE-20261103-OKDG` | `2026-11-03T16:32:18.724Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6541` | Yes (`fd09ef16...`) |
 | `CYCLE-20261103-ZCJD` | `2026-11-03T16:40:41.785Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6542, Rule 6543` | Yes (`a63c5e5d...`) |
+| `CYCLE-20261103-C80P` | `2026-11-03T16:50:42.457Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6544` | Yes (`72004ae0...`) |
+| `CYCLE-20261103-CBNB` | `2026-11-03T16:50:47.159Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6545` | Yes (`88219c93...`) |

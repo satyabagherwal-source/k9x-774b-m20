@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-S45W",
-    "timestamp": "2026-10-31T02:44:14.996Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-S6OX",
-    "timestamp": "2026-10-31T02:44:18.273Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-10M8",
     "timestamp": "2026-10-31T02:51:10.304Z",
     "repository": "openreplay/openreplay",
@@ -7492,6 +7462,36 @@
     "contentHash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-C80P",
+    "timestamp": "2026-11-03T16:50:42.457Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-CBNB",
+    "timestamp": "2026-11-03T16:50:47.159Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

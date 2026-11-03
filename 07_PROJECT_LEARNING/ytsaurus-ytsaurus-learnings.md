@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `5ea67989`  
+> **Source Version**: `303b4d91`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:14:45.084Z  
+> **Timestamp**: 2026-11-03T16:50:46.454Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:14:45.078Z  
+> **Harvest Timestamp**: 2026-11-03T16:50:46.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1171,17 +1171,14 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1881** (2026-11-01): **YQL: WHERE resolves input columns as GROUP BY aliases with language version 2025.02 (TPC-H Q3)**
+  *Symptoms*: ### Description  With YQL language version `2025.02`, a TPC-H Q3 query fails during type annotation when `WHERE` references input columns that also have same-name aliases in `GROUP BY`.  `WHERE` should resolve these references against the input tables before the `GROUP BY` expressions and aliases are introduced. Instead, the translator appears to resolve them as grouping aliases, then fails because those aliases have not been computed yet.  ### SQL reproducer  The following is TPC-H Q3 with minor YQL syntax adaptations. Run it against the standard TPC-H tables, adjusting `TablePathPrefix` to their location, with Query Tracker setting `yql_version: "2025.02"`:  ```sql pragma TablePathPrefix = '//home/tpc/h/1/'; pragma AnsiImplicitCrossJoin;  select 	l_orderkey, 	sum(l_extendedprice * (Decimal('1',15,6) - l_discount)) as revenue, 	o_orderdate, 	o_shippriority from 	customer, 	orders, 	lineitem where 	c_mktsegment = 'BUILDING' 	and c_custkey = o_custkey 	and l_orderkey = o_orderkey 	and o_orderdate < Date('1995-03-15') 	and l_shipdate > Date('1995-03-15') group by 	l_orderkey as l_orderkey, 	o_orderdate as o_orderdate, 	o_shippriority as o_shippriority order by 	revenue desc, 	o_orderdate limit 10; ```  ### Actual behavior  The query fails before execution with a type annotation error. The relevant errors from this example are:  ```text Type annotation   At function: OrderedFilter     At function: ==       At function: Member         16:6: Member not found: l_orderkey     At fun
+
 - **Issue #1826** (2026-10-06): **yt/cpp/mapreduce: add supported erasure codecs into EErasureCodecAttr**
   *Symptoms*: Add support for canonic (effective) names for "isa_*" codecs.  See: yt/yt/library/erasure/public.h yt/yt/library/erasure/impl/codec.cpp yt/yt/library/erasure/impl/codec_opensource.cpp  Use canonic `ECodec::IsaReedSolomon_3_3` FindCodec() which exactly same (4).  Issue: #1825 Signed-off-by: Konstantin Khlebnikov <khlebnikov@nebius.com>  ---  * Changelog entry Type: fix Component: cpp-sdk  Fix support of erasure codecs isa_reed_solomon_3_3 and isa_reed_solomon_6_3 
   **Post-Mortem & Fix Analysis**:
   > `02.09.2026, 13:56:17` PR autocheck started. Watch workflow progress [here](https://github.com/ytsaurus/ytsaurus/actions/runs/33638771584). `02.09.2026, 13:57:12` PR autocheck finished. Statuses: Strawberry controller: cancelled CMake build+check: skipped Ya-make build: skipped Tests: skipped 
   > `02.09.2026, 13:57:47` PR autocheck started. Watch workflow progress [here](https://github.com/ytsaurus/ytsaurus/actions/runs/33638818989). `02.09.2026, 22:02:03` Tests finished. 0 `02.09.2026, 22:02:13` PR autocheck finished. Statuses: Strawberry controller: success CMake build+check: failure Ya-make build: success Tests: failure 
-
-- **Issue #1825** (2026-10-16): **Fix list of supported erasure codecs**
-  *Symptoms*: There is sill some minor huge mess.  https://github.com/ytsaurus/ytsaurus/blob/main/yt/yt/library/erasure/public.h  https://github.com/ytsaurus/ytsaurus/blob/main/yt/yt/library/erasure/impl/codec.cpp  https://github.com/ytsaurus/ytsaurus/blob/main/yt/yt/library/erasure/impl/codec_opensource.cpp  https://github.com/ytsaurus/ytsaurus/blob/main/yt/cpp/mapreduce/interface/common.h#L455  Right now we are seeing that YQL cannot write into "reed_solomon_6_3" with one reason: `Materialization failed: Unsupported erasure codec "reed_solomon_6_3"` and "isa_reed_solomon_6_3" with another: `tools/enum_parser/enum_serialization_runtime/enum_runtime.cpp:70: Key 'isa_reed_solomon_6_3' not found in enum NYT::EErasureCodecAttr. Valid options are: 'none', 'reed_solomon_6_3', 'lrc_12_2_2', 'isa_lrc_12_2_2'`.  Canonical "isa_*" should be supported everywhere and just work. Support of legacy aliases is optional.
-  **Post-Mortem & Fix Analysis**:
-  > related  chnage https://github.com/ytsaurus/ytsaurus/commit/305fa0c7f50262b667988c13695696371c2d3c22 @Quid37 
-  > Another mess:  ``` # yt get-features ...   "erasure_codecs" = [     "none";     "isa_lrc_12_2_2";     "reed_solomon_3_3";     "isa_reed_solomon_6_3";   ]; ... ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1198,279 +1195,279 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9067a5fd` (2026-10-31)
-**Commit Message**: YT-30107: Reserve estimated memory for heavy commands before execution
+### Incident Patch 1: `b90c8fa3` (2026-11-03)
+**Commit Message**: Fix test_schema_coexistence class timeout
 
-- Changelog entry
-  Type: fix
-  Component: proxy
+Increase TestChaosRpcProxy from 40 to 100 partitions so slow test groups fit within the existing class execution limit.
 
-Reserve estimated memory for heavy driver requests before execution to avoid proxies OOM.
-commit_hash:7d17d03398eb9a59614293dd2c307c94b14a4f4e
+Assigned YT test: test_chaos.py::TestChaosRpcProxy[35]::test_schema_coexistence[async-3-schemas1] (savrus, osidorkin)
 
-**File**: `yt/yt/client/driver/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
+Test history: https://nda.ya.ru/t/TYkSMMDb7vkK85
+commit_hash:fee2173ba2266fb466d189401c98034631120e6e
+
+**File**: `yt/yt/tests/integration/dynamic_tables/test_chaos.py` (modified, +23/-6)
 ```diff
-@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
-```
-
-**File**: `yt/yt/client/driver/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
-```
-
-**File**: `yt/yt/client/driver/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
-```
-
-**File**: `yt/yt/client/driver/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
-```
-
-**File**: `yt/yt/client/driver/CMakeLists.windows-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ target_sources(yt-client-driver PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
-```
-
-**File**: `yt/yt/client/driver/command_memory_estimate.cpp` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+#include "command_memory_estimate.h"
-+
-+#include "config.h"
-+
-+#include <yt/yt/client/api/config.h>
-+
-+#include <yt/yt/client/table_client/config.h>
-+
-+#include <yt/yt/core/ytree/node.h>
-+#include <yt/yt/core/ytree/yson_struct.h>
-+
-+namespace NYT::NDriver {
-+
-+using namespace NYTree;
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+namespace {
-+
-+template <class TConfig>
-+TIntrusivePtr<TConfig> GetEffectiveConfig(
-+    const TIntrusivePtr<TConfig>& config,
-+    const IMapNodePtr& parameters,
-+    TStringBuf parameterName)
-+{
-+    auto patch = parameters ? parameters->FindChild(parameterName) : INodePtr();
-+    return patch ? UpdateYsonStruct(config, patch) : config;
-+}
-+
-+} // namespace
-+
-+std::optional<i64> EstimateHeavyCommandMemoryUsage(
-+    const std::string& commandName,
-+    const TDriverConfigPtr& config,
-+    const IMapNodePtr& parameters)
-+{
-+    if (commandName == "read_file" || commandName == "read_file_partition") {
-+        return GetEffectiveConfig(config->FileReader, parameters, "file_reader")->MaxBufferSize;
-+    }
-+    if (commandName == "read_table" || commandName == "read_blob_table") {
-+        return GetEffectiveConfig(config->TableReader, parameters, "table_reader")->MaxBufferSize;
-+    }
-+    if (commandName == "read_table_partition") {
-+        // The partition reader ignores the driver config and uses the default one.
-+        static const auto DefaultTableReaderConfig = New<NTableClient::TTableReaderConfig>();
-+        return DefaultTableReaderConfig->MaxBufferSize;
-+    }
-+    if (commandName == "write_file") {
-+        auto writerConfig = GetEffectiveConfig(config->FileWriter, parameters, "file_writer");
-+        return writerConfig->BlockSize + writerConfig->EncodeWindowSize;
-+    }
-+    if (commandName == "write_file_fragment") {
-+        // The file fragment writer ignores the driver config and uses the default one.
-+        static const auto DefaultFileWriterConfig = New<NApi::TFileWriterConfig>();
-+        return DefaultFileWriterConfig->BlockSize + DefaultFileWriterConfig->EncodeWindowSize;
-+    }
-+    if (commandName == "write_table" || commandName == "write_table_fragment") {
-+        auto writerConfig = GetEffectiveConfig(config->TableWriter, parameters, "table_writer");
-+        return writerConfig->MaxBufferSize + writerConfig->EncodeWindowSize;
-+    }
-+    return std::nullopt;
-+}
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+} // namespace NYT::NDriver
-```
-
-**File**: `yt/yt/client/driver/command_memory_estimate.h` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+#pragma once
-+
-+#include "public.h"
-+
-+#include <yt/yt/core/ytree/public.h>
-+
-+namespace NYT::NDriver {
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+//! Returns an upper bound of the memory a heavy command may hold in its reader or writer buffers,
-+//! derived from |config| and the per-request config overrides in |parameters|.
-+//! Returns null for commands without a known estimate.
-+std::optional<i64> EstimateHeavyCommandMemoryUsage(
-+    const std::string& commandName,
-+    const TDriverConfigPtr& config,
-+    const NYTree::IMapNodePtr& parameters);
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+} // namespace NYT::NDriver
-```
-
-**File**: `yt/yt/client/driver/ya.make` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ SRCS(
-     bundle_controller_commands.cpp
-     chaos_commands.cpp
-     command.cpp
-+    command_memory_estimate.cpp
-     config.cpp
-     cypress_commands.cpp
-     distributed_table_commands.cpp
+@@ -4411,8 +4411,12 @@ def _check(error):
+     @pytest.mark.parametrize("tablet_count", [1, 3])
+     @pytest.mark.parametrize("mode", ["sync", "async", "async_queue"])
+     def test_schema_coexistence(self, schemas, tablet_count, mode):
+-        cell_id = self._sync_create_chaos_bundle_and_cell()
+-        sync_create_cells(1)
++        primary_driver, remote_driver0, _ = self._get_drivers()
++        cell_id, _, _ = map_in_parallel(lambda create_cells: create_cells(), [
++            self._sync_create_chaos_bundle_and_cell,
++            lambda: sync_create_cells(1, driver=primary_driver),
++            lambda: sync_create_cells(1, driver=remote_driver0),
++        ])
+ 
+         enabled = mode != "async_queue"
+         replica_mode = "sync" if mode == "sync" else "async"
+@@ -4426,7 +4430,6 @@ def test_schema_coexistence(self, schemas, tablet_count, mode):
+             {"cluster_name": "remote_0", "content_type": "queue", "mode": replica_mode, "enabled": True, "replica_path": "//tmp/rqa"},
+         ]
+         card_id, replica_ids = self._create_chaos_tables(cell_id, replicas[:3], create_replica_tables=False, sync_replication_era=False)
+-        _, remote_driver0, remote_driver1 = self._get_drivers()
+ 
+         create("chaos_replicated_table", "//tmp/crt", attributes={
+             "replication_card_id": card_id,
+@@ -4449,15 +4452,29 @@ def _create_pivots(schema):
+         )
+ 
+         replica_ids.append(self._create_chaos_table_replica(replicas[3], replication_card_id=card_id, catchup=False))
+-        self._create_replica_tables(replicas[3:4], replica_ids[3:4], schema=schema1, pivot_keys=_create_pivots(schema1))
++        self._create_replica_tables(
++            replicas[3:4],
++            replica_ids[3:4],
++            create_tablet_cells=False,
++            schema=schema1,
++            pivot_keys=_create_pivots(schema1),
++        )
+         self._sync_replication_era(card_id)
+ 
+         sync_unmount_table("//tmp/rqs", driver=remote_driver0)
+         progress = get("#{0}/@replication_progress".format(replica_ids[3]))
+         replica_ids.append(self._create_chaos_table_replica(replicas[4], replication_card_id=card_id, replication_progress=progress))
+         replica_ids.append(self._create_chaos_table_replica(replicas[5], replication_card_id=card_id, replication_progress=progress))
+-        sync_mount_table("//tmp/rqs", driver=remote_driver0)
+-        self._create_replica_tables(replicas[4:], replica_ids[4:], schema=schema1, pivot_keys=_create_pivots(schema1), replication_progress=progress)
++        self._create_replica_tables(
++            replicas[4:],
++            replica_ids[4:],
++            create_tablet_cells=False,
++            mount_tables=False,
++            schema=schema1,
++            pivot_keys=_create_pivots(schema1),
++            replication_progress=progress,
++        )
++        self._mount_replicas(replicas[3:])
+         self._sync_replication_era(card_id)
+ 
+         assert get("//tmp/pd/@tablet_count") == tablet_count
 ```
 
 ---
 
-### Incident Patch 2: `9818d390` (2026-10-31)
-**Commit Message**: Fix typo in chaos-dynamic-tables.md
+### Incident Patch 2: `c58a681a` (2026-11-03)
+**Commit Message**: YT-30042: increase timeout for size_s tests
+commit_hash:71e16d13ac2cebebb80da8fe2853c89b2311aa61
 
-При перешардировании очередей надо наблюдать что прогресс репликации движется, а replication_lag_time наоборот должен быть околонулевым.
-
----
-
-Pull Request resolved: https://github.com/ytsaurus/ytsaurus/pull/1892
-commit_hash:3ad55157f19984a15125d44da966e2a8631eb4bc
-
-**File**: `yt/docs/ru/_includes/user-guide/dynamic-tables/chaos-dynamic-tables.md` (modified, +1/-1)
+**File**: `yt/yt/tests/integration/size_s/ya.make` (modified, +1/-0)
 ```diff
-@@ -117,7 +117,7 @@ $ yt --proxy replica_cluster create replication_log_table //path/to/replication_
- Реплики-очереди являются очередями, и поэтому нельзя напрямую изменить количество таблетов в таких репликах. Перешардирование реплик-очередей возможно только через пересоздание. Сделать это можно следующим способом:
+@@ -5,6 +5,7 @@ SET(YT_SPLIT_FACTOR 60)
+ ENV(YT_TEST_FILTER=SMALL)
  
- 1. Завести новые реплики-очереди с желаемым количеством шардов в sync-режиме и указав `catchup=%false` и `replicated_table_tracker_enabled=%false` с новым путем. Последнее нужно, чтобы все новые реплики не стали async.
--2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_time должен расти
-+2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_timestamp должен расти
- 3. Сгенерировать таймстемп `yt generate-timestamp` и запомнить его
- 4. Дождаться, когда значение replication_lag_timestamp _всех_ реплик будет больше, чем timestamp, сгенерированный на предыдущем шаге. Посмотреть replication_lag_timestamp реплик таблицы можно командой
- ```bash
+ INCLUDE(../YaMakeDependsBoilerplate.txt)
++TIMEOUT(2400)
+ 
+ YT_SPEC(yt/yt/tests/integration/spec_job_batching.yson)
+ 
 ```
 
 ---
 
-### Incident Patch 3: `580592b6` (2026-10-31)
-**Commit Message**: YT-30200: Send job proxy heartbeat before requesting memory reserve increase
+### Incident Patch 3: `303b4d91` (2026-11-03)
+**Commit Message**: YT-30228: Fix case
+commit_hash:79752cde487cf32e2d274dc8c273385121ace7f5
 
-When the node detects a resource overdraft on `UpdateResourceUsage`, it aborts the job immediately and reports the statistics from the job proxy's last periodic heartbeat. A job that grows quickly can overdraft before its first heartbeat, so the abort carries no `user_job/max_memory` / `job_proxy/max_memory`. `TTask::OnJobResourceOverdraft` then falls back to comparing reserve gaps against zero usage and blames the process with the smaller reserve (usually the job proxy); the user job reserve is never increased.
-
-Observed in `TestAllocationSizeIncrease::test_allocation_aborted_on_resource_lack`: job ran ~1.7s, controller logged `JobProxyMaxMemory: 0, UserJobMaxMemory: 0`, chose job proxy overdraft, the restarted job kept the old reserve and the expected `node_resource_overcommit` abort never happened.
-
-Fix: in `CheckMemoryUsage`, deliver a heartbeat (and wait for it) before requesting a larger memory reserve. The user job memory tracker has already recorded the new peak at this point, so the node holds fresh `max_memory` if it aborts. `RequestedMemoryReserve_` is bumped after the heartbeat so concurrent C
-
-**File**: `yt/yt/server/job_proxy/job_proxy.cpp` (modified, +13/-1)
+**File**: `yt/yt/library/query/base/expr_builder_v2.cpp` (modified, +10/-0)
 ```diff
-@@ -398,6 +398,7 @@ void TJobProxy::SendHeartbeat()
- 
-     auto job = FindJob();
-     if (!job) {
-+        LastHeartbeatFuture_ = OKFuture;
-         return;
-     }
- 
-@@ -445,7 +446,7 @@ void TJobProxy::SendHeartbeat()
+@@ -50,6 +50,10 @@ TConstExpressionPtr CreateCoercion(EValueType type, TConstExpressionPtr operand)
+         castName = "uint64";
+     } else if (type == EValueType::Double) {
+         castName = "double";
++    } else if (type == EValueType::Boolean) {
++        castName = "boolean";
++    } else if (type == EValueType::String) {
++        castName = "string";
+     } else if (type == EValueType::Any) {
+         castName = "to_any";
+     } else {
+@@ -1145,6 +1149,12 @@ TConstExpressionPtr TExpressionBuilderV2::OnCaseOp(const NAst::TCaseExpression*
          }
      }
  
--    req->Invoke().Subscribe(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
-+    LastHeartbeatFuture_ = req->Invoke().AsVoid().Apply(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
- }
- 
- void TJobProxy::OnHeartbeatResponse(const TError& error)
-@@ -2077,6 +2078,17 @@ void TJobProxy::CheckMemoryUsage()
-         YT_TLOG_DEBUG("Requesting node for memory usage increase")
-             .With("OldMemoryReserve", RequestedMemoryReserve_.load())
-             .With("NewMemoryReserve", memoryReserve);
-+        // The node may abort the job for overdraft on this request, reporting the statistics it has.
-+        // Deliver fresh max_memory first; otherwise the controller agent cannot tell which process overdrafted.
-+        auto executedEvent = HeartbeatExecutor_->GetExecutedEvent();
-+        HeartbeatExecutor_->ScheduleOutOfBand();
-+        auto error = WaitFor(executedEvent);
-+        if (error.IsOK()) {
-+            auto heartbeatFuture = LastHeartbeatFuture_;
-+            error = WaitFor(heartbeatFuture);
-+        }
-+        YT_TLOG_ERROR_UNLESS(error.IsOK(), "Failed to send heartbeat before memory reserve increase")
-+            .With(error);
-         RequestedMemoryReserve_ = memoryReserve;
-         UpdateResourceUsage();
-     }
++    if (typedDefaultExpression &&
++        resultType != TypingCtx_.GetTypeId(typedDefaultExpression->GetWireType()))
++    {
++        typedDefaultExpression = CreateCoercion(TypingCtx_.GetWireType(resultType), typedDefaultExpression);
++    }
++
+     return New<TCaseExpression>(
+         TypingCtx_.GetWireType(resultType),
+         std::move(typedOptionalOperand),
 ```
 
-**File**: `yt/yt/server/job_proxy/job_proxy.h` (modified, +1/-0)
+**File**: `yt/yt/library/query/engine/cg_fragment_compiler.cpp` (modified, +6/-1)
 ```diff
-@@ -167,6 +167,7 @@ class TJobProxy
-     NApi::NNative::IClientPtr Client_;
+@@ -1657,6 +1657,8 @@ TCGValue CodegenRelationalBinaryOpExpr(
+         Value* evalData = nullptr;
  
-     NConcurrency::TPeriodicExecutorPtr HeartbeatExecutor_;
-+    TFuture<void> LastHeartbeatFuture_ = OKFuture;
-     NConcurrency::TPeriodicExecutorPtr MemoryWatchdogExecutor_;
+         switch (operandType) {
++            case EValueType::Null:
++                return compareNulls();
+             case EValueType::Int64:
+                 switch (opcode) {
+                     CMP_OP(Equal, ICmpEQ)
+@@ -2385,6 +2387,7 @@ TCGValue CodegenCaseExpr(
+     TRange<std::pair<size_t, size_t>> whenThenExpressionIds,
+     std::optional<size_t> defaultId,
+     EValueType resultType,
++    bool nullable,
+     TCGExprContext& builder)
+ {
+     auto* resultPtr = CodegenAllocateValues(builder, /*valueCount*/ 1);
+@@ -2431,7 +2434,7 @@ TCGValue CodegenCaseExpr(
+     builder->CreateBr(endBB);
  
-     TDuration RefCountedTrackerLogPeriod_;
+     builder->SetInsertPoint(endBB);
+-    return TCGValue::LoadFromRowValue(builder, resultPtr, resultType);
++    return TCGValue::LoadFromRowValue(builder, resultPtr, nullable, resultType);
+ }
+ 
+ } // namespace NDetail
+@@ -2441,6 +2444,7 @@ TCodegenExpression MakeCodegenCaseExpr(
+     std::vector<std::pair<size_t, size_t>> whenThenExpressionIds,
+     std::optional<size_t> defaultId,
+     EValueType resultType,
++    bool nullable,
+     TComparerManagerPtr comparerManager,
+     bool useCanonicalNullRelations)
+ {
+@@ -2480,6 +2484,7 @@ TCodegenExpression MakeCodegenCaseExpr(
+             whenThenExpressionIds,
+             defaultId,
+             resultType,
++            nullable,
+             builder);
+     };
+ }
+```
+
+**File**: `yt/yt/library/query/engine/cg_fragment_compiler.h` (modified, +1/-0)
+```diff
+@@ -148,6 +148,7 @@ TCodegenExpression MakeCodegenCaseExpr(
+     std::vector<std::pair<size_t, size_t>> whenThenExpressionIds,
+     std::optional<size_t> defaultId,
+     EValueType resultType,
++    bool nullable,
+     TComparerManagerPtr comparerManager,
+     bool useCanonicalNullRelations);
+ 
+```
+
+**File**: `yt/yt/library/query/engine/folding_profiler.cpp` (modified, +5/-1)
+```diff
+@@ -902,7 +902,7 @@ size_t TExpressionProfiler::Profile(
+             {.ExecutionBackend = ExecutionBackend_},
+             Id_),
+         functionExpr->GetWireType(),
+-        function->IsNullable(nullableArgs));
++        functionExpr->GetWireType() == EValueType::Null || function->IsNullable(nullableArgs));
+ 
+     if (ExecutionBackend_ == EExecutionBackend::WebAssembly) {
+         if (auto bytecode = function->GetWebAssemblyBytecodeFile(); !bytecode.Data.Empty()) {
+@@ -1154,6 +1154,7 @@ size_t TExpressionProfiler::Profile(
+     id.AddInteger(static_cast<int>(ExecutionBackend_));
+     id.AddInteger(static_cast<int>(EFoldingObjectType::CaseExpr));
+     id.AddInteger(static_cast<ui8>(caseExpr->GetWireType()));
++    id.AddBoolean(UseCanonicalNullRelations_);
+     id.AddBoolean(static_cast<bool>(caseExpr->OptionalOperand));
+     if (caseExpr->OptionalOperand) {
+         id.AddInteger(static_cast<ui8>(caseExpr->OptionalOperand->GetWireType()));
+@@ -1209,6 +1210,8 @@ size_t TExpressionProfiler::Profile(
+         ++fragments->Items[*defaultExprId].UseCount;
+ 
+         nullable |= fragments->Items[*defaultExprId].Nullable;
++    } else {
++        nullable = true;
+     }
+ 
+     auto argIds = std::vector<size_t>();
+@@ -1228,6 +1231,7 @@ size_t TExpressionProfiler::Profile(
+             std::move(whenThenExpressionIds),
+             defaultExprId,
+             caseExpr->GetWireType(),
++            nullable,
+             ComparerManager_,
+             UseCanonicalNullRelations_),
+         caseExpr->GetWireType(),
+```
+
+**File**: `yt/yt/library/query/unittests/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
+```diff
+@@ -90,6 +90,7 @@ target_sources(library-query-unittests.global PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
+```
+
+**File**: `yt/yt/library/query/unittests/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
+```diff
+@@ -90,6 +90,7 @@ target_sources(library-query-unittests.global PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
+```
+
+**File**: `yt/yt/library/query/unittests/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+```diff
+@@ -94,6 +94,7 @@ target_sources(library-query-unittests.global PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
+```
+
+**File**: `yt/yt/library/query/unittests/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
+```diff
+@@ -94,6 +94,7 @@ target_sources(library-query-unittests.global PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
+- **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 - **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1882** (closed): Fix group by alias (@Tony-Romanov)
-- **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1490,28 +1487,55 @@ Fix: in `CheckMemoryUsage`, deliver a heartbeat (and wait for it) before request
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30107: Reserve estimated memory for heavy commands before execution
+## X. test_schema_coexistence class timeout
 
 **RULE**:
-When implementing operations in `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_chaos.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9067a5fd`: YT-30107: Reserve estimated memory for heavy commands before execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b90c8fa3`: test_schema_coexistence class timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_chaos.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+        primary_driver, remote_driver0, _ = self._get_drivers()
+        cell_id, _, _ = map_in_parallel(lambda create_cells: create_cells(), [
+            self._sync_create_chaos_bundle_and_cell,
+            lambda: sync_create_cells(1, driver=primary_driver),
+            lambda: sync_create_cells(1, driver=remote_driver0),
+        ])
+        self._create_replica_tables(
+            replicas[3:4],
+            replica_ids[3:4],
+            create_tablet_cells=False,
+            schema=schema1,
+            pivot_keys=_create_pivots(schema1),
+        )
+        self._create_replica_tables(
+            replicas[4:],
+            replica_ids[4:],
+            create_tablet_cells=False,
+            mount_tables=False,
+            schema=schema1,
+            pivot_keys=_create_pivots(schema1),
+            replication_progress=progress,
+        )
+        self._mount_replicas(replicas[3:])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        cell_id = self._sync_create_chaos_bundle_and_cell()
+        sync_create_cells(1)
+        _, remote_driver0, remote_driver1 = self._get_drivers()
+        self._create_replica_tables(replicas[3:4], replica_ids[3:4], schema=schema1, pivot_keys=_create_pivots(schema1))
+        sync_mount_table("//tmp/rqs", driver=remote_driver0)
+        self._create_replica_tables(replicas[4:], replica_ids[4:], schema=schema1, pivot_keys=_create_pivots(schema1), replication_progress=progress)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9067a5fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b90c8fa3` are properly handled with clean fallback behavior.

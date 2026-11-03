@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `49ad4202`  
+> **Source Version**: `644e2d55`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T04:22:23.628Z  
+> **Timestamp**: 2026-11-03T16:50:41.736Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T04:22:22.806Z  
+> **Harvest Timestamp**: 2026-11-03T16:50:40.675Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40691 stars
+- **Stars / Engagement**: 40706 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72542** (2026-10-30): **build: resolve Bazel Go deps through GOPROXY (#69844)**
-  *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #69513  Cherry-pick #69844 (the release-8.5 backport of master #69503) to **release-8.5-20260715-v8.5.7**. This CB branched immediately before #69844 and still uses the retired Go-module mirror URL flow.  This is the standalone prerequisite for #72522; it does not include the Go 1.27 Bazel-tooling or ABI changes.  ### What changed?  - Generate Go dependency repositories using module `sum` and `version`, resolved through the configured `GOPROXY`, instead of static mirror URLs and archive SHA/strip-prefix metadata. - Remove the old ZIP mirroring/upload implementation and unused skylark parser dependency. Keep legacy CLI flags as deprecated no-ops and retain the release-branch generation behavior. - Update the preparation/mirror Makefile targets to use the migrated generator. - Resolve the automated cherry-pick's committed kvproto conflict in `DEPS.bzl`. Keep cosmos's existing **v0.0.0-20261026041219-2c5f843b9827** and its verified module sum **h1:36snzl9cRshFt/A9/mzbYPk5C9Y+iZlNQIUCvR5SUb4=**, not the older June version from the historical source PR.  - Align the Bazel Go SDK from **1.25.10 to 1.25.14**, matching the existing root module and pinned kvproto minimum. With `GOTOOLCHAIN=local`, GOPROXY fetching enforces this requirement; the old ZIP extraction path had hidden the mismatch.  No Go directive, dependency-version or Go 1.27 upgrade is introduced. The initial conflict repair changes only the kvproto declaration; th
+- **Issue #72667** (2026-11-03): **server: restore session on change user auth failure**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69691  Problem Summary:  Backport the connection session restoration fix from #69692 to `cdc-based-release-8.5.5-active-active`. If authentication during `COM_CHANGE_USER` failed, the connection could retain the newly opened session instead of restoring the previously authenticated session.  ### What changed and how does it work?  The change keeps the old user, database, authentication plugin, and session context until the new authentication succeeds. Any failed authentication path closes the new context and restores the previous session state.  The active-active branch predates the resource-group counter API added by the upstream fix, so the unrelated resource-group bookkeeping line was omitted.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Comma
 
-- **Issue #72540** (2026-10-30): **mvservice, domain: integrate automatic materialized view maintenance**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The merged MVService scheduling engine needs production SQL/metadata adapters and startup wiring to run automatic materialized view maintenance. This PR connects refresh and log purge to the running TiDB service, the existing concurrency/backpressure variables and runtime monitoring.  ### What changed and how does it work?  - Implement infosync membership discovery, instance deduplication, InfoSchema lookup and schedule loading, plus restricted SQL for automatic fast refresh and log purge. Apply global maintenance settings to borrowed system sessions and restore them on success and failure. - Persist manual-cancellation backoff through the existing metadata transactions, and filter MV-related DDL events for reload notifications. - Register the service and DDL consumer during Domain initialization, start the service during normal bootstrap, and manage the scheduler and cross-TiDB DDL notification loops through the Domain lifecycle. - Bind the four existing task concurrency/b
+- **Issue #72657** (2026-11-03): ***: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (#72640) | tidb-test=release-8.5-20260715-v8.5.7**
+  *Symptoms*: This is an automated cherry-pick of #72640  This is an automated cherry-pick of #72534  ### What problem does this PR solve?  Issue Number: close #72629  Problem Summary: Dependabot alert GHSA-8wmf-6v46-5gfg (CVE-2026-81870, low severity). OpenTelemetry Go < 1.45.0 can write trace exporter endpoint config to Info-level internal logs when an SDK `TracerProvider` is created. `go.opentelemetry.io/otel/exporters/otlp/otlptrace` was pinned at v1.22.0, which is in the vulnerable range.  ### What changed and how does it work?  - Upgrade OpenTelemetry core, SDK, trace exporters, and related modules to v1.45.0, and gRPC to v1.83.2, retaining the security fixes. - Keep the otelgrpc v0.59.0 compatibility replacement while etcd 3.5 still uses the legacy interceptors removed in v0.60.0. Include the generated Bazel dependency updates and the embedded-etcd unary/streaming RPC regression test. - Build external plugins in a temporary Go workspace containing both the plugin module and the TiDB module it imports. Go does not inherit dependency-module replacements, which otherwise makes the plugin use a different otelgrpc version and fail at `plugin.Open`. Preserve an existing workspace when the caller has already supplied one. - Add a regression that compiles a real plugin and loads it into a host with a dependency replacement. Cover Classic, NextGen, and an existing workspace, and verify that module files are unchanged. Regenerate the plugin packager's Bazel test target.  ### Check List  Tests
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,444 +1940,438 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49ad4202` (2026-10-30)
-**Commit Message**: planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078)
+### Incident Patch 1: `6dd4c55c` (2026-11-03)
+**Commit Message**: fix(deps): retain etcd compatibility with otelgrpc
 
-ref pingcap/tidb#71999
+Pin only the otelgrpc instrumentation module to v0.59.0 while etcd 3.5 still requires the legacy interceptors removed in v0.60.0. Keep OpenTelemetry core, SDK and exporters at v1.45.0 and gRPC at v1.83.2, preserving both security fixes.
 
-**File**: `pkg/planner/cardinality/row_count_column.go` (modified, +32/-0)
+Add an embedded-etcd unary/streaming RPC regression test, verified to fail with the previous dependency graph and pass with the compatibility pin. Regenerate Bazel dependencies and include the transitive tooling graph changes required by go mod tidy.
+
+Validated make lint, module integrity, owner and streamhelper tests with failpoints enabled, classic and NextGen Go/Bazel test compilation, tidb-server build, and gRPC transport regression tests.
+
+**File**: `DEPS.bzl` (modified, +11/-10)
 ```diff
-@@ -256,6 +256,19 @@ func betweenRowCountOnColumn(sctx planctx.PlanContext, c *statistics.Column, l,
- 	return histBetweenCnt
- }
- 
-+// allColumnsHaveStats returns true if the first n columns of idxCols all have valid column statistics.
-+func allColumnsHaveStats(sctx planctx.PlanContext, coll *statistics.HistColl, idxCols []*expression.Column, n int) bool {
-+	if n > len(idxCols) {
-+		return false
-+	}
-+	for _, col := range idxCols[:n] {
-+		if statistics.ColumnStatsIsInvalid(coll.GetCol(col.UniqueID), sctx, coll, col.UniqueID) {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- // getPseudoRowCountWithPartialStats calculates the row count if there are no statistics on the index, but there are column stats available.
- func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistics.HistColl, indexRanges []*ranger.Range,
- 	tableRowCount float64, idxCols []*expression.Column) (totalCount float64, maxCount float64, err error) {
-@@ -284,7 +297,26 @@ func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistic
- 	)
- 	totalCount = float64(0)
- 	maxCount = float64(0)
-+	colsIDs := make([]int64, len(idxCols))
-+	for i, col := range idxCols {
-+		colsIDs[i] = col.UniqueID
-+	}
- 	for _, indexRange := range indexRanges {
-+		// Prefer exponential backoff when every column of the range has statistics. Assuming independence by
-+		// multiplying the single column selectivities can badly underestimate an index whose columns each have
-+		// a low NDV. If any column lacks statistics (e.g. a virtual column), exponential backoff would skip it
-+		// entirely, so fall back to the pseudo estimation for that column below.
-+		if len(indexRange.LowVal) > 1 && allColumnsHaveStats(sctx, coll, idxCols, len(indexRange.LowVal)) {
-+			sel, _, maxSel, ok, err := expBackoffEstimationByColIDs(sctx, coll, colsIDs, 0, len(idxCols), false, indexRange, idxCols)
-+			if err != nil {
-+				return 0, 0, errors.Trace(err)
-+			}
-+			if ok {
-+				totalCount += sel * tableRowCount
-+				maxCount += maxSel * tableRowCount
-+				continue
-+			}
-+		}
- 		selectivity := float64(1.0)
- 		corrSelectivity := float64(1.0)
- 		for i := range indexRange.LowVal {
+@@ -715,8 +715,8 @@ def go_deps():
+         name = "com_github_bazelbuild_rules_go",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/bazelbuild/rules_go",
+-        sum = "h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=",
+-        version = "v0.42.1-0.20231101215950-df20c987afcb",
++        sum = "h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=",
++        version = "v0.49.0",
+     )
+     go_repository(
+         name = "com_github_bboreham_go_loser",
+@@ -2053,8 +2053,8 @@ def go_deps():
+         name = "com_github_golang_mock",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/golang/mock",
+-        sum = "h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=",
+-        version = "v1.6.0",
++        sum = "h1:YojYx61/OLFsiv6Rw1Z96LpldJIy31o+UHmwAUMJ6/U=",
++        version = "v1.7.0-rc.1",
+     )
+     go_repository(
+         name = "com_github_golang_protobuf",
+@@ -3217,8 +3217,8 @@ def go_deps():
+         name = "com_github_lyft_protoc_gen_star_v2",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/lyft/protoc-gen-star/v2",
+-        sum = "h1:/3+/2sWyXeMLzKd1bX+ixWKgEMsULrIivpDsuaF441o=",
+-        version = "v2.0.3",
++        sum = "h1:sIXJOMrYnQZJu7OB7ANSF4MYri2fTEGIsRLz6LwI4xE=",
++        version = "v2.0.4-0.20230330145011-496ad1ac90a4",
+     )
+     go_repository(
+         name = "com_github_macabu_inamedparam",
+@@ -6190,8 +6190,9 @@ def go_deps():
+         name = "io_opentelemetry_go_contrib_instrumentation_google_golang_org_grpc_otelgrpc",
+         build_file_proto_mode = "disable_global",
+         importpath = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+-        sum = "h1:q4XOmH/0opmeuJtPsbFNivyl7bCt7yRBbeEm2sC/XtQ=",
+-        version = "v0.61.0",
++        replace = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
++        sum = "h1:rgMkmiGfix9vFJDcDi1PK8WEQP4FLQwLDfhp5ZLpFeE=",
++        version = "v0.59.0",
+     )
+     go_repository(
+         name = "io_opentelemetry_go_contrib_instrumentation_net_http_otelhttp",
+@@ -6400,8 +6401,8 @@ def go_deps():
+         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
+         build_file_proto_mode = "disable_global",
+         importpath = "google.golang.org/grpc/cmd/protoc-gen-go-grpc",
+-        sum = "h1:M1YKkFIboKNieVO5DLUEVzQfGwJD30Nv2jfUgzb5UcE=",
+-        version = "v1.1.0",
++        sum = "h1:rNBFJjBCOgVr9pWD7rs/knKL4FRTKgpZmsRfV214zcA=",
++        version = "v1.3.0",
+     )
+     go_repository(
+         name = "org_golang_google_grpc_examples",
 ```
 
-**File**: `pkg/planner/cardinality/row_count_index.go` (modified, +13/-6)
+**File**: `go.mod` (modified, +4/-1)
 ```diff
-@@ -451,14 +451,22 @@ func equalRowCountOnIndex(sctx planctx.PlanContext, idx *statistics.Index, b []b
- 
- // expBackoffEstimation estimate the multi-col cases following the Exponential Backoff. See comment below for details.
- func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll *statistics.HistColl, indexRange *ranger.Range, idxCols []*expression.Column) (sel float64, minSel float64, maxSel float64, success bool, err error) {
-+	idxHasStats := idx.Histogram.Len() > 0 || idx.TopN.Num() > 0
-+	return expBackoffEstimationByColIDs(sctx, coll, coll.Idx2ColUniqueIDs[idx.Histogram.ID], idx.NDV, len(idx.Info.Columns), idxHasStats, indexRange, idxCols)
-+}
-+
-+// expBackoffEstimationByColIDs is the core of expBackoffEstimation. It does not require index statistics:
-+// colsIDs are the unique IDs of the index columns, idxNDV is the index NDV (0 if unknown), numIdxCols is the
-+// number of index columns, and idxHasStats indicates whether the index itself has a histogram or TopN.
-+func expBackoffEstimationByColIDs(sctx planctx.PlanContext, coll *statistics.HistColl, colsIDs []int64, idxNDV int64, numIdxCols int, idxHasStats bool,
-+	indexRange *ranger.Range, idxCols []*expression.Column) (sel float64, minSel float64, maxSel float64, success bool, err error) {
- 	tmpRan := []*ranger.Range{
- 		{
- 			LowVal:    make([]types.Datum, 1),
- 			HighVal:   make([]types.Datum, 1),
- 			Collators: make([]collate.Collator, 1),
- 		},
- 	}
--	colsIDs := coll.Idx2ColUniqueIDs[idx.Histogram.ID]
- 	singleColumnEstResults := make([]float64, 0, len(indexRange.LowVal))
- 	minSel, maxSel = 1.0, 1.0
- 	// The following codes uses Exponential Backoff to reduce the impact of independent assumption. It works like:
-@@ -523,8 +531,7 @@ func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll
- 			// statistics. See https://github.com/pingcap/tidb/issues/69134.
- 			// Any other column lacking statistics keeps the existing behavior:
- 			// skip it and estimate from the remaining columns.
--			if i < len(idxCols) && idxCols[i] != nil && idxCols[i].VirtualExpr != nil &&
--				(idx.Histogram.Len() > 0 || idx.TopN.Num() > 0) {
-+			if i < len(idxCols) && idxCols[i] != nil && idxCols[i].VirtualExpr != nil && idxHasStats {
- 				return 0, 0, 0, false, nil
- 			}
- 			continue
-@@ -548,13 +555,13 @@ func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll
- 	// is less than the number of index columns - use 90% of the bound to differentiate a subset from full index match.
- 	// If there is an individual column selectivity that goes below this bound, use that selectivity only.
- 	histNDV := coll.RealtimeCount
--	if idx.NDV > 0 {
--		histNDV = idx.NDV
-+	if idxNDV > 0 {
-+		histNDV = idxNDV
- 	}
- 	idxLowBound := 1 / float64(min(histNDV, coll.RealtimeCount))
- 	minBound := idxLowBound
- 	// Adjust idxLowBound upwards if we have not used all index columns.
--	if l < len(idx.Info.Columns) {
-+	if l < numIdxCols {
- 		idxLowBound /= 0.9
- 	}
- 	// maxSel is the "best" selectivity from all maximum of single column selectivities.
+@@ -30,7 +30,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.0
+ 	github.com/aws/smithy-go v1.24.2
+ 	github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb
+-	github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb
++	github.com/bazelbuild/rules_go v0.49.0
+ 	github.com/bits-and-blooms/bitset v1.14.3
+ 	github.com/blacktear23/go-proxyprotocol v1.0.8
+ 	github.com/butuzov/mirror v1.3.3
+@@ -365,6 +365,9 @@ replace (
+ 	cloud.google.com/go/storage => cloud.google.com/go/storage v1.39.1
+ 	github.com/go-ldap/ldap/v3 => github.com/YangKeao/ldap/v3 v3.4.5-0.20230421065457-369a3bab1117
+ 	github.com/pingcap/tidb/pkg/parser => ./pkg/parser
++	// etcd 3.5 uses the interceptors removed in otelgrpc v0.60.0.
++	// Remove this compatibility pin when etcd is upgraded to v3.6.1 or later.
++	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc => go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.59.0
+ 	// TODO: `sourcegraph.com/sourcegraph/appdash` has been archived, and the original host has been removed.
+ 	// Please remove these dependencies.
+ 	sourcegraph.com/sourcegraph/appdash => github.com/sourcegraph/appdash v0.0.0-20190731080439-ebfcffb1b5c0
 ```
 
-**File**: `pkg/planner/cardinality/selectivity_test.go` (modified, +107/-2)
+**File**: `go.sum` (modified, +110/-7)
 ```diff
-@@ -783,6 +783,10 @@ func TestNewIndexWithoutStats(t *testing.T) {
- 	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c > 5").CheckContain("idxab(a, b)")
- 	// New index idxab should NOT win because idxca has the same number of equals and has statistics
- 	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c = 5").CheckContain("idxca(c, a)")
-+	// The missing-statistics rules do not depend on tidb_opt_prefer_range_scan.
-+	testKit.MustExec("set @@tidb_opt_prefer_range_scan=0")
-+	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b = 5").CheckContain("idxab(a, b)")
-+	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c = 5").CheckContain("idxca(c, a)")
+@@ -1,3 +1,6 @@
++cel.dev/expr v0.15.0/go.mod h1:TRSuuV7DlVCE/uwv5QbAiW/v8l5O8C4eEPHeu7gf7Sg=
++cel.dev/expr v0.16.0/go.mod h1:TRSuuV7DlVCE/uwv5QbAiW/v8l5O8C4eEPHeu7gf7Sg=
++cel.dev/expr v0.16.2/go.mod h1:gXngZQMkWJoSbE8mOzehJlXQyubn/Vg0vR9/F3W7iw8=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
+@@ -341,10 +344,14 @@ cloud.google.com/go/compute v1.23.2/go.mod h1:JJ0atRC0J/oWYiiVBmsSsrRnh92DhZPG4h
+ cloud.google.com/go/compute v1.23.3/go.mod h1:VCgBUoMnIVIR0CscqQiPJLAG25E3ZRZMzcFZeQ+h8CI=
+ cloud.google.com/go/compute v1.23.4/go.mod h1:/EJMj55asU6kAFnuZET8zqgwgJ9FvXWXOkkfQZa4ioI=
+ cloud.google.com/go/compute v1.24.0/go.mod h1:kw1/T+h/+tK2LJK0wiPPx1intgdAM3j/g3hFDlscY40=
++cloud.google.com/go/compute v1.25.1/go.mod h1:oopOIR53ly6viBYxaDhBfJwzUAxf1zE//uf3IB011ls=
+ cloud.google.com/go/compute/metadata v0.1.0/go.mod h1:Z1VN+bulIf6bt4P/C37K4DyZYZEXYonfTBHHFPO/4UU=
+ cloud.google.com/go/compute/metadata v0.2.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
+ cloud.google.com/go/compute/metadata v0.2.1/go.mod h1:jgHgmJd2RKBGzXqF5LR2EZMGxBkeanZ9wwa75XHJgOM=
+ cloud.google.com/go/compute/metadata v0.2.3/go.mod h1:VAV5nSsACxMJvgaAuX6Pk2AawlZn8kiOGuCv6gTkwuA=
++cloud.google.com/go/compute/metadata v0.3.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
++cloud.google.com/go/compute/metadata v0.5.0/go.mod h1:aHnloV2TPI38yx4s9+wAZhHykWvVCfu7hQbF+9CWoiY=
++cloud.google.com/go/compute/metadata v0.5.2/go.mod h1:C66sj2AluDcIqakBq/M8lw8/ybHgOZqin2obFxa/E5k=
+ cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
+ cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
+ cloud.google.com/go/contactcenterinsights v1.3.0/go.mod h1:Eu2oemoePuEFc/xKFPjbTuPSj0fYJcPls9TFlPNnHHY=
+@@ -1337,6 +1344,7 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
+ github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
+ github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
+ github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.24.2/go.mod h1:itPGVDKf9cC/ov4MdvJ2QZ0khw4bfoo9jzwTJlaxy2k=
+ github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=
+ github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXYg9BVp4O+o5f6V/ehm6Oo=
+ github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c/go.mod h1:X0CRv0ky0k6m906ixxpzmDRLvX58TFUKS2eePweuyxk=
+@@ -1497,8 +1505,8 @@ github.com/aws/smithy-go v1.24.2 h1:FzA3bu/nt/vDvmnkg+R8Xl46gmzEDam6mZ1hzmwXFng=
+ github.com/aws/smithy-go v1.24.2/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
+ github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb h1:4k69c5E7Sa7jmNtv9itBHYA4Z5pfurInuRrtgohxZeA=
+ github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb/go.mod h1:689QdV3hBP7Vo9dJMmzhoYIyo/9iMhEmHkJcnaPRCbo=
+-github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=
+-github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb/go.mod h1:TFLfii8e49kTgn329knh1lsJFKdxyp/hKlWObY66xwY=
++github.com/bazelbuild/rules_go v0.49.0 h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=
++github.com/bazelbuild/rules_go v0.49.0/go.mod h1:Dhcz716Kqg1RHNWos+N6MlXNkjNP2EwZQ0LukRKJfMs=
+ github.com/bboreham/go-loser v0.0.0-20230920113527-fcc2c21820a3 h1:6df1vn4bBlDDo4tARvBm7l6KA9iVMnE3NWizDeWSrps=
+ github.com/bboreham/go-loser v0.0.0-20230920113527-fcc2c21820a3/go.mod h1:CIWtjkly68+yqLPbvwwR/fjNJA/idrtULjZWh2v1ys0=
+ github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
+@@ -1571,6 +1579,10 @@ github.com/cncf/xds/go v0.0.0-20230428030218-4003588d1b74/go.mod h1:eXthEFrGJvWH
+ github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+ github.com/cncf/xds/go v0.0.0-20231109132714-523115ebc101/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+ github.com/cncf/xds/go v0.0.0-20231128003011-0fa0005c9caa/go.mod h1:x/1Gn8zydmfq8dk6e9PdstVsDgu9RuyIIJqAaF//0IM=
++github.com/cncf/xds/go v0.0.0-20240318125728-8a4994d93e50/go.mod h1:5e1+Vvlzido69INQaVO6d87Qn543Xr6nooe9Kz7oBFM=
++github.com/cncf/xds/go v0.0.0-20240423153145-555b57ec207b/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
++github.com/cncf/xds/go v0.0.0-20240723142845-024c85f92f20/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
++github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
+ github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 h1:aBangftG7EVZoUb69Os8IaYg++6uMOdKK83QtkkvJik=
+ github.com/cnc
+```
+
+**File**: `pkg/util/etcd/etcd_test.go` (modified, +25/-0)
+```diff
+@@ -17,6 +17,7 @@ package etcd
+ import (
+ 	"context"
+ 	"testing"
++	"time"
+ 
+ 	"github.com/stretchr/testify/require"
+ 	clientv3 "go.etcd.io/etcd/client/v3"
+@@ -28,6 +29,30 @@ func testSetupOriginal(t *testing.T) (context.Context, *clientv3.Client, *integr
+ 	return context.Background(), cluster.RandClient(), cluster
  }
  
- func TestIssue57948(t *testing.T) {
-@@ -797,12 +801,37 @@ func TestIssue57948(t *testing.T) {
- 	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
- 	testKit.MustExec("insert into t values (1, 1, 1)")
- 	testKit.MustExec("insert into t select mod(a,250), mod(a,10), mod(a,100) from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 500) select a from x) as subquery")
--	testKit.MustExec("analyze table t")
-+	// Leave column b without statistics, so the new index has no statistics to estimate from.
-+	testKit.MustExec("analyze table t columns a, c")
- 	testKit.MustExec("create index idxb on t(b)")
--	// Create index after ANALYZE. SkyLine pruning should ensure that idxb is chosen because it has statistics
-+	// Create index after ANALYZE. SkyLine pruning should ensure that idxb is chosen even though it is missing statistics
- 	testKit.MustQuery("explain format='brief' select * from t where b = 5").CheckContain("idxb(b)")
- }
- 
-+func TestMissingStatsIndexUsesColumnStats(t *testing.T) {
-+	// An index without statistics, whose access columns all have column statistics, is compared on its
-+	// estimates instead of by the missing-statistics heuristics. It should behave as if it was analyzed.
-+	store, _ := testkit.CreateMockStoreAndDomain(t)
-+	testKit := testkit.NewTestKit(t, store)
-+	testKit.MustExec("use test")
-+	testKit.MustExec("drop table if exists t")
-+	testKit.MustExec("create table t(a int, b int, c int, d int)")
-+	testKit.MustExec("set @@tidb_analyze_version=2")
-+	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
-+	// a, b and c are fully correlated with 2 distinct values each. d is unique.
-+	testKit.MustExec("insert into t select mod(a,2), mod(a,2), mod(a,2), a from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 1000) select a from x) as subquery")
-+	testKit.MustExec("analyze table t")
-+	testKit.MustExec("create index idx_abc on t(a, b, c)")
-+	testKit.MustExec("create index idx_d on t(d)")
-+	for _, preferRange := range []string{"0", "1"} {
-+		testKit.MustExec("set @@tidb_opt_prefer_range_scan=" + preferRange)
-+		// Half of the table matches. The extra equal predicates of idx_abc must not prune the full table scan.
-+		testKit.MustQuery("explain format='brief' select * from t where a = 1 and b = 1 and c = 1").CheckContain("TableFullScan")
-+		// A selective index is still chosen.
-+		testKit.MustQuery("explain format='brief' select * from t where d = 5").CheckContain("idx_d(d)")
++// TestEtcdOpenTelemetryCompatibility ensures embedded etcd still builds and
++// serves RPCs after upgrading OpenTelemetry dependencies.
++func TestEtcdOpenTelemetryCompatibility(t *testing.T) {
++	integration.BeforeTest(t)
++	ctx, cli, cluster := testSetupOriginal(t)
++	t.Cleanup(func() { cluster.Terminate(t) })
++
++	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
++	defer cancel()
++	putResp, err := cli.Put(ctx, "otel-compatibility", "value")
++	require.NoError(t, err)
++
++	// Exercise both unary and streaming RPCs.
++	watch := cli.Watch(ctx, "otel-compatibility", clientv3.WithRev(putResp.Header.Revision))
++	select {
++	case resp := <-watch:
++		require.NoError(t, resp.Err())
++		require.Len(t, resp.Events, 1)
++		require.Equal(t, "value", string(resp.Events[0].Kv.Value))
++	case <-ctx.Done():
++		t.Fatal(ctx.Err())
 +	}
 +}
 +
- func TestVirtualColumnIndexEstimation(t *testing.T) {
- 	// A composite index whose last column is a virtual generated column. Virtual
- 	// columns have no column statistics, so the exponential backoff estimation
-@@ -957,6 +986,82 @@ func TestNewIndexWithColumnStats(t *testing.T) {
- 	require.NotEqual(t, rowCnt1, rowCnt2)
- }
- 
-+func TestNewIndexWithLowNDVColumnStats(t *testing.T) {
-+	// An index without statistics, whose columns each have a low NDV, is estimated from column statistics.
-+	// The columns are fully correlated, so assuming independence would underestimate badly. Exponential
-+	// backoff must be used instead.
-+	store, _ := testkit.CreateMockStoreAndDomain(t)
-+	testKit := testkit.NewTestKit(t, store)
-+	testKit.MustExec("use test")
-+	testKit.MustExec("drop table if exists t")
-+	testKit.MustExec("create table t(a int, b int, c int)")
-+	testKit.MustExec("set @@tidb_analyze_version=2")
-+	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
-+	testKit.MustExec("insert into t select mod(a,10), mod(a,10), mod(a,10) from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 1000) select a from x) as subquery")
-+	testKit.MustExec("analyze table t")
-+	testKit.MustExec("create index idx_abc on t(a, b, c)")
-+	rows := testKit.MustQuery("explain format='brief' select * from t use index(idx_abc) where a = 1 and b = 1 and c = 1").Rows()
-+	var estRows float64
-+	for _, row := range rows {
-+		if strings.Contains(row[0].(string), "IndexRangeScan") {
-+			var err error
-+			estRows, err = strconv.ParseFloat(row[1].(string), 64)
-+			require.NoError(t, err)
-+		}
-+	}
-+	// Actual row count is 100. Independence would estimate 1000 * 0.1^3 = 1, while exponen
+ func TestSetEtcdCliByNamespace(t *testing.T) {
+ 	integration.BeforeTest(t)
+ 	ctx, origEtcdCli, etcdMockCluster := testSetupOriginal(t)
 ```
 
-**File**: `pkg/planner/core/casetest/index/BUILD.bazel` (modified, +1/-1)
+---
+
+### Incident Patch 2: `df74ff3d` (2026-11-02)
+**Commit Message**: fix(deps): upgrade grpc to v1.83.2 for security fixes
+
+Upgrade google.golang.org/grpc from v1.83.0 to v1.83.2 to address GHSA-vp52-pcj8-j9qc (CVE-2026-84304), matching tikv/pd#11456. Regenerate DEPS.bzl with make bazel_prepare and synchronize go.sum.
+
+Validated module integrity, gRPC receive-buffer regression tests, the external workload gRPC client round trip, and the tidb-server build. The existing etcd/otelgrpc test compilation incompatibility is unchanged and remains outside this patch.
+
+**File**: `DEPS.bzl` (modified, +2/-2)
 ```diff
-@@ -10,7 +10,7 @@ go_test(
-     ],
-     data = glob(["testdata/**"]),
-     flaky = True,
--    shard_count = 14,
-+    shard_count = 15,
-     deps = [
+@@ -6393,8 +6393,8 @@ def go_deps():
+         name = "org_golang_google_grpc",
+         build_file_proto_mode = "disable_global",
+         importpath = "google.golang.org/grpc",
+-        sum = "h1:JeNZEKJFbQxArAMl+hiytHauacDNqJUllNfmIMmpqnQ=",
+-        version = "v1.83.0",
++        sum = "h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=",
++        version = "v1.83.2",
+     )
+     go_repository(
+         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ require (
+ 	golang.org/x/time v0.14.0
+ 	golang.org/x/tools v0.52.0
+ 	google.golang.org/api v0.264.0
+-	google.golang.org/grpc v1.83.0
++	google.golang.org/grpc v1.83.2
+ 	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/yaml.v2 v2.4.0
+ 	gorm.io/driver/mysql v1.5.7
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -3372,8 +3372,8 @@ google.golang.org/grpc v1.60.1/go.mod h1:OlCHIeLYqSSsLi6i49B5QGdzaMZK9+M7LXN2FKz
+ google.golang.org/grpc v1.61.0/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
+ google.golang.org/grpc v1.61.1/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
+ google.golang.org/grpc v1.62.0/go.mod h1:IWTG0VlJLCh1SkC58F7np9ka9mx/WNkjl4PGJaiq+QE=
+-google.golang.org/grpc v1.83.0 h1:JeNZEKJFbQxArAMl+hiytHauacDNqJUllNfmIMmpqnQ=
+-google.golang.org/grpc v1.83.0/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
++google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
++google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
+ google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0/go.mod h1:6Kw0yEErY5E/yWrBtf03jp27GLLJujG4z/JK95pnjjw=
+ google.golang.org/grpc/examples v0.0.0-20250407062114-b368379ef8f6 h1:ExN12ndbJ608cboPYflpTny6mXSzPrDLh0iTaVrRrds=
+ google.golang.org/grpc/examples v0.0.0-20250407062114-b368379ef8f6/go.mod h1:6ytKWczdvnpnO+m+JiG9NjEDzR1FJfsnmJdG7B8QVZ8=
+```
+
+---
+
+### Incident Patch 3: `25fe66f9` (2026-11-03)
+**Commit Message**: server: fix COM_QUERY fallback warnings and LOAD DATA LOCAL retry safety (#72608)
+
+close pingcap/tidb#72590
+
+**File**: `pkg/server/BUILD.bazel` (modified, +1/-0)
+```diff
+@@ -180,6 +180,7 @@ go_test(
+         "//pkg/config/kerneltype",
          "//pkg/domain",
          "//pkg/domain/infosync",
++        "//pkg/executor",
+         "//pkg/expression",
+         "//pkg/extension",
+         "//pkg/keyspace",
 ```
 
-**File**: `pkg/planner/core/casetest/index/index_test.go` (modified, +25/-0)
+**File**: `pkg/server/conn.go` (modified, +6/-2)
 ```diff
-@@ -600,6 +600,31 @@ func TestIndexPruneWithSharedClusteredPrefix(t *testing.T) {
- 	})
- }
+@@ -1886,7 +1886,8 @@ func (cc *clientConn) handleQuery(ctx context.Context, sql string) (err error) {
+ 	}
  
-+func TestSkylinePruningWithMissingIndexStats(t *testing.T) {
+ 	warns := sc.GetWarnings()
+-	parserWarns := warns[len(prevWarns):]
++	// Execution retries can reset and reuse this statement context's warning buffer.
++	parserWarns := append([]contextutil.SQLWarn(nil), warns[len(prevWarns):]...)
+ 
+ 	var pointPlans []base.Plan
+ 	sessVars.InMultiStmts = len(stmts) > 1
+@@ -2234,6 +2235,7 @@ func (cc *clientConn) handleStmt(
+ 	ctx = execdetails.ContextWithInitializedExecDetails(ctx)
+ 	reg := trace.StartRegion(ctx, "ExecuteStmt")
+ 	cc.audit(context.Background(), plugin.Starting)
++	retrySafety := stmtRetrySafe
+ 
+ 	// if stmt is load data stmt, store the channel that reads from the conn
+ 	// into the ctx for executor to use
+@@ -2244,6 +2246,8 @@ func (cc *clientConn) handleStmt(
+ 			if err != nil {
+ 				return stmtRetryUnsafe, err
+ 			}
++			// ExecuteStmt can request a one-shot client file stream, even if it fails.
++			retrySafety = stmtRetryUnsafe
+ 		}
+ 	}
+ 
+@@ -2272,7 +2276,7 @@ func (cc *clientConn) handleStmt(
+ 		if sv := cc.ctx.GetSessionVars(); sv != nil && sv.StmtCtx != nil {
+ 			sv.StmtCtx.DetachMemDiskTracker()
+ 		}
+-		return stmtRetrySafe, err
++		return retrySafety, err
+ 	}
+ 
+ 	status := cc.ctx.Status()
+```
+
+**File**: `pkg/server/conn_stmt_retry_test.go` (modified, +139/-0)
+```diff
+@@ -22,17 +22,21 @@ import (
+ 	"testing"
+ 
+ 	"github.com/pingcap/errors"
++	"github.com/pingcap/tidb/pkg/executor"
+ 	"github.com/pingcap/tidb/pkg/kv"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/server/internal/packetio"
++	"github.com/pingcap/tidb/pkg/server/internal/testutil"
++	serverutil "github.com/pingcap/tidb/pkg/server/internal/util"
+ 	"github.com/pingcap/tidb/pkg/session/sessionapi"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
+ 	"github.com/pingcap/tidb/pkg/sessiontxn"
+ 	storeerr "github.com/pingcap/tidb/pkg/store/driver/error"
+ 	"github.com/pingcap/tidb/pkg/testkit"
+ 	"github.com/pingcap/tidb/pkg/util/arena"
+ 	"github.com/pingcap/tidb/pkg/util/chunk"
++	contextutil "github.com/pingcap/tidb/pkg/util/context"
+ 	"github.com/pingcap/tidb/pkg/util/sqlexec"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -294,3 +298,138 @@ func TestStmtRetryWarningHandling(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestTextFallbackReusesWarningBuffer(t *testing.T) {
 +	store := testkit.CreateMockStore(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("set tidb_opt_prefer_range_scan = on")
-+	tk.MustExec(`create table t (
-+		id int not null, a int not null, b int not null, c int not null,
-+		payload varchar(100), key idx_id(id))`)
-+	var values strings.Builder
-+	for i := 1; i <= 1000; i++ {
-+		if i > 1 {
-+			values.WriteString(",")
++	for _, parserWarning := range []bool{false, true} {
++		for _, previousWarnings := range []int{0, 1} {
++			t.Run(fmt.Sprintf("parser=%t/previous=%d", parserWarning, previousWarnings), func(t *testing.T) {
++				tk := testkit.NewTestKit(t, store)
++				// Use a cached statement context with spare warning capacity. The fallback
++				// will reset and reuse this context after the first execution swaps it out.
++				tk.MustExec("do 0")
++				vars := tk.Session().GetSessionVars()
++				vars.StmtCtx.SetWarnings(make([]contextutil.SQLWarn, 0, 8))
++				for range previousWarnings {
++					vars.StmtCtx.AppendWarning(errors.New("previous statement warning"))
++				}
++				vars.AllowFallbackToTiKV = map[kv.StoreType]struct{}{kv.TiFlash: {}}
++				vars.IsolationReadEngines[kv.TiFlash] = struct{}{}
++				executionWarnings := []error{
++					errors.New("fallback warning 1"),
++					errors.New("fallback warning 2"),
++					errors.New("fallback warning 3"),
++				}
++				attempts := 0
++				se := &stmtAttemptSession{Session: tk.Session(), vars: vars}
++				se.executeStmt = func(ctx context.Context, stmt ast.StmtNode) (sqlexec.RecordSet, error) {
++					attempts++
++					rs, err := tk.Session().ExecuteStmt(ctx, stmt)
++					require.NoError(t, err)
++					if attempts == 1 {
++						require.NoError(t, rs.Close())
++						return nil, storeerr.ErrTiFlashServerTimeout
++					}
++					// Warnings produced before ExecuteStmt returns must not overwrite
++					// the saved parser warnings or the timeout warning.
++					for _, warning := range executionWarnings {
++						vars.StmtCtx.AppendWarning(warning)
++					}
++					return rs, nil
++				}
++				cc := &clientConn{
++					alloc:      arena.NewAllocator(1024),
++					chunkAlloc: chunk.NewAllocator(),
++					pkt:        packetio.NewForTest(bufio.NewWriter(bytes.NewBuffer(nil))),
++				}
++				cc.SetCtx(&TiDBContext{Session: se, stmts: make(map[int]*TiDBStatement)})
++				sql := "select 1"
++				if parserWarning {
++					sql = "select /*+ unknown_hint() */ 1"
++				}
++				require.NoError(t, cc.handleQuery(context.Background(), sql))
++				require.Equal(t, 2, attempts)
++				warnings := vars.StmtCtx.GetWarnings()
++				wantCount := len(executionWarnings) + 1
++				if parserWarning {
++					wantCount++
++				}
++				require.Len(t, warnings, wantCount)
++				for i, warning := range executionWarnings {
++					require.Same(t, warning, warnings[i].Err)
++					require.Equal(t, contextutil.WarnLevelWarning, warnings[i].Level)
++				}
++				if parserWarning {
++					require.ErrorContains(t, warnings[len(executionWarnings)].Err, "hint")
++				}
++				require.True(t, errors.ErrorEqual(warnings[len(warnings)-1].Err, storeerr.ErrTiFlashServerTimeout))
++				require.Equal(t, contextutil.WarnLevelError, warnings[len(warnings)-1].Level)
++			})
 +		}
-+		fmt.Fprintf(&values, "(%d, 1, 1, 1, 'payload')", i)
 +	}
-+	tk.MustExec("insert into t values " + values.String())
-+	tk.MustExec("analyze table t")
-+	tk.MustExec("alter table t add index idx_abc(a, b, c)")
-+	// Only idx_id has statistics, and it is much more selective than idx_abc.
-+	tk.MustQuery("show stats_histograms where db_name = 'test' and table_name = 't' and is_index = 1").CheckAt([]int{3}, testkit.Rows("idx_id"))
-+	const query = "select * from t where id = 1 and a = 1 and b = 1 and c = 1"
-+	tk.MustQuery("explain format = 'brief' " + query).CheckContain("index:idx_id(id)")
-+	tk.MustQuery(query).Check(testkit.Rows("1 1 1 1 payload"))
 +}
 +
- func TestForceIndexLimit(t *testing.T) {
- 	testkit.RunTestUnderCascades(t, func(t *testing.T, tk *testkit.TestKit, cascades, caller string) {
- 		tk.MustExec(`use test`)
-```
-
-**File**: `pkg/planner/core/find_best_task.go` (modified, +44/-28)
-```diff
-@@ -863,7 +863,7 @@ func (c *candidatePath) getCountAfterAccess4SkylinePruning() (float64, bool) {
- // compareCandidates is the core of skyline pruning, which is used to decide which candidate path is better.
- // The first return value is 1 if lhs is better, -1 if rhs is better, 0 if they are equivalent or not comparable.
- // The 2nd return value indicates whether the "better path" is missing statistics or not.
--func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *property.PhysicalProperty, lhs, rhs *candidatePath, preferRange bool) (int, bool) {
-+func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *property.PhysicalProperty, lhs, rhs *candidatePath) (int, bool) {
- 	// Due to #50125, full scan on MVIndex has been disabled, so MVIndex path might lead to 'can't find a proper plan' error at the end.
- 	// Avoid MVIndex path to exclude all other paths and leading to 'can't find a proper plan' error, see #49438 for an example.
- 	if isMVIndexPath(lhs.path) || isMVIndexPath(rhs.path) {
-@@ -916,11 +916,13 @@ func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *
- 		(lhs.eqOrInCount > 0 || rhs.eqOrInCount > 0) { // At least one index has equal/IN predicates
- 		lhsFullMatch := isFullIndexMatch(lhs)
- 		rhsFullMatch := isFullIndexMatch(rhs)
--		pseudoResult = comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch, eqOrInResult, lhs.eqOrInCount, rhs.eqOrInCount, preferRange)
--		if pseudoResult > 0 && totalSum >= 0 {
-+		pseudoResult = comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch, eqOrInResult, lhs.eqOrInCount, rhs.eqOrInCount)
-+		// Predicate counts alone cannot justify pruning an index on different columns.
-+		// The winner must also strictly dominate the other path's access conditions.
-+		if pseudoResult > 0 && comparable1 && accessResult > 0 && totalSum >= 0 {
- 			return pseudoResult, lhsPseudo
- 		}
--		if pseudoResult < 0 && totalSum <= 0 {
-+		if pseudoResult < 0 && comparable1 && accessResult < 0 && totalSum <= 0 {
- 			return pseudoResult, rhsPseudo
- 		}
- 	}
-@@ -985,24 +987,40 @@ func isCandidatesPseudo(lhs, rhs *candidatePath, statsTbl *statistics.Table) (lh
- 	lhsPseudo, rhsPseudo = statsTbl.HistColl.Pseudo, statsTbl.HistColl.Pseudo
- 	if len(lhs.path.PartialIndexPaths) == 0 && len(rhs.path.PartialIndexPaths) == 0 {
- 		if !lhs.path.IsTablePath() && lhs.path.Index != nil {
--			if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(lhs.path.Index.ID, true) {
--				lhsPseudo = false // We have statistics for the lhs index
--			} else {
--				lhsPseudo = true
--			}
-+			lhsPseudo = !hasStatsForEstimation(lhs, statsTbl)
- 		}
- 		if !rhs.path.IsTablePath() && rhs.path.Index != nil {
--			if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(rhs.path.Index.ID, true) {
--				rhsPseudo = false // We have statistics on the rhs index
--			} else {
--				rhsPseudo = true
--			}
-+			rhsPseudo = !hasStatsForEstimation(rhs, statsTbl)
- 		}
- 	}
- 	return lhsPseudo, rhsPseudo
- }
- 
--func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrInResult, lhsEqOrInCount, rhsEqOrInCount int, preferRange bool) int {
-+// hasStatsForEstimation returns true if the index of the candidate has statistics, or if every column
-+// referenced by its access conditions has statistics. In the latter case, the row count of the index
-+// is estimated from the column statistics (using exponential backoff for multiple columns), so the
-+// candidate can be compared on its estimates rather than on the missing-statistics heuristics.
-+func hasStatsForEstimation(c *candidatePath, statsTbl *statistics.Table) bool {
-+	if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(c.path.Index.ID, true) {
-+		return true
-+	}
-+	if len(c.accessCondsColMap) == 0 {
-+		return false
-+	}
-+	found := 0
-+	for _, col := range c.path.IdxCols {
-+		if _, ok := c.accessCondsColMap[col.UniqueID]; !ok {
-+			continue
-+		}
-+		if !statsTbl.ColAndIdxExistenceMap.HasAnalyzed(col.ID, false) {
-+			return false
-+		}
-+		found++
-+	}
-+	return found == len(c.accessCondsColMap)
-+}
-+
-+func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrInResult, lhsEqOrInCount, rhsEqOrInCount int) int {
- 	// TO-DO: Consider a separate set of rules for global indexes.
- 	// If one index has statistics and the other does not, choose the index with statistics if it
- 	// has the same or higher number of equal/IN predicates.
-@@ -1012,18 +1030,16 @@ func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrIn
- 	if !rhsPseudo && rhsEqOrInCount > 0 && eqOrInResult <= 0 {
- 		return -1 // right wins
- 	}
--	if preferRange {
--		// keep an index without statistics if that index has more equal/IN predicates, AND:
--		// 1) there are at least 2 equal/INs
--		// 2) OR - it's a full index match for all index predicates
--		if lhsPseudo && eqOrInResult > 0 &&
--			(lhsEqOrInCount > 1 || lhsFullMatch) {
--			return 1 // left wins
--		}
--		if rhsPseudo && eqOrInResult < 0 &&
--			(rhsEqOrInCount > 1 || rhsFullMatch) {
--		
-```
-
-**File**: `pkg/planner/core/find_best_task_test.go` (modified, +35/-6)
-```diff
-@@ -36,6 +36,7 @@ func TestFindBestTaskSuite(t *testing.T) {
- 	t.Run("TestHintCannotFitProperty", testHintCannotFitProperty)
- 	t.Run("RangeCountComparison", testRangeCountComparison)
- 	t.Run("RangeCountSkyline", testRangeCountSkyline)
-+	t.Run("MissingStatsIndexVsFullScan", testMissingStatsIndexVsFullScan)
- }
- 
- func testRangeCountComparison(t *testing.T) {
-@@ -100,25 +101,26 @@ func testRangeCountSkyline(t *testing.T) {
- 			want      int
- 		}{{0, 1}, {1001, 1}, {1000, 0}} {
- 			ctx.GetSessionVars().RangeMaxCount = tc.threshold
--			result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs, true)
-+			result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs)
- 			require.Equal(t, tc.want, result, "pseudo=%v threshold=%d", pseudo, tc.threshold)
--			result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs, true)
-+			result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs)
- 			require.Equal(t, -tc.want, result, "reversed: pseudo=%v threshold=%d", pseudo, tc.threshold)
- 		}
- 	}
- 
--	// A missing-statistics index must not retain its extra equality/IN preference above the threshold.
-+	// Missing statistics and equality/IN counts cannot break the tie between
-+	// incomparable access conditions, regardless of the range-count threshold.
- 	stats := &statistics.Table{ColAndIdxExistenceMap: statistics.NewColAndIndexExistenceMapWithoutSize()}
- 	stats.ColAndIdxExistenceMap.InsertIndex(2, true)
- 	lhs, rhs := newCandidate(1, 3, 1001, 10), newCandidate(2, 2, 1, 10)
- 	for _, tc := range []struct {
- 		threshold int64
- 		want      int
--	}{{0, 1}, {1001, 1}, {1000, -1}} {
-+	}{{0, 0}, {1001, 0}, {1000, 0}} {
- 		ctx.GetSessionVars().RangeMaxCount = tc.threshold
--		result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs, true)
-+		result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs)
- 		require.Equal(t, tc.want, result)
--		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs, true)
-+		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs)
- 		require.Equal(t, -tc.want, result)
- 	}
- }
-@@ -260,3 +262,30 @@ func testHintCannotFitProperty(t *testing.T) {
- 	require.True(t, ok)
- 	require.Equal(t, 1, mockPhysicalPlan.planType)
- }
-+
-+func testMissingStatsIndexVsFullScan(t *testing.T) {
-+	ctx := coretestsdk.MockContext()
-+	defer domain.GetDomain(ctx).StatsHandle().Close()
-+	prop := property.NewPhysicalProperty(property.RootTaskType, nil, false, 0, false)
-+	// The table has statistics, but index 1 does not.
-+	stats := &statistics.Table{ColAndIdxExistenceMap: statistics.NewColAndIndexExistenceMapWithoutSize()}
-+	idx := &candidatePath{
-+		path:              &util.AccessPath{Index: &model.IndexInfo{ID: 1}, Ranges: make(ranger.Ranges, 1), CountAfterAccess: 10},
-+		accessCondsColMap: map[int64]int{1: -1, 2: -1},
-+		eqOrInCount:       2,
-+	}
-+	tbl := &candidatePath{
-+		path:              &util.AccessPath{IsIntHandlePath: true, Ranges: ranger.FullIntRange(false), IsSingleScan: true, CountAfterAccess: 1000},
-+		accessCondsColMap: map[int64]int{},
-+	}
-+	// The missing-statistics index with 2 equal predicates wins over a full table scan,
-+	// independent of tidb_opt_prefer_range_scan.
-+	for _, preferRange := range []bool{false, true} {
-+		ctx.GetSessionVars().SetAllowPreferRangeScan(preferRange)
-+		result, missingStats := compareCandidates(ctx.GetPlanCtx(), stats, prop, idx, tbl)
-+		require.Equal(t, 1, result, "preferRange=%v", preferRange)
-+		require.True(t, missingStats)
-+		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, tbl, idx)
-+		require.Equal(t, -1, result, "reversed: preferRange=%v", preferRange)
-+	}
-+}
-```
-
-**File**: `pkg/planner/core/index_join_path.go` (modified, +1/-2)
-```diff
-@@ -303,9 +303,8 @@ func indexJoinPathCompare(ds *logicalop.DataSource, best, current *indexJoinPath
- 
- 	// reuse Skyline pruning to compare the index join paths.
- 	prop := &property.PhysicalProperty{ExpectedCnt: math.MaxFloat64} // default property without any requirement
--	preferRange := ds.SCtx().GetSessionVars().GetAllowPreferRangeScan()
- 
--	cmpResult, _ := compareCandidates(ds.SCtx(), ds.StatisticTable, prop, current.candidate, best.candidate, preferRange)
-+	cmpResult, _ := compareCandidates(ds.SCtx(), ds.StatisticTable, prop, current.candidate, best.candidate)
- 	if cmpResult == 1 {
- 		return true
- 	} else if cmpResult == -1 {
++func TestLoadDataLocalRetrySafety(t *testing.T) {
++	store := testkit.CreateMockStore(t)
++	for _, tt := range []struct {
++		name   string
++		local  bool
++		err    error
++		action sessiontxn.StmtErrorAction
++	}{
++		{name: "transaction retry", local: true, err: errors.New("execution failed"), action: sessiontxn.StmtActionRetryReady},
++		{name: "TiFlash fallback", local: true, err: storeerr.ErrTiFlashServerTimeout, action: sessiontxn.StmtActionNoIdea},
++		{name: "server file", err: errors.New("execution failed"), action: sessiontxn.StmtActionNoIdea},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			tk := testkit.NewTestKit(t, store)
++			vars := tk.Session().GetSessionVars()
++			vars.AllowFallbackToTiKV = map[kv.StoreType]struct{}{kv.TiFlash: {}}
++			vars.TxnManager = &stmtAttemptTxnManager{onError: func(context.Context, sessiontxn.StmtErrorHandlePoint, error) (sessiontxn.StmtErrorAction, error) {
++				return tt.action, nil
++			}}
++			// The client terminates its file response with an empty packet, after
++			// the server sends the sequence-0 local-infile request.
++			input := &testutil.BytesConn{Buffer: *bytes.NewBuffer([]byte{0, 0, 0, 1})}
++			var o
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72542** (2026-10-30): build: resolve Bazel Go deps through GOPROXY (#69844) (@ti-chi-bot)
-- **PR #72540** (2026-10-30): mvservice, domain: integrate automatic materialized view maintenance (@windtalker)
-- **PR #72535** (2026-10-30): ddl, executor: add materialized view maintenance error codes (@windtalker)
-- **PR #72527** (2026-10-30): errno: reserve materialized view error codes (@windtalker)
-- **PR #72522** (2026-10-30): build: prepare Bazel tooling for Go 1.27 (#72082) (#72406) (@ti-chi-bot)
-- **PR #72507** (2026-10-29): crossks, executor: give runtime sessions an auto-ID client and an MPP server ID (@joechenrh)
+- **PR #72667** (closed): server: restore session on change user auth failure (@lcwangchao)
+- **PR #72657** (2026-11-03): *: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (#72640) | tidb-test=release-8.5-20260715-v8.5.7 (@ti-chi-bot)
+- **PR #72651** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
+- **PR #72650** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
+- **PR #72647** (2026-11-03): *: update client-go to latest master (@lcwangchao)
+- **PR #72640** (2026-11-03): *: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (@ti-chi-bot)
 
 ---
 
@@ -2397,52 +2391,47 @@ ref pingcap/tidb#71999
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. planner: estimate missing-stats indexes with exponential backoff and drop prefer
+## X. deps): retain etcd compatibility with otelgrpc
 
 **RULE**:
-When implementing operations in `pkg/planner/cardinality/row_count_column.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `DEPS.bzl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49ad4202`: planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dd4c55c`: deps): retain etcd compatibility with otelgrpc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/planner/cardinality/row_count_column.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEPS.bzl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// allColumnsHaveStats returns true if the first n columns of idxCols all have valid column statistics.
-func allColumnsHaveStats(sctx planctx.PlanContext, coll *statistics.HistColl, idxCols []*expression.Column, n int) bool {
-	if n > len(idxCols) {
-		return false
-	}
-	for _, col := range idxCols[:n] {
-		if statistics.ColumnStatsIsInvalid(coll.GetCol(col.UniqueID), sctx, coll, col.UniqueID) {
-			return false
-		}
-	}
-	return true
-}
-
-	colsIDs := make([]int64, len(idxCols))
-	for i, col := range idxCols {
-		colsIDs[i] = col.UniqueID
-	}
-		// Prefer exponential backoff when every column of the range has statistics. Assuming independence by
-		// multiplying the single column selectivities can badly underestimate an index whose columns each have
-		// a low NDV. If any column lacks statistics (e.g. a virtual column), exponential backoff would skip it
-		// entirely, so fall back to the pseudo estimation for that column below.
-		if len(indexRange.LowVal) > 1 && allColumnsHaveStats(sctx, coll, idxCols, len(indexRange.LowVal)) {
-			sel, _, maxSel, ok, err := expBackoffEstimationByColIDs(sctx, coll, colsIDs, 0, len(idxCols), false, indexRange, idxCols)
-			if err != nil {
-				return 0, 0, errors.Tra
+        sum = "h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=",
+        version = "v0.49.0",
+        sum = "h1:YojYx61/OLFsiv6Rw1Z96LpldJIy31o+UHmwAUMJ6/U=",
+        version = "v1.7.0-rc.1",
+        sum = "h1:sIXJOMrYnQZJu7OB7ANSF4MYri2fTEGIsRLz6LwI4xE=",
+        version = "v2.0.4-0.20230330145011-496ad1ac90a4",
+        replace = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+        sum = "h1:rgMkmiGfix9vFJDcDi1PK8WEQP4FLQwLDfhp5ZLpFeE=",
+        version = "v0.59.0",
+        sum = "h1:rNBFJjBCOgVr9pWD7rs/knKL4FRTKgpZmsRfV214zcA=",
+        version = "v1.3.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        sum = "h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=",
+        version = "v0.42.1-0.20231101215950-df20c987afcb",
+        sum = "h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=",
+        version = "v1.6.0",
+        sum = "h1:/3+/2sWyXeMLzKd1bX+ixWKgEMsULrIivpDsuaF441o=",
+        version = "v2.0.3",
+        sum = "h1:q4XOmH/0opmeuJtPsbFNivyl7bCt7yRBbeEm2sC/XtQ=",
+        version = "v0.61.0",
+        sum = "h1:M1YKkFIboKNieVO5DLUEVzQfGwJD30Nv2jfUgzb5UcE=",
+        version = "v1.1.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49ad4202` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dd4c55c` are properly handled with clean fallback behavior.

@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "5ea67989",
+    "sourceVersion": "303b4d91",
     "license": "Apache-2.0",
-    "contentHash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
-    "lastHarvestedAt": "2026-10-31T19:14:45.772Z",
+    "contentHash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
+    "lastHarvestedAt": "2026-11-03T16:50:47.163Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "49ad4202",
+    "sourceVersion": "644e2d55",
     "license": "Apache-2.0",
-    "contentHash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
-    "lastHarvestedAt": "2026-10-31T04:22:24.073Z",
+    "contentHash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
+    "lastHarvestedAt": "2026-11-03T16:50:42.461Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

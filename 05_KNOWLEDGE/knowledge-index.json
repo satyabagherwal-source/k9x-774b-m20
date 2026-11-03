@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T16:40:41.735Z",
+  "last_updated": "2026-11-03T16:50:47.079Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46599,8 +46599,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "49ad4202",
-      "content_hash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+      "source_version": "644e2d55",
+      "content_hash": "72004ae0cea6bedc5f77a0ad3d2032c7f6373d5304467e99d6628f621be0fa83",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -46678,6 +46678,11 @@
           "number": 6067,
           "title": "planner: estimate missing-stats indexes with exponential backoff and drop prefer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6544,
+          "title": "deps): retain etcd compatibility with otelgrpc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46685,7 +46690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:22:24.010Z",
+      "verified_at": "2026-11-03T16:50:42.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60456,8 +60461,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "5ea67989",
-      "content_hash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
+      "source_version": "303b4d91",
+      "content_hash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -60525,6 +60530,11 @@
           "number": 6292,
           "title": "YT-30107: Reserve estimated memory for heavy commands before execution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6545,
+          "title": "test_schema_coexistence class timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60532,7 +60542,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:14:45.659Z",
+      "verified_at": "2026-11-03T16:50:47.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169015,6 +169025,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T16:40:41.722Z"
+    },
+    "rule-6544": {
+      "learning_id": "rule-6544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6544,
+      "title": "deps): retain etcd compatibility with otelgrpc",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "644e2d55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:50:42.355Z"
+    },
+    "rule-6545": {
+      "learning_id": "rule-6545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6545,
+      "title": "test_schema_coexistence class timeout",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "303b4d91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:50:47.058Z"
     }
   },
   "aliases": {
