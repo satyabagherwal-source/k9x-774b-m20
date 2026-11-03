@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `f5d37847`  
+> **Source Version**: `697bdea5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:59:49.769Z  
+> **Timestamp**: 2026-11-03T17:30:17.151Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:59:49.318Z  
+> **Harvest Timestamp**: 2026-11-03T17:30:16.755Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38566 stars
+- **Stars / Engagement**: 38578 stars
 
 ---
 
@@ -821,251 +821,369 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5d37847` (2026-11-03)
-**Commit Message**: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276)
+### Incident Patch 1: `697bdea5` (2026-11-03)
+**Commit Message**: cmd/pgproxy: delete, leave README stub
 
-* cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift
+Fixes tailscale/corp#50889
 
-The nameserver ServiceAccount, Deployment, Service and ConfigMap are created
-with an ownerReference to the cluster-scoped DNSConfig and
-blockOwnerDeletion: true. Clusters running the
-OwnerReferencesPermissionEnforcement admission plugin - which OpenShift enables
-by default and upstream Kubernetes does not - require the creating identity to
-hold update on the owner finalizers subresource before accepting such a child.
+Change-Id: I9ea45c14ea305fb3e5cd5adee5f64701db054f8e
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-The operator ClusterRole grants dnsconfigs and dnsconfigs/status but no rule on
-any finalizers subresource, so every nameserver reconcile is rejected:
-
-  serviceaccounts "nameserver" is forbidden: cannot set blockOwnerDeletion if
-  an ownerReference refers to a resource you cannot set finalizers on
-
-It retries forever, the DNSConfig never gets a status, and dns-records-reconciler
-waits indefinitely. Granting the rule lets the reconcile succeed on the next
-attempt; it is inert where the admission plugin is not enabled.
-
-Static manifest regenerated with ./tool/go run ./cmd/k8s-operato
-
-**File**: `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml` (modified, +11/-0)
+**File**: `cmd/pgproxy/README.md` (modified, +8/-36)
 ```diff
-@@ -41,6 +41,17 @@ rules:
- - apiGroups: ["tailscale.com"]
-   resources: ["dnsconfigs", "dnsconfigs/status"]
-   verbs: ["get", "list", "watch", "update"]
-+# Child resources are created with an ownerReference to their owner and
-+# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
-+# admission plugin (OpenShift does by default) then require update on the owner's
-+# finalizers subresource, otherwise every such create is rejected and the owner never
-+# reconciles. Inert where the plugin is not enabled.
-+- apiGroups: ["tailscale.com"]
-+  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
-+  verbs: ["update"]
-+- apiGroups: [""]
-+  resources: ["services/finalizers"]
-+  verbs: ["update"]
- - apiGroups: ["tailscale.com"]
-   resources: ["tailnets", "tailnets/status"]
-   verbs: ["get", "list", "watch", "update"]
+@@ -1,42 +1,14 @@
+ # pgproxy
+ 
+-The pgproxy server is a proxy for the Postgres wire protocol. [Read
+-more in our blog
+-post](https://tailscale.com/blog/introducing-pgproxy/) about it!
++The pgproxy server was our old Tailscale proxy for the Postgres wire
++protocol. See our [Introducing pgproxy blog post]
++post](https://tailscale.com/blog/introducing-pgproxy/).
+ 
+-The proxy runs an in-process Tailscale instance, accepts postgres
+-client connections over Tailscale only, and proxies them to the
+-configured upstream postgres server.
++We changed our internal infrastructure such that we no longer depend on it.
++Rather than pretend it's still maintained, we deleted it.
+ 
+-This proxy exists because postgres clients default to very insecure
+-connection settings: either they "prefer" but do not require TLS; or
+-they set sslmode=require, which merely requires that a TLS handshake
+-took place, but don't verify the server's TLS certificate or the
+-presented TLS hostname.  In other words, sslmode=require enforces that
+-a TLS session is created, but that session can trivially be
+-machine-in-the-middled to steal credentials, data, inject malicious
+-queries, and so forth.
++If community fork(s) emerge, we'll link from here.
+ 
+-Because this flaw is in the client's validation of the TLS session,
+-you have no way of reliably detecting the misconfiguration
+-server-side. You could fix the configuration of all the clients you
+-know of, but the default makes it very easy to accidentally regress.
++If you want the old code, it's [still in git](https://raw.githubusercontent.com/tailscale/tailscale/d45c5ddfbbc1bb6ded8e3e9a15af9ece78bb4744/cmd/pgproxy/pgproxy.go)
++or installable via `go install tailscale.com/cmd/pgproxy@d45c5ddfbbc1b`.
+ 
+-Instead of trying to verify client configuration over time, this proxy
+-removes the need for postgres clients to be configured correctly: the
+-upstream database is configured to only accept connections from the
+-proxy, and the proxy is only available to clients over Tailscale.
+-
+-Therefore, clients must use the proxy to connect to the database. The
+-client<>proxy connection is secured end-to-end by Tailscale, which the
+-proxy enforces by verifying that the connecting client is a known
+-current Tailscale peer. The proxy<>server connection is established by
+-the proxy itself, using strict TLS verification settings, and the
+-client is only allowed to communicate with the server once we've
+-established that the upstream connection is safe to use.
+-
+-A couple side benefits: because clients can only connect via
+-Tailscale, you can use Tailscale ACLs as an extra layer of defense on
+-top of the postgres user/password authentication. And, the proxy can
+-maintain an audit log of who connected to the database, complete with
+-the strongly authenticated Tailscale identity of the client.
 ```
 
-**File**: `cmd/k8s-operator/deploy/manifests/operator.yaml` (modified, +14/-0)
+**File**: `cmd/pgproxy/pgproxy.go` (removed, +0/-362)
 ```diff
-@@ -6663,6 +6663,20 @@ rules:
-         - list
-         - watch
-         - update
-+    - apiGroups:
-+        - tailscale.com
-+      resources:
-+        - dnsconfigs/finalizers
-+        - proxygroups/finalizers
-+        - recorders/finalizers
-+      verbs:
-+        - update
-+    - apiGroups:
-+        - ""
-+      resources:
-+        - services/finalizers
-+      verbs:
-+        - update
-     - apiGroups:
-         - tailscale.com
-       resources:
+@@ -1,362 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-// The pgproxy server is a proxy for the Postgres wire protocol.
+-package main
+-
+-import (
+-	"context"
+-	"crypto/ecdsa"
+-	"crypto/elliptic"
+-	crand "crypto/rand"
+-	"crypto/tls"
+-	"crypto/x509"
+-	"crypto/x509/pkix"
+-	"expvar"
+-	"flag"
+-	"fmt"
+-	"io"
+-	"log"
+-	"math/big"
+-	"net"
+-	"net/http"
+-	"os"
+-	"strings"
+-	"time"
+-
+-	"tailscale.com/client/local"
+-	"tailscale.com/metrics"
+-	"tailscale.com/tsnet"
+-	"tailscale.com/tsweb"
+-)
+-
+-var (
+-	hostname     = flag.String("hostname", "", "Tailscale hostname to serve on")
+-	port         = flag.Int("port", 5432, "Listening port for client connections")
+-	debugPort    = flag.Int("debug-port", 80, "Listening port for debug/metrics endpoint")
+-	upstreamAddr = flag.String("upstream-addr", "", "Address of the upstream Postgres server, in host:port format")
+-	upstreamCA   = flag.String("upstream-ca-file", "", "File containing the PEM-encoded CA certificate for the upstream server")
+-	tailscaleDir = flag.String("state-dir", "", "Directory in which to store the Tailscale auth state")
+-)
+-
+-func main() {
+-	flag.Parse()
+-	if *hostname == "" {
+-		log.Fatal("missing --hostname")
+-	}
+-	if *upstreamAddr == "" {
+-		log.Fatal("missing --upstream-addr")
+-	}
+-	if *upstreamCA == "" {
+-		log.Fatal("missing --upstream-ca-file")
+-	}
+-	if *tailscaleDir == "" {
+-		log.Fatal("missing --state-dir")
+-	}
+-
+-	ts := &tsnet.Server{
+-		Dir:      *tailscaleDir,
+-		Hostname: *hostname,
+-	}
+-
+-	if os.Getenv("TS_AUTHKEY") == "" {
+-		log.Print("Note: you need to run this with TS_AUTHKEY=... the first time, to join your tailnet of choice.")
+-	}
+-
+-	tsclient, err := ts.LocalClient()
+-	if err != nil {
+-		log.Fatalf("getting tsnet API client: %v", err)
+-	}
+-
+-	p, err := newProxy(*upstreamAddr, *upstreamCA, tsclient)
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-	expvar.Publish("pgproxy", p.Expvar())
+-
+-	if *debugPort != 0 {
+-		mux := http.NewServeMux()
+-		tsweb.Debugger(mux)
+-		srv := &http.Server{
+-			Handler: mux,
+-		}
+-		dln, err := ts.Listen("tcp", fmt.Sprintf(":%d", *debugPort))
+-		if err != nil {
+-			log.Fatal(err)
+-		}
+-		go func() {
+-			log.Fatal(srv.Serve(dln))
+-		}()
+-	}
+-
+-	ln, err := ts.Listen("tcp", fmt.Sprintf(":%d", *port))
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-	log.Printf("serving access to %s on port %d", *upstreamAddr, *port)
+-	log.Fatal(p.Serve(ln))
+-}
+-
+-// proxy is a postgres wire protocol proxy, which strictly enforces
+-// the security of the TLS connection to its upstream regardless of
+-// what the client's TLS configuration is.
+-type proxy struct {
+-	upstreamAddr     string // "my.database.com:5432"
+-	upstreamHost     string // "my.database.com"
+-	upstreamCertPool *x509.CertPool
+-	downstreamCert   []tls.Certificate
+-	client           *local.Client
+-
+-	activeSessions  expvar.Int
+-	startedSessions expvar.Int
+-	errors          metrics.LabelMap
+-}
+-
+-// newProxy returns a proxy that forwards connections to
+-// upstreamAddr. The upstream's TLS session is verified using the CA
+-// cert(s) in upstreamCAPath.
+-func newProxy(upstreamAddr, upstreamCAPath string, client *local.Client) (*proxy, error) {
+-	bs, err := os.ReadFile(upstreamCAPath)
+-	if err != nil {
+-		return nil, err
+-	}
+-	upstreamCertPool := x509.NewCertPool()
+-	if !upstreamCertPool.AppendCertsFromPEM(bs) {
+-		return nil, fmt.Errorf("invalid CA cert in %q", upstreamCAPath)
+-	}
+-
+-	h, _, err := net.SplitHostPort(upstreamAddr)
+-	if err != nil {
+-		return nil, err
+-	}
+-	downstreamCert, err := mkSelfSigned(h)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	return &proxy{
+-		upstreamAddr:     upstreamAddr,
+-		upstreamHost:     h,
+-		upstreamCertPool: upstreamCertPool,
+-		downstreamCert:   []tls.Certificate{downstreamCert},
+-		client:           client,
+-		errors:           metrics.LabelMap{Label: "kind"},
+-	}, nil
+-}
+-
+-// Expvar returns p's monitoring metrics.
+-func (p *proxy) Expvar() expvar.Var {
+-	ret := &metrics.Set{}
+-	ret.Set("sessions_active", &p.activeSessions)
+-	ret.Set("sessions_started", &p.startedSessions)
+-	ret.Set("session_errors", &p.errors)
+-	return ret
+-}
+-
+-// Serve accepts postgres client connections on ln and proxies them to
+-// the configured upstream. ln can be any net.Listener, but all client
+-// connections must originate from tailscale IPs that can be verified
+-// with WhoIs.
+-func (p *proxy) Serve(ln net.Listener) error {
+-	var lastSessionID int64
+-	for {
+-		c, err := ln.Accept()
+-		if err != nil {
+-			return err
+-		}
+-		id := time.Now().UnixNano()
+-		if id == lastSessionID {
+-			// Bluntly enforce SID uniqueness, even if collisions are
+-			// fantastically unlikely (but OSes vary in how much timer
+-			// precision they expose to the OS, so id might be rounded
+-			// e.g. to the same millisecond)
+-			id++
+-		}
+-		lastSessionID = id
+-		go func(sessionID int64) {
+-			if err := p.serve(sessionID, c); err != nil {
+-				log.Printf("%d: session ended with error: %v", sessionID, err)
+-			}
+-		}(id)
+-	}
+-}
+-
+-var (
+-	
 ```
 
 ---
 
-### Incident Patch 2: `1db86dac` (2026-11-03)
-**Commit Message**: cmd/k8s-operator/e2e: add IP family tests for ingress (#22091)
+### Incident Patch 2: `d45c5ddf` (2026-11-03)
+**Commit Message**: cmd/tailscale/cli: check the requested port before enabling Funnel (#22120)
 
-Restructure the L3, L3 HA and L7 ingress e2e tests into IP family subtests
-to cover IPv4 and IPv6, plus DualStack for ProxyGroup.
+The funnel command checked Funnel access with a hardcoded port 443, so
+any requested port passed and the CLI reported it as available on the
+internet. Check the port the user asked for instead. Turning Funnel
+off skips the check so existing configs on other ports can still be
+removed.
 
-Updates tailscale/corp#38029
+Fixes #10742
+Fixes #21989
 
-Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
+Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
-**File**: `cmd/k8s-operator/e2e/ingress_test.go` (modified, +273/-190)
+**File**: `cmd/tailscale/cli/serve_v2.go` (modified, +6/-7)
 ```diff
-@@ -37,80 +37,93 @@ func TestL3Ingress(t *testing.T) {
- 	// Apply nginx
- 	nginx := nginxDeployment(ns)
- 	createAndCleanup(t, kubeClient, nginx)
--	// Apply service to expose it as ingress
--	svc := &corev1.Service{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      generateName("test-ingress"),
--			Namespace: ns,
--			Annotations: map[string]string{
--				"tailscale.com/expose": "true",
--			},
--		},
--		Spec: corev1.ServiceSpec{
--			Selector: map[string]string{
--				"app.kubernetes.io/name": nginx.Name,
--			},
--			Ports: []corev1.ServicePort{
--				{
--					Name:     "http",
--					Protocol: "TCP",
--					Port:     80,
--				},
--			},
--		},
--	}
--	createAndCleanup(t, kubeClient, svc)
+@@ -407,13 +407,6 @@ func (e *serveEnv) runServeCombined(subcmd serveMode) execFunc {
+ 			return errors.New("Error: --service flag is not supported with funnel")
+ 		}
  
--	if err := tstest.WaitFor(time.Minute, func() error {
--		maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
--		if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
--			return err
+-		if funnel {
+-			// verify node has funnel capabilities
+-			if err := e.verifyFunnelEnabled(ctx, 443); err != nil {
+-				return err
+-			}
 -		}
--		isReady := kube.SvcIsReady(maybeReadySvc)
--		if isReady {
--			t.Log("Service is ready")
--			return nil
--		}
--		return fmt.Errorf("Service is not ready yet")
--	}); err != nil {
--		t.Fatalf("error waiting for the Service to become Ready: %v", err)
--	}
-+	// Singleton ingress proxy forwards only the Service's primary ClusterIP family,
-+	// Dualstack isn't supported. See https://github.com/tailscale/tailscale/issues/22138.
-+	for _, tc := range []struct {
-+		name     string
-+		families []corev1.IPFamily
-+	}{
-+		{"IPv4", []corev1.IPFamily{corev1.IPv4Protocol}},
-+		{"IPv6", []corev1.IPFamily{corev1.IPv6Protocol}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			skipIfUnsupportedFamilies(t, tc.families)
-+			// Apply service to expose it as ingress
-+			svc := &corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      generateName("test-ingress"),
-+					Namespace: ns,
-+					Annotations: map[string]string{
-+						"tailscale.com/expose": "true",
+-
+ 		if forService && !e.bg.Value {
+ 			return errors.New("Error: --service flag is only compatible with background mode")
+ 		}
+@@ -460,6 +453,12 @@ func (e *serveEnv) runServeCombined(subcmd serveMode) execFunc {
+ 		parentSC := sc
+ 
+ 		turnOff := len(args) > 0 && "off" == args[len(args)-1]
++		if funnel && !turnOff {
++			// Verify the node can use Funnel on the requested port.
++			if err := e.verifyFunnelEnabled(ctx, srvPort); err != nil {
++				return err
++			}
++		}
+ 		if !turnOff && srvType == serveTypeHTTPS {
+ 			// Running serve with https requires that the tailnet has enabled
+ 			// https cert provisioning. Send users through an interactive flow
+```
+
+**File**: `cmd/tailscale/cli/serve_v2_test.go` (modified, +45/-0)
+```diff
+@@ -893,6 +893,51 @@ func TestServeDevConfigMutations(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		{
++			// The fake status only allows Funnel on ports 443 and 8443.
++			name: "funnel_port_not_allowed",
++			steps: []step{
++				{
++					command: cmd("funnel --bg --https=10000 3000"),
++					wantErr: func(err error) (badErrMsg string) {
++						if err == nil || !strings.Contains(err.Error(), "not allowed for funnel") {
++							return fmt.Sprintf("want a port-not-allowed error; got %v", err)
++						}
++						return ""
 +					},
 +				},
-+				Spec: corev1.ServiceSpec{
-+					IPFamilyPolicy: new(ipFamilyPolicy(tc.families)),
-+					IPFamilies:     tc.families,
-+					Selector: map[string]string{
-+						"app.kubernetes.io/name": nginx.Name,
-+					},
-+					Ports: []corev1.ServicePort{
-+						{
-+							Name:     "http",
-+							Protocol: "TCP",
-+							Port:     80,
-+						},
++				{
++					command: cmd("funnel --bg --tcp=10000 tcp://localhost:5432"),
++					wantErr: func(err error) (badErrMsg string) {
++						if err == nil || !strings.Contains(err.Error(), "not allowed for funnel") {
++							return fmt.Sprintf("want a port-not-allowed error; got %v", err)
++						}
++						return ""
 +					},
 +				},
-+			}
-+			createAndCleanup(t, kubeClient, svc)
- 
--	// Get a matching-family Tailscale IP for the Service from the associated Secret.
--	var proxyIP string
--	if err := tstest.WaitFor(time.Minute, func() error {
--		var secrets corev1.SecretList
--		if err := kubeClient.List(t.Context(), &secrets,
--			client.InNamespace("tailscale"),
--			client.MatchingLabels{
--				"tailscale.com/parent-resource":    svc.Name,
--				"tailscale.com/parent-resource-ns": ns,
--			},
--		); err != nil {
--			return err
--		}
--		if len(secrets.Items) == 0 {
--			return fmt.Errorf("Service not ready yet")
--		}
--		var deviceIPs []string
--		if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
--			return fmt.Errorf("decoding device IPs: %w", err)
--		}
--		currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
--		if err := get(t.Context(), kubeClient, currentSvc); err != nil {
--			return err
--		}
--		proxyIP = ipMatchingFamily(deviceIPs, currentSvc.Spec.ClusterIP)
--		if proxyIP == "" {
--			return fmt.Errorf("device has no IP matching Service ClusterIP family")
--		}
--		return nil
--	}); err != nil {
--		t.Fatalf("error waiting for matching-family IP for Service: %v", err)
--	}
-+			if err := tstest.WaitFor(time.Minute, func() error {
-+				maybeReadySvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
-+				if err := get(t.Context(), kubeClient, maybeReadySvc); err != nil {
-+					return err
-+				}
-+				if kube.SvcIsReady(maybeReadySvc) {
-+					return nil
-+				}
-+				return fmt.Errorf("Service is not ready yet")
-+			}); err != nil {
-+				t.Fatalf("error waiting for the Service to become Ready: %v", err)
-+			}
- 
--	if err := testIngressIsReachable(t, newHTTPClient(tnClient), "http://"+net.JoinHostPort(proxyIP, "80")); err != nil {
--		t.Fatal(err)
-+			// Get matching-family Tailscale IPs for the Service from the associated Secret.
-+			var proxyIP string
-+			if err := tstest.WaitFor(time.Minute, func() error {
-+				var secrets corev1.SecretList
-+				if err := kubeClient.List(t.Context(), &secrets,
-+					client.InNamespace("tailscale"),
-+					client.MatchingLabels{
-+						"tailscale.com/parent-resource":    svc.Name,
-+						"tailscale.com/parent-resource-ns": ns,
++			},
++		},
++		{
++			// Turning Funnel off on a port that is no longer allowed must
++			// still work, so users can clean up configs made before the
++			// port check applied to the requested port.
++			name: "funnel_off_on_disallowed_port",
++			initialState: fakeLocalServeClient{
++				config: &ipn.ServeConfig{
++					TCP: map[uint16]*ipn.TCPPortHandler{10000: {HTTPS: true}},
++					Web: map[ipn.HostPort]*ipn.WebServerConfig{
++						"foo.test.ts.net:10000": {Handlers: map[string]*ipn.HTTPHandler{
++							"/": {Proxy: "http://127.0.0.1:3000"},
++						}},
 +					},
-+				); err != nil {
-+					return err
-+				}
-+				if len(secrets.Items) == 0 {
-+					return fmt.Errorf("Service not ready yet")
-+				}
-+				var deviceIPs []string
-+				if err := json.Unmarshal(secrets.Items[0].Data[kubetypes.KeyDeviceIPs], &deviceIPs); err != nil {
-+					return fmt.Errorf("decoding device IPs: %w", err)
-+				}
-+				currentSvc := &corev1.Service{ObjectMeta: objectMeta(ns, svc.Name)}
-+				if err := get(t.Context(), kubeClient, currentSvc); err != nil {
-+					return err
-+				}
-+				proxyIP = ipMatchingFamily(deviceIPs, c
++					AllowFunnel: map[ipn.HostPort]bool{"foo.test.ts.net:10000": true},
++				},
++			},
++			steps: []step{{
++				command: cmd("funnel --https=10000 off"),
++				want:    &ipn.ServeConfig{},
++			}},
++		},
+ 		{
+ 			name: "no_http_with_funnel",
+ 			steps: []step{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
 - **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
 - **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
 - **PR #22148** (closed): Proposed picks for 1.104.5 (@raggi)
 - **PR #22147** (2026-11-02): feature/conn25: block destinations inside the magic and transit IP pools (@mazdakn)
 - **PR #22146** (2026-11-02): magicsock: handle UDP read feedback (@illotum)
-- **PR #22143** (2026-11-02): ipn/ipnlocal,cmd/tsnet-proxy: strip underscore variants of identity headers (@andrew-d)
 
 ---
 
@@ -1085,38 +1203,54 @@ Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op
+## X. cmd/pgproxy: delete, leave README stub
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/pgproxy/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5d37847`: cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on OpenShift (#21276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `697bdea5`: cmd/pgproxy: delete, leave README stub. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/deploy/chart/templates/operator-rbac.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/pgproxy/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Child resources are created with an ownerReference to their owner and
-# blockOwnerDeletion: true. Clusters that enable the OwnerReferencesPermissionEnforcement
-# admission plugin (OpenShift does by default) then require update on the owner's
-# finalizers subresource, otherwise every such create is rejected and the owner never
-# reconciles. Inert where the plugin is not enabled.
-- apiGroups: ["tailscale.com"]
-  resources: ["dnsconfigs/finalizers", "proxygroups/finalizers", "recorders/finalizers"]
-  verbs: ["update"]
-- apiGroups: [""]
-  resources: ["services/finalizers"]
-  verbs: ["update"]
+The pgproxy server was our old Tailscale proxy for the Postgres wire
+protocol. See our [Introducing pgproxy blog post]
+post](https://tailscale.com/blog/introducing-pgproxy/).
+We changed our internal infrastructure such that we no longer depend on it.
+Rather than pretend it's still maintained, we deleted it.
+If community fork(s) emerge, we'll link from here.
+If you want the old code, it's [still in git](https://raw.githubusercontent.com/tailscale/tailscale/d45c5ddfbbc1bb6ded8e3e9a15af9ece78bb4744/cmd/pgproxy/pgproxy.go)
+or installable via `go install tailscale.com/cmd/pgproxy@d45c5ddfbbc1b`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The pgproxy server is a proxy for the Postgres wire protocol. [Read
+more in our blog
+post](https://tailscale.com/blog/introducing-pgproxy/) about it!
+The proxy runs an in-process Tailscale instance, accepts postgres
+client connections over Tailscale only, and proxies them to the
+configured upstream postgres server.
+This proxy exists because postgres clients default to very insecure
+connection settings: either they "prefer" but do not require TLS; or
+they set sslmode=require, which merely requires that a TLS handshake
+took place, but don't verify the server's TLS certificate or the
+presented TLS hostname.  In other words, sslmode=require enforces that
+a TLS session is created, but that session can trivially be
+machine-in-the-middled to steal credentials, data, inject malicious
+queries, and so forth.
+Because this flaw is in the client's validation of the TLS session,
+you have no way of reliably detecting the misconfiguration
+server-side. You could fix the configuration of all the clients you
+know of, but the default makes it very easy to accidentally regress.
+Instead of trying to verify client configuration over time, this proxy
+removes the need for postgres clients to be configured 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5d37847` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `697bdea5` are properly handled with clean fallback behavior.

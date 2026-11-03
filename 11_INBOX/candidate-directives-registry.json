@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T12:18:33.483Z",
+  "last_updated": "2026-11-03T17:30:12.311Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3687,6 +3687,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-crate-ci-typos"
+    },
+    {
+      "id": "CD-R0LZ",
+      "directive_title": "docs(agents): tune AGENTS.md and skills for current Claude prompting guidance (#",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sozercan/kaset",
+      "source_commit": "6a20e60c",
+      "date_staged": "2026-11-03",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-sozercan-kaset"
     }
   ]
 }

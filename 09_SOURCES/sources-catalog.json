@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "f5d37847",
+    "sourceVersion": "697bdea5",
     "license": "BSD-3-Clause",
-    "contentHash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
-    "lastHarvestedAt": "2026-11-03T10:59:50.531Z",
+    "contentHash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
+    "lastHarvestedAt": "2026-11-03T17:30:17.650Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "44bcb956",
+    "sourceVersion": "60fc36fb",
     "license": "Apache-2.0",
-    "contentHash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
-    "lastHarvestedAt": "2026-10-31T20:05:00.955Z",
+    "contentHash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
+    "lastHarvestedAt": "2026-11-03T17:30:22.770Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "d14dbd1e",
+    "sourceVersion": "ae43c804",
     "license": "MIT",
-    "contentHash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
-    "lastHarvestedAt": "2026-10-31T15:49:41.594Z",
+    "contentHash": "f38b343758494242adff301f8657cdec84cba94e68ce19c2f54d9f80ae5e7893",
+    "lastHarvestedAt": "2026-11-03T17:30:09.474Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "4c59ff25",
+    "sourceVersion": "6a20e60c",
     "license": "MIT",
-    "contentHash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
-    "lastHarvestedAt": "2026-10-22T19:09:46.440Z",
+    "contentHash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
+    "lastHarvestedAt": "2026-11-03T17:30:12.307Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {

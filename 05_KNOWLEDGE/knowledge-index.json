@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T17:22:51.029Z",
+  "last_updated": "2026-11-03T17:30:22.708Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45807,8 +45807,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "d14dbd1e",
-      "content_hash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
+      "source_version": "ae43c804",
+      "content_hash": "f38b343758494242adff301f8657cdec84cba94e68ce19c2f54d9f80ae5e7893",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -45861,6 +45861,11 @@
           "number": 6236,
           "title": "linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6554,
+          "title": "semantic): keep block type bindings separate from hoisted vars (#28601)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45868,7 +45873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:49:41.487Z",
+      "verified_at": "2026-11-03T17:30:09.378Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53016,8 +53021,8 @@
       "slug": "sozercan-kaset",
       "platform": "github",
       "source_url": "https://github.com/sozercan/kaset",
-      "source_version": "4c59ff25",
-      "content_hash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
+      "source_version": "6a20e60c",
+      "content_hash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
       "dossier_path": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "promoted_rules": [
@@ -53037,7 +53042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:09:46.377Z",
+      "verified_at": "2026-11-03T17:30:12.200Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54827,8 +54832,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "f5d37847",
-      "content_hash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
+      "source_version": "697bdea5",
+      "content_hash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -54981,6 +54986,11 @@
           "number": 6501,
           "title": "cmd/k8s-operator: grant dnsconfigs/finalizers so the nameserver provisions on Op",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6555,
+          "title": "cmd/pgproxy: delete, leave README stub",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54988,7 +54998,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:59:50.424Z",
+      "verified_at": "2026-11-03T17:30:17.578Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58357,8 +58367,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "44bcb956",
-      "content_hash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
+      "source_version": "60fc36fb",
+      "content_hash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -58431,6 +58441,11 @@
           "number": 6307,
           "title": "Relative Headroom Allocation for Process Priority Testing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6556,
+          "title": "Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58438,7 +58453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:05:00.756Z",
+      "verified_at": "2026-11-03T17:30:22.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -169205,6 +169220,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T17:22:51.006Z"
+    },
+    "rule-6554": {
+      "learning_id": "rule-6554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6554,
+      "title": "semantic): keep block type bindings separate from hoisted vars (#28601)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "ae43c804",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:30:09.378Z"
+    },
+    "rule-6555": {
+      "learning_id": "rule-6555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6555,
+      "title": "cmd/pgproxy: delete, leave README stub",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "697bdea5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:30:17.578Z"
+    },
+    "rule-6556": {
+      "learning_id": "rule-6556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6556,
+      "title": "Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "60fc36fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T17:30:22.695Z"
     }
   },
   "aliases": {

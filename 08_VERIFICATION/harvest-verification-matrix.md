@@ -6943,3 +6943,7 @@
 | `CYCLE-20261103-HFOA` | `2026-11-03T17:22:45.274Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6551` | Yes (`7568ce16...`) |
 | `CYCLE-20261103-HGLT` | `2026-11-03T17:22:46.481Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6552` | Yes (`6c8976ec...`) |
 | `CYCLE-20261103-HK6F` | `2026-11-03T17:22:51.111Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6553` | Yes (`a4f8fe5d...`) |
+| `CYCLE-20261103-QYF3` | `2026-11-03T17:30:09.471Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6554` | Yes (`f38b3437...`) |
+| `CYCLE-20261103-R0LT` | `2026-11-03T17:30:12.305Z` | `sozercan/kaset` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sozercan-kaset-learnings.md` | Yes (`35436630...`) |
+| `CYCLE-20261103-R4Q7` | `2026-11-03T17:30:17.647Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6555` | Yes (`c2e47a10...`) |
+| `CYCLE-20261103-R8OF` | `2026-11-03T17:30:22.767Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6556` | Yes (`a77afd54...`) |

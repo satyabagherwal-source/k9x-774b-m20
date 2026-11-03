@@ -6952,3 +6952,7 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c94f694e` | Multi-dimensional audit evidence | 2026-11-03T17:22:45.278Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ca2c4da1` | Multi-dimensional audit evidence | 2026-11-03T17:22:46.485Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `bdf154a3` | Multi-dimensional audit evidence | 2026-11-03T17:22:51.115Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `ae43c804` | Multi-dimensional audit evidence | 2026-11-03T17:30:09.474Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `6a20e60c` | Multi-dimensional audit evidence | 2026-11-03T17:30:12.307Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `697bdea5` | Multi-dimensional audit evidence | 2026-11-03T17:30:17.650Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `60fc36fb` | Multi-dimensional audit evidence | 2026-11-03T17:30:22.770Z |

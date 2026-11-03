@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T17:22:51.126Z",
+  "last_updated": "2026-11-03T17:30:22.777Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "d9f7495281b91cd9fcf4aebdc1372abf69d337f5d532e1b15df4ca885d2d4d25",
-      "verified_at": "2026-11-03T10:59:50.540Z",
+      "content_hash": "c2e47a10158e226673d5e3126d45f71d4b8550175cf94fc10799f420abd05dfd",
+      "verified_at": "2026-11-03T17:30:17.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:59:50.540Z"
+      "last_updated": "2026-11-03T17:30:17.657Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
-      "verified_at": "2026-10-31T20:05:00.962Z",
+      "content_hash": "a77afd5471b0b9a094d3b124d258da98096f3ea73f2fe611c6307d326e2af91a",
+      "verified_at": "2026-11-03T17:30:22.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:05:00.962Z"
+      "last_updated": "2026-11-03T17:30:22.776Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
-      "verified_at": "2026-10-31T15:49:41.603Z",
+      "content_hash": "f38b343758494242adff301f8657cdec84cba94e68ce19c2f54d9f80ae5e7893",
+      "verified_at": "2026-11-03T17:30:09.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:49:41.603Z"
+      "last_updated": "2026-11-03T17:30:09.480Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -14721,14 +14721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sozercan-kaset",
-      "content_hash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
-      "verified_at": "2026-10-22T19:09:46.454Z",
+      "content_hash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
+      "verified_at": "2026-11-03T17:30:12.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:09:46.462Z"
+      "last_updated": "2026-11-03T17:30:12.315Z"
     },
     "digitalbazaar/pyld": {
       "repository": "digitalbazaar/pyld",
