@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "4aa6ac3d",
+    "sourceVersion": "6b2e03f8",
     "license": "MIT",
-    "contentHash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
-    "lastHarvestedAt": "2026-11-03T11:59:20.294Z",
+    "contentHash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
+    "lastHarvestedAt": "2026-11-03T18:22:43.987Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "146f7699",
+    "sourceVersion": "e636338c",
     "license": "Apache-2.0",
-    "contentHash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
-    "lastHarvestedAt": "2026-10-30T13:58:26.682Z",
+    "contentHash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
+    "lastHarvestedAt": "2026-11-03T18:22:42.933Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "52529f0c",
+    "sourceVersion": "18430ef4",
     "license": "Apache-2.0",
-    "contentHash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
-    "lastHarvestedAt": "2026-10-31T20:53:23.898Z",
+    "contentHash": "2e3b48d64d3fe690d43f0aa5cc819e1d3db6991ca1567b393bdd8807490a40d3",
+    "lastHarvestedAt": "2026-11-03T18:22:50.692Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "c8c0e7a2",
+    "sourceVersion": "49e6d826",
     "license": "MIT",
-    "contentHash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
-    "lastHarvestedAt": "2026-10-31T16:57:11.318Z",
+    "contentHash": "bd0bb4ebdc541172d413fe47e436921064f5e834a3389475cd9e65e2d57ef453",
+    "lastHarvestedAt": "2026-11-03T18:22:57.802Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `c8c0e7a2`  
+> **Source Version**: `49e6d826`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:57:10.724Z  
+> **Timestamp**: 2026-11-03T18:22:57.043Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:57:10.421Z  
+> **Harvest Timestamp**: 2026-11-03T18:22:39.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40239 stars
+- **Stars / Engagement**: 40256 stars
 
 ---
 
@@ -1668,14 +1668,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30447** (2026-10-30): **scan_delta returns deleted rows from partitions whose path is percent-encoded**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import tempfile import polars as pl from delta import configure_spark_with_delta_pip from pyspark.sql import SparkSession  spark = configure_spark_with_delta_pip(     SparkSession.builder.master("local[1]")     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") ).getOrCreate()  for k in ["a b", "ab"]:     p = tempfile.mkdtemp()     spark.sql(f"CREATE TABLE delta.`{p}` (id BIGINT, k STRING) USING DELTA PARTITIONED BY (k) "               "TBLPROPERTIES ('delta.enableDeletionVectors' = 'true')")     spark.sql(f"INSERT INTO delta.`{p}` VALUES (1, '{k}'), (2, '{k}')")     spark.sql(f"DELETE FROM delta.`{p}` WHERE id = 2")     print(repr(k), pl.scan_delta(p).collect()["id"].to_list())  # 'a b' [1, 2], should be [1] # 'ab' [1] # Spark, duckdb's delta_scan and deltalake's QueryBuilder return [1] for both ```  ### Log output  ```shell  ```  ### Issue description  Currently, `_extract_delta_deletion_vectors` joins the scan paths from `file_uris()` to `deletion_vectors()["filepath"]` by string, but the first is decoded (`k=a b/part-...`) and the second keeps the log's encoding (`k=a%20b/part-...`), so those files get no deletion vector. Partition
-  **Post-Mortem & Fix Analysis**:
-  > (Drafted with an AI assistant, reviewed by me.)  I reproduced this with your exact Spark steps (pyspark 4.0.1, delta-spark 4.0.0) on polars 2.1.0 / deltalake 1.6.6, and also tried a few more partition values. In every case the two deltalake APIs disagree on the encoding:  ``` space   file_uris()               : ['.../tables/space/k=a b/part-00000-....snappy.parquet']   deletion_vectors filepath : ['file:///.../tables/space/k=a%20b/part-00000-....snappy.parquet'] percent   file_uris()               : ['.../tables/percent/k=50%25/part-00000-....snappy.parquet']   deletion_vectors filepath : ['file:///.../tables/percent/k=50%2525/part-00000-....snappy.parquet'] ```  So `filepath` is one URI-encoding level above `file_uris()`. A small fix in `_extract_delta_deletion_vectors` is to percent-decode `filepath` before the join:  ```diff --- a/py-polars/src/polars/io/delta/_dataset.py +++ b/py-polars/src/polars/io/delta/_dataset.py @@ -4,6 +4,7 @@  from dataclasses import dataclass  from functoo
-  > Triage notes  A local Spark table with three rows `id = 1, 2, 3` and partition `k = "a b"`. `DELETE ... WHERE id = 2` stored the deletion as a deletion vector, so the expected result is `[1, 3]`.  `scan_delta` looks up each file's deletion vector by matching its scan path from `file_uris()` against `deletion_vectors()["filepath"]` as strings:  | | | |---|---| | scan path (`file_uris()`) | `<root>/k=a b/part-00000-bfac6324….parquet` | | deletion vector path | `<root>/k=a%20b/part-00000-bfac6324….parquet` | | match? | **no** | | `scan_delta` result | **`[1, 2, 3]`**, the deleted row comes back |  For local tables, deltalake decodes `file_uris()` below the table root, while the deletion vector path keeps the log's percent-encoding.  Found and generated with AI 
+- **Issue #30541** (2026-11-03): **Row-oriented DataFrame construction stores integers other than 1 as `false` in a Boolean column**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame([[1], [2], [0], [3]], schema={"b": pl.Boolean}, orient="row", strict=False) print(df["b"].to_list()) # [True, False, False, False]  print(pl.DataFrame({"b": [1, 2, 0, 3]}, schema={"b": pl.Boolean}, strict=False)["b"].to_list()) # [True, True, False, True] print(pl.Series([1, 2, 0, 3]).cast(pl.Boolean).to_list()) # [True, True, False, True] ```  ### Log output  ```shell No error or warning is raised. ```  ### Issue description  When a DataFrame is built from rows (`orient="row"` or a list of dicts), an integer in a Boolean column becomes `true` only if it is 1. Other values from 2 to 255 become `false`, and values outside 0 to 255 raise `ComputeError: could not append value`. The column-oriented constructor and `cast` map every non-zero integer to `true`. With the default `strict=True` the row constructor also returns `[True, False, False, False]` instead of raising; that part is #17375.  Possible cause: the Boolean arm of `AnyValueBuffer::add` extracts a `u8` and appends `v == 1` ([av_buffer.rs#L60-L63](https://github.com/pola-rs/polars/blob/ee5f3e7b6d4e47365094754fe7e3def51bce74d4/crates/polars-core/src/frame/row/av_buffer.rs#L60-L63)).  AI disclosure: the bug was found by a testing pipeline built with Claude Code, 
 
-- **Issue #30432** (2026-10-30): **`sort` and `n_unique` wrong after a `rolling` `slice` with a per-window offset**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"t": range(5), "v": range(1, 6)}).sort("v") v = df.rolling("t", period="3i").agg(     pl.col("v").slice(pl.col("t").last() % 2, 1).first() )["v"]  print(v.to_list())         # [1, 2, 1, 3, 3] print(v.sort().to_list())  # [1, 2, 1, 3, 3], expected [1, 1, 2, 3, 3] print(v.n_unique())        # 4, expected 3 ```  ### Issue description  The result is not sorted but keeps the sorted flag of `v`, so `sort`, `n_unique` and `unique` on it are wrong. With a constant offset, e.g. `slice(1, 1)`, the result is correct.  ### Expected behavior  `v.sort().to_list() == [1, 1, 2, 3, 3]` and `v.n_unique() == 3`.  ### Installed versions  Reproduces on 2.1.0 and main.  Found and generated with AI 
+- **Issue #30540** (2026-11-03): **AsOf Join wrong results for categorical `on`**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  # Register the categories in reverse order, so "a" gets the highest code. order = pl.Series(["e", "d", "c", "b", "a"], dtype=pl.Categorical)  left = pl.DataFrame({"key": ["a", "b", "c", "d", "e"]}, schema={"key": pl.Categorical}) right = pl.DataFrame(     {"key": ["b", "d"], "matched": ["b", "d"]},     schema={"key": pl.Categorical, "matched": pl.String}, )  print(pl.__version__) print("left sorted:", left["key"].is_sorted(), "right sorted:", right["key"].is_sorted())  # Backward strategy: each left key takes the last right key <= it. out = left.with_columns(     code=pl.col("key").to_physical(),     expected=pl.Series([None, "b", "b", "d", "d"]), ) for engine in ["in-memory", "streaming"]:     res = left.lazy().join_asof(right.lazy(), on="key").collect(engine=engine)     out = out.with_columns(res["matched"].alias(engine)) print(out)  ```   ### Log output  ``` 2.1.0 left sorted: True right sorted: True shape: (5, 5) ┌─────┬──────┬──────────┬───────────┬───────────┐ │ key ┆ code ┆ expected ┆ in-memory ┆ streaming │ │ --- ┆ ---  ┆ ---      ┆ ---       ┆ ---       │ │ cat ┆ u32  ┆ str      ┆ str       ┆ str       │ ╞═════╪══════╪══════════╪═══════════╪═══════════╡ │ a   ┆ 4    ┆ null     ┆ d         ┆ b         │ │ b   ┆ 3    ┆ b       
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1692,252 +1689,135 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8c0e7a2` (2026-10-31)
-**Commit Message**: fix: Raise an error instead of panicking for SQL decimal types with an invalid precision or scale (#30450)
+### Incident Patch 1: `c1889135` (2026-11-03)
+**Commit Message**: fix: Panic in pl.format (#30534)
 
-**File**: `crates/polars-sql/src/types.rs` (modified, +15/-4)
+**File**: `crates/polars-ops/src/series/ops/strings.rs` (modified, +8/-8)
 ```diff
-@@ -190,10 +190,21 @@ pub(crate) fn map_sql_dtype_to_polars(dtype: &SQLDataType) -> PolarsResult<DataT
-         SQLDataType::Dec(info)
-         | SQLDataType::Decimal(info)
-         | SQLDataType::BigDecimal(info)
--        | SQLDataType::Numeric(info) => match *info {
--            ExactNumberInfo::PrecisionAndScale(p, s) => DataType::Decimal(p as usize, s as usize),
--            ExactNumberInfo::Precision(p) => DataType::Decimal(p as usize, 0),
--            ExactNumberInfo::None => DataType::Decimal(38, 9),
-+        | SQLDataType::Numeric(info) => {
-+            let (precision, scale) = match *info {
-+                ExactNumberInfo::PrecisionAndScale(p, s) => (p, s),
-+                ExactNumberInfo::Precision(p) => (p, 0),
-+                ExactNumberInfo::None => (38, 9),
-+            };
-+            polars_ensure!(
-+                (1..=38).contains(&precision),
-+                SQLSyntax: "invalid DECIMAL precision (expected 1-38, found {})", precision
-+            );
-+            polars_ensure!(
-+                (0..=precision as i64).contains(&scale),
-+                SQLSyntax: "invalid DECIMAL scale (expected 0-{}, found {})", precision, scale
-+            );
-+            DataType::Decimal(precision as usize, scale as usize)
-         },
+@@ -112,11 +112,11 @@ pub fn str_format(cs: &mut [Column], format: &str, insertions: &[usize]) -> Pola
+             unsafe { builder.push_inline_view_ignore_validity(Default::default()) };
  
-         // ---------------------------------
+             for (iter, arr, elem_idx) in arrays.iter_mut() {
+-                *elem_idx += 1;
+-                if i + 1 != output_length && *elem_idx == arr.len() {
++                while *elem_idx == arr.len() {
+                     *arr = iter.next().unwrap();
+                     *elem_idx = 0;
+                 }
++                *elem_idx += 1;
+             }
+ 
+             continue;
+@@ -126,16 +126,16 @@ pub fn str_format(cs: &mut [Column], format: &str, insertions: &[usize]) -> Pola
+         s.push_str(&format[..insertions[0]]);
+ 
+         for (j, (iter, arr, elem_idx)) in arrays.iter_mut().enumerate() {
++            while *elem_idx == arr.len() {
++                *arr = iter.next().unwrap();
++                *elem_idx = 0;
++            }
+             s.push_str(opt_str_to_string(arr.get(*elem_idx)));
++            *elem_idx += 1;
++
+             let start = insertions[j];
+             let end = insertions.get(j + 1).copied().unwrap_or(format.len());
+             s.push_str(&format[start..end]);
+-
+-            *elem_idx += 1;
+-            if i + 1 != output_length && *elem_idx == arr.len() {
+-                *arr = iter.next().unwrap();
+-                *elem_idx = 0;
+-            }
+         }
+ 
+         builder.push_value_ignore_validity(&s);
 ```
 
-**File**: `py-polars/tests/unit/sql/test_numeric.py` (modified, +30/-0)
+**File**: `py-polars/tests/unit/functions/as_datatype/test_format.py` (modified, +20/-0)
 ```diff
-@@ -115,6 +115,36 @@ def test_numeric_decimal_type(
-     assert_frame_equal(result, expected)
+@@ -6,3 +6,23 @@ def test_format() -> None:
  
- 
-+@pytest.mark.parametrize(
-+    ("sqltype", "error"),
-+    [
-+        ("DECIMAL(2, 3)", r"invalid DECIMAL scale \(expected 0-2, found 3\)"),
-+        ("NUMERIC(10, 2147483648)", r"invalid DECIMAL scale \(expected 0-10"),
-+        ("DECIMAL(39, 2)", r"invalid DECIMAL precision \(expected 1-38, found 39\)"),
-+        ("DECIMAL(0)", r"invalid DECIMAL precision \(expected 1-38, found 0\)"),
-+        ("DECIMAL(10, -1)", r"invalid DECIMAL scale \(expected 0-10, found -1\)"),
-+        ("DEC(5, 6)", r"invalid DECIMAL scale \(expected 0-5, found 6\)"),
-+        ("DECIMAL(2, 3)[]", r"invalid DECIMAL scale \(expected 0-2, found 3\)"),
-+    ],
-+)
-+def test_numeric_decimal_type_invalid(sqltype: str, error: str) -> None:
-+    # an error, not a panic in the cast
-+    for query in (
-+        f"SELECT CAST(1 AS {sqltype})",
-+        f"SELECT TRY_CAST(1 AS {sqltype})",
-+        f"SELECT 1::{sqltype}",
-+    ):
-+        with pytest.raises(SQLSyntaxError, match=error):
-+            pl.sql(query, eager=True)
+     out = df.select([pl.format("foo_{}_bar_{}", pl.col("a"), "b").alias("fmt")])
+     assert out["fmt"].to_list() == ["foo_a_bar_1", "foo_b_bar_2", "foo_c_bar_3"]
 +
 +
-+@pytest.mark.parametrize("prec_scale", [(1, 0), (1, 1), (38, 0), (38, 38)])
-+def test_numeric_decimal_type_bounds(prec_scale: tuple[int, int]) -> None:
-+    precision, scale = prec_scale
-+    res = pl.sql(f"SELECT CAST(0 AS DECIMAL({precision}, {scale})) AS d", eager=True)
-+    assert res.schema["d"] == pl.Decimal(precision, scale)
++def test_format_empty_chunks_25525() -> None:
++    s = pl.concat(
++        [
++            pl.Series("a", ["p"]),
++            pl.Series("a", ["x", "y"]),
++            pl.Series("a", ["q"]),
++            pl.Series("a", ["z", None]),
++        ],
++        rechunk=False,
++    )
++    df = pl.DataFrame([s, pl.Series("k", [0, 1, 1, 0, 1, 1])])
++    df = df.filter(df["k"] == 1).with_columns(b=pl.Series(["1", "2", "3", "4"]))
 +
++    out = df.select(pl.format("<{}>", pl.col("a")))
++    assert out.to_series().to_list() == ["<x>", "<y>", "<z>", None]
 +
- @pytest.mark.parametrize(
-     ("decimals", "expected"),
-     [
++    out = df.select(pl.format("<{}-{}-{}>", pl.col("b"), pl.lit("s"), pl.col("a")))
++    assert out.to_series().to_list() == ["<1-s-x>", "<2-s-y>", "<3-s-z>", None]
 ```
 
 ---
 
-### Incident Patch 2: `456d1d7a` (2026-10-31)
-**Commit Message**: fix: Allow TOP as a SQL table alias or column name (#30476)
+### Incident Patch 2: `49e6d826` (2026-11-03)
+**Commit Message**: chore: Update `.gitattributes` for Linguist (#30562)
 
-**File**: `crates/polars-sql/src/context.rs` (modified, +2/-11)
+**File**: `.gitattributes` (modified, +8/-0)
 ```diff
-@@ -30,8 +30,6 @@ use sqlparser::ast::{
-     UnaryOperator as SQLUnaryOperator, Value as SQLValue, ValueWithSpan, Values, VisitorMut,
-     WildcardAdditionalOptions, WindowSpec, WindowType, With,
- };
--use sqlparser::dialect::GenericDialect;
--use sqlparser::parser::{Parser, ParserOptions};
- 
- use crate::catalog::{
-     CatalogAlter, CatalogDdl, CatalogNamespace, CatalogRegistry, CatalogSpellings, CatalogTable,
-@@ -56,7 +54,7 @@ use crate::join_keys::{sql_join_key_pair, sql_join_where_predicate};
- use crate::sql_expr::{
-     convert_int_literal_for_string, is_string_expr, order_by_sort_options, parse_sql_array,
-     parse_sql_expr, resolve_compound_identifier, resolve_expr_dtype, series_from_literals,
--    to_sql_interface_err,
-+    sql_parser, to_sql_interface_err,
- };
- use crate::sql_visitors::{
-     QualifyExpression, TableIdentifierCollector, check_ambiguous_column,
-@@ -7621,14 +7619,7 @@ fn parse_single_statement(query: &str) -> PolarsResult<Statement> {
- }
- 
- fn parse_sql(query: &str) -> PolarsResult<Vec<Statement>> {
--    let mut parser = Parser::new(&GenericDialect);
--    parser = parser.with_options(ParserOptions {
--        trailing_commas: true,
--        ..Default::default()
--    });
--    parser
--        .try_with_sql(query)
--        .map_err(to_sql_interface_err)?
-+    sql_parser(query)?
-         .parse_statements()
-         .map_err(to_sql_interface_err)
- }
+@@ -1 +1,9 @@
++# Notebooks are tutorials, not library code
+ *.ipynb linguist-documentation
++
++# Force Rust: an empty .rs file is currently misdetected as RenderScript
++*.rs linguist-language=Rust
++
++# Linguist only auto-detects docs/ and examples/ at the repo root
++py-polars/docs/** linguist-documentation
++pyo3-polars/example/** linguist-documentation
+\ No newline at end of file
 ```
 
-**File**: `crates/polars-sql/src/sql_expr.rs` (modified, +46/-9)
+---
+
+### Incident Patch 3: `c4c05959` (2026-11-03)
+**Commit Message**: fix: Add `UInt128` to `Product` type mapper (#30555)
+
+**File**: `crates/polars-plan/src/plans/aexpr/function_expr/schema.rs` (modified, +2/-0)
 ```diff
-@@ -34,9 +34,9 @@ use sqlparser::ast::{
-     UnaryOperator as SQLUnaryOperator, Value as SQLValue, ValueWithSpan,
- };
- use sqlparser::dialect::GenericDialect;
--use sqlparser::keywords;
-+use sqlparser::keywords::{self, Keyword};
- use sqlparser::parser::{Parser, ParserOptions};
--use sqlparser::tokenizer::Token;
-+use sqlparser::tokenizer::{Token, TokenWithSpan, Tokenizer};
- 
- use crate::context::join_idents;
- use crate::dyn_visit::visit_expressions;
-@@ -61,6 +61,49 @@ pub fn to_sql_interface_err(err: impl Display) -> PolarsError {
-     PolarsError::SQLInterface(err.to_string().into())
- }
- 
-+/// A parser of `sql`. `TOP` is only a keyword in `SELECT TOP n`, so that it can also name a
-+/// relation or a column.
-+pub(crate) fn sql_parser(sql: &str) -> PolarsResult<Parser<'static>> {
-+    let options = ParserOptions {
-+        trailing_commas: true,
-+        ..Default::default()
-+    };
-+    let mut tokens = Tokenizer::new(&GenericDialect, sql)
-+        .with_unescape(options.unescape)
-+        .tokenize_with_location()
-+        .map_err(to_sql_interface_err)?;
-+    demote_top_keyword(&mut tokens);
-+    Ok(Parser::new(&GenericDialect)
-+        .with_options(options)
-+        .with_tokens_with_locations(tokens))
-+}
-+
-+fn demote_top_keyword(tokens: &mut [TokenWithSpan]) {
-+    let is_keyword = |token: &Token, keywords: &[Keyword]| matches!(token, Token::Word(word) if keywords.contains(&word.keyword));
-+    let mut previous: Option<usize> = None;
-+    for i in 0..tokens.len() {
-+        if matches!(tokens[i].token, Token::Whitespace(_)) {
-+            continue;
-+        }
-+        if is_keyword(&tokens[i].token, &[Keyword::TOP]) {
-+            let next = tokens[i + 1..]
-+                .iter()
-+                .find(|t| !matches!(t.token, Token::Whitespace(_)))
-+                .map(|t| &t.token);
-+            let starts_top = previous.is_some_and(|p| {
-+                is_keyword(
-+                    &tokens[p].token,
-+                    &[Keyword::SELECT, Keyword::DISTINCT, Keyword::ALL],
-+                )
-+            }) && matches!(next, Some(Token::Number(..) | Token::LParen));
-+            if !starts_top && let Token::Word(word) = &mut tokens[i].token {
-+                word.keyword = Keyword::NoKeyword;
-+            }
-+        }
-+        previous = Some(i);
-+    }
-+}
-+
- /// Sort options for a single `ORDER BY` key.
- ///
- /// If not given, 'NULLS FIRST' is the default for DESC and 'NULLS LAST' otherwise;
-@@ -2116,14 +2159,8 @@ pub fn sql_expr<S: AsRef<str>>(s: S) -> PolarsResult<Expr> {
-     let mut ctx = SQLContext::new();
-     let s = s.as_ref();
- 
--    let mut parser = Parser::new(&GenericDialect);
--    parser = parser.with_options(ParserOptions {
--        trailing_commas: true,
--        ..Default::default()
--    });
--
-     // `sql_expr` should only translate expressions, not statements or clauses
--    let mut ast = parser.try_with_sql(s).map_err(to_sql_interface_err)?;
-+    let mut ast = sql_parser(s)?;
-     if let Token::Word(word) = &ast.peek_token().token {
-         if keywords::RESERVED_FOR_COLUMN_ALIAS.contains(&word.keyword) {
-             polars_bail!(SQLInterface: "expected an expression (found '{}' clause)", word.value)
+@@ -187,6 +187,8 @@ impl IRFunctionExpr {
+                     T::UInt64 => T::UInt64,
+                     #[cfg(feature = "dtype-i128")]
+                     T::Int128 => T::Int128,
++                    #[cfg(feature = "dtype-u128")]
++                    T::UInt128 => T::UInt128,
+                     #[cfg(feature = "dtype-decimal")]
+                     T::Decimal(_p, s) => T::Decimal(DEC128_MAX_PREC, *s),
+                     _ => T::Int64,
 ```
 
-**File**: `py-polars/tests/unit/sql/test_miscellaneous.py` (modified, +32/-0)
+**File**: `py-polars/tests/unit/operations/aggregation/test_aggregations.py` (modified, +0/-1)
 ```diff
-@@ -792,3 +792,35 @@ def test_sql_context_eager_execution_removed() -> None:
-     msg = "It was renamed to 'eager'."
-     with pytest.raises(ArgumentRemovedError, match=re.escape(msg)):
-         pl.SQLContext(eager_execution=True)  # type: ignore[call-arg]
-+
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        ("SELECT top FROM t ORDER BY top", [(1,), (2,), (3,)]),
-+        ("SELECT top.x FROM t top ORDER BY 1", [(1,), (2,), (3,)]),
-+        ("SELECT x, top FROM t AS top WHERE top.top > 1 ORDER BY x", [(1, 3), (3, 2)]),
-+        (
-+            "WITH top AS (SELECT * FROM t) "
-+            "SELECT CONCAT_WS(',', top.x, TOP.top) AS s FROM top ORDER BY s",
-+            [("1,3",), ("2,1",), ("3,2",)],
-+        ),
-+    ],
-+)
-+def test_top_as_identifier(query: str, expected: list[tuple[Any, ...]]) -> None:
-+    t = pl.DataFrame({"top": [3, 1, 2], "x": [1, 2, 3]})
-+    assert pl.SQLContext(t=t).execute(query, eager=True).rows() == expected
-+
-+
-+@pytest.mark.parametrize(
-+    "query",
-+    [
-+        "SELECT TOP 2 x FROM t",
-+        "SELECT TOP (1) x FROM t",
-+        "SELECT DISTINCT TOP 1 x FROM t",
-+    ],
-+)
-+def test_top_clause_unsupported(query: str) -> None:
-+    t = pl.DataFrame({"x": [1, 2, 3]})
-+    with pytest.raises(SQLInterfaceError, match="`TOP` clause is not supported"):
-+        pl.SQLContext(t=t).execute(query, eager=True)
+@@ -1530,7 +1530,6 @@ def test_agg_with_slice_then_cast_23682(
+     ],
+ )
+ @pytest.mark.parametrize("grouped", [False, True])
+-@pytest.mark.may_fail_lazy_schema  # TODO: uint128
+ def test_agg_invalid_same_engines_behavior(
+     op: str, expr: pl.Expr, df: pl.DataFrame, grouped: bool
+ ) -> None:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30480** (2026-10-31): feat: Support SQL REPEAT, CARDINALITY and ARRAY_LENGTH with a dimension (@ritchie46)
-- **PR #30476** (2026-10-31): fix: Allow TOP as a SQL table alias or column name (@ritchie46)
-- **PR #30474** (2026-10-31): perf: Split streaming merge join windows in linear time (@ritchie46)
-- **PR #30469** (2026-10-31): test: Run the sort allocator decay test in a new process (@ritchie46)
-- **PR #30467** (2026-10-30): feat: Support SQL derived tables that read the relations joined before them (LATERAL) (@ritchie46)
-- **PR #30466** (2026-10-30): feat: Support correlated SQL EXISTS with HAVING or with outer-only subquery conditions (@ritchie46)
+- **PR #30562** (2026-11-03): chore: Update `.gitattributes` for Linguist (@Kevin-Patyk)
+- **PR #30561** (2026-11-03): refactor(rust): Expose the breakpoint positions of `bin_quantiles` (@dancsi)
+- **PR #30557** (2026-11-03): perf: Optimise `DataType::eq` comparison (@alexander-beedie)
+- **PR #30555** (2026-11-03): fix: Add `UInt128` to `Product` type mapper (@dsprenkels)
+- **PR #30554** (2026-11-03): fix: Asof join with Categorical key column (@orlp)
+- **PR #30549** (2026-11-03): chore: Disallow trivial first-time contributor fixes (@orlp)
 
 ---
 
@@ -1957,45 +1837,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Raise an error instead of panicking for SQL decimal types with an invalid precis
+## X. Panic in pl.format (#30534)
 
 **RULE**:
-When implementing operations in `crates/polars-sql/src/types.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-ops/src/series/ops/strings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8c0e7a2`: Raise an error instead of panicking for SQL decimal types with an invalid precision or scale (#30450). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1889135`: Panic in pl.format (#30534). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-sql/src/types.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ops/src/series/ops/strings.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        | SQLDataType::Numeric(info) => {
-            let (precision, scale) = match *info {
-                ExactNumberInfo::PrecisionAndScale(p, s) => (p, s),
-                ExactNumberInfo::Precision(p) => (p, 0),
-                ExactNumberInfo::None => (38, 9),
-            };
-            polars_ensure!(
-                (1..=38).contains(&precision),
-                SQLSyntax: "invalid DECIMAL precision (expected 1-38, found {})", precision
-            );
-            polars_ensure!(
-                (0..=precision as i64).contains(&scale),
-                SQLSyntax: "invalid DECIMAL scale (expected 0-{}, found {})", precision, scale
-            );
-            DataType::Decimal(precision as usize, scale as usize)
+                while *elem_idx == arr.len() {
+                *elem_idx += 1;
+            while *elem_idx == arr.len() {
+                *arr = iter.next().unwrap();
+                *elem_idx = 0;
+            }
+            *elem_idx += 1;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        | SQLDataType::Numeric(info) => match *info {
-            ExactNumberInfo::PrecisionAndScale(p, s) => DataType::Decimal(p as usize, s as usize),
-            ExactNumberInfo::Precision(p) => DataType::Decimal(p as usize, 0),
-            ExactNumberInfo::None => DataType::Decimal(38, 9),
+                *elem_idx += 1;
+                if i + 1 != output_length && *elem_idx == arr.len() {
+
+            *elem_idx += 1;
+            if i + 1 != output_length && *elem_idx == arr.len() {
+                *arr = iter.next().unwrap();
+                *elem_idx = 0;
+            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8c0e7a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1889135` are properly handled with clean fallback behavior.

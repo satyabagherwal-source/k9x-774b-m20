@@ -6964,3 +6964,7 @@
 | `CYCLE-20261103-WOVE` | `2026-11-03T18:02:36.650Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6569` | Yes (`bb615641...`) |
 | `CYCLE-20261103-7VBG` | `2026-11-03T18:11:18.220Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6570` | Yes (`df4d97ed...`) |
 | `CYCLE-20261103-845A` | `2026-11-03T18:11:29.662Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6571` | Yes (`190d1fad...`) |
+| `CYCLE-20261103-MJN6` | `2026-11-03T18:22:42.930Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6572` | Yes (`a1e65dc7...`) |
+| `CYCLE-20261103-MKGF` | `2026-11-03T18:22:43.983Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6573` | Yes (`5a37e45b...`) |
+| `CYCLE-20261103-MPMP` | `2026-11-03T18:22:50.689Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6574` | Yes (`2e3b48d6...`) |
+| `CYCLE-20261103-MV46` | `2026-11-03T18:22:57.798Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6575` | Yes (`bd0bb4eb...`) |

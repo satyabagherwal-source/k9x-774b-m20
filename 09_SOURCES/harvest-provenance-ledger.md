@@ -6973,3 +6973,7 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `505d8729` | Multi-dimensional audit evidence | 2026-11-03T18:02:36.654Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `28c23b0e` | Multi-dimensional audit evidence | 2026-11-03T18:11:18.223Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `c96ae32c` | Multi-dimensional audit evidence | 2026-11-03T18:11:29.665Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `e636338c` | Multi-dimensional audit evidence | 2026-11-03T18:22:42.933Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6b2e03f8` | Multi-dimensional audit evidence | 2026-11-03T18:22:43.987Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `18430ef4` | Multi-dimensional audit evidence | 2026-11-03T18:22:50.692Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `49e6d826` | Multi-dimensional audit evidence | 2026-11-03T18:22:57.802Z |

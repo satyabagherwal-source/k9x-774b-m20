@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T18:11:29.672Z",
+  "last_updated": "2026-11-03T18:22:57.811Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
-      "verified_at": "2026-11-03T11:59:20.307Z",
+      "content_hash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
+      "verified_at": "2026-11-03T18:22:43.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:59:20.307Z"
+      "last_updated": "2026-11-03T18:22:43.996Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
-      "verified_at": "2026-10-30T13:58:26.692Z",
+      "content_hash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
+      "verified_at": "2026-11-03T18:22:42.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:58:26.692Z"
+      "last_updated": "2026-11-03T18:22:42.942Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
-      "verified_at": "2026-10-31T20:53:23.904Z",
+      "content_hash": "2e3b48d64d3fe690d43f0aa5cc819e1d3db6991ca1567b393bdd8807490a40d3",
+      "verified_at": "2026-11-03T18:22:50.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:53:23.904Z"
+      "last_updated": "2026-11-03T18:22:50.701Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
-      "verified_at": "2026-10-31T16:57:11.326Z",
+      "content_hash": "bd0bb4ebdc541172d413fe47e436921064f5e834a3389475cd9e65e2d57ef453",
+      "verified_at": "2026-11-03T18:22:57.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:57:11.326Z"
+      "last_updated": "2026-11-03T18:22:57.811Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

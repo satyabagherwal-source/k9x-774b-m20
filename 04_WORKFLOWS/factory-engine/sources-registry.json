@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T18:11:32.219Z",
-    "lastVerified": "2026-11-03T18:11:32.219Z",
+    "lastChecked": "2026-11-03T18:23:00.372Z",
+    "lastVerified": "2026-11-03T18:23:00.372Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -324,14 +324,14 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T11:59:19.817Z",
-    "lastVerified": "2026-11-03T11:59:19.817Z",
+    "lastChecked": "2026-11-03T18:22:42.201Z",
+    "lastVerified": "2026-11-03T18:22:42.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "5a37e45b67fbf02635268524c696b53583a46f1215f6c15015ed55a3634a245e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T17:45:51.572Z",
+    "lastChecked": "2026-11-03T18:22:39.485Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T17:45:51.572Z"
+    "lastVerified": "2026-11-03T18:22:39.485Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2218,22 +2218,21 @@
     "lastVerified": "2026-10-31T02:27:52.019Z"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh",
+    "name": "chaos-mesh/chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T21:46:04.817Z",
-    "lastVerified": "2026-10-31T21:46:04.817Z",
+    "lastChecked": "2026-11-03T18:22:40.256Z",
+    "lastVerified": "2026-11-03T18:22:40.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
+    "contentHash": "a1e65dc77640d948642cf80ca171cd955071aa3fd3dfb0b88ae4bce4de5cfdc3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "146f7699"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy/mitmproxy",
@@ -7273,14 +7272,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T20:53:23.457Z",
-    "lastVerified": "2026-10-31T20:53:23.457Z",
+    "lastChecked": "2026-11-03T18:22:48.603Z",
+    "lastVerified": "2026-11-03T18:22:48.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
+    "contentHash": "2e3b48d64d3fe690d43f0aa5cc819e1d3db6991ca1567b393bdd8807490a40d3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8265,14 +8264,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T16:57:10.421Z",
-    "lastVerified": "2026-10-31T16:57:10.421Z",
+    "lastChecked": "2026-11-03T18:22:39.427Z",
+    "lastVerified": "2026-11-03T18:22:39.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
+    "contentHash": "bd0bb4ebdc541172d413fe47e436921064f5e834a3389475cd9e65e2d57ef453",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10105,9 +10104,9 @@
   "joshcarty-google-searchconsole": {
     "name": "google-searchconsole",
     "officialUrl": "https://github.com/joshcarty/google-searchconsole",
-    "lastChecked": "2026-10-30T06:56:45.681Z",
+    "lastChecked": "2026-11-03T18:22:35.906Z",
     "revisionIdentifier": "9ab5a265",
-    "lastVerified": "2026-10-30T06:56:45.681Z"
+    "lastVerified": "2026-11-03T18:22:35.906Z"
   },
   "joreilly-confetti": {
     "name": "joreilly/Confetti",
@@ -11210,9 +11209,9 @@
   "dodo-reach-hermes-desktop": {
     "name": "hermes-desktop",
     "officialUrl": "https://github.com/dodo-reach/hermes-desktop",
-    "lastChecked": "2026-10-30T18:39:30.945Z",
+    "lastChecked": "2026-11-03T18:22:29.882Z",
     "revisionIdentifier": "3b772afa",
-    "lastVerified": "2026-10-30T18:39:30.945Z"
+    "lastVerified": "2026-11-03T18:22:29.882Z"
   },
   "vitejs-vite": {
     "name": "vitejs/vite",

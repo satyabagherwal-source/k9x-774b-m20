@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T18:11:29.669Z",
-  "total_cycles_completed": 6941,
-  "total_learnings_persisted": 6941,
-  "total_rules_promoted": 6588,
+  "last_updated": "2026-11-03T18:22:57.807Z",
+  "total_cycles_completed": 6945,
+  "total_learnings_persisted": 6945,
+  "total_rules_promoted": 6592,
   "history": [
-    {
-      "timestamp": "2026-11-01T00:10:34.024Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T00:19:06.650Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T00:30:05.771Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T00:36:14.962Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-01T00:36:20.448Z",
       "repository": "jellyfin/Swiftfin",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-03T18:11:29.669Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:22:42.939Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:22:43.992Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:22:50.697Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:22:57.807Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

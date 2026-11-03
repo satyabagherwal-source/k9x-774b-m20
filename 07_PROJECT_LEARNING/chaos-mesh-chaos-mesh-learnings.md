@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `146f7699`  
+> **Source Version**: `e636338c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:58:26.000Z  
+> **Timestamp**: 2026-11-03T18:22:42.167Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:53:23.645Z  
+> **Harvest Timestamp**: 2026-11-03T18:22:40.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7961 stars
+- **Stars / Engagement**: 7965 stars
 
 ---
 
@@ -917,13 +917,13 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5186** (2026-10-29): **ci(e2e): align release-2.8 Kubernetes versions**
-  *Symptoms*: ## What problem does this PR solve?  Reduce repeated E2E work on release-2.8 and align its Kubernetes test versions with master.  ## What's changed and how does it work?  - Run the existing E2E suites on Kubernetes 1.35 and 1.37. - Upgrade Minikube to 1.39.0 and omit Kubernetes patch versions so Minikube selects them from its bundled version table. - Use containerd for the test clusters and configure the Chaos Daemon runtime and socket to match.  ## Related changes  - [x] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs), covered by [chaos-mesh/website#475](https://github.com/chaos-mesh/website/pull/475) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits include a Signed-off-by trailer. 
+- **Issue #5201** (2026-11-03): **ci: restrict automation to upstream and remove unused image builds**
+  *Symptoms*: ## What problem does this PR solve?  Forks inherit Claude and OSV jobs intended for the upstream repository. The rarely used `/build-image` command also needs fixes to build the target PR and post its download instructions.  ## What's changed and how does it work?  - Run Claude and both OSV scans only in `chaos-mesh/chaos-mesh`. - Remove the `/build-image` workflow and its dedicated download script.  Validation: Parsed all 21 remaining workflow YAML files, ran `git diff --check`, and checked for references to the removed command and files. GitHub Actions workflows were not executed.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [x] **Breaking backward compatibility**: removes the `/build-image` comment command and `hack/download-image.sh`.  ## DCO  The commit includes a DCO sign-off. 
 
-- **Issue #5185** (2026-10-29): **chore(hack): remove obsolete scripts and fix image loading**
-  *Symptoms*: ## What problem does this PR solve?  The hack directory contains obsolete E2E entry points and a duplicate Swagger generation script. The PR image download script also passes the repository and run ID as one argument and imports image archives with the wrong command.  ## What's changed and how does it work?  - Remove `e2e.sh`, `run-e2e.sh`, `prepare-e2e.sh`, and `generate_swagger_spec.sh`. CI already runs E2E tests directly, and `make swagger_spec` generates the Swagger spec. - Pass the repository and run ID as separate arguments in `download-image.sh`. - Load the image archives with `docker image load` to match the workflow's `docker image save` output.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a Signed-off-by trailer. 
+- **Issue #5198** (2026-11-03): **refactor(build): simplify helper scripts and version metadata**
+  *Symptoms*: ## What problem does this PR solve?  Remove obsolete helper scripts and simplify version metadata while preserving release tags, source commits, and build dates.  ## What's changed and how does it work?  - Remove the legacy kind helper, its unused library, and the version script. Read version and commit information from Go build metadata, and inject release tags and UTC build dates through Make. Honor `SOURCE_DATE_EPOCH` when set. - Build command packages and mount the shared Git directory read-only so container builds from worktrees retain their source commit. Use shallow checkout with tags for image publishing. - Download the named image artifact through `gh`, validate command arguments, and clean up temporary files on exit.  Version metadata and artifact download behavior were verified.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [x] **Breaking backward compatibility**  The removed helper scripts are no longer available. Development versions use Go's pseudo-version format.  ## DCO  All commits include a Signed-off-by trai
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5185?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 32.64%. Comparing base ([`65d6dc0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/65d6dc0cb4d9a2668bf2a610ba57d5aa1ad1a304?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2ace5b2`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/2ace5b22c97dc4c1aca8c6420e9c63e22d76065b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5198?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `0%` with `12 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 33.74%. Comparing base ([`6226cec`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/6226cec8ba1af8b0a5815bae334558029db7f4cb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`8986dfb`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/8986dfb15d13d38841ef4da1e4e44e80f35874de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5198?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -940,139 +940,354 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7549178e` (2026-10-29)
-**Commit Message**: fix(selector): skip terminated pods by default (#5150)
+### Incident Patch 1: `3af796e8` (2026-11-01)
+**Commit Message**: fix(ci): query known GHCR packages for image cleanup (#5187)
 
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/scripts/README.md` (modified, +11/-19)
 ```diff
-@@ -75,6 +75,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
- - Honor reconciliation cancellation in PhysicalMachineChaos requests to chaosd. [#5095](https://github.com/chaos-mesh/chaos-mesh/pull/5095)
- - Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
-+- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
- - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
- - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
- - Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion [#5143](https://github.com/chaos-mesh/chaos-mesh/pull/5143)
+@@ -1,28 +1,20 @@
+ # GHCR image cleanup
+ 
+-`cleanup_ghcr.py` removes old untagged container image versions from GHCR packages linked to `chaos-mesh/chaos-mesh`.
+-This prevents older build outputs from accumulating while retaining tagged images and their dependencies.
+-
+-The script retains:
++`cleanup_ghcr.py` queries the packages in `PACKAGE_NAMES` and checks their association with `chaos-mesh/chaos-mesh`.
++Cleanup deletes old untagged versions while retaining:
+ 
+ - Every tagged version.
+ - Every version created or updated within the last 30 days.
+ - Every manifest referenced directly or indirectly by those retained versions.
+ 
+-A tagged multi-platform image can depend on untagged manifests, so being untagged alone does not make a version eligible for deletion.
+-
+-The [Clean GHCR images workflow](../workflows/cleanup_ghcr.yml) runs on the first day of every other month at 10:00 China Standard Time, starting in January.
+-You can also start it manually from GitHub Actions.
+-Both scheduled and manual runs delete eligible versions.
++Run `python3 -B .github/scripts/cleanup_ghcr.py` to verify queries without deletion.
++Add `--apply` to delete eligible versions.
+ 
+-The workflow shares a concurrency group with the image publishing workflows.
+-The script deletes candidates selected by the initial scan and accepts a successful HTTP 204 response as deletion success.
+-It waits 2 seconds after each successful deletion.
+-It stops without retrying if a request fails or returns an invalid response.
+-Progress appears in the run logs, and a new run reads the current package inventory.
+-The logs show initial tagged and untagged counts, and counts after cleanup unless the package has no old untagged versions and is skipped.
+-The after counts use the initial inventory minus successful deletions, without an additional API scan.
++The [workflow](../workflows/cleanup_ghcr.yml) uses the default `GITHUB_TOKEN`.
++PR checks only verify queries with `packages: read`.
++Scheduled and manual runs perform cleanup with `packages: write`.
++The schedule is 10:00 China Standard Time on the first day of every other month, starting in January.
+ 
+-Local execution requires Python 3, GitHub CLI, Docker with Buildx, and authenticated access to GitHub and GHCR.
+-The credentials need permission to read and delete package versions.
+-Run `python3 -B .github/scripts/cleanup_ghcr.py` from the repository root to perform the same cleanup locally.
++Local use requires Python 3, GitHub CLI, and package read access.
++Cleanup also requires Docker with Buildx, GHCR authentication, and package admin access.
++Classic personal access tokens need `read:packages` and `delete:packages` scopes for cleanup.
 ```
 
-**File**: `pkg/selector/pod/phase_selector.go` (modified, +10/-0)
+**File**: `.github/scripts/cleanup_ghcr.py` (modified, +36/-9)
 ```diff
-@@ -33,6 +33,11 @@ const phaseSelectorName = "phase"
- type phaseSelector struct {
- 	reqIncl []labels.Requirement
- 	reqExcl []labels.Requirement
-+
-+	// skipTerminated is set when no phase requirement is configured. Pods that
-+	// have already terminated (Succeeded or Failed) have no running containers
-+	// to inject faults into, so they are not selected by default.
-+	skipTerminated bool
- }
+@@ -13,6 +13,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
  
- var _ generic.Selector = &phaseSelector{}
-@@ -48,6 +53,9 @@ func (s *phaseSelector) ListFunc(_ client.Reader) generic.ListFunc {
- func (s *phaseSelector) Match(obj client.Object) bool {
- 	included := len(s.reqIncl) == 0
- 	pod := obj.(*v1.Pod)
-+	if s.skipTerminated && (pod.Status.Phase == v1.PodSucceeded || pod.Status.Phase == v1.PodFailed) {
-+		return false
-+	}
- 	selector := labels.Set{string(pod.Status.Phase): ""}
++import argparse
+ from dataclasses import dataclass
+ from datetime import datetime, timedelta, timezone
+ import json
+@@ -23,6 +24,15 @@
+ from urllib.parse import quote
  
- 	// include pod if one including requirement matches
-@@ -95,5 +103,7 @@ func newPhaseSelector(spec v1alpha1.PodSelectorSpec) (generic.Selector, error) {
- 	return &phaseSelector{
- 		reqIncl: reqIncl,
- 		reqExcl: reqExcl,
-+
-+		skipTerminated: len(reqs) == 0,
- 	}, nil
- }
+ REPOSITORY = "chaos-mesh/chaos-mesh"
++PACKAGE_NAMES = (
++    "chaos-dlv",
++    "chaos-daemon",
++    "chaos-mesh",
++    "chaos-dashboard",
++    "chaos-kernel",
++    "build-env",
++    "dev-env",
++)
+ INDEX_TYPES = {"application/vnd.oci.image.index.v1+json", "application/vnd.docker.distribution.manifest.list.v2+json"}
+ IMAGE_TYPES = {"application/vnd.oci.image.manifest.v1+json", "application/vnd.docker.distribution.manifest.v2+json"}
+ 
+@@ -44,8 +54,16 @@ def api(path, method="GET"):
+     status = re.fullmatch(r"HTTP/\S+ (\d{3})(?: .*)?", lines[0] if lines else "")
+     require(separator and status, f"Unreadable API response for {method} {path}")
+     code = int(status[1])
+-    require(result.returncode == 0 and code == (204 if method == "DELETE" else 200),
+-            f"API {method} {path} returned HTTP {code}; stopping without retry")
++    if result.returncode != 0 or code != (204 if method == "DELETE" else 200):
++        detail = result.stderr.strip()
++        try:
++            error = json.loads(body)
++        except json.JSONDecodeError:
++            error = None
++        if isinstance(error, dict) and isinstance(error.get("message"), str):
++            detail = error["message"]
++        raise ValueError(f"API {method} {path} returned HTTP {code} (gh exit {result.returncode}); "
++                         f"{detail[:2000] or 'no error details'}; stopping without retry")
+     return None if method == "DELETE" else json.loads(body)
+ 
+ 
+@@ -106,16 +124,20 @@ def references(image, value):
+     return children
+ 
+ 
+-def cleanup():
+-    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+-    packages = [package for package in pages("/orgs/chaos-mesh/packages?package_type=container")
+-                if associated(package)]
+-    for package in packages:
+-        name = package["name"]
++def cleanup(*, apply=False):
++    if apply:
++        cutoff = datetime.now(timezone.utc) - timedelta(days=30)
++    for name in PACKAGE_NAMES:
+         path = f"/orgs/chaos-mesh/packages/container/{quote(name, safe='')}"
++        package = api(path)
++        require(package["name"] == name, f"Unexpected package name for {name}")
++        require(associated(package), f"Package {name} is not linked to {REPOSITORY}")
+         versions = [Version.parse(data) for data in pages(f"{path}/versions?state=active")]
+         tagged = sum(bool(version.tags) for version in versions)
+         untagged = len(versions) - tagged
++        if not apply:
++            print(f"{name}: query verified: tagged={tagged}, untagged={untagged}", flush=True)
++            continue
+         print(f"{name}: before cleanup: tagged={tagged}, untagged={untagged}", flush=True)
+         pending = {version.digest for version in versions if version.retained(cutoff)}
+         candidates = [version for version in versions if version.digest not in pending]
+@@ -138,11 +160,16 @@ def cleanup():
+             print(f"{name}: cleanup stopped after {deleted} successful deletions", flush=True)
+             raise
+         print(f"{name}: after cleanup (calculated): tagged={tagged}, untagged={untagged - deleted}", flush=True)
++    if not apply:
++        print("Query verification complete; no image versions deleted.", flush=True)
+ 
+ 
+ if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description="Verify fixed GHCR package queries without deleting image versions.")
++    parser.add_argument("--apply", action="store_true", help="delete eligible versions under the retention policy")
++    args = parser.parse_args()
+     try:
+-        cleanup()
++        cleanup(apply=args.apply)
+     except (KeyError, TypeError, ValueError, OSError, subprocess.TimeoutExpired) as error:
+         print(f"Cleanup stopped: {error}", file=sys.stderr, flush=True)
+         sys.exit(1)
 ```
 
-**File**: `pkg/selector/pod/phase_selector_test.go` (modified, +24/-0)
+**File**: `.github/workflows/cleanup_ghcr.yml` (modified, +21/-4)
 ```diff
-@@ -41,6 +41,9 @@ func TestPhaseSelectorMatch(t *testing.T) {
- 	failedSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodFailed)}})
- 	g.Expect(err).ShouldNot(HaveOccurred())
+@@ -1,18 +1,35 @@
+ name: Clean GHCR images
  
-+	succeededSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodSucceeded)}})
-+	g.Expect(err).ShouldNot(HaveOccurred())
+ on:
++  pull_request:
++    paths:
++      - ".github/scripts/cleanup_ghcr.py"
++      - ".github/workflows/cleanup_ghcr.yml"
+   schedule:
+     - cron: "0 2 1 */2 *"
+   workflow_dispatch:
+ 
+ permissions:
+   contents: read
+-  packages: write
++  packages: read
+ 
+ jobs:
++  verify:
++    if: github.repository == 'chaos-mesh/chaos-mesh' && github.event_name == 'pull_request'
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v7
++      - name: Verify fixed GHCR package queries
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++        run: python3 -B .github/scripts/cleanup_ghcr.py
 +
- 	unknownSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodUnknown)}})
- 	g.Expect(err).ShouldNot(HaveOccurred())
- 
-@@ -49,6 +52,7 @@ func TestPhaseSelectorMatch(t *testing.T) {
- 		testutils.NewPod(testutils.PodArg{Name: "p2", Status: v1.PodRunning}),
- 		testutils.NewPod(testutils.PodArg{Name: "p3", Status: v1.PodPending}),
- 		testutils.NewPod(testutils.PodArg{Name: "p4", Status: v1.PodFailed}),
-+		testutils.NewPod(testutils.PodArg{Name: "p5", Status: v1.PodSucceeded}),
- 	}
- 
- 	tcs := []struct {
-@@ -72,6 +76,26 @@ func TestPhaseSelectorMatch(t *testing.T) {
- 			pod:      pods[0],
- 			selector: emptySelector,
- 			match:    true,
-+		}, {
-+			name:     "empty filter skips failed pod",
-+			pod:      pods[3],
-+			selector: emptySelector,
-+			match:    false,
-+		}, {
-+			name:     "empty filter skips succeeded pod",
-+			pod:      pods[4],
-+			selector: emptySelector,
-+			match:    false,
-+		}, {
-+			name:     "empty filter keeps pending pod",
-+			pod:      pods[2],
-+			selector: emptySelector,
-+			match:    true,
-+		}, {
-+			name:     "filter succeeded",
-+			pod:      pods[4],
-+			selector: succeededSelector,
-+			match:    true,
- 		}, {
- 			name:     "filter running and pending",
- 			pod:      pods[0],
+   cleanup:
+-    if: github.repository == 'chaos-mesh/chaos-mesh'
+-    runs-on: ubuntu-24.04
++    if: github.repository == 'chaos-mesh/chaos-mesh' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
++    permissions:
++      contents: read
++      packages: write
++    runs-on: ubuntu-latest
+     timeout-minutes: 360
+     concurrency:
+       group: ghcr-image-maintenance
+@@ -28,4 +45,4 @@ jobs:
+       - name: Apply retention policy
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+-        run: python3 -B .github/scripts/cleanup_ghcr.py
++        run: python3 -B .github/scripts/cleanup_ghcr.py --apply
 ```
 
 ---
 
-### Incident Patch 2: `24c8a932` (2026-10-29)
-**Commit Message**: chore(hack): remove obsolete scripts and fix image loading (#5185)
+### Incident Patch 2: `e636338c` (2026-11-03)
+**Commit Message**: ci: restrict automation to upstream and remove unused image builds (#5201)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `hack/download-image.sh` (modified, +2/-2)
+**File**: `.github/workflows/claude.yml` (modified, +6/-13)
 ```diff
-@@ -54,7 +54,7 @@ function download_image() {
- 
-     for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
-     do
--        docker image import .cache/$IMAGE.tar ghcr.io/chaos-mesh/$IMAGE:latest &>/dev/null
-+        docker image load --input ".cache/$IMAGE.tar" &>/dev/null
-         echo "Image ghcr.io/chaos-mesh/$IMAGE:latest loaded"
-     done
- }
-@@ -104,4 +104,4 @@ while [[ $# -gt 0 ]]; do
-     esac
- done
- 
--download_image "$GITHUB_REPOSITORY $GITHUB_ACTION_ID"
-+download_image "$GITHUB_REPOSITORY" "$GITHUB_ACTION_ID"
+@@ -16,10 +16,12 @@ permissions:
+ jobs:
+   claude:
+     if: |
+-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
++      github.repository == 'chaos-mesh/chaos-mesh' && (
++        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
++        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
++        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
++        (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
++      )
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -42,12 +44,3 @@ jobs:
+           # This is an optional setting that allows Claude to read CI results on PRs
+           additional_permissions: |
+             actions: read
+-
+-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
+-          # prompt: 'Update the pull request description to include a summary of changes.'
+-
+-          # Optional: Add claude_args to customize behavior and configuration
+-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+-          # or https://code.claude.com/docs/en/cli-reference for available options
+-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+-
 ```
 
-**File**: `hack/e2e.sh` (removed, +0/-338)
+**File**: `.github/workflows/osv-scanner-pr.yml` (modified, +1/-0)
 ```diff
-@@ -1,338 +0,0 @@
+@@ -23,6 +23,7 @@ permissions:
+ 
+ jobs:
+   scan-pr:
++    if: github.repository == 'chaos-mesh/chaos-mesh'
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.7.0"
+     with:
+       scan-args: |-
+```
+
+**File**: `.github/workflows/osv-scanner-scheduled.yml` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@ permissions:
+ 
+ jobs:
+   scan-scheduled:
++    if: github.repository == 'chaos-mesh/chaos-mesh'
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.7.0"
+     with:
+       scan-args: |-
+```
+
+**File**: `.github/workflows/upload_image_pr.yml` (removed, +0/-83)
+```diff
+@@ -1,83 +0,0 @@
+-name: Upload Image for PR
+-
+-on:
+-  issue_comment:
+-    types: [created]
+-
+-permissions: read-all
+-
+-jobs:
+-  build-for-pr:
+-    runs-on: ubuntu-24.04
+-    if: ${{ github.event.issue.pull_request && startsWith( github.event.comment.body, '/build-image') }}
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Install jq
+-        run: |
+-          sudo apt install jq -y
+-
+-      - name: Cache docker image and go
+-        uses: actions/cache@v6
+-        with:
+-          path: |
+-            cache
+-          key: chaos-mesh-build-${{ github.event.issue.number }}
+-
+-      - name: Enable docker builder
+-        run: |
+-          DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --use --name chaos-mesh-builder
+-
+-      - name: Build Chaos Mesh Build Env
+-        uses: ./.github/actions/build-chaos-mesh-build-env
+-        with:
+-          use-docker-cache: 'true'
+-
+-      - name: Build Chaos Mesh Dev Env
+-        env:
+-          IMAGE_DEV_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-dev-env-image') }}
+-        run: |
+-          if [ "${IMAGE_DEV_ENV_BUILD}" = "true" ] ; then
+-            export IMAGE_DEV_ENV_BUILD=1;
+-          else
+-            export IMAGE_DEV_ENV_BUILD=0;
+-          fi
+-
+-          make \
+-            DOCKER_CACHE=1 \
+-            DOCKER_CACHE_DIR=$GITHUB_WORKSPACE/cache \
+-            GO_BUILD_CACHE=$GITHUB_WORKSPACE/cache \
+-            image-dev-env
+-
+-      - name: Build Chaos Mesh
+-        run: |
+-          make \
+-            IMAGE_TAG=latest \
+-            UI=1 \
+-            DOCKER_CACHE=1 \
+-            DOCKER_CACHE_DIR=$GITHUB_WORKSPACE/cache \
+-            GO_BUILD_CACHE=$GITHUB_WORKSPACE/cache \
+-            image
+-
+-          for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
+-          do
+-            docker image save ghcr.io/chaos-mesh/$IMAGE > $IMAGE.tar
+-          done
+-
+-      - name: Upload Chaos Mesh Image to Artifacts
+-        uses: actions/upload-artifact@v7
+-        with:
+-          name: chaos-mesh-images
+-          path: |
+-            *.tar
+-
+-      - name: Create comment
+-        uses: peter-evans/create-or-update-comment@v5
+-        with:
+-          issue-number: ${{ github.event.issue.number }}
+-          body: |
+-            You can download and import the image with following commands:
+-
+-            ```bash
+-            ./hack/download-image.sh -r ${{ github.repository }} -i ${{ github.run_id }}
+-            ```
+```
+
+**File**: `hack/download-image.sh` (removed, +0/-103)
+```diff
+@@ -1,103 +0,0 @@
 -#!/usr/bin/env bash
--# Copyright 2021 Chaos Mesh Authors.
+-# Copyright 2022 Chaos Mesh Authors.
 -#
 -# Licensed under the Apache License, Version 2.0 (the "License");
 -# you may not use this file except in compliance with the License.
@@ -1087,543 +1302,583 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 -# limitations under the License.
 -#
 -
--#
--# E2E entrypoint script.
--#
+-# This script should work with the github action in `.github/workflows/upload_image_pr.yml`
 -
--set -o errexit
--set -o nounset
--set -o pipefail
--
--ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
--cd "$ROOT"
--
--source "${ROOT}/hack/lib.sh"
+-set -e
 -
 -function usage() {
 -    cat <<'EOF'
--This script is entrypoint to run e2e tests.
--Usage: hack/e2e.sh [-h] -- [extra test args]
--    -h      show this message and exit
--Environments:
--    PROVIDER                    Kubernetes provider, e.g. kind, gke, eks, defaults: kind
--    IMAGE_REGISTRY              image docker registry
--    IMAGE_TAG                   image tag
--    SKIP_BUILD                  skip building binaries
--    SKIP_IMAGE_BUILD            skip build and push images
--    SKIP_UP                     skip starting the cluster
--    SKIP_DOWN                   skip shutting down the cluster
--    KUBE_VERSION                the version of Kubernetes to test against
--    KUBE_WORKERS                the number of worker nodes (excludes master nodes), defaults: 3
--    DOCKER_IO_MIRROR            configure mirror for docker.io
--    GCR_IO_MIRROR               configure mirror for gcr.io
--    QUAY_IO_MIRROR              configure mirror for quay.io
--    KIND_DATA_HOSTPATH          (for kind) the host path of data directory for kind cluster, defaults: none
--    GINKGO_NODES                ginkgo nodes to run specs, defaults: 1
--    GINKGO_PARALLEL             if set to `y`, will run specs in parallel, the number of nodes will be the number of cpus
--    GINKGO_NO_COLOR             if set to `y`, suppress color output in default reporter
--Examples:
--0) view help
--    ./hack/e2e.sh -h
--1) run all specs
--    ./hack/e2e.sh
--    GINKGO_NODES=8 ./hack/e2e.sh # in parallel
--2) limit specs to run
--    ./hack/e2e.sh -- --ginkgo.focus='Basic'
--    ./hack/e2e.sh -- --ginkgo.focus='Backup\sand\srestore'
--    See https://onsi.github.io/ginkgo/ for more ginkgo options.
--3) reuse the cluster and don't tear down it after the testing
--    SKIP_UP=y SKIP_DOWN=y ./hack/e2e.sh -- <e2e args>
--4) use registry mirrors
--    DOCKER_IO_MIRROR=https://dockerhub.azk8s.cn QUAY_IO_MIRROR=https://quay.azk8s.cn GCR_IO_MIRROR=https://gcr.azk8s.cn ./hack/e2e.sh -- <e2e args>
--EOF
+-This command downloads and imports the chaos-mesh image from the github artifacts
 -
+-Usage: hack/download-image.sh -r REPOSITORY -i RUN_ID
+-
+-    -h show this message and exit
+-    -r the github repository which running the github actions
+-    -i download the artifact related with this action run id
+-
+-EOF
 -}
 -
--while getopts "h?" opt; do
--    case "$opt" in
--    h|\?)
--        usage
--        exit 0
--        ;;
+-function download_image() (
+-    local github_repository=$1
+-    local github_run_id=$2
+-    local download_dir
+-    download_dir=$(mktemp -d)
+-    trap 'rm -rf "$download_dir"' EXIT
+-
+-    gh run download "$github_run_id" --repo "$github_repository" \
+-        --name chaos-mesh-images --dir "$download_dir"
+-
+-    for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
+-    do
+-        docker image load --input "$download_dir/$IMAGE.tar" &>/dev/null
+-        echo "Image ghcr.io/chaos-mesh/$IMAGE:latest loaded"
+-    done
+-)
+-
+-function check_executable_exists() {
+-    while [[ $# -gt 0 ]]; do
+-        local executable=$1
+-        if ! command -v "$executable" >/dev/null 2>&1; then
+-            echo "Error: $executable is not installed"
+-            exit 1
+-        fi
+-
+-        shift
+-    done
+-}
+-
+-GITHUB_REPOSITORY=""
+-GITHUB_ACTION_ID=""
+-
+-while getopts ':r:i:h' option; do
+-    case $option in
+-        r|i)
+-            if [[ -z $OPTARG || $OPTARG == -* ]]; then
+-                echo "Error: -$option requires a value"
+-                exit 1
+-            fi
+-            if [[ $option == r ]]; then
+-                GITHUB_REPOSITORY=$OPTARG
+-            else
+-                GITHUB_ACTION_ID=$OPTARG
+-            fi
+-            ;;
+-        h)
+-            usage
+-            exit 0
+-            ;;
+-        :)
+-            echo "Error: -$OPTARG requires a value"
+-            exit 1
+-            ;;
+-        *)
+-            echo "unknown flag or option -$OPTARG"
+-            usage
+-            exit 1
+-            ;;
 -    esac
 -done
+-shift "$((OPTIND - 1))"
 -
--if [ "${1:-}" == "--" ]; then
--    shift
--fi
--
--hack::ensure_kind
--echo "ensured kind"
--hack::ensure_kubectl
--echo "ensured kubectl"
--hack::ensure_kubebuilder
--echo "ensured kubebuilder"
--hack::ensure_kustomize
--echo "ensured kustomize"
--hack::ensure_kubetest2
--echo "ensured kubetest2"
--
--PROVIDER=${PROVIDER:-kind}
--IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
--IMAGE_TAG=${IMAGE_TAG:-latest}
--CLUSTER=${CLUSTER:-chaos-mesh}
--KUBECONFIG=${KUBECONFIG:-~/.kube/config}
--SKIP_BUILD=${SKIP_BUILD:-}
--SKIP_IMAGE_BUILD=${SKIP_IMAGE_BUILD:-}
--SKIP_UP=${SKIP_UP:-}
--SKIP_DOWN=${SKIP_DOWN:-}
--SKIP_DUMP=${SKIP_DUMP:-}
--SKIP_TEST=${SKIP_TEST:-}
--KIND_DATA_HOSTPATH=${KIND_DATA_HOSTPATH:-none}
--KUBE_VERSION=${KUBE_VERSION:-v1.20.7}
--KUBE_WORKERS=${KUBE_WORKERS:-3}
--DOCKER_IO_MIRROR=${DOCKER_IO_MIRROR:-}
--GCR_IO_MIRROR=${GCR_IO_MIRROR:-}
--QUAY_IO_MIRROR=${QUAY_IO_MIRROR:-}
--RUNNER_SUITE_NAME=${RUNNER_SUITE_NAME:-}
--ARTIFACTS=${ARTIFACTS:-}
--
--echo "PROVIDER: $PROVIDER"
--echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
--echo "IMAGE_TAG: $IMAGE_TAG"
--echo "CLUSTER: $CLUSTER"
--echo "KUBECONFIG: $KUBECONFIG"
--echo "SKIP_BUILD: $SKIP_BUILD"
--echo "SKIP_IMAGE_BUILD: $SKIP_IMAGE_BUILD"
--echo "SKIP_UP: $SKIP_UP"
--echo "SKIP_DOWN: $SKIP_DOWN"
--echo "SKIP_DUMP: $SKIP_DUMP"
--echo "KIND_DATA_HOSTPATH: $KIND_DATA_HOSTPATH"
--echo "KUBE_VERSION: $KUBE_VERSION"
--echo "DOCKER_IO_MIRROR: $DOCKER_IO_MIRROR"
--echo "GCR_IO_MIRROR: $GCR_IO_MIRROR"
--echo "QUAY_IO_MIRROR: $QUAY_IO_MIRROR"
--echo "ARTIFACTS: $ARTIFACTS"
--echo "KUBE_WORKERS: $KUBE_WORKERS"
--
--# https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1
--declare -A kind_node_images
--kind_node_images["v1.11.10"]="kindest/node:v1.11.10@sha256:74c8740710649a3abb169e7f348312deff88fc97d74cfb874c5095ab3866bb42"
--kind_node_images["v1.12.10"]="kindest/node:v1.12.10@sha256:faeb82453af2f9373447bb63f50bae02b8020968e0889c7fa308e19b348916cb"
--kind_node_images["v1.13.12"]="kindest/node:v1.13.12@sha256:214476f1514e47fe3f6f54d0f9e24cfb1e4cda449529791286c7161b7f9c08e7"
--# the following node images support amd64 and arm64
--
-```
-
-**File**: `hack/generate_swagger_spec.sh` (removed, +0/-35)
-```diff
-@@ -1,35 +0,0 @@
--#!/usr/bin/env bash
--# Copyright 2021 Chaos Mesh Authors.
--#
--# Licensed under the Apache License, Version 2.0 (the "License");
--# you may not use this file except in compliance with the License.
--# You may obtain a copy of the License at
--#
--# http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing, software
--# distributed under the License is distributed on an "AS IS" BASIS,
--# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--# See the License for the specific language governing permissions and
--# limitations under the License.
--#
--
--# This script call swag converts Go annotations to Swagger Documentation.
--#
--# See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
--
--set -euo pipefail
--
--DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
--PROJECT_DIR="$(dirname "$DIR")"
--
--cd $PROJECT_DIR
--
--export GOBIN=$PROJECT_DIR/bin
--export PATH=$GOBIN:$PATH
--
--echo "+ Install swaggo/swag"
--go install github.com/swaggo/swag/cmd/swag@v1.16.6
--
--echo "+ Generate swagger spec"
--swag init -g cmd/chaos-dashboard/main.go --output pkg/dashboard/swaggerdocs --pd
-```
-
-**File**: `hack/prepare-e2e.sh` (removed, +0/-36)
-```diff
-@@ -1,36 +0,0 @@
--#!/usr/bin/env bash
--# Copyright 2021 Chaos Mesh Authors.
--#
--# Licensed under the Apache License, Version 2.0 (the "License");
--# you may not use this file except in compliance with the License.
--# You may obtain a copy of the License at
--#
--# http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing, software
--# distributed under the License is distributed on an "AS IS" BASIS,
--# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--# See the License for the specific language governing permissions and
--# limitations under the License.
--#
--
--#
--# This script runs before all e2e jobs to prepare shared files.
--# This is optional. We only use it in CI to speed up our e2e process.
--#
--
--set -o errexit
--set -o nounset
--set -o pipefail
--
--ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
--cd $ROOT
--
--source "${ROOT}/hack/lib.sh"
--
--hack::ensure_kind
--hack::ensure_kubectl
--hack::ensure_helm
--hack::ensure_kubebuilder
--hack::ensure_kustomize
--hack::ensure_kubetest2
-\ No newline at end of file
-```
-
-**File**: `hack/run-e2e.sh` (removed, +0/-182)
-```diff
-@@ -1,182 +0,0 @@
--#!/usr/bin/env bash
--# Copyright 2021 Chaos Mesh Authors.
--#
--# Licensed under the Apache License, Version 2.0 (the "License");
--# you may not use this file except in compliance with the License.
--# You may obtain a copy of the License at
--#
--# http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing, software
--# distributed under the License is distributed on an "AS IS" BASIS,
--# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--# See the License for the specific language governing permissions and
--# limitations under the License.
--#
--
--set -o errexit
--set -o nounset
--set -o pipefail
--
--ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
--cd $ROOT
--
--source $ROOT/hack/lib.sh
--
--hack::ensure_kubectl
--hack::ensure_helm
--hack::ensure_kind
--
--
--PROVIDER=${PROVIDER:-}
--CLUSTER=${CLUSTER:-}
--IMAGE_TAG=${IMAGE_TAG:-}
--E2E_IMAGE=${E2E_IMAGE:-ghcr.io/chaos-mesh/chaos-mesh-e2e:latest}
--KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
--KUBECONTEXT=${KUBECONTEXT:-kind-chaos-mesh}
--REPORT_DIR=${REPORT_DIR:-}
--REPORT_PREFIX=${REPORT_PREFIX:-}
--GINKGO_NODES=${GINKGO_NODES:-}
--GINKGO_PARALLEL=${GINKGO_PARALLEL:-n} # set to 'y' to run tests in parallel
--# If 'y', Ginkgo's reporter will not print out in color when tests are run
--# in parallel
--GINKGO_NO_COLOR=${GINKGO_NO_COLOR:-n}
--GINKGO_STREAM=${GINKGO_STREAM:-y}
--SKIP_GINKGO=${SKIP_GINKGO:-}
--# We don't finalizers namespace on failure by default for easier debugging in local development.
--# TODO support this feature
--DELETE_NAMESPACE_ON_FAILURE=${DELETE_NAMESPACE_ON_FAILURE:-false}
--IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
--
--if [ -z "$KUBECONFIG" ]; then
--    echo "error: KUBECONFIG is required"
+-if [[ -z $GITHUB_REPOSITORY || -z $GITHUB_ACTION_ID || $# -ne 0 ]]; then
+-    usage
 -    exit 1
 -fi
 -
--echo "PROVIDER: $PROVIDER"
--echo "CLUSTER: $CLUSTER"
--echo "IMAGE_TAG: $IMAGE_TAG"
--echo "E2E_IMAGE: $E2E_IMAGE"
--echo "KUBECONFIG: $KUBECONFIG"
--echo "KUBECONTEXT: $KUBECONTEXT"
--echo "REPORT_DIR: $REPORT_DIR"
--echo "REPORT_PREFIX: $REPORT_PREFIX"
--echo "DELETE_NAMESPACE_ON_FAILURE: $DELETE_NAMESPACE_ON_FAILURE"
--echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
+-check_executable_exists gh docker
 -
--function e2e::image_load() {
--    local images=(
--        chaos-mesh/chaos-mesh
--        chaos-mesh/chaos-daemon
--        chaos-mesh/e2e-helper
--    )
--    if [ "$PROVIDER" == "kind" ]; then
--        local nodes=$($KIND_BIN get nodes --name $CLUSTER | grep -v 'control-plane$')
--        echo $nodes
--        echo "info: load images" "${images[@]}"
--        for image in ${images[@]}; do
--            $KIND_BIN load docker-image --name $CLUSTER ${IMAGE_REGISTRY}/$image:$IMAGE_TAG --nodes $(hack::join ',' ${nodes[@]})
--        done
--
--        # bypassing docker pull rate limit inner the kind container: kindest/node has no credentials
--        # we suppose that you could pull this image on your host docker
--        echo "info: load images ghcr.io/chaos-mesh/chaos-coredns:v0.3.0, nginx:latest and gcr.io/google-containers/pause:latest"
--        docker pull ghcr.io/chaos-mesh/chaos-coredns:v0.3.0
--        docker pull nginx:latest
--        docker pull gcr.io/google-containers/pause:latest
--        $KIND_BIN load docker-image --name "$CLUSTER" ghcr.io/chaos-mesh/chaos-coredns:v0.3.0 --nodes "$(hack::join ',' ${nodes[@]})"
--        $KIND_BIN load docker-image --name "$CLUSTER" nginx:latest --nodes "$(hack::join ',' ${nodes[@]})"
--        $KIND_BIN load docker-image --name "$CLUSTER" gcr.io/google-containers/pause:latest --nodes "$(hack::join ',' ${nodes[@]})"
--    fi
--}
--
--
--function e2e::get_kube_version() {
--    $KUBECTL_BIN --context $KUBECONTEXT version --short | awk '/Server Version:/ {print $3}'
--}
--
--if [ -z "$KUBECONTEXT" ]; then
--    echo "info: KUBECONTEXT is not set, current context is used"
--    KUBECONTEXT=$($KUBECTL_BIN config current-context 2>/dev/null) || true
--    if [ -z "$KUBECONTEXT" ]; then
--        echo "error: current context cannot be detected"
--        exit 1
--    fi
--    echo "info: current kubeconfig context is '$KUBECONTEXT'"
--fi
--
--e2e::image_load
--echo "info: image loaded"
--
--if [ -n "$SKIP_GINKGO" ]; then
--    echo "info: skipping ginkgo"
--    exit 0
--fi
--
--echo "info: start to run e2e process"
--
--ginkgo_args=()
--
--if [[ -n "${GINKGO_NODES:-}" ]]; then
--    ginkgo_args+=("--nodes=${GINKGO_NODES}")
--elif [[ ${GINKGO_PARALLEL} =~ ^[yY]$ ]]; then
--    ginkgo_args+=("-p")
--fi
--
--if [[ "${GINKGO_NO_COLOR}" == "y" ]]; then
--    ginkgo_args+=("--noColor")
--fi
--
--if [[ "${GINKGO_STREAM}" == "y" ]]; then
--    ginkgo_args+=("--stream")
--fi
--
--e2e_args=(
--    /usr/local/bin/ginkgo
--    ${ginkgo_args[@]:-}
--    /usr/local/bin/e2e.test
--    --
--    --manager-image-registry="${IMAGE_REGISTRY}"
--    --manager-image="chaos-mesh/chaos-mesh"
--    --manager-image-tag="${IMAGE_TAG}"
--    --daemon-image-registry="${IMAGE_REGISTRY}"
--    --daemon-image="chaos-mesh/chaos-daemon"
--    --daemon-image-tag="${IMAGE_TAG}"
--    --e2e-image="${IMAGE_REGISTRY}/chaos-mesh/e2e-helper:${IMAGE_TAG}"
--    --install-chaos-
+-download_image "$GITHUB_REPOSITORY" "$GITHUB_ACTION_ID"
 ```
 
 ---
 
-### Incident Patch 3: `c8d2dc02` (2026-10-29)
-**Commit Message**: fix(deps): update vulnerable dependencies and exclude e2e scans (#5182)
+### Incident Patch 3: `4a2045ee` (2026-11-03)
+**Commit Message**: refactor(build): simplify helper scripts and version metadata (#5198)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/osv-scanner-pr.yml` (modified, +5/-0)
+**File**: `.github/workflows/upload_image.yml` (modified, +1/-2)
 ```diff
-@@ -24,3 +24,8 @@ permissions:
- jobs:
-   scan-pr:
-     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.6.0"
-+    with:
-+      scan-args: |-
-+        -r
-+        --experimental-exclude=e2e-test
-+        ./
+@@ -31,8 +31,7 @@ jobs:
+     steps:
+       - uses: actions/checkout@v7
+         with:
+-          # It requires all the tags and branches to generate the correct GitVersion with `hack/version.sh`.
+-          fetch-depth: 0
++          fetch-tags: true
+ 
+       - name: Extract Image Tag
+         id: image_tag
 ```
 
-**File**: `.github/workflows/osv-scanner-scheduled.yml` (modified, +5/-0)
+**File**: `Makefile` (modified, +15/-1)
 ```diff
-@@ -20,3 +20,8 @@ permissions:
- jobs:
-   scan-scheduled:
-     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.6.0"
-+    with:
-+      scan-args: |-
-+        -r
-+        --experimental-exclude=e2e-test
-+        ./
+@@ -7,8 +7,22 @@
+ 
+ .DEFAULT_GOAL:=help
+ 
++# Go ignores v2 release tags because the module path has no /v2 suffix.
++RELEASE_TAG := $(shell git describe --tags --exact-match --match 'v[0-9]*' 2>/dev/null)
++
+ # Set DEBUGGER=1 to build debug symbols
+-export LDFLAGS := $(if $(LDFLAGS),$(LDFLAGS),$(if $(DEBUGGER),,-s -w) $(shell ./hack/version.sh))
++ifeq ($(strip $(LDFLAGS)),)
++BUILD_DATE := $(shell python3 -c 'import datetime, os, time; \
++	print(datetime.datetime.fromtimestamp(int(os.getenv("SOURCE_DATE_EPOCH") or time.time()), \
++	datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))')
++ifeq ($(BUILD_DATE),)
++$(error Failed to compute BUILD_DATE)
++endif
++LDFLAGS := $(if $(DEBUGGER),,-s -w) \
++	-X github.com/chaos-mesh/chaos-mesh/pkg/version.buildDate=$(BUILD_DATE) \
++	$(if $(RELEASE_TAG),-X github.com/chaos-mesh/chaos-mesh/pkg/version.gitVersion=$(RELEASE_TAG))
++endif
++export LDFLAGS
+ 
+ export IMAGE_TAG ?= latest
+ export IMAGE_BUILD ?= 1
 ```
 
-**File**: `api/go.mod` (modified, +6/-6)
+**File**: `binary.generated.mk` (modified, +4/-4)
 ```diff
-@@ -62,14 +62,14 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+@@ -5,22 +5,22 @@
+ .PHONY: images/chaos-mesh/bin/chaos-controller-manager
+ images/chaos-mesh/bin/chaos-controller-manager: SHELL:=$(RUN_IN_BUILD_SHELL)
+ images/chaos-mesh/bin/chaos-controller-manager: image-build-env  ## Build binary chaos-controller-manager
+-	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-mesh/bin/chaos-controller-manager cmd/chaos-controller-manager/main.go
++	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-mesh/bin/chaos-controller-manager ./cmd/chaos-controller-manager
+ 
+ .PHONY: images/chaos-daemon/bin/chaos-daemon
+ images/chaos-daemon/bin/chaos-daemon: SHELL:=$(RUN_IN_BUILD_SHELL)
+ images/chaos-daemon/bin/chaos-daemon: image-build-env pkg/time/fakeclock/fake_clock_gettime.o pkg/time/fakeclock/fake_gettimeofday.o ## Build binary chaos-daemon
+-	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-daemon/bin/chaos-daemon cmd/chaos-daemon/main.go
++	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-daemon/bin/chaos-daemon ./cmd/chaos-daemon
+ 
+ .PHONY: images/chaos-dashboard/bin/chaos-dashboard
+ images/chaos-dashboard/bin/chaos-dashboard: SHELL:=$(RUN_IN_BUILD_SHELL)
+ images/chaos-dashboard/bin/chaos-dashboard: image-build-env ui ## Build binary chaos-dashboard
+-	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-dashboard/bin/chaos-dashboard cmd/chaos-dashboard/main.go
++	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-dashboard/bin/chaos-dashboard ./cmd/chaos-dashboard
+ 
+ .PHONY: images/chaos-daemon/bin/cdh
+ images/chaos-daemon/bin/cdh: SHELL:=$(RUN_IN_BUILD_SHELL)
+ images/chaos-daemon/bin/cdh: image-build-env  ## Build binary chaos-daemon-helper
+-	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-daemon/bin/cdh cmd/chaos-daemon-helper/main.go
++	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o images/chaos-daemon/bin/cdh ./cmd/chaos-daemon-helper
+ 
+ .PHONY: clean-binary
+ clean-binary:
 ```
 
-**File**: `api/go.sum` (modified, +12/-12)
+**File**: `build/get_env_shell.py` (modified, +8/-0)
 ```diff
-@@ -165,22 +165,22 @@ go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
- go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
--golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
--golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
--golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
--golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
-+golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
-+golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
- gomodules.xyz/jsonpatch/v2 v2.4.0 h1:Ci3iUJyx9UeRx7CeFN8ARgGbkESwJK+KB9lLcWxY/Zw=
- gomodules.xyz/jsonpatch/v2 v2.4.0/go.mod h1:AH3dM2RI6uoBZxn3LVrfvJ3E0/9dG4cSrbuBJT4moAY=
- google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
+@@ -23,6 +23,7 @@
+ import os
+ import pathlib
+ import shlex
++import subprocess
+ 
+ import common
+ 
+@@ -54,6 +55,13 @@ def main():
+ 
+     cwd = os.getcwd()
+     cmd += ["--volume", f"{cwd}:{cwd}"]
++    if os.path.exists(os.path.join(cwd, ".git")):
++        git_common_dir = os.path.realpath(subprocess.check_output(
++            ["git", "rev-parse", "--git-common-dir"],
++            cwd=cwd, universal_newlines=True).strip())
++        if os.path.commonpath([cwd, git_common_dir]) != cwd:
++            # Keep worktree Git pointers resolvable without modifying shared metadata.
++            cmd += ["--volume", f"{git_common_dir}:{git_common_dir}:ro"]
+     # HACK: if you have permission issues when using Docker Desktop for Mac, you can try removing this line to see if it works.
+     cmd += ["--user", f"{os.getuid()}:{os.getgid()}"]
+ 
 ```
 
-**File**: `e2e-test/go.mod` (modified, +1/-1)
+**File**: `cmd/generate-makefile/generate_binary_makefile.go` (modified, +4/-5)
 ```diff
-@@ -119,7 +119,7 @@ require (
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
+@@ -53,7 +53,6 @@ const binaryRecipeTemplate = `.PHONY: {{ .TargetName }}
+ type binaryRecipeOptions struct {
+ 	// TargetName is the name of the makefile target.
+ 	TargetName string
+-	// SourcePath is the path to the source file.
+ 	SourcePath string
+ 	// OutputPath is the path to the output file.
+ 	OutputPath string
+@@ -105,14 +104,14 @@ func renderBinaryGeneratedMk(name string, fileTemplate string, binaryRecipeTempl
+ var binaryRecipes = []binaryRecipeOptions{
+ 	{
+ 		TargetName:        "images/chaos-mesh/bin/chaos-controller-manager",
+-		SourcePath:        "cmd/chaos-controller-manager/main.go",
++		SourcePath:        "./cmd/chaos-controller-manager",
+ 		OutputPath:        "images/chaos-mesh/bin/chaos-controller-manager",
+ 		UseCGO:            false,
+ 		DependencyTargets: nil,
+ 		Comment:           "Build binary chaos-controller-manager",
+ 	}, {
+ 		TargetName: "images/chaos-daemon/bin/chaos-daemon",
+-		SourcePath: "cmd/chaos-daemon/main.go",
++		SourcePath: "./cmd/chaos-daemon",
+ 		OutputPath: "images/chaos-daemon/bin/chaos-daemon",
+ 		UseCGO:     true,
+ 		DependencyTargets: []string{
+@@ -122,7 +121,7 @@ var binaryRecipes = []binaryRecipeOptions{
+ 		Comment: "Build binary chaos-daemon",
+ 	}, {
+ 		TargetName: "images/chaos-dashboard/bin/chaos-dashboard",
+-		SourcePath: "cmd/chaos-dashboard/main.go",
++		SourcePath: "./cmd/chaos-dashboard",
+ 		OutputPath: "images/chaos-dashboard/bin/chaos-dashboard",
+ 		UseCGO:     false,
+ 		DependencyTargets: []string{
+@@ -131,7 +130,7 @@ var binaryRecipes = []binaryRecipeOptions{
+ 		Comment: "Build binary chaos-dashboard",
+ 	}, {
+ 		TargetName:        "images/chaos-daemon/bin/cdh",
+-		SourcePath:        "cmd/chaos-daemon-helper/main.go",
++		SourcePath:        "./cmd/chaos-daemon-helper",
+ 		OutputPath:        "images/chaos-daemon/bin/cdh",
+ 		UseCGO:            false,
+ 		DependencyTargets: nil,
 ```
 
-**File**: `e2e-test/go.sum` (modified, +2/-2)
+**File**: `cmd/generate-makefile/generate_local_binary_makefile.go` (modified, +2/-2)
 ```diff
-@@ -291,8 +291,8 @@ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJk
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+@@ -44,14 +44,14 @@ const localBinaryRecipeTemplate = `.PHONY: {{ .OutputPath }}
+ var localBinaryRecipes = []binaryRecipeOptions{
+ 	{
+ 		TargetName: "local/chaos-controller-manager",
+-		SourcePath: "cmd/chaos-controller-manager/main.go",
++		SourcePath: "./cmd/chaos-controller-manager",
+ 		OutputPath: "bin/chaos-controller-manager",
+ 		UseCGO:     false,
+ 		Comment:    "Build binary chaos-controller-manager in local environment",
+ 	},
+ 	{
+ 		TargetName: "local/chaos-dashboard",
+-		SourcePath: "cmd/chaos-dashboard/main.go",
++		SourcePath: "./cmd/chaos-dashboard",
+ 		OutputPath: "bin/chaos-dashboard",
+ 		UseCGO:     true,
+ 		Comment:    "Build binary chaos-dashboard in local environment",
 ```
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `hack/download-image.sh` (modified, +35/-39)
 ```diff
-@@ -165,7 +165,7 @@ require (
- 	github.com/glebarez/go-sqlite v1.22.0 // indirect
- 	github.com/go-errors/errors v1.5.1 // indirect
- 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.2 // indirect
-@@ -286,7 +286,7 @@ require (
- 	golang.org/x/arch v0.19.0 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
+@@ -22,7 +22,7 @@ function usage() {
+     cat <<'EOF'
+ This command downloads and imports the chaos-mesh image from the github artifacts
+ 
+-Usage: hack/download-image.sh
++Usage: hack/download-image.sh -r REPOSITORY -i RUN_ID
+ 
+     -h show this message and exit
+     -r the github repository which running the github actions
+@@ -31,33 +31,22 @@ Usage: hack/download-image.sh
+ EOF
+ }
+ 
+-function download_image() {
++function download_image() (
+     local github_repository=$1
+     local github_run_id=$2
++    local download_dir
++    download_dir=$(mktemp -d)
++    trap 'rm -rf "$download_dir"' EXIT
+ 
+-    mkdir -p .cache/
+-
+-    local ARTIFACT_URL=$(curl \
+-        -H "Accept: application/vnd.github.v3+json" \
+-        https://api.github.com/repos/"$github_repository"/actions/runs/"$github_run_id"/artifacts 2>/dev/null |\
+-        jq -r ".artifacts[0].archive_download_url")
+-    local TOKEN=$(echo url=https://github.com/"$github_repository"|\
+-        gh auth git-credential get|\
+-        grep password|\
+-        cut -b 10-)
+-
+-    curl -L \
+-        -H "Accept: application/vnd.github.v3+json" \
+-        -H "Authorization: token $TOKEN" \
+-        "$ARTIFACT_URL" > .cache/chaos-mesh-images.zip
+-    unzip -o -d .cache/ .cache/chaos-mesh-images.zip
++    gh run download "$github_run_id" --repo "$github_repository" \
++        --name chaos-mesh-images --dir "$download_dir"
+ 
+     for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
+     do
+-        docker image load --input ".cache/$IMAGE.tar" &>/dev/null
++        docker image load --input "$download_dir/$IMAGE.tar" &>/dev/null
+         echo "Image ghcr.io/chaos-mesh/$IMAGE:latest loaded"
+     done
+-}
++)
+ 
+ function check_executable_exists() {
+     while [[ $# -gt 0 ]]; do
+@@ -74,34 +63,41 @@ function check_executable_exists() {
+ GITHUB_REPOSITORY=""
+ GITHUB_ACTION_ID=""
+ 
+-if [ $# -eq 0 ]
+-  then
+-    usage
+-    exit 1
+-fi
+-
+-check_executable_exists gh jq unzip curl
+-
+-while [[ $# -gt 0 ]]; do
+-    case $1 in
+-        -r)
+-            GITHUB_REPOSITORY=$2
+-            shift 2
++while getopts ':r:i:h' option; do
++    case $option in
++        r|i)
++            if [[ -z $OPTARG || $OPTARG == -* ]]; then
++                echo "Error: -$option requires a value"
++                exit 1
++            fi
++            if [[ $option == r ]]; then
++                GITHUB_REPOSITORY=$OPTARG
++            else
++                GITHUB_ACTION_ID=$OPTARG
++            fi
+             ;;
+-        -i)
+-            GITHUB_ACTION_ID=$2
+-            shift 2
+-            ;;
+-        -h)
++        h)
+             usage
+             exit 0
+             ;;
++        :)
++            echo "Error: -$OPTARG requires a value"
++            exit 1
++            ;;
+         *)
+-            echo "unknown flag or option $1"
++            echo "unknown flag or option -$OPTARG"
+             usage
+             exit 1
+             ;;
+     esac
+ done
++shift "$((OPTIND - 1))"
++
++if [[ -z $GITHUB_REPOSITORY || -z $GITHUB_ACTION_ID || $# -ne 0 ]]; then
++    usage
++    exit 1
++fi
++
++check_executable_exists gh docker
+ 
+ download_image "$GITHUB_REPOSITORY" "$GITHUB_ACTION_ID"
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `hack/kind-cluster-build.sh` (removed, +0/-207)
 ```diff
-@@ -287,8 +287,8 @@ github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8b
- github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-gorp/gorp/v3 v3.1.0 h1:ItKF/Vbuj31dmV4jxA1qblpSwkl9g1typ24xoe70IGs=
- github.com/go-gorp/gorp/v3 v3.1.0/go.mod h1:dLEjIyyRNiXvNZ8PSmzpt1GsWAUK8kjVhEpjH8TixEw=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V4qmtdjCk=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
-@@ -890,8 +890,8 @@ golang.org/x/net v0.22.0/go.mod h1:JKghWKKOSdJwpW2GEx0Ja7fmaKnMsbu+MWVZTokSYmg=
- golang.org/x/net v0.24.0/go.mod h1:2Q7sJY5mzlzWjKtYUEXSlBWCdyaioyXzRB2RtU8KVE8=
- golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
- golang.org/x/net v0.26.0/go.mod h1:5YKkiSynbBIh3p6iOc/vibscux0x38BZDkn8sCUPxHE=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+@@ -1,207 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-set -e
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd $ROOT
+-
+-usage() {
+-    cat <<EOF
+-This script use kind to create Kubernetes cluster,about kind please refer: https://kind.sigs.k8s.io/
+-Before run this script,please ensure that:
+-* have installed docker
+-* have installed helm
+-Options:
+-       -h,--help               prints the usage message
+-       -n,--name               name of the Kubernetes cluster, default value: kind
+-       -c,--nodeNum            the count of the cluster nodes, default value: 3
+-       -k,--k8sVersion         version of the Kubernetes cluster, default value: v1.20.7
+-       -v,--volumeNum          the volumes number of each kubernetes node, default value: 5
+-       -r,--registryName       the name of local docker registry, default value: registry
+-       -p,--registryPort       the published port of local docker registry, default value: 5000
+-Usage:
+-    $0 --name testCluster --nodeNum 4 --k8sVersion v1.20.7
+-EOF
+-}
+-
+-while [[ $# -gt 0 ]]
+-do
+-key="$1"
+-
+-case $key in
+-    -n|--name)
+-    clusterName="$2"
+-    shift
+-    shift
+-    ;;
+-    -c|--nodeNum)
+-    nodeNum="$2"
+-    shift
+-    shift
+-    ;;
+-    -k|--k8sVersion)
+-    k8sVersion="$2"
+-    shift
+-    shift
+-    ;;
+-    -v|--volumeNum)
+-    volumeNum="$2"
+-    shift
+-    shift
+-    ;;
+-    -r|--registryName)
+-    registryName="$2"
+-    shift
+-    shift
+-    ;;
+-    -p|--registryPort)
+-    registryPort="$2"
+-    shift
+-    shift
+-    ;;
+-    -h|--help)
+-    usage
+-    exit 0
+-    ;;
+-    *)
+-    echo "unknown option: $key"
+-    usage
+-    exit 1
+-    ;;
+-esac
+-done
+-
+-clusterName=${clusterName:-kind}
+-nodeNum=${nodeNum:-3}
+-k8sVersion=${k8sVersion:-v1.20.7}
+-volumeNum=${volumeNum:-5}
+-registryName=${registryName:-registry}
+-registryPort=${registryPort:-5000}
+-
+-echo "clusterName: ${clusterName}"
+-echo "nodeNum: ${nodeNum}"
+-echo "k8sVersion: ${k8sVersion}"
+-echo "volumeNum: ${volumeNum}"
+-echo "registryName: ${registryName}"
+-echo "registryPort: ${registryPort}"
+-
+-source "${ROOT}/hack/lib.sh"
+-
+-echo "ensuring kind"
+-hack::ensure_kind
+-echo "ensuring kubectl"
+-hack::ensure_kubectl
+-
+-OUTPUT_BIN=${ROOT}/output/bin
+-KUBECTL_BIN=${OUTPUT_BIN}/kubectl
+-HELM_BIN=${OUTPUT_BIN}/helm
+-KIND_BIN=${OUTPUT_BIN}/kind
+-
+-# create registry container unless it already exists
+-running="$(docker inspect -f '{{.State.Running}}' "${registryName}" 2>/dev/null || true)"
+-if [ "${running}" != 'true' ]; then
+-  docker run \
+-    -d --restart=always -p "${registryPort}:5000" --name "${registryName}" \
+-    registry:2
+-fi
+-
+-echo "############# start create cluster:[${clusterName}] #############"
+-workDir=${HOME}/kind/${clusterName}
+-kubeconfigPath=${workDir}/config
+-mkdir -p ${workDir}
+-
+-data_dir=${workDir}/data
+-
+-echo "clean data dir: ${data_dir}"
+-if [ -d ${data_dir} ]; then
+-    rm -rf ${data_dir}
+-fi
+-
+-configFile=${workDir}/kind-config.yaml
+-
+-cat <<EOF > ${configFile}
+-kind: Cluster
+-apiVersion: kind.x-k8s.io/v1alpha4
+-kubeadmConfigPatches:
+-- |
+-  apiVersion: kubeadm.k8s.io/v1beta2
+-  kind: ClusterConfiguration
+-  metadata:
+-    name: config
+-  apiServerExtraArgs:
+-    enable-admission-plugins: NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
+-containerdConfigPatches:
+-- |-
+-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${registryPort}"]
+-    endpoint = ["http://${registryName}:${registryPort}"]
+-nodes:
+-- role: control-plane
+-EOF
+-
+-for ((i=0;i<nodeNum;i++))
+-do
+-    mkdir -p ${data_dir}/worker${i}
+-    cat <<EOF >>  ${configFile}
+-- role: worker
+-  extraMounts:
+-EOF
+-    for ((k=1;k<=volumeNum;k++))
+-    do
+-        mkdir -p ${data_dir}/worker${i}/vol${k}
+-        cat <<EOF >> ${configFile}
+-  - containerPath: /mnt/disks/vol${k}
+-    hostPath: ${data_dir}/worker${i}/vol${k}
+-EOF
+-    done
+-done
+-
+-echo "start to create k8s cluster"
+-${KIND_BIN} create cluster --config ${configFile} --image kindest/node:${k8sVersion} --name=${clusterName}
+-${KIND_BIN} get kubeconfig --name=${clusterName} > ${kubeconfigPath}
+-export KUBECONFIG=${kubeconfigPath}
+-
+-echo "connect the local docker registry to the cluster network"
+-
+-set +e
+-
+-connected=$(docker network connect "kind" "${registryName}" 2>&1)
+-exitCode=$?
+-
+-if [[ exitCode -ne 0 ]] && [[ $connected != *"already exists"* ]]; then
+-  echo "error when connecting docker registry: ${connected}"
+-  exit 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5186** (2026-10-29): ci(e2e): align release-2.8 Kubernetes versions (@g1eny0ung)
-- **PR #5185** (2026-10-29): chore(hack): remove obsolete scripts and fix image loading (@g1eny0ung)
-- **PR #5184** (2026-10-29): ci(e2e): test Kubernetes 1.35 and 1.37 (@g1eny0ung)
-- **PR #5183** (2026-10-29): chore(deps): simplify Kubernetes module replacements (@g1eny0ung)
-- **PR #5182** (2026-10-29): fix(deps): update vulnerable dependencies and exclude e2e scans (@g1eny0ung)
-- **PR #5181** (2026-10-29): fix(ci): correct SBOM namespaces and release job conditions (@g1eny0ung)
+- **PR #5201** (2026-11-03): ci: restrict automation to upstream and remove unused image builds (@g1eny0ung)
+- **PR #5198** (2026-11-03): refactor(build): simplify helper scripts and version metadata (@g1eny0ung)
+- **PR #5196** (2026-11-02): fix(ci): authenticate coverage uploads with OIDC (@g1eny0ung)
+- **PR #5195** (2026-11-02): go: bump filippo.io/edwards25519 from 1.1.1 to 1.2.0 (@dependabot[bot])
+- **PR #5194** (2026-11-02): go: bump github.com/go-playground/validator/v10 from 10.27.0 to 10.30.5 (@dependabot[bot])
+- **PR #5192** (2026-11-02): go: bump github.com/moby/sys/userns from 0.1.0 to 0.2.1 (@dependabot[bot])
 
 ---
 
@@ -1643,28 +1898,53 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. selector): skip terminated pods by default (#5150)
+## X. ci): query known GHCR packages for image cleanup (#5187)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7549178e`: selector): skip terminated pods by default (#5150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3af796e8`: ci): query known GHCR packages for image cleanup (#5187). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
+`cleanup_ghcr.py` queries the packages in `PACKAGE_NAMES` and checks their association with `chaos-mesh/chaos-mesh`.
+Cleanup deletes old untagged versions while retaining:
+Run `python3 -B .github/scripts/cleanup_ghcr.py` to verify queries without deletion.
+Add `--apply` to delete eligible versions.
+The [workflow](../workflows/cleanup_ghcr.yml) uses the default `GITHUB_TOKEN`.
+PR checks only verify queries with `packages: read`.
+Scheduled and manual runs perform cleanup with `packages: write`.
+The schedule is 10:00 China Standard Time on the first day of every other month, starting in January.
+Local use requires Python 3, GitHub CLI, and package read access.
+Cleanup also requires Docker with Buildx, GHCR authentication, and package admin access.
+Classic personal access tokens need `read:packages` and `delete:packages` scopes for cleanup.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+`cleanup_ghcr.py` removes old untagged container image versions from GHCR packages linked to `chaos-mesh/chaos-mesh`.
+This prevents older build outputs from accumulating while retaining tagged images and their dependencies.
+
+The script retains:
+A tagged multi-platform image can depend on untagged manifests, so being untagged alone does not make a version eligible for deletion.
+
+The [Clean GHCR images workflow](../workflows/cleanup_ghcr.yml) runs on the first day of every other month at 10:00 China Standard Time, starting in January.
+You can also start it manually from GitHub Actions.
+Both scheduled and manual runs delete eligible versions.
+The workflow shares a concurrency group with the image publishing workflows.
+The script deletes candidates selected by the initial scan and accepts a successful HTTP 204 response as deletion success.
+It waits 2 seconds after each successful deletion.
+It stops without retrying if a request fails or returns an invalid response.
+Progress appears in the run logs, and a new run reads the current package inventory.
+The logs show initial tagged and untagged counts, and counts after cleanup unless the package has no old untagged versions and is skipped.
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7549178e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3af796e8` are properly handled with clean fallback behavior.
