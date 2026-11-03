@@ -7054,3 +7054,4 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `c7fd75f9` | Multi-dimensional audit evidence | 2026-11-03T22:32:03.502Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ecab5ce6` | Multi-dimensional audit evidence | 2026-11-03T22:32:05.233Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `d4951da8` | Multi-dimensional audit evidence | 2026-11-03T22:32:09.637Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `36a1b9f1` | Multi-dimensional audit evidence | 2026-11-03T22:38:46.751Z |

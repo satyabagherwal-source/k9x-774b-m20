@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "aac8cdc4",
+    "sourceVersion": "36a1b9f1",
     "license": "GPL-3.0",
-    "contentHash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
-    "lastHarvestedAt": "2026-10-30T22:27:30.186Z",
+    "contentHash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
+    "lastHarvestedAt": "2026-11-03T22:38:46.751Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {

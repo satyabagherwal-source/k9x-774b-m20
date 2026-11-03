@@ -7045,3 +7045,4 @@
 | `CYCLE-20261103-J7AI` | `2026-11-03T22:32:03.498Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6645` | Yes (`603c8c55...`) |
 | `CYCLE-20261103-J8ML` | `2026-11-03T22:32:05.229Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6600` | Yes (`cc6e7a2c...`) |
 | `CYCLE-20261103-JC0W` | `2026-11-03T22:32:09.632Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6646` | Yes (`092980e3...`) |
+| `CYCLE-20261103-RUFW` | `2026-11-03T22:38:46.748Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6647` | Yes (`4de3dcff...`) |

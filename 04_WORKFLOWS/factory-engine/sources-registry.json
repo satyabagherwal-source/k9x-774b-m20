@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T17:53:52.071Z",
-    "lastVerified": "2026-11-03T17:53:52.071Z",
+    "lastChecked": "2026-11-03T22:38:44.964Z",
+    "lastVerified": "2026-11-03T22:38:44.964Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a08e420b"
   },
   "tanstack-router": {
     "name": "router",
@@ -39,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T22:32:12.209Z",
-    "lastVerified": "2026-11-03T22:32:12.209Z",
+    "lastChecked": "2026-11-03T22:38:49.884Z",
+    "lastVerified": "2026-11-03T22:38:49.884Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -353,9 +354,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T22:06:43.586Z",
+    "lastChecked": "2026-11-03T22:38:49.876Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T22:06:43.586Z"
+    "lastVerified": "2026-11-03T22:38:49.876Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1515,8 +1516,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:02:07.570Z",
-    "lastVerified": "2026-10-31T20:02:07.570Z",
+    "lastChecked": "2026-11-03T22:38:35.119Z",
+    "lastVerified": "2026-11-03T22:38:35.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -1571,8 +1572,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:10:34.184Z",
-    "lastVerified": "2026-11-01T00:10:34.184Z",
+    "lastChecked": "2026-11-03T22:38:47.407Z",
+    "lastVerified": "2026-11-03T22:38:47.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -3722,8 +3723,8 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T00:55:57.865Z",
-    "lastVerified": "2026-11-01T00:55:57.865Z",
+    "lastChecked": "2026-11-03T22:38:42.588Z",
+    "lastVerified": "2026-11-03T22:38:42.588Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
@@ -10658,9 +10659,9 @@
   "unifiedjs-unified": {
     "name": "unified",
     "officialUrl": "https://github.com/unifiedjs/unified",
-    "lastChecked": "2026-10-30T13:37:24.340Z",
+    "lastChecked": "2026-11-03T22:38:37.438Z",
     "revisionIdentifier": "dfaf172e",
-    "lastVerified": "2026-10-30T13:37:24.340Z"
+    "lastVerified": "2026-11-03T22:38:37.438Z"
   },
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
@@ -11896,14 +11897,14 @@
     "officialUrl": "https://github.com/gauthierpiarrette/highball",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-30T22:27:28.975Z",
-    "lastVerified": "2026-10-30T22:27:28.975Z",
+    "lastChecked": "2026-11-03T22:38:45.088Z",
+    "lastVerified": "2026-11-03T22:38:45.088Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
+    "contentHash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

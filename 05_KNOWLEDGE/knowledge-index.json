@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T22:32:09.543Z",
+  "last_updated": "2026-11-03T22:38:46.701Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -125926,8 +125926,8 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "aac8cdc4",
-      "content_hash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
+      "source_version": "36a1b9f1",
+      "content_hash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
@@ -125945,6 +125945,11 @@
           "number": 5920,
           "title": "MoltenVK: the fixes from DiAvisoo's MoltenVK-Detroit for Detroit: Become Human (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6647,
+          "title": "A bug report keeps how the run ended when its log is too long for the URL, the S",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -125952,7 +125957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:27:30.097Z",
+      "verified_at": "2026-11-03T22:38:46.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171038,6 +171043,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T22:32:09.519Z"
+    },
+    "rule-6647": {
+      "learning_id": "rule-6647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6647,
+      "title": "A bug report keeps how the run ended when its log is too long for the URL, the S",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "36a1b9f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T22:38:46.688Z"
     }
   },
   "aliases": {

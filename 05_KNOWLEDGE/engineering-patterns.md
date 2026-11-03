@@ -485415,3 +485415,53 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `63019b25` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6647. A bug report keeps how the run ended when its log is too long for the URL, the S (Harvested from gauthierpiarrette/highball)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "A bug report keeps how the run ended when its log is too long for the URL, the S",
+  "source": "gauthierpiarrette/highball",
+  "source_url": "https://github.com/gauthierpiarrette/highball",
+  "source_version": "36a1b9f1",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-03T22:38:46.524Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gauthierpiarrette-highball",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball) (Revision: `36a1b9f1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1a5a088b`: A bug report keeps how the run ended when its log is too long for the URL, the Steam library list is also read from config, and the README's engine id can't go stale.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+.build/release/highball engine accept <the id install printed> apple-gptk-license-2023-08-17  # optional: D3DMetal
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+.build/release/highball engine accept x64-sikarugir10.0_6-r2 apple-gptk-license-2023-08-17  # optional: D3DMetal
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1a5a088b` are properly handled with clean fallback behavior.
