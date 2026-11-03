@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "c40e86c6",
+    "sourceVersion": "8deb3872",
     "license": "Apache-2.0",
-    "contentHash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
-    "lastHarvestedAt": "2026-10-31T18:22:24.349Z",
+    "contentHash": "673fa63c40751d4d0e6f3f5c3928634da3ca012775b5412de2fa22b6de9b8ada",
+    "lastHarvestedAt": "2026-11-03T16:09:23.501Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "9c5c0eb9",
+    "sourceVersion": "b506147f",
     "license": "Apache-2.0",
-    "contentHash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
-    "lastHarvestedAt": "2026-10-31T19:23:50.819Z",
+    "contentHash": "e171d3f5bbee3fd0b8eb0f4a6648e3a47d31809ad2c59ca21f0245b3a1c68c91",
+    "lastHarvestedAt": "2026-11-03T16:09:17.883Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "69c6653a",
+    "sourceVersion": "1cadf448",
     "license": "MIT",
-    "contentHash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
-    "lastHarvestedAt": "2026-10-31T14:25:55.545Z",
+    "contentHash": "f139df42f2f2a0b8de91445eb72408fe3ea2450733d55fb5581e852342fb4ec0",
+    "lastHarvestedAt": "2026-11-03T16:09:09.013Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

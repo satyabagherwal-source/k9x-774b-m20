@@ -6935,3 +6935,6 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `d956e12a` | Multi-dimensional audit evidence | 2026-11-03T16:01:31.418Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f988a147` | Multi-dimensional audit evidence | 2026-11-03T16:01:31.471Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `2ff9bb64` | Multi-dimensional audit evidence | 2026-11-03T16:01:34.143Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `1cadf448` | Multi-dimensional audit evidence | 2026-11-03T16:09:09.013Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `b506147f` | Multi-dimensional audit evidence | 2026-11-03T16:09:17.883Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8deb3872` | Multi-dimensional audit evidence | 2026-11-03T16:09:23.501Z |

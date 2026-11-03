@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `9c5c0eb9`  
+> **Source Version**: `b506147f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:23:50.104Z  
+> **Timestamp**: 2026-11-03T16:09:17.093Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:23:50.097Z  
+> **Harvest Timestamp**: 2026-11-03T16:09:16.193Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,17 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16179** (2026-10-31): **Update pvc-autoscaler to v0.3.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [gardener/pvc-autoscaler](https://redirect.github.com/gardener/pvc-autoscaler) |  | patch | `v0.3.1` → `v0.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/github-releases/gardener%2fpvc-autoscaler/v0.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/github-releases/gardener%2fpvc-autoscaler/v0.3.1/v0.3.2?slim=true) | | [github.com/gardener/pvc-autoscaler](https://redirect.github.com/gardener/pvc-autoscaler) | require | patch | `v0.3.1` → `v0.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgardener%2fpvc-autoscaler/v0.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgardener%2fpvc-autoscaler/v0.3.1/v0.3.2?slim=true) |  ---  ### Release Notes  <details> <summary>gardener/pvc-autoscaler</summary>  ### [`v0.3.2`](https://redirect.github.com/gardener/pvc-autoscaler/releases/tag/v0.3.2)  [Compare Source](https://redirect.github.com/gardener/pvc-autoscaler/compare/v0.3.1...v0.3.2)  ##### \[github.com/gardener/pvc-autoscaler:v0.3.2]  ##### 🏃 Others  - `[OPERATOR]` Bumped the golang version used to build `pvc-autoscaler` to `1.26.10`. by `@plkokanov` \[[#&#8203;407](https://redirect.github.com/gardener/pvc-autoscaler/pull/407)]  ##### application/s
+- **Issue #16201** (2026-11-03): **[release-v1.154] Don't rely on own writes when reading credentials rotation progress**
+  *Symptoms*: This is an automated cherry-pick of #16193  /assign rfranzke  ```bugfix operator github.com/gardener/gardener #16201 @rfranzke Fixed a race during credentials rotation where a stale cache read could undo the ETCD encryption key switch or cause rotation steps (such as taking an ETCD snapshot or creating `StorageVersionMigration` resources) to be redundantly re-run. This affects both the ETCD peer CA rollout during CA rotation and the ETCD encryption key rotation for `kube-apiserver` and `gardener-apiserver`. ```  /kind bug
   **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [lucabernstein](https://github.com/lucabernstein) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["lucabernstein"]} -->
+  > Hi @gardener-prow-cherrypicker[bot]. Thanks for your PR.  I'm waiting for a [gardener](https://github.com/orgs/gardener/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  Regular contributors should [join the org](https://gardener.cloud/docs/contribute/code/roles/) to skip this step.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=gardener%2Fgardener).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-
+  > /lgtm /approve /ok-to-test
 
-- **Issue #16178** (2026-10-31): **Update sigs.k8s.io/kube-api-linter digest to d90122c**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sigs.k8s.io/kube-api-linter](https://redirect.github.com/kubernetes-sigs/kube-api-linter) | require | digest | `79b557a` → `d90122c` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16195** (2026-11-03): **Update dependency crate-ci/typos to v1.52.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [crate-ci/typos](https://redirect.github.com/crate-ci/typos) | minor | `v1.51.1` → `v1.52.0` |  ---  ### Release Notes  <details> <summary>crate-ci/typos</summary>  ### [`v1.52.0`](https://redirect.github.com/crate-ci/typos/releases/tag/v1.52.0)  [Compare Source](https://redirect.github.com/crate-ci/typos/compare/v1.51.1...v1.52.0)  #### \[1.52.0] - 2026-11-02  ##### Features  - Updated the dictionary with the [October 2026](https://redirect.github.com/crate-ci/typos/issues/1626) changes  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMDIuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjIwMi4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > LGTM label has been added.  <details>Git tree hash: eb6e0ed5bc97472decddfa88c9c7e7479271c221</details>
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16178#pullrequestreview-5719607163" title="Approved">marc1404</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [marc1404]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > /retest /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16195#issuecomment-6594694083" title="Approved">acumino</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [acumino]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,46 +753,210 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c5c0eb9` (2026-10-31)
-**Commit Message**: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
+### Incident Patch 1: `69af5034` (2026-11-03)
+**Commit Message**: Fix pvc autoscaling testmachinery tests (#15863)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* Fix pvc autoscaling tm tests
 
-**File**: `hack/tools/go.mod` (modified, +1/-1)
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+* Use agnhost image
+
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+* Pass context as first argument to Eventually for consistency
+
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+* Remove incorrect call to `Eventually` from `ensureDebugContainer`
+
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+* Reduce timeouts to bring them closer to the expected test durations
+
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+**File**: `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go` (modified, +136/-30)
 ```diff
-@@ -29,7 +29,7 @@ require (
- 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
- 	// or, with `go work` enabled, use `go work sync`
- 	golang.org/x/tools v0.52.0
--	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
-+	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
+@@ -39,21 +39,28 @@ import (
+ 	"k8s.io/apimachinery/pkg/api/resource"
+ 	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/uuid"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+ 	victorialogsConstants "github.com/gardener/gardener/pkg/component/observability/logging/victorialogs/constants"
++	"github.com/gardener/gardener/pkg/utils"
+ 	"github.com/gardener/gardener/test/framework"
  )
  
- require (
+ const (
+-	pvcAutoscalerTestTimeout           = 60 * time.Minute
+-	pvcAutoscalerCleanupTimeout        = 5 * time.Minute
+-	pvcAutoscalerInitializationTimeout = 5 * time.Minute
++	pvcAutoscalerTestTimeout           = 30 * time.Minute
++	pvcAutoscalerCleanupTimeout        = 2 * time.Minute
++	pvcAutoscalerInitializationTimeout = 2 * time.Minute
+ 	pvcGrowthWaitInterval              = 30 * time.Second
+ 	pvcGrowthWaitTimeout               = 10 * time.Minute
+ 
+ 	pvcFillUtilizationPercent = 75
++
++	debugContainerNamePrefix = "pvc-autoscaler-test-debug"
++	// A custom agnhost image (europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost) is used instead of the upstream one (registry.k8s.io/e2e-test-images/agnhost)
++	// because this Deployment is created in a Seed cluster and the image needs to be signed with particular keys.
++	debugContainerImage = "europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost:2.40"
+ )
+ 
+ type logBackend struct {
+@@ -69,11 +76,15 @@ type logBackend struct {
+ var _ = Describe("Shoot PVC autoscaling for logging testing", func() {
+ 	shootFramework := framework.NewShootFramework(nil)
+ 
+-	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace string, pvcSize resource.Quantity) error) {
++	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace, debugContainerName string, pvcSize resource.Quantity) error) {
++		var debugContainerName string
++
+ 		shootFramework.Beta().Serial().CIt(fmt.Sprintf("should scale %s PVC when capacity threshold is exceeded", backend.name), func(ctx context.Context) {
+ 			seedClient := shootFramework.SeedClient.Client()
+ 			shootNamespace := shootFramework.ShootSeedNamespace()
+ 
++			debugContainerName = debugContainerNamePrefix + "-" + utils.ComputeSHA256Hex([]byte(uuid.NewUUID()))[:5]
++
+ 			By(fmt.Sprintf("Check whether %s is deployed", backend.name))
+ 			deployed, err := backend.isDeployed(ctx, seedClient, shootNamespace)
+ 			framework.ExpectNoError(err)
+@@ -90,30 +101,27 @@ var _ = Describe("Shoot PVC autoscaling for logging testing", func() {
+ 			shootFramework.Logger.Info("Initial PVC size", "backend", backend.name, "pvc", pvcName, "size", initialPVCSize.String())
+ 
+ 			By(fmt.Sprintf("Fill %s PVC to %d%% utilization to trigger pvc-autoscaler", backend.name, pvcFillUtilizationPercent))
+-			Eventually(func() error {
+-				return fillFunc(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
+-			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
++			Eventually(ctx, func() error {
++				return fillFunc(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
++			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).Should(Succeed())
+ 
+ 			By(fmt.Sprintf("Wait for pvc-autoscaler to grow the %s PVC", backend.name))
+ 			waitUntilPVCGrows(ctx, seedClient, shootNamespace, backend.pvcLabels, initialPVCSize)
+ 
+ 			By(fmt.Sprintf("Wait until %s pod's filesystem reflects the new PVC size", backend.name))
+-			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
++			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
+ 
+ 			By("Clean up fill files")
+-			Eventually(func() error {
+-				_, _, err = framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootNamespace, labels.SelectorFromSet(backend.podLabels), backend.containerName,
+-					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
+-				)
+-				return err
+-			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
++			Eventually(ctx, func() error {
++				return cleanupFillFiles(ctx, shootFramework, backend, shootNamespace, debugContainerName)
++			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).Should(Succeed())
+ 		}, pvcAutoscalerTestTimeout, framework.WithCAfterTest(func(ctx context.Context) {
+-			Eventually(func() error {
+-				_, _, err := framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootFramework.ShootSeedNamespace(), labels.SelectorFromSet(backend.podLabels), backend.containerName,
+-					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
+-				)
+-				return err
+-			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
++			if debugContainerN
 ```
 
-**File**: `hack/tools/go.sum` (modified, +2/-2)
+---
+
+### Incident Patch 2: `1739beea` (2026-11-03)
+**Commit Message**: Fix shoot access pane KUBECONFIG in remote-local-setup (#16086)
+
+The 'Access the shoot cluster' pane in prepare-gardener.sh ran
+generate-kubeconfig.sh without first targeting the virtual-garden
+cluster, so it resolved against the wrong context and failed with
+NotFound/Forbidden errors.
+
+Set KUBECONFIG to the virtual-garden kubeconfig before invoking
+generate-kubeconfig.sh, matching the pattern already used in
+prepare-operator-complete.sh.
+
+Signed-off-by: Karim SAD <[REDACTED_EMAIL]>
+Co-authored-by: Karim SAD <[REDACTED_EMAIL]>
+
+**File**: `docs/deployment/content/remote-local-setup.yaml` (modified, +1/-0)
 ```diff
-@@ -1040,8 +1040,8 @@ sigs.k8s.io/controller-tools v0.22.0 h1:eG3FAVja/KnlXKIWg95udIFz1cMyAtMjP11cqBh3
- sigs.k8s.io/controller-tools v0.22.0/go.mod h1:VizwUStoZK7rReCj704czGGrB7mLxXTiJSJt7wN5ilI=
- sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
- sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
--sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d h1:XNllDc3cAHdTzBYTyfZObS5izoWrM0JoT63q4zxbUeQ=
--sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
-+sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087 h1:UMGzIsnhhNPtSRHreTvOA2Ox7aitGqcwyYHSJAfzsqw=
-+sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
- sigs.k8s.io/randfill v1.0.0 h1:JfjMILfT8A6RbawdsK2JXGBR5AQVfd+9TbzrlneTyrU=
- sigs.k8s.io/randfill v1.0.0/go.mod h1:XeLlZ/jmk4i1HRopwe7/aU3H5n1zNUcX6TM94b3QxOY=
- sigs.k8s.io/structured-merge-diff/v6 v6.4.2 h1:qdOxHwrl2Kaag1aQEarlYcOA9vSyGCp3CIki3aW8c4Q=
+@@ -348,6 +348,7 @@ spec:
+             kubectl apply -f example/provider-local/shoot.yaml
+           EOF
+           new_pane "Access the shoot cluster" <<"EOF"
++            export KUBECONFIG=$PWD/dev-setup/kubeconfigs/virtual-garden/kubeconfig
+             KUBECONFIG=<(generate-kubeconfig.sh) kubectl get pods -A
+           EOF
+           new_pane "Run simple e2e test (create and delete shoot)" <<"EOF"
+```
+
+---
+
+### Incident Patch 3: `dda01876` (2026-11-02)
+**Commit Message**: Revert "added a new requirement for skipping components managed via ManagedRe… (#15905)" (#16183)
+
+This reverts commit 3224a0fbb4b371ddc6354e5af3c91e75c240f83c.
+
+Signed-off-by: Tim Ebert <[REDACTED_EMAIL]>
+
+**File**: `pkg/gardenlet/operation/botanist/cleanup.go` (modified, +4/-7)
+```diff
+@@ -31,7 +31,6 @@ import (
+ 	"github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
+ 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+-	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/client/kubernetes"
+ 	"github.com/gardener/gardener/pkg/utils"
+ 	"github.com/gardener/gardener/pkg/utils/flow"
+@@ -71,11 +70,9 @@ var (
+ 	NotKubernetesProvider = utils.MustNewRequirement(Provider, selection.NotEquals, KubernetesProvider)
+ 	// NotKubeAggregatorAutoManaged is a requirement that something is not auto-managed by Kube-Aggregator.
+ 	NotKubeAggregatorAutoManaged = utils.MustNewRequirement(KubeAggregatorAutoManaged, selection.DoesNotExist)
+-	// NotManagedByGardener is a requirement that something is not managed via ManagedResources.
+-	NotManagedByGardener = utils.MustNewRequirement(resourcesv1alpha1.ManagedBy, selection.NotEquals, resourcesv1alpha1.GardenerManager)
+ 
+-	// CleanupSelector is a selector that excludes system components, all resources not considered for auto cleanup and all components not managed via ManagedResources.
+-	CleanupSelector = labels.NewSelector().Add(NotSystemComponent).Add(NoCleanupPrevention).Add(NotManagedByGardener)
++	// CleanupSelector is a selector that excludes system components and all resources not considered for auto cleanup.
++	CleanupSelector = labels.NewSelector().Add(NotSystemComponent).Add(NoCleanupPrevention)
+ 
+ 	// NoCleanupPreventionListOption are CollectionMatching that exclude system components or non-auto cleaned up resource.
+ 	NoCleanupPreventionListOption = client.MatchingLabelsSelector{Selector: CleanupSelector}
+@@ -101,14 +98,14 @@ var (
+ 	// ServiceCleanOption is the delete selector for Services.
+ 	ServiceCleanOption = utilclient.ListWith{
+ 		client.MatchingLabelsSelector{
+-			Selector: labels.NewSelector().Add(NotKubernetesProvider, NotSystemComponent, NoCleanupPrevention, NotManagedByGardener),
++			Selector: labels.NewSelector().Add(NotKubernetesProvider, NotSystemComponent, NoCleanupPrevention),
+ 		},
+ 	}
+ 
+ 	// APIServiceCleanOption is the delete selector for APIServices.
+ 	APIServiceCleanOption = utilclient.ListWith{
+ 		client.MatchingLabelsSelector{
+-			Selector: labels.NewSelector().Add(NotSystemComponent, NotKubeAggregatorAutoManaged, NotManagedByGardener),
++			Selector: labels.NewSelector().Add(NotSystemComponent, NotKubeAggregatorAutoManaged),
+ 		},
+ 	}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16179** (2026-10-31): Update pvc-autoscaler to v0.3.2 (@renovate[bot])
-- **PR #16178** (2026-10-31): Update sigs.k8s.io/kube-api-linter digest to d90122c (@renovate[bot])
-- **PR #16174** (2026-10-30): Adapt `node-local-dns` metrics and DNS dashboard to CoreDNS v1.11+ (@vicwicker)
-- **PR #16172** (closed): Update registry.k8s.io/metrics-server/metrics-server Docker tag to v0.9.1 (@renovate[bot])
-- **PR #16171** (2026-10-30): Update registry.k8s.io/coredns/coredns Docker tag to v1.15.0 (@renovate[bot])
-- **PR #16170** (2026-10-30): Update module github.com/prometheus/common to v0.73.1 (@renovate[bot])
+- **PR #16201** (2026-11-03): [release-v1.154] Don't rely on own writes when reading credentials rotation progress (@gardener-prow-cherrypicker[bot])
+- **PR #16195** (2026-11-03): Update dependency crate-ci/typos to v1.52.0 (@renovate[bot])
+- **PR #16194** (2026-11-03): Update module github.com/onsi/ginkgo/v2 to v2.34.0 (@renovate[bot])
+- **PR #16193** (2026-11-03): Don't rely on own writes when reading credentials rotation progress (@rfranzke)
+- **PR #16192** (2026-11-02): Update quay.io/kiwigrid/k8s-sidecar Docker tag to v2.14.3 (@renovate[bot])
+- **PR #16190** (2026-11-03): Clean up ValidatingAdmissionPolicies during shoot deletion (@pujitha24)
 
 ---
 
@@ -812,28 +976,60 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
+## X. pvc autoscaling testmachinery tests (#15863)
 
 **RULE**:
-When implementing operations in `hack/tools/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c5c0eb9`: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69af5034`: pvc autoscaling testmachinery tests (#15863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/tools/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
+	"k8s.io/apimachinery/pkg/util/uuid"
+	"github.com/gardener/gardener/pkg/utils"
+	pvcAutoscalerTestTimeout           = 30 * time.Minute
+	pvcAutoscalerCleanupTimeout        = 2 * time.Minute
+	pvcAutoscalerInitializationTimeout = 2 * time.Minute
+
+	debugContainerNamePrefix = "pvc-autoscaler-test-debug"
+	// A custom agnhost image (europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost) is used instead of the upstream one (registry.k8s.io/e2e-test-images/agnhost)
+	// because this Deployment is created in a Seed cluster and the image needs to be signed with particular keys.
+	debugContainerImage = "europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost:2.40"
+	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace, debugContainerName string, pvcSize resource.Quantity) error) {
+		var debugContainerName string
+
+			debugContainerName = debugContainerNamePrefix + "-" + utils.ComputeSHA256Hex([]byte(uuid.NewUUID()))[:5]
+
+			Eventually(ctx, func() error {
+				return fillFunc(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
+			}).WithTimeout(time.Minute * 1).WithPolling(time.Se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
+	pvcAutoscalerTestTimeout           = 60 * time.Minute
+	pvcAutoscalerCleanupTimeout        = 5 * time.Minute
+	pvcAutoscalerInitializationTimeout = 5 * time.Minute
+	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace string, pvcSize resource.Quantity) error) {
+			Eventually(func() error {
+				return fillFunc(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
+			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
+			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
+			Eventually(func() error {
+				_, _, err = framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootNamespace, labels.SelectorFromSet(backend.podLabels), backend.containerName,
+					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
+				)
+				return err
+			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
+			Eventually(func() error {
+				_, _, err := framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootFramework.ShootSeedNamespace(), labels.SelectorFromSet(backend.podL
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c5c0eb9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69af5034` are properly handled with clean fallback behavior.

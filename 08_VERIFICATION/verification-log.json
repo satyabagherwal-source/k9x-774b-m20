@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-YN7V",
-    "timestamp": "2026-10-31T02:21:20.011Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-YR1K",
-    "timestamp": "2026-10-31T02:21:24.968Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-776M",
-    "timestamp": "2026-10-31T02:27:59.134Z",
-    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-    "contentHash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-78CF",
     "timestamp": "2026-10-31T02:28:00.639Z",
     "repository": "prometheus/prometheus",
@@ -7490,6 +7445,51 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-US29",
+    "timestamp": "2026-11-03T16:09:09.009Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "f139df42f2f2a0b8de91445eb72408fe3ea2450733d55fb5581e852342fb4ec0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-UYWN",
+    "timestamp": "2026-11-03T16:09:17.879Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "e171d3f5bbee3fd0b8eb0f4a6648e3a47d31809ad2c59ca21f0245b3a1c68c91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-V38P",
+    "timestamp": "2026-11-03T16:09:23.497Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "673fa63c40751d4d0e6f3f5c3928634da3ca012775b5412de2fa22b6de9b8ada",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

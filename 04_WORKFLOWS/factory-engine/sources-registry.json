@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:01:36.682Z",
-    "lastVerified": "2026-11-03T16:01:36.682Z",
+    "lastChecked": "2026-11-03T16:09:26.061Z",
+    "lastVerified": "2026-11-03T16:09:26.061Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T15:34:44.298Z",
+    "lastChecked": "2026-11-03T16:09:16.360Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T15:34:44.298Z"
+    "lastVerified": "2026-11-03T16:09:16.360Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -861,14 +861,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T19:23:50.097Z",
-    "lastVerified": "2026-10-31T19:23:50.097Z",
+    "lastChecked": "2026-11-03T16:09:16.193Z",
+    "lastVerified": "2026-11-03T16:09:16.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
+    "contentHash": "e171d3f5bbee3fd0b8eb0f4a6648e3a47d31809ad2c59ca21f0245b3a1c68c91",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1319,8 +1319,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:46:45.276Z",
-    "lastVerified": "2026-11-02T17:46:45.276Z",
+    "lastChecked": "2026-11-03T16:09:11.576Z",
+    "lastVerified": "2026-11-03T16:09:11.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -6197,14 +6197,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:22:23.722Z",
-    "lastVerified": "2026-10-31T18:22:23.722Z",
+    "lastChecked": "2026-11-03T16:09:21.920Z",
+    "lastVerified": "2026-11-03T16:09:21.920Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
+    "contentHash": "673fa63c40751d4d0e6f3f5c3928634da3ca012775b5412de2fa22b6de9b8ada",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7587,14 +7587,14 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T14:25:55.070Z",
-    "lastVerified": "2026-10-31T14:25:55.070Z",
+    "lastChecked": "2026-11-03T16:09:06.733Z",
+    "lastVerified": "2026-11-03T16:09:06.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
+    "contentHash": "f139df42f2f2a0b8de91445eb72408fe3ea2450733d55fb5581e852342fb4ec0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9813,9 +9813,9 @@
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
     "officialUrl": "https://github.com/aliarifsoydas/sitemap-checker",
-    "lastChecked": "2026-10-30T04:54:21.758Z",
+    "lastChecked": "2026-11-03T16:09:03.984Z",
     "revisionIdentifier": "8eef8767",
-    "lastVerified": "2026-10-30T04:54:21.758Z"
+    "lastVerified": "2026-11-03T16:09:03.984Z"
   },
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
@@ -10860,9 +10860,9 @@
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
     "officialUrl": "https://github.com/SDWebImage/SDWebImageSwiftUI",
-    "lastChecked": "2026-10-30T15:49:10.923Z",
+    "lastChecked": "2026-11-03T16:09:06.636Z",
     "revisionIdentifier": "d1f7b2b4",
-    "lastVerified": "2026-10-30T15:49:10.923Z"
+    "lastVerified": "2026-11-03T16:09:06.636Z"
   },
   "aio-libs-aiohttp": {
     "name": "aio-libs/aiohttp",

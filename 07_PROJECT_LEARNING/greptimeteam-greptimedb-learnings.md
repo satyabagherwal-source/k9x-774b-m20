@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `c40e86c6`  
+> **Source Version**: `8deb3872`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:22:23.727Z  
+> **Timestamp**: 2026-11-03T16:09:22.676Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:22:23.722Z  
+> **Harvest Timestamp**: 2026-11-03T16:09:21.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6778 stars
+- **Stars / Engagement**: 6782 stars
 
 ---
 
@@ -1651,11 +1651,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10061** (2026-10-31): **docs: link the observability database definition from README**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Depends on GreptimeTeam/docs#3013, which adds the `#what-an-observability-database-is` section the first link points to. Merge after that PR is deployed.  ## What's changed and what's your intention?  README-only change. The README calls GreptimeDB an observability database without saying what that means. The term now links to the definition in the docs, and Project Status links the blog post that explains it.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`). 
+- **Issue #10118** (2026-11-03): **fix: include peer context in distributed query errors**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None.  ## What's changed and what's your intention?  Distributed information-schema query failures can report `Failed to do Flight get` without identifying the datanode, making errors such as DNS failures difficult to investigate.  Include the target address in the `FlightGet` error message and attach the datanode peer (ID and address) to information-extension query errors. This preserves node context in the propagated error chain.  This change improves error reporting only; it does not change DNS resolution, connection handling, or retry behavior.  Validation: - Rust formatting and `git diff --check` passed. - Client and catalog tests were blocked because the configured Cargo build directory was read-only.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [x] Merge during the nightly window <!-- nightly-merge --> 
 
-- **Issue #10056** (2026-10-29): **ci: authenticate ECR Public pulls in benchmark workflows**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  - Failed anonymous pull: https://github.com/GreptimeTeam/greptimedb/actions/runs/40809997410 - Agent benchmark with authenticated pulls: https://github.com/GreptimeTeam/greptimedb/actions/runs/40813622374  ## What's changed and what's your intention?  Agent Observability could not start because anonymous ECR Public runtime pulls repeatedly returned `Data limit exceeded`. Authenticate before the first pull in both validation and benchmark jobs for Agent Observability, Tracesbench, VMBench Long Range, and OS WAL S3 Benchmark.  Reuse the existing `AWS_ECR_ACCESS_KEY_ID` and `AWS_ECR_SECRET_ACCESS_KEY` credentials and `aws-actions/amazon-ecr-login@v2`, with the ECR Public authentication region fixed to `us-east-1`. Both credential setup and login run only when the runtime image starts with `public.ecr.aws/`. EC2 provisioning and benchmark resource settings are unchanged; the existing S3 steps keep their explicit bucket credentials.  Validation:  - `actionlint` passed for all four workflows; `git diff --check` passed. - Existing CI runner tests: 34 passed; version-comparison tests: 6 passed; OS WAL benchmark tests: 62 passed. The OS WAL tests required a rerun outside the socket-restricted sandbox so their local HTTP fixtures could bind. - The Agent benchmark run above passed validation and provisioning and advanced past 
+- **Issue #10117** (2026-11-03): **fix(promql): land the native admission change on narthex (#10071)**
+  *Symptoms*: Carries #10071 onto `narthex`.  #10071 merged into its own base branch, and #10072 had already merged into `narthex` using the head recorded before that, so `narthex` got the serde change without the admission change. This merge brings `narthex` into the branch, leaving only #10071's five files as the delta.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **15** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9974: fix\(sqlness\)\: isolate protocol sessions between cases](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9974) - [PR 9995: test\(promql\)\: cover global topk variants and hybrid range gaps](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9995) - [PR 9996: feat\(flow\)\: support caller\-owned fenced increm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,193 +1674,1148 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c40e86c6` (2026-10-31)
-**Commit Message**: fix(datanode): pick a node epoch above the recorded one (#9984)
+### Incident Patch 1: `a09ebc70` (2026-11-02)
+**Commit Message**: feat(postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs) (#10050)
 
-* fix(datanode): pick a node epoch above the recorded one
+feat(postgres): OTLP binary payload ingest via COPY FROM STDIN
 
-The metasrv fences a datanode whose node epoch is lower than the
-highest one it has recorded for the node id. A datanode used its start
-time as its epoch, so after a restart on a host whose clock is behind
-the previous process's, or after the clock stepped back, the new
-process picked a lower epoch and was fenced for good: no region lease,
-no keep-alive.
+COPY FROM STDIN WITH (FORMAT otlp [, signal '...'] [, <options>]) ingests
+one binary OTLP protobuf message over the postgres wire protocol — the
+first binary COPY format (wire format code 1) — for all three signals:
 
-Before it creates the heartbeat task, the datanode now reads the
-recorded epoch through its metadata backend and uses one more than it
-if its start time is not higher. The node info still reports the local
-start time. A failed read fails the startup, like the other metadata
-reads.
+- signal 'metrics' (default): ExportMetricsServiceRequest, completed
+  through OpenTelemetryProtocolHandler::metrics with the same context
+  preparation as the HTTP route (OtlpMetricCtx from the options); rows
+  are accepted data points.
+- signal 'traces': ExportTraceServiceRequest through ::traces, with the
+  trace table name and pipeline name/version/params from the options
+  (an explicit pipeline name is required, exactly like the HTTP traces
+  endpoint); rows are accepted spans.
+- signal 'logs': ExportLogsServiceRequest through ::logs, with the log
+  table name, pipeline options and extract keys from the options, and
+  the same OtlpLogDirect default as the HTTP route; rows are affected
+  rows.
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+The WITH options carry what the HTTP endpoints take as request headers,
+reusing the HTTP path's own parsing helper
 
-* test(datanode): tighten the node epoch tests
-
-Use a lower record that leaves room below the start time, so the test
-fails if the start time is ignored, and a nonzero node id, so it fails
-if the node id is ignored. Clarify the doc comment of the epoch choice.
-
-This assumes the previous process of a node id has stopped before a new
-one starts.
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-
-
-**File**: `src/datanode/src/heartbeat.rs` (modified, +94/-5)
+**File**: `src/frontend/src/server.rs` (modified, +2/-0)
 ```diff
-@@ -32,6 +32,8 @@ use common_meta::heartbeat::handler::{
- };
- use common_meta::heartbeat::mailbox::{HeartbeatMailbox, MailboxRef};
- use common_meta::heartbeat::utils::outgoing_message_to_mailbox_message;
-+use common_meta::key::MetadataValue;
-+use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
- use common_meta::kv_backend::KvBackendRef;
- use common_stat::ResourceStatRef;
- use common_telemetry::{debug, error, info, trace, warn};
-@@ -47,19 +49,39 @@ use tokio::time::Instant;
- use self::handler::RegionHeartbeatResponseHandler;
- use crate::alive_keeper::{CountdownTaskHandlerExtRef, RegionAliveKeeper};
- use crate::config::DatanodeOptions;
--use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
-+use crate::error::{
-+    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
-+};
- use crate::event_listener::RegionServerEventReceiver;
- use crate::metrics::{self, HEARTBEAT_RECV_COUNT, HEARTBEAT_SENT_COUNT};
- use crate::region_server::RegionServer;
+@@ -409,6 +409,7 @@ where
  
- pub(crate) mod handler;
- pub(crate) mod task_tracker;
+         if opts.postgres.enable {
+             // Init PosgresSQL Server
++            let with_metric_engine = effective_prom_store_options(&opts).with_metric_engine;
+             let opts = &opts.postgres;
+             let pg_addr = parse_addr(&opts.addr)?;
  
-+/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
-+/// recorded for the node when the record is not lower than the start time, as after a restart on
-+/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
-+/// recorded one.
-+async fn node_epoch_above_record(
-+    kv_backend: &KvBackendRef,
-+    node_id: u64,
-+    start_time_ms: u64,
-+) -> Result<u64> {
-+    let key = DatanodeEpochKey::new(node_id).to_bytes();
-+    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
-+        return Ok(start_time_ms);
-+    };
-+    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
-+    Ok(start_time_ms.max(recorded.node_epoch + 1))
-+}
-+
- /// The datanode heartbeat task which sending `[HeartbeatRequest]` to Metasrv periodically in background.
- pub struct HeartbeatTask {
-     node_id: u64,
-     workload_types: Vec<DatanodeWorkloadType>,
-     node_epoch: u64,
-+    start_time_ms: u64,
-     peer_addr: String,
-     running: Arc<AtomicBool>,
-     meta_client: MetaClientRef,
-@@ -87,6 +109,9 @@ impl HeartbeatTask {
-         plugins: Plugins,
-         resource_stat: ResourceStatRef,
-     ) -> Result<Self> {
-+        let node_id = opts.node_id.unwrap_or(0);
-+        let start_time_ms = common_time::util::current_time_millis() as u64;
-+        let node_epoch = node_epoch_above_record(&kv_backend, node_id, start_time_ms).await?;
-         let countdown_task_handler_ext = plugins.get::<CountdownTaskHandlerExtRef>();
-         let region_alive_keeper = Arc::new(RegionAliveKeeper::new(
-             region_server.clone(),
-@@ -105,10 +130,10 @@ impl HeartbeatTask {
-         ]));
+@@ -430,6 +431,7 @@ where
+                     Some(self.instance.process_manager().clone()),
+                 )
+                 .with_influxdb_handler(instance.clone())
++                .with_otlp_handler(instance.clone(), with_metric_engine)
+                 .with_batching_enabled(postgres_batching),
+             ) as Box<dyn Server>;
  
-         Ok(Self {
--            node_id: opts.node_id.unwrap_or(0),
-+            node_id,
-             workload_types: opts.workload_types.clone(),
--            // We use datanode's start time millis as the node's epoch.
--            node_epoch: common_time::util::current_time_millis() as u64,
-+            node_epoch,
-+            start_time_ms,
-             peer_addr: addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr)),
-             running: Arc::new(AtomicBool::new(false)),
-             meta_client,
-@@ -227,6 +252,7 @@ impl HeartbeatTask {
-         }
-         let node_id = self.node_id;
-         let node_epoch = self.node_epoch;
-+        let start_time_ms = self.start_time_ms;
-         let addr = &self.peer_addr;
- 
-         let meta_client = self.meta_client.clone();
-@@ -301,7 +327,7 @@ impl HeartbeatTask {
-                 info: Some(NodeInfo {
-                     version: build_info.version.to_string(),
-                     git_commit: build_info.commit_short.to_string(),
--                    start_time_ms: node_epoch,
-+                    start_time_ms,
-                     total_cpu_millicores,
-                     total_memory_bytes,
-                     cpu_usage_millicores: 0,
-@@ -471,3 +497,66 @@ impl HeartbeatTask {
-         Ok(())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use common_meta::cache_invalidator::DummyCacheInvalidator;
-+    use common_meta::kv_backend::memory::MemoryKvBackend;
-+    use common_meta::rpc::store::PutRequest;
-+    use common_stat::ResourceStatImpl;
-+    use meta_client::client::MetaClientBuilder;
-+
-+    use super::*;
-+    use crate::tests::mock_region_server;
-+
-+    const NODE_ID: u64 = 7;
-+
-+    async fn kv_backend_with_record(node_epoch: Option<u64>) -> KvBackendRef {
-+        let kv_backend: KvBackendRef = Arc::new(MemoryKvBackend::new());
-+        if let Some(node_epoch) = node_epoch {
-+            let key = DatanodeEpochKey::new(NODE_ID).to_bytes();
-+            let value = DatanodeEpochValue { node_epoch }
-+                .try_as_raw_value()
-+                .unwrap();
-+            let req = PutRequest::new().with_key(key).with_value(value);
-+            kv_backend.put(req).await.unwr
 ```
 
-**File**: `src/meta-srv/src/service/heartbeat.rs` (modified, +14/-0)
+**File**: `src/servers/src/postgres.rs` (modified, +15/-1)
 ```diff
-@@ -1311,6 +1311,20 @@ mod tests {
-             assert!(accept_node_epoch(&cached, 1, e2).await.unwrap());
+@@ -44,7 +44,9 @@ use session::context::Channel;
+ use self::auth_handler::{PgUserProviderSource, ZeroPidSecretKeyGenerator};
+ use self::handler::DefaultQueryParser;
+ use crate::query_handler::sql::ServerSqlQueryHandlerRef;
+-use crate::query_handler::{CopyInHandlerRef, InfluxdbLineProtocolHandlerRef};
++use crate::query_handler::{
++    CopyInHandlerRef, InfluxdbLineProtocolHandlerRef, OpenTelemetryProtocolHandlerRef,
++};
+ 
+ pub(crate) struct GreptimeDBStartupParameters {
+     version: String,
+@@ -86,6 +88,12 @@ pub struct PostgresServerHandlerInner {
+     /// Absent on servers not wired for it; such connections reject the
+     /// influxdb format when a copy starts.
+     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
++    /// Executes the OTLP payload flushed by a table-less
++    /// `COPY FROM STDIN WITH (FORMAT otlp)` — the same handler the
++    /// OTLP/HTTP endpoints use — plus the with-metric-engine flag the
++    /// HTTP wiring passes from its options.
++    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
++    otlp_with_metric_engine: bool,
+     force_tls: bool,
+     auth_driver: AuthDriver<Arc<GreptimeDBStartupParameters>, UserInfoRef>,
+     /// SCRAM selected; failures get the uniform metric label.
+@@ -106,6 +114,10 @@ pub(crate) struct MakePostgresServerHandler {
+     copy_in_handler: CopyInHandlerRef,
+     #[builder(default)]
+     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
++    #[builder(default)]
++    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
++    #[builder(default)]
++    otlp_with_metric_engine: bool,
+     user_provider: Option<UserProviderRef>,
+     #[builder(default = "Arc::new(GreptimeDBStartupParameters::new())")]
+     param_provider: Arc<GreptimeDBStartupParameters>,
+@@ -157,6 +169,8 @@ impl MakePostgresServerHandler {
+                 .map(|p| Arc::new(PgUserProviderSource::new(p))),
+             copy_in_handler: self.copy_in_handler.clone(),
+             influxdb_handler: self.influxdb_handler.clone(),
++            otlp_handler: self.otlp_handler.clone(),
++            otlp_with_metric_engine: self.otlp_with_metric_engine,
+             force_tls: self.force_tls,
+             auth_driver: AuthDriver::new(self.param_provider.clone())
+                 .with_pid_secret_key_generator(Arc::new(ZeroPidSecretKeyGenerator)),
+```
+
+**File**: `src/servers/src/postgres/copy_in/codec.rs` (modified, +7/-0)
+```diff
+@@ -55,6 +55,7 @@ use pgwire::error::PgWireResult;
+ 
+ use crate::postgres::copy_in::csv::CsvCodec;
+ use crate::postgres::copy_in::influxdb::InfluxdbOptions;
++use crate::postgres::copy_in::otlp::OtlpOptions;
+ 
+ /// A resolved COPY FROM STDIN format with its validated options.
+ #[derive(Debug, Clone)]
+@@ -67,6 +68,12 @@ pub(super) enum CopyFormat {
+     /// pipeline the HTTP write endpoints use (one COPY statement is one
+     /// ingestion request; streaming ingest is not supported).
+     Influxdb(InfluxdbOptions),
++    /// Table-less, **binary** OTLP: one `ExportMetricsServiceRequest`,
++    /// `ExportTraceServiceRequest` or `ExportLogsServiceRequest`
++    /// protobuf message, buffered whole and completed through the
++    /// matching OTLP pipeline the OTLP/HTTP endpoints use. Advertises
++    /// wire format code 1.
++    Otlp(OtlpOptions),
+ }
+ 
+ /// A parsed, insertable row: one gRPC value per targeted column, in COPY
+```
+
+**File**: `src/servers/src/postgres/copy_in/mod.rs` (modified, +222/-9)
+```diff
+@@ -35,19 +35,22 @@ mod codec;
+ mod csv;
+ mod influxdb;
+ mod options;
++mod otlp;
+ mod parse;
+ 
+ use std::fmt::Debug;
+ use std::sync::Arc;
+ 
+ use crate::influxdb::InfluxdbRequest;
++use crate::query_handler::PipelineHandlerRef;
+ use api::helper::ColumnDataTypeWrapper;
+ use api::v1::column_def::options_from_column_schema;
+ use api::v1::{
+     Row as GrpcRow, RowInsertRequest, RowInsertRequests, Rows as GrpcRows, SemanticType,
+ };
+ use async_trait::async_trait;
+ use codec::{CopyFormat, RecordParser};
++use common_catalog::consts::{TRACE_TABLE_NAME, TRACE_TABLE_NAME_SESSION_KEY};
+ use common_grpc::precision::Precision;
+ use common_query::OutputData;
+ use common_telemetry::{info, warn};
+@@ -57,12 +60,15 @@ use datatypes::data_type::DataType;
+ use datatypes::schema::{ColumnSchema, SchemaRef};
+ use futures::{Sink, SinkExt, stream};
+ use influxdb::InfluxdbOptions;
++use otel_arrow_rust::proto::opentelemetry::collector::metrics::v1::ExportMetricsServiceRequest;
++use otlp::{OtlpOptions, OtlpSignal};
+ use pgwire::api::copy::CopyHandler;
+ use pgwire::api::results::{CopyResponse, Response, Tag};
+ use pgwire::api::{ClientInfo, PgWireConnectionState};
+ use pgwire::error::{ErrorInfo, PgWireError, PgWireResult};
+ use pgwire::messages::PgWireBackendMessage;
+ use pgwire::messages::copy::{CopyData, CopyDone, CopyFail};
++use prost::Message;
+ use session::context::QueryContextRef;
+ use table::metadata::TableInfo;
+ 
+@@ -84,11 +90,10 @@ use crate::postgres::utils::convert_err;
+ /// the per-batch fixed costs negligible.
+ pub(crate) const COPY_IN_FLUSH_ROWS: usize = 32768;
+ 
+-/// Upper bound of an influxdb COPY FROM STDIN payload. One COPY
+-/// statement is one bounded ingestion request (the whole payload is
+-/// buffered like one HTTP write body); a larger import is multiple COPY
+-/// statements. Streaming ingest may arrive later, with framing owned by
+-/// the shared line-protocol parser rather than the COPY layer.
++/// Upper bound of a table-less COPY FROM STDIN payload (influxdb line
++/// protocol, OTLP). One COPY statement is one bounded ingestion request
++/// (the whole payload is buffered like one HTTP request body); a larger
++/// import is multiple COPY statements.
+ pub(crate) const COPY_IN_MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
+ 
+ /// Builds a format from the format-neutral option set.
+@@ -102,6 +107,8 @@ const REGISTERED_FORMATS: &[(&str, FormatBuilder)] = &[
+     ("csv", csv::build_csv_codec),
+     ("influxdb", influxdb::build_influxdb_codec),
+     ("influxdb_line", influxdb::build_influxdb_codec),
++    ("otlp", otlp::build_otlp_codec),
++    ("otlp_metrics", otlp::build_otlp_codec),
+     ("text", build_unimplemented_text_codec),
+     ("txt", build_unimplemented_text_codec),
+     ("binary", build_unimplemented_binary_codec),
+@@ -268,6 +275,10 @@ enum Payload {
+         data: Vec<u8>,
+         precision: Option<Precision>,
+     },
++    /// The whole buffered OTLP payload with its validated options,
++    /// decoded and completed as one request at `CopyDone` through the
++    /// matching OTLP pipeline.
++    Otlp { data: Vec<u8>, options: OtlpOptions },
+ }
+ 
+ impl CopyInState {
+@@ -327,6 +338,22 @@ impl CopyInState {
+         }
+     }
+ 
++    /// State for the OTLP format: the whole binary payload is buffered
++    /// and completed once at `CopyDone` through the matching OTLP
++    /// pipeline. Binary: the advertised wire format code is 1.
++    fn new_otlp(options: &OtlpOptions, query_ctx: QueryContextRef) -> Self {
++        Self {
++            query_ctx,
++            payload: Payload::Otlp {
++                data: Vec::new(),
++                options: options.clone(),
++            },
++            codec_name: "otlp",
++            codec_format_code: 1,
++            rows_written: 0,
++        }
++    }
++
+     /// The wire format code advertised to the client.
+     pub(crate) fn format_code(&self) -> i8 {
+         self.codec_format_code
+@@ -337,7 +364,7 @@ impl CopyInState {
+     fn feed(&mut self, data: &[u8]) -> PgWireResult<()> {
+         match &mut self.payload {
+             Payload::Table { parser, rows, .. } => rows.extend(parser.feed(data)?),
+-            Payload::Influxdb { data: buffered, .. } => {
++            Payload::Influxdb { data: buffered, .. } | Payload::Otlp { data: buffered, .. } => {
+                 if buffered.len() + data.len() > COPY_IN_MAX_PAYLOAD_BYTES {
+                     return Err(bad_copy_data(format!(
+                         "COPY FROM STDIN payload exceeds the {} limit; split the import into multiple COPY statements",
+@@ -356,7 +383,7 @@ impl CopyInState {
+         match &mut self.payload {
+             Payload::Table { parser, rows, .. } => rows.extend(parser.finish()?),
+             // The whole payload is one request body; nothing to finalize.
+-            Payload::Influxdb { .. } => {}
++            Payload::Influxdb { .. } | Payload::Otlp { .. } => {}
+         }
+         Ok(())
+     }
+@@ -365,7 +392,7 @@ impl CopyInState {
+         match &self.payload {
+             Payload::Table { rows, 
+```
+
+**File**: `src/servers/src/postgres/copy_in/otlp.rs` (added, +307/-0)
+```diff
+@@ -0,0 +1,307 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! The `otlp` format for COPY FROM STDIN: one binary OTLP payload for
++//! any of the three signals — `ExportMetricsServiceRequest`,
++//! `ExportTraceServiceRequest` or `ExportLogsServiceRequest`.
++//!
++//! `COPY FROM STDIN WITH (FORMAT otlp [, signal 'traces'] [, <options>])`
++//! is a GreptimeDB-specific, **binary** format (wire format code 1).
++//! Like the influxdb format it is table-less and does not decode here:
++//! the whole payload is buffered until `CopyDone` — exactly like an
++//! OTLP/HTTP request body — then decoded and completed through the
++//! frontend's `OpenTelemetryProtocolHandler`, the same path the
++//! `/v1/otlp/v1/{metrics,traces,logs}` endpoints use, under the
++//! connection's regular postgres query context.
++//!
++//! The `WITH` options carry what the HTTP endpoints take as request
++//! headers; values already provided by the postgres session (database,
++//! user, permissions) are not repeated. Option semantics, defaults and
++//! parsing helpers are shared with the HTTP extractors (`truthy`,
++//! `SelectInfo`, `GreptimePipelineParams`, `PipelineWay`), so the two
++//! ingestion routes cannot drift.
++//!
++//! One COPY statement is one bounded ingestion request (see
++//! [`crate::postgres::copy_in::COPY_IN_MAX_PAYLOAD_BYTES`]).
++
++use ahash::HashSet;
++
++use pgwire::error::PgWireResult;
++use pipeline::truthy;
++use session::protocol_ctx::OtlpMetricTranslationStrategy;
++
++use crate::postgres::copy_in::bad_copy_data;
++use crate::postgres::copy_in::codec::CopyFormat;
++use crate::postgres::copy_in::options::{CopyOptionSet, CopyOptionValue};
++
++/// The format's validated options: the signal and its header-equivalent
++/// configuration, carried to the flush that completes the copy.
++#[derive(Debug, Clone)]
++pub(super) struct OtlpOptions {
++    pub(super) signal: OtlpSignal,
++}
++
++#[derive(Debug, Clone)]
++pub(super) enum OtlpSignal {
++    /// Metric options mirroring the `x-greptime-otlp-metric-*` headers.
++    Metrics {
++        /// Persist all resource attributes; `resource_attrs` then acts
++        /// as an exclude list, otherwise as an include list.
++        promote_all_resource_attrs: bool,
++        resource_attrs: HashSet<String>,
++        promote_scope_attrs: bool,
++        translation_strategy: OtlpMetricTranslationStrategy,
++    },
++    /// Trace options mirroring `x-greptime-trace-table-name` and the
++    /// pipeline headers. The raw pipeline-params string is parsed by the
++    /// shared `GreptimePipelineParams::from_params` when the copy
++    /// completes, like the HTTP request does.
++    Traces {
++        table_name: Option<String>,
++        pipeline_name: Option<String>,
++        pipeline_version: Option<String>,
++        pipeline_params: Option<String>,
++    },
++    /// Log options mirroring `x-greptime-log-table-name`,
++    /// `x-greptime-log-extract-keys` and the pipeline headers.
++    Logs {
++        table_name: Option<String>,
++        pipeline_name: Option<String>,
++        pipeline_version: Option<String>,
++        pipeline_params: Option<String>,
++        extract_keys: Option<String>,
++    },
++}
++
++pub(super) fn build_otlp_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
++    let signal = options.take_string("signal")?;
++    let metric_options = (
++        take_truthy(&mut options, "promote_all_resource_attrs")?,
++        options.take_string("resource_attrs")?,
++        take_truthy(&mut options, "promote_scope_attrs")?,
++        options.take_string("translation_strategy")?,
++    );
++    let trace_log_options = (
++        options.take_string("table_name")?,
++        options.take_string("pipeline_name")?,
++        options.take_string("pipeline_version")?,
++        options.take_string("pipeline_params")?,
++    );
++    let extract_keys = options.take_string("extract_keys")?;
++    options.reject_leftovers("otlp")?;
++
++    let unexpected = |option: &str| {
++        bad_copy_data(format!(
++            "COPY option \"{option}\" does not apply to the selected signal"
++        ))
++    };
++    let signal = match signal.as_deref() {
++        None | Some("metrics") => {
++            if trace_log_options != (None, None, None, None) || extract_keys.is_some() {
++                return Err(unexpected("table_name/pipeline/extract_keys"));
++            }
++            let (promote_all, resource_attrs, promote_scope, strategy) = metric_options;
++            let 
+```
+
+**File**: `src/servers/src/postgres/server.rs` (modified, +22/-0)
+```diff
+@@ -31,6 +31,7 @@ use crate::error::Result;
+ use crate::postgres::{MakePostgresServerHandler, MakePostgresServerHandlerBuilder};
+ use crate::query_handler::CopyInHandlerRef;
+ use crate::query_handler::InfluxdbLineProtocolHandlerRef;
++use crate::query_handler::OpenTelemetryProtocolHandlerRef;
+ use crate::query_handler::sql::ServerSqlQueryHandlerRef;
+ use crate::server::{AbortableStream, BaseTcpServer, Server};
+ use crate::tls::ReloadableTlsServerConfig;
+@@ -42,6 +43,8 @@ pub struct PostgresServer {
+     keep_alive_secs: u64,
+     batching_enabled: bool,
+     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
++    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
++    otlp_with_metric_engine: bool,
+     bind_addr: Option<SocketAddr>,
+     process_manager: Option<ProcessManagerRef>,
+ }
+@@ -80,6 +83,8 @@ impl PostgresServer {
+             keep_alive_secs,
+             batching_enabled: false,
+             influxdb_handler: None,
++            otlp_handler: None,
++            otlp_with_metric_engine: false,
+             bind_addr: None,
+             process_manager,
+         }
+@@ -100,6 +105,21 @@ impl PostgresServer {
+         self
+     }
+ 
++    /// Wires the OTLP handler used by table-less
++    /// `COPY FROM STDIN WITH (FORMAT otlp)` — the same handler the
++    /// OTLP/HTTP endpoints use, so the payload runs through the
++    /// identical pipeline. `with_metric_engine` carries the same flag
++    /// the HTTP wiring passes from its options.
++    pub fn with_otlp_handler(
++        mut self,
++        handler: OpenTelemetryProtocolHandlerRef,
++        with_metric_engine: bool,
++    ) -> Self {
++        self.otlp_handler = Some(handler);
++        self.otlp_with_metric_engine = with_metric_engine;
++        self
++    }
++
+     fn accept(
+         &self,
+         io_runtime: Runtime,
+@@ -115,6 +135,8 @@ impl PostgresServer {
+             query_handler: make_handler.query_handler.clone(),
+             copy_in_handler: make_handler.copy_in_handler.clone(),
+             influxdb_handler: self.influxdb_handler.clone(),
++            otlp_handler: self.otlp_handler.clone(),
++            otlp_with_metric_engine: self.otlp_with_metric_engine,
+             user_provider: make_handler.user_provider.clone(),
+             param_provider: make_handler.param_provider.clone(),
+             force_tls: make_handler.force_tls,
+```
+
+**File**: `tests-integration/src/test_util.rs` (modified, +6/-3)
+```diff
+@@ -1216,7 +1216,8 @@ pub async fn setup_pg_server_with_slow_query_threshold(
+             None,
+             None,
+         )
+-        .with_influxdb_handler(fe_instance_ref.clone()),
++        .with_influxdb_handler(fe_instance_ref.clone())
++        .with_otlp_handler(fe_instance_ref.clone(), true),
+     );
+ 
+     pg_server
+@@ -1263,7 +1264,8 @@ pub async fn setup_pg_server_with_user_provider(
+             user_provider,
+             None,
+         )
+-        .with_influxdb_handler(fe_instance_ref.clone()),
++        .with_influxdb_handler(fe_instance_ref.clone())
++        .with_otlp_handler(fe_instance_ref.clone(), true),
+     );
+ 
+     pg_server
+@@ -1322,7 +1324,8 @@ pub async fn setup_pg_server_with_prom_native_histogram(
+             None,
+             None,
+         )
+-        .with_influxdb_handler(instance.fe_instance().clone()),
++        .with_influxdb_handler(instance.fe_instance().clone())
++        .with_otlp_handler(instance.fe_instance().clone(), true),
+     );
+ 
+     pg_server
+```
+
+**File**: `tests-integration/src/tests/postgres_copy_in_test.rs` (modified, +354/-0)
+```diff
+@@ -819,3 +819,357 @@ async fn test_postgres_copy_in_influxdb_invalid_utf8_and_trailing_record() {
+ 
+     server.shutdown().await.unwrap();
+ }
++
++/// `COPY FROM STDIN WITH (FORMAT otlp)` ingests one binary OTLP
++/// ExportMetricsServiceRequest through the same pipeline as the OTLP/HTTP
++/// endpoint — and validates binary (format code 1) COPY support, including
++/// payloads split across CopyData chunks.
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn test_postgres_copy_in_otlp_binary() {
++    use otel_arrow_rust::proto::opentelemetry::collector::metrics::v1::ExportMetricsServiceRequest;
++    use otel_arrow_rust::proto::opentelemetry::common::v1::any_value;
++    use otel_arrow_rust::proto::opentelemetry::common::v1::{AnyValue, KeyValue};
++    use otel_arrow_rust::proto::opentelemetry::metrics::v1::number_data_point::Value;
++    use otel_arrow_rust::proto::opentelemetry::metrics::v1::{
++        Gauge, Metric, NumberDataPoint, ResourceMetrics, ScopeMetrics, metric,
++    };
++    use prost::Message;
++
++    init_default_ut_logging();
++    let (_guard, server) = setup_pg_server(StorageType::File, "pg_copy_in_otlp").await;
++    let port = server.bind_addr().unwrap().port();
++    let client = connect(port).await;
++
++    let request = ExportMetricsServiceRequest {
++        resource_metrics: vec![ResourceMetrics {
++            scope_metrics: vec![ScopeMetrics {
++                metrics: vec![Metric {
++                    name: "copy_otlp_gauge".into(),
++                    data: Some(metric::Data::Gauge(Gauge {
++                        data_points: vec![
++                            NumberDataPoint {
++                                time_unix_nano: 1_700_000_000_000_000_000,
++                                value: Some(Value::AsDouble(1.5)),
++                                attributes: vec![KeyValue {
++                                    key: "host".into(),
++                                    value: Some(AnyValue {
++                                        value: Some(any_value::Value::StringValue("a".into())),
++                                    }),
++                                }],
++                                ..Default::default()
++                            },
++                            NumberDataPoint {
++                                time_unix_nano: 1_700_000_001_000_000_000,
++                                value: Some(Value::AsDouble(2.5)),
++                                attributes: vec![KeyValue {
++                                    key: "host".into(),
++                                    value: Some(AnyValue {
++                                        value: Some(any_value::Value::StringValue("b".into())),
++                                    }),
++                                }],
++                                ..Default::default()
++                            },
++                        ],
++                    })),
++                    ..Default::default()
++                }],
++                ..Default::default()
++            }],
++            ..Default::default()
++        }],
++    };
++    let body = request.encode_to_vec();
++
++    // Feed the binary payload in small chunks: the message spans CopyData
++    // boundaries exactly like a large text payload would.
++    let rows = feed_copy_in(
++        &client,
++        "COPY FROM STDIN WITH (FORMAT otlp)",
++        body.chunks(9).map(Bytes::copy_from_slice).collect(),
++    )
++    .await
++    .unwrap();
++    assert_eq!(rows, 2);
++
++    let messages = client
++        .simple_query("SELECT host, greptime_value FROM copy_otlp_gauge ORDER BY host")
++        .await
++        .unwrap();
++    let rows: Vec<(String, String)> = messages
++        .iter()
++        .filter_map(|m| {
++            let tokio_postgres::SimpleQueryMessage::Row(row) = m else {
++                return None;
++            };
++            Some((
++                row.get(0).unwrap_or("").to_string(),
++                row.get(1).unwrap_or("").to_string(),
++            ))
++        })
++        .collect();
++    assert_eq!(
++        rows,
++        vec![("a".into(), "1.5".into()), ("b".into(), "2.5".into())]
++    );
++
++    // Garbage bytes fail the copy and the connection stays usable.
++    let error = feed_copy_in(
++        &client,
++        "COPY FROM STDIN WITH (FORMAT otlp)",
++        vec![Bytes::from_static(b"\xff\xff\xff\xff")],
++    )
++    .await
++    .unwrap_err();
++    assert!(
++        error
++            .as_db_error()
++            .map(|d| d.message().contains("invalid OTLP payload"))
++            .unwrap_or(false),
++        "unexpected error: {error}"
++    );
++    let messages = client.simple_query("SELECT 1").await.unwrap();
++    assert!(!messages.is_empty());
++
++    server.shutdown().await.unwrap();
++}
++
++/// `COPY FROM STDIN WITH (FORMAT otlp, signal 'traces')` ingests one
++/// binary ExportTraceServiceRequest through the same pipeline as the
++/// OTLP/HTTP traces endpoint, honoring the trace-table-name option.
++#[tokio::test(flavor = "multi_thread", w
+```
+
+---
+
+### Incident Patch 2: `8deb3872` (2026-11-03)
+**Commit Message**: fix: include peer context in distributed query errors (#10118)
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `src/catalog/src/error.rs` (modified, +2/-1)
+```diff
+@@ -291,8 +291,9 @@ pub enum Error {
+         location: Location,
+     },
+ 
+-    #[snafu(display("Failed to handle query"))]
++    #[snafu(display("Failed to handle query, addr: {}", addr))]
+     HandleQuery {
++        addr: String,
+         source: common_meta::error::Error,
+         #[snafu(implicit)]
+         location: Location,
+```
+
+**File**: `src/catalog/src/information_extension.rs` (modified, +3/-1)
+```diff
+@@ -84,7 +84,9 @@ impl DistributedInformationExtension {
+                         header: None,
+                     })
+                     .await
+-                    .context(crate::error::HandleQuerySnafu)
++                    .context(crate::error::HandleQuerySnafu {
++                        addr: node.peer.addr,
++                    })
+             }
+         }))
+         .await?;
+```
+
+**File**: `src/client/src/error.rs` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ pub enum Error {
+         location: Location,
+     },
+ 
+-    #[snafu(display("Failed to do Flight get, code: {}", tonic_code))]
++    #[snafu(display("Failed to do Flight get, addr: {}, code: {}", addr, tonic_code))]
+     FlightGet {
+         addr: String,
+         tonic_code: Code,
+```
+
+---
+
+### Incident Patch 3: `c17a5e09` (2026-11-03)
+**Commit Message**: fix(auth): preserve physical metric table targets (#10084)
+
+* fix(auth): preserve physical metric table targets
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+* fix: nit
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+**File**: `src/auth/src/permission.rs` (modified, +74/-2)
+```diff
+@@ -34,6 +34,9 @@ pub struct PermissionTableTarget {
+     pub catalog: String,
+     pub schema: String,
+     pub table: String,
++    /// Set from catalog metadata, never from a client-supplied table name.
++    /// Physical metric tables contain data belonging to multiple logical tables.
++    pub is_physical_metric_table: bool,
+ }
+ 
+ impl PermissionTableTarget {
+@@ -47,8 +50,15 @@ impl PermissionTableTarget {
+             catalog: catalog.into(),
+             schema: schema.into(),
+             table: table.into(),
++            is_physical_metric_table: false,
+         }
+     }
++
++    /// Sets whether catalog metadata identifies this target as a physical metric table.
++    pub fn with_physical_metric_table(mut self, is_physical_metric_table: bool) -> Self {
++        self.is_physical_metric_table = is_physical_metric_table;
++        self
++    }
+ }
+ 
+ /// The result of resolving every table target in a permission request.
+@@ -183,6 +193,11 @@ pub enum PermissionReq<'a> {
+     GrpcRequest(&'a Request),
+     SqlStatement(&'a Statement),
+     Action(PermissionAction),
++    /// Enumerates a schema's metadata without accessing any table data.
++    SchemaRead {
++        catalog: &'a str,
++        schema: &'a str,
++    },
+     BulkInsert {
+         catalog: &'a str,
+         schema: &'a str,
+@@ -199,6 +214,7 @@ impl<'a> PermissionReq<'a> {
+             }
+             PermissionReq::SqlStatement(stmt) => stmt.is_readonly(),
+             PermissionReq::Action(action) => action.access_mode() == AccessMode::Read,
++            PermissionReq::SchemaRead { .. } => true,
+ 
+             PermissionReq::GrpcRequest(_) | PermissionReq::BulkInsert { .. } => false,
+         }
+@@ -241,6 +257,17 @@ pub trait PermissionChecker: Send + Sync {
+         true
+     }
+ 
++    /// Extracts user-visible gRPC targets before the frontend classifies them
++    /// using catalog metadata. Unrecognized requests must fail closed.
++    fn grpc_table_targets(
++        &self,
++        _request: &Request,
++        _catalog: &str,
++        _schema: &str,
++    ) -> PermissionTableTargets {
++        PermissionTableTargets::Unresolved
++    }
++
+     /// Checks the operation privilege and its resolved user-visible table targets.
+     ///
+     /// [`PermissionTableTargets::Resolved`] with an empty vector still requires
+@@ -296,6 +323,18 @@ impl PermissionChecker for Option<&PermissionCheckerRef> {
+         }
+     }
+ 
++    fn grpc_table_targets(
++        &self,
++        request: &Request,
++        catalog: &str,
++        schema: &str,
++    ) -> PermissionTableTargets {
++        match self {
++            Some(checker) => checker.grpc_table_targets(request, catalog, schema),
++            None => PermissionTableTargets::Unresolved,
++        }
++    }
++
+     fn check_permission_with_table_targets(
+         &self,
+         user_info: UserInfoRef,
+@@ -386,6 +425,20 @@ mod tests {
+             Ok(PermissionResp::Reject)
          }
  
-+        #[tokio::test]
-+        async fn test_epoch_above_a_record_ahead_of_the_clock_is_accepted() {
-+            let group = new_group();
-+            let ctx = TestEnv::new().ctx();
-+            // The previous process of the node ran on a faster clock.
-+            let recorded = current_time_millis() as u64 + 60_000;
-+            record(&ctx, recorded).await;
-+
-+            let mut restarted = Stream::open(&group, &ctx).await;
-+            let res = restarted.send(heartbeat(recorded + 1, "a2")).await;
-+            assert!(res.region_lease.is_some());
-+            assert_eq!(lease_addr(&ctx).await.as_deref(), Some("a2"));
++        fn grpc_table_targets(
++            &self,
++            request: &Request,
++            catalog: &str,
++            schema: &str,
++        ) -> PermissionTableTargets {
++            match request {
++                Request::RowInserts(requests) => {
++                    PermissionTableTargets::from_row_insert_requests(catalog, schema, requests)
++                }
++                _ => PermissionTableTargets::Unresolved,
++            }
 +        }
 +
-         #[tokio::test]
-         async fn test_epoch_far_ahead_is_not_recorded() {
-             let kv_backend = MemoryKvBackend::new();
+         fn check_permission_with_table_targets(
+             &self,
+             _user_info: UserInfoRef,
+@@ -600,8 +653,8 @@ mod tests {
+ 
+     #[test]
+     fn test_table_target_permission_forwarding() {
+-        let checker: PermissionCheckerRef = Arc::new(TargetAwarePermissionChecker);
+-        let checker = Some(&checker);
++        let inner_checker: PermissionCheckerRef = Arc::new(TargetAwarePermissionChecker);
++        let checker = Some(&inner_checker);
+         assert!(checker.uses_table_targets());
+ 
+         let allowed = checker
+@@ -658,6 +711,25 @@ mod tests {
+ 
+         let no_checker: Option<&PermissionCheckerRef> = None;
+         assert!(!no_checker.uses_table_targets());
++        for request in [
++            Request::RowInserts(RowInsertRequests {
++                inserts: vec![api::v1::RowInsertRequest {
++                    table_name: "allowed".to_string(),
++                    ..Default::default()
++                }],
++            }),
++            Request::RowInserts(RowInsertRequests::default()),
++            Request::Query(api::v1::QueryRequest::default()),
++        ] {
++            assert_eq!(
++                inner_checker.grpc_table_targets(&request, "catalog", "schema"),
++                checker.grpc_table_targets(&request, "catalog", "schema"),
++            );
++            assert_eq!(
++                PermissionTableTargets::Unresolved,
++                no_checker.grpc_table_targets(&request, "catalog", "schema"),
++            );
++        }
+         let allowed = no_checker
+             .check_permission_with_table_targets(
+                 crate::userinfo_by_
+```
+
+**File**: `src/frontend/src/instance.rs` (modified, +135/-21)
+```diff
+@@ -1238,29 +1238,16 @@ impl Instance {
+             let mut seen = HashSet::with_capacity(targets.len());
+             targets.retain(|target| seen.insert(target.clone()));
+         }
+-        if let [target] = targets.as_slice() {
+-            return if self
+-                .is_physical_query_permission_target(target, query_ctx)
+-                .await?
+-            {
+-                Ok(PermissionTableTargets::Unresolved)
+-            } else {
+-                Ok(PermissionTableTargets::resolved(targets))
+-            };
+-        }
+-
+         // Bound catalog load and inspect results in target order to preserve serial semantics.
+-        for chunk in targets.chunks(CONCURRENCY) {
++        for chunk in targets.chunks_mut(CONCURRENCY) {
+             let results = future::join_all(
+                 chunk
+                     .iter()
+                     .map(|target| self.is_physical_query_permission_target(target, query_ctx)),
+             )
+             .await;
+-            for result in results {
+-                if result? {
+-                    return Ok(PermissionTableTargets::Unresolved);
+-                }
++            for (target, result) in chunk.iter_mut().zip(results) {
++                target.is_physical_metric_table = result?;
+             }
+         }
+ 
+@@ -1494,6 +1481,35 @@ impl PrometheusHandler for Instance {
+         Ok(allowed)
+     }
+ 
++    async fn filter_metadata_schema_names(
++        &self,
++        schema_names: Vec<String>,
++        query_ctx: &QueryContextRef,
++    ) -> server_error::Result<Vec<String>> {
++        let checker = self.plugins.get::<PermissionCheckerRef>();
++        let mut allowed = Vec::with_capacity(schema_names.len());
++        for schema in schema_names {
++            match checker
++                .as_ref()
++                .check_permission(
++                    query_ctx.current_user(),
++                    PermissionReq::SchemaRead {
++                        catalog: query_ctx.current_catalog(),
++                        schema: &schema,
++                    },
++                )
++                .context(AuthSnafu)
++            {
++                Ok(_) => allowed.push(schema),
++                Err(error)
++                    if error.status_code()
++                        == common_error::status_code::StatusCode::PermissionDenied => {}
++                Err(error) => return Err(error),
++            }
++        }
++        Ok(allowed)
++    }
++
+     async fn query_metric_names(
+         &self,
+         matchers: Vec<Matcher>,
+@@ -2121,9 +2137,9 @@ mod tests {
+         ) -> auth::error::Result<PermissionResp> {
+             let reject = match targets {
+                 PermissionTableTargets::Unresolved => true,
+-                PermissionTableTargets::Resolved(targets) => {
+-                    targets.iter().any(|target| target.table == "denied")
+-                }
++                PermissionTableTargets::Resolved(targets) => targets
++                    .iter()
++                    .any(|target| target.table == "denied" || target.is_physical_metric_table),
+             };
+             Ok(if reject {
+                 PermissionResp::Reject
+@@ -3553,6 +3569,103 @@ mod tests {
+         Ok(())
+     }
+ 
++    #[tokio::test]
++    async fn test_physical_target_permission_reaches_checker() -> TestResult<()> {
++        struct PhysicalChecker {
++            allow: bool,
++        }
++        impl PermissionChecker for PhysicalChecker {
++            fn check_permission(
++                &self,
++                _: UserInfoRef,
++                _: PermissionReq,
++            ) -> auth::error::Result<PermissionResp> {
++                Ok(PermissionResp::Allow)
++            }
++
++            fn grpc_table_targets(
++                &self,
++                request: &api::v1::greptime_request::Request,
++                catalog: &str,
++                schema: &str,
++            ) -> PermissionTableTargets {
++                let api::v1::greptime_request::Request::Ddl(ddl) = request else {
++                    panic!("expected DDL")
++                };
++                let Some(api::v1::ddl_request::Expr::CommentOn(comment)) = &ddl.expr else {
++                    panic!("expected comment")
++                };
++                PermissionTableTargets::resolved(vec![PermissionTableTarget::new(
++                    catalog,
++                    schema,
++                    &comment.object_name,
++                )])
++            }
++
++            fn check_permission_with_table_targets(
++                &self,
++                _: UserInfoRef,
++                _: PermissionReq,
++                targets: PermissionTableTargets,
++            ) -> auth::error::Result<PermissionResp> {
++                let PermissionTableTargets::Resolved(targets) = targets else {
++                    panic!("physical target must retain its identity")
++                };
++                assert_eq!(targets.len(), 1);
++                assert_eq!(targets[0].catalog, "greptime");
++                assert_eq!(targ
+```
+
+**File**: `src/frontend/src/instance/grpc.rs` (modified, +33/-1)
+```diff
+@@ -27,7 +27,8 @@ use api::v1::{
+ use async_stream::try_stream;
+ use async_trait::async_trait;
+ use auth::{
+-    PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp, PermissionTableTargets,
++    PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp, PermissionTableTarget,
++    PermissionTableTargets,
+ };
+ use common_error::ext::BoxedError;
+ use common_grpc::flight::do_put::DoPutResponse;
+@@ -85,6 +86,20 @@ impl GrpcQueryHandler for Instance {
+                         Some(&ctx.current_schema()),
+                     )
+                     .context(PermissionSnafu)?;
++
++                if let Some(checker) = self.plugins.get::<PermissionCheckerRef>()
++                    && checker.uses_table_targets()
++                {
++                    let targets = checker.grpc_table_targets(
++                        &request,
++                        ctx.current_catalog(),
++                        &ctx.current_schema(),
++                    );
++                    let targets = self.resolve_query_permission_targets(targets, &ctx)
++                        .await.map_err(BoxedError::new).context(ExternalSnafu)?;
++                    self.check_table_permission(&ctx, PermissionReq::GrpcRequest(&request), targets)
++                        .context(PermissionSnafu)?;
++                }
+             }
+ 
+             let output = match request {
+@@ -439,6 +454,23 @@ impl Instance {
+                             table_name: table_name.to_string(),
+                         })?;
+ 
++                    let target = PermissionTableTarget::new(
++                        &table_name.catalog_name,
++                        &table_name.schema_name,
++                        &table_name.table_name,
++                    )
++                    .with_physical_metric_table(table.table_info().is_physical_table());
++                    plugins.get::<PermissionCheckerRef>().as_ref()
++                        .check_permission_with_table_targets(
++                            ctx.current_user(),
++                            PermissionReq::BulkInsert {
++                                catalog: &table_name.catalog_name,
++                                schema: &table_name.schema_name,
++                                table: &table_name.table_name,
++                            },
++                            PermissionTableTargets::resolved(vec![target]),
++                        ).context(PermissionSnafu)?;
++
+                     // Check permissions for the table
+                     let interceptor_ref = plugins.get::<GrpcQueryInterceptorRef<Error>>();
+                     let interceptor = interceptor_ref.as_ref();
+```
+
+**File**: `src/servers/src/http/prometheus.rs` (modified, +273/-250)
+```diff
+@@ -60,7 +60,7 @@ use serde::de::{self, MapAccess, Visitor};
+ use serde::{Deserialize, Serialize};
+ use serde_json::Value;
+ use session::context::{QueryContext, QueryContextRef};
+-use snafu::{Location, OptionExt, ResultExt};
++use snafu::{Location, OptionExt, ResultExt, ensure};
+ use store_api::metric_engine_consts::{
+     DATA_SCHEMA_TABLE_ID_COLUMN_NAME, DATA_SCHEMA_TSID_COLUMN_NAME, LOGICAL_TABLE_METADATA_KEY,
+ };
+@@ -1828,61 +1828,17 @@ pub async fn label_values_query(
+         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(table_names));
+     } else if label_name == FIELD_NAME_LABEL {
+         try_call_return_response!(handler.check_query_permission(&[], &query_ctx).await);
+-        let enumerate_all = matches.is_empty();
+-        let metric_names = matches
+-            .iter()
+-            .map(|selector| retrieve_exact_metric_name_from_promql(selector))
+-            .collect::<Vec<_>>();
+-        if metric_names.iter().any(Option::is_none) {
+-            try_call_return_response!(
+-                handler
+-                    .check_query_target_permission(PermissionTableTargets::Unresolved, &query_ctx,)
+-                    .await
+-            );
+-        }
+-        let metric_names = metric_names.into_iter().flatten().collect::<Vec<_>>();
+-
+-        try_call_return_response!(
+-            handler
+-                .check_query_target_permission(
+-                    current_schema_metric_targets(&query_ctx, &metric_names),
+-                    &query_ctx,
+-                )
+-                .await
+-        );
+-
+-        let (field_columns, table_names) = if !enumerate_all && metric_names.is_empty() {
+-            (HashSet::new(), Vec::new())
+-        } else {
+-            handle_schema_err!(
+-                retrieve_field_names(&query_ctx, handler.catalog_manager(), metric_names).await
+-            )
+-            .unwrap_or_default()
+-        };
+-        try_call_return_response!(
+-            handler
+-                .check_query_target_permission(
+-                    current_schema_metric_targets(&query_ctx, &table_names),
+-                    &query_ctx,
+-                )
+-                .await
+-        );
++        let field_columns =
++            handle_schema_err!(retrieve_field_names(&query_ctx, &handler, matches).await)
++                .unwrap_or_default();
+         let mut field_columns = field_columns.into_iter().collect::<Vec<_>>();
+         field_columns.sort_unstable();
+         truncate_results(&mut field_columns, params.limit);
+         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(field_columns));
+     } else if is_database_selection_label(&label_name) {
+         try_call_return_response!(handler.check_query_permission(&[], &query_ctx).await);
+-        let catalog_manager = handler.catalog_manager();
+-
+-        let (mut schema_names, targets) = try_call_return_response!(
+-            retrieve_schema_names(&query_ctx, catalog_manager, matches).await
+-        );
+-        try_call_return_response!(
+-            handler
+-                .check_query_target_permission(targets, &query_ctx)
+-                .await
+-        );
++        let mut schema_names =
++            try_call_return_response!(retrieve_schema_names(&query_ctx, &handler, matches).await);
+         truncate_results(&mut schema_names, params.limit);
+         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(schema_names));
+     }
+@@ -2300,100 +2256,132 @@ fn table_has_native_histogram_value(table_info: &TableInfo) -> bool {
+         .any(|column| is_native_histogram_value_type(&column.data_type))
+ }
+ 
+-async fn retrieve_field_names(
+-    query_ctx: &QueryContext,
+-    manager: CatalogManagerRef,
+-    matches: Vec<String>,
+-) -> Result<(HashSet<String>, Vec<String>)> {
+-    let mut field_columns = HashSet::new();
+-    let mut table_names = Vec::new();
+-    let catalog = query_ctx.current_catalog();
+-    let schema = query_ctx.current_schema();
++fn metadata_name_selectors(matches: &[String]) -> Result<Vec<Vec<Matcher>>> {
++    matches
++        .iter()
++        .map(|query| {
++            let expr = promql_parser::parser::parse(query)
++                .map_err(|reason| InvalidQuerySnafu { reason }.build())?;
++            let PromqlExpr::VectorSelector(mut selector) = expr else {
++                return InvalidQuerySnafu {
++                    reason: "expected vector selector".to_string(),
++                }
++                .fail();
++            };
++            ensure!(
++                selector.matchers.or_matchers.is_empty(),
++                InvalidQuerySnafu {
++                    reason: "OR matchers are not supported in schema and field metadata queries"
++                        .to_string(),
++                }
++            );
++            Ok(take_metric_name_matchers(&mut selector))
++        })
++        .collect()
++}
+ 
+-    if matches.is_empty() {
+-        // query all tables if no matcher is provided
+-        let mut tables = manager.tables(catalog
+```
+
+**File**: `src/servers/src/prometheus_handler.rs` (modified, +8/-1)
+```diff
+@@ -168,14 +168,21 @@ pub trait PrometheusHandler {
+         query_ctx: &QueryContextRef,
+     ) -> Result<()>;
+ 
+-    /// Removes inaccessible metric names from logical-table metadata enumeration results.
++    /// Removes inaccessible names from non-physical table metadata enumeration results.
+     async fn filter_metadata_metric_names(
+         &self,
+         metric_names: Vec<String>,
+         schema: &str,
+         query_ctx: &QueryContextRef,
+     ) -> Result<Vec<String>>;
+ 
++    /// Removes schemas the user cannot access from metadata enumeration results.
++    async fn filter_metadata_schema_names(
++        &self,
++        schema_names: Vec<String>,
++        query_ctx: &QueryContextRef,
++    ) -> Result<Vec<String>>;
++
+     /// Query metric table names by the `__name__` matchers.
+     async fn query_metric_names(
+         &self,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10061** (2026-10-31): docs: link the observability database definition from README (@killme2008)
-- **PR #10056** (2026-10-29): ci: authenticate ECR Public pulls in benchmark workflows (@WenyXu)
-- **PR #10054** (2026-10-29): chore(ci): slide the compatibility window to v1.3.0 (@discord9)
-- **PR #10053** (2026-10-29): ci: backport scoped heavy CI to narthex (@WenyXu)
-- **PR #10052** (closed): feat(promql): restore the ordered raw series merge (@discord9)
-- **PR #10051** (2026-10-29): chore(ci): update compatibility versions (@MichaelScofield)
+- **PR #10118** (2026-11-03): fix: include peer context in distributed query errors (@WenyXu)
+- **PR #10117** (2026-11-03): fix(promql): land the native admission change on narthex (#10071) (@discord9)
+- **PR #10116** (2026-11-03): chore(ci): use standard AWS secrets in CI workflows (@daviderli614)
+- **PR #10108** (2026-11-03): fix(prometheus): report the metric name only where the aggregation keeps it (@discord9)
+- **PR #10102** (closed): test(meta): verify streamed drain recovery and grouped migration children (@WenyXu)
+- **PR #10100** (2026-11-02): fix(meta): forward flushed Parquet bytes in region statistics (@WenyXu)
 
 ---
 
@@ -1878,57 +2835,29 @@ Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datanode): pick a node epoch above the recorded one (#9984)
+## X. postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs
 
 **RULE**:
-When implementing operations in `src/datanode/src/heartbeat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/frontend/src/server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c40e86c6`: datanode): pick a node epoch above the recorded one (#9984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a09ebc70`: postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs) (#10050). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/src/server.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use common_meta::key::MetadataValue;
-use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
-use crate::error::{
-    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
-};
-/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
-/// recorded for the node when the record is not lower than the start time, as after a restart on
-/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
-/// recorded one.
-async fn node_epoch_above_record(
-    kv_backend: &KvBackendRef,
-    node_id: u64,
-    start_time_ms: u64,
-) -> Result<u64> {
-    let key = DatanodeEpochKey::new(node_id).to_bytes();
-    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
-        return Ok(start_time_ms);
-    };
-    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
-    Ok(start_time_ms.max(recorded.node_epoch + 1))
-}
-
-    start_time_ms: u64,
-        let node_id = opts.node_id.unwrap_or(0);
-        let start_time_ms = common_time::util::current_time_millis() as u64;
-        let node_epoch = node_epoch_above_record(&kv_backend, no
+            let with_metric_engine = effective_prom_store_options(&opts).with_metric_engine;
+                .with_otlp_handler(instance.clone(), with_metric_engine)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
-            node_id: opts.node_id.unwrap_or(0),
-            // We use datanode's start time millis as the node's epoch.
-            node_epoch: common_time::util::current_time_millis() as u64,
-                    start_time_ms: node_epoch,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c40e86c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a09ebc70` are properly handled with clean fallback behavior.
