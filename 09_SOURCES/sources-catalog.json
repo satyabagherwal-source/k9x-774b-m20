@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "71f47d41",
+    "sourceVersion": "c96ae32c",
     "license": "MIT",
-    "contentHash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
-    "lastHarvestedAt": "2026-10-31T04:09:42.994Z",
+    "contentHash": "190d1fad3b82db56edd8bc2fddfa2a118bbfd15247def82314b4b7ad59ae594d",
+    "lastHarvestedAt": "2026-11-03T18:11:29.665Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "564a2074",
+    "sourceVersion": "28c23b0e",
     "license": "Apache-2.0",
-    "contentHash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
-    "lastHarvestedAt": "2026-10-31T16:50:26.530Z",
+    "contentHash": "df4d97ed4963643efd1d4b687b542fdb21a7312887093c914a59e58f9484e11c",
+    "lastHarvestedAt": "2026-11-03T18:11:18.223Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

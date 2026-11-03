@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T18:02:36.659Z",
-  "total_cycles_completed": 6939,
-  "total_learnings_persisted": 6939,
-  "total_rules_promoted": 6586,
+  "last_updated": "2026-11-03T18:11:29.669Z",
+  "total_cycles_completed": 6941,
+  "total_learnings_persisted": 6941,
+  "total_rules_promoted": 6588,
   "history": [
-    {
-      "timestamp": "2026-11-01T00:04:15.780Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-01T00:10:25.278Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-01T00:10:34.024Z",
       "repository": "skyhook-io/radar",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-03T18:02:36.659Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:11:18.228Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T18:11:29.669Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

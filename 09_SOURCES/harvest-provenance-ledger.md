@@ -6971,3 +6971,5 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `03a91cb3` | Multi-dimensional audit evidence | 2026-11-03T18:02:32.754Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `43f90387` | Multi-dimensional audit evidence | 2026-11-03T18:02:32.971Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `505d8729` | Multi-dimensional audit evidence | 2026-11-03T18:02:36.654Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `28c23b0e` | Multi-dimensional audit evidence | 2026-11-03T18:11:18.223Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `c96ae32c` | Multi-dimensional audit evidence | 2026-11-03T18:11:29.665Z |

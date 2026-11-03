@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T18:02:39.204Z",
-    "lastVerified": "2026-11-03T18:02:39.204Z",
+    "lastChecked": "2026-11-03T18:11:32.219Z",
+    "lastVerified": "2026-11-03T18:11:32.219Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -220,9 +220,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-03T11:52:02.224Z",
+    "lastChecked": "2026-11-03T18:11:19.878Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-03T11:52:02.224Z"
+    "lastVerified": "2026-11-03T18:11:19.878Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T17:38:22.371Z",
-    "lastVerified": "2026-11-03T17:38:22.371Z",
+    "lastChecked": "2026-11-03T18:11:24.358Z",
+    "lastVerified": "2026-11-03T18:11:24.358Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2158,9 +2158,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-10-31T21:37:35.908Z",
+    "lastChecked": "2026-11-03T18:11:17.716Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-10-31T21:37:35.908Z"
+    "lastVerified": "2026-11-03T18:11:17.716Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -7194,22 +7194,21 @@
     "revisionIdentifier": "3461a87f"
   },
   "duckdb-duckdb": {
-    "name": "duckdb",
+    "name": "duckdb/duckdb",
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T20:46:46.231Z",
-    "lastVerified": "2026-10-31T20:46:46.231Z",
+    "lastChecked": "2026-11-03T18:11:28.884Z",
+    "lastVerified": "2026-11-03T18:11:28.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
+    "contentHash": "190d1fad3b82db56edd8bc2fddfa2a118bbfd15247def82314b4b7ad59ae594d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "71f47d41"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "crate-ci-typos": {
     "name": "crate-ci/typos",
@@ -8225,14 +8224,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T16:50:24.467Z",
-    "lastVerified": "2026-10-31T16:50:24.467Z",
+    "lastChecked": "2026-11-03T18:11:16.341Z",
+    "lastVerified": "2026-11-03T18:11:16.341Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
+    "contentHash": "df4d97ed4963643efd1d4b687b542fdb21a7312887093c914a59e58f9484e11c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10082,9 +10081,9 @@
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
     "officialUrl": "https://github.com/melihandic/deep-in-gsc",
-    "lastChecked": "2026-10-30T06:49:57.330Z",
+    "lastChecked": "2026-11-03T18:11:11.465Z",
     "revisionIdentifier": "bf8cb859",
-    "lastVerified": "2026-10-30T06:49:57.330Z"
+    "lastVerified": "2026-11-03T18:11:11.465Z"
   },
   "kamgurgul-cpu-info": {
     "name": "kamgurgul/cpu-info",
@@ -11187,9 +11186,9 @@
   "jaywcjlove-devhub": {
     "name": "DevHub",
     "officialUrl": "https://github.com/jaywcjlove/DevHub",
-    "lastChecked": "2026-10-30T18:32:25.603Z",
+    "lastChecked": "2026-11-03T18:11:14.129Z",
     "revisionIdentifier": "15d258ec",
-    "lastVerified": "2026-10-30T18:32:25.603Z"
+    "lastVerified": "2026-11-03T18:11:14.129Z"
   },
   "solidjs-solid": {
     "name": "solidjs/solid",
