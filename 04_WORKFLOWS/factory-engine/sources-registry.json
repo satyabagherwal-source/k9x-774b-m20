@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T23:39:26.688Z",
-    "lastVerified": "2026-11-03T23:39:26.688Z",
+    "lastChecked": "2026-11-03T23:46:14.324Z",
+    "lastVerified": "2026-11-03T23:46:14.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -299,14 +299,14 @@
     "officialUrl": "https://github.com/storybookjs/storybook",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T23:28:38.205Z",
-    "lastVerified": "2026-10-30T23:28:38.205Z",
+    "lastChecked": "2026-11-03T23:46:09.580Z",
+    "lastVerified": "2026-11-03T23:46:09.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
+    "contentHash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-03T23:13:17.153Z",
+    "lastChecked": "2026-11-03T23:46:13.349Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-03T23:13:17.153Z"
+    "lastVerified": "2026-11-03T23:46:13.349Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -775,8 +775,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T19:15:10.807Z",
-    "lastVerified": "2026-11-03T19:15:10.807Z",
+    "lastChecked": "2026-11-03T23:46:08.205Z",
+    "lastVerified": "2026-11-03T23:46:08.205Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2207,9 +2207,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-10-31T21:07:58.247Z",
+    "lastChecked": "2026-11-03T23:45:58.096Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-10-31T21:07:58.247Z"
+    "lastVerified": "2026-11-03T23:45:58.096Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -2273,9 +2273,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-01T01:14:35.457Z",
+    "lastChecked": "2026-11-03T23:46:10.760Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-11-01T01:14:35.457Z"
+    "lastVerified": "2026-11-03T23:46:10.760Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -4205,14 +4205,14 @@
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-01T02:00:52.576Z",
-    "lastVerified": "2026-11-01T02:00:52.576Z",
+    "lastChecked": "2026-11-03T23:46:11.144Z",
+    "lastVerified": "2026-11-03T23:46:11.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "45f4a037b6310ac9490b9cb1668862a7ba05406c71af63bd9ce904f2e80aeea7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10834,14 +10834,14 @@
     "officialUrl": "https://github.com/axios/axios",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T15:14:57.011Z",
-    "lastVerified": "2026-10-30T15:14:57.011Z",
+    "lastChecked": "2026-11-03T23:46:07.428Z",
+    "lastVerified": "2026-11-03T23:46:07.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-axios-axios",
-    "contentHash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+    "contentHash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

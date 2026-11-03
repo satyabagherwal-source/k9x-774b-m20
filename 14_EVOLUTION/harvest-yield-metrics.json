@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T23:39:18.959Z",
-  "total_cycles_completed": 7039,
-  "total_learnings_persisted": 7039,
-  "total_rules_promoted": 6684,
+  "last_updated": "2026-11-03T23:46:11.774Z",
+  "total_cycles_completed": 7042,
+  "total_learnings_persisted": 7042,
+  "total_rules_promoted": 6687,
   "history": [
-    {
-      "timestamp": "2026-11-02T17:58:27.017Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T21:22:51.972Z",
-      "repository": "pyannote/speaker-diarization-3.1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-02T21:30:10.184Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-02T21:30:10.549Z",
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-03T23:39:18.959Z",
       "repository": "nodejs/undici",
       "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T23:46:09.027Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T23:46:10.213Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T23:46:11.774Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

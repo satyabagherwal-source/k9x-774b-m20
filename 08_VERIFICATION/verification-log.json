@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-1VF9",
-    "timestamp": "2026-10-31T12:39:42.165Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-AY50",
-    "timestamp": "2026-10-31T12:46:45.588Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-B6IC",
-    "timestamp": "2026-10-31T12:46:56.436Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-B9AP",
     "timestamp": "2026-10-31T12:47:00.049Z",
     "repository": "matrixorigin/matrixone",
@@ -7490,6 +7445,51 @@
     "repository": "nodejs/undici",
     "learningId": "learn-github-nodejs-undici",
     "contentHash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6HH7",
+    "timestamp": "2026-11-03T23:46:09.019Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6IE3",
+    "timestamp": "2026-11-03T23:46:10.203Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-6JLI",
+    "timestamp": "2026-11-03T23:46:11.766Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "45f4a037b6310ac9490b9cb1668862a7ba05406c71af63bd9ce904f2e80aeea7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

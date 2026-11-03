@@ -7071,3 +7071,6 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `28ba3499` | Multi-dimensional audit evidence | 2026-11-03T23:32:24.135Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `7cead47b` | Multi-dimensional audit evidence | 2026-11-03T23:39:18.358Z |
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `39995739` | Multi-dimensional audit evidence | 2026-11-03T23:39:18.953Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `fb88a1b1` | Multi-dimensional audit evidence | 2026-11-03T23:46:09.023Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `e4ec6073` | Multi-dimensional audit evidence | 2026-11-03T23:46:10.207Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `6bb987c8` | Multi-dimensional audit evidence | 2026-11-03T23:46:11.769Z |

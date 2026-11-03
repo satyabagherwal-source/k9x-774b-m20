@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:39:18.861Z",
+  "last_updated": "2026-11-03T23:46:11.699Z",
   "total_verified_learnings": 1201,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -786,8 +786,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "d4c963ba",
-      "content_hash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
+      "source_version": "6bb987c8",
+      "content_hash": "45f4a037b6310ac9490b9cb1668862a7ba05406c71af63bd9ce904f2e80aeea7",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -815,6 +815,11 @@
           "number": 5845,
           "title": "python): URL-encode memory subscription filters (#1137)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6665,
+          "title": "sdk/go): don't cut active streams with Client.Timeout (#1147)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -822,7 +827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T02:00:52.721Z",
+      "verified_at": "2026-11-03T23:46:11.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54006,8 +54011,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "43a13889",
-      "content_hash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
+      "source_version": "e4ec6073",
+      "content_hash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -54035,6 +54040,11 @@
           "number": 5937,
           "title": "builder-webpack5): resolve declared mocks through webpack's resolver",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6664,
+          "title": "Merge pull request #36703 from storybookjs/fix/composition-camelcase-ref-keys",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54042,7 +54052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:28:40.819Z",
+      "verified_at": "2026-11-03T23:46:10.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74790,8 +74800,8 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "9d11464a",
-      "content_hash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+      "source_version": "fb88a1b1",
+      "content_hash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
@@ -74824,6 +74834,11 @@
           "number": 5783,
           "title": "fix line break",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6663,
+          "title": "deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74831,7 +74846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:14:59.178Z",
+      "verified_at": "2026-11-03T23:46:08.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171342,6 +171357,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:39:18.839Z"
+    },
+    "rule-6663": {
+      "learning_id": "rule-6663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6663,
+      "title": "deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "fb88a1b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:46:08.934Z"
+    },
+    "rule-6664": {
+      "learning_id": "rule-6664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6664,
+      "title": "Merge pull request #36703 from storybookjs/fix/composition-camelcase-ref-keys",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "e4ec6073",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:46:10.113Z"
+    },
+    "rule-6665": {
+      "learning_id": "rule-6665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6665,
+      "title": "sdk/go): don't cut active streams with Client.Timeout (#1147)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "6bb987c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T23:46:11.680Z"
     }
   },
   "aliases": {

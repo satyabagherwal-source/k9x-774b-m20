@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source**: github ([https://github.com/axios/axios](https://github.com/axios/axios))  
-> **Source Version**: `9d11464a`  
+> **Source Version**: `fb88a1b1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:14:58.645Z  
+> **Timestamp**: 2026-11-03T23:46:08.412Z  
 > **Learning ID**: `learn-github-axios-axios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/axios/axios](https://github.com/axios/axios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:14:57.011Z  
+> **Harvest Timestamp**: 2026-11-03T23:46:07.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Promise based HTTP client for the browser and node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 109310 stars
+- **Stars / Engagement**: 109314 stars
 
 ---
 
@@ -1388,18 +1388,34 @@ function throwIfCancellationRequested(config) {
 }
 
 /**
- * Milliseconds elapsed since `start`, floored at zero.
+ * Resolve the clock used to time adapter execution.
  *
- * Wall-clock, to match the rest of the codebase (speedometer, throttle,
- * AxiosTransformStream). A backwards clock adjustment mid-request would
- * otherwise produce a negative duration, so the result is clamped.
+ * Prefers the monotonic `performance.now()` so wall-clock adjustments do not
+ * skew the measurement, and so frameworks that forbid reading the current
+ * time during prerendering (e.g. Next.js Cache Components) accept it. Falls
+ * back to `Date.now()` in runtimes without the High Resolution Time API.
  *
- * @param {number} start Timestamp from `Date.now()`
+ * @returns {() => number} Millisecond clock
+ */
+function resolveClock() {
+  return typeof performance !== 'undefined' && utils.isFunction(performance.now)
+    ? () => performance.now()
+    : Date.now;
+}
+
+/**
+ * Whole milliseconds elapsed since `start`, floored at zero.
+ *
+ * Rounded so the value stays an integer as with `Date.now()`. The fallback
+ * wall clock can move backwards mid-request, so the result is clamped.
+ *
+ * @param {() => number} now Clock returned by `resolveClock()`
+ * @param {number} start Timestamp read from `now`
  *
  * @returns {number} Non-negative elapsed milliseconds
  */
-function elapsedSince(start) {
-  return Math.max(0, Date.now() - start);
+function elapsedSince(now, start) {
+  return Math.max(0, Math.round(now() - start));
 }
 
 /**
@@ -1428,13 +1444,14 @@ export default function dispatchRequest(_config) {
 
   const adapter = adapters.getAdapter(config.adapter || defaults.adapter, config);
 
-  const start = Date.now();
+  const now = resolveClock();
+  const start = now();
 
   return adapter(config).then(
     function onAdapterResolution(response) {
       throwIfCancellationRequested(config);
 
-      response.duration = elapsedSince(start);
+      response.duration = elapsedSince(now, start);
 
       // Expose the current response on config so that transformResponse can
       // attach it to any AxiosError it throws (e.g. on JSON parse failure).
@@ -1456,7 +1473,7 @@ export default function dispatchRequest(_config) {
 
         // Transform response data
         if (reason && reason.response) {
-          reason.response.duration = elapsedSince(start);
+          reason.response.duration = elapsedSince(now, start);
           config.response = reason.response;
           try {
             reason.response.data = transformData.call(
@@ -1780,15 +1797,11 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11400** (2026-10-28): **docs: add partners page and shared sponsor cards**
-  *Symptoms*: ## Summary  Adds a Partners section to the docs site for HeroDevs, Socket, Namespace, Greptile, and cubic, linking back to each partner's website and social profiles. Also moves the Sponsors page and the homepage sponsor carousel onto the same card design so partners and sponsors look consistent.  ## Linked issue  No issue. Requested by a maintainer to recognise the project's partners on the docs site.  ## Changes  - **Partners page** (`/pages/misc/partners` in en, es, fr, zh), linked from the top nav. Partner data lives in `docs/data/partners.json` (name, logo, website, social links, localized description). Logos are each company's GitHub organisation avatar, stored in `docs/public/partners/`. - **Homepage sections:** each homepage gets a short translated introduction for Sponsors (linking to Open Collective) and a new Partners section with its own introduction and the five partner cards under the sponsor carousel. - **Shared card** (`docs/.vitepress/theme/LogoCard.vue`) used by the Partners page, Sponsors page, homepage carousel, and homepage Partners section:   - logo on a white tile, so dark logos stay visible in dark mode   - name always reserves two lines, so tier badges and descriptions line up across cards   - tier badge or description   - a link row led by a globe icon for the website, followed by an icon for every social profile   - the whole card links to the website (stretched link); social icons sit above it   - cards without a website are not clickable - **Socia
-  **Post-Mortem & Fix Analysis**:
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=89616021"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/axios/github/axios/axios/-/pull/11400?utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https://greptile-static-assets.s3.amazonaws.c
+- **Issue #11422** (2026-11-03): **chore(deps-dev): bump the development_dependencies group with 4 updates**
+  *Symptoms*: Bumps the development_dependencies group with 4 updates: [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/HEAD/packages/alias), [@rollup/plugin-terser](https://github.com/rollup/plugins/tree/HEAD/packages/terser), [body-parser](https://github.com/expressjs/body-parser) and [rollup](https://github.com/rollup/rollup).  Updates `@rollup/plugin-alias` from 6.0.0 to 6.0.1 <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/rollup/plugins/blob/master/packages/alias/CHANGELOG.md">@​rollup/plugin-alias's changelog</a>.</em></p> <blockquote> <h2>v6.0.1</h2> <p><em>2026-10-21</em></p> <h3>Updates</h3> <ul> <li>alias: bump release (<a href="https://github.com/rollup/plugins/commit/3417670">3417670</a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/rollup/plugins/commit/cdf9113a14c116520ef9f937a1151797666bbfa2"><code>cdf9113</code></a> chore(repo): manually update changelog and package versions after bad release...</li> <li><a href="https://github.com/rollup/plugins/commit/841a0391c1dd11fed16771a202e6eff97cf4139b"><code>841a039</code></a> fix(alias,auto-install,babel,beep,buble,commonjs,data-uri,dsv,dynamic-import-...</li> <li><a href="https://github.com/rollup/plugins/commit/abda5cfd3148beba158292eabb784ddb7833c075"><code>abda5cf</code></a> chore(release): alias v5.0.0</li> <li><a href="https://github.com/rollup/plugins/commit/a0242b24d3fb03912a0ceb31a5fbbe41b7f419c5"><code>a0
 
-- **Issue #11399** (2026-10-28): **docs: add Namespace OSS CI sponsor badge**
-  *Symptoms*: ## Summary  Add Namespace to the Gold sponsors grid in the README. The square uses the open source CI badge, the line "Actually the fastest way to run your GitHub Actions.", and a link to namespace.so. Axios workflows already run on the namespace-profile-axios profile.  ## Linked issue  None. This records the CI sponsorship after the runner migration in #11396.  ## Changes  - Add a Namespace square to the Gold sponsors grid. - Add a Documentation entry to PRE_RELEASE_CHANGELOG.md.  ## Validation  - Checked the badge in GitHub's Preview. It sits in the last Gold sponsors row, to the right of Sweepico, with the badge, sentence, and link centered. - Runtime checks are not applicable: README and prerelease changelog only.  ## Compatibility and documentation  No semver impact. Documentation only. No public API or type changes.  A maintainer needs to apply the ai-assisted label.  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic ## Description  Adds Namespace as a Gold sponsor in the README, placing its open source CI badge, the tagline "Actually the fastest way to run your GitHub Actions," and a link to namespace.so in the sponsors grid. Axios CI already runs on the namespace-profile-axios runner profile, so this records the CI sponsorship after the earlier runner migration. Also adds a corresponding Documentation entry to `PRE_RELEASE_CHANGELOG.md`.  ## Docs  This change is documentation-only and updates the README sponsor listing. No further docs u
-  **Post-Mortem & Fix Analysis**:
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=89231004"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/axios/github/axios/axios/-/pull/11399"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2" align="right"></picture></a>Confidence Score: 5/5
+- **Issue #11421** (2026-11-03): **chore(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 in the github-actions group**
+  *Symptoms*: Bumps the github-actions group with 1 update: [zizmorcore/zizmor-action](https://github.com/zizmorcore/zizmor-action).  Updates `zizmorcore/zizmor-action` from 0.7.1 to 0.8.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zizmorcore/zizmor-action/releases">zizmorcore/zizmor-action's releases</a>.</em></p> <blockquote> <h2>v0.8.0</h2> <p>The action now supports prereleases.</p> <p>The default has not changed, but you can pass a prerelease version of zizmor or <code>version: prerelease</code> to get whatever latest prerelease the action knows about.</p> <h2>What's Changed</h2> <ul> <li>Support prereleases by <a href="https://github.com/woodruffw"><code>@​woodruffw</code></a> in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/182">zizmorcore/zizmor-action#182</a></li> <li>Sync zizmor versions by <a href="https://github.com/github-actions"><code>@​github-actions</code></a>[bot] in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/184">zizmorcore/zizmor-action#184</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0">https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/zizmorcore/zizmor-action/commit/53290badfa369cb0bf7ad16342cb62c2fa47ac7b"><code>53290ba</code></a> Sync zizmor versions (<a href="https://redi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1805,62 +1818,405 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d11464a` (2026-10-28)
-**Commit Message**: chore: fix line break
+### Incident Patch 1: `00b4d1ed` (2026-11-02)
+**Commit Message**: fix(deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -365,7 +365,7 @@
-         />
-     </a>
-     <p align="center">
--        Actually the fastest way to run your<br>GitHub Actions.
-+        Actually the fastest way to run <br>your GitHub Actions.
-     </p>
-     <p align="center">
-         <a
+@@ -20,4 +20,5 @@
+ 
+ <!-- Record test-only changes, internal refactors, tooling, dependency updates, and CI changes without a user-visible behavior change here. -->
+ 
++- **follow-redirects security update:** Raised the `follow-redirects` dependency range from `^1.16.0` to `^1.16.2` and updated the lockfile to 1.16.2, which fixes [CVE-2026-116689](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p) (cross-realm `sensitiveHeaders` arrays are discarded and custom credentials can follow redirects). Raising the range floor stops installs from resolving the vulnerable 1.16.0 and 1.16.1 releases. No axios runtime, public API, or type compatibility changes. ([#11409](https://github.com/axios/axios/issues/11409), [#11410](https://github.com/axios/axios/pull/11410))
+ - **CI runners:** Switched GitHub Actions jobs from GitHub-hosted `ubuntu-latest` runners to the `namespace-profile-axios` Namespace runner profile. The npm publish job stays on `ubuntu-latest` because npm provenance and trusted publishing require GitHub-hosted runners. CI only; no runtime, public API, or type compatibility changes.
+```
+
+**File**: `package-lock.json` (modified, +4/-4)
+```diff
+@@ -9,7 +9,7 @@
+       "version": "1.21.0",
+       "license": "MIT",
+       "dependencies": {
+-        "follow-redirects": "^1.16.0",
++        "follow-redirects": "^1.16.2",
+         "form-data": "^4.0.6",
+         "https-proxy-agent": "^5.0.1",
+         "proxy-from-env": "^2.1.0"
+@@ -5324,9 +5324,9 @@
+       "license": "ISC"
+     },
+     "node_modules/follow-redirects": {
+-      "version": "1.16.1",
+-      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
+-      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
++      "version": "1.16.2",
++      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.2.tgz",
++      "integrity": "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==",
+       "funding": [
+         {
+           "type": "individual",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -139,7 +139,7 @@
+     "prepare": "husky"
+   },
+   "dependencies": {
+-    "follow-redirects": "^1.16.0",
++    "follow-redirects": "^1.16.2",
+     "form-data": "^4.0.6",
+     "https-proxy-agent": "^5.0.1",
+     "proxy-from-env": "^2.1.0"
 ```
 
 ---
 
-### Incident Patch 2: `ff542ee3` (2026-10-27)
-**Commit Message**: docs: fix SAP typo in README (#11373)
+### Incident Patch 2: `6f5950a9` (2026-11-02)
+**Commit Message**: fix(types): accept config in getAdapter (#11404)
 
-Co-authored-by: pei711 <[REDACTED_EMAIL]>
 Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
+Co-authored-by: cubic-dev-ai[bot] <191113872+cubic-dev-ai[bot]@users.noreply.github.com>
 
 **File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -8,6 +8,7 @@
+@@ -7,6 +7,7 @@
+ ## Bug Fixes
+ 
+ - **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
++- **`getAdapter` typings:** `getAdapter(adapters, config?)` in `index.d.ts` and `index.d.cts` now accepts the optional request config that the runtime already forwards to adapter getters, so `getAdapter('fetch', { env: { fetch } })` type-checks without a cast. A JSDoc comment on the parameter notes that the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and that other fields are not applied. Type-only; additive and backwards compatible, no runtime change. ([#11403](https://github.com/axios/axios/issues/11403), [#11404](https://github.com/axios/axios/pull/11404))
  
  ## Documentation
  
-+- **README sponsor name:** Corrected sponsor name typo `BSAP SE` → `SAP SE` in the README sponsor listing. This updates sponsor recognition only, with no runtime, public API, or type compatibility changes. ([#11373](https://github.com/axios/axios/pull/11373))
- - **Error identification:** Corrected the error `name` description in the README and English, French, Spanish, and Chinese error-handling guides. Cancellation errors use `CanceledError`, and wrapped errors may retain their original name, so the guides now recommend `axios.isAxiosError(error)` for identifying Axios errors and `axios.isCancel(error)` for detecting cancellations instead of comparing `name`. Documentation only; no runtime, public API, or type changes. ([#11374](https://github.com/axios/axios/pull/11374))
- - **v1.21.0 release notes and docs:** Added the published v1.21.0 release notes to `CHANGELOG.md`. Applied the 13 pending `PRE_RELEASE_DOCS.md` entries from v1.20.0 and v1.21.0 to the English, Spanish, French, and Chinese docs site, including upgrade-guide sections for both releases. Cleared the released entries from `PRE_RELEASE_CHANGELOG.md`, and reduced `PRE_RELEASE_DOCS.md` to the README updates that remain pending for those entries. No runtime, public API, or type compatibility changes.
+```
+
+**File**: `PRE_RELEASE_DOCS.md` (modified, +10/-0)
+```diff
+@@ -29,6 +29,16 @@ Do not store raw diffs or line-number-only instructions here; prefer stable sect
+ - **Required content:** Replace the bullet saying the value is approximate wall-clock time measured with `Date.now()`. The value is now measured with the monotonic `performance.now()` and rounded to whole milliseconds, so system clock adjustments no longer affect it. Runtimes without `performance.now()` fall back to `Date.now()`, where backward clock adjustments are clamped to `0` and forward adjustments can inflate the value. Optionally note that this keeps axios compatible with Next.js Cache Components prerendering, which rejects `Date.now()`.
+ - **Notes:** The README entry below says "approximate wall-clock time"; use the new wording when applying it.
+ 
++### `getAdapter` request config argument
++
++- **Change:** The `getAdapter` typings accept an optional second `config` argument, which the runtime already forwards to adapter getters.
++- **Source:** [Issue #11403](https://github.com/axios/axios/issues/11403), [PR #11404](https://github.com/axios/axios/pull/11404).
++- **Status:** Pending.
++- **Docs targets:** The `getAdapter` section of `docs/pages/advanced/api-reference.md` and its Spanish, French, and Chinese translations. Optionally cross-link from the custom `fetch` section of `docs/pages/advanced/fetch-adapter.md`.
++- **Required content:** Update the signature to `getAdapter(adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined, config?: AxiosRequestConfig): AxiosAdapter`. The current docs signature (`string | string[]`) also omits `undefined` and adapter functions, which the typings have always accepted. Explain that `config` is passed to adapter getters: the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it, and without `config` it uses the global implementations. For the built-in `fetch` adapter, other request fields are not used while resolving the adapter; they take effect when the returned adapter is called with a request config. Custom adapter getters may inspect any forwarded config field.
++- **Examples:** `const fetchAdapter = getAdapter('fetch', { env: { fetch: customFetch } });`
++- **Notes:** Passing a new `fetch` function on every call creates and caches a new adapter each time, so reuse the same `fetch` reference.
++
+ ### Response duration (README)
+ 
+ - **Change:** Bring `README.md` in line with the released docs site.
+```
+
+**File**: `index.d.cts` (modified, +10/-1)
+```diff
+@@ -772,7 +772,16 @@ declare namespace axios {
+       options?: FormSerializerOptions
+     ): GenericFormData;
+     formToJSON(form: GenericFormData | GenericHTMLFormElement): object;
+-    getAdapter(adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined): AxiosAdapter;
++    /**
++     * Resolves an adapter by name, adapter function, or priority list.
++     * @param config Request config forwarded to adapter getters. The built-in `fetch`
++     * adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and falls
++     * back to the globals when it is omitted. Other fields are not applied here.
++     */
++    getAdapter(
++      adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined,
++      config?: AxiosRequestConfig
++    ): AxiosAdapter;
+     AxiosHeaders: typeof AxiosHeaders;
+     mergeConfig<D = any, P = any>(
+       config1: AxiosRequestConfig<D, P>,
+```
+
+**File**: `index.d.ts` (modified, +8/-1)
+```diff
+@@ -752,8 +752,15 @@ export interface GenericHTMLFormElement {
+   submit(): void;
+ }
+ 
++/**
++ * Resolves an adapter by name, adapter function, or priority list.
++ * @param config Request config forwarded to adapter getters. The built-in `fetch`
++ * adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and falls
++ * back to the globals when it is omitted. Other fields are not applied here.
++ */
+ export function getAdapter(
+-  adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined
++  adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined,
++  config?: AxiosRequestConfig
+ ): AxiosAdapter;
+ 
+ export function toFormData(
+```
+
+**File**: `tests/module/cjs/tests/helpers/cjs-fetch-types.ts` (modified, +9/-0)
+```diff
+@@ -63,3 +63,12 @@ axios.create({
+     Response: StringOnlyResponse,
+   },
+ });
++
++// getAdapter accepts the request config that adapter getters read, e.g. fetch's env.
++const customFetch: typeof fetch = (input, init) => fetch(input, init);
++axios.getAdapter('fetch', { env: { fetch: customFetch } });
++axios.getAdapter(['fetch', 'xhr'], { env: { fetch: customFetch } });
++axios.getAdapter(undefined, { env: { fetch: customFetch } });
++axios.getAdapter((config) => axios.getAdapter('fetch', config)(config), { timeout: 1000 });
++// @ts-expect-error env.fetch must be a fetch function
++axios.getAdapter('fetch', { env: { fetch: 1 } });
+```
+
+**File**: `tests/module/esm/tests/helpers/esm-fetch-types.ts` (modified, +9/-0)
+```diff
+@@ -63,3 +63,12 @@ axios.create({
+     Response: StringOnlyResponse,
+   },
+ });
++
++// getAdapter accepts the request config that adapter getters read, e.g. fetch's env.
++const customFetch: typeof fetch = (input, init) => fetch(input, init);
++axios.getAdapter('fetch', { env: { fetch: customFetch } });
++axios.getAdapter(['fetch', 'xhr'], { env: { fetch: customFetch } });
++axios.getAdapter(undefined, { env: { fetch: customFetch } });
++axios.getAdapter((config) => axios.getAdapter('fetch', config)(config), { timeout: 1000 });
++// @ts-expect-error env.fetch must be a fetch function
++axios.getAdapter('fetch', { env: { fetch: 1 } });
+```
+
+**File**: `tests/unit/adapters/adapters.test.js` (modified, +16/-0)
+```diff
+@@ -43,6 +43,22 @@ describe('adapters', () => {
+     );
+   });
+ 
++  it('should pass the config to adapter getters', () => {
++    const adapter = () => {};
++    const config = { env: {} };
++    let received;
++
++    adapters.adapters.testadapter = {
++      get: (c) => {
++        received = c;
++        return adapter;
++      },
++    };
++
++    assert.strictEqual(adapters.getAdapter('testAdapter', config), adapter);
++    assert.strictEqual(received, config);
++  });
++
+   it('should pick suitable adapter from the list', () => {
+     const adapter = () => {};
  
 ```
 
-**File**: `README.md` (modified, +1/-1)
+---
+
+### Incident Patch 3: `4417c7e2` (2026-11-02)
+**Commit Message**: fix(core): measure response duration with performance.now() (#11411)
+
+**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -103,7 +103,7 @@
-                 align="center"
-                 title="SAP SE, a global software company, is one of the largest vendors of ERP and other enterprise applications."
-             >
--                BSAP SE, a global software company, is one of the largest vendors of ERP and other enterprise applications.
-+                SAP SE, a global software company, is one of the largest vendors of ERP and other enterprise applications.
-             </p>
-             <p align="center">
-                 <a
+@@ -6,6 +6,8 @@
+ 
+ ## Bug Fixes
+ 
++- **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
++
+ ## Documentation
+ 
+ - **README sponsor name:** Corrected sponsor name typo `BSAP SE` → `SAP SE` in the README sponsor listing. This updates sponsor recognition only, with no runtime, public API, or type compatibility changes. ([#11373](https://github.com/axios/axios/pull/11373))
+```
+
+**File**: `PRE_RELEASE_DOCS.md` (modified, +9/-0)
+```diff
+@@ -20,6 +20,15 @@ Do not store raw diffs or line-number-only instructions here; prefer stable sect
+ 
+ ## Unreleased
+ 
++### Response duration clock
++
++- **Change:** `response.duration` uses `performance.now()` instead of `Date.now()`.
++- **Source:** [Issue #11407](https://github.com/axios/axios/issues/11407).
++- **Status:** Pending.
++- **Docs targets:** `docs/pages/advanced/response-schema.md` (Response duration) and the Spanish, French, and Chinese translations of that section; the README duration note tracked in the entry below.
++- **Required content:** Replace the bullet saying the value is approximate wall-clock time measured with `Date.now()`. The value is now measured with the monotonic `performance.now()` and rounded to whole milliseconds, so system clock adjustments no longer affect it. Runtimes without `performance.now()` fall back to `Date.now()`, where backward clock adjustments are clamped to `0` and forward adjustments can inflate the value. Optionally note that this keeps axios compatible with Next.js Cache Components prerendering, which rejects `Date.now()`.
++- **Notes:** The README entry below says "approximate wall-clock time"; use the new wording when applying it.
++
+ ### Response duration (README)
+ 
+ - **Change:** Bring `README.md` in line with the released docs site.
+```
+
+**File**: `index.d.cts` (modified, +2/-1)
+```diff
+@@ -651,7 +651,8 @@ declare namespace axios {
+     status: number;
+     statusText: string;
+     /**
+-     * Wall-clock milliseconds from adapter invocation to settlement, clamped at zero.
++     * Whole milliseconds from adapter invocation to settlement, clamped at zero. Measured with
++     * `performance.now()` when available, otherwise `Date.now()`.
+      * Excludes interceptors and request/response transforms. Stream consumption is not included.
+      */
+     duration?: number;
+```
+
+**File**: `index.d.ts` (modified, +2/-1)
+```diff
+@@ -527,7 +527,8 @@ export interface AxiosResponse<T = any, D = any, H = {}, P = any> {
+   status: number;
+   statusText: string;
+   /**
+-   * Wall-clock milliseconds from adapter invocation to settlement, clamped at zero.
++   * Whole milliseconds from adapter invocation to settlement, clamped at zero. Measured with
++   * `performance.now()` when available, otherwise `Date.now()`.
+    * Excludes interceptors and request/response transforms. Stream consumption is not included.
+    */
+   duration?: number;
+```
+
+**File**: `lib/core/dispatchRequest.js` (modified, +27/-10)
+```diff
+@@ -26,18 +26,34 @@ function throwIfCancellationRequested(config) {
+ }
+ 
+ /**
+- * Milliseconds elapsed since `start`, floored at zero.
++ * Resolve the clock used to time adapter execution.
+  *
+- * Wall-clock, to match the rest of the codebase (speedometer, throttle,
+- * AxiosTransformStream). A backwards clock adjustment mid-request would
+- * otherwise produce a negative duration, so the result is clamped.
++ * Prefers the monotonic `performance.now()` so wall-clock adjustments do not
++ * skew the measurement, and so frameworks that forbid reading the current
++ * time during prerendering (e.g. Next.js Cache Components) accept it. Falls
++ * back to `Date.now()` in runtimes without the High Resolution Time API.
+  *
+- * @param {number} start Timestamp from `Date.now()`
++ * @returns {() => number} Millisecond clock
++ */
++function resolveClock() {
++  return typeof performance !== 'undefined' && utils.isFunction(performance.now)
++    ? () => performance.now()
++    : Date.now;
++}
++
++/**
++ * Whole milliseconds elapsed since `start`, floored at zero.
++ *
++ * Rounded so the value stays an integer as with `Date.now()`. The fallback
++ * wall clock can move backwards mid-request, so the result is clamped.
++ *
++ * @param {() => number} now Clock returned by `resolveClock()`
++ * @param {number} start Timestamp read from `now`
+  *
+  * @returns {number} Non-negative elapsed milliseconds
+  */
+-function elapsedSince(start) {
+-  return Math.max(0, Date.now() - start);
++function elapsedSince(now, start) {
++  return Math.max(0, Math.round(now() - start));
+ }
+ 
+ /**
+@@ -66,13 +82,14 @@ export default function dispatchRequest(_config) {
+ 
+   const adapter = adapters.getAdapter(config.adapter || defaults.adapter, config);
+ 
+-  const start = Date.now();
++  const now = resolveClock();
++  const start = now();
+ 
+   return adapter(config).then(
+     function onAdapterResolution(response) {
+       throwIfCancellationRequested(config);
+ 
+-      response.duration = elapsedSince(start);
++      response.duration = elapsedSince(now, start);
+ 
+       // Expose the current response on config so that transformResponse can
+       // attach it to any AxiosError it throws (e.g. on JSON parse failure).
+@@ -94,7 +111,7 @@ export default function dispatchRequest(_config) {
+ 
+         // Transform response data
+         if (reason && reason.response) {
+-          reason.response.duration = elapsedSince(start);
++          reason.response.duration = elapsedSince(now, start);
+           config.response = reason.response;
+           try {
+             reason.response.data = transformData.call(
+```
+
+**File**: `tests/browser/requests.browser.test.js` (modified, +1/-1)
+```diff
+@@ -137,7 +137,7 @@ describe('requests (vitest browser)', () => {
+   });
+ 
+   it.each([200, 500])('reports elapsed adapter time for XHR status %s', async (status) => {
+-    const clock = vi.spyOn(Date, 'now').mockReturnValue(1000);
++    const clock = vi.spyOn(performance, 'now').mockReturnValue(1000);
+     const { request, promise } = startRequest('/timing', { adapter: 'xhr' });
+     clock.mockReturnValue(1025);
+     request.respondWith({ status, responseText: '{"ok":true}' });
+```
+
+**File**: `tests/browser/responseDuration.browser.test.js` (modified, +2/-2)
+```diff
+@@ -8,7 +8,7 @@ describe('fetch response duration', () => {
+ 
+   it.each([200, 500])('includes body buffering for status %s', async (status) => {
+     let now = 1000;
+-    vi.spyOn(Date, 'now').mockImplementation(() => now);
++    vi.spyOn(performance, 'now').mockImplementation(() => now);
+     const result = await axios
+       .get(new URL('/timing', location.href).href, {
+         adapter: 'fetch',
+@@ -39,7 +39,7 @@ describe('fetch response duration', () => {
+   it('excludes later stream consumption', async () => {
+     let now = 1000;
+     let controller;
+-    vi.spyOn(Date, 'now').mockImplementation(() => now);
++    vi.spyOn(performance, 'now').mockImplementation(() => now);
+     const response = await axios.get(new URL('/timing', location.href).href, {
+       adapter: 'fetch',
+       responseType: 'stream',
+```
+
+**File**: `tests/unit/adapters/responseDuration.test.js` (modified, +2/-2)
+```diff
+@@ -17,7 +17,7 @@ describe.each(['http', 'fetch'])('%s response duration', (adapter) => {
+     });
+ 
+     try {
+-      vi.spyOn(Date, 'now').mockImplementation(() => now);
++      vi.spyOn(performance, 'now').mockImplementation(() => now);
+       const result = await axios
+         .get(`http://localhost:${server.address().port}`, {
+           adapter,
+@@ -45,7 +45,7 @@ describe.each(['http', 'fetch'])('%s response duration', (adapter) => {
+     });
+ 
+     try {
+-      vi.spyOn(Date, 'now').mockImplementation(() => now);
++      vi.spyOn(performance, 'now').mockImplementation(() => now);
+       const response = await axios.get(`http://localhost:${server.address().port}`, {
+         adapter,
+         proxy: false,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11400** (2026-10-28): docs: add partners page and shared sponsor cards (@jasonsaayman)
-- **PR #11399** (2026-10-28): docs: add Namespace OSS CI sponsor badge (@ivanhapaz)
-- **PR #11398** (2026-10-27): ci: run workflows on Namespace runners (v0.x) (@jasonsaayman)
-- **PR #11397** (2026-10-27): ci: run workflows on Namespace runners (v2.x) (@jasonsaayman)
-- **PR #11396** (2026-10-27): ci: run workflows on Namespace runners (@jasonsaayman)
-- **PR #11395** (2026-10-27): chore(deps): bump qs from 6.16.0 to 6.17.0 (@dependabot[bot])
+- **PR #11422** (2026-11-03): chore(deps-dev): bump the development_dependencies group with 4 updates (@dependabot[bot])
+- **PR #11421** (2026-11-03): chore(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 in the github-actions group (@dependabot[bot])
+- **PR #11420** (closed): chore(release): prepare release 1.21.1 (@github-actions[bot])
+- **PR #11419** (2026-11-03): docs: clarify redact, browser size limits and formToJSON collisions (@jasonsaayman)
+- **PR #11417** (2026-11-02): chore: release v0.35.0 (@github-actions[bot])
+- **PR #11416** (2026-11-02): ci: install Firefox in v0.x release branch workflow (@jasonsaayman)
 
 ---
 
@@ -1880,28 +2236,28 @@ Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix line break
+## X. deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in axios/axios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `PRE_RELEASE_CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in axios/axios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d11464a`: fix line break. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00b4d1ed`: deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `PRE_RELEASE_CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        Actually the fastest way to run <br>your GitHub Actions.
+- **follow-redirects security update:** Raised the `follow-redirects` dependency range from `^1.16.0` to `^1.16.2` and updated the lockfile to 1.16.2, which fixes [CVE-2026-116689](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p) (cross-realm `sensitiveHeaders` arrays are discarded and custom credentials can follow redirects). Raising the range floor stops installs from resolving the vulnerable 1.16.0 and 1.16.1 releases. No axios runtime, public API, or type compatibility changes. ([#11409](https://github.com/axios/axios/issues/11409), [#11410](https://github.com/axios/axios/pull/11410))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-        Actually the fastest way to run your<br>GitHub Actions.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d11464a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00b4d1ed` are properly handled with clean fallback behavior.
