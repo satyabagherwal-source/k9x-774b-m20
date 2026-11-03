@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-03T16:25:23.651Z",
-  "total_cycles_completed": 6908,
-  "total_learnings_persisted": 6908,
-  "total_rules_promoted": 6556,
+  "last_updated": "2026-11-03T16:32:18.732Z",
+  "total_cycles_completed": 6909,
+  "total_learnings_persisted": 6909,
+  "total_rules_promoted": 6557,
   "history": [
-    {
-      "timestamp": "2026-10-31T22:03:49.847Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T22:05:19.810Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-03T16:25:23.651Z",
       "repository": "bahdotsh/wrkflw",
       "learningId": "learn-github-bahdotsh-wrkflw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-03T16:32:18.732Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

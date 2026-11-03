@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-03T16:25:27.351Z",
-    "lastVerified": "2026-11-03T16:25:27.351Z",
+    "lastChecked": "2026-11-03T16:32:25.976Z",
+    "lastVerified": "2026-11-03T16:32:25.976Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T16:01:27.348Z",
-    "lastVerified": "2026-11-03T16:01:27.348Z",
+    "lastChecked": "2026-11-03T16:32:25.965Z",
+    "lastVerified": "2026-11-03T16:32:25.965Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1112,8 +1112,8 @@
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T19:49:44.520Z",
-    "lastVerified": "2026-10-31T19:49:44.520Z",
+    "lastChecked": "2026-11-03T16:32:18.516Z",
+    "lastVerified": "2026-11-03T16:32:18.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flux-iac-tofu-controller",
@@ -1556,9 +1556,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-02T21:30:07.625Z",
+    "lastChecked": "2026-11-03T16:32:21.081Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-02T21:30:07.625Z"
+    "lastVerified": "2026-11-03T16:32:21.081Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -6370,9 +6370,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-10-31T18:52:39.620Z",
+    "lastChecked": "2026-11-03T16:32:23.564Z",
     "revisionIdentifier": "c49c44a8",
-    "lastVerified": "2026-10-31T18:52:39.620Z"
+    "lastVerified": "2026-11-03T16:32:23.564Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -7734,14 +7734,14 @@
     "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:45:47.129Z",
-    "lastVerified": "2026-10-31T14:45:47.129Z",
+    "lastChecked": "2026-11-03T16:32:16.500Z",
+    "lastVerified": "2026-11-03T16:32:16.500Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
+    "contentHash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9855,9 +9855,9 @@
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "lastChecked": "2026-10-30T05:19:21.739Z",
+    "lastChecked": "2026-11-03T16:32:13.560Z",
     "revisionIdentifier": "8aeca12b",
-    "lastVerified": "2026-10-30T05:19:21.739Z"
+    "lastVerified": "2026-11-03T16:32:13.560Z"
   },
   "simonschubert-kai": {
     "name": "Kai",
@@ -10929,9 +10929,9 @@
   "simibac-confettiswiftui": {
     "name": "ConfettiSwiftUI",
     "officialUrl": "https://github.com/simibac/ConfettiSwiftUI",
-    "lastChecked": "2026-10-30T16:29:48.147Z",
+    "lastChecked": "2026-11-03T16:32:15.948Z",
     "revisionIdentifier": "9ae5bc2c",
-    "lastVerified": "2026-10-30T16:29:48.147Z"
+    "lastVerified": "2026-11-03T16:32:15.948Z"
   },
   "rdflib-rdflib": {
     "name": "RDFLib/rdflib",

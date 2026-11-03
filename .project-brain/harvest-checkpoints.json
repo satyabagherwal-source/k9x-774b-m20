@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T16:25:23.655Z",
+  "last_updated": "2026-11-03T16:32:18.735Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
-      "verified_at": "2026-10-31T14:45:47.643Z",
+      "content_hash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
+      "verified_at": "2026-11-03T16:32:18.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:45:47.643Z"
+      "last_updated": "2026-11-03T16:32:18.734Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

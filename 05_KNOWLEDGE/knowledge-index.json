@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T16:25:23.555Z",
+  "last_updated": "2026-11-03T16:32:18.655Z",
   "total_verified_learnings": 1198,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -859,8 +859,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "8bd72072",
-      "content_hash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
+      "source_version": "6b406fe8",
+      "content_hash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -923,6 +923,11 @@
           "number": 6227,
           "title": "serve): turn off the Funnel a failed Tailscale start switched on (#5043)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6541,
+          "title": "serve): retry an idle workerless session whose queue is stranded (#5203)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -930,7 +935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:45:47.534Z",
+      "verified_at": "2026-11-03T16:32:18.638Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -168958,6 +168963,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T16:25:23.534Z"
+    },
+    "rule-6541": {
+      "learning_id": "rule-6541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6541,
+      "title": "serve): retry an idle workerless session whose queue is stranded (#5203)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "6b406fe8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T16:32:18.638Z"
     }
   },
   "aliases": {

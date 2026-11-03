@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "8bd72072",
+    "sourceVersion": "6b406fe8",
     "license": "MIT",
-    "contentHash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
-    "lastHarvestedAt": "2026-10-31T14:45:47.637Z",
+    "contentHash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
+    "lastHarvestedAt": "2026-11-03T16:32:18.727Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

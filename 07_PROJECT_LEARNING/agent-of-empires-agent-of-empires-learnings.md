@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `8bd72072`  
+> **Source Version**: `6b406fe8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:45:47.136Z  
+> **Timestamp**: 2026-11-03T16:32:18.100Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:45:47.129Z  
+> **Harvest Timestamp**: 2026-11-03T16:32:16.500Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3398 stars
+- **Stars / Engagement**: 3407 stars
 
 ---
 
@@ -2218,11 +2218,11 @@ impl Transaction {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5056** (2026-10-30): **TUI test harness inherits daemon endpoint and credentials**
-  *Symptoms*: ## What happened?  P3 follow-up from #5028: TUI test processes still inherit `AOE_DAEMON_URL` and `AOE_DAEMON_TOKEN`, although directly launched CLI fixtures now clear them.  ### Reproduction scenario  1. Export a nonempty daemon URL and a sentinel token before the harness's tmux server starts. 2. Run a local TUI fixture, such as `settings_shortcut_bar_hides_the_row_and_survives_restart`, without an explicit remote override. 3. The pane inherits those variables and starts remote-home instead of using the fixture's isolated local state. An existing harness tmux server can retain the same overrides.  Expected: local fixtures ignore inherited daemon discovery settings; only explicit fixture overrides select a remote endpoint. Actual source behavior causes host-dependent startup failures or access to the configured daemon's session state. No destructive remote action or dynamic reproduction is claimed.  Evidence: [tmux launch environment](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L875-L895), [peer/server launch](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L943-L954), and [remote-mode selection before local startup](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/tui/mod.rs#L244-L250).  ### Acceptance  - Apply URL/token isolation at the actual pane launch boundary, including 
+- **Issue #5226** (2026-11-03): **Dependabot: group Vitest and its V8 coverage provider across major updates**
+  *Symptoms*: ## What happened?  Dependabot opened separate major upgrades for `vitest` (#5191) and `@vitest/coverage-v8` (#5193). Each PR updates only one direct dependency, leaving incompatible peers and preventing normal npm installation.  At [main@9ffbbf24](https://github.com/agent-of-empires/agent-of-empires/blob/9ffbbf24be690929ea6a61d02fc4cbdefc1db924/.github/dependabot.yml#L91-L138), minor/patch upgrades already match `web-minor-patch`. Major upgrades match no group and therefore receive individual PRs, as [documented by GitHub](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).  The coverage provider requires an exact Vitest peer: [4.1.11](https://registry.npmjs.org/@vitest/coverage-v8/4.1.11) requires `vitest: 4.1.11`; [5.0.3](https://registry.npmjs.org/@vitest/coverage-v8/5.0.3) requires `vitest: 5.0.3`.  ## Reproduction and evidence  Copy `web/package.json`, `web/package-lock.json` and `web/.npmrc` from each revision into an isolated temporary directory, then run:  ```sh npm ci --dry-run --ignore-scripts --no-audit --no-fund \   --legacy-peer-deps=false --force=false ```  Observed locally:  | Revision | Exit | Result | | --- | --- | --- | | `main@9ffbbf24` | 0 | Dependency resolution succeeds | | #5191 at `2564fdbe1bd6e1d0737b5606939d5eb8744dced5` | 1 | `ERESOLVE`: coverage 4.1.11 requires Vitest 4.1.11, but Vitest resolves to 5.0.3 | | #5193 at `932bfaf06365868baf74ed378e18adb32430ece6` | 1 | `ERESOLVE`: coverage 5.
 
-- **Issue #5051** (2026-10-30): **Quote worktree paths in displayed repair commands**
-  *Symptoms*: ## What happened?  P3 recovery-guidance follow-up to #4824. Two degraded-move warnings interpolate the destination directly into a copyable `git worktree repair` command.  ### Source-traced recovery scenario, not an executed reproduction  1. Rename a linked worktree with initialized submodules under a parent such as `/home/alice/My Projects` or `/home/o'connor/projects`. 2. If post-move `.git` pointer conversion fails, read the degraded-result warning. The repair-failure plus failed-rollback branch emits the same kind of command. 3. Copy the suggested command. `git worktree repair /home/alice/My Projects/new` supplies two paths; an unescaped apostrophe can leave an unterminated shell quote.  **Expected:** the command preserves the destination as one literal argument. **Actual:** raw `to.display()` is inserted in [the repair/rollback warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L343) and [the pointer-conversion warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L355). The [parent directory is retained](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/session/worktree_edit.rs#L53), so these are supported paths.  ### Correction and acceptance  Quote the destination operand in both displayed commands using existing POSIX word-quoting support that prese
+- **Issue #5198** (2026-11-02): **Wait for a usable control connection when starting integration runners**
+  *Symptoms*: ### What happened?  Nonblocking P3 follow-up from #4842.  The ACP integration fixture treats the control socket’s pathname as readiness, then connects once with `unwrap()` ([fixture:229–245](https://github.com/agent-of-empires/agent-of-empires/blob/ee916d9640b6cf51aadf7f766b3b285fd9a461ff/tests/integration/common/mod.rs#L229-L245)). Hello/Initialized/SessionReady reads are outside its 10-second startup deadline (`:245–301`).  **Observed:** [Linux CI failed with `ConnectionRefused` at line 245](https://github.com/agent-of-empires/agent-of-empires/actions/runs/41145340472/job/124378928669). The helper in tested merge `454aa3b5` is byte-identical to `main@ee916d96`. This is a pre-existing test-fixture problem found while reviewing #4842, not a demonstrated production regression.  **Source-derived scenarios, not locally reproduced:** a runner paused between socket bind and listen, or exiting after creating the path, can make the one-shot connection fail. A connected peer that stalls before the expected bootstrap frame has no fixture-level handshake deadline. The historical log does not establish which startup failure occurred.  Expected: fixture success means a usable retained connection and completed bootstrap through SessionReady, within one bounded budget. Startup failure should report its phase, last connection error and child exit status instead of an unexplained connect panic or unbounded setup wait.  Acceptance: - Retry only expected transient startup errors, retaining the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2239,690 +2239,640 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b7b4b7f` (2026-10-30)
-**Commit Message**: fix(serve): turn off the Funnel a failed Tailscale start switched on (#5043)
+### Incident Patch 1: `9daf6d52` (2026-11-02)
+**Commit Message**: fix(serve): retry an idle workerless session whose queue is stranded (#5203)
 
-* fix(serve): turn off the Funnel a failed Tailscale start switched on
+* fix(serve): retry an idle workerless session whose queue is stranded
 
-`aoe serve` with Tailscale runs `tailscale funnel --bg` and then reads the
-public URL. If that read failed, timed out, or the start was cancelled, the
-Funnel stayed on, pointing at a port nothing served.
+A resume attempt that launch admission cancelled (row still Stopped,
+for example right after unarchive) pins the id in the reconciler's
+attempted set. When the row then reads Idle with queued prompts and no
+worker, nothing ever starts one: the prompt POST parks as WorkerDown
+and the queue drain only wakes dormant rows.
 
-The start now records whether :443 already carried our Funnel before it ran.
-If it didn't, a guard armed after `--bg` turns the Funnel back off with
-`tailscale funnel --https=443 off`: awaited (bounded) on the error and
-timeout paths, and from Drop only when the start future is cancelled. A
-Funnel the user already had on this port is never touched.
+Lift the pin for Idle rows with a queue and no worker so they go
+through the normal respawn budget. Stopped rows stay pinned, and a row
+with a live worker is never unpinned, so crash-loop parking still
+applies.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(serve): keep retrying a queued session after a failed spawn
+
+A failed queued retry publishes AgentStartupError, which sets the row
+to Error. The queue retry only matched Idle rows, so the session
+re-pinned after the first failure and the respawn budget never ran out.
+
+Key the retry on the queue and the absent worker, excluding only
+Stopped so a deliberate stop stays pinned.
+
+Addresses review comment from @coderabbitai on #5203.
+
+Co-Authored-By: Claude 
+
+**File**: `src/server/acp_reconciler/mod.rs` (modified, +60/-5)
+```diff
+@@ -230,7 +230,11 @@ pub async fn reconcile_acp_workers(
+     };
+ 
+     // Triaged sessions are excluded so an archive/snooze teardown is not undone (#1581).
+-    let (targets, with_queued_prompts): (Vec<ResumeTarget>, HashSet<String>) = {
++    let (targets, with_queued_prompts, queued_not_stopped): (
++        Vec<ResumeTarget>,
++        HashSet<String>,
++        HashSet<String>,
++    ) = {
+         let instances = state.instances.read().await;
+         (
+             instances
+@@ -243,6 +247,13 @@ pub async fn reconcile_acp_workers(
+                 .filter(|i| !i.queued_prompts.is_empty())
+                 .map(|i| i.id.clone())
+                 .collect(),
++            instances
++                .iter()
++                .filter(|i| {
++                    !i.queued_prompts.is_empty() && i.status != crate::session::Status::Stopped
++                })
++                .map(|i| i.id.clone())
++                .collect(),
+         )
+     };
+     let live: HashSet<&String> = targets.iter().map(|t| &t.id).collect();
+@@ -261,15 +272,23 @@ pub async fn reconcile_acp_workers(
+     let mut tasks = Vec::new();
+     for mut target in targets {
+         let id = target.id.clone();
++        // A session with a queue and no worker is retried under the normal
++        // budget, whatever its status short of Stopped (a failed spawn leaves
++        // Error): an earlier attempt must not strand the queue (#5200).
++        let retry_for_queue = attempted.contains(&id)
++            && queued_not_stopped.contains(&id)
++            && supervisor.worker_state(&id).await == AcpWorkerState::Absent;
+         if attempted.contains(&id) {
+             // A restart marker can land after the reaper ran: add-project (#3103)
+             // writes it only once the moved workspace is durable.
+-            if supervisor.worker_state(&id).await == AcpWorkerState::Stopping
+-                || !supervisor.take_late_restart_marker(&id)
+-            {
++            let restart_marker = supervisor.worker_state(&id).await != AcpWorkerState::Stopping
++                && supervisor.take_late_restart_marker(&id);
++            if !retry_for_queue && !restart_marker {
+                 continue;
+             }
+-            forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
++            if restart_marker {
++                forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
++            }
+         }
+         match supervisor.worker_state(&id).await {
+             AcpWorkerState::Running | AcpWorkerState::Resuming => {
+@@ -876,6 +895,42 @@ mod tests {
+         }
+     }
+ 
++    /// A resume attempt that launch admission cancelled (row still `Stopped`)
++    /// pins the id; once the row reads `Idle` with a queue, the pin must lift
++    /// so the queue is not stranded behind a worker nothing starts (#5200).
++    #[tokio::test]
++    #[serial_test::serial]
++    async fn a_pinned_idle_session_with_a_queue_is_resumed() {
++        use crate::session::Status;
++
++        let cases = [
++            ("idle with a queue", Status::Idle, 1),
++            ("error with a queue", Status::Error, 1),
++            ("deliberately stopped with a queue", Status::Stopped, 0),
++        ];
++        for (name, status, expected_attempts) in cases {
++            let id = "sess-pinned";
++            let (_home, state, _project) = test_fixtures::test_state(id);
++            {
++                let mut instances = state.instances.write().await;
++                instances[0].status = status;
++                instances[0]
++                    .queued_prompts
++                    .push(test_fixtures::queued_prompt());
++            }
++
++            let mut tick = test_fixtures::Tick::default();
++            tick.attempted.insert(id.to_string());
++            tick.run(&state).await;
++
++            assert_eq!(
++                test_fixtures::startup_errors(&state, id),
++                expected_attempts,
++                "{name}"
++            );
++        }
++    }
++
+     /// A launch-prep race (here: memory and disk disagree on the row) must not
+     /// pin the session out of the resume set, or a queued prompt never drains.
+     #[tokio::test]
+```
+
+---
+
+### Incident Patch 2: `2d1ee322` (2026-11-02)
+**Commit Message**: fix(acp): end a background task when TaskStop kills it (#5217)
+
+* fix(acp): end a background task when TaskStop kills it
+
+Claude writes no task-notification for a task it killed, so the tailer
+never reported an end and the session stayed Running after its turn.
+Treat a successful TaskStop result as the end and cancel the tailer so
+it stops following and no longer blocks conversation reset.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp): settle a stopped workflow's agents before ending its task
+
+TaskStop cancelled the tailer owner, which also stopped the workflow
+journal before it completed open agents, so they kept the session
+Running. Give TaskStop its own stop signal: the tailer settles the
+journal, then publishes the end itself.
+
+Addresses review comment from CodeRabbit on #5217.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp): keep a TaskStop seen before task tailing resumes
+
+A replayed TaskStop can arrive before ResumeTaskTailing, when no tailer
+follows the task yet. Remember it and end the task on resume instead of
+tailing it for a notification that never comes.
+
+Addresses review comment from CodeRabbit on #5217.
+
+Co-Authored-By: Claude So
+
+**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +5/-0)
+```diff
+@@ -322,6 +322,11 @@ impl Shared {
+                 }
+                 continue;
+             }
++            // Only `TaskStop` ends a task here; the tailer publishes the end.
++            if let Event::BackgroundTaskFinished { task_id, .. } = &event {
++                self.bg_tasks.stop(task_id);
++                continue;
++            }
+             update_tool_context_cache(&self.tool_context_cache, &event, &update_for_tool_context);
+             if self.event_tx.send(event).await.is_err() {
+                 break;
+```
+
+**File**: `src/acp/acp_client/raw_input.rs` (modified, +55/-0)
+```diff
+@@ -131,6 +131,27 @@ pub(super) fn background_task_started_from_value(v: &serde_json::Value) -> Optio
+     }
+ }
+ 
++/// A successful `TaskStop`. Claude writes no `<task-notification>` for a task
++/// it killed, so the tool result is the only end signal.
++pub(super) fn background_task_stopped_from_value(v: &serde_json::Value) -> Option<Event> {
++    let cc = v.get("_meta")?.get("claudeCode")?;
++    if cc.get("toolName").and_then(|t| t.as_str()) != Some("TaskStop") {
++        return None;
++    }
++    let tr = cc.get("toolResponse")?;
++    if !tr
++        .get("message")?
++        .as_str()?
++        .starts_with("Successfully stopped task")
++    {
++        return None;
++    }
++    Some(Event::BackgroundTaskFinished {
++        task_id: tr.get("task_id")?.as_str()?.to_string(),
++        ended_at: Some(chrono::Utc::now()),
++    })
++}
++
+ /// A Claude async sub-agent launch, arriving as `_meta.claudeCode` with
+ /// `toolName: "Agent"` and a `toolResponse` whose `status` is
+ /// `"async_launched"`. `agentId` is the only required field; anything else
+@@ -215,6 +236,40 @@ mod tests {
+         .is_none());
+     }
+ 
++    #[test]
++    fn task_stop_ends_the_task() {
++        let update = |tool: &str, response: serde_json::Value| serde_json::json!({"_meta": {"claudeCode": {"toolName": tool, "toolResponse": response}}});
++        let stopped = serde_json::json!({
++            "message": "Successfully stopped task: b21uzuute (cargo check)",
++            "task_id": "b21uzuute",
++        });
++        match background_task_stopped_from_value(&update("TaskStop", stopped.clone())) {
++            Some(Event::BackgroundTaskFinished { task_id, ended_at }) => {
++                assert_eq!(task_id, "b21uzuute");
++                assert!(ended_at.is_some());
++            }
++            other => panic!("expected BackgroundTaskFinished, got {other:?}"),
++        }
++        for (label, tool, response) in [
++            ("other tool", "Bash", stopped.clone()),
++            (
++                "not stopped",
++                "TaskStop",
++                serde_json::json!({"message": "No task found", "task_id": "b21uzuute"}),
++            ),
++            (
++                "no task id",
++                "TaskStop",
++                serde_json::json!({"message": "Successfully stopped task: x"}),
++            ),
++        ] {
++            assert!(
++                background_task_stopped_from_value(&update(tool, response)).is_none(),
++                "{label}"
++            );
++        }
++    }
++
+     #[test]
+     fn workflow_launch_starts_a_task() {
+         // Trimmed from a real claude-agent-acp 0.96 launch result.
+```
+
+**File**: `src/acp/acp_client/update_events.rs` (modified, +3/-1)
+```diff
+@@ -19,7 +19,8 @@ use super::lifecycle::{detect_off_protocol_work_completed, OffProtocolWorkKind};
+ use super::plan::{extract_plan_from_switch_mode, map_plan_status, plan_status_to_str};
+ use super::raw_input::{
+     background_agent_launched_from_value, background_command_launched_from_value,
+-    background_task_started_from_value, monitor_event_from_raw, wakeup_event_from_raw,
++    background_task_started_from_value, background_task_stopped_from_value, monitor_event_from_raw,
++    wakeup_event_from_raw,
+ };
+ use super::tool_output::{
+     extract_diffs_from_content, extract_memory_recall, extract_tool_content_text,
+@@ -481,6 +482,7 @@ pub(super) fn map_update_to_events(
+                         if profile.supports_wakeup_tools {
+                             events.extend(background_command_launched_from_value(&payload));
+                             events.extend(background_task_started_from_value(&payload));
++                            events.extend(background_task_stopped_from_value(&payload));
+                         }
+                         events.push(Event::RawAgentUpdate { payload });
+                     }
+```
+
+**File**: `src/acp/task_transcript.rs` (modified, +194/-6)
+```diff
+@@ -142,12 +142,18 @@ fn shared_watch() -> Arc<FileWatchService> {
+ #[derive(Default)]
+ pub(crate) struct ActiveTasks {
+     owners: Mutex<HashMap<String, Arc<TaskOwner>>>,
++    /// Tasks `TaskStop` ended before any tailer followed them, as when the
++    /// result is replayed ahead of the resumed tailing.
++    stopped_early: Mutex<HashSet<String>>,
+     publication: tokio::sync::Mutex<()>,
+ }
+ 
+ struct TaskOwner {
+     tool_call_id: Option<String>,
++    /// Another launch took over the task: stop without reporting an end.
+     cancellation: CancellationToken,
++    /// `TaskStop` killed the task: settle its agents, then report the end.
++    stop: CancellationToken,
+ }
+ 
+ impl ActiveTasks {
+@@ -159,6 +165,28 @@ impl ActiveTasks {
+         self.lock().is_empty()
+     }
+ 
++    /// Ends `task_id` because `TaskStop` killed it. A following tailer
++    /// publishes the end itself; with none, the stop is kept for the resumed
++    /// tailer that registers next.
++    pub(crate) fn stop(&self, task_id: &str) {
++        match self.lock().get(task_id) {
++            Some(owner) => owner.stop.cancel(),
++            None => {
++                self.stopped_early
++                    .lock()
++                    .unwrap_or_else(PoisonError::into_inner)
++                    .insert(task_id.to_string());
++            }
++        }
++    }
++
++    fn take_early_stop(&self, task_id: &str) -> bool {
++        self.stopped_early
++            .lock()
++            .unwrap_or_else(PoisonError::into_inner)
++            .remove(task_id)
++    }
++
+     fn owns(&self, task_id: &str, owner: &Arc<TaskOwner>) -> bool {
+         self.lock()
+             .get(task_id)
+@@ -216,8 +244,15 @@ impl TaskTailer {
+             let owner = Arc::new(TaskOwner {
+                 tool_call_id: self.tool_call_id.clone(),
+                 cancellation: CancellationToken::new(),
++                stop: CancellationToken::new(),
+             });
+             owners.insert(self.task_id.clone(), owner.clone());
++            // Under the owners lock, so a concurrent `stop` either finds this
++            // owner or leaves its marker here. A live launch supersedes a
++            // stale marker.
++            if self.active.take_early_stop(&self.task_id) && self.start == TailerStart::Resumed {
++                owner.stop.cancel();
++            }
+             owner
+         };
+         let guard = ActiveGuard {
+@@ -241,6 +276,7 @@ impl TaskTailer {
+             });
+             let ended_at = tokio::select! {
+                 () = owner.cancellation.cancelled() => return,
++                () = owner.stop.cancelled() => Some(Utc::now()),
+                 ended_at = self.follow() => ended_at,
+             };
+             ended.cancel();
+@@ -699,11 +735,20 @@ mod tests {
+ 
+     impl Fixture {
+         async fn spawn_with(&self, watch: Arc<FileWatchService>, start: TailerStart) {
++            self.spawn_task("t-1", watch, start).await;
++        }
++
++        async fn spawn_task(
++            &self,
++            task_id: &str,
++            watch: Arc<FileWatchService>,
++            start: TailerStart,
++        ) {
+             let _ = TaskTailer {
+                 tool_call_id: Some("toolu_1".into()),
+                 claude_home: Some(self.home.clone()),
+                 watch,
+-                task_id: "t-1".into(),
++                task_id: task_id.into(),
+                 session_id: "sess".into(),
+                 active: self.active.clone(),
+                 event_tx: self.tx.as_ref().expect("sender kept").downgrade(),
+@@ -753,6 +798,16 @@ mod tests {
+             self.tx = None;
+         }
+ 
++        async fn released_task(&self, task_id: &str) {
++            tokio::time::timeout(Duration::from_secs(5), async {
++                while self.active.lock().contains_key(task_id) {
++                    tokio::task::yield_now().await;
++                }
++            })
++            .await
++            .expect("the tailer released its slot");
++        }
++
+         async fn released(&self) {
+             tokio::time::timeout(Duration::from_secs(5), async {
+                 while !self.active.is_empty() {
+@@ -798,18 +853,131 @@ mod tests {
+         assert_eq!(finished_id(f.next().await), "t-1");
+     }
+ 
++    #[tokio::test]
++    async fn a_stopped_task_reports_one_end_and_releases_its_slot() {
++        let mut f = fixture("{\"type\":\"user\"}\n");
++        f.spawn(TailerStart::Live).await;
++        f.parked().await;
++        f.active.stop("t-1");
++        match f.next().await {
++            Event::BackgroundTaskFinished { task_id, ended_at } => {
++                assert_eq!(task_id, "t-1");
++                assert!(ended_at.is_some());
++            }
++            other => panic!("expected BackgroundTaskFinished, got {other:?}"),
++        }
++        f.released().await;
++        f.active.stop("t-1");
++        assert!(
++            f.active.take_early_stop("t-1"),
++            "a stop with no tailer is kept"
++        );
++        f.append(&notification_line("t-1", Some("completed
+```
+
+---
+
+### Incident Patch 3: `2523d822` (2026-11-02)
+**Commit Message**: fix(serve): give a wedged Tailscale the --no-tailscale advice in the CLI pre-check too (#5138)
+
+* fix(serve): give a wedged Tailscale the --no-tailscale advice in the CLI pre-check too
+
+#4866 taught the Daemon to fail closed when the `tailscale` probe times out,
+but `aoe serve --remote`'s own pre-check still used the sync probe, which
+reads a timeout as "unavailable". With no `cloudflared` installed, it
+bailed with the cloudflared install error instead of the probe's message.
+
+- The pre-check now makes the same decision as `start_server`: it skips the
+  probe for `--no-tailscale` or a named tunnel, and otherwise uses
+  `tailscale_probe().use_funnel()`, so a timeout fails with "`tailscale`
+  didn't answer… pass `--no-tailscale`".
+- `skips_tailscale` is the one rule both use, with a table test (none,
+  `--no-tailscale`, named tunnel, a name without a URL).
+- The comment in `tailscale_probe_with` says a timeout fails the start,
+  not that it falls back to Cloudflare.
+
+The e2e test puts a hanging `tailscale` and a failing `cloudflared` on
+PATH and checks the error.
+
+Closes #5127.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): keep the Funnel reset armed until it finishes, and match our port exactly
+* test(e2e): don't let an inherited AGENT_OF_EMPIRES_P
 
-Two gaps in the failed-start reset:
-
-- `reset()` disarmed the guard before awaiting `funnel --https=443 off`. A
-  start cancelled during that await killed the command, and Drop then saw
-  nothing to do, so the Funnel stayed on. It now disarms after the await;
-  a second `off` from Drop is harmless.
-- The pre-flight took any proxy containing `127.0.0.
-
-**File**: `docs/guides/web-dashboard.md` (modified, +1/-1)
+**File**: `src/cli/serve.rs` (modified, +12/-2)
 ```diff
-@@ -65,7 +65,7 @@ In `--remote` mode the token rotates every four hours. Use `aoe url` for the liv
- 
- `--remote` selects a tunnel in this order, unless named-tunnel flags override it:
- 
--1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
-+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
- 2. **Named Cloudflare tunnel:** an explicit named tunnel takes precedence over Tailscale and provides a stable hostname on your domain:
- 
-    ```bash
-```
-
-**File**: `src/server/tunnel.rs` (modified, +1012/-64)
-```diff
-@@ -170,6 +170,18 @@ impl TunnelHandle {
-     /// Configure Tailscale Funnel for the local port and return a handle carrying the
-     /// stable `https://<host>.<tailnet>.ts.net` URL.
-     pub async fn spawn_tailscale(local_port: u16) -> anyhow::Result<Self> {
-+        use anyhow::Context as _;
-+        let home =
-+            dirs::home_dir().context("couldn't find the home directory for the Funnel lock")?;
-+        let lock = funnel_lock_path(&home);
-+        Self::spawn_tailscale_with(std::ffi::OsStr::new("tailscale"), &lock, local_port).await
-+    }
-+
-+    async fn spawn_tailscale_with(
-+        program: &std::ffi::OsStr,
-+        lock: &std::path::Path,
-+        local_port: u16,
-+    ) -> anyhow::Result<Self> {
-         // Hard cap on each tailscale command so we never wedge if tailscale pops an
-         // interactive prompt (HTTPS-certs consent, Funnel-not-enabled-in-ACL, node not
-         // signed in).
-@@ -181,7 +193,7 @@ impl TunnelHandle {
-         );
- 
-         // Pre-flight 1.
--        if let Err(e) = check_funnel_capability().await {
-+        if let Err(e) = check_funnel_capability(program).await {
-             debug!(reason = %e, "spawn_tailscale: funnel cap check failed");
-             anyhow::bail!(
-                 "Tailscale Funnel is not enabled for this tailnet. \
-@@ -190,14 +202,14 @@ impl TunnelHandle {
-             );
+@@ -1260,8 +1260,18 @@ async fn validate_launch_args(profile: &str, args: &ServeArgs) -> Result<AuthMod
+         if args.passphrase.is_none() {
+             bail!("Remote exposure requires --passphrase or AOE_SERVE_PASSPHRASE");
          }
- 
-+        // Held until this start succeeds or its reset ends; the guard owns it, so it's released
-+        // after the guard's own `off`. Another aoe daemon can't activate in between.
-+        let funnel_lock = lock_funnel_starts(lock).await?;
-+
-         // Pre-flight 2.
--        if let Some(existing) = inspect_existing_funnel(local_port).await {
--            anyhow::bail!(
--                "port 443 is already configured on this node for a different \
--                 backend ({}). Run `tailscale funnel reset` to clear the \
--                 existing config, or pass --no-tailscale to use Cloudflare.",
--                existing
--            );
-+        let preflight = inspect_existing_funnel(program, local_port).await;
-+        if let FunnelPreflight::Refuse(why) = &preflight {
-+            anyhow::bail!("{why}");
-         }
- 
-         // Single-command Funnel (Tailscale 1.52+).
-@@ -208,14 +220,33 @@ impl TunnelHandle {
-             local_port
-         );
- 
--        let mut child = Command::new("tailscale")
-+        // If :443 had nothing on it before, everything there from now on is this start's: a
-+        // start that fails or is cancelled turns it back off, even while `--bg` is still running
-+        // (it may already have applied the config), so no Funnel is left pointing at a port
-+        // nothing serves. A public Funnel that was already there (the user's own, or a sibling
-+        // path) keeps its other routes; only `/` changes.
-+        let mut guard = FunnelStartGuard::new(
-+            program,
-+            local_port,
-+            preflight == FunnelPreflight::Unused,
-+            funnel_lock,
-+        );
-+
-+        let child = Command::new(program)
-             .args(funnel_args)
-             .stdin(std::process::Stdio::null())
-             .stdout(std::process::Stdio::piped())
-             .stderr(std::process::Stdio::piped())
-             .kill_on_drop(true)
--            .spawn()
--            .map_err(|e| anyhow::anyhow!("failed to run tailscale funnel: {}", e))?;
-+            .spawn();
-+        let mut child = match child {
-+            Ok(child) => child,
-+            Err(e) => {
-+                // `--bg` never ran, so there's nothing to turn off.
-+                guard.disarm();
-+                anyhow::bail!("failed to run tailscale funnel: {e}");
-+            }
-+        };
-         let stdout = child.stdout.take();
-         let stderr = child.stderr.take();
- 
-@@ -257,29 +288,39 @@ impl TunnelHandle {
-                     Err(_) => "Enable it from your tailnet admin console under \
-                               Settings > Features > Funnel.".to_string(),
-                 };
--                return Err(anyhow::anyhow!(
-+                let e = anyhow::anyhow!(
-                     "Tailscale Funnel is not enabled for this tailnet.\n\n\
-                      {detail}\n\n\
-                      After enabling, re-run `aoe serve --remote`. \
-                      Or pass --no-tailscale to use Cloudflare instead."
--                ));
--            }
--            res = tokio::time::timeout(STEP_TIMEOUT, child.wait()) => {
--                res
--                    .map_err(|_| {
--                        anyhow::anyhow!(
--                            "tailscale funnel timed out after {}s; your node may not have \
--                             HTTPS certs enabled or Funnel may not be enabled in your tailnet \
--                             ACL. Run `AGENT_OF_EMPIRES_DEBUG=1 aoe serve --remote` and \
--                             check debug.log for the live output, or try \
--                             `tailscale funnel --bg --yes {}` ma
-```
-
----
-
-### Incident Patch 2: `687771d9` (2026-10-31)
-**Commit Message**: fix(logging): make debug.log diagnosable, nothing dropped and every lifecycle event and failure logged (#5093)
-
-* fix(logging): stop dropping unrooted targets and log session lifecycle
-
-`filter_for_level` built the EnvFilter from `DEFAULT_TARGET_ROOTS` alone, so
-events on any other root (`task.panic` errors, `push`, `file_watch`,
-`events`, `conversation_summary`, `shutdown`) were dropped at every level,
-and dependency crates never logged. Add the missing roots, prepend a fixed
-`warn` catch-all, and add a source-scan test so a new root cannot drift
-out again. Migration v053 deletes the persisted `runtime_filter`, which
-would otherwise re-apply the old root list at boot.
-
-Log every committed status transition once at `publish` time (ACP sessions
-had none), add `info` summaries for session create/purge/trash/restart/
-rename, and move the two per-poll debug sites that made up 88% of the file
-(`list_sessions resolved`, `worker rpc ok`) to `trace`.
-
-Prune dead `KNOWN_SUB_TARGETS` entries, add the new ones, and test both
-that each entry exists in source and that the web mirror matches.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-* feat(logging): narrate every lifecycle event and
-
-**File**: `docs/development.md` (modified, +5/-3)
-```diff
-@@ -51,9 +51,11 @@ aoe logs
- `cargo xtask dev` runs a dashboard-enabled debug backend on 8081 and Vite with HMR on 5173; `--watch` rebuilds and restarts the backend when Rust inputs change, leaving the previous backend running if a rebuild fails.
- 
- Use explicit dotted tracing area targets so per-target logging overrides affect
--native and dashboard failures consistently. Settings > Logging exposes server,
--migration and process areas; clearing one override restores inheritance without
--clearing other targets.
-+native and dashboard failures consistently. Every `target:` root used in `src/`
-+must be listed in `DEFAULT_TARGET_ROOTS` in `src/logging.rs`; a unit test
-+enforces it, and an unlisted root only reaches the file at `warn` and above.
-+Dependency crates log at `warn` regardless of `default_level`. Clearing one override in
-+Settings > Logging restores inheritance without clearing other targets.
- 
- Filter changes saved in Settings > Logging apply to the TUI, running daemon and structured runners in the same app namespace. Sink and rotation changes require restart. No-op and unrelated saves preserve temporary runtime filters.
- 
-```
-
-**File**: `docs/guides/configuration.md` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ Updates use a locked read-modify-write operation, preserving concurrent changes.
- | Variable | Description |
- |----------|-------------|
- | `AGENT_OF_EMPIRES_PROFILE` | Default profile |
--| `AOE_LOG_LEVEL` | File log level: `trace`, `debug`, `info`, `warn`, `error` |
-+| `AOE_LOG_LEVEL` | File log level for AoE's own targets: `trace`, `debug`, `info`, `warn`, `error`. Dependency crates stay at `warn`. One-shot CLI commands always log to the same file at the configured level once the app directory exists; `[logging].output = "stdout"` applies to a foreground `aoe serve` only |
- | `AGENT_OF_EMPIRES_DEBUG` | Legacy alias for `AOE_LOG_LEVEL=debug` |
- | `AOE_DEFER_SANDBOX_MIGRATION` | Start without moving sandboxed sessions' agent stores; retried later or by `aoe migrate`. See [Per-session agent stores](sandbox.md#per-session-agent-stores) |
- 
-```
-
-**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +3/-1)
-```diff
-@@ -160,7 +160,9 @@ impl Session {
-                     // The supervisor publishes the terminal here (#1100).
-                     info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
-                     self.stand_down_idle_completion();
--                    let _ = self.send_cancel().await;
-+                    if let Err(error) = self.send_cancel().await {
-+                        debug!(target: "acp.protocol", %error, "cancel notification failed");
-+                    }
-                 }
-                 Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
-                 Some(ClientCmd::DeleteSession {
-```
-
-**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +1/-1)
-```diff
-@@ -283,7 +283,7 @@ impl Shared {
-             // During replay only transcript events are dropped; ambient state
-             // and lifecycle events still pass so pickers stay current.
-             if suppressing && is_transcript_event(&event) {
--                debug!(
-+                tracing::trace!(
-                     target: "acp.protocol",
-                     session = %self.session_label,
-                     kind = transcript_event_kind(&event),
-```
-
-**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +10/-3)
-```diff
-@@ -84,6 +84,8 @@ struct TurnFlags {
-     prompt_cancelled: bool,
-     orphan_cancel_sent: bool,
-     cancelling: bool,
-+    /// What the adapter reported; `None` when no `PromptResponse` arrived.
-+    agent_stop_reason: Option<StopReason>,
- }
- 
- struct Turn {
-@@ -304,6 +306,7 @@ impl Session {
-         let e = match res {
-             Ok(resp) => {
-                 turn.flags.prompt_cancelled = matches!(resp.stop_reason, StopReason::Cancelled);
-+                turn.flags.agent_stop_reason = Some(resp.stop_reason);
-                 if !turn.flags.prompt_cancelled {
-                     if let Some(info) = self.take_parking_rejection() {
-                         self.shared.emit(Event::RateLimit { info }).await;
-@@ -400,7 +403,9 @@ impl Session {
-                     target: "acp.protocol",
-                     "force-stop requested during in-flight prompt; ending turn and restarting worker"
-                 );
--                let _ = self.send_cancel().await;
-+                if let Err(error) = self.send_cancel().await {
-+                    debug!(target: "acp.protocol", %error, "cancel notification failed");
-+                }
-                 turn.flags.force_stopped = true;
-                 turn.flags.shutdown = true;
-                 return Ok(Flow::Break);
-@@ -642,11 +647,13 @@ impl Session {
-         shared.reset_message_dedup();
-         shared.prompt_in_flight.store(false, Ordering::Relaxed);
-         // Missing after a Stopped, this line signals a stranded prompt (#3190).
--        debug!(
-+        info!(
-             target: "acp.protocol",
-             session = %shared.session_label,
-             reason,
--            "prompt drain complete; between-prompt idle ownership restored"
-+            agent_stop_reason = ?f.agent_stop_reason,
-+            duration_ms = now_ms() - prompt_started_at_ms,
-+            "turn finished; between-prompt idle ownership restored"
-         );
-     }
- }
-```
-
-**File**: `src/acp/acp_client/spawn.rs` (modified, +11/-2)
-```diff
-@@ -9,7 +9,7 @@ use std::process::Stdio;
- use tracing::{debug, info, warn};
- 
- use super::errors::AcpError;
--use super::resolve_command::resolve_agent_command;
-+use super::resolve_command::{resolve_agent_command, Unresolved};
- 
- #[derive(Debug, Clone)]
- pub struct SpawnConfig {
-@@ -464,7 +464,16 @@ pub(super) fn spawn_subprocess(
-             r.path.to_string_lossy().into_owned(),
-             r.prepend_paths.clone(),
-         ),
--        Err(_) => (config.spec.command.clone(), Vec::new()),
-+        Err(Unresolved::NotBare) => (config.spec.command.clone(), Vec::new()),
-+        Err(error) => {
-+            debug!(
-+                target: "acp.protocol.spawn",
-+                command = %config.spec.command,
-+                ?error,
-+                "could not resolve command via node-manager dirs; using bare command"
-+            );
-+            (config.spec.command.clone(), Vec::new())
-+        }
-     };
- 
-     let mut cmd = tokio::process::Command::new(&spawn_command);
-```
-
-**File**: `src/acp/adapters.rs` (modified, +4/-2)
-```diff
-@@ -1,7 +1,7 @@
- use std::path::{Path, PathBuf};
- 
- use thiserror::Error;
--use tracing::{info, warn};
-+use tracing::{error, info, warn};
- 
- use crate::acp::node::{NodeSource, ResolvedNode};
- 
-@@ -347,7 +347,9 @@ fn publish(tmp: &Path, final_dir: &Path) -> std::io::Result<()> {
-             Ok(())
-         }
-         Err(e) => {
--            let _ = std::fs::rename(&backup, final_dir);
-+            if let Err(error) = std::fs::rename(&backup, final_dir) {
-+                error!(target: "acp.adapters", %error, backup = %backup.display(), "failed to restore adapter backup");
-+            }
-             let _ = std::fs::remove_dir_all(tmp);
-             Err(e)
-         }
-```
-
-**File**: `src/acp/event_store/mod.rs` (modified, +12/-0)
-```diff
-@@ -339,6 +339,18 @@ fn decode(json: &str) -> Option<Event> {
-     serde_json::from_str(json).ok()
- }
- 
-+fn decode_logged(json: &str, session_id: &str, what: &str) -> Option<Event> {
-+    serde_json::from_str(json)
-+        .map_err(|e| {
-+            warn!(
-+                target: "acp.event_store",
-+                session = %session_id,
-+                "{what}: deserialise failed: {e}"
-+            )
-+        })
-+        .ok()
-+}
-+
- /// Log a failed query as `None`.
- fn logged<T>(result: rusqlite::Result<T>, what: &str, session_id: &str) -> Option<T> {
-     result
-```
-
----
-
-### Incident Patch 3: `2a2e1a42` (2026-10-31)
-**Commit Message**: feat(tui): show plugin-provided row status (#4789)
-
-* feat(tui): show plugin status and browser links
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* test(tui): cover plugin status provider combinations
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* refactor(tui): keep plugin contributions status-only
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* docs: clarify native TUI plugin row rendering
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* fix(tui): stabilize plugin status CI
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* docs: preserve plugin badge ordering contract
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* fix(tui): address plugin status review feedback
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* fix(tui): factor status plan test cases into a type alias
-
-Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
-
-* fix(tui): harden plugin status poller and drop the web gate
-
-Keeps the last good snapshot on transient fetch failures, clears it only
-when the local daemon is genuinely gone, and stops polling on a rejected
-bearer token to avoid repeated IP-wide lockout
-
-**File**: `docs/plugin-api.md` (modified, +5/-1)
-```diff
-@@ -429,7 +429,9 @@ request({ method: "ready", params: { nonce: location.hash.slice(1) } }, (m) => p
- 
- `status-bar`, `header-start` and `detail-badge` also take an integer `order`, default 0, lowest first; ties keep plugin id then entry id order. In the terminal UI they render as text and tone in the status line, `header-start` first; icons, tooltips and links are web only.
- 
--Give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
-+`row-badge` items on terminal session rows render every item with `text` or `tooltip`, using `tooltip` when `text` is absent. With no `items` list, the top-level `row-badge` uses `tooltip` as a fallback label for missing `text`. `row-column` renders text only; the TUI omits icons and links.
-+
-+In the web dashboard, give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
- 
- ```json
- { "items": [
-@@ -441,6 +443,8 @@ Give items a shared `group` to collapse them into one chip that shows one item a
- 
- Items without a `group` stay separate chips, and each distinct `group` cycles independently. The position is kept per browser tab and is never sent to the worker. A cycling chip ignores `href`; a group with a single item renders as a normal chip. The TUI cannot click and shows the first item with text.
- 
-+Grouped `row-badge` items remain separate in the TUI and do not cycle.
-+
- ### Pane payload
- 
- A `pane` entry renders a dockable tool-window, pushed with `ui.state.set`:
-```
-
-**File**: `src/plugin/ui_state.rs` (modified, +2/-1)
-```diff
-@@ -252,7 +252,8 @@ pub struct Notification {
-     pub href: Option<String>,
- }
- 
--#[derive(Debug, Clone, Serialize, Deserialize)]
-+/// One entry in a plugin UI snapshot.
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
- pub struct UiEntry {
-     pub plugin_id: String,
-     pub slot: UiSlot,
-```
-
-**File**: `src/tui/app.rs` (modified, +6/-0)
-```diff
-@@ -1316,6 +1316,8 @@ impl App {
-                 needs_full_refresh = true;
-             }
- 
-+            self.home.request_plugin_ui_refresh();
-+
-             if last_metrics_sample.elapsed() >= METRICS_SAMPLE_INTERVAL {
-                 self.home.request_metrics_refresh();
-                 last_metrics_sample = std::time::Instant::now();
-@@ -1325,6 +1327,10 @@ impl App {
-                 refresh_needed = true;
-             }
- 
-+            if self.home.apply_plugin_ui_updates() {
-+                needs_full_refresh = true;
-+            }
-+
-             needs_full_refresh |= self.home.apply_session_feed();
-             needs_full_refresh |= self.poll_dashboard_launch();
-             needs_full_refresh |= self.poll_dashboard_stop();
-```
-
-**File**: `src/tui/home/lifecycle.rs` (modified, +1/-0)
-```diff
-@@ -230,6 +230,7 @@ impl HomeView {
-             search_matches: Vec::new(),
-             search_match_index: 0,
-             available_tools,
-+            plugin_ui: crate::tui::plugin_ui_poller::PluginUiState::default(),
-             show_diagnostics: resolved.session.show_diagnostics_pane,
-             show_shortcut_bar: resolved.session.show_shortcut_bar,
-             preview_link_prefixes: resolved.session.preview_link_prefixes.clone(),
-```
-
-**File**: `src/tui/home/mod.rs` (modified, +1/-0)
-```diff
-@@ -355,6 +355,7 @@ pub struct HomeView {
- 
-     pub(super) available_tools: AvailableTools,
- 
-+    pub(super) plugin_ui: crate::tui::plugin_ui_poller::PluginUiState,
-     pub(super) show_diagnostics: bool,
-     pub(super) show_shortcut_bar: bool,
-     pub(super) preview_link_prefixes: Vec<String>,
-```
-
-**File**: `src/tui/home/render.rs` (modified, +160/-5)
-```diff
-@@ -889,6 +889,65 @@ fn title_width_for_column(
-     (title_width.min(budget), false)
- }
- 
-+const MAX_PLUGIN_STATUS_WIDTH: usize = 32;
-+
-+const MAX_PLUGIN_STATUS_COUNT: usize = 16;
-+
-+#[derive(Clone, Copy)]
-+struct PluginStatusSpan<'a> {
-+    text: &'a str,
-+    tone: Option<crate::plugin::ui_state::Tone>,
-+    width: usize,
-+}
-+
-+struct PluginStatusPlan<'a> {
-+    spans: [Option<PluginStatusSpan<'a>>; MAX_PLUGIN_STATUS_COUNT],
-+    len: usize,
-+    width: usize,
-+}
-+
-+impl<'a> PluginStatusPlan<'a> {
-+    fn iter(&self) -> impl Iterator<Item = PluginStatusSpan<'a>> + '_ {
-+        self.spans[..self.len].iter().flatten().copied()
-+    }
-+}
-+
-+fn plan_plugin_statuses<'a>(
-+    statuses: impl Iterator<Item = (&'a str, Option<crate::plugin::ui_state::Tone>)>,
-+    budget: usize,
-+) -> PluginStatusPlan<'a> {
-+    let mut plan = PluginStatusPlan {
-+        spans: [None; MAX_PLUGIN_STATUS_COUNT],
-+        len: 0,
-+        width: 0,
-+    };
-+    let budget = budget.min(MAX_PLUGIN_STATUS_WIDTH);
-+
-+    for (text, tone) in statuses {
-+        if plan.len == MAX_PLUGIN_STATUS_COUNT {
-+            break;
-+        }
-+        let available = budget.saturating_sub(plan.width).saturating_sub(2);
-+        if available == 0 {
-+            break;
-+        }
-+        let text_width = rendered_width(text);
-+        let visible_width = text_width.min(available);
-+        plan.spans[plan.len] = Some(PluginStatusSpan {
-+            text,
-+            tone,
-+            width: visible_width,
-+        });
-+        plan.len += 1;
-+        plan.width += 2 + visible_width;
-+        if visible_width < text_width {
-+            break;
-+        }
-+    }
-+
-+    plan
-+}
-+
- /// The activity column's text: remaining snooze under Attention sort, else the age of a
- /// resting (Idle or Unknown) row, else blank. `last_accessed_at` is only a fallback for a
- /// missing `idle_entered_at`; on an active row it reads as idle time.
-@@ -1975,6 +2034,7 @@ impl HomeView {
-         line_spans.push(Span::styled(format!("{} ", icon), icon_style));
-         let prefix_width: usize = line_spans.iter().map(|s| s.width()).sum();
-         let room = (list_width as usize).saturating_sub(prefix_width);
-+        let text_width = rendered_width(&text);
- 
-         let inst = match item {
-             Item::Session { id, .. } => self.get_instance(id).map(|inst| (id, inst)),
-@@ -2039,18 +2099,46 @@ impl HomeView {
-             LAST_ACTIVITY_SLOT
-         };
- 
--        let (title_width, keep_tag) = title_width_for_column(
--            rendered_width(&text),
--            room,
--            tag_span.as_ref().map_or(0, |s| s.width()),
--            slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN,
-+        let tag_width = tag_span.as_ref().map_or(0, |span| span.width());
-+        let fixed_trailing = slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN;
-+
-+        let status_budget = room
-+            .saturating_sub(tag_width + fixed_trailing + text_width.min(MIN_TITLE_CELLS))
-+            .min(MAX_PLUGIN_STATUS_WIDTH);
-+
-+        let plugin_status_plan = plan_plugin_statuses(
-+            crate::tui::plugin_ui::session_row_statuses(&self.plugin_ui.snapshot, id),
-+            status_budget,
-         );
-+        let plugin_status_width = plugin_status_plan.width;
-+
-+        let (title_width, keep_tag) = if plugin_status_width > 0 {
-+            (
-+                text_width
-+                    .min(room.saturating_sub(tag_width + fixed_trailing + plugin_status_width)),
-+                true,
-+            )
+-        let tailscale_ok =
+-            tokio::task::spawn_blocking(crate::server::tunnel::tailscale_available_sync).await?;
++        // The same decision `start_server` makes, so a wedged Tailscale fails here with the
++        // probe's `--no-tailscale` advice rather than the cloudflared install error below.
++        use crate::server::tunnel::{skips_tailscale, tailscale_probe};
++        let tailscale_ok = if skips_tailscale(
++            args.no_tailscale,
++            args.tunnel_name.as_deref(),
++            args.tunnel_url.as_deref(),
++        ) {
++            false
 +        } else {
-+            title_width_for_column(text_width, room, tag_width, fixed_trailing)
++            tailscale_probe().await.use_funnel()?
 +        };
-         line_spans.push(Span::styled(
-             truncate_to_width(&text, title_width),
-             text_style,
-         ));
-         line_spans.extend(tag_span.filter(|_| keep_tag));
- 
-+        for status in plugin_status_plan.iter() {
-+            line_spans.push(Span::raw("  "));
-+            let status_style = crate::tui::plugin_ui::tone_style(status.tone, theme);
-+            line_spans.push(Span::styled(
-+                truncate_to_width(status.text, status.width),
-+                if is_selected {
-+                    selected_row_style(status_style, theme)
-+                } else {
-+                    status_style
-+                },
-+            ));
-+        }
-         let used_width: usize = line_spans.iter().map(|s| s.width()).sum();
-         let column_pad = activity_column_padding(used_width, list_width, slot_width, badge_width);
-         let column_fits = column_pad.is_some();
-@@ -5427,3 +5515,70 @@ mod tests {
-         assert_eq!(sb.rendered(), "[sb]");
+         if cloudflared_required(args.no_tailscale, args.tunnel_name.is_some(), tailscale_ok) {
+             tokio::task::spawn_blocking(crate::server::tunnel::check_cloudflared).await??;
+         }
+```
+
+**File**: `src/server/startup.rs` (modified, +1/-2)
+```diff
+@@ -616,8 +616,7 @@ pub(crate) async fn start_server(
+     let tunnel_handle = if remote {
+         // Choosing and starting the tunnel is the part that can hang, so it shares one deadline.
+         let handle = within_tunnel_deadline(tunnel_deadline, async {
+-            let named = tunnel_name.is_some() && tunnel_url.is_some();
+-            let tailscale_ok = if no_tailscale || named {
++            let tailscale_ok = if tunnel::skips_tailscale(no_tailscale, tunnel_name, tunnel_url) {
+                 tracing::debug!(target: "http.middleware", "tunnel: --no-tailscale or a named tunnel, skipping Tailscale auto-detection");
+                 false
+             } else {
+```
+
+**File**: `src/server/tunnel.rs` (modified, +32/-2)
+```diff
+@@ -533,6 +533,16 @@ impl TailscaleProbe {
      }
  }
-+
-+#[cfg(test)]
-+mod plugin_status_plan_tests {
-+    use super::plan_plugin_statuses;
-+    use crate::plugin::ui_state::Tone;
-+
-+    /// (name, budget, count, expected span list, expected width).
-+    type StatusPlanCase = (
-+        &'static str,
-+        usize,
-+        usize,
-+        Vec<(&'static str, Option<Tone>, usize)>,
-+        usize,
-+    );
-+
-+    #[test]
-+    fn s
-```
-
-**File**: `src/tui/home/status.rs` (modified, +8/-0)
-```diff
-@@ -9,6 +9,14 @@ impl HomeView {
-         self.instances.values().cloned().collect()
-     }
  
-+    pub fn request_plugin_ui_refresh(&mut self) {
-+        self.plugin_ui.request_refresh(!self.instances.is_empty());
++/// Whether tunnel selection skips Tailscale: `--no-tailscale`, or a named Cloudflare tunnel
++/// (name and URL both set), makes the probe's answer irrelevant.
++pub fn skips_tailscale(
++    no_tailscale: bool,
++    tunnel_name: Option<&str>,
++    tunnel_url: Option<&str>,
++) -> bool {
++    no_tailscale || (tunnel_name.is_some() && tunnel_url.is_some())
++}
++
+ /// Probe whether `tailscale` is on PATH and its daemon is running and signed in.
+ pub async fn tailscale_probe() -> TailscaleProbe {
+     tailscale_probe_with(std::ffi::OsStr::new("tailscale"), PROBE_TIMEOUT).await
+@@ -542,8 +552,9 @@ async fn tailscale_probe_with(
+     program: &std::ffi::OsStr,
+     timeout: std::time::Duration,
+ ) -> TailscaleProbe {
+-    // Each probe is bounded so a wedged `tailscale` falls back to Cloudflare at once instead of
+-    // holding tunnel selection until the startup deadline; dropping one kills its child.
++    // Each probe is bounded so a wedged `tailscale` reads as `TimedOut` at once, which fails the
++    // start, instead of holding tunnel selection until the startup deadline; dropping one kills
++    // its child.
+     let probe = |arg: &'static str| async move {
+         let output = Command::new(program).arg(arg).kill_on_drop(true).output();
+         match tokio::time::timeout(timeout, output).await {
+@@ -1339,6 +1350,25 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[test]
++    fn tailscale_is_skipped_only_when_its_answer_cannot_matter() {
++        // (--no-tailscale, tunnel name, tunnel URL, skipped)
++        let cases = [
++            (false, None, None, false),
++            (true, None, None, true),
++            (false, Some("work"), Some("https://aoe.example.com"), true),
++            // A name without a URL is refused earlier; it isn't a named tunnel.
++            (false, Some("work"), None, false),
++        ];
++        for (no_tailscale, name, url, skipped) in cases {
++            assert_eq!(
++                skips_tailscale(no_tailscale, name, url),
++                skipped,
++                "{no_tailscale} {name:?} {url:?}"
++            );
++        }
 +    }
 +
-+    pub fn apply_plugin_ui_updates(&mut self) -> bool {
-+        self.plugin_ui.apply_pending()
-+    }
-+
-     /// Request a system-health sample in the background while either health
-     /// surface is visible. Call `apply_metrics_updates` to pick up the result.
-     pub fn request_metrics_refresh(&mut self) {
+     #[test]
+     fn funnel_preflight_starts_only_where_it_can_put_back_what_it_changes() {
+         let web =
 ```
 
-**File**: `src/tui/mod.rs` (modified, +2/-0)
+**File**: `tests/e2e/harness.rs` (modified, +4/-0)
 ```diff
-@@ -15,6 +15,8 @@ pub(crate) mod markdown;
- mod metrics_poller;
- pub(crate) mod open_url;
- pub(crate) mod plugin_ui;
-+pub(crate) mod plugin_ui_poller;
+@@ -918,6 +918,7 @@ last_seen_version = "{}"
+             .env("TERM", "xterm-256color")
+             .env_remove("NO_COLOR")
+             .env_remove("AOE_NO_AUTOSTART")
++            .env_remove("AGENT_OF_EMPIRES_PROFILE")
+             .envs(self.extra_env.iter().map(|(key, value)| (key, value)))
+             .output()
+             .expect("failed to run tmux new-session");
+@@ -977,6 +978,7 @@ last_seen_version = "{}"
+             .env("PATH", self.env_path())
+             .env("TERM", "xterm-256color")
+             .env_remove("NO_COLOR")
++            .env_remove("AGENT_OF_EMPIRES_PROFILE")
+             .envs(self.extra_env.iter().map(|(key, value)| (key, value)))
+             .output()
+             .expect("failed to run tmux new-session");
+@@ -1419,6 +1421,8 @@ last_seen_version = "{}"
+             .env_remove("AOE_NO_AUTOSTART")
+             .env_remove("AOE_DAEMON_URL")
+             .env_remove("AOE_DAEMON_TOKEN")
++            // The harness creates only the `default` profile.
++            .env_remove("AGENT_OF_EMPIRES_PROFILE")
+             .envs(self.extra_env.iter().map(|(key, value)| (key, value)));
+         for key in &self.extra_env_remove {
+             command.env_remove(key);
+```
+
+**File**: `tests/e2e/serve.rs` (modified, +44/-0)
+```diff
+@@ -4061,3 +4061,47 @@ fn cli_serve_restart_reports_replacement_startup_failure() {
+         "not a directory"
+     );
+ }
 +
- pub(crate) mod remote_home;
- pub(crate) mod responsive;
- mod session_feed;
++#[test]
++#[parallel]
++fn remote_serve_with_a_wedged_tailscale_says_to_skip_tailscale_not_to_install_cloudflared() {
++    use std::os::unix::fs::PermissionsExt;
++    let mut h = TuiTestHarness::new_in_tmp("wedged_tailscale");
++    // A `tailscale` that never answers, and a `cloudflared` that fails as a missing one would,
++    // both ahead of any real ones on PATH.
++    let bin = h.home_path().join("fake-bin");
++    std::fs::create_dir_all(&bin).unwrap();
++    for (name, body) in [("tailscale", "exec sleep 600"), ("cloudflared", "exit 1")] {
++        let fake = bin.join(name);
++        std::fs::write(&fake, format!("#!/bin/sh\n{body}\n")).unwrap();
++        std::fs::set_permissions(&fake, std::fs::Permissions::from_mode(0o755)).unwrap();
++    }
++    h.add_path_dir(&bin);
++
++    let mut child = h.spawn_cli(&[
++        "serve",
++        "--remote",
++        "--passphrase",
++        "wedged-tailscale-check",
++    ]);
++    // The probe gives up after 3 s; a start that got past the check would keep running.
++    let deadline = Instant::now() + Duration::from_secs(30);
++    let status = loop {
++        if let Some(status) = child.try_wait().unwrap() {
++            break status;
++        }
++        if Instant::now() > deadline {
++            let _ = child.kill();
++            panic!("`aoe serve --remote` didn't stop at the pre-check");
++        }
++        std::thread::sleep(Duration::from_millis(100));
++    };
++    let output = child.wait_with_output().unwrap();
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(!status.success(), "{stderr}");
++    assert!(
++        stderr.contains("didn't answer") && stderr.contains("--no-tailscale"),
++        "{stderr}"
++    );
++    assert!(!stderr.contains("cloudflared"), "{stderr}");
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5178** (2026-10-31): docs(suggestions): add user guide for suggested sessions (@Seluj78)
-- **PR #5175** (2026-10-31): fix(tui): repair the two unit tests red on the suggestions integration branch (@Seluj78)
-- **PR #5170** (2026-10-31): feat(suggestions): started-session link, grouped view with refresh status, edge states (@Seluj78)
-- **PR #5169** (2026-10-31): feat(tui): initial_prompt in the new-session dialog and aoe add --prompt, sanitise suggestion text (@Seluj78)
-- **PR #5168** (2026-10-31): feat(suggestions): refresh interval, wizard Edit template link, uses_agent and provider fix (@Seluj78)
-- **PR #5167** (2026-10-31): refactor(tui): share one suggestions store and open a suggestion's source from the palette (@Seluj78)
+- **PR #5233** (2026-11-03): ci: share Rust build artifacts through kache on S3 (@Seluj78)
+- **PR #5230** (2026-11-03): docs(ci): clarify pre-1.0 grouping policy (@jerome-benoit)
+- **PR #5229** (2026-11-03): fix(deps): group vitest updates across majors (@jerome-benoit)
+- **PR #5217** (2026-11-02): fix(acp): end a background task when TaskStop kills it (@Seluj78)
+- **PR #5215** (2026-11-03): fix(web,server): say Check again starts a stopped container before a manual step (@klubrake)
+- **PR #5213** (2026-11-02): fix(test): wait for a usable control connection when starting ACP runners (@klubrake)
 
 ---
 
@@ -2942,28 +2892,56 @@ bearer token to avoid repeated IP-wide lockout
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serve): turn off the Funnel a failed Tailscale start switched on (#5043)
+## X. serve): retry an idle workerless session whose queue is stranded (#5203)
 
 **RULE**:
-When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/acp_reconciler/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b7b4b7f`: serve): turn off the Funnel a failed Tailscale start switched on (#5043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9daf6d52`: serve): retry an idle workerless session whose queue is stranded (#5203). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/acp_reconciler/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
+    let (targets, with_queued_prompts, queued_not_stopped): (
+        Vec<ResumeTarget>,
+        HashSet<String>,
+        HashSet<String>,
+    ) = {
+            instances
+                .iter()
+                .filter(|i| {
+                    !i.queued_prompts.is_empty() && i.status != crate::session::Status::Stopped
+                })
+                .map(|i| i.id.clone())
+                .collect(),
+        // A session with a queue and no worker is retried under the normal
+        // budget, whatever its status short of Stopped (a failed spawn leaves
+        // Error): an earlier attempt must not strand the queue (#5200).
+        let retry_for_queue = attempted.contains(&id)
+            && queued_not_stopped.contains(&id)
+            && supervisor.worker_state(&id).await == AcpWorkerState::Absent;
+            let restart_marker = supervisor.worker_state(&id).await != AcpWorkerState::Stopping
+                && supervisor.take_late_restart_marker(&id);
+            if !retry_for_queue && !restart_marker {
+            if restart_marker {
+                forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
+            }
+    /// A resume attempt that l
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
+    let (targets, with_queued_prompts): (Vec<ResumeTarget>, HashSet<String>) = {
+            if supervisor.worker_state(&id).await == AcpWorkerState::Stopping
+                || !supervisor.take_late_restart_marker(&id)
+            {
+            forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b7b4b7f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9daf6d52` are properly handled with clean fallback behavior.

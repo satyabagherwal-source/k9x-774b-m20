@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-GRL8",
-    "timestamp": "2026-10-31T02:35:25.484Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-S1FQ",
     "timestamp": "2026-10-31T02:44:11.462Z",
     "repository": "bitnami/sealed-secrets",
@@ -7490,6 +7475,21 @@
     "repository": "bahdotsh/wrkflw",
     "learningId": "learn-github-bahdotsh-wrkflw",
     "contentHash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-OKDG",
+    "timestamp": "2026-11-03T16:32:18.724Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
