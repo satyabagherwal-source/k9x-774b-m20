@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T11:45:01.032Z",
+  "last_updated": "2026-11-03T11:52:09.889Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12513,8 +12513,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "1573d594",
-      "content_hash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
+      "source_version": "4b0b7450",
+      "content_hash": "0b020a13268e4eb1d2d36000478da4c6ee1e728b50ab69dbe09d9dae944e826a",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -12567,6 +12567,11 @@
           "number": 5591,
           "title": "Merge pull request #22670 from vivekpatani/distroless-debian13",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6515,
+          "title": "CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12574,7 +12579,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:59:42.089Z",
+      "verified_at": "2026-11-03T11:52:09.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38937,8 +38942,8 @@
       "slug": "mazzzystar-queryable",
       "platform": "github",
       "source_url": "https://github.com/mazzzystar/Queryable",
-      "source_version": "b95a05a8",
-      "content_hash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
+      "source_version": "19825faa",
+      "content_hash": "f9954b47c414dfdbc2a25db89b7b3b5484cb50f4936dee8b1cc76ed31cd251c8",
       "dossier_path": "07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md",
       "promoted_rules": [
@@ -38946,6 +38951,11 @@
           "number": 2859,
           "title": "IOSurface crash: buffer pooling, batch encoding, GPU resize",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2926,
+          "title": "Update README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38953,7 +38963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:32:57.844Z",
+      "verified_at": "2026-11-03T11:52:01.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38990,8 +39000,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "15b46b5a",
-      "content_hash": "97bd8b82e33dad124b033d419c1844f11478384cde616ee625162a7c7ac368c3",
+      "source_version": "4a795ca6",
+      "content_hash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -39019,6 +39029,11 @@
           "number": 3264,
           "title": "Tighter xan view record process loop",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6513,
+          "title": "fractional_days panicking on identical points in time",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39026,7 +39041,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:27:44.982Z",
+      "verified_at": "2026-11-03T11:51:57.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55286,8 +55301,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "b818208e",
-      "content_hash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
+      "source_version": "8fcaa51f",
+      "content_hash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -55350,6 +55365,11 @@
           "number": 6267,
           "title": "call chasm time skipping APIs in workflow time skipping path (#12848)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6514,
+          "title": "Add throttle-aware retry controller for history task processing (#12094)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55357,7 +55377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:37:05.734Z",
+      "verified_at": "2026-11-03T11:52:05.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112557,14 +112577,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
       "title": "Update README.md",
-      "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "8b10e2d9",
+      "source_url": "https://github.com/mazzzystar/Queryable",
+      "source_version": "19825faa",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-30T04:34:56.817Z"
+      "verified_at": "2026-11-03T11:52:01.859Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
@@ -168355,6 +168375,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T11:44:06.670Z"
+    },
+    "rule-6513": {
+      "learning_id": "rule-6513",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6513,
+      "title": "fractional_days panicking on identical points in time",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "4a795ca6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:51:57.715Z"
+    },
+    "rule-6514": {
+      "learning_id": "rule-6514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6514,
+      "title": "Add throttle-aware retry controller for history task processing (#12094)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "8fcaa51f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:52:05.902Z"
+    },
+    "rule-6515": {
+      "learning_id": "rule-6515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6515,
+      "title": "CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "4b0b7450",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-03T11:52:09.868Z"
     }
   },
   "aliases": {

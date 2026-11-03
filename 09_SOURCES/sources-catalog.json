@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "1573d594",
+    "sourceVersion": "4b0b7450",
     "license": "Apache-2.0",
-    "contentHash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
-    "lastHarvestedAt": "2026-10-30T03:59:42.192Z",
+    "contentHash": "0b020a13268e4eb1d2d36000478da4c6ee1e728b50ab69dbe09d9dae944e826a",
+    "lastHarvestedAt": "2026-11-03T11:52:09.977Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "b818208e",
+    "sourceVersion": "8fcaa51f",
     "license": "MIT",
-    "contentHash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
-    "lastHarvestedAt": "2026-10-31T17:37:05.836Z",
+    "contentHash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
+    "lastHarvestedAt": "2026-11-03T11:52:06.011Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "15b46b5a",
+    "sourceVersion": "4a795ca6",
     "license": "Unlicense",
-    "contentHash": "97bd8b82e33dad124b033d419c1844f11478384cde616ee625162a7c7ac368c3",
-    "lastHarvestedAt": "2026-10-20T16:27:45.043Z",
+    "contentHash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
+    "lastHarvestedAt": "2026-11-03T11:51:57.821Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -9323,10 +9323,10 @@
     "repository": "mazzzystar/Queryable",
     "platform": "github",
     "sourceUrl": "https://github.com/mazzzystar/Queryable",
-    "sourceVersion": "b95a05a8",
+    "sourceVersion": "19825faa",
     "license": "MIT",
-    "contentHash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
-    "lastHarvestedAt": "2026-10-19T22:32:57.915Z",
+    "contentHash": "f9954b47c414dfdbc2a25db89b7b3b5484cb50f4936dee8b1cc76ed31cd251c8",
+    "lastHarvestedAt": "2026-11-03T11:52:01.975Z",
     "learningId": "learn-github-mazzzystar-queryable"
   },
   "html5lib-html5lib-python": {

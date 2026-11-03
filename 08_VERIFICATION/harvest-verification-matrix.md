@@ -6896,3 +6896,7 @@
 | `CYCLE-20261103-7MDC` | `2026-11-03T11:39:12.000Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6511` | Yes (`56ad5a69...`) |
 | `CYCLE-20261103-DXTK` | `2026-11-03T11:44:06.776Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6512` | Yes (`c36786b0...`) |
 | `CYCLE-20261103-F3RG` | `2026-11-03T11:45:01.132Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md` | Yes (`3e029908...`) |
+| `CYCLE-20261103-O1A1` | `2026-11-03T11:51:57.817Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6513` | Yes (`8e32d6f0...`) |
+| `CYCLE-20261103-O4HF` | `2026-11-03T11:52:01.971Z` | `mazzzystar/Queryable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`f9954b47...`) |
+| `CYCLE-20261103-O7LJ` | `2026-11-03T11:52:06.007Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6514` | Yes (`40eb3af8...`) |
+| `CYCLE-20261103-OANP` | `2026-11-03T11:52:09.973Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6515` | Yes (`0b020a13...`) |

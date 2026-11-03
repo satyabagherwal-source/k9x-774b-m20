@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source**: github ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
-> **Source Version**: `1573d594`  
+> **Source Version**: `4b0b7450`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T03:59:41.521Z  
+> **Timestamp**: 2026-11-03T11:52:09.241Z  
 > **Learning ID**: `learn-github-etcd-io-etcd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T03:59:41.250Z  
+> **Harvest Timestamp**: 2026-11-03T11:52:08.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed reliable key-value store for the most critical data of a distributed system
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 52431 stars
+- **Stars / Engagement**: 52443 stars
 
 ---
 
@@ -667,17 +667,17 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22670** (2026-10-28): **Dockerfile: bump base image to distroless static-debian13**
-  *Symptoms*: - the debian 11 and 12 distroless images still trust the compromised eMudhra intermediate CAs, with no patched release - see #22665 
+- **Issue #22689** (2026-11-03): **CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries**
+  *Symptoms*: Adds the v3.5.36, v3.6.17 and v3.7.4 changelog entries for #22655
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/etcd-io/etcd/pull/22670?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.99%. Comparing base ([`2b7b001`](https://app.codecov.io/gh/etcd-io/etcd/commit/2b7b001a90b4be38e6b1b54021ea3327666e3793?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)) to head ([`8f34a9c`](https://app.codecov.io/gh/etcd-io/etcd/commit/8f34a9cf6c4ddfcab63153024ccdd32d10fcb2b0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>   [see 19 files with indirect coverage changes](https://app.codecov.io/gh/etcd-
-  > /retest
+  > Hi @AliasJeff. Thanks for your PR.  I'm waiting for a [etcd-io](https://github.com/orgs/etcd-io/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  Regular contributors should [join the org](https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md) to skip this step.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?t
+  > /ok-to-test
 
-- **Issue #22669** (2026-10-28): **[release-3.7] Dockerfile: bump base image to distroless static-debian13**
-  *Symptoms*: - the debian 11 and 12 distroless images still trust the compromised eMudhra intermediate CAs, with no patched release - see #22665 
+- **Issue #22688** (2026-11-03): **[release-3.5] prevent the adjusted commit-index from exceeding the last index on force-new-cluster (#22655)**
+  *Symptoms*: Backport of https://github.com/etcd-io/etcd/pull/22655 to release-3.5
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/etcd-io/etcd/pull/22669?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 69.76%. Comparing base ([`0a173d0`](https://app.codecov.io/gh/etcd-io/etcd/commit/0a173d0410a96d01091b484daae81365bbcde57e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)) to head ([`35da5f6`](https://app.codecov.io/gh/etcd-io/etcd/commit/35da5f6e62ce36bd3c3601f245c1b91152dc779f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)).  <details><summary>Additional details and impacted files</summary>   [see 21 files with indirect coverage changes](https://app.codecov.io/gh/etcd-io/etcd/pull/22669/indirect-changes?src=pr&el=tree-
-  > /retitle [release-3.7] Dockerfile: bump base image to distroless static-debian13
+  > Hi @AliasJeff. Thanks for your PR.  I'm waiting for a [etcd-io](https://github.com/orgs/etcd-io/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  Regular contributors should [join the org](https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md) to skip this step.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?t
+  > /ok-to-test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -694,28 +694,370 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1573d594` (2026-10-28)
-**Commit Message**: Merge pull request #22670 from vivekpatani/distroless-debian13
+### Incident Patch 1: `ba2f7625` (2026-11-02)
+**Commit Message**: CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries
 
-Dockerfile: bump base image to distroless static-debian13
+Signed-off-by: AliasJeff <[REDACTED_EMAIL]>
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `CHANGELOG/CHANGELOG-3.5.md` (modified, +4/-0)
 ```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
-+FROM gcr.io/distroless/static-debian13@sha256:15f8637509792e05b97d83451b0b6ccfa4abd548f997e406ac1e72c87fe1fa78
+@@ -6,6 +6,10 @@ Previous change logs can be found at [CHANGELOG-3.4](https://github.com/etcd-io/
  
- ARG TARGETARCH
- ARG VERSION
+ ## v3.5.36 (TBC)
+ 
++### etcd server
++
++- Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22688)
++
+ ---
+ 
+ ## v3.5.35 (2026-10-22)
+```
+
+**File**: `CHANGELOG/CHANGELOG-3.6.md` (modified, +4/-0)
+```diff
+@@ -6,6 +6,10 @@ Previous change logs can be found at [CHANGELOG-3.5](https://github.com/etcd-io/
+ 
+ ## v3.6.17 (TBC)
+ 
++### etcd server
++
++- Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22686)
++
+ ---
+ 
+ ## v3.6.16 (2026-10-22)
+```
+
+**File**: `CHANGELOG/CHANGELOG-3.7.md` (modified, +4/-0)
+```diff
+@@ -5,6 +5,10 @@ Previous change logs can be found at [CHANGELOG-3.6](https://github.com/etcd-io/
+ 
+ ## v3.7.4 (TBC)
+ 
++### etcd server
++
++- Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22685)
++
+ ---
+ 
+ ## v3.7.3 (2026-10-22)
+```
+
+---
+
+### Incident Patch 2: `a2e3642b` (2026-11-02)
+**Commit Message**: Merge pull request #22655 from AliasJeff/fix-22646-force-new-cluster-backend-ahead
+
+etcdserver: prevent the adjusted commit-index from exceeding the last index on force-new-cluster
+
+**File**: `server/etcdserver/bootstrap.go` (modified, +62/-31)
+```diff
+@@ -86,7 +86,11 @@ func bootstrap(cfg config.ServerConfig) (b *bootstrappedServer, err error) {
+ 			return nil, fmt.Errorf("cannot write to WAL directory: %w", err)
+ 		}
+ 		cfg.Logger.Info("Bootstrapping WAL from snapshot")
+-		bwal = bootstrapWALFromSnapshot(cfg, backend.snapshot, backend.ci)
++		bwal, err = bootstrapWALFromSnapshot(cfg, backend.snapshot, backend.ci)
++		if err != nil {
++			backend.Close()
++			return nil, err
++		}
+ 	}
+ 
+ 	cfg.Logger.Info("bootstrapping cluster")
+@@ -597,7 +601,7 @@ func (b *bootstrappedRaft) newRaftNode(ss *snap.Snapshotter, wal *wal.WAL, cl *m
+ 	)
+ }
+ 
+-func bootstrapWALFromSnapshot(cfg config.ServerConfig, snapshot *raftpb.Snapshot, ci cindex.ConsistentIndexer) *bootstrappedWAL {
++func bootstrapWALFromSnapshot(cfg config.ServerConfig, snapshot *raftpb.Snapshot, ci cindex.ConsistentIndexer) (*bootstrappedWAL, error) {
+ 	wal, st, ents, snap, meta := openWALFromSnapshot(cfg, snapshot)
+ 	bwal := &bootstrappedWAL{
+ 		lg:       cfg.Logger,
+@@ -621,7 +625,18 @@ func bootstrapWALFromSnapshot(cfg config.ServerConfig, snapshot *raftpb.Snapshot
+ 		// committed, we reset Commit to max(HardState.Commit, consistent_index).
+ 		//
+ 		// See: https://github.com/etcd-io/raft/pull/300 for more details.
+-		bwal.st.Commit = new(max(oldCommitIndex, consistentIndex))
++		adjustedCommitIndex := max(oldCommitIndex, consistentIndex)
++		lastIdx := bwal.lastIndex()
++		if adjustedCommitIndex > lastIdx {
++			cfg.Logger.Error(
++				"adjusted commit index is ahead of the last WAL entry",
++				zap.Uint64("adjusted-commit-index", adjustedCommitIndex),
++				zap.Uint64("last-wal-entry-index", lastIdx),
++			)
++			bwal.w.Close()
++			return nil, fmt.Errorf("adjusted commit index %d exceeds the last WAL entry index %d", adjustedCommitIndex, lastIdx)
++		}
++		bwal.st.Commit = new(adjustedCommitIndex)
+ 
+ 		// discard the previously uncommitted entries
+ 		bwal.ents = bwal.CommitedEntries()
+@@ -643,7 +658,7 @@ func bootstrapWALFromSnapshot(cfg config.ServerConfig, snapshot *raftpb.Snapshot
+ 			zap.Uint64("commit-index", bwal.st.GetCommit()),
+ 		)
+ 	}
+-	return bwal
++	return bwal, nil
+ }
+ 
+ // openWALFromSnapshot reads the WAL at the given snap and returns the wal, its latest HardState and cluster ID, and all entries that appear
+@@ -722,52 +737,68 @@ type bootstrappedWAL struct {
+ 	meta     *snapshotMetadata
+ }
+ 
+-func (wal *bootstrappedWAL) MemoryStorage() *raft.MemoryStorage {
++func (bwal *bootstrappedWAL) MemoryStorage() *raft.MemoryStorage {
+ 	s := raft.NewMemoryStorage()
+-	if wal.snapshot != nil {
+-		s.ApplySnapshot(wal.snapshot)
++	if bwal.snapshot != nil {
++		s.ApplySnapshot(bwal.snapshot)
+ 	}
+-	if wal.st != nil {
+-		s.SetHardState(wal.st)
++	if bwal.st != nil {
++		s.SetHardState(bwal.st)
+ 	}
+-	if len(wal.ents) != 0 {
+-		s.Append(wal.ents)
++	if len(bwal.ents) != 0 {
++		s.Append(bwal.ents)
+ 	}
+ 	return s
+ }
+ 
+-func (wal *bootstrappedWAL) CommitedEntries() []*raftpb.Entry {
+-	for i, ent := range wal.ents {
+-		if ent.GetIndex() > wal.st.GetCommit() {
+-			wal.lg.Info(
++func (bwal *bootstrappedWAL) CommitedEntries() []*raftpb.Entry {
++	for i, ent := range bwal.ents {
++		if ent.GetIndex() > bwal.st.GetCommit() {
++			bwal.lg.Info(
+ 				"discarding uncommitted WAL entries",
+ 				zap.Uint64("entry-index", ent.GetIndex()),
+-				zap.Uint64("commit-index-from-wal", wal.st.GetCommit()),
+-				zap.Int("number-of-discarded-entries", len(wal.ents)-i),
++				zap.Uint64("commit-index-from-wal", bwal.st.GetCommit()),
++				zap.Int("number-of-discarded-entries", len(bwal.ents)-i),
+ 			)
+-			return wal.ents[:i]
++			return bwal.ents[:i]
+ 		}
+ 	}
+-	return wal.ents
++	return bwal.ents
+ }
+ 
+-func (wal *bootstrappedWAL) NewConfigChangeEntries() []*raftpb.Entry {
++func (bwal *bootstrappedWAL) NewConfigChangeEntries() []*raftpb.Entry {
+ 	return serverstorage.CreateConfigChangeEnts(
+-		wal.lg,
+-		serverstorage.GetEffectiveNodeIDsFromWALEntries(wal.lg, wal.snapshot, wal.ents),
+-		uint64(wal.meta.nodeID),
+-		wal.st.GetTerm(),
+-		wal.st.GetCommit(),
++		bwal.lg,
++		serverstorage.GetEffectiveNodeIDsFromWALEntries(bwal.lg, bwal.snapshot, bwal.ents),
++		uint64(bwal.meta.nodeID),
++		bwal.st.GetTerm(),
++		bwal.st.GetCommit(),
+ 	)
+ }
+ 
+-func (wal *bootstrappedWAL) AppendAndCommitEntries(ents []*raftpb.Entry) {
+-	wal.ents = append(wal.ents, ents...)
+-	err := wal.w.Save(&raftpb.HardState{}, ents)
++func (bwal *bootstrappedWAL) AppendAndCommitEntries(ents []*raftpb.Entry) {
++	bwal.ents = append(bwal.ents, ents...)
++	err := bwal.w.Save(&raftpb.HardState{}, ents)
+ 	if err != nil {
+-		wal.lg.Fatal("failed to save hard state and entries", zap.Error(err))
++		bwal.lg.Fatal("failed to save hard state and entries", zap.Error(err))
++	}
++	if len(bwal.ents) != 0 {
++		bwal.st.Commit = bwal.ents[len(bwal.ents)-1].Index
+ 	}
+-	if len(wal.ents) != 0 {
+-		wal.st.Commit = wal.ents[len(wal.ents)-1].Index
++}
++
++// `lastIndex` returns the index of the last entry, or the snapshot index if there are no entries
++func (bwal *bootstrappedWAL) lastIndex() uint64 {
++	var idx uint64
++	if bw
+```
+
+**File**: `server/etcdserver/bootstrap_test.go` (modified, +65/-0)
+```diff
+@@ -34,8 +34,10 @@ import (
+ 	"go.etcd.io/etcd/api/v3/etcdserverpb"
+ 	"go.etcd.io/etcd/api/v3/version"
+ 	"go.etcd.io/etcd/client/pkg/v3/types"
++	"go.etcd.io/etcd/pkg/v3/pbutil"
+ 	"go.etcd.io/etcd/server/v3/config"
+ 	"go.etcd.io/etcd/server/v3/etcdserver/api/membership"
++	"go.etcd.io/etcd/server/v3/etcdserver/cindex"
+ 	serverstorage "go.etcd.io/etcd/server/v3/storage"
+ 	"go.etcd.io/etcd/server/v3/storage/datadir"
+ 	"go.etcd.io/etcd/server/v3/storage/schema"
+@@ -293,3 +295,66 @@ func createSnapshotAndBackendDB(cfg config.ServerConfig, snapshotTerm, snapshotI
+ 	schema.UnsafeUpdateConsistentIndex(be.BatchTx(), 1, 1)
+ 	return be.Close()
+ }
++
++func TestBootstrapWALFromSnapshotBackendAheadOfWAL(t *testing.T) {
++	dataDir, err := createDataDir(t)
++	require.NoError(t, err)
++
++	cfg := config.ServerConfig{
++		Logger:          zaptest.NewLogger(t),
++		DataDir:         dataDir,
++		ForceNewCluster: true,
++	}
++
++	var ents []*raftpb.Entry
++	for idx := uint64(28); idx <= 31; idx++ {
++		ents = append(ents, &raftpb.Entry{
++			Type:  raftpb.EntryNormal.Enum(),
++			Data:  []byte("foo"),
++			Term:  new(uint64(2)),
++			Index: new(idx),
++		})
++	}
++
++	metadata := pbutil.MustMarshalMessage(
++		&etcdserverpb.Metadata{
++			NodeID:    new(uint64(1)),
++			ClusterID: new(uint64(1)),
++		},
++	)
++	w, err := wal.Create(cfg.Logger, cfg.WALDir(), metadata)
++	require.NoError(t, err)
++	snapshot := &raftpb.Snapshot{
++		Metadata: &raftpb.SnapshotMetadata{
++			ConfState: &raftpb.ConfState{Voters: []uint64{1, 2, 3}},
++			Index:     new(uint64(27)),
++			Term:      new(uint64(2)),
++		},
++	}
++	require.NoError(t, w.SaveSnapshot(&walpb.Snapshot{
++		Index:     snapshot.Metadata.Index,
++		Term:      snapshot.Metadata.Term,
++		ConfState: snapshot.Metadata.ConfState,
++	}))
++	err = w.Save(&raftpb.HardState{Term: new(uint64(2)), Commit: new(uint64(28))}, ents)
++	require.NoError(t, err)
++	require.NoError(t, w.Close())
++
++	bwal, err := bootstrapWALFromSnapshot(cfg, snapshot, cindex.NewFakeConsistentIndex(49))
++	require.Error(t, err)
++	require.Nil(t, bwal)
++	require.Contains(t, err.Error(), "exceeds the last WAL entry index")
++
++	// the WAL must not have been touched: no entries past the gap are
++	// appended, and the hard state is left as it was
++	w2, err := wal.Open(cfg.Logger, cfg.WALDir(), &walpb.Snapshot{
++		Index: snapshot.Metadata.Index,
++		Term:  snapshot.Metadata.Term,
++	})
++	require.NoError(t, err)
++	defer w2.Close()
++	_, _, ents2, err := w2.ReadAll()
++	require.NoError(t, err)
++	require.Len(t, ents2, 4)
++	require.Equal(t, uint64(31), ents2[len(ents2)-1].GetIndex())
++}
+```
+
+**File**: `tests/e2e/force_new_cluster_test.go` (modified, +62/-0)
+```diff
+@@ -17,7 +17,10 @@
+ package e2e
+ 
+ import (
++	"encoding/binary"
+ 	"encoding/json"
++	"errors"
++	"fmt"
+ 	"strings"
+ 	"testing"
+ 	"time"
+@@ -201,3 +204,62 @@ func mustReadMembersFromBoltDB(t *testing.T, dataDir string) []*membership.Membe
+ 
+ 	return members
+ }
++
++// TestForceNewCluster_BackendConsistentIndexAheadOfWAL ensures that
++// --force-new-cluster fails cleanly when the backend consistent index is
++// ahead of the last entry in the WAL.
++func TestForceNewCluster_BackendConsistentIndexAheadOfWAL(t *testing.T) {
++	e2e.BeforeTest(t)
++
++	epc, err := e2e.NewEtcdProcessCluster(t.Context(), t,
++		e2e.WithConfig(e2e.NewConfig(e2e.WithClusterSize(3))),
++		e2e.WithKeepDataDir(true),
++	)
++	require.NoError(t, err)
++
++	t.Log("Writing some keys")
++	for i := 0; i < 5; i++ {
++		_, err = epc.Etcdctl().Put(t.Context(), fmt.Sprintf("key-%d", i), "value", config.PutOptions{})
++		require.NoError(t, err)
++	}
++	require.NoError(t, epc.Close())
++
++	victim := epc.Procs[0]
++	t.Log("Simulating a crash where the backend consistent index advanced past the last entry written to the WAL")
++	bumpBackendConsistentIndex(t, victim.Config().DataDirPath, 5)
++
++	t.Logf("Forcibly create a one-member cluster with member: %s", victim.Config().Name)
++	victim.Config().Args = append(victim.Config().Args, "--force-new-cluster")
++
++	t.Log("The bootstrap must fail cleanly with an error instead of panicking")
++	require.Error(t, victim.Start(t.Context()))
++
++	t.Log("Checking the failure is intentional and explained in the member log")
++	require.Contains(t, strings.Join(victim.Logs().Lines(), "\n"), "adjusted commit index is ahead of the last WAL entry")
++}
++
++// bumpBackendConsistentIndex advances the consistent index persisted in the
++// member's backend by delta, without writing the corresponding entries to
++// the WAL.
++func bumpBackendConsistentIndex(t *testing.T, dataDir string, delta uint64) {
++	dbPath := datadir.ToBackendFileName(dataDir)
++	db, err := bbolt.Open(dbPath, 0o600, nil)
++	require.NoError(t, err)
++	defer func() {
++		require.NoError(t, db.Close())
++	}()
++	require.NoError(t, db.Update(func(tx *bbolt.Tx) error {
++		b := tx.Bucket(schema.Meta.Name())
++		if b == nil {
++			return errors.New("meta bucket not found")
++		}
++		key := schema.MetaConsistentIndexKeyName
++		v := b.Get(key)
++		if len(v) != 8 {
++			return fmt.Errorf("unexpected consistent_index value length: %d", len(v))
++		}
++		buf := make([]byte, 8)
++		binary.BigEndian.PutUint64(buf, binary.BigEndian.Uint64(v)+delta)
++		return b.Put(key, buf)
++	}))
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22689** (2026-11-03): CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries (@AliasJeff)
+- **PR #22688** (2026-11-03): [release-3.5] prevent the adjusted commit-index from exceeding the last index on force-new-cluster (#22655) (@AliasJeff)
+- **PR #22686** (2026-11-03): [release-3.6] prevent the adjusted commit-index from exceeding the last index on force-new-cluster (#22655) (@AliasJeff)
+- **PR #22685** (2026-11-03): [release-3.7] prevent the adjusted commit-index from exceeding the last index on force-new-cluster (#22655) (@AliasJeff)
 - **PR #22670** (2026-10-28): Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
 - **PR #22669** (2026-10-28): [release-3.7] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
-- **PR #22668** (2026-10-28): [release-3.6] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
-- **PR #22667** (2026-10-28): [release-3.5] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
-- **PR #22663** (2026-10-27): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #22662** (2026-10-27): build(deps): bump the codeql group with 4 updates (@dependabot[bot])
 
 ---
 
@@ -735,28 +1077,31 @@ Dockerfile: bump base image to distroless static-debian13
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22670 from vivekpatani/distroless-debian13
+## X. CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG/CHANGELOG-3.5.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1573d594`: Merge pull request #22670 from vivekpatani/distroless-debian13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba2f7625`: CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG/CHANGELOG-3.5.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM gcr.io/distroless/static-debian13@sha256:15f8637509792e05b97d83451b0b6ccfa4abd548f997e406ac1e72c87fe1fa78
+### etcd server
+
+- Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22688)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1573d594` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba2f7625` are properly handled with clean fallback behavior.

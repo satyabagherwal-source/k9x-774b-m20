@@ -6905,3 +6905,7 @@ Every entry in this ledger must capture:
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `d4f206e3` | Multi-dimensional audit evidence | 2026-11-03T11:39:12.004Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `e9fc337f` | Multi-dimensional audit evidence | 2026-11-03T11:44:06.780Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `2dfd6fcd` | Multi-dimensional audit evidence | 2026-11-03T11:45:01.142Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `4a795ca6` | Multi-dimensional audit evidence | 2026-11-03T11:51:57.821Z |
+| `learn-github-mazzzystar-queryable` | `https://github.com/mazzzystar/Queryable` | `19825faa` | Multi-dimensional audit evidence | 2026-11-03T11:52:01.975Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `8fcaa51f` | Multi-dimensional audit evidence | 2026-11-03T11:52:06.011Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `4b0b7450` | Multi-dimensional audit evidence | 2026-11-03T11:52:09.977Z |

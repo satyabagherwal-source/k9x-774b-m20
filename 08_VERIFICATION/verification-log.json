@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-TJ7Z",
-    "timestamp": "2026-10-31T01:21:22.319Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-TMWE",
-    "timestamp": "2026-10-31T01:21:27.086Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "dc6b3bdba2a9708c5a5644b7362e5755a1721f830e6417a7b220ac5cda78de08",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-TO9C",
-    "timestamp": "2026-10-31T01:21:28.848Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-TPU6",
-    "timestamp": "2026-10-31T01:21:30.894Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-TS5K",
     "timestamp": "2026-10-31T01:21:33.896Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7432,66 @@
     "contentHash": "3e0299083c312134e0084794b69e21760cdf9f4117b17a9e5735f6a3c1f40d08",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-O1A1",
+    "timestamp": "2026-11-03T11:51:57.817Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "8e32d6f0d1a462801893ca58f34a56abfe9dea2c8c0ade9be43da825fa37074f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-O4HF",
+    "timestamp": "2026-11-03T11:52:01.971Z",
+    "repository": "mazzzystar/Queryable",
+    "learningId": "learn-github-mazzzystar-queryable",
+    "contentHash": "f9954b47c414dfdbc2a25db89b7b3b5484cb50f4936dee8b1cc76ed31cd251c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-O7LJ",
+    "timestamp": "2026-11-03T11:52:06.007Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261103-OANP",
+    "timestamp": "2026-11-03T11:52:09.973Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "0b020a13268e4eb1d2d36000478da4c6ee1e728b50ab69dbe09d9dae944e826a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

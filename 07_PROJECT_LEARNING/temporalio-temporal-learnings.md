@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `b818208e`  
+> **Source Version**: `8fcaa51f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:37:05.147Z  
+> **Timestamp**: 2026-11-03T11:52:05.279Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:37:05.139Z  
+> **Harvest Timestamp**: 2026-11-03T11:52:04.226Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24104 stars
+- **Stars / Engagement**: 24157 stars
 
 ---
 
@@ -2121,15 +2121,285 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b818208e` (2026-10-31)
-**Commit Message**: call chasm time skipping APIs in workflow time skipping path (#12848)
+### Incident Patch 1: `709d9cf0` (2026-11-03)
+**Commit Message**: Add throttle-aware retry controller for history task processing (#12094)
 
 ## What changed?
 
-call chasm isExecutionSkippable in workflow time skipping path 
+Adds a throttle-aware retry controller for history task processing,
+behind `history.taskThrottleControllerEnabled` (default false).
+
+Tasks refused by a shared namespace budget are grouped into a class
+keyed on (cause, namespace) — one bucket per budget. The rescheduler
+offers that bucket to its classes in priority order, and paces releases
+against it. The controller learns the rate: ×0.85 when a window's loss
+ratio exceeds 5%, ×1.10 when it does not *and* the gate actually refused
+a release in that window, otherwise unchanged. A decision needs 20
+releases before the ratio can resolve the threshold; below that the
+evidence carries forward. Coverage is `APS_LIMIT` and
+`PERSISTENCE_LIMIT` at namespace scope; every other cause keeps today's
+path.
+
+`shouldResubmitOnNack` returns false for a governed task, since that
+shortcut bypasses the rescheduler and with it the gate.
+
+Design doc has the control law and the error-coverage boundary in full.
 
 ## Why?
-nexus is migrated from HSM to CHASM
+
+Retry state is per task while the constraint is per namespace, so every
+parked task rediscovers the same limit alone and pays a full dispatch to
+f
+
+**File**: `common/dynamicconfig/constants.go` (modified, +9/-0)
+```diff
+@@ -2225,6 +2225,15 @@ The actual count is calculated as base * (multiplier ^ level)`,
+ The actual count is calculated as base * (multiplier ^ level)`,
+ 	)
+ 
++	TaskThrottleController = NewGlobalTypedSetting(
++		"history.taskThrottleController",
++		DefaultTaskThrottleControllerSettings,
++		`TaskThrottleController tunes host level pacing of history task retries that a namespace
++APS or persistence rate limiter refused. Unset fields keep their defaults.
++Fields: Enabled, MinRate, MaxRate, InitialRate, KeyTTL, Beta, IncreaseRatio, LossThreshold,
++Window, MaxKeys. See TaskThrottleControllerSettings comments for details.`,
++	)
++
+ 	TaskSchedulerEnableRateLimiter = NewGlobalBoolSetting(
+ 		"history.taskSchedulerEnableRateLimiter",
+ 		false,
+```
+
+**File**: `common/dynamicconfig/shared_constants.go` (modified, +51/-0)
+```diff
+@@ -91,6 +91,57 @@ var DefaultDynamicRateLimitingParams = DynamicRateLimitingParams{
+ 	RateMultiMax:         1.0,
+ }
+ 
++// TaskThrottleControllerSettings tunes the host level pacing of history task retries that
++// were refused by a namespace APS or persistence rate limiter. One budget is kept per
++// (cause, namespace); its admitted rate moves multiplicatively, down by Beta when a control
++// window loses more than LossThreshold and up by IncreaseRatio when it does not.
++type TaskThrottleControllerSettings struct {
++	// Enabled toggles the controller.
++	Enabled bool
++	// MinRate is the floor on a budget's admitted rate, in releases per second. Raising it
++	// is the lever for shortening recovery after a long incident. Values below one release
++	// per second are not honoured, because a budget that low can never earn the releases a
++	// decision needs.
++	MinRate float64
++	// MaxRate is the ceiling on a budget's admitted rate, in releases per second. It also
++	// bounds the burst, which is one window's worth of credit.
++	MaxRate float64
++	// InitialRate is the rate a budget starts at, and returns to when it is reset after
++	// going idle.
++	InitialRate float64
++	// KeyTTL is how long a budget survives untouched before it is evicted, or reset to
++	// InitialRate if it is touched again first, so a rate learned during an incident does
++	// not outlive it.
++	KeyTTL time.Duration
++	// Beta is the multiplicative decrease applied after a lossy window. Should be in (0, 1).
++	Beta float64
++	// IncreaseRatio is the fraction by which the rate grows after a clean window.
++	IncreaseRatio float64
++	// LossThreshold is the fraction of admitted releases that may be throttled before the
++	// rate decreases. It also sizes the evidence gate: a window decides nothing until it has
++	// seen 1/LossThreshold releases.
++	LossThreshold float64
++	// Window is the control window over which loss is evaluated. Keep it at a second or more:
++	// a blocked budget looks again every tenth of a window, so a shorter one polls harder, and
++	// at zero it polls without pausing at all.
++	Window time.Duration
++	// MaxKeys caps the budgets tracked by a host. Past the cap the controller fails open.
++	MaxKeys int
++}
++
++var DefaultTaskThrottleControllerSettings = TaskThrottleControllerSettings{
++	Enabled:       false,
++	MinRate:       1.0,
++	MaxRate:       10000.0,
++	InitialRate:   1000.0,
++	KeyTTL:        5 * time.Minute,
++	Beta:          0.85,
++	IncreaseRatio: 0.10,
++	LossThreshold: 0.05,
++	Window:        time.Second,
++	MaxKeys:       1024,
++}
++
+ // ScheduleInvariantsScannerParams configures the schedule-invariants scanners. The three
+ // invariant checks are independently toggleable but otherwise share their timing and
+ // rate-limiting knobs, so they're grouped into a single struct-valued dynamic config.
+```
+
+**File**: `common/metrics/metric_defs.go` (modified, +21/-1)
+```diff
+@@ -990,7 +990,27 @@ var (
+ 	TaskScheduleToStartLatency  = NewTimerDef("task_schedule_to_start_latency")
+ 	TaskBatchCompleteCounter    = NewCounterDef("task_batch_complete_counter")
+ 	TaskReschedulerPendingTasks = NewDimensionlessHistogramDef("task_rescheduler_pending_tasks")
+-	PendingTasksCounter         = NewDimensionlessHistogramDef(
++	TaskThrottleGateAdmitted    = NewCounterDef(
++		"task_throttle_gate_admitted",
++		WithDescription("The number of task releases admitted by the throttle controller gate."),
++	)
++	TaskThrottleGateSuppressed = NewCounterDef(
++		"task_throttle_gate_suppressed",
++		WithDescription("The number of task releases suppressed by the throttle controller gate, i.e. attempts the controller prevented from being wasted."),
++	)
++	TaskThrottleRejections = NewCounterDef(
++		"task_throttle_rejections",
++		WithDescription("The number of throttle rejections fed into the throttle controller, by cause."),
++	)
++	TaskThrottleAdmittedRate = NewGaugeDef(
++		"task_throttle_admitted_rate",
++		WithDescription("The current admitted rate, in task releases per second, for one throttle controller key."),
++	)
++	TaskThrottleKeysTracked = NewGaugeDef(
++		"task_throttle_keys_tracked",
++		WithDescription("The number of keys tracked by the throttle controller."),
++	)
++	PendingTasksCounter = NewDimensionlessHistogramDef(
+ 		"pending_tasks",
+ 		WithDescription("A histogram across history shards for the number of in-memory pending history tasks."),
+ 	)
+```
+
+**File**: `common/tasks/priority.go` (modified, +5/-0)
+```diff
+@@ -1,6 +1,8 @@
+ package tasks
+ 
+ import (
++	"maps"
++	"slices"
+ 	"strconv"
+ 
+ 	"go.temporal.io/server/common/headers"
+@@ -56,6 +58,9 @@ var (
+ 		PriorityLow:         headers.CallerTypeBackgroundLow,
+ 		PriorityPreemptable: headers.CallerTypePreemptable,
+ 	}
++
++	// Sorted priority order, most urgent first.
++	PriorityOrder = slices.Sorted(maps.Keys(PriorityName))
+ )
+ 
+ func (p Priority) String() string {
+```
+
+**File**: `common/tasks/priority_test.go` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++package tasks
++
++import (
++	"slices"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// Callers iterate PriorityOrder to visit every priority, so a priority missing from it is
++// one whose work never gets looked at.
++func TestPriorityOrderCoversEveryNamedPriority(t *testing.T) {
++	require.Len(t, PriorityOrder, len(PriorityName),
++		"a priority added to PriorityName must also be ordered")
++	for _, priority := range PriorityOrder {
++		require.Contains(t, PriorityName, priority)
++	}
++}
++
++// A lower Priority is more urgent, so ascending value is most urgent first.
++func TestPriorityOrderIsMostUrgentFirst(t *testing.T) {
++	require.True(t, slices.IsSorted(PriorityOrder), "PriorityOrder must ascend by value")
++	require.Equal(t, PriorityHigh, PriorityOrder[0])
++	require.Equal(t, PriorityPreemptable, PriorityOrder[len(PriorityOrder)-1])
++}
+```
+
+**File**: `service/history/archival_queue_factory.go` (modified, +2/-0)
+```diff
+@@ -157,6 +157,7 @@ func (f *archivalQueueFactory) newScheduledQueue(shard historyi.ShardContext, ex
+ 		shard.GetTimeSource(),
+ 		logger,
+ 		metricsHandler,
++		f.ThrottleState,
+ 	)
+ 
+ 	factory := queues.NewExecutableFactory(
+@@ -177,6 +178,7 @@ func (f *archivalQueueFactory) newScheduledQueue(shard historyi.ShardContext, ex
+ 		f.Config.TaskDLQUnexpectedErrorAttempts,
+ 		f.Config.TaskDLQInternalErrors,
+ 		f.Config.TaskDLQErrorPattern,
++		f.ThrottleState,
+ 	)
+ 	return queues.NewScheduledQueue(
+ 		shard,
+```
+
+**File**: `service/history/configs/config.go` (modified, +3/-0)
+```diff
+@@ -134,6 +134,8 @@ type Config struct {
+ 	TaskDLQInternalErrors          dynamicconfig.BoolPropertyFn
+ 	TaskDLQErrorPattern            dynamicconfig.StringPropertyFn
+ 
++	TaskThrottleController dynamicconfig.TypedPropertyFn[dynamicconfig.TaskThrottleControllerSettings]
++
+ 	TaskSchedulerEnableRateLimiter            dynamicconfig.BoolPropertyFn
+ 	TaskSchedulerEnableRateLimiterShadowMode  dynamicconfig.BoolPropertyFn
+ 	TaskSchedulerRateLimiterStartupDelay      dynamicconfig.DurationPropertyFn
+@@ -612,6 +614,7 @@ func NewConfig(
+ 		TaskDLQInternalErrors:          dynamicconfig.HistoryTaskDLQInternalErrors.Get(dc),
+ 		TaskDLQErrorPattern:            dynamicconfig.HistoryTaskDLQErrorPattern.Get(dc),
+ 
++		TaskThrottleController:                               dynamicconfig.TaskThrottleController.Get(dc),
+ 		TaskSchedulerEnableRateLimiter:                       dynamicconfig.TaskSchedulerEnableRateLimiter.Get(dc),
+ 		TaskSchedulerEnableRateLimiterShadowMode:             dynamicconfig.TaskSchedulerEnableRateLimiterShadowMode.Get(dc),
+ 		TaskSchedulerRateLimiterStartupDelay:                 dynamicconfig.TaskSchedulerRateLimiterStartupDelay.Get(dc),
+```
+
+**File**: `service/history/outbound_queue_factory.go` (modified, +2/-0)
+```diff
+@@ -224,6 +224,7 @@ func (f *outboundQueueFactory) CreateQueue(
+ 		shardContext.GetTimeSource(),
+ 		logger,
+ 		metricsHandler,
++		f.ThrottleState,
+ 	)
+ 
+ 	activeExecutor := newOutboundQueueActiveTaskExecutor(
+@@ -277,6 +278,7 @@ func (f *outboundQueueFactory) CreateQueue(
+ 		f.Config.TaskDLQUnexpectedErrorAttempts,
+ 		f.Config.TaskDLQInternalErrors,
+ 		f.Config.TaskDLQErrorPattern,
++		f.ThrottleState,
+ 	)
+ 	return queues.NewImmediateQueue(
+ 		shardContext,
+```
+
+---
+
+### Incident Patch 2: `2270bcd6` (2026-11-02)
+**Commit Message**: Require contiguous history for backfillHistory (#12741)
+
+## What changed?
+`backfillHistory` now checks the history it receives from the source
+cluster. Event IDs must run on from the start with no gaps, each event's
+version must match the snapshot's version history, and the stream must
+reach the snapshot's last event. If any check fails, it returns a
+retryable `Internal` error instead of persisting mutable state.
+
+## Why?
+`GetWorkflowExecutionRawHistoryV2` can end early without an error. For
+example, its continuation token pins the branch token from page 1, so if
+the source moves the run to another storage tier between pages, the last
+range reads as empty with no next token.
+
+The pagination issue will be fixed in another PR, but this is being kept
+for hardening.
 
 ## How did you test it?
 - [x] built
@@ -2138,238 +2408,560 @@ nexus is migrated from HSM to CHASM
 - [x] added new unit test(s)
 - [ ] added new functional test(s)
 
-**File**: `chasm/lib/workflow/workflow.go` (modified, +9/-2)
-```diff
-@@ -21,8 +21,9 @@ import (
- // So while Workflow implements the [callback.Host] interface, WorkflowUpdate is only a [callback.Holder].
- // And attaching completion callbacks to a WorkflowUpdate is done through an [updateCallbackHost].
- var (
--	_ callback.Host   = (*Workflow)(nil)
--	_ callback.Holder = (*WorkflowUpdate)(nil)
-+	_ callback.Host                 = (*Workflow)(nil)
-+	_ callback.Holder               = (*WorkflowUpdate)(nil)
-+	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
- )
- 
- type Workflow struct {
-@@ -71,6 +72,12 @@ func (w *Workflow) LifecycleState(
- 	return w.MSPointer.LifecycleState()
- }
- 
-+// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
-+// Mutable State checks the workflow's legacy state and in-flight work separately.
-+func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
-+	return w.pendingNexusOperationCount() == 0
-+}
-+
- func (w *Workflow) ContextMetadata(_ chasm.Context) map[string]string {
- 	// TODO: Export workflow metadata from the CHASM workflow root instead of CloseTransaction().
- 	return nil
-```
+## Potential risks
+- Any intentional history gaps would now DLQ instead of applying.
 
-**File**: `service/history/workflow/timeskipping.go` (modified, +12/-0)
+Related to #12742
+
+**File**: `service/history/ndc/workflow_state_replicator.go` (modified, +25/-5)
 ```diff
-@@ -383,6 +383,18 @@ func (ms *MutableStateImpl) isWorkflowSkippable() bool {
- 		noSkippingReason = "has pending nexus operations"
- 		return false
- 	}
-+	if ms.ChasmEnabled() {
-+		wf, chasmCtx, err := ms.ChasmWorkflowComponentReadOnly(context.Background())
+@@ -2096,6 +2096,7 @@ func (r *WorkflowStateReplicatorImpl) backfillHistory(
+ 	sortedAncestors := sortAncestors(historyBranch.GetAncestors())
+ 	sortedAncestorsIdx := 0
+ 	var ancestors []*persistencespb.HistoryBranchRange
++	expectedEventID := common.FirstEventID
+ 
+ BackfillLoop:
+ 	for remoteHistoryIterator.HasNext() {
+@@ -2104,14 +2105,29 @@ BackfillLoop:
+ 			return err
+ 		}
+ 
+-		if isStateBased {
+-			// If backfill suceeds but later event reapply fails, during task's next retry,
+-			// we still need to reapply events that have been stored in local DB.
+-			events, err := r.historySerializer.DeserializeEvents(historyBlob.rawHistory)
++		// The remote read can come back short or with a gap without returning an error, for example when the
++		// source moves the branch to another storage tier between pages. Persisting mutable state on top of such
++		// a history would lose events permanently, so every event is checked and the task retries instead.
++		batch, err := r.historySerializer.DeserializeEvents(historyBlob.rawHistory)
 +		if err != nil {
-+			metrics.ExecutionTimeSkippingTransitionedErrorCounter.With(ms.metricsHandler).Record(1, ms.timeSkippingMetricTags()...)
-+			ms.logger.Error("failed to check CHASM workflow time skipping eligibility", tag.Error(err))
-+			return false
++			return err
 +		}
-+		if !wf.IsExecutionSkippable(chasmCtx) {
-+			noSkippingReason = "has pending CHASM nexus operations"
-+			return false
-+		}
-+	}
- 	if len(ms.GetPendingChildExecutionInfos()) > 0 {
- 		noSkippingReason = "has pending child execution"
- 		return false
-```
-
-**File**: `service/history/workflow/timeskipping_test.go` (modified, +48/-0)
-```diff
-@@ -14,6 +14,9 @@ import (
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/activity"
-+	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
-+	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
-+	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/clock"
- 	"go.temporal.io/server/common/metrics"
-@@ -494,6 +497,51 @@ func (s *mutableStateSuite) TestIsWorkflowSkippable() {
- 	})
- }
++		for _, event := range batch {
++			if event.GetEventId() != expectedEventID {
++				return serviceerror.NewInternalf("Backfill history is not contiguous. Expected event %v, but got %v", expectedEventID, event.GetEventId())
++			}
++			version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
+ 			if err != nil {
+ 				return err
+ 			}
+-			for _, event := range events {
++			if version != event.GetVersion() {
++				return serviceerror.NewInternalf("Backfill event version does not match. Expected %v, but got %v", version, event.GetVersion())
++			}
++			expectedEventID++
++
++			if isStateBased {
++				// If backfill suceeds but later event reapply fails, during task's next retry,
++				// we still need to reapply events that have been stored in local DB.
+ 				mutableState.AddReapplyCandidateEvent(event)
+ 				r.addEventToCache(mutableState.GetWorkflowKey(), event)
+ 			}
+@@ -2196,6 +2212,10 @@ BackfillLoop:
+ 		prevBranchID = branchID
+ 	}
  
-+func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASM() {
-+	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
-+	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
-+		Config: &commonpb.TimeSkippingConfig{Enabled: true},
++	if expectedEventID != lastEventItem.GetEventId()+1 {
++		return serviceerror.NewInternalf("Backfill history ended early. Expected events up to %v, but got up to %v", lastEventItem.GetEventId(), expectedEventID-1)
 +	}
 +
-+	registry := chasm.NewRegistry(s.logger)
-+	s.Require().NoError(registry.Register(&chasm.CoreLibrary{}))
-+	s.Require().NoError(registry.Register(chasmworkflow.NewLibrary(chasmworkflow.NewRegistry())))
-+	s.Require().NoError(registry.Register(chasmnexus.NewNilLibrary()))
-+	tree := chasm.NewEmptyTree(registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler)
-+	s.mutableState.chasmTree = tree
-+
-+	// A workflow may have a CHASM tree without a persisted root component yet.
-+	s.True(s.mutableState.isWorkflowSkippable())
-+	s.False(tree.IsStateDirty(), "the eligibility check must only read the CHASM tree")
-+
-+	wf, chasmCtx, err := s.mutableState.ChasmWorkflowComponent(s.T().Context())
-+	s.Require().NoError(err)
-+	wf.Operations = chasm.Map[int64, *chasmnexus.Operation]{
-+		1: chasm.NewComponentField(chasmCtx, chasmnexus.NewOperation(&nexusoperationpb.OperationState{})),
-+	}
-+	s.False(s.mutableState.isWorkflowSkippable(), "a pending CHASM Nexus operation blocks time skipping")
-+}
-+
-+func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASMReadError() {
-+	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
-+	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
-+		Config: &commonpb.TimeSkippingConfig{Enabled: true},
-+	}
-+
-+	// The tree exists, but its workflow root type cannot be resolved by this registry.
-+	registry := chasm.NewRegistry(s.logger)
-+	s.mutableState.chasmTree = chasm.NewEmptyTree(
-+		registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler,
-+	)
-+	metricsHandler := metricstest.NewCaptureHandler()
-+	capture := metricsHandler.StartCapture()
-+	defer metricsHandler.StopCapture(capture)
-+	s.mutableState.metricsHandler = metricsHandler
-+
-+	s.False(s.mutableState.isWorkflowSkippable())
-+	s.Require().Len(capture.Snapshot()[metrics.ExecutionTimeSkippingTransitionedErrorCounter.Name()], 1)
-+}
-+
- func (s *mutableStateSuite) TestIsWorkflowSkippableFeatureFlagDisabled() {
- 	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
- 		Config: &commonpb.TimeSkippingConfig{Enabled: true},
+ 	mutableState.GetExecutionInfo().LastFirstEventTxnId = prevTxnID
+ 	return mutableState.SetCurrentBranchToken(backfillBranchToken)
+ }
 ```
 
-**File**: `tests/timeskipping_test.go` (modified, +83/-0)
+**File**: `service/history/ndc/workflow_state_replicator_test.go` (modified, +148/-3)
 ```diff
-@@ -3,6 +3,7 @@ package tests
+@@ -2,6 +2,7 @@ package ndc
+ 
  import (
  	"context"
- 	"errors"
-+	"strconv"
- 	"sync/atomic"
++	"errors"
+ 	"fmt"
  	"testing"
  	"time"
-@@ -24,6 +25,7 @@ import (
- 	enumsspb "go.temporal.io/server/api/enums/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/chasm"
-+	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/namespace"
-@@ -1157,6 +1159,87 @@ func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingNexusOperationBlocksSkip
- 		"wall elapsed = %v; the 1h timer must be skipped once the nexus operation completes", wallElapsed)
+@@ -166,7 +167,7 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_BrandNew() {
+ 							BranchToken: historyBranch.GetData(),
+ 							Items: []*historyspb.VersionHistoryItem{
+ 								{
+-									EventId: int64(100),
++									EventId: int64(6),
+ 									Version: int64(100),
+ 								},
+ 							},
+@@ -218,11 +219,26 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_BrandNew() {
+ 		int64(100),
+ 	), nil).AnyTimes()
+ 	s.mockNamespaceCache.EXPECT().GetNamespaceName(namespace.ID(namespaceID)).Return(namespace.Name(namespaceName), nil).AnyTimes()
++	var historyBlobs []*commonpb.DataBlob
++	var nodeIDs []int64
++	for _, batch := range [][]*historypb.HistoryEvent{
++		{{EventId: 1, Version: 100}, {EventId: 2, Version: 100}},
++		{{EventId: 3, Version: 100}, {EventId: 4, Version: 100}, {EventId: 5, Version: 100}, {EventId: 6, Version: 100}},
++	} {
++		blob, err := s.serializer.SerializeEvents(batch)
++		s.NoError(err)
++		historyBlobs = append(historyBlobs, blob)
++		nodeIDs = append(nodeIDs, batch[0].GetEventId())
++	}
+ 	s.mockRemoteAdminClient.EXPECT().GetWorkflowExecutionRawHistoryV2(gomock.Any(), gomock.Any()).Return(
+-		&adminservice.GetWorkflowExecutionRawHistoryV2Response{},
++		&adminservice.GetWorkflowExecutionRawHistoryV2Response{
++			HistoryBatches: historyBlobs,
++			HistoryNodeIds: nodeIDs,
++		},
+ 		nil,
+ 	)
+ 	s.mockExecutionManager.EXPECT().ReadHistoryBranchByBatch(gomock.Any(), gomock.Any()).Return(nil, serviceerror.NewNotFound("test"))
++	s.mockExecutionManager.EXPECT().AppendRawHistoryNodes(gomock.Any(), gomock.Any()).Return(nil, nil).Times(2)
+ 	s.mockExecutionManager.EXPECT().GetCurrentExecution(gomock.Any(), gomock.Any()).Return(nil, serviceerror.NewNotFound(""))
+ 	fakeStartHistory := &historypb.HistoryEvent{
+ 		Attributes: &historypb.HistoryEvent_WorkflowExecutionStartedEventAttributes{
+@@ -275,7 +291,7 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
+ 							BranchToken: historyBranch.GetData(),
+ 							Items: []*historyspb.VersionHistoryItem{
+ 								{
+-									EventId: int64(100),
++									EventId: int64(6),
+ 									Version: int64(100),
+ 								},
+ 							},
+@@ -342,33 +358,39 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
+ 			Events: []*historypb.HistoryEvent{
+ 				{
+ 					EventId: 1,
++					Version: 100,
+ 				},
+ 				{
+ 					EventId: 2,
++					Version: 100,
+ 				},
+ 			},
+ 		},
+ 		{
+ 			Events: []*historypb.HistoryEvent{
+ 				{
+ 					EventId: 3,
++					Version: 100,
+ 				},
+ 			},
+ 		},
+ 		{
+ 			Events: []*historypb.HistoryEvent{
+ 				{
+ 					EventId: 4,
++					Version: 100,
+ 				},
+ 			},
+ 		},
+ 		{
+ 			Events: []*historypb.HistoryEvent{
+ 				{
+ 					EventId: 5,
++					Version: 100,
+ 				},
+ 				{
+ 					EventId: 6,
++					Version: 100,
+ 				},
+ 			},
+ 		},
+@@ -420,6 +442,129 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
+ 	s.NoError(err)
  }
  
-+// TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip verifies that a workflow-owned
-+// CHASM Nexus operation prevents the workflow's timer from advancing virtual time.
-+// Completing the operation allows the next workflow task to skip to the timer.
-+func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip() {
-+	env := newNexusTestEnv(s.T(), true,
-+		testcore.WithDynamicConfig(dynamicconfig.WorkflowTimeSkippingEnabled, true),
-+		testcore.WithDynamicConfig(dynamicconfig.EnableChasm, true),
-+		testcore.WithDynamicConfig(chasmnexus.Enabled, true),
-+		testcore.WithDynamicConfig(chasmnexus.EnableChasmWorkflowOperations, true),
-+		testcore.WithDynamicConfig(chasmnexus.ChasmWorkflowOperationsRolloutPercent, 100),
-+	)
-+	tv := testvars.New(s.T())
-+	started := make(chan struct{}, 1)
-+	release := make(chan struct{}, 1)
-+	defer close(release)
-+	handler := nexustest.Handler{
-+		OnStartOperation: func(ctx context.Context, _, _ string, _ *nexus.LazyValue, _ nexus.StartOperationOptions) (nexus.HandlerStartOperationResult[any], error) {
-+			select {
-+			case started <- struct{}{}:
-+			default:
-+			}
-+			select {
-+			case <-release:
-+				return &nexus.HandlerStartOperationResultSync[any]{Value: "ok"}, nil
-+			case <-ctx.Done():
-+				return nil, ctx.Err()
-+			}
++func (s *workflowReplicatorSuite) TestApplyWorkflowStateBackfillIncomplete() {
++	testCases := []struct {
++		name          string
++		remoteBatches [][]*historypb.HistoryEvent
++		appends       int
++		errorContains string
++	}{
++		{
++			// The source returned the ancestor range but nothing from the run's own branch.
++			name: "ends at ancestor",
++			remoteBatches: [][]*historypb.HistoryEvent{
++				{{EventId: 1, Version: 100}, {EventId: 2, Version: 100}},
++				{{EventId: 3, Version: 100}},
++			},
++			appends:       2,
++			errorContains: "Backfill history ended early. Expected events up to 6, but got up to 3",
++		},
++		{
++			name: "gap",
++			remoteBatches: [][]*historypb.HistoryEvent{
++				{{EventId: 1, Version: 100}, {EventId: 2, Version: 100}},
++				{{EventId: 5, Version: 100}, {EventId: 6, Version: 100}},
++			},
++			appends:       1,
++			errorContains: "Backfill history is not contiguous. Expected event 3, but got 5",
++		},
++		{
++			name: "version mismatch",
++			remoteBatches: [][]*historypb.HistoryEvent{
++				{{EventId: 1, Version: 100}, {EventId: 2, Version: 100}},
++				{{EventId: 3, Version: 99}},
++			},
++			appends:       1,
++			errorContains: "Backfill event version does not match. Expected 100, but got 99",
 +		},
 +	}
-+	endpointName := env.createRandomExternalNexusServer(s.Context(), s.T(), handler)
-+	runID := s.startWorkflowWithTimeSkipping(env.TestEnv, tv, 4*time.Hour)
-+	poller := taskpoller.New(s.T(), env.FrontendClient(), env.Namespace().String())
 +
-+	_, err := poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
-+		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{
-+			{
-+				CommandType: enumspb.COMMAND_TYPE_SCHEDULE_NEXUS_OPERATION,
-+				Attributes: &commandpb.Command_ScheduleNexusOperationCommandAttributes{
-+					ScheduleNexusOperationCommandAttributes: &commandpb.ScheduleNexusOperationCommandAttributes{
-+						Endpoint: endpointName, Service: "service", Operation: "operation",
-+						Input: testcore.MustToPayload(s.T(), "input"),
++	for _, tc := range testCases {
++		s.Run(tc.name, func() {
++			namespaceID := uuid.NewString()
++			runID := uuid.NewString()
++			branchInfo := &persistencespb.HistoryBranch{
++				TreeId:   runID,
++				BranchId: uuid.NewString(),
++				Ancestors: []*persistencespb.HistoryBranchRange{
++					{
++						BranchId:    uuid.NewString(),
++						BeginNodeId: 1,
++						EndNodeId:   4,
 +					},
 +				},
-+			},
-+			startTimerCmd("timer-1", time.Hour),
-+		}}, nil
-+	})
-+	s.Require().NoError(err)
++			}
++			historyBranch, err := s.serializer.HistoryBranchToBlob(branchInfo)
++			s.NoError(err)
++			request := &historyservice.ReplicateWorkflowStateRequest{
++				WorkflowState: &persistencespb.WorkflowMutableState{
++					ExecutionInfo: &persistencespb.WorkflowExecutionInfo{
++						WorkflowId:  s.workflowID,
++						NamespaceId: namespaceID,
++						VersionHistories: &h
+```
+
+---
+
+### Incident Patch 3: `c8b6d18f` (2026-11-02)
+**Commit Message**: Add temporal_with_s3store build tag to compile out S3 archival (#12769)
+
+## What changed?
+
+Follow-up to https://github.com/temporalio/temporal/pull/12593:
+`temporal_minimal` now also compiles out S3 archival.
+
+`temporal_with_s3store` opts it back in.
+
+**The default build is unchanged.**
+
+A `temporal_minimal` server with an S3 archiver configured refuses to
+start:
+
+```
+config validation error: archival.history.provider.s3store: S3 archival is not compiled into this server; remove this config or rebuild with the temporal_with_s3store build tag
+```
+
+## Why?
+
+Every server binary includes the AWS SDK S3 client, even when archival
+to S3 is never configured.
+
+|                    | default  | `temporal_minimal` |
+| ------------------ | -------- |
+----------------------------------------- |
+| darwin/arm64 | 103.5 MB | 98.5 MB (−4.96 MB, −4.8%) |
+| linux/amd64 | 108.3 MB | 102.6 MB (−5.68 MB, −5.2%) |
+| packages compiled | 1447 | 1434 |
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +1/-0)
+```diff
+@@ -537,6 +537,7 @@ comma := ,
+ # end of the variable name is set. Each temporal_with_* tag needs one.
+ EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage
+ EXCLUDED_PACKAGES_temporal_with_elasticsearch := github.com/olivere/elastic/v7
++EXCLUDED_PACKAGES_temporal_with_s3store := github.com/aws/aws-sdk-go-v2/service/s3
+ 
+ # $(call server-deps,<tags>): the packages the server depends on when built with <tags>.
+ server-deps = $(shell CGO_ENABLED=$(CGO_ENABLED) go list -tags $(ALL_BUILD_TAGS),$(1) -deps ./cmd/server)
+```
+
+**File**: `common/archiver/provider/provider.go` (modified, +2/-9)
+```diff
+@@ -8,7 +8,6 @@ import (
+ 
+ 	"go.temporal.io/server/common/archiver"
+ 	"go.temporal.io/server/common/archiver/filestore"
+-	"go.temporal.io/server/common/archiver/s3store"
+ 	"go.temporal.io/server/common/config"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
+@@ -156,10 +155,7 @@ func (p *archiverProvider) GetHistoryArchiver(scheme string) (historyArchiver ar
+ 			historyArchiver, err = p.newGstorageHistoryArchiver()
+ 
+ 		case archiver.URISchemeS3store:
+-			if p.historyArchiverConfigs.S3store == nil {
+-				return nil, ErrArchiverConfigNotFound
+-			}
+-			historyArchiver, err = s3store.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.S3store)
++			historyArchiver, err = p.newS3storeHistoryArchiver()
+ 		default:
+ 			return nil, ErrUnknownScheme
+ 		}
+@@ -213,10 +209,7 @@ func (p *archiverProvider) GetVisibilityArchiver(scheme string) (archiver.Visibi
+ 			}
+ 			visibilityArchiver, err = filestore.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Filestore)
+ 		case archiver.URISchemeS3store:
+-			if p.visibilityArchiverConfigs.S3store == nil {
+-				return nil, ErrArchiverConfigNotFound
+-			}
+-			visibilityArchiver, err = s3store.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.S3store)
++			visibilityArchiver, err = p.newS3storeVisibilityArchiver()
+ 		case archiver.URISchemeGstorage:
+ 			visibilityArchiver, err = p.newGstorageVisibilityArchiver()
+ 
+```
+
+**File**: `common/archiver/provider/provider_s3store.go` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++//go:build !temporal_minimal || temporal_with_s3store
 +
-+	select {
-+	case <-started:
-+	case <-time.After(30 * time.Second):
-+		s.FailNow("Nexus operation did not start")
++package provider
++
++import (
++	"go.temporal.io/server/common/archiver"
++	"go.temporal.io/server/common/archiver/s3store"
++)
++
++func (p *archiverProvider) newS3storeHistoryArchiver() (archiver.HistoryArchiver, error) {
++	if p.historyArchiverConfigs.S3store == nil {
++		return nil, ErrArchiverConfigNotFound
 +	}
-+
-+	ms := s.getMutableState(env.TestEnv, tv.WorkflowID(), runID)
-+	history := env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
-+	scheduledEvent := s.RequireHistoryEvent(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_SCHEDULED)
-+	_, inCHASM := ms.State.ChasmNodes["Operations#"+strconv.FormatInt(scheduledEvent.EventId, 10)]
-+	s.True(inCHASM, "pending Nexus operation must be stored in the CHASM tree")
-+	s.Zero(ms.State.ExecutionInfo.GetTimeSkippingInfo().GetAccumulatedSkippedDuration().AsDuration())
-+	s.False(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
-+	s.False(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
-+
-+	release <- struct{}{}
-+	_, err = poller.PollAndHandleWorkflowTask(tv, taskpoller.DrainWorkflowTask)
-+	s.Require().NoError(err)
-+	_, err = poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
-+		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{completeWorkflowCmd()}}, nil
-+	})
-+	s.Require().NoError(err)
-+
-+	history = env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
-+	s.True(hasEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED))
-+	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
-+	s.Less(indexOfEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED),
-+		indexOfEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
-+	s.True(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
-+	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_COMPLETED))
++	return s3store.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.S3store)
 +}
 +
- // TestTimeSkipping_StartWithDelay_NoBound verifies that time-skipping with no
- // bound shifts a W
++func (p *archiverProvider) newS3storeVisibilityArchiver() (archiver.VisibilityArchiver, error) {
++	if p.visibilityArchiverConfigs.S3store == nil {
++		return nil, ErrArchiverConfigNotFound
++	}
++	return s3store.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.S3store)
++}
+```
+
+**File**: `common/archiver/provider/provider_s3store_excluded.go` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++//go:build temporal_minimal && !temporal_with_s3store
++
++package provider
++
++import (
++	"fmt"
++
++	"go.temporal.io/server/common/archiver"
++)
++
++// errS3storeExcluded is returned for the s3 scheme, whose archiver is excluded from this build.
++// It doesn't mention the build tag because it can reach API clients.
++// Operators get the build tag from the config validation error instead.
++var errS3storeExcluded = fmt.Errorf("%w %q: S3 archival is not available on this server", ErrUnknownScheme, archiver.URISchemeS3store)
++
++func (p *archiverProvider) newS3storeHistoryArchiver() (archiver.HistoryArchiver, error) {
++	return nil, errS3storeExcluded
++}
++
++func (p *archiverProvider) newS3storeVisibilityArchiver() (archiver.VisibilityArchiver, error) {
++	return nil, errS3storeExcluded
++}
+```
+
+**File**: `common/archiver/provider/provider_s3store_excluded_test.go` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++//go:build temporal_minimal && !temporal_with_s3store
++
++package provider
++
++import (
++	"go.temporal.io/server/common/archiver"
++	"go.temporal.io/server/common/config"
++)
++
++func (s *ProviderSuite) TestGetArchiver_S3storeExcluded() {
++	provider := NewArchiverProvider(
++		&config.HistoryArchiverProvider{},
++		&config.VisibilityArchiverProvider{},
++		nil,
++		nil,
++		s.mockExecutionManager,
++		s.logger,
++		s.metricsHandler,
++	)
++
++	historyArchiver, err := provider.GetHistoryArchiver(archiver.URISchemeS3store)
++	s.ErrorIs(err, ErrUnknownScheme)
++	s.EqualError(err, `unknown archiver scheme "s3": S3 archival is not available on this server`)
++	s.Nil(historyArchiver)
++
++	visibilityArchiver, err := provider.GetVisibilityArchiver(archiver.URISchemeS3store)
++	s.ErrorIs(err, ErrUnknownScheme)
++	s.EqualError(err, `unknown archiver scheme "s3": S3 archival is not available on this server`)
++	s.Nil(visibilityArchiver)
++}
+```
+
+**File**: `common/archiver/provider/provider_s3store_test.go` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++//go:build !temporal_minimal || temporal_with_s3store
++
++package provider
++
++import (
++	"go.temporal.io/server/common/archiver"
++	"go.temporal.io/server/common/config"
++)
++
++func (s *ProviderSuite) TestGetHistoryArchiver_ConfigNotFound_S3() {
++	scheme := archiver.URISchemeS3store
++
++	provider := NewArchiverProvider(
++		&config.HistoryArchiverProvider{
++			S3store: nil, // Config not set
++		},
++		nil,
++		nil,
++		nil,
++		s.mockExecutionManager,
++		s.logger,
++		s.metricsHandler,
++	)
++
++	result, err := provider.GetHistoryArchiver(scheme)
++	s.Error(err)
++	s.Equal(ErrArchiverConfigNotFound, err)
++	s.Nil(result)
++}
++
++func (s *ProviderSuite) TestGetVisibilityArchiver_ConfigNotFound_S3() {
++	scheme := archiver.URISchemeS3store
++
++	provider := NewArchiverProvider(
++		nil,
++		&config.VisibilityArchiverProvider{
++			S3store: nil, // Config not set
++		},
++		nil,
++		nil,
++		s.mockExecutionManager,
++		s.logger,
++		s.metricsHandler,
++	)
++
++	result, err := provider.GetVisibilityArchiver(scheme)
++	s.Error(err)
++	s.Equal(ErrArchiverConfigNotFound, err)
++	s.Nil(result)
++}
+```
+
+**File**: `common/archiver/provider/provider_test.go` (modified, +0/-43)
+```diff
+@@ -9,7 +9,6 @@ import (
+ 	"github.com/stretchr/testify/suite"
+ 	"go.temporal.io/server/common/archiver"
+ 	"go.temporal.io/server/common/archiver/filestore"
+-	"go.temporal.io/server/common/archiver/s3store"
+ 	"go.temporal.io/server/common/config"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
+@@ -220,27 +219,6 @@ func (s *ProviderSuite) TestGetHistoryArchiver_ConfigNotFound_Filestore() {
+ 	s.Nil(result)
+ }
+ 
+-func (s *ProviderSuite) TestGetHistoryArchiver_ConfigNotFound_S3() {
+-	scheme := s3store.URIScheme
+-
+-	provider := NewArchiverProvider(
+-		&config.HistoryArchiverProvider{
+-			S3store: nil, // Config not set
+-		},
+-		nil,
+-		nil,
+-		nil,
+-		s.mockExecutionManager,
+-		s.logger,
+-		s.metricsHandler,
+-	)
+-
+-	result, err := provider.GetHistoryArchiver(scheme)
+-	s.Error(err)
+-	s.Equal(ErrArchiverConfigNotFound, err)
+-	s.Nil(result)
+-}
+-
+ func (s *ProviderSuite) TestGetHistoryArchiver_ConcurrentAccess() {
+ 	scheme := "custom"
+ 
+@@ -464,27 +442,6 @@ func (s *ProviderSuite) TestGetVisibilityArchiver_ConfigNotFound_Filestore() {
+ 	s.Nil(result)
+ }
+ 
+-func (s *ProviderSuite) TestGetVisibilityArchiver_ConfigNotFound_S3() {
+-	scheme := s3store.URIScheme
+-
+-	provider := NewArchiverProvider(
+-		nil,
+-		&config.VisibilityArchiverProvider{
+-			S3store: nil, // Config not set
+-		},
+-		nil,
+-		nil,
+-		s.mockExecutionManager,
+-		s.logger,
+-		s.metricsHandler,
+-	)
+-
+-	result, err := provider.GetVisibilityArchiver(scheme)
+-	s.Error(err)
+-	s.Equal(ErrArchiverConfigNotFound, err)
+-	s.Nil(result)
+-}
+-
+ func (s *ProviderSuite) TestGetVisibilityArchiver_ConcurrentAccess() {
+ 	scheme := "custom"
+ 
+```
+
+**File**: `common/config/archival.go` (modified, +8/-2)
+```diff
+@@ -33,14 +33,20 @@ func (p *HistoryArchiverProvider) validate() error {
+ 	if p == nil {
+ 		return nil
+ 	}
+-	return p.Gstorage.validate("archival.history.provider.gstorage")
++	if err := p.Gstorage.validate("archival.history.provider.gstorage"); err != nil {
++		return err
++	}
++	return p.S3store.validate("archival.history.provider.s3store")
+ }
+ 
+ func (p *VisibilityArchiverProvider) validate() error {
+ 	if p == nil {
+ 		return nil
+ 	}
+-	return p.Gstorage.validate("archival.visibility.provider.gstorage")
++	if err := p.Gstorage.validate("archival.visibility.provider.gstorage"); err != nil {
++		return err
++	}
++	return p.S3store.validate("archival.visibility.provider.s3store")
+ }
+ 
+ func isArchivalConfigValid(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12865** (2026-10-31): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12858** (closed): Separate parallel suite runner from server assertions (@stephanos)
-- **PR #12851** (2026-10-31): Bump auto-scaled-workers to include k8s build-tag gate (@gcristea-temporal)
-- **PR #12850** (2026-10-31): [release/v1.31.x] Bump auto-scaled-workers to v0.0.1-1.31.2 (@gcristea-temporal)
-- **PR #12849** (2026-10-31): [release/v1.32.x] Bump auto-scaled-workers to v0.2.1-1.32.0.158.0 (@gcristea-temporal)
-- **PR #12848** (2026-10-31): call chasm time skipping APIs in workflow time skipping path (@feiyang3cat)
+- **PR #12903** (2026-11-03): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12889** (2026-11-02): Add opaque persistence_metadata to WorkflowExecutionInfo (@collinvandyck)
+- **PR #12888** (2026-11-02): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12885** (2026-11-02): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12871** (2026-11-01): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12869** (2026-11-02): Limit frequency of emitting worker metrics event (@rkannan82)
 
 ---
 
@@ -2389,37 +2981,36 @@ nexus is migrated from HSM to CHASM
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. call chasm time skipping APIs in workflow time skipping path (#12848)
+## X. Add throttle-aware retry controller for history task processing (#12094)
 
 **RULE**:
-When implementing operations in `chasm/lib/workflow/workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/dynamicconfig/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b818208e`: call chasm time skipping APIs in workflow time skipping path (#12848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `709d9cf0`: Add throttle-aware retry controller for history task processing (#12094). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/workflow/workflow.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/dynamicconfig/constants.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_ callback.Host                 = (*Workflow)(nil)
-	_ callback.Holder               = (*WorkflowUpdate)(nil)
-	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
-// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
-// Mutable State checks the workflow's legacy state and in-flight work separately.
-func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
-	return w.pendingNexusOperationCount() == 0
-}
+	TaskThrottleController = NewGlobalTypedSetting(
+		"history.taskThrottleController",
+		DefaultTaskThrottleControllerSettings,
+		`TaskThrottleController tunes host level pacing of history task retries that a namespace
+APS or persistence rate limiter refused. Unset fields keep their defaults.
+Fields: Enabled, MinRate, MaxRate, InitialRate, KeyTTL, Beta, IncreaseRatio, LossThreshold,
+Window, MaxKeys. See TaskThrottleControllerSettings comments for details.`,
+	)
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	_ callback.Host   = (*Workflow)(nil)
-	_ callback.Holder = (*WorkflowUpdate)(nil)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b818208e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `709d9cf0` are properly handled with clean fallback behavior.

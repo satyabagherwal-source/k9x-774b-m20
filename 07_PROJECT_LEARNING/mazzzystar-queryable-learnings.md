@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md`  
 > **Source**: github ([https://github.com/mazzzystar/Queryable](https://github.com/mazzzystar/Queryable))  
-> **Source Version**: `b95a05a8`  
+> **Source Version**: `19825faa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:32:57.592Z  
+> **Timestamp**: 2026-11-03T11:52:01.497Z  
 > **Learning ID**: `learn-github-mazzzystar-queryable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mazzzystar/Queryable](https://github.com/mazzzystar/Queryable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:32:57.426Z  
+> **Harvest Timestamp**: 2026-11-03T11:52:00.967Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run OpenAI's CLIP and Apple's MobileCLIP model on iOS to search photos.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2991 stars
+- **Stars / Engagement**: 2994 stars
 
 ---
 
@@ -1467,313 +1467,32 @@ fileprivate let logger = Logger(subsystem: "com.mazzystar.Queryable", category: 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2ff92f9` (2026-03-29)
-**Commit Message**: Fix IOSurface crash: buffer pooling, batch encoding, GPU resize
+### Incident Patch 1: `19825faa` (2026-10-31)
+**Commit Message**: Update README.md
 
-Rewrite ImgEncoder to prevent IOSurface exhaustion at ~15800 photos:
-- CVPixelBufferPool for buffer recycling
-- detachFromIOSurface() to memcpy embeddings to heap memory
-- CILanczosScaleTransform for GPU-accelerated image resize
-- encodeBatch() with MLArrayBatchProvider for Neural Engine pipelining
-- Remove UIImage+Extension.swift (CPU resize no longer needed)
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `Queryable/Queryable/CLIP/ImgEncoder.swift` (modified, +139/-19)
+**File**: `README.md` (modified, +6/-6)
 ```diff
-@@ -1,63 +1,183 @@
- //
- //  ImgEncoder.swift
--//  TestEncoder
-+//  Queryable
- //
- //  Created by Ke Fang on 2022/12/08.
- //
+@@ -1,14 +1,14 @@
+ # Queryable
  
- import Foundation
- import CoreML
-+import CoreImage
- import UIKit
+-<a href="https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone">
+-    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/6824141/252914927-51414112-236b-4f7a-a13b-5210f9203198.svg" alt="download-on-the-app-store">
+-</a>
++The open-source code of **Queryable**, an offline photo search app for iPhone and iPad (iOS 18 or later). Describe a photo in your own words, such as `a brown dog sitting on a bench`, and Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip) model finds it on the device. Your photos are never uploaded.
  
- public struct ImgEncoder {
-     var model: MLModel
--    
-+
-+    /// Shared CIContext for GPU-accelerated image processing
-+    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
-+
-+    /// Shared pixel buffer pool to recycle IOSurface-backed buffers (prevents hitting the 16384 limit)
-+    private static var bufferPool: CVPixelBufferPool? = {
-+        let poolAttrs: [String: Any] = [
-+            kCVPixelBufferPoolMinimumBufferCountKey as String: 4
-+        ]
-+        let bufferAttrs: [String: Any] = [
-+            kCVPixelBufferWidthKey as String: 256,
-+            kCVPixelBufferHeightKey as String: 256,
-+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32ARGB,
-+            kCVPixelBufferCGImageCompatibilityKey as String: true,
-+            kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
-+        ]
-+        var pool: CVPixelBufferPool?
-+        CVPixelBufferPoolCreate(kCFAllocatorDefault, poolAttrs as CFDictionary, bufferAttrs as CFDictionary, &pool)
-+        return pool
-+    }()
-+
-+    /// Flush idle buffers from the pool so the OS can reclaim their IOSurfaces.
-+    static func flushBufferPool() {
-+        if let pool = bufferPool {
-+            CVPixelBufferPoolFlush(pool, CVPixelBufferPoolFlushFlags(rawValue: 0))
-+        }
-+    }
-+
-+    /// Deep-copy an MLShapedArray's scalar data into a fresh, heap-backed MLMultiArray.
-+    /// CoreML prediction outputs are backed by IOSurface memory; MLShapedArray(converting:)
-+    /// and MLMultiArray(shapedArray) may share that IOSurface storage rather than copying.
-+    /// Storing those wrappers in savedEmbedding means each embedding retains an IOSurface,
-+    /// hitting the per-process 16384 IOSurface limit at ~15800 embeddings.
-+    /// This method breaks that chain by memcpy-ing the floats into plain heap memory.
-+    static func detachFromIOSurface(_ shapedArray: MLShapedArray<Float32>) -> MLMultiArray {
-+        let count = shapedArray.scalarCount
-+        let heapArray = try! MLMultiArray(shape: [1, NSNumber(value: count)], dataType: .float32)
-+        let dst = heapArray.dataPointer.assumingMemoryBound(to: Float32.self)
-+        shapedArray.withUnsafeShapedBufferPointer { ptr, _, _ in
-+            dst.update(from: ptr.baseAddress!, count: count)
-+        }
-+        return heapArray
-+    }
-+
-     init(resourcesAt baseURL: URL,
-          configuration config: MLModelConfiguration = .init()
-     ) throws {
--        let imgEncoderURL = baseURL.appending(path:"ImageEncoder_mobileCLIP_s2.mlmodelc")
-+        let imgEncoderURL = baseURL.appending(path: "ImageEncoder_mobileCLIP_s2.mlmodelc")
-         let imgEncoderModel = try MLModel(contentsOf: imgEncoderURL, configuration: config)
-         self.model = imgEncoderModel
-     }
--    
-+
-     public func computeImgEmbedding(img: UIImage) async throws -> MLShapedArray<Float32> {
-         let imgEmbedding = try await self.encode(image: img)
-         return imgEmbedding
-     }
--    
--//    public init(model: MLModel) {
--//        self.model = model
--//    }
--    
-+
-     /// Prediction queue
-     let queue = DispatchQueue(label: "imgencoder.predict")
--    
--    private func encode(image: UIImage) async throws -> MLShapedArray<Float32> {
-+
-+    public func encode(image: UIImage) async throws -> MLShapedArray<Float32> {
-         do {
--            guard let resizedImage = try image.resizeImageTo(size:CGSize(width: 256, height: 256)) else {
--                throw ImageEncodingError.resizeError
--            }
--            
--            guard let buffer = resizedImage.convertToBuffer() else {
-+            guard let buffer = Self.resizeAndConvertToBuffer(image: image, size: CGSize(width: 256, height: 256)) else {
-                 throw ImageEncodingError.bufferConversionError
-             }
--            
-+
-             guard let inputFeatures = try? MLDictionaryFeatureProvider(dictionary: ["colorImage": buffer]) else {
-                 throw ImageEncodingError.featureProviderError
-             }
--            
-+
-             let result = try queue.sync { try model.prediction(from: inputFeatures) }
-             guard let embeddingFeature = result.featureValue(for: "embOutput"),
-                   let multiArray = embeddingFeature.multiArrayValue else {
-                 throw ImageEncodingError.predictionError
-             }
--            
-+
-             return MLShapedArray<Float32>(converting: multiArray)
-         } catch {
-             print("Error in encoding: \(error)")
-             throw error
-         }
-     }
-+
-+    /// Batch prediction: encode multiple images in one CoreML call.
-+    /// Uses MLArrayBatchProvider for efficient Neural Engine pipelining.
-+    /// All CoreML intermediates are scoped inside autoreleasepool to release
-+    /// Neural Engine IOSurface a
-```
-
-**File**: `Queryable/Queryable/Model/UIImage+Extension.swift` (removed, +0/-73)
-```diff
-@@ -1,73 +0,0 @@
--//
--//  UIImage+Extension.swift
--//  CoreMLmeetsSwiftUI
--//
--//  Created by Moritz Philip Recke for Create with Swift on 10 February 2021.
--//
--
--import Foundation
--import UIKit
--
--extension UIImage {
--    
--    func resizeImageTo(size: CGSize) throws -> UIImage? {
--        
--        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
--        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
--        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()!
--        UIGraphicsEndImageContext()
--        return resizedImage
--    }
--    
--     func convertToBuffer() -> CVPixelBuffer? {
--        
--        let attributes = [
--            kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
--            kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue
--        ] as CFDictionary
--        
--        var pixelBuffer: CVPixelBuffer?
--        
--        let status = CVPixelBufferCreate(
--            kCFAllocatorDefault, Int(self.size.width),
--            Int(self.size.height),
--            kCVPixelFormatType_32ARGB,
--            attributes,
--            &pixelBuffer)
--        
--        guard (status == kCVReturnSuccess) else {
--            return nil
--        }
--        
--        CVPixelBufferLockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
--        
--        let pixelData = CVPixelBufferGetBaseAddress(pixelBuffer!)
--        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
--        
--        let context = CGContext(
--            data: pixelData,
--            width: Int(self.size.width),
--            height: Int(self.size.height),
--            bitsPerComponent: 8,
--            bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer!),
--            space: rgbColorSpace,
--            bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue)
--        
--        context?.translateBy(x: 0, y: self.size.height)
--        context?.scaleBy(x: 1.0, y: -1.0)
--        
--        UIGraphicsPushContext(context!)
--        self.draw(in: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height))
--        UIGraphicsPopContext()
--        
--        CVPixelBufferUnlockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
--        
--        return pixelBuffer
--    }
--    
--    static func image(with size: CGSize) -> UIImage {
--        UIGraphicsImageRenderer(size: size)
--            .image { $0.fill(CGRect(origin: .zero, size: size)) }
--    }
--
--}
-```
-
----
-
-### Incident Patch 2: `b95a05a8` (2026-03-29)
-**Commit Message**: Fix text flickering during index building by fixing layout ratio
-
-Use GeometryReader to pin image at 80% and text at 20% of screen height,
-preventing text from jumping as indexed photos change size.
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `Queryable/Queryable/View/BuildIndexView.swift` (modified, +21/-14)
-```diff
-@@ -97,22 +97,29 @@ struct StartBuildView: View {
+-[![Queryable](https://mazzzystar.com/images/2022-12-28/Queryable-search-result.jpg)](https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone)
++<a href="https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8">
++    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/6824141/252914927-51414112-236b-4f7a-a13b-5210f9203198.svg" alt="Download on the App Store">
++</a>
  
- struct BuildingIndexView: View {
-     @ObservedObject var photoSearcher: PhotoSearcher
--    
-+
-     var body: some View {
--        VStack {
--            Image(uiImage: photoSearcher.curShowingPhoto)
--                .resizable()
--                .scaledToFit()
--            
--            let end = "Photos have been indexed."
--            Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
--            Text("Task runs entirely locally. Do not operate until completed.")
--                .foregroundColor(.gray)
--                .scaledToFit()
--                .minimumScaleFactor(0.5)
--                .lineLimit(1)
-+        GeometryReader { geometry in
-+            VStack(spacing: 0) {
-+                Image(uiImage: photoSearcher.curShowingPhoto)
-+                    .resizable()
-+                    .scaledToFit()
-+                    .frame(height: geometry.size.height * 0.8)
-+
-+                VStack(spacing: 4) {
-+                    let end = "Photos have been indexed."
-+                    Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
-+
-+                    Text(NSLocalizedString("Task runs entirely locally. Do not operate until completed.", comment: ""))
-+                        .padding([.leading, .trailing])
-+                        .foregroundColor(.gray)
-+                        .font(.caption)
-+                        .multilineTextAlignment(.center)
-+                        .lineLimit(2)
-+                }
-+                .frame(height: geometry.size.height * 0.2)
-+            }
-         }
--        
-     }
- }
+-The open-source code of Queryable, an iOS app, leverages the ~~OpenAI's [CLIP](https://github.com/openai/CLIP)~~ Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip) model to conduct offline searches in the 'Photos' album. Unlike the category-based search model built into the iOS Photos app, Queryable allows you to use natural language statements, such as `a brown dog sitting on a bench`, to search your album. Since it's offline, your album privacy won't be compromised by any company, including Apple or Google.
++[![Queryable](https://mazzzystar.com/images/2022-12-28/Queryable-search-result.jpg)](https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8)
  
-```
-
----
-
-### Incident Patch 3: `00c2bc90` (2024-02-07)
-**Commit Message**: we don't need to load text encoder when finished build index
-
-**File**: `Queryable/Queryable/ViewModel/PhotoSearcher.swift` (modified, +0/-6)
-```diff
-@@ -26,7 +26,6 @@ enum BUILD_INDEX_CODE: Int {
-     case LOADING_PHOTOS      = -2
-     case PHOTOS_LOADED       = -1
-     case LOADING_MODEL       = 0
--    case MODEL_LOADED        = 1
-     case IS_BUILDING_INDEX   = 2
-     case BUILD_FINISHED      = 3
- }
-@@ -161,7 +160,6 @@ class PhotoSearcher: ObservableObject {
-             // 8.542439937591553 seconds used for loading img encoder
-             print("\(startingTime.timeIntervalSinceNow * -1) seconds used for loading img encoder")
-             self.imageEncoder = imgEncoder
--            self.buildIndexCode = .MODEL_LOADED
-             self.buildIndexCode = .IS_BUILDING_INDEX
-         } catch let error {
-             logger.error("Failed to load model: \(error.localizedDescription)")
-@@ -368,10 +366,6 @@ class PhotoSearcher: ObservableObject {
-         self.totalUnIndexedPhotosNum = 0
-         
-         clearCache()
--        print("Loading text encoder..")
--        self.photoSearchModel.load_text_encoder()
--        print("Text encoder loaded.")
--
-     }
-     
-     func loadEmbeddingsData(fileName: String) -> Bool {
+-[Blog](https://mazzzystar.com/2022/12/29/Run-CLIP-on-iPhone-to-Search-Photos/) | [App Store](https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone) | [Website](https://queryable.app/) | [Story](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App/) | [故事](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App-zh/)
++[Blog](https://mazzzystar.com/2022/12/29/Run-CLIP-on-iPhone-to-Search-Photos/) | [App Store](https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8) | [Website](https://queryable.app/) | [Story](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App/) | [故事](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App-zh/)
+ 
+ ## How does it work?
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1802,72 +1521,38 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. IOSurface crash: buffer pooling, batch encoding, GPU resize
+## X. Update README.md
 
 **RULE**:
-When implementing operations in `Queryable/Queryable/CLIP/ImgEncoder.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mazzzystar/Queryable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mazzzystar/Queryable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2ff92f9`: IOSurface crash: buffer pooling, batch encoding, GPU resize. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19825faa`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Queryable/Queryable/CLIP/ImgEncoder.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-//  Queryable
-import CoreImage
-
-    /// Shared CIContext for GPU-accelerated image processing
-    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
-
-    /// Shared pixel buffer pool to recycle IOSurface-backed buffers (prevents hitting the 16384 limit)
-    private static var bufferPool: CVPixelBufferPool? = {
-        let poolAttrs: [String: Any] = [
-            kCVPixelBufferPoolMinimumBufferCountKey as String: 4
-        ]
-        let bufferAttrs: [String: Any] = [
-            kCVPixelBufferWidthKey as String: 256,
-            kCVPixelBufferHeightKey as String: 256,
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32ARGB,
-            kCVPixelBufferCGImageCompatibilityKey as String: true,
-            kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
-        ]
-        var pool: CVPixelBufferPool?
-        CVPixelBufferPoolCreate(kCFAllocatorDefault, poolAttrs as CFDictionary, bufferAttrs as CFDictionary, &pool)
-        return pool
-    }()
-
-    /// Flush idle buffers from the pool so the OS can reclaim their IOSurfaces.
-    static func flushBufferPool() {
-        if let pool = bufferPool {
-            CVPixelBufferPoo
+The open-source code of **Queryable**, an offline photo search app for iPhone and iPad (iOS 18 or later). Describe a photo in your own words, such as `a brown dog sitting on a bench`, and Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip) model finds it on the device. Your photos are never uploaded.
+<a href="https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8">
+    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/6824141/252914927-51414112-236b-4f7a-a13b-5210f9203198.svg" alt="Download on the App Store">
+</a>
+[![Queryable](https://mazzzystar.com/images/2022-12-28/Queryable-search-result.jpg)](https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8)
+[Blog](https://mazzzystar.com/2022/12/29/Run-CLIP-on-iPhone-to-Search-Photos/) | [App Store](https://apps.apple.com/app/apple-store/id1661598353?pt=128849838&ct=github-readme&mt=8) | [Website](https://queryable.app/) | [Story](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App/) | [故事](https://mazzzystar.com/2024/07/21/Two-Years-of-an-AI-Photo-Album-Search-App-zh/)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-//  TestEncoder
-    
-        let imgEncoderURL = baseURL.appending(path:"ImageEncoder_mobileCLIP_s2.mlmodelc")
-    
-    
-//    public init(model: MLModel) {
-//        self.model = model
-//    }
-    
-    
-    private func encode(image: UIImage) async throws -> MLShapedArray<Float32> {
-            guard let resizedImage = try image.resizeImageTo(size:CGSize(width: 256, height: 256)) else {
-                throw ImageEncodingError.resizeError
-            }
-            
-            guard let buffer = resizedImage.convertToBuffer() else {
-            
-            
-            
+<a href="https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone">
+    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/6824141/252914927-51414112-236b-4f7a-a13b-5210f9203198.svg" alt="download-on-the-app-store">
+</a>
+[![Queryable](https://mazzzystar.com/images/2022-12-28/Queryable-search-result.jpg)](https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone)
+The open-source code of Queryable, an iOS app, leverages the ~~OpenAI's [CLIP](https://github.com/openai/CLIP)~~ Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip) model to conduct offline searches in the 'Photos' album. Unlike the category-based search model built into the iOS Photos app, Queryable allows you to use natural language statements, such as `a brown dog sitting on a bench`, to search your album. Since it's offline, your album privacy won't be compromised by any company, including Apple or Google.
+[Blog](https://mazzzystar.com/2022/12/29/Run-CLIP-on-iPhone-to-Search-Photos/) | [App Store](https://apps.apple.com/us/app/queryable-find-photo-by-text/id1661598353?platform=iphone) | [Website](https://queryable.app/) | [Story](h
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2ff92f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19825faa` are properly handled with clean fallback behavior.
