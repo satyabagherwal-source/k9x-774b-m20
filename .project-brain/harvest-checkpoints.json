@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:59:06.274Z",
+  "last_updated": "2026-11-04T23:06:28.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "7d982a1d1baefa605d20e968e6a7664021581c4fa8be6ff27b7ecd6ac94cca8e",
-      "verified_at": "2026-10-31T08:06:56.982Z",
+      "content_hash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
+      "verified_at": "2026-11-04T23:06:13.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:06:56.982Z"
+      "last_updated": "2026-11-04T23:06:13.367Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
-      "verified_at": "2026-11-04T21:26:19.333Z",
+      "content_hash": "33a77c3a033bee8c10f472af88d56c478a487825c78a5983e499171f6830a933",
+      "verified_at": "2026-11-04T23:06:27.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:26:19.333Z"
+      "last_updated": "2026-11-04T23:06:27.638Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
-      "verified_at": "2026-10-31T15:49:45.478Z",
+      "content_hash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
+      "verified_at": "2026-11-04T23:06:19.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:49:45.478Z"
+      "last_updated": "2026-11-04T23:06:19.609Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
-      "verified_at": "2026-11-04T00:10:57.075Z",
+      "content_hash": "c1cebb1c17fd1a4a53db237c8a90763cff10e008ea0b3ced7ca82eda7bda6865",
+      "verified_at": "2026-11-04T23:06:28.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:10:57.075Z"
+      "last_updated": "2026-11-04T23:06:28.316Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:59:06.204Z",
+  "last_updated": "2026-11-04T23:06:28.197Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31646,7 +31646,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "7d982a1d1baefa605d20e968e6a7664021581c4fa8be6ff27b7ecd6ac94cca8e",
+      "content_hash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -31701,7 +31701,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-31T08:06:56.864Z",
+      "verified_at": "2026-11-04T23:06:13.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42938,8 +42938,8 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "49c79f42",
-      "content_hash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
+      "source_version": "07e84ec5",
+      "content_hash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
@@ -42962,6 +42962,11 @@
           "number": 6237,
           "title": "core): css var() fallbacks, order-independent custom properties, and no crash on",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7011,
+          "title": "deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#11598)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42969,7 +42974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:49:45.362Z",
+      "verified_at": "2026-11-04T23:06:19.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47045,8 +47050,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "4b2ecad6",
-      "content_hash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
+      "source_version": "bbeade35",
+      "content_hash": "c1cebb1c17fd1a4a53db237c8a90763cff10e008ea0b3ced7ca82eda7bda6865",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -47109,6 +47114,11 @@
           "number": 6671,
           "title": "route sum(int8) to the DataFusion aggregate backend (#7143)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7012,
+          "title": "align Antithesis SDK with proptest fork (#7215)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47116,7 +47126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:10:56.950Z",
+      "verified_at": "2026-11-04T23:06:28.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71707,13 +71717,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "66955b13",
-      "content_hash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "33a77c3a033bee8c10f472af88d56c478a487825c78a5983e499171f6830a933",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -71823,7 +71833,7 @@
         {
           "number": 6978,
           "title": "Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71831,7 +71841,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:26:19.200Z",
+      "verified_at": "2026-11-04T23:06:27.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177728,14 +177738,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6978,
       "title": "Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "66955b13",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T21:26:19.200Z"
+      "verified_at": "2026-11-04T23:06:27.473Z"
     },
     "rule-6979": {
       "learning_id": "rule-6979",
@@ -178184,6 +178194,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:59:06.190Z"
+    },
+    "rule-7011": {
+      "learning_id": "rule-7011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7011,
+      "title": "deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#11598)",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "07e84ec5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:06:19.476Z"
+    },
+    "rule-7012": {
+      "learning_id": "rule-7012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7012,
+      "title": "align Antithesis SDK with proptest fork (#7215)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "bbeade35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:06:28.172Z"
     }
   },
   "aliases": {

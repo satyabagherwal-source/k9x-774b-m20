@@ -7396,3 +7396,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-04T22:58:51.518Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `e9779b6f` | Multi-dimensional audit evidence | 2026-11-04T22:58:52.673Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `75a200a3` | Multi-dimensional audit evidence | 2026-11-04T22:59:06.259Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-04T23:06:13.357Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `07e84ec5` | Multi-dimensional audit evidence | 2026-11-04T23:06:19.591Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `66955b13` | Multi-dimensional audit evidence | 2026-11-04T23:06:27.618Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `bbeade35` | Multi-dimensional audit evidence | 2026-11-04T23:06:28.286Z |

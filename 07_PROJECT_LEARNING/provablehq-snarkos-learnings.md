@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `a7f0c300`  
+> **Source Version**: `66955b13`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:29:59.316Z  
+> **Timestamp**: 2026-11-04T23:06:27.084Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:29:58.923Z  
+> **Harvest Timestamp**: 2026-11-04T23:06:27.076Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,104 +1987,264 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7f0c300` (2026-11-04)
-**Commit Message**: Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2
+### Incident Patch 1: `66955b13` (2026-11-04)
+**Commit Message**: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
 
-**File**: `.github/workflows/stress-test.yml` (modified, +12/-3)
+Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959
+
+**File**: `Cargo.lock` (modified, +155/-170)
 ```diff
-@@ -43,7 +43,7 @@ on:
-         options: [testnet, mainnet]
-         default: testnet
-       params:
--        description: "Test parameter overrides, e.g. rate=200,duration=300"
-+        description: "Test parameter overrides, e.g. rate=50,duration=300"
-         default: ""
-       follow_run_id:
-         description: "Internal: keep following this run"
-@@ -189,7 +189,9 @@ jobs:
-           ACTOR: ${{ steps.req.outputs.actor }}
-         run: |
-           source "$RUNNER_TEMP/gate.sh"
--          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS"
-+          # Only a rejection's message reaches the check.
-+          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
-+          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
+@@ -521,11 +521,11 @@ dependencies = [
  
-       - name: Follow the run
-         id: follow
-@@ -273,11 +275,18 @@ jobs:
-           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
-           [[ "$(jq -r .verdict status.json)" == pass ]]
+ [[package]]
+ name = "bit-set"
+-version = "0.8.0"
++version = "0.11.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
++checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
+ dependencies = [
+- "bit-vec 0.8.0",
++ "bit-vec 0.10.1",
+ ]
  
--      - name: Report orchestration failure
-+      - name: Report a rejection or an orchestration failure
-         if: failure() && steps.check.outputs.id != '' && steps.follow.outputs.handoff != 'false'
-         env:
-           CHECK_ID: ${{ steps.check.outputs.id }}
-         run: |
-+          if [[ -s rejected.txt ]]; then
-+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
-+              -f status=completed -f conclusion=failure \
-+              -f 'output[title]=Request rejected' \
-+              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
-+            exit 0
-+          fi
-           gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
-             -f status=completed -f conclusion=action_required \
-             -f 'output[title]=Orchestration interrupted' \
+ [[package]]
+@@ -536,9 +536,13 @@ checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
+ 
+ [[package]]
+ name = "bit-vec"
+-version = "0.8.0"
++version = "0.10.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
++checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
++dependencies = [
++ "borsh",
++ "serde",
++]
+ 
+ [[package]]
+ name = "bitflags"
+@@ -608,10 +612,24 @@ version = "1.8.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f"
+ dependencies = [
++ "borsh-derive",
+  "bytes",
+  "cfg_aliases",
+ ]
+ 
++[[package]]
++name = "borsh-derive"
++version = "1.8.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
++dependencies = [
++ "once_cell",
++ "proc-macro-crate",
++ "proc-macro2",
++ "quote 1.0.47",
++ "syn 3.0.3",
++]
++
+ [[package]]
+ name = "bs58"
+ version = "0.5.1"
+@@ -1106,6 +1124,12 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+ 
++[[package]]
++name = "core_detect"
++version = "1.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
++
+ [[package]]
+ name = "cpubits"
+ version = "0.1.1"
+@@ -1487,7 +1511,7 @@ checksum = "bba95f299f6b9cd47f68a847eca2ae9060a2713af532dc35c342065544845407"
+ dependencies = [
+  "proc-macro2",
+  "quote 1.0.47",
+- "structmeta 0.3.0",
++ "structmeta",
+  "syn 2.0.119",
+ ]
+ 
+@@ -2489,7 +2513,7 @@ dependencies = [
+  "libc",
+  "percent-encoding",
+  "pin-project-lite",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "system-configuration",
+  "tokio",
+  "tower-service",
+@@ -3365,9 +3389,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "num-bigint"
+-version = "0.4.8"
++version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
++checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
+ dependencies = [
+  "num-integer",
+  "num-traits",
+@@ -3981,6 +4005,15 @@ dependencies = [
+  "wnaf",
+ ]
+ 
++[[package]]
++name = "proc-macro-crate"
++version = "3.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
++dependencies = [
++ "toml_edit",
++]
++
+ [[package]]
+ name = "proc-macro2"
+ version = "1.0.107"
+@@ -3992,18 +4025,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "proptest"
+-version = "1.6.0"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
++checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
+ dependencies = [
+- "bit-set 0.8.0",
+- "bit-vec 0.8.0",
++ "bit-set 0.11.1",
++ "bit-vec 0.10.1",
+  "bitflags 2.13.1",
+- "lazy_static",
++ "chacha20 0.10.2",
++ "core_detect",
+  "num-traits",
+- "rand 0.8.7",
+- "rand_chacha 0.3.1",
+- "rand_xorshift 0.3.0",
++ "rand 0.10.3",
++ "rand_xorshift",
+  "regex-syntax",
+  "rusty-fork",
+  "tempfile",
+@@ -4096,7 +4129,7 @@ dependencies = [
+  "quinn-udp",
+  "rustc-hash",
+  "rustls",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "thiserror 2.0.20",
+  "tokio",
+  "tracing",
+@@ -4135,7 +4168,7 @@ dependencies = [
+  "cfg_aliases",
+  "libc",
+  "once_cell",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "tracing",
+  "windows-sys 0.61.2",
+ ]
+@@ -4173,8 +4206,6 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "22f6172bdec972074665ed81ed53b71da00bfc44b65a753cfde883ec4c702a1a"
+ dependencies = [
+- "libc",
+- "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+ ]
+ 
+@@ -4199,16 +4230,6 @@ dependencies = [
+  "rand_core 0.10.1",
+ ]
+ 
+-[[package]]
+-name = "rand_chacha"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
+-dependencies = [
+- "ppv-lite86",
+- "rand_core 0.6.4",
+-]
+-
+ [[package]]
+ name = "rand_chacha"
+ version = "0.9.0"
+@@ -4272,15 +4293,6 @@ dependencies = [
+  "rand_core 0.10.1",
+ ]
+ 
+-[[package]]
+-name = "rand_xorshift"
+-version = "0.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
+-dependencies =
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "9796eb19dee4fd2c671be9b3a1322eda62586991" #staging
++rev = "a62f989591d78bcf10877accd5df1877c3e662da" #staging
+ #version = "=4.12.0"
+ default-features = false
+ 
+```
+
+**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
+```diff
+@@ -2066,7 +2066,7 @@ pub mod prop_tests {
+         type Strategy = BoxedStrategy<CryptoTestRng>;
+ 
+         fn arbitrary_with(_: Self::Parameters) -> Self::Strategy {
+-            use proptest::prelude::RngCore as ProptestRngCore;
++            use proptest::prelude::Rng as ProptestRng;
+             Just(0).prop_perturb(|_, mut rng| CryptoTestRng(ChaChaRng::seed_from_u64(rng.next_u64()))).boxed()
+         }
+     }
 ```
 
 ---
 
-### Incident Patch 2: `78a526ef` (2026-11-04)
-**Commit Message**: Say rejected rather than refused
+### Incident Patch 2: `e23a7374` (2026-11-04)
+**Commit Message**: Merge pull request #4626 from aleo-labs-protocol/ci/bump-snarkvm-twice-weekly
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
+Run the snarkVM bump workflow on Mondays and Thursdays
 
-**File**: `.github/workflows/stress-test.yml` (modified, +6/-6)
+**File**: `.github/workflows/bump-snarkvm.yml` (modified, +1/-1)
 ```diff
-@@ -189,8 +189,8 @@ jobs:
-           ACTOR: ${{ steps.req.outputs.actor }}
-         run: |
-           source "$RUNNER_TEMP/gate.sh"
--          # Only a refusal's message reaches the check.
--          trap 'cat enqueue.err >&2; sed -n "s/^refused: //p" enqueue.err | head -c 2000 > refused.txt' EXIT
-+          # Only a rejection's message reaches the check.
-+          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
-           gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
+@@ -1,7 +1,7 @@
+ name: Bump snarkVM
+ on:
+   schedule:
+-    - cron: '0 6 * * 1'
++    - cron: '0 6 * * 1,4'
+   workflow_dispatch:
  
-       - name: Follow the run
-@@ -275,16 +275,16 @@ jobs:
-           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
-           [[ "$(jq -r .verdict status.json)" == pass ]]
- 
--      - name: Report a refusal or an orchestration failure
-+      - name: Report a rejection or an orchestration failure
-         if: failure() && steps.check.outputs.id != '' && steps.follow.outputs.handoff != 'false'
-         env:
-           CHECK_ID: ${{ steps.check.outputs.id }}
-         run: |
--          if [[ -s refused.txt ]]; then
-+          if [[ -s rejected.txt ]]; then
-             gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
-               -f status=completed -f conclusion=failure \
--              -f 'output[title]=Request refused' \
--              -f "output[summary]=The Gauntlet host refused this request and started no run: $(cat refused.txt)" >/dev/null
-+              -f 'output[title]=Request rejected' \
-+              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
-             exit 0
-           fi
-           gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
+ concurrency:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4626** (2026-11-04): Run the snarkVM bump workflow on Mondays and Thursdays (@cbeck88)
+- **PR #4624** (2026-11-04): Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959 (@aleo-labs-merge-bot[bot])
+- **PR #4623** (2026-11-04): Open snarkVM bump PRs with the merge-bot app (@cbeck88)
 - **PR #4621** (2026-11-04): Report a request the stress test host rejects (@cbeck88)
 - **PR #4620** (2026-11-04): Update the stress test's params example (@cbeck88)
 - **PR #4619** (2026-11-04): Choose the stress test's network size by validator count (@cbeck88)
-- **PR #4617** (2026-11-03): Read stress test settings from environment secrets (@cbeck88)
-- **PR #4616** (closed): Read stress test settings from environment secrets (@cbeck88)
-- **PR #4614** (2026-11-03): Add Gauntlet stress test workflow (@snarkworld)
 
 ---
 
@@ -2104,41 +2264,107 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNSP3RcL6oYCA2bxvj
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2
+## X. Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
 
 **RULE**:
-When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7f0c300`: Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66955b13`: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        description: "Test parameter overrides, e.g. rate=50,duration=300"
-          # Only a rejection's message reaches the check.
-          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
-          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
-      - name: Report a rejection or an orchestration failure
-          if [[ -s rejected.txt ]]; then
-            gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
-              -f status=completed -f conclusion=failure \
-              -f 'output[title]=Request rejected' \
-              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
-            exit 0
-          fi
+version = "0.11.1"
+checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
+ "bit-vec 0.10.1",
+version = "0.10.1"
+checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
+dependencies = [
+ "borsh",
+ "serde",
+]
+ "borsh-derive",
+[[package]]
+name = "borsh-derive"
+version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
+dependencies = [
+ "once_cell",
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote 1.0.47",
+ "syn 3.0.3",
+]
+
+[[package]]
+name = "core_detect"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
+
+ "structmeta",
+ "socket2 0.5.10",
+version = "0.5.1"
+checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
+[[package]]
+name = "proc-macro-crate"
+version = "3.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
+dependencies = [
+ "toml_edit",
+]
+
+version = "1.12.0"
+checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        description: "Test parameter overrides, e.g. rate=200,duration=300"
-          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS"
-      - name: Report orchestration failure
+version = "0.8.0"
+checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
+ "bit-vec 0.8.0",
+version = "0.8.0"
+checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
+ "structmeta 0.3.0",
+ "socket2 0.6.5",
+version = "0.4.8"
+checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
+version = "1.6.0"
+checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
+ "bit-set 0.8.0",
+ "bit-vec 0.8.0",
+ "lazy_static",
+ "rand 0.8.7",
+ "rand_chacha 0.3.1",
+ "rand_xorshift 0.3.0",
+ "socket2 0.6.5",
+ "socket2 0.6.5",
+ "libc",
+ "rand_chacha 0.3.1",
+[[package]]
+name = "rand_chacha"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.6.4",
+]
+
+[[package]]
+name = "rand_xorshift"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
+dependencies =
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7f0c300` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66955b13` are properly handled with clean fallback behavior.

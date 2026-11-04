@@ -7387,3 +7387,7 @@
 | `CYCLE-20261104-XIPI` | `2026-11-04T22:58:51.510Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`f08a5e60...`) |
 | `CYCLE-20261104-XJLQ` | `2026-11-04T22:58:52.670Z` | `google/tcmalloc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/google-tcmalloc-learnings.md` | Yes (`fcaa4c20...`) |
 | `CYCLE-20261104-XU35` | `2026-11-04T22:59:06.257Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7010` | Yes (`1dcb8069...`) |
+| `CYCLE-20261104-6ZMQ` | `2026-11-04T23:06:13.346Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`e82de935...`) |
+| `CYCLE-20261104-74G3` | `2026-11-04T23:06:19.587Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7011` | Yes (`c129df18...`) |
+| `CYCLE-20261104-7AN2` | `2026-11-04T23:06:27.614Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6978` | Yes (`33a77c3a...`) |
+| `CYCLE-20261104-7B5M` | `2026-11-04T23:06:28.282Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7012` | Yes (`c1cebb1c...`) |

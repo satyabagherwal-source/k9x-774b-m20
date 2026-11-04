@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `4b2ecad6`  
+> **Source Version**: `bbeade35`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:10:56.282Z  
+> **Timestamp**: 2026-11-04T23:06:27.498Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:10:55.699Z  
+> **Harvest Timestamp**: 2026-11-04T23:06:27.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9474 stars
+- **Stars / Engagement**: 9483 stars
 
 ---
 
@@ -2304,8 +2304,8 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 - **Issue #7167** (2026-11-03): **Negated boolean heap filter includes NULL rows in a ParadeDB Base Scan**
   *Symptoms*: ### What happens?  For `body @@@ 'hello' AND NOT flag`, a ParadeDB Base Scan returns a row where `flag IS NULL`. PostgreSQL's three-valued logic excludes that row because `NOT NULL` is still NULL. Disabling the custom scan returns the correct row set.  ### To reproduce  ```sql CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_search; CREATE TABLE not_null_repro(id integer PRIMARY KEY, body text, flag boolean); INSERT INTO not_null_repro VALUES   (1, 'hello true', true),   (2, 'hello false', false),   (3, 'hello null', NULL),   (4, 'other', false); CREATE INDEX not_null_repro_idx ON not_null_repro USING paradedb (id, body); ANALYZE not_null_repro;  SET paradedb.enable_custom_scan = off; SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2}  SET paradedb.enable_custom_scan = on; SET paradedb.enable_filter_pushdown = on; EXPLAIN (COSTS OFF) SELECT id FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- Custom Scan (ParadeDB Base Scan)  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2,3}; expected {2}  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND flag IS NOT TRUE; -- {2,3} (control: this expression should include the NULL row)  DROP TABLE not_null_repro; ```  `EXPLAIN` places the `flag` heap filter under a Tantivy `must_not` query. A NULL `flag` does not match the inner filter, so `must_not` retains it, although the SQL `NOT` p
 
-- **Issue #7150** (2026-11-03): **AggregateScan ignores a non-constant string_agg separator and uses ","**
-  *Symptoms*: ### What happens?  `ParadeDB Aggregate Scan` returns the wrong result for `string_agg(value, separator)` when the separator is not a constant, for example a column. The scan joins the values with `","` instead of using the separator.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE sa (id int PRIMARY KEY, name text, sep text); CREATE TABLE sb (id int PRIMARY KEY, a_id int);  INSERT INTO sa VALUES (1, 'x', '-'), (2, 'y', ';'), (3, 'z', '|'); INSERT INTO sb VALUES (1, 1), (2, 2), (3, 3);  CREATE INDEX sa_idx ON sa USING paradedb (id, (name::pdb.literal)); CREATE INDEX sb_idx ON sb USING paradedb (id, a_id);  SET max_parallel_workers_per_gather = 0; SET paradedb.enable_join_custom_scan = off;  SELECT string_agg(sa.name, sa.sep ORDER BY sa.id) FROM sa JOIN sb ON sb.a_id = sa.id WHERE sa.id @@@ pdb.all(); ```  Returns `x,y,z`. Expected `x;y|z`. With `SET paradedb.enable_aggregate_custom_scan = off;` it returns `x;y|z`.  ### OS:  MacOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  73897ff6  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB Docker Image  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant data sets for reproducing the issue?  Yes  ### Did you include the code required to reproduce the issue?  - [ ] Yes, I have  ### Did you include all relevant configurations (e.g., CPU architecture, PostgreSQL version, Linux distribution) to rep
+- **Issue #7166** (2026-11-04): **JSON numeric range query includes fractional values in an exact integer range**
+  *Symptoms*: ### What happens?  An indexed JSON numeric field returns a false match for a valid `numrange`. With `payload.n` values `5` and `5.5`, `paradedb.range('payload.n', '[5,5]'::numrange)` returns both rows, although PostgreSQL numeric comparison returns only the `5` row. This happens with both `paradedb.enable_custom_scan=off` and `on`. A second valid range, `[5,5.4]`, raises `called Option::unwrap() on a None value` instead of returning the `5` row. The mixed-type-bound error is also reported in #5077; the new issue here is the false-positive match for `[5,5]`.  ### To reproduce  Run in a scratch PostgreSQL 16 database:  ```sql CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_search; CREATE TABLE json_numrange_repro(id integer PRIMARY KEY, payload jsonb); INSERT INTO json_numrange_repro VALUES   (1, '{"n":1}'), (2, '{"n":5}'), (3, '{"n":5.5}'),   (4, '{"n":8}'), (5, '{"n":10}'); CREATE INDEX json_numrange_repro_idx ON json_numrange_repro   USING paradedb(id, payload)   WITH (json_fields='{"payload":{"indexed":true,"fast":true,"expand_dots":true}}'); ANALYZE json_numrange_repro; SET paradedb.enable_aggregate_custom_scan=off;  SELECT array_agg(id ORDER BY id) FROM json_numrange_repro WHERE (payload->>'n')::numeric BETWEEN 5 AND 5; -- {2}  SET paradedb.enable_custom_scan=off; SELECT array_agg(id ORDER BY id) FROM json_numrange_repro WHERE id @@@ paradedb.range('payload.n','[5,5]'::numrange); -- {2,3}; expected {2}  SET paradedb.enable_custom_scan=on; EXPLAIN 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,686 +2322,443 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9030485` (2026-11-02)
-**Commit Message**: fix: route sum(int8) to the DataFusion aggregate backend (#7143)
+### Incident Patch 1: `44cf1813` (2026-11-04)
+**Commit Message**: fix: align Antithesis SDK with proptest fork (#7215)
 
-## Summary
+## What
+Pin `dst` to Antithesis SDK `0.2.9`, matching the pinned proptest fork,
+and remove SDK `0.3.0` from `Cargo.lock`.
 
-`sum()` over a `bigint` column on the single-table Aggregate Scan ran in
-Tantivy, which sums in f64, so totals past 2^53 came back rounded. This
-routes `sum(int8)` to the DataFusion backend, the same way NUMERIC
-aggregates are already routed, and the result is exact.
+## Why
+The [scheduled Antithesis proptests
+job](https://github.com/paradedb/paradedb-enterprise/actions/runs/41758500509/job/126347551604)
+builds successfully but panics in `antithesis_sdk_initializes` with
+`duplicate #[distributed_slice] with name "ANTITHESIS_CATALOG"`. Linking
+both SDK versions registers the catalog twice.
 
-**Merge order.** Please merge #7118 first. On main, DataFusion's
-`sum(int8)` is a plain `Int64` sum that wraps past the `bigint` range
-(#6932), and #7118 fixes that by summing as `Decimal128(38, 0)`. Without
-it, this PR turns a rounded total past 2^63 into a wrapped one. With
-this branch on current main, two `9223372036854775807` rows sum to `-2`,
-where PostgreSQL gives `18446744073709551614`.
+## How
+Use an exact SDK version pin so dependency updates cannot independently
+move `dst` to another SDK version. Keep the existing Docker build
+initialization check.
 
-## Context
+## Tests
+- Parsed the manifest and lockfile and verified that `dst` and the
+proptest fork reference the single locked SDK `0.2.9`.
+- `git diff --check` passed.
+- Runtime validation pending CI: Rust is not installed locally and the
+Docker daemon is unavailable.
 
-The issue's repro, on main:
+---------
 
+Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-18)
+```diff
+@@ -146,22 +146,6 @@ dependencies = [
+  "serde_json",
+ ]
+ 
+-[[package]]
+-name = "antithesis_sdk"
+-version = "0.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a8ed6751597568a284314fd9e2db420665898600109dedc7d8d9b588f00ae9c4"
+-dependencies = [
+- "libc",
+- "libloading",
+- "linkme",
+- "once_cell",
+- "rand 0.8.7",
+- "rustc_version_runtime",
+- "serde",
+- "serde_json",
+-]
+-
+ [[package]]
+ name = "anyhow"
+ version = "1.0.104"
+@@ -2743,7 +2727,7 @@ name = "dst"
+ version = "0.26.0"
+ dependencies = [
+  "antithesis-instrumentation",
+- "antithesis_sdk 0.3.0",
++ "antithesis_sdk",
+  "serde_json",
+ ]
+ 
+@@ -5746,7 +5730,7 @@ name = "proptest"
+ version = "1.11.0"
+ source = "git+https://github.com/antithesishq/proptest?rev=6061eb48d67ff76f882e709677308816d5791ce7#6061eb48d67ff76f882e709677308816d5791ce7"
+ dependencies = [
+- "antithesis_sdk 0.2.9",
++ "antithesis_sdk",
+  "bit-set",
+  "bit-vec",
+  "bitflags 2.13.1",
 ```
-SELECT sum(b) FROM t WHERE body @@@ 'x';
--- Aggregate Scan (Tantivy):   18014398509482000
--- PostgreSQL:                 18014398509481991
+
+**File**: `dst/Cargo.toml` (modified, +3/-2)
+```diff
+@@ -14,8 +14,9 @@ workspace = true
+ enabled = ["dep:antithesis_sdk", "dep:antithesis-instrumentation"]
+ 
+ [dependencies]
+-# Match proptest's SDK so qgen links only one ANTITHESIS_CATALOG.
+-antithesis_sdk = { version = "0.3.0", default-features = false, features = [
++# Pin to the SDK used by the proptest fork in tests/Cargo.toml. Both must
++# resolve to one version so qgen links only one ANTITHESIS_CATALOG.
++antithesis_sdk = { version = "=0.2.9", default-features = false, features = [
+   "full",
+ ], optional = true }
+ # Coverage shim: provides the sancov symbols and loads libvoidstar at runtime.
 ```
 
-Tantivy's `SumAggregation` accumulates in f64, and changing that would
-mean changing the tantivy fork. The DataFusion backend already reads the
-`int8` fast field exactly, so routing is the change that stays in this
-repo.
+**File**: `nix/pg_search.nix` (modified, +1/-1)
+```diff
+@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
+   # If maintainers forget to do so, Nix will throw an error message that begins
+   # like this and then provides the correct new hash:
+   # error: hash mismatch in fixed-output derivation '...'
+-  cargoHash = "sha256-eRWQ0PN6WQqoUsH4qf4ab+03Cmjt5hmxGuT1/fn11C4=";
++  cargoHash = "sha256-Kb5VZQWfFArjeXXQHr7vLfrYY9PXKAvsJ1n7vU0HolE=";
+ 
+   inherit cargo-pgrx postgresql;
+ 
+```
 
-## Changes
+---
 
-- `CreateUpperPathsHookArgs::has
+### Incident Patch 2: `3cc797ec` (2026-11-04)
+**Commit Message**: fix: keep integer bounds of JSON numeric ranges exact (#7199)
 
-**File**: `docs/project/changelog/unreleased/7143.bugfix.mdx` (added, +5/-0)
+# Ticket(s) Closed
+
+- Closes #7166
+
+## What
+
+`paradedb.range()` on a JSON numeric path now returns the same rows as
+PostgreSQL when an integer bound sits next to fractional values. `[5,5]`
+no longer matches `5.5`.
+
+## Why
+
+`canonicalize_range_bounds_for_field` sent JSON bounds through
+`check_range_bounds`, which rewrites an included integer upper bound `n`
+as an excluded `n + 1`, and an excluded integer lower bound `n` as an
+included `n + 1`. That is exact for integer columns but not for a JSON
+path, which can hold `5.5`. On the issue's data the indexed path got
+three ranges wrong:
+
+| range | PostgreSQL | before |
+|---|---|---|
+| `[5,5]` | `{2}` | `{2,3}` |
+| `(5,6]` | `{3,4}` | `{4,5}` |
+| `(5,6)` | `{3}` | empty |
+
+## How
+
+The JSON branch keeps the bounds as `string_to_json_numeric` produced
+them. For a JSON field `typeoid` is `json`/`jsonb`, so the integer
+rewrite was the only part of `check_range_bounds` that applied there.
+Tantivy's JSON fast-field range converts the bounds to the column's type
+and handles included and excluded bounds itself.
+
+The `[5,5.4]` panic (`called Option::unwrap() on a None value`) still
+ha
+
+**File**: `docs/project/changelog/unreleased/7199.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- `sum()` over a `bigint` column in a single-table aggregate now returns the exact total instead of rounding values past 2^53.
++- `paradedb.range()` on a JSON numeric path no longer matches fractional values outside an integer bound, such as `[5,5]` matching `5.5`.
 ```
 
-**File**: `pg_search/src/postgres/customscan/aggregatescan/mod.rs` (modified, +8/-0)
+**File**: `pg_search/src/query/pdb_query.rs` (modified, +4/-2)
 ```diff
-@@ -694,6 +694,14 @@ impl CustomScan for AggregateScan {
-                             // backend: Tantivy aggregations compute in f64 and cannot
-                             // read the decimal-bytes storage.
-                             || builder.args().has_numeric_aggregate()
-+                            // Tantivy sums int8 in f64, which rounds past 2^53. Only
-+                            // take queries the Tantivy backend would have taken.
-+                            || (builder.args().has_int8_sum_aggregate()
-+                                && (gucs::enable_custom_scan_without_operator()
-+                                    || search_operator_relations::applies_to(
-+                                        builder.args().root,
-+                                        input_rel.relid,
-+                                    )))
-                             || pdb_route.as_ref().is_some_and(PdbAggRoute::references_numeric)
-                             // Route DATE grouping to DataFusion for exact integer day conversion
-                             // and explicit handling of PostgreSQL infinities. Tantivy histograms
-```
-
-**File**: `pg_search/src/postgres/customscan/mod.rs` (modified, +27/-0)
-```diff
-@@ -493,6 +493,33 @@ impl CreateUpperPathsHookArgs {
-         false
-     }
- 
-+    /// True when the query sums a direct `int8` column reference. PostgreSQL sums
-+    /// `bigint` into an exact NUMERIC, but the Tantivy aggregation engine sums in
-+    /// f64, which rounds values past 2^53, so these queries must route to the
-+    /// DataFusion backend. Wrapped arguments stay on Tantivy, as in
-+    /// [`Self::has_numeric_aggregate`].
-+    pub unsafe fn has_int8_sum_aggregate(&self) -> bool {
-+        let parse = self.root().parse;
-+        if parse.is_null() {
-+            return false;
-+        }
-+
-+        let is_int8_sum = |node: *mut pg_sys::Node| {
-+            crate::nodecast!(Aggref, T_Aggref, node).is_some_and(|aggref| {
-+                (*aggref).aggfnoid.to_u32() == pg_sys::F_SUM_INT8
-+                    && PgList::<pg_sys::TargetEntry>::from_pg((*aggref).args)
-+                        .iter_ptr()
-+                        .any(|arg| {
-+                            aggregatescan::join_targetlist::unwrap_to_var((*arg).expr.cast())
-+                                .is_some()
-+                        })
-+            })
-+        };
-+
-+        (!(*parse).targetList.is_null() && (*parse).targetList.any(is_int8_sum))
-+            || (!(*parse).havingQual.is_null() && (*parse).havingQual.any(is_int8_sum))
-+    }
-+
-     /// Returns true when a `GROUP BY` expression is `date(timestamp)` or
-     /// `date(timestamptz)`.
-     ///
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate.out` (modified, +12/-9)
-```diff
-@@ -383,15 +383,18 @@ SELECT
-     SUM(double_val), AVG(double_val), MIN(double_val), MAX(double_val)
- FROM type_test
- WHERE (text_val ||| 'test1' OR text_val ||| 'test2');
--                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-- Custom Scan (ParadeDB Aggregate Scan) on public.type_test
--   Output: pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
--   Index: type_test_idx
--   Tantivy Query: {"boolean":{"should":[{"with_index":{"query":{"match":{"field":"text_val","value":"test1","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"with_index":{"query":{"match":{"field":"text_val","value":"test2","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}]}}
--     Applies to Aggregates: SUM(int_val), AVG(int_val), MIN(int_val), MAX(int_val), SUM(bigint_val), AVG(bigint_val), MIN(bigint_val), MAX(bigint_val), SUM(smallint_val), AVG(smallint_val), MIN(smallint_val), MAX(smallint_val), SUM(numeric_val), AVG(numeric_val), MIN(numeric_val), MAX(numeric_val), SUM(float_val), AVG(float_val), MIN(float_val), MAX(float_val), SUM(double_val), AVG(double_val), MIN(double_val), MAX(double_val)
--     Aggregate Definition: {"0":{"sum":{"field":"int_val","missing":null,"none_if_no_match":true}},"1":{"avg":{"field":"int_val","missing":null}},"10":{"min":{"field":"smallint_val","missing":null}},"11":{"max":{"field":"smallint_val","missing":null}},"12":{"sum":{"field":"numeric_val","missing":null,"none_if_no_match":true}},"13":{"avg":{"field":"numeric_val","missing":null}},"14":{"min":{"field":"numeric_val","missing":null}},"15":{"max":{"field":"numeric_val","missing":null}},"16":{"sum":{"field":"float_val","missing":null,"none
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_6929.out` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+CREATE TABLE issue_6929_t (id int PRIMARY KEY, body text, grp int4, b int8);
-+INSERT INTO issue_6929_t VALUES
-+    (1, 'x', 1, 9007199254740993),
-+    (2, 'x', 1, 9007199254740993),
-+    (3, 'x', 2, 5),
-+    (4, 'x', 2, NULL);
-+CREATE INDEX issue_6929_t_idx ON issue_6929_t USING paradedb (id, body, grp, b);
-+SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_aggregate_custom_scan TO on;
-+-- sum(int8) runs in the DataFusion aggregate backend, not Tantivy's f64 sum
-+EXPLAIN (COSTS OFF)
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+                                                                                                QUERY PLAN                                                                                                
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan)
-+   Backend: DataFusion
-+   Indexes: issue_6929_t_idx (issue_6929_t)
-+   Aggregates: SUM(b)
-+   DataFusion Physical Plan: 
-+     : AggregateExec: mode=Single, gby=[], aggr=[sum(issue_6929_t_0.b) as agg_0]
-+     :   CooperativeExec
-+     :     PgSearchScan: table=issue_6929_t, segments=1, visibility=eager, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"x","lenient":null,"conjunction_mode":null}}}}
-+(8 rows)
-+
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+        sum        
-+-------------------
-+ 18014398509481991
-+(1 row)
-+
-+SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
-+ grp |        sum        
-+-----+-------------------
-+   1 | 18014398509481986
-+   2 |                 5
-+(2 rows)
-+
-+SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
-+      doubled      
-+-------------------
-+ 36028797018963982
-+(1 row)
-+
-+SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
-+GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
-+ grp 
-+-----
-+   1
-+(1 row)
-+
-+-- Parity
-+SET paradedb.enable_aggregate_custom_scan TO off;
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+        sum        
-+-------------------
-+ 18014398509481991
-+(1 row)
-+
-+SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
-+ grp |        sum        
-+-----+-------------------
-+   1 | 18014398509481986
-+   2 |                 5
-+(2 rows)
-+
-+SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
-+      doubled      
-+-------------------
-+ 36028797018963982
-+(1 row)
-+
-+SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
-+GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
-+ grp 
-+-----
-+   1
-+(1 row)
-+
-+RESET paradedb.enable_aggregate_custom_scan;
-+RESET max_parallel_workers_per_gather;
-+DROP TABLE issue_6929_t;
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_6929.sql` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+
-+CREATE TABLE issue_6929_t (id int PRIMARY KEY, body text, grp int4, b int8);
-+INSERT INTO issue_6929_t VALUES
-+    (1, 'x', 1, 9007199254740993),
-+    (2, 'x', 1, 9007199254740993),
-+    (3, 'x', 2, 5),
-+    (4, 'x', 2, NULL);
-+CREATE INDEX issue_6929_t_idx ON issue_6929_t USING paradedb (id, body, grp, b);
-+
-+SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_aggregate_custom_scan TO on;
-+
-+-- sum(int8) runs in the DataFusion aggregate backend, not Tantivy's f64 sum
-+EXPLAIN (COSTS OFF)
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
-+SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
-+SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
-+GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
-+
-+-- Parity
-+SET paradedb.enable_aggregate_custom_scan TO off;
-+SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
-+SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
-+SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
-+SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
-+GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
-+
-+RESET paradedb.enable_aggregate_custom_scan;
-+RESET max_parallel_workers_per_gather;
-+DROP TABLE issue_6929_t;
-```
-
----
-
-### Incident Patch 2: `b3d4631b` (2026-11-02)
-**Commit Message**: fix: parallelize and instrument MS MARCO heap loading (#7185)
-
-## What
-
-Load MS MARCO Parquet shards with 16 independent DuckDB/Postgres
-workers, display progress every minute, and expose a workflow input for
-tuning concurrency. Give the snapshot job a 12-hour budget and refresh
-AWS credentials before loading and backup.
-
-## Why
-
-[The current snapshot
-run](https://github.com/paradedb/paradedb/actions/runs/41513557929) uses
-one bulk insert for the entire corpus. Runner metrics show roughly 11
-MiB/s of source reads and 2% CPU utilization across 96 vCPUs, projecting
-beyond the existing six-hour job timeout and AWS session. The loader
-emits no incremental progress.
-
-## How
-
-- Add opt-in `parquet_load_workers`; MS MARCO selects 16. Workers claim
-distinct shards and use independent connections with two DuckDB threads
-and a 2 GB memory limit each. Retain the NUL-byte cleanup. Datasets that
-omit the setting keep their existing single bulk import.
-- Read Parquet metadata for exact expected row counts. Every minute,
-print a log-friendly bar with the percentage of rows committed,
-shard/row counts, recent and average rows/sec, elapsed time, and
-estimated load time remaining. In-flight rows are
-
-**File**: `.github/workflows/generate-benchmark-snapshots.yml` (modified, +45/-1)
-```diff
-@@ -30,6 +30,11 @@ on:
-         description: "Optional size for stackoverflow/cohere/msmarco (e.g. 100k, 1m, 20m, 113m). Blank = all sizes. Not supported for stackexchange/wikipedia."
-         required: false
-         default: ""
-+      load_workers:
-+        description: "MS MARCO Parquet loader workers. Positive integer; blank uses the dataset default (16)."
-+        required: false
-+        type: string
-+        default: ""
-       benchmarker_ref:
-         description: "Benchmarker ref for stackexchange/wikipedia (branch/tag/SHA)."
-         required: false
-@@ -62,8 +67,15 @@ jobs:
-         env:
-           DATASET: ${{ inputs.dataset }}
-           SIZE: ${{ inputs.size }}
-+          LOAD_WORKERS: ${{ inputs.load_workers }}
-         run: |
-           set -euo pipefail
-+          if [ -n "$LOAD_WORKERS" ]; then
-+            if [[ "$DATASET" != msmarco || ! "$LOAD_WORKERS" =~ ^[1-9][0-9]*$ ]]; then
-+              echo "load_workers must be a positive integer and requires dataset=msmarco" >&2
-+              exit 1
-+            fi
-+          fi
-           all='[
-             {"dataset":"stackoverflow","size":"100k"},
-             {"dataset":"stackoverflow","size":"1m"},
-@@ -92,6 +104,7 @@ jobs:
-       contents: read
-       id-token: write
-     name: Snapshot ${{ matrix.dataset }} (${{ matrix.size }})
-+    timeout-minutes: ${{ matrix.dataset == 'msmarco' && 720 || 360 }}
-     needs: prep
-     if: github.ref == 'refs/heads/main' && needs.prep.outputs.native != '[]'
-     runs-on:
-@@ -142,22 +155,52 @@ jobs:
-           # extension default of 0, so an index's own `target_segment_count` is honored.
-           global_target_segment_count: ${{ matrix.dataset == 'stackoverflow' && '48' || '0' }}
- 
-+      - name: Refresh AWS credentials for MS MARCO load
-+        if: matrix.dataset == 'msmarco'
-+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
-+        with:
-+          role-to-assume: arn:aws:iam::858265286872:role/paradedb-benchmark-write
-+          role-session-name: benchmark-${{ github.run_id }}-${{ github.run_attempt }}-load
-+          role-duration-seconds: 21600
-+          allowed-account-ids: "858265286872"
-+          unset-current-credentials: true
-+          aws-region: us-east-1
-+
-       # Load the heap only (no index, no queries) so the cluster can be captured as a snapshot.
-       - name: Load Heap
-+        timeout-minutes: ${{ matrix.dataset == 'msmarco' && 300 || 360 }}
-         working-directory: benchmarks/
-+        env:
-+          LOAD_WORKERS: ${{ inputs.load_workers }}
-         run: |
-           set -euo pipefail
-+          load_args=()
-+          if [ -n "$LOAD_WORKERS" ]; then
-+            load_args+=(--parquet-load-workers "$LOAD_WORKERS")
-+          fi
-           cargo run --release -- load-heap \
-             --dataset "${{ matrix.dataset }}" \
-             --size "${{ matrix.size }}" \
--            --url "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres"
-+            --url "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres" \
-+            "${load_args[@]}"
- 
-       - name: Verify and vacuum MS MARCO heap
-         if: matrix.dataset == 'msmarco'
-         run: |
-           psql "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres" \
-             -X -v ON_ERROR_STOP=1 -f benchmarks/datasets/msmarco/verify_heap.sql
- 
-+      - name: Refresh AWS credentials for MS MARCO backup
-+        if: matrix.dataset == 'msmarco'
-+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
-+        with:
-+          role-to-assume: arn:aws:iam::858265286872:role/paradedb-benchmark-write
-+          role-session-name: benchmark-${{ github.run_id }}-${{ github.run_attempt }}-backup
-+          role-duration-seconds: 21600
-+          allowed-account-ids: "858265286872"
-+          unset-current-credentials: true
-+          aws-region: us-east-1
-+
-       # Clear any pre-existing snapshot at this path. Each run inits a fresh cluster (new system
-       # identifier), so a snapshot left from a prior run would conflict with pgBackRest stanza-create
-       # (error 028: "info files exist but do not match the database"). Regenerating intentionally
-@@ -179,6 +222,7 @@ jobs:
-         run: cargo pgrx stop pg${{ env.pg_version }}
- 
-       - name: Snapshot Heap
-+        timeout-minutes: ${{ matrix.dataset == 'msmarco' && 330 || 360 }}
-         working-directory: benchmarks/
-         run: |
-           set -euo pipefail
-```
-
-**File**: `benchmarks/datasets/msmarco/README.md` (modified, +18/-0)
-```diff
-@@ -18,6 +18,24 @@ The source contains embedded NUL bytes in text, which PostgreSQL cannot store.
- `pg_null_byte_replacement = ""` removes those bytes during Parquet loading.
- Datasets that omit this setting retain the default behavior of rejecting them.
- 
-+`parquet_load_workers = 16` loads separate shards concurrently through independent
-+DuckDB/Postgres connections. Each worker uses two DuckDB threads and a 2 GB memory
-+limit. Every minute, a log-friendly progress bar shows committed rows and
-+shards, recent and average throughput, elapsed time, and estimated time remaining.
-+The percentage uses row counts from Parquet metadata, so unequal shard sizes do
-+not distort it. Rows in active, uncommitted shards are excluded; the ETA is an
-+estimate of the load only, excluding verification/vacuum and backup.
-+
-+Set the workflow's `load_workers` input (for example, `-f load_workers=8`) to tune
-+the next run without a code change. The native CLI accepts
-+`--parquet-load-workers 8`. This does not change worker counts on a running job.
-+A failed shard fails the load; rerunning `load-heap` recreates the table before
-+loading again. Datasets that omit the setting keep the single bulk import.
-+
-+The MS MARCO job allows 12 hours overall and refreshes its six-hour AWS credentials
-+immediately before loading and before backup. Loading is capped at five hours and
-+backup at five and a half hours, leaving headroom within each credential session.
-+
- The snapshot contains the heap with 1,024-dimensional vectors and no search
- index. Snapshot generation runs only from main and uses the existing benchmark
- write role. MS MARCO requires explicit selection and is excluded from `all`.
-```
-
-**File**: `benchmarks/datasets/msmarco/config.toml` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- sampling_seed = 0
- load_format = "parquet"
- pg_null_byte_replacement = ""
-+parquet_load_workers = 16
- s3_base_path = "s3://paradedb-benchmark/datasets/msmarco/v1"
- tables = []
- 
-```
-
-**File**: `benchmarks/src/config.rs` (modified, +4/-0)
-```diff
-@@ -18,6 +18,7 @@
- use anyhow::{Context, Result, bail};
- use serde::Deserialize;
- use std::collections::{HashMap, HashSet};
-+use std::num::NonZeroUsize;
- 
- #[derive(Deserialize, Default, Clone, Copy, PartialEq, Eq)]
- #[serde(rename_all = "lowercase")]
-@@ -49,6 +50,8 @@ pub struct DatasetConfig {
-     /// Replacement for NUL bytes when loading Parquet strings into Postgres; empty removes them.
-     #[serde(default)]
-     pub pg_null_byte_replacement: Option<String>,
-+    #[serde(default)]
-+    pub parquet_load_workers: Option<NonZeroUsize>,
-     /// Named index parameters. Each value is an expression (evaluated as a SQL scalar) over
-     /// recognized variables such as `dataset_size`, e.g. `lists = "{{ dataset_size }} / 100"`.
-     /// Index SQL references them with `{{ name }}`.
-@@ -166,6 +169,7 @@ mod tests {
-             s3_base_path: None,
-             load_format: LoadFormat::default(),
-             pg_null_byte_replacement: None,
-+            parquet_load_workers: None,
-             params: HashMap::new(),
+@@ -1667,10 +1667,12 @@ pub(crate) fn canonicalize_range_bounds_for_field(
+             (lower, upper)
          }
-     }
+         SearchFieldType::Json(_) => {
+-            // For JSON fields, convert string numeric values to appropriate JSON types
++            // For JSON fields, convert string numeric values to appropriate JSON types.
++            // A JSON path can also hold fractional values, so integer bounds keep their kind
++            // rather than being canonicalized to the next integer.
+             let lower = map_bound(lower_bound, string_to_json_numeric);
+             let upper = map_bound(upper_bound, string_to_json_numeric);
+-            check_range_bounds(typeoid, lower, upper, index_created_by_version)?
++            (lower, upper)
+         }
+         // Dates and times are stored in I64 fields, but they are not numbers
+         SearchFieldType::I64(oid) if is_datetime_type(oid) => {
 ```
 
-**File**: `benchmarks/src/main.rs` (modified, +227/-16)
+**File**: `pg_search/tests/pg_regress/expected/issue_7166.out` (added, +100/-0)
 ```diff
-@@ -22,9 +22,12 @@ use sqlx::{AssertSqlSafe, Connection, PgConnection, Row};
- use std::collections::{HashMap, HashSet};
- use std::fs::File;
- use std::io::Write;
-+use std::num::NonZeroUsize;
- use std::path::Path;
- use std::process::Command;
--use std::time::Instant;
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+use std::sync::mpsc;
-+use std::time::{Duration, Instant};
- 
- mod backrest;
- mod config;
-@@ -142,10 +145,13 @@ struct LoadHeapArgs {
-     #[arg(long)]
-     size: String,
- 
--    /// Base path to external CSV data source (S3 or local). Overrides s3_base_path in
--    /// config.toml. CSVs are loaded from `{data_source}/sampled/{size}/csv/{table}/`.
-+    /// Base path to external data (S3 or local). Overrides s3_base_path in config.toml.
-     #[arg(long)]
-     data_source: Option<String>,
+@@ -0,0 +1,100 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++CREATE TABLE issue_7166 (id integer PRIMARY KEY, payload jsonb);
++INSERT INTO issue_7166 VALUES
++    (1, '{"n": 1}'),
++    (2, '{"n": 5}'),
++    (3, '{"n": 5.5}'),
++    (4, '{"n": 6}'),
++    (5, '{"n": 6.5}'),
++    (6, '{"n": 8}');
++CREATE INDEX issue_7166_idx ON issue_7166
++USING paradedb (id, payload)
++WITH (json_fields = '{"payload": {"indexed": true, "fast": true, "expand_dots": true}}');
++ANALYZE issue_7166;
++SET paradedb.planner_warnings = 'off';
++SET paradedb.enable_custom_scan = on;
++-- Integer bounds on a JSON path that also holds fractional values keep their kind
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,5]'::numrange);
++ array_agg 
++-----------
++ {2}
++(1 row)
 +
-+    /// Override the dataset's number of concurrent Parquet shard loaders.
-+    #[arg(long)]
-+    parquet_load_workers: Option<NonZeroUsize>,
- }
- 
- #[tokio::main]
-@@ -165,6 +171,7 @@ async fn main() -> anyhow::Result<()> {
-             &args.dataset,
-             &args.size,
-             args.data_source.as_deref(),
-+            args.parquet_load_workers,
-         ),
-         Commands::SnapshotHeap(args) => backrest::run_snapshot_heap(args),
-         Commands::RestoreHeap(args) => backrest::run_restore_heap(args),
-@@ -992,11 +999,18 @@ fn load_external_data(
-     dataset: &str,
-     size_label: &str,
-     data_source: Option<&str>,
-+    parquet_load_workers: Option<NonZeroUsize>,
- ) -> anyhow::Result<()> {
-     // Read dataset config for table names and S3 path.
-     let config_path = format!("datasets/{dataset}/config.toml");
--    let (config, _) = config::load_dataset_config(&config_path)
-+    let (mut config, _) = config::load_dataset_config(&config_path)
-         .with_context(|| format!("Failed to load config '{config_path}'"))?;
-+    if let Some(workers) = parquet_load_workers {
-+        if config.load_format != LoadFormat::Parquet {
-+            bail!("--parquet-load-workers requires a Parquet dataset");
-+        }
-+        config.parquet_load_workers = Some(workers);
-+    }
- 
-     // Determine data source path.
-     let base_path = match data_source {
-@@ -1126,27 +1140,205 @@ fn load_tables_parquet(
-     config: &config::DatasetConfig,
-     source_path: &str,
- ) -> anyhow::Result<()> {
-+    let conn = open_parquet_load_conn(url, config)?;
-+    for table_name in config.all_table_names() {
-+        let glob = format!("{source_path}/{table_name}/*.parquet");
-+        println!("Loading '{table_name}' from {glob} into PostgreSQL...");
-+        if let Some(workers) = config.parquet_load_workers {
-+            println!("  Reading shard metadata...");
-+            let mut statement = conn.prepare(
-+                "SELECT file_name, num_rows FROM parquet_file_metadata(?) ORDER BY file_name",
-+            )?;
-+            let files = statement
-+                .query_map([&glob], |row| {
-+                    Ok((row.get::<_, String>(0)?, row.get::<_, usize>(1)?))
-+                })?
-+                .collect::<Result<Vec<_>, _>>()
-+                .with_context(|| format!("Failed to read parquet metadata at '{glob}'"))?;
-+            if files.is_empty() {
-+                bail!("No parquet files found at '{glob}'");
-+            }
-+            load_parquet_shards(url, config, table_name, &files, workers.get())?;
-+        } else {
-+            conn.execute_batch(&format!(
-+                "INSERT INTO pg.public.\"{table_name}\" SELECT * FROM read_parquet('{glob}');"
-+            ))
-+            .with_context(|| format!("Failed to load parquet into table '{table_name}'"))?;
-+        }
-+        println!("  Loaded '{table_name}'.");
-+    }
-+    Ok(())
-+}
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6]'::numrange);
++ array_agg 
++-----------
++ {3,4}
++(1 row)
 +
-+fn open_parquet_load_conn(
-+    url: &str,
-+    config: &config::DatasetConfig,
-+) -> anyhow::Result<duckdb::Connection> {
-     let conn = utils::open_duckdb_conn().with_context(|| "Failed to open DuckDB connection")?;
-+    if config.parquet_load_workers.is_some() {
-+        conn.execute_batch("SET threads = 2; SET memory_limit = '2GB';")?;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6)'::numrange);
++ array_agg 
++-----------
++ {3}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,6)'::numrange);
++ array_agg 
++-----------
++ {2,3}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ '{
++    "range": {
++        "field": "payload.n",
++        "lower_bound": {"included": 5},
++        "upper_bound": {"included": 5}
 +    }
-     conn.execute_batch("INSTALL postgres; LOAD postgres;")
-         .with_context(|| "Failed to load DuckDB postgres extension")?;
-     if let Some(replacement) = &config.pg_null_byte_replacement {
-         conn.execute("SET pg_null_byte_replacement = ?", [replacement])
-             .with_context(|| "Failed to configure Postgres NUL-byte replacement")?;
-     }
--    conn.execute_batch(&format!("ATTACH '{url}' AS pg (TYPE postgres);"))
--        .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
-+    conn.execute_batch(&format!(
-+        "ATTACH '{}' AS pg (TYPE postgres);",
-+        url.replace('\'', "''")
-+    ))
-+    .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
-+    Ok(conn)
-+}
- 
--    for table_name in config.all_table_names() {
--        let glob = format!("{source_path}/{table_name}/*.parquet");
--        println!("Loading '{table_name}' from {glob} into PostgreSQL...");
-- 
++}'::jsonb;
++ array_agg 
++-----------
++ {2}
++(1 row)
++
++-- PostgreSQL's answers for the same ranges
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '[5,5]'::numrange @> (payload->>'n')::numeric;
++ array_agg 
++-----------
++ {2}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '(5,6]'::numrange @> (payload->>'n')::numeric;
++ array_agg 
++-----------
++ {3,4}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '(5,6)'::numrange @> (payload->>'n')::numeric;
++ array_agg 
++-----------
++ {3}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '[5,6)'::numrange @> (payload->>'n')::numeric;
++ array_agg 
++-----------
++ {2,3}
++(1 row)
++
++-- Same results with the Custom Scan off
++SET paradedb.enable_custom_scan = off;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,5]'::numrange);
++ array_agg 
++-----------
++ {2}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6]'::numrange);
++ array_agg 
++-----------
++ {3,4}
++(1 row)
++
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6)'::numrange);
++ array_agg 
++-----------
++ {3}
++(1 row)
++
++RESET paradedb.enable_custom_scan;
++RESET paradedb.planner_warnings;
++DROP TABLE issue_7166;
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_7166.sql` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++
++CREATE TABLE issue_7166 (id integer PRIMARY KEY, payload jsonb);
++INSERT INTO issue_7166 VALUES
++    (1, '{"n": 1}'),
++    (2, '{"n": 5}'),
++    (3, '{"n": 5.5}'),
++    (4, '{"n": 6}'),
++    (5, '{"n": 6.5}'),
++    (6, '{"n": 8}');
++CREATE INDEX issue_7166_idx ON issue_7166
++USING paradedb (id, payload)
++WITH (json_fields = '{"payload": {"indexed": true, "fast": true, "expand_dots": true}}');
++ANALYZE issue_7166;
++
++SET paradedb.planner_warnings = 'off';
++SET paradedb.enable_custom_scan = on;
++
++-- Integer bounds on a JSON path that also holds fractional values keep their kind
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,5]'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6]'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6)'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,6)'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ '{
++    "range": {
++        "field": "payload.n",
++        "lower_bound": {"included": 5},
++        "upper_bound": {"included": 5}
++    }
++}'::jsonb;
++
++-- PostgreSQL's answers for the same ranges
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '[5,5]'::numrange @> (payload->>'n')::numeric;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '(5,6]'::numrange @> (payload->>'n')::numeric;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '(5,6)'::numrange @> (payload->>'n')::numeric;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE '[5,6)'::numrange @> (payload->>'n')::numeric;
++
++-- Same results with the Custom Scan off
++SET paradedb.enable_custom_scan = off;
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '[5,5]'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6]'::numrange);
++SELECT array_agg(id ORDER BY id) FROM issue_7166 WHERE id @@@ paradedb.range('payload.n', '(5,6)'::numrange);
++RESET paradedb.enable_custom_scan;
++RESET paradedb.planner_warnings;
++
++DROP TABLE issue_7166;
 ```
 
 ---
 
-### Incident Patch 3: `6d096089` (2026-11-02)
-**Commit Message**: fix: handle NUL bytes in MS MARCO heap imports (#7182)
+### Incident Patch 3: `06b76427` (2026-11-04)
+**Commit Message**: fix: use system Git for macOS release checkouts (#7249)
 
 ## What
-
-Allow the MS MARCO heap import to remove embedded NUL bytes from source
-strings.
+Use macOS system Git in both macOS package publishing workflows. Verify
+Git checkouts before building.
 
 ## Why
+On runner image `20261026.0455.2`, `brew reinstall git` leaves Homebrew
+Git terminated by SIGKILL (exit 137). Checkout silently falls back to a
+source archive, which excludes `.github` via `.gitattributes`. The
+v0.26.5 package published successfully, but the subsequent PostgresApp
+update failed because its local action was missing.
 
-[The first snapshot
-run](https://github.com/paradedb/paradedb/actions/runs/41510416618/job/125500578425)
-authenticated and set up the cluster successfully, then failed in `Load
-Heap`: DuckDB's Postgres writer rejects VARCHAR values containing NUL
-bytes. No heap snapshot was created.
+The previous successful release used image `20261021.0445.8`. The image
+update correlates with the regression; the reason macOS kills the
+reinstalled binary remains unconfirmed.
 
 ## How
-
-Add an optional dataset setting, `pg_null_byte_replacement`, and apply
-it to the existing DuckDB Postgres loader. MS MARCO opts into the empty
-string to remove NUL bytes; omitted settings retain the existing
-rejection behavior. Document this cleanup in the dataset README.
-
-After this merges, dispatch a fresh `generate-benchmark-snapshots.yml`
-run from main with `dataset=msmarco` and `size=113m`.
+Remove the Homebrew Git reinstall and prepend `/usr/bin` in both
+`publish-pg_search-macos.yml` and `publish-pg_search-postgresapp.yml`.
+Verify Git immediately after checkout in both workflows.
 
 ## Tests
+Compared original and fixed setup on GitHub-hosted `macos-26`, both
+using image `20261026.0455.2`:
+- [Original
+setup](https://github.com/paradedb/paradedb/actions/runs/41898870870/job/126815632465):
+reproduced archive fallback; Homebrew Git killed with exit 137.
+- [Fixed
+setup](https://github.com/pa
 
-- Reproduced the failure with the native Rust loader against an isolated
-PostgreSQL 18 instance using five affected rows from the first uploaded
-MS MARCO shard.
-- The opt-in setting imported all five rows plus synthetic coverage for
-multiple NULs, Unicode, SQL NULLs, and clean strings. Verified IDs
-unchanged, only NULs removed, and all 1,02
-
-**File**: `benchmarks/datasets/msmarco/README.md` (modified, +4/-0)
+**File**: `.github/workflows/publish-pg_search-macos.yml` (modified, +7/-3)
 ```diff
-@@ -14,6 +14,10 @@ into PostgreSQL 18. The workflow verifies the exact row count, freezes and
- analyzes the heap, and backs it up with pgBackRest to
- `s3://paradedb-benchmark/snapshots/msmarco/v1/113m/pg_backrest/`.
+@@ -63,21 +63,25 @@ jobs:
+             pg_version: 18
  
-+The source contains embedded NUL bytes in text, which PostgreSQL cannot store.
-+`pg_null_byte_replacement = ""` removes those bytes during Parquet loading.
-+Datasets that omit this setting retain the default behavior of rejecting them.
+     steps:
+-      # Force reinstall git to make sure it is in PATH. gettext provides envsubst,
+-      # which sigstore/cosign-installer needs and which isn't on PATH by default.
++      # gettext provides envsubst, which sigstore/cosign-installer needs and which
++      # is not on PATH by default.
+       - name: Install Dependencies
+         run: |
+           # The GitHub macOS runner images ship with aws/tap pre-tapped but untrusted,
+           # which makes Homebrew print a "taps are not trusted" warning on every brew
+           # invocation. We don't use it, so untap it to keep the logs clean.
+           brew untap aws/tap || true
+-          brew reinstall git
+           brew install gettext
+           echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
++          echo "/usr/bin" >> "$GITHUB_PATH"
++          /usr/bin/git --version
+ 
+       - name: Checkout Git Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+ 
++      - name: Verify Git Checkout
++        run: git rev-parse --is-inside-work-tree
 +
- The snapshot contains the heap with 1,024-dimensional vectors and no search
- index. Snapshot generation runs only from main and uses the existing benchmark
- write role. MS MARCO requires explicit selection and is excluded from `all`.
+       # Used to upload the release to GitHub Releases. We force install gh to make sure it is in PATH.
+       - name: Install GitHub CLI
+         run: |
 ```
 
-**File**: `benchmarks/datasets/msmarco/config.toml` (modified, +1/-0)
+**File**: `.github/workflows/publish-pg_search-postgresapp.yml` (modified, +7/-3)
 ```diff
-@@ -1,5 +1,6 @@
- sampling_seed = 0
- load_format = "parquet"
-+pg_null_byte_replacement = ""
- s3_base_path = "s3://paradedb-benchmark/datasets/msmarco/v1"
- tables = []
+@@ -39,21 +39,25 @@ jobs:
+         pg_version: [18]
  
-```
-
-**File**: `benchmarks/src/config.rs` (modified, +4/-0)
-```diff
-@@ -46,6 +46,9 @@ pub struct DatasetConfig {
-     /// Storage format LoadHeap reads from `sampled/{size}/{load_format}/`. Defaults to CSV.
-     #[serde(default)]
-     pub load_format: LoadFormat,
-+    /// Replacement for NUL bytes when loading Parquet strings into Postgres; empty removes them.
-+    #[serde(default)]
-+    pub pg_null_byte_replacement: Option<String>,
-     /// Named index parameters. Each value is an expression (evaluated as a SQL scalar) over
-     /// recognized variables such as `dataset_size`, e.g. `lists = "{{ dataset_size }} / 100"`.
-     /// Index SQL references them with `{{ name }}`.
-@@ -162,6 +165,7 @@ mod tests {
-             tables,
-             s3_base_path: None,
-             load_format: LoadFormat::default(),
-+            pg_null_byte_replacement: None,
-             params: HashMap::new(),
-         }
-     }
-```
-
-**File**: `benchmarks/src/main.rs` (modified, +4/-0)
-```diff
-@@ -1129,6 +1129,10 @@ fn load_tables_parquet(
-     let conn = utils::open_duckdb_conn().with_context(|| "Failed to open DuckDB connection")?;
-     conn.execute_batch("INSTALL postgres; LOAD postgres;")
-         .with_context(|| "Failed to load DuckDB postgres extension")?;
-+    if let Some(replacement) = &config.pg_null_byte_replacement {
-+        conn.execute("SET pg_null_byte_replacement = ?", [replacement])
-+            .with_context(|| "Failed to configure Postgres NUL-byte replacement")?;
-+    }
-     conn.execute_batch(&format!("ATTACH '{url}' AS pg (TYPE postgres);"))
-         .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
+     steps:
+-      # Force reinstall git to make sure it is in PATH. gettext provides envsubst,
+-      # which sigstore/cosign-installer needs and which isn't on PATH by default.
++      # gettext provides envsubst, which sigstore/cosign-installer needs and which
++      # is not on PATH by default.
+       - name: Install Dependencies
+         run: |
+           # The GitHub macOS runner images ship with aws/tap pre-tapped but untrusted,
+           # which makes Homebrew print a "taps are not trusted" warning on every brew
+           # invocation. We don't use it, so untap it to keep the logs clean.
+           brew untap aws/tap || true
+-          brew reinstall git
+           brew install gettext
+           echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
++          echo "/usr/bin" >> "$GITHUB_PATH"
++          /usr/bin/git --version
  
+       - name: Checkout Git Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+ 
++      - name: Verify Git Checkout
++        run: git rev-parse --is-inside-work-tree
++
+       # Used to query/update the GitHub Release and open the PostgresApp/PostgresApp PR.
+       - name: Install GitHub CLI
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7208** (2026-11-03): ci: Reserve worker slots for benchmark parallelism (@rebasedming)
-- **PR #7204** (2026-11-03): docs: Remove unused PostHog integration (@philippemnoel)
-- **PR #7203** (2026-11-03): perf: flatten grouped aggregate results in one pass (@paradedb-github-bot[bot])
-- **PR #7195** (closed): chore: Update opencc-jieba-rs to latest main (@philippemnoel)
-- **PR #7194** (2026-11-03): chore(deps): bump the cargo-dependencies group with 17 updates (@dependabot[bot])
-- **PR #7193** (2026-11-03): ci: enable monthly dependency updates (@philippemnoel)
+- **PR #7253** (2026-11-04): chore: Generate Dockerfiles for v0.26.5 (@paradedb-github-bot[bot])
+- **PR #7252** (2026-11-04): chore: Generate Dockerfiles for v0.26.5 (@paradedb-github-bot[bot])
+- **PR #7251** (2026-11-04): fix: use system Git for macOS release checkouts (@paradedb-github-bot[bot])
+- **PR #7250** (2026-11-04): ci: backport extension smoke-test runner fix to 0.26.x (@philippemnoel)
+- **PR #7249** (2026-11-04): fix: use system Git for macOS release checkouts (@philippemnoel)
+- **PR #7247** (closed): feat: replace vector_fields with index-wide quantization (@paradedb-github-bot[bot])
 
 ---
 
@@ -3021,32 +2778,46 @@ unchanged, only NULs removed, and all 1,02
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. route sum(int8) to the DataFusion aggregate backend (#7143)
+## X. align Antithesis SDK with proptest fork (#7215)
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/7143.bugfix.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9030485`: route sum(int8) to the DataFusion aggregate backend (#7143). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44cf1813`: align Antithesis SDK with proptest fork (#7215). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7143.bugfix.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: stability
----
-
-- `sum()` over a `bigint` column in a single-table aggregate now returns the exact total instead of rounding values past 2^53.
+ "antithesis_sdk",
+ "antithesis_sdk",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+[[package]]
+name = "antithesis_sdk"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8ed6751597568a284314fd9e2db420665898600109dedc7d8d9b588f00ae9c4"
+dependencies = [
+ "libc",
+ "libloading",
+ "linkme",
+ "once_cell",
+ "rand 0.8.7",
+ "rustc_version_runtime",
+ "serde",
+ "serde_json",
+]
+
+ "antithesis_sdk 0.3.0",
+ "antithesis_sdk 0.2.9",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9030485` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44cf1813` are properly handled with clean fallback behavior.
