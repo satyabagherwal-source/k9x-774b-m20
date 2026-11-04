@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T22:27:29.033Z",
-  "total_cycles_completed": 7350,
-  "total_learnings_persisted": 7350,
-  "total_rules_promoted": 7045,
+  "last_updated": "2026-11-04T22:34:56.152Z",
+  "total_cycles_completed": 7355,
+  "total_learnings_persisted": 7355,
+  "total_rules_promoted": 7048,
   "history": [
-    {
-      "timestamp": "2026-11-04T08:14:13.701Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:14:18.574Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:21:57.164Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:21:58.596Z",
-      "repository": "scrapinghub/scrapy-poet",
-      "learningId": "learn-github-scrapinghub-scrapy-poet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:28:35.122Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T08:28:35.673Z",
       "repository": "envoyproxy/envoy",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-04T22:27:29.033Z",
       "repository": "astral-sh/uv",
       "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:34:41.035Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:34:43.773Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:34:47.699Z",
+      "repository": "kosi-libs/Kodein",
+      "learningId": "learn-github-kosi-libs-kodein",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:34:51.867Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:34:56.152Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

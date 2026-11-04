@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:27:29.047Z",
+  "last_updated": "2026-11-04T22:34:56.164Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "ab3272b688f3e2fa0b775bab8ba663a7a39d96233205ae895fb38dc1dcc7ee90",
-      "verified_at": "2026-10-31T06:52:31.251Z",
+      "content_hash": "bdbee4ddec6c9c98490ad7b5b9d4608b90da22d1f50c63971e32cbfe69b8c67f",
+      "verified_at": "2026-11-04T22:34:41.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:52:31.251Z"
+      "last_updated": "2026-11-04T22:34:41.038Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "fa721e352c2c5d7fe623ab44c01b30cdf51f139f0156cbdafff82e1c2d43b61d",
-      "verified_at": "2026-11-04T00:24:28.138Z",
+      "content_hash": "f20228f1c0d826c6ac667be5db911e4b3648d0405b0cb92d182fb0dc61f224ac",
+      "verified_at": "2026-11-04T22:34:51.878Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:24:28.138Z"
+      "last_updated": "2026-11-04T22:34:51.878Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -11016,14 +11016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kosi-libs-kodein",
-      "content_hash": "0ec0937820fc9fb745a9039cf33deeab3b518eced58e6a1d4a29eb1db48ff308",
-      "verified_at": "2026-10-19T08:32:19.304Z",
+      "content_hash": "3a50199802c5fe74eb9b8f0f8b1f67a0e81f89802622356e513a083f3d5baf1d",
+      "verified_at": "2026-11-04T22:34:47.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:32:19.304Z"
+      "last_updated": "2026-11-04T22:34:47.702Z"
     },
     "kubesphere/kubesphere": {
       "repository": "kubesphere/kubesphere",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "145b8cd43fcebe675d626774c6b0e38ca4c84c71f65947d4475dbab85302b887",
-      "verified_at": "2026-11-03T23:32:24.144Z",
+      "content_hash": "dbdb02f70712865256f0a251b420150b954390f8cdfa9db7aa496225b9f8645c",
+      "verified_at": "2026-11-04T22:34:56.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:32:24.144Z"
+      "last_updated": "2026-11-04T22:34:56.164Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "bd0bb4ebdc541172d413fe47e436921064f5e834a3389475cd9e65e2d57ef453",
-      "verified_at": "2026-11-03T18:22:57.811Z",
+      "content_hash": "7a702b79cd21a123353e6b5d2bc7b60d93fa71c8705711f3b81f0554e90b518d",
+      "verified_at": "2026-11-04T22:34:43.785Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:22:57.811Z"
+      "last_updated": "2026-11-04T22:34:43.785Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

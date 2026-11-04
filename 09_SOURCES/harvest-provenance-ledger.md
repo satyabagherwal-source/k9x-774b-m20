@@ -7382,3 +7382,8 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `a82bcc47` | Multi-dimensional audit evidence | 2026-11-04T22:20:18.009Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T22:27:27.807Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `4470c33b` | Multi-dimensional audit evidence | 2026-11-04T22:27:29.028Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-04T22:34:41.029Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `35a2cb73` | Multi-dimensional audit evidence | 2026-11-04T22:34:43.767Z |
+| `learn-github-kosi-libs-kodein` | `https://github.com/kosi-libs/Kodein` | `8ef0da27` | Multi-dimensional audit evidence | 2026-11-04T22:34:47.690Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `c7fc4d48` | Multi-dimensional audit evidence | 2026-11-04T22:34:51.861Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `2dedde9b` | Multi-dimensional audit evidence | 2026-11-04T22:34:56.146Z |
