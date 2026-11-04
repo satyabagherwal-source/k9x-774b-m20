@@ -4826,3 +4826,7 @@ https://huggingface.co/microsoft/Mage-VL-Cowork
 # --- Automatically Discovered by AI Scout Engine [2026-11-04T07:25:40.342Z] ---
 # [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-Embedding-0.6B (15240 score) - Verified Hugging Face Model: Qwen/Qwen3-Embedding-0.6B (1324 likes, 8958817 down
 https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T09:17:43.655Z] ---
+# [AI-AGENTS] feder-cr/Jobs_Applier_AI_Agent_AIHawk (17870 score) - Open-source, self-hosted alternative to OpenAI Dots, Grok Bot. Built to be undet
+https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk

@@ -20233,5 +20233,20 @@
     "downloads": 8958817,
     "qualityScore": 15240,
     "discoveredAt": "2026-11-04T07:23:32.371Z"
+  },
+  {
+    "name": "Jobs_Applier_AI_Agent_AIHawk",
+    "fullName": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source, self-hosted alternative to OpenAI Dots, Grok Bot. Built to be undetectable by anti-bot systems.",
+    "stars": 32385,
+    "forks": 4738,
+    "openIssues": 3,
+    "language": "TypeScript",
+    "qualityScore": 17870,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-04T09:14:01.133Z"
   }
 ]

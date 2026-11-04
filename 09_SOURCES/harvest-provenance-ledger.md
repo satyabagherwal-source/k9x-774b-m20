@@ -7198,3 +7198,4 @@ Every entry in this ledger must capture:
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0e8dbd98` | Multi-dimensional audit evidence | 2026-11-04T08:57:37.876Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `5cb6272e` | Multi-dimensional audit evidence | 2026-11-04T09:04:26.049Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4d4c4a7` | Multi-dimensional audit evidence | 2026-11-04T09:04:33.863Z |
+| `learn-github-feder-cr-jobs_applier_ai_agent_aihawk` | `https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk` | `da1c7ff1` | Multi-dimensional audit evidence | 2026-11-04T09:17:50.718Z |

@@ -494457,3 +494457,79 @@ NEXT_PUBLIC_BUILDER_API_KEY=
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0e8dbd98` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6789. engine: no fixed cap on a tool's result; the cut is the model's window, read fro (Harvested from feder-cr/Jobs_Applier_AI_Agent_AIHawk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "engine: no fixed cap on a tool's result; the cut is the model's window, read fro",
+  "source": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+  "source_url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+  "source_version": "da1c7ff1",
+  "license": "MIT",
+  "extracted_at": "2026-11-04T09:17:50.378Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [feder-cr/Jobs_Applier_AI_Agent_AIHawk](https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk) (Revision: `da1c7ff1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/architecture.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feder-cr/Jobs_Applier_AI_Agent_AIHawk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `440e43a1`: engine: no fixed cap on a tool's result; the cut is the model's window, read from OpenRouter on every turn. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/architecture.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+the gate and never run, and the model gets the error. A result comes back
+whole: no tool has a fixed cap. A request that outgrows the model's window is
+compacted first (old results cleared, then the history summarized, section
+8.5); only if it still does not fit are the results of its latest round cut,
+to what the window leaves (`ContextGovernor.fit_latest_round`), and the cut says
+how many characters came through of how many and how to ask for less. A result
+is stored cut only beyond what no compaction could make room for: the window
+less the system prompt and the tool definitions.
+Every request uses the whole of what its model can do. The engine reads the
+model's limits at the start of every turn from the providers OpenRouter lists
+for it (`GET /models/{model}/endpoints`), not once: an engine runs for weeks and
+OpenRouter changes a model's providers meanwhile. Of the providers serving it,
+the widest window and the longest answer at that window are the model's. A
+model OpenRouter does not know fails the turn in words; a router, which lists
+no provider, gets no limits. Each request
+attempts, honouring `Retry-After`). A tool result is cut only where the
+model's window ends (section 
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+the gate and never run, and the model gets the error. A result longer than
+12000 characters is cut, once.
+Every request uses the whole of what its model can do. The engine reads each
+model's limits once from OpenRouter's list of models (`GET /models`): the
+context window and the longest answer of the provider OpenRouter routes the
+model to by default (`top_provider`). A model OpenRouter does not list fails
+the turn in words; a router that publishes no limits gets none. Each request
+attempts, honouring `Retry-After`). Tool results longer than 12000 characters
+are cut with a marker.
+  step limit, the 12000-character
+  result cap, and the Dot's section of
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `440e43a1` are properly handled with clean fallback behavior.

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-UQWA",
-    "timestamp": "2026-10-31T19:34:03.946Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "14b043207ded98d3eed29d1c67148cc5e0f94e3d96f0a6d02a2fd69aff39d6ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-3FPC",
     "timestamp": "2026-10-31T19:40:49.344Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7492,6 +7477,21 @@
     "contentHash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-LOU2",
+    "timestamp": "2026-11-04T09:17:50.714Z",
+    "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "learningId": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk",
+    "contentHash": "8f98a805db1533e30ee4884e6f338f4d2e24d99f6833118b79313950ea45263d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T09:04:33.766Z",
-  "total_verified_learnings": 1205,
+  "last_updated": "2026-11-04T09:17:50.630Z",
+  "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -173841,6 +173841,53 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:57:37.782Z"
+    },
+    "learn-github-feder-cr-jobs_applier_ai_agent_aihawk": {
+      "learning_id": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+      "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+      "slug": "feder-cr-jobs_applier_ai_agent_aihawk",
+      "platform": "github",
+      "source_url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+      "source_version": "da1c7ff1",
+      "content_hash": "8f98a805db1533e30ee4884e6f338f4d2e24d99f6833118b79313950ea45263d",
+      "dossier_path": "07_PROJECT_LEARNING/feder-cr-jobs_applier_ai_agent_aihawk-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/feder-cr-jobs_applier_ai_agent_aihawk-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6789,
+          "title": "engine: no fixed cap on a tool's result; the cut is the model's window, read fro",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T09:17:50.607Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6789": {
+      "learning_id": "rule-6789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6789,
+      "title": "engine: no fixed cap on a tool's result; the cut is the model's window, read fro",
+      "source_url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+      "source_version": "da1c7ff1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:17:50.607Z"
     }
   },
   "aliases": {

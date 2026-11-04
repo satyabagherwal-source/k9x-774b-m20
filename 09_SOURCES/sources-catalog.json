@@ -11868,5 +11868,15 @@
     "contentHash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
     "lastHarvestedAt": "2026-11-04T07:25:57.297Z",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
+  },
+  "feder-cr-jobs_applier_ai_agent_aihawk": {
+    "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk",
+    "sourceVersion": "da1c7ff1",
+    "license": "MIT",
+    "contentHash": "8f98a805db1533e30ee4884e6f338f4d2e24d99f6833118b79313950ea45263d",
+    "lastHarvestedAt": "2026-11-04T09:17:50.718Z",
+    "learningId": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk"
   }
 }
