@@ -7227,3 +7227,7 @@
 | `CYCLE-20261104-CHA7` | `2026-11-04T11:02:39.487Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6826, Rule 6827, Rule 6828` | Yes (`f9510553...`) |
 | `CYCLE-20261104-L8DB` | `2026-11-04T11:09:27.839Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6829, Rule 6830, Rule 6831` | Yes (`0c822443...`) |
 | `CYCLE-20261104-LAZH` | `2026-11-04T11:09:31.229Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6832` | Yes (`ff4142e0...`) |
+| `CYCLE-20261104-6YRF` | `2026-11-04T16:34:17.595Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`6ce8819c...`) |
+| `CYCLE-20261104-76C5` | `2026-11-04T16:34:27.413Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6833, Rule 6834, Rule 6835` | Yes (`79306e4f...`) |
+| `CYCLE-20261104-76NL` | `2026-11-04T16:34:27.825Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6836` | Yes (`f0aeb914...`) |
+| `CYCLE-20261104-7FDD` | `2026-11-04T16:34:39.121Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6837` | Yes (`e5639165...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T11:09:31.239Z",
+  "last_updated": "2026-11-04T16:34:39.135Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
-      "verified_at": "2026-11-03T16:18:05.954Z",
+      "content_hash": "e56391651f9d5300cb48f1542c0d284a0f4e3edec070332e37678f5b0e981320",
+      "verified_at": "2026-11-04T16:34:39.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:18:05.954Z"
+      "last_updated": "2026-11-04T16:34:39.135Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
-      "verified_at": "2026-11-03T17:06:26.698Z",
+      "content_hash": "f0aeb9142d43f9fdb29a2038aa6713c91cafd48c1a7010b671ec210673c65ee6",
+      "verified_at": "2026-11-04T16:34:27.838Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:06:26.698Z"
+      "last_updated": "2026-11-04T16:34:27.838Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -17879,6 +17879,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-04T09:17:50.727Z"
+    },
+    "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4": {
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "content_hash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
+      "verified_at": "2026-11-04T16:34:17.613Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T16:34:17.613Z"
+    },
+    "moonshotai/Kimi-K3.1-Pro": {
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "content_hash": "79306e4f53c6a4f97730ae77b23504c19b7faab5a4e1d2d520636907504edc55",
+      "verified_at": "2026-11-04T16:34:27.426Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T16:34:27.426Z"
     }
   },
   "repos": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T11:09:31.236Z",
-  "total_cycles_completed": 7204,
-  "total_learnings_persisted": 7204,
-  "total_rules_promoted": 6859,
+  "last_updated": "2026-11-04T16:34:39.131Z",
+  "total_cycles_completed": 7208,
+  "total_learnings_persisted": 7208,
+  "total_rules_promoted": 6864,
   "history": [
-    {
-      "timestamp": "2026-11-03T22:06:41.122Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:06:42.480Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:06:44.658Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:06:46.869Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T22:15:17.785Z",
       "repository": "sharkdp/fd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-04T11:09:31.236Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T16:34:17.610Z",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T16:34:27.422Z",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T16:34:27.834Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T16:34:39.131Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

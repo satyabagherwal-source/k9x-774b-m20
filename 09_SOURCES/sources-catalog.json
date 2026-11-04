@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "fc82aedd",
+    "sourceVersion": "b24a3efb",
     "license": "Apache-2.0",
-    "contentHash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
-    "lastHarvestedAt": "2026-11-03T16:18:05.948Z",
+    "contentHash": "e56391651f9d5300cb48f1542c0d284a0f4e3edec070332e37678f5b0e981320",
+    "lastHarvestedAt": "2026-11-04T16:34:39.125Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "189cf90a",
+    "sourceVersion": "e43834ca",
     "license": "Apache-2.0",
-    "contentHash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
-    "lastHarvestedAt": "2026-11-03T17:06:26.689Z",
+    "contentHash": "f0aeb9142d43f9fdb29a2038aa6713c91cafd48c1a7010b671ec210673c65ee6",
+    "lastHarvestedAt": "2026-11-04T16:34:27.829Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -11878,5 +11878,25 @@
     "contentHash": "8f98a805db1533e30ee4884e6f338f4d2e24d99f6833118b79313950ea45263d",
     "lastHarvestedAt": "2026-11-04T09:17:50.718Z",
     "learningId": "learn-github-feder-cr-jobs_applier_ai_agent_aihawk"
+  },
+  "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4": {
+    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
+    "lastHarvestedAt": "2026-11-04T16:34:17.604Z",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
+  },
+  "hf-moonshotai-kimi-k3.1-pro": {
+    "repository": "moonshotai/Kimi-K3.1-Pro",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+    "sourceVersion": "hf-moonshotai-kimi-k3.1-pro",
+    "license": "Open-Source",
+    "contentHash": "79306e4f53c6a4f97730ae77b23504c19b7faab5a4e1d2d520636907504edc55",
+    "lastHarvestedAt": "2026-11-04T16:34:27.416Z",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro"
   }
 }

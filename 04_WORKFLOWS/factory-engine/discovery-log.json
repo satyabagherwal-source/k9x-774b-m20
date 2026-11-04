@@ -20248,5 +20248,29 @@
     "qualityScore": 17870,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-04T09:14:01.133Z"
+  },
+  {
+    "name": "moonshotai/Kimi-K3.1-Pro",
+    "fullName": "moonshotai/Kimi-K3.1-Pro",
+    "url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: moonshotai/Kimi-K3.1-Pro (158 likes, 797 downloads)",
+    "likes": 158,
+    "downloads": 797,
+    "qualityScore": 2377,
+    "discoveredAt": "2026-11-04T16:32:00.234Z"
+  },
+  {
+    "name": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "fullName": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 (167 likes, 3648 downloads)",
+    "likes": 167,
+    "downloads": 3648,
+    "qualityScore": 3670,
+    "discoveredAt": "2026-11-04T16:32:00.235Z"
   }
 ]

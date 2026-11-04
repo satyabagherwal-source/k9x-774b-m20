@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T11:09:31.173Z",
-  "total_verified_learnings": 1206,
+  "last_updated": "2026-11-04T16:34:39.037Z",
+  "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -15628,8 +15628,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "189cf90a",
-      "content_hash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
+      "source_version": "e43834ca",
+      "content_hash": "f0aeb9142d43f9fdb29a2038aa6713c91cafd48c1a7010b671ec210673c65ee6",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -15692,6 +15692,11 @@
           "number": 6547,
           "title": "portal): prevent resource names from wrapping in permissions panel (#24284)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6836,
+          "title": "restore robot member role assignment compatibility (#24300)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15699,7 +15704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:06:26.585Z",
+      "verified_at": "2026-11-04T16:34:27.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61154,8 +61159,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "fc82aedd",
-      "content_hash": "4a3b2b1b0658ad9ccf45150d531a18fca33b0dd7c888f55f2635f8ff026ec4b9",
+      "source_version": "b24a3efb",
+      "content_hash": "e56391651f9d5300cb48f1542c0d284a0f4e3edec070332e37678f5b0e981320",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -61228,6 +61233,11 @@
           "number": 6539,
           "title": "REQUIREMENTS(cpu) from real usage — Security (#57899)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6837,
+          "title": "EXT-2580 Hive log UI actions (#57953)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61235,7 +61245,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:18:05.861Z",
+      "verified_at": "2026-11-04T16:34:39.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174705,6 +174715,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T11:09:31.159Z"
+    },
+    "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4": {
+      "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "slug": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "source_version": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
+      "content_hash": "6ce8819c213a529a606368fcd108227d9fcfc83d9297b2178bf5d0f5c4d07e43",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T16:34:17.467Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-moonshotai-kimi-k3-1-pro": {
+      "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "moonshotai/Kimi-K3.1-Pro",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "slug": "hf-moonshotai-kimi-k3.1-pro",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "content_hash": "79306e4f53c6a4f97730ae77b23504c19b7faab5a4e1d2d520636907504edc55",
+      "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6833,
+          "title": "Hybrid Attention Layer Mapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6834,
+          "title": "MoE Expert Routing Density Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6835,
+          "title": "Multimodal Token Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T16:34:27.303Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6833": {
+      "learning_id": "rule-6833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6833,
+      "title": "Hybrid Attention Layer Mapping Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:34:27.303Z"
+    },
+    "rule-6834": {
+      "learning_id": "rule-6834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6834,
+      "title": "MoE Expert Routing Density Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:34:27.303Z"
+    },
+    "rule-6835": {
+      "learning_id": "rule-6835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6835,
+      "title": "Multimodal Token Alignment Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:34:27.303Z"
+    },
+    "rule-6836": {
+      "learning_id": "rule-6836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6836,
+      "title": "restore robot member role assignment compatibility (#24300)",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "e43834ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:34:27.720Z"
+    },
+    "rule-6837": {
+      "learning_id": "rule-6837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6837,
+      "title": "EXT-2580 Hive log UI actions (#57953)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "b24a3efb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:34:39.015Z"
     }
   },
   "aliases": {

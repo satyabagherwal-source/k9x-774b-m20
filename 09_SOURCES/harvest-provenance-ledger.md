@@ -7236,3 +7236,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T11:02:39.491Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-04T11:09:27.845Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `351f4207` | Multi-dimensional audit evidence | 2026-11-04T11:09:31.231Z |
+| `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T16:34:17.604Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-04T16:34:27.416Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e43834ca` | Multi-dimensional audit evidence | 2026-11-04T16:34:27.829Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `b24a3efb` | Multi-dimensional audit evidence | 2026-11-04T16:34:39.125Z |
