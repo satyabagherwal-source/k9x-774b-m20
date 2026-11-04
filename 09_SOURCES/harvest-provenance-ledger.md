@@ -7336,3 +7336,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2131caf5` | Multi-dimensional audit evidence | 2026-11-04T20:39:11.054Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-04T20:39:19.717Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `bbd630ae` | Multi-dimensional audit evidence | 2026-11-04T20:39:33.589Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `c0299477` | Multi-dimensional audit evidence | 2026-11-04T20:46:39.866Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-04T20:46:41.452Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `b5012d56` | Multi-dimensional audit evidence | 2026-11-04T20:46:42.885Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `97df5a8b` | Multi-dimensional audit evidence | 2026-11-04T20:46:46.771Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `6c1f8d15` | Multi-dimensional audit evidence | 2026-11-04T20:46:50.105Z |

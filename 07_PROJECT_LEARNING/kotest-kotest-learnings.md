@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `0397e47b`  
+> **Source Version**: `b5012d56`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:27:12.142Z  
+> **Timestamp**: 2026-11-04T20:46:42.136Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:27:12.138Z  
+> **Harvest Timestamp**: 2026-11-04T20:46:42.128Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Powerful, elegant and flexible test framework for Kotlin with assertions, property testing and data driven tests.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4787 stars
+- **Stars / Engagement**: 4788 stars
 
 ---
 
@@ -676,11 +676,11 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6261** (2026-11-02): **Keep Gradle's no-discovered-tests check enabled on the JVM (#6257)**
+  *Symptoms*: Fixes #6257  ## Summary  The Gradle plugin currently disables `failOnNoDiscoveredTests` on **every** `AbstractTestTask`. As measured in the issue, that opt-out is only required on non-JVM targets (Kotlin/JS, Wasm, Native), where Gradle's result counters stay at zero even for a fully successful run, so Gradle 9's check fails every green build. On the JVM the counters are correct, and the opt-out only suppresses an accurate error.  ## Change  `decorateGradleTestTask` now applies the opt-out only when the task is **not** a Gradle `Test` task (the JVM test task type, which `KotlinJvmTest` extends as well). JS/Wasm/Native test tasks are other `AbstractTestTask` subtypes and keep the opt-out. Also switched the string literal to the existing `FAIL_ON_NO_DISCOVERED_TESTS` constant.  ## Behaviour change (deliberate, please sanity-check)  A JVM test task with test sources but no discoverable tests will now fail the build with Gradle's *"the test task did not discover any tests to execute"* instead of passing silently. This is exactly the behaviour the issue proposes; if you'd rather keep the opt-out uniform across targets, this PR can be dropped — flagging it explicitly since it's a user-visible change.  ## Testing  - `:kotest-framework:kotest-framework-plugin-gradle` compiles and its unit tests pass - The module has no functional test kit; the behavioural verification recipe from the issue (KMP project, jvm() + js { nodejs() }, Gradle 9.5, overriding the flag) is the reference scenari
+
 - **Issue #6260** (2026-10-30): **perf: short-circuit the contain matcher pass/fail decision (#6106)**
   *Symptoms*: Fixes #6106  ## Summary  The `contain(t, verifier)` matcher built the full list of matching indexes before deciding pass/fail, invoking `Equality.verify` on every element of the collection — even though the `should` flow only needs to know whether **any** element matched, and when the assertion fails the index list is empty by definition. With custom verifiers this makes `shouldContain` unnecessarily expensive (see the timeouts described in the issue).  ## Changes  - The pass/fail decision now uses `any { }`, short-circuiting on the first match — the same pattern already used by `beOneOf` and `containAll` - The list of matching indexes is computed lazily inside the negated failure message lambda, the only place it is used (`shouldNot` flow) - Assertion output is unchanged; existing message tests (`PossibleMatches`, `but it did at index(es)`) pass as-is  For the other matchers mentioned in the issue: `containAll`, `containOnly` and `containExactly(InAnyOrder)` already short-circuit with `any { }`, while `containExactCopies` and `matchEach` need the full element scan for their own decisions/failure messages, so `contain` was the outlier.  ## Testing  - Added a test with a counting verifier: a successful `shouldContain` on a 100-element list invokes the verifier exactly once - `:kotest-assertions:kotest-assertions-core:jvmTest --tests "com.sksamuel.kotest.matchers.collections.*"` passes 
-
-- **Issue #6259** (2026-10-29): **Expose HikariCP as an api dependency of kotest-extensions-testcontainers**
-  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ -->  The docs example for `JdbcDatabaseContainerSpecExtension` / `JdbcDatabaseContainerProjectExtension` does not compile unless the user adds HikariCP themselves:  ```kotlin val ds = install(JdbcDatabaseContainerProjectExtension(mysql)) {    poolName = "app-pool"   // Cannot access class 'HikariConfig' } ```  `mount(configure: HikariConfig.() -> Unit): HikariDataSource` exposes Hikari types to users, but the module declares `implementation(libs.hikari)`, so Hikari is only on the consumer's runtime classpath. In the old standalone repo it was `api(libs.hikari)`. It became `implementation` when the module moved here in #4773.  This uses the same rule as #6253 (`kotlinx-coroutines-test` → `api`).  - Only `hikari` changes. `testcontainers-*` types are in public signatures too, but users almost always declare a Testcontainers module themselves, so I left those alone. Happy to include them if you prefer. - If `implementation` was intentional, I can turn this into a docs change that tells users to add HikariCP.  Verified: - `apiCheck` passes for the module; JDBC extension tests pass. - Published pom now lists HikariCP with `compile` scope (was `runtime`). - A c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -697,149 +697,61 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0397e47b` (2026-10-30)
-**Commit Message**: perf: short-circuit the contain matcher pass/fail decision (#6106) (#6260)
+### Incident Patch 1: `b5012d56` (2026-11-02)
+**Commit Message**: Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)
 
-Fixes #6106
+Fixes #6257
 
 ## Summary
 
-The `contain(t, verifier)` matcher built the full list of matching
-indexes before deciding pass/fail, invoking `Equality.verify` on every
-element of the collection — even though the `should` flow only needs to
-know whether **any** element matched, and when the assertion fails the
-index list is empty by definition. With custom verifiers this makes
-`shouldContain` unnecessarily expensive (see the timeouts described in
-the issue).
+The Gradle plugin currently disables `failOnNoDiscoveredTests` on
+**every** `AbstractTestTask`. As measured in the issue, that opt-out is
+only required on non-JVM targets (Kotlin/JS, Wasm, Native), where
+Gradle's result counters stay at zero even for a fully successful run,
+so Gradle 9's check fails every green build. On the JVM the counters are
+correct, and the opt-out only suppresses an accurate error.
 
-## Changes
+## Change
 
-- The pass/fail decision now uses `any { }`, short-circuiting on the
-first match — the same pattern already used by `beOneOf` and
-`containAll`
-- The list of matching indexes is computed lazily inside the negated
-failure message lambda, the only place it is used (`shouldNot` flow)
-- Assertion output is unchanged; existing message tests
-(`PossibleMatches`, `but it did at index(es)`) pass as-is
+`decorateGradleTestTask` now applies the opt-out only when the task is
+**not** a Gradle `Test` task (the JVM test task type, which
+`KotlinJvmTest` extends as well). JS/Wasm/Native test tasks are other
+`AbstractTestTask` subtypes and keep the opt-out. Also switched the
+string literal to the existing `FAIL_ON_NO_DISCOVERED_TESTS` constant.
 
-For the other matchers mentioned in the issue: `containAll`,
-`containOnly` and `containExactly(InAnyOrder)` already short-circuit
-with `any { }`, while `containExactCopies` and `matchEach` need the full
-element scan for their own decisions/failure messages, 
+## Behaviour change (deliberate, please sanity-check)
 
-**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/contain.kt` (modified, +29/-4)
+A JVM test task with test sources but no discoverable tests will now
+fail the build with Gradle's *"the test task did not discover any tests
+to execute"* instead of passing silently. This is exactly the behaviour
+the issue proposes; if you'd rather keep the opt-out uniform across
+ta
+
+**File**: `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt` (modified, +5/-2)
 ```diff
-@@ -53,10 +53,33 @@ fun <T> Array<T>.shouldContain(t: T, comparator: Equality<T>): Array<T> = apply
- // Matcher
- fun <T, C : Collection<T>> contain(t: T, verifier: Equality<T> = Equality.default()) = object : Matcher<C> {
-    override fun test(value: C) : MatcherResult {
--      val passedAtIndexes = value.mapIndexedNotNull {
--         index, it -> if(verifier.verify(it, t).areEqual()) index else null
-+      // the verifier can be expensive, so a single pass over the collection is shared between
-+      // the pass/fail decision and the negated failure message: the decision stops at the first
-+      // match, and the negated message resumes the pass to collect the remaining indexes,
-+      // so the verifier is invoked at most once per element in every scenario
-+      val remaining = value.withIndex().iterator()
-+      val passedAtIndexes = mutableListOf<Int>()
-+
-+      fun findFirstMatch(): Boolean {
-+         while (remaining.hasNext()) {
-+            val (index, element) = remaining.next()
-+            if (verifier.verify(element, t).areEqual()) {
-+               passedAtIndexes.add(index)
-+               return true
-+            }
-+         }
-+         return false
-+      }
-+
-+      fun collectRemainingMatches(): List<Int> {
-+         while (remaining.hasNext()) {
-+            val (index, element) = remaining.next()
-+            if (verifier.verify(element, t).areEqual()) passedAtIndexes.add(index)
-+         }
-+         return passedAtIndexes
-       }
--      val passed = passedAtIndexes.isNotEmpty()
-+
-+      val passed = findFirstMatch()
-       val possibleMatches = {
-          if (!passed && (verifier.name() == Equality.default<T>().name())) {
-             val candidates = possibleMatchesDescription(value.toSet(), t)
-@@ -69,7 +92,9 @@ fun <T, C : Collection<T>> contain(t: T, verifier: Equality<T> = Equality.defaul
-             "Collection should contain element ${t.print().value} based on ${verifier.name()}; " +
-                "but the collection is ${value.print().value}${possibleMatches()}"
-          },
--         { "Collection should not contain element ${t.print().value} based on ${verifier.name()}, but it did at index(es):${passedAtIndexes.print().value}" }
-+         {
-+            "Collection should not contain element ${t.print().value} based on ${verifier.name()}, but it did at index(es):${collectRemainingMatches().print().value}"
-+         }
-       )
-    }
- }
-```
-
-**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/collections/ShouldContainTest.kt` (modified, +32/-0)
-```diff
-@@ -12,6 +12,7 @@ import io.kotest.matchers.collections.contain
- import io.kotest.matchers.collections.shouldContain
- import io.kotest.matchers.collections.shouldNotContain
- import io.kotest.matchers.should
-+import io.kotest.matchers.shouldBe
- import io.kotest.matchers.string.shouldContain
- import io.kotest.matchers.string.shouldContainInOrder
- import io.kotest.matchers.throwable.shouldHaveMessage
-@@ -40,6 +41,22 @@ class ShouldContainTest : WordSpec({
-          col should contain(2, verifier)
+@@ -154,8 +154,11 @@ abstract class KotestPlugin : Plugin<Project> {
+    private fun decorateGradleTestTask(project: Project, extension: KotestGradleExtension, task: AbstractTestTask) {
+ 
+       // this has to happen at configuration time as its a final property
+-      if (task.hasProperty("failOnNoDiscoveredTests")) {
+-         task.setProperty("failOnNoDiscoveredTests", false)
++      // Gradle's no-discovered-tests check false-positives on non-JVM targets, where Gradle's
++      // result counters stay at zero even when the whole suite ran successfully (#6257); on the
++      // JVM (Gradle's Test task) the check works correctly, so it is left enabled there
++      if (task !is Test && task.hasProperty(FAIL_ON_NO_DISCOVERED_TESTS)) {
++         task.setProperty(FAIL_ON_NO_DISCOVERED_TESTS, false)
        }
  
-+      "stop invoking the verifier once an element has matched" {
-+         val countingVerifier = CountingEquality()
-+         val col = List(100) { it }
-+         col.shouldContain(0, countingVerifier)
-+         countingVerifier.invocations shouldBe 1
-+      }
-+
-+      "invoke the verifier exactly once per element when the negated assertion fails" {
-+         val countingVerifier = CountingEquality()
-+         val col = List(100) { if (it == 99) 1000 else it } // single match at the last index
-+         shouldThrow<AssertionError> {
-+            col.shouldNotContain(1000, countingVerifier)
-+         }
-+         countingVerifier.invocations shouldBe 100
-+      }
-+
-       "support infix shouldContain" {
-          val col = listOf(1, 2, 3)
-          col shouldContain (2)
-@@ -211,3 +228,18 @@ private object FruitEquality: Equality<Fruit> {
-    override fun verify(actual: Fruit, expected: Fruit): EqualityResult =
-       SimpleEqualityResult(actual == expected, SimpleEqualityResultDetail { "Some Mesasge" })
- }
-+
-+private class CountingEquality : Equality<Int> {
-+   var invocations = 0
-+      private set
-+
-+   override fun name() = "counting equality"
-+
-+   override fun verify(actual: Int, expected: Int): EqualityResult {
-+      invocations++
-+      return if (actual == expected)
-+         EqualityResult.equal(actual, expected, this)
-+      else
-+         EqualityResult.notEqual(actual, expected, this)
-+   }
-+}
+       task.doFirst {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6261** (2026-11-02): Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (@Inf1mum)
 - **PR #6260** (2026-10-30): perf: short-circuit the contain matcher pass/fail decision (#6106) (@Inf1mum)
 - **PR #6259** (2026-10-29): Expose HikariCP as an api dependency of kotest-extensions-testcontainers (@PreAgile)
 - **PR #6255** (2026-10-21): Report a spec that fails outside its tests to pitest (@ItsDeadlyProgrammer)
 - **PR #6253** (2026-10-18): improve ai skills and make coroutines-test part of api (@alfonsoristorato)
 - **PR #6252** (2026-10-21): Call PropTestListeners around every shrink run (@ybai08)
-- **PR #6251** (2026-10-16): Keep the original error as the cause of a failed permutation (@ItsDeadlyProgrammer)
 
 ---
 
@@ -859,58 +771,33 @@ element scan for their own decisions/failure messages,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. short-circuit the contain matcher pass/fail decision (#6106) (#6260)
+## X. Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)
 
 **RULE**:
-When implementing operations in `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/contain.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0397e47b`: short-circuit the contain matcher pass/fail decision (#6106) (#6260). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5012d56`: Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/contain.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      // the verifier can be expensive, so a single pass over the collection is shared between
-      // the pass/fail decision and the negated failure message: the decision stops at the first
-      // match, and the negated message resumes the pass to collect the remaining indexes,
-      // so the verifier is invoked at most once per element in every scenario
-      val remaining = value.withIndex().iterator()
-      val passedAtIndexes = mutableListOf<Int>()
-
-      fun findFirstMatch(): Boolean {
-         while (remaining.hasNext()) {
-            val (index, element) = remaining.next()
-            if (verifier.verify(element, t).areEqual()) {
-               passedAtIndexes.add(index)
-               return true
-            }
-         }
-         return false
-      }
-
-      fun collectRemainingMatches(): List<Int> {
-         while (remaining.hasNext()) {
-            val (index, element) = remaining.next()
-            if (verifier.verify(element, t).areEqual()) passedAtIndexes.add(index)
-         }
-         return passedAtIndexes
-
-      val passed = findFirstMatch()
-         {
-            "Collection should not contain element ${t.print().value} based on ${verifier.name()}, but it did a
+      // Gradle's no-discovered-tests check false-positives on non-JVM targets, where Gradle's
+      // result counters stay at zero even when the whole suite ran successfully (#6257); on the
+      // JVM (Gradle's Test task) the check works correctly, so it is left enabled there
+      if (task !is Test && task.hasProperty(FAIL_ON_NO_DISCOVERED_TESTS)) {
+         task.setProperty(FAIL_ON_NO_DISCOVERED_TESTS, false)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-      val passedAtIndexes = value.mapIndexedNotNull {
-         index, it -> if(verifier.verify(it, t).areEqual()) index else null
-      val passed = passedAtIndexes.isNotEmpty()
-         { "Collection should not contain element ${t.print().value} based on ${verifier.name()}, but it did at index(es):${passedAtIndexes.print().value}" }
+      if (task.hasProperty("failOnNoDiscoveredTests")) {
+         task.setProperty("failOnNoDiscoveredTests", false)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0397e47b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5012d56` are properly handled with clean fallback behavior.

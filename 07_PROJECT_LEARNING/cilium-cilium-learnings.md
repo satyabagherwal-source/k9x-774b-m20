@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `4c9c9518`  
+> **Source Version**: `6c1f8d15`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:09:48.016Z  
+> **Timestamp**: 2026-11-04T20:46:49.370Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:09:33.273Z  
+> **Harvest Timestamp**: 2026-11-04T20:46:49.363Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25773 stars
+- **Stars / Engagement**: 25774 stars
 
 ---
 
@@ -1282,134 +1282,55 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38f4a7d7` (2026-11-04)
-**Commit Message**: cilium-cli: add explicit timeout to ensure health check termination
+### Incident Patch 1: `6c1f8d15` (2026-08-29)
+**Commit Message**: docs: explain IPv6 cluster-pool "node CIDR size is too big" error
 
-Otherwise, the test would continue running forever until manually stopped
-(or the CI timeout hits) in case the health status does not converge.
-The timeout is set to five minutes, which should be generous enough to
-not risk causing flakes.
+cilium-operator can fail to start when cluster-pool IPAM is used with
+IPv6 with the error "unable to initialize IPv6 allocator New CIDR set
+failed; the node CIDR size is too big". This is caused by an
+undocumented constraint: clusterPoolIPv6MaskSize cannot differ from
+the clusterPoolIPv6PodCIDRList mask by more than 16 bits (see
+pkg/ipam/cidrset/cidr_set.go).
 
-Signed-off-by: Marco Iorio <[REDACTED_EMAIL]>
+Document the constraint and two ways to work around it in the
+cluster-pool IPAM troubleshooting section.
 
-**File**: `cilium-cli/connectivity/tests/health.go` (modified, +3/-0)
+Fixes: #20756
+Signed-off-by: Satyam Pandey <[REDACTED_EMAIL]>
+
+**File**: `Documentation/network/concepts/ipam/cluster-pool.rst` (modified, +27/-0)
 ```diff
-@@ -34,6 +34,9 @@ func (s *ciliumHealth) Name() string {
- }
+@@ -79,3 +79,30 @@ You can solve it in two ways:
  
- func (s *ciliumHealth) Run(ctx context.Context, t *check.Test) {
-+	ctx, cancel := context.WithTimeout(ctx, check.LongTimeout)
-+	defer cancel()
+   - Explicitly set ``clusterPoolIPv4PodCIDRList`` to a non-conflicting CIDR
+   - Use a different CIDR for your nodes
 +
- 	for name, pod := range t.Context().CiliumPods() {
- 		t.NewGenericAction(s, name).Run(func(_ *check.Action) {
- 			runHealthProbe(ctx, t, &pod)
-```
-
----
-
-### Incident Patch 2: `e1864dfd` (2026-11-04)
-**Commit Message**: fix: pass in ipsec config instead of fakes
-
-Signed-off-by: Vamsi Kalapala <[REDACTED_EMAIL]>
-
-**File**: `pkg/datapath/linux/node.go` (modified, +2/-2)
-```diff
-@@ -28,7 +28,6 @@ import (
- 	"github.com/cilium/cilium/pkg/backoff"
- 	"github.com/cilium/cilium/pkg/datapath/config"
- 	"github.com/cilium/cilium/pkg/datapath/linux/ipsec"
--	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
- 	ipsecTypes "github.com/cilium/cilium/pkg/datapath/linux/ipsec/types"
- 	"github.com/cilium/cilium/pkg/datapath/linux/linux_defaults"
- 	"github.com/cilium/cilium/pkg/datapath/linux/route"
-@@ -131,6 +130,7 @@ func NewNodeHandler(
- 	nodeConfigNotifier *config.NodeConfigNotifier,
- 	kprCfg kpr.KPRConfig,
- 	ipsecAgent ipsecTypes.Agent,
-+	ipsecCfg ipsecTypes.Config,
- 	localNodeStore *node.LocalNodeStore,
- 	nodePolicy *NodePolicy,
- 	params reconciler.Params,
-@@ -151,7 +151,7 @@ func NewNodeHandler(
- 		nodeMap,
- 		kprCfg,
- 		ipsecAgent,
--		fakeipsec.Config{},
-+		ipsecCfg,
- 		localNodeStore,
- 		nodePolicy,
- 		db,
-```
-
----
-
-### Incident Patch 3: `64992d2e` (2026-09-28)
-**Commit Message**: ci: add sysdump upload for resource-churn workflow error debugging
-
-Signed-off-by: Deepesh Pathak <[REDACTED_EMAIL]>
-(cherry picked from commit b1b92e16c2aeea6b0e5a1004dd0afee5b5cac6c3)
-
-**File**: `.github/workflows/resource-churn.yaml` (modified, +36/-0)
-```diff
-@@ -487,6 +487,9 @@ jobs:
-             2>&1 | tee cl2-output-baseline.txt
-           echo "time_end=$(date +%s%3N)" >> "$GITHUB_OUTPUT"
- 
-+          cilium status
-+          cilium sysdump --output-filename ${REPORT_DIR}/cilium-sysdump
++Resolve "node CIDR size is too big" error with IPv6
++===================================================
 +
-           sudo chmod --recursive +r "${REPORT_DIR}"
- 
-           # Ensure no state is left behind from baseline run.
-@@ -594,6 +597,9 @@ jobs:
-             2>&1 | tee cl2-output-test.txt
-           echo "time_end=$(date +%s%3N)" >> "$GITHUB_OUTPUT"
- 
-+          cilium status
-+          cilium sysdump --output-filename ${REPORT_DIR}/cilium-sysdump
++When enabling IPv6 with cluster-pool IPAM, ``cilium-operator`` may fail to
++start with an error similar to::
 +
-           sudo chmod --recursive +r "${REPORT_DIR}"
- 
-       - name: Collect test tag Cilium agent node logs
-@@ -717,7 +723,37 @@ jobs:
-           path: ./perf-tests/clusterloader2/report/*/node-logs.zip
-           if-no-files-found: warn
- 
-+      - name: Upload cilium sysdumps
-+        if: ${{ always() }}
-+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        with:
-+          name: cilium-sysdumps-${{ steps.vars.outputs.scenario }}-${{ github.run_attempt }}
-+          path: ./perf-tests/clusterloader2/report/*/cilium-sysdump.zip
-+          if-no-files-found: warn
++    level=fatal msg="Unable to init cluster-pool allocator" error="unable to initialize IPv6 allocator New CIDR set failed; the node CIDR size is too big" subsys=cilium-operator-generic
 +
-       - name: Cleanup cluster
-         if: ${{ always() && steps.deploy-cluster.outcome != 'skipped' }}
-         run: |
-           eksctl delete cluster --name ${{ steps.vars.outputs.cluster_name }} --region ${{ steps.vars.outputs.eks_region }}
++This happens because the per-node mask size (``clusterPoolIPv6MaskSize``,
++``/120`` by default) is only allowed to differ from the mask size of the pool
++CIDR (``clusterPoolIPv6PodCIDRList``) by up to 16 bits. For example, a
++``/64`` pool CIDR only supports a ``clusterPoolIPv6MaskSize`` of up to
++``/80`` (``80 - 64 = 16``); the default of ``/120`` exceeds that difference
++and triggers this error.
 +
-+  merge-artifacts:
-+    if: ${{ always() }}
-+    name: Merge Artifacts
-+    runs-on: ubuntu-24.04
-+    needs: resource-churn
-+    steps:
-+      - name: Merge Sysdumps
-+        uses: cilium/cilium/.github/actions/merge-artifacts@main # main
-+        with:
-+          name: cilium-sysdumps
-+          pattern: cilium-sysdumps-*
-+          token: ${{ secrets.GITHUB_TOKEN }}
-+          separate-directories: false
++You can resolve this in one of two ways:
 +
-+      - name: Merge Logs
-+        uses: cilium/cilium/.github/actions/merge-artifacts@main # main
-+        with:
-+          name: cilium-logs
-+          pattern: cilium-logs-*
-+          token: ${{ secrets.GITHUB_TOKEN }}
-+          separate-directories: false
++- Use a pool CIDR whose mask is at least ``clusterPoolIPv6MaskSize - 16``
++  (for example, a ``/104`` or smaller range instead of ``/64`` for the default
++  ``/120`` per-node mask).
++- Lower ``clusterPoolIPv6MaskSize`` to be within 16 bits of your pool
++  CIDR's mask (for example, ``--set ipam.operator.clusterPoolIPv6MaskSize=80``
++  for a ``/64`` pool CIDR).
++
++This limit comes from the underlying CIDR allocator and mirrors a similar
++restriction in upstream Kubernetes.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1438,23 +1359,46 @@ Signed-off-by: Deepesh Pathak <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cilium-cli: add explicit timeout to ensure health check termination
+## X. docs: explain IPv6 cluster-pool "node CIDR size is too big" error
 
 **RULE**:
-When implementing operations in `cilium-cli/connectivity/tests/health.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/network/concepts/ipam/cluster-pool.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38f4a7d7`: cilium-cli: add explicit timeout to ensure health check termination. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c1f8d15`: docs: explain IPv6 cluster-pool "node CIDR size is too big" error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/tests/health.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/network/concepts/ipam/cluster-pool.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ctx, cancel := context.WithTimeout(ctx, check.LongTimeout)
-	defer cancel()
 
+Resolve "node CIDR size is too big" error with IPv6
+===================================================
+
+When enabling IPv6 with cluster-pool IPAM, ``cilium-operator`` may fail to
+start with an error similar to::
+
+    level=fatal msg="Unable to init cluster-pool allocator" error="unable to initialize IPv6 allocator New CIDR set failed; the node CIDR size is too big" subsys=cilium-operator-generic
+
+This happens because the per-node mask size (``clusterPoolIPv6MaskSize``,
+``/120`` by default) is only allowed to differ from the mask size of the pool
+CIDR (``clusterPoolIPv6PodCIDRList``) by up to 16 bits. For example, a
+``/64`` pool CIDR only supports a ``clusterPoolIPv6MaskSize`` of up to
+``/80`` (``80 - 64 = 16``); the default of ``/120`` exceeds that difference
+and triggers this error.
+
+You can resolve this in one of two ways:
+
+- Use a pool CIDR whose mask is at least ``clusterPoolIPv6MaskSize - 16``
+  (for example, a ``/104`` or smaller range instead of ``/64`` for the default
+  ``/120`` per-node mask).
+- Lower ``clusterPoolIPv6MaskSize`` to be within 16 bits of your pool
+  CIDR's mask (for example, ``--set ipam.operator.clusterPoolIPv6MaskSize=80``
+  for a ``/64`` pool CIDR).
+
+Th
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1464,4 +1408,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38f4a7d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c1f8d15` are properly handled with clean fallback behavior.

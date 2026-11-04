@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "61f160e9a833da5b717d3995a16e6f35fff2a2543c6344158a795dd7646b31a7",
-    "lastHarvestedAt": "2026-10-31T05:00:53.700Z",
+    "contentHash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
+    "lastHarvestedAt": "2026-11-04T20:46:41.452Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "4c9c9518",
+    "sourceVersion": "6c1f8d15",
     "license": "Apache-2.0",
-    "contentHash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
-    "lastHarvestedAt": "2026-11-04T17:09:48.777Z",
+    "contentHash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
+    "lastHarvestedAt": "2026-11-04T20:46:50.105Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "da7b0e35",
+    "sourceVersion": "97df5a8b",
     "license": "NOASSERTION",
-    "contentHash": "9e56bdb82e11d6a4bd332e5fa22d7af9b409512138e497142aa0d7c5b8215122",
-    "lastHarvestedAt": "2026-11-03T22:23:42.391Z",
+    "contentHash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
+    "lastHarvestedAt": "2026-11-04T20:46:46.771Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "0397e47b",
+    "sourceVersion": "b5012d56",
     "license": "Apache-2.0",
-    "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
-    "lastHarvestedAt": "2026-10-31T13:27:12.570Z",
+    "contentHash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
+    "lastHarvestedAt": "2026-11-04T20:46:42.885Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "b4628bc8",
+    "sourceVersion": "c0299477",
     "license": "MIT",
-    "contentHash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
-    "lastHarvestedAt": "2026-11-03T16:25:23.645Z",
+    "contentHash": "ec1b26bcb48d06d5f07a77f0728ffa11f81a7961be93fa229ac7ee580cb5a5cd",
+    "lastHarvestedAt": "2026-11-04T20:46:39.866Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:39:33.514Z",
+  "last_updated": "2026-11-04T20:46:50.015Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4501,8 +4501,8 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "b4628bc8",
-      "content_hash": "56d38d3e779f7f19ca828f7e3e8ea9ec40d06f7e9f85c3218b279ecefeba2583",
+      "source_version": "c0299477",
+      "content_hash": "ec1b26bcb48d06d5f07a77f0728ffa11f81a7961be93fa229ac7ee580cb5a5cd",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
@@ -4525,6 +4525,11 @@
           "number": 6540,
           "title": "gitlab): honor image, rules, when and stage failures (#150)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6963,
+          "title": "ui): upgrade to ratatui 0.30 and redesign the TUI (#162)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4532,7 +4537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:25:23.534Z",
+      "verified_at": "2026-11-04T20:46:39.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7104,8 +7109,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "4c9c9518",
-      "content_hash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
+      "source_version": "6c1f8d15",
+      "content_hash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7328,6 +7333,11 @@
           "number": 6852,
           "title": "cilium-cli: add explicit timeout to ensure health check termination",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6966,
+          "title": "docs: explain IPv6 cluster-pool \"node CIDR size is too big\" error",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7335,7 +7345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:09:48.665Z",
+      "verified_at": "2026-11-04T20:46:49.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23526,7 +23536,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "61f160e9a833da5b717d3995a16e6f35fff2a2543c6344158a795dd7646b31a7",
+      "content_hash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -23941,7 +23951,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-31T05:00:53.584Z",
+      "verified_at": "2026-11-04T20:46:41.330Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35878,8 +35888,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "da7b0e35",
-      "content_hash": "9e56bdb82e11d6a4bd332e5fa22d7af9b409512138e497142aa0d7c5b8215122",
+      "source_version": "97df5a8b",
+      "content_hash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -35922,6 +35932,11 @@
           "number": 6643,
           "title": "Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6965,
+          "title": "support split image variables for CR workloads (#5037)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35929,7 +35944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:23:42.327Z",
+      "verified_at": "2026-11-04T20:46:46.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36135,8 +36150,8 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "0397e47b",
-      "content_hash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
+      "source_version": "b5012d56",
+      "content_hash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
@@ -36154,6 +36169,11 @@
           "number": 6209,
           "title": "short-circuit the contain matcher pass/fail decision (#6106) (#6260)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6964,
+          "title": "Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36161,7 +36181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:27:12.507Z",
+      "verified_at": "2026-11-04T20:46:42.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177262,6 +177282,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:39:33.495Z"
+    },
+    "rule-6963": {
+      "learning_id": "rule-6963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6963,
+      "title": "ui): upgrade to ratatui 0.30 and redesign the TUI (#162)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "c0299477",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:46:39.752Z"
+    },
+    "rule-6964": {
+      "learning_id": "rule-6964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6964,
+      "title": "Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "b5012d56",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:46:42.772Z"
+    },
+    "rule-6965": {
+      "learning_id": "rule-6965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6965,
+      "title": "support split image variables for CR workloads (#5037)",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "97df5a8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:46:46.659Z"
+    },
+    "rule-6966": {
+      "learning_id": "rule-6966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6966,
+      "title": "docs: explain IPv6 cluster-pool \"node CIDR size is too big\" error",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "6c1f8d15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:46:49.992Z"
     }
   },
   "aliases": {
