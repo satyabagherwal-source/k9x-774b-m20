@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T08:35:31.684Z",
-    "lastVerified": "2026-11-04T08:35:31.684Z",
+    "lastChecked": "2026-11-04T08:47:20.263Z",
+    "lastVerified": "2026-11-04T08:47:20.263Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,8 +110,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T02:19:14.548Z",
-    "lastVerified": "2026-11-04T02:19:14.548Z",
+    "lastChecked": "2026-11-04T08:46:01.759Z",
+    "lastVerified": "2026-11-04T08:46:01.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T08:14:13.246Z",
-    "lastVerified": "2026-11-04T08:14:13.246Z",
+    "lastChecked": "2026-11-04T08:46:06.780Z",
+    "lastVerified": "2026-11-04T08:46:06.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3857,9 +3857,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-10-31T05:52:25.407Z",
+    "lastChecked": "2026-11-04T08:45:56.725Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-10-31T05:52:25.407Z"
+    "lastVerified": "2026-11-04T08:45:56.725Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -5071,9 +5071,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-02T15:08:04.456Z",
+    "lastChecked": "2026-11-04T08:45:51.726Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-02T15:08:04.456Z"
+    "lastVerified": "2026-11-04T08:45:51.726Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -5314,9 +5314,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-03T11:15:02.376Z",
+    "lastChecked": "2026-11-04T08:46:04.263Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-03T11:15:02.376Z"
+    "lastVerified": "2026-11-04T08:46:04.263Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -7397,14 +7397,14 @@
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T12:13:34.268Z",
-    "lastVerified": "2026-11-03T12:13:34.268Z",
+    "lastChecked": "2026-11-04T08:46:02.842Z",
+    "lastVerified": "2026-11-04T08:46:02.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12088,9 +12088,9 @@
   "syntax-tree-mdast": {
     "name": "mdast",
     "officialUrl": "https://github.com/syntax-tree/mdast",
-    "lastChecked": "2026-10-30T22:34:22.667Z",
+    "lastChecked": "2026-11-04T08:45:54.250Z",
     "revisionIdentifier": "c034ec9d",
-    "lastVerified": "2026-10-30T22:34:22.667Z"
+    "lastVerified": "2026-11-04T08:45:54.250Z"
   },
   "shiguangschedule-shiguangschedule": {
     "name": "shiguangschedule",

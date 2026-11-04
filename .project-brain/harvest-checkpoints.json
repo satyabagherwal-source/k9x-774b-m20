@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:35:29.155Z",
+  "last_updated": "2026-11-04T08:47:17.703Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
-      "verified_at": "2026-11-03T12:13:35.355Z",
+      "content_hash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
+      "verified_at": "2026-11-04T08:47:17.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:13:35.355Z"
+      "last_updated": "2026-11-04T08:47:17.702Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-5RR1",
-    "timestamp": "2026-10-31T19:14:38.653Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-5X8O",
     "timestamp": "2026-10-31T19:14:45.768Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7477,21 @@
     "contentHash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-IEGP",
+    "timestamp": "2026-11-04T08:47:17.689Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

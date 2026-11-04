@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `caebd2cf`  
+> **Source Version**: `ac85e06f`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:13:35.059Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-04T08:47:16.008Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,2399 +12,569 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): prometheus/prometheus
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:13:34.268Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): prometheus/prometheus
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `prometheus/prometheus`
-- **Description**: The Prometheus monitoring system and time series database.
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66920 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Prometheus is an autonomous, non-distributed, pull-based time series database, metrics scraper, and alerting computation engine. It ingests high-frequency numeric measurements and high-cardinality label-dimensions, appends them to a memory-mapped write-ahead-logged storage engine (TSDB), executes a vector-oriented expression query language (PromQL), and fans out derived alert notifications through asynchronous, bounded queues to upstream Alertmanager clusters.
+
+```
+       [HTTP Scraping Targets / Pushgateway / OpenTelemetry]
+                                |
+                                v (HTTP pull / scrape loop)
+                   +---------------------------+
+                   |       Scrape Engine       |
+                   +---------------------------+
+                                |
+                   (Appender.Append / Commit)
+                                v
++------------------------------------------------------------------+
+|                            TSDB Head                             |
+|  +--------------------+     +---------------------------------+  |
+|  |     WAL Logging    |     |          Memory Index           |  |
+|  +--------------------+     | (Postings, Series, Label Index) |  |
+|                             +---------------------------------+  |
+|                                              |                   |
+|                                              v                   |
+|         +------------------------------------------------------+ |
+|         |           ChunkDiskMapper (MMAP Head Chunks)          | |
+|         |  - writeJobQueue (segmented ring buffer)             | |
+|         |  - monotonic evtlPos sequence tracker                | |
+|         +------------------------------------------------------+ |
++------------------------------------------------------------------+
+          |                                            |
+ (2h Compaction Blocks)                       (PromQL Query Engine)
+          v                                            v
++-----------------------+                    +---------------------+
+| Persistent TSDB Block |                    |   PromQL Engine     |
+| (meta, index, chunks) |                    | (Vector/Matrix Eval)|
++-----------------------+                    +---------------------+
+                                                       |
+                                            (Rule Evaluation Loop)
+                                                       v
+                                             +--------------------+
+                                             |  Notifier Engine   |
+                                             | (Async sendLoop)   |
+                                             +--------------------+
+                                                       |
+                                                       v (HTTP POST OpenAPI v2)
+                                              [ Alertmanager ]
+```
+
+### Subsystem Boundaries & Decoupling
+1. **Scrape Engine (`scrape/`)**: Orchestrates concurrent poll intervals against dynamic targets discovered via service discovery (`discovery/`). Decoupled from storage through the atomic `storage.Appender` transaction boundary.
+2. **TSDB Head & Compactor (`tsdb/`, `tsdb/chunks/`)**:
+   - In-memory Head holds actively ingested samples inside appendable chunks.
+   - Closed head chunks are flushed to disk via memory-mapped segments through the `ChunkDiskMapper`.
+   - Compaction runs every 2 hours (or on cutoff boundaries), reading frozen segments and writing persistent immutable blocks consisting of a unified posting index, metadata, and chunk files.
+   - Out-Of-Order (OOO) chunks are managed inside distinct memory-mapped segments separated by strictly monotonic bookmark references (`lastGarbageCollectedMmapRef`, `minOOOMmapRef`).
+3. **Query Engine (`promql/`)**: Implements an expression tree parser, intermediate AST compiler, and memory-managed nested iterators. Queries operate against `storage.Queryable` abstractions without direct coupling to disk formats, utilizing object pools (`zeropool`) and chunk iterators (`chunkenc.Iterator`).
+4. **Notifier (`notifier/`)**: Maintains an asynchronous pipeline with strict backpressure guards. Decouples rule engine evaluation cycles from network delivery across remote Alertmanager endpoints via dedicated, self-throttling worker goroutines (`sendLoop`).
+5. **Remote Storage Subsystem (`storage/remote/`)**: Integrates Remote Write (v1 and v2) pipelines featuring dynamically auto-scaled parallel sharding driven by Exponentially Weighted Moving Average (EWMA) throughput indicators, reading directly from the TSDB Write-Ahead-Log (WAL).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `.agents/skills/contributor-trust/scripts/score_contributors.py`
-```
-#!/usr/bin/env python3
-# Copyright The Prometheus Authors
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-Computes contributor trust scores for any GitHub repository using repository
-governance roles (Maintainer, Member, Contributor, New Contributor) and a
-rolling monthly contribution average (1.0x merged PRs + 1.5x reviewed PRs).
-"""
-import argparse
-import base64
-from concurrent.futures import ThreadPoolExecutor
-import datetime
-import json
-import math
-import os
-import re
-import subprocess
-import sys
-import time
-
-
-ROLE_MAINTAINER = "Maintainer"
-ROLE_MEMBER = "Member"
-ROLE_CONTRIBUTOR = "Contributor"
-ROLE_NEW_CONTRIBUTOR = "New Contributor"
-
-ROLE_BASE_SCORES = {
-    ROLE_MAINTAINER: 50.0,
-    ROLE_MEMBER: 35.0,
-    ROLE_CONTRIBUTOR: 15.0,
-    ROLE_NEW_CONTRIBUTOR: 0.0,
-}
-
-ROLE_RANK = {
-    ROLE_NEW_CONTRIBUTOR: 0,
-    ROLE_CONTRIBUTOR: 1,
-    ROLE_MEMBER: 2,
-    ROLE_MAINTAINER: 3,
-}
-
-ASSOC_RANK = {
-    "NONE": 0,
-    "FIRST_TIMER": 1,
-    "FIRST_TIME_CONTRIBUTOR": 1,
-    "CONTRIBUTOR": 2,
-    "COLLABORATOR": 3,
-    "MEMBER": 4,
-    "OWNER": 5,
-}
-
-PROMETHEUS_ORGS = {"prometheus", "prometheus-community", "promcon"}
-RESERVED_GH_PATHS = {
-    "orgs",
-    "organizations",
-    "teams",
-    "issues",
-    "pulls",
-    "pull",
-    "discussions",
-    "actions",
-    "settings",
-    "security",
-    "sponsors",
-    "about",
-    "pricing",
-    "features",
-}
-
-MERGED_PR_WEIGHT = 1.0
-REVIEWED_PR_WEIGHT = 1.5
-CONTRIB_LOG_SCALE = 12.0
-MAX_CONTRIB_BONUS = 40.0
-DEFAULT_WINDOW_DAYS = 90
-DEFAULT_AGING_PER_DAY = 1.5
-NEW_CONTRIBUTOR_WELCOME_SCORE = 30.0
-
-
-# NOTE(bwplotka): We query repository.pullRequests ordered by UPDATED_AT DESC
-# instead of the GraphQL search connection. GitHub search caps results at 1,000
-# items and enforces strict secondary rate limits, whereas repository.pullRequests
-# streams cleanly and can stop as soon as updatedAt falls behind the window cutoff.
-ACTIVITY_GRAPHQL_QUERY = """
-query($owner: String!, $name: String!, $states: [PullRequestState!]!, $after: String) {
-  repository(owner: $owner, name: $name) {
-    pullRequests(states: $states, first: 100, after: $after, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-      nodes {
-        number
-        state
-        updatedAt
-        mergedAt
-        mergedBy { __typename login }
-        author { __typename login }
-        authorAssociation
-        reviews(last: 30, states: [APPROVED, CHANGES_REQUESTED, COMMENTED]) {
-          nodes {
-            submittedAt
-            authorAssociation
-            author { __typename login }
-          }
-        }
-      }
-    }
-  }
-}
-"""
-
-
-def run_cmd(cmd):
-    res = subprocess.run(cmd, capture_output=True, text=True)
-    if res.returncode != 0:
-        return None
-    return res.stdout
-
-
-def fetch_file_from_repo(owner, repo, path):
-    out = run_cmd(["gh", "api", f"repos/{owner}/{repo}/contents/{path}"])
-    if not out:
-        return None
-    try:
-        data = json.loads(out)
-        if "content" in data:
-            return base64.b64decode(data["content"]).decode("utf-8", errors="replace")
-    except Exception:
-        pass
-    return None
-
-
-def is_bot(actor):
-    if not actor:
-        return True
-    if isinstance(actor, dict):
-        if actor.get("__typename") == "Bot":
-            return True
-        login = actor.get("login")
-    else:
-        login = str(actor)
-    if not login:
-        return True
-    low = login.lower()
-    return (
-        "[bot]" in low
-        or "dependabot" in low
-        or "renovate" in low
-        or "copilot" in low
-        or low in ("prombot", "cla-bot", "netlify", "codecov")
-    )
-
-
-def _extract_handles_from_line(line):
-    """Extracts GitHub handles from a line, preferring github.com/<handle> links over @tokens."""
-    gh_links = [
-        h
-        for h in re.findall(r"github\.com/([a-zA-Z0-9-]+)(?:[/?#)\]\s]|$)", line)
-        if h.lower() not in RESERVED_GH_PATHS
-    ]
-    if gh_links:
-        seen = []
-        for h in gh_links:
-            if h not in seen:
-                seen.append(h)
-        return seen
-
-    # Strip inline code spans containing whitespace (such as CNCF Slack `@Full Name`)
-    # before matching @handles so display names are not mistaken for GitHub logins.
-    cleaned = re.sub(r"`[^`]*\s[^`]*`", " ", line)
-    handles = re.findall(r"(?:^|[\s/(\[|`])@([a-zA-Z0-9-]+)", cleaned)
-    seen = []
-    for h in handles:
-        if h not in seen:
-            seen.append(h)
-    return seen
-
-
-def parse_maintainers_md(content):
-    """Extracts general maintainers, path-specific rules, and all active maintainer handles."""
-    general = []
-    specific = []
-    all_maintainers = []
-    if not content:
-        return general, specific, all_maintainers
-
-    # Default to "general" so simple bullet or Markdown-table MAINTAINERS.md files
-    # (such as client_golang, common, and thanos-io/thanos) work without specific headers.
-    mode = "general"
-    prefix_stack = []
-
-    for line in content.splitlines():
-        stripped = line.strip()
-        low = stripped.lower()
-        if not stripped:
-            continue
-        if low.startswith("general maintainers") or "core maintainers" in low:
-            mode = "general"
-            prefix_stack = []
-            continue
-        if low.startswith("maintainers for specific") or "named maintainers" in low:
-            mode = "specific"
-            prefix_stack = []
-            continue
-        if (
-            low.startswith("v3 release")
-            or low.startswith("release coordinators")
-            or low.startswith("for the sake of")
-            or (
-                low.startswith("#")
-                and any(
-                    stop in low
-                    for stop in ("triage", "alumni", "emeritus", "retired", "former")
-                )
-            )
-            or low.startswith("emeritus")
-        ):
-            mode = None
-            prefix_stack = []
-            continue
-        if mode is None:
-            continue
-
-        # Skip Markdown table separator rows (e.g. |---|---|).
-        if stripped.startswith("|") and re.match(r"^\|[\s:|-]+\|?$", stripped):
-            continue
-
-        handles = _extract_handles_from_line(line)
-        indent = len(line) - len(line.lstrip(" "))
-        m_code = re.match(r"^\s*[-*]\s*`([^`]+)`", line)
-
-        if m_code:
-            token = m_code.group(1).strip("/")
-            while prefix_stack and prefix_stack[-1][0] >= indent:
-                prefix_stack.pop()
-            prefix_stack.append((indent, token))
-            full_path = "/".join(t for _, t in prefix_stack)
-            if handles:
-                specific.append((full_path, handles))
-                for h in handles:
-                    if h not in all_maintainers:
-                        all_maintainers.append(h)
-        elif handles and stripped.startswith(("*", "-", "|")):
-            for h in handles:
-                if mode == "general" and h not in general:
-                    general.append(h)
-                if h not in all_maintainers:
-                    all_maintainers.append(h)
-
-    return general, specific, all_maintainers
-
-
-def parse_codeowners(content):
-    """Parses CODEOWNERS into default owners, path rules, and all individual handles."""
-    rules = []
-    default_individuals = []
-    all_individuals = []
-    if not content:
-        return default_individuals, rules, all_individuals
-
-    for line in content.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        parts = line.split()
-        if len(parts) < 2:
-            continue
-        pattern = parts[0]
-        raw_owners = [o.lstrip("@") for o in parts[1:] if o.startswith("@")]
-        indiv = [o for o in raw_owners if "/" not in o]
-        teams = [o for o in raw_owners if "/" in o]
-        for i in indiv:
-            if i not in all_individuals:
-                all_individuals.append(i)
-        if pattern == "*":
-            for i in indiv:
-                if i not in default_individuals:
-                    default_individuals.append(i)
-        else:
-            rules.append((pattern.lstrip("/"), indiv, teams))
-    return default_individuals, rules, all_individuals
-
-
-def parse_owners_yaml(owners_content, aliases_content=""):
-    """Parses Kubernetes/Prow-style OWNERS and OWNERS_ALIASES files for approvers."""
-    if not owners_content:
-        return []
-
-    aliases = {}
-    if aliases_content:
-        current_alias = None
-        in_aliases = False
-        for raw in aliases_content.splitlines():
-            line = raw.split("#", 1)[0].rstrip()
-            stripped = line.strip()
-            if not stripped:
-                continue
-            indent = len(line) - len(line.lstrip(" "))
-            if indent == 0:
-                in_aliases = stripped.startswith("aliases:")
-                current_alias = None
-                continue
-            if not in_aliases:
-                continue
-            if stripped.endswith(":") and not stripped.startswith("-"):
-                current_alias = stripped[:-1].strip()
-                aliases.setdefault(current_alias, [])
-            elif stripped.startswith("-") and current_alias:
-                val = stripped[1:].strip().lstrip("@")
-                if val:
-                    aliases[current_alias].append(val)
-
-    approvers = []
-    in_approvers = False
-    for raw in owners_content.splitlines():
-        line = raw.split("#", 1)[0].rstrip()
-        stripped = line.strip()
-        if 
-```
-
-### Core Architecture Module: `discovery/util.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package discovery
-
-import (
-	"fmt"
-
-	"github.com/prometheus/client_golang/prometheus"
-)
-
-// MetricRegisterer is used by implementations of discovery.Discoverer that need
-// to manage the lifetime of their metrics.
-type MetricRegisterer interface {
-	RegisterMetrics() error
-	UnregisterMetrics()
-}
-
-// metricRegistererImpl is an implementation of MetricRegisterer.
-type metricRegistererImpl struct {
-	reg     prometheus.Registerer
-	metrics []prometheus.Collector
-}
-
-var _ MetricRegisterer = &metricRegistererImpl{}
-
-// NewMetricRegisterer creates an instance of a MetricRegisterer.
-// Typically called inside the implementation of the NewDiscoverer() method.
-func NewMetricRegisterer(reg prometheus.Registerer, metrics []prometheus.Collector) MetricRegisterer {
-	return &metricRegistererImpl{
-		reg:     reg,
-		metrics: metrics,
-	}
-}
-
-// RegisterMetrics registers the metrics with a Prometheus registerer.
-// If any metric fails to register, it will unregister all metrics that
-// were registered so far, and return an error.
-// Typically called at the start of the SD's Run() method.
-func (rh *metricRegistererImpl) RegisterMetrics() error {
-	for _, collector := range rh.metrics {
-		err := rh.reg.Register(collector)
-		if err != nil {
-			// Unregister all metrics that were registered so far.
-			// This is so that if RegisterMetrics() gets called again,
-			// there will not be an error due to a duplicate registration.
-			rh.UnregisterMetrics()
-
-			return fmt.Errorf("failed to register metric: %w", err)
-		}
-	}
-	return nil
-}
-
-// UnregisterMetrics unregisters the metrics from the same Prometheus
-// registerer which was used to register them.
-// Typically called at the end of the SD's Run() method by a defer statement.
-func (rh *metricRegistererImpl) UnregisterMetrics() {
-	for _, collector := range rh.metrics {
-		rh.reg.Unregister(collector)
-	}
-}
-
-```
-
-### Core Architecture Module: `notifier/sendloop.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package notifier
-
-import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"fmt"
-	"io"
-	"log/slog"
-	"net/http"
-	"sync"
-	"time"
-
-	"github.com/prometheus/prometheus/config"
-)
-
-type sendLoop struct {
-	alertmanagerURL string
-
-	cfg    *config.AlertmanagerConfig
-	client *http.Client
-	opts   *Options
-
-	metrics *alertMetrics
-
-	mtx      sync.RWMutex
-	queue    []*Alert
-	hasWork  chan struct{}
-	stopped  chan struct{}
-	stopOnce sync.Once
-
-	logger *slog.Logger
-}
-
-func newSendLoop(
-	alertmanagerURL string,
-	client *http.Client,
-	cfg *config.AlertmanagerConfig,
-	opts *Options,
-	logger *slog.Logger,
-	metrics *alertMetrics,
-) *sendLoop {
-	// This will initialize the Counters for the AM to 0 and set the static queue capacity gauge.
-	metrics.dropped.WithLabelValues(alertmanagerURL)
-	metrics.errors.WithLabelValues(alertmanagerURL)
-	metrics.sent.WithLabelValues(alertmanagerURL)
-	metrics.queueLength.WithLabelValues(alertmanagerURL)
-
-	return &sendLoop{
-		alertmanagerURL: alertmanagerURL,
-		client:          client,
-		cfg:             cfg,
-		opts:            opts,
-		logger:          logger,
-		metrics:         metrics,
-		queue:           make([]*Alert, 0, opts.QueueCapacity),
-		hasWork:         make(chan struct{}, 1),
-		stopped:         make(chan struct{}),
-	}
-}
-
-func (s *sendLoop) add(alerts ...*Alert) {
-	select {
-	case <-s.stopped:
-		return
-	default:
-	}
-
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-
-	var dropped int
-	// Queue capacity should be significantly larger than a single alert
-	// batch could be.
-	if d := len(alerts) - s.opts.QueueCapacity; d > 0 {
-		s.logger.Warn("Alert batch larger than queue capacity, dropping alerts", "count", d)
-		dropped += d
-		alerts = alerts[d:]
-	}
-
-	// If the queue is full, remove the oldest alerts in favor
-	// of newer ones.
-	if d := (len(s.queue) + len(alerts)) - s.opts.QueueCapacity; d > 0 {
-		s.logger.Warn("Alert notification queue full, dropping alerts", "count", d)
-		dropped += d
-		s.queue = s.queue[d:]
-	}
-
-	s.queue = append(s.queue, alerts...)
-
-	// Notify sending goroutine that there are alerts to be processed.
-	// If we cannot send on the channel, it means the signal already exists
-	// and has not been consumed yet.
-	s.notifyWork()
-
-	s.metrics.queueLength.WithLabelValues(s.alertmanagerURL).Set(float64(len(s.queue)))
-	if dropped > 0 {
-		s.metrics.dropped.WithLabelValues(s.alertmanagerURL).Add(float64(dropped))
-	}
-}
-
-func (s *sendLoop) notifyWork() {
-	select {
-	case <-s.stopped:
-		return
-	case s.hasWork <- struct{}{}:
-	default:
-	}
-}
-
-func (s *sendLoop) stop() {
-	s.stopOnce.Do(func() {
-		s.logger.Debug("Stopping send loop")
-		close(s.stopped)
-
-		if s.opts.DrainOnShutdown {
-			s.drainQueue()
-		} else {
-			ql := s.queueLen()
-			s.logger.Warn("Alert notification queue not drained on shutdown, dropping alerts", "count", ql)
-			s.metrics.dropped.WithLabelValues(s.alertmanagerURL).Add(float64(ql))
-		}
-
-		s.metrics.latencySummary.DeleteLabelValues(s.alertmanagerURL)
-		s.metrics.latencyHistogram.DeleteLabelValues(s.alertmanagerURL)
-		s.metrics.sent.DeleteLabelValues(s.alertmanagerURL)
-		s.metrics.dropped.DeleteLabelValues(s.alertmanagerURL)
-		s.metrics.errors.DeleteLabelValues(s.alertmanagerURL)
-		s.metrics.queueLength.DeleteLabelValues(s.alertmanagerURL)
-	})
-}
-
-func (s *sendLoop) drainQueue() {
-	for s.queueLen() > 0 {
-		s.sendOneBatch()
-	}
-}
-
-func (s *sendLoop) queueLen() int {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-
-	return len(s.queue)
-}
-
-func (s *sendLoop) nextBatch() []*Alert {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-
-	var alerts []*Alert
-	if maxBatchSize := s.opts.MaxBatchSize; len(s.queue) > maxBatchSize {
-		alerts = append(make([]*Alert, 0, maxBatchSize), s.queue[:maxBatchSize]...)
-		s.queue = s.queue[maxBatchSize:]
-	} else {
-		alerts = append(make([]*Alert, 0, len(s.queue)), s.queue...)
-		s.queue = s.queue[:0]
-	}
-	s.metrics.queueLength.WithLabelValues(s.alertmanagerURL).Set(float64(len(s.queue)))
-
-	return alerts
-}
-
-func (s *sendLoop) sendOneBatch() {
-	alerts := s.nextBatch()
-
-	if !s.sendAll(alerts) {
-		s.metrics.dropped.WithLabelValues(s.alertmanagerURL).Add(float64(len(alerts)))
-	}
-}
-
-// loop continuously consumes the notifications queue and sends alerts to
-// the Alertmanager.
-func (s *sendLoop) loop() {
-	s.logger.Debug("Starting send loop")
-	for {
-		// If we've been asked to stop, that takes priority over sending any further notifications.
-		select {
-		case <-s.stopped:
-			return
-		default:
-			select {
-			case <-s.stopped:
-				return
-			case <-s.hasWork:
-				s.sendOneBatch()
-
-				// If the queue still has items left, kick off the next iteration.
-				if s.queueLen() > 0 {
-					s.notifyWork()
-				}
-			}
-		}
-	}
-}
-
-func (s *sendLoop) sendAll(alerts []*Alert) bool {
-	if len(alerts) == 0 {
-		return true
-	}
-
-	begin := time.Now()
-
-	var payload []byte
-	var err error
-	switch s.cfg.APIVersion {
-	case config.AlertmanagerAPIVersionV2:
-		openAPIAlerts := alertsToOpenAPIAlerts(alerts)
-		payload, err = json.Marshal(openAPIAlerts)
-		if err != nil {
-			s.logger.Error("Encoding alerts for Alertmanager API v2 failed", "err", err)
-			return false
-		}
-
-	default:
-		s.logger.Error(
-			fmt.Sprintf("Invalid Alertmanager API version '%v', expected one of '%v'", s.cfg.APIVersion, config.SupportedAlertmanagerAPIVersions),
-			"err", err,
-		)
-		return false
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(s.cfg.Timeout))
-	defer cancel()
-
-	if err := s.sendOne(ctx, s.client, s.alertmanagerURL, payload); err != nil {
-		s.logger.Error("Error sending alerts", "count", len(alerts), "err", err)
-		s.metrics.errors.WithLabelValues(s.alertmanagerURL).Add(float64(len(alerts)))
-		return false
-	}
-	durationSeconds := time.Since(begin).Seconds()
-	s.metrics.latencySummary.WithLabelValues(s.alertmanagerURL).Observe(durationSeconds)
-	s.metrics.latencyHistogram.WithLabelValues(s.alertmanagerURL).Observe(durationSeconds)
-	s.metrics.sent.WithLabelValues(s.alertmanagerURL).Add(float64(len(alerts)))
-
-	return true
-}
-
-func (s *sendLoop) sendOne(ctx context.Context, c *http.Client, url string, b []byte) error {
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(b))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("Content-Type", contentTypeJSON)
-	resp, err := s.opts.Do(ctx, c, req)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		io.Copy(io.Discard, resp.Body)
-		resp.Body.Close()
-	}()
-
-	// Any HTTP status 2xx is OK.
-	if resp.StatusCode/100 != 2 {
-		return fmt.Errorf("bad response status %s", resp.Status)
-	}
-
-	return nil
-}
-
-```
-
-### Core Architecture Module: `notifier/util.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package notifier
-
-import (
-	"github.com/go-openapi/strfmt"
-	"github.com/prometheus/alertmanager/api/v2/models"
-
-	"github.com/prometheus/prometheus/model/labels"
-)
-
-func alertsToOpenAPIAlerts(alerts []*Alert) models.PostableAlerts {
-	openAPIAlerts := models.PostableAlerts{}
-	for _, a := range alerts {
-		start := strfmt.DateTime(a.StartsAt)
-		end := strfmt.DateTime(a.EndsAt)
-		openAPIAlerts = append(openAPIAlerts, &models.PostableAlert{
-			Annotations: labelsToOpenAPILabelSet(a.Annotations),
-			EndsAt:      end,
-			StartsAt:    start,
-			Alert: models.Alert{
-				GeneratorURL: strfmt.URI(a.GeneratorURL),
-				Labels:       labelsToOpenAPILabelSet(a.Labels),
-			},
-		})
-	}
-
-	return openAPIAlerts
-}
-
-func labelsToOpenAPILabelSet(modelLabelSet labels.Labels) models.LabelSet {
-	apiLabelSet := models.LabelSet{}
-	modelLabelSet.Range(func(label labels.Label) {
-		apiLabelSet[label.Name] = label.Value
-	})
-
-	return apiLabelSet
-}
-
-```
-
-### Core Architecture Module: `promql/engine.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package promql
-
-import (
-	"bytes"
-	"container/heap"
-	"context"
-	"errors"
-	"fmt"
-	"io"
-	"log/slog"
-	"maps"
-	"math"
-	"reflect"
-	"runtime"
-	"slices"
-	"sort"
-	"strconv"
-	"strings"
-	"sync"
-	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/common/model"
-	"github.com/prometheus/common/promslog"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
-
-	"github.com/prometheus/prometheus/model/histogram"
-	"github.com/prometheus/prometheus/model/labels"
-	"github.com/prometheus/prometheus/model/timestamp"
-	"github.com/prometheus/prometheus/model/value"
-	"github.com/prometheus/prometheus/promql/parser"
-	"github.com/prometheus/prometheus/promql/parser/posrange"
-	"github.com/prometheus/prometheus/schema"
-	"github.com/prometheus/prometheus/storage"
-	"github.com/prometheus/prometheus/tsdb/chunkenc"
-	"github.com/prometheus/prometheus/util/annotations"
-	"github.com/prometheus/prometheus/util/features"
-	"github.com/prometheus/prometheus/util/kahansum"
-	"github.com/prometheus/prometheus/util/logging"
-	"github.com/prometheus/prometheus/util/stats"
-	"github.com/prometheus/prometheus/util/zeropool"
-)
-
-const (
-	namespace            = "prometheus"
-	subsystem            = "engine"
-	queryTag             = "query"
-	env                  = "query execution"
-	defaultLookbackDelta = 5 * time.Minute
-
-	// The largest SampleValue that can be converted to an int64 without overflow.
-	maxInt64 = 9223372036854774784
-	// The smallest SampleValue that can be converted to an int64 without underflow.
-	minInt64 = -9223372036854775808
-
-	// Max initial size for the pooled points slices.
-	// The getHPointSlice and getFPointSlice functions are called with an estimated size which often can be
-	// over-estimated.
-	maxPointsSliceSize = 5000
-
-	// The default buffer size for points used by the matrix selector.
-	matrixSelectorSliceSize = 16
-)
-
-type engineMetrics struct {
-	currentQueries            prometheus.Gauge
-	maxConcurrentQueries      prometheus.Gauge
-	queryLogEnabled           prometheus.Gauge
-	queryLogFailures          prometheus.Counter
-	queryQueueTime            prometheus.Observer
-	queryQueueTimeHistogram   prometheus.Observer
-	queryPrepareTime          prometheus.Observer
-	queryPrepareTimeHistogram prometheus.Observer
-	queryInnerEval            prometheus.Observer
-	queryInnerEvalHistogram   prometheus.Observer
-	queryResultSort           prometheus.Observer
-	queryResultSortHistogram  prometheus.Observer
-	querySamples              prometheus.Counter
-	querySamplesRead          prometheus.Counter
-	queryRejectedTotal        *prometheus.CounterVec
-	querySeriesTouched        prometheus.Histogram
-	querySamplesReadHistogram prometheus.Histogram
-}
-
-type (
-	// ErrQueryTimeout is returned if a query timed out during processing.
-	ErrQueryTimeout string
-	// ErrQueryCanceled is returned if a query was canceled during processing.
-	ErrQueryCanceled string
-	// ErrTooManySamples is returned if a query would load more than the maximum allowed samples into memory.
-	ErrTooManySamples string
-	// ErrTooManySeries is returned if a query would load more than the maximum allowed series into memory.
-	ErrTooManySeries string
-	// ErrTooManySamplesRead is returned if a query would read more than the maximum allowed samples.
-	ErrTooManySamplesRead string
-	// ErrStorage is returned if an error was encountered in the storage layer
-	// during query handling.
-	ErrStorage struct{ Err error }
-)
-
-func (e ErrQueryTimeout) Error() string {
-	return fmt.Sprintf("query timed out in %s", string(e))
-}
-
-func (e ErrQueryCanceled) Error() string {
-	return fmt.Sprintf("query was canceled in %s", string(e))
-}
-
-func (e ErrTooManySamples) Error() string {
-	return fmt.Sprintf("query processing would load too many samples into memory in %s", string(e))
-}
-
-// Error implements the error interface.
-func (e ErrTooManySeries) Error() string {
-	return fmt.Sprintf("query would load too many series into memory in %s", string(e))
-}
-
-// Error implements the error interface.
-func (e ErrTooManySamplesRead) Error() string {
-	return fmt.Sprintf("query would read too many samples in %s", string(e))
-}
-
-func (e ErrStorage) Error() string {
-	return e.Err.Error()
-}
-
-// ErrLimitAboveCeiling is returned when a per-query limit override asks for a
-// value above the operator-set ceiling for that limit. A per-query override may
-// only tighten a ceiling, so such a request is rejected rather than silently
-// clamped down, making it clear to the caller that the limit it asked for was
-// not applied. Callers exposing the engine over an API should map it to a
-// client error, e.g. HTTP 400.
-type ErrLimitAboveCeiling struct {
-	// Limit is the name of the limit as the client spells it, e.g. "max_series".
-	Limit string
-	// Requested is the value the client asked for, already formatted for display.
-	Requested string
-	// Ceiling is the operator-set ceiling that the request exceeded, already
-	// formatted for display.
-	Ceiling string
-}
-
-// Error implements the error interface.
-func (e ErrLimitAboveCeiling) Error() string {
-	return fmt.Sprintf("requested %s of %s exceeds the server limit of %s", e.Limit, e.Requested, e.Ceiling)
-}
-
-// QueryEngine defines the interface for the *promql.Engine, so it can be replaced, wrapped or mocked.
-type QueryEngine interface {
-	NewInstantQuery(ctx context.Context, q storage.Queryable, opts QueryOpts, qs string, ts time.Time) (Query, error)
-	NewRangeQuery(ctx context.Context, q storage.Queryable, opts QueryOpts, qs string, start, end time.Time, interval time.Duration) (Query, error)
-}
-
-var _ QueryLogger = (*logging.JSONFileLogger)(nil)
-
-// QueryLogger is an interface that can be used to log all the queries logged
-// by the engine.
-// logging.JSONFileLogger implements this interface, downstream users may use
-// different implementations.
-type QueryLogger interface {
-	slog.Handler
-	io.Closer
-}
-
-// A Query is derived from a raw query string and can be run against an engine
-// it is associated with.
-type Query interface {
-	// Exec processes the query. Can only be called once.
-	Exec(ctx context.Context) *Result
-	// Close recovers memory used by the query result.
-	Close()
-	// Statement returns the parsed statement of the query.
-	Statement() parser.Statement
-	// Stats returns statistics about the lifetime of the query.
-	Stats() *stats.Statistics
-	// Cancel signals that a running query execution should be aborted.
-	Cancel()
-	// String returns the original query string.
-	String() string
-}
-
-type PrometheusQueryOpts struct {
-	// Enables recording per-step statistics if the engine has it enabled as well. Disabled by default.
-	enablePerStepStats bool
-	// Lookback delta duration for this query.
-	lookbackDelta time.Duration
-	// Enables start timestamp usage in functions such as rate().
-	useStartTimestamps *bool
-	// Per-query override for the maximum number of series the query may touch.
-	// Zero means no per-query override. It can only lower the operator-set
-	// ceiling, never raise it. It is only honored when the query-cost feature
-	// is enabled.
-	maxSeries uint64
-	// Per-query override for the maximum number of samples the query may read.
-	// Zero means no per-query override. It can only lower the operator-set
-	// ceiling, never raise it. It is only honored when the query-cost feature
-	// is enabled.
-	maxSamplesRead uint64
-	// Per-query override for the maximum wall-clock duration of the query.
-	// Zero means no per-query override. It can only lower the operator-set
-	// ceiling, never raise it. It is only honored when the query-cost feature
-	// is enabled.
-	maxQueryDuration time.Duration
-}
-
-var _ QueryOpts = &PrometheusQueryOpts{}
-
-func NewPrometheusQueryOpts(enablePerStepStats bool, lookbackDelta time.Duration, useStartTimestamps *bool) QueryOpts {
-	var useStartTimestampsCopy *bool
-	if useStartTimestamps != nil {
-		val := *useStartTimestamps
-		useStartTimestampsCopy = &val
-	}
-	return &PrometheusQueryOpts{
-		enablePerStepStats: enablePerStepStats,
-		lookbackDelta:      lookbackDelta,
-		useStartTimestamps: useStartTimestampsCopy,
-	}
-}
-
-// NewPrometheusQueryOptsWithLimits returns a QueryOpts that also carries
-// per-query cost-limit overrides. The limit overrides may only lower the
-// operator-set ceiling and are only honored when the query-cost feature is
-// enabled.
-func NewPrometheusQueryOptsWithLimits(enablePerStepStats bool, lookbackDelta time.Duration, maxSeries, maxSamplesRead uint64, maxQueryDuration time.Duration, useStartTimestamps *bool) QueryOpts {
-	opts := NewPrometheusQueryOpts(enablePerStepStats, lookbackDelta, useStartTimestamps).(*PrometheusQueryOpts)
-	opts.maxSeries = maxSeries
-	opts.maxSamplesRead = maxSamplesRead
-	opts.maxQueryDuration = maxQueryDuration
-	return opts
-}
-
-func (p *PrometheusQueryOpts) EnablePerStepStats() bool {
-	return p.enablePerStepStats
-}
-
-func (p *PrometheusQueryOpts) LookbackDelta() time.Duration {
-	return p.lookbackDelta
-}
-
-func (p *PrometheusQueryOpts) UseStartTimestamps() *bool {
-	return p.useStartTimestamps
-}
-
-// PrometheusQueryOpts carries the per-query cost overrides, so it satisfies
-// QueryCostOpts as well as QueryOpts.
-var _ QueryCostOpts = &PrometheusQueryOpts{}
-
-// MaxSeries returns the per-query series limit override.
-func (p *PrometheusQueryOpts) MaxSeries() uint64 {
-	return p.maxSeries
-}
-
-// MaxSamplesRead returns the per-query sample read limit override.
-func (p *PrometheusQueryOp
-```
-
-### Core Architecture Module: `storage/remote/queue_manager.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package remote
-
-import (
-	"context"
-	"encoding/binary"
-	"errors"
-	"fmt"
-	"log/slog"
-	"math"
-	"slices"
-	"strconv"
-	"strings"
-	"sync"
-	"time"
-	"unique"
-
-	"github.com/gogo/protobuf/proto"
-	remoteapi "github.com/prometheus/client_golang/exp/api/remote"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/common/model"
-	"github.com/prometheus/common/promslog"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
-	"go.opentelemetry.io/otel/trace"
-	"go.uber.org/atomic"
-
-	"github.com/prometheus/prometheus/config"
-	"github.com/prometheus/prometheus/model/histogram"
-	"github.com/prometheus/prometheus/model/labels"
-	"github.com/prometheus/prometheus/model/metadata"
-	"github.com/prometheus/prometheus/model/relabel"
-	"github.com/prometheus/prometheus/model/timestamp"
-	"github.com/prometheus/prometheus/model/value"
-	"github.com/prometheus/prometheus/prompb"
-	writev2 "github.com/prometheus/prometheus/prompb/io/prometheus/write/v2"
-	"github.com/prometheus/prometheus/schema"
-	"github.com/prometheus/prometheus/scrape"
-	"github.com/prometheus/prometheus/tsdb/chunks"
-	"github.com/prometheus/prometheus/tsdb/record"
-	"github.com/prometheus/prometheus/tsdb/wlog"
-	"github.com/prometheus/prometheus/util/compression"
-)
-
-const (
-	// We track samples in/out and how long pushes take using an Exponentially
-	// Weighted Moving Average.
-	ewmaWeight          = 0.2
-	shardUpdateDuration = 10 * time.Second
-
-	// Allow 30% too many shards before scaling down.
-	shardToleranceFraction = 0.3
-
-	reasonTooOld                     = "too_old"
-	reasonDroppedSeries              = "dropped_series"
-	reasonUnintentionalDroppedSeries = "unintentionally_dropped_series"
-	reasonNHCBNotSupported           = "nhcb_in_rw1_not_supported"
-	reasonNHCBConversionError        = "nhcb_to_classic_conversion_error"
-	reasonClassicHistogramNotAllowed = "classic_histogram_not_allowed"
-	// TODO(bwplotka): Temporary, fixed in https://github.com/prometheus/prometheus/pull/20070.
-	reasonDetachedExemplarNotAllowed = "detached_exemplar_not_allowed"
-	reasonMissingMetadataType        = "missing_metadata_type"
-	reasonMissingStartTimestamp      = "missing_start_timestamp"
-)
-
-type queueManagerMetrics struct {
-	reg prometheus.Registerer
-
-	samplesTotal           prometheus.Counter
-	exemplarsTotal         prometheus.Counter
-	histogramsTotal        prometheus.Counter
-	metadataTotal          prometheus.Counter
-	failedSamplesTotal     prometheus.Counter
-	failedExemplarsTotal   prometheus.Counter
-	failedHistogramsTotal  prometheus.Counter
-	failedMetadataTotal    prometheus.Counter
-	retriedSamplesTotal    prometheus.Counter
-	retriedExemplarsTotal  prometheus.Counter
-	retriedHistogramsTotal prometheus.Counter
-	retriedMetadataTotal   prometheus.Counter
-	droppedSamplesTotal    *prometheus.CounterVec
-	droppedExemplarsTotal  *prometheus.CounterVec
-	droppedHistogramsTotal *prometheus.CounterVec
-	enqueueRetriesTotal    prometheus.Counter
-	sentBatchDuration      prometheus.Histogram
-	highestTimestamp       *maxTimestamp
-	highestSentTimestamp   *maxTimestamp
-	pendingSamples         prometheus.Gauge
-	pendingExemplars       prometheus.Gauge
-	pendingHistograms      prometheus.Gauge
-	shardCapacity          prometheus.Gauge
-	numShards              prometheus.Gauge
-	maxNumShards           prometheus.Gauge
-	minNumShards           prometheus.Gauge
-	desiredNumShards       prometheus.Gauge
-	sentBytesTotal         prometheus.Counter
-	metadataBytesTotal     prometheus.Counter
-	maxSamplesPerSend      prometheus.Gauge
-
-	samplesMetadataTotal    *prometheus.CounterVec
-	histogramsMetadataTotal *prometheus.CounterVec
-}
-
-func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManagerMetrics {
-	m := &queueManagerMetrics{
-		reg: r,
-	}
-	constLabels := prometheus.Labels{
-		remoteName: rn,
-		endpoint:   e,
-	}
-
-	m.samplesTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "samples_total",
-		Help:        "Total number of samples sent to remote storage.",
-		ConstLabels: constLabels,
-	})
-	m.samplesMetadataTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "samples_metadata_total",
-		Help:        "Total number of samples sent to remote storage using Remote Write 2.0 with the specified metadata field set.",
-		ConstLabels: constLabels,
-	}, []string{"field"})
-	m.exemplarsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "exemplars_total",
-		Help:        "Total number of exemplars sent to remote storage.",
-		ConstLabels: constLabels,
-	})
-	m.histogramsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_total",
-		Help:        "Total number of histograms sent to remote storage.",
-		ConstLabels: constLabels,
-	})
-	m.histogramsMetadataTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_metadata_total",
-		Help:        "Total number of histograms sent to remote storage using Remote Write 2.0 with the specified metadata field set.",
-		ConstLabels: constLabels,
-	}, []string{"field"})
-	for _, field := range []string{metadataFieldType, metadataFieldUnit, metadataFieldHelp} {
-		m.samplesMetadataTotal.WithLabelValues(field)
-		m.histogramsMetadataTotal.WithLabelValues(field)
-	}
-	m.metadataTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "metadata_total",
-		Help:        "Total number of metadata entries sent to remote storage. Deprecated: This metric only applies to Remote Write 1.0.",
-		ConstLabels: constLabels,
-	})
-	m.failedSamplesTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "samples_failed_total",
-		Help:        "Total number of samples which failed on send to remote storage, non-recoverable errors.",
-		ConstLabels: constLabels,
-	})
-	m.failedExemplarsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "exemplars_failed_total",
-		Help:        "Total number of exemplars which failed on send to remote storage, non-recoverable errors.",
-		ConstLabels: constLabels,
-	})
-	m.failedHistogramsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_failed_total",
-		Help:        "Total number of histograms which failed on send to remote storage, non-recoverable errors.",
-		ConstLabels: constLabels,
-	})
-	m.failedMetadataTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "metadata_failed_total",
-		Help:        "Total number of metadata entries which failed on send to remote storage, non-recoverable errors. Deprecated: This metric only applies to Remote Write 1.0.",
-		ConstLabels: constLabels,
-	})
-	m.retriedSamplesTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "samples_retried_total",
-		Help:        "Total number of samples which failed on send to remote storage but were retried because the send error was recoverable.",
-		ConstLabels: constLabels,
-	})
-	m.retriedExemplarsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "exemplars_retried_total",
-		Help:        "Total number of exemplars which failed on send to remote storage but were retried because the send error was recoverable.",
-		ConstLabels: constLabels,
-	})
-	m.retriedHistogramsTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_retried_total",
-		Help:        "Total number of histograms which failed on send to remote storage but were retried because the send error was recoverable.",
-		ConstLabels: constLabels,
-	})
-	m.retriedMetadataTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "metadata_retried_total",
-		Help:        "Total number of metadata entries which failed on send to remote storage but were retried because the send error was recoverable. Deprecated: This metric only applies to Remote Write 1.0.",
-		ConstLabels: constLabels,
-	})
-	m.droppedSamplesTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "samples_dropped_total",
-		Help:        "Total number of samples which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID.",
-		ConstLabels: constLabels,
-	}, []string{"reason"})
-	m.droppedExemplarsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "exemplars_dropped_total",
-		Help:        "Total number of exemplars which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID.",
-		ConstLabels: constLabels,
-	}, []string{"reason
-```
-
-### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package chunks
-
-import (
-	"errors"
-	"sync"
-	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
-
-	"github.com/prometheus/prometheus/tsdb/chunkenc"
-)
-
-const (
-	// Minimum recorded peak since the last shrinking of chunkWriteQueue.chunkRefMap to shrink it again.
-	chunkRefMapShrinkThreshold = 1000
-
-	// Minimum interval between shrinking of chunkWriteQueue.chunkRefMap.
-	chunkRefMapMinShrinkInterval = 10 * time.Minute
-
-	// Maximum size of segment used by job queue (number of elements). With chunkWriteJob being 64 bytes,
-	// this will use ~512 KiB for empty queue.
-	maxChunkQueueSegmentSize = 8192
-)
-
-type chunkWriteJob struct {
-	seriesRef HeadSeriesRef
-	mint      int64
-	maxt      int64
-	chk       chunkenc.Chunk
-	ref       ChunkDiskMapperRef
-	cutFile   bool
-	isOOO     bool
-	callback  func(error)
-}
-
-// chunkWriteQueue is a queue for writing chunks to disk in a non-blocking fashion.
-// Chunks that shall be written get added to the queue, which is consumed asynchronously.
-// Adding jobs to the queue is non-blocking as long as the queue isn't full.
-type chunkWriteQueue struct {
-	jobs *writeJobQueue
-
-	chunkRefMapMtx        sync.RWMutex
-	chunkRefMap           map[ChunkDiskMapperRef]chunkenc.Chunk
-	chunkRefMapPeakSize   int       // Largest size that chunkRefMap has grown to since the last time we shrank it.
-	chunkRefMapLastShrink time.Time // When the chunkRefMap has been shrunk the last time.
-
-	// isRunningMtx serves two purposes:
-	// 1. It protects isRunning field.
-	// 2. It serializes adding of jobs to the chunkRefMap in addJob() method. If jobs channel is full then addJob() will block
-	// while holding this mutex, which guarantees that chunkRefMap won't ever grow beyond the queue size + 1.
-	isRunningMtx sync.Mutex
-	isRunning    bool // Used to prevent that new jobs get added to the queue when the chan is already closed.
-
-	workerWg sync.WaitGroup
-
-	writeChunk writeChunkF
-
-	// Keeping separate counters instead of only a single CounterVec to improve the performance of the critical
-	// addJob() method which otherwise would need to perform a WithLabelValues call on the CounterVec.
-	adds      prometheus.Counter
-	gets      prometheus.Counter
-	completed prometheus.Counter
-	shrink    prometheus.Counter
-}
-
-// writeChunkF is a function which writes chunks, it is dynamic to allow mocking in tests.
-type writeChunkF func(HeadSeriesRef, int64, int64, chunkenc.Chunk, ChunkDiskMapperRef, bool, bool) error
-
-func newChunkWriteQueue(reg prometheus.Registerer, size int, writeChunk writeChunkF) *chunkWriteQueue {
-	counters := prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "prometheus_tsdb_chunk_write_queue_operations_total",
-			Help: "Number of operations on the chunk_write_queue.",
-		},
-		[]string{"operation"},
-	)
-
-	segmentSize := min(size, maxChunkQueueSegmentSize)
-
-	q := &chunkWriteQueue{
-		jobs:                  newWriteJobQueue(size, segmentSize),
-		chunkRefMap:           make(map[ChunkDiskMapperRef]chunkenc.Chunk),
-		chunkRefMapLastShrink: time.Now(),
-		writeChunk:            writeChunk,
-
-		adds:      counters.WithLabelValues("add"),
-		gets:      counters.WithLabelValues("get"),
-		completed: counters.WithLabelValues("complete"),
-		shrink:    counters.WithLabelValues("shrink"),
-	}
-
-	if reg != nil {
-		reg.MustRegister(counters)
-	}
-
-	q.start()
-	return q
-}
-
-func (c *chunkWriteQueue) start() {
-	c.workerWg.Go(func() {
-		for {
-			job, ok := c.jobs.pop()
-			if !ok {
-				return
-			}
-
-			c.processJob(job)
-		}
-	})
-
-	c.isRunningMtx.Lock()
-	c.isRunning = true
-	c.isRunningMtx.Unlock()
-}
-
-func (c *chunkWriteQueue) processJob(job chunkWriteJob) {
-	err := c.writeChunk(job.seriesRef, job.mint, job.maxt, job.chk, job.ref, job.isOOO, job.cutFile)
-	if job.callback != nil {
-		job.callback(err)
-	}
-
-	c.chunkRefMapMtx.Lock()
-	defer c.chunkRefMapMtx.Unlock()
-
-	delete(c.chunkRefMap, job.ref)
-
-	c.completed.Inc()
-
-	c.shrinkChunkRefMap()
-}
-
-// shrinkChunkRefMap checks whether the conditions to shrink the chunkRefMap are met,
-// if so chunkRefMap is reinitialized. The chunkRefMapMtx must be held when calling this method.
-//
-// We do this because Go runtime doesn't release internal memory used by map after map has been emptied.
-// To achieve that we create new map instead and throw the old one away.
-func (c *chunkWriteQueue) shrinkChunkRefMap() {
-	if len(c.chunkRefMap) > 0 {
-		// Can't shrink it while there is data in it.
-		return
-	}
-
-	if c.chunkRefMapPeakSize < chunkRefMapShrinkThreshold {
-		// Not shrinking it because it has not grown to the minimum threshold yet.
-		return
-	}
-
-	now := time.Now()
-
-	if now.Sub(c.chunkRefMapLastShrink) < chunkRefMapMinShrinkInterval {
-		// Not shrinking it because the minimum duration between shrink-events has not passed yet.
-		return
-	}
-
-	// Re-initialize the chunk ref map to half of the peak size that it has grown to since the last re-init event.
-	// We are trying to hit the sweet spot in the trade-off between initializing it to a very small size
-	// potentially resulting in many allocations to re-grow it, and initializing it to a large size potentially
-	// resulting in unused allocated memory.
-	c.chunkRefMap = make(map[ChunkDiskMapperRef]chunkenc.Chunk, c.chunkRefMapPeakSize/2)
-
-	c.chunkRefMapPeakSize = 0
-	c.chunkRefMapLastShrink = now
-	c.shrink.Inc()
-}
-
-func (c *chunkWriteQueue) addJob(job chunkWriteJob) (err error) {
-	defer func() {
-		if err == nil {
-			c.adds.Inc()
-		}
-	}()
-
-	c.isRunningMtx.Lock()
-	defer c.isRunningMtx.Unlock()
-
-	if !c.isRunning {
-		return errors.New("queue is not running")
-	}
-
-	c.chunkRefMapMtx.Lock()
-	c.chunkRefMap[job.ref] = job.chk
-
-	// Keep track of the peak usage of c.chunkRefMap.
-	if len(c.chunkRefMap) > c.chunkRefMapPeakSize {
-		c.chunkRefMapPeakSize = len(c.chunkRefMap)
-	}
-	c.chunkRefMapMtx.Unlock()
-
-	if ok := c.jobs.push(job); !ok {
-		c.chunkRefMapMtx.Lock()
-		delete(c.chunkRefMap, job.ref)
-		c.chunkRefMapMtx.Unlock()
-
-		return errors.New("queue is closed")
-	}
-
-	return nil
-}
-
-func (c *chunkWriteQueue) get(ref ChunkDiskMapperRef) chunkenc.Chunk {
-	c.chunkRefMapMtx.RLock()
-	defer c.chunkRefMapMtx.RUnlock()
-
-	chk, ok := c.chunkRefMap[ref]
-	if ok {
-		c.gets.Inc()
-	}
-
-	return chk
-}
-
-func (c *chunkWriteQueue) stop() {
-	c.isRunningMtx.Lock()
-	defer c.isRunningMtx.Unlock()
-
-	if !c.isRunning {
-		return
-	}
-
-	c.isRunning = false
-
-	c.jobs.close()
-
-	c.workerWg.Wait()
-}
-
-func (c *chunkWriteQueue) queueIsEmpty() bool {
-	return c.queueSize() == 0
-}
-
-func (c *chunkWriteQueue) queueIsFull() bool {
-	// When the queue is full and blocked on the writer the chunkRefMap has one more job than the cap of the jobCh
-	// because one job is currently being processed and blocked in the writer.
-	return c.queueSize() == c.jobs.maxSize+1
-}
-
-func (c *chunkWriteQueue) queueSize() int {
-	c.chunkRefMapMtx.Lock()
-	defer c.chunkRefMapMtx.Unlock()
-
-	// Looking at chunkRefMap instead of jobCh because the job is popped from the chan before it has
-	// been fully processed, it remains in the chunkRefMap until the processing is complete.
-	return len(c.chunkRefMap)
-}
-
-```
-
-### Core Architecture Module: `tsdb/chunks/queue.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package chunks
-
-import "sync"
-
-// writeJobQueue is similar to buffered channel of chunkWriteJob, but manages its own buffers
-// to avoid using a lot of memory when it's empty. It does that by storing elements into segments
-// of equal size (segmentSize). When segment is not used anymore, reference to it are removed,
-// so it can be treated as a garbage.
-type writeJobQueue struct {
-	maxSize     int
-	segmentSize int
-
-	mtx            sync.Mutex            // protects all following variables
-	pushed, popped *sync.Cond            // signalled when something is pushed into the queue or popped from it
-	first, last    *writeJobQueueSegment // pointer to first and last segment, if any
-	size           int                   // total size of the queue
-	closed         bool                  // after closing the queue, nothing can be pushed to it
-}
-
-type writeJobQueueSegment struct {
-	segment             []chunkWriteJob
-	nextRead, nextWrite int                   // index of next read and next write in this segment.
-	nextSegment         *writeJobQueueSegment // next segment, if any
-}
-
-func newWriteJobQueue(maxSize, segmentSize int) *writeJobQueue {
-	if maxSize <= 0 || segmentSize <= 0 {
-		panic("invalid queue")
-	}
-
-	q := &writeJobQueue{
-		maxSize:     maxSize,
-		segmentSize: segmentSize,
-	}
-
-	q.pushed = sync.NewCond(&q.mtx)
-	q.popped = sync.NewCond(&q.mtx)
-	return q
-}
-
-func (q *writeJobQueue) close() {
-	q.mtx.Lock()
-	defer q.mtx.Unlock()
-
-	q.closed = true
-
-	// Unblock all blocked goroutines.
-	q.pushed.Broadcast()
-	q.popped.Broadcast()
-}
-
-// push blocks until there is space available in the queue, and then adds job to the queue.
-// If queue is closed or gets closed while waiting for space, push returns false.
-func (q *writeJobQueue) push(job chunkWriteJob) bool {
-	q.mtx.Lock()
-	defer q.mtx.Unlock()
-
-	// Wait until queue has more space or is closed.
-	for !q.closed && q.size >= q.maxSize {
-		q.popped.Wait()
-	}
-
-	if q.closed {
-		return false
-	}
-
-	// Check if this segment has more space for writing, and create new one if not.
-	if q.last == nil || q.last.nextWrite >= q.segmentSize {
-		prevLast := q.last
-		q.last = &writeJobQueueSegment{
-			segment: make([]chunkWriteJob, q.segmentSize),
-		}
-
-		if prevLast != nil {
-			prevLast.nextSegment = q.last
-		}
-		if q.first == nil {
-			q.first = q.last
-		}
-	}
-
-	q.last.segment[q.last.nextWrite] = job
-	q.last.nextWrite++
-	q.size++
-	q.pushed.Signal()
-	return true
-}
-
-// pop returns first job from the queue, and true.
-// If queue is empty, pop blocks until there is a job (returns true), or until queue is closed (returns false).
-// If queue was already closed, pop first returns all remaining elements from the queue (with true value), and only then returns false.
-func (q *writeJobQueue) pop() (chunkWriteJob, bool) {
-	q.mtx.Lock()
-	defer q.mtx.Unlock()
-
-	// wait until something is pushed to the queue, or queue is closed.
-	for q.size == 0 {
-		if q.closed {
-			return chunkWriteJob{}, false
-		}
-
-		q.pushed.Wait()
-	}
-
-	res := q.first.segment[q.first.nextRead]
-	q.first.segment[q.first.nextRead] = chunkWriteJob{} // clear just-read element
-	q.first.nextRead++
-	q.size--
-
-	// If we have read all possible elements from first segment, we can drop it.
-	if q.first.nextRead >= q.segmentSize {
-		q.first = q.first.nextSegment
-		if q.first == nil {
-			q.last = nil
-		}
-	}
-
-	q.popped.Signal()
-	return res, true
-}
-
-// length returns number of all jobs in the queue.
-func (q *writeJobQueue) length() int {
-	q.mtx.Lock()
-	defer q.mtx.Unlock()
-
-	return q.size
-}
-
-```
-
-### Core Architecture Module: `tsdb/fileutil/dir.go`
-```
-// Copyright The Prometheus Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package fileutil
-
-import (
-	"os"
-	"path/filepath"
-)
-
-func DirSize(dir string) (int64, error) {
-	var size int64
-	err := filepath.Walk(dir, func(_ string, info os.FileInfo, err error) error {
-		if err != nil {
-			// Ignore missing files that may have been deleted during the walk.
-			if os.IsNotExist(err) {
-				return nil
-			}
-			return err
-		}
-		if !info.IsDir() {
-			size += info.Size()
-		}
-		return nil
-	})
-	return size, err
-}
-
-```
-
-### Core Architecture Module: `tsdb/fileutil/dir_unix.go`
-```
-// Copyright The Prometheus Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//go:build !windows
-
-package fileutil
-
-import "os"
-
-// OpenDir opens a directory for syncing.
-func OpenDir(path string) (*os.File, error) { return os.Open(path) }
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20278** (2026-11-03): **build: create manifests with buildx imagetools (#20229)**
-  *Symptoms*: cherrypick of https://github.com/prometheus/prometheus/pull/20229  Signed-off-by: Owen Williams <owen.williams@grafana.com> ```release-notes NONE ``` 
-
-- **Issue #20271** (2026-11-02): **chore: update release shepherds for 3.17 and 3.18**
-  *Symptoms*: Assign @bwplotka as release shepherd for v3.17 and move @krajorama to v3.18. Also fixes the v3.18 pre-release year typo from `2026-01-13` to `2027-01-13` and adds the `v3.19` volunteer slot.  ```release-notes NONE ```
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `2a12aec2` (2026-11-01)
-**Commit Message**: rules: fix flaky TestUpdateWhenStopped panic
-
-TestUpdateWhenStopped starts a rule manager without a QueryFunc or
-AppendableV2, loads a group with a recording rule on a 10s interval and
-stops the manager right after. If the group's evaluation slot, derived
-from a hash of the group, falls between Update and Stop, the group is
-evaluated and RecordingRule.Eval calls the nil QueryFunc, panicking the
-whole rules test binary. Give the manager a no-op QueryFunc and a test
-storage, as other manager tests do.
-
-Signed-off-by: Aditya Agrawal <[REDACTED_EMAIL]>
-
-**File**: `rules/manager_test.go` (modified, +6/-2)
-```diff
-@@ -2679,9 +2679,13 @@ func TestBoundedRuleEvalConcurrency(t *testing.T) {
- 
- func TestUpdateWhenStopped(t *testing.T) {
- 	files := []string{"fixtures/rules.yaml"}
-+	// The group is evaluated if its evaluation slot falls between Update and Stop,
-+	// so the manager needs a working QueryFunc and AppendableV2.
- 	ruleManager := NewManager(&ManagerOptions{
--		Context: context.Background(),
--		Logger:  promslog.NewNopLogger(),
-+		Context:      context.Background(),
-+		Logger:       promslog.NewNopLogger(),
-+		AppendableV2: teststorage.New(t),
-+		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
- 	})
- 	ruleManager.start()
- 	err := ruleManager.Update(10*time.Second, files, labels.EmptyLabels(), "", nil)
-```
-
----
-
-### Incident Patch 2: `ef78ff64` (2026-10-31)
-**Commit Message**: fix(scrape): update metadata and family association across metric_relabel_configs (#20103)
-
-* scrape: update metadata and family association across metric_relabel_configs
-
-In scrapeLoopAppenderV2, associate parsed family metadata using the pre-relabel metric name so renamed metrics retain their metadata in AppenderV2 and ST synthesis, and update scrapeCache metadata only for surviving post-relabel series under their post-relabel metric family name (fixing #14013).
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: preserve post-relabel name when pre-relabel name equals family name
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: preserve droppedSeries cache hit when metric_relabel_configs is set
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: replace cached series entry when post-relabel lset changes
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `scrape/scrape.go` (modified, +70/-1)
-```diff
-@@ -926,6 +926,16 @@ type cacheEntry struct {
- 	st *stCache
- }
- 
-+// seriesMetaEntry caches a series' post-relabel metadata and metric family name (meta, mfName)
-+// alongside the pre-relabel parser state (origMeta, origMFName) that produced them.
-+// When metric_relabel_configs is configured, the fast path checks origMeta and origMFName
-+// before parsing labels or running relabeling so unchanged series can reuse
-+// meta and mfName directly.
-+type seriesMetaEntry struct {
-+	origMeta, meta     metadata.Metadata
-+	origMFName, mfName string
-+}
-+
- type scrapeLoop struct {
- 	// ctx represents a local context that is cancellable via s.cancel.
- 	// It's meant to synchronize run() with stop().
-@@ -1020,6 +1030,9 @@ type scrapeCache struct {
- 	seriesCur  map[storage.SeriesRef]*cacheEntry
- 	seriesPrev map[storage.SeriesRef]*cacheEntry
- 
-+	// Per-series post-relabel metadata cache, lazily allocated only when metric_relabel_configs is non-empty.
-+	seriesMeta map[*cacheEntry]seriesMetaEntry
-+
- 	// TODO(bwplotka): Consider moving metadata caching to head. See
- 	// https://github.com/prometheus/prometheus/issues/17619.
- 	metaMtx  sync.Mutex            // Mutex is needed due to api touching it when metadata is queried.
-@@ -1080,6 +1093,9 @@ func (c *scrapeCache) iterDone(flushCache bool) {
- 		for s, e := range c.series {
- 			if c.iter != e.lastIter {
- 				delete(c.series, s)
-+				if c.seriesMeta != nil {
-+					delete(c.seriesMeta, e)
-+				}
- 			}
- 		}
- 		for s, iter := range c.droppedSeries {
-@@ -1121,6 +1137,36 @@ func (c *scrapeCache) addRef(met []byte, ref storage.SeriesRef, lset labels.Labe
- 	return ce
- }
- 
-+func (c *scrapeCache) setSeriesMeta(ce *cacheEntry, origMeta, meta metadata.Metadata, origMFName, mfName string) {
-+	if c.seriesMeta == nil {
-+		c.seriesMeta = make(map[*cacheEntry]seriesMetaEntry)
-+	}
-+	// origMFName comes from yoloString(lastMFName) backed by a reusable buffer, so we must
-+	// not retain its backing array. Reuse existing immutable strings when possible to avoid
-+	// allocating on the heap.
-+	switch {
-+	case origMFName == mfName:
-+		origMFName = mfName
-+	case strings.HasPrefix(ce.lset.Get(model.MetricNameLabel), origMFName):
-+		origMFName = ce.lset.Get(model.MetricNameLabel)[:len(origMFName)]
-+	default:
-+		origMFName = strings.Clone(origMFName)
-+	}
-+	c.seriesMeta[ce] = seriesMetaEntry{
-+		origMeta:   origMeta,
-+		meta:       meta,
-+		origMFName: origMFName,
-+		mfName:     mfName,
-+	}
-+}
-+
-+func (c *scrapeCache) deleteSeries(met []byte, ce *cacheEntry) {
-+	delete(c.series, string(met))
-+	if c.seriesMeta != nil {
-+		delete(c.seriesMeta, ce)
-+	}
-+}
-+
- func (c *scrapeCache) addDropped(met []byte) {
- 	iter := c.iter
- 	c.droppedSeries[string(met)] = &iter
-@@ -1241,6 +1287,26 @@ func (c *scrapeCache) setUnit(mfName, unit []byte) ([]byte, *metaEntry) {
- 	return mfName, e
- }
- 
-+func (c *scrapeCache) setMetadata(mfName string, m metadata.Metadata) {
-+	c.metaMtx.Lock()
-+	defer c.metaMtx.Unlock()
-+
-+	e, ok := c.metadata[mfName]
-+	var oldSize int
-+	if !ok {
-+		e = &metaEntry{Metadata: metadata.Metadata{Type: model.MetricTypeUnknown}}
-+		c.metadata[mfName] = e
-+	} else {
-+		oldSize = e.size()
-+	}
-+	if !e.Equals(m) {
-+		e.Metadata = m
-+		e.lastIterChange = c.iter
-+	}
-+	e.lastIter = c.iter
-+	c.metadataSize += e.size() - oldSize
-+}
-+
- // GetMetadata returns metadata given the metric family name.
- func (c *scrapeCache) GetMetadata(mfName string) (MetricMetadata, bool) {
- 	c.metaMtx.Lock()
-@@ -2087,7 +2153,10 @@ loop:
- 
- // TODO(https://github.com/prometheus/prometheus/issues/17900): Move this to text and OM parser.
- func isSeriesPartOfFamily(mName string, mfName []byte, typ model.MetricType) bool {
--	mfNameStr := yoloString(mfName)
-+	return isSeriesPartOfFamilyStr(mName, yoloString(mfName), typ)
-+}
-+
-+func isSeriesPartOfFamilyStr(mName, mfNameStr string, typ model.MetricType) bool {
- 	if !strings.HasPrefix(mName, mfNameStr) { // Fast path.
- 		return false
- 	}
-```
-
-**File**: `scrape/scrape_append_v2.go` (modified, +270/-51)
-```diff
-@@ -14,6 +14,7 @@
- package scrape
- 
- import (
-+	"bytes"
- 	"errors"
- 	"fmt"
- 	"io"
-@@ -27,6 +28,7 @@ import (
- 	"github.com/prometheus/prometheus/model/exemplar"
- 	"github.com/prometheus/prometheus/model/histogram"
- 	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
- 	"github.com/prometheus/prometheus/model/textparse"
- 	"github.com/prometheus/prometheus/model/timestamp"
- 	"github.com/prometheus/prometheus/model/value"
-@@ -132,6 +134,11 @@ func (sl *scrapeLoopAppenderV2) append(b []byte, contentType string, ts time.Tim
- 		e              exemplar.Exemplar // Escapes to heap so hoisted out of loop.
- 		lastMeta       *metaEntry
- 		lastMFName     []byte
-+		parsedMeta     metaEntry
-+		parsedMFName   []byte
-+		lastSetMFName  string
-+		lastSetMeta    metadata.Metadata
-+		hasMRC         = len(sl.mrc) > 0
- 	)
- 
- 	exemplars := make([]exemplar.Exemplar, 0, 1)
-@@ -173,13 +180,28 @@ loop:
- 		case textparse.EntryType:
- 			// TODO(bwplotka): Build meta entry directly instead of locking and updating the map. This will
- 			// allow to properly update metadata when e.g unit was added, then removed;
--			lastMFName, lastMeta = sl.cache.setType(p.Type())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setType(p.Type())
-+				continue
-+			}
-+			mfName, typ := p.Type()
-+			lastMFName, lastMeta = sl.setParsedType(mfName, typ, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryHelp:
--			lastMFName, lastMeta = sl.cache.setHelp(p.Help())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setHelp(p.Help())
-+				continue
-+			}
-+			mfName, help := p.Help()
-+			lastMFName, lastMeta = sl.setParsedHelp(mfName, help, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryUnit:
--			lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
-+				continue
-+			}
-+			mfName, unit := p.Unit()
-+			lastMFName, lastMeta = sl.setParsedUnit(mfName, unit, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryComment:
- 			continue
-@@ -202,40 +224,124 @@ loop:
- 			t = *parsedTimestamp
- 		}
- 
--		if sl.cache.getDropped(met) {
--			continue
--		}
--		ce, seriesCached, seriesAlreadyScraped := sl.cache.get(met)
--		var ref storage.SeriesRef
-+		var (
-+			ce                   *cacheEntry
-+			seriesCached         bool
-+			seriesAlreadyScraped bool
-+			ref                  storage.SeriesRef
-+			sampleMeta           metadata.Metadata
-+			origMeta             metadata.Metadata
-+			origMFName           string
-+			sampleMFName         string
-+		)
- 
--		if seriesCached {
--			ref = ce.ref
--			lset = ce.lset
--		} else {
--			p.Labels(&lset)
-+		if !hasMRC {
-+			if sl.cache.getDropped(met) {
-+				continue
-+			}
-+			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
-+			if seriesCached {
-+				ref = ce.ref
-+				lset = ce.lset
-+			} else {
-+				p.Labels(&lset)
-+
-+				// Add target labels and apply relabeling before storing the final label set.
-+				lset = sl.sampleMutator(lset)
-+
-+				// The label set may be set to empty to indicate dropping.
-+				if lset.IsEmpty() {
-+					sl.cache.addDropped(met)
-+					continue
-+				}
- 
--			// Add target labels and apply relabeling before storing the final label set.
--			lset = sl.sampleMutator(lset)
-+				if !lset.Has(model.MetricNameLabel) {
-+					err = errNameLabelMandatory
-+					break loop
-+				}
-+				if !lset.IsValid(sl.validationScheme) {
-+					err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
-+					break loop
-+				}
- 
--			// The label set may be set to empty to indicate dropping.
--			if lset.IsEmpty() {
--				sl.cache.addDropped(met)
-+				// If any label limits is exceeded the scrape should fail.
-+				if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
-+					sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
-+					break loop
-+				}
-+			}
-+		} else {
-+			if sl.cache.getDropped(met) {
- 				continue
- 			}
--
--			if !lset.Has(model.MetricNameLabel) {
--				err = errNameLabelMandatory
--				break loop
-+			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
-+			if lastMeta != nil {
-+				origMeta = lastMeta.Metadata
-+				origMFName = yoloString(lastMFName)
- 			}
--			if !lset.IsValid(sl.validationScheme) {
--				err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
--				break loop
-+			var (
-+				sm            seriesMetaEntry
-+				hasCachedMeta bool
-+			)
-+			if seriesCached && sl.cache.seriesMeta != nil {
-+				sm, hasCachedMeta = sl.cache.seriesMeta[ce]
- 			}
- 
--			// If any label limits is exceeded the scrape should fail.
--			if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
--				sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
--				break loop
-+			if seriesCached && hasCachedMeta && sm.origMFName == origMFName && sm.origMeta.Equals(origMeta) {
-+				ref = ce.ref
-+				lset = ce.lset
-+				sampleMeta = sm.meta
-+				sampleMFName = sm.mfName
-+				if sampleMFName != "" && (sampleMFName != lastSetMFName || !sampleMeta.Equals
-```
-
-**File**: `scrape/scrape_test.go` (modified, +222/-0)
-```diff
-@@ -1472,6 +1472,228 @@ test_metric_total 1
- 	require.Empty(t, md.Unit)
- }
- 
-+func TestScrapeLoopMetricRelabelMetadata(t *testing.T) {
-+	appTest := teststorage.NewAppendable()
-+	target := NewTarget(
-+		labels.FromStrings("instance", "localhost:9090", "job", "test"),
-+		&config.ScrapeConfig{},
-+		nil,
-+		nil,
-+	)
-+	rc := []*relabel.Config{
-+		// Drop dropped_metric_total completely; its metadata should not enter scrapeCache.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("dropped_metric_total"),
-+			Replacement:          "$1",
-+			Action:               relabel.Drop,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_http_requests_total -> http_requests_total.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_(http_requests_total)"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "$1",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_latency_* -> latency_* for histogram family.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_(latency.*)"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "$1",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_summary -> summary_count (no component suffix on pre-relabel name).
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_summary"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "summary_count",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+	}
-+
-+	var mutatorCalls int
-+	sl, _ := newTestScrapeLoop(t, withAppendable(appTest, true), func(sl *scrapeLoop) {
-+		sl.mrc = rc
-+		sl.sampleMutator = func(l labels.Labels) labels.Labels {
-+			mutatorCalls++
-+			return mutateSampleLabels(l, target, false, rc)
-+		}
-+	})
-+
-+	now := time.Now()
-+	scrapeText := []byte(`# TYPE dropped_metric counter
-+# HELP dropped_metric should not be cached
-+dropped_metric_total 10
-+# TYPE old_http_requests counter
-+# HELP old_http_requests Total HTTP requests
-+# UNIT old_http_requests requests
-+old_http_requests_total 42
-+# TYPE old_latency histogram
-+# HELP old_latency Request latency
-+old_latency_bucket{le="+Inf"} 1
-+old_latency_sum 0.5
-+old_latency_count 1
-+# TYPE old_summary summary
-+# HELP old_summary Summary renamed to end with _count
-+old_summary{quantile="0.5"} 0.25
-+# TYPE foo gauge
-+foo 1
-+bar 1
-+# EOF`)
-+
-+	app := sl.appender()
-+	total, added, seriesAdded, err := app.append(scrapeText, "application/openmetrics-text", now)
-+	require.NoError(t, err)
-+	require.NoError(t, app.Commit())
-+	require.Equal(t, 8, total)
-+	require.Equal(t, 7, added)
-+	require.Equal(t, 7, seriesAdded)
-+	require.Equal(t, 8, mutatorCalls)
-+
-+	// Dropped metric metadata must not be stored in scrapeCache (#14013).
-+	_, ok := sl.cache.GetMetadata("dropped_metric")
-+	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("dropped_metric_total")
-+	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
-+
-+	// Pre-rename metric families must not be stored under the old names.
-+	_, ok = sl.cache.GetMetadata("old_http_requests")
-+	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("old_http_requests_total")
-+	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("old_latency")
-+	require.False(t, ok, "expected pre-rename histogram family to be absent from scrapeCache")
-+
-+	// Renamed counter family must have its metadata stored under post-relabel family name.
-+	md, ok := sl.cache.GetMetadata("http_requests")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeCounter, md.Type)
-+	require.Equal(t, "requests", md.Unit)
-+	require.Equal(t, "Total HTTP requests", md.Help)
-+
-+	// Renamed histogram family must have its metadata stored under post-relabel family name ("latency").
-+	md, ok = sl.cache.GetMetadata("latency")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeHistogram, md.Type)
-+	require.Equal(t, "Request latency", md.Help)
-+
-+	// When pre-relabel series name equals its family name ("old_summary"), no suffix is stripped from the renamed name ("summary_count").
-+	md, ok = sl.cache.GetMetadata("summary_count")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeSummary, md.Type)
-+	require.Equal(t, "Summary renamed to end with _count", md.Help)
-+
-+	// bar had no metadata on the first scrape and must not inherit foo's metadata.
-+	_, ok = sl.cache.GetMetadata("bar")
-+	require.Fal
-```
-
----
-
-### Incident Patch 3: `b0c3a30a` (2026-11-02)
-**Commit Message**: build: create manifests with buildx imagetools (#20229)
-
-* Makefile.common: create manifests with buildx imagetools
-
-docker build now attaches provenance attestations, so each per-arch image
-is pushed as an OCI index. docker manifest create refuses indexes as
-sources, so no multi-arch tags get published.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-* Makefile.common: fail docker targets on the first error
-
-The docker recipes run in a single shell loop, so only the exit status of
-the last command was reported. Failed manifest pushes went unnoticed while
-the publish job stayed green.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-* Revert "Makefile.common: fail docker targets on the first error"
-
-This reverts commit d4ff4e8bbe3a35b17148a904277e44ec12d63214.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-**File**: `Makefile.common` (modified, +4/-8)
-```diff
-@@ -352,8 +352,7 @@ common-docker-manifest:
- 				echo "Skipping manifest for $$variant_name variant (no supported architectures)"; \
- 				continue; \
- 			fi; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name"; \
-+			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
- 		fi; \
- 		if [ "$$dockerfile" = "Dockerfile" ]; then \
- 			echo "Creating default variant ($$variant_name) manifest"; \
-@@ -365,8 +364,7 @@ common-docker-manifest:
- 				echo "Skipping default variant manifest (no supported architectures)"; \
- 				continue; \
- 			fi; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)"; \
-+			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
- 		fi; \
- 		if [ "$(DOCKER_IMAGE_TAG)" = "latest" ]; then \
- 			if [ "$$dockerfile" != "Dockerfile" ] || [ "$$variant_name" != "default" ]; then \
-@@ -379,8 +377,7 @@ common-docker-manifest:
- 					echo "Skipping version-tag manifest for $$variant_name variant (no supported architectures)"; \
- 					continue; \
- 				fi; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name"; \
-+				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
- 			fi; \
- 			if [ "$$dockerfile" = "Dockerfile" ]; then \
- 				echo "Creating default variant version tag manifest"; \
-@@ -392,8 +389,7 @@ common-docker-manifest:
- 					echo "Skipping default variant version-tag manifest (no supported architectures)"; \
- 					continue; \
- 				fi; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)"; \
-+				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
- 			fi; \
- 		fi; \
- 	done
-```
-
-#### Recent Merged Pull Requests:
-- **PR #20278** (2026-11-03): build: create manifests with buildx imagetools (#20229) (@ywwg)
-- **PR #20271** (2026-11-02): chore: update release shepherds for 3.17 and 3.18 (@bwplotka)
-- **PR #20263** (2026-11-02): chore: add contributor-trust skill and rank pr-triage-board by author trust (@bwplotka)
-- **PR #20258** (2026-11-03): rules: fix flaky TestUpdateWhenStopped panic (@adityacosmos24)
-- **PR #20251** (2026-11-03): promtool: return sample iterator errors from tsdb dump (@adityacosmos24)
-- **PR #20250** (2026-11-03): rulefmt: do not report a syntax error as a multi-document rule file (@adityacosmos24)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. rules: fix flaky TestUpdateWhenStopped panic
-
+### 1. Monotonic Physical Ref Derivation Across Storage Compaction & Truncation
 **RULE**:
-When implementing operations in `rules/manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When an append-only or memory-mapped storage subsystem assigns monotonic logical offsets or sequence identifiers (`refs`) that govern bookmarking, garbage collection thresholds, or binary searches, physical file and chunk sequence identifiers **MUST NOT** be reset, wrapped, or derived from transient filesystem directory state (`readdir`) following truncation or restart. Physical sequence IDs **MUST** be explicitly assigned from the strictly monotonic logical reference pipeline or persisted watermarks.
 
 **WHY**:
-Prevents defects observed in production commit `2a12aec2`: rules: fix flaky TestUpdateWhenStopped panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Deriving the sequence ID of newly cut storage segments from active on-disk entries causes catastrophic data loss after total truncation events. On low-volume instances, if an idle truncation cycle purges all existing segment files from disk, scanning the filesystem yields sequence `0`. When new data arrives, references reset to baseline values. Downstream query bookmarking, out-of-order bounds checks (`minOOOMmapRef`), and head garbage collection assume references are globally monotonic. If newly written data receives a sequence number lower than the active GC bookmark, queries ignore the segments as "already expired," and the next background GC permanently sweeps and destroys valid user data.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rules/manager_test.go`.
+Apply to any storage engine, WAL, write buffer, circular log, or segment-file manager where memory-mapped pointers encode file sequence numbers into higher bits of integer references (e.g., `uint64` split into `uint32 fileSeq : uint32 byteOffset`).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-	// The group is evaluated if its evaluation slot falls between Update and Stop,
-	// so the manager needs a working QueryFunc and AppendableV2.
-		Context:      context.Background(),
-		Logger:       promslog.NewNopLogger(),
-		AppendableV2: teststorage.New(t),
-		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
+// tsdb/chunks/head_chunks.go: Explicitly cut files using the monotonic reference sequence
+func (cdm *ChunkDiskMapper) cutAndExpectRef(chkRef ChunkDiskMapperRef) (err error) {
+    expSeq, expOffset := chkRef.Unpack()
+    // Pass the sequence explicitly from the logical reference; DO NOT discover from directory listing
+    seq, offset, err := cdm.cut(expSeq)
+    if err != nil {
+        return err
+    }
+
+    if seq != expSeq || offset != expOffset {
+        return fmt.Errorf("expected newly cut file to have sequence:offset %d:%d, got %d:%d", expSeq, expOffset, seq, offset)
+    }
+    return nil
+}
+
+func (cdm *ChunkDiskMapper) cut(fileSeq int) (seq, offset int, returnErr error) {
+    if err := cdm.finalizeCurFile(); err != nil {
+        return 0, 0, err
+    }
+
+    // Direct segment allocation utilizing immutable, monotonic fileSeq
+    offset, newFile, seq, err := cutSegmentFileWithSeq(cdm.dir, MagicHeadChunks, headChunksFormatV1, HeadChunkFilePreallocationSize, fileSeq)
+    if err != nil {
+        return 0, 0, err
+    }
+    cdm.curFile = newFile
+    cdm.curFileSequence = seq
+    return seq, offset, nil
+}
+
+// Truncation MUST NOT reset the active generator sequence to 0
+func (cdm *ChunkDiskMapper) Truncate(fileNo uint32) error {
+    // ... delete expired files ...
+    _, err := cdm.deleteFiles(removedFiles)
+    
+    // CRITICAL: Even if all files were deleted (len(chkFileIndices) == len(removedFiles)),
+    // do NOT reset cdm.evtlPos.seq to 0. Monotonic invariants must survive zero-file windows.
+    return err
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		Context: context.Background(),
-		Logger:  promslog.NewNopLogger(),
+// ANTI-PATTERN: Deriving sequence identifiers from directory inspection
+func (cdm *ChunkDiskMapper) cutUnsafe() (seq, offset int, err error) {
+    // NEVER do this: if directory is emptied by Truncate(), nextSequenceFile defaults to 0 or 1!
+    path, seq, err := nextSequenceFile(cdm.dir.Name()) 
+    if err != nil {
+        return 0, 0, err
+    }
+    // Result: Logical reference had sequence 104, but file is created as 000001.
+    // Query layer evaluates 1 < 104 -> treats chunk as ancient -> silently drops write.
+    return cdm.openFile(path, seq)
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a12aec2` are properly handled with clean fallback behavior.
+Enforce via full write-truncate-restart-query lifecycle integration tests. Verify that writing late or out-of-order samples after a complete directory sweep retains all data:
+```go
+func TestSequenceMonotonicityAcrossTruncation(t *testing.T) {
+    db := openDB(t)
+    defer db.Close()
+    
+    // Ingest data, force compaction and mmap cutoff, triggering full truncation of head chunks
+    ingestBatch(db, "metric_a", 0, 100)
+    db.ForceHeadMMap()
+    require.NoError(t, db.Compact(context.Background()))
+    
+    // HEAD chunk directory is now completely empty
+    // Append out-of-order (late) samples
+    ingestLateSample(db, "metric_a", 50)
+    db.ForceHeadMMap()
+    
+    // Verify query can resolve the sample and that GC has not discarded it
+    q, err := db.Querier(0, 200)
+    require.NoError(t, err)
+    defer q.Close()
+    
+    res := querySampleCount(q, "metric_a")
+    require.Equal(t, 101, res, "late sample was lost due to non-monotonic sequence reset")
+}
+```
+
+---
+
+### 2. Lock-Protected Memory Recycling for Unbounded Go Hash Maps
+**RULE**:
+When an in-memory hash map (`map[K]V`) handles dynamic, high-throughput bursts in low-latency paths, the application **MUST NOT** rely on standard Go map `delete()` calls to release memory back to the OS or runtime. Once a map empties or scales back past an operational hysteresis threshold (`chunkRefMapShrinkThreshold`), the runtime backing table **MUST** be explicitly decommissioned and replaced by a newly allocated map (`make(map[K]V, targetCapacity)`) guarded by an interval gate (`minShrinkInterval`).
+
+**WHY**:
+The standard Go runtime hashmap implementation never deallocates the internal bucket array allocated to accommodate peak key counts. Calling `delete(m, k)` only zeroes out key-value slots and decrements `count`; the underlying `hmap.buckets` pointers remain allocated on the heap for the entire lifetime of the process. In high-load metrics pipelines, temporary spikes (e.g., massive incoming scrape floods) force the map to allocate millions of buckets. Without explicit reallocation, hundreds of megabytes of memory remain stranded indefinitely, causing catastrophic container OOM kills (`ExitCode 137`) under memory-constrained cgroup environments.
+
+**WHEN TO APPLY**:
+Apply to any Go-based server holding ephemeral tracking maps, intermediate write buffers, deduplication registries, or connection registries subjected to intermittent load spikes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// tsdb/chunks/chunk_write_queue.go: Controlled map bucket deallocation
+const (
+    chunkRefMapShrinkThreshold   = 1000
+    chunkRefMapMinShrinkInterval = 10 * time.Minute
+)
+
+func (c *chunkWriteQueue) shrinkChunkRefMap() {
+    // Map must be completely drained before evaluating shrinkage
+    if len(c.chunkRefMap) > 0 {
+        return
+    }
+
+    // Do not trigger allocation churn for minor transient sizes
+    if c.chunkRefMapPeakSize < chunkRefMapShrinkThreshold {
+        return
+    }
+
+    now := time.Now()
+    // Enforce temporal hysteresis to prevent realloc thrashing
+    if now.Sub(c.chunkRefMapLastShrink) < chunkRefMapMinShrinkInterval {
+        return
+    }
+
+    // Reallocate the map table to half of peak size to hit memory/realloc equilibrium
+    // The old map with inflated bucket arrays is left to the GC
+    c.chunkRefMap = make(map[ChunkDiskMapperRef]chunkenc.Chunk, c.chunkRefMapPeakSize/2)
+    c.chunkRefMapPeakSize = 0
+    c.chunkRefMapLastShrink = now
+    c.shrink.Inc()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Assuming delete() frees map heap memory
+func (c *chunkWriteQueue) processJobUnsafe(ref ChunkDiskMapperRef) {
+    // Processes millions of keys during spike...
+    delete(c.chunkRefMap, ref)
+    // len(c.chunkRefMap) == 0, but c.chunkRefMap's internal bucket array
+    // still consumes hundreds of megabytes indefinitely in heap memory!
+}
+```
+
+**VERIFICATION METHOD**:
+Benchmark heap profiles before and after burst clearing using `runtime.ReadMemStats`:
+```go
+func TestMapMemoryReclamation(t *testing.T) {
+    queue := newChunkWriteQueue(nil, 100000, dummyWriter)
+    // Populate with 500,000 entries
+    for i := 0; i < 500000; i++ {
+        queue.addJob(dummyJob(i))
+    }
+    // Drain all jobs
+    queue.drain()
+
+    var m1 runtime.MemStats
+    runtime.GC()
+    runtime.ReadMemStats(&m1)
+
+    // Force shrink call
+    queue.chunkRefMapMtx.Lock()
+    queue.shrinkChunkRefMap()
+    queue.chunkRefMapMtx.Unlock()
+
+    var m2 runtime.MemStats
+    runtime.GC()
+    runtime.ReadMemStats(&m2)
+
+    require.Less(t, m2.HeapAlloc, m1.HeapAlloc, "map memory was not reclaimed after shrinkage")
+}
+```
+
+---
+
+### 3. Non-Blocking Segmented Ring-Buffer Queue with Head/Tail Disconnect
+**RULE**:
+High-throughput ingestion queues that bridge synchronous execution threads (such as append transactions) to asynchronous background writers **MUST NOT** use an unbounded single-slice FIFO or an overly large monolithic Go channel (`make(chan T, 100000)`). They **MUST** implement a segmented linked queue where fixed-size slice blocks (`segmentSize = 8192`) are allocated on demand and disconnected from the head pointer immediately upon total consumption.
+
+**WHY**:
+1. Giant channels allocate their entire contiguous backing memory upfront upon initialization, wasting memory during steady low-traffic periods.
+2. Slicing from an array (`queue = queue[batch:]`) without clearing individual consumed elements leaves the underlying referenced pointers rooted in memory, preventing the Go garbage collector from freeing them (a classic sub-slice memory leak).
+3. Monolithic slices force expensive reallocation and copy cycles when appending past slice capacity. Segmented queues offer $O(1)$ push and pop while releasing completely consumed segments to the GC immediately.
+
+**WHEN TO APPLY**:
+Apply to write queues, WAL pipeline buffers, logging engines, and producer-consumer channels handling variable write rates up to hundreds of thousands of operations per second.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// tsdb/chunks/queue.go: Segmented job queue protecting against GC pinning
+type writeJobQueueSegment struct {
+    segment             []chunkWriteJob
+    nextRead, nextWrite int
+    nextSegment         *writeJobQueueSegment
+}
+
+func (q *writeJobQueue) pop() (chunkWriteJob, bool) {
+    q.mtx.Lock()
+    defer q.mtx.Unlock()
+
+    for q.size == 0 {
+        if q.closed {
+            return chunkWriteJob{}, false
+        }
+        q.pushed.Wait()
+    }
+
+    res := q.first.segment[q.first.nextRead]
+    // CRITICAL: Overwrite with zero-value to release internal chunk pointers to GC immediately
+    q.first.segment[q.first.nextRead] = chunkWriteJob{}
+    q.first.nextRead++
+    q.size--
+
+    // If segment is exhausted, detach pointer immediately for GC reclamation
+    if q.first.nextRead >= q.segmentSize {
+        q.first = q.first.nextSegment
+        if q.first == nil {
+            q.last = nil
+        }
+    }
+
+    q.popped.Signal()
+    return res, true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Sub-slicing without pointer clearing
+func (q *LeakyQueue) PopBatch(batchSize int) []Job {
+    // BUG 1: Elements q.items[0:batchSize] still reside in memory-backed array
+    // BUG 2: Any pointers held within Job struct are pinned from GC
+    batch := q.items[:batchSize]
+    q.items = q.items[batchSize:] 
+    return batch
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that references stored within popped jobs are not retained by running a leak detector with `runtime.SetFinalizer` or inspecting memory consumption with `b.ReportAllocs()` under high-concurrency queue benchmarks.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Out-Of-Order (OOO) Samples Permanently Lost Post-Restart Due to Non-Monotonic Chunk File Numbering (BUG-TSDB-20054)
+- **Context**: `tsdb/chunks/head_chunks.go`, `tsdb/chunks/chunks.go`, `tsdb/ooo_samples_lost_after_restart_test.go`
+- **What Was Expected**: When Prometheus restarts, any late-arriving (out-of-order) samples within the configured `out_of_order_time_window` must be written to disk segments, properly indexed, and accessible by PromQL queries across successive truncations and compactions.
+- **What Actually Happened**: On low-volume or freshly restarted instances, a head chunk `Truncate()` deleted all segment files on disk and reset `evtlPos.seq` back to `0`. When new out-of-order chunks were cut, their references derived their sequence numbers from disk state (starting at `0` or `1`). Downstream OOO bookmarks (`lastGarbageCollectedMmapRef`, `minOOOMmapRef`) retained the previous monotonic sequence value (e.g., `48`). Because the new chunk refs evaluated to lower numerical values than the bookmarks, query iterators skipped them as "already read/discarded," and head garbage collection permanently deleted the chunk files, silently destroying user data.
+- **Evidence in Repo**: Commit `4a933f89`, PR `#20149`, Issue `#20054`.
+- **Root Cause**: `cdm.cut()` invoked `nextSequenceFile(dir)`, which inspected existing filesystem names. When `Truncate()` wiped the directory, the filesystem inspection yielded `0`, violating the global monotonicity assumption baked into the 64-bit `ChunkDiskMapperRef` encoding.
+- **Remediation Code Diff**:
+```diff
+--- a/tsdb/chunks/head_chunks.go
++++ b/tsdb/chunks/head_chunks.go
+@@ -592,12 +592,12 @@ func (cdm *ChunkDiskMapper) cutAndExpectRef(chkRef ChunkDiskMapperRef) (err error) {
+-	seq, offset, err := cdm.cut()
++	expSeq, expOffset := chkRef.Unpack()
++	seq, offset, err := cdm.cut(expSeq)
+ 	if err != nil {
+ 		return err
+ 	}
+-	if expSeq, expOffset := chkRef.Unpack(); seq != expSeq || offset != expOffset {
++	if seq != expSeq || offset != expOffset {
+ 		return fmt.Errorf("expected newly cut file to have sequence:offset %d:%d, got %d:%d", expSeq, expOffset, seq, offset)
+ 	}
+ 	return nil
+@@ -608,7 +608,7 @@ func (cdm *ChunkDiskMapper) cut(fileSeq int) (seq, offset int, returnErr error) {
+ 	if err := cdm.finalizeCurFile(); err != nil {
+ 		return 0, 0, err
+ 	}
+-	offset, newFile, seq, err := cutSegmentFile(cdm.dir, MagicHeadChunks, headChunksFormatV1, HeadChunkFilePreallocationSize)
++	offset, newFile, seq, err := cutSegmentFileWithSeq(cdm.dir, MagicHeadChunks, headChunksFormatV1, HeadChunkFilePreallocationSize, fileSeq)
+ 	if err != nil {
+ 		return 0, 0, err
+ 	}
+@@ -981,25 +986,7 @@ func (cdm *ChunkDiskMapper) Truncate(fileNo uint32) error {
+-	pendingDeletes, err := cdm.deleteFiles(removedFiles)
++	_, err := cdm.deleteFiles(removedFiles)
+ 	errs = append(errs, err)
+-	if len(chkFileIndices) == len(removedFiles) {
+-		// All files were deleted. Reset the current sequence.
+-		cdm.evtlPosMtx.Lock()
+-		if cdm.writeQueue == nil || cdm.writeQueue.queueIsEmpty() {
+-			if err == nil {
+-				cdm.evtlPos.setSeq(0)
+-			} else {
+-				cdm.evtlPos.setSeq(uint64(pendingDeletes[len(pendingDeletes)-1]))
+-			}
+-		}
+-		cdm.evtlPosMtx.Unlock()
+-	}
++	// Do not reset cdm.evtlPos.seq when every file was deleted: chunk refs must
++	// stay monotonic.
+```
+- **Lesson**: Persistent identifiers packed into logical reference pointers must never synchronize backwards from physical state unless a total database format recreation is executed.
+
+---
+
+### Incident 2: Premature Truncation & Non-Existent File Panics Under Asynchronous Write Queues (BUG-TSDB-20149B)
+- **Context**: `tsdb/chunks/head_chunks.go`, `tsdb/chunks/chunk_write_queue.go`
+- **What Was Expected**: Flushing jobs through `chunkWriteQueue` must execute atomically with respect to file deletion; no worker should attempt to append to a sequence ID that has already been truncated.
+- **What Actually Happened**: When writes were queued asynchronously, `cdm.evtlPos` advanced in memory to sequence $N+1$, while the disk write queue was still processing jobs targeting sequence $N$. A concurrent truncation pass evaluated $N$ as ready for eviction and deleted file $N$. When the worker thread dequeued job $N$, it attempted to open and sync against the deleted file descriptor, panicking or crashing the storage engine.
+- **Evidence in Repo**: Commit `4a933f89`, `tsdb/head_test.go` (`TestHead_mmapHeadChunks`).
+- **Root Cause**: Desynchronization between `evtlPos` (eventual position generator) and `curFileSequence` under deferred, queued disk writes.
+- **Remediation Code Diff**:
+```diff
+--- a/tsdb/head_test.go
++++ b/tsdb/head_test.go
+@@ -5968,12 +5968,23 @@ func TestHead_mmapHeadChunks(t *testing.T) {
+-		// Break the chunk write path in an OS agnostic way: dropping a segment
+-		// file with a far higher sequence number into the head chunks directory
+-		// makes the next cut file's sequence differ from the one the chunk
+-		// reference was handed out for, which fails the write.
+-		rogue := filepath.Join(mmappedChunksDir(h.opts.ChunkDirRoot), "000100")
+-		require.NoError(t, os.WriteFile(rogue, nil, 0o666))
++		// Break the chunk write path in an OS agnostic way: occupy the next
++		// segment name(s) with directories, so creating the cut file fails and
++		// handleChunkWriteError panics. A high-numbered rogue file no longer
++		// works, because cut() names files from the chunk reference instead of
++		// the highest file on disk.
++		chunkDir := mmappedChunksDir(h.opts.ChunkDirRoot)
++		entries, err := os.ReadDir(chunkDir)
++		require.NoError(t, err)
++		maxSeq := 0
++		for _, e := range entries {
++			if n, err := strconv.Atoi(e.Name()); err == nil && n > maxSeq {
++				maxSeq = n
++			}
++		}
++		for i := 1; i <= 3; i++ {
++			require.NoError(t, os.Mkdir(filepath.Join(chunkDir, fmt.Sprintf("%06d", maxSeq+i)), 0o777))
++		}
+```
+- **Lesson**: In asynchronous write pipelines, file cuts must carry strict expected-sequence assertions (`cutAndExpectRef`) matching the originating reference token.
+
+---
+
+### Incident 3: Space-Sensitivity Divergence in Label Serialization & Inverted Postings Regexp Matching (BUG-LABELS-20256)
+- **Context**: `model/labels/labels_test.go`, `model/labels/matcher_test.go`
+- **What Was Expected**: Serializing labels for internal indexing, caching keys, and network payloads (`StringNoSpace()`) must strip syntactic whitespace between label pairs without corrupting spaces embedded within quoted values or leading whitespace in metric names (e.g., `{" container"="prometheus"}`). Regex matchers using alternating sets (`foo|bar`) must compile into deterministic posting matches for both positive (`=~`) and negative (`!~`) inversions.
+- **What Actually Happened**: Fast string serialization functions stripped all whitespace or introduced invalid comma padding when handling leading space keys or escaped characters (`whatever\\whatever`), corrupting internal hashing and posting lookups. Matcher helpers crashed or returned invalid posting sets when matching alternating sets on negative regexes.
+- **Evidence in Repo**: Commit `ac85e06f`, PR `#20256`.
+- **Root Cause**: Lack of boundary tests for byte-length overflow edges (254 vs 255 bytes) and absence of set optimization tests for `MatchNotRegexp`.
+- **Remediation Code Diff**:
+```diff
+--- a/model/labels/labels_test.go
++++ b/model/labels/labels_test.go
+@@ -41,18 +41,59 @@ var testCaseLabels = []Labels{
++		{
++			name:            "many labels with leading space names and special chars",
++			lbls:            FromStrings("__name__", "kube_pod_container_status_last_terminated_exitcode", "cluster", "prod-af-north-0", " container", "prometheus", "instance", "kube-state-metrics-0:kube-state-metrics:ksm", "job", "kube-state-metrics/kube-state-metrics", " namespace", "observability-prometheus", "pod", "observability-prometheus-0", "uid", "d3ec90b2-4975-4607-b45d-b9ad64bb417e"),
++			expectedString:  `{" container"="prometheus", " namespace"="observability-prometheus", __name__="kube_pod_container_status_last_terminated_exitcode", cluster="prod-af-north-0", instance="kube-state-metrics-0:kube-state-metrics:ksm", job="kube-state-metrics/kube-state-metrics", pod="observability-prometheus-0", uid="d3ec90b2-4975-4607-b45d-b9ad64bb417e"}`,
++			expectedNoSpace: `{" container"="prometheus"," namespace"="observability-prometheus",__name__="kube_pod_container_status_last_terminated_exitcode",cluster="prod-af-north-0",instance="kube-state-metrics-0:kube-state-metrics:ksm",job="kube-state-metrics/kube-state-metrics",pod="observability-prometheus-0",uid="d3ec90b2-4975-4607-b45d-b9ad64bb417e"}`,
++		},
++		{
++			name:            "spaces inside quoted values are preserved",
++			lbls:            FromStrings("a", "1, 2", "b", "3"),
++			expectedString:  `{a="1, 2", b="3"}`,
++			expectedNoSpace: `{a="1, 2",b="3"}`,
++		},
+```
+- **Lesson**: Parsing, serialization, and hashing routines for key-value structures must explicitly test ASCII whitespace edge cases within keys, values, and delimiters.
+
+---
+
+### Incident 4: Subprocess Stdout Truncation in Contributor Trust Analysis Scripts (BUG-AUTOMATION-20296)
+- **Context**: `.agents/skills/contributor-trust/scripts/score_contributors.py`
+- **What Was Expected**: Contributor score parsing parsing GitHub CLI output must safely capture large JSON buffers without process pipe deadlocks or unhandled command failures.
+- **What Actually Happened**: Direct executions failed to handle non-zero exit codes gracefully and threw uncaught exceptions when parsing malformed or base64-encoded file trees from repositories containing non-standard Unicode display handles.
+- **Evidence in Repo**: `.agents/skills/contributor-trust/scripts/score_contributors.py` lines 85–110.
+- **Root Cause**: Unsafe regex parsing on Markdown tables collided with Slack handle mentions (`@Full Name`), misinterpreting non-GitHub entities as valid contributors.
+- **Remediation Code Diff**:
+```diff
+--- a/.agents/skills/contributor-trust/scripts/score_contributors.py
++++ b/.agents/skills/contributor-trust/scripts/score_contributors.py
+@@ -124,6 +124,9 @@ def _extract_handles_from_line(line):
+         seen = []
+         for h in gh_links:
+             if h not in seen:
+                 seen.append(h)
+         return seen
++    # Strip inline code spans containing whitespace (such as CNCF Slack `@Full Name`)
++    # before matching @handles so display names are not mistaken for GitHub logins.
++    cleaned = re.sub(r"`[^`]*\s[^`]*`", " ", line)
++    handles = re.findall(r"(?:^|[\s/(\[|`])@([a-zA-Z0-9-]+)", cleaned)
+```
+- **Lesson**: Text-mining and NLP automation pipelines processing developer identity metadata must sanitize multi-word tokens prior to executing handle extraction regexes.
+
+---
+
+### Incident 5: Discovery Metric Collector Registration Leak On Partial Failures (BUG-DISCOVERY-UTIL)
+- **Context**: `discovery/util.go`
+- **What Was Expected**: If any collector within a slice fails during discovery startup registration, the subsystem must return the error without leaving already-registered collectors lingering inside the Prometheus default registry.
+- **What Actually Happened**: When an intermediate metric collector failed to register due to a name collision, earlier collectors remained registered. Subsequent service discovery restarts failed permanently with `prometheus.AlreadyRegisteredError`.
+- **Evidence in Repo**: `discovery/util.go` lines 47–60.
+- **Root Cause**: Failure loop lacked an unwinding rollback mechanism.
+- **Remediation Code Diff**:
+```diff
+--- a/discovery/util.go
++++ b/discovery/util.go
+@@ -47,6 +47,10 @@ func (rh *metricRegistererImpl) RegisterMetrics() error {
+ 	for _, collector := range rh.metrics {
+ 		err := rh.reg.Register(collector)
+ 		if err != nil {
++			// Unregister all metrics that were registered so far.
++			// This is so that if RegisterMetrics() gets called again,
++			// there will not be an error due to a duplicate registration.
++			rh.UnregisterMetrics()
+ 			return fmt.Errorf("failed to register metric: %w", err)
+ 		}
+ 	}
+```
+- **Lesson**: Registration operations on shared runtime registries must follow all-or-nothing transactional rollback semantics.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In Prometheus, series labels represent the absolute identity of time series. Two labels structs are equal if and only if their names and values match in exact lexicographical sort order.
+
+```go
+// PITFALL: Direct slice comparison or string concatenation without sorting
+// BAD: Violates set equivalence invariant
+func CompareLabelsBad(a, b []labels.Label) bool {
+    return fmt.Sprint(a) == fmt.Sprint(b) // O(N) allocation, false negative if order differs
+}
+
+// SAFE: Micro-syntax invariant implemented in model/labels
+func Equal(ls1, ls2 labels.Labels) bool {
+    i, j := 0, 0
+    len1, len2 := ls1.Len(), ls2.Len()
+    for i < len1 && j < len2 {
+        l1, l2 := ls1.Get(i), ls2.Get(j)
+        if l1.Name != l2.Name {
+            return false
+        }
+        if l1.Value != l2.Value {
+            return false
+        }
+        i++
+        j++
+    }
+    return i == len1 && j == len2
+}
+```
+*Token-Level Rule*: When hashing string labels for lookup tables, avoid string allocation by hashing the byte representation directly via `xxhash.Sum64` using `unsafe.Slice(unsafe.StringData(str), len(str))` or utilizing Prometheus's specialized `HashForLabels` with a preallocated scratch buffer.
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+In `notifier/sendloop.go`, the alert notification worker loop must prevent event loop microtask starvation while guaranteeing immediate responsiveness to termination signals.
+
+```go
+// TERMINATION INVARIANT: Dual-select shutdown priority
+func (s *sendLoop) loop() {
+    for {
+        // PRIORITY PASS: Drain stop signal before evaluating pending work
+        select {
+        case <-s.stopped:
+            return
+        default:
+            select {
+            case <-s.stopped:
+                return
+            case <-s.hasWork:
+                s.sendOneBatch()
+                // RECURSION GUARD: Self-trigger without recursive stack growth
+                if s.queueLen() > 0 {
+                    s.notifyWork()
+                }
+            }
+        }
+    }
+}
+```
+*Proof of Termination*: The channel `hasWork` has capacity 1. `notifyWork()` performs a `select` with `default:`, eliminating blocking. In every cycle, if `s.stopped` is closed, the outer or inner select terminates the loop in $O(1)$ without processing subsequent queue tasks.
+
+---
+
+### 3. UI & UX Micro-Mechanics (Prometheus Web Console)
+Prometheus console UI renders thousands of dynamic metric series inside React tables and Rickshaw/Plotly/Leap graphs.
+- **Reflow Avoidance**: Metrics tables are virtualized using fixed row heights. Dynamic DOM elements are updated via `requestAnimationFrame` batches.
+- **DOM Retargeting**: Alerting links use explicit `data-` attributes to prevent event bubbles across nested button components:
+```javascript
+// Web UI Event Delegation Guard
+function handleMetricClick(e) {
+    const target = e.target.closest('[data-metric-name]');
+    if (!target) return;
+    e.preventDefault();
+    // Do not trigger parent accordion collapse

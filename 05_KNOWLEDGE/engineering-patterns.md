@@ -494029,3 +494029,329 @@ def bad_single_condition(image, noise, t):
 ```
 **VERIFICATION METHOD**:
 Ablation study: Compare PSNR/SSIM of outputs generated with dual conditioning vs. single conditioning. The dual-conditioned model should show significantly better structural consistency (Chamfer distance) and texture fidelity (LPIPS).
+
+
+---
+
+## 6784. Monotonic Physical Ref Derivation Across Storage Compaction & Truncation (Harvested from prometheus/prometheus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Physical Ref Derivation Across Storage Compaction & Truncation",
+  "source": "prometheus/prometheus",
+  "source_url": "https://github.com/prometheus/prometheus",
+  "source_version": "ac85e06f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:47:16.427Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-prometheus-prometheus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `ac85e06f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an append-only or memory-mapped storage subsystem assigns monotonic logical offsets or sequence identifiers (`refs`) that govern bookmarking, garbage collection thresholds, or binary searches, physical file and chunk sequence identifiers **MUST NOT** be reset, wrapped, or derived from transient filesystem directory state (`readdir`) following truncation or restart. Physical sequence IDs **MUST** be explicitly assigned from the strictly monotonic logical reference pipeline or persisted watermarks.
+
+**WHY**:
+Deriving the sequence ID of newly cut storage segments from active on-disk entries causes catastrophic data loss after total truncation events. On low-volume instances, if an idle truncation cycle purges all existing segment files from disk, scanning the filesystem yields sequence `0`. When new data arrives, references reset to baseline values. Downstream query bookmarking, out-of-order bounds checks (`minOOOMmapRef`), and head garbage collection assume references are globally monotonic. If newly written data receives a sequence number lower than the active GC bookmark, queries ignore the segments as "already expired," and the next background GC permanently sweeps and destroys valid user data.
+
+**WHEN TO APPLY**:
+Apply to any storage engine, WAL, write buffer, circular log, or segment-file manager where memory-mapped pointers encode file sequence numbers into higher bits of integer references (e.g., `uint64` split into `uint32 fileSeq : uint32 byteOffset`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// tsdb/chunks/head_chunks.go: Explicitly cut files using the monotonic reference sequence
+func (cdm *ChunkDiskMapper) cutAndExpectRef(chkRef ChunkDiskMapperRef) (err error) {
+    expSeq, expOffset := chkRef.Unpack()
+    // Pass the sequence explicitly from the logical reference; DO NOT discover from directory listing
+    seq, offset, err := cdm.cut(expSeq)
+    if err != nil {
+        return err
+    }
+
+    if seq != expSeq || offset != expOffset {
+        return fmt.Errorf("expected newly cut file to have sequence:offset %d:%d, got %d:%d", expSeq, expOffset, seq, offset)
+    }
+    return nil
+}
+
+func (cdm *ChunkDiskMapper) cut(fileSeq int) (seq, offset int, returnErr error) {
+    if err := cdm.finalizeCurFile(); err != nil {
+        return 0, 0, err
+    }
+
+    // Direct segment allocation utilizing immutable, monotonic fileSeq
+    offset, newFile, seq, err := cutSegmentFileWithSeq(cdm.dir, MagicHeadChunks, headChunksFormatV1, HeadChunkFilePreallocationSize, fileSeq)
+    if err != nil {
+        return 0, 0, err
+    }
+    cdm.curFile = newFile
+    cdm.curFileSequence = seq
+    return seq, offset, nil
+}
+
+// Truncation MUST NOT reset the active generator sequence to 0
+func (cdm *ChunkDiskMapper) Truncate(fileNo uint32) error {
+    // ... delete expired files ...
+    _, err := cdm.deleteFiles(removedFiles)
+    
+    // CRITICAL: Even if all files were deleted (len(chkFileIndices) == len(removedFiles)),
+    // do NOT reset cdm.evtlPos.seq to 0. Monotonic invariants must survive zero-file windows.
+    return err
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Deriving sequence identifiers from directory inspection
+func (cdm *ChunkDiskMapper) cutUnsafe() (seq, offset int, err error) {
+    // NEVER do this: if directory is emptied by Truncate(), nextSequenceFile defaults to 0 or 1!
+    path, seq, err := nextSequenceFile(cdm.dir.Name()) 
+    if err != nil {
+        return 0, 0, err
+    }
+    // Result: Logical reference had sequence 104, but file is created as 000001.
+    // Query layer evaluates 1 < 104 -> treats chunk as ancient -> silently drops write.
+    return cdm.openFile(path, seq)
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via full write-truncate-restart-query lifecycle integration tests. Verify that writing late or out-of-order samples after a complete directory sweep retains all data:
+```go
+func TestSequenceMonotonicityAcrossTruncation(t *testing.T) {
+    db := openDB(t)
+    defer db.Close()
+    
+    // Ingest data, force compaction and mmap cutoff, triggering full truncation of head chunks
+    ingestBatch(db, "metric_a", 0, 100)
+    db.ForceHeadMMap()
+    require.NoError(t, db.Compact(context.Background()))
+    
+    // HEAD chunk directory is now completely empty
+    // Append out-of-order (late) samples
+    ingestLateSample(db, "metric_a", 50)
+    db.ForceHeadMMap()
+    
+    // Verify query can resolve the sample and that GC has not discarded it
+    q, err := db.Querier(0, 200)
+    require.NoError(t, err)
+    defer q.Close()
+    
+    res := querySampleCount(q, "metric_a")
+    require.Equal(t, 101, res, "late sample was lost due to non-monotonic sequence reset")
+}
+```
+
+---
+
+
+---
+
+## 6785. Lock-Protected Memory Recycling for Unbounded Go Hash Maps (Harvested from prometheus/prometheus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lock-Protected Memory Recycling for Unbounded Go Hash Maps",
+  "source": "prometheus/prometheus",
+  "source_url": "https://github.com/prometheus/prometheus",
+  "source_version": "ac85e06f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:47:16.871Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-prometheus-prometheus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `ac85e06f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an in-memory hash map (`map[K]V`) handles dynamic, high-throughput bursts in low-latency paths, the application **MUST NOT** rely on standard Go map `delete()` calls to release memory back to the OS or runtime. Once a map empties or scales back past an operational hysteresis threshold (`chunkRefMapShrinkThreshold`), the runtime backing table **MUST** be explicitly decommissioned and replaced by a newly allocated map (`make(map[K]V, targetCapacity)`) guarded by an interval gate (`minShrinkInterval`).
+
+**WHY**:
+The standard Go runtime hashmap implementation never deallocates the internal bucket array allocated to accommodate peak key counts. Calling `delete(m, k)` only zeroes out key-value slots and decrements `count`; the underlying `hmap.buckets` pointers remain allocated on the heap for the entire lifetime of the process. In high-load metrics pipelines, temporary spikes (e.g., massive incoming scrape floods) force the map to allocate millions of buckets. Without explicit reallocation, hundreds of megabytes of memory remain stranded indefinitely, causing catastrophic container OOM kills (`ExitCode 137`) under memory-constrained cgroup environments.
+
+**WHEN TO APPLY**:
+Apply to any Go-based server holding ephemeral tracking maps, intermediate write buffers, deduplication registries, or connection registries subjected to intermittent load spikes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// tsdb/chunks/chunk_write_queue.go: Controlled map bucket deallocation
+const (
+    chunkRefMapShrinkThreshold   = 1000
+    chunkRefMapMinShrinkInterval = 10 * time.Minute
+)
+
+func (c *chunkWriteQueue) shrinkChunkRefMap() {
+    // Map must be completely drained before evaluating shrinkage
+    if len(c.chunkRefMap) > 0 {
+        return
+    }
+
+    // Do not trigger allocation churn for minor transient sizes
+    if c.chunkRefMapPeakSize < chunkRefMapShrinkThreshold {
+        return
+    }
+
+    now := time.Now()
+    // Enforce temporal hysteresis to prevent realloc thrashing
+    if now.Sub(c.chunkRefMapLastShrink) < chunkRefMapMinShrinkInterval {
+        return
+    }
+
+    // Reallocate the map table to half of peak size to hit memory/realloc equilibrium
+    // The old map with inflated bucket arrays is left to the GC
+    c.chunkRefMap = make(map[ChunkDiskMapperRef]chunkenc.Chunk, c.chunkRefMapPeakSize/2)
+    c.chunkRefMapPeakSize = 0
+    c.chunkRefMapLastShrink = now
+    c.shrink.Inc()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Assuming delete() frees map heap memory
+func (c *chunkWriteQueue) processJobUnsafe(ref ChunkDiskMapperRef) {
+    // Processes millions of keys during spike...
+    delete(c.chunkRefMap, ref)
+    // len(c.chunkRefMap) == 0, but c.chunkRefMap's internal bucket array
+    // still consumes hundreds of megabytes indefinitely in heap memory!
+}
+```
+
+**VERIFICATION METHOD**:
+Benchmark heap profiles before and after burst clearing using `runtime.ReadMemStats`:
+```go
+func TestMapMemoryReclamation(t *testing.T) {
+    queue := newChunkWriteQueue(nil, 100000, dummyWriter)
+    // Populate with 500,000 entries
+    for i := 0; i < 500000; i++ {
+        queue.addJob(dummyJob(i))
+    }
+    // Drain all jobs
+    queue.drain()
+
+    var m1 runtime.MemStats
+    runtime.GC()
+    runtime.ReadMemStats(&m1)
+
+    // Force shrink call
+    queue.chunkRefMapMtx.Lock()
+    queue.shrinkChunkRefMap()
+    queue.chunkRefMapMtx.Unlock()
+
+    var m2 runtime.MemStats
+    runtime.GC()
+    runtime.ReadMemStats(&m2)
+
+    require.Less(t, m2.HeapAlloc, m1.HeapAlloc, "map memory was not reclaimed after shrinkage")
+}
+```
+
+---
+
+
+---
+
+## 6786. Non-Blocking Segmented Ring-Buffer Queue with Head/Tail Disconnect (Harvested from prometheus/prometheus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Blocking Segmented Ring-Buffer Queue with Head/Tail Disconnect",
+  "source": "prometheus/prometheus",
+  "source_url": "https://github.com/prometheus/prometheus",
+  "source_version": "ac85e06f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:47:17.353Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-prometheus-prometheus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `ac85e06f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+High-throughput ingestion queues that bridge synchronous execution threads (such as append transactions) to asynchronous background writers **MUST NOT** use an unbounded single-slice FIFO or an overly large monolithic Go channel (`make(chan T, 100000)`). They **MUST** implement a segmented linked queue where fixed-size slice blocks (`segmentSize = 8192`) are allocated on demand and disconnected from the head pointer immediately upon total consumption.
+
+**WHY**:
+1. Giant channels allocate their entire contiguous backing memory upfront upon initialization, wasting memory during steady low-traffic periods.
+2. Slicing from an array (`queue = queue[batch:]`) without clearing individual consumed elements leaves the underlying referenced pointers rooted in memory, preventing the Go garbage collector from freeing them (a classic sub-slice memory leak).
+3. Monolithic slices force expensive reallocation and copy cycles when appending past slice capacity. Segmented queues offer $O(1)$ push and pop while releasing completely consumed segments to the GC immediately.
+
+**WHEN TO APPLY**:
+Apply to write queues, WAL pipeline buffers, logging engines, and producer-consumer channels handling variable write rates up to hundreds of thousands of operations per second.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// tsdb/chunks/queue.go: Segmented job queue protecting against GC pinning
+type writeJobQueueSegment struct {
+    segment             []chunkWriteJob
+    nextRead, nextWrite int
+    nextSegment         *writeJobQueueSegment
+}
+
+func (q *writeJobQueue) pop() (chunkWriteJob, bool) {
+    q.mtx.Lock()
+    defer q.mtx.Unlock()
+
+    for q.size == 0 {
+        if q.closed {
+            return chunkWriteJob{}, false
+        }
+        q.pushed.Wait()
+    }
+
+    res := q.first.segment[q.first.nextRead]
+    // CRITICAL: Overwrite with zero-value to release internal chunk pointers to GC immediately
+    q.first.segment[q.first.nextRead] = chunkWriteJob{}
+    q.first.nextRead++
+    q.size--
+
+    // If segment is exhausted, detach pointer immediately for GC reclamation
+    if q.first.nextRead >= q.segmentSize {
+        q.first = q.first.nextSegment
+        if q.first == nil {
+            q.last = nil
+        }
+    }
+
+    q.popped.Signal()
+    return res, true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Sub-slicing without pointer clearing
+func (q *LeakyQueue) PopBatch(batchSize int) []Job {
+    // BUG 1: Elements q.items[0:batchSize] still reside in memory-backed array
+    // BUG 2: Any pointers held within Job struct are pinned from GC
+    batch := q.items[:batchSize]
+    q.items = q.items[batchSize:] 
+    return batch
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that references stored within popped jobs are not retained by running a leak detector with `runtime.SetFinalizer` or inspecting memory consumption with `b.ReportAllocs()` under high-concurrency queue benchmarks.
+
+---

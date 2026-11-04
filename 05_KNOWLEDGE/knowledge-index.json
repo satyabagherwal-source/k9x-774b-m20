@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:35:29.070Z",
+  "last_updated": "2026-11-04T08:47:17.606Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48086,8 +48086,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "caebd2cf",
-      "content_hash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
+      "source_version": "ac85e06f",
+      "content_hash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -48150,6 +48150,21 @@
           "number": 6018,
           "title": "Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6784,
+          "title": "Monotonic Physical Ref Derivation Across Storage Compaction & Truncation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6785,
+          "title": "Lock-Protected Memory Recycling for Unbounded Go Hash Maps",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6786,
+          "title": "Non-Blocking Segmented Ring-Buffer Queue with Head/Tail Disconnect",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48157,7 +48172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:13:35.217Z",
+      "verified_at": "2026-11-04T08:47:17.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173746,6 +173761,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:35:29.056Z"
+    },
+    "rule-6784": {
+      "learning_id": "rule-6784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6784,
+      "title": "Monotonic Physical Ref Derivation Across Storage Compaction & Truncation",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "ac85e06f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:47:17.584Z"
+    },
+    "rule-6785": {
+      "learning_id": "rule-6785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6785,
+      "title": "Lock-Protected Memory Recycling for Unbounded Go Hash Maps",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "ac85e06f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:47:17.584Z"
+    },
+    "rule-6786": {
+      "learning_id": "rule-6786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6786,
+      "title": "Non-Blocking Segmented Ring-Buffer Queue with Head/Tail Disconnect",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "ac85e06f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:47:17.584Z"
     }
   },
   "aliases": {

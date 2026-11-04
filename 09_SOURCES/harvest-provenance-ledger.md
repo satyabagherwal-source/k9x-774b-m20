@@ -7193,3 +7193,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `359b34c7` | Multi-dimensional audit evidence | 2026-11-04T08:28:41.350Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `2b723db5` | Multi-dimensional audit evidence | 2026-11-04T08:35:09.442Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-04T08:35:29.148Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ac85e06f` | Multi-dimensional audit evidence | 2026-11-04T08:47:17.693Z |

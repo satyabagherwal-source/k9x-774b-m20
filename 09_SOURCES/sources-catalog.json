@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "caebd2cf",
+    "sourceVersion": "ac85e06f",
     "license": "Apache-2.0",
-    "contentHash": "22b9a4be8e3a86647b769abd00933eac46c7b0b6992dc77852da4a8a66d4879a",
-    "lastHarvestedAt": "2026-11-03T12:13:35.343Z",
+    "contentHash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
+    "lastHarvestedAt": "2026-11-04T08:47:17.693Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

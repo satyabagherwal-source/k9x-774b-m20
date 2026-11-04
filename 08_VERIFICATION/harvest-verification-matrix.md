@@ -7184,3 +7184,4 @@
 | `CYCLE-20261104-UH38` | `2026-11-04T08:28:41.348Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6780` | Yes (`ccb05e0d...`) |
 | `CYCLE-20261104-2SJK` | `2026-11-04T08:35:09.440Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6781` | Yes (`57580d88...`) |
 | `CYCLE-20261104-37QY` | `2026-11-04T08:35:29.146Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6782, Rule 6783` | Yes (`6d4ba37b...`) |
+| `CYCLE-20261104-IEGP` | `2026-11-04T08:47:17.689Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6784, Rule 6785, Rule 6786` | Yes (`976862de...`) |
