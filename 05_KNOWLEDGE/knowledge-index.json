@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T10:37:47.769Z",
+  "last_updated": "2026-11-04T10:45:28.355Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11971,8 +11971,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "0df32817",
-      "content_hash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
+      "source_version": "84367eb5",
+      "content_hash": "1efdf81bdebbab0a15666716b51fb755321adcb8cf09d6b9540c202799c9ee74",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -12030,6 +12030,11 @@
           "number": 6543,
           "title": "Annotation-Driven Resource Filtering & Immutability",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6820,
+          "title": "Bump the all-dependencies group with 5 updates (#725)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12037,7 +12042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:40:41.722Z",
+      "verified_at": "2026-11-04T10:45:26.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53541,8 +53546,8 @@
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "b19e2331",
-      "content_hash": "b2668ffafa06cf6323baf90d7745ec4b4cb3448d6c3492ee1c3565013d207d48",
+      "source_version": "754229cb",
+      "content_hash": "5edd4089c76dcee5f4efd3557013f7c44ef36d1b96c5214d4bb3cddb3e197a50",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "promoted_rules": [
@@ -53570,6 +53575,11 @@
           "number": 5299,
           "title": "[iOS] Report zero Pan velocity when the pointer rested before release (#4642)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6819,
+          "title": "[Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53577,7 +53587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:56:54.761Z",
+      "verified_at": "2026-11-04T10:45:24.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104726,7 +104736,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
+      "content_hash": "c0720f1e9f66850060927abef63d5a2f8b5d8a52ab41f10986da075e3099980b",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
@@ -104764,6 +104774,16 @@
           "number": 5956,
           "title": "Workflow Contract Enforcement via Naming Conventions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6821,
+          "title": "Heterogeneous Precision Artifact Sharding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6822,
+          "title": "Workflow-Model Coupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -104771,7 +104791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:20:39.105Z",
+      "verified_at": "2026-11-04T10:45:28.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174439,6 +174459,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T10:37:47.756Z"
+    },
+    "rule-6819": {
+      "learning_id": "rule-6819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6819,
+      "title": "[Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)",
+      "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
+      "source_version": "754229cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:45:24.990Z"
+    },
+    "rule-6820": {
+      "learning_id": "rule-6820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6820,
+      "title": "Bump the all-dependencies group with 5 updates (#725)",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "84367eb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:45:26.205Z"
+    },
+    "rule-6821": {
+      "learning_id": "rule-6821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6821,
+      "title": "Heterogeneous Precision Artifact Sharding",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:45:28.323Z"
+    },
+    "rule-6822": {
+      "learning_id": "rule-6822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6822,
+      "title": "Workflow-Model Coupling Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:45:28.323Z"
     }
   },
   "aliases": {

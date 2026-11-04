@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "b19e2331",
+    "sourceVersion": "754229cb",
     "license": "MIT",
-    "contentHash": "b2668ffafa06cf6323baf90d7745ec4b4cb3448d6c3492ee1c3565013d207d48",
-    "lastHarvestedAt": "2026-10-28T13:56:54.858Z",
+    "contentHash": "5edd4089c76dcee5f4efd3557013f7c44ef36d1b96c5214d4bb3cddb3e197a50",
+    "lastHarvestedAt": "2026-11-04T10:45:25.116Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
-    "lastHarvestedAt": "2026-10-31T00:20:39.182Z",
+    "contentHash": "c0720f1e9f66850060927abef63d5a2f8b5d8a52ab41f10986da075e3099980b",
+    "lastHarvestedAt": "2026-11-04T10:45:28.446Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "0df32817",
+    "sourceVersion": "84367eb5",
     "license": "MIT",
-    "contentHash": "a63c5e5d20d486b85b53c97076c12c7ef23a0759a83cd859fe376d73e0b5dcc4",
-    "lastHarvestedAt": "2026-11-03T16:40:41.787Z",
+    "contentHash": "1efdf81bdebbab0a15666716b51fb755321adcb8cf09d6b9540c202799c9ee74",
+    "lastHarvestedAt": "2026-11-04T10:45:26.334Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {

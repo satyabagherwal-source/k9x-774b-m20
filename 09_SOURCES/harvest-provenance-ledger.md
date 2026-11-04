@@ -7227,3 +7227,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-04T10:30:23.985Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T10:37:43.085Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `0b659694` | Multi-dimensional audit evidence | 2026-11-04T10:37:47.820Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `754229cb` | Multi-dimensional audit evidence | 2026-11-04T10:45:25.116Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `84367eb5` | Multi-dimensional audit evidence | 2026-11-04T10:45:26.334Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T10:45:28.446Z |

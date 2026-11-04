@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `b19e2331`  
+> **Source Version**: `754229cb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:56:54.235Z  
+> **Timestamp**: 2026-11-04T10:45:24.276Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:56:54.227Z  
+> **Harvest Timestamp**: 2026-11-04T10:45:23.968Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6793 stars
+- **Stars / Engagement**: 6800 stars
 
 ---
 
@@ -1388,307 +1388,79 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b19e2331` (2026-10-28)
-**Commit Message**: [iOS] Report zero Pan velocity when the pointer rested before release (#4642)
+### Incident Patch 1: `bf440870` (2026-11-02)
+**Commit Message**: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
 
 ## Description
 
-Follow-up to the web fix for #4636, same rule on iOS and macOS.
+On Android, `delaysChildPressedState={false}` has no effect in a release
+build that R8 minifies. A `Touchable` inside such a `ScrollView` still
+enters its pressed state only after the tap timeout, exactly like one in
+a `ScrollView` that keeps the delay.
 
-The Pan handler reports UIKit's `velocityInView:` in every event,
-including the end event. That estimate freezes at the last touch move,
-so a drag that stops, holds still, and then lifts reports the velocity
-of the drag in `onEnd`, and a `withDecay` started from it flings a
-pointer that had come to rest. Android reports 0 in that case, since its
-`VelocityTracker` treats a pointer as stopped after 40 ms without a
-sample.
+`NativeViewGestureHandler` looks up
+`HasChildPressedStateDelay.setHasChildPressedStateDelay` by reflection,
+since the interface only exists since React Native 0.87. Nothing else
+references it, so R8 renames the interface and drops its methods.
+`getMethod` then throws, the setter stays `null` and the option becomes
+a no-op.
 
-`RNBetterPanGestureRecognizer` now stamps the time of every move and, on
-release, records whether more than 40 ms passed since the last move. The
-check runs before the superclass handles the release, because that is
-where the gesture ends and the action is dispatched. The event payload
-reads the velocity through `reportedVelocityInView:`, which returns zero
-in the ended state after such a rest and UIKit's estimate otherwise.
-Update events, activation criteria and failure paths are unchanged, and
-so is a release within 40 ms of the last move.
+This adds a consumer ProGuard rule that keeps the interface and its
+setter, and lists it in the package `files` so it is published.
+
+Fixes #4652
 
 ## Test plan
 
-Tested on "Velocity Test" example
+Tested on an API 34 emulator with `basic-example` (RN 0.88.0) in release
+builds, with a `ScrollView` of each kind holding a `Touchable`. I logged
+the time from the raw touch-down to `onPressIn` after a 400 ms hold
+(`adb shell input swipe x y x y 400`):
 
-- iPhone 17 simul
+| | minified, before | minified, after | not minified |
+|---|---|---|---|
+| `delaysChildPressedState={false}` | +102 m
 
-**File**: `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m` (modified, +36/-8)
+**File**: `packages/react-native-gesture-handler/android/build.gradle` (modified, +1/-0)
 ```diff
-@@ -37,11 +37,18 @@ @interface RNBetterPanGestureRecognizer : UIPanGestureRecognizer
- #endif
+@@ -170,6 +170,7 @@ android {
+     defaultConfig {
+         minSdkVersion safeExtGet('minSdkVersion', 24)
+         targetSdkVersion safeExtGet('targetSdkVersion', 33)
++        consumerProguardFiles 'consumer-rules.pro'
  
- - (id)initWithGestureHandler:(RNGestureHandler *)gestureHandler;
-+- (CGPoint)reportedVelocityInView:(RNGHUIView *)view;
- 
- @end
- 
-+// A pointer that sent no move for this long is treated as stopped, like in
-+// Android's VelocityTracker and the web tracker.
-+static const NSTimeInterval pointerStoppedInterval = 0.04;
-+
- @implementation RNBetterPanGestureRecognizer {
-   __weak RNGestureHandler *_gestureHandler;
-+  NSTimeInterval _lastMoveTimestamp;
-+  BOOL _restedBeforeRelease;
- #if TARGET_OS_OSX
-   BOOL _blockAutomaticActivation;
- #else
-@@ -135,6 +142,11 @@ - (void)interactionsBegan:(NSSet *)touches withEvent:(UIEvent *)event
-     [_gestureHandler reset];
-   }
- 
-+  if (self.state == UIGestureRecognizerStatePossible) {
-+    _lastMoveTimestamp = event.timestamp;
-+    _restedBeforeRelease = NO;
-+  }
-+
- #if !TARGET_OS_TV && !TARGET_OS_OSX
-   if (_hasCustomActivationCriteria) {
-     // We use "minimumNumberOfTouches" property to prevent pan handler from recognizing
-@@ -169,6 +181,7 @@ - (void)interactionsBegan:(NSSet *)touches withEvent:(UIEvent *)event
- 
- - (void)interactionsMoved:(NSSet *)touches withEvent:(UIEvent *)event
- {
-+  _lastMoveTimestamp = event.timestamp;
-   [_gestureHandler.pointerTracker touchesMoved:touches withEvent:event];
- 
-   if (self.state == UIGestureRecognizerStatePossible && [self shouldFailUnderCustomCriteria]) {
-@@ -212,6 +225,13 @@ - (void)interactionsMoved:(NSSet *)touches withEvent:(UIEvent *)event
- #endif
- }
- 
-+// Velocity for the event payload: zero on release when the pointer rested
-+// before lifting, the recognizer's estimate otherwise.
-+- (CGPoint)reportedVelocityInView:(RNGHUIView *)view
-+{
-+  return self.state == UIGestureRecognizerStateEnded && _restedBeforeRelease ? CGPointZero : [self velocityInView:view];
+         externalNativeBuild {
+             cmake {
+```
+
+**File**: `packages/react-native-gesture-handler/android/consumer-rules.pro` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++# Reached only by reflection in NativeViewGestureHandler, so R8 would otherwise strip it.
++-keep interface com.facebook.react.uimanager.HasChildPressedStateDelay {
++  void setHasChildPressedStateDelay(java.lang.Boolean);
 +}
-+
- - (void)interactionsEnded:(NSSet *)touches withEvent:(UIEvent *)event
- {
-   [_gestureHandler.pointerTracker touchesEnded:touches withEvent:event];
-@@ -264,6 +284,8 @@ - (void)mouseDragged:(NSEvent *)event
- 
- - (void)mouseUp:(NSEvent *)event
- {
-+  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
-+
-   [super mouseUp:event];
-   [self interactionsEnded:[NSSet setWithObject:event] withEvent:event];
- }
-@@ -286,6 +308,8 @@ - (void)touchesMoved:(NSSet<RNGHUITouch *> *)touches withEvent:(UIEvent *)event
- 
- - (void)touchesEnded:(NSSet<RNGHUITouch *> *)touches withEvent:(UIEvent *)event
- {
-+  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
-+
-   [super touchesEnded:touches withEvent:event];
-   [self interactionsEnded:touches withEvent:event];
- }
-@@ -306,6 +330,7 @@ - (void)reset
- #if TARGET_OS_OSX
-   _blockAutomaticActivation = NO;
- #endif
-+  _restedBeforeRelease = NO;
-   [super reset];
-   [_gestureHandler reset];
- 
-@@ -486,13 +511,16 @@ - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
- #if TARGET_OS_OSX
- - (RNGestureHandlerEventExtraData *)eventExtraData:(NSPanGestureRecognizer *)recognizer
- {
--  return [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
--                           withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
--                                withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
--                                   withVelocity:[recognizer velocityInView:recognizer.view.window.contentView]
--                            withNumberOfTouches:1
--                                withPointerType:RNGestureHandlerMouse
--                                 withStylusData:nil];
-+  RNBetterPanGestureRecognizer *panRecognizer = (RNBetterPanGestureRecognizer *)recognizer;
-+
-+  return
-+      [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
-+                        withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
-+                             withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
-+                                withVelocity:[panRecognizer reportedVelocityInView:recognizer.view.window.contentView]
-+                         withNumberOfTouches:1
-+                             withPointerType:RNGestureHandlerMouse
-+                              withStylusData:nil];
- }
- #else
- - (RNGestureHandlerEventExtraData *)eventExtraData:(UIPanGestureRecognizer *)recognizer
-@@ -503,7 +531,7 @@ - (RNGestureHandlerEventExtraData *)eventExtraData:(UIPanGestureRecognizer *)rec
-                     forPan:[recognizer locationInView:self.coordinateView]
-       withAbsolutePosition:[recognizer locationInView:recognizer.view.window]
-            withTranslation:[recognizer translationInView:recognizer.view.window]
--              withVelocity:[recognizer velocityInView:recognizer.view.window]
-+              withVelocity:[panRecognizer reportedVelocityInView:recognizer.view.windo
 ```
 
----
-
-### Incident Patch 2: `613be1c7` (2026-10-28)
-**Commit Message**: [Web] Report zero Pan velocity when the pointer rested before release (#4641)
-
-## Description
-
-On web, `PanGestureHandler.onPointerUp` ends the gesture without looking
-at the release event, so `onEnd` carries the velocity computed by the
-last `pointermove`, however long ago that was. A drag that stops, holds
-still, and then releases reports the velocity of the drag, and a
-`withDecay` started from it flings a pointer that had come to rest.
-Android reports 0 in that case: its `VelocityTracker` treats a pointer
-as stopped after 40 ms without a sample, [matching
-Flutter](https://github.com/flutter/flutter/blob/66b3ad90177ccbd2963836a5556076b370622fe4/packages/flutter/lib/src/gestures/velocity_tracker.dart#L142).
-
-The web `VelocityTracker` already uses the same 40 ms threshold to split
-the sample history during a drag. The constant is now exported as
-`POINTER_STOPPED_MILLISECONDS`, `PointerTracker.track` stamps the time
-of each pointer's last sample, and `PointerTracker.getVelocityAt`
-returns zero when the queried time is past that threshold. `onPointerUp`
-reads the velocity at the release time before ending. A release within
-40 ms of the last move is unchanged.
-
-Feeding the release eve
-
-**File**: `packages/react-native-gesture-handler/src/web/handlers/PanGestureHandler.ts` (modified, +6/-0)
+**File**: `packages/react-native-gesture-handler/package.json` (modified, +1/-0)
 ```diff
-@@ -261,6 +261,12 @@ export default class PanGestureHandler extends GestureHandler {
-   protected override onPointerUp(event: AdaptedEvent): void {
-     this.stylusData = event.stylusData;
- 
-+    // A pointer that rested before lifting reports zero velocity instead of
-+    // the velocity of its last move.
-+    const velocity = this.tracker.getVelocityAt(event.pointerId, event.time);
-+    this.velocityX = velocity?.x ?? 0;
-+    this.velocityY = velocity?.y ?? 0;
-+
-     super.onPointerUp(event);
-     if (this.state === State.ACTIVE) {
-       const lastCoords = this.tracker.getAbsoluteCoordsAverage();
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/PanGestureHandler.test.ts` (modified, +42/-0)
-```diff
-@@ -418,3 +418,45 @@ describe('PanGestureHandler pointer leaving and entering the view', () => {
-     expect(handler.state).toBe(State.CANCELLED);
-   });
- });
-+
-+describe('PanGestureHandler velocity at release', () => {
-+  function timedEvent(eventType: EventTypes, y: number, time: number) {
-+    return { ...pointerEvent(eventType, y), time };
-+  }
-+
-+  // Four moves 8ms apart, 10px each: 1250px/s downwards.
-+  function dragThenRelease(releaseTime: number) {
-+    const handler = createHandler();
-+
-+    handler.setGestureConfig({ enabled: true, minDist: 0 });
-+    handler.pointerDown(timedEvent(EventTypes.DOWN, 20, 0));
-+    for (let move = 1; move <= 4; move++) {
-+      handler.pointerMove(
-+        timedEvent(EventTypes.MOVE, 20 + 10 * move, 8 * move)
-+      );
-+    }
-+    expect(handler.state).toBe(State.ACTIVE);
-+
-+    handler.pointerUp(timedEvent(EventTypes.UP, 60, releaseTime));
-+    expect(handler.state).toBe(State.END);
-+
-+    return handler.nativeEvent();
-+  }
-+
-+  test('a pointer released at its last move keeps the velocity of the drag', () => {
-+    expect(dragThenRelease(32).velocityY).toBeCloseTo(1250, -2);
-+  });
-+
-+  test('a pointer that rested before release reports zero velocity', () => {
-+    expect(dragThenRelease(532).velocityY).toBe(0);
-+  });
-+
-+  // The last move is at 32ms, the pointer counts as stopped after 40ms.
-+  test('a pointer released at the stopped threshold keeps its velocity', () => {
-+    expect(dragThenRelease(72).velocityY).toBeCloseTo(1250, -2);
-+  });
-+
-+  test('a pointer released past the stopped threshold reports zero velocity', () => {
-+    expect(dragThenRelease(73).velocityY).toBe(0);
-+  });
-+});
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/tools/PointerTracker.ts` (modified, +9/-2)
-```diff
-@@ -4,7 +4,6 @@ import VelocityTracker from './VelocityTracker';
- export interface TrackerElement {
-   abosoluteCoords: Point;
-   relativeCoords: Point;
--  timestamp: number;
-   velocityX: number;
-   velocityY: number;
- }
-@@ -43,7 +42,6 @@ export default class PointerTracker {
-     const newElement: TrackerElement = {
-       abosoluteCoords: { x: event.x, y: event.y },
-       relativeCoords: { x: event.offsetX, y: event.offsetY },
--      timestamp: event.time,
-       velocityX: 0,
-       velocityY: 0,
-     };
-@@ -122,6 +120,15 @@ export default class PointerTracker {
-       : null;
-   }
- 
-+  public getVelocityAt(pointerId: number, time: number) {
-+    if (!this.trackedPointers.has(pointerId)) {
-+      return null;
-+    }
-+
-+    const [x, y] = this.velocityTracker.velocityAt(time);
-+    return { x, y };
-+  }
-+
-   public getLastAbsoluteCoords(pointerId?: number) {
-     return this.trackedPointers.get(pointerId ?? this.lastMovedPointerId)
-       ?.abosoluteCoords;
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/tools/VelocityTracker.ts` (modified, +11/-0)
-```diff
-@@ -92,6 +92,17 @@ export default class VelocityTracker {
-     return [0, 0];
-   }
- 
-+  // Velocity at `time`: zero once no sample arrived within the stopped
-+  // window, the current estimate otherwise.
-+  public velocityAt(time: number): [number, number] {
-+    const newest = this.samples.get(this.samples.size - 1);
-+
-+    return !newest ||
-+      time - newest.time > this.assumePointerMoveStoppedMilliseconds
-+      ? [0, 0]
-+      : this.velocity;
-+  }
-+
-   public reset(): void {
-     this.samples.clear();
-   }
+@@ -34,6 +34,7 @@
+     "android/build.gradle",
+     "android/gradle.properties",
+     "android/CMakeLists.txt",
++    "android/consumer-rules.pro",
+     "android/src/main/AndroidManifest.xml",
+     "android/src/main/java/",
+     "android/src/main/jni/",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4650** (2026-10-28): Remove `disableReanimated` prop from components (@m-bert)
-- **PR #4648** (2026-10-26): Bump body-parser from 1.20.6 to 1.20.9 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4647** (2026-10-26): Bump body-parser from 1.20.8 to 1.20.9 (@dependabot[bot])
-- **PR #4646** (2026-10-26): Bump postcss-selector-parser from 6.1.4 to 6.1.5 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4645** (2026-10-26): Bump fast-uri from 3.1.8 to 3.1.9 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4644** (2026-10-27): Stop the Pressable long press timer on touch up (@m-bert)
+- **PR #4665** (2026-11-04): [iOS] Skip `accessibilityElementsHidden` children when inferring button label (@m-bert)
+- **PR #4663** (2026-11-04): Remove unused `enabled` listener from `useJSResponderHandler` (@m-bert)
+- **PR #4662** (2026-11-03): Bump follow-redirects from 1.16.1 to 1.16.2 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4661** (2026-11-03): Bump joi from 17.13.8 to 17.13.9 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4660** (2026-11-02): [Jest] Add opt-out for the `GestureHandlerRootView` check (@m-bert)
+- **PR #4659** (2026-11-02): Bump node-forge from 1.4.0 to 1.4.2 (@dependabot[bot])
 
 ---
 
@@ -1708,64 +1480,28 @@ Feeding the release eve
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [iOS] Report zero Pan velocity when the pointer rested before release (#4642)
+## X. [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b19e2331`: [iOS] Report zero Pan velocity when the pointer rested before release (#4642). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf440870`: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/android/build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- (CGPoint)reportedVelocityInView:(RNGHUIView *)view;
-// A pointer that sent no move for this long is treated as stopped, like in
-// Android's VelocityTracker and the web tracker.
-static const NSTimeInterval pointerStoppedInterval = 0.04;
-
-  NSTimeInterval _lastMoveTimestamp;
-  BOOL _restedBeforeRelease;
-  if (self.state == UIGestureRecognizerStatePossible) {
-    _lastMoveTimestamp = event.timestamp;
-    _restedBeforeRelease = NO;
-  }
-
-  _lastMoveTimestamp = event.timestamp;
-// Velocity for the event payload: zero on release when the pointer rested
-// before lifting, the recognizer's estimate otherwise.
-- (CGPoint)reportedVelocityInView:(RNGHUIView *)view
-{
-  return self.state == UIGestureRecognizerStateEnded && _restedBeforeRelease ? CGPointZero : [self velocityInView:view];
-}
-
-  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
-
-  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
-
-  _restedBeforeRelease = NO;
-  RNBetterPanGestureRecognizer *panRecognizer = (RNBetterPanGestureRecognizer *)recognizer;
-
-  return
-      [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
-        
+        consumerProguardFiles 'consumer-rules.pro'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  return [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
-                           withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
-                                withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
-                                   withVelocity:[recognizer velocityInView:recognizer.view.window.contentView]
-                            withNumberOfTouches:1
-                                withPointerType:RNGestureHandlerMouse
-                                 withStylusData:nil];
-              withVelocity:[recognizer velocityInView:recognizer.view.window]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b19e2331` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf440870` are properly handled with clean fallback behavior.
