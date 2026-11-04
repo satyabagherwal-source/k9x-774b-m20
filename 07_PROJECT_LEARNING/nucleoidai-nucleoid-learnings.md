@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `712830f8`  
+> **Source Version**: `55fbddc1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:42:38.850Z  
+> **Timestamp**: 2026-11-04T22:12:48.205Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:42:38.845Z  
+> **Harvest Timestamp**: 2026-11-04T22:12:48.198Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1006,702 +1006,412 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `712830f8` (2026-11-04)
-**Commit Message**: Add ARC dataset for puzzle 3c9b0459
+### Incident Patch 1: `55fbddc1` (2026-11-04)
+**Commit Message**: Add two-object pairs to ARC genesis datasets
 
-Annotate the four original training pairs of the default puzzle 3c9b0459,
-followed by its test pair, with one whole-mosaic Obj instance per 3 by 3
-grid. A single class-level rule,
-`$Obj.orientation = ($Obj.orientation@first + 180) % 360`, turns every
-mosaic a half turn; x, y and the tag stay unchanged, and the output canvas
-is EXACT.
+Append a second synthesized 7x7 pair with two objects to the core, extension, curve and line datasets. It covers corners at orientations 45/315 and 225/135, two points with different rims, and vertical and horizontal lines extending toward opposite ends. Update the arc/README.md description of the genesis datasets to match.
 
-Files: arc/src/dataset/dataset.3c9b0459.json, its paragraph in
-arc/README.md, its entry in the ARC puzzle report list in
-.github/workflows/arc.yml, the solver's default puzzle in arc/src/app.ts
-(25ff71a9 to 3c9b0459), and the progress record
-arc/docs/ARC-NUC-3c9b0459.md.
-
-No Nucleoid enhancement was requested, so there is no NUC outcome.
-
-Run: one local `bun start 3c9b0459` exited 1 before any model call with
-`Error: OPENROUTER_API_KEY is required`; the difference is unknown.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
-
-**File**: `.github/workflows/arc.yml` (modified, +1/-0)
+**File**: `arc/README.md` (modified, +13/-7)
 ```diff
-@@ -30,6 +30,7 @@ jobs:
-         0d3d703e
-         25d8a9c8
-         25ff71a9
-+        3c9b0459
-       NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
-       DOTENV_CONFIG_PATH: /dev/null
-       NO_COLOR: "1"
-```
-
-**File**: `arc/README.md` (modified, +48/-0)
-```diff
-@@ -470,6 +470,54 @@ input canvas and output masks its output canvas. Orientation is 0 in both
- states because the shapes are not rotated. The test pair follows the training
- pairs at the same level and is annotated by the same rules.
+@@ -178,13 +178,19 @@ The genesis datasets are `dataset.core.json`, `dataset.extension.json`,
+ the genesis puzzle `3aa6fb7a`, which has no `dataset.3aa6fb7a.json`, and every
+ run receives them with the other datasets. Their pairs are synthesized
+ varieties of corners, curves, and lines rather than original training or test
+-pairs, so they contain no test pair. Each ends with one synthesized pair that
+-holds a single object on the genesis puzzle's 7 by 7 canvas, annotated with
+-that dataset's own declarations: a color-9 corner at orientation 135 with its
+-outside color-4 marker (`dataset.core.json`), a color-4 corner at orientation
+-45 with its inside color-7 marker (`dataset.extension.json`), a color-9 point
+-with its color-2 rim below (`dataset.curve.json`), and a vertical line that
+-extends down from its top endpoint (`dataset.line.json`).
++pairs, so they contain no test pair. Each ends with two synthesized pairs on
++the genesis puzzle's 7 by 7 canvas, annotated with that dataset's own
++declarations. The first holds a single object: a color-9 corner at
++orientation 135 with its outside color-4 marker (`dataset.core.json`), a
++color-4 corner at orientation 45 with its inside color-7 marker
++(`dataset.extension.json`), a color-9 point with its color-2 rim below
++(`dataset.curve.json`), and a vertical line that extends down from its top
++endpoint (`dataset.line.json`). The last holds two objects: color-9 corners
++at orientations 45 and 315 with their outside color-4 markers, color-4
++corners at orientations 225 and 135 with their inside color-7 markers, a
++color-9 point with its color-2 rim below and a color-4 point with its color-8
++rim above, and a vertical line that extends up from its bottom endpoint with
++a horizontal line that extends left from its right endpoint.
  
-+`dataset.3c9b0459.json` annotates the four original training pairs from
-+`data\training\3c9b0459.json`, in order, followed by its test pair, five
-+mosaic instances in total, one per pair. Every input and output retains its
-+original 3 by 3 canvas, colors, and positions, and no grid has a zero cell.
-+Each input is one mosaic of 9 cells that fills its canvas, in two or three
-+colors: 1, 2, and 8; 2, 4, and 9; 5 and 8; and 2, 3, and 9 in the training
-+pairs. Each object is that whole mosaic, the figure seen first, whose 3 by 3
-+box spans the canvas from its origin, 0 and 0. Each output turns the whole
-+mosaic a half turn, 180 degrees, so the cell in row r and column c moves to
-+row 2 - r and column 2 - c, and every color keeps its cell count. The half
-+turn is the only one of the square's eight turns and mirrors, the identity
-+included, that reproduces any training pair: no training mosaic looks the
-+same after a quarter turn, a half turn, a mirror across either center line,
-+or a flip across either diagonal. The class takes no descriptive property,
-+with no color, parts list, width, height, canvas size, or matrix of cells,
-+because the rule needs none: the mosaic's cells travel in its masks, and its
-+turn is its orientation. One unconditional class-level rule rewrites
-+`orientation` as `($Obj.orientation@first + 180) % 360`, the half-turn rule
-+of `dataset.6150a2bd.json`, anchored with `@first` because the rule rewrites
-+`orientation` itself. The rules leave `x` and `y` unchanged: a mosaic that
-+fills its canvas keeps its box in place under a half turn, whether about its
-+own center or the canvas's. The two further rules of `dataset.6150a2bd.json`,
-+which move the box about the canvas center as
-+`canvas_width - $Obj.x@first - $Obj.width` and
-+`canvas_height - $Obj.y@first - $Obj.height`, would reproduce every training
-+output as well, but every mosaic's `width` and `height` equal the canvas's,
-+so those properties would only restate the canvas size and those rules would
-+only return the input origin; the rules state the half turn alone, a choice
-+fixed from the training pairs before the test pair was read. Each training
-+grid holds a single mosaic and shows no relation between objects, so no
-+population operation appears. The rules create no property and leave `x`,
-+`y`, and the tag unchanged, so input and output states share the same keys
-+and differ only in `orientation`. Native snapshots start with the pair's
-+`canvas_width` and `canvas_height`, and output snapshots are captured with
-+the pair's implementation followed by `Obj[:]`. The tag `l9100` is a single
-+shape, as in `dataset.28bf18c6.json` and `dataset.6150a2bd.json`, in both
-+states. Input masks retain each pair's full-size 3 by 3 input canvas and
-+output masks the complete 3 by 3 output; with no zero cell, each mask equals
-+its pair's grid, and merging them reproduces each pair's input and output.
-+The `output_x`/`output_y` fields record the turned mosaic's nonzero
-+bounding-box origin, 0 and 0, equal to `output_value.x`/`output_value.y`.
-+`output_canvas` is `EXACT` because each output keeps its input's 3 by 3
-+canvas; with no zero cell to crop, `FIT` would frame the same grids.
-+Orientation is 0 in every input state, where the mosaic is not turned, and
-+180 in every output state. The declarations hold executable code only,
-+without `#` comments. The test pair follows the training pairs at the same
-+level and is annotated by the same rules.
-+
- `dataset.44f52bb0.json` annotates the six original training pairs from
- `data\training\44f52bb0.json`, in order, followed by its two test pairs,
- eight pattern instances in total, one per pair. Every input retains its
+ Instance `implementation` snippets use named constructor arguments whose names
+ match the parameters in their class declarations. The canvas size is not one
 ```
 
-**File**: `arc/docs/ARC-NUC-3c9b0459.md` (added, +140/-0)
+**File**: `arc/src/dataset/dataset.core.json` (modified, +82/-0)
 ```diff
-@@ -0,0 +1,140 @@
-+# ARC-NUC-3c9b0459 -- Mosaic Half Turn
-+
-+Progress record for ARC training puzzle `3c9b0459`: its instruction dataset,
-+the solver and Nucleoid changes it needed, its runs, and what is still open.
-+
-+| Item | Status |
-+| --- | --- |
-+| Puzzle | [`data/training/3c9b0459.json`](../data/training/3c9b0459.json) |
-+| Instruction dataset | [`dataset.3c9b0459.json`](../src/dataset/dataset.3c9b0459.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record |
-+| Output canvas | `EXACT` |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
-+| Solver changes | None; suggested changes await review, not applied |
-+| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
-+| Updated | 4-Nov-2026 |
-+
-+## Puzzle
-+
-+Each training input is a 3 by 3 canvas filled by one mosaic: every cell holds
-+a color, and none holds the background color 0. The four mosaics use two or
-+three colors each: 1, 2, and 8; 2, 4, and 9; 5 and 8; and 2, 3, and 9. The
-+output keeps the canvas and turns the whole mosaic a half turn, 180 degrees,
-+so the cell in row r and column c moves to row 2 - r and column 2 - c, and
-+every color keeps its cell count. Of the square's eight turns and mirrors,
-+only the half turn maps each training input to its output, and no training
-+mosaic looks the same under any of the other seven, so each pair confirms the
-+half turn on its own. The output keeps the input's 3 by 3 canvas, so the
-+dataset is `EXACT`; with no zero cell to crop, `FIT` would frame the same
-+grids.
-+
-+`/arc-purposal` chose this puzzle by default: among the 386 training puzzles
-+other than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
-+training matrix has the fewest cells, 9, with 72 cells in all its training
-+matrices. Four other puzzles, `74dd1130`, `9565186b`, `a85d4709`, and
-+`ed36ccf7`, tie on both measures, and `3c9b0459` has the lowest ID among them.
-+
-+## Dataset
-+
-+The dataset holds the four original training pairs in source order, followed
-+at the same level by the puzzle's test pair, which the same rule annotates.
-+Every mosaic is one instance of `Obj(x, y, orientation)`, tagged `l9100`, a
-+single shape, as in `dataset.28bf18c6.json`, `dataset.6150a2bd.json`, and
-+`dataset.25ff71a9.json`. The class takes no color, size, cell list, canvas
-+size, or matrix of cells: the mosaic's cells travel unchanged in its masks,
-+and its turn is its orientation. One unconditional class-level rule turns
-+every mosaic:
-+
-+```nuc
-+$Obj.orientation = ($Obj.orientation@first + 180) % 360
-+```
-+
-+It is the half-turn rule of `dataset.6150a2bd.json`. `@first` reads the
-+mosaic's orientation from before the rules ran, which the rule needs because
-+it rewrites `orientation` itself. The rule creates no property and leaves `x`,
-+`y`, and the tag unchanged: a mosaic that fills its canvas keeps its box at 0
-+and 0 under a half turn. Each input state has orientation 0 and each output
-+state 180, and they differ in nothing else. The declarations carry no `#`
-+comments, as in `dataset.25d8a9c8.json` and `dataset.25ff71a9.json`. The
-+[README](../README.md#instruction-datasets) describes the dataset in full.
-+
-+The worker started from the big picture, the whole mosaic as the object, and
-+that formulation explained every training pair, so it never went down to
-+single cells. `dataset.6150a2bd.json` turns its shapes with the same rule and
-+also moves each box about the canvas center through `width` and `height`
-+properties. That fuller rule set reproduces every training output here too,
-+but every mosaic's width and height equal the canvas's, so those properties
-+would only restate the canvas size and its position rules would only return
-+the origin. The worker kept the half turn alone, a choice fixed from the
-+training pairs before it read the test pair. Each training grid holds one
-+mosaic and relates it to nothing else, so the rule needs no population
-+operation such as `filter` or `some`; the class-level rule already states the
-+turn once for every mosaic.
-+
-+The caller checked the handoff against the declarative, higher-order, and
-+gestalt requirements, found that it met them, and sent nothing back. The
-+caller also replayed the four training pairs on the accepted runtime, 66
-+checks of grids, keys, mask shapes and cells, bounding boxes, merges,
-+orientations, and input and output snapshots, all passing. The worker froze
-+the rules from the training pairs before it read the test pair and reported
-+that the same rules reproduce it. It wrote the dataset, its README paragraph,
-+and the puzzle's entry in the **ARC puzzle report** workflow's list, its 15th
-+puzzle. The caller made the puzzle the solver's default in `src/app.
-```
-
-**File**: `arc/src/app.ts` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
- import fs from "node:fs/promises";
- 
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "25ff71a9") {
-+export async function start(puzzle_id: string = "3c9b0459") {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-     await arc_dataset.load(puzzle_id);
- 
-```
-
-**File**: `arc/src/dataset/dataset.3c9b0459.json` (added, +189/-0)
-```diff
-@@ -0,0 +1,189 @@
-+{
-+  "declarations": [
-+    "class Obj(x: int, y: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'",
-+    "$Obj.orientation = ($Obj.orientation@first + 180) % 360"
-+  ],
-+  "output_canvas": "EXACT",
-+  "dataset": [
-+    {
-+      "input_matrix": [
-+        [2, 2, 1],
-+        [2, 1, 2],
-+        [2, 8, 1]
-+      ],
-+      "output_matrix": [
-+        [1, 8, 2],
-+        [2, 1, 2],
-+        [1, 2, 2]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objad2abfd1734f",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 180,
-+          "input_instance_matrix": [
-+            [2, 2, 1],
-+            [2, 1, 2],
-+            [2, 8, 1]
-+          ],
-+          "output_instance_matrix": [
-+            [1, 8, 2],
-+            [2, 1, 2],
-+            [1, 2, 2]
-+          ],
-+          "implementation": "objad2abfd1734f = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"objad2abfd1734f","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"objad2abfd1734f","orientation":180,"tag":"l9100","x":0,"y":0}
-+        }
-+      ]
+@@ -416,6 +416,88 @@
+           "output_value": {"horizontal_segment_color":9,"id":"objb10dd4029d3e","marker_color":4,"orientation":135,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1}
+         }
+       ]
 +    },
 +    {
 +      "input_matrix": [
-+        [9, 2, 4],
-+        [2, 4, 4],
-+        [2, 9, 2]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 9, 9, 0, 0],
++        [0, 0, 0, 0, 9, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 9, 9, 0, 0, 0, 0],
++        [0, 9, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "output_matrix": [
-+        [2, 9, 2],
-+        [4, 4, 2],
-+        [4, 2, 9]
++        [0, 0, 0, 0, 0, 4, 0],
++        [0, 0, 0, 9, 9, 0, 0],
++        [0, 0, 0, 0, 9, 0, 0],
++        [4, 0, 0, 0, 0, 0, 0],
++        [0, 9, 9, 0, 0, 0, 0],
++        [0, 9, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj67fe33c11cd0",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
++          "instance_name": "obj1d3e297e70a8",
++          "input_x": 3,
++          "output_x": 3,
++          "input_y": 1,
 +          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 180,
++          "input_orientation": 45,
++          "output_orientation": 45,
 +          "input_instance_matrix": [
-+            [9, 2, 4],
-+            [2, 4, 4],
-+            [2, 9, 2]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 9, 9, 0, 0],
++            [0, 0, 0, 0, 9, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
-+            [2, 9, 2],
-+            [4, 4, 2],
-+            [4, 2, 9]
++            [0, 0, 0, 0, 0, 4, 0],
++            [0, 0, 0, 9, 9, 0, 0],
++            [0, 0, 0, 0, 9, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
-+          "implementation": "obj67fe33c11cd0 = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"obj67fe33c11cd0","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"obj67fe33c11cd0","orientation":180,"tag":"l9100","x":0,"y":0}
++          "implementation": "obj1d3e297e70a8 = Obj(x=3, y=1, orientation=45, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)",
++          "input_value": {"horizontal_segment_color":9,"id":"obj1d3e297e70a8","marker_color":0,"orientation":45,"tag":"l6747","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1},
++          "output_value": {"horizontal_segment_color":9,"id":"obj1d3e297e70a8","marker_color":4,"orientation":45,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":3,"y":1}
++        },
++        {
++          "instance_name": "obj20499ff135c0",
++          "input_x": 1,
++          "output_x": 0,
++          "input_y": 4,
++          "output_y": 3,
++          "input_orientation": 315,
++          "output_orientation": 315,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 9, 9, 0, 0, 0, 0],
++            [0, 9, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [4, 0, 0, 0, 0, 0, 0],
++            [0, 9, 9, 0, 0, 0, 0],
++            [0, 9, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj20499ff135c0 = Obj(x=1, y=4, orientation=315, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)",
++          "input_value": {"horizontal_segment_color":9,"id":"obj20499ff135c0","marker_color":0,"orientation":315,"tag":"l6747","vertex_color":9,"vertical_segment_color":9,"x":1,"y":4},
++          "output_value": {"horizontal_segment_color":9,"id":"obj20499ff135c0","marker_color":4,"orientation":315,"tag":"l6624","vertex_color":9,"vertical_segment_color":9,"x":1,"y":4}
 +        }
 +      ]
+     }
+   ]
+ }
+```
+
+**File**: `arc/src/dataset/dataset.curve.json` (modified, +82/-0)
+```diff
+@@ -313,6 +313,88 @@
+           "output_value": {"id":"obj3d302d758b50","orientation":180,"rim_color":2,"tag":"l9906","vertex_color":9,"x":3,"y":2}
+         }
+       ]
 +    },
 +    {
 +      "input_matrix": [
-+        [8, 8, 8],
-+        [5, 5, 8],
-+        [8, 5, 5]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 9, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 4, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "output_matrix": [
-+        [5, 5, 8],
-+        [8, 5, 5],
-+        [8, 8, 8]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 9, 0, 0],
++        [0, 0, 0, 2, 0, 2, 0],
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 8, 0, 8, 0, 0, 0],
++        [0, 0, 4, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj6862d9b15c0c",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
++          "instance_name": "obja1b9ca3ab601",
++          "input_x": 4,
++          "output_x": 3,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 180,
 +          "output_orientation": 180,
 +          "input_instance_matrix": [
-+            [8, 8, 8],
-+            [5, 5, 8],
-+            [8, 5, 5]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 9, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
-+            [5, 5, 8],
-+            [8, 5, 5],
-+            [8, 8, 8]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 9, 0, 0],
++            [0, 0, 0, 2, 0, 2, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
-+          "implementation": "obj6862d9b15c0c = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"obj6862d9b15c0c","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"obj6862d9b15c0c","orientation":180,"tag":"l9100","x":0,"y":0}
++          "implementation": "obja1b9ca3ab601 = Obj(x=4, y=1, orientation=180, vertex_color=9)",
++          "input_value": {"id":"obja1b9ca3ab601","orientation":180,"tag":"l7544","vertex_color":9,"x":4,"y":1},
++          "output_value": {"id":"obja1b9ca3ab601","orientation":180,"rim_color":2,"tag":"l9906","vertex_color":9,"x":3,"y":1}
++        },
++        {
++          "instance_name": "obj5fb3f33a329f",
++          "input_x": 2,
++          "output_x": 1,
++          "input_y": 5,
++          "output_y": 4,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 4, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 8, 0, 8, 0, 0, 0],
++            [0, 0, 4, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj5fb3f33a329f = Obj(x=2, y=5, orientation=0, vertex_color=4)",
++          "input_value": {"id":"obj5fb3f33a329f","orientation":0,"tag":"l7544","vertex_color":4,"x":2,"y":5},
++          "output_value": {"id":"obj5fb3f33a329f","orientation":0,"rim_color":8,"tag":"l6840","vertex_color":4,"x":1,"y":4}
 +        }
 +      ]
+     }
+   ]
+ }
+```
+
+**File**: `arc/src/dataset/dataset.extension.json` (modified, +82/-0)
+```diff
+@@ -430,6 +430,88 @@
+           "output_value": {"horizontal_segment_color":4,"id":"objc28d52f4b589","marker_color":7,"orientation":45,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":3,"y":2}
+         }
+       ]
 +    },
 +    {
 +      "input_matrix": [
-+        [3, 2, 9],
-+        [9, 9, 9],
-+        [2, 3, 3]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 4, 0, 0, 0, 0, 0],
++        [0, 4, 0, 0, 0, 0, 0],
++        [0, 4, 4, 4, 0, 0, 4],
++        [0, 0, 0, 0, 0, 0, 4],
++        [0, 0, 0, 0, 4, 4, 4],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "output_matrix": [
-+        [3, 3, 2],
-+        [9, 9, 9],
-+        [9, 2, 3]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 4, 0, 0, 0, 0, 0],
++        [0, 4, 7, 0, 0, 0, 0],
++        [0, 4, 4, 4, 0, 0, 4],
++        [0, 0, 0, 0, 0, 7, 4],
++        [0, 0, 0, 0, 4, 4, 4],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj176130d1ca05",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 180,
++          "instance_name": "objd50f6f521f67",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 225,
++          "output_orientation": 225,
 +          "input_instance_matrix": [
-+            [3, 2, 9],
-+            [9, 9, 9],
-+            [2, 3, 3]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 4, 0, 0, 0, 0, 0],
++            [0, 4, 0, 0, 0, 0, 0],
++            [0, 4, 4, 4, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
-+            [3, 3, 2],
-+            [9, 9, 9],
-+            [9, 2, 3]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 4, 0, 0, 0, 0, 0],
++            [0, 4, 7, 0, 0, 0, 0],
++            [0, 4, 4, 4, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
-+          "implementation": "obj176130d1ca05 = Obj(x=0, y=0, orientation=0)",
-+          "input_value": {"id":"obj176130d1ca05","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"id":"obj176130d1ca05","orientation":180,"tag":"l9100","x":0,"y":0}
++          "implementation": "objd50f6f521f67 = Obj(x=1, y=1, orientation=225, vertex_color=4, vertical_segment_color=4, horizontal_segment_color=4)",
++          "input_value": {"horizontal_segment_color":4,"id":"objd50f6f521f67","marker_color":0,"orientation":225,"tag":"l6747","vertex_color":4,"vertical_segment_color":4,"x":1,"y":1},
++          "output_value": {"horizontal_segment_color":4,"id":"objd50f6f521f67","marker_color":7,"orientation":225,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":1,"y":1}
++        },
++        {
++          "instance_name": "obj6977f002d257",
++          "input_x": 4,
++          "output_x": 4,
++          "input_y": 3,
++          "output_y": 3,
++          "input_orientation": 135,
++          "output_orientation": 135,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 4],
++            [0, 0, 0, 0, 0, 0, 4],
++            [0, 0, 0, 0, 4, 4, 4],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 4],
++            [0, 0, 0, 0, 0, 7, 4],
++            [0, 0, 0, 0, 4, 4, 4],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj6977f002d257 = Obj(x=4, y=3, orientation=135, vertex_color=4, vertical_segment_color=4, horizontal_segment_color=4)",
++          "input_value": {"horizontal_segment_color":4,"id":"obj6977f002d257","marker_color":0,"orientation":135,"tag":"l6747","vertex_color":4,"vertical_segment_color":4,"x":4,"y":3},
++          "output_value": {"horizontal_segment_color":4,"id":"obj6977f002d257","marker_color":7,"orientation":135,"tag":"l6624","vertex_color":4,"vertical_segment_color":4,"x":4,"y":3}
 +        }
 +      ]
+     }
+   ]
+ }
+```
+
+**File**: `arc/src/dataset/dataset.line.json` (modified, +82/-0)
+```diff
+@@ -355,6 +355,88 @@
+           "output_value": {"endpoint_position":"up","extension_direction":"down","id":"obj84b61b7cd8f6","orientation":0,"tag":"l6012","x":2,"y":1}
+         }
+       ]
 +    },
 +    {
 +      "input_matrix": [
-+        [6, 4, 4],
-+        [6, 6, 4],
-+        [4, 6, 7]
++        [0, 0, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 8, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 6, 6, 8],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "output_matrix": [
-+        [7, 6, 4],
-+        [4, 6, 6],
-+        [4, 4, 6]
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 6, 0, 0, 0, 0, 0],
++        [0, 8, 0, 0, 0, 0, 0],
++        [0, 0, 0, 6, 6, 6, 8],
++        [0, 0, 0, 0, 0, 0, 0]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj661d3fe38fde",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 0,
++          "instance_name": "obj71a65bf8e5ce",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 1,
 +          "output_y": 0,
 +          "input_orientation": 0,
-+          "output_orientation": 180,
++          "output_orientation": 0,
 +          "input_instance_matrix": [
-+            [6, 4, 4],
-+            [6, 6, 4],
-+            [4, 6, 7]
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 8, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
-+            [7, 6, 4],
-+            [4, 6, 6],
-+            [4, 4, 6]
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 6, 0, 0, 0, 0, 0],
++            [0, 8, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0]
 +          ],
-+          "implement
-```
-
----
-
-### Incident Patch 2: `c3aa0769` (2026-11-04)
-**Commit Message**: Let ARC workflows commit their changes
-
-Allow `/arc-purposal` to commit and push its own puzzle dataset, documentation, solver default, and progress record in a separate commit from any NUC outcome. Update the shared synchronization policies and workflow documentation to define staging, conflict handling, and reporting.
-
-**File**: `.claude/CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ not a replacement for the policies it links to.
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
- | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
--| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; every agent pulls before it starts (fast-forward only, except the `/nuc-proposal` caller), pull before commit/push, push after every commit, resolve conflicts and push |
-+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
- 
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
- 
-```
-
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +14/-9)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: arc-purposal
--description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
-+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, document the puzzle's progress in `arc/docs/`, and commit and push the invocation's changes.
- include-custom-instructions: true
- ---
- 
-@@ -83,17 +83,22 @@ Follow `.claude/CLAUDE.md`, the
-   the evaluator's decision, an evaluator acceptance makes it Accepted, and any
-   other result makes it Automatic-Accepted.
- - Record the outcome through the `/nuc-proposal` caller steps, with its basis,
--  the evaluator's decision, and the run's evidence. Only those steps commit,
--  pulling before and pushing right after under the
--  [git synchronization policy](../rules/git.instructions.md). Commit and push
--  nothing else: the dataset, README paragraph, reporting list, solver default,
--  and progress record stay uncommitted for review. Never change project
--  versions.
-+  the evaluator's decision, and the run's evidence. Those steps commit the
-+  NUC's outcome, pulling before and pushing right after under the
-+  [git synchronization policy](../rules/git.instructions.md). Never change
-+  project versions.
- - After the outcome, create or update the puzzle's progress record,
-   `arc/docs/ARC-NUC-<puzzle-id>.md`, under the skill's
-   [progress step](../skills/arc-purposal/SKILL.md#document-the-progress).
-   Write it yourself, never through an agent, and copy nothing from the run's
-   output into it beyond the exit status, difference or error, and elapsed time.
-+- When you are done, after the progress record, commit and push the
-+  invocation's own changes under the skill's
-+  [commit step](../skills/arc-purposal/SKILL.md#commit-and-push): pull right
-+  before the commit and before the push, stage by explicit path only the
-+  dataset, README paragraph, reporting-list entry, solver default and
-+  progress record that this invocation changed and kept, never another
-+  session's changes, and push right after the commit.
- - Save the JSON result record that the skill defines in the session workspace,
--  report a short summary with its path, the progress record's path, and any
--  suggested solver changes, and stop.
-+  report a short summary with its path, the progress record's path, the pushed
-+  commit, and any suggested solver changes, and stop.
-```
-
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +2/-1)
-```diff
-@@ -109,7 +109,8 @@ agent with this handoff and a fresh report path. The caller owns integration
- and evaluation status/index updates.
- 
- After a `Rejected` outcome, which requires a failed hard criterion, the
--`/nuc-proposal` caller, the only flow that commits and pushes, must still
-+`/nuc-proposal` caller, the only flow that commits and pushes NUC outcomes,
-+must still
- record and commit the
- rejected proposal documentation and index/outcome metadata under the
- [shared rejection workflow](../rules/proposals.instructions.md#record-rejected-outcomes-caller-only).
-```
-
-**File**: `.claude/rules/arc.instructions.md` (modified, +3/-1)
-```diff
-@@ -11,7 +11,9 @@ omitted. The `arc-dataset` agent writes the puzzle's
- instruction dataset, any Nucleoid enhancement that dataset requires goes
- through the NUC stages, and its outcome follows the automatic acceptance rule,
- with one solver run whose exact match makes it Accepted. Afterwards it
--documents the puzzle's progress in `arc/docs/ARC-NUC-<puzzle-id>.md`.
-+documents the puzzle's progress in `arc/docs/ARC-NUC-<puzzle-id>.md`. When it
-+is done, it commits and pushes its own changes under the
-+[git synchronization policy](git.instructions.md).
- `/arc-purposal` never changes the TypeScript implementation in `arc/`, except
- that it sets the default `puzzle_id` in `arc/src/app.ts` to the puzzle it runs;
- that default only selects the puzzle for a bare `bun start` and is not solver
-```
-
-**File**: `.claude/rules/git.instructions.md` (modified, +32/-24)
-```diff
-@@ -9,24 +9,28 @@ delegated workers alike. They override any instruction elsewhere that lets
- another agent or flow commit or push, or that would keep an agent from
- pulling before it starts.
- 
--## Only `/nuc-proposal` commits and pushes
-+## Only `/nuc-proposal` and `/arc-purposal` commit and push
- 
--- Among all agents, only `/nuc-proposal` commits and pushes: the coordinating
--  caller that follows the caller steps of the
--  [nuc-proposal skill](../skills/nuc-proposal/SKILL.md). It commits NUC
--  outcomes (Accepted, Automatic-Accepted, Rejected) under the
--  [proposal rules](proposals.instructions.md) and the merges its own pulls
--  need, and it pushes each of them.
--- A NUC that `/arc-purposal` requests, or whose cycle `/nuc-evaluate`
--  coordinates, is committed and pushed by those `/nuc-proposal` caller steps.
--  `/arc-purposal` and `/nuc-evaluate` themselves commit and push nothing.
-+- Among all agents, only two coordinating callers commit and push, each
-+  following the caller steps of its own skill:
-+  - `/nuc-proposal`, under the
-+    [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits NUC
-+    outcomes (Accepted, Automatic-Accepted, Rejected) under the
-+    [proposal rules](proposals.instructions.md), including those of NUCs that
-+    `/arc-purposal` requests and of cycles that `/nuc-evaluate` coordinates.
-+  - `/arc-purposal`, under the
-+    [arc-purposal skill](../skills/arc-purposal/SKILL.md#commit-and-push),
-+    commits its own ARC changes once, when it is done: the puzzle's dataset,
-+    README paragraph, reporting-list entry, solver default and progress
-+    record, as far as the invocation changed and kept them.
-+- Each of them also commits the merges its own pulls need, and pushes every
-+  commit it makes.
- - No other agent or flow commits, pushes, or makes a merge commit:
--  `/arc-purposal`, `/arc-dataset`, `/arc-debug` and `/nuc-evaluate`; the
--  `arc-purposal`, `arc-dataset`, `arc-debug`, `nuc-evaluate` and
--  `rust-improver` agents; the `nuc-proposal` agent, which drafts in its
--  candidate worktree; and any general-purpose agent given one of their
--  profiles. They leave their changes uncommitted for review and report
--  anything that would need a commit.
-+  `/arc-dataset`, `/arc-debug` and `/nuc-evaluate`; the `arc-dataset`,
-+  `arc-debug`, `nuc-evaluate` and `rust-improver` agents; the `nuc-proposal`
-+  agent, which drafts in its candidate worktree; and any general-purpose agent
-+  given one of their profiles. They leave their changes uncommitted for review
-+  and report anything that would need a commit.
- 
- ## Pull first
- 
-@@ -44,18 +48,21 @@ pulling before it starts.
- - Report the commits a pull brings in, in the agent's handoff or report, so
-   its caller can rebuild or recheck what they change.
- - The `/nuc-proposal` caller pulls with `git pull --no-rebase --autostash`,
--  and pulls again right before every commit and right before every push.
-+  and pulls again right before every commit and right before every push. The
-+  `/arc-purposal` caller pulls that way right before its commit and right
-+  before every push; its other pulls are those of every other agent.
- - Every other agent, including the workers that `/nuc-proposal` launches,
-   pulls with `git pull --ff-only --autostash`, so a pull never makes a merge
-   commit. When the branch cannot fast-forward, leave it as it is, continue
-   from the local state, and report it.
- 
- ## Push after every commit
- 
--- Every `/nuc-proposal` commit is followed immediately by `git push` of the
--  same branch. This includes NUC outcome commits (Accepted,
-+- Every `/nuc-proposal` and `/arc-purposal` commit is followed immediately by
-+  `git push` of the same branch. This includes NUC outcome commits (Accepted,
-   Automatic-Accepted, Rejected), those for NUCs that `/arc-purposal` requests,
--  and merge commits. A commit is not finished until it is pushed.
-+  `/arc-purposal`'s own commit of its ARC changes, and merge commits. A commit
-+  is not finished until it is pushed.
- - If the push is rejected because the remote moved, pull, resolve, and push
-   again until it succeeds.
- 
-@@ -65,11 +72,12 @@ pulling before it starts.
-   intended changes, never discard another user's or session's work, and keep
-   the specification, runtime, documents and datasets consistent under the
-   other instruction files.
--- In `/nuc-proposal`, after resolving, rerun the checks the changed paths
--  require (for example `cargo build --all-targets`,
-+- In `/nuc-proposal` and `/arc-purposal`, after resolving, rerun the checks
-+  the changed paths require (for example `cargo build --all-targets`,
-   `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check` and
--  `cargo test` for Rust or executable-document changes), commit the merge,
--  and push it.
-+  `cargo test` for Rust or executable-document changes, or `bun run typecheck`
-+  and `bun run lint` in `arc/` for ARC TypeScript), commit the merge, and
-+  push it.
- - Every other agent commits no merge.
-```
-
-**File**: `.claude/rules/proposals.instructions.md` (modified, +8/-5)
-```diff
-@@ -325,8 +325,9 @@ to that evaluation and must not recursively launch another agent.
-   requests and revisited Rejected NUCs.
- - Only the `/nuc-proposal` caller makes these commits and pushes each one
-   right after it, under the [git synchronization policy](git.instructions.md).
--  `/arc-purposal`, `/nuc-evaluate` and every worker agent commit and push
--  nothing.
-+  `/nuc-evaluate` and every worker agent commit and push nothing, and
-+  `/arc-purposal` commits and pushes only its own ARC changes, separately,
-+  once it is done.
- - State the outcome in the body: `Accepted`, `Automatic-Accepted` or
-   `Rejected`, its basis, the hard-criteria evidence, every failed policy check
-   for Automatic-Accepted, and for a rejection the failing hard criterion that
-@@ -341,7 +342,7 @@ to that evaluation and must not recursively launch another agent.
- - Keep rejected implementation changes isolated in the candidate worktree; do not apply its full diff merely to record the NUC.
- - Stage explicit proposal/index paths and use a path-limited commit. Verify the resulting commit contains only the rejection documentation and directly related metadata. Never use repository-wide staging or `git commit -a`, or include unrelated files already staged.
- - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
--- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
-+- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
- 
- ## ARC-requested proposals (caller only)
- 
-@@ -367,8 +368,10 @@ automatic acceptance rule directly. Record the basis, the evaluator's decision
- and report, and the run's evidence with the outcome, and never hide the
- evaluator's failures. The run is scored once: never rerun it, or revise the
- dataset or candidate from its output, to reach a pass. The `/nuc-proposal`
--caller steps commit and push that outcome; `/arc-purposal` commits and pushes
--nothing of its own.
-+caller steps commit and push that outcome. When the invocation is done,
-+`/arc-purposal` commits and pushes its own ARC changes, among them the dataset
-+and progress record, in a separate commit under the
-+[arc-purposal skill](../skills/arc-purposal/SKILL.md#commit-and-push).
- 
- ## User-requested proposals (caller only)
- 
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +57/-13)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: arc-purposal
--description: Run one ARC training puzzle through its instruction dataset, any required Nucleoid enhancement with the existing NUC strategy bandit, and one exact-match solver run, then decide the enhancement's outcome and document the puzzle's progress.
-+description: Run one ARC training puzzle through its instruction dataset, any required Nucleoid enhancement with the existing NUC strategy bandit, and one exact-match solver run, then decide the enhancement's outcome, document the puzzle's progress, and commit and push the invocation's changes.
- argument-hint: "[<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]"
- ---
- 
-@@ -9,7 +9,8 @@ argument-hint: "[<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <
- `/arc-purposal [<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]`
- takes one training puzzle through its instruction dataset, any Nucleoid
- enhancement that dataset requires, one solver run, the outcome, and its
--progress record in `arc/docs/`. A requested enhancement uses the existing
-+progress record in `arc/docs/`, then [commits and pushes](#commit-and-push)
-+its changes. A requested enhancement uses the existing
- [NUC strategy bandit](#learn-the-nuc-proposal-strategy). Follow
- `.claude/CLAUDE.md`, the
- [ARC instructions](../../rules/arc.instructions.md), and the
-@@ -359,12 +360,13 @@ push it:
-   replaced it. Preserve pre-existing entries, other datasets, genesis files,
-   and unrelated workflow changes. Keep the candidate isolated.
- 
--Only `/nuc-proposal` commits and pushes, under the
--[git synchronization policy](../../rules/git.instructions.md): those caller
--steps push the requested NUC's outcome commit right after it, pulling first.
--This invocation commits and pushes nothing else. Leave the dataset, README,
--reporting-list, solver-default, and progress-record changes uncommitted for
--review. Never change project versions.
-+Those caller steps push the requested NUC's outcome commit right after it,
-+pulling first, under the
-+[git synchronization policy](../../rules/git.instructions.md). That commit
-+holds only the NUC's own records and integration; the dataset, README,
-+reporting-list, solver-default, and progress-record changes wait for this
-+invocation's [own commit](#commit-and-push) at the end. Never change project
-+versions.
- 
- ## Suggest solver changes
- 
-@@ -408,8 +410,48 @@ such as `arc/docs/ARC-NUC-0ca9ddb6.md`:
- Describe the puzzle and dataset from the training pairs and the arc-dataset
- handoff; never read the puzzle's `test` entries for the record. From the run's
- output, copy only its exit status, difference or error, and elapsed time,
--never a grid or cell. Leave the record uncommitted for review with the
--dataset.
-+never a grid or cell. Then [commit and push](#commit-and-push) the record
-+with the dataset.
-+
-+## Commit and push
-+
-+When the invocation is done, after the progress record, commit its changes
-+and push them under the
-+[git synchronization policy](../../rules/git.instructions.md). This is its
-+one commit of its own, separate from a requested NUC's outcome commit, which
-+the nuc-proposal caller steps already made and pushed. An invocation that
-+pauses, or stops before it writes the progress record, commits nothing.
-+
-+1. Pull with `git pull --no-rebase --autostash` right before committing, and
-+   resolve any conflict under the policy, keeping every other session's work.
-+   A conflict on the solver's default puzzle keeps the value the working tree
-+   held before the pull: this invocation's puzzle ID, or a later session's.
-+2. Stage, by explicit path, only what this invocation changed and kept in the
-+   primary checkout: `arc/src/dataset/dataset.<puzzle-id>.json`, its
-+   paragraph in `arc/README.md`, its entry in `.github/workflows/arc.yml`,
-+   the default puzzle in `arc/src/app.ts` while it names this puzzle, and
-+   `arc/docs/ARC-NUC-<puzzle-id>.md`. A withdrawn dataset, and the paragraph
-+   and entry withdrawn with it, stay out. When a path also holds changes this
-+   invocation did not make, such as the pre-existing changes recorded at the
-+   start or another session's, stage only this invocation's hunks, for example
-+   by applying its own diff with `git apply --cached`; if they cannot be
-+   separated, leave the path out and report it. Never use `git add -A`,
-+   `git add .`, or `git commit -a`, and never stage session artifacts, run
-+   logs, `arc/logs/`, or anything from a candidate worktree.
-+3. Commit with an imperative subject that names the puzzle and what changed,
-+   as the existing ARC commits do, such as
-+   `Add ARC dataset for puzzle <puzzle-id>` for a new dataset or
-+   `Rework ARC 27a28665 dataset to whole-block shapes` for a replaced one. In
-+   the body, state what the dataset models, the files changed, any requested
-+   NUC with its outcome, and the run's exit status and difference or error,
-+   or that there was no run. Copy nothing else from the run's out
-```
-
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +2/-1)
-```diff
-@@ -334,7 +334,8 @@ checks still apply.
- When `/nuc-evaluate` coordinates an active continuous cycle, it commits and
- pushes nothing itself. The
- [nuc-proposal caller steps](../nuc-proposal/SKILL.md#name-outcome-commits-caller-only),
--the only flow that commits, record the outcome and commit and push it. A
-+the only flow that commits NUC outcomes, record the outcome and commit and
-+push it. A
- `Rejected` outcome, which now requires a failed hard criterion, follows the
- [shared rejection workflow](../../rules/proposals.instructions.md#record-rejected-outcomes-caller-only):
- its commit holds only the NUC rejection documentation and directly related
++          "implementation": "obj71a65bf8e5ce = Obj(x=1, y=1, orientation=0, endpoint_position='down')",
++          "input_value": {"endpoint_position":"down","id":"obj71a65bf8e5ce","orientation":0,"tag":"l8001","x":1,"y":1},
++          "output_value": {"endpoint_position":"down","extension_direction":"up","id":"obj71a65bf8e5ce","orientation":0,"tag":"l6012","x":1,"y":0}
++        },
++        {
++          "instance_name": "obj400315cd8551",
++          "input_x": 4,
++          "output_x": 3,
++          "input_y": 5,
++          "output_y": 5,
++          "input_orientation": 90,
++          "output_orientation": 90,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 6, 6, 8],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 6, 6, 6, 8],
++            [0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj400315cd8551 = Obj(x=4, y=5, orientation=90, endpoint_position='right')",
++          "input_value": {"endpoint_position":"right","id":"obj400315cd8551","orientation":90,"tag":"l8001","x":4,"y":5},
++          "output_value": {"endpoint_position":"right","extension_direction":"left","id":"obj400315cd8551","orientation":90,"tag":"l4102","x":3,"y":5}
++        }
++      ]
+     }
+   ]
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1730,28 +1440,46 @@ Allow `/arc-purposal` to commit and push its own puzzle dataset, documentation, 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ARC dataset for puzzle 3c9b0459
+## X. Add two-object pairs to ARC genesis datasets
 
 **RULE**:
-When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `712830f8`: Add ARC dataset for puzzle 3c9b0459. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55fbddc1`: Add two-object pairs to ARC genesis datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        3c9b0459
+pairs, so they contain no test pair. Each ends with two synthesized pairs on
+the genesis puzzle's 7 by 7 canvas, annotated with that dataset's own
+declarations. The first holds a single object: a color-9 corner at
+orientation 135 with its outside color-4 marker (`dataset.core.json`), a
+color-4 corner at orientation 45 with its inside color-7 marker
+(`dataset.extension.json`), a color-9 point with its color-2 rim below
+(`dataset.curve.json`), and a vertical line that extends down from its top
+endpoint (`dataset.line.json`). The last holds two objects: color-9 corners
+at orientations 45 and 315 with their outside color-4 markers, color-4
+corners at orientations 225 and 135 with their inside color-7 markers, a
+color-9 point with its color-2 rim below and a color-4 point with its color-8
+rim above, and a vertical line that extends up from its bottom endpoint with
+a horizontal line that extends left from its right endpoint.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+pairs, so they contain no test pair. Each ends with one synthesized pair that
+holds a single object on the genesis puzzle's 7 by 7 canvas, annotated with
+that dataset's own declarations: a color-9 corner at orientation 135 with its
+outside color-4 marker (`dataset.core.json`), a color-4 corner at orientation
+45 with its inside color-7 marker (`dataset.extension.json`), a color-9 point
+with its color-2 rim below (`dataset.curve.json`), and a vertical line that
+extends down from its top endpoint (`dataset.line.json`).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `712830f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55fbddc1` are properly handled with clean fallback behavior.

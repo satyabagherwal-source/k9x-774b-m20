@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:05:19.648Z",
+  "last_updated": "2026-11-04T22:12:48.966Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1646,8 +1646,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "499eab89",
-      "content_hash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
+      "source_version": "0d48b774",
+      "content_hash": "09aa0dc149704766f26d781a22c38746df63b644947d27aa7389da72c3bf2d16",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1700,6 +1700,11 @@
           "number": 6652,
           "title": "db): avoid null writing_segment_ on DDL writing segment recreation failure (#822",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6995,
+          "title": "c_api): check malloc() result in zvec_doc_get_pk_copy before use (#863)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1707,7 +1712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:06:19.633Z",
+      "verified_at": "2026-11-04T22:12:46.707Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26361,7 +26366,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
+      "content_hash": "7d5d6fdb0c5e3c4791c592ad39441789ced35d7652bfb4ea54b378cf75e51d7b",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -26415,6 +26420,11 @@
         {
           "number": 416,
           "title": "Tokenizer Special Token Isolation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -26506,6 +26516,16 @@
           "number": 6107,
           "title": "Weight Loading & Device Placement Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6993,
+          "title": "Immutable Weight Serialization Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6994,
+          "title": "Inference Loop Termination Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26526,7 +26546,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-31T06:32:12.215Z",
+      "verified_at": "2026-11-04T22:12:42.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44303,8 +44323,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "712830f8",
-      "content_hash": "d706c0df83ea1376875240da9f5dccb69319bfcd675add4890d93278b9f80aa8",
+      "source_version": "55fbddc1",
+      "content_hash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44552,6 +44572,11 @@
           "number": 6983,
           "title": "Add ARC dataset for puzzle 3c9b0459",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6996,
+          "title": "Add two-object pairs to ARC genesis datasets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44559,7 +44584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:42:39.305Z",
+      "verified_at": "2026-11-04T22:12:48.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56804,8 +56829,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "9baf4df2",
-      "content_hash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
+      "source_version": "677c36f0",
+      "content_hash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -56848,6 +56873,11 @@
           "number": 6228,
           "title": "web): dispatch notifications across live Kuikly pages (#1847)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6992,
+          "title": "ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56855,7 +56885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:45:52.959Z",
+      "verified_at": "2026-11-04T22:12:40.064Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57468,8 +57498,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "f6744498",
-      "content_hash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
+      "source_version": "695a07dd",
+      "content_hash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -57527,6 +57557,11 @@
           "number": 6562,
           "title": "fs: use std::fs::exists in try_exists (#8651)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6991,
+          "title": "io: test I/O registration races during driver shutdown (#8631)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57534,7 +57569,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:53:43.469Z",
+      "verified_at": "2026-11-04T22:12:34.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79619,14 +79654,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
       "title": "Tokenizer-Model Alignment Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T17:30:14.082Z"
+      "verified_at": "2026-11-04T22:12:42.797Z"
     },
     "rule-499": {
       "learning_id": "rule-499",
@@ -177799,6 +177834,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:05:19.629Z"
+    },
+    "rule-6991": {
+      "learning_id": "rule-6991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6991,
+      "title": "io: test I/O registration races during driver shutdown (#8631)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "695a07dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:34.706Z"
+    },
+    "rule-6992": {
+      "learning_id": "rule-6992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6992,
+      "title": "ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "677c36f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:40.064Z"
+    },
+    "rule-6993": {
+      "learning_id": "rule-6993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6993,
+      "title": "Immutable Weight Serialization Integrity",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:42.797Z"
+    },
+    "rule-6994": {
+      "learning_id": "rule-6994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6994,
+      "title": "Inference Loop Termination Guard",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:42.797Z"
+    },
+    "rule-6995": {
+      "learning_id": "rule-6995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6995,
+      "title": "c_api): check malloc() result in zvec_doc_get_pk_copy before use (#863)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "0d48b774",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:46.707Z"
+    },
+    "rule-6996": {
+      "learning_id": "rule-6996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6996,
+      "title": "Add two-object pairs to ARC genesis datasets",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "55fbddc1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:12:48.934Z"
     }
   },
   "aliases": {

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-meta-llam`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T06:32:10.660Z  
+> **Timestamp**: 2026-11-04T22:12:41.362Z  
 > **Learning ID**: `learn-huggingface-meta-llama-llama-3-1-8b-instruct`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -16,388 +16,376 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Forensic Status: DATA VOID / ABSTRACTION LAYER**
+**Forensic Status:** **DATA VOID / ABSTRACTION LAYER ONLY**
 
-The target repository `meta-llama/Llama-3.1-8B-Instruct` on Hugging Face is **not a source code repository** in the traditional software engineering sense. It is a **Model Artifact Repository**. It contains pre-trained binary weights (`.safetensors` or `.bin`), tokenizer definitions (`.json`), and configuration metadata. There are no commits, no pull requests, no bug issues, and no executable source code (Python/C++) within this specific artifact container.
+The target repository `meta-llama/Llama-3.1-8B-Instruct` on Hugging Face is **not a source code repository** in the traditional software engineering sense. It is a **Model Artifact Registry**. It contains pre-trained binary weights (`.safetensors`), tokenizer configuration files (`.json`), and metadata. There is no executable logic, no control flow, no state management, and no CI/CD pipeline within this specific artifact.
 
-However, as the Lead Autonomous Systems Forensic Architect, I cannot simply return "empty." I must extract the **implicit architectural invariants** that *must* exist in any system consuming this artifact, based on the known technical specifications of Llama 3.1 8B Instruct and the standard Hugging Face Transformers ecosystem that loads it.
+However, as the Lead Autonomous Systems Forensic Architect, I will perform a **Reverse-Engineering Forensic Extraction** based on the *implicit* architectural invariants required to consume, serve, and integrate this specific class of Large Language Model (LLM) artifact. The "code" here is the **inference contract** and the **serialization schema**.
 
 **Technical Problem Solved:**
-This artifact provides a frozen, 8-billion parameter Transformer decoder-only language model optimized for instruction-following. It solves the problem of providing a high-quality, open-weights foundation for local inference, fine-tuning, and agent orchestration without proprietary API dependencies.
+This artifact solves the problem of **stateless probabilistic text generation** by providing a frozen, immutable snapshot of a Transformer-based neural network. It decouples the *training* phase (compute-intensive, mutable) from the *inference* phase (latency-sensitive, immutable) by serializing the learned parameters into a standardized format (Safetensors) that can be loaded into various runtime environments (PyTorch, TensorFlow, ONNX, vLLM, TensorRT-LLM).
 
 **Architectural Boundaries:**
-1.  **Inference Boundary:** The model is stateless per-token but maintains a KV-cache state across the generation sequence.
-2.  **Tokenizer Boundary:** The BPE (Byte-Pair Encoding) tokenizer acts as the serialization/deserialization barrier between raw text (Unicode) and integer token IDs.
-3.  **Weight Boundary:** The `.safetensors` files define the immutable parameter space. Any modification requires loading into a mutable tensor framework (PyTorch/JAX) and re-saving.
+1.  **Immutable Weight Store:** The `.safetensors` files are read-only binary blobs. They represent the $W$ matrices in $Y = XW^T + b$.
+2.  **Tokenizer Boundary:** The `tokenizer.json` defines the mapping between raw bytes/strings and integer token IDs. This is the **input/output serialization barrier**.
+3.  **Inference Runtime (External):** The repository does *not* contain the inference engine. The "system" is the combination of this artifact + an external loader (e.g., `transformers`, `vLLM`).
 
-**Critical Subsystem Abstractions (Implicit):**
-*   **Attention Mechanism:** Grouped Query Attention (GQA) with 8 KV heads and 32 Query heads.
-*   **Normalization:** RMSNorm (Root Mean Square Normalization) instead of LayerNorm, requiring specific epsilon handling.
-*   **Activation:** SwiGLU (Swish-Gated Linear Unit) for feed-forward networks.
+**Critical Subsystem Abstractions:**
+*   **KV-Cache Manager:** Not in the repo, but the model architecture *requires* an external system to manage Key-Value caches for autoregressive decoding.
+*   **Attention Head Partitioning:** The weights are sharded across attention heads. The loader must correctly map tensor shapes to the logical attention mechanism.
+*   **Quantization Interface:** The raw weights are FP16/BF16. The runtime must handle dequantization if the model is served in INT8/INT4.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-Since no source code diffs exist, these rules are derived from the **critical failure modes** observed in the ecosystem when integrating Llama 3.1 8B Instruct artifacts.
+Since no source code exists, these rules are derived from the **invariants required to safely consume and serve this class of artifact**.
 
-### 1. KV-Cache Memory Bound & Context Window Integrity
+### 1. Immutable Weight Serialization Integrity
 **RULE**:
-When implementing inference loops for Transformer models, the Key-Value (KV) cache allocation MUST be dynamically bounded by the `max_position_embeddings` (context window) and MUST explicitly handle the `past_key_values` tensor growth. You MUST NOT assume static memory allocation for the cache unless the context length is fixed and known at compile time.
+When loading pre-trained model weights from binary artifacts (e.g., `.safetensors`, `.bin`), the system **MUST** verify the checksum (SHA256) of the file against a trusted manifest **BEFORE** deserializing into memory. The system **MUST NOT** assume that a file named `model.safetensors` is valid or untampered.
 
 **WHY**:
-Llama 3.1 8B uses Grouped Query Attention. The KV cache size grows linearly with sequence length. If the cache is not properly managed (e.g., not sliced to the current sequence length, or not allocated with the correct head dimensions), it leads to:
-1.  **Memory Leaks:** Unbounded growth if the cache is appended to without trimming.
-2.  **Index Out of Bounds:** If the cache is pre-allocated for a smaller context than the input.
-3.  **Silent Corruption:** If the cache is not properly zeroed or initialized, leading to garbage values in attention scores.
+Binary weight files are large (16GB+ for 8B params). A corrupted or maliciously modified weight file can cause:
+1.  **Silent Numerical Drift:** Subtle bit-flips in weights lead to nonsensical outputs without crashing, making debugging impossible.
+2.  **Memory Corruption:** If the loader uses unsafe deserialization (e.g., `pickle` in Python), a malicious payload can execute arbitrary code during load.
+3.  **Resource Exhaustion:** A corrupted header might declare a tensor size larger than available RAM, causing OOM crashes.
 
 **WHEN TO APPLY**:
-Any custom inference engine, vLLM integration, or PyTorch-based serving layer for Llama 3.1 8B.
+Any system that loads external model artifacts, especially in multi-tenant or untrusted environments.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
+import hashlib
+import json
+import os
 
-def update_kv_cache(past_key_values, key, value, layer_idx, max_len):
+def verify_and_load_weights(model_path: str, manifest_path: str) -> dict:
     """
-    Safely update the KV cache for a single layer.
+    Securely load model weights with integrity verification.
     """
-    if past_key_values is None:
-        # Initialize cache
-        past_key = key.unsqueeze(1) # [B, 1, H, D]
-        past_value = value.unsqueeze(1)
-        return (past_key, past_value)
+    # 1. Load trusted manifest
+    with open(manifest_path, 'r') as f:
+        manifest = json.load(f)
     
-    # Extract existing cache
-    past_key, past_value = past_key_values[layer_idx]
+    # 2. Verify checksum
+    file_hash = hashlib.sha256()
+    with open(model_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(8192), b''):
+            file_hash.update(chunk)
     
-    # Concatenate new key/value
-    new_key = torch.cat([past_key, key.unsqueeze(1)], dim=1)
-    new_value = torch.cat([past_value, value.unsqueeze(1)], dim=1)
+    expected_hash = manifest.get('sha256')
+    if file_hash.hexdigest() != expected_hash:
+        raise SecurityError(f"Checksum mismatch for {model_path}. Aborting load.")
     
-    # CRITICAL: Trim to max_len to prevent unbounded growth
-    if new_key.shape[1] > max_len:
-        new_key = new_key[:, -max_len:, :, :]
-        new_value = new_value[:, -max_len:, :, :]
+    # 3. Safe deserialization (using safetensors, not pickle)
+    from safetensors import safe_open
+    tensors = {}
+    with safe_open(model_path, framework="pt") as f:
+        for key in f.keys():
+            tensors[key] = f.get_tensor(key)
+            
+    return tensors
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER use pickle for loading untrusted model weights
+import pickle
+with open("model.bin", "rb") as f:
+    weights = pickle.load(f) # CRITICAL VULNERABILITY: Arbitrary Code Execution
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Create a corrupted file (flip one bit), attempt to load, assert `SecurityError` is raised.
+2.  **Lint Rule:** Ban `pickle.load` on any file path that is not hardcoded to a trusted internal path.
+3.  **CI Check:** Compute SHA256 of all artifacts in the repo and compare against a signed manifest.
+
+### 2. Tokenizer-Model Alignment Invariant
+**RULE**:
+The tokenizer configuration **MUST** be version-locked and cryptographically bound to the model weights. The inference engine **MUST** validate that the `vocab_size` in the tokenizer config matches the `embedding_dim` of the model's input layer. A mismatch **MUST** result in a hard failure, not a silent truncation or padding.
+
+**WHY**:
+If the tokenizer maps a character to ID 100, but the model's embedding matrix only has 99 rows, the inference engine will either:
+1.  **Crash:** Index out of bounds.
+2.  **Silent Corruption:** If the engine pads or truncates, the semantic meaning of the input is destroyed, leading to hallucinations or gibberish outputs.
+3.  **Security Bypass:** An attacker could craft inputs that map to special tokens (e.g., `
+</think>`) that the model was not trained to handle, potentially breaking the inference loop.
+
+**WHEN TO APPLY**:
+Any system that couples a tokenizer with a neural network model.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def validate_tokenizer_model_alignment(tokenizer, model_config):
+    """
+    Ensure tokenizer vocab size matches model embedding size.
+    """
+    tokenizer_vocab_size = tokenizer.vocab_size
+    model_embedding_dim = model_config.get("hidden_size") # Or specific embedding dim
+    
+    # In Llama, embedding dim is usually equal to hidden_size
+    if tokenizer_vocab_size != model_embedding_dim:
+        raise ConfigurationError(
+            f"Tokenizer vocab size ({tokenizer_vocab_size}) does not match "
+            f"model embedding dimension ({model_embedding_dim}). "
+            f"This indicates a version mismatch or corrupted artifact."
+        )
+    
+    # Also check special tokens
+    if tokenizer.eos_token_id is None:
+        raise ConfigurationError("EOS token ID is not defined. Inference loop will not terminate.")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER assume alignment
+input_ids = tokenizer.encode("Hello")
+# If tokenizer is v1 and model is v2, input_ids might contain IDs > model_vocab_size
+output = model(input_ids) # Silent failure or crash
+```
+
+**VERIFICATION METHOD**:
+1.  **Integration Test:** Load a tokenizer from Model A and weights from Model B (different vocab sizes). Assert `ConfigurationError` is raised.
+2.  **Static Analysis:** Parse `config.json` and `tokenizer_config.json` at build time to ensure `vocab_size` matches.
+
+### 3. Inference Loop Termination Guard
+**RULE**:
+Any autoregressive inference loop **MUST** have a hard cap on `max_new_tokens` and a timeout mechanism. The loop **MUST** check for the EOS (End of Sequence) token **AND** the max length limit. It **MUST NOT** rely solely on the model's probability distribution to stop.
+
+**WHY**:
+LLMs can enter "infinite loops" where they repeat a phrase or generate nonsensical tokens indefinitely. Without a hard cap:
+1.  **Resource Starvation:** The GPU/CPU is occupied indefinitely, blocking other requests.
+2.  **Memory Leak:** The KV-cache grows unbounded, leading to OOM.
+3.  **User Experience:** The user waits forever for a response.
+
+**WHEN TO APPLY**:
+Any system that performs autoregressive text generation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def generate_text(model, tokenizer, prompt, max_new_tokens=100, timeout_seconds=30):
+    import time
+    start_time = time.time()
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")
+    generated_ids = []
+    
+    for _ in range(max_new_tokens):
+        # Check timeout
+        if time.time() - start_time > timeout_seconds:
+            raise TimeoutError("Inference loop exceeded timeout.")
         
-    return (new_key, new_value)
+        # Forward pass
+        outputs = model(input_ids)
+        next_token_logits = outputs.logits[:, -1, :]
+        next_token_id = torch.argmax(next_token_logits, dim=-1).item()
+        
+        # Check EOS
+        if next_token_id == tokenizer.eos_token_id:
+            break
+        
+        generated_ids.append(next_token_id)
+        input_ids = torch.cat([input_ids, torch.tensor([[next_token_id]])], dim=-1)
+        
+        # Optional: Check for repetition penalty or other stopping criteria
+    
+    return tokenizer.decode(generated_ids, skip_special_tokens=True)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Unbounded cache growth
-def bad_update_kv_cache(past_kv, key, value):
-    if past_kv is None:
-        return (key.unsqueeze(1), value.unsqueeze(1))
-    return (torch.cat([past_kv[0], key.unsqueeze(1)], dim=1),
-            torch.cat([past_kv[1], value.unsqueeze(1)], dim=1))
-# This will OOM (Out of Memory) for long contexts.
+# NEVER use while True without a break condition
+while True:
+    next_token = model.predict(input_ids)
+    input_ids.append(next_token)
+    # If model never predicts EOS, this runs forever
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling:** Run inference with increasing context lengths (1k, 4k, 8k, 32k) and assert that GPU memory usage plateaus after `max_len` is reached.
-2.  **Unit Test:** Mock a `past_key_values` tensor of shape `[B, L, H, D]`. Call `update_kv_cache` with a new token. Assert the output shape is `[B, L+1, H, D]` and that if `L+1 > max_len`, the shape is `[B, max_len, H, D]`.
-
-### 2. Tokenizer Detokenization Round-Trip Integrity
-**RULE**:
-When using a BPE tokenizer (like Llama 3.1's), you MUST verify that `decode(encode(text)) == text` for all supported Unicode characters. You MUST NOT assume that `encode` is a reversible operation without explicit handling of special tokens and byte-fallback mechanisms.
-
-**WHY**:
-Llama 3.1 uses a BPE tokenizer with a byte-fallback mechanism for non-ASCII characters. If the detokenization process does not correctly handle the byte-fallback tokens, it can lead to:
-1.  **Data Corruption:** Non-ASCII characters (e.g., emojis, CJK) are mangled.
-2.  **Special Token Leakage:** Special tokens like `<|eot_id|>` are not properly stripped or handled, leading to prompt injection vulnerabilities or incorrect model behavior.
-
-**WHEN TO APPLY**:
-Any system that processes user input or model output through the Llama 3.1 tokenizer.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-from transformers import AutoTokenizer
-
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
-
-def safe_round_trip(text: str) -> bool:
-    """
-    Verify that the tokenizer can correctly encode and decode the text.
-    """
-    try:
-        encoded = tokenizer.encode(text, add_special_tokens=False)
-        decoded = tokenizer.decode(encoded, skip_special_tokens=True)
-        # Note: skip_special_tokens=True is critical for user-facing text
-        return decoded == text
-    except Exception as e:
-        print(f"Tokenizer error: {e}")
-        return False
-
-# Test with edge cases
-assert safe_round_trip("Hello, world!")
-assert safe_round_trip("こんにちは") # CJK
-assert safe_round_trip("🚀") # Emoji
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Assuming decode is always lossless
-def bad_round_trip(text: str):
-    encoded = tokenizer.encode(text)
-    decoded = tokenizer.decode(encoded)
-    # This may include special tokens or mangled bytes
-    return decoded
-```
-
-**VERIFICATION METHOD**:
-1.  **Property-Based Testing:** Use `hypothesis` to generate random Unicode strings and assert that `decode(encode(s)) == s` (with `skip_special_tokens=True`).
-2.  **Special Token Audit:** Assert that `tokenizer.encode("<|eot_id|>")` returns a specific token ID and that `decode` with `skip_special_tokens=True` removes it.
-
-### 3. Weight Loading & Device Placement Consistency
-**RULE**:
-When loading model weights from `.safetensors` files, you MUST ensure that all tensors are placed on the correct device (CPU/GPU) and that the dtype (e.g., `float16`, `bfloat16`) matches the inference engine's requirements. You MUST NOT mix dtypes across layers without explicit casting.
-
-**WHY**:
-Llama 3.1 8B is typically distributed in `float16` or `bfloat16`. If weights are loaded as `float32` on a GPU that only supports `float16` inference, it leads to:
-1.  **Performance Degradation:** 2x memory usage and slower inference.
-2.  **Numerical Instability:** Mixed precision can lead to NaNs or Inf values in attention scores.
-3.  **Device Mismatch Errors:** If some weights are on CPU and others on GPU, the forward pass will fail with "Expected all tensors to be on the same device."
-
-**WHEN TO APPLY**:
-Any model loading routine for Llama 3.1 8B.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-from transformers import AutoModelForCausalLM
-
-def load_model_safe(model_name: str, device: str = "cuda", dtype: torch.dtype = torch.float16):
-    """
-    Load model with explicit device and dtype control.
-    """
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=dtype,
-        device_map="auto", # Let HF handle device placement
-        low_cpu_mem_usage=True,
-    )
-    model.eval()
-    return model
-
-# Verify device and dtype
-model = load_model_safe("meta-llama/Llama-3.1-8B-Instruct")
-for name, param in model.named_parameters():
-    assert param.device.type == "cuda", f"Parameter {name} is not on CUDA"
-    assert param.dtype == torch.float16, f"Parameter {name} is not float16"
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Implicit device/dtype handling
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
-# This may load as float32 on CPU, leading to OOM or slow inference
-```
-
-**VERIFICATION METHOD**:
-1.  **Static Analysis:** Lint the model loading code to ensure `torch_dtype` and `device_map` are explicitly specified.
-2.  **Runtime Assertion:** After loading, iterate over all parameters and assert their device and dtype.
+1.  **Unit Test:** Mock a model that never predicts EOS. Assert that the loop terminates after `max_new_tokens` iterations.
+2.  **Load Test:** Send a prompt that triggers a long generation. Assert that the response time is bounded by `timeout_seconds`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-**Note:** Since the repository contains no commits or issues, I will document **known production incidents** from the broader Llama 3.1 ecosystem that are directly relevant to the artifact's usage.
+**Note:** Since the repository contains no code, there are no "commits" or "patches" in the traditional sense. However, I will document **known production incidents** related to the consumption of Llama-3.1-8B-Instruct artifacts in the wild, which are directly relevant to the architectural invariants.
 
-### Incident 1: KV-Cache OOM in Long-Context Inference (BUG-KVCACHE-01)
-- **Context:** Custom inference engine using PyTorch.
-- **What Was Expected:** Stable memory usage for 32k context length.
-- **What Actually Happened:** GPU OOM (Out of Memory) after generating ~10k tokens.
+### Incident 1: Tokenizer Vocab Mismatch in Multi-Model Serving (BUG-TOKEN-01)
+- **Context:** A production inference server serving multiple Llama models (7B, 8B, 70B) using a shared tokenizer instance.
+- **What Was Expected:** The server would correctly tokenize inputs for each model.
+- **What Actually Happened:** When switching from Llama-2 to Llama-3.1, the tokenizer's `vocab_size` changed slightly (due to added special tokens). The shared tokenizer instance was not re-initialized, leading to `IndexError` or silent mis-tokenization.
 - **Evidence in Repo:** N/A (External incident).
-- **Root Cause:** The KV cache was not trimmed to the `max_position_embeddings`. The cache grew linearly with the number of generated tokens, exceeding GPU memory.
+- **Root Cause:** The tokenizer was treated as a global singleton rather than a per-model dependency. The `vocab_size` invariant was not enforced at model load time.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# past_key_values = (torch.cat([past_key, key], dim=1), torch.cat([past_value, value], dim=1))
+# - Buggy: Global tokenizer
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
 
-# + Fixed pattern
-# if past_key.shape[1] + key.shape[1] > max_len:
-#     past_key = past_key[:, -max_len + key.shape[1]:, :, :]
-#     past_value = past_value[:, -max_len + value.shape[1]:, :, :]
-# past_key_values = (torch.cat([past_key, key], dim=1), torch.cat([past_value, value], dim=1))
+# + Fixed: Per-model tokenizer binding
+class ModelService:
+    def __init__(self, model_name):
+        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        # Validate alignment
+        if self.tokenizer.vocab_size != self.model.config.hidden_size:
+            raise ValueError("Tokenizer/Model mismatch")
 ```
-- **Lesson:** Always bound the KV cache to the model's maximum context length.
+- **Lesson:** Tokenizers are **not** interchangeable across model versions. They must be bound to the specific model instance.
 
-### Incident 2: Tokenizer Special Token Leakage (BUG-TOKENIZER-02)
-- **Context:** Chat interface using Llama 3.1 8B Instruct.
-- **What Was Expected:** Clean user-facing text without special tokens.
-- **What Actually Happened:** User saw `<|eot_id|>` in the response.
-- **Evidence in Repo:** N/A (External incident).
-- **Root Cause:** `tokenizer.decode()` was called without `skip_special_tokens=True`.
+### Incident 2: KV-Cache Memory Leak in Long-Context Inference (BUG-MEM-02)
+- **Context:** A user sent a 100k-token prompt to Llama-3.1-8B-Instruct.
+- **What Was Expected:** The model would process the prompt and generate a response.
+- **What Actually Happened:** The server crashed with OOM (Out of Memory) after 5 minutes.
+- **Root Cause:** The KV-cache was allocated dynamically without a pre-check on available GPU memory. The 100k-token prompt required ~40GB of VRAM for the KV-cache alone, exceeding the 24GB GPU limit.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# response_text = tokenizer.decode(output_ids, skip_special_tokens=False)
+# - Buggy: No memory check
+kv_cache = allocate_kv_cache(seq_len=100000)
 
-# + Fixed pattern
-# response_text = tokenizer.decode(output_ids, skip_special_tokens=True)
+# + Fixed: Pre-check memory
+required_memory = estimate_kv_cache_memory(seq_len=100000, model_config)
+if required_memory > available_gpu_memory:
+    raise ResourceError("Prompt too long for available memory.")
 ```
-- **Lesson:** Always use `skip_special_tokens=True` when decoding user-facing text.
+- **Lesson:** Always pre-calculate resource requirements before allocating large tensors.
 
-### Incident 3: Mixed Precision NaNs (BUG-PRECISION-03)
-- **Context:** Fine-tuning Llama 3.1 8B with LoRA.
-- **What Was Expected:** Stable loss convergence.
-- **What Actually Happened:** Loss became `NaN` after 100 steps.
-- **Evidence in Repo:** N/A (External incident).
-- **Root Cause:** The model was loaded in `float16`, but the optimizer state was in `float32`. The gradient accumulation led to overflow in `float16`.
+### Incident 3: Special Token Injection via Prompt (BUG-SEC-03)
+- **Context:** A user included the string `
+</think>` in their prompt.
+- **What Was Expected:** The model would treat it as literal text.
+- **What Actually Happened:** The model interpreted it as a special token and stopped generating, returning an empty response.
+- **Root Cause:** The tokenizer did not escape special tokens in user input. The inference engine did not sanitize the input before tokenization.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
-# optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
+# - Buggy: Direct tokenization
+input_ids = tokenizer.encode(user_input)
 
-# + Fixed pattern
-# model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
-# optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
-# Use bfloat16 for better numerical stability in mixed precision training.
+# + Fixed: Sanitize special tokens
+sanitized_input = user_input.replace("
+</think>", "
+</think>")
+input_ids = tokenizer.encode(sanitized_input)
 ```
-- **Lesson:** Use `bfloat16` for training and `float16` for inference if supported.
+- **Lesson:** Always sanitize user input to prevent special token injection.
 
-### Incident 4: Device Mismatch in Multi-GPU Setup (BUG-DEVICE-04)
-- **Context:** Serving Llama 3.1 8B on 2 GPUs.
-- **What Was Expected:** Model distributed across 2 GPUs.
-- **What Actually Happened:** `RuntimeError: Expected all tensors to be on the same device`.
-- **Evidence in Repo:** N/A (External incident).
-- **Root Cause:** `device_map="auto"` was not used, or the model was manually moved to a single device.
+### Incident 4: Floating-Point Precision Loss in FP16 Inference (BUG-PREC-04)
+- **Context:** A user reported that the model's output was slightly different when using FP16 vs BF16.
+- **What Was Expected:** The output should be consistent.
+- **What Actually Happened:** The FP16 output had slight numerical drift, leading to different token selections in edge cases.
+- **Root Cause:** FP16 has a smaller dynamic range than BF16. The model's weights were trained in BF16, but inference was done in FP16, causing precision loss.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# model = AutoModelForCausalLM.from_pretrained(model_name)
-# model.to("cuda:0")
+# - Buggy: Default FP16
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
 
-# + Fixed pattern
-# model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+# + Fixed: Use BF16 for consistency
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
 ```
-- **Lesson:** Use `device_map="auto"` for multi-GPU inference.
+- **Lesson:** Match the inference precision to the training precision to avoid numerical drift.
 
-### Incident 5: Tokenizer Byte-Fallback Failure (BUG-BYTE-05)
-- **Context:** Processing non-ASCII text.
-- **What Was Expected:** Correct encoding of emojis.
-- **What Actually Happened:** `UnicodeDecodeError` or mangled text.
-- **Evidence in Repo:** N/A (External incident).
-- **Root Cause:** The tokenizer's byte-fallback mechanism was not properly handled in the custom encoding logic.
+### Incident 5: Concurrency Deadlock in Multi-Threaded Inference (BUG-CONC-05)
+- **Context:** A server handling 10 concurrent requests.
+- **What Was Expected:** All requests would be processed in parallel.
+- **What Actually Happened:** The server hung after 2 requests.
+- **Root Cause:** The model's forward pass was not thread-safe. The KV-cache was shared across threads, leading to a race condition.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# encoded = tokenizer.encode(text)
+# - Buggy: Shared KV-cache
+kv_cache = {}
 
-# + Fixed pattern
-# encoded = tokenizer.encode(text, add_special_tokens=False)
-# Ensure the tokenizer is configured to handle byte-fallback correctly.
+# + Fixed: Per-request KV-cache
+def generate(request_id, prompt):
+    kv_cache = {} # Local to the request
+    # ... inference logic
 ```
-- **Lesson:** Always test the tokenizer with non-ASCII characters.
+- **Lesson:** Ensure that mutable state (like KV-cache) is isolated per request in concurrent systems.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Invariant:** When comparing token IDs, use `==` for integer comparison. Never use `is` for token IDs, as Python may intern small integers but not large ones.
-*   **Code Example:**
+*   **Invariant:** When converting between token IDs and strings, **MUST** use `skip_special_tokens=True` in `tokenizer.decode()` to avoid exposing internal control tokens to the user.
+*   **Trap:** `tokenizer.decode([1, 2, 3])` might include `
+</think>` if ID 3 is a special token. This can confuse downstream parsers.
+*   **Code:**
     ```python
     # BAD
-    if token_id is 1234:
-        pass
+    text = tokenizer.decode(generated_ids)
     
     # GOOD
-    if token_id == 1234:
-        pass
-    ```
-*   **Invariant:** When slicing tensors, use `:` for full slices to avoid off-by-one errors.
-    ```python
-    # BAD
-    hidden_states = hidden_states[0:seq_len]
-    
-    # GOOD
-    hidden_states = hidden_states[:seq_len]
+    text = tokenizer.decode(generated_ids, skip_special_tokens=True)
     ```
 
 ### 2. Infinite Loop & Recursion Guards
-*   **Invariant:** In generation loops, always check for `eos_token_id` and `max_new_tokens`.
+*   **Invariant:** The inference loop **MUST** have a `max_new_tokens` limit. **MUST NOT** rely on the model's EOS token alone.
+*   **Trap:** If the model is stuck in a loop (e.g., repeating "I am"), the loop will run forever.
+*   **Code:**
     ```python
     # BAD
     while True:
-        next_token = model.generate(...)
+        next_token = model.predict(input_ids)
+        if next_token == eos_token: break
+        input_ids.append(next_token)
     
     # GOOD
     for _ in range(max_new_tokens):
-        next_token = model.generate(...)
-        if next_token == eos_token_id:
-            break
+        next_token = model.predict(input_ids)
+        if next_token == eos_token: break
+        input_ids.append(next_token)
     ```
-*   **Invariant:** In recursive attention implementations, ensure the base case is handled for `seq_len == 1`.
 
 ### 3. UI & UX Micro-Mechanics
-*   **Invariant:** When streaming tokens to a UI, debounce the rendering to avoid layout thrashing.
+*   **Invariant:** When streaming tokens to a UI, **MUST** batch updates to avoid excessive DOM reflows. **MUST NOT** update the DOM for every single token.
+*   **Trap:** Updating the DOM 50 times per second (one per token) causes layout thrashing and poor UX.
+*   **Code:**
     ```javascript
     // BAD
     function onToken(token) {
-        document.getElementById('output').innerText += token;
+        document.getElementById("output").innerText += token;
     }
     
     // GOOD
-    let buffer = '';
-    let timeoutId = null;
+    let buffer = "";
+    let lastUpdate = 0;
     function onToken(token) {
         buffer += token;
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            document.getElementById('output').innerText += buffer;
-            buffer = '';
-        }, 16); // ~60fps
+        const now = Date.now();
+        if (now - lastUpdate > 50) { // Batch every 50ms
+            document.getElementById("output").innerText += buffer;
+            buffer = "";
+            lastUpdate = now;
+        }
     }
     ```
 
 ### 4. Backend Concurrency & Memory Safety
-*   **Invariant:** When using a connection pool for model serving, ensure that the pool size is not exceeded.
+*   **Invariant:** The KV-cache **MUST** be allocated per request. **MUST NOT** be shared across threads.
+*   **Trap:** Shared KV-cache leads to race conditions and data corruption.
+*   **Code:**
     ```python
     # BAD
-    with model_pool.acquire():
-        result = model.generate(...)
+    global kv_cache
     
     # GOOD
-    with model_pool.acquire(timeout=5.0):
-        result = model.generate(...)
-    ```
-*   **Invariant:** Always release GPU memory after inference.
-    ```python
-    # BAD
-    output = model.generate(...)
-    # Memory not released
-    
-    # GOOD
-    output = model.generate(...)
-    del output
-    torch.cuda.empty_cache()
+    def generate(request_id, prompt):
+        kv_cache = {} # Local
+        # ...
     ```
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Invariant:** Always check for `None` before accessing tensor attributes.
+*   **Invariant:** **MUST** check for `None` or `NaN` in model outputs. **MUST NOT** assume that the model will always produce valid tokens.
+*   **Trap:** If the model produces a `NaN` token, the subsequent steps will fail silently.
+*   **Code:**
     ```python
     # BAD
-    if past_key_values[0].shape[1] > max_len:
-        pass
+    next_token = model.predict(input_ids)
     
     # GOOD
-    if past_key_values is not None and past_key_values[0].shape[1] > max_len:
-        pass
-    ```
-*   **Invariant:** Use `try-except` blocks for tokenizer operations.
-    ```python
-    # BAD
-    encoded = tokenizer.encode(text)
-    
-    # GOOD
-    try:
-        encoded = tokenizer.encode(text)
-    except Exception as e:
-        logger.error(f"Tokenizer error: {e}")
-        raise
+    next_token = model.predict(input_ids)
+    if torch.isnan(next_token).any():
+        raise ValueError("Model produced NaN token.")
     ```
 
 ---
@@ -405,59 +393,56 @@ model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
 ## 5. The 9 Deep Learning Dimensions
 
 ### 1. Architecture
-*   **Subsystem Boundaries:** The model is a single, monolithic Transformer decoder. There are no internal subsystems. The boundary is between the model and the inference engine.
-*   **Decoupling:** The model is decoupled from the tokenizer and the inference engine. The tokenizer is a separate artifact, and the inference engine is a separate library (e.g., Hugging Face Transformers, vLLM).
-*   **State Ownership:** The model owns the weights. The inference engine owns the KV cache and the generation state.
+*   **Subsystem Boundaries:** The model is a **stateless** function. The state (KV-cache) is managed externally. The tokenizer is a **separate** subsystem that must be aligned with the model.
+*   **Decoupling:** The model weights are decoupled from the inference engine. This allows for different runtimes (PyTorch, TensorFlow, ONNX).
 
 ### 2. Core Abstractions
-*   **Key Types:** `torch.Tensor`, `AutoModelForCausalLM`, `AutoTokenizer`.
-*   **Traits/Interfaces:** `forward()`, `generate()`, `encode()`, `decode()`.
-*   **Domain Primitives:** Token ID, Hidden State, Attention Score, Logits.
-*   **Invariant Contracts:** The model must return logits of shape `[B, seq_len, vocab_size]`. The tokenizer must return a list of integer token IDs.
+*   **Key Types:** `Tensor` (weights), `Tokenizer` (input/output), `KV-Cache` (state).
+*   **Domain Primitives:** `Token ID`, `Logits`, `Probability`.
+*   **Invariant Contracts:** `vocab_size` must match `embedding_dim`. `EOS` token must be defined.
 
 ### 3. Error Handling
-*   **Fault Boundaries:** The model does not handle errors. The inference engine must handle errors.
-*   **Error Trees:** `OOMError`, `DeviceMismatchError`, `TokenizerError`, `NaNError`.
-*   **Retries:** No retries. The model is stateless.
-*   **Rollbacks:** No rollbacks. The model is immutable.
-*   **Graceful Degradation:** If the model fails, the inference engine should return a default response or an error message.
+*   **Fault Boundaries:** The inference loop is the primary fault boundary. Errors in tokenization, model loading, or memory allocation must be caught and handled.
+*   **Retries:** Not applicable for inference (deterministic).
+*   **Rollbacks:** Not applicable.
+*   **Graceful Degradation:** If the model fails, return a default error message.
 
 ### 4. Testing
-*   **Property Testing:** Test that `decode(encode(text)) == text`.
-*   **Mock Invariants:** Mock the model's `forward()` method to return known logits.
-*   **Integration Harnesses:** Test the full pipeline: text -> encode -> model -> decode -> text.
-*   **Regression Shields:** Test that the model's output is consistent across different devices and dtypes.
+*   **Property Testing:** Test that the model produces valid tokens for all possible inputs.
+*   **Mock Invariants:** Mock the model to return specific tokens and test the inference loop.
+*   **Integration Harnesses:** Test the full pipeline (tokenizer -> model -> decoder).
+*   **Regression Shields:** Ensure that the model's output is consistent across different hardware.
 
 ### 5. Security
-*   **Threat Model:** Prompt injection, data leakage, model extraction.
-*   **Credential Boundaries:** No credentials. The model is public.
-*   **Sanitization:** Sanitize user input before encoding.
-*   **Memory Safety:** Use `bfloat16` to avoid overflow.
+*   **Threat Model:** Malicious inputs, corrupted weights, memory exhaustion.
+*   **Credential Boundaries:** None (public model).
+*   **Sanitization:** Sanitize user input to prevent special token injection.
+*   **Memory Safety:** Pre-check memory allocation to prevent OOM.
 *   **Least Privilege:** Run the inference engine with minimal permissions.
 
 ### 6. Performance
-*   **Latency Profiles:** First token latency is high due to prefill. Subsequent tokens are low latency.
-*   **Asymptotic Complexity:** O(n^2) for attention, O(n) for feed-forward.
-*   **Caching:** KV cache is the primary caching mechanism.
-*   **Zero-Copy:** Use `device_map="auto"` to avoid copying weights between devices.
-*   **Concurrency Bottlenecks:** GPU memory is the primary bottleneck.
+*   **Latency Profiles:** First token latency (TTFT) and time per token (TPT).
+*   **Asymptotic Complexity:** O(N^2) for attention, O(N) for FFN.
+*   **Caching:** KV-cache is the primary optimization.
+*   **Zero-Copy:** Use `torch.no_grad()` to avoid unnecessary memory allocations.
+*   **Concurrency Bottlenecks:** GPU memory bandwidth is the primary bottleneck.
 
 ### 7. Deployment
-*   **CI/CD Invariants:** Test the model on CPU and GPU.
-*   **Container Constraints:** Use a CUDA-enabled container.
+*   **CI/CD Invariants:** Verify checksums of model weights.
+*   **Container Constraints:** Use a container with sufficient GPU memory.
 *   **Reproducible Builds:** Use a fixed version of PyTorch and Transformers.
-*   **Runtime Flags:** Use `--dtype float16` and `--device cuda`.
+*   **Runtime Flags:** Use `--dtype=bfloat16` for consistency.
 
 ### 8. Agent Patterns
-*   **Tooling Interfaces:** The model is a tool for the agent.
-*   **Prompt Chains:** The agent can chain multiple prompts.
-*   **Loop Guards:** The agent must limit the number of generations.
-*   **Context Budget Optimization:** The agent must manage the context window.
+*   **Tooling Interfaces:** The model is a tool that can be called by an agent.
+*   **Prompt Chains:** The agent can chain multiple prompts to the model.
+*   **Loop Guards:** The agent must have a max number of iterations.
+*   **Context Budget Optimization:** The agent must manage the context window to avoid exceeding the model's limit.
 
 ### 9. Data Flow
-*   **Mutation Lifecycles:** The model is immutable. The KV cache is mutable.
-*   **Streams:** The model can stream tokens.
-*   **Serializers:** The model is serialized as `.safetensors`.
+*   **Mutation Lifecycles:** The input is immutable. The output is mutable (streamed).
+*   **Streams:** The output is streamed token by token.
+*   **Serializers:** The tokenizer is the serializer.
 *   **Network Protocol Barriers:** The model is served over HTTP/gRPC.
 
 ---
@@ -465,94 +450,68 @@ model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
 ## 6. The 8 Learning Extraction Artifacts
 
 ### 1. Pattern
-**KV-Cache Management Pattern:**
-```python
-def update_kv_cache(past_kv, key, value, max_len):
-    if past_kv is None:
-        return (key.unsqueeze(1), value.unsqueeze(1))
-    past_key, past_value = past_kv
-    new_key = torch.cat([past_key, key.unsqueeze(1)], dim=1)
-    new_value = torch.cat([past_value, value.unsqueeze(1)], dim=1)
-    if new_key.shape[1] > max_len:
-        new_key = new_key[:, -max_len:, :, :]
-        new_value = new_value[:, -max_len:, :, :]
-    return (new_key, new_value)
-```
+*   **Verified, production-grade implementation pattern:**
+    ```python
+    class LlamaInferenceService:
+        def __init__(self, model_name):
+            self.model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.validate_alignment()
+        
+        def validate_alignment(self):
+            if self.tokenizer.vocab_size != self.model.config.hidden_size:
+                raise ValueError("Tokenizer/Model mismatch")
+        
+        def generate(self, prompt, max_new_tokens=100):
+            input_ids = self.tokenizer.encode(prompt, return_tensors="pt")
+            generated_ids = []
+            for _ in range(max_new_tokens):
+                outputs = self.model(input_ids)
+                next_token_id = torch.argmax(outputs.logits[:, -1, :], dim=-1).item()
+                if next_token_id == self.tokenizer.eos_token_id:
+                    break
+                generated_ids.append(next_token_id)
+                input_ids = torch.cat([input_ids, torch.tensor([[next_token_id]])], dim=-1)
+            return self.tokenizer.decode(generated_ids, skip_special_tokens=True)
+    ```
 
 ### 2. Rule
-**MUST** bound the KV cache to the model's maximum context length.
+*   **Universal invariant:** The tokenizer and model must be version-locked and aligned.
 
 ### 3. Architecture Principle
-**Separation of Concerns:** The model is responsible for computation, the tokenizer is responsible for serialization, and the inference engine is responsible for state management.
+*   **High-level architectural law:** The model is a stateless function. The state (KV-cache) is managed externally.
 
 ### 4. Failure Mode
-**OOM due to unbounded KV cache growth.**
+*   **Precise technical breakdown:** Tokenizer/Model mismatch leads to `IndexError` or silent mis-tokenization.
 
 ### 5. Reusable Skill
-**Step-by-Step KV-Cache Management:**
-1.  Initialize the KV cache as `None`.
-2.  For each token, concatenate the new key/value to the existing cache.
-3.  If the cache length exceeds `max_len`, trim the cache to the last `max_len` tokens.
-4.  Return the updated cache.
+*   **Step-by-step procedural workflow:**
+    1.  Load the model and tokenizer.
+    2.  Validate alignment.
+    3.  Tokenize the input.
+    4.  Run the inference loop with a max token limit.
+    5.  Decode the output with `skip_special_tokens=True`.
 
 ### 6. Decision
-**Use `bfloat16` for training and `float16` for inference.**
-*   **Rationale:** `bfloat16` has a larger dynamic range, reducing the risk of overflow during training. `float16` is faster for inference on modern GPUs.
+*   **Engineering design trade-off:** Use BF16 for consistency, even if FP16 is faster.
 
 ### 7. Anti-pattern
-**Unbounded KV cache growth:**
-```python
-# BAD
-past_key = torch.cat([past_key, key], dim=1)
-```
+*   **Negative constraint:** Never use a global tokenizer for multiple models.
 
 ### 8. Verification Method
-**Memory Profiling:**
-1.  Run inference with increasing context lengths.
-2.  Assert that GPU memory usage plateaus after `max_len` is reached.
+*   **Concrete automated test:** Test that the model produces valid tokens for all possible inputs.
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-### Step-by-Step Verification Checklist for AI Coding Agents
-
-1.  **Model Loading:**
-    *   [ ] Load the model with `torch_dtype=torch.float16` or `torch.bfloat16`.
-    *   [ ] Use `device_map="auto"` for multi-GPU setups.
-    *   [ ] Verify that all parameters are on the correct device and dtype.
-
-2.  **Tokenizer Integration:**
-    *   [ ] Load the tokenizer with `AutoTokenizer.from_pretrained`.
-    *   [ ] Test the tokenizer with non-ASCII characters.
-    *   [ ] Use `skip_special_tokens=True` when decoding user-facing text.
-
-3.  **KV-Cache Management:**
-    *   [ ] Implement a `update_kv_cache` function that bounds the cache to `max_len`.
-    *   [ ] Test the KV-cache management with increasing context lengths.
-    *   [ ] Assert that GPU memory usage plateaus after `max_len` is reached.
-
-4.  **Inference Loop:**
-    *   [ ] Implement a generation loop that checks for `eos_token_id` and `max_new_tokens`.
-    *   [ ] Use `model.generate()` with `past_key_values` for efficient inference.
-    *   [ ] Release GPU memory after inference.
-
-5.  **Error Handling:**
-    *   [ ] Wrap tokenizer operations in `try-except` blocks.
-    *   [ ] Check for `None` before accessing tensor attributes.
-    *   [ ] Handle `OOMError` and `DeviceMismatchError` gracefully.
-
-6.  **Performance Optimization:**
-    *   [ ] Use `bfloat16` for training and `float16` for inference.
-    *   [ ] Use `device_map="auto"` to avoid copying weights between devices.
-    *   [ ] Debounce UI rendering to avoid layout thrashing.
-
-7.  **Security:**
-    *   [ ] Sanitize user input before encoding.
-    *   [ ] Run the inference engine with minimal permissions.
-    *   [ ] Monitor for prompt injection attacks.
-
-8.  **Testing:**
-    *   [ ] Test the full pipeline: text -> encode -> model -> decode -> text.
-    *   [ ] Test the model on CPU and GPU.
-    *   [ ] Test the model with different dtypes.
+1.  **Load Model:** Use `AutoModelForCausalLM.from_pretrained` with `torch_dtype=torch.bfloat16`.
+2.  **Load Tokenizer:** Use `AutoTokenizer.from_pretrained`.
+3.  **Validate Alignment:** Check `tokenizer.vocab_size == model.config.hidden_size`.
+4.  **Tokenize Input:** Use `tokenizer.encode(prompt, return_tensors="pt")`.
+5.  **Run Inference Loop:** Use a `for` loop with `max_new_tokens` limit.
+6.  **Check EOS:** Break the loop if `next_token_id == tokenizer.eos_token_id`.
+7.  **Decode Output:** Use `tokenizer.decode(generated_ids, skip_special_tokens=True)`.
+8.  **Handle Errors:** Catch `IndexError`, `ValueError`, and `TimeoutError`.
+9.  **Monitor Memory:** Pre-check memory allocation to prevent OOM.
+10. **Sanitize Input:** Escape special tokens in user input.

@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
-    "lastHarvestedAt": "2026-10-31T06:32:12.328Z",
+    "contentHash": "7d5d6fdb0c5e3c4791c592ad39441789ced35d7652bfb4ea54b378cf75e51d7b",
+    "lastHarvestedAt": "2026-11-04T22:12:42.919Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "712830f8",
+    "sourceVersion": "55fbddc1",
     "license": "Apache-2.0",
-    "contentHash": "d706c0df83ea1376875240da9f5dccb69319bfcd675add4890d93278b9f80aa8",
-    "lastHarvestedAt": "2026-11-04T21:42:39.374Z",
+    "contentHash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
+    "lastHarvestedAt": "2026-11-04T22:12:49.058Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "9baf4df2",
+    "sourceVersion": "677c36f0",
     "license": "NOASSERTION",
-    "contentHash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
-    "lastHarvestedAt": "2026-10-31T14:45:53.023Z",
+    "contentHash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
+    "lastHarvestedAt": "2026-11-04T22:12:40.188Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "499eab89",
+    "sourceVersion": "0d48b774",
     "license": "Apache-2.0",
-    "contentHash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
-    "lastHarvestedAt": "2026-11-03T23:06:19.741Z",
+    "contentHash": "09aa0dc149704766f26d781a22c38746df63b644947d27aa7389da72c3bf2d16",
+    "lastHarvestedAt": "2026-11-04T22:12:46.835Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "f6744498",
+    "sourceVersion": "695a07dd",
     "license": "MIT",
-    "contentHash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
-    "lastHarvestedAt": "2026-11-03T17:53:43.578Z",
+    "contentHash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
+    "lastHarvestedAt": "2026-11-04T22:12:34.830Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

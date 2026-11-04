@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T22:05:19.727Z",
-  "total_cycles_completed": 7340,
-  "total_learnings_persisted": 7340,
-  "total_rules_promoted": 7035,
+  "last_updated": "2026-11-04T22:12:49.064Z",
+  "total_cycles_completed": 7345,
+  "total_learnings_persisted": 7345,
+  "total_rules_promoted": 7042,
   "history": [
-    {
-      "timestamp": "2026-11-04T07:42:05.529Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:49:05.532Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:49:07.282Z",
-      "repository": "i18next/react-i18next",
-      "learningId": "learn-github-i18next-react-i18next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:49:10.262Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:49:14.764Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T07:55:46.206Z",
       "repository": "faker-js/faker",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-04T22:05:19.727Z",
       "repository": "Agent-Field/agentfield",
       "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:12:34.838Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:12:40.194Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:12:42.924Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:12:46.841Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:12:49.064Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

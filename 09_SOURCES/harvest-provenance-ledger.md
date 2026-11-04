@@ -7372,3 +7372,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-04T22:05:10.612Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `62852de1` | Multi-dimensional audit evidence | 2026-11-04T22:05:12.760Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `118b90ba` | Multi-dimensional audit evidence | 2026-11-04T22:05:19.722Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `695a07dd` | Multi-dimensional audit evidence | 2026-11-04T22:12:34.830Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `677c36f0` | Multi-dimensional audit evidence | 2026-11-04T22:12:40.188Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-04T22:12:42.919Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0d48b774` | Multi-dimensional audit evidence | 2026-11-04T22:12:46.835Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `55fbddc1` | Multi-dimensional audit evidence | 2026-11-04T22:12:49.058Z |

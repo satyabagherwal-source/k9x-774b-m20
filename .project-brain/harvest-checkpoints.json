@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:05:19.738Z",
+  "last_updated": "2026-11-04T22:12:49.075Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -335,14 +335,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
-      "verified_at": "2026-10-31T06:32:12.337Z",
+      "content_hash": "7d5d6fdb0c5e3c4791c592ad39441789ced35d7652bfb4ea54b378cf75e51d7b",
+      "verified_at": "2026-11-04T22:12:42.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:32:12.337Z"
+      "last_updated": "2026-11-04T22:12:42.936Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d706c0df83ea1376875240da9f5dccb69319bfcd675add4890d93278b9f80aa8",
-      "verified_at": "2026-11-04T21:42:39.380Z",
+      "content_hash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
+      "verified_at": "2026-11-04T22:12:49.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:42:39.380Z"
+      "last_updated": "2026-11-04T22:12:49.074Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
-      "verified_at": "2026-10-31T14:45:53.029Z",
+      "content_hash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
+      "verified_at": "2026-11-04T22:12:40.205Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:45:53.029Z"
+      "last_updated": "2026-11-04T22:12:40.205Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "e979bc9954955363ddad84615b19931dedee71c7516924983abebedbe03780ba",
-      "verified_at": "2026-11-03T23:06:19.750Z",
+      "content_hash": "09aa0dc149704766f26d781a22c38746df63b644947d27aa7389da72c3bf2d16",
+      "verified_at": "2026-11-04T22:12:46.852Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:06:19.750Z"
+      "last_updated": "2026-11-04T22:12:46.852Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "6e0e2f178cd6c851d28af412c81345ec59cb11884cae615a1fd913f40b4561ea",
-      "verified_at": "2026-11-03T17:53:43.587Z",
+      "content_hash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
+      "verified_at": "2026-11-04T22:12:34.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:53:43.587Z"
+      "last_updated": "2026-11-04T22:12:34.848Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
