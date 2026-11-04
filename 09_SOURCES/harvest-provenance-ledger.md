@@ -7085,3 +7085,6 @@ Every entry in this ledger must capture:
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `3dfa4626` | Multi-dimensional audit evidence | 2026-11-04T00:24:25.913Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `049d8557` | Multi-dimensional audit evidence | 2026-11-04T00:24:28.129Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `1c3abda1` | Multi-dimensional audit evidence | 2026-11-04T00:24:32.513Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `f587409b` | Multi-dimensional audit evidence | 2026-11-04T00:31:55.868Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c54e83c8` | Multi-dimensional audit evidence | 2026-11-04T00:32:05.390Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `4fcd74ac` | Multi-dimensional audit evidence | 2026-11-04T00:32:08.487Z |

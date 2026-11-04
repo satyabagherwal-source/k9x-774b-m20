@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:24:32.422Z",
+  "last_updated": "2026-11-04T00:32:08.400Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10320,8 +10320,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "4ce2a715",
-      "content_hash": "23040da8a8ccfaec771bb5025d5c10dc1a8774932b452eb902892d7b14f49524",
+      "source_version": "4fcd74ac",
+      "content_hash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -10374,6 +10374,21 @@
           "number": 5160,
           "title": "Duplicate Title Prevention Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6680,
+          "title": "[Content Schema Enforcement]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6681,
+          "title": "[Idempotent README Generation]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6682,
+          "title": "[PR Title Consistency]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10381,7 +10396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:05:34.778Z",
+      "verified_at": "2026-11-04T00:32:08.378Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14078,8 +14093,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "99b7ccaf",
-      "content_hash": "bbe280b196a506f80670d618bb3cf3bdb4a05068471f76995868f718be653fd9",
+      "source_version": "c54e83c8",
+      "content_hash": "83ec14ac82a3e7a603deaaa1624ad320b90c2218b673350f4a84c07270274972",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14272,6 +14287,11 @@
           "number": 6601,
           "title": "ci: cut Ubicloud runner spend without slowing PR CI (#6105)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6679,
+          "title": "transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14279,7 +14299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:12:20.711Z",
+      "verified_at": "2026-11-04T00:32:05.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61706,8 +61726,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "0a153df5",
-      "content_hash": "98fcf092d7396bcce7cdabf0979b17f0112b6fcf64a45bf70ef93c7501d25697",
+      "source_version": "f587409b",
+      "content_hash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -61755,6 +61775,11 @@
           "number": 6334,
           "title": "Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6678,
+          "title": "Merge pull request #1132 from zeronsh/security/ci-secret-environments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61762,7 +61787,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:46:01.772Z",
+      "verified_at": "2026-11-04T00:31:55.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171660,6 +171685,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:24:32.400Z"
+    },
+    "rule-6678": {
+      "learning_id": "rule-6678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6678,
+      "title": "Merge pull request #1132 from zeronsh/security/ci-secret-environments",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "f587409b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:31:55.755Z"
+    },
+    "rule-6679": {
+      "learning_id": "rule-6679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6679,
+      "title": "transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "c54e83c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:32:05.282Z"
+    },
+    "rule-6680": {
+      "learning_id": "rule-6680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6680,
+      "title": "[Content Schema Enforcement]",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "4fcd74ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:32:08.378Z"
+    },
+    "rule-6681": {
+      "learning_id": "rule-6681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6681,
+      "title": "[Idempotent README Generation]",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "4fcd74ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:32:08.378Z"
+    },
+    "rule-6682": {
+      "learning_id": "rule-6682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6682,
+      "title": "[PR Title Consistency]",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "4fcd74ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:32:08.378Z"
     }
   },
   "aliases": {

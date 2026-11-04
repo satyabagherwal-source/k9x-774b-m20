@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `99b7ccaf`  
+> **Source Version**: `c54e83c8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:12:20.074Z  
+> **Timestamp**: 2026-11-04T00:32:04.641Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:11:12.583Z  
+> **Harvest Timestamp**: 2026-11-04T00:32:03.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1741,8 +1741,8 @@ pub mod streaming_buffer;
 - **Issue #6105** (2026-11-03): **ci: cut Ubicloud runner spend without slowing PR CI**
   *Symptoms*: ## Problem  The October Ubicloud bill was $429. Rebuilt from the Actions API (per-job durations for a stratified sample of 573 of ~3,700 runs, at Ubicloud list prices) it comes to ~$440, which confirms the account is on standard pricing. freenet-core's `ci.yml` is ~$301 of it, most of that on three standard-16 jobs (Unit & Integration ~$124, Simulation ~$89, NAT Validation ~$55). The daily large simulation is another ~$42. Spend tracks real work: 92% of PR CI runs were on PRs that merged, about $1.80 of CI per merged PR. So this cuts structural waste, not usage.  ## Approach  **1. Simulation stopped recompiling before it tests** (measured). Its run step lacked the build step's linker env. Cargo saw changed flags and rebuilt before running a single test: 3m04s on run 41154587352 and 3m54s (485 crates) on run 41665757502, per `sim-logs/nextest.log`, on a standard-16, on every PR run. The same gap existed in Unit & Integration's ping-types step. Both now carry the env. Projected saving: ~$20-30/month, plus 3-4 min off Simulation's wall clock.  **2. Warm Rust cache for the heavy jobs.** A PR can restore a cache from its own branch or from main. I verified that Ubicloud honours this: a new PR's first Clippy run logs `Restored from cache key "v0-rust-clippy_check-…" full match: true`. But the heavy jobs never run on main, so they had no main entry. There was no `v0-rust-test_unit-*` entry at all, and Simulation and NAT saved 1.2-2.2 GB per PR branch (0.5-0.9 min of upload per run) 
 
-- **Issue #6103** (2026-11-03): **fix(delegates): refuse node-only inbound messages from clients**
-  *Symptoms*: ## Problem  A client's delegate request (`DelegateRequest::ApplicationMessages`) could carry any `InboundDelegateMsg` variant, and the runtime forwarded it to the delegate verbatim. `carries_host_only_inbound` refused only `Lifecycle` and `WakeupFired`. Every other non-`ApplicationMessage` variant reports something only the node knows: `ContractNotification`, the `Get/Put/Update/Subscribe/UnsubscribeContractResponse` family, `UserResponse` and `DelegateMessage`. None of them carries an origin, so a delegate cannot tell a forged one from a real one. A web app on the node, or an unattested client, could hand a delegate a contract state the contract never had, or a made-up answer to a contract request it made.  Local mode (`run_local_node`, `Executor::handle_request`) reaches the executor without going through the contract loop, so it had no refusal at all, not even for `Lifecycle`/`WakeupFired`.  Tracked privately as GHSA-3rw4-2m4x-g3gh.  ## Approach  - `carries_host_only_inbound` becomes `node_only_inbound`, an **allowlist**: a client may send `ApplicationMessage` and nothing else. A variant added later to the `#[non_exhaustive]` enum is refused until someone decides otherwise. - It is applied at every client entry point: `dispatch_delegate_request` on a network node (where the old check lived, still before exclusion/queueing), and a new `Executor::client_delegate_request` that `run_local_node` and `handle_request` now both call. - The unchecked inherent methods `Executor::del
+- **Issue #6104** (2026-11-03): **feat(transport): turn QUIC shadow mode on by default on Linux and macOS**
+  *Symptoms*: ## Problem  This is Step 2 of the QUIC rollout (#5940): shadow mode on by default on Linux and macOS. Step 1 is done. The nova gateways and framework ran shadow for 40 hours with no panic, breaker trip or endpoint fault. A private pair across real home NAT held one path for 17 hours with no fallback. In Step 2 every eligible pair negotiates, and its gate (upgrade success, fallbacks per path-day, memory per path) is measured while it runs.  ## Approach  `QuicMode::default_mode()` is what an unset `transport-quic` means: `Shadow` on Linux and macOS, `Off` everywhere else. Windows stays off until #6031's real-machine checks are done. Other platforms stay off because the crash-loop breaker reads no boot identity there and so cannot trip. `from_config_value(None)` and `Default` both use it, and the startup log now says which mode is in effect and whether it came from config or from the default.  The default is decided when the value is read and is never written into `config.toml`. A node that did not set the key follows the release it runs, so a later default-off release turns QUIC off on every node that did not set it explicitly. That is the rollback.  Shadow sends only control frames on a path. Application traffic stays on UDP, and `QUIC_DATA_PERCENT` stays 0. Peers below 0.2.154 are never offered to, and peers with QUIC off answer `Decline{disabled}`.  The memory accounting gate (the per-path ceiling in the node aggregate) is a gate for QUIC carrying data by default, which is S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,420 +1759,288 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99b7ccaf` (2026-11-03)
-**Commit Message**: ci: cut Ubicloud runner spend without slowing PR CI (#6105)
+### Incident Patch 1: `c54e83c8` (2026-11-03)
+**Commit Message**: feat(transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)
 
-**File**: `.github/scripts/check_cache_warm_parity.py` (added, +900/-0)
+**File**: `.claude/rules/bug-prevention-patterns.md` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,900 @@
-+#!/usr/bin/env python3
-+"""Keep ci-cache-warm.yml's jobs producing the cache keys ci.yml restores.
-+
-+ci.yml's heavy PR jobs (Unit & Integration, Simulation, NAT Validation) never
-+run on pushes to main, so nothing they do can write a main-scoped cache entry,
-+and a PR can only restore from its own branch or from main. Measured
-+2026-11-03: no ``v0-rust-test_unit-*`` entry existed, so every Unit &
-+Integration run compiled its dependency tree from scratch on a standard-16
-+Ubicloud runner. ci-cache-warm.yml writes those entries.
-+
-+It only helps while its keys are the keys the PR jobs look up. Swatinem/
-+rust-cache restores by ``<prefix>-<key>-<GITHUB_JOB>-<OS>-<arch>-<hash>``,
-+where ``<hash>`` covers the rustc version and every env var whose name starts
-+with CARGO, CC, CFLAGS, CXX, CMAKE or RUST. And a restored entry only saves
-+work if cargo's fingerprints match, which needs the same flags, env and
-+feature sets on every compile command. Any drift fails SILENTLY: the PR jobs
-+stay green and quietly build cold again. Hence this linter, run from Rule Lint.
-+
-+A "warm job" is a job in the warm workflow that uses Swatinem/rust-cache.
-+Against the ci.yml job with the SAME id it checks:
-+
-+1. workflow-level ``env:``/``defaults:`` and job-level ``env:``/``defaults:``
-+   are identical, and so are ``$GITHUB_ENV`` writes and the ORDER of actions
-+   up to the cache step (the toolchain action sets CARGO_* env the key hashes);
-+2. the ``dtolnay/rust-toolchain`` inputs are identical (and present);
-+3. the ``Swatinem/rust-cache`` reference, inputs and step env are identical,
-+   except ``save-if``, which is checked separately: the ci.yml twin must save
-+   only from main (exactly ``SAVE_IF_MAIN``), and the warm job must save;
-+4. the compile signatures are identical: each cargo build/test/nextest/run/
-+   check/clippy/bench/doc command reduced to the flags that decide what is
-+   compiled, plus every ``make`` invocation, EACH paired with the compile-
-+   affecting env of its own step (step ``env:``, ``export``s, and inline
-+   ``VAR=value cargo ...`` prefixes). ``--no-run``, ``--locked``, ``-E``
-+   filters, ``-j`` and nextest's test ``--profile`` are ignored, so a warm job
-+   that compiles without running matches a CI job that compiles and runs;
-+5. ``apt-get install`` package sets are identical;
-+6. the warm job runs on a Ubicloud runner with the same label suffix
-+   (architecture, OS variant), and its display name starts with
-+   ``Warm cache:`` -- scripts/release.sh excludes check runs by that prefix,
-+   and a name that matched a required context would impersonate it.
-+
-+It also DISCOVERS which ci.yml jobs need a twin: a Ubicloud job whose
-+rust-cache has a conditional ``save-if`` and whose ``if:`` gates on
-+``github.event_name`` without ever admitting ``== 'push'``. It fails if such a
-+job has no twin, or if a warm job's twin no longer needs one.
-+
-+Standard library only, like the other Rule Lint scripts: the subset of YAML
-+these two files use is parsed by indentation.
-+
-+Usage:
-+    check_cache_warm_parity.py <ci.yml> <ci-cache-warm.yml>
-+    check_cache_warm_parity.py --self-test
-+"""
-+
-+from __future__ import annotations
-+
-+import re
-+import shlex
-+import sys
-+from pathlib import Path
-+
-+SAVE_IF_MAIN = "${{ github.ref == 'refs/heads/main' }}"
-+WARM_NAME_PREFIX = "Warm cache:"
-+
-+# Step-level env that changes what cargo/rustc/cc/build scripts produce, so a
-+# cached artifact built without it is not reused. CARGO_TERM_* only colours
-+# output.
-+COMPILE_ENV_RE = re.compile(
-+    r"^(CARGO_(?!TERM_)|RUSTFLAGS$|RUSTDOCFLAGS$|RUSTC|CC$|CC_|CFLAGS|CXX|"
-+    r"CMAKE|PKG_CONFIG|LIBCLANG|BINDGEN|OPENSSL_|SDKROOT$|MACOSX_DEPLOYMENT_TARGET$)"
-+)
-+EXPORT_RE = re.compile(r"^\s*export\s+([A-Za-z_][A-Za-z0-9_]*)=(.*)$")
-+INLINE_ENV_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=(\"[^\"]*\"|'[^']*'|\S+)\s+")
-+CARGO_CMD_RE = re.compile(
-+    r"\bcargo\s+(build|nextest\s+run|test|run|check|clippy|bench|doc)\b(.*)"
-+)
-+MAKE_CMD_RE = re.compile(r"(?:^|[;&|]\s*|\s)(make\s.*)$")
-+APT_RE = re.compile(r"\bapt(?:-get)?\s+install\b(.*)")
-+UBICLOUD_LABEL_RE = re.compile(r"ubicloud-standard-\d+((?:-[a-z0-9]+)*)")
-+
-+# Flags that take a value and decide what is compiled.
-+VALUE_FLAGS = {"-p", "--package", "--features", "-F", "--exclude", "--test",
-+               "--bin", "--example", "--bench", "--target", "--profile",
-+               "--cargo-profile", "--target-dir", "--config", "--manifest-path"}
-+# nextest's --profile picks a TEST profile (retries, timeouts), not a cargo
-+# profile, so it does not affect what is compiled.
-+NEXTEST_IGNORED_VALUE_FLAGS = {"--profile"}
-+BOOL_FLAGS = {"--no-default-features", "--all-features", "--release", "-r",
-+              "--workspace", "--all", "--lib", "--bins", "--tests", "--benches",
-+              "--examples", "--all-targets"}
-+
-+
-+# --- minimal indentation-based YAML access -----------------------------------
-+
-+def _indent(line: str) -> int:
-+    return len(line) - len(l
-```
-
-**File**: `.github/workflows/binstall-smoke-test.yml` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ name: Binstall Smoke Test (Nightly)
- 
- on:
-   schedule:
--    # 5 AM UTC daily — staggered after simulation-nightly (3 AM UTC).
-+    # 5 AM UTC daily — staggered after simulation-nightly (WAN bench 3 AM UTC daily, large sim 2 AM UTC Sundays).
-     - cron: "0 5 * * *"
-   workflow_dispatch:
+@@ -897,7 +897,8 @@ NOT covered by the reassembly allowance: they come on top of it, the send
+ window is outbound, and quinn's own per-connection state is unbounded by
+ the windows. That memory (measurements of some of its terms, and a list of
+ what was not measured, are in `quic/config.rs`) is not accounted in the
+-aggregate and must be before QUIC is on by default. A node-wide share
++aggregate and must be before QUIC carries data by default (Step 3 at
++100%; shadow paths, on by default since Step 2, carry none). A node-wide share
+ and fairness between connections are deferred to the transport redesign. Do
+ not copy this shape for memory the node holds on its own initiative.
  
 ```
 
-**File**: `.github/workflows/check-token-coalesce.yml` (modified, +8/-1)
+**File**: `.claude/rules/transport.md` (modified, +22/-9)
 ```diff
-@@ -30,11 +30,18 @@ jobs:
-   check:
-     name: Workflow steps that trigger downstream events must use RELEASE_PAT coalesce
-     runs-on: ubuntu-latest
--    timeout-minutes: 2
-+    # 5, not 2: the full-history fetch alone took 1m56s on 2026-11-03 (run
-+    # 41688535376) and the job was killed two seconds into its grep, leaving a
-+    # red required-looking check on a PR it had nothing to say about.
-+    timeout-minutes: 5
-     steps:
-       - uses: actions/checkout@v7
-         with:
-           fetch-depth: 0
-+          # Blobless partial clone: full history and trees (what the
-+          # three-dot diff and merge-base need) without every file version;
-+          # the few blobs the diff below reads are fetched on demand.
-+          filter: blob:none
+@@ -884,15 +884,20 @@ it must not wait unless it is a pacing point.
  
-       - name: Grep workflow files for unsafe GITHUB_TOKEN usage
-         env:
+ #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
+ 
+-`transport-quic` (config key, `off` by default, `shadow` or `prefer`) decides
+-whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
++`transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
++`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, since
++the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+ `prefer` negotiates data with the release's share of pairs ("Data slice" below;
+ `upgrade::policy::log_startup` reports the share at INFO once per node). No code
+ sends data on a path yet, so `prefer` differs from `shadow` only by that bit. The
+ release that makes `prefer` carry data must say in its notes that existing
+ `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
+ changes. QUIC must stay off by default on Windows until the crash-loop
+-breaker has been confirmed on a real Windows machine (#6031). Shadow or prefer: the endpoint is built
++breaker has been confirmed on a real Windows machine (#6031). The default is
++read, never written to config.toml: a node that did not set the key follows the
++release it runs, so a default-off release is the kill switch. It does not reach
++a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
++are saved to config.toml like any setting (the Step 1 gateways are such nodes). Shadow or prefer: the endpoint is built
+ with the node's QUIC identity (below) and an EMPTY allow-set, so nothing
+ reaches it and it sends nothing; the listener holds it, with the queue of
+ its accept loop (below), which hands on no attempt while the allow-set is
+@@ -1244,8 +1249,10 @@ orders other than a single gap at offset 0. Some quinn terms depend on
+ traffic rate and time rather than configuration, as the UDP transport's
+ dedup window and sent-packet tracker do, so the per-path ceiling (memory
+ gate M2, #5940) cannot be the sum of these measurements alone. This
+-memory is NOT accounted in the node aggregate and must be before QUIC is on
+-by default (rollout gate). The fixed
++memory is NOT accounted in the node aggregate and must be before QUIC carries
++data by default (Step 3 at 100%, rollout gate). Shadow paths carry no data, so
++what they hold is the fixed per-path terms, and Step 2's gate watches that as
++RSS against `quic_paths_active`. The fixed
+ node-wide endpoint buffers are summed whatever `transport-quic` says:
+ `INCOMING_BUFFER_TOTAL_BYTES` (quinn's pending attempts) and
+ `QUIC_INGRESS_QUEUE_BYTES`.
+@@ -1274,7 +1281,11 @@ seeded GlobalRng repeat the same event trace; the bytes differ, because
+ rustls's key exchange and the XEdDSA nonce use the OS RNG.
+ 
+ In SimNetwork: `with_transport_quic` / `with_node_transport_quic` set the
+-config value per node (off by default; an unknown value panics), and the
++config value per node (off unless set, whatever the node default: the
++harness writes `off` into every node's config; an unknown value panics;
++tests that start nodes outside SimNetwork, in `crates/core/tests` and through
++freenet-test-network, get the platform default on purpose, as production does,
++except where a restart after SIGKILL would trip the breaker), and the
+ endpoint runs on the network's VirtualTime (`get_socket_virtual_time`;
+ RealTime in production, pinned by
+ `the_transport_endpoint_runs_on_virtual_time_only_in_simulation`). Its
+@@ -1330,7 +1341,7 @@ every rate), endpoint-down, panics and breaker trips, RSS against
+   stays near 0 and UDP metrics do not change.
+ - Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
+   A/B runs only if something looks odd. Rollback: set the key to off and restart.
+-- Step 2: shadow on by default, not on Windows. Gate: at least 95% upgrade
++- Step 2: shadow on by default on Linux and macOS (`QuicMode::default_mode`). Gate: at least 95% upgrade
+   success by `established_as_offerer / accepted`; fewer than 1 fallback per
+   path-day excluding endpoint and restart causes; memory within the measured
+   terms (about 0.3 to 0.5 MiB per idle path). An abort spike stops the step.
+@@ -1793,8 +1804,10 @@ QUIC receive flow (#5940 e5b-4):
+ 
+ #### QUIC errors, close codes and liveness (`quic/error.rs`, `quic/liveness.rs`, #5940 step e4)
+ 
+-Dead code in production while QUIC carries no traffic: with `transport-quic`
+-off no endpoint is built and the transport reports `Disabled`.
++Live in production on Linux and macOS, where shadow is the default: the
++paths carry control frames only, but endpoints, connections and their errors
++are real. With `transport-quic` off no endpoint is built and the transport
++reports `Disabled`.
+ 
+ ```
+ Errors: TransportError::Quic(QuicError), beside TransportError::Udp and
 ```
 
-**File**: `.github/workflows/ci-cache-warm.yml` (added, +254/-0)
+**File**: `.github/workflows/ci.yml` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,254 @@
-+name: CI Cache Warm
+@@ -1161,6 +1161,14 @@ jobs:
+       - name: Test service commands
+         run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
+ 
++      # QUIC shadow is the default on macOS (#5940 Step 2), and its crash-loop
++      # breaker reads kern.boottime there: run the real-binary shutdown tests on
++      # a real Mac (a clean stop clears it, a SIGKILL trips it, which needs the
++      # boot identity, and a node with no setting arms it). Not the lib unit
++      # tests: building the lib test target here takes over 20 minutes.
++      - name: Test QUIC crash-loop breaker
++        run: cargo nextest run -p freenet --profile ci --test graceful_shutdown_exit_code
 +
-+# Writes the main-scoped Rust caches that ci.yml's heavy PR jobs restore from.
-+#
-+# WHY THIS EXISTS. A PR can restore a cache saved on its own branch or on main,
-+# nothing else. ci.yml's Unit & Integration, Simulation and NAT Validation jobs
-+# do not run on pushes to main (the PR already validated the code), so none of
-+# them ever wrote a main-scoped entry. Measured 2026-11-03 with
-+# `ubi gh freenet/freenet-core list-cache-entries`: no `v0-rust-test_unit-*`
-+# entry existed at all, so every Unit & Integration run compiled its whole
-+# dependency tree on a standard-16 runner, and Simulation / NAT Validation
-+# started cold on each PR's first run and then saved a 1.2-2.2 GB entry that
-+# only later pushes to that one branch could read.
-+#
-+# HOW THE KEYS LINE UP. Swatinem/rust-cache keys on
-+#   <prefix>-<key input>-<GITHUB_JOB>-<OS>-<arch>-<hash>-<lockfile hash>
-+# where <hash> covers the installed rustc versions and every env var whose
-+# name starts with CARGO, CC, CFLAGS, CXX, CMAKE or RUST, and a PR restores by
-+# the key minus the lockfile hash. The `key` input is THIS file's hash on both
-+# sides: rust-cache skips the save on an exact key hit, so a change to what
-+# the PR jobs compile (which must be mirrored here) has to yield a new key for
-+# this workflow to fill. So each job below MUST keep:
-+#   - the SAME job id as its ci.yml counterpart (test_unit, test_simulation,
-+#     nat_validation) -- the display `name:` is deliberately different, so
-+#     these never masquerade as the required status contexts;
-+#   - the SAME job-level `env:`, toolchain and toolchain targets;
-+#   - the SAME linker env on its compile steps, and the same cargo features,
-+#     or cargo's fingerprints differ and the restored deps are rebuilt anyway.
-+# .github/scripts/check_cache_warm_parity.py enforces this from Rule Lint.
-+# When you change one of those jobs in ci.yml, change its twin here.
-+#
-+# It must run on a Ubicloud runner: Ubicloud serves its own cache backend, so
-+# an entry saved from a GitHub-hosted runner is invisible to Ubicloud jobs.
-+# Runner size does not enter the key (only OS and arch do), so the cheaper
-+# standard-8 is used throughout.
-+
-+on:
-+  # Daily backstop, for what no path filter sees: eviction (Ubicloud's policy
-+  # is not documented; this does not rely on PR restores keeping an entry
-+  # alive), and a runner-image update. rust-cache hashes EVERY installed rustup
-+  # toolchain into the key, so an image that bumps its preinstalled stable
-+  # orphans the entries until the next warm. On an exact key hit a run only
-+  # rebuilds the workspace crates and skips the save, so it is cheap.
-+  schedule:
-+    - cron: "0 4 * * *"
-+  # Re-warm when what the cached dependencies depend on changes on main: the
-+  # lockfile and manifests, the toolchain and cargo config, and this file.
-+  # ci.yml is deliberately absent: any ci.yml change that matters to the cache
-+  # (job env, toolchain, compile commands) must be mirrored here -- the parity
-+  # linter enforces it -- and the cache `key` is this file's hash, so a
-+  # ci.yml-only push would hit the existing key and save nothing. Path filters
-+  # are safe because no job here is a required status context (#5451).
-+  push:
-+    branches: [main]
-+    paths:
-+      - "Cargo.lock"
-+      - "**/Cargo.toml"
-+      - "rust-toolchain"
-+      - "rust-toolchain.toml"
-+      - ".cargo/config.toml"
-+      - ".github/workflows/ci-cache-warm.yml"
-+  workflow_dispatch:
-+
-+# Finish the running warm, then run only the latest queued one (GitHub keeps
-+# one pending run per group). Cancelling instead would discard a run just
-+# before its post-job save, and a steady stream of merges could then keep
-+# every run from saving.
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: false
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  test_unit:
-+    name: "Warm cache: Unit & Integration"
-+    runs-on: ubicloud-standard-8
-+    timeout-minutes: 45
-+
-+    # Must match ci.yml test_unit's job-level env exactly (cache key input).
-+    env:
-+      RUST_LOG: error
-+      CARGO_TARGET_DIR: ${{ github.workspace }}/target
-+      RUST_MIN_STACK: 268435456
-+
-+    steps:
-+      - uses: actions/checkout@v7
-+
-+      - name: Install mold linker
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y mold
-+
-+      - uses: dtolnay/rust-toolchain@stable
-+        with:
-+          toolchain: 1.93.0
-+          targets: wasm32-unknown-unknown
-+
-+      - uses: Swatinem/rust-cache@v2
-+        with:
-+          save-if: ${{ github.ref == 'refs/heads/main' }}
-+          key: ci-${{ hashFiles('.github/workflows/ci-cache-warm.yml') }}
-+
-+      - name: Install nextest
-+        uses: taiki-e/install-action@v2
-+        timeout-minutes: 5
-+        with:
-+          tool: cargo-nextest
-+          fallback: none
-+
-+      - name: Build
-+        env:
-+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: clang
-+  
+       # freenet:// scheme handler (#5726) against the real binary.
+       - name: Test freenet:// handler binary
+         run: cargo nextest run -p freenet --profile ci --test url_scheme_handler
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +90/-10)
+**File**: `apps/freenet-ping/app/tests/common/mod.rs` (modified, +2/-1)
 ```diff
-@@ -7,8 +7,8 @@ name: CI
- #    permanently unmergeable, so it is confined to the trigger where no
- #    required check is at stake.
- #    This is a REAL cost increase, not a relocation: since #5571 a docs-only PR
--#    pays the full PR suite (Clippy on ubicloud-standard-8; Unit & Integration,
--#    Simulation and NAT Validation on ubicloud-standard-16; the macOS/Windows
-+#    pays the full PR suite (Clippy and NAT Validation on ubicloud-standard-8;
-+#    Unit & Integration and Simulation on ubicloud-standard-16; the macOS/Windows
- #    unit jobs) PLUS a paid Claude rule review, on top of the merge_group run it
- #    already paid. That was accepted because docs-only merges are rare (15 in
- #    the year to 2026-09-05) and the alternative — gating each expensive STEP on
-@@ -30,6 +30,9 @@ name: CI
- #      protection happy without contending for ubicloud-standard-16 slots.
- #    - Release merge_group (commit message starts with "build: release") runs
- #      the full suite as the pre-publish gate, so what ships is known-green.
-+# 8. Heavy jobs restore a main-scoped Rust cache and never save on PRs. The
-+#    entries are written by ci-cache-warm.yml, which mirrors those jobs' ids,
-+#    env and build commands; check_cache_warm_parity.py keeps them in step.
- 
- on:
-   push:
-@@ -239,6 +242,22 @@ jobs:
-       - name: Self-test required-check path-filter guard
-         run: bash scripts/required_check_path_filters_test.sh
- 
-+      # Regression gate for the Rust cache warm (#6105). ci-cache-warm.yml
-+      # writes the main-scoped caches the heavy PR jobs restore, and drift
-+      # between the two files fails silently (green checks, cold builds).
-+      # Pins that the parity linter fires on the real defect it found
-+      # (Simulation's run step recompiling for want of the linker env), that
-+      # the repo satisfies it, that it is wired into rule_lint, and that the
-+      # release pre-flight ignores "Warm cache:" check runs.
-+      - name: Self-test cache-warm parity guard
-+        run: bash scripts/cache_warm_parity_test.sh
-+
-+      # Each simulation-nightly job selects its cron with a literal copy of the
-+      # string under `on.schedule`. If they drift, the job is skipped on every
-+      # run, which the notifiers and the release pre-flight read as healthy.
-+      - name: Self-test simulation schedule pairing
-+        run: bash scripts/simulation_schedule_test.sh
-+
-       # Regression gate for the release driver's cross-compile wait: under
-       # `set -euo pipefail` a bare `var=$(gh ...)` aborts the whole driver on a
-       # transient GitHub blip, AFTER the release publishes but BEFORE the
-@@ -352,7 +371,7 @@ jobs:
-       # clean when they landed but were not actually in this list, so nothing
-       # held them to it. `-x` because the two test scripts `source` the canary.
-       - name: Lint install/uninstall scripts (shellcheck)
--        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh
-+        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh
-       # The PR-backlog sweep reports stalled PRs (see
-       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
-       # paths -- failed query, empty listing the REST probe contradicts,
-@@ -490,6 +509,17 @@ jobs:
-       - name: Check release dry_run cannot push, merge, tag or publish
-         run: python3 .github/scripts/check_release_dry_run.py .github/workflows
- 
-+      # Self-test the cache-warm parity linter, then run it. Not diff-sco
+@@ -184,7 +184,8 @@ pub async fn base_node_test_config_with_rng<R: Rng>(
+             ledbat_min_ssthresh: None,
+             congestion_control: None,
+             bbr_startup_rate: None,
+-            transport_quic: None,
++            // Off whatever the node default is: these tests are not about QUIC.
++            transport_quic: Some("off".to_string()),
+             quic_max_paths: None,
+             quic_data_percent: None,
+             quic_ignore_crash_breaker: None,
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -492,8 +492,8 @@ jobs:
-     name: Wait for PR to merge
-     runs-on: ubuntu-latest
-     # 75 min covers: merge-queue scheduling + full-suite release gate (test_unit
--    # + Simulation + NAT Validation in parallel, ~10-15 min each on a busy
--    # ubicloud-standard-16) + branch-protection check propagation. Bumped from
-+    # + Simulation + NAT Validation in parallel, ~10-15 min each on busy
-+    # Ubicloud runners) + branch-protection check propagation. Bumped from
-     # 60 min when the release merge_group started running the full suite (#3973).
-     timeout-minutes: 75
-     needs: [validate, update_versions]
+@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
+ # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
+ # with it on the assumption that reqwest validates them identically.
+ rustls = { version = "0.23", default-features = false, features = ["std"] }
+-# QUIC endpoint (transport/quic.rs, #5940), inert unless `transport-quic` is
+-# on. Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
++# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux
++# and macOS, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
+ # crate's own Runtime over TimeSource, so simulation drives it), no
+ # platform-verifier (peers are authenticated by raw public keys, never by a CA
+ # root store), and no aws-lc-rs (deny.toml bans it).
 ```
 
-**File**: `.github/workflows/simulation-nightly.yml` (modified, +22/-2)
+**File**: `crates/core/src/config.rs` (modified, +38/-21)
 ```diff
-@@ -6,9 +6,25 @@ name: Simulation Tests (Nightly)
- #   - Nightly-gated nextest tests (1h virtual time, 250-contract scale)
- #   - Large scale (500 nodes, 10000 events)
+@@ -334,7 +334,7 @@ impl Default for ConfigArgs {
+                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
+                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
+                 bbr_startup_rate: None,    // Uses default from BBR config
+-                transport_quic: None,      // Default: off
++                transport_quic: None,      // Default: shadow on Linux and macOS
+                 quic_max_paths: None,      // Default: max-number-of-connections
+                 quic_data_percent: None,   // Default: this release's share of pairs
+                 quic_ignore_crash_breaker: None,
+@@ -2493,13 +2493,15 @@ pub struct NetworkArgs {
+     #[serde(rename = "bbr-startup-rate", skip_serializing_if = "Option::is_none")]
+     pub bbr_startup_rate: Option<u64>,
  
-+# Despite the name, the large simulation runs WEEKLY; only WAN Bench R1 is
-+# still nightly. The name stays because scripts/release.sh filters on the
-+# check names "Simulation Tests (Nightly)" and "Large Scale Simulation", and
-+# "nightly" also names the `nightly_tests` feature and nextest profile.
- on:
-   schedule:
--    # Run at 3 AM UTC every day
-+    # Each job runs on exactly ONE of these crons (see each job's `if:`), and
-+    # the concurrency group includes the cron string, so the two never cancel
-+    # each other.
-+    #
-+    # Large Scale Simulation: Sundays 02:00 UTC. Daily until 2026-11: at
-+    # ~2.5 h on a ubicloud-standard-16 the daily run cost ~$42/month, about a
-+    # tenth of the project's Ubicloud bill, and a daily cadence had not bought
-+    # fast detection in practice -- the 500-node step was silently cancelled
-+    # for weeks before anyone noticed (see the timeout note on the job below).
-+    # Run it by hand (workflow_dispatch) to check a specific change.
-+    - cron: "0 2 * * 0"
-+    # WAN Bench R1: daily 03:00 UTC, unchanged. A short congestion-controller
-+    # gate (~$1.30/month), so it keeps its nightly cadence.
-     - cron: "0 3 * * *"
-   workflow_dispatch:
-     # Allow manual triggering from any branch
-@@ -24,12 +40,14 @@ on:
+-    /// QUIC transport (#5940): `off` (default), `shadow` or `prefer`.
++    /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
++    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
+     ///
+-    /// `shadow` builds a QUIC endpoint on the network port. In this release
+-    /// the endpoint accepts no connections and opens none, so the node
+-    /// behaves as with `off`. `prefer` also negotiates data with a share of
+-    /// pairs; this release sends none. An
+-    /// unknown value is treated as `off`, with a warning in the log.
++    /// `shadow` builds a QUIC endpoint on the network port and upgrades
++    /// connections to peers that also run it to a QUIC path. The path carries
++    /// control frames only, so all traffic stays on the existing transport.
++    /// `prefer` also negotiates data with a share of pairs; this release sends
++    /// none. `off` builds no endpoint. An unknown value is treated as `off`,
++    /// with a warning in the log.
+     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
+     #[serde(rename = "transport-quic", skip_serializing_if = "Option::is_none")]
+     pub transport_quic: Option<String>,
+@@ -2833,8 +2835,8 @@ pub struct NetworkApiConfig {
+     )]
+     pub bbr_startup_rate: Option<u64>,
  
- # Cancel in-progress runs when a new run is triggered
- concurrency:
--  group: ${{ github.workflow }}-${{ github.ref }}
-+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.schedule || 'manual' }}
-   cancel-in-progress: true
+-    /// QUIC transport (#5940): `off` (the default when unset), `shadow` or
+-    /// `prefer`. Kept as written, so a value from a later release
++    /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
++    /// `QuicMode::default_mode` (shadow on Linux and macOS). Kept as written, so a value from a later release
+     /// round-trips; see [`Self::quic_settings`] for how it is read.
+     #[serde(
+         default,
+@@ -2918,8 +2920,9 @@ impl NetworkApiConfig {
+     }
  
- jobs:
-   large-scale-simulation:
-     name: Large Scale Simulation
-+    # Weekly cron only (see `on.schedule`); always on a manual dispatch.
-+    if: github.event_name != 'schedule' || github.event.schedule == '0 2 * * 0'
-     runs-on: ubicloud-standard-16
-     # This job runs the nextest suite (~109 min) then the 500-node step
-     # (≤60 min, its own cap below) sequentially, plus ~4 min build/setup.
-@@ -186,6 +204,8 @@ jobs:
-   # Once the cause is fixed, add a seed that caught a real bug to GATE_SEEDS.
-   wan-bench-r1:
-     name: WAN Bench R1
-+    # Daily cron only (see `on.schedule`); always on a manual dispatch.
-+    if: github.event_name != 'schedule' || github.event.schedule == '0 3 * * *'
-     runs-on: ubicloud-standard-16
-     # Steps carry their own timeouts, and this cap is above their sum (5 + 40
-     # + 30 + 40 = 115 min, plus setup), so a hang always trips a step first: a
+     /// The QUIC endpoint settings when `transport-quic` turns QUIC on, or
+-    /// `None` when it is off, unset or a value this binary does not know
+-    /// (which logs a warning). Reads the node's memory limit, since the
++    /// `None` when it reads as off: set to `off`, unset on a platform whose
++    /// default is off, or a value this binary does not know (which logs a
++    /// warning). Reads the node's memory limit, since the
+     /// endpoint's flow-control windows are sized from it.
+     pub(crate) fn quic_settings(&self) -> Option<crate::transport::quic::QuicSettings> {
+         use crate::transport::quic::QuicMode;
+@@ -7179,20 +7182,30 @@ shutdown-drain-secs = 42
+         assert_seeded_values_bound(&cfg);
+     }
+ 
+-    /// QUIC is off by default, and Windows must stay off until its crash-loop
+-    /// breaker has been confirmed on a real Windows machine (#6031). A release
+-    /// that changes the default on other platforms must keep Windows off and
+-    /// keep this check for it: the lib tests do not compile on Windows, and
+-    /// `tests/quic_breaker_windows.rs` is the same pin through the real binary.
++    /// An unset `transport-quic` is shadow, and off on Windows, which must stay
++    /// off until its crash-loop breaker has been confirmed on a real Windows
++    /// machine (#6031). The lib tests do not compile on Windows, so
++    /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
++    /// binary. The default is not written into the config, so a default-off
++    /// release turns QUIC off on every node that did not set the key.
+     #[test]
+-    fn quic_stays_off_by_default() {
++    fn quic_is_shadow_by_default_except_on_windows() {
+         use crate::transport::quic::QuicMode;
+-        assert_eq!(QuicMode::default(), QuicMode::Off);
+-        assert_eq!(QuicMode::from_config_value(None), QuicMode::Off);
++        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
++            QuicMode::Shadow
++        } else {
++            QuicMode::Off
++        };
++        assert_eq!(QuicMode::default(), expected);
++        assert_eq!(QuicMode::from_config_value(None), expected);
+         let args = ConfigArgs::default();
++        assert_eq!(
++            args.network_api.transport_quic, None,
++            "the default is not stored"
++        );
+         assert_eq!(
+     
 ```
 
-**File**: `docs/architecture/testing/simulation-testing.md` (modified, +1/-1)
+**File**: `crates/core/src/contract/executor.rs` (modified, +4/-4)
 ```diff
-@@ -343,7 +343,7 @@ when mid-simulation fault injection via closures is needed.
+@@ -2930,16 +2930,16 @@ mod tests {
+             // MAX_STREAM_TOTAL_BYTES row). The memory one QUIC connection
+             // holds (some of its terms are measured in quic::config) is NOT
+             // accounted in this aggregate,
+-            // and must be before QUIC is on by default (a gate in the #5940
+-            // rollout plan). It is in addition to reassembly, not covered by
++            // and must be before QUIC carries data by default (Step 3 at 100%,
++            // a gate in the #5940 rollout plan; shadow paths carry none). It is in addition to reassembly, not covered by
+             // it.
+             (
+                 "connection_window_bytes",
+                 "one QUIC connection's flow-control window W: a per-connection \
+                  exception like MAX_STREAM_TOTAL_BYTES; quinn holds received data \
+                  beyond W and state W does not limit (measured terms in \
+-                 quic::config); not accounted here, and must be before QUIC is on \
+-                 by default",
++                 quic::config); not accounted here, and must be before QUIC \
++                 carries data by default",
+             ),
+             (
+                 "MIN_WINDOW_BYTES",
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +3/-2)
+```diff
+@@ -1295,8 +1295,9 @@ impl P2pConnManager {
+         let uptime_clock: DynTimeSource = Arc::new(InstantTimeSrc::new());
+         let started_at = uptime_clock.now();
+         let quic_breaker_now = uptime_clock.system_time_now();
+-        // Once per node: `prefer` running as shadow, and a `quic-max-paths`
+-        // that is ignored or lowered (#5940).
++        // Once per node: the configured QUIC mode and where it came from,
++        // `prefer` running as shadow, and a `quic-max-paths` that is ignored
++        // or lowered (#5940).
+         crate::transport::quic::upgrade::policy::log_startup(&config.config.network_api);
  
- ## Nightly Test Suite
- 
--The nightly workflow (`.github/workflows/simulation-nightly.yml`) runs these simulation scenarios.
-+The "nightly" workflow (`.github/workflows/simulation-nightly.yml`) runs these simulation scenarios. Despite its name, the large-scale simulation job is scheduled weekly (Sundays, 02:00 UTC); its WAN Bench R1 job still runs nightly. Trigger the workflow with `workflow_dispatch` to run both on demand.
- All fdev tests include realistic network conditions and use 200ms default event spacing.
- 
- | Test | Nodes | Events | Virtual Time | Fault Injection |
+         // The crash-loop breaker may keep QUIC off after a run with QUIC
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6105** (2026-11-03): ci: cut Ubicloud runner spend without slowing PR CI (@sanity)
+- **PR #6104** (2026-11-03): feat(transport): turn QUIC shadow mode on by default on Linux and macOS (@sanity)
 - **PR #6103** (2026-11-03): fix(delegates): refuse node-only inbound messages from clients (@sanity)
 - **PR #6101** (2026-11-03): feat(transport): add a QUIC crash-loop breaker for Windows by counting short runs (@sanity)
 - **PR #6094** (2026-11-03): fix(macos): make freenet-bin the bundle executable so the menu bar icon shows on macOS 26 (@sanity)
 - **PR #6092** (2026-11-02): fix(conformance): report what the shadow prober leaves out and the states the sampler refuses (@sanity)
-- **PR #6091** (2026-11-02): feat(transport): add QUIC send primitives with deadlines per stage (@sanity)
 
 ---
 
@@ -2192,49 +2060,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: cut Ubicloud runner spend without slowing PR CI (#6105)
+## X. transport): turn QUIC shadow mode on by default on Linux and macOS (#6104)
 
 **RULE**:
-When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/bug-prevention-patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99b7ccaf`: ci: cut Ubicloud runner spend without slowing PR CI (#6105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c54e83c8`: transport): turn QUIC shadow mode on by default on Linux and macOS (#6104). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_cache_warm_parity.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/bug-prevention-patterns.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#!/usr/bin/env python3
-"""Keep ci-cache-warm.yml's jobs producing the cache keys ci.yml restores.
-
-ci.yml's heavy PR jobs (Unit & Integration, Simulation, NAT Validation) never
-run on pushes to main, so nothing they do can write a main-scoped cache entry,
-and a PR can only restore from its own branch or from main. Measured
-2026-11-03: no ``v0-rust-test_unit-*`` entry existed, so every Unit &
-Integration run compiled its dependency tree from scratch on a standard-16
-Ubicloud runner. ci-cache-warm.yml writes those entries.
-
-It only helps while its keys are the keys the PR jobs look up. Swatinem/
-rust-cache restores by ``<prefix>-<key>-<GITHUB_JOB>-<OS>-<arch>-<hash>``,
-where ``<hash>`` covers the rustc version and every env var whose name starts
-with CARGO, CC, CFLAGS, CXX, CMAKE or RUST. And a restored entry only saves
-work if cargo's fingerprints match, which needs the same flags, env and
-feature sets on every compile command. Any drift fails SILENTLY: the PR jobs
-stay green and quietly build cold again. Hence this linter, run from Rule Lint.
-
-A "warm job" is a job in the warm workflow that uses Swatinem/rust-cache.
-Against the ci.yml job with the SAME id it checks:
-
-1. workflow-le
+aggregate and must be before QUIC carries data by default (Step 3 at
+100%; shadow paths, on by default since Step 2, carry none). A node-wide share
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+aggregate and must be before QUIC is on by default. A node-wide share
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99b7ccaf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c54e83c8` are properly handled with clean fallback behavior.

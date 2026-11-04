@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "4ce2a715",
+    "sourceVersion": "4fcd74ac",
     "license": "CC0-1.0",
-    "contentHash": "23040da8a8ccfaec771bb5025d5c10dc1a8774932b452eb902892d7b14f49524",
-    "lastHarvestedAt": "2026-10-31T00:05:34.883Z",
+    "contentHash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
+    "lastHarvestedAt": "2026-11-04T00:32:08.487Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "99b7ccaf",
+    "sourceVersion": "c54e83c8",
     "license": "NOASSERTION",
-    "contentHash": "bbe280b196a506f80670d618bb3cf3bdb4a05068471f76995868f718be653fd9",
-    "lastHarvestedAt": "2026-11-03T20:12:20.819Z",
+    "contentHash": "83ec14ac82a3e7a603deaaa1624ad320b90c2218b673350f4a84c07270274972",
+    "lastHarvestedAt": "2026-11-04T00:32:05.390Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "0a153df5",
+    "sourceVersion": "f587409b",
     "license": "MIT",
-    "contentHash": "98fcf092d7396bcce7cdabf0979b17f0112b6fcf64a45bf70ef93c7501d25697",
-    "lastHarvestedAt": "2026-10-31T21:46:01.859Z",
+    "contentHash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
+    "lastHarvestedAt": "2026-11-04T00:31:55.868Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

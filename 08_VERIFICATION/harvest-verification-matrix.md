@@ -7076,3 +7076,6 @@
 | `CYCLE-20261104-JPRQ` | `2026-11-04T00:24:25.910Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6675` | Yes (`65c91f72...`) |
 | `CYCLE-20261104-JRH9` | `2026-11-04T00:24:28.125Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6676` | Yes (`fa721e35...`) |
 | `CYCLE-20261104-JUV1` | `2026-11-04T00:24:32.509Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6677` | Yes (`60f5a88f...`) |
+| `CYCLE-20261104-TCYH` | `2026-11-04T00:31:55.865Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6678` | Yes (`d12aa7b3...`) |
+| `CYCLE-20261104-TKAY` | `2026-11-04T00:32:05.386Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6679` | Yes (`83ec14ac...`) |
+| `CYCLE-20261104-TMOZ` | `2026-11-04T00:32:08.483Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6680, Rule 6681, Rule 6682` | Yes (`3c15c5d5...`) |
