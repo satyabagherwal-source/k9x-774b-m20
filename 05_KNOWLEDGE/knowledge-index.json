@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T16:34:39.037Z",
+  "last_updated": "2026-11-04T16:43:12.811Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8821,8 +8821,8 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "5a981aee",
-      "content_hash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
+      "source_version": "36f62871",
+      "content_hash": "2d40adf177cf713dd57eb21ac2776a3ae1fbdc48f6a936a0458ffa0e6c7b54fd",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
@@ -8855,6 +8855,11 @@
           "number": 4953,
           "title": "- [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6839,
+          "title": "- [重构] 重写网络探针页面，检测更快、结果更稳定",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8862,7 +8867,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T09:36:52.573Z",
+      "verified_at": "2026-11-04T16:43:10.486Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10120,8 +10125,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "27a6ff0c",
-      "content_hash": "f6497804385efd450fcf8a045fa2ed491a9c673c4334b89cec149fedd4f0e7e3",
+      "source_version": "7c71db93",
+      "content_hash": "aa3dc7fe5b41e78660ee75436291bf76b24eb5b7d1cf3c283fcc8040f209a54e",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -10179,6 +10184,11 @@
           "number": 6468,
           "title": "python): revoke path proofs after opaque coercions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6838,
+          "title": "evaluator): read PowerShell call, dot-source and script-block invoke statements",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10186,7 +10196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:24:25.939Z",
+      "verified_at": "2026-11-04T16:43:05.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111148,7 +111158,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
+      "content_hash": "664864a7176502d6cc6cbb02f0eee8435e84b505b28723066ef58e3e48d70b99",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -111186,6 +111196,21 @@
           "number": 4597,
           "title": "MoE Memory Bandwidth & Expert Parallelism Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6840,
+          "title": "Quantization Precision & Numerical Stability Invariant (NVFP4)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6841,
+          "title": "Mixture-of-Experts (MoE) Routing & Load Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6842,
+          "title": "Repository Integrity & CI/CD Artifact Verification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -111193,7 +111218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:46:10.352Z",
+      "verified_at": "2026-11-04T16:43:12.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174855,6 +174880,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T16:34:39.015Z"
+    },
+    "rule-6838": {
+      "learning_id": "rule-6838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6838,
+      "title": "evaluator): read PowerShell call, dot-source and script-block invoke statements",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "7c71db93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:43:05.315Z"
+    },
+    "rule-6839": {
+      "learning_id": "rule-6839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6839,
+      "title": "- [重构] 重写网络探针页面，检测更快、结果更稳定",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "36f62871",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:43:10.486Z"
+    },
+    "rule-6840": {
+      "learning_id": "rule-6840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6840,
+      "title": "Quantization Precision & Numerical Stability Invariant (NVFP4)",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:43:12.792Z"
+    },
+    "rule-6841": {
+      "learning_id": "rule-6841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6841,
+      "title": "Mixture-of-Experts (MoE) Routing & Load Balancing Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:43:12.792Z"
+    },
+    "rule-6842": {
+      "learning_id": "rule-6842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6842,
+      "title": "Repository Integrity & CI/CD Artifact Verification Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:43:12.792Z"
     }
   },
   "aliases": {

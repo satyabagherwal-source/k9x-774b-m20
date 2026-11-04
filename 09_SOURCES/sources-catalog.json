@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "5a981aee",
+    "sourceVersion": "36f62871",
     "license": "MIT",
-    "contentHash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
-    "lastHarvestedAt": "2026-10-31T09:36:52.689Z",
+    "contentHash": "2d40adf177cf713dd57eb21ac2776a3ae1fbdc48f6a936a0458ffa0e6c7b54fd",
+    "lastHarvestedAt": "2026-11-04T16:43:10.579Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "27a6ff0c",
+    "sourceVersion": "7c71db93",
     "license": "NOASSERTION",
-    "contentHash": "f6497804385efd450fcf8a045fa2ed491a9c673c4334b89cec149fedd4f0e7e3",
-    "lastHarvestedAt": "2026-11-02T17:24:26.045Z",
+    "contentHash": "aa3dc7fe5b41e78660ee75436291bf76b24eb5b7d1cf3c283fcc8040f209a54e",
+    "lastHarvestedAt": "2026-11-04T16:43:05.408Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
-    "lastHarvestedAt": "2026-10-31T00:46:10.481Z",
+    "contentHash": "664864a7176502d6cc6cbb02f0eee8435e84b505b28723066ef58e3e48d70b99",
+    "lastHarvestedAt": "2026-11-04T16:43:12.884Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

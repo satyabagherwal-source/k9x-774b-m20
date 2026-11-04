@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
-> **Source Version**: `5a981aee`  
+> **Source Version**: `36f62871`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T09:36:52.421Z  
+> **Timestamp**: 2026-11-04T16:43:09.938Z  
 > **Learning ID**: `learn-github-czy0729-bangumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T09:36:52.413Z  
+> **Harvest Timestamp**: 2026-11-04T16:43:09.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6206 stars
+- **Stars / Engagement**: 6215 stars
 
 ---
 
@@ -1228,589 +1228,1254 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a981aee` (2026-10-30)
-**Commit Message**: - [超展开] 整理页面结构，清理无用图标与冗余类型标注
+### Incident Patch 1: `36f62871` (2026-11-03)
+**Commit Message**: - [重构] 重写网络探针页面，检测更快、结果更稳定
 
-**File**: `.claude/docs/architecture.md` (modified, +14/-0)
+**File**: `src/screens/user/server-status/ds.ts` (modified, +26/-2)
 ```diff
-@@ -54,6 +54,20 @@
- | `@assets` | `src/assets/` |
- | `@src` | `src/` |
- 
-+## 导入约定（首屏）
-+
-+6 个底部 tab 的根页面入口一律用**深路径**引 `Component` / `Page`，不要用 `@components` barrel：
-+
-+```ts
-+import { Component } from '@components/component'
-+import { Page } from '@components/page'
-+```
-+
-+- 涉及页面：`discovery/index`、`timeline/v2`、`home/v2`、`rakuen/v2`、`user/v2`、`tinygrail/index`
-+- 原因：`src/components/index.ts` 是 ~80 个 `export *` 的 barrel，走 barrel 会把这套组件全部纳入模块图；这些页面在导航初始化时就被加载（不走 `React.lazy`），是冷启动路径的一部分
-+- 其余页面都是懒加载，页面加载时 barrel 早已就绪，照常写 `@components` 即可
-+- 同理，这些入口页不要为了「导入整齐」把深路径合并成 barrel，属于有意的性能约定
-+
- ## 导航结构
- 
- - **Root Stack**: `createNativeStackNavigator()` — 所有页面作为 Stack.Screen
-```
-
-**File**: `.claude/docs/code-style.md` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@
- - Store 访问：页面通过 hooks 解构 `{ id, $ }`，子组件通过 `useStore<Ctx>(COMPONENT)` 获取
- - `StoreContext.Provider` 在页面 index.tsx 中提供，子组件通过 context 消费
- - **JSX 文件不要写 `import React from 'react'`**：项目使用 automatic JSX runtime（expo `jsx: react-jsx`），多余的 React 导入会触发 `noUnusedLocals` 的 TS6133
-+- **6 个底部 tab 根页面入口用深路径引 `Component` / `Page`**（`@components/component`、`@components/page`），不要为了导入整齐合并成 `@components` barrel：这些页面在冷启动时加载，barrel 会拉入整个组件库。详见 [architecture.md](./architecture.md)「导入约定（首屏）」
- 
- # React Native 规范
- 
-```
-
-**File**: `src/screens/rakuen/v2/component/ds.ts` (modified, +4/-2)
-```diff
-@@ -1,8 +1,10 @@
+@@ -1,7 +1,31 @@
  /*
   * @Author: czy0729
-  * @Date: 2024-01-04 17:47:34
+  * @Date: 2024-12-11 20:43:05
 - * @Last Modified by:   czy0729
-- * @Last Modified time: 2024-01-04 17:47:34
+- * @Last Modified time: 2024-12-11 20:43:05
 + * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-30 00:00:00
++ * @Last Modified time: 2026-11-04 12:00:00
 + *
-+ * 页面子组件标识
++ * 网络探针: 页面标识、探测地址与检测参数
   */
- import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
++import { HOST_AC_API } from '@constants'
++
++export const COMPONENT = 'ServerStatus'
++
+ export const HM = ['server-status', 'ServerStatus'] as const
++
++/** 探针请求: bilibili 番剧分区, 只用于检测延迟 */
++export const URL_PROBE_BILIBILI = `${HOST_AC_API}/pgc/web/season/section?season_id=1`
++
++/** 探针请求: youku 番剧预览, 只用于检测延迟 */
++export const URL_PROBE_YOUKU = 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery'
++
++/** 每个站点最多检测次数, 失败即停止 */
++export const PING_COUNTS = 4
++
++/** 单次检测超时 (毫秒) */
++export const PING_TIMEOUT = 5000
++
++/** 平均延迟低于此值显示绿色 (毫秒) */
++export const STATUS_FAST = 150
++
++/** 平均延迟低于此值显示黄色, 超过或失败显示红色 (毫秒) */
++export const STATUS_OK = 1000
 ```
 
-**File**: `src/screens/rakuen/v2/component/extra/ds.ts` (modified, +3/-1)
+**File**: `src/screens/user/server-status/hooks.ts` (added, +140/-0)
 ```diff
-@@ -2,7 +2,9 @@
+@@ -0,0 +1,140 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-04 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-04 12:00:00
++ *
++ * 网络探针: 站点逐个串行检测的状态机
++ */
++import { useCallback, useEffect, useRef, useState } from 'react'
++import { subjectStore } from '@stores'
++import { err, ping, t } from '@utils/fetch'
++import { PING_COUNTS, PING_TIMEOUT } from './ds'
++import { getSitesList } from './utils'
++
++import type { ProbeMode, Site } from './types'
++
++export function useServerStatusPage() {
++  const [list, setList] = useState<Site[]>(() => getSitesList(subjectStore.origin))
++  const [mode, setMode] = useState<ProbeMode>('idle')
++
++  /** 最新清单: 检测流程从这里取站点, 让对外回调保持稳定引用 */
++  const listRef = useRef(list)
++  useEffect(() => {
++    listRef.current = list
++  }, [list])
++
++  /** 运行序号, 页面卸载后递增让在途结果作废 */
++  const runIdRef = useRef(0)
++
++  /** 同一时间只允许一次检测 */
++  const runningRef = useRef(false)
++
++  useEffect(
++    () => () => {
++      runIdRef.current += 1
++      runningRef.current = false
++    },
++    []
++  )
++
++  const patchSite = useCallback((index: number, patch: Partial<Site>) => {
++    setList(prev => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)))
++  }, [])
++
++  const runSites = useCallback(
++    async (sites: Site[], indices: number[]) => {
++      const runId = runIdRef.current
++
++      for (const index of indices) {
++        if (runId !== runIdRef.current) return
++
++        const site = sites[index]
++        if (!site) continue
++
++        patchSite(index, { msg: [], loading: true })
++
++        /** 单个站点出错不影响后续站点, 且必须复位自身的检测中标记 */
++        try {
++          const msg: number[] = []
++          for (let i = 0; i < PING_COUNTS; i += 1) {
++            if (runId !== runIdRef.current) return
++
++            const latency = await ping(site.url, site.headers, PING_TIMEOUT, 'headers')
++            if (runId !== runIdRef.current) return
++
++            msg.push(latency)
++            patchSite(index, { msg: [...msg] })
++
++            /** 失败与超时不再重试, 站点已不可用 */
++            if (!latency) break
++          }
++        } catch (error) {
++          err(`ServerStatus pingSites ${site.url}: ${String(error)}`)
++        } finally {
++          if (runId === runIdRef.current) patchSite(index, { loading: false })
++        }
++      }
++
++      if (runId === runIdRef.current) {
++        runningRef.current = false
++        setMode('idle')
++      }
++    },
++    [patchSite]
++  )
++
++  /** 启动检测, 已有任务在跑时返回 false */
++  const start = useCallback(
++    (sites: Site[], indices: number[], nextMode: ProbeMode) => {
++      if (runningRef.current) return false
++
++      runningRef.current = true
++      setMode(nextMode)
++      runSites(sites, indices)
++
++      return true
++    },
++    [runSites]
++  )
++
++  const pingOne = useCallback(
++    (index: number) => {
++      const sites = listRef.current
++      if (!start(sites, [index], 'one')) return
++
++      /** 埋点置于业务逻辑之后 */
++      t('网络探针.检测', { desc: sites[index]?.desc, url: sites[index]?.url })
++    },
++    [start]
++  )
++
++  const pingAll = useCallback(() => {
++    if (runningRef.current) return
++
++    const sites = getSitesList(subjectStore.origin)
++    setList(sites)
++    start(
++      sites,
++      sites.map((_item, index) => index),
++      'all'
++    )
++
++    /** 埋点置于业务逻辑之后 */
++    t('网络探针.全部检测')
++  }, [start])
++
++  return {
++    /** 站点清单与各自的检测结果 */
++    list,
++
++    /** 当前运行模式 */
++    mode,
++
++    /** 检测单个站点 */
++    pingOne,
++
++    /** 重新取站点清单并逐个检测 */
++    pingAll
++  }
++}
+```
+
+**File**: `src/screens/user/server-status/index.stories.tsx` (modified, +3/-9)
+```diff
+@@ -4,8 +4,7 @@
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2024-09-11 19:54:58
+  */
+-import React from 'react'
+-import { getStorybookArgs, StorybookList, StorybookSPA } from '@components'
++import { StorybookList, StorybookSPA } from '@components'
+ import { ServerStatus as Component } from '@screens'
+ 
+ export default {
+@@ -15,13 +14,8 @@ export default {
+ 
+ export const ServerStatus = () => (
+   <StorybookSPA>
+-    <StorybookList
+-      style={{
+-        // @ts-expect-error
+-        overflowY: 'scroll'
+-      }}
+-    >
+-      <Component {...getStorybookArgs('ServerStatus')} />
++    <StorybookList>
++      <Component />
+     </StorybookList>
+   </StorybookSPA>
+ )
+```
+
+**File**: `src/screens/user/server-status/index.tsx` (modified, +87/-201)
+```diff
+@@ -2,9 +2,10 @@
   * @Author: czy0729
-  * @Date: 2024-01-04 17:46:16
+  * @Date: 2020-10-13 17:10:17
   * @Last Modified by: czy0729
-- * @Last Modified time: 2024-02-03 22:31:58
-+ * @Last Modified time: 2026-10-30 00:00:00
+- * @Last Modified time: 2026-04-21 14:15:55
++ * @Last Modified time: 2026-11-04 12:00:00
 + *
-+ * 额外层标识
++ * 网络探针: 逐个检测客户端依赖的站点与服务延迟
   */
- import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
-```
-
-**File**: `src/screens/rakuen/v2/component/extra/index.tsx` (modified, +3/-1)
-```diff
-@@ -3,11 +3,13 @@
-  * @Date: 2024-01-04 17:45:12
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-10-30 00:00:00
-+ *
-+ * 额外层: 统计与埋点
-  */
+-import React from 'react'
+ import { View } from 'react-native'
  import { observer } from 'mobx-react'
- import { Track } from '@components'
- import { r } from '@utils/dev'
--import Heatmaps from '../heapmaps'
-+import Heatmaps from '../heatmaps'
- import { COMPONENT, HM } from './ds'
+ import {
+@@ -20,214 +21,99 @@ import {
+ } from '@components'
+ import { Notice } from '@_'
+ import { _ } from '@stores'
+-import { ping, t } from '@utils/fetch'
+-import { getSitesList } from './utils'
+-import { HM } from './ds'
++import { stl } from '@utils'
++import { useServerStatusPage } from './hooks'
++import { getStatus } from './utils'
++import { HM, PING_TIMEOUT, STATUS_FAST, STATUS_OK } from './ds'
+ import { memoStyles } from './styles'
  
- function Extra() {
+-/** 最大尝试访问次数 */
+-const PING_COUNTS = 4
+-
+ /** 网络探针 */
+-class ServerStatus extends React.Component {
+-  state = {
+-    list: getSitesList(),
+-    pinging: false
+-  }
+-
+-  private _isUnmounted = false
+-
+-  componentWillUnmount() {
+-    this._isUnmounted = true
+-  }
+-
+-  /** 单个检测 */
+-  onPingOne = (index: number) => {
+-    const { list, pinging } = this.state
+-    if (pinging) return
+-
+-    // 跳过非 http 链接
+-    if (!list[index].url?.startsWith('http')) {
+-      return
+-    }
+-
+-    t('网络探针.检测', { index })
+-
+-    list[index].msg = []
+-    list[index].loading = true
+-
+-    this.setState({ list, pinging: true }, async () => {
+-      const { list } = this.state
+-
+-      for (let ii = 0; ii < PING_COUNTS; ii += 1) {
+-        if (this._isUnmounted) return
+-
+-        const detail = await ping(list[index].url, list[index].headers)
+-
+-        if (!this._isUnmounted) {
+-          list[index].msg.push(detail)
+-          this.setState({ list })
+-        }
+-      }
+-
+-      if (!this._isUnmounted) {
+-        list[index].loading = false
+-        this.setState({ list, pinging: false })
+-      }
+-    })
+-  }
+-
+-  /** 全部检测 */
+-  onPing = () => {
+-    const { pinging } = this.state
+-    if (pinging) return
+-
+-    t('网络探针.全部检测')
+-
+-    this.setState(
+-      {
+-        list: getSitesList(),
+-        pinging: true
+-      },
+-      async () => {
+-        const { list } = this.state
+-        for (let i = 0; i < list.length; i += 1) {
+-          if (this._isUnmounted) return
+-
+-          // 跳过非 http 链接
+-          if (!list[i].url?.startsWith('http')) continue
+-
+-          list[i].loading = true
+-          this.setState({ list })
+-
+-          for (let ii = 0; ii < PING_COUNTS; ii += 1) {
+-            if (this._isUnmounted) return
+-            const detail = await ping(list[i].url, list[i].headers)
+-
+-            if (!this._isUnmounted) {
+-              list[i].msg.push(detail)
+-              this.setState({ list })
+-            }
+-          }
+-
+-          if (!this._isUnmounted) {
+-            list[i].loading = false
+-            this.setState({ list })
+-          }
+-        }
+-
+-        if (!this._isUnmounted) {
+-          this.setState({ pinging: false })
+-        }
+-      }
+-    )
+-  }
+-
+-  computedStatus = (msg: any[]) => {
+-    let sum = 0
+-
+-    // 通常第一个记录不准确很慢, 排除
+-    msg.filter((_item, index) => !!index).forEach(item => (sum += item || 5000))
+-
+-    const avg = sum / msg.length
+-    if (avg <= 150) return 'Success'
+-    if (avg <= 1000) return 'Warning'
+-    return 'Danger'
+-  }
+-
+-  render() {
+-    const { list } = this.state
+-    return (
+-      <Component id='screen-server-status'>
+-        <HeaderPlaceholder />
+-
+-        <Notice>
+-          <Text size={12} lineHeight={13} bold>
+-            这是一个过时的功能，目前已不作维护。
++function ServerStatus() {
++  const { list, mode, pingOne, pingAll } = useServerStatusPage()
++
++  const styles = memoStyles()
++
++  return (
++    <Component id='screen-server-status'>
++      <HeaderPlaceholder />
++      <Notice>
++        <Text size={12} lineHeight={13} bold>
++          旧探针已废弃，请点击设置页面右上角电波图标查看新探针。
++        </Text>
++      </Notice>
++      <ScrollView
++        style={_.container.plain}
++        contentContainerStyle={stl(_.container.bottom, _.container.wind)}
++        scrollToTop
++      >
++        <Text style={_.mt.md} size={12} lineHeight={14} type='sub'>
++          <Text size={12} lineHeight={14} type='success'>
++            绿色 {'<'} {STATUS_FAST}ms
+           </Text>
+-        </Notice>
+-
+-        <ScrollView
+-          style={_.container.plain}
+-          contentContainerStyle={this.styles.contentContainerStyle}
+-          scrollToTop
+-        >
+-          <Text style={_.mt.md} size={12} lineHeight={14} type='sub'>
+-            <Text size={12} lineHeight={14} type='success'>
+-              绿色 {'<'} 150ms
+-            </Text>
+-            ，
+-            <Text size={12} lineHeight={14} type='warning'>
+-              黄色 {'<'} 1000ms
+-            </Text>
+-            ，
+-            <Text size={12} lineHeight={14} type='danger'>
+-              红色 (或超时) {'>'} 1000ms (5000ms)
+-            </Text>{' '}
+-            ，若必要服务为红色则严重影响 App 的正常使用
++          ，
++          <Text size={12} lineHeight={14} type='warning'>
++            黄色 {'<'} {STATUS_OK}ms
+
 ```
 
-**File**: `src/screens/rakuen/v2/component/heatmaps/ds.ts` (renamed, +4/-2)
+**File**: `src/screens/user/server-status/styles.ts` (modified, +6/-8)
 ```diff
-@@ -1,8 +1,10 @@
- /*
+@@ -2,15 +2,13 @@
   * @Author: czy0729
-  * @Date: 2024-01-04 17:47:45
-- * @Last Modified by:   czy0729
-- * @Last Modified time: 2024-01-04 17:47:45
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-30 00:00:00
+  * @Date: 2022-08-20 10:30:40
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2025-12-24 19:08:06
++ * @Last Modified time: 2026-11-04 12:00:00
 + *
-+ * 埋点标识
++ * 网络探针: 列表行、状态点与底部按钮
   */
- import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
+ import { _ } from '@stores'
+ 
+ export const memoStyles = _.memoStyles(() => ({
+-  contentContainerStyle: {
+-    paddingHorizontal: _.wind,
+-    paddingBottom: _.bottom + _.lg
+-  },
+   desc: {
+     width: '52%'
+   },
+@@ -29,13 +27,13 @@ export const memoStyles = _.memoStyles(() => ({
+     marginRight: _.md,
+     borderRadius: 4
+   },
+-  statusSuccess: {
++  success: {
+     backgroundColor: _.colorSuccess
+   },
+-  statusWarning: {
++  warning: {
+     backgroundColor: _.colorWarning
+   },
+-  statusDanger: {
++  danger: {
+     backgroundColor: _.colorDanger
+   },
+   loading: {
 ```
 
-**File**: `src/screens/rakuen/v2/component/heatmaps/index.tsx` (renamed, +2/-0)
+**File**: `src/screens/user/server-status/types.ts` (added, +32/-0)
 ```diff
-@@ -3,6 +3,8 @@
-  * @Date: 2020-12-16 01:24:53
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-10-30 00:00:00
+@@ -0,0 +1,32 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-04 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-04 12:00:00
 + *
-+ * 页面埋点
++ * 网络探针: 站点、探测档位与运行模式
++ */
++
++/** 探测档位, 同时作为状态点样式键 */
++export type ProbeStatus = 'success' | 'warning' | 'danger'
++
++/** 运行模式: 空闲 / 单个站点 / 全部站点 */
++export type ProbeMode = 'idle' | 'one' | 'all'
++
++/** 待检测站点 */
++export type Site = {
++  /** 说明文案 */
++  desc: string
++
++  /** 请求地址, 展示与实际请求共用 */
++  url: string
++
++  /** 每次检测的延迟 (毫秒), 0 表示失败或超时 */
++  msg: number[]
++
++  /** 是否检测中 */
++  loading: boolean
++
++  /** 额外请求头 */
++  headers?: Record<string, string>
++}
+```
+
+**File**: `src/screens/user/server-status/utils.ts` (modified, +81/-101)
+```diff
+@@ -2,124 +2,104 @@
+  * @Author: czy0729
+  * @Date: 2022-08-20 10:24:28
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-04-21 13:54:01
++ * @Last Modified time: 2026-11-04 12:00:00
++ *
++ * 网络探针: 站点清单与延迟档位判定
   */
+-import { subjectStore } from '@stores'
+ import {
+   API_CALENDAR,
+-  API_HOST,
+   API_HOST_TINYGRAIL,
++  API_MK_STATUS_HOST,
+   GITHUB_RELEASE_REPOS,
+   HOST,
+   HOST_AC,
+-  HOST_AC_API,
+   HOST_IMAGE_UPLOAD_RYMK,
+   HOST_NETABA,
+   SITE_AGEFANS,
+   URL_OAUTH
+ } from '@constants'
+ import { getOriginConfig } from '../origin-setting/utils'
++import { PING_TIMEOUT, STATUS_FAST, STATUS_OK, URL_PROBE_BILIBILI, URL_PROBE_YOUKU } from './ds'
+ 
+-/** 获取需要检测的站点 */
+-export function getSitesList() {
+-  const OriginUrls = []
++import type { Origin } from '@types'
++import type { ProbeStatus, Site } from './types'
+ 
++/**
++ * 生成一条待检测站点
++ *
++ * @param desc 说明文案
++ * @param url 请求地址
++ * @param headers 额外请求头
++ */
++function createSite(desc: string, url: string, headers?: Record<string, string>): Site {
++  return {
++    desc,
++    url,
++    msg: [],
++    loading: false,
++    headers
++  }
++}
++
++/**
++ * 用户配置的源头, 只取启用且为 http 地址的项
++ *
++ * @param origin 用户的源头配置
++ */
++function getOriginSites(origin: Origin): Site[] {
+   try {
+-    const origins = getOriginConfig(subjectStore.origin)
+-    Object.keys(origins).forEach(type => {
+-      origins[type].forEach(item => {
+-        if (item.active === 1 && String(item.url).startsWith('http')) {
+-          OriginUrls.push({
+-            title: item.url,
+-            desc: `${item.name} (源头)`,
+-            url: item.url,
+-            msg: [],
+-            loading: false
+-          })
+-        }
+-      })
+-    })
+-  } catch {}
++    return Object.values(getOriginConfig(origin))
++      .flat()
++      .filter(item => item.active === 1 && String(item.url).startsWith('http'))
++      .map(item => createSite(`${item.name} (源头)`, item.url))
++  } catch {
++    return []
++  }
++}
+ 
++/**
++ * 站点清单: 固定依赖 + 用户配置的源头
++ *
++ * @param origin 用户的源头配置
++ */
++export function getSitesList(origin: Origin): Site[] {
+   return [
+-    ...[
+-      {
+-        title: HOST,
+-        desc: '主站 (必要)',
+-        url: `${HOST}/about/copyright`,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: URL_OAUTH,
+-        desc: '授权登录服务 (登录必要)',
+-        url: URL_OAUTH,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: API_HOST,
+-        desc: '主站 API (必要)',
+-        url: API_CALENDAR(),
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: API_HOST_TINYGRAIL,
+-        desc: '小圣杯 API',
+-        url: API_HOST_TINYGRAIL,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: GITHUB_RELEASE_REPOS,
+-        desc: '客户端版本检测',
+-        url: GITHUB_RELEASE_REPOS,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: `${SITE_AGEFANS()}/update`,
+-        desc: 'Agefans',
+-        url: `${SITE_AGEFANS()}/update`,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: `${HOST_AC_API}/pgc/web/season/section?season_id=1`,
+-        desc: 'bilibili 番剧预览图',
+-        url: `${HOST_AC_API}/pgc/web/season/section?season_id=1`,
+-        headers: {
+-          Referer: `${HOST_AC}/`
+-        },
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery',
+-        desc: 'youku 番剧预览图',
+-        url: 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery',
+-        headers: {
+-          Referer: 'https://list.youku.com/'
+-        },
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: HOST_NETABA,
+-        desc: 'netaba.re',
+-        url: HOST_NETABA,
+-        msg: [],
+-        loading: false
+-      },
+-      {
+-        title: HOST_IMAGE_UPLOAD_RYMK,
+-        desc: '免费图床',
+-        url: HOST_IMAGE_UPLOAD_RYMK,
+-        msg: [],
+-        loading: false
+-      }
+-    ],
+-    ...OriginUrls
++    createSite('主站 (必要)', `${HOST}/about/copyright`),
++    createSite('主站 API (必要)', API_CALENDAR()),
++    createSite('授权登录服务 (登录必要)', URL_OAUTH),
++    createSite('服务状态', `${API_MK_STATUS_HOST}/api/mini`),
++    createSite('小圣杯 API', API_HOST_TINYGRAIL),
++    createSite('客户端版本检测', GITHUB_RELEASE_REPOS),
++    createSite('免费图床', HOST_IMAGE_UPLOAD_RYMK),
++    createSite('bilibili 番剧预览图', URL_PROBE_BILIBILI, {
++      Referer: `${HOST_AC}/`
++    }),
++    createSite('youku 番剧预览图', URL_PROBE_YOUKU, {
++      Referer: 'https://list.youku.com/'
++    }),
++    createSite('Agefans', `${SITE_AGEFANS()}/update`),
++    createSite('netaba.re', HOST_NETABA),
++    ...getOriginSites(origin)
+   ]
+ }
++
++/**
++ * 延迟中位数: 只统计成功样本, 首次建连与偶发抖动不会拉偏判定; 全部失败按超时计
++ */
++export function getMedianLatency(msg: number[]) {
++  const valid = msg.filter(item => item > 0).sort((a, b) => a - b)
++  if (!valid.length) return PING_TIMEOUT
++
++  const mid = Math.floor(valid.length / 2)
++  return valid.length % 2 ? valid[mid] : Math.round((valid[mid - 1] + v
+```
+
+**File**: `src/screens/user/setting/component/zhinan/app-zhinan/index.tsx` (modified, +0/-1)
+```diff
+@@ -4,7 +4,6 @@
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-07-24 21:52:16
+  */
+-import React from 'react'
  import { observer } from 'mobx-react'
  import { Heatmap } from '@components'
-```
-
-**File**: `src/screens/rakuen/v2/component/icon/group.tsx` (modified, +2/-0)
-```diff
-@@ -3,6 +3,8 @@
-  * @Date: 2021-01-21 19:56:09
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-10-30 00:00:00
-+ *
-+ * 头部「我的小组」图标
-  */
- import { useCallback } from 'react'
- import { observer } from 'mobx-react'
+ import { ItemSetting } from '@_'
 ```
 
 ---
 
-### Incident Patch 2: `6fb339f8` (2026-10-29)
-**Commit Message**: - [长按菜单] 菜单项支持右侧图标与颜色，Popover 支持对象项、value 选中态与危险动作标红
+### Incident Patch 2: `3e1fdd0c` (2026-11-03)
+**Commit Message**: - [重构] 整理关于客户端页面的代码组织与写法
 
-**File**: `jest/setup.js` (modified, +6/-0)
+**File**: `src/screens/user/qiafan/component/section-1/bar-chart/index.tsx` (modified, +37/-94)
 ```diff
-@@ -315,6 +315,12 @@ jest.mock(
-       URL_DEFAULT_MONO: '/info_only.png',
-       LIST_EMPTY: { list: [], pagination: { page: 0, pageTotal: 0 } },
-       FROZEN_FN: () => {},
-+
-+      // 通用「菜单动作文案 → 图标」映射 (空表即单测不派生图标)
-+      MENU_ICONS: {},
-+
-+      // 危险动作「菜单文案 → 文字颜色类型」映射 (空表即单测不派生颜色)
-+      MENU_TYPES: {},
-       LIKE_TYPE_RAKUEN: 8,
-       LIKE_TYPE_TIMELINE: 40,
-       LIKE_TYPE_SAY: 50,
-```
-
-**File**: `src/components/hold-menu/ds.ts` (modified, +3/-0)
-```diff
-@@ -68,6 +68,9 @@ export const MENU_ITEM_PADDING_VERTICAL = 10
- /** 菜单项文字大小 */
- export const MENU_ITEM_TEXT_SIZE = 16
- 
-+/** 菜单项右侧图标大小 (图标字形小于同字号文本, 取大一档与文字视觉等大) */
-+export const MENU_ITEM_ICON_SIZE = MENU_ITEM_TEXT_SIZE + 2
-+
- /** 菜单标题项文字大小 */
- export const MENU_ITEM_TITLE_SIZE = 14
- 
-```
-
-**File**: `src/components/hold-menu/menu/menu-item/index.tsx` (modified, +52/-14)
-```diff
-@@ -7,16 +7,28 @@
- import { memo } from 'react'
+@@ -3,75 +3,36 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-24 13:35:17
++ *
++ * 每周提交数柱状图: 触摸平移查看某周明细
+  */
+-import { useCallback, useMemo, useRef, useState } from 'react'
++import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
  import { View } from 'react-native'
- import Animated, { useAnimatedStyle } from 'react-native-reanimated'
--import { Text } from '@components/text'
-+import { getTextStyle, Text } from '@components/text'
-+import { Iconfont } from '@components/iconfont'
- import { Touchable } from '@components/touchable'
- import { stl } from '@utils'
--import { MENU_ITEM_TEXT_SIZE, MENU_ITEM_TITLE_SIZE } from '../../ds'
-+import { MENU_ITEM_ICON_SIZE, MENU_ITEM_TEXT_SIZE, MENU_ITEM_TITLE_SIZE } from '../../ds'
- import { useHoldMenu } from '../../context'
- import { memoStyles } from './styles'
+ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+ import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+ import Svg, { Line, Rect } from 'react-native-svg'
+-import { observer } from 'mobx-react'
+ import { Flex, Text } from '@components'
+-import { feedback } from '@utils'
++import { feedback, stl } from '@utils'
+ import { scheduleOnRN } from '@utils/worklets'
+-import {
+-  BADGE_HEIGHT,
+-  BAR_BOTTOM,
+-  BAR_GAP,
+-  BAR_INSET,
+-  BAR_MIN_HEIGHT,
+-  BAR_MIN_WIDTH,
+-  COLOR,
+-  TICK_TEXT_MIN_BOTTOM,
+-  YEAR_MIN_GAP
+-} from '../ds'
+-import { formatWeek, getEvenMonthLabels, getMaxCount, getMonthLabels, getTicks } from '../utils'
++import { BADGE_HALF_WIDTH, BAR_BOTTOM, COLOR, TICK_TEXT_MIN_BOTTOM } from '../ds'
++import { formatWeek, getBarStat } from '../utils'
+ import { styles } from './styles'
  
- import type { MenuPressEvent } from '../../types'
-+import type { TextType } from '@components/text/types'
-+import type { TextStyle as RNTextStyle } from 'react-native'
  import type { Props } from './types'
  
-+/** 从全局 Text 语义色解析具体颜色值 (getTextStyle 内部有缓存; 所有 TextType 均有对应色) */
-+function getTypeColor(type: TextType) {
-+  const styles = getTextStyle({ type })
-+  for (let i = styles.length - 1; i >= 0; i--) {
-+    const color = (styles[i] as RNTextStyle | undefined)?.color
-+    if (color) return color
-+  }
+-/** badge 半宽估算, 用于跟手平移时居中 */
+-const BADGE_HALF_WIDTH = 52
++/** 触点横坐标换算为柱位下标, 超出范围收敛到首尾柱 (worklet) */
++function toBarIndex(x: number, barWidth: number, count: number) {
++  'worklet'
++  return Math.max(0, Math.min(Math.floor(x / barWidth), count - 1))
 +}
-+
- /**
-  * 单个菜单项: 点击执行回调并关闭菜单
-  * 拖动悬停高亮由菜单层手势写 highlightIndex 驱动, 这里只读 shared value 计算背景, 无 re-render
-@@ -25,6 +37,18 @@ function MenuItemComponent({ item, index, isLast, actionParams }: Props) {
-   const { close, highlight } = useHoldMenu()
-   const styles = memoStyles()
  
-+  /** 选中项固定渲染勾图标, 否则渲染调用方传入的图标 */
-+  const iconName = item.isTitle ? '' : item.checked ? 'md-check' : item.icon
-+
-+  /** 文字与右侧图标共用色: 显式 type 优先, 其次破坏性红, 默认菜单文本色 (标题项固定灰色) */
-+  const colorStyle = item.isTitle
-+    ? styles.title
-+    : item.type
-+      ? { color: getTypeColor(item.type) }
-+      : item.isDestructive
-+        ? styles.destructive
-+        : styles.text
-+
-   const handlePress = (evt?: MenuPressEvent) => {
-     item.onPress?.(evt, ...(actionParams?.[item.text] || []))
-     close()
-@@ -43,18 +67,32 @@ function MenuItemComponent({ item, index, isLast, actionParams }: Props) {
-           withoutFeedback={item.isTitle}
-           onPress={item.isTitle ? undefined : handlePress}
-         >
--          <Text
--            style={
--              item.isTitle ? styles.title : item.isDestructive ? styles.destructive : styles.text
--            }
--            size={item.isTitle ? MENU_ITEM_TITLE_SIZE : MENU_ITEM_TEXT_SIZE}
--            align={item.isTitle ? 'center' : 'left'}
--            numberOfLines={item.isTitle ? undefined : 1}
--            ellipsizeMode='middle'
--            s2t={false}
--          >
--            {item.text}
--          </Text>
-+          {item.isTitle ? (
-+            <Text style={colorStyle} size={MENU_ITEM_TITLE_SIZE} align='center' s2t={false}>
-+              {item.text}
-+            </Text>
-+          ) : (
-+            <View style={styles.row}>
-+              <Text
-+                style={stl(colorStyle, styles.flex)}
-+                size={MENU_ITEM_TEXT_SIZE}
-+                align='left'
-+                numberOfLines={1}
-+                ellipsizeMode='middle'
-+                s2t={false}
-+              >
-+                {item.text}
-+              </Text>
-+              {iconName && (
-+                <Iconfont
-+                  style={styles.icon}
-+                  name={iconName}
-+                  size={MENU_ITEM_ICON_SIZE}
-+                  color={colorStyle.color}
-+                />
-+              )}
-+            </View>
-+          )}
-         </Touchable>
-       </Animated.View>
-       {item.withSeparator && <View style={styles.separator} />}
+ /** 每周提交数柱状图, 触摸平移查看某周明细 */
+ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
+   /** 刻度、年份、柱子位置只与数据尺寸有关 */
+-  const stat = useMemo(() => {
+-    if (!weeks.length) return null
+-
+-    const max = getMaxCount(weeks)
+-    const barWidth = width / weeks.length
+-
+-    /** 坐标系底部抬离图表下缘, 0 刻度与柱子不再贴底 */
+-    const bottom = height - BAR_BOTTOM
+-    const usableHeight = bottom - BAR_INSET
+-
+-    /** 每格给右侧留 BAR_GAP 缝, 密集时柱子之间仍有分割 */
+-    const gap = Math.min(BAR_GAP, Math.max(barWidth - BAR_MIN_WIDTH, 0))
+-    const w = Math.max(BAR_MIN_WIDTH, barWidth - gap)
+-
+-    return {
+-      max,
+-      bottom,
+-      barWidth,
+-      ticks: getTicks(max),
+-      months: withYearLabel
+-        ? getEvenMonthLabels(weeks, width, 5, true)
+-        : getMonthLabels(weeks, width, YEAR_MIN_GAP),
+-      bars: weeks.map((item, index) => {
+-        const barHeight = Math.max(BAR_MIN_HEIGHT, (item.c / max) * usableHeight)
+-        return {
+-          key: item.w,
+-          w: item.w,
+-          c: item.c,
+-          index,
+-          x: index * barWidth,
+-          y: bottom - barHeight,
+-          width: w,
+-          height: barHeight
+-        }
+-      })
+-    }
+-  }, [weeks, width, height, withYearLabel])
++  const stat = useMemo(
++    () => getBarStat(weeks, width, height, withYearLabel),
++    [weeks, width, height, withYearLabel]
++  )
+ 
+   /** 当前探查的周下标, -1 表示未触摸 */
+   const [active, setActive] = useState(-1)
+@@ -83,12 +44,14 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
+   const showBadge = useSharedValue(false)
+ 
+   /** worklet 里读不到组件变量, 用 shared value 传图表参数 */
+-  const barWidthSV = useSharedValue(0)
++  const barWidthSV = useSharedValue(stat?.barWidth || 0)
+   const widthSV = useSharedValue(width)
+-  const countSV = useSharedValue(0)
+-  barWidthSV.value = stat?.barWidth || 0
+-  widthSV.value = width
+-  countSV.value = stat?.bars.length || 0
++  const countSV = useSharedValue(stat?.bars.length || 0)
++  useEffect(() => {
++    barWidthSV.value = stat?.barWidth || 0
++    widthSV.value = width
++    countSV.value = stat?.bars.length || 0
++  }, [stat, width, barWidthSV, widthSV, countSV])
+ 
+   /** index 变化时更新 state + 震动; 稳定引用供 worklet 调用 */
+   const applyIndex = useCallback((index: number) => {
+@@ -105,13 +68,13 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
+   const panGesture = Gesture.Pan()
+     .activeOffsetX([-2, 2])
+     .onStart(event => {
+-      const index = Math.max(0, Math.min(Math.floor(event.x / barWidthSV.value), countSV.value - 1))
++      const index = toBarIndex(event.x, barWidthSV.value, countSV.value)
+       showBadge.value = true
+       badgeX.value = (index + 0.5) * barWidthSV.value
+       scheduleOnRN(applyIndex, index)
+     })
+     .onUpdate(event => {
+-      const index = Math.max(0, Math.min(Math.floor(event.x / barWidthSV.value), countSV.value - 1))
++      const index = toBarIndex(event.x, barWidthSV.value, countSV.value)
+       badgeX.value = (index + 0.5) * barWidthSV.value
+       scheduleOnRN(applyIndex, index)
+     })
+@@ -142,26 +105,23 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
+ 
+   return (
+     <Flex>
+-      <View style={[styles.axis, { height }]}>
++      <View style={stl(styles.axis, { height })}>
+         {stat.ticks.map(tick => (
+           <Text
+             key={tick}
+-            style={[
+-              styles.tick,
+-              {
+-                /** 0 刻度兜底上移, 避免文字中心压底边线被裁 */
+-                bottom: Math.max(
+-  
 ```
 
-**File**: `src/components/hold-menu/menu/menu-item/styles.ts` (modified, +10/-0)
+**File**: `src/screens/user/qiafan/component/section-1/bar-chart/styles.ts` (modified, +21/-13)
 ```diff
-@@ -32,6 +32,16 @@ export const memoStyles = _.memoStyles(() => ({
-   text: {
-     color: _.select(MENU_TEXT_LIGHT_COLOR, MENU_TEXT_DARK_COLOR)
-   },
-+  row: {
-+    flexDirection: 'row',
-+    alignItems: 'center'
-+  },
-+  flex: {
-+    flex: 1
-+  },
-+  icon: {
-+    marginLeft: _.r(8)
-+  },
-   title: {
-     color: MENU_TITLE_COLOR
-   },
-```
-
-**File**: `src/components/hold-menu/types.ts` (modified, +11/-1)
-```diff
-@@ -5,7 +5,8 @@
-  * @Last Modified time: 2026-09-10 11:00:00
+@@ -3,23 +3,28 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-24 13:53:08
++ *
++ * 柱状图: 纵轴刻度、横轴月份、触摸探查 badge 与右侧说明
   */
- import type { PropsWithChildren } from 'react'
--import type { ViewStyle } from '@types'
-+import type { IconfontNames, ViewStyle } from '@types'
-+import type { TextType } from '../text'
+ import { _ } from '@stores'
+-import { AXIS_WIDTH, COLOR } from '../ds'
++import { AXIS_WIDTH, BADGE_HEIGHT, BADGE_WIDTH, COLOR, SIDE_WIDTH } from '../ds'
  
- /** 菜单项点击事件 */
- export type MenuPressEvent = {
-@@ -21,6 +22,15 @@ export type MenuItemProps = {
-   /** 文本 */
-   text: string
- 
-+  /** 最右侧图标 (标题项不显示, 与 checked 同传时 checked 优先) */
-+  icon?: IconfontNames
-+
-+  /** 是否为选中项 (最右侧渲染勾图标, 标题项不显示) */
-+  checked?: boolean
-+
-+  /** 文字颜色类型 (全局 Text 语义色, 显式指定时优先于 isDestructive; 标题项忽略) */
-+  type?: TextType
-+
-   /** 是否为标题 (标题项不显示点击反馈, 参与布局但不参与选中) */
-   isTitle?: boolean
- 
+ export const styles = _.create({
+   axis: {
+-    width: AXIS_WIDTH,
+-    position: 'relative'
++    position: 'relative',
++    width: AXIS_WIDTH
++  },
++  main: {
++    flex: 1
+   },
+   tick: {
+     position: 'absolute',
+     right: 6,
+     width: 18,
+     fontSize: 9,
+     lineHeight: 10,
+-    textAlign: 'right',
+-    color: COLOR.sub
++    color: COLOR.sub,
++    textAlign: 'right'
+   },
+   months: {
+     position: 'relative',
+@@ -31,19 +36,22 @@ export const styles = _.create({
+     width: 44,
+     fontSize: 10,
+     lineHeight: 12,
+-    textAlign: 'center',
+-    color: COLOR.sub
++    color: COLOR.sub,
++    textAlign: 'center'
+   },
+-  /** 触摸探查 badge: 跟手平移的时间+数值气泡 */
++  /** 触摸探查 badge: 跟手平移的时间+数值气泡, 定宽保证居中位置稳定 */
+   badge: {
+     position: 'absolute',
+     top: 0,
++    width: BADGE_WIDTH,
++    height: BADGE_HEIGHT,
++    alignItems: 'center',
+     paddingHorizontal: 8,
+     paddingVertical: 4,
+-    borderRadius: 6,
+     backgroundColor: COLOR.miniBg,
+     borderWidth: 1,
+-    borderColor: COLOR.border
++    borderColor: COLOR.border,
++    borderRadius: 6
+   },
+   badgeText: {
+     fontSize: 10,
+@@ -56,16 +64,16 @@ export const styles = _.create({
+     color: COLOR.miniSelect
+   },
+   side: {
+-    width: 14,
+     alignItems: 'center',
+-    justifyContent: 'center'
++    justifyContent: 'center',
++    width: SIDE_WIDTH
+   },
+   sideText: {
+     width: 90,
+     fontSize: 9,
+     lineHeight: 14,
+-    textAlign: 'center',
+     color: COLOR.sub,
++    textAlign: 'center',
+     transform: [
+       {
+         rotate: '90deg'
 ```
 
-**File**: `src/components/popover/__tests__/hooks.menu.test.ts` (added, +137/-0)
+**File**: `src/screens/user/qiafan/component/section-1/bar-chart/types.ts` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,137 @@
+@@ -3,10 +3,13 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-24 13:16:36
++ *
++ * 柱状图 Props
+  */
+ import type { Week } from '../../../github'
+ 
+ export type Props = {
++  /** 每周提交数 */
+   weeks: Week[]
+ 
+   /** 图表区宽度 */
+```
+
+**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/ds.ts` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
 +/*
 + * @Author: czy0729
-+ * @Date: 2026-10-30 06:13:52
-+ * @Last Modified by:   czy0729
-+ * @Last Modified time: 2026-10-30 06:13:52
++ * @Date: 2026-11-03 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-03 12:00:00
 + *
-+ * usePopoverItems 查表与勾选派生分支
-+ *  - setup.js 的 @constants 虚拟 mock 是空表, 这里用 doMock 局部替换为带条目的映射
++ * 提交趋势卡片: 大图与总览缩略图的固定高度
 + */
-+import React from 'react'
 +
-+const TestRenderer = jest.requireActual('react-test-renderer')
++/** 图表区高度 */
++export const CHART_HEIGHT = 110
 +
-+// React 19 要求显式声明 act 测试环境, 否则 act 内状态更新不生效
-+;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+
-+// 屏蔽 react-test-renderer 官方弃用告警
-+const originalConsoleError = console.error
-+beforeAll(() => {
-+  jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
-+    if (String(args[0]).includes('react-test-renderer is deprecated')) return
-+    originalConsoleError(...args)
-+  })
-+})
-+
-+// 简繁转换 mock (同 hooks.test.ts)
-+jest.mock('@utils/thirdParty/open-cc', () => ({
-+  s2t: (text: string) => `T:${text}`
-+}))
-+
-+// 局部 @constants mock: MENU_ICONS_ENABLED 走全局开关, 用例内可动态翻转
-+jest.doMock('@constants', () => ({
-+  FROZEN_FN: () => {},
-+  MENU_ICONS: { 删除: 'md-delete-outline' },
-+  get MENU_ICONS_ENABLED() {
-+    return (globalThis as any).__menuIconsEnabled__
-+  },
-+  MENU_TYPES: { 删除: 'danger' }
-+}))
-+
-+// doMock 必须先于 require 执行, 故此处不能用静态 import
-+const { usePopoverItems } = require('../hooks')
-+
-+function renderHook<T>(useHook: () => T) {
-+  const result = { current: undefined as T }
-+  let renderer: any
-+
-+  function Probe() {
-+    result.current = useHook()
-+    return null
-+  }
-+
-+  TestRenderer.act(() => {
-+    renderer = TestRenderer.create(React.createElement(Probe))
-+  })
-+
-+  return { result }
-+}
-+
-+describe('usePopoverItems 查表与勾选派生', () => {
-+  beforeEach(() => {
-+    ;(globalThis as any).__menuIconsEnabled__ = true
-+  })
-+
-+  afterEach(() => {
-+    ;(globalThis as any).__menuIconsEnabled__ = true
-+  })
-+
-+  it('传 value 时命中项自动渲染勾, 未命中项无勾', () => {
-+    const { result } = renderHook(() => usePopoverItems({ data: ['买入', '删除'], value: '删除' }))
-+
-+    expect(result.current.items[0].checked).toBe(false)
-+    expect(result.current.items[1].checked).toBe(true)
-+  })
-+
-+  it('不传 value 时无勾选态', () => {
-+    const { result } = renderHook(() => usePopoverItems({ data: ['买入'] }))
-+
-+    expect(result.current.items[0].checked).toBe(false)
-+  })
-+
-+  it('对象项显式 checked 优先于 value 推导', () => {
-+    const { result } = renderHook(() =>
-+      usePopoverItems({ data: [{ text: '买入', checked: true }], value: '删除' })
-+    )
-+
-+    expect(result.current.items[0].checked).toBe(true)
-+  })
-+
-+  it('操作型菜单按文案查图标映射', () => {
-+    const { result } = renderHook(() => usePopoverItems({ data: ['删除', '买入'] }))
-+
-+    expect(result.current.items[0].icon).toBe('md-delete-outline')
-+    expect(result.current.items[1].icon).toBeUndefined()
-+  })
-+
-+  it('选择型菜单 (传 value) 不查图标表', () => {
-+    const { result } = renderHook(() => usePopoverItems({ data: ['删除'], value: '删除' }))
-+
-+    expect(result.current.items[0].icon).toBeUndefined()
-+  })
-+
-+  it('MENU_ICONS_ENABLED 关闭时不查图标表', () => {
-+    ;(globalThis as any).__menuIconsEnabled__ = false
-+    const { result } = renderHook(() => usePopoverItems({ data: ['删除'] }))
-+
-+    expect(result.current.items[0].icon).toBeUndefined()
-+  })
-+
-+  it('危险动作查表派生 type=danger', () => {
-+    const { result } = renderHook(() => usePopoverItems({ data: ['删除', '买入'] }))
-+
-+    expect(result.current.items[0].type).toBe('danger')
-+    expect(result.current.items[1].type).toBeUndefined()
-+  })
-+
-+  it('显式 icon 与 type 优先于查表', () => {
-+    const { result } = renderHook(() =>
-+      usePopoverItems({ data: [{ text: '删除', icon: 'md-edit', type: 'main' }] })
-+    )
-+
-+    expect(result.current.items[0].icon).toBe('md-edit')
-+    expect(result.current.items[0].type).toBe('main')
-+  })
-+
-+  it('value 按对象项 text 匹配', () => {
-+    const { result } = renderHook(() =>
-+      usePopoverItems({
-+        data: [{ text: '买入' }, { text: '删除' }],
-+        value: { text: '删除' }
-+      })
-+    )
-+
-+    expect(result.current.items[0].checked).toBe(false)
-+    expect(result.current.items[1].checked).toBe(true)
-+  })
-+})
++/** 总览缩略图高度 */
++export const MINI_HEIGHT = 34
 ```
 
-**File**: `src/components/popover/hooks.ts` (modified, +36/-16)
+**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/index.tsx` (modified, +6/-9)
 ```diff
-@@ -2,13 +2,12 @@
-  * @Author: czy0729
-  * @Date: 2026-09-15 00:00:00
+@@ -3,18 +3,22 @@
+  * @Date: 2026-09-23 12:00:00
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-09-15 07:27:09
-+ * @Last Modified time: 2026-10-30 05:48:29
+  * @Last Modified time: 2026-09-24 13:37:42
++ *
++ * 提交趋势卡片: 大图 + 总览缩略图联动
   */
- import { useCallback, useMemo, useRef, useState } from 'react'
- import { findNodeHandle, UIManager } from 'react-native'
--import { systemStore } from '@stores'
- import { globalWarn } from '@utils/dev'
--import { FROZEN_FN } from '@constants'
-+import { FROZEN_FN, MENU_ICONS, MENU_ICONS_ENABLED, MENU_TYPES } from '@constants'
- import { toMenuLabel, toMenuLabels, usePopoverList } from './utils'
- import { ANDROID_DELAY_PRESS_IN, MENU_CLOSE_DELAY, WEB_SELECT_DELAY } from './ds'
- 
-@@ -32,31 +31,52 @@ let warnedMissingPopupMenu = false
- /** iOS: 把菜单数据派生为 hold-menu 菜单项 */
- export function usePopoverItems<Data extends PopoverData>({
-   data,
-+  value,
-   title = '',
-   onSelect = FROZEN_FN,
-   onLongPress,
-   activateOn
- }: UsePopoverItemsOptions<Data>): UsePopoverItemsResult {
-   const list = usePopoverList(data)
- 
--  /** 简繁开关变化需要重新派生菜单文案, 故读出作为 memo 依赖 */
--  const s2tEnabled = systemStore.setting.s2t
--
-   // 外部传了 onLongPress 说明长按语义归调用方, 菜单自动降级为纯点击激活, 不抢占长按
-   const hasExternalLongPress = typeof onLongPress === 'function'
- 
-   const items = useMemo<PopoverIOSItems>(() => {
-     // 显式引用开关: 简繁设置变化时 memo 需重算 (toMenuLabels / toMenuLabel 读取的是同一个开关)
--    const labels = s2tEnabled ? toMenuLabels(list) : list.slice()
--    const itemsValue: PopoverIOSItems = labels.map((text, index) => ({
--      text,
--      onPress: (evt?: PopoverEvent) => {
--        // 等菜单收起动画结束再触发动作, 避免跳转/弹窗与关闭动画重叠
--        setTimeout(() => {
--          onSelect(list[index], index, evt)
--        }, MENU_CLOSE_DELAY)
-+    const labels = toMenuLabels(list)
-+    const valueText = typeof value === 'string' ? value : value?.text
-+
-+    const itemsValue: PopoverIOSItems = labels.map((text, index) => {
-+      const entry = list[index]
-+      const rawText = typeof entry === 'string' ? entry : entry.text
-+
-+      /**
-+       * 操作型菜单 (未传 value) 按原始文案查通用图标映射, 显式 icon 优先;
-+       * 选择型菜单 (传 value) 只派生勾, 不查表, 两类菜单互不干扰;
-+       * 查表受 MENU_ICONS_ENABLED 总开关控制
-+       */
-+      const mappedIcon = value === undefined && MENU_ICONS_ENABLED ? MENU_ICONS[rawText] : undefined
-+
-+      /** 危险动作按文案查表标红 (danger), 显式 type 优先; 选择型菜单不查表 */
-+      const mappedType = value === undefined ? MENU_TYPES[rawText] : undefined
-+
-+      return {
-+        text,
-+        icon: typeof entry === 'string' ? mappedIcon : entry.icon ?? mappedIcon,
-+        checked:
-+          typeof entry === 'string'
-+            ? rawText === valueText
-+            : entry.checked ?? rawText === valueText,
-+        type: typeof entry === 'string' ? mappedType : entry.type ?? mappedType,
-+        onPress: (evt?: PopoverEvent) => {
-+          // 等菜单收起动画结束再触发动作, 避免跳转/弹窗与关闭动画重叠
-+          setTimeout(() => {
-+            onSelect(entry, index, evt)
-+          }, MENU_CLOSE_DELAY)
-+        }
-       }
--    }))
-+    })
- 
-     if (title) {
-       itemsValue.unshift({
-@@ -66,7 +86,7 @@ export function usePopoverItems<Data extends PopoverData>({
-     }
- 
-     return itemsValue
--  }, [title, list, onSelect, s2tEnabled])
-+  }, [value, title, list, onSelect])
- 
-   return {
-     items,
-```
-
-**File**: `src/components/popover/index.tsx` (modified, +3/-1)
-```diff
-@@ -2,7 +2,7 @@
-  * @Author: czy0729
-  * @Date: 2022-05-02 11:29:48
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-09-15 05:57:59
-+ * @Last Modified time: 2026-10-30 05:13:41
-  */
+ import { useMemo } from 'react'
  import { View } from 'react-native'
  import { observer } from 'mobx-react'
-@@ -19,6 +19,7 @@ export type { PopoverProps, PopoverData }
- /** 点击位置弹出层 (iOS: react-native-hold-menu) */
- function Popover<Data extends PopoverData>({
-   data,
-+  value,
-   title = '',
-   style,
-   activateOn,
-@@ -31,6 +32,7 @@ function Popover<Data extends PopoverData>({
+ import { Flex, Text } from '@components'
+ import { _ } from '@stores'
++import { stl } from '@utils'
+ import { AXIS_WIDTH } from '../ds'
+ import BarChart from '../bar-chart'
+ import { useWeekRange } from '../hooks'
+ import { formatWeek, getChartWidth } from '../utils'
+ import MiniChart from './mini-chart'
+-import { CHART_HEIGHT, MINI_HEIGHT, styles } from './styles'
++import { CHART_HEIGHT, MINI_HEIGHT } from './ds'
++import { styles } from './styles'
  
-   const { items, activateOn: popoverActivateOn } = usePopoverItems({
-     data,
-+    value,
-     title,
-     onSelect,
-     onLongPress,
+ import type { Props } from './types'
+ 
+@@ -31,14 +35,7 @@ function CommitsOverTime({ width, weeks }: Props) {
+   const to = visibleWeeks[visibleWeeks.length - 1]?.w
+ 
+   return (
+-    <View
+-      style={[
+-        styles.card,
+-        {
+-          width
+-        }
+-      ]}
+-    >
++    <View style={stl(styles.card, { width })}>
+       <Flex align='center'>
+         <Flex.Item>
+           <Text style={styles.title}>Commits over time</Text>
+```
+
+**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/mini-chart/index.tsx` (modified, +24/-57)
+```diff
+@@ -3,14 +3,16 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-24 13:16:40
++ *
++ * 总览缩略图: 折线 + 可拖动的区间选择框
+  */
+-import { useCallback, useEffect, useMemo, useRef } from 'react'
++import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
+ import { View } from 'react-native'
+ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+ import Svg, { Path, Polyline, Rect } from 'react-native-svg'
+-import { observer } from 'mobx-react'
+ import { Text } from '@components'
++import { stl } from '@utils'
+ import { scheduleOnRN } from '@utils/worklets'
+ import { COLOR, MINI_HANDLE_INSET, MINI_PADDING_BOTTOM, MINI_PADDING_TOP } from '../../ds'
+ import { getEvenYearLabels, getMaxCount } from '../../utils'
+@@ -51,20 +53,23 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
+   const widthSV = useSharedValue(width)
+   const maxSelectXSV = useSharedValue(maxSelectX)
+   const spanSV = useSharedValue(span)
+-  widthSV.value = width
+-  maxSelectXSV.value = maxSelectX
+-  spanSV.value = span
++  useEffect(() => {
++    widthSV.value = width
++    maxSelectXSV.value = maxSelectX
++    spanSV.value = span
++  }, [width, maxSelectX, span, widthSV, maxSelectXSV, spanSV])
+ 
+   /** 手势基准: 拖动开始时的选择框左偏移 */
+   const dragStartX = useSharedValue(0)
+   const isDragging = useSharedValue(false)
+   const translateX = useSharedValue(restX)
++  const restXSV = useSharedValue(restX)
+ 
+   /** 数据刷新或外部 start 变化时, 非拖动态下选择框归位到对应周 */
+   useEffect(() => {
++    restXSV.value = restX
+     if (!isDragging.value) translateX.value = restX
+-    // eslint-disable-next-line react-hooks/exhaustive-deps
+-  }, [restX])
++  }, [isDragging, restX, translateX, restXSV])
+ 
+   /** 松手提交: worklet 里只能捕获稳定引用, 内部再读最新的 onMove */
+   const onMoveRef = useRef(onMove)
+@@ -84,14 +89,18 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
+       translateX.value = Math.max(0, Math.min(next, maxSelectXSV.value))
+     })
+     .onEnd(() => {
+-      isDragging.value = false
+-
+       /** 像素位置 -> 起始周下标, 吸附到整格后提交给 JS 侧更新大图 */
+       const nextStart = Math.round((translateX.value / widthSV.value) * spanSV.value)
+       const snappedX = Math.min((nextStart / spanSV.value) * widthSV.value, maxSelectXSV.value)
+       translateX.value = withTiming(snappedX, { duration: 120 })
+       scheduleOnRN(submit, nextStart)
+     })
++    .onFinalize((_event, success) => {
++      isDragging.value = false
++
++      /** 被外层滚动抢走而取消时 onEnd 不执行, 选择框回到当前区间对应的位置 */
++      if (!success) translateX.value = withTiming(restXSV.value, { duration: 120 })
++    })
+ 
+   /** 选择框位置完全由 translateX 驱动: 拖动中跟手, 松手时已吸附 */
+   const selectStyle = useAnimatedStyle(() => ({
+@@ -103,69 +112,27 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
+   const handleHeight = height - MINI_HANDLE_INSET * 2 - 2
+ 
+   return (
+-    <View
+-      style={[
+-        styles.mini,
+-        {
+-          width,
+-          height
+-        }
+-      ]}
+-    >
++    <View style={stl(styles.mini, { width, height })}>
+       <Svg width={width} height={height}>
+         <Rect x={0} y={0} width={width} height={height} rx={2} fill={COLOR.miniBg} />
+         <Path d={stat.area} fill={COLOR.miniArea} />
+         <Polyline points={stat.line} fill='none' stroke={COLOR.miniLine} strokeWidth={1} />
+       </Svg>
+       {stat.years.map(item => (
+-        <Text
+-          key={item.label}
+-          style={[
+-            styles.miniYear,
+-            {
+-              left: item.left - 14
+-            }
+-          ]}
+-        >
++        <Text key={item.label} style={stl(styles.miniYear, { left: item.left - 14 })}>
+           {item.label}
+         </Text>
+       ))}
+       <GestureDetector gesture={panGesture}>
+         <Animated.View
+-          style={[
+-            styles.selectBox,
+-            {
+-              top: 1,
+-              width: selectWidth,
+-              height: height - 2
+-            },
+-            selectStyle
+-          ]}
++          style={stl(styles.selectBox, { width: selectWidth, height: height - 2 }, selectStyle)}
+         >
+-          <View
+-            style={[
+-              styles.handle,
+-              {
+-                left: 0,
+-                top: MINI_HANDLE_INSET - 1,
+-                height: handleHeight
+-              }
+-            ]}
+-          />
+-          <View
+-            style={[
+-              styles.handle,
+-              {
+-                right: 0,
+-                top: MINI_HANDLE_INSET - 1,
+-                height: handleHeight
+-              }
+-            ]}
+-          />
++          <View style={stl(styles.handle, styles.handleLeft, { height: handleHeight })} />
++          <View style={stl(styles.handle, styles.handleRight, { height: handleHeight })} />
+         </Animated.View>
+       </GestureDetector>
+     </View>
+   )
+ }
+ 
+-export default observer(MiniChart)
++e
+```
+
+**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/mini-chart/styles.ts` (modified, +15/-5)
+```diff
+@@ -3,9 +3,11 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-24 13:16:43
++ *
++ * 缩略图: 年份刻度与区间选择框
+  */
+ import { _ } from '@stores'
+-import { COLOR, MINI_HANDLE_WIDTH } from '../../ds'
++import { COLOR, MINI_HANDLE_INSET, MINI_HANDLE_WIDTH } from '../../ds'
+ 
+ export const styles = _.create({
+   mini: {
+@@ -15,6 +17,7 @@ export const styles = _.create({
+   /** 选择框: 跟手平移, 边框即区间范围 */
+   selectBox: {
+     position: 'absolute',
++    top: 1,
+     left: 0,
+     borderWidth: 1,
+     borderColor: COLOR.miniSelect,
+@@ -23,17 +26,24 @@ export const styles = _.create({
+   /** 选择框两侧把手 */
+   handle: {
+     position: 'absolute',
++    top: MINI_HANDLE_INSET - 1,
+     width: MINI_HANDLE_WIDTH,
+-    borderRadius: 1,
+-    backgroundColor: COLOR.handle
++    backgroundColor: COLOR.handle,
++    borderRadius: 1
++  },
++  handleLeft: {
++    left: 0
++  },
++  handleRight: {
++    right: 0
+   },
+   miniYear: {
+     position: 'absolute',
+     bottom: 3,
+     width: 28,
+     fontSize: 8,
+     lineHeight: 10,
+-    textAlign: 'center',
+-    color: COLOR.text
++    color: COLOR.text,
++    textAlign: 'center'
+   }
+ })
+```
+
+**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/styles.ts` (modified, +4/-8)
+```diff
+@@ -3,21 +3,17 @@
+  * @Date: 2026-09-23 12:00:00
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-23 12:00:00
++ *
++ * 提交趋势卡片: 深色卡片与标题排版
+  */
+ import { _ } from '@stores'
+ import { CARD_WIND, COLOR } from '../ds'
+ 
+-/** 图表区高度 */
+-export const CHART_HEIGHT = 110
+-
+-/** 总览缩略图高度 */
+-export const MINI_HEIGHT = 34
+-
+ export const styles = _.create({
+   card: {
+     padding: CARD_WIND,
+-    borderRadius: _.radiusSm,
+-    backgroundColor: COLOR.card
++    backgroundColor: COLOR.card,
++    borderRadius: _.radiusSm
+   },
+   title: {
+     fontSize: 13,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1839,41 +2504,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [超展开] 整理页面结构，清理无用图标与冗余类型标注
+## X. - [重构] 重写网络探针页面，检测更快、结果更稳定
 
 **RULE**:
-When implementing operations in `.claude/docs/architecture.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/screens/user/server-status/ds.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a981aee`: - [超展开] 整理页面结构，清理无用图标与冗余类型标注. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36f62871`: - [重构] 重写网络探针页面，检测更快、结果更稳定. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/docs/architecture.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/screens/user/server-status/ds.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## 导入约定（首屏）
+ * @Last Modified by: czy0729
+ * @Last Modified time: 2026-11-04 12:00:00
+ *
+ * 网络探针: 页面标识、探测地址与检测参数
+import { HOST_AC_API } from '@constants'
 
-6 个底部 tab 的根页面入口一律用**深路径**引 `Component` / `Page`，不要用 `@components` barrel：
+export const COMPONENT = 'ServerStatus'
 
-```ts
-import { Component } from '@components/component'
-import { Page } from '@components/page'
-```
 
-- 涉及页面：`discovery/index`、`timeline/v2`、`home/v2`、`rakuen/v2`、`user/v2`、`tinygrail/index`
-- 原因：`src/components/index.ts` 是 ~80 个 `export *` 的 barrel，走 barrel 会把这套组件全部纳入模块图；这些页面在导航初始化时就被加载（不走 `React.lazy`），是冷启动路径的一部分
-- 其余页面都是懒加载，页面加载时 barrel 早已就绪，照常写 `@components` 即可
-- 同理，这些入口页不要为了「导入整齐」把深路径合并成 barrel，属于有意的性能约定
+/** 探针请求: bilibili 番剧分区, 只用于检测延迟 */
+export const URL_PROBE_BILIBILI = `${HOST_AC_API}/pgc/web/season/section?season_id=1`
 
+/** 探针请求: youku 番剧预览, 只用于检测延迟 */
+export const URL_PROBE_YOUKU = 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery'
+
+/** 每个站点最多检测次数, 失败即停止 */
+export const PING_COUNTS = 4
+
+/** 单次检测超时 (毫秒) */
+export const PING_TIMEOUT = 5000
+
+/** 平均延迟低于此值显示绿色 (毫秒) */
+export const STATUS_FAST = 150
+
+/** 平均延迟低于此值显示黄色, 超过或失败显示红色 (毫秒) */
+export const STATUS_OK = 1000
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ * @Last Modified by:   czy0729
+ * @Last Modified time: 2024-12-11 20:43:05
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a981aee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36f62871` are properly handled with clean fallback behavior.

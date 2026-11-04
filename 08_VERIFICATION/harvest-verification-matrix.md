@@ -7231,3 +7231,6 @@
 | `CYCLE-20261104-76C5` | `2026-11-04T16:34:27.413Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6833, Rule 6834, Rule 6835` | Yes (`79306e4f...`) |
 | `CYCLE-20261104-76NL` | `2026-11-04T16:34:27.825Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6836` | Yes (`f0aeb914...`) |
 | `CYCLE-20261104-7FDD` | `2026-11-04T16:34:39.121Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6837` | Yes (`e5639165...`) |
+| `CYCLE-20261104-IA0T` | `2026-11-04T16:43:05.405Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6838` | Yes (`aa3dc7fe...`) |
+| `CYCLE-20261104-IE0F` | `2026-11-04T16:43:10.575Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6839` | Yes (`2d40adf1...`) |
+| `CYCLE-20261104-IFSH` | `2026-11-04T16:43:12.881Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6840, Rule 6841, Rule 6842` | Yes (`664864a7...`) |

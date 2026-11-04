@@ -7240,3 +7240,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-04T16:34:27.416Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e43834ca` | Multi-dimensional audit evidence | 2026-11-04T16:34:27.829Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `b24a3efb` | Multi-dimensional audit evidence | 2026-11-04T16:34:39.125Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `7c71db93` | Multi-dimensional audit evidence | 2026-11-04T16:43:05.408Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `36f62871` | Multi-dimensional audit evidence | 2026-11-04T16:43:10.579Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-04T16:43:12.884Z |
