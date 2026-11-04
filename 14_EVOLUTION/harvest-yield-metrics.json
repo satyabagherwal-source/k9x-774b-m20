@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:25:14.034Z",
-  "total_cycles_completed": 7299,
-  "total_learnings_persisted": 7299,
-  "total_rules_promoted": 6996,
+  "last_updated": "2026-11-04T20:32:01.505Z",
+  "total_cycles_completed": 7301,
+  "total_learnings_persisted": 7301,
+  "total_rules_promoted": 6998,
   "history": [
-    {
-      "timestamp": "2026-11-04T02:19:24.846Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:26:09.702Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T02:26:10.668Z",
       "repository": "callstack/react-native-paper",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T20:25:14.034Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:31:57.913Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:32:01.505Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

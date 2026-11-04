@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T20:25:14.045Z",
+  "last_updated": "2026-11-04T20:32:01.518Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "f139df42f2f2a0b8de91445eb72408fe3ea2450733d55fb5581e852342fb4ec0",
-      "verified_at": "2026-11-03T16:09:09.023Z",
+      "content_hash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
+      "verified_at": "2026-11-04T20:31:57.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:09:09.023Z"
+      "last_updated": "2026-11-04T20:31:57.923Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
-      "verified_at": "2026-10-28T02:41:25.117Z",
+      "content_hash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
+      "verified_at": "2026-11-04T20:32:01.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:41:25.117Z"
+      "last_updated": "2026-11-04T20:32:01.517Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

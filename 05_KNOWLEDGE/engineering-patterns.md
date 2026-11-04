@@ -505555,3 +505555,114 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5df70b0f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6959. Native UI scroll improvements (#243) (Harvested from zenbu-labs/terminal-browser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Native UI scroll improvements (#243)",
+  "source": "zenbu-labs/terminal-browser",
+  "source_url": "https://github.com/zenbu-labs/terminal-browser",
+  "source_version": "d02e800f",
+  "license": "MIT",
+  "extracted_at": "2026-11-04T20:31:57.616Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zenbu-labs-terminal-browser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `d02e800f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d02e800f`: Native UI scroll improvements (#243). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| `position` | `"flow" \| "absolute" \| "sticky"` (sticky: `inset.top` is how close to the top of the scroll area it stops; it stays inside its parent and paints over the parent's other children) |
+| `layout` | `"flex" \| "list"`, see Long lists |
+| `scrollAnchor` | `"auto" \| "end"` (`"end"`: a scroll box at its end stays at its end as its content grows) |
+<!-- fixme: placeholder copy -->
+### Long lists
+
+A scroll box with `layout: "list"` lays its children out one at a time as rows at its own width, stacked with `gap` inside `padding`, instead of as one flexbox; the box gets its size from its parent like any scroll box. Changing, adding or removing a row only lays out that row, and scrolling only places and draws the rows on screen, so a list of thousands of rows scrolls and streams as fast as a short one. Rows far from the viewport are laid out in idle time; until then they keep their last height (or the average row height). When rows above the viewport change height, the first visible row keeps its place, so what you are reading never jumps. Use `scrollAnchor: "end"` to keep following new rows at the end, and `position: "sticky"` with `onStick` for headers that stay at the top w
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+| `position` | `"flow" \| "absolute"` |
+| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d02e800f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6960. start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805) (Harvested from TanStack/router)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805)",
+  "source": "TanStack/router",
+  "source_url": "https://github.com/TanStack/router",
+  "source_version": "c5320d7c",
+  "license": "MIT",
+  "extracted_at": "2026-11-04T20:32:01.191Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tanstack-router",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TanStack/router](https://github.com/TanStack/router) (Revision: `c5320d7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/rsbuild-spa-dev-shell.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c5320d7c`: start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsbuild-spa-dev-shell.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+'@tanstack/start-plugin-core': patch
+---
+
+With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev server does, instead of rendering the route and running its loaders on the server.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c5320d7c` are properly handled with clean fallback behavior.

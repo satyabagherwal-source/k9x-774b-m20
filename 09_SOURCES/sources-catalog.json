@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "1cadf448",
+    "sourceVersion": "d02e800f",
     "license": "MIT",
-    "contentHash": "f139df42f2f2a0b8de91445eb72408fe3ea2450733d55fb5581e852342fb4ec0",
-    "lastHarvestedAt": "2026-11-03T16:09:09.013Z",
+    "contentHash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
+    "lastHarvestedAt": "2026-11-04T20:31:57.908Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -11383,10 +11383,10 @@
     "repository": "TanStack/router",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/router",
-    "sourceVersion": "da2adec7",
+    "sourceVersion": "c5320d7c",
     "license": "MIT",
-    "contentHash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
-    "lastHarvestedAt": "2026-10-28T02:41:25.109Z",
+    "contentHash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
+    "lastHarvestedAt": "2026-11-04T20:32:01.500Z",
     "learningId": "learn-github-tanstack-router"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {

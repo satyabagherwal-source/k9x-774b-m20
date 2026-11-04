@@ -7331,3 +7331,5 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ff11b355` | Multi-dimensional audit evidence | 2026-11-04T20:25:07.928Z |
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-04T20:25:09.265Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `4876e026` | Multi-dimensional audit evidence | 2026-11-04T20:25:14.030Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d02e800f` | Multi-dimensional audit evidence | 2026-11-04T20:31:57.908Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `c5320d7c` | Multi-dimensional audit evidence | 2026-11-04T20:32:01.500Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `da2adec7`  
+> **Source Version**: `c5320d7c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:41:24.693Z  
+> **Timestamp**: 2026-11-04T20:32:00.860Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:41:24.686Z  
+> **Harvest Timestamp**: 2026-11-04T20:32:00.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15254 stars
+- **Stars / Engagement**: 15281 stars
 
 ---
 
@@ -684,592 +684,663 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63a886da` (2026-10-19)
-**Commit Message**: fix(start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild dev (#8750)
+### Incident Patch 1: `c5320d7c` (2026-11-04)
+**Commit Message**: fix(start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805)
 
-* fix(start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild dev
+* fix(start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode
 
-- Skip the resolver rebuild at the end of make when the resolver has not
-  been written since this compiler last rebuilt it. Rebuilding an
-  unchanged resolver made Rspack rebuild the server chunk graph after
-  every edit.
-- Child compilations still rebuild every time and do not change the
-  parent compiler's state.
-- The RSC resolver hook skips unchanged writes in dev, like the non-RSC
-  hook.
+In Rsbuild dev mode, `source.define` now sets `process.env.TSS_SHELL` and `import.meta.env.TSS_SHELL` from `startConfig.spa?.enabled` (`"true"` when SPA mode is enabled, `"false"` otherwise). Before this, Rsbuild dev never defined `TSS_SHELL`, so with `spa: { enabled: true }` it server-rendered the matched route and ran its loader on the server instead of serving only the shell. Build and preview are unchanged: the define is added only when `isDev` is true.
 
-* docs: drop the COMPILER_ARCHITECTURE.md change
+Changes:
+- `packages/start-plugin-core/src/rsbuild/plugin.ts`: add the dev-only `TSS_SHELL` defines to the Rsbuild define block.
+- `packages/start-plugin-core/tests/rsbuild/spa-shell-define.test.ts`: new test that calls the plugin's `modifyRsbuildConfig` hook. It checks that `TSS_SHELL` is `"true"` in dev with SPA enabled, `"false"` in dev without SPA, and not defined in build.
+- `.changeset/rsbuild-spa-dev-shell.md`: patch changeset for `@tanstack/start-plugin-core`.
 
-**File**: `.changeset/skip-unchanged-resolver-rebuild.md` (added, +5/-0)
+Fixes #8543
+
+Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]>
+Assisted-by: claude-sonnet-5-5 (via Claude Code)
+
+
+**File**: `.changeset/rsbuild-spa-dev-shell.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@tanstack/start-plugin-core': patch
 +---
 +
-+Skip the server function resolver rebuild in Rsbuild dev when the resolver has not changed, so most edits no longer rebuild the whole server chunk graph.
++With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev server does, instead of rendering the route and running its loaders on the server.
 ```
 
-**File**: `packages/start-plugin-core/src/rsbuild/plugin.ts` (modified, +27/-25)
+**File**: `e2e/react-start/basic/package.json` (modified, +28/-0)
 ```diff
-@@ -27,6 +27,7 @@ import {
- } from './virtual-modules'
- import { createServerSetup } from './server-middleware'
- import { registerClientBuildCapture } from './normalized-client-build'
-+import { tapServerFnResolverRebuild } from './server-fn-resolver-rebuild'
- import { registerRouterPlugins } from './start-router-plugin'
- import { postBuildWithRsbuild } from './post-build'
- import { enableSwcReactServerComponents } from './swc-rsc'
-@@ -343,22 +344,24 @@ export function tanStackStartRsbuild(
-             return
-           }
+@@ -50,6 +50,18 @@
+     "zod": "^4.4.3"
+   },
+   "nx": {
++    "targets": {
++      "test:e2e--vite-spa--dev": {
++        "dependsOn": [
++          "^build"
++        ]
++      },
++      "test:e2e--rsbuild-spa--dev": {
++        "dependsOn": [
++          "^build"
++        ]
++      }
++    },
+     "metadata": {
+       "playwrightModes": [
+         {
+@@ -60,6 +72,14 @@
+           "toolchain": "vite",
+           "mode": "spa"
+         },
++        {
++          "toolchain": "vite",
++          "mode": "spa",
++          "name": "dev",
++          "env": {
++            "E2E_DEV_SERVER": "true"
++          }
++        },
+         {
+           "toolchain": "vite",
+           "mode": "prerender",
+@@ -87,6 +107,14 @@
+           "toolchain": "rsbuild",
+           "mode": "spa"
+         },
++        {
++          "toolchain": "rsbuild",
++          "mode": "spa",
++          "name": "dev",
++          "env": {
++            "E2E_DEV_SERVER": "true"
++          }
++        },
+         {
+           "toolchain": "rsbuild",
+           "mode": "prerender",
+```
+
+**File**: `e2e/react-start/basic/playwright.config.ts` (modified, +17/-1)
+```diff
+@@ -5,19 +5,35 @@ const mode = process.env.MODE ?? 'ssr'
+ const toolchain = process.env.E2E_TOOLCHAIN ?? 'vite'
  
-+          const environmentName = utils.environment.name
-           config.plugins.push({
-             apply(compiler: RspackCompiler) {
--              compiler.hooks.finishMake.tapPromise(
--                {
--                  name: 'TanStackStartServerFnResolverRebuild',
--                  stage: -10,
--                },
--                async (compilation: RspackCompilationExtended) => {
-+              tapServerFnResolverRebuild(compiler, {
-+                name: 'TanStackStartServerFnResolverRebuild',
-+                updateResolver: () => {
-                   virtualModuleState.updateServerFnResolver()
--
--                  await rebuildModulesContaining(
-+                },
-+                getResolverWriteCount: () =>
-+                  virtualModuleState.getServerFnResolverWriteCount(
-+                    environmentName,
-+                  ),
-+                rebuildResolver: (compilation) =>
-+                  rebuildModulesContaining(
-                     compilation,
-                     virtualModuleState.serverFnResolverPath,
--                  )
--                },
--              )
-+                  ),
-+              })
-             },
-           })
-         })
-@@ -537,24 +540,23 @@ export function tanStackStartRsbuild(
+ const distDir = process.env.E2E_DIST_DIR ?? 'dist'
++// The dev runs start the dev server and run only the SPA shell spec
++const devServer = process.env.E2E_DEV_SERVER === 'true'
  
-             config.plugins.push({
-               apply(compiler: RspackCompiler) {
--                compiler.hooks.finishMake.tapPromise(
--                  {
--                    name: 'TanStackStartRscServerFnResolverRebuild',
--                    stage: -10,
--                  },
--                  async (compilation: RspackCompilationExtended) => {
--                    const resolverContent =
--                      virtualModuleState.generateCurrentResolverContent(true)
-+                tapServerFnResolverRebuild(compiler, {
-+                  name: 'TanStackStartRscServerFnResolverRebuild',
-+                  updateResolver: () => {
-                     virtualModuleState.tryUpdateServerFnResolver(
--                      resolverContent,
-+                      virtualModuleState.generateCurrentResolverContent(true),
-                     )
--
--                    await rebuildModulesContaining(
-+                  },
-+                  getResolverWriteCount: () =>
-+                    virtualModuleState.getServerFnResolverWriteCount(
-+                      RSBUILD_ENVIRONMENT_NAMES.server,
-+                    ),
-+                  rebuildResolver: (compilation) =>
-+                    rebuildModulesContaining(
-                       compilation,
-                       virtualModuleState.serverFnResolverPath,
--                    )
--                  },
--                )
-+                    ),
-+                })
-               },
-             })
+ const PORT = Number(process.env.E2E_APP_PORT ?? 0)
+ const baseURL = `http://localhost:${PORT}`
+ const previewCommand =
+   toolchain === 'rsbuild'
+     ? `pnpm preview:rsbuild --host 0.0.0.0 --port ${PORT}`
+     : `pnpm preview --host 0.0.0.0 --outDir ${distDir} --port ${PORT}`
+-const commandByMode = mode === 'preview' ? previewCommand : 'pnpm start'
++const devCommand =
++  toolchain === 'rsbuild'
++    ? `pnpm dev:rsbuild --port ${PORT}`
++    : `pnpm dev:vite --port ${PORT}`
++const commandByMode = devServer
++  ? devCommand
++  : mode === 'preview'
++    ? previewCommand
++    : 'pnpm start'
+ /**
+  * See https://playwright.dev/docs/test-configuration.
+  */
+ export default defineConfig({
+   testDir: './tests',
++  ...(devServer
++    ? {
++        testMatch: 'spa-shell.spec.ts',
++        globalSetup: './tests/setup/dev-server.setup.ts',
++      }
++    : {}),
+   workers: 1,
+   reporter: [['line']],
  
 ```
 
-**File**: `packages/start-plugin-core/src/rsbuild/server-fn-resolver-rebuild.ts` (added, +53/-0)
+**File**: `e2e/react-start/basic/tests/setup/dev-server.setup.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { preOptimizeDevServer, waitForServer } from '@tanstack/router-e2e-utils'
++
++export default async function setup() {
++  const port = Number(process.env.E2E_APP_PORT ?? 0)
++  const baseURL = `http://localhost:${port}`
++
++  await waitForServer(baseURL)
++  await preOptimizeDevServer({
++    baseURL,
++    warmup: async (page) => {
++      await page.getByRole('heading').getByText('Welcome Home').waitFor()
++      await page.goto(`${baseURL}/specialChars/search?searchParam=warmup`)
++      await page.getByTestId('special-search-loaded-info').waitFor()
++      await page.goto(`${baseURL}/posts`)
++      await page.getByRole('link', { name: 'sunt aut facere repe' }).waitFor()
++      await page.waitForLoadState('networkidle')
++    },
++  })
++}
+```
+
+**File**: `e2e/react-start/basic/tests/spa-shell.spec.ts` (added, +53/-0)
 ```diff
 @@ -0,0 +1,53 @@
-+import type { Rspack } from '@rsbuild/core'
++import { expect } from '@playwright/test'
++import { test } from '@tanstack/router-e2e-utils'
++import { isSpaMode } from './utils/isSpaMode'
 +
-+export interface ServerFnResolverRebuildOptions {
-+  /** Name of the finishMake tap. */
-+  name: string
-+  /** Writes the current resolver content to its virtual module. */
-+  updateResolver: () => void
-+  /** Returns how many times this environment's resolver has been written. */
-+  getResolverWriteCount: () => number
-+  /** Rebuilds the resolver module in the given compilation. */
-+  rebuildResolver: (compilation: Rspack.Compilation) => Promise<void>
-+}
++// The prod SPA run and the dev SPA runs (`E2E_DEV_SERVER`) all run this file.
++// The dev runs run nothing else.
++test.skip(!isSpaMode, 'only SPA mode answers documents with the shell')
 +
-+/**
-+ * Rebuilds the server function resolver module at finishMake stage -10,
-+ * after stage -20 has refreshed the server function registry.
-+ *
-+ * Skips the rebuild when the resolver has not been written since this
-+ * compiler last rebuilt it. In development the resolver is written only when
-+ * its content changes. Rebuilding an unchanged resolver can make Rspack
-+ * rebuild the whole chunk graph.
-+ */
-+export function tapServerFnResolverRebuild(
-+  compiler: Rspack.Compiler,
-+  options: ServerFnResolverRebuildOptions,
-+): void {
-+  // Write count of the resolver content this compiler last rebuilt from.
-+  let rebuiltAtWriteCount: number | undefined
++// Its loader and beforeLoad report where they ran.
++const searchRoute = '/specialChars/search?searchParam=shell'
 +
-+  compiler.hooks.finishMake.tapPromise(
-+    { name: options.name, stage: -10 },
-+    async (compilation) => {
-+      options.updateResolver()
++test('a document request gets the shell, not the rendered route', async ({
++  request,
++}) => {
++  const response = await request.get(searchRoute)
 +
-+      // Child compilers copy finishMake taps from their parent. Child
-+      // compilations always rebuild and do not change this compiler's state.
-+      if (compilation.compiler !== compiler) {
-+        await options.rebuildResolver(compilation)
-+        return
-+      }
++  expect(response.status()).toBe(200)
++  const html = await response.text()
++  // The root route's document renders...
++  expect(html).toContain('This Route Does Not Exist')
++  // ...but not the matched route, nor its loader's output.
++  expect(html).not.toContain('special-search-loaded-info')
++  expect(html).not.toContain('Loaded on: server')
++})
 +
-+      // Read the count before the rebuild reads the resolver, so a write
-+      // that lands during the rebuild causes another rebuild next time.
-+      const writeCount = options.getResolverWriteCount()
-+      if (writeCount === rebuiltAtWriteCount) {
-+        return
-+      }
++test('the route loads in the browser', async ({ page }) => {
++  await page.goto(searchRoute)
 +
-+      await options.rebuildResolver(compilation)
-+      rebuiltAtWriteCount = writeCount
-+    },
++  await expect(page.getByTestId('special-search-loaded-info')).toHaveText(
++    'Loaded on: client',
 +  )
-+}
-```
-
-**File**: `packages/start-plugin-core/src/rsbuild/virtual-modules.ts` (modified, +11/-8)
-```diff
-@@ -45,8 +45,10 @@ export interface VirtualModuleState {
-   updateManifest: (clientBuild: NormalizedClientBuild) => void
-   /** Call to update server fn resolver content after compilation discovers fns */
-   updateServerFnResolver: () => void
--  /** Try to write explicit resolver content now; queues if env not ready */
-+  /** Write explicit server resolver content; queues if env not ready */
-   tryUpdateServerFnResolver: (content: string) => void
-+  /** Number of times the server fn resolver was written for an environment */
-+  getServerFnResolverWriteCount: (environmentName: string) => number
-   /** Get the virtual path for a given module ID */
-   getVirtualPath: (moduleId: string) => string
-   /** Generate resolver module content from current serverFnsById state.
-@@ -276,6 +278,7 @@ export function registerVirtualModules(
-   let clientBuild: NormalizedClientBuild | undefined
-   const lastResolverContentByEnvironment: Record<string, string | undefined> =
-     {}
-+  const resolverWriteCountByEnvironment: Record<string, number> = {}
-   const hasSeparateProviderEnvironment =
-     !opts.rscEnabled &&
-     opts.providerEnvName !== RSBUILD_ENVIRONMENT_NAMES.server
-@@ -307,6 +310,8 @@ export function registerVirtualModules(
-       content !== lastResolverContentByEnvironment[environmentName]
-     ) {
-       lastResolverContentByEnvironment[environmentName] = content
-+      resolverWriteCountByEnvironment[environmentName] =
-+        (resolverWriteCountByEnvironment[environmentName] ?? 0) + 1
-       tryWriteModule(environmentName, paths.serverFnResolver, content)
-     }
-   }
-@@ -591,13 +596,11 @@ export function createFromReadableStream() { throw new Error('RSC SSR decode is
-     },
- 
-     tryUpdateServerFnResolver(content: string) {
--      lastResolverContentByEnvironment[RSBUILD_ENVIRONMENT_NAMES.server] =
--        content
--      tryWriteModule(
--        RSBUILD_ENVIRONMENT_NAMES.server,
--        paths.serverFnResolver,
--        content,
--      )
-+      writeResolverContent(RSBUILD_ENVIRONMENT_NAMES.server, content)
-+    },
-+
-+    getServerFnResolverWriteCount(environmentName: string): number {
-+      return resolverWriteCountByEnvironment[environmentName] ?? 0
-     },
- 
-     getVirtualPath(moduleId: string): string {
-```
-
-**File**: `packages/start-plugin-core/tests/rsbuild/server-fn-resolver-rebuild.test.ts` (added, +169/-0)
-```diff
-@@ -0,0 +1,169 @@
-+import { describe, expect, test } from 'vitest'
-+import { RSBUILD_ENVIRONMENT_NAMES } from '../../src/rsbuild/planning'
-+import { tapServerFnResolverRebuild } from '../../src/rsbuild/server-fn-resolver-rebuild'
-+import { registerVirtualModules } from '../../src/rsbuild/virtual-modules'
-+import type { ServerFn } from '../../src/start-compiler/types'
-+
-+type FinishMakeTap = (compilation: { compiler: object }) => Promise<void>
-+
-+function serverFn(name: string): ServerFn {
-+  return {
-+    functionName: name,
-+    functionId: name,
-+    extractedFilename: `/app/src/${name}.ts?tss-serverfn-split`,
-+    filename: `/app/src/${name}.ts`,
-+  }
-+}
-+
-+function setup(opts: { action?: 'dev' | 'build'; rsc?: boolean } = {}) {
-+  const serverFnsById: Record<string, ServerFn> = {}
-+  const virtualModules = registerVirtualModules(
-+    {
-+      context: { action: opts.action ?? 'dev' },
-+      modifyRspackConfig: () => {},
-+    } as any,
-+    {
-+      root: '/app',
-+      getConfig: () => {
-+        throw new Error('getConfig is not used by these tests')
-+      },
-+      serverFnsById,
-+      providerEnvName: RSBUILD_ENVIRONMENT_NAMES.server,
-+      ssrIsProvider: true,
-+      serializationAdapters: undefined,
-+      getDevClientEntryUrl: () => '/client.js',
-+      rscEnabled: opts.rsc,
-+      scriptFormat: 'module',
-+    },
++  await expect(page.getByTestId('special-search-before-load-info')).toHaveText(
++    'Before load on: client',
 +  )
++  await expect(page.getByTestId('special-search-param')).toHaveText('shell')
++})
 +
-+  const taps: Array<FinishMakeTap> = []
-+  const compiler = {
-+    hooks: {
-+      finishMake: {
-+        tapPromise: (_options: unknown, tap: FinishMakeTap) => {
-+          taps.push(tap)
-+        },
-+      },
-+    },
-+  }
++test('client navigation works from the shell', async ({ page }) => {
++  await page.goto('/')
++  await expect(page.getByRole('heading')).toContainText('Welcome Home')
++  await expect(page.getByTestId('router-status')).toHaveText('idle')
 +
-+  // Wired the same way as the non-RSC and RSC hooks in plugin.ts.
-+  let rebuilds = 0
-+  let duringNextRebuild: (() => void) | undefined
-+  tapServerFnResolverRebuild(compiler as any, {
-+    name: 'test',
-+    updateResolver: opts.rsc
-+      ? () => {
-+          virtualModules.tryUpdateServerFnResolver(
-+            virtualModules.generateCurrentResolverContent(true),
-+          )
-+        }
-+      : () => {
-+          virtualModules.updateServerFnResolver()
-+        },
-+    getResolverWriteCount: () =>
-+      virtualModules.getServerFnResolverWriteCount(
-+        RSBUILD_ENVIRONMENT_NAMES.server,
-+      ),
-+    rebuildResolver: () => {
-+      rebuilds++
-+      const during = duringNextRebuild
-+      duringNextRebuild = undefined
-+      during?.()
-+      return Promise.resolve()
-+    },
++  // A full page load would drop this.
++  await page.evaluate(() => {
++    ;(window as any).__spaShellPage = true
 +  })
-+
-+  const runFinishMake = async (compilationCompiler: object) => {
-+    for (const tap of taps) {
-+      await tap({ compiler: compilationCompiler })
-+    }
-+  }
-+
-+  return {
-+    serverFnsById,
-+    virtualModules,
-+    rebuilds: () => rebuilds,
-+    duringNextRebuild: (callback: () => void) => {
-+      duringNextRebuild = callback
-+    },
-+    finishMake: () => runFinishMake(compiler),
-+    // Rspack copies finishMake taps into child compilers.
-+    finishMakeInChild: () => runFinishMake({}),
-+  }
-+}
-+
-+describe('server function resolver rebuild', () => {
-+  test.each([
-+    { resolver: 'resolver', rsc: false },
-+    { resolver: 'RSC resolver', rsc: true },
-+  ])(
-+    'rebuilds the $resolver only when its content changes',
-+    async ({ rsc }) => {
-+      const t = setup({ rsc })
-+
-+      await t.finishMake()
-+      expect(t.rebuilds()).toBe(1)
-+
-+      await t.finishMake()
-+      expect(t.rebuilds()).toBe(1)
-+
-+      t.serverFnsById.a = serverFn('a')
-+      await t.finishMake()
-+      expect(t.rebuilds()).toBe(2)
-+
-+      await t.finishMake()
-+      expect(t.rebuilds()).toBe(2)
-+
-+      delete t.serverFnsById.a
-+      await t.finishMake()
-+      expect(t.rebuilds()).toBe(3)
-+    },
-+  )
-+
-+  test('rebuilds after another write to the resolver, even if the content is restored', async () => {
-+    const t = setup()
-+    await t.finishMake()
-+
-+    // For example, a child compilation that wrote content from another registry.
-+    t.virtualModules.tryUpdateServerFnResolver('export {}')
-+    await t.finishMake()
-+    expect(t.rebuilds()).toBe(2)
-+  })
-+
-+  test('rebuilds after a write that lands while the resolver is being rebuilt', async () => {
-+    const t = setup()
-+    // For example, another compiler's finishMake updating the shared registry.
-+    t.duringNextRebuild(() => {
-+      t.serverFnsById.a = serverFn('a')
-+      t.virtualModules.updateServerFnResolver()
-+    })
-+
-+    await t.finishMake()
-+    await t.finishMake()
-+    expect(t.rebuilds()).toBe(2)
-+  })
-+
-+  test('child compilations always rebuild and do not count for the parent', async () => {
-+    const t = setup()
-+
-+    await t.finishMakeInChild()
-+    await t.finishMake()
-+    expect(t.rebuilds()).toBe(2)
-+
-+    await t.finishMakeInChild()
-+    expect(t.rebuilds()).toBe(3)
-+
-+    await t.finishMake()
-+    expect(t.rebuilds()).toBe(3)
-+  })
-+
-+  test('rebuilds in every compilation of a production build', async () => {
-+    const t = setup({ action: 'build' })
-+
-+    await t.finishMake()
-+    await t.finishMake()
-+    expect(t.rebuilds()).toBe(2)
-+  })
++  await page.getByRole('link', { name: 'Posts' }).click()
++  await page.waitForURL('/posts')
++  await expect(
++    page.getByRole('link', { name: 'sunt aut facere repe' }),
++  ).toBeVisible()
++  expect(await page.evaluate(() => (window as any).__spaShellPage)).toBe(true)
 +})
 ```
 
----
-
-### Incident Patch 2: `78caf5f3` (2026-10-24)
-**Commit Message**: docs(start): use TanStack Markdown in rendering guide (#8808)
-
-**File**: `docs/start/framework/react/guide/rendering-markdown.md` (modified, +198/-324)
+**File**: `packages/start-plugin-core/src/rsbuild/plugin.ts` (modified, +12/-0)
 ```diff
-@@ -3,231 +3,141 @@ id: rendering-markdown
- title: Rendering Markdown
- ---
- 
--This guide covers two methods for importing and rendering markdown content in your TanStack Start application:
-+Use [TanStack Markdown](https://tanstack.com/markdown/latest/docs/overview) to render Markdown in your TanStack Start application. Its React renderer works synchronously during server rendering and client navigation, so content does not need to wait for a client effect.
- 
--1. **Static markdown** with `content-collections` for build-time loading (e.g., blog posts)
--2. **Dynamic markdown** fetched at runtime from GitHub or any remote source
-+This guide covers static posts loaded with Content Collections and remote content fetched through a server function. Both use the same Markdown component.
- 
--Both methods share a common rendering pipeline using the `unified` ecosystem.
-+## Rendering Markdown
- 
--## Setting Up the Markdown Processor
--
--Both approaches use the same markdown-to-HTML processing pipeline. First, install the required dependencies:
-+Install TanStack Markdown:
- 
- ```bash
--npm install unified remark-parse remark-gfm remark-rehype rehype-raw rehype-slug rehype-autolink-headings rehype-stringify shiki html-react-parser gray-matter
-+npm install @tanstack/markdown
- ```
- 
--Create a markdown processor utility:
--
--```tsx
--// src/utils/markdown.ts
--import { unified } from 'unified'
--import remarkParse from 'remark-parse'
--import remarkGfm from 'remark-gfm'
--import remarkRehype from 'remark-rehype'
--import rehypeRaw from 'rehype-raw'
--import rehypeSlug from 'rehype-slug'
--import rehypeAutolinkHeadings from 'rehype-autolink-headings'
--import rehypeStringify from 'rehype-stringify'
--
--export type MarkdownHeading = {
--  id: string
--  text: string
--  level: number
--}
--
--export type MarkdownResult = {
--  markup: string
--  headings: Array<MarkdownHeading>
--}
--
--export async function renderMarkdown(content: string): Promise<MarkdownResult> {
--  const headings: Array<MarkdownHeading> = []
--
--  const result = await unified()
--    .use(remarkParse) // Parse markdown
--    .use(remarkGfm) // Support GitHub Flavored Markdown
--    .use(remarkRehype, { allowDangerousHtml: true }) // Convert to HTML AST
--    .use(rehypeRaw) // Process raw HTML in markdown
--    .use(rehypeSlug) // Add IDs to headings
--    .use(rehypeAutolinkHeadings, {
--      behavior: 'wrap',
--      properties: { className: ['anchor'] },
--    })
--    .use(() => (tree) => {
--      // Extract headings for table of contents
--      const { visit } = require('unist-util-visit')
--      const { toString } = require('hast-util-to-string')
--
--      visit(tree, 'element', (node: any) => {
--        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tagName)) {
--          headings.push({
--            id: node.properties?.id || '',
--            text: toString(node),
--            level: parseInt(node.tagName.charAt(1), 10),
--          })
--        }
--      })
--    })
--    .use(rehypeStringify) // Serialize to HTML string
--    .process(content)
--
--  return {
--    markup: String(result),
--    headings,
--  }
--}
--```
--
--## Creating a Markdown Component
--
--Create a React component that renders the processed HTML with custom element handling:
-+Create a shared component that accepts either Markdown source or a parsed document:
- 
- ```tsx
- // src/components/Markdown.tsx
--import parse, { type HTMLReactParserOptions, Element } from 'html-react-parser'
--import { renderMarkdown, type MarkdownResult } from '~/utils/markdown'
-+import { Markdown as ReactMarkdown } from '@tanstack/markdown/react'
-+import type { MarkdownDocument } from '@tanstack/markdown'
- 
- type MarkdownProps = {
--  content: string
-+  content: string | MarkdownDocument
-   className?: string
- }
- 
- export function Markdown({ content, className }: MarkdownProps) {
--  const [result, setResult] = useState<MarkdownResult | null>(null)
--
--  useEffect(() => {
--    renderMarkdown(content).then(setResult)
--  }, [content])
-+  return (
-+    <div className={className}>
-+      <ReactMarkdown headingAnchors>{content}</ReactMarkdown>
-+    </div>
-+  )
-+}
-+```
- 
--  if (!result) {
--    return <div className={className}>Loading...</div>
--  }
-+Headings receive stable IDs, and `headingAnchors` adds links to them. Raw HTML is escaped and unsafe URL protocols are removed by default. Keep these defaults for remote or user-written content. TanStack Markdown does not execute MDX or implement every CommonMark or GFM feature, so check the [supported syntax](https://tanstack.com/markdown/latest/docs/core-concepts/syntax-profile) when migrating existing content.
- 
--  const options: HTMLReactParserOptions = {
--    replace: (domNode) => {
--      if (domNode instanceof Element) {
--        // Customize rendering of specific elements
--        if (domNode.name === 'a') {
--          // Handle links
--          const href = domNode.attribs.href
--          if (href?.startsWith('/')) {
--            // Internal link - use your router's Link component
--            return (
+@@ -210,6 +210,18 @@ export function tanStackStartRsbuild(
+               'process.env.TSS_ROUTER_BASEPATH': JSON.stringify(routerBasepath),
+               'import.meta.env.TSS_ROUTER_BASEPATH':
+                 JSON.stringify(routerBasepath),
++              // In dev, SPA mode answers the shell (as Vite's dev server);
++              // a build leaves it to the prerendered shell (#8543)
++              ...(isDev
++                ? {
++                    'process.env.TSS_SHELL': JSON.stringify(
++                      startConfig.spa?.enabled ? 'true' : 'false',
++                    ),
++                    'import.meta.env.TSS_SHELL': JSON.stringify(
++                      startConfig.spa?.enabled ? 'true' : 'false',
++                    ),
++                  }
++                : {}),
+               'process.env.TSS_DEV_SERVER': JSON.stringify(
+                 isDev ? 'true' : 'false',
+               ),
 ```
 
 ---
 
-### Incident Patch 3: `ed557759` (2026-10-19)
-**Commit Message**: fix(start-plugin-core): skip the Rsbuild import-protection loader when disabled (#8748)
+### Incident Patch 2: `545a8d37` (2026-11-04)
+**Commit Message**: fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (#8871)
 
-* fix(start-plugin-core): skip the Rsbuild import-protection loader when disabled
+* fix(start-plugin-core): require exsolve ^1.1.3 and bypass its cache for entry lookups
 
-- With import protection disabled, the Rsbuild integration still added
-  its post loader for every JS and TS module, node_modules included,
-  plus its virtual modules plugin. The loader returned at once, but every
-  module still paid for a loader step.
-- Register nothing when import protection is disabled, as the Vite
-  plugin does.
+exsolve caches a failed `try: true` lookup as an Error in its
+process-wide cache. Before 1.1.2 that Error kept its call sites, and
+with them its callers, alive for the life of the process (unjs/exsolve#63),
+so each build in one process left its objects behind. Require ^1.1.3.
 
-* test(start-plugin-core): drop the disabled import-protection unit test
+The cache also kept misses: Start looks up its optional entries
+(`src/start.ts`, `src/client.tsx`, `src/server.ts`) once per plugin
+instance, and a dev server restart got the cached miss for an entry
+created since. Entry lookups now pass `cache: false`.
 
-**File**: `.changeset/skip-disabled-import-protection.md` (added, +5/-0)
+From #8817.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changeset): narrow the exsolve memory claim
+
+exsolve still caches lookups, and other packages in an app's build (for
+example Nitro, which bundles an older exsolve) share its process-wide
+cache. Say what the bump fixes: Start's cached failed lookups no longer
+keep each build's objects alive.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED
+
+**File**: `.changeset/start-plugin-core-exsolve.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@tanstack/start-plugin-core': patch
 +---
 +
-+Skip the Rsbuild import-protection loader and its plugins when import protection is disabled, so modules no longer pass through the loader.
++Require `exsolve` `^1.1.3`: a failed lookup that exsolve caches no longer keeps its callers alive, so Start's cached failed lookups no longer hold on to each build's objects. Entry lookups bypass exsolve's process-wide cache, so a dev server restart finds an entry file (such as `src/start.ts`) created since.
 ```
 
-**File**: `packages/start-plugin-core/src/rsbuild/import-protection.ts` (modified, +3/-0)
+**File**: `packages/start-plugin-core/package.json` (modified, +1/-1)
 ```diff
-@@ -1505,7 +1505,10 @@ export function registerImportProtection(
-     applyUserConfig()
+@@ -117,7 +117,7 @@
+     "@tanstack/router-plugin": "workspace:*",
+     "@tanstack/router-utils": "workspace:*",
+     "@tanstack/start-server-core": "workspace:*",
+-    "exsolve": "^1.1.1",
++    "exsolve": "^1.1.3",
+     "lightningcss": "^1.33.0",
+     "pathe": "catalog:",
+     "picomatch": "^4.0.7",
+```
+
+**File**: `packages/start-plugin-core/src/resolve-entries.ts` (modified, +4/-0)
+```diff
+@@ -13,6 +13,10 @@ function resolveModule(opts: ResolveModuleOptions): string | undefined {
+     from: opts.from,
+     extensions: ['.ts', '.js', '.mts', '.mjs', '.tsx', '.jsx'],
+     try: true,
++    // exsolve's default cache is process-wide and keeps misses: a dev server
++    // restart would not see an entry created since. The plugin already
++    // resolves the entries once per instance.
++    cache: false,
+   })
+ }
  
-     const envName = utils.environment.name
-+    // When import protection is disabled, register nothing, as the Vite plugin
-+    // does, so modules do not pass through the loader.
-     if (
-+      !config.enabled ||
-       !opts.environments.some((environment) => environment.name === envName)
-     ) {
-       return
+```
+
+**File**: `packages/start-plugin-core/tests/integration/start-dev-restart.test.ts` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++/**
++ * A Vite dev server restart (`r` in the terminal, or an edit of the Vite
++ * config) loads the app's Vite config again, with new Start plugin
++ * instances: they see the app's files as they are now.
++ */
++import path from 'node:path'
++import { createServer } from 'vite'
++import { expect, onTestFinished, test } from 'vitest'
++import { appFiles, createStartApp } from './start-app'
++
++const timeout = 60_000
++
++// Start looks up its optional entries (`src/start.ts`, `src/client.tsx`,
++// `src/server.ts`) once per plugin instance. The lookup's cache was
++// process-wide and kept misses, so a restart did not see an entry created
++// since.
++test(
++  'after a dev server restart, a start entry created since is used',
++  async () => {
++    const app = await createStartApp(
++      appFiles({
++        'vite.config.ts': `import { tanstackStart } from '@tanstack/react-start/plugin/vite'
++export default { plugins: [tanstackStart()] }
++`,
++      }),
++    )
++    // (listening, as `vite dev`: Start leaves its request handler out in
++    // middleware mode)
++    const server = await createServer({
++      root: app.root,
++      configFile: path.join(app.root, 'vite.config.ts'),
++      logLevel: 'error',
++      server: { port: 0 },
++    })
++    onTestFinished(() => server.close())
++    await server.listen()
++    const page = () => fetch(server.resolvedUrls!.local[0]!)
++    expect((await page()).headers.get('x-start')).toBeNull()
++
++    await app.write({
++      'src/start.ts': `import { createMiddleware, createStart } from '@tanstack/react-start'
++import { setResponseHeader } from '@tanstack/react-start/server'
++const mark = createMiddleware().server(({ next }) => {
++  setResponseHeader('x-start', 'MARK_START')
++  return next()
++})
++export const startInstance = createStart(() => ({ requestMiddleware: [mark] }))
++`,
++    })
++    await server.restart()
++    expect((await page()).headers.get('x-start')).toBe('MARK_START')
++  },
++  timeout,
++)
+```
+
+**File**: `pnpm-lock.yaml` (modified, +7/-2)
+```diff
+@@ -15307,8 +15307,8 @@ importers:
+         specifier: workspace:*
+         version: link:../start-server-core
+       exsolve:
+-        specifier: ^1.1.1
+-        version: 1.1.1
++        specifier: ^1.1.3
++        version: 1.2.0
+       lightningcss:
+         specifier: ^1.33.0
+         version: 1.33.0
+@@ -24697,6 +24697,9 @@ packages:
+   exsolve@1.1.1:
+     resolution: {integrity: sha512-9U/jZUgjnSGyntRr6y5Muu1MJcwFl6kPu7k8qLF0IMNfLqvw0NZ4nnVDq0RVoZ0RvCyumib4Ez3KYrVfilrw+g==}
+ 
++  exsolve@1.2.0:
++    resolution: {integrity: sha512-h1pQPR9XoeSMdntRNCjyTznaume4UpfXrULBnlkZ2CUM/G5eSa+pBByGldO5uR8dxbPC+OuJXsPPNf+JZ81ADg==}
++
+   extendable-error@0.1.7:
+     resolution: {integrity: sha512-UOiS2in6/Q0FK0R0q6UY9vYpQ21mr/Qn1KOnte7vsACuNJf514WvCCUHSRCPcgjPT2bAhNIJdlE6bVap1GKmeg==}
+ 
+@@ -39389,6 +39392,8 @@ snapshots:
+ 
+   exsolve@1.1.1: {}
+ 
++  exsolve@1.2.0: {}
++
+   extendable-error@0.1.7: {}
+ 
+   fast-check@3.23.2:
+```
+
+---
+
+### Incident Patch 3: `1ba19a04` (2026-11-04)
+**Commit Message**: fix(router-plugin): omit browser warnings from production bundles (#8269)
+
+* fix(router-plugin): omit browser warnings from production bundles
+
+* fix(router-plugin): only the bundler's mode keeps the warning out of the page
+
+The code splitter always passes isProduction, so the NODE_ENV fallback in the compiler was reachable only from direct test calls. The changeset now names the bug users see.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(router-plugin): real webpack and Rspack production builds ship no splitter warning
+
+Builds an app whose route exports its component, with mode 'production' and with mode left out, and checks that no emitted JS names the app's absolute path. Fails on main. Replaces the fake-compiler matrix in router-plugin-context.test.ts.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Sheraff <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/calm-tables-warn.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@tanstack/router-plugin': patch
++---
++
++fix: webpack and Rspack production builds no longer put the code splitter's "will not be code-split" warning, with the route file's absolute path, into the client bundle when the build process's `NODE_ENV` isn't `production`. The bundler's mode decides, and a config without `mode` counts as production, as it does for webpack and Rspack. The warning still prints in the build output.
+```
+
+**File**: `packages/router-plugin/src/core/code-splitter/compilers.ts` (modified, +4/-2)
+```diff
+@@ -364,6 +364,7 @@ function removeSharedDeclarations(ast: t.File, sharedBindings: Set<string>) {
+ export function compileCodeSplitReferenceRoute(
+   opts: ParseAstOptions &
+     CompileCodeSplitReferenceRouteOptions & {
++      isProduction?: boolean
+       compilerPlugins?: Array<CodeSplitCompilerPlugin>
+     },
+ ): GeneratorResult | null {
+@@ -847,8 +848,9 @@ export function compileCodeSplitReferenceRoute(
+     )
+     console.warn(warningMessage)
+ 
+-    // append this warning to the file using a template
+-    if (process.env.NODE_ENV !== 'production') {
++    // Development builds log it in the page too. The bundler's mode decides,
++    // not the build process's NODE_ENV, which webpack never sets.
++    if (!opts.isProduction) {
+       const warningTemplate = template.statement(
+         `console.warn(${JSON.stringify(warningMessage)})`,
+       )()
+```
+
+**File**: `packages/router-plugin/src/core/router-code-splitter-plugin.ts` (modified, +3/-2)
+```diff
+@@ -182,6 +182,7 @@ export function createRouterCodeSplitterPlugin(
+       targetFramework: userConfig.target,
+       filename: id,
+       id,
++      isProduction,
+       deleteNodes: userConfig.codeSplittingOptions?.deleteNodes
+         ? new Set(userConfig.codeSplittingOptions.deleteNodes)
+         : undefined,
+@@ -327,13 +328,13 @@ export function createRouterCodeSplitterPlugin(
+       },
+ 
+       rspack(compiler) {
+-        isProduction = compiler.options.mode === 'production'
++        isProduction = (compiler.options.mode ?? 'production') === 'production'
+         ROOT = process.cwd()
+         initUserConfig()
+       },
+ 
+       webpack(compiler) {
+-        isProduction = compiler.options.mode === 'production'
++        isProduction = (compiler.options.mode ?? 'production') === 'production'
+         ROOT = process.cwd()
+         initUserConfig()
+       },
+```
+
+**File**: `packages/router-plugin/tests/production-warnings.test.ts` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++/**
++ * A production client build ships none of the code splitter's development
++ * warnings, whatever the build process's `NODE_ENV` (Vitest sets it to
++ * `test`, which behaves like a shell without it): the bundler's mode
++ * decides, and webpack and Rspack build in production when `mode` is left
++ * out. Such a warning would log in every visitor's console, with the
++ * absolute path of the route file on the build machine.
++ */
++import {
++  mkdir,
++  mkdtemp,
++  readFile,
++  readdir,
++  rm,
++  writeFile,
++} from 'node:fs/promises'
++import path from 'node:path'
++import { rspack } from '@rsbuild/core'
++import webpack from 'webpack'
++import { describe, expect, test, vi } from 'vitest'
++
++const timeout = 60_000
++
++/**
++ * The exported component stays in the route module unless the code splitter
++ * can split exports; the error component is split either way.
++ */
++const routeSource = `import { createFileRoute } from '@tanstack/react-router'
++
++export function ExportedPage() {
++  return 'MARK_EXPORTED_PAGE'
++}
++
++function ErrorPage() {
++  return 'MARK_ERROR_PAGE'
++}
++
++export const Route = createFileRoute('/')({
++  component: ExportedPage,
++  errorComponent: ErrorPage,
++})
++`
++
++const rootSource = `import { createRootRoute } from '@tanstack/react-router'
++export const Route = createRootRoute({})
++`
++
++/** Writes `files` into a new app directory inside the package. */
++async function createApp(files: Record<string, string>) {
++  // Keep the app inside the package so runtime imports resolve.
++  const root = await mkdtemp(path.join(__dirname, '.production-warnings-'))
++  await mkdir(path.join(root, 'routes'))
++  for (const [file, code] of Object.entries(files)) {
++    await writeFile(path.join(root, file), code)
++  }
++  return root
++}
++
++function routerOptions(root: string) {
++  return {
++    target: 'react',
++    routesDirectory: path.join(root, 'routes'),
++    generatedRouteTree: path.join(root, 'routeTree.gen.ts'),
++    autoCodeSplitting: true,
++  } as const
++}
++
++/** A client build of `entry` in `mode` (left out when undefined), unminified. */
++function compilerConfig(
++  root: string,
++  entry: string,
++  mode: 'production' | undefined,
++) {
++  return {
++    context: root,
++    ...(mode ? { mode } : {}),
++    target: 'web',
++    entry: `./${entry}`,
++    output: { path: path.join(root, 'dist') },
++    optimization: { minimize: false },
++  } as const
++}
++
++interface Compiler {
++  run: (
++    callback: (
++      error: Error | null,
++      stats?: {
++        hasErrors: () => boolean
++        toString: (options: object) => string
++      },
++    ) => void,
++  ) => void
++  close: (callback: (error?: Error | null) => void) => void
++}
++
++/** Runs one build and settles once the compiler has closed. */
++function runCompiler(compiler: Compiler) {
++  return new Promise<void>((resolve, reject) => {
++    compiler.run((error, stats) => {
++      // The test removes the app afterwards: wait for the compiler to finish.
++      compiler.close((closeError) => {
++        if (error ?? closeError) {
++          reject(error ?? closeError)
++        } else if (stats?.hasErrors()) {
++          reject(new Error(stats.toString({ all: false, errors: true })))
++        } else {
++          resolve()
++        }
++      })
++    })
++  })
++}
++
++const bundlers = [
++  {
++    name: 'webpack',
++    // webpack parses no TypeScript: the router plugin is the only loader.
++    extension: 'js',
++    async build(root: string, entry: string, mode: 'production' | undefined) {
++      const { tanstackRouter } = await import('../src/webpack')
++      await runCompiler(
++        webpack({
++          ...compilerConfig(root, entry, mode),
++          // The test app is not part of the package's TypeScript project.
++          resolve: { tsconfig: false },
++          plugins: [tanstackRouter(routerOptions(root))],
++        }),
++      )
++    },
++  },
++  {
++    name: 'rspack',
++    // As in Rsbuild: SWC compiles the router plugin's output.
++    extension: 'tsx',
++    async build(root: string, entry: string, mode: 'production' | undefined) {
++      const { tanstackRouter } = await import('../src/rspack')
++      await runCompiler(
++        rspack({
++          ...compilerConfig(root, entry, mode),
++          module: {
++            rules: [
++              {
++                test: /\.tsx?$/,
++                loader: 'builtin:swc-loader',
++                options: {
++                  jsc: { parser: { syntax: 'typescript', tsx: true } },
++                },
++                type: 'javascript/auto',
++              },
++            ],
++          },
++          plugins: [tanstackRouter(routerOptions(root))],
++        }),
++      )
++    },
++  },
++] as const
++
++describe.each(bundlers)('$name build', (bundler) => {
++  test.each([
++    { label: "mode: 'production'", mode: 'production' },
++    { label: 'mode left out', mode: undefined },
++  ] as const)(
++    'with $label, the client JS logs no warning about an exported component',
++    async ({ mode }) => {
++      con
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8812** (closed): ci: experiment with 16 large Nx workers (@beaussan)
-- **PR #8811** (closed): ci: experiment with 19 medium Nx workers (@beaussan)
-- **PR #8809** (closed): ci: compare Nx 24 full cache bust without task packing flags (@beaussan)
-- **PR #8808** (2026-10-24): docs(start): use TanStack Markdown in rendering guide (@tannerlinsley)
-- **PR #8807** (2026-10-24): ci: upgrade Nx and migrate worker configuration (@beaussan)
-- **PR #8784** (closed): perf(start-plugin-core): reduce Rspack N-API calls (@SyMind)
+- **PR #8871** (2026-11-04): fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (@Sheraff)
+- **PR #8870** (2026-11-04): fix(router-plugin): write `import.meta.hot.accept(` out in Vite route HMR (@Sheraff)
+- **PR #8869** (2026-11-04): fix(vue-start): pre-bundle @tanstack/vue-store so a cold dev start doesn't reload the page (@Sheraff)
+- **PR #8867** (2026-11-04): fix(router-utils): parse decorators after `export` (@Sheraff)
+- **PR #8863** (2026-11-04): fix(start-plugin-core): keep the app's server.compress on Rsbuild (@Sheraff)
+- **PR #8862** (closed): fix(router-core): the server's route tree cache follows a re-evaluated route tree (@Sheraff)
 
 ---
 
@@ -1289,16 +1360,16 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild 
+## X. start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805)
 
 **RULE**:
-When implementing operations in `.changeset/skip-unchanged-resolver-rebuild.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/rsbuild-spa-dev-shell.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63a886da`: start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild dev (#8750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5320d7c`: start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/skip-unchanged-resolver-rebuild.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsbuild-spa-dev-shell.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
@@ -1307,7 +1378,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 '@tanstack/start-plugin-core': patch
 ---
 
-Skip the server function resolver rebuild in Rsbuild dev when the resolver has not changed, so most edits no longer rebuild the whole server chunk graph.
+With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev server does, instead of rendering the route and running its loaders on the server.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1317,4 +1388,4 @@ Skip the server function resolver rebuild in Rsbuild dev when the resolver has n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63a886da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5320d7c` are properly handled with clean fallback behavior.
