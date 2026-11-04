@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:57:48.477Z",
-    "lastVerified": "2026-11-04T03:57:48.477Z",
+    "lastChecked": "2026-11-04T04:04:59.840Z",
+    "lastVerified": "2026-11-04T04:04:59.840Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:37:49.592Z",
-    "lastVerified": "2026-11-04T03:37:49.592Z",
+    "lastChecked": "2026-11-04T04:04:53.232Z",
+    "lastVerified": "2026-11-04T04:04:53.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1495,9 +1495,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-04T00:53:21.138Z",
+    "lastChecked": "2026-11-04T04:04:48.301Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-04T00:53:21.138Z"
+    "lastVerified": "2026-11-04T04:04:48.301Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3086,9 +3086,9 @@
   "akveo-react-native-ui-kitten": {
     "name": "react-native-ui-kitten",
     "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
-    "lastChecked": "2026-10-31T04:09:28.762Z",
+    "lastChecked": "2026-11-04T04:04:43.143Z",
     "revisionIdentifier": "e73dce62",
-    "lastVerified": "2026-10-31T04:09:28.762Z"
+    "lastVerified": "2026-11-04T04:04:43.143Z"
   },
   "beclab-olares": {
     "name": "beclab/Olares",
@@ -4341,9 +4341,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-01T01:40:14.949Z",
+    "lastChecked": "2026-11-04T04:04:38.106Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-01T01:40:14.949Z"
+    "lastVerified": "2026-11-04T04:04:38.106Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -4512,14 +4512,14 @@
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:46:52.000Z",
-    "lastVerified": "2026-11-02T17:46:52.000Z",
+    "lastChecked": "2026-11-04T04:04:55.470Z",
+    "lastVerified": "2026-11-04T04:04:55.470Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
+    "contentHash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6531,9 +6531,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-03T10:29:28.131Z",
+    "lastChecked": "2026-11-04T04:04:45.577Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-03T10:29:28.131Z"
+    "lastVerified": "2026-11-04T04:04:45.577Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -11740,9 +11740,9 @@
   "testing-library-react-testing-library": {
     "name": "react-testing-library",
     "officialUrl": "https://github.com/testing-library/react-testing-library",
-    "lastChecked": "2026-10-30T20:59:16.405Z",
+    "lastChecked": "2026-11-04T04:04:40.675Z",
     "revisionIdentifier": "20ce75f2",
-    "lastVerified": "2026-10-30T20:59:16.405Z"
+    "lastVerified": "2026-11-04T04:04:40.675Z"
   },
   "signerlabs-klee": {
     "name": "signerlabs/Klee",

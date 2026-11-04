@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `f7015b3d`  
+> **Source Version**: `a106ce63`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:46:52.358Z  
+> **Timestamp**: 2026-11-04T04:04:56.539Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:46:52.000Z  
+> **Harvest Timestamp**: 2026-11-04T04:04:55.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -927,11 +927,11 @@ pub async fn test_email_handler(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #310** (2026-11-03): **v0.35.8: provide authenticated nonredirect acknowledgement for global logout**
+  *Symptoms*: ### Summary / environment  Could TrailBase expose a documented machine-readable global-logout outcome that confirms authenticated owner-wide refresh-session deletion, rather than requiring an application to interpret a browser redirect?  Reproduced against the **official Linux x64 v0.35.8** distribution, commit `05238c02b54aabb483e9f6224b5e014d40e88a5d`, SQLite/password auth, installed `trailbase@0.14.3`, disposable local SMTP-confirmed accounts. No server patch is required. This is an API capability request, not a claim of foreign-user access or a severity/CVE report.  ### Reproduction / actual behavior  Use a new disposable local depot with email confirmation and a protected record API. Sign in twice as one confirmed owner and once as an unrelated control owner. Retain only the generated credentials locally; do not paste them in an issue.  1. Issue `GET /api/auth/v1/logout?redirect_uri=<same-origin-health-URL>` with **no cookies**, redirects disabled and **no Authorization header**. Observe **303** to that target; both owner refresh sessions and the control remain unchanged. 2. Repeat with an invalid Bearer JWT. Observe the **same 303 target**, with sessions/account/data unchanged. 3. Repeat with the genuinely valid owner Bearer JWT. Observe the **same 303 target**, but this time all that owner's refresh sessions are deleted. Their refresh requests subsequently return **401**; the unrelated control and account/data remain unchanged. 4. A followed health/root **200** cannot 
+
 - **Issue #309** (2026-10-27): **fix: stream record subscriptions through reverse proxies**
   *Symptoms*: ## Problem  `GET /api/records/v1/{name}/subscribe/{record}` already responds with `content-type: text/event-stream` and flushes `: ping` immediately (axum `KeepAlive`, first tick is instant, then every 15 s). The only cache header axum sets is `cache-control: no-cache`.  That is enough for a client talking to TrailBase directly. It is not enough behind nginx (or a proxy that follows nginx's convention): with `proxy_buffering on` (the default), nginx holds a chunked body until `proxy_buffer_size` fills. An 8-byte `: ping`, and a real event written 1.5 s later, both stayed invisible for 3 s behind nginx 1.24 with an 8 kB buffer. The same nginx, given `X-Accel-Buffering: no`, delivered the first byte in 4 ms.  PocketBase's realtime handler sets `Cache-Control: no-store` and `X-Accel-Buffering: no` on its SSE response for this reason ([apis/realtime.go](https://github.com/pocketbase/pocketbase/blob/7f2773ec234b62d0b80ca47c508397cb3d0da3ea/apis/realtime.go#L61-L65)). TrailBase's subscribe response sends neither.  ## Repro  nginx 1.24, `proxy_buffering on`, `proxy_buffer_size 8k`, `gzip on`, `gzip_proxied any`, `gzip_types text/event-stream`, `gzip_min_length 1`. Upstream writes `: ping\n\n` immediately and `event: connect` after 1.5 s.  ```sh curl -N -D - --http1.1 -m 3 \   -H 'Accept: text/event-stream' \   -H 'Accept-Encoding: gzip' \   http://127.0.0.1:19990/ ```  | Upstream response headers | First byte within 3 s | `content-encoding` | | --- | --- | --- | | `cache-control: no
-
-- **Issue #307** (2026-11-02): **fix: ensure graceful SQLite close and WAL checkpoint on shutdown**
-  *Symptoms*:  ### Summary Fixes #306 an issue where shutting down the server (Ctrl+C / SIGINT / SIGTERM) does not close or checkpoint SQLite databases. This caused active `-wal` files to be left on disk with dirty/uncheckpointed frames, risking database corruption.  ### Root Cause 1. `Server::serve()` awaited only the Axum HTTP listeners (`set.join_all().await;`), printed `"Shut down gracefully 👋"`, and immediately exited without calling any database cleanup. 2. Background tasks (`start_sighup_reload_task`, cron scheduler jobs in `JobRegistry`, and `SqliteLogLayer`) retained cloned references to `AppState` and connections indefinitely, preventing `Drop for Executor` from ever running. 3. As a result, native SQLite worker threads were abruptly killed on process exit, and SQLite never invoked `sqlite3_close()` to sync and clean up the WAL.  ### Changes - **`crates/sqlite` (`executor.rs`)**:   - Drained pending writes from `writer_receiver` before breaking on `ReaderMessage::Terminate`.   - Added `PRAGMA wal_checkpoint(TRUNCATE)` in `close_impl()` before closing connections to guarantee all dirty pages are synced and `-wal` is truncated to 0 bytes. - **`crates/core` (`connection.rs`, `scheduler.rs`, `app_state.rs`)**:   - Added `ConnectionManager::close()` to close both cached secondary and main database connections.   - Added `JobRegistry::stop()` to cancel running cron jobs.   - Added `AppState::close()` to stop subscriptions, stop jobs, and close all databases in order. - **`crates/core`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -948,237 +948,374 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `840fd86b` (2026-11-01)
-**Commit Message**: Update JavaScript dependencies. Addresses security advisories.
+### Incident Patch 1: `8ddc107b` (2026-11-03)
+**Commit Message**: Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if explicitly requested or non-JSON request. Fix OpenApi documentation. #310
 
-**File**: `.github/workflows/audit.yaml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +47/-0)
 ```diff
-@@ -38,7 +38,7 @@ jobs:
+@@ -631,6 +631,26 @@ dependencies = [
+  "tracing",
+ ]
  
-       # Audit JS/TS
-       - uses: ./.github/actions/setup_pnpm
--      - run: pnpm audit --prod --ignore-unfixable
-+      - run: pnpm audit --prod --json
++[[package]]
++name = "axum-extra"
++version = "0.12.6"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "be44683b41ccb9ab2d23a5230015c9c3c55be97a25e4428366de8873103f7970"
++dependencies = [
++ "axum-core",
++ "bytes",
++ "futures-core",
++ "futures-util",
++ "headers",
++ "http",
++ "http-body",
++ "http-body-util",
++ "mime",
++ "pin-project-lite",
++ "tower-layer",
++ "tower-service",
++]
++
+ [[package]]
+ name = "axum-test"
+ version = "21.1.0"
+@@ -3135,6 +3155,30 @@ dependencies = [
+  "hashbrown 0.17.1",
+ ]
  
-       # Audit Rust
-       - uses: taiki-e/install-action@v2
++[[package]]
++name = "headers"
++version = "0.4.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fc2700e3fe555c3310aa7286cac6167449f2c87e0eb58769c9208a1c58a1d106"
++dependencies = [
++ "base64 0.22.1",
++ "bytes",
++ "headers-core",
++ "http",
++ "httpdate",
++ "mime",
++ "sha1 0.10.7",
++]
++
++[[package]]
++name = "headers-core"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4"
++dependencies = [
++ "http",
++]
++
+ [[package]]
+ name = "heapless"
+ version = "0.6.1"
+@@ -7903,6 +7947,7 @@ dependencies = [
+  "async-channel 2.5.0",
+  "async-trait",
+  "axum",
++ "axum-extra",
+  "axum-test",
+  "axum-tracing-opentelemetry",
+  "base32",
+@@ -7924,6 +7969,7 @@ dependencies = [
+  "geos",
+  "getrandom 0.4.3",
+  "governor",
++ "headers",
+  "hex",
+  "http-body-util",
+  "hyper",
+@@ -7939,6 +7985,7 @@ dependencies = [
+  "litegis",
+  "log",
+  "mimalloc",
++ "mime",
+  "mini-moka",
+  "minijinja",
+  "oauth2",
 ```
 
-**File**: `client/testfixture/guests/typescript/package.json` (modified, +4/-4)
+**File**: `Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -16,13 +16,13 @@
-     "trailbase-wasm": "workspace:*"
-   },
-   "devDependencies": {
--    "@bytecodealliance/jco": "^1.39.0",
-+    "@bytecodealliance/jco": "^1.40.0",
-     "@eslint/js": "^10.0.1",
--    "@types/node": "^26.6.5",
--    "eslint": "^10.13.0",
-+    "@types/node": "^26.6.6",
-+    "eslint": "^10.14.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vite": "^8.3.5"
+@@ -55,6 +55,7 @@ arc-swap = { version = "1.9.3", default-features = false }
+ argon2 = { version = "^0.6.0", default-features = false, features = ["alloc", "getrandom", "password-hash"] }
+ askama = { version = "0.16.1", default-features = false, features = ["derive", "std", "config"] }
+ axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
++axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
+ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
+ bytes = { version = "1.12.1", features = ["serde"] }
+ chrono = { version = "0.4.45", default-features = false }
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -43,6 +43,7 @@ askama = { workspace = true }
+ async-channel = "2.5.0"
+ async-trait = "0.1.92"
+ axum = { workspace = true }
++axum-extra = { workspace = true }
+ axum-tracing-opentelemetry = { version = "0.42.1", optional = true }
+ base32 = "0.5.1"
+ base64 = { workspace = true }
+@@ -60,6 +61,7 @@ futures-util = { workspace = true }
+ geos = { workspace = true, optional = true }
+ getrandom = "0.4.3"
+ governor = "0.10.4"
++headers = "0.4.2"
+ hex = "0.4.3"
+ http-body-util = { workspace = true }
+ hyper = { workspace = true }
+@@ -73,6 +75,7 @@ lazy_static = "1.5.1"
+ lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
+ litegis = { workspace = true, optional = true }
+ log = { workspace = true }
++mime = "0.3.17"
+ mini-moka = "0.10.3"
+ minijinja = { workspace = true }
+ oauth2 = { version = "5.0.0", default-features = false, features = ["rustls-tls"] }
+```
+
+**File**: `crates/core/src/auth/api/logout.rs` (modified, +19/-11)
+```diff
+@@ -1,6 +1,7 @@
+ use axum::extract::{Extension, Json, Query, State};
+ use axum::http::StatusCode;
+ use axum::response::{IntoResponse, Redirect, Response};
++use axum_extra::TypedHeader;
+ use serde::Deserialize;
+ use tower_cookies::Cookies;
+ use ts_rs::TS;
+@@ -28,31 +29,38 @@ pub struct LogoutParams {
+   tag = "auth",
+   params(LogoutParams),
+   responses(
+-    (status = 200, description = "Auth & refresh tokens.")
++    (status = 200, description = "Sessions deleted. JWT auth token remains valid until expiry but refresh is no longer possible."),
++    (status = 303, description = "Sessions deleted. JWT auth token remains valid until expiry but refresh is no longer possible. (?redirect_to= provided or non-json Content-Type with root path installed)"),
++    (status = 401, description = "Failed to delete sessions (missing or invalid JWT)."),
+   )
+ )]
+ pub async fn logout_handler(
+   State(state): State<AppState>,
+   Query(query): Query<LogoutParams>,
+   Extension(HasRoot(has_root)): Extension<HasRoot>,
+-  user: Option<User>,
++  content_type: Option<TypedHeader<headers::ContentType>>,
++  user: User,
+   cookies: Cookies,
+ ) -> Result<Response, AuthError> {
+   let redirect_uri = validate_redirect(&state, query.redirect_uri)?;
+ 
++  delete_all_sessions_for_user(state.session_conn(), user.id).await?;
++
+   remove_all_cookies(&cookies);
+ 
+-  if let Some(user) = user {
+-    delete_all_sessions_for_user(state.session_conn(), user.id).await?;
++  if let Some(redirect) = redirect_uri {
++    return Ok(Redirect::to(&redirect).into_response());
++  }
++
++  if has_root {
++    let is_json =
++      content_type.is_some_and(|TypedHeader(c)| mime::Mime::from(c) == mime::APPLICATION_JSON);
++    if !is_json {
++      return Ok(Redirect::to("/").into_response());
++    }
+   }
+ 
+-  return if let Some(redirect) = redirect_uri {
+-    Ok(Redirect::to(&redirect).into_response())
+-  } else if has_root {
+-    Ok(Redirect::to("/").into_response())
+-  } else {
+-    Ok((StatusCode::OK, "logged out").into_response())
+-  };
++  return Ok((StatusCode::OK, "logged out").into_response());
+ }
+ 
+ #[derive(Clone, Debug, Deserialize, ToSchema, TS)]
+```
+
+**File**: `crates/core/src/auth/auth_test.rs` (modified, +8/-4)
+```diff
+@@ -511,7 +511,8 @@ async fn test_auth_password_login_flow_with_pkce() {
+     State(state.clone()),
+     Query(LogoutParams::default()),
+     Extension(HasRoot(false)),
+-    Some(user.clone()),
++    None,
++    user.clone(),
+     Cookies::default(),
+   )
+   .await
+@@ -627,7 +628,8 @@ async fn test_auth_password_login_flow_without_pkce() {
+     State(state.clone()),
+     Query(LogoutParams::default()),
+     Extension(HasRoot(false)),
+-    Some(user.clone()),
++    None,
++    user.clone(),
+     Cookies::default(),
+   )
+   .await
+@@ -851,7 +853,8 @@ async fn test_auth_reset_password_flow() {
+     State(state.clone()),
+     Query(LogoutParams::default()),
+     Extension(HasRoot(false)),
+-    Some(user.clone()),
++    None,
++    user.clone(),
+     Cookies::default(),
+   )
+   .await
+@@ -1186,7 +1189,8 @@ async fn test_auth_change_username_and_unset_email_flow() {
+     State(state.clone()),
+     Query(LogoutParams::default()),
+     Extension(HasRoot(false)),
+-    Some(user.clone()),
++    None,
++    user.clone(),
+     Cookies::default(),
+   )
+   .await
+```
+
+**File**: `crates/core/src/extract/content_type.rs` (modified, +6/-6)
+```diff
+@@ -1,8 +1,8 @@
+-use axum::extract::{FromRequest, Request};
++use axum::extract::FromRequestParts;
+ use axum::http::header::{ACCEPT, CONTENT_TYPE};
++use axum::http::request::Parts;
+ use axum::http::{HeaderMap, StatusCode};
+ use axum::response::{IntoResponse, Response};
+-use thiserror::Error;
+ 
+ /// Supported request content types.
+ ///
+@@ -15,7 +15,7 @@ pub enum RequestContentType {
+   Form,
+ }
+ 
+-#[derive(Debug, Error)]
++#[derive(Debug, thiserror::Error)]
+ pub enum ContentTypeRejection {
+   #[error("Unsupported Content-Type: {0}")]
+   UnsupportedContentType(String),
+@@ -77,13 +77,13 @@ impl ResponseContentType {
+   }
+ }
+ 
+-impl<S> FromRequest<S> for ResponseContentType
++impl<S> FromRequestParts<S> for ResponseContentType
+ where
+   S: Send + Sync,
+ {
+   type Rejection = ContentTypeRejection;
+ 
+-  async fn from_request(req: Request, _state: &S) -> Result<Self, Self::Rejection> {
+-    return Self::from_headers(req.headers());
++  async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
++    return Self::from_headers(&parts.headers);
    }
  }
 ```
 
-**File**: `crates/assets/js/admin/package.json` (modified, +9/-9)
+---
+
+### Incident Patch 2: `4505dd95` (2026-11-02)
+**Commit Message**: Update admin UI's `rapidoc` to v12.
+
+**File**: `crates/assets/js/admin/package.json` (modified, +1/-1)
 ```diff
-@@ -30,9 +30,9 @@
-     "@nanostores/solid": "^1.1.1",
-     "@panzoom/panzoom": "^4.6.2",
-     "@solid-primitives/memo": "^1.5.1",
--    "@solidjs/router": "^1.0.0",
-+    "@solidjs/router": "^1.0.1",
-     "@tanstack/solid-form": "^1.33.5",
--    "@tanstack/solid-query": "^5.104.5",
-+    "@tanstack/solid-query": "^5.105.0",
-     "@tanstack/solid-table": "^9.3.1",
-     "@tanstack/table-core": "^9.3.1",
-     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
-@@ -43,27 +43,27 @@
-     "geojson": "^0.5.0",
-     "i18n-iso-countries": "^7.14.0",
+@@ -45,7 +45,7 @@
      "long": "^5.3.2",
--    "maplibre-gl": "^6.15.0",
-+    "maplibre-gl": "^6.16.0",
+     "maplibre-gl": "^6.16.0",
      "nanostores": "^1.5.5",
-     "rapidoc": "^9.3.8",
+-    "rapidoc": "^9.3.8",
++    "rapidoc": "^12.0.0",
      "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.17",
-+    "solid-js": "^1.9.18",
+     "solid-js": "^1.9.18",
      "tailwind-merge": "^3.7.0",
-     "trailbase": "file:../client",
-     "uuid": "^14.0.3"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.42",
-+    "@iconify-json/tabler": "^1.2.43",
-     "@solidjs/testing-library": "^0.8.10",
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.3",
-     "@testing-library/jest-dom": "^7.0.1",
-     "@testing-library/user-event": "^14.6.8",
-     "@types/geojson": "^7946.0.16",
-     "@types/wicg-file-system-access": "^2023.10.7",
--    "autoprefixer": "^10.6.1",
--    "eslint": "^10.13.0",
-+    "autoprefixer": "^10.6.2",
-+    "eslint": "^10.14.0",
-     "eslint-plugin-better-tailwindcss": "^4.10.0",
-     "eslint-plugin-solid": "^0.18.1",
-     "globals": "^17.13.0",
-@@ -76,10 +76,10 @@
-     "ts-proto": "^2.18.3",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vite": "^8.3.5",
-     "vite-plugin-csp-guard": "^4.0.1",
--    "vite-plugin-solid": "^2.11.14",
-+    "vite-plugin-solid": "^2.11.15",
-     "vite-tsconfig-paths": "6.1.1",
-     "vitest": "^4.1.12"
-   }
 ```
 
-**File**: `crates/assets/js/bindings/package.json` (modified, +2/-2)
+**File**: `crates/assets/js/admin/src/components/openapi/OpenApiPage.tsx` (modified, +9/-10)
 ```diff
-@@ -9,8 +9,8 @@
-     "build": "barrelize && vite build"
-   },
-   "devDependencies": {
--    "@microsoft/api-extractor": "^7.59.4",
--    "barrelize": "^1.9.2",
-+    "@microsoft/api-extractor": "^7.60.1",
-+    "barrelize": "^1.11.0",
-     "typescript": "=6.0.3",
-     "vite": "^8.3.5",
-     "vite-plugin-dts": "^5.1.2"
-```
-
-**File**: `crates/assets/js/client/package.json` (modified, +4/-4)
-```diff
-@@ -42,20 +42,20 @@
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@microsoft/api-extractor": "^7.59.4",
-+    "@microsoft/api-extractor": "^7.60.1",
-     "@types/geojson": "^7946.0.16",
--    "eslint": "^10.13.0",
-+    "eslint": "^10.14.0",
-     "globals": "^17.13.0",
-     "http-status": "^2.1.0",
-     "jsdom": "^30.1.3",
-     "nano-spawn": "^2.1.0",
-     "oauth2-mock-server": "^8.2.3",
--    "otplib": "^13.5.0",
-+    "otplib": "^13.6.0",
-     "prettier": "^3.9.10",
-     "tinybench": "^6.2.2",
-     "trailbase-bindings": "file:../bindings",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vite": "^8.3.5",
-     "vite-node": "^6.0.0",
-     "vite-plugin-dts": "^5.1.2",
-```
-
-**File**: `crates/auth-ui/ui/package.json` (modified, +6/-6)
-```diff
-@@ -14,28 +14,28 @@
-   },
-   "dependencies": {
-     "@astrojs/check": "^0.9.12",
--    "@astrojs/solid-js": "^7.1.1",
-+    "@astrojs/solid-js": "^7.1.2",
-     "@kobalte/core": "^0.13.14",
-     "@nanostores/persistent": "^1.3.5",
-     "@nanostores/solid": "^1.1.1",
--    "astro": "^7.4.2",
-+    "astro": "^7.4.4",
-     "astro-icon": "^1.2.0",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-     "nanostores": "^1.5.5",
-     "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.17",
-+    "solid-js": "^1.9.18",
-     "tailwind-merge": "^3.7.0",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase": "file:../../assets/js/client"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.42",
-+    "@iconify-json/tabler": "^1.2.43",
-     "@kobalte/tailwindcss": "^0.9.0",
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.3",
--    "eslint": "^10.13.0",
-+    "eslint": "^10.14.0",
-     "eslint-plugin-astro": "^3.2.1",
-     "eslint-plugin-better-tailwindcss": "^4.10.0",
-     "eslint-plugin-solid": "^0.18.1",
-@@ -47,6 +47,6 @@
-     "tailwindcss": "^4.3.3",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0"
-+    "typescript-eslint": "^8.72.1"
-   }
+@@ -97,13 +97,12 @@ export default function Page() {
+   });
+ 
+   return (
+-    <div class="max-md:min-h-dvh">
++    <div class="max-md:min-h-dvh md:max-h-full md:overflow-y-auto">
+       <rapi-doc
+         ref={
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           ref as any
+         }
+-        load-fonts="false"
+         sort-tags="true"
+         render-style="view" // "read" | "view" | "focused"
+         layout="row" // "row" | "column"
+@@ -116,6 +115,9 @@ export default function Page() {
+         persist-auth="false"
+         allow-authentication="false"
+         allow-server-selection="false"
++        style={{
++          "--background": theme() === "light" ? "#f8fafc" : "#121821",
++        }}
+         {...(theme() === "light" ? lightTheme : darkTheme)}
+       >
+         {/* Contents */}
+@@ -134,6 +136,8 @@ export default function Page() {
+             </Popover>
+           }
+         />
++
++        <div class="py-1" />
+       </rapi-doc>
+     </div>
+   );
+@@ -179,22 +183,17 @@ function TokenPopoverContent(props: {
  }
+ 
+ type Theme = {
+-  theme: "light" | "dark";
+-  "bg-color": string;
++  "color-scheme": "light" | "dark";
+   "primary-color": string;
+-  "text-color"?: string;
+-  "header-color"?: string;
+ };
+ 
+ const lightTheme: Theme = {
+-  theme: "light",
+-  "bg-color": "#f8fafc",
++  "color-scheme": "light",
+   "primary-color": "#0073a8",
+ };
+ 
+ const darkTheme: Theme = {
+-  theme: "dark",
+-  "bg-color": "#121821",
++  "color-scheme": "dark",
+   "primary-color": "#34b7f4",
+ };
+ 
 ```
 
-**File**: `docs/examples/record_api_ts/package.json` (modified, +3/-3)
+**File**: `pnpm-workspace.yaml` (modified, +1/-3)
 ```diff
-@@ -9,11 +9,11 @@
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@types/node": "^26.6.5",
--    "eslint": "^10.13.0",
-+    "@types/node": "^26.6.6",
-+    "eslint": "^10.14.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vitest": "^4.1.12"
-   },
-   "dependencies": {
-```
-
-**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +4/-4)
-```diff
-@@ -16,15 +16,15 @@
-     "trailbase-wasm": "workspace:*"
-   },
-   "devDependencies": {
--    "@bytecodealliance/jco": "^1.39.0",
-+    "@bytecodealliance/jco": "^1.40.0",
-     "@eslint/js": "^10.0.1",
--    "@types/node": "^26.6.5",
-+    "@types/node": "^26.6.6",
-     "commander": "^15.0.0",
--    "eslint": "^10.13.0",
-+    "eslint": "^10.14.0",
-     "nano-spawn": "^2.1.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "vite": "^8.3.5"
-   }
- }
+@@ -32,6 +32,4 @@ overrides:
+   form-data@>=4.0.0 <4.0.6: ^4.0.6
+ auditConfig:
+   ignoreGhsas:
+-    - GHSA-ch52-4w7c-c8xp
+-    - GHSA-gcqx-w48m-w2h4
+-    - GHSA-g3hv-75wg-m249 # minimatch via rapidoc: client-side only.
++    # - GHSA-ch52-4w7c-c8xp  # example
 ```
 
 #### Recent Merged Pull Requests:
@@ -1207,28 +1344,74 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update JavaScript dependencies. Addresses security advisories.
+## X. Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if exp
 
 **RULE**:
-When implementing operations in `.github/workflows/audit.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `840fd86b`: Update JavaScript dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ddc107b`: Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if explicitly requested or non-JSON request. Fix OpenApi documentation. #310. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/audit.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - run: pnpm audit --prod --json
+[[package]]
+name = "axum-extra"
+version = "0.12.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be44683b41ccb9ab2d23a5230015c9c3c55be97a25e4428366de8873103f7970"
+dependencies = [
+ "axum-core",
+ "bytes",
+ "futures-core",
+ "futures-util",
+ "headers",
+ "http",
+ "http-body",
+ "http-body-util",
+ "mime",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
+name = "headers"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc2700e3fe555c3310aa7286cac6167449f2c87e0eb58769c9208a1c58a1d106"
+dependencies = [
+ "base64 0.22.1",
+ "bytes",
+ "headers-core",
+ "http",
+ "httpdate",
+ "mime",
+ "sha1 0.10.7",
+]
+
+[[package]]
+name = "headers-core"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4"
+dependencies = [
+ "http",
+]
+
+ "axum-extra",
+ "headers",
+ "mime",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - run: pnpm audit --prod --ignore-unfixable
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `840fd86b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ddc107b` are properly handled with clean fallback behavior.

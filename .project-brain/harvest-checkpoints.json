@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:57:45.951Z",
+  "last_updated": "2026-11-04T04:04:57.284Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
-      "verified_at": "2026-11-02T17:46:53.166Z",
+      "content_hash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
+      "verified_at": "2026-11-04T04:04:57.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:46:53.166Z"
+      "last_updated": "2026-11-04T04:04:57.283Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:57:45.880Z",
+  "last_updated": "2026-11-04T04:04:57.185Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -57287,8 +57287,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "f7015b3d",
-      "content_hash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
+      "source_version": "a106ce63",
+      "content_hash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -57326,6 +57326,11 @@
           "number": 6477,
           "title": "Update JavaScript dependencies. Addresses security advisories.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6752,
+          "title": "Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if exp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57333,7 +57338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:46:53.040Z",
+      "verified_at": "2026-11-04T04:04:57.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173110,6 +173115,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:57:45.867Z"
+    },
+    "rule-6752": {
+      "learning_id": "rule-6752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6752,
+      "title": "Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if exp",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "a106ce63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T04:04:57.163Z"
     }
   },
   "aliases": {

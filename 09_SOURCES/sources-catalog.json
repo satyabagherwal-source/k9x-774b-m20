@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "f7015b3d",
+    "sourceVersion": "a106ce63",
     "license": "OSL-3.0",
-    "contentHash": "eee743fa0a5f0c3e5ebe98be011036870e03f29bd58147f9c513176991fb8462",
-    "lastHarvestedAt": "2026-11-02T17:46:53.158Z",
+    "contentHash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
+    "lastHarvestedAt": "2026-11-04T04:04:57.274Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-63O0",
-    "timestamp": "2026-10-31T17:22:55.632Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-FI2E",
     "timestamp": "2026-10-31T17:30:14.198Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-FB5I",
+    "timestamp": "2026-11-04T04:04:57.270Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

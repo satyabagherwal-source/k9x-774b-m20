@@ -7161,3 +7161,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ee552061` | Multi-dimensional audit evidence | 2026-11-04T03:51:14.518Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `8f38c4e3` | Multi-dimensional audit evidence | 2026-11-04T03:57:39.771Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `7f1923a3` | Multi-dimensional audit evidence | 2026-11-04T03:57:45.945Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `a106ce63` | Multi-dimensional audit evidence | 2026-11-04T04:04:57.274Z |

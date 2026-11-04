@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:57:45.948Z",
-  "total_cycles_completed": 7129,
-  "total_learnings_persisted": 7129,
-  "total_rules_promoted": 6775,
+  "last_updated": "2026-11-04T04:04:57.280Z",
+  "total_cycles_completed": 7130,
+  "total_learnings_persisted": 7130,
+  "total_rules_promoted": 6776,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:45:55.521Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:53:43.583Z",
       "repository": "tokio-rs/tokio",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-04T03:57:45.948Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T04:04:57.280Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
