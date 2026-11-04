@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261101-GP03",
-    "timestamp": "2026-11-01T00:03:04.467Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-I80T",
-    "timestamp": "2026-11-01T00:04:15.773Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-Q54I",
-    "timestamp": "2026-11-01T00:10:25.266Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261101-QBVM",
     "timestamp": "2026-11-01T00:10:34.018Z",
     "repository": "skyhook-io/radar",
@@ -7492,6 +7447,51 @@
     "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-8ESO",
+    "timestamp": "2026-11-04T17:59:23.880Z",
+    "repository": "alexpasmantier/television",
+    "learningId": "learn-github-alexpasmantier-television",
+    "contentHash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-8MMQ",
+    "timestamp": "2026-11-04T17:59:34.034Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-8N1O",
+    "timestamp": "2026-11-04T17:59:34.572Z",
+    "repository": "InternScience/Sage-A1.5",
+    "learningId": "learn-huggingface-internscience-sage-a1-5",
+    "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

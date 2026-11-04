@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "a08e420b",
+    "sourceVersion": "12890d87",
     "license": "NOASSERTION",
-    "contentHash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
-    "lastHarvestedAt": "2026-11-03T17:53:53.024Z",
+    "contentHash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
+    "lastHarvestedAt": "2026-11-04T17:59:34.038Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6583,10 +6583,10 @@
     "repository": "alexpasmantier/television",
     "platform": "github",
     "sourceUrl": "https://github.com/alexpasmantier/television",
-    "sourceVersion": "13e831d5",
+    "sourceVersion": "221ba5a5",
     "license": "MIT",
-    "contentHash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
-    "lastHarvestedAt": "2026-11-03T10:46:19.233Z",
+    "contentHash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
+    "lastHarvestedAt": "2026-11-04T17:59:23.883Z",
     "learningId": "learn-github-alexpasmantier-television"
   },
   "insertkoinio-koin": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
-    "lastHarvestedAt": "2026-10-31T02:00:20.498Z",
+    "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
+    "lastHarvestedAt": "2026-11-04T17:59:34.576Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {

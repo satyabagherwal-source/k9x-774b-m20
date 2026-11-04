@@ -7261,3 +7261,6 @@
 | `CYCLE-20261104-ZG3P` | `2026-11-04T17:52:25.669Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6878` | Yes (`2e9266dc...`) |
 | `CYCLE-20261104-ZIIJ` | `2026-11-04T17:52:28.795Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 6879` | Yes (`d4254ea9...`) |
 | `CYCLE-20261104-ZMYT` | `2026-11-04T17:52:34.565Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6880` | Yes (`b317ef57...`) |
+| `CYCLE-20261104-8ESO` | `2026-11-04T17:59:23.880Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6881` | Yes (`323b7162...`) |
+| `CYCLE-20261104-8MMQ` | `2026-11-04T17:59:34.034Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6882` | Yes (`a925de23...`) |
+| `CYCLE-20261104-8N1O` | `2026-11-04T17:59:34.572Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6882, Rule 1145, Rule 6883` | Yes (`74f0ea1d...`) |

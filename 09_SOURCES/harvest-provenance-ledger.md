@@ -7270,3 +7270,6 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `ed58a25b` | Multi-dimensional audit evidence | 2026-11-04T17:52:25.673Z |
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-04T17:52:28.799Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `37ffa51d` | Multi-dimensional audit evidence | 2026-11-04T17:52:34.569Z |
+| `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `221ba5a5` | Multi-dimensional audit evidence | 2026-11-04T17:59:23.883Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `12890d87` | Multi-dimensional audit evidence | 2026-11-04T17:59:34.038Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-04T17:59:34.576Z |

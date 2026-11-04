@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T17:52:34.579Z",
+  "last_updated": "2026-11-04T17:59:34.584Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
-      "verified_at": "2026-11-03T17:53:53.033Z",
+      "content_hash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
+      "verified_at": "2026-11-04T17:59:34.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:53:53.033Z"
+      "last_updated": "2026-11-04T17:59:34.046Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -9951,14 +9951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alexpasmantier-television",
-      "content_hash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
-      "verified_at": "2026-11-03T10:46:19.239Z",
+      "content_hash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
+      "verified_at": "2026-11-04T17:59:23.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:46:19.239Z"
+      "last_updated": "2026-11-04T17:59:23.890Z"
     },
     "InsertKoinIO/koin": {
       "repository": "InsertKoinIO/koin",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
-      "verified_at": "2026-10-31T02:00:20.510Z",
+      "content_hash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
+      "verified_at": "2026-11-04T17:59:34.583Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:00:20.510Z"
+      "last_updated": "2026-11-04T17:59:34.583Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",

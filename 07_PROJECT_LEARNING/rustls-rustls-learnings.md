@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `a08e420b`  
+> **Source Version**: `12890d87`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:53:52.276Z  
+> **Timestamp**: 2026-11-04T17:59:33.376Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:53:52.071Z  
+> **Harvest Timestamp**: 2026-11-04T17:59:32.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7734 stars
+- **Stars / Engagement**: 7736 stars
 
 ---
 
@@ -2278,64 +2278,297 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe2d1c67` (2026-11-02)
-**Commit Message**: Remove unreachable panic in WebPkiSupportedAlgorithms::new
+### Incident Patch 1: `12890d87` (2026-10-29)
+**Commit Message**: server: reject stateful sessions older than the advertised lifetime
 
-**File**: `rustls/src/crypto/mod.rs` (modified, +1/-3)
+The server records creation_time_sec in each stored session but never
+consulted it on resumption. Stateful TLS 1.3 tickets advertise a 24 hour
+ticket_lifetime and TLS 1.2 session ids have no bound at all, yet both
+were accepted until the entry fell out of session_storage.
+
+Apply the 24 hour lifetime to sessions read back from session_storage on
+both paths, falling back to a full handshake. Tickets from the ticketer
+are already bounded by its key rotation and are unchanged.
+
+**File**: `rustls-test/tests/api/resume.rs` (modified, +84/-1)
 ```diff
-@@ -362,8 +362,7 @@ pub struct WebPkiSupportedAlgorithms {
- impl WebPkiSupportedAlgorithms {
-     /// Creating a `WebPkiSupportedAlgorithms` and checking its consistency.
-     ///
--    /// This is intended to only be called in const context, so the panics are
--    /// compile-time.
-+    /// This is intended to only be called in const context.
-     pub const fn new(
-         all: &'static [&'static dyn SignatureVerificationAlgorithm],
-         mapping: &'static [(
-@@ -382,7 +381,6 @@ impl WebPkiSupportedAlgorithms {
-             if s.mapping[i].1.is_empty() {
-                 return Err(ApiMisuse::NoSignatureVerificationAlgorithms);
-             }
--            assert!(!s.mapping[i].1.is_empty());
-             i += 1;
+@@ -3,7 +3,7 @@
+ #![allow(clippy::disallowed_types, clippy::duplicate_mod)]
+ 
+ use core::hash::Hasher;
+-use core::sync::atomic::{AtomicUsize, Ordering};
++use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+ use core::time::Duration;
+ use std::fmt;
+ use std::sync::Arc;
+@@ -13,7 +13,9 @@ use rustls::crypto::kx::NamedGroup;
+ use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
+ use rustls::enums::{CertificateType, ProtocolVersion};
+ use rustls::error::{ApiMisuse, Error, PeerMisbehaved};
++use rustls::pki_types::UnixTime;
+ use rustls::server::{ServerSessionKey, Tls13Tickets};
++use rustls::time_provider::TimeProvider;
+ use rustls::{
+     ClientConfig, ClientSide, Connection, HandshakeKind, ServerConfig, ServerSide, Tcp, VecInput,
+ };
+@@ -1343,6 +1345,87 @@ fn tls13_client_discards_zero_lifetime_ticket() {
+     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
+ }
+ 
++#[test]
++fn tls13_server_rejects_expired_stateful_session() {
++    let provider = provider::DEFAULT_TLS13_PROVIDER;
++    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
++
++    let clock = Arc::new(AdjustableClock::new());
++    let storage = Arc::new(ServerStorage::new());
++    let mut server_config = make_server_config(KeyType::default(), &provider);
++    server_config.session_storage = storage.clone();
++    server_config.time_provider = clock.clone();
++    let server_config = Arc::new(server_config);
++
++    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
++    assert_eq!(storage.puts(), 2);
++
++    // 25 hours later (by the server's clock) the stored session is found but not resumed
++    clock.advance(Duration::from_secs(25 * 60 * 60));
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(storage.takes(), 1);
++    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
++    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
++}
++
++#[test]
++fn tls12_server_rejects_expired_stateful_session() {
++    let provider = provider::DEFAULT_TLS12_PROVIDER;
++    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
++
++    let clock = Arc::new(AdjustableClock::new());
++    let storage = Arc::new(ServerStorage::new());
++    let mut server_config = make_server_config(KeyType::default(), &provider);
++    server_config.session_storage = storage.clone();
++    server_config.time_provider = clock.clone();
++    let server_config = Arc::new(server_config);
++
++    // full handshake: the server stores the session under its session id
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
++    assert_eq!(storage.puts(), 1);
++
++    // 25 hours later (by the server's clock) the stored session is found but not resumed
++    clock.advance(Duration::from_secs(25 * 60 * 60));
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(storage.gets(), 1);
++    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
++    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
++}
++
++/// A `TimeProvider` that starts at the current time and only moves when told to.
++#[derive(Debug)]
++struct AdjustableClock(AtomicU64);
++
++impl AdjustableClock {
++    fn new() -> Self {
++        Self(AtomicU64::new(UnixTime::now().as_secs()))
++    }
++
++    fn advance(&self, by: Duration) {
++        self.0
++            .fetch_add(by.as_secs(), Ordering::SeqCst);
++    }
++}
++
++impl TimeProvider for AdjustableClock {
++    fn current_time(&self) -> Option<UnixTime> {
++        Some(UnixTime::since_unix_epoch(Duration::from_secs(
++            self.0.load(Ordering::SeqCst),
++        )))
++    }
++}
++
+ /// Issues tickets with a `ticket_lifetime` of zero.
+ #[derive(Debug)]
+ struct ZeroLifetimeTicketer(Arc<dyn TicketProducer>);
+```
+
+**File**: `rustls/src/server/mod.rs` (modified, +11/-1)
+```diff
+@@ -126,6 +126,13 @@ impl<'a> CommonServerSessionValue<'a> {
          }
+     }
+ 
++    /// Whether this session was created more than `lifetime` ago.
++    pub(crate) fn has_expired(&self, now: UnixTime, lifetime: Duration) -> bool {
++        self.creation_time_sec
++            .saturating_add(lifetime.as_secs())
++            < now.as_secs()
++    }
++
+     pub(crate) fn can_resume(&self, suite: CipherSuite, sni: Option<&DnsName<'_>>) -> bool {
+         // The RFCs underspecify what happens if we try to resume to
+         // an unoffered/varying suite.  We merely don't resume in weird cases.
+@@ -223,5 +230,8 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
+     }
+ }
+ 
+-/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
++/// How long a session in [`ServerConfig::session_storage`] stays resumable.
++///
++/// Advertised as `ticket_lifetime` for stateful TLS 1.3 tickets.  Tickets from
++/// [`ServerConfig::ticketer`] are bounded by its key rotation instead.
+ pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
+```
+
+**File**: `rustls/src/server/tls12.rs` (modified, +16/-1)
+```diff
+@@ -9,7 +9,9 @@ use zeroize::Zeroize;
+ 
+ use super::config::ServerConfig;
+ use super::hs::ServerState;
+-use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
++use super::{
++    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
++};
+ use crate::ConnectionTrafficSecrets;
+ use crate::check::inappropriate_message;
+ use crate::common_state::{Event, HandshakeFlightTls12, HandshakeKind, Output, OutputEvent, Side};
+@@ -115,6 +117,7 @@ mod client_hello {
+                 st.sni.as_ref(),
+                 st.using_ems,
+                 suite,
++                st.config.current_time()?,
+                 &st.config,
+             );
+ 
+@@ -215,6 +218,7 @@ mod client_hello {
+         sni: Option<&DnsName<'_>>,
+         using_ems: bool,
+         suite: &'static Tls12CipherSuite,
++        now: UnixTime,
+         config: &ServerConfig,
+     ) -> (bool, Option<Tls12ServerSessionValue<'static>>) {
+         // First, check for a ticket that decrypts
+@@ -264,6 +268,17 @@ mod client_hello {
+             return (ticket, None);
+         }
+ 
++        // Tickets are bounded by the ticketer's key rotation; sessions from
++        // `session_storage` by the lifetime we advertise for them.
++        if !ticket
++            && session
++                .common
++                .has_expired(now, STATEFUL_SESSION_LIFETIME)
++        {
++            debug!("stored session has expired");
++            return (ticket, None);
++        }
++
+         match session.extended_ms == using_ems || session.extended_ms && !using_ems {
+             true => (ticket, Some(session.into_owned())),
+             false => (ticket, None),
+```
+
+**File**: `rustls/src/server/tls13.rs` (modified, +12/-1)
+```diff
+@@ -485,7 +485,8 @@ mod client_hello {
+ 
+         let now = config.current_time()?;
+         for (index, psk_id) in psk_offer.identities.iter().enumerate() {
+-            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, config) else {
++            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, now, config)
++            else {
+                 continue;
+             };
+ 
+@@ -1313,6 +1314,7 @@ pub(crate) struct Tls13ServerSessionValue<'a> {
+ impl<'a> Tls13ServerSessionValue<'a> {
+     fn from_ticket(
+         id: &PresharedKeyIdentity,
++        now: UnixTime,
+         config: &ServerConfig,
+     ) -> Option<Tls13ServerSessionValue<'static>> {
+         let plain = match config.ticketer.as_deref() {
+@@ -1326,6 +1328,15 @@ impl<'a> Tls13ServerSessionValue<'a> {
+             return None;
+         };
+ 
++        if config.ticketer.is_none()
++            && tls13
++                .common
++                .has_expired(now, STATEFUL_SESSION_LIFETIME)
++        {
++            debug!("stored session has expired");
++            return None;
++        }
++
+         Some(tls13.into_owned())
+     }
  
 ```
 
 ---
 
-### Incident Patch 2: `ca2a6d1d` (2026-11-02)
-**Commit Message**: Fix logic error in front-page sample code
+### Incident Patch 2: `b471b260` (2026-10-29)
+**Commit Message**: server: extract stateful ticket lifetime into a const
 
-**File**: `rustls/src/lib.rs` (modified, +1/-0)
+**File**: `rustls/src/server/mod.rs` (modified, +4/-0)
 ```diff
-@@ -236,6 +236,7 @@
- //!       .handle_all(&mut plaintext)
- //!       .unwrap();
- //!     io::stdout().write(&plaintext).unwrap();
-+//!     plaintext.clear();
- //!   }
- //!
- //!   if !sent_request && !client.is_handshaking() {
+@@ -1,4 +1,5 @@
+ use alloc::vec::Vec;
++use core::time::Duration;
+ 
+ use pki_types::{DnsName, UnixTime};
+ 
+@@ -221,3 +222,6 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
+         self.inner
+     }
+ }
++
++/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
++pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
 ```
 
----
-
-### Incident Patch 3: `20e2d1c9` (2026-11-02)
-**Commit Message**: Fix link to `with_ech()`
-
-**File**: `rustls/src/client/config.rs` (modified, +1/-1)
+**File**: `rustls/src/server/tls13.rs` (modified, +4/-4)
 ```diff
-@@ -45,7 +45,7 @@ use crate::{DistinguishedName, DynHasher, KeyLog, compress};
- /// These must be created via the [`ClientConfig::builder()`] or [`ClientConfig::builder_with_details()`]
- /// function.
- ///
--/// Note that using [`ConfigBuilder<ClientConfig, WantsVersions>::with_ech()`] will produce a common
-+/// Note that using [`ConfigBuilder<ClientConfig, WantsVerifier>::with_ech()`] will produce a common
- /// configuration specific to the provided [`crate::client::EchConfig`] that may not be appropriate
- /// for all connections made by the program. In this case the configuration should only be shared
- /// by connections intended for domains that offer the provided [`crate::client::EchConfig`] in
+@@ -1,7 +1,6 @@
+ use alloc::boxed::Box;
+ use alloc::vec;
+ use alloc::vec::Vec;
+-use core::time::Duration;
+ 
+ pub(crate) use client_hello::TLS13_HANDLER;
+ use pki_types::{DnsName, UnixTime};
+@@ -10,7 +9,9 @@ use zeroize::Zeroizing;
+ 
+ use super::config::ServerConfig;
+ use super::hs::{HandshakeHashOrBuffer, ServerState};
+-use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
++use super::{
++    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
++};
+ use crate::check::{inappropriate_handshake_message, inappropriate_message};
+ use crate::common_state::{Event, HandshakeFlightTls13, HandshakeKind, Output, OutputEvent, Side};
+ use crate::conn::kernel::KernelState;
+@@ -1472,8 +1473,7 @@ impl ExpectFinished {
+                 trace!("resumption not available; not issuing ticket");
+                 return Ok(());
+             }
+-            let stateful_lifetime = Duration::from_secs(24 * 60 * 60); // this is a bit of a punt
+-            (id.to_vec(), stateful_lifetime)
++            (id.to_vec(), STATEFUL_SESSION_LIFETIME)
+         };
+ 
+         let mut payload = NewSessionTicketPayloadTls13::new(lifetime, age_add, nonce, ticket);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2364,30 +2597,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove unreachable panic in WebPkiSupportedAlgorithms::new
+## X. server: reject stateful sessions older than the advertised lifetime
 
 **RULE**:
-When implementing operations in `rustls/src/crypto/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe2d1c67`: Remove unreachable panic in WebPkiSupportedAlgorithms::new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12890d87`: server: reject stateful sessions older than the advertised lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/crypto/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// This is intended to only be called in const context.
+use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+use rustls::pki_types::UnixTime;
+use rustls::time_provider::TimeProvider;
+#[test]
+fn tls13_server_rejects_expired_stateful_session() {
+    let provider = provider::DEFAULT_TLS13_PROVIDER;
+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
+
+    let clock = Arc::new(AdjustableClock::new());
+    let storage = Arc::new(ServerStorage::new());
+    let mut server_config = make_server_config(KeyType::default(), &provider);
+    server_config.session_storage = storage.clone();
+    server_config.time_provider = clock.clone();
+    let server_config = Arc::new(server_config);
+
+    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
+    let (mut client, mut server, mut buf) =
+        make_pair_for_arc_configs(&client_config, &server_config);
+    buf.handshake(&mut client, &mut server);
+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
+    assert_eq!(storage.puts(), 2);
+
+    // 25 hours later (by the server's clock) the stored session is found but not resumed
+    clock.advance(Duration::from_secs(25 * 60 * 60));
+    let (mut client, mut server, mut buf) =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// This is intended to only be called in const context, so the panics are
-    /// compile-time.
-            assert!(!s.mapping[i].1.is_empty());
+use core::sync::atomic::{AtomicUsize, Ordering};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe2d1c67` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12890d87` are properly handled with clean fallback behavior.

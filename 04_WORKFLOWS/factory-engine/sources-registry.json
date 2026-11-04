@@ -1,21 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T08:35:06.154Z",
-    "lastVerified": "2026-11-04T08:35:06.154Z",
+    "lastChecked": "2026-11-04T17:59:32.514Z",
+    "lastVerified": "2026-11-04T17:59:32.514Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "e591b21a0f159dd2cce75332bbb4cc5fdd3750b5d4fe39f91ca4dd58e48fb914",
+    "contentHash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a08e420b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "router",
@@ -40,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T17:52:37.136Z",
-    "lastVerified": "2026-11-04T17:52:37.136Z",
+    "lastChecked": "2026-11-04T17:59:37.133Z",
+    "lastVerified": "2026-11-04T17:59:37.133Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -434,12 +433,12 @@
     "lastVerified": "2026-11-03T20:11:11.388Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T17:30:48.251Z",
-    "lastVerified": "2026-11-04T17:30:48.251Z",
+    "lastChecked": "2026-11-04T17:59:33.310Z",
+    "lastVerified": "2026-11-04T17:59:33.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -448,7 +447,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e8ef229c"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -2336,8 +2336,8 @@
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:30:02.915Z",
-    "lastVerified": "2026-11-03T18:30:02.915Z",
+    "lastChecked": "2026-11-04T17:59:26.147Z",
+    "lastVerified": "2026-11-04T17:59:26.147Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -5535,9 +5535,9 @@
   "benoitvallon-react-native-nw-react-calculator": {
     "name": "react-native-nw-react-calculator",
     "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
-    "lastChecked": "2026-10-31T10:47:13.465Z",
+    "lastChecked": "2026-11-04T17:59:23.662Z",
     "revisionIdentifier": "4f9628fa",
-    "lastVerified": "2026-10-31T10:47:13.465Z"
+    "lastVerified": "2026-11-04T17:59:23.662Z"
   },
   "bridgecrewio-checkov": {
     "name": "bridgecrewio/checkov",
@@ -6704,14 +6704,14 @@
     "officialUrl": "https://github.com/alexpasmantier/television",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T10:45:41.088Z",
-    "lastVerified": "2026-11-03T10:45:41.088Z",
+    "lastChecked": "2026-11-04T17:59:21.974Z",
+    "lastVerified": "2026-11-04T17:59:21.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alexpasmantier-television",
-    "contentHash": "dcaf7b709f7224898ab8849559182a9a623b6c5fb9e4a66802edb26b16ddc5ff",
+    "contentHash": "323b7162d9ff8564e0256bb7bb6bd7198139c17ed86ee335b26ef5d2041adf02",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7088,9 +7088,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-03T17:38:19.201Z",
+    "lastChecked": "2026-11-04T17:59:30.824Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-03T17:38:19.201Z"
+    "lastVerified": "2026-11-04T17:59:30.824Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -12618,13 +12618,13 @@
     "officialUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T02:00:19.429Z",
-    "lastVerified": "2026-10-31T02:00:19.429Z",
+    "lastChecked": "2026-11-04T17:59:20.823Z",
+    "lastVerified": "2026-11-04T17:59:20.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-internscience-sage-a1-5",
-    "contentHash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
-    "promotedRulesCount": 0,
+    "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

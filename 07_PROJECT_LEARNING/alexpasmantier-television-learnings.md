@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alexpasmantier-television-learnings.md`  
 > **Source**: github ([https://github.com/alexpasmantier/television](https://github.com/alexpasmantier/television))  
-> **Source Version**: `13e831d5`  
+> **Source Version**: `221ba5a5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:46:18.759Z  
+> **Timestamp**: 2026-11-04T17:59:23.215Z  
 > **Learning ID**: `learn-github-alexpasmantier-television`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alexpasmantier-television-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alexpasmantier/television](https://github.com/alexpasmantier/television))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:41.088Z  
+> **Harvest Timestamp**: 2026-11-04T17:59:21.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A very fast, portable and hackable fuzzy finder.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6405 stars
+- **Stars / Engagement**: 6407 stars
 
 ---
 
@@ -2121,576 +2121,184 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d81eddfb` (2026-11-01)
-**Commit Message**: refactor(ui): cleanup input prompt and header logic
+### Incident Patch 1: `221ba5a5` (2026-11-03)
+**Commit Message**: fix(ui): reduce min preview height for autohide
 
-**File**: `television/config/layers.rs` (modified, +8/-9)
+**File**: `television/screen/layout.rs` (modified, +1/-1)
 ```diff
-@@ -250,13 +250,13 @@ impl ConfigLayers {
-             .input_header
-             .clone()
-             .or_else(|| channel_input_bar?.header.clone())
--            .or_else(|| self.base_config.ui.input_bar.header.clone());
-+            .unwrap_or_else(|| self.base_config.ui.input_bar.header.clone());
-         let input_bar_prompt = self
-             .channel_cli
-             .input_prompt
-             .clone()
-             .or_else(|| channel_input_bar?.prompt.clone())
--            .or_else(|| self.base_config.ui.input_bar.prompt.clone());
-+            .unwrap_or_else(|| self.base_config.ui.input_bar.prompt.clone());
-         let input_bar_border_type = self
-             .channel_cli
-             .input_border
-@@ -604,8 +604,8 @@ pub struct MergedConfig {
-     pub width: Option<u16>,
-     // input bar
-     pub input_bar_position: InputPosition,
--    pub input_bar_header: Option<String>,
--    pub input_bar_prompt: Option<String>,
-+    pub input_bar_header: String,
-+    pub input_bar_prompt: String,
-     pub input_bar_border_type: BorderType,
-     pub input_bar_padding: Padding,
-     /// Show the channel name next to the result count (minimal UI preset).
-@@ -688,7 +688,7 @@ impl MergedConfig {
- 
-     /// An empty input bar header means "no header line at all".
-     pub fn input_bar_header_hidden(&self) -> bool {
--        self.input_bar_header.as_deref().is_some_and(str::is_empty)
-+        self.input_bar_header.is_empty()
-     }
- 
-     /// Number of vertical cells the results block chrome (borders + padding)
-@@ -842,9 +842,8 @@ mod tests {
-             assert_eq!(merged.input_bar_border_type, BorderType::None);
-             assert_eq!(merged.results_panel_border_type, BorderType::None);
-             assert_eq!(merged.preview_panel_border_type, BorderType::None);
--            assert_eq!(merged.input_bar_header.as_deref(), Some(""));
-             assert!(merged.input_bar_header_hidden());
--            assert_eq!(merged.input_bar_prompt.as_deref(), Some(""));
-+            assert!(merged.input_bar_prompt.is_empty());
-             assert_eq!(merged.input_bar_padding, Padding::new(0, 1, 1, 0));
-             assert_eq!(merged.results_panel_padding, Padding::new(0, 0, 1, 0));
-             assert_eq!(merged.preview_panel_padding, Padding::new(1, 0, 0, 0));
-@@ -868,7 +867,7 @@ mod tests {
-         assert_eq!(merged.results_panel_border_type, BorderType::None);
-         assert_eq!(merged.preview_panel_border_type, BorderType::None);
-         assert!(merged.input_bar_header_hidden());
--        assert_eq!(merged.input_bar_prompt.as_deref(), Some(""));
-+        assert!(merged.input_bar_prompt.is_empty());
-         assert!(merged.input_bar_minimal);
-         // ...but the status bar stays
-         assert!(!merged.status_bar_hidden);
-@@ -992,7 +991,7 @@ mod tests {
-         );
-         assert!(!merged.status_bar_hidden);
-         assert_eq!(merged.preview_panel_border_type, BorderType::Rounded);
--        assert_eq!(merged.input_bar_header.as_deref(), Some("Custom"));
-+        assert_eq!(merged.input_bar_header, "Custom");
-         // fields the CLI didn't touch still get the preset
-         assert_eq!(merged.results_panel_border_type, BorderType::None);
-     }
+@@ -516,7 +516,7 @@ fn centered_rect_with_dimensions(dimensions: &Dimensions, r: Rect) -> Rect {
+ /// Minimum dimensions each pane must end up with for the preview to be worth
+ /// showing; below these the preview is automatically hidden so the results
+ /// list stays usable (e.g. `--inline` in a handful of rows).
+-const MIN_PREVIEW_HEIGHT: u16 = 8;
++const MIN_PREVIEW_HEIGHT: u16 = 4;
+ const MIN_RESULTS_HEIGHT: u16 = 4;
+ const MIN_PREVIEW_WIDTH: u16 = 25;
+ const MIN_RESULTS_WIDTH: u16 = 30;
 ```
 
-**File**: `television/config/mod.rs` (modified, +2/-2)
+**File**: `tests/pty/layout.rs` (modified, +1/-1)
 ```diff
-@@ -447,7 +447,7 @@ mod tests {
-         default_config.ui.ui_scale = 40;
-         default_config.ui.theme = "television".to_string();
-         // the fixture sets an explicit prompt (the built-in default is none)
--        default_config.ui.input_bar.prompt = Some(">".to_string());
-+        default_config.ui.input_bar.prompt = ">".to_string();
-         // With new architecture, we add directly to the bindings map
-         default_config.keybindings.insert(
-             Key::new(KeyCode::Enter, KeyModifiers::CONTROL),
-@@ -493,7 +493,7 @@ mod tests {
-         let config = Config::new(&config_env, None).unwrap();
+@@ -285,7 +285,7 @@ fn test_minimal_ui_auto_hides_preview_when_cramped() {
  
-         // Verify that input_prompt was loaded from user config
--        assert_eq!(config.ui.input_bar.prompt, Some("❯".to_string()));
-+        assert_eq!(config.ui.input_bar.prompt, "❯");
-     }
- 
-     #[test]
-```
-
-**File**: `television/config/ui.rs` (modified, +4/-12)
-```diff
-@@ -7,15 +7,13 @@ use serde::{Deserialize, Serialize};
- 
- pub const DEFAULT_UI_SCALE: u16 = 100;
- pub const DEFAULT_PREVIEW_SIZE: u16 = 50;
--pub const DEFAULT_PROMPT: &str = ">";
- 
- #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Hash)]
- #[serde(default)]
- pub struct InputBarConfig {
-     pub position: InputPosition,
--    pub header: Option<String>,
--    #[serde(default = "default_prompt")]
--    pub prompt: Option<String>,
-+    pub header: String,
-+    pub prompt: String,
-     pub border_type: BorderType,
-     pub padding: Padding,
- }
-@@ -24,20 +22,14 @@ impl Default for InputBarConfig {
-     fn default() -> Self {
-         Self {
-             position: InputPosition::default(),
--            // an empty header/prompt means "don't render it at all"
--            header: Some(String::new()),
--            prompt: Some(String::new()),
-+            header: String::new(),
-+            prompt: String::new(),
-             border_type: BorderType::default(),
-             padding: Padding::uniform(0),
-         }
-     }
- }
- 
--#[allow(clippy::unnecessary_wraps)]
--fn default_prompt() -> Option<String> {
--    Some(String::new())
--}
--
- #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Hash, Default)]
- #[serde(default)]
- pub struct StatusBarConfig {
-```
-
-**File**: `television/draw.rs` (modified, +0/-2)
-```diff
-@@ -227,7 +227,6 @@ pub fn draw(ctx: Ctx, f: &mut Frame<'_>, area: Rect) -> Result<Layout> {
-             picker.total_items,
-             picker.total_count,
-             false,
--            "channels",
-             // with no status bar, the picker hint stands in for the mode
-             ctx.config
-                 .status_bar_hidden
-@@ -266,7 +265,6 @@ pub fn draw(ctx: Ctx, f: &mut Frame<'_>, area: Rect) -> Result<Layout> {
-             ctx.tv_state.results_picker.total_items,
-             ctx.tv_state.channel_state.total_count,
-             ctx.tv_state.channel_state.running,
--            &ctx.tv_state.channel_state.current_channel_name,
-             // with no status bar, the channel name moves next to the count,
-             // in the same color the status bar would use
-             (minimal && ctx.config.status_bar_hidden).then(|| {
-```
-
-**File**: `television/screen/action_picker.rs` (modified, +0/-1)
-```diff
-@@ -69,7 +69,6 @@ pub fn draw_actions_pane(
-         results_count,
-         total_count,
-         false,
--        "actions",
-         // with no status bar, the picker hint stands in for the mode
-         config
-             .status_bar_hidden
-```
-
-**File**: `television/screen/input.rs` (modified, +10/-20)
-```diff
-@@ -1,5 +1,5 @@
- use crate::{
--    config::{layers::MergedConfig, ui::DEFAULT_PROMPT},
-+    config::layers::MergedConfig,
-     screen::{colors::Colorscheme, layout::InputPosition},
-     utils::input::Input,
- };
-@@ -41,8 +41,6 @@ pub fn draw_input_box(
-     results_count: u32,
-     total_count: u32,
-     matcher_running: bool,
--    // shown as the header when the config doesn't set one
--    header_fallback: &str,
-     // optional `· <hint>` suffix after the count in the given color (the
-     // current channel or picker mode), shown when the status bar is hidden
-     hint: Option<(&str, Color)>,
-@@ -52,14 +50,11 @@ pub fn draw_input_box(
-     let position = config.input_bar_position;
-     let padding = &config.input_bar_padding;
-     let border_type = &config.input_bar_border_type;
--    let prompt = config.input_bar_prompt.as_ref();
-+    let prompt = &config.input_bar_prompt;
-     // minimal UI: dimmed compact count and undecorated query
-     let minimal = config.input_bar_minimal;
-     // an empty header means "no header at all"
--    let header = config
--        .input_bar_header
--        .as_deref()
--        .unwrap_or(header_fallback);
-+    let header = &config.input_bar_header;
-     let mut input_block = Block::default()
-         .style(Style::default().bg(colorscheme.general.background))
-         .padding(RatatuiPadding::from(*padding));
-@@ -94,17 +89,12 @@ pub fn draw_input_box(
-     // split input block into 4 parts: prompt symbol, input, result count, indicator
-     let indicator_len = if matcher_running { 2 } else { 0 };
-     // an empty prompt means "no prompt at all"
--    let prompt_len = prompt
--        .as_ref()
--        .map(|p| {
--            if p.is_empty() {
--                0
--            } else {
--                u16::try_from(p.chars().count() + 1)
--                    .expect("Prompt length should fit in u16")
--            }
--        })
--        .unwrap_or(2);
-+    let prompt_len = if prompt.is_empty() {
-+        0
-+    } else {
-+        u16::try_from(prompt.chars().count() + 1)
-+            .expect("Prompt length should fit in u16")
-+    };
-     // columns left for the count once the query field got its minimum
-     let count_width_budget = input_block_inner
-         .width
-@@ -199,7 +189,7 @@ pub fn draw_input_box(
-     if prompt_len > 0 {
-         let arrow_block = Block::default();
-         let arrow = Paragraph::new(Span::styled(
--            format!("{} ", prompt.unwrap_or(&DEFAULT_PROMPT.to_string())),
-+            format!("{} ", prompt),
-             Style::default().fg(colorscheme.input.input_fg).bold(),
-         ))
-         .block(arrow_block);
+     let s = tv_local_config_and_cable_with_args(
+         &pt,
+-        &["files", "--height", "10", "--layout", "portrait"],
++        &["files", "--height", "6", "--layout", "portrait"],
+     )
+     .env(TESTING_ENV_VAR, "1")
+     .start()
 ```
 
 ---
 
-### Incident Patch 2: `b5abf104` (2026-11-01)
-**Commit Message**: fix(config): merge channel ui configs field by field
+### Incident Patch 2: `b1d8c693` (2026-11-03)
+**Commit Message**: fix(ui): better frame and app state sync
 
-**File**: `television/channels/prototypes.rs` (modified, +45/-27)
+**File**: `television/action.rs` (modified, +12/-4)
 ```diff
-@@ -1,11 +1,11 @@
- use crate::cli::parse_source_entry_delimiter;
--use crate::config::ui::{InputBarConfig, ThemeOverrides};
-+use crate::config::ui::{BorderType, Padding, ThemeOverrides};
- use crate::utils::shell::Shell;
- use crate::utils::strings::SPACE;
- use crate::{
-     config::{Keybindings, ui},
-     event::Key,
--    screen::layout::Orientation,
-+    screen::layout::{InputPosition, Orientation},
- };
- use anyhow::Result;
- use rustc_hash::FxHashMap;
-@@ -487,11 +487,11 @@ pub struct UiSpec {
-     pub theme_overrides: ThemeOverrides,
-     // Feature-specific configurations
-     #[serde(default)]
--    pub input_bar: Option<InputBarConfig>,
-+    pub input_bar: Option<InputBarSpec>,
-     #[serde(default)]
--    pub preview_panel: Option<ui::PreviewPanelConfig>,
-+    pub preview_panel: Option<PreviewPanelSpec>,
-     #[serde(default)]
--    pub results_panel: Option<ui::ResultsPanelConfig>,
-+    pub results_panel: Option<ResultsPanelSpec>,
-     #[serde(default)]
-     pub status_bar: Option<ui::StatusBarConfig>,
-     #[serde(default)]
-@@ -500,25 +500,38 @@ pub struct UiSpec {
-     pub remote_control: Option<ui::RemoteControlConfig>,
- }
- 
--pub const DEFAULT_PROTOTYPE_NAME: &str = "files";
-+#[derive(Debug, Clone, Default, serde::Deserialize, serde::Serialize)]
-+#[serde(default)]
-+pub struct InputBarSpec {
-+    pub position: Option<InputPosition>,
-+    pub header: Option<String>,
-+    pub prompt: Option<String>,
-+    pub border_type: Option<BorderType>,
-+    pub padding: Option<Padding>,
-+}
- 
--impl From<&crate::config::UiConfig> for UiSpec {
--    fn from(config: &crate::config::UiConfig) -> Self {
--        UiSpec {
--            ui_scale: Some(config.ui_scale),
--            orientation: Some(config.orientation),
--            theme: Some(config.theme.clone()),
--            theme_overrides: config.theme_overrides.clone(),
--            input_bar: Some(config.input_bar.clone()),
--            preview_panel: Some(config.preview_panel.clone()),
--            results_panel: Some(config.results_panel.clone()),
--            status_bar: Some(config.status_bar.clone()),
--            help_panel: Some(config.help_panel.clone()),
--            remote_control: Some(config.remote_control.clone()),
--        }
--    }
-+#[derive(Debug, Clone, Default, serde::Deserialize, serde::Serialize)]
-+#[serde(default)]
-+pub struct ResultsPanelSpec {
-+    pub border_type: Option<BorderType>,
-+    pub padding: Option<Padding>,
- }
- 
-+#[derive(Debug, Clone, Default, serde::Deserialize, serde::Serialize)]
-+#[serde(default)]
-+pub struct PreviewPanelSpec {
-+    pub size: Option<u16>,
-+    pub header: Option<Template>,
-+    pub footer: Option<Template>,
-+    pub scrollbar: Option<bool>,
-+    pub border_type: Option<BorderType>,
-+    pub padding: Option<Padding>,
-+    pub word_wrap: Option<bool>,
-+    pub hidden: bool,
-+}
-+
-+pub const DEFAULT_PROTOTYPE_NAME: &str = "files";
-+
- #[cfg(test)]
- mod tests {
-     use crate::{
-@@ -669,11 +682,11 @@ mod tests {
-         let ui = prototype.ui.unwrap();
-         assert_eq!(ui.orientation, Some(Orientation::Landscape));
-         assert_eq!(ui.ui_scale, Some(100));
--        assert_eq!(ui.preview_panel.as_ref().unwrap().size, 66);
-+        assert_eq!(ui.preview_panel.as_ref().unwrap().size, Some(66));
-         let input_bar = ui.input_bar.as_ref().unwrap();
--        assert_eq!(input_bar.position, InputPosition::Bottom);
-+        assert_eq!(input_bar.position, Some(InputPosition::Bottom));
-         assert_eq!(input_bar.header.as_ref().unwrap(), "Input: {}");
--        assert_eq!(input_bar.border_type, BorderType::Plain);
-+        assert_eq!(input_bar.border_type, Some(BorderType::Plain));
-         let preview_panel = ui.preview_panel.as_ref().unwrap();
-         assert_eq!(
-             preview_panel.header.as_ref().unwrap().raw(),
-@@ -683,9 +696,12 @@ mod tests {
-             preview_panel.footer.as_ref().unwrap().raw(),
-             "Press 'q' to quit"
-         );
--        assert_eq!(preview_panel.border_type, BorderType::Thick);
-+        assert_eq!(preview_panel.border_type, Some(BorderType::Thick));
- 
--        assert_eq!(ui.results_panel.unwrap().border_type, BorderType::None);
-+        assert_eq!(
-+            ui.results_panel.unwrap().border_type,
-+            Some(BorderType::None)
-+        );
- 
-         let keybindings = prototype.keybindings.unwrap();
-         assert_eq!(
-@@ -950,8 +966,10 @@ mod tests {
-         assert_eq!(ui.ui_scale, Some(40));
-         assert_eq!(
-             ui.input_bar.as_ref().unwrap().border_type,
--            BorderType::None
-+            Some(BorderType::None)
-         );
-+        // fields the channel doesn't set stay unset
-+        assert!(ui.input_bar.as_ref().unwrap().prompt.is_none());
-         assert!(ui.preview_panel.is_some());
-         assert_eq!(
-             ui.preview_panel
-```
-
-**File**: `television/config/layers.rs` (modified, +81/-118)
-```diff
-@@ -15,6 +15,7 @@ use crate::{
- };
- use rustc_hash::FxHashMap;
- use std::path::PathBuf;
-+use tracing::trace;
- 
- /// Represents the different layers of configuration that make up the final
- /// merged configuration used by the application.
-@@ -219,60 +220,52 @@ impl ConfigLayers {
-             .and_then(|ui| ui.help_panel.as_ref())
-             .is_none_or(|hp| hp.show_categories)
-             && self.base_config.ui.help_panel.show_categories;
--        let input_bar_position = self.channel_cli.input_position.unwrap_or(
--            self.channel
--                .ui
--                .as_ref()
--                .and_then(|ui| ui.input_bar.as_ref())
--                .map_or(self.base_config.ui.input_bar.position, |ib| {
--                    ib.position
--                }),
--        );
- 
--        // CLI > channel > base config fields
--        let ui_scale = self.channel_cli.ui_scale.unwrap_or(
--            self.channel
--                .ui
--                .as_ref()
--                .and_then(|ui| ui.ui_scale)
--                .unwrap_or(self.base_config.ui.ui_scale),
--        );
--        let layout = self.channel_cli.layout.unwrap_or(
--            self.channel
--                .ui
--                .as_ref()
--                .and_then(|ui| ui.orientation)
--                .unwrap_or(self.base_config.ui.orientation),
--        );
-+        // CLI > channel > base config fields.
-+        let channel_ui = self.channel.ui.as_ref();
-+        let channel_input_bar =
-+            channel_ui.and_then(|ui| ui.input_bar.as_ref());
-+        let channel_results_panel =
-+            channel_ui.and_then(|ui| ui.results_panel.as_ref());
-+        let channel_preview_panel =
-+            channel_ui.and_then(|ui| ui.preview_panel.as_ref());
-+
-+        let ui_scale = self
-+            .channel_cli
-+            .ui_scale
-+            .or(channel_ui.and_then(|ui| ui.ui_scale))
-+            .unwrap_or(self.base_config.ui.ui_scale);
-+        let layout = self
-+            .channel_cli
-+            .layout
-+            .or(channel_ui.and_then(|ui| ui.orientation))
-+            .unwrap_or(self.base_config.ui.orientation);
-+        let input_bar_position = self
-+            .channel_cli
-+            .input_position
-+            .or(channel_input_bar.and_then(|ib| ib.position))
-+            .unwrap_or(self.base_config.ui.input_bar.position);
-         let input_bar_header = self
-             .channel_cli
-             .input_header
-             .clone()
--            .or_else(|| {
--                self.channel.ui.as_ref()?.input_bar.as_ref()?.header.clone()
--            })
-+            .or_else(|| channel_input_bar?.header.clone())
-             .or_else(|| self.base_config.ui.input_bar.header.clone());
-         let input_bar_prompt = self
-             .channel_cli
-             .input_prompt
-             .clone()
--            .or_else(|| {
--                self.channel.ui.as_ref()?.input_bar.as_ref()?.prompt.clone()
--            })
-+            .or_else(|| channel_input_bar?.prompt.clone())
-             .or_else(|| self.base_config.ui.input_bar.prompt.clone());
-         let input_bar_border_type = self
-             .channel_cli
-             .input_border
--            .or_else(|| {
--                Some(self.channel.ui.as_ref()?.input_bar.as_ref()?.border_type)
--            })
-+            .or(channel_input_bar.and_then(|ib| ib.border_type))
-             .unwrap_or(self.base_config.ui.input_bar.border_type);
-         let mut input_bar_padding = self
-             .channel_cli
-             .input_padding
--            .or_else(|| {
--                Some(self.channel.ui.as_ref()?.input_bar.as_ref()?.padding)
--            })
-+            .or(channel_input_bar.and_then(|ib| ib.padding))
-             .unwrap_or(self.base_config.ui.input_bar.padding);
-         let status_bar_disabled = self.global_cli.no_status_bar;
-         let mut status_bar_hidden = if status_bar_disabled {
-@@ -292,105 +285,53 @@ impl ConfigLayers {
-         let results_panel_border_type = self
-             .channel_cli
-             .results_border
--            .or_else(|| {
--                Some(
--                    self.channel
--                        .ui
--                        .as_ref()?
--                        .results_panel
--                        .as_ref()?
--                        .border_type,
--                )
--            })
-+            .or(channel_results_panel.and_then(|rp| rp.border_type))
-             .unwrap_or(self.base_config.ui.results_panel.border_type);
-         let mut results_panel_padding = self
-             .channel_cli
-             .results_padding
--            .or_else(|| {
--                Some(self.channel.ui.as_ref()?.results_panel.as_ref()?.padding)
--            })
-+            .or(channel_results_panel.and_then(|rp| rp.padding))
-             .unwrap_or(self.base_config.ui.results_panel.padding);
-         let preview_panel_size = self
-             .channel_cli
-             .preview_size
--            .or_else(|| {
--                Some(self.channel
-```
-
----
-
-### Incident Patch 3: `d8b6845b` (2026-11-01)
-**Commit Message**: fix(matcher): disable case bonuses when query is all lowercase
-
-**File**: `television/matcher/mod.rs` (modified, +30/-8)
-```diff
-@@ -462,19 +462,26 @@ fn build_indices_matcher(
- /// Parse the query into pattern atoms, giving each one a typo budget when
- /// typo resistance is enabled. The budget only affects fuzzy atoms; literal
- /// atoms (`'`, `^`, `$`, `!`) always match without typos.
-+///
-+/// When an atom is entirely lowercase, we disable frizbee's `matching_case_bonus`.
- fn parse_patterns(
-     pattern: &str,
-     config: MatcherConfig,
- ) -> Vec<frizbee::Pattern> {
--    let patterns = frizbee::Pattern::parse_query(pattern);
--    if !config.typo_resistance {
--        return patterns;
--    }
--    patterns
-+    frizbee::Pattern::parse_query(pattern)
-         .into_iter()
--        .map(|pattern| {
--            let budget = typo_budget(&pattern.needle);
--            pattern.max_typos(Some(budget))
-+        .map(|mut pattern| {
-+            if !pattern.needle.chars().any(char::is_uppercase) {
-+                pattern = pattern.scoring(Some(frizbee::Scoring {
-+                    matching_case_bonus: 0,
-+                    ..frizbee::Scoring::default()
-+                }));
-+            }
-+            if config.typo_resistance {
-+                let budget = typo_budget(&pattern.needle);
-+                pattern = pattern.max_typos(Some(budget));
-+            }
-+            pattern
-         })
-         .collect()
- }
-@@ -650,6 +657,21 @@ mod tests {
-         assert_eq!(collect_ids(&mut tolerant), vec![1]);
+@@ -311,10 +311,6 @@ impl Action {
+                 | Action::ScrollPreviewHalfPageUp
+                 | Action::ScrollPreviewHalfPageDown
+                 | Action::CyclePreviews
+-                | Action::ToggleHelp
+-                | Action::TogglePreview
+-                | Action::ToggleStatusBar
+-                | Action::ToggleOrientation
+                 | Action::CopyEntryToClipboard
+                 | Action::OpenEntry
+                 | Action::Render
+@@ -326,6 +322,18 @@ impl Action {
+         )
      }
  
-+    /// A lowercase query doesn't favor entries that happen to be lowercase.
-+    #[test]
-+    fn lowercase_query_ignores_case_when_ranking() {
-+        let items: Vec<(usize, String)> = vec![
-+            (0, ".github/workflows/update_readme.yml".to_string()),
-+            (1, "README.md".to_string()),
-+        ];
-+
-+        let mut matcher: Matcher<usize> = Matcher::new(SortStrategy::Score, 2);
-+        matcher.injector().push_batch(items);
-+        matcher.find("readme");
-+        matcher.wait_for_idle();
-+        assert_eq!(collect_ids(&mut matcher), vec![1, 0]);
++    pub fn affects_layout(&self) -> bool {
++        matches!(
++            self,
++            Action::ToggleHelp
++                | Action::TogglePreview
++                | Action::ToggleStatusBar
++                | Action::ToggleOrientation
++                | Action::ToggleActionPicker
++                | Action::ToggleRemoteControl
++        )
 +    }
 +
-     /// A promoted strategy backed by a fixed score table, keyed on the
-     /// haystack.
-     fn promoted_strategy(entries: &[(&str, u64)]) -> SortStrategy<usize> {
+     /// Returns a user-friendly description of the action for help panels and UI display.
+     ///
+     /// This method provides human-readable descriptions of actions that are suitable
+```
+
+**File**: `television/mouse.rs` (modified, +2/-1)
+```diff
+@@ -62,8 +62,9 @@ mod tests {
+         // the help panel borrows the preview pane: `preview_window` is None
+         // and `help_panel` holds the pane rect
+         let layout = Layout::new(
++            Rect::new(0, 0, 50, 33),
+             Rect::new(0, 0, 50, 30),
+-            Rect::new(0, 30, 100, 1),
++            Rect::new(0, 1, 50, 3),
+             None,
+             None,
+             Some(Rect::new(50, 0, 50, 30)),
+```
+
+**File**: `television/screen/layout.rs` (modified, +6/-1)
+```diff
+@@ -141,6 +141,7 @@ pub fn preview_pane_block(
+ 
+ #[derive(Debug, Clone, Copy, PartialEq)]
+ pub struct Layout {
++    pub canvas: Rect,
+     pub results: Rect,
+     pub input: Rect,
+     pub preview_window: Option<Rect>,
+@@ -158,7 +159,8 @@ impl Default for Layout {
+     fn default() -> Self {
+         Self::new(
+             Rect::new(0, 0, 0, 100),
+-            Rect::default(),
++            Rect::new(0, 0, 0, 100),
++            Rect::new(0, 0, 0, 1),
+             None,
+             None,
+             None,
+@@ -170,6 +172,7 @@ impl Default for Layout {
+ impl Layout {
+     #[allow(clippy::too_many_arguments)]
+     pub fn new(
++        canvas: Rect,
+         results: Rect,
+         input: Rect,
+         preview_window: Option<Rect>,
+@@ -178,6 +181,7 @@ impl Layout {
+         status_bar: Option<Rect>,
+     ) -> Self {
+         Self {
++            canvas,
+             results,
+             input,
+             preview_window,
+@@ -468,6 +472,7 @@ impl Layout {
+         };
+ 
+         Self::new(
++            area,
+             results,
+             input,
+             preview_window,
+```
+
+**File**: `television/television.rs` (modified, +19/-1)
+```diff
+@@ -26,7 +26,7 @@ use crate::{
+     screen::{
+         colors::Colorscheme,
+         help_panel::max_help_scroll,
+-        layout::{InputPosition, Orientation},
++        layout::{InputPosition, Layout, Orientation},
+     },
+     utils::{
+         clipboard::CLIPBOARD,
+@@ -267,6 +267,16 @@ impl Television {
+         self.ui_state = ui_state;
+     }
+ 
++    /// Recompute the layout based on the current canvas size and the app state.
++    pub fn hint_layout(&mut self) {
++        let layout = Layout::build(
++            self.ui_state.layout.canvas,
++            &self.merged_config,
++            self.mode,
++        );
++        self.ui_state.layout = layout;
++    }
++
+     pub fn dump_context(&self) -> Ctx {
+         let channel_state = ChannelState::new(
+             self.current_channel(),
+@@ -1222,12 +1232,20 @@ impl Television {
+         // to restart the fast-render window. This ensures newly loaded results
+         // are rendered immediately instead of waiting for the next
+         // RENDERING_INTERVAL.
++        // TODO: maybe reassess this
+         let running = self.channel.running();
+         if self.was_running && !running {
+             self.ticks = 0;
+         }
+         self.was_running = running;
+ 
++        // we may need to reassess the layout in some cases so that computations
++        // below are based on the correct numbers. this will be thrown away on the
++        // next frame anyway since it gets recomputed in `crate::draw::draw`.
++        if action.affects_layout() {
++            self.hint_layout();
++        }
++
+         // Only run the full results pipeline when the action could
+         // have changed the results or the visible viewport
+         if action.affects_results() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2719,43 +2327,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): cleanup input prompt and header logic
+## X. ui): reduce min preview height for autohide
 
 **RULE**:
-When implementing operations in `television/config/layers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alexpasmantier/television. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `television/screen/layout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alexpasmantier/television. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d81eddfb`: ui): cleanup input prompt and header logic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `221ba5a5`: ui): reduce min preview height for autohide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `television/config/layers.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `television/screen/layout.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .unwrap_or_else(|| self.base_config.ui.input_bar.header.clone());
-            .unwrap_or_else(|| self.base_config.ui.input_bar.prompt.clone());
-    pub input_bar_header: String,
-    pub input_bar_prompt: String,
-        self.input_bar_header.is_empty()
-            assert!(merged.input_bar_prompt.is_empty());
-        assert!(merged.input_bar_prompt.is_empty());
-        assert_eq!(merged.input_bar_header, "Custom");
+const MIN_PREVIEW_HEIGHT: u16 = 4;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            .or_else(|| self.base_config.ui.input_bar.header.clone());
-            .or_else(|| self.base_config.ui.input_bar.prompt.clone());
-    pub input_bar_header: Option<String>,
-    pub input_bar_prompt: Option<String>,
-        self.input_bar_header.as_deref().is_some_and(str::is_empty)
-            assert_eq!(merged.input_bar_header.as_deref(), Some(""));
-            assert_eq!(merged.input_bar_prompt.as_deref(), Some(""));
-        assert_eq!(merged.input_bar_prompt.as_deref(), Some(""));
-        assert_eq!(merged.input_bar_header.as_deref(), Some("Custom"));
+const MIN_PREVIEW_HEIGHT: u16 = 8;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d81eddfb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `221ba5a5` are properly handled with clean fallback behavior.

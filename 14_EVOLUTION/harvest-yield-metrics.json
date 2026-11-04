@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T17:52:34.574Z",
-  "total_cycles_completed": 7238,
-  "total_learnings_persisted": 7238,
-  "total_rules_promoted": 6909,
+  "last_updated": "2026-11-04T17:59:34.581Z",
+  "total_cycles_completed": 7241,
+  "total_learnings_persisted": 7241,
+  "total_rules_promoted": 6914,
   "history": [
-    {
-      "timestamp": "2026-11-03T23:39:18.959Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T23:46:09.027Z",
-      "repository": "axios/axios",
-      "learningId": "learn-github-axios-axios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T23:46:10.213Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T23:46:11.774Z",
       "repository": "Agent-Field/agentfield",
@@ -1403,6 +1382,27 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:59:23.887Z",
+      "repository": "alexpasmantier/television",
+      "learningId": "learn-github-alexpasmantier-television",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:59:34.043Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:59:34.581Z",
+      "repository": "InternScience/Sage-A1.5",
+      "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
