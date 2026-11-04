@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:20:56.232Z",
+  "last_updated": "2026-11-04T23:27:34.371Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
-      "verified_at": "2026-11-04T01:14:08.943Z",
+      "content_hash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
+      "verified_at": "2026-11-04T23:27:34.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:14:08.943Z"
+      "last_updated": "2026-11-04T23:27:34.370Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
-      "verified_at": "2026-10-31T16:20:24.602Z",
+      "content_hash": "a7736658a90dd119561c86e272dd806e8dd4f02ff5d729d55cfcc283c040cba0",
+      "verified_at": "2026-11-04T23:27:34.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:20:24.602Z"
+      "last_updated": "2026-11-04T23:27:34.110Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "db4b4bf284fec7a03f0b4641777b1d48279c72ba3129649d5bd673e007af4f3f",
-      "verified_at": "2026-11-03T19:52:17.497Z",
+      "content_hash": "f0f5642c1bd3310c85b842a15e84ece2589c53eeeddc15f42a89706ba0ce5c9c",
+      "verified_at": "2026-11-04T23:27:27.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:52:17.497Z"
+      "last_updated": "2026-11-04T23:27:27.843Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
@@ -17496,14 +17496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
-      "content_hash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
-      "verified_at": "2026-10-31T08:50:26.361Z",
+      "content_hash": "4da86c4a8c9265715244b2fd2a938905ac79d08c06fb7e6f342e6d572231cb15",
+      "verified_at": "2026-11-04T23:27:26.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:50:26.361Z"
+      "last_updated": "2026-11-04T23:27:26.081Z"
     },
     "vercel-labs/agent-desktop": {
       "repository": "vercel-labs/agent-desktop",

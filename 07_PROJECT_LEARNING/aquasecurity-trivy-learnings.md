@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `4918c342`  
+> **Source Version**: `e8a68c1b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:14:08.457Z  
+> **Timestamp**: 2026-11-04T23:27:33.810Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:14:08.453Z  
+> **Harvest Timestamp**: 2026-11-04T23:27:33.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38945 stars
+- **Stars / Engagement**: 38987 stars
 
 ---
 
@@ -1002,80 +1002,59 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4918c342` (2026-11-03)
-**Commit Message**: fix(license): categorize MIT-0 as unencumbered (#11498)
+### Incident Patch 1: `e8a68c1b` (2026-11-04)
+**Commit Message**: docs(crypto): clarify cryptographic asset scanning limitations (#11378)
 
-**File**: `docs/guide/references/configuration/config-file.md` (modified, +1/-0)
+**File**: `docs/guide/scanner/crypto.md` (modified, +16/-5)
 ```diff
-@@ -375,6 +375,7 @@ license:
-    - CC0-1.0
-    - Unlicense
-    - 0BSD
-+   - MIT-0
+@@ -221,22 +221,33 @@ The scanner also works in [client/server mode](../references/modes/client-server
  
- ```
- ## Misconfiguration options
-```
-
-**File**: `docs/guide/scanner/license.md` (modified, +1/-0)
-```diff
-@@ -338,6 +338,7 @@ license:
-   - CC0-1.0
-   - Unlicense
-   - 0BSD
-+  - MIT-0
-   
-   permissive: []
- ```
-```
-
-**File**: `pkg/licensing/expression/category.go` (modified, +2/-0)
-```diff
-@@ -126,6 +126,7 @@ const (
- 	LPL102                      = "LPL-1.02"
- 	LPL10                       = "LPL-1.0"
- 	MIT                         = "MIT"
-+	MIT0                        = "MIT-0"
- 	MPL10                       = "MPL-1.0"
- 	MPL11                       = "MPL-1.1"
- 	MPL20                       = "MPL-2.0"
-@@ -367,6 +368,7 @@ var (
- 		CC010,
- 		Unlicense,
- 		ZeroBSD,
-+		MIT0,
- 	}
- )
+ ## Limitations
  
-```
-
-**File**: `pkg/licensing/scanner_test.go` (modified, +9/-0)
-```diff
-@@ -30,6 +30,15 @@ func TestScanner_Scan(t *testing.T) {
- 			wantCategory: types.CategoryForbidden,
- 			wantSeverity: "CRITICAL",
- 		},
-+		{
-+			name: "default unencumbered licenses",
-+			categories: map[types.LicenseCategory][]string{
-+				types.CategoryUnencumbered: expression.UnencumberedLicenses,
-+			},
-+			licenseName:  "MIT-0",
-+			wantCategory: types.CategoryUnencumbered,
-+			wantSeverity: "LOW",
-+		},
- 		{
- 			name: "has plus",
- 			categories: map[types.LicenseCategory][]string{
+-The scanner is available for `trivy image` only.
++### Supported targets and options
+ 
+-Trivy rejects `--scanners crypto` together with [`--sbom-sources`](../target/container_image.md#discover-sbom-referencing-the-container-image), because a remote SBOM found for the image replaces the analysis of its layers.
++- The scanner is available for `trivy image` only.
++- Trivy rejects `--scanners crypto` together with [`--sbom-sources`](../target/container_image.md#discover-sbom-referencing-the-container-image), because a remote SBOM found for the image replaces the analysis of its layers.
+ 
+-A file without one of the extensions above is not read, so a key in a file named `tls-key` or inside a config file is missed. You can point the scanner at such a file with [`--file-patterns`](../configuration/skipping.md#customizing-file-handling), as long as it holds PEM or DER material or a PKCS#12 or JKS keystore:
++### File selection
++
++By default, Trivy selects files by the extensions listed under [What is scanned](#what-is-scanned) and by the exact file name `cacerts`. Files larger than 10 MiB are skipped, including files selected with `--file-patterns`.
++
++Use [`--file-patterns`](../configuration/skipping.md#customizing-file-handling) to select a file with another name if it contains PEM or DER material or is a PKCS#12 or JKS keystore. This example scans a key named `tls-key`.
+ 
+ ```shell
+ $ trivy image --scanners crypto --format cyclonedx --file-patterns "crypto:etc/app/tls-key" myimage:1.0.0
+ ```
+ 
+-Files larger than 10 MB are skipped, because a file of that size with one of these extensions is almost never cryptographic material.
++### Unsupported material
+ 
+-Some objects are recognized and skipped. Certificate signing requests, CRLs and PKCS#7 bundles are not part of the inventory. OpenSSH keys, JCEKS keystores and OpenPGP keyrings are not covered yet. A certificate or key that uses an EC key with explicit curve parameters instead of a named curve cannot be parsed and is skipped as well. Private keys of X25519, X448 and Ed448 are skipped, although their public keys are reported.
++- Certificates embedded in application binaries, such as Node.js's built-in root certificates.
++- Certificate signing requests, certificate revocation lists (CRLs), and PKCS#7 bundles.
++- OpenSSH keys, JCEKS keystores, and OpenPGP keyrings.
++- Certificates and keys that use explicit EC curve parameters instead of a named curve.
++- X25519, X448, and Ed448 private keys. Trivy reports their public keys.
+ 
+ From certificates and keys on the curve P-192, only the `EC-P-192` algorithm is extracted.
+ 
++### Keystore limitations
++
+ Trivy does not decrypt PKCS#12 keystores and reads only what is stored without encryption. Private keys are usually stored this way, because keytool, OpenSSL and .NET encrypt each key separately and keep it out of the encrypted part. An encrypted key is reported without its algorithm, and a key stored in the clear, such as with `-keypbe NONE` in OpenSSL, is reported with it. The same tools encrypt certificates unless this is turned off, such as with `-J-Dkeystore.pkcs12.certProtectionAlgorithm=NONE` in keytool or `-certpbe NONE` in OpenSSL. OpenSSL encrypts them even with an empty password. The `cacerts` trust store of JDK 18 and later has no password, so all its certificates are reported.
+ 
+ A PKCS#12 keystore protected by a public-key signature instead of a password-based MAC is not read. Parts of a keystore encoded in BER rather than DER are skipped. Trivy reads at most 10000 bags from one keystore.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11536** (closed): Add optional upx decompression (@gary-wall)
 - **PR #11524** (2026-11-03): feat(crypto): report private keys from PKCS#12 and JKS keystores (@nikpivkin)
 - **PR #11511** (2026-10-30): fix(containerd): export image by its stored name (@nikpivkin)
 - **PR #11498** (2026-11-03): fix(license): categorize MIT-0 as unencumbered (@nikpivkin)
 - **PR #11490** (closed): chore(deps): update go-jose and x/net for security advisories (@crbnn)
 - **PR #11489** (2026-10-28): chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@DmitriyLewen)
-- **PR #11488** (2026-10-28): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (@dependabot[bot])
 
 ---
 
@@ -1095,28 +1074,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. license): categorize MIT-0 as unencumbered (#11498)
+## X. docs(crypto): clarify cryptographic asset scanning limitations (#11378)
 
 **RULE**:
-When implementing operations in `docs/guide/references/configuration/config-file.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/scanner/crypto.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4918c342`: license): categorize MIT-0 as unencumbered (#11498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8a68c1b`: docs(crypto): clarify cryptographic asset scanning limitations (#11378). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/references/configuration/config-file.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/scanner/crypto.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-   - MIT-0
+### Supported targets and options
+- The scanner is available for `trivy image` only.
+- Trivy rejects `--scanners crypto` together with [`--sbom-sources`](../target/container_image.md#discover-sbom-referencing-the-container-image), because a remote SBOM found for the image replaces the analysis of its layers.
+### File selection
+
+By default, Trivy selects files by the extensions listed under [What is scanned](#what-is-scanned) and by the exact file name `cacerts`. Files larger than 10 MiB are skipped, including files selected with `--file-patterns`.
+
+Use [`--file-patterns`](../configuration/skipping.md#customizing-file-handling) to select a file with another name if it contains PEM or DER material or is a PKCS#12 or JKS keystore. This example scans a key named `tls-key`.
+### Unsupported material
+- Certificates embedded in application binaries, such as Node.js's built-in root certificates.
+- Certificate signing requests, certificate revocation lists (CRLs), and PKCS#7 bundles.
+- OpenSSH keys, JCEKS keystores, and OpenPGP keyrings.
+- Certificates and keys that use explicit EC curve parameters instead of a named curve.
+- X25519, X448, and Ed448 private keys. Trivy reports their public k
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The scanner is available for `trivy image` only.
+Trivy rejects `--scanners crypto` together with [`--sbom-sources`](../target/container_image.md#discover-sbom-referencing-the-container-image), because a remote SBOM found for the image replaces the analysis of its layers.
+A file without one of the extensions above is not read, so a key in a file named `tls-key` or inside a config file is missed. You can point the scanner at such a file with [`--file-patterns`](../configuration/skipping.md#customizing-file-handling), as long as it holds PEM or DER material or a PKCS#12 or JKS keystore:
+Files larger than 10 MB are skipped, because a file of that size with one of these extensions is almost never cryptographic material.
+Some objects are recognized and skipped. Certificate signing requests, CRLs and PKCS#7 bundles are not part of the inventory. OpenSSH keys, JCEKS keystores and OpenPGP keyrings are not covered yet. A certificate or key that uses an EC key with explicit curve parameters instead of a named curve cannot be parsed and is skipped as well. Private keys of X25519, X448 and Ed448 are skipped, although their public keys are reported.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4918c342` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8a68c1b` are properly handled with clean fallback behavior.

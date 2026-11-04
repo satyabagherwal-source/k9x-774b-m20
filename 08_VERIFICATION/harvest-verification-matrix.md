@@ -7396,3 +7396,7 @@
 | `CYCLE-20261104-PS4C` | `2026-11-04T23:20:50.076Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7014` | Yes (`a692ad3e...`) |
 | `CYCLE-20261104-PV5J` | `2026-11-04T23:20:54.007Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7015` | Yes (`606397a1...`) |
 | `CYCLE-20261104-PWUS` | `2026-11-04T23:20:56.212Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7016, Rule 7017, Rule 7018` | Yes (`28ad5f68...`) |
+| `CYCLE-20261104-Y9O0` | `2026-11-04T23:27:26.064Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`4da86c4a...`) |
+| `CYCLE-20261104-YB0W` | `2026-11-04T23:27:27.824Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7019` | Yes (`f0f5642c...`) |
+| `CYCLE-20261104-YFUX` | `2026-11-04T23:27:34.089Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7020` | Yes (`a7736658...`) |
+| `CYCLE-20261104-YG29` | `2026-11-04T23:27:34.353Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7021` | Yes (`5cec5bda...`) |

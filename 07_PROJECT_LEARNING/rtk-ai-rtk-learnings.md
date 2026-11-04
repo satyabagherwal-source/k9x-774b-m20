@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `63b8c3e2`  
+> **Source Version**: `b47e05b5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:52:16.699Z  
+> **Timestamp**: 2026-11-04T23:27:27.258Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:52:15.747Z  
+> **Harvest Timestamp**: 2026-11-04T23:27:27.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 85450 stars
+- **Stars / Engagement**: 85568 stars
 
 ---
 
@@ -1749,528 +1749,654 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `380d2130` (2026-11-02)
-**Commit Message**: test(init): pin the builtin list and the dropped safety promise
+### Incident Patch 1: `50ebcea5` (2026-11-04)
+**Commit Message**: ci(benchmark): stop running the whole test suite in the benchmark job
 
-The prefix-rule test checked that each payload scopes the rule and has an
-exclusion paragraph, but a payload could drop `cd` from its list, or put
-"the prefix is always safe" back, and every test still passed. One shared
-assertion now covers the full awareness file, the legacy --claude-md block
-and the Copilot instructions: the nine builtins in the exclusion list,
-`env` in the same paragraph, and none of the three old promises in any
-case or line wrapping.
+The benchmark is the longest CI job at 9 minutes, and it only reads output
+token counts: nothing in it measures time, and a command's failure is ignored.
 
-The Cline, Windsurf and Kilo Code READMEs described the payload as the
-instruction to prefix every shell command; they now describe the scoped
-rule.
+- `cargo test --lib` replaces the four whole-suite runs (237 s). The lib tests
+  are 4,627 of about 5,480 tests and keep about 90% of the raw output.
+- The job measures a debug rtk, named by the new `RTK_BIN`, instead of building
+  with LTO (158 s). A full local run with each profile gave the same rtk totals
+  to within one token. That build moves to a new `release (build)` job, so it no
+  longer lengthens this one.
+- golangci-lint comes as a prebuilt binary instead of compiling from source
+  (67 s).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `hooks/cline/README.md` (modified, +1/-1)
+**File**: `.github/workflows/CICD.md` (modified, +4/-3)
 ```diff
-@@ -5,5 +5,5 @@
- ## Specifics
+@@ -22,9 +22,9 @@ Trigger: pull_request to develop or master
+            ▼       ▼              ▼               ▼        ▼
+      ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌─────────┐ ┌──────────┐
+      │ test     │ │ security │ │ semgrep   │ │benchmark│ │ doc      │
+-     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ >=80%   │ │ review   │
+-     │ windows  │ │ audit    │ │ diff-only │ │ savings │ │ ai agent │
+-     │ macos    │ │ patterns │ │           │ │         │ │          │
++     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ no empty│ │ review   │
++     │ windows  │ │ audit    │ │ diff-only │ │ or grown│ │ ai agent │
++     │ macos    │ │ patterns │ │           │ │ output  │ │          │
+      └────┬─────┘ └────┬─────┘ └─────┬─────┘ └────┬────┘ └────┬─────┘
+           │            │             │             │            │
+           └────────────┴─────────┬───┴─────────────┴────────────┘
+@@ -34,6 +34,7 @@ Trigger: pull_request to develop or master
+                       │  to merge          │
+                       └────────────────────┘
  
- - Prompt-level guidance only (no programmatic hook) -- relies on Cline reading custom instructions
--- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
-+- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
- - Installed to `.clinerules` (project-local) by `rtk init`
++     + release (build, after clippy: must also pass to merge)
+      + DCO check (independent, develop PRs only)
+      + Dependabot (weekly: Cargo deps + GitHub Actions)
+ ```
 ```
 
-**File**: `hooks/kilocode/README.md` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +23/-3)
 ```diff
-@@ -5,5 +5,5 @@
- ## Specifics
+@@ -300,8 +300,9 @@ jobs:
  
- - Prompt-level guidance only (no programmatic hook) -- relies on Kilo Code reading custom instructions
--- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
-+- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
- - Installed to `.kilocode/rules/rtk-rules.md` (project-local) by `rtk init --agent kilocode`
-```
-
-**File**: `hooks/windsurf/README.md` (modified, +1/-1)
-```diff
-@@ -5,5 +5,5 @@
- ## Specifics
+       - uses: Swatinem/rust-cache@v2
  
- - Prompt-level guidance only (no programmatic hook) -- relies on Windsurf Cascade reading rules files
--- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
-+- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
- - Installed to `.windsurfrules` (project-local, workspace-scoped) by `rtk init`
-```
-
-**File**: `src/hooks/init/copilot.rs` (modified, +4/-3)
-```diff
-@@ -331,9 +331,10 @@ mod tests {
++      # Only output tokens are measured, so a release build would only add time.
+       - name: Build rtk
+-        run: cargo build --release
++        run: cargo build
  
-     #[test]
-     fn test_copilot_instructions_exclude_shell_builtins_from_prefix_rule() {
--        assert!(COPILOT_INSTRUCTIONS.contains("Prefix external programs with `rtk`"));
--        assert!(COPILOT_INSTRUCTIONS.contains("Do not prefix shell builtins or keywords"));
--        assert!(!COPILOT_INSTRUCTIONS.contains("Always prefix shell commands with `rtk`"));
-+        crate::hooks::init::tests::assert_prefix_rule_spares_builtins(
-+            "copilot",
-+            COPILOT_INSTRUCTIONS,
-+        );
-     }
+       - name: Install system tools
+         run: sudo apt-get install -y tree ripgrep
+@@ -314,11 +315,30 @@ jobs:
+         with:
+           go-version: "stable"
  
-     #[test]
-```
-
-**File**: `src/hooks/init/mod.rs` (modified, +46/-14)
-```diff
-@@ -2486,28 +2486,60 @@ level = "high"
-         assert!(RTK_AWARENESS_FULL.contains(ACTIVATION));
-     }
+-      - name: Install Go tools
+-        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
++      - name: Install golangci-lint
++        uses: golangci/golangci-lint-action@v9
++        with:
++          install-only: true
++          skip-cache: true
  
--    #[test]
--    fn test_agent_guidance_excludes_shell_builtins_from_prefix_rule() {
--        for (name, content) in [
--            ("awareness-full", RTK_AWARENESS_FULL),
--            ("legacy", RTK_INSTRUCTIONS),
-+    /// The prefix rule every payload that teaches it must carry: scoped to external programs,
-+    /// naming the same builtins and RTK-shadowed names, and without the old promise that the
-+    /// prefix is safe on anything. Shared with the Copilot payload's test so the three stay in
-+    /// sync.
-+    pub(super) fn assert_prefix_rule_spares_builtins(name: &str, content: &str) {
-+        assert!(
-+            content.contains("Prefix external programs with `rtk`"),
-+            "{name} must scope the prefix rule to external programs"
-+        );
-+        let start = content
-+            .find("Do not prefix shell builtins or keywords")
-+            .unwrap_or_else(|| panic!("{name} must exclude shell builtins from the prefix rule"));
-+        let paragraph = &content[start..];
-+        let paragraph = &paragraph[..paragraph.find("\n\n").unwrap_or_else(|| {
-+            panic!("{name}: the exclusion paragraph must end with a blank line")
-+        })];
-+        // The list itself is the first sentence; `env` is named in it or in the next one.
-+        let list = &paragraph[..paragraph.find('.').unwrap_or(paragraph.len())];
-+        for builtin in [
-+            "test", "[", "read", "cd", "echo", "export", "eval", "source", "printf",
-         ] {
-             assert!(
--                content.contains("Prefix external programs with `rtk`"),
--                "{name} must scope the prefix rule to external programs"
--            );
--            assert!(
--                content.contains("Do not prefix shell builtins or keywords"),
--                "{name} must exclude shell builtins from the prefix rule"
-+                list.contains(&format!("`{builtin}`")),
-+                "{name} must list `{builtin}` among the commands left unprefixed"
-             );
-+        }
-+        assert!(
-+            paragraph.contains("`env`"),
-+            "{name} must name `env` in the paragraph that leaves commands unprefixed"
-+        );
-+        let words = content
-+            .split_whitespace()
-+            .collect::<Vec<_>>()
-+            .join(" ")
-+            .to_lowercase();
-+        for promise in [
-+            "always prefix shell commands with `rtk`",
-+            "always prefix commands with `rtk`",
-+            "prefix every shell command with `rtk`",
-+            "always safe",
-+        ] {
-             assert!(
--                !content.contains("Always prefix shell commands with `rtk`")
--                    && !content.contains("Prefix every shell command with `rtk`"),
--                "{name} must not promise that every shell command is safe to prefix"
-+                !words.contains(promise),
-+                "{name} must not promise that every shell command is safe to prefix: {promise:?}"
-             );
-         }
-     }
- 
-+    #[test]
-+    fn test_agent_guidance_excludes_shell_builtins_from_prefix_rule() {
-+        assert_prefix_rule_spares_builtins("awareness-full", RTK_AWARENESS_FULL);
-+        assert_prefix_rule_spares_builtins("legacy", RTK_INSTRUCTIONS);
-+    }
+       - name: Run benchmark
+         run: ./scripts/benchmark.sh
++        env:
++          RTK_BIN: target/debug/rtk
 +
-     #[test]
-     fn test_awareness_meta_commands_present_above_default() {
-         for (name, content) in [
++  # The one PR job building the shipped profile: LTO problems only show at this link.
++  release:
++    name: release (build)
++    needs: clippy
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v7
++
++      - uses: dtolnay/rust-toolchain@stable
++
++      - uses: Swatinem/rust-cache@v2
++
++      - run: cargo build --release
+ 
+   # ─── AI Doc Review: develop PRs only ───
+ 
+```
+
+**File**: `scripts/benchmark.sh` (modified, +19/-8)
+```diff
+@@ -4,15 +4,26 @@ set -e
+ # cargo prints no colour into a pipe, which is how agents read it.
+ export CARGO_TERM_COLOR=never
+ 
+-# Use local release build if available, otherwise fall back to installed rtk
+-if [ -f "./target/release/rtk" ]; then
+-  RTK="$(cd "$(dirname ./target/release/rtk)" && pwd)/$(basename ./target/release/rtk)"
++# RTK_BIN names the binary to measure. Otherwise use the local release build if
++# available, and fall back to the installed rtk.
++if [ -n "${RTK_BIN:-}" ]; then
++  if [ ! -f "$RTK_BIN" ] || [ ! -x "$RTK_BIN" ]; then
++    echo "Error: RTK_BIN=$RTK_BIN is not a path to an executable file."
++    exit 1
++  fi
++  RTK="$RTK_BIN"
++elif [ -f "./target/release/rtk" ]; then
++  RTK="./target/release/rtk"
+ elif command -v rtk &> /dev/null; then
+   RTK="$(command -v rtk)"
+ else
+-  echo "Error: rtk not found. Run 'cargo build --release' or install rtk."
++  echo "Error: rtk not found. Run 'cargo build --release', install rtk, or set RTK_BIN."
+   exit 1
+ fi
++# Absolute, since the benches change directory. `command -v` can name a shell function.
++if [[ "$RTK" == */* ]]; then
++  RTK="$(CDPATH= cd -- "$(dirname -- "$RTK")" && pwd)/$(basename -- "$RTK")"
++fi
+ BENCH_DIR="$(pwd)/scripts/benchmark"
+ RTK_ROOT="$(pwd)"
+ 
+@@ -363,8 +374,8 @@ fi
+ # ===================
+ section "test"
+ if command -v cargo &>/dev/null; then
+-  precompile cargo test --no-run
+-  bench "test cargo test" "cargo test 2>&1 || true" "$RTK test cargo test 2>&1"
++  precompile cargo test --lib --no-run
++  bench "test cargo test" "cargo test --lib 2>&1 || true" "$RTK test cargo test --lib 2>&1"
+ else
+   echo "⏭️  test cargo test (cargo not in PATH, skipped)"
+ fi
+@@ -414,8 +425,8 @@ section "cargo"
+ if command -v cargo &>/dev/null; then
+   precompile cargo build
+   bench "cargo build" "cargo build 2>&1 || true" "$RTK cargo build 2>&1"
+-  precompile cargo test --no-run
+-  bench "cargo test" "cargo test 2>&1 || true" "$RTK cargo test 2>&1"
++  precompile cargo test --lib --no-run
++  bench "cargo test" "cargo test --lib 2>&1 || true" "$RTK cargo test --lib 2>&1"
+   precompile cargo clippy
+   bench "cargo clippy" "cargo clippy 2>&1 || true" "$RTK cargo clippy 2>&1"
+   precompile cargo check
 ```
 
 ---
 
-### Incident Patch 2: `ccd334d3` (2026-11-01)
-**Commit Message**: Merge pull request #4697 from bercedev/fix/nextest-timeouts-and-retries
+### Incident Patch 2: `fb616a31` (2026-11-04)
+**Commit Message**: Merge pull request #4965 from KuSh/test/windows-suite-duration
 
-fix(cargo): keep nextest timeouts and retried failures
+test: cut process spawns in the slowest Windows test suites
 
-**File**: `src/cmds/rust/cargo_cmd.rs` (modified, +439/-19)
+**File**: `tests/git_log_cap_notice_test.rs` (modified, +84/-14)
 ```diff
-@@ -630,11 +630,31 @@ fn flush_failure_block(header: &mut String, body: &mut Vec<String>, failures: &m
-     body.clear();
+@@ -35,12 +35,34 @@ fn isolate(cmd: &mut Command, home: &Path) {
  }
  
-+/// A nextest status line without the `TRY n ` prefix nextest puts on each attempt of a retried test.
-+fn nextest_status(trimmed: &str) -> &str {
-+    match trimmed.strip_prefix("TRY ") {
-+        Some(rest) => rest
-+            .trim_start_matches(|c: char| c.is_ascii_digit())
-+            .trim_start(),
-+        None => trimmed,
-+    }
+ fn git_ok(repo: &Path, home: &Path, args: &[&str]) {
++    git_ok_with_stdin(repo, home, args, "");
 +}
 +
-+/// The test a nextest status line or failure block names, e.g. `fx tests::hang` in
-+/// `TRY 1 TMT [   2.003s] (───) fx tests::hang`. The `(1/2)` counter changes between attempts.
-+fn nextest_test_name(block: &str) -> &str {
-+    let line = block.lines().next().unwrap_or_default();
-+    let name = line.split_once(']').map_or(line, |(_, rest)| rest).trim();
-+    name.strip_prefix('(')
-+        .and_then(|rest| rest.split_once(") "))
-+        .map_or(name, |(_, name)| name)
-+}
++/// [`git_ok`] with `input` on git's stdin.
++fn git_ok_with_stdin(repo: &Path, home: &Path, args: &[&str], input: &str) {
++    use std::io::Write;
++    use std::process::Stdio;
+     let mut cmd = Command::new("git");
+     cmd.arg("-C").arg(repo);
+     cmd.args(["-c", "commit.gpgsign=false", "-c", "core.autocrlf=false"]);
++    // Every commit otherwise spawns `git maintenance run --auto`, a third process per
++    // commit for histories too small to need it.
++    cmd.args(["-c", "maintenance.auto=false"]);
+     cmd.args(args);
+     isolate(&mut cmd, home);
+-    let out = cmd.output().expect("run git");
++    let mut child = cmd
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn git");
++    // A write error means git exited early; its stderr below says why.
++    let _ = child
++        .stdin
++        .take()
++        .expect("stdin")
++        .write_all(input.as_bytes());
++    let out = child.wait_with_output().expect("wait for git");
+     assert!(
+         out.status.success(),
+         "git {args:?} failed: {}",
+@@ -75,8 +97,10 @@ fn repo_with_messages(commits: usize, message: impl Fn(usize) -> Vec<String>) ->
+     repo_committing(commits, |_| vec!["f.txt".to_string()], message)
+ }
+ 
+-/// A history whose commit `i` writes the files `files(i)` and carries the message paragraphs
+-/// `message(i)`, one `-m` each.
++/// A history whose commit `i` writes `content {i}` to the files `files(i)` and carries the
++/// message paragraphs `message(i)`, recorded as `git commit -m` records them, then checked
++/// out. One `git fast-import` writes every commit, since each process costs tens of
++/// milliseconds on Windows.
+ fn repo_committing(
+     commits: usize,
+     files: impl Fn(usize) -> Vec<String>,
+@@ -88,19 +112,43 @@ fn repo_committing(
+     std::fs::create_dir_all(&path).expect("mkdir repo");
+     std::fs::create_dir_all(&home).expect("mkdir home");
+     git_ok(&path, &home, &["init", "-q", "-b", "main"]);
 +
- /// Filter cargo nextest output - show failures + compact summary
- fn filter_cargo_nextest(output: &str) -> String {
-     // nextest annotates `passed` in place, e.g. `2 passed (1 slow), 1 failed`
-     let summary_re = regex::Regex::new(
--        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:\s+\([^)]*\))?(?:,\s+(\d+) failed)?(?:,\s+(\d+) skipped)?"
-+        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:\s+\([^)]*\))?(?:,\s+(\d+) failed)?(?:,\s+(\d+) exec failed)?(?:,\s+(\d+) timed out)?(?:,\s+(\d+) skipped)?"
-     ).expect("invalid nextest summary regex");
- 
-     let starting_re = regex::Regex::new(r"Starting \d+ tests? across (\d+) binar(?:y|ies)")
-@@ -683,31 +703,31 @@ fn filter_cargo_nextest(output: &str) -> String {
-             continue;
-         }
- 
--        // Strip PASS lines
--        if trimmed.starts_with("PASS") {
--            if in_failure_block {
--                flush_failure_block(
--                    &mut current_failure_header,
--                    &mut current_failure_body,
--                    &mut failures,
--                );
--                in_failure_block = false;
--            }
--            continue;
++    // Stamped now, as `git commit` would: the default format prints relative dates.
++    let now = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .expect("clock after 1970")
++        .as_secs();
++    let mut stream = String::new();
+     for i in 0..commits {
+-        for file in files(i) {
+-            let target = path.join(&file);
+-            std::fs::create_dir_all(target.parent().expect("parent")).expect("mkdir");
+-            std::fs::write(target, format!("content {i}\n")).expect("write");
 -        }
-+        // A retried attempt reads `TRY 2 FAIL [...]`, a timeout `TIMEOUT [...]`, or `TRY 2 TMT [...]`
-+        // when it is retried
-+        let status = nextest_status(trimmed);
-+        let is_failure = status.starts_with("FAIL")
-+            || status.starts_with("TIMEOUT")
-+            || status.starts_with("TMT");
+-        git_ok(&path, &home, &["add", "-A"]);
+-        let paragraphs = message(i);
+-        let mut args = vec!["commit", "-q"];
+-        for paragraph in &paragraphs {
+-            args.extend(["-m", paragraph.as_str()]);
++        let message = commit_message(&message(i));
++        assert!(
++            !message.is_empty(),
++            "commit {i}: git commit refuses an empty message"
++        );
++        stream.push_str(&format!(
++            "commit refs/heads/main\n\
++             author t <t@example.com> {now} +0000\n\
++             committer t <t@example.com> {now} +0000\n\
++             data {}\n{message}\n",
++            message.len()
++        ));
++        let content = format!("content {i}\n");
++        let files = files(i);
++        assert!(
++            !files.is_empty(),
++            "commit {i}: git commit refuses an empty change"
++        );
++        for file in files {
++            stream.push_str(&format!(
++                "M 100644 inline {file}\ndata {}\n{content}\n",
++                content.len()
++            ));
+         }
+-        git_ok(&path, &home, &args);
++    }
++    if commits > 0 {
++        stream.push_str("done\n");
++        git_ok_with_stdin(&path, &home, &["fast-import", "--quiet", "--done"], &stream);
++        git_ok(&path, &home, &["reset", "-q", "--hard"]);
+     }
+     Repo {
+         _dir: dir,
+@@ -109,6 +157,28 @@ fn repo_committing(
+     }
+ }
  
--        // Detect FAIL lines
--        if trimmed.starts_with("FAIL") {
-+        if is_failure || status.starts_with("PASS") {
-             // Close previous failure block if any
-             if in_failure_block {
-                 flush_failure_block(
-                     &mut current_failure_header,
-                     &mut current_failure_body,
-                     &mut failures,
++/// The message `git commit -m p1 -m p2 …` records: the paragraphs a blank line apart, then
++/// git's default cleanup for a message it does not edit -- trailing whitespace dropped, runs
++/// of blank lines collapsed, none at either end.
++fn commit_message(paragraphs: &[String]) -> String {
++    let mut message = String::new();
++    let mut blank_pending = false;
++    for line in paragraphs.join("\n\n").split('\n') {
++        let line = line.trim_end_matches([' ', '\t', '\r']);
++        if line.is_empty() {
++            blank_pending = !message.is_empty();
++            continue;
++        }
++        if blank_pending {
++            message.push('\n');
++            blank_pending = false;
++        }
++        message.push_str(line);
++        message.push('\n');
++    }
++    message
++}
++
+ /// Every output shape that once swallowed th
+```
+
+**File**: `tests/git_show_blob_differential_test.rs` (modified, +43/-23)
+```diff
+@@ -7,7 +7,8 @@
+ //!
+ //! This test is the standing guarantee that no misroute class is hiding. It builds a
+ //! hermetic git repo with objects of every relevant type, then — with a FIXED seed so CI
+-//! is deterministic — generates hundreds of `git show <random flags> <arg>` invocations
++//! is deterministic — generates hundreds of `git show <random flags> <arg>` invocations,
++//! runs each distinct one once (rtk's answer depends only on its argv in this fixed repo),
+ //! and checks rtk's CLASSIFICATION (did it window? pass through? render a commit-diff?)
+ //! against ground truth from `git cat-file -t`. It asserts:
+ //! - 0 misroutes: rtk never windows anything git does not call a `blob`;
+@@ -21,12 +22,14 @@
+ //! It shells out to the real `git` and the built `rtk` binary, matching the repo's other
+ //! integration tests (e.g. `diff_byte_accuracy_test.rs`).
+ 
++use std::collections::HashMap;
+ use std::path::{Path, PathBuf};
+ use std::process::{Command, Output};
+ 
+ mod common;
+ 
+-/// Number of fuzz iterations. Seeded, so this is deterministic across runs/CI.
++/// Number of invocations drawn; the repeats among them are run once. Seeded, so this is
++/// deterministic across runs/CI.
+ const ITERATIONS: usize = 600;
+ /// Fixed seed — change only intentionally.
+ const SEED: u64 = 0x5DEE_CE66_D3A1_2B4F;
+@@ -185,7 +188,7 @@ fn was_windowed(out: &Output) -> bool {
+ }
+ 
+ /// The object categories the fuzzer draws from, with their expected classification.
+-#[derive(Clone, Copy, Debug)]
++#[derive(Clone, Copy, Debug, PartialEq)]
+ enum Kind {
+     /// Large valid-UTF-8 blob → MUST window.
+     LargeUtf8,
+@@ -336,18 +339,6 @@ fn git_show_blob_classification_differential() {
+     let repo = setup_repo();
+     let (path, home) = (repo.path.as_path(), repo.home.as_path());
+ 
+-    // Sanity-check the fixtures against ground truth before fuzzing.
+-    assert_eq!(
+-        cat_file_type(path, home, "HEAD:large.txt").as_deref(),
+-        Some("blob")
+-    );
+-    assert_eq!(
+-        cat_file_type(path, home, "HEAD:dir").as_deref(),
+-        Some("tree")
+-    );
+-    assert_eq!(cat_file_type(path, home, "HEAD").as_deref(), Some("commit"));
+-    assert_eq!(cat_file_type(path, home, "HEAD:does-not-exist.txt"), None);
+-
+     let kinds = [
+         Kind::LargeUtf8,
+         Kind::Small,
+@@ -362,20 +353,46 @@ fn git_show_blob_classification_differential() {
+         Kind::PathspecLargeUtf8,
+     ];
+ 
++    // The draws repeat (the flag pools are small) and every process costs tens of
++    // milliseconds on Windows, so each distinct invocation runs once.
+     let mut rng = Rng(SEED);
++    let mut invocations: Vec<(Kind, Vec<String>)> = Vec::new();
++    for _ in 0..ITERATIONS {
++        let kind = *rng.pick(&kinds);
++        let invocation = (kind, build_invocation(&mut rng, kind));
++        if !invocations.contains(&invocation) {
++            invocations.push(invocation);
++        }
++    }
++
++    // Ground truth per object, from `git cat-file -t`.
++    let mut truths: HashMap<&str, Option<String>> = HashMap::new();
++    for &kind in &kinds {
++        let object = kind_object(kind);
++        truths
++            .entry(object)
++            .or_insert_with(|| cat_file_type(path, home, object));
++    }
++
++    // Sanity-check the fixtures against ground truth before fuzzing.
++    assert_eq!(truths["HEAD:large.txt"].as_deref(), Some("blob"));
++    assert_eq!(truths["HEAD:dir"].as_deref(), Some("tree"));
++    assert_eq!(truths["HEAD"].as_deref(), Some("commit"));
++    assert_eq!(truths["HEAD:does-not-exist.txt"], None);
++    let mut plain_shows: HashMap<&str, Vec<u8>> = HashMap::new();
++
+     // Collect failures instead of panicking mid-loop, so the incidence is measured
+     // across ALL invocations (KuSh: a measured incidence is what proves no class hides).
+     let mut misroutes: Vec<String> = Vec::new();
+     let mut silent_losses: Vec<String> = Vec::new();
+     let mut fidelity_breaks: Vec<String> = Vec::new();
+ 
+-    for _ in 0..ITERATIONS {
+-        let kind = *rng.pick(&kinds);
+-        let args = build_invocation(&mut rng, kind);
++    for (kind, args) in &invocations {
++        let kind = *kind;
+         let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
+ 
+         let object = kind_object(kind);
+-        let truth = cat_file_type(path, home, object); // ground truth for the object
++        let truth = &truths[object];
+         let out = rtk_show(path, home, &arg_refs);
+         let windowed = was_windowed(&out);
+ 
+@@ -407,13 +424,15 @@ fn git_show_blob_classification_differential() {
+                     !windowed,
+                     "small/latin1/utf16 blobs must not window: {args:?}"
                  );
-+                in_failure_block = false;
-+            }
-+            // Only the last attempt of a test counts. Attempts of different tests interleave,
-+            // so earlier ones are found by name, not by being the block still open.
-+            let name = nextest_test_name(trimmed);
-+            failures.retain(|block| nextest_test_name(block) != name);
-+            if is_failure {
-+                current_failure_header = trimmed.to_string();
-+                in_failure_block = true;
-             }
--            current_failure_header = trimmed.to_string();
--            in_failure_block = true;
+-                let plain = git(path, home, &["show", object]);
+-                if out.stdout != plain.stdout {
++                let plain = plain_shows
++                    .entry(object)
++                    .or_insert_with(|| git(path, home, &["show", object]).stdout);
++                if out.stdout != *p
+```
+
+**File**: `tests/help_passthrough_fuzz_test.rs` (modified, +73/-34)
+```diff
+@@ -275,9 +275,9 @@ const CASES: &[Case] = &[
+ 
+ #[test]
+ fn a_wrapped_tools_own_help_survives_rtk() {
+-    let mut checked = 0usize;
+     let mut skipped = Vec::new();
+-
++    // The cases of one tool, in `CASES` order, with the tool's resolved path.
++    let mut by_tool: Vec<(PathBuf, Vec<&Case>)> = Vec::new();
+     for case in CASES {
+         if UNIX_ONLY.contains(&case.tool) {
+             skipped.push(case.tool);
+@@ -287,47 +287,86 @@ fn a_wrapped_tools_own_help_survives_rtk() {
+             skipped.push(case.tool);
              continue;
-         }
- 
-@@ -763,18 +783,26 @@ fn filter_cargo_nextest(output: &str) -> String {
-             .get(4)
-             .and_then(|m| m.as_str().parse().ok())
-             .unwrap_or(0);
--        let skipped: u32 = caps
-+        let exec_failed: u32 = caps
-             .get(5)
-             .and_then(|m| m.as_str().parse().ok())
-             .unwrap_or(0);
-+        let timed_out: u32 = caps
-+            .get(6)
-+            .and_then(|m| m.as_str().parse().ok())
-+            .unwrap_or(0);
-+        let skipped: u32 = caps
-+            .get(7)
-+            .and_then(|m| m.as_str().parse().ok())
-+            .unwrap_or(0);
- 
-         let binary_text = match binaries.cmp(&1) {
-             Ordering::Greater => format!("{} binaries", binaries),
-             Ordering::Equal => "1 binary".to_string(),
-             Ordering::Less => String::new(),
          };
+-        let label = format!("rtk {}", case.rtk_args.join(" "));
+-        let mine = run_rtk(case.rtk_args);
+-        let native = run(&tool, case.native_args);
+-        checked += 1;
+-
+-        assert!(
+-            !is_rtk_usage(&mine.text),
+-            "{label} answered with RTK's own usage:\n{}",
+-            &mine.text[..mine.text.len().min(200)]
+-        );
+-        assert_eq!(
+-            mine.code, native.code,
+-            "{label} exit code drifted from the tool's"
+-        );
+-        // Content, not length: a length check passes on a long page from the wrong
+-        // subcommand, which is exactly what a bad `git_name` arm would return. Exact bytes
+-        // are still not asserted, because `man` renders to the terminal it thinks it has
+-        // and a tool may print its own name from argv[0].
+-        let anchor = without_exe(first_substantial_line(&native.text));
+-        assert!(
+-            without_exe(&mine.text).contains(&anchor),
+-            "{label} does not contain the tool's own first line {anchor:?}:\n{}",
+-            &mine.text[..mine.text.len().min(200)]
+-        );
+-        assert!(
+-            mine.text.len() * 2 >= native.text.len(),
+-            "{label} returned {} bytes of the tool's {}",
+-            mine.text.len(),
+-            native.text.len()
+-        );
++        match by_tool.iter_mut().find(|(path, _)| *path == tool) {
++            Some((_, cases)) => cases.push(case),
++            None => by_tool.push((tool, vec![case])),
++        }
+     }
+-
+     assert!(
+-        checked > 0,
++        !by_tool.is_empty(),
+         "no wrapped tool was available to compare against"
+     );
++
++    // A toolchain's first launch can take seconds (a Windows runner's cold start, a
++    // first run in the scratch profile), so the tools run side by side. One tool's
++    // cases stay in order on one thread, rtk before the tool, so whatever a tool
++    // prints only on its first run lands on the same side it always has.
++    std::thread::scope(|scope| {
++        let threads: Vec<_> = by_tool
++            .iter()
++            .map(|(tool, cases)| {
++                // Named after the tool, so a failure reads `thread 'git' panicked`.
++                std::thread::Builder::new()
++                    .name(cases[0].tool.to_string())
++                    .spawn_scoped(scope, move || {
++                        for case in cases {
++                            check(tool, case);
++                        }
++                    })
++                    .expect("spawn a thread per tool")
++            })
++            .collect();
++        // Every thread is joined before the first panic is resumed, so `scope`
++        // adds no generic panic of its own.
++        let mut first = None;
++        for thread in threads {
++            if let Err(panic) = thread.join() {
++                first.get_or_insert(panic);
++            }
++        }
++        if let Some(panic) = first {
++            std::panic::resume_unwind(panic);
++        }
++    });
++
+     if !skipped.is_empty() {
+         eprintln!("skipped (not installed): {}", skipped.join(", "));
+     }
+ }
  
--        if failed == 0 {
-+        if failed + exec_failed + timed_out == 0 {
-             // All pass - compact single line
-             let mut parts = vec![format!("{} passed", passed)];
-             if skipped > 0 {
-@@ -804,6 +832,12 @@ fn filter_cargo_nextest(output: &str) -> String {
-         if failed > 0 {
-             summary_parts.push(format!("{} failed", failed));
-         }
-+        if exec_failed > 0 {
-+            summary_parts.push(format!("{} exec failed", exec_failed));
-+        }
-+        if timed_out > 0 {
-+            summary_parts.push(format!("{} timed out", timed_out));
-+        }
-       
++/// `rtk <case.rtk_args>` against `<tool> <case.native_args>`.
++fn check(tool: &Path, case: &Case) {
++    let label = format!("rtk {}", case.rtk_args.join(" "));
++    let mine = run_rtk(case.rtk_args);
++    let native = run(tool, case.native_args);
++
++    assert!(
++        !is_rtk_usage(&mine.text),
++        "{label} answered with RTK's own usage:\n{}",
++        &mine.text[..mine.text.len().min(200)]
++    );
++    assert_eq!(
++        mine.code, native.code,
++        "{label} exit code drifted from the tool's"
++    );
++    // Content, not length: a length check passes on a long page from the wrong
++    // subcommand, which is exactly what a bad `git_name` arm would return. Exact bytes
++    // are still not asserted, because `man` renders to the terminal it thinks it has
++    // and a tool may print its own name from argv[0].
++    let anchor = without_exe(first_substantial_line(&native.text));
++    assert!(
++        without_exe(&mine.text).contains(&anchor),
++        "{label} does not contain the tool's own first line {anchor:?}:\n{}",
++        &mine.text[..mine.text.len().min(200)]
++    );
++    assert!(
++        mine.text.len() * 2 >= native.text.len(),
++        "{label} returned {} bytes of the tool's {}",
++        mine.text.len(),
++        native.text.len()
++    );
++}
++
+ /// The reported bug, en
 ```
 
 ---
 
-### Incident Patch 3: `4b4bc40d` (2026-11-01)
-**Commit Message**: Merge pull request #3833 from Hubujiu/fix/hermes-modify-directive
+### Incident Patch 3: `980ae986` (2026-11-03)
+**Commit Message**: fix(benchmark): stop booking compile output, colour and target/ as savings
 
-fix(hermes): close the rewrite's stdin and make its timeout configurable
+Three cases counted output on the raw side that rtk was never shown or an agent
+would never read. All were found while analysing how long the benchmark job
+takes.
 
-**File**: `hooks/README.md` (modified, +5/-2)
+- bench runs the raw command first, so on a cold target the compile output
+  landed on that side alone: `err cargo build` reported 77 -> 12 tokens with rtk
+  compiling nothing. `cargo build`, `test`, `clippy` and `check` now build before
+  each pair.
+- CI forces `CARGO_TERM_COLOR=always`, so rtk got credit for stripping colour
+  that cargo does not print into a pipe. The script now turns it off.
+- The raw `find *`, `find *.rs` and `tree` rows listed `target/`, which rtk skips,
+  and the `find` rows also listed `.git/`, so they moved with whatever had been
+  built. They now exclude both, as `find --max 100` already does.
+
+The reported rows and token total drop to what the filters actually do.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `scripts/benchmark.sh` (modified, +18/-3)
 ```diff
-@@ -306,10 +306,13 @@ if (tool === "bash" || tool === "shell") {
+@@ -1,6 +1,9 @@
+ #!/usr/bin/env bash
+ set -e
  
- ### Hermes (Python Plugin)
- 
--Mutates `args["command"]` in-place via the `pre_tool_call` hook:
-+Mutates `args["command"]` in place and returns no directive, so on Hermes v2026.8.16 (0.20.2) and later another plugin's `modify` directive that sets `command` replaces the rewrite. The adapter uses a 5-second default rewrite timeout, configurable through `RTK_HERMES_TIMEOUT` (see [timeout limits](hermes/README.md#how-it-works)). Simplified success path:
- 
- ```python
--result = subprocess.run(["rtk", "rewrite", command], capture_output=True, text=True, timeout=2)
-+result = subprocess.run(
-+    ["rtk", "rewrite", command], shell=False, stdin=subprocess.DEVNULL,
-+    capture_output=True, text=True, timeout=_rewrite_timeout(),
-+)
- rewritten = result.stdout.strip()
- if result.returncode in {0, 3} and rewritten and rewritten != command:
-     args["command"] = rewritten
-```
-
-**File**: `hooks/hermes/README.md` (modified, +5/-3)
-```diff
-@@ -12,13 +12,15 @@ The installer writes the plugin to `~/.hermes/plugins/rtk-rewrite/` and enables
- 
- ## How it works
- 
--Hermes loads plugins from Python, so the plugin entrypoint is Python. The Python code is only a thin Hermes adapter. It reads the Hermes terminal tool payload, calls `rtk rewrite` for the actual command decision, then mutates the terminal tool `command` before Hermes executes it.
-+Hermes loads plugins from Python, so the plugin entrypoint is Python. The Python code is only a thin Hermes adapter. It reads the Hermes terminal tool payload, calls `rtk rewrite` for the actual command decision, then updates `command` in that payload, which Hermes executes. It returns no `modify` directive. On Hermes releases that apply `modify` directives (v2026.8.16, Hermes 0.20.2, and later), one from another plugin that sets `command` replaces the rewritten command; directives for other keys, such as `workdir`, leave the rewrite in place.
- 
- All rewrite rules stay in Rust inside `rtk rewrite`. When RTK adds or changes command rewrite behavior, the Hermes plugin picks up that behavior by delegating to the RTK binary.
- 
-+The rewrite subprocess has no standard input and defaults to a 5-second timeout. Set `RTK_HERMES_TIMEOUT` to a positive, finite number of seconds (for example, `RTK_HERMES_TIMEOUT=10`) to override it. Missing, malformed, non-positive, or non-finite values fall back to 5 seconds. This controls the rewrite step only, not the terminal command's own timeout. From v2026.8.27 (Hermes 0.20.6), keep it below Hermes' `plugins.hook_callback_timeout` (30 seconds by default): the host may block the tool call if its callback limit is reached. Earlier releases have no host callback limit. Extremely large values may exceed the platform subprocess timeout limit and cause a warning with no rewrite.
++# cargo prints no colour into a pipe, which is how agents read it.
++export CARGO_TERM_COLOR=never
 +
- ## Fail-open behavior
+ # Use local release build if available, otherwise fall back to installed rtk
+ if [ -f "./target/release/rtk" ]; then
+   RTK="$(cd "$(dirname ./target/release/rtk)" && pwd)/$(basename ./target/release/rtk)"
+@@ -42,6 +45,12 @@ FAIL_TESTS=0
+ WARN_TESTS=0
+ NEGATIVE_TESTS=0
  
--The plugin does not block command execution. If anything goes wrong, Hermes runs the original command unchanged.
-+The plugin itself does not request blocking. On rewrite failures it leaves the original command unchanged and returns no directive. From v2026.8.27 (Hermes 0.20.6), Hermes can still block execution if its own callback timeout is reached.
- 
- If rtk is not available in PATH when Hermes loads the plugin, the plugin prints a warning and skips hook registration.
- 
-@@ -32,4 +34,4 @@ If rtk is not available in PATH when Hermes loads the plugin, the plugin prints
- 
- - Only Hermes `terminal` tool calls are rewritten.
- - Commands skipped by `rtk rewrite` stay unchanged, including commands already prefixed with `rtk`, compound shell commands, heredocs, and commands without an RTK filter.
--- Shell hooks are not used for Hermes command rewriting. The integration depends on Hermes loading Python plugins and passing a mutable terminal tool payload.
-+- Shell hooks are not used for Hermes command rewriting. The integration depends on Hermes loading Python plugins and invoking `pre_tool_call` with the shared tool payload.
-```
-
-**File**: `hooks/hermes/rtk-rewrite/__init__.py` (modified, +18/-2)
-```diff
-@@ -4,13 +4,16 @@
- only bridges Hermes ``pre_tool_call`` payloads to that command and fails open.
- """
- 
-+import math
-+import os
- import shutil
- import subprocess
- import sys
- 
- 
- ACCEPTED_REWRITE_RETURN_CODES = {0, 3}
- EXPECTED_PASSTHROUGH_RETURN_CODES = {1, 2}
-+DEFAULT_REWRITE_TIMEOUT = 5
- _rtk_available = None
- _rtk_missing_warned = False
- 
-@@ -37,8 +40,16 @@ def _check_rtk():
-     return _rtk_available
- 
- 
-+def _rewrite_timeout():
-+    try:
-+        timeout = float(os.environ.get("RTK_HERMES_TIMEOUT", DEFAULT_REWRITE_TIMEOUT))
-+    except ValueError:
-+        return DEFAULT_REWRITE_TIMEOUT
-+    return timeout if math.isfinite(timeout) and timeout > 0 else DEFAULT_REWRITE_TIMEOUT
++# bench runs the raw side first, so a first build's compile output would land on
++# that side alone and read as savings. Building first gives both sides the same target.
++precompile() {
++  "$@" > /dev/null 2>&1 || echo "⚠️  precompile failed: $*" >&2
++}
 +
-+
- def _pre_tool_call(tool_name=None, args=None, **_kwargs):
--    """Rewrite mutable Hermes terminal command args when RTK provides a change."""
-+    """Update the shared payload without overriding other hooks' directives."""
-     try:
-         if tool_name != "terminal" or not isinstance(args, dict):
-             return
-@@ -51,7 +62,8 @@ def _pre_tool_call(tool_name=None, args=None, **_kwargs):
-             result = subprocess.run(
-                 ["rtk", "rewrite", command],
-                 shell=False,
--                timeout=2,
-+                stdin=subprocess.DEVNULL,
-+                timeout=_rewrite_timeout(),
-                 capture_output=True,
-                 text=True,
-             )
-@@ -70,6 +82,10 @@ def _pre_tool_call(tool_name=None, args=None, **_kwargs):
- 
-         rewritten = result.stdout.strip()
-         if rewritten and rewritten != command:
-+            # Hermes executes this shared payload, including on releases before
-+            # modify directives were supported. Newer releases then apply queued
-+            # directives in hook order. Returning a command directive here would
-+            # overwrite an earlier plugin's command that this hook cannot see.
-             args["command"] = rewritten
-     except Exception as e:
-         _warn(str(e))
-```
-
-**File**: `hooks/hermes/tests/test_rtk_rewrite_plugin.py` (modified, +109/-50)
-```diff
-@@ -59,6 +59,12 @@ def write_fake_rtk(bin_dir):
- 
- 
- class RtkRewritePluginTest(unittest.TestCase):
-+    def setUp(self):
-+        environment = mock.patch.dict(os.environ)
-+        environment.start()
-+        self.addCleanup(environment.stop)
-+        os.environ.pop("RTK_HERMES_TIMEOUT", None)
-+
-     def load_callback(self):
-         module = load_plugin_module()
-         module._rtk_available = None
-@@ -124,44 +130,88 @@ def test_check_rtk_caches_result_across_calls(self):
- 
-         which.assert_called_once_with("rtk")
- 
--    def test_rewrite_success_mutates_same_terminal_args_dict(self):
--        module, callback = self.load_callback()
--        args = {"command": "git status"}
--
--        with mock.patch.object(
--            module.subprocess,
--            "run",
--            return_value=FakeCompletedProcess(stdout="rtk git status\n"),
--        ):
--            callback(tool_name="terminal", args=args)
--
--        self.assertEqual({"command": "rtk git status"}, args)
--
--    def test_rewrite_returncode_three_mutates_same_terminal_args_dict(self):
--        module, callback = self.load_callback()
--        args = {"command": "git status"}
--
--        with mock.patch.object(
--            module.subprocess,
--            "run",
--            return_value=FakeCompletedProcess(returncode=3, stdout="rtk git status\n"),
--        ):
--            callback(tool_name="terminal", args=args)
--
--        self.assertEqual({"command": "rtk git status"}, args)
--
--    def test_rewrite_returncode_zero_mutates_when_rewrite_changes_command(self):
--        module, callback = self.load_callback()
--        args = {"command": "git status"}
-+    def test_rewrite_updates_payload_without_returning_a_directive(self):
-+        for returncode in (0, 3):
-+            with self.subTest(returncode=returncode):
-+                module, callback = self.load_callback()
-+                args = {"command": "git status", "workdir": "/repo", "timeout": 30}
- 
--        with mock.patch.object(
--            module.subprocess,
--            "run",
--            return_value=FakeCompletedProcess(stdout="rtk git status\n"),
-+                with mock.patch.object(
-+                    module.subprocess,
-+                    "run",
-+                    return_value=FakeCompletedProcess(
-+                        returncode=returncode, stdout="rtk git status\n"
-+                    ),
-+                ) as run:
-+                    directive = callback(tool_name="terminal", args=args)
-+
-+                run.assert_called_once_with(
-+                    ["rtk", "rewrite", "git status"],
-+                    shell=False,
-+                    stdin=subprocess.DEVNULL,
-+                    timeout=5,
-+                    capture_output=True,
-+                    text=True,
-+                )
-+                self.assertIsNone(directive)
-+                self.assertEqual(
-+                    {"command": "rtk git status", "workdir": "/repo", "timeout": 30}, args
-+                )
-+
-+    def test_rewrite_preserves_earlier_plugins_command_and_workdir_directives(self):
-+        for partial in (
-+            {"command": "git status --porcelain"},
-+            {"workdir": "/safe/repo"},
-+            {"command": "git status --porcelain", "workdir": "/safe/repo"},
-         ):
--            callback(tool_name="terminal", args=args)
--
--        self.assertEqual({"command": "rtk git status"}, args)
-+            for returncode in (0, 3):
-+                with self.subTest(partial=partial, returncode=returncode):
-+                    module, callback = self.load_callback()
-+                    args = {"command": "git status", "workdir": "/repo", "timeout": 30}
-+                    # Hermes gives hooks the shared payload, then merges returned
-+                    # modify directives in hook order, not before the next hook.
-+                    directives = [{"action": "modify", "args": dict(partial)}]
-+                    with mock.patch.object(
-+                        module.subprocess,
-+                        "run",
-+                        return_value=FakeCompletedProcess(
-+                            returncode=returncode, stdout="rtk git status\n"
-+                        ),
-+                    ):
-+                        directives.append(callback(tool_name="terminal", args=args))
-+
-+                    effective_args = dict(args)
-+                    for directive in directives:
-+                        if isinstance(directive, dict) and directive.get("action") == "modify":
-+                            effective_args.update(directive["args"])
-+
-+                    self.assertEqual(
-+                        {"command": "rtk git status", "workdir": "/repo", "timeout": 30, **partial},
-+                        effective_args,
-+                    )
-+
-+    def test_rewrite_timeout_uses_positive_environment_override(self):
-+        for value, expected in (("12", 12), ("0.25", 0.25), (" 7.5 ", 7.5)):
-+            with self.subTest(value=value):
-+                module, callbac
+ bench() {
+   local name="$1"
+   local unix_cmd="$2"
+@@ -176,7 +185,7 @@ bench "ls multi" "ls -la src/ scripts/" "$RTK ls src/ scripts/"
+ # ===================
+ if command -v tree &>/dev/null; then
+   section "tree"
+-  bench "tree" "tree -L 2" "$RTK tree -L 2"
++  bench "tree" "tree -L 2 -I target" "$RTK tree -L 2"
+   bench "tree src/" "tree src/ -L 2" "$RTK tree src/ -L 2"
+ else
+   echo ""
+@@ -197,8 +206,8 @@ bench "read -n" "cat -n src/lib.rs" "$RTK read src/lib.rs -n"
+ # find
+ # ===================
+ section "find"
+-bench "find *" "find . -type f" "$RTK find '*'"
+-bench "find *.rs" "find . -name '*.rs' -type f" "$RTK find '*.rs'"
++bench "find *" "find . -not -path './target/*' -not -path './.git/*' -type f" "$RTK find '*'"
++bench "find *.rs" "find . -not -path './target/*' -not -path './.git/*' -name '*.rs' -type f" "$RTK find '*.rs'"
+ # `rtk find --max N` caps how many names are DISPLAYED but still scans and
+ # summarizes the whole tree, so the honest baseline is the full `find` a user
+ # would otherwise read, not a `head -N`-truncated slice — that measures a
+@@ -343,6 +352,7 @@ bench "env -f PATH" "env | grep PATH" "$RTK env -f PATH"
+ # ===================
+ section "err"
+ if command -v cargo &>/dev/null; then
++  precompile cargo build
+   bench "err cargo build" "cargo build 2>&1 || true" "$RTK err cargo build 2>&1"
+ else
+   echo "⏭️  err cargo build (cargo not in PATH, skipped)"
+@@ -353,6 +363,7 @@ fi
+ # ===================
+ section "test"
+ if command -v cargo &>/dev/null; then
++  precompile cargo test --no-run
+   bench "test cargo test" "cargo test 2>&1 || true" "$RTK test cargo test 2>&1"
+ else
+   echo "⏭️  test cargo test (cargo not in PATH, skipped)"
+@@ -401,9 +412,13 @@ fi
+ # ===================
+ section "cargo"
+ if command -v cargo &>/dev/null; then
++  precompile cargo build
+   bench "cargo build" "cargo build 2>&1 || true" "$RTK cargo build 2>&1"
++  precompile cargo test --no-run
+   bench "cargo test" "cargo test 2>&1 || true" "$RTK cargo test 2>&1"
++  precompile cargo clippy
+   bench "cargo clippy" "cargo clippy 2>&1 || true" "$RTK cargo clippy 2>&1"
++  precompile cargo check
+   bench "cargo check" "cargo check 2>&1 || true" "$RTK cargo check 2>&1"
+ else
+   echo "⏭️  cargo build/test/clippy/check (cargo not in PATH, skipped)"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4988** (2026-11-04): ci(benchmark): cut the job to about 3 minutes and compare like with like (@KuSh)
+- **PR #4965** (2026-11-04): test: cut process spawns in the slowest Windows test suites (@KuSh)
 - **PR #4876** (closed): docs: make the rewrite coverage page verifiable (@alexrain)
 - **PR #4870** (closed): fix(git): point the show truncation hint at the unfiltered commit (@alexrain)
 - **PR #4868** (closed): fix(pnpm): keep the child's stdout when install fails (@alexrain)
 - **PR #4852** (2026-10-30): docs(root): add backlink to pro (@aeppling)
-- **PR #4846** (closed): fix(dotnet): count distinct projects in test/build summaries (@mrkayhyun)
-- **PR #4841** (closed): docs(agents): how a host without a tool hook delegates to rtk rewrite (@ismoss)
 
 ---
 
@@ -2290,28 +2416,33 @@ fix(hermes): close the rewrite's stdin and make its timeout configurable
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(init): pin the builtin list and the dropped safety promise
+## X. ci(benchmark): stop running the whole test suite in the benchmark job
 
 **RULE**:
-When implementing operations in `hooks/cline/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/CICD.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `380d2130`: test(init): pin the builtin list and the dropped safety promise. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50ebcea5`: ci(benchmark): stop running the whole test suite in the benchmark job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `hooks/cline/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix external programs with `rtk`, leaving shell builtins, keywords and the RTK-shadowed `env` unprefixed, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
+     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ no empty│ │ review   │
+     │ windows  │ │ audit    │ │ diff-only │ │ or grown│ │ ai agent │
+     │ macos    │ │ patterns │ │           │ │ output  │ │          │
+     + release (build, after clippy: must also pass to merge)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Installs `../rtk-awareness-full.md` (shared, agent-neutral): the instruction to prefix every shell command with `rtk`, plus meta commands. No hook, so the `full` level is always used regardless of `awareness.level`
+     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ >=80%   │ │ review   │
+     │ windows  │ │ audit    │ │ diff-only │ │ savings │ │ ai agent │
+     │ macos    │ │ patterns │ │           │ │         │ │          │
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `380d2130` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50ebcea5` are properly handled with clean fallback behavior.

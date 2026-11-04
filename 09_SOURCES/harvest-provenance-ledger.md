@@ -7405,3 +7405,7 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `eb097071` | Multi-dimensional audit evidence | 2026-11-04T23:20:50.080Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `8f7eca22` | Multi-dimensional audit evidence | 2026-11-04T23:20:54.010Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-04T23:20:56.216Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T23:27:26.074Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `b47e05b5` | Multi-dimensional audit evidence | 2026-11-04T23:27:27.827Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `4ef33ee9` | Multi-dimensional audit evidence | 2026-11-04T23:27:34.092Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `e8a68c1b` | Multi-dimensional audit evidence | 2026-11-04T23:27:34.356Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:20:56.134Z",
+  "last_updated": "2026-11-04T23:27:34.298Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2966,8 +2966,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "4918c342",
-      "content_hash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
+      "source_version": "e8a68c1b",
+      "content_hash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -3035,6 +3035,11 @@
           "number": 6696,
           "title": "license): categorize MIT-0 as unencumbered (#11498)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7021,
+          "title": "docs(crypto): clarify cryptographic asset scanning limitations (#11378)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3042,7 +3047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:14:08.868Z",
+      "verified_at": "2026-11-04T23:27:34.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41022,8 +41027,8 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "8a95a6d5",
-      "content_hash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
+      "source_version": "4ef33ee9",
+      "content_hash": "a7736658a90dd119561c86e272dd806e8dd4f02ff5d729d55cfcc283c040cba0",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
@@ -41051,6 +41056,11 @@
           "number": 6242,
           "title": "Dependabot npm updates and keep yarn.lock free of download URLs (#16548)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7020,
+          "title": "Title release PRs with a rocket prefix, add the release label, and detect releas",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41058,7 +41068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:20:24.490Z",
+      "verified_at": "2026-11-04T23:27:34.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51090,8 +51100,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "63b8c3e2",
-      "content_hash": "db4b4bf284fec7a03f0b4641777b1d48279c72ba3129649d5bd673e007af4f3f",
+      "source_version": "b47e05b5",
+      "content_hash": "f0f5642c1bd3310c85b842a15e84ece2589c53eeeddc15f42a89706ba0ce5c9c",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -51154,6 +51164,11 @@
           "number": 6595,
           "title": "test(init): pin the builtin list and the dropped safety promise",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7019,
+          "title": "ci(benchmark): stop running the whole test suite in the benchmark job",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51161,7 +51176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:52:17.372Z",
+      "verified_at": "2026-11-04T23:27:27.739Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165031,7 +165046,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
       "source_version": "hf-comfy-org-wan-2.2",
-      "content_hash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
+      "content_hash": "4da86c4a8c9265715244b2fd2a938905ac79d08c06fb7e6f342e6d572231cb15",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "promoted_rules": [
@@ -165056,7 +165071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T08:50:26.248Z",
+      "verified_at": "2026-11-04T23:27:25.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178336,6 +178351,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:20:56.108Z"
+    },
+    "rule-7019": {
+      "learning_id": "rule-7019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7019,
+      "title": "ci(benchmark): stop running the whole test suite in the benchmark job",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "b47e05b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:27:27.739Z"
+    },
+    "rule-7020": {
+      "learning_id": "rule-7020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7020,
+      "title": "Title release PRs with a rocket prefix, add the release label, and detect releas",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "4ef33ee9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:27:34.013Z"
+    },
+    "rule-7021": {
+      "learning_id": "rule-7021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7021,
+      "title": "docs(crypto): clarify cryptographic asset scanning limitations (#11378)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "e8a68c1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:27:34.283Z"
     }
   },
   "aliases": {

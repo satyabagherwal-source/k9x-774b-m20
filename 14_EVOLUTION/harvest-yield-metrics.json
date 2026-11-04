@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T23:20:56.221Z",
-  "total_cycles_completed": 7373,
-  "total_learnings_persisted": 7373,
-  "total_rules_promoted": 7065,
+  "last_updated": "2026-11-04T23:27:34.360Z",
+  "total_cycles_completed": 7377,
+  "total_learnings_persisted": 7377,
+  "total_rules_promoted": 7068,
   "history": [
-    {
-      "timestamp": "2026-11-04T09:40:03.752Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:40:05.646Z",
-      "repository": "DylanVann/react-native-fast-image",
-      "learningId": "learn-github-dylanvann-react-native-fast-image",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:40:21.844Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:57:42.806Z",
-      "repository": "mlua-rs/mlua",
-      "learningId": "learn-github-mlua-rs-mlua",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T09:57:48.254Z",
       "repository": "nativewind/nativewind",
@@ -1403,6 +1375,34 @@
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:27:26.078Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:27:27.833Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:27:34.097Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:27:34.360Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
