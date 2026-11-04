@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "9f1dcebf",
+    "sourceVersion": "a3ca96f3",
     "license": "NOASSERTION",
-    "contentHash": "2f101d7297399209120003c632c6c08dd75309646ac54d1c25258478ebe31076",
-    "lastHarvestedAt": "2026-10-31T02:51:10.307Z",
+    "contentHash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
+    "lastHarvestedAt": "2026-11-04T03:00:16.919Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {

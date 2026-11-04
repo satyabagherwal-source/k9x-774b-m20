@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:53:31.179Z",
+  "last_updated": "2026-11-04T03:00:16.839Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45494,8 +45494,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "9f1dcebf",
-      "content_hash": "2f101d7297399209120003c632c6c08dd75309646ac54d1c25258478ebe31076",
+      "source_version": "a3ca96f3",
+      "content_hash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -45538,6 +45538,11 @@
           "number": 6029,
           "title": "chalice): changed MCP auth",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6732,
+          "title": "api): don't panic on malformed assist live-sessions filters (#5113)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45545,7 +45550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:51:10.207Z",
+      "verified_at": "2026-11-04T03:00:16.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172729,6 +172734,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:53:31.151Z"
+    },
+    "rule-6732": {
+      "learning_id": "rule-6732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6732,
+      "title": "api): don't panic on malformed assist live-sessions filters (#5113)",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "a3ca96f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:00:16.821Z"
     }
   },
   "aliases": {

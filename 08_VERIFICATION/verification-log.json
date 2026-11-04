@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-6FEC",
-    "timestamp": "2026-10-31T16:27:11.604Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-6I5D",
     "timestamp": "2026-10-31T16:27:15.169Z",
     "repository": "CrossPaste/crosspaste-desktop",
@@ -7490,6 +7475,21 @@
     "repository": "wix/react-native-navigation",
     "learningId": "learn-github-wix-react-native-navigation",
     "contentHash": "41dfd2f2b81b48801417b28eb8a0f5a3b8b9c01b4e5b0266fef16b4d21fe41ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-451W",
+    "timestamp": "2026-11-04T03:00:16.916Z",
+    "repository": "openreplay/openreplay",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
