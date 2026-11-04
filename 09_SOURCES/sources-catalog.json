@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "8deb3872",
+    "sourceVersion": "351f4207",
     "license": "Apache-2.0",
-    "contentHash": "673fa63c40751d4d0e6f3f5c3928634da3ca012775b5412de2fa22b6de9b8ada",
-    "lastHarvestedAt": "2026-11-03T16:09:23.501Z",
+    "contentHash": "ff4142e0b8d3b27c363be80a61d1e5181c9fd92e2c1752fedd18f271e6dc5beb",
+    "lastHarvestedAt": "2026-11-04T11:09:31.231Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -8455,8 +8455,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
     "sourceVersion": "hf-mistralai-timestral-209m",
     "license": "Open-Source",
-    "contentHash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
-    "lastHarvestedAt": "2026-10-31T00:34:27.002Z",
+    "contentHash": "0c822443015e7820c5a1368a6c56494c09323e3fa4ebc59b6aeb71c9906d073d",
+    "lastHarvestedAt": "2026-11-04T11:09:27.845Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
   },
   "software-mansion-react-native-screens": {

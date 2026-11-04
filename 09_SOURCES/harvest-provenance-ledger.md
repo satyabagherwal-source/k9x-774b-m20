@@ -7234,3 +7234,5 @@ Every entry in this ledger must capture:
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `c5d0e262` | Multi-dimensional audit evidence | 2026-11-04T10:57:43.472Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `5e3bfe39` | Multi-dimensional audit evidence | 2026-11-04T11:02:29.708Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T11:02:39.491Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-04T11:09:27.845Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `351f4207` | Multi-dimensional audit evidence | 2026-11-04T11:09:31.231Z |

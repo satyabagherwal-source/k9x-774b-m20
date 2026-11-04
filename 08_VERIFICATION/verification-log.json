@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-C5U0",
-    "timestamp": "2026-10-31T21:39:34.920Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-KGE8",
-    "timestamp": "2026-10-31T21:46:01.856Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "98fcf092d7396bcce7cdabf0979b17f0112b6fcf64a45bf70ef93c7501d25697",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-KP48",
     "timestamp": "2026-10-31T21:46:13.160Z",
     "repository": "volcengine/OpenViking",
@@ -7492,6 +7462,36 @@
     "contentHash": "f9510553a6bffcac5fdf301a8a8a3452e61bb72d018594be0591854634d9c8c2",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-L8DB",
+    "timestamp": "2026-11-04T11:09:27.839Z",
+    "repository": "mistralai/Timestral-209M",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "0c822443015e7820c5a1368a6c56494c09323e3fa4ebc59b6aeb71c9906d073d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-LAZH",
+    "timestamp": "2026-11-04T11:09:31.229Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "ff4142e0b8d3b27c363be80a61d1e5181c9fd92e2c1752fedd18f271e6dc5beb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
