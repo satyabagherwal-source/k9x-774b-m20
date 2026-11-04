@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `630068f9`  
+> **Source Version**: `e9779b6f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:56:42.347Z  
+> **Timestamp**: 2026-11-04T22:58:52.468Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:56:41.535Z  
+> **Harvest Timestamp**: 2026-11-04T22:58:52.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5396 stars
+- **Stars / Engagement**: 5394 stars
 
 ---
 
@@ -1230,15 +1230,11 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1823** (2026-11-03): **No public description**
-  *Symptoms*: No public description 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1823/checks?check_run_id=125715878440) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1850** (2026-11-04): **Enable releasing stale pages by default.**
+  *Symptoms*: Enable releasing stale pages by default.  Releasing stale pages from the HugePageFiller is now enabled by default. It can be disabled by setting the environment variable `TCMALLOC_DISABLE_RELEASE_STALE_PAGES` to 1 or by linking the binary against :want_disable_release_stale_pages. 
 
-- **Issue #1822** (2026-11-03): **No public description**
-  *Symptoms*: No public description 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1822/checks?check_run_id=125699411396) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1849** (2026-11-04): **Internal change**
+  *Symptoms*: Internal change 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1255,96 +1251,105 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88e6e2f8` (2026-11-02)
-**Commit Message**: Add regression test for retained capacities in percpu_tcmalloc_fuzz.
+### Incident Patch 1: `f246239d` (2026-11-03)
+**Commit Message**: Revert: Wire up release stale/free backend experiment.
 
-Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
-PiperOrigin-RevId: 1012290269
-
-**File**: `tcmalloc/internal/percpu_tcmalloc_fuzz.cc` (modified, +14/-0)
-```diff
-@@ -781,6 +781,20 @@ TEST(PercpuTcmallocTest, FuzzPercpuTcmallocRegression) {
-        UncacheCpuSlab{}, CacheCpuSlab{}, SwitchCpu{.cpu_index = 1},
-        StopCpu{.cpu_index = 1}, StartCpu{.cpu_index = 1}},
-       {kMaxCapacity, kMaxCapacity, kMaxCapacity, kMaxCapacity});
-+
-+  FuzzPercpuTcmalloc(
-+      {StopCpu{.cpu_index = 50}, Pop{.size_class = 4294967295},
-+       StartCpu{.cpu_index = 8}, Grow{.size_class = 2147483647, .len = 143},
-+       Push{.size_class = 0},
-+       GrowOtherClass{.cpu_index = 55, .size_class = 468428499, .len = 90},
-+       CacheCpuSlab{}, PopBatch{.size_class = 2147483647, .count = 167},
-+       PushBatch{.size_class = 1975813631, .count = 252},
-+       PushBatch{.size_class = 4294967295, .count = 222}, Drain{.cpu_index = 6},
-+       ReleasePerCPUSlabMetadata{.madvise_fail = false},
-+       UpdateMaxCapacities{.size_class = 1, .new_max_capacity = 204},
-+       SwitchCpu{.cpu_index = 237}, Push{.size_class = 0},
-+       PushBatch{.size_class = 4294967295, .count = 15}},
-+      {166, 109, 102, 186});
- }
- 
- TEST(PercpuTcmallocTest, ResizeSlabsMaxCapacities) {
-```
-
----
-
-### Incident Patch 2: `630068f9` (2026-11-03)
-**Commit Message**: Revert: Adding an ablation study for understanding the performance trade-offs of using a shorter demand cycle.
-
-PiperOrigin-RevId: 1013093793
+PiperOrigin-RevId: 1013197856
 
 **File**: `tcmalloc/experiment_config.h` (modified, +0/-2)
 ```diff
-@@ -24,7 +24,6 @@ enum class Experiment : int {
-   // clang-format off
-   // go/keep-sorted start
+@@ -26,7 +26,6 @@ enum class Experiment : int {
    TCMALLOC_CFL_PRIORITIZATION_ABLATION,  // TODO: b/567166830 - Complete experiment.
--  TCMALLOC_DEMAND_CYCLE_120S,  // TODO: b/540987155 - Complete experiment.
    TCMALLOC_PGHO_EXPERIMENT,  // TODO: b/460486507 - Complete experiment.
    TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION,  // TODO: b/205153285 - Complete experiment.
-   TCMALLOC_RELEASE_FREE_STALE,  // TODO: b/527473378 - Complete experiment.
-@@ -58,7 +57,6 @@ struct ExperimentConfig {
- inline constexpr ExperimentConfig experiments[] = {
-     // go/keep-sorted start
+-  TCMALLOC_RELEASE_FREE_STALE,  // TODO: b/527473378 - Complete experiment.
+   TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES,  // TODO: b/435718337 - Complete experiment.
+   TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION,  // TODO: b/577007348 - Complete experiment.
+   TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES,  // TODO: b/539704318 - Complete experiment.
+@@ -59,7 +58,6 @@ inline constexpr ExperimentConfig experiments[] = {
      {Experiment::TCMALLOC_CFL_PRIORITIZATION_ABLATION, "TCMALLOC_CFL_PRIORITIZATION_ABLATION"},
--    {Experiment::TCMALLOC_DEMAND_CYCLE_120S, "TCMALLOC_DEMAND_CYCLE_120S"},
      {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
      {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
-     {Experiment::TCMALLOC_RELEASE_FREE_STALE, "TCMALLOC_RELEASE_FREE_STALE"},
+-    {Experiment::TCMALLOC_RELEASE_FREE_STALE, "TCMALLOC_RELEASE_FREE_STALE"},
+     {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES, "TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
 ```
 
-**File**: `tcmalloc/parameters.cc` (modified, +0/-14)
+**File**: `tcmalloc/experiment_variants.bzl` (modified, +0/-6)
 ```diff
-@@ -126,20 +126,6 @@ static std::atomic<bool>& hpaa_subrelease_ptr() {
- }
+@@ -34,12 +34,6 @@ experiment_variants = [
+         "deps": ["//tcmalloc:common_8k_pages"],
+         "env": {"BORG_EXPERIMENTS": "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
+     },
+-    {
+-        "name": "tcmalloc_release_free_stale",
+-        "malloc": "//tcmalloc",
+-        "deps": ["//tcmalloc:common_8k_pages"],
+-        "env": {"BORG_EXPERIMENTS": "TCMALLOC_RELEASE_FREE_STALE"},
+-    },
+     {
+         "name": "tcmalloc_collapse_released_hugepages",
+         "malloc": "//tcmalloc",
+```
+
+**File**: `tcmalloc/parameters.cc` (modified, +0/-5)
+```diff
+@@ -150,11 +150,6 @@ void Parameters::InitializeFromExperiments() {
+                                       std::memory_order_relaxed);
+   }
  
- void Parameters::InitializeFromExperiments() {
--#if !defined(TCMALLOC_INTERNAL_SMALL_BUT_SLOW)
--  if (IsExperimentActive(Experiment::TCMALLOC_DEMAND_CYCLE_120S)) {
--    skip_subrelease_short_interval_ns_.store(
--        absl::ToInt64Nanoseconds(absl::Seconds(60)), std::memory_order_relaxed);
--    skip_subrelease_long_interval_ns_.store(
--        absl::ToInt64Nanoseconds(absl::Seconds(300)),
--        std::memory_order_relaxed);
--    skip_subrelease_cold_short_interval_ns_.store(
--        absl::ToInt64Nanoseconds(absl::Seconds(60)), std::memory_order_relaxed);
--    skip_subrelease_cold_long_interval_ns_.store(
--        absl::ToInt64Nanoseconds(absl::Seconds(300)),
--        std::memory_order_relaxed);
+-  if (IsExperimentActive(Experiment::TCMALLOC_RELEASE_FREE_STALE)) {
+-    release_stale_pages_.store(ReleaseStalePages::kEnabled,
+-                               std::memory_order_relaxed);
 -  }
--#endif
- 
-   if (IsExperimentActive(Experiment::TCMALLOC_SONIC_TRACK_BROKEN_HUGEPAGES)) {
-     track_broken_hugepages_.store(TrackBrokenHugepages::kEnabled,
+-
+   if (IsExperimentActive(
+           Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION)) {
+     release_drained_slab_metadata_.store(false, std::memory_order_relaxed);
+```
+
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +0/-16)
+```diff
+@@ -327,15 +327,6 @@ function(tcmalloc_cc_test_variants)
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+     ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"
+   )
+-  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_release_free_stale
+-    ${EXTRA_ARGS}
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_RELEASE_FREE_STALE"
+-  )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_collapse_released_hugepages
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+@@ -571,13 +562,6 @@ function(tcmalloc_cc_binary_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+   )
+-  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_release_free_stale
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-  )
+   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_collapse_released_hugepages
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1823** (closed): No public description (@copybara-service[bot])
-- **PR #1822** (closed): No public description (@copybara-service[bot])
-- **PR #1816** (2026-11-03): Do not unblock libc-internal signals in `tcmalloc_internal::ScopedSigmask`. (@copybara-service[bot])
-- **PR #1813** (2026-11-03): Revert: Adding an ablation study for understanding the performance trade-offs of using a shorter demand cycle. (@copybara-service[bot])
-- **PR #1812** (2026-11-02): Internal change. (@copybara-service[bot])
-- **PR #1807** (closed): No public description (@copybara-service[bot])
+- **PR #1850** (2026-11-04): Enable releasing stale pages by default. (@copybara-service[bot])
+- **PR #1849** (closed): Internal change (@copybara-service[bot])
+- **PR #1848** (2026-11-04): Introduce an opt-out mechanism for releasing stale pages. (@copybara-service[bot])
+- **PR #1845** (closed): Internal change (@copybara-service[bot])
+- **PR #1830** (2026-11-03): Retry MADV_FREE after munlock in SystemAllocator::Release. (@copybara-service[bot])
+- **PR #1827** (2026-11-04): Replace CpuCache::Deactivate with ~CpuCache. (@copybara-service[bot])
 
 ---
 
@@ -1358,47 +1363,3 @@ PiperOrigin-RevId: 1013093793
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add regression test for retained capacities in percpu_tcmalloc_fuzz.
-
-**RULE**:
-When implementing operations in `tcmalloc/internal/percpu_tcmalloc_fuzz.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `88e6e2f8`: Add regression test for retained capacities in percpu_tcmalloc_fuzz.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/percpu_tcmalloc_fuzz.cc`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-
-  FuzzPercpuTcmalloc(
-      {StopCpu{.cpu_index = 50}, Pop{.size_class = 4294967295},
-       StartCpu{.cpu_index = 8}, Grow{.size_class = 2147483647, .len = 143},
-       Push{.size_class = 0},
-       GrowOtherClass{.cpu_index = 55, .size_class = 468428499, .len = 90},
-       CacheCpuSlab{}, PopBatch{.size_class = 2147483647, .count = 167},
-       PushBatch{.size_class = 1975813631, .count = 252},
-       PushBatch{.size_class = 4294967295, .count = 222}, Drain{.cpu_index = 6},
-       ReleasePerCPUSlabMetadata{.madvise_fail = false},
-       UpdateMaxCapacities{.size_class = 1, .new_max_capacity = 204},
-       SwitchCpu{.cpu_index = 237}, Push{.size_class = 0},
-       PushBatch{.size_class = 4294967295, .count = 15}},
-      {166, 109, 102, 186});
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88e6e2f8` are properly handled with clean fallback behavior.

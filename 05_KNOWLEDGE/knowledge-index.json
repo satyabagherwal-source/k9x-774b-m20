@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:52:28.952Z",
+  "last_updated": "2026-11-04T22:59:06.204Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9239,8 +9239,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "61e6a768",
-      "content_hash": "5cc5b07d3b128638502437d285ede00ce1e959ef51bc3639d1068b168305080f",
+      "source_version": "75a200a3",
+      "content_hash": "1dcb8069dda091ba687238bab5dbda760c29c7c1a3c329b4d0ec229e990dd7d7",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -9293,6 +9293,11 @@
           "number": 6666,
           "title": "query): remove experimental privilege check settings (#20933)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7010,
+          "title": "storage): prevent incomplete index refresh after writes (#20909)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9300,7 +9305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:59:32.273Z",
+      "verified_at": "2026-11-04T22:59:06.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16109,8 +16114,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "630068f9",
-      "content_hash": "a7770e6affd4ca7da10a53c45887089dac1115a0e9cf06c7f78118d12de250ef",
+      "source_version": "e9779b6f",
+      "content_hash": "fcaa4c202f436aeb9f3183a49a1ee4eb30ae6a374d18d68c1d673657ecea8414",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -16185,7 +16190,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:56:43.089Z",
+      "verified_at": "2026-11-04T22:58:52.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28717,7 +28722,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
+      "content_hash": "f08a5e6099d07278cba4f3fd2124dc417f3d34f4cb0bc9ac8bd0ccf2c3eb07bf",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -28797,7 +28802,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-10-31T07:56:36.281Z",
+      "verified_at": "2026-11-04T22:58:51.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178165,6 +178170,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:52:28.931Z"
+    },
+    "rule-7010": {
+      "learning_id": "rule-7010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7010,
+      "title": "storage): prevent incomplete index refresh after writes (#20909)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "75a200a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:59:06.190Z"
     }
   },
   "aliases": {

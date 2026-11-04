@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:52:29.047Z",
+  "last_updated": "2026-11-04T22:59:06.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
-      "verified_at": "2026-10-31T07:56:36.375Z",
+      "content_hash": "f08a5e6099d07278cba4f3fd2124dc417f3d34f4cb0bc9ac8bd0ccf2c3eb07bf",
+      "verified_at": "2026-11-04T22:58:51.524Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T07:56:36.375Z"
+      "last_updated": "2026-11-04T22:58:51.524Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "5cc5b07d3b128638502437d285ede00ce1e959ef51bc3639d1068b168305080f",
-      "verified_at": "2026-11-03T23:59:32.403Z",
+      "content_hash": "1dcb8069dda091ba687238bab5dbda760c29c7c1a3c329b4d0ec229e990dd7d7",
+      "verified_at": "2026-11-04T22:59:06.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:59:32.403Z"
+      "last_updated": "2026-11-04T22:59:06.273Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "a7770e6affd4ca7da10a53c45887089dac1115a0e9cf06c7f78118d12de250ef",
-      "verified_at": "2026-11-03T18:56:43.234Z",
+      "content_hash": "fcaa4c202f436aeb9f3183a49a1ee4eb30ae6a374d18d68c1d673657ecea8414",
+      "verified_at": "2026-11-04T22:58:52.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:56:43.234Z"
+      "last_updated": "2026-11-04T22:58:52.678Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",

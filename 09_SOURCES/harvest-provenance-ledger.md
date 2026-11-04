@@ -7393,3 +7393,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-04T22:52:23.681Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `ee8130ad` | Multi-dimensional audit evidence | 2026-11-04T22:52:26.099Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `10f77d75` | Multi-dimensional audit evidence | 2026-11-04T22:52:29.031Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-04T22:58:51.518Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `e9779b6f` | Multi-dimensional audit evidence | 2026-11-04T22:58:52.673Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `75a200a3` | Multi-dimensional audit evidence | 2026-11-04T22:59:06.259Z |

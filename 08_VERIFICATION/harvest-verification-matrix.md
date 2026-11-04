@@ -7384,3 +7384,6 @@
 | `CYCLE-20261104-P7G9` | `2026-11-04T22:52:23.673Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`376117db...`) |
 | `CYCLE-20261104-P9BJ` | `2026-11-04T22:52:26.095Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7008` | Yes (`1ff86133...`) |
 | `CYCLE-20261104-PBL0` | `2026-11-04T22:52:29.028Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7009` | Yes (`4c525dc3...`) |
+| `CYCLE-20261104-XIPI` | `2026-11-04T22:58:51.510Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`f08a5e60...`) |
+| `CYCLE-20261104-XJLQ` | `2026-11-04T22:58:52.670Z` | `google/tcmalloc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/google-tcmalloc-learnings.md` | Yes (`fcaa4c20...`) |
+| `CYCLE-20261104-XU35` | `2026-11-04T22:59:06.257Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7010` | Yes (`1dcb8069...`) |
