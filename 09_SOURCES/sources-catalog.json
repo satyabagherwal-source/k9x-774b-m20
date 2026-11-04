@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "f619e1e3",
+    "sourceVersion": "4e1eec78",
     "license": "NOASSERTION",
-    "contentHash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
-    "lastHarvestedAt": "2026-10-31T00:34:25.408Z",
+    "contentHash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
+    "lastHarvestedAt": "2026-11-04T00:53:22.819Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "dae6d3a0",
+    "sourceVersion": "4aa6fc23",
     "license": "AGPL-3.0",
-    "contentHash": "47ce8713c9c6b333dfd2147de5f6f8b0d8152cab84ea2cfbf60f196465e65fa7",
-    "lastHarvestedAt": "2026-10-25T14:03:28.793Z",
+    "contentHash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
+    "lastHarvestedAt": "2026-11-04T00:53:28.965Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "f74bb39c",
+    "sourceVersion": "378f4494",
     "license": "MIT",
-    "contentHash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
-    "lastHarvestedAt": "2026-10-31T22:12:05.739Z",
+    "contentHash": "0bba5f56313e9ad540130cbe49149a3b0e60593103c92ebbc62c02379319aa5c",
+    "lastHarvestedAt": "2026-11-04T00:53:17.988Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:46:35.856Z",
+  "last_updated": "2026-11-04T00:53:28.892Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112,8 +112,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "f74bb39c",
-      "content_hash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
+      "source_version": "378f4494",
+      "content_hash": "0bba5f56313e9ad540130cbe49149a3b0e60593103c92ebbc62c02379319aa5c",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -206,6 +206,11 @@
           "number": 6346,
           "title": "tui): keep resume search work off the input thread",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6689,
+          "title": "security: upgrade native SSH crypto stack and preserve strict pinning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213,7 +218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T22:12:05.637Z",
+      "verified_at": "2026-11-04T00:53:17.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14828,8 +14833,8 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "dae6d3a0",
-      "content_hash": "47ce8713c9c6b333dfd2147de5f6f8b0d8152cab84ea2cfbf60f196465e65fa7",
+      "source_version": "4aa6fc23",
+      "content_hash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
@@ -14842,6 +14847,11 @@
           "number": 4329,
           "title": "graph): resolve C# names only through the scopes and imports C# uses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6691,
+          "title": "use consistent native path canonicalization for graph inputs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14849,7 +14859,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:03:28.743Z",
+      "verified_at": "2026-11-04T00:53:28.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38928,8 +38938,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "f619e1e3",
-      "content_hash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
+      "source_version": "4e1eec78",
+      "content_hash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -38972,6 +38982,11 @@
           "number": 5959,
           "title": "[MM-71476] Fix timeout when deleting the last reply in a thread on large Posts t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6690,
+          "title": "Update snapshots for compass-ui alpha.25 class names (#39670)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38979,7 +38994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:34:25.308Z",
+      "verified_at": "2026-11-04T00:53:22.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171869,6 +171884,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:46:35.833Z"
+    },
+    "rule-6689": {
+      "learning_id": "rule-6689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6689,
+      "title": "security: upgrade native SSH crypto stack and preserve strict pinning",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "378f4494",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:53:17.894Z"
+    },
+    "rule-6690": {
+      "learning_id": "rule-6690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6690,
+      "title": "Update snapshots for compass-ui alpha.25 class names (#39670)",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "4e1eec78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:53:22.731Z"
+    },
+    "rule-6691": {
+      "learning_id": "rule-6691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6691,
+      "title": "use consistent native path canonicalization for graph inputs",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "4aa6fc23",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:53:28.873Z"
     }
   },
   "aliases": {

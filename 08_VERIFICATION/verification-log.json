@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-868A",
-    "timestamp": "2026-10-31T13:40:35.338Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-GSRW",
-    "timestamp": "2026-10-31T13:47:17.804Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-GT5R",
-    "timestamp": "2026-10-31T13:47:18.303Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-GYIV",
     "timestamp": "2026-10-31T13:47:25.255Z",
     "repository": "pixeltable/pixeltable",
@@ -7490,6 +7445,51 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-KU8W",
+    "timestamp": "2026-11-04T00:53:17.984Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "0bba5f56313e9ad540130cbe49149a3b0e60593103c92ebbc62c02379319aa5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-KXZ3",
+    "timestamp": "2026-11-04T00:53:22.815Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-L2PT",
+    "timestamp": "2026-11-04T00:53:28.961Z",
+    "repository": "giancarloerra/SocratiCode",
+    "learningId": "learn-github-giancarloerra-socraticode",
+    "contentHash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

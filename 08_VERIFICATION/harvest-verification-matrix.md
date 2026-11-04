@@ -7085,3 +7085,6 @@
 | `CYCLE-20261104-BZ9K` | `2026-11-04T00:46:24.584Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6686` | Yes (`bfc3b135...`) |
 | `CYCLE-20261104-BZWL` | `2026-11-04T00:46:25.413Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6687` | Yes (`720e4163...`) |
 | `CYCLE-20261104-C812` | `2026-11-04T00:46:35.942Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6688` | Yes (`b936822d...`) |
+| `CYCLE-20261104-KU8W` | `2026-11-04T00:53:17.984Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6689` | Yes (`0bba5f56...`) |
+| `CYCLE-20261104-KXZ3` | `2026-11-04T00:53:22.815Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6690` | Yes (`3a21f9f7...`) |
+| `CYCLE-20261104-L2PT` | `2026-11-04T00:53:28.961Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6691` | Yes (`6d859934...`) |

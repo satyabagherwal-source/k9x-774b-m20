@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `f619e1e3`  
+> **Source Version**: `4e1eec78`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:34:24.746Z  
+> **Timestamp**: 2026-11-04T00:53:22.208Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:34:24.452Z  
+> **Harvest Timestamp**: 2026-11-04T00:53:21.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39480 stars
+- **Stars / Engagement**: 39515 stars
 
 ---
 
@@ -1630,1636 +1630,619 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18fb0968` (2026-10-30)
-**Commit Message**: [MM-71476] Fix timeout when deleting the last reply in a thread on large Posts tables (#39579)
-
-* [MM-71476] Compute thread reply stats in one query to avoid full index scan on reply delete
-
-Deleting the last live reply in a thread could time out on large Posts
-tables: the MAX-only LastReplyAt subquery let Postgres use a backward scan
-of idx_posts_create_at, which walks the entire index when no live reply
-remains. Selecting COUNT and MAX together prevents that rewrite, so the
-query reads the thread through idx_posts_root_id_delete_at.
-
-Also return the thread cleanup error before updating the root post's
-UpdateAt, and return an error from that update instead of only logging it,
-so the real cause is no longer masked by "driver: bad connection".
-
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-
-* Address PR feedback: 0 answered, 1 resolved, 0 declined
-
-Add a Postgres EXPLAIN test for the thread reply stats query, rendered from a
-shared threadReplyStatsQuery helper, with a MAX-only control case.
-
-* Address PR feedback: 0 answered, 1 resolved, 0 declined
-
----------
+### Incident Patch 1: `4e1eec78` (2026-11-03)
+**Commit Message**: Update snapshots for compass-ui alpha.25 class names (#39670)
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-**File**: `server/channels/store/sqlstore/post_store.go` (modified, +27/-31)
+**File**: `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap` (modified, +4/-4)
 ```diff
-@@ -1031,19 +1031,22 @@ func (s *SqlPostStore) Delete(rctx request.CTX, postID string, time int64, delet
- 		err = s.deleteThread(transaction, postID, time)
- 	} else {
- 		err = s.updateThreadAfterReplyDeletion(transaction, id.RootId, id.UserId)
-+	}
-+
-+	if err != nil {
-+		return errors.Wrapf(err, "failed to cleanup Thread with postid=%s", id.RootId)
-+	}
-+
-+	if id.RootId != "" {
- 		updatePostQuery := s.getQueryBuilder().
- 			Update("Posts").
- 			Set("UpdateAt", time).
- 			Where(sq.Eq{"Id": id.RootId})
- 		if _, err = transaction.ExecBuilder(updatePostQuery); err != nil {
--			rctx.Logger().Warn("Error updating Post UpdateAt.", mlog.Err(err))
-+			return errors.Wrapf(err, "failed to update UpdateAt of root post with id=%s", id.RootId)
- 		}
- 	}
- 
--	if err != nil {
--		return errors.Wrapf(err, "failed to cleanup Thread with postid=%s", id.RootId)
--	}
--
- 	if err = transaction.Commit(); err != nil {
- 		return errors.Wrap(err, "commit_transaction")
- 	}
-@@ -3193,6 +3196,18 @@ func (s *SqlPostStore) deleteThreadFiles(transaction *sqlxTxWrapper, postID stri
- 	return nil
- }
- 
-+// threadReplyStatsQuery selects a thread's LastReplyAt and ReplyCount in that order.
-+// Selecting COUNT alongside MAX keeps Postgres from rewriting MAX as a backward scan of
-+// idx_posts_create_at, which walks the whole index when no live reply remains.
-+func threadReplyStatsQuery(rootId string) sq.SelectBuilder {
-+	return sq.Select("COALESCE(MAX(CreateAt), 0) AS LastReplyAt", "COUNT(*) AS ReplyCount").
-+		From("Posts").
-+		Where(sq.Eq{
-+			"RootId":   rootId,
-+			"DeleteAt": 0,
-+		})
-+}
-+
- // updateThreadAfterReplyDeletion decrements the thread reply count and adjusts the participants
- // list as necessary.
- func (s *SqlPostStore) updateThreadAfterReplyDeletion(transaction *sqlxTxWrapper, rootId string, userId string) error {
-@@ -3218,23 +3233,8 @@ func (s *SqlPostStore) updateThreadAfterReplyDeletion(transaction *sqlxTxWrapper
- 			updateQuery = updateQuery.Set("Participants", sq.Expr("Participants - ?", userId))
- 		}
- 
--		lastReplyAtSubquery := sq.Select("COALESCE(MAX(CreateAt), 0)").
--			From("Posts").
--			Where(sq.Eq{
--				"RootId":   rootId,
--				"DeleteAt": 0,
--			})
--
--		lastReplyCountSubquery := sq.Select("Count(*)").
--			From("Posts").
--			Where(sq.Eq{
--				"RootId":   rootId,
--				"DeleteAt": 0,
--			})
--
- 		updateQuery = updateQuery.
--			Set("LastReplyAt", lastReplyAtSubquery).
--			Set("ReplyCount", lastReplyCountSubquery).
-+			Set("(LastReplyAt, ReplyCount)", threadReplyStatsQuery(rootId)).
- 			Where(sq.And{
- 				sq.Eq{"PostId": rootId},
- 				sq.Gt{"ReplyCount": 0},
-@@ -3346,15 +3346,11 @@ func (s *SqlPostStore) updateThreadsFromPosts(transaction *sqlxTxWrapper, posts
- 				participants = append(participants, item.UserId)
- 			}
- 
--			// calculate reply count
--			var count int64
--			err := transaction.Get(&count, "SELECT COUNT(Posts.Id) FROM Posts WHERE Posts.RootId=? And Posts.DeleteAt=0", rootId)
--			if err != nil {
--				return err
-+			var replyStats struct {
-+				LastReplyAt int64
-+				ReplyCount  int64
- 			}
--			// calculate last reply at
--			var lastReplyAt int64
--			err = transaction.Get(&lastReplyAt, "SELECT COALESCE(MAX(Posts.CreateAt), 0) FROM Posts WHERE Posts.RootID=? and Posts.DeleteAt=0", rootId)
-+			err := transaction.GetBuilder(&replyStats, threadReplyStatsQuery(rootId))
- 			if err != nil {
- 				return err
- 			}
-@@ -3378,8 +3374,8 @@ func (s *SqlPostStore) updateThreadsFromPosts(transaction *sqlxTxWrapper, posts
- 				(:PostId, :ChannelId, :ReplyCount, :LastReplyAt, :Participants, :TeamId)`, &model.Thread{
- 				PostId:       rootId,
- 				ChannelId:    channelId,
--				ReplyCount:   count,
--				LastReplyAt:  lastReplyAt,
-+				ReplyCount:   replyStats.ReplyCount,
-+				LastReplyAt:  replyStats.LastReplyAt,
- 				Participants: participants,
- 				TeamId:       teamId,
- 			}); err != nil {
+@@ -632,13 +632,13 @@ exports[`components/SettingItemMin should match snapshot, team icon on source 1`
+             >
+               <button
+                 aria-label="Remove This Icon"
+-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
++                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
+                 data-testid="removeSettingPicture"
+                 type="button"
+               >
+                 <span
+                   aria-hidden="true"
+-                  class="_icon-button__icon-slot_13ryy_41"
++                  class="_icon-button__icon-slot_ft92e_41"
+                 >
+                   <div
+                     aria-hidden="true"
+@@ -774,13 +774,13 @@ exports[`components/SettingItemMin should match snapshot, user icon on source 1`
+             >
+               <button
+                 aria-label="Remove Profile Picture"
+-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
++                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
+                 data-testid="removeSettingPicture"
+                 type="button"
+               >
+                 <span
+                   aria-hidden="true"
+-                  class="_icon-button__icon-slot_13ryy_41"
++                  class="_icon-button__icon-slot_ft92e_41"
+                 >
+                   <div
+                     aria-hidden="true"
 ```
 
-**File**: `server/channels/store/sqlstore/post_store_test.go` (modified, +79/-0)
+**File**: `webapp/channels/src/components/actions_menu/__snapshots__/actions_menu.test.tsx.snap` (modified, +6/-6)
 ```diff
-@@ -5,13 +5,15 @@ package sqlstore
- 
- import (
- 	"fmt"
-+	"strings"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/mattermost/mattermost/server/public/model"
- 	"github.com/mattermost/mattermost/server/public/shared/mlog"
-+	"github.com/mattermost/mattermost/server/public/shared/request"
- 	"github.com/mattermost/mattermost/server/v8/channels/store/searchtest"
- 	"github.com/mattermost/mattermost/server/v8/channels/store/storetest"
- )
-@@ -58,3 +60,80 @@ func TestDetermineMaxPostSize(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestThreadReplyStatsQueryPlan checks that the reply stats query never gets
-+// the MIN/MAX rewrite (LIMIT 1 over a backward scan of idx_posts_create_at),
-+// which walks the whole index when no live reply matches (MM-71476).
-+//
-+// The planner only takes the rewrite when it expects an early match, so the
-+// thread makes up most of the table. The control case proves the MAX-only
-+// form gets the rewrite under these conditions, so the assertion can fail.
-+func TestThreadReplyStatsQueryPlan(t *testing.T) {
-+	logger := mlog.CreateTestLogger(t)
-+
-+	settings, err := makeSqlSettings(model.DatabaseDriverPostgres)
-+	if err != nil {
-+		t.Skip(err)
-+	}
-+	t.Cleanup(func() { storetest.CleanupSqlSettings(settings) })
-+
-+	store, err := New(*settings, logger, nil)
-+	require.NoError(t, err)
-+	t.Cleanup(store.Close)
-+
-+	rctx := request.TestContext(t)
-+
-+	channel, err := store.Channel().Save(rctx, &model.Channel{
-+		TeamId:      model.NewId(),
-+		DisplayName: "Reply stats plan",
-+		Name:        "z-z-" + model.NewId(),
-+		Type:        model.ChannelTypeOpen,
-+	}, -1)
-+	require.NoError(t, err)
-+
-+	userID := model.NewId()
-+	root, err := store.Post().Save(rctx, &model.Post{ChannelId: channel.Id, UserId: userID, Message: "root"})
-+	require.NoError(t, err)
-+
-+	replies := make([]*model.Post, 1000)
-+	for i := range replies {
-+		replies[i] = &model.Post{ChannelId: channel.Id, UserId: userID, RootId: root.Id, Message: "reply", CreateAt: root.CreateAt + int64(i) + 1}
-+	}
-+	_, _, err = store.Post().SaveMultiple(rctx, replies)
-+	require.NoError(t, err)
-+
-+	master := store.GetMaster()
-+	_, err = master.ExecNoTimeout("ANALYZE Posts")
-+	require.NoError(t, err)
-+
-+	// enable_seqscan is a session setting, so it and the EXPLAIN must share a
-+	// connection. A transaction pins one, and the rollback undoes SET LOCAL.
-+	explain := func(t *testing.T, query string, args ...any) string {
-+		t.Helper()
-+		tx, txErr := master.Begin()
-+		require.NoError(t, txErr)
-+		defer tx.Rollback() //nolint:errcheck
-+
-+		_, txErr = tx.Exec("SET LOCAL enable_seqscan = off")
-+		require.NoError(t, txErr)
-+
-+		var lines []string
-+		require.NoError(t, tx.Select(&lines, "EXPLAIN "+query, args...))
-+		return strings.Join(lines, "\n")
-+	}
-+
-+	t.Run("reply stats query is not rewritten into a backward index scan", func(t *testing.T) {
-+		query, args, err := threadReplyStatsQuery(root.Id).ToSql()
-+		require.NoError(t, err)
-+
-+		plan := explain(t, query, args...)
-+		assert.NotContains(t, plan, "Limit", "plan was:\n%s", plan)
-+		assert.NotContains(t, plan, "Index Scan Backward", "plan was:\n%s", plan)
-+	})
-+
-+	t.Run("control: MAX-only form is rewritten into a backward index scan", func(t *testing.T) {
-+		plan := explain(t, "SELECT COALESCE(MAX(CreateAt), 0) FROM Posts WHERE RootId = ? AND DeleteAt = 0", root.Id)
-+		assert.Contains(t, plan, "Limit", "plan was:\n%s", plan)
-+		assert.Contains(t, plan, "Index Scan Backward using idx_posts_create_at", "plan was:\n%s", plan)
-+	})
-+}
+@@ -10,14 +10,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace disabled
+       aria-expanded="true"
+       aria-haspopup="true"
+       aria-label="actions"
+-      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
++      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
+       data-active="true"
+       id="center_actions_button_post_id_1"
+       type="button"
+     >
+       <span
+         aria-hidden="true"
+-        class="_icon-button__icon-slot_13ryy_41"
++        class="_icon-button__icon-slot_ft92e_41"
+       >
+         <div
+           aria-hidden="true"
+@@ -85,14 +85,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace enabled a
+       aria-expanded="true"
+       aria-haspopup="true"
+       aria-label="actions"
+-      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
++      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
+       data-active="true"
+       id="center_actions_button_post_id_1"
+       type="button"
+     >
+       <span
+         aria-hidden="true"
+-        class="_icon-button__icon-slot_13ryy_41"
++        class="_icon-button__icon-slot_ft92e_41"
+       >
+         <div
+           aria-hidden="true"
+@@ -193,14 +193,14 @@ exports[`components/actions_menu/ActionsMenu no actions - sysadmin - menu should
+     aria-expanded="true"
+     aria-haspopup="true"
+     aria-label="actions"
+-    class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
++    class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
+     data-active="true"
+     id="center_actions_button_post_id_1"
+     type="button"
+   >
+     <span
+       aria-hidden="true"
+-      class="_icon-button__icon-slot_13ryy_41"
++      class="_icon-button__icon-slot_ft92e_41"
+     >
+       <div
+         aria-hidden="true"
 ```
 
-**File**: `server/channels/store/storetest/post_store.go` (modified, +12/-3)
+**File**: `webapp/channels/src/components/add_users_to_group_modal/__snapshots__/add_users_to_group_modal.test.tsx.snap` (modified, +4/-4)
 ```diff
-@@ -570,6 +570,7 @@ func testPostStoreSaveMultiple(t *testing.T, rctx request.CTX, ss store.Store) {
- 		require.NoError(t, errT)
- 
- 		assert.Equal(t, int64(1), thread.ReplyCount)
-+		assert.Equal(t, o2.CreateAt, thread.LastReplyAt)
- 		assert.Equal(t, int(1), len(thread.Participants))
- 		assert.Equal(t, model.StringArray{o2.UserId}, thread.Participants)
- 
-@@ -1481,16 +1482,16 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 		updatedRootPost, err := ss.Post().GetSingle(rctx, rootPost1.Id, false)
- 		require.NoError(t, err)
- 
--		beforeDeleteTime := updatedRootPost.UpdateAt
-+		deleteTime := updatedRootPost.UpdateAt + 1000
- 
- 		// Delete the reply previous to last
--		err = ss.Post().Delete(rctx, replyPost2.Id, model.GetMillis(), "")
-+		err = ss.Post().Delete(rctx, replyPost2.Id, deleteTime, "")
- 		require.NoError(t, err)
- 
- 		updatedRootPost, err = ss.Post().GetSingle(rctx, rootPost1.Id, false)
- 		require.NoError(t, err)
- 
--		require.Greater(t, updatedRootPost.UpdateAt, beforeDeleteTime)
-+		require.Equal(t, deleteTime, updatedRootPost.UpdateAt)
- 	})
- 
- 	t.Run("thread with multiple replies, update thread last reply at", func(t *testing.T) {
-@@ -1517,6 +1518,7 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 			UserId:    model.NewId(),
- 			Message:   NewTestID(),
- 			RootId:    rootPost1.Id,
-+			CreateAt:  rootPost1.CreateAt + 1000,
- 		})
- 		require.NoError(t, err)
- 
-@@ -1526,6 +1528,7 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 			UserId:    model.NewId(),
- 			Message:   NewTestID(),
- 			RootId:    rootPost1.Id,
-+			CreateAt:  rootPost1.CreateAt + 2000,
- 		})
- 		require.NoError(t, err)
- 
-@@ -1535,12 +1538,14 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 			UserId:    model.NewId(),
- 			Message:   NewTestID(),
- 			RootId:    rootPost1.Id,
-+			CreateAt:  rootPost1.CreateAt + 3000,
- 		})
- 		require.NoError(t, err)
- 
- 		thread, err := ss.Thread().Get(rootPost1.Id)
- 		require.NoError(t, err)
- 		require.Equal(t, replyPost3.CreateAt, thread.LastReplyAt)
-+		require.Equal(t, int64(3), thread.ReplyCount)
- 
- 		// Delete the reply previous to last
- 		err = ss.Post().Delete(rctx, replyPost2.Id, model.GetMillis(), "")
-@@ -1550,6 +1555,7 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 		require.NoError(t, err)
- 		// last reply at should be unchanged
- 		require.Equal(t, replyPost3.CreateAt, thread.LastReplyAt)
-+		require.Equal(t, int64(2), thread.ReplyCount)
- 
- 		// Delete the last reply
- 		err = ss.Post().Delete(rctx, replyPost3.Id, model.GetMillis(), "")
-@@ -1559,6 +1565,7 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 		require.NoError(t, err)
- 		// last reply at should have changed
- 		require.Equal(t, replyPost1.CreateAt, thread.LastReplyAt)
-+		require.Equal(t, int64(1), thread.ReplyCount)
- 
- 		// Delete the last reply
- 		err = ss.Post().Delete(rctx, replyPost1.Id, model.GetMillis(), "")
-@@ -1568,6 +1575,8 @@ func testPostStoreDelete(t *testing.T, rctx request.CTX, ss store.Store) {
- 		require.NoError(t, err)
- 		// last reply at should be 0
- 		require.Equal(t, int64(0), thread.LastReplyAt)
-+		require.Equal(t, int64(0), thread.ReplyCount)
-+		require.Empty(t, thread.Participants)
- 	})
- 
- 	t.Run("thread with file attachments", func(t *testing.T) {
+@@ -36,12 +36,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
+             >
+               <button
+                 aria-label="Back"
+-                class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 modal-header-back-button"
++                class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 modal-header-back-button"
+                 type="button"
+               >
+                 <span
+                   aria-hidden="true"
+-                  class="_icon-button__icon-slot_13ryy_41"
++                  class="_icon-button__icon-slot_ft92e_41"
+                 >
+                   <div
+                     aria-hidden="true"
+@@ -75,12 +75,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
+             </div>
+             <button
+               aria-label="Close"
+-              class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 user-groups-modal__header-close"
++              class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 user-groups-modal__header-close"
+               type="button"
+             >
+               <span
+                 aria-hidden="true"
+-                class="_icon-button__icon-slot_13ryy_41"
++                class="_icon-button__icon-slot_ft92e_41"
+               >
+                 <div
+                   aria-hidden="true"
 ```
 
-**File**: `server/channels/store/storetest/thread_store.go` (modified, +3/-0)
+**File**: `webapp/channels/src/components/admin_console/access_control/__snapshots__/policies.test.tsx.snap` (modified, +8/-8)
 ```diff
-@@ -116,6 +116,7 @@ func testThreadStorePopulation(t *testing.T, rctx request.CTX, ss store.Store) {
- 		require.NoError(t, err, "couldn't get thread")
- 		require.NotNil(t, thread)
- 		require.Equal(t, int64(2), thread.ReplyCount)
-+		require.Equal(t, max(newPosts[1].CreateAt, newPosts[2].CreateAt), thread.LastReplyAt)
- 		require.ElementsMatch(t, model.StringArray{newPosts[0].UserId, newPosts[1].UserId}, thread.Participants)
- 
- 		teamId := model.NewId()
-@@ -268,13 +269,15 @@ func testThreadStorePopulation(t *testing.T, rctx request.CTX, ss store.Store) {
- 		thread, err = ss.Thread().Get(rootPost.Id)
- 		require.NoError(t, err)
- 		require.EqualValues(t, thread.ReplyCount, 2)
-+		require.Equal(t, replyPost3.CreateAt, thread.LastReplyAt)
- 		require.EqualValues(t, thread.Participants, model.StringArray{replyPost.UserId, replyPost3.UserId})
- 
- 		err = ss.Post().Delete(rctx, replyPost.Id, 123, model.NewId())
- 		require.NoError(t, err)
- 		thread, err = ss.Thread().Get(rootPost.Id)
- 		require.NoError(t, err)
- 		require.EqualValues(t, thread.ReplyCount, 1)
-+		require.Equal(t, replyPost3.CreateAt, thread.LastReplyAt)
- 		require.EqualValues(t, thread.Participants, model.StringArray{replyPost3.UserId})
- 	})
- 
+@@ -348,13 +348,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
+                   aria-expanded="false"
+                   aria-haspopup="true"
+                   aria-label="Policy actions menu"
+-                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
++                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
+                   id="policy-menu-policy1"
+                   type="button"
+                 >
+                   <span
+                     aria-hidden="true"
+-                    class="_icon-button__icon-slot_13ryy_41"
++                    class="_icon-button__icon-slot_ft92e_41"
+                   >
+                     <div
+                       aria-hidden="true"
+@@ -423,13 +423,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
+                   aria-expanded="false"
+                   aria-haspopup="true"
+                   aria-label="Policy actions menu"
+-                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
++                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
+                   id="policy-menu-policy2"
+                   type="button"
+                 >
+                   <span
+                     aria-hidden="true"
+-                    class="_icon-button__icon-slot_13ryy_41"
++                    class="_icon-button__icon-slot_ft92e_41"
+                   >
+                     <div
+                       aria-hidden="true"
+@@ -472,13 +472,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
+             </span>
+             <button
+               aria-label="Previous page"
+-              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+               disabled=""
+               type="button"
+             >
+               <span
+                 aria-hidden="true"
+-                class="_icon-button__icon-slot_13ryy_41"
++                class="_icon-button__icon-slot_ft92e_41"
+               >
+                 <div
+                   aria-hidden="true"
+@@ -505,13 +505,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
+             </button>
+             <button
+               aria-label="Next page"
+-              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+               disabled=""
+               type="button"
+             >
+               <span
+                 aria-hidden="true"
+-                class="_icon-button__icon-slot_13ryy_41"
++                class="_icon-button__icon-slot_ft92e_41"
+               >
+                 <div
+                   aria-hidden="true"
+```
+
+**File**: `webapp/channels/src/components/admin_console/access_control/policy_details/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +12/-12)
+```diff
+@@ -287,13 +287,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -320,13 +320,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -645,13 +645,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -678,13 +678,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -1003,13 +1003,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -1036,13 +1036,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+```
+
+**File**: `webapp/channels/src/components/admin_console/data_retention_settings/__snapshots__/data_retention_settings.test.tsx.snap` (modified, +8/-8)
+```diff
+@@ -473,13 +473,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
+                     </span>
+                     <button
+                       aria-label="Previous page"
+-                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+                       disabled=""
+                       type="button"
+                     >
+                       <span
+                         aria-hidden="true"
+-                        class="_icon-button__icon-slot_13ryy_41"
++                        class="_icon-button__icon-slot_ft92e_41"
+                       >
+                         <div
+                           aria-hidden="true"
+@@ -506,13 +506,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
+                     </button>
+                     <button
+                       aria-label="Next page"
+-                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+                       disabled=""
+                       type="button"
+                     >
+                       <span
+                         aria-hidden="true"
+-                        class="_icon-button__icon-slot_13ryy_41"
++                        class="_icon-button__icon-slot_ft92e_41"
+                       >
+                         <div
+                           aria-hidden="true"
+@@ -844,13 +844,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
+                     </span>
+                     <button
+                       aria-label="Previous page"
+-                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+                       disabled=""
+                       type="button"
+                     >
+                       <span
+                         aria-hidden="true"
+-                        class="_icon-button__icon-slot_13ryy_41"
++                        class="_icon-button__icon-slot_ft92e_41"
+                       >
+                         <div
+                           aria-hidden="true"
+@@ -877,13 +877,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
+                     </button>
+                     <button
+                       aria-label="Next page"
+-                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+                       disabled=""
+                       type="button"
+                     >
+                       <span
+                         aria-hidden="true"
+-                        class="_icon-button__icon-slot_13ryy_41"
++                        class="_icon-button__icon-slot_ft92e_41"
+                       >
+                         <div
+                           aria-hidden="true"
+```
+
+**File**: `webapp/channels/src/components/admin_console/data_retention_settings/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +8/-8)
+```diff
+@@ -395,13 +395,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -428,13 +428,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -1446,13 +1446,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -1479,12 +1479,12 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+```
+
+**File**: `webapp/channels/src/components/admin_console/data_retention_settings/team_list/__snapshots__/team_list.test.tsx.snap` (modified, +8/-8)
+```diff
+@@ -129,13 +129,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -162,13 +162,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -842,13 +842,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
+           </span>
+           <button
+             aria-label="Previous page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
+             disabled=""
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
+@@ -875,12 +875,12 @@ exports[`components/admin_console/data_retention_settings/team_list should match
+           </button>
+           <button
+             aria-label="Next page"
+-            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
++            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
+             type="button"
+           >
+             <span
+               aria-hidden="true"
+-              class="_icon-button__icon-slot_13ryy_41"
++              class="_icon-button__icon-slot_ft92e_41"
+             >
+               <div
+                 aria-hidden="true"
 ```
 
 ---
 
-### Incident Patch 2: `718b00b3` (2026-10-29)
-**Commit Message**: Remove unused Cloud usage limits UI (#39530)
+### Incident Patch 2: `388cddcb` (2026-11-03)
+**Commit Message**: fix(webapp): skip classification banner fetch while logged out (#39661)
 
-Removes the Cloud usage modal, file limit sticky banner, product switcher
-limits footer, admin limit-reached effects, the usage-delta hooks and HOC,
-the teams-limit gating that read usage deltas, the limits branch of the
-cloud_subscription_changed websocket handler, and their strings.
+GlobalClassificationBanner is mounted for every route under the root
+switch, including the logged-out "/" route that redirects to /login.
+Its bootstrap effect fetched the access_control system property field
+and values, which require a session, so logged-out page loads got two
+401s whose rejections went unhandled. This made
+pre_auth_webapp_plugins.spec.ts flaky on master when the page errors
+landed after the test attached its pageerror listener.
+
+Skip the fetch until there is a current user, and rerun it once one
+logs in.
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 
-**File**: `e2e-tests/cypress/tests/integration/channels/enterprise/cloud/billing/notify_admin_spec.ts` (modified, +1/-150)
+**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.test.tsx` (modified, +17/-1)
 ```diff
-@@ -28,24 +28,6 @@ interface Limits {
-     files?: {total_storage: number};
- }
- 
--function simulateFilesLimitReached(fileStorageUsageBytes: number) {
--    cy.intercept('GET', '**/api/v4/usage/storage', {
--        statusCode: 200,
--        body: {
--            bytes: fileStorageUsageBytes + 1, // increase workspace usage
--        },
--    });
--
--    cy.intercept('GET', '**/api/v4/cloud/limits', {
--        statusCode: 200,
--        body: {
--            files: {
--                total_storage: fileStorageUsageBytes,
--            },
--        },
--    });
--}
--
- // Move to utils
- function simulateSubscription(subscription: Partial<Subscription>, withLimits = {}) {
-     cy.intercept('GET', '**/api/v4/cloud/subscription', {
-@@ -111,37 +93,6 @@ function userGroupsNotification() {
-     cy.get('.close').click();
- }
- 
--function creatNewTeamNotification() {
--    // # Click on the team menu button
--    cy.get('#sidebarTeamMenuButton').click();
--
--    // # Click on the lock button on Create a team menu item
--    cy.get('#sidebarTeamMenu').within(() => {
--        cy.get('#mattermost_feature_create_multiple_teams-restricted-indicator').click();
--    });
--
--    cy.get('#FeatureRestrictedModal').should('exist');
--    cy.get('#button-plans').as('notifyButton').should('have.text', 'Notify admin').click();
--    cy.get('@notifyButton').should('have.text', 'Admin notified!');
--    cy.get('@notifyButton').click();
--    cy.get('@notifyButton').should('have.text', 'Already notified!').should('be.disabled');
--    cy.get('.close').click();
--}
--
--function createMessageLimitNotification() {
--    cy.get('#product_switch_menu').click().then((() => {
--        cy.get('#notify_admin_cta').click();
--    }));
--}
--
--function createFilesNotificationForProfessionalFeatures() {
--    cy.get('#product_switch_menu').click().then((() => {
--        cy.findByText('Notify admin').should('be.visible').click();
--        cy.findByText('Admin notified!').should('be.visible').click();
--        cy.findByText('Already notified!').should('be.visible').should('be.disabled');
--    }));
--}
--
- function createTrialNotificationForProfessionalFeatures() {
-     cy.get('#product_switch_menu').click().then((() => {
-         cy.get('#view_plans_cta').click();
-@@ -324,57 +275,12 @@ function testTrialNotifications(subscription: Partial<Subscription>, limits: Par
-     deletePost();
- }
- 
--function testFilesNotifications(subscription: Subscription, limits: Limits) {
--    let myTeam: Cypress.Team;
--    let myChannel: Cypress.Channel;
--    let myUrl: string;
--    let myAllProfessionalUsers: Cypress.UserProfile[] = [];
--    const ALL_PROFESSIONAL_FEATURES_REQUESTS = 5;
--    const TOTAL = 5;
--
--    // # Login as an admin and create test users that will click the different notification ctas
--    cy.apiInitSetup().then(({team, channel, offTopicUrl: url}) => {
--        myTeam = team;
--        myChannel = channel;
--        myUrl = url;
--
--        // # Create non admin users
--        myAllProfessionalUsers = createUsersProcess(myTeam, myChannel, ALL_PROFESSIONAL_FEATURES_REQUESTS);
--    });
--
--    // # Click notify admin to trial on pricing modal
--    cy.then(() => {
--        myAllProfessionalUsers.forEach((user) => {
--            simulateSubscription(subscription, limits);
--            cy.apiLogin({...user, password: newTestPassword()});
--            cy.visit(`/${myTeam.name}/channels/${myChannel.name}`);
--            cy.wait(['@subscription', '@products']);
--            createFilesNotificationForProfessionalFeatures();
--        });
--    });
--
--    cy.then(() => {
--        // # Manually trigger saved notifications
--        triggerNotifications(myUrl, false);
--    });
--
--    cy.then(() => {
--        assertNotification('mattermost.feature.unlimited_file_storage', 'Professional plan', TOTAL, ALL_PROFESSIONAL_FEATURES_REQUESTS, myTeam.name);
--        assertUpgradeMessageButton();
--    });
--    deletePost();
--}
--
- function testUpgradeNotifications(subscription: Partial<Subscription>, limits: Partial<Limits>) {
-     let myTeam: Cypress.Team;
-     let myChannel: Cypress.Channel;
-     let myUrl: string;
--    let myMessageLimitUsers: Cypress.UserProfile[] = [];
--    let myUnlimitedTeamsUsers: Cypress.UserProfile[] = [];
-     let myUserGroupsUsers: Cypress.UserProfile[] = [];
- 
--    const CREATE_MULTIPLE_TEAMS_USERS = 2;
--    const UNLIMITED_MESSAGES_USERS = 3;
-     const CUSTOM_USER_GROUPS = 5;
- 
-     // # Login as an admin and create test users that will click the different notification ctas
-@@ -384,35 +290,9 @@ function testUpgradeNotifications(subscription: Partial<Subscription>, limits: P
-         myUrl = url;
- 
-         // # Create non admin users
--        myMessageLimitUsers = createUsersProcess(myTeam, myChannel, UNLIMITED_MESSAGES_USERS);
--        myUnlimitedTeamsUsers = createUsersProcess(myTeam, myChannel, CREATE_MULTIPLE_TEAMS_USERS);
-         myUserGroupsUsers = createUsersProcess(myTeam, myChannel, CUSTOM_USER_GROUPS);
-     });
- 
--    // # Click notify admin on message limit reached
--
-```
-
-**File**: `webapp/channels/src/actions/websocket_actions.test.ts` (modified, +2/-56)
-```diff
-@@ -1248,14 +1248,7 @@ describe('handleCloudSubscriptionChanged', () => {
-         const initialState = {
-             entities: {
-                 cloud: {
--                    limits: {
--                        messages: {
--                            history: 10000,
--                        },
--                        integrations: {
--                            enabled: 10,
--                        },
--                    },
-+                    subscription: {...baseSubscription},
-                 },
-                 general: {
-                     license: {
-@@ -1264,11 +1257,6 @@ describe('handleCloudSubscriptionChanged', () => {
-                 },
-             },
-         } as unknown as GlobalState;
--        const newLimits = {
--            messages: {
--                history: 10001,
--            },
--        };
- 
-         const newSubscription = {
-             ...baseSubscription,
-@@ -1277,7 +1265,6 @@ describe('handleCloudSubscriptionChanged', () => {
-         const msg = wsMessage<WebSocketMessages.CloudSubscriptionChanged>({
-             event: WebSocketEvents.CloudSubscriptionChanged,
-             data: {
--                limits: newLimits,
-                 subscription: newSubscription,
-             },
-         });
-@@ -1288,48 +1275,7 @@ describe('handleCloudSubscriptionChanged', () => {
-         expect(testStore.getActions()).toEqual([]);
-     });
- 
--    test('when on cloud, entirely replaces cloud limits in store', () => {
--        const initialState = {
--            entities: {
--                cloud: {
--                    limits: {
--                        messages: {
--                            history: 10000,
--                        },
--                        integrations: {
--                            enabled: 10,
--                        },
--                    },
--                },
--                general: {
--                    license: {
--                        Cloud: 'true',
--                    },
--                },
--            },
--        } as unknown as GlobalState;
--        const newLimits = {
--            messages: {
--                history: 10001,
--            },
--        };
--        const msg = wsMessage<WebSocketMessages.CloudSubscriptionChanged>({
--            event: WebSocketEvents.CloudSubscriptionChanged,
--            data: {
--                limits: newLimits,
--            },
--        });
--
--        const testStore = configureStore(initialState);
--        testStore.dispatch(handleCloudSubscriptionChanged(msg));
--
--        expect(testStore.getActions()).toContainEqual({
--            type: CloudTypes.RECEIVED_CLOUD_LIMITS,
--            data: newLimits,
--        });
--    });
--
--    test('when on cloud, entirely replaces cloud limits in store', () => {
-+    test('when on cloud, replaces cloud subscription in store', () => {
-         const initialState = {
-             entities: {
-                 cloud: {
-```
-
-**File**: `webapp/channels/src/actions/websocket_actions.ts` (modified, +0/-7)
-```diff
-@@ -2302,13 +2302,6 @@ export function handleCloudSubscriptionChanged(msg: WebSocketMessages.CloudSubsc
-         const license = getLicense(state);
- 
-         if (license.Cloud === 'true') {
--            if (msg.data.limits) {
--                doDispatch({
--                    type: CloudTypes.RECEIVED_CLOUD_LIMITS,
--                    data: msg.data.limits,
--                });
--            }
--
-             if (msg.data.subscription) {
-                 doDispatch({
-                     type: CloudTypes.RECEIVED_CLOUD_SUBSCRIPTION,
-```
-
-**File**: `webapp/channels/src/components/admin_console/team_channel_settings/team/details/__snapshots__/team_profile.test.tsx.snap` (modified, +0/-509)
-```diff
-@@ -331,512 +331,3 @@ exports[`admin_console/team_channel_settings/team/TeamProfile should match snaps
-   </div>
- </div>
- `;
--
--exports[`admin_console/team_channel_settings/team/TeamProfile__Cloud restore should not be disabled when below teams limit 1`] = `
--<div>
--  <div
--    class="AdminPanel clearfix "
--    id="team_profile"
--  >
--    <div
--      class="header"
--    >
--      <div>
--        <h3>
--          Team Profile
--        </h3>
--        <div
--          class="mt-2"
--        >
--          Summary of the team, including team name and description.
--        </div>
--      </div>
--    </div>
--    <div
--      class="group-teams-and-channels"
--    >
--      <div
--        class="group-teams-and-channels--body"
--      >
--        <div
--          class="d-flex"
--        >
--          <div
--            class="large-team-image-col"
--          >
--            <div
--              class="TeamIcon TeamIcon__lg no-hover"
--            >
--              <div
--                class="TeamIcon__content no-hover"
--              >
--                <div
--                  aria-label="name Team Initials"
--                  class="TeamIcon__initials TeamIcon__initials__lg"
--                  data-testid="teamIconInitial"
--                  role="img"
--                >
--                  na
--                </div>
--              </div>
--            </div>
--          </div>
--          <div
--            class="team-desc-col team-desc-col--edit"
--          >
--            <div
--              class="row row-bottom-padding"
--            >
--              <div
--                class="Input_container"
--              >
--                <div
--                  class="Input_fieldset Input_fieldset___legend"
--                  data-testid="input-wrapper"
--                >
--                  <label
--                    class="Input_legend Input_legend___focus"
--                    for="input_"
--                  >
--                                            
--                    Team Name
--                  </label>
--                  <div
--                    class="Input_wrapper"
--                  >
--                    <input
--                      aria-label="Team Name"
--                      class="Input form-control medium Input__focus"
--                      data-testid="teamNameInput"
--                      id="teamName"
--                      maxlength="64"
--                      placeholder="Team Name"
--                      type="text"
--                      value="name"
--                    />
--                  </div>
--                </div>
--              </div>
--            </div>
--            <div
--              class="row"
--            >
--              <div
--                class="Input_container"
--              >
--                <div
--                  class="Input_fieldset"
--                  data-testid="input-wrapper"
--                >
--                  <label
--                    class="Input_legend"
--                    for="input_"
--                  >
--                                            
--                  </label>
--                  <div
--                    class="Input_wrapper"
--                  >
--                    <textarea
--                      aria-label="Team Description"
--                      class="Input form-control medium"
--                      data-testid="teamDescriptionInput"
--                      id="teamDescription"
--                      maxlength="50"
--                      placeholder="Team Description"
--                      rows="3"
--                      type="textarea"
--                    />
--                  </div>
--                </div>
--              </div>
--            </div>
--          </div>
--        </div>
--        <div
--          class="AdminChannelDetails_archiveContainer"
--        >
--          <button
--            class="_button_we8pe_2 _button--emphasis-secondary_we8pe_101 _button--size-medium_we8pe_64 _button--destructive_we8pe_176"
--            type="button"
--          >
--            <span
--              class="_button__icon-slot_we8pe_35"
--            >
--              <div
--                aria-hidden="true"
--                class="_icon_1i355_2 _icon--size-16_1i355_38"
--              >
--                <div
--                  class="_icon__glyph-area_1i355_9"
--                >
--                  <svg
--                    fill="currentColor"
--                    height="18"
--                    version="1.1"
--                    viewBox="0 0 24 24"
--                    width="18"
--                    xmlns="http://www.w3.org/2000/svg"
--                  >
--                    <path
--                      d="M20 21H4V10H6V19H18V10H20V21M3 3H21V9H3V3M5 5V7H19V5M10.5 17V14H8L12 10L16 14H13.5V17"
--                    />
--                  </svg>
--                </div>
--              </div>
--            </span>
--            <span
--              class="_button__label_we8pe_31"
--            >
--              Unarchive Team
--            </span>
--          </button>
-
-```
-
-**File**: `webapp/channels/src/components/admin_console/team_channel_settings/team/details/team_details.tsx` (modified, +0/-1)
-```diff
-@@ -1082,7 +1082,6 @@ export default class TeamDetails extends React.PureComponent<Props, State> {
-                             onToggleArchive={this.onToggleArchive}
-                             isArchived={isLocalArchived}
-                             isDisabled={this.props.isDisabled}
--                            saveNeeded={this.state.saveNeeded}
-                         />
-                         <ConfirmModal
-                             show={showArchiveConfirmModal}
-```
-
-**File**: `webapp/channels/src/components/admin_console/team_channel_settings/team/details/team_profile.test.tsx` (modified, +0/-227)
-```diff
-@@ -4,172 +4,10 @@
- import React from 'react';
- 
- import {renderWithContext, screen, userEvent, within} from 'tests/react_testing_utils';
--import {CloudProducts} from 'utils/constants';
--import {FileSizes} from 'utils/file_utils';
- import {TestHelper} from 'utils/test_helper';
- 
- import {TeamProfile} from './team_profile';
- 
--describe('admin_console/team_channel_settings/team/TeamProfile__Cloud', () => {
--    const baseProps = {
--        team: TestHelper.getTeamMock(),
--        name: 'name',
--        description: '',
--        onNameChange: jest.fn(),
--        onDescriptionChange: jest.fn(),
--        onToggleArchive: jest.fn(),
--        isArchived: true,
--    };
--
--    const initialState = {
--        views: {
--            announcementBar: {
--                announcementBarState: {
--                    announcementBarCount: 1,
--                },
--            },
--        },
--        entities: {
--            general: {
--                license: {
--                    IsLicensed: 'true',
--                    Cloud: 'true',
--                },
--            },
--            users: {
--                currentUserId: 'current_user_id',
--                profiles: {
--                    current_user_id: {roles: 'system_admin'},
--                },
--            },
--            cloud: {
--                subscription: {
--                    product_id: 'test_prod_1',
--                    trial_end_at: 1652807380,
--                    is_free_trial: 'false',
--                },
--                products: {
--                    test_prod_1: {
--                        id: 'test_prod_1',
--                        sku: CloudProducts.STARTER,
--                        price_per_seat: 0,
--                    },
--                },
--                limits: {
--                    limitsLoaded: true,
--                    limits: {
--                        integrations: {
--                            enabled: 10,
--                        },
--                        messages: {
--                            history: 10000,
--                        },
--                        files: {
--                            total_storage: FileSizes.Gigabyte,
--                        },
--                        teams: {
--                            active: 1,
--                        },
--                        boards: {
--                            cards: 500,
--                            views: 5,
--                        },
--                    },
--                },
--            },
--            usage: {
--                integrations: {
--                    enabled: 11,
--                    enabledLoaded: true,
--                },
--                messages: {
--                    history: 10000,
--                    historyLoaded: true,
--                },
--                files: {
--                    totalStorage: FileSizes.Gigabyte,
--                    totalStorageLoaded: true,
--                },
--                teams: {
--                    active: 1,
--                    cloudArchived: 0,
--                    teamsLoaded: true,
--                },
--                boards: {
--                    cards: 500,
--                    cardsLoaded: true,
--                },
--            },
--        },
--    };
--
--    test('should match snapshot - archived, at teams limit', () => {
--        const {container} = renderWithContext(<TeamProfile {...baseProps}/>, initialState);
--        expect(container).toMatchSnapshot();
--    });
--
--    test('should match snapshot - not archived, at teams limit', () => {
--        const props = {
--            ...baseProps,
--            isArchived: false,
--        };
--
--        const {container} = renderWithContext(<TeamProfile {...props}/>, initialState);
--        expect(container).toMatchSnapshot();
--    });
--
--    test('restore should not be disabled when below teams limit', () => {
--        const state = JSON.parse(JSON.stringify(initialState));
--        state.entities.cloud.limits = {
--            limitsLoaded: true,
--            limits: {
--                integrations: {
--                    enabled: 10,
--                },
--                messages: {
--                    history: 10000,
--                },
--                files: {
--                    total_storage: FileSizes.Gigabyte,
--                },
--                teams: {
--                    active: 10,
--                },
--                boards: {
--                    cards: 500,
--                    views: 5,
--                },
--            },
--        };
--        state.entities.usage = {
--            integrations: {
--                enabled: 11,
--                enabledLoaded: true,
--            },
--            messages: {
--                history: 10000,
--                historyLoaded: true,
--            },
--            files: {
--                totalStorage: FileSizes.Gigabyte,
--                totalStorageLoaded: true,
--            },
--            teams: {
--                active: 1,
--                cloudArchived: 0,
--                teamsLoad
-```
-
-**File**: `webapp/channels/src/components/admin_console/team_channel_settings/team/details/team_profile.tsx` (modified, +15/-82)
-```diff
-@@ -1,22 +1,15 @@
- // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
- // See LICENSE.txt for license information.
- 
--import React, {useEffect, useState} from 'react';
-+import React from 'react';
- import type {ChangeEvent} from 'react';
- import {FormattedMessage, defineMessage, useIntl} from 'react-intl';
--import {useSelector} from 'react-redux';
- 
- import {ArchiveArrowUpOutlineIcon, ArchiveOutlineIcon} from '@mattermost/compass-icons/components';
- import {Button} from '@mattermost/compass-ui/components/button';
- import {Icon} from '@mattermost/compass-ui/components/icon';
--import {WithTooltip} from '@mattermost/shared/components/tooltip';
- import type {Team} from '@mattermost/types/teams';
- 
--import {getLicense} from 'mattermost-redux/selectors/entities/general';
--
--import useGetUsage from 'components/common/hooks/useGetUsage';
--import useGetUsageDeltas from 'components/common/hooks/useGetUsageDeltas';
--import useOpenPricingModal from 'components/common/hooks/useOpenPricingModal';
- import AdminPanel from 'components/widgets/admin_console/admin_panel';
- import Input from 'components/widgets/inputs/input/input';
- import TeamIcon from 'components/widgets/team_icon/team_icon';
-@@ -34,78 +27,16 @@ type Props = {
-     isArchived: boolean;
-     onToggleArchive: () => void;
-     isDisabled?: boolean;
--    saveNeeded?: boolean;
+@@ -71,12 +71,14 @@ type StateOptions = {
+     linkedField?: PropertyField | null;
+     systemValue?: PropertyValue<string> | null;
+     featureFlagEnabled?: boolean;
++    currentUserId?: string;
  };
  
--export function TeamProfile({team, name, description, onNameChange, onDescriptionChange, nameError, isArchived, onToggleArchive, isDisabled, saveNeeded}: Props) {
-+export function TeamProfile({team, name, description, onNameChange, onDescriptionChange, nameError, isArchived, onToggleArchive, isDisabled}: Props) {
-     const teamIconUrl = imageURLForTeam(team);
--    const usageDeltas = useGetUsageDeltas();
--    const usage = useGetUsage();
--    const license = useSelector(getLicense);
-     const intl = useIntl();
--    const {openPricingModal, isAirGapped} = useOpenPricingModal();
--
--    const [overrideRestoreDisabled, setOverrideRestoreDisabled] = useState(false);
--    const [restoreDisabled, setRestoreDisabled] = useState(usageDeltas.teams.teamsLoaded && usageDeltas.teams.active >= 0 && isArchived);
--
--    useEffect(() => {
--        setRestoreDisabled(license.Cloud === 'true' && usageDeltas.teams.teamsLoaded && usageDeltas.teams.active >= 0 && isArchived && !overrideRestoreDisabled && !saveNeeded);
--    }, [usageDeltas, isArchived, overrideRestoreDisabled, saveNeeded, license]);
--
--    // If in a cloud context and the teams usage hasn't loaded, don't render anything to prevent weird flashes on the screen
--    if (license.Cloud === 'true' && !usage.teams.teamsLoaded) {
--        return null;
--    }
- 
-     const archiveBtn = isArchived ?
-         defineMessage({id: 'admin.team_settings.team_details.unarchiveTeam', defaultMessage: 'Unarchive Team'}) :
-         defineMessage({id: 'admin.team_settings.team_details.archiveTeam', defaultMessage: 'Archive Team'});
- 
--    const toggleArchive = () => {
--        setOverrideRestoreDisabled(true);
--        onToggleArchive();
--    };
--    const button = () => {
--        if (restoreDisabled) {
--            return (
--                <WithTooltip
--                    title={intl.formatMessage({id: 'workspace_limits.teams_limit_reached.upgrade_to_unarchive', defaultMessage: 'Upgrade to Unarchive'})}
--                    hint={intl.formatMessage({id: 'workspace_limits.teams_limit_reached.tool_tip', defaultMessage: 'You\'ve reached the team limit for your current plan. Consider upgrading to unarchive this team or archive your other teams'})}
--                >
--                    <Button
--                        type='button'
--                        disabled={isDisabled || restoreDisabled}
--                        emphasis='secondary'
--                        destructive={true}
--                        leadingIcon={(
--                            <Icon
--                                glyph={isArchived ? <ArchiveArrowUpOutlineIcon/> : <ArchiveOutlineIcon/>}
--                            />
--                        )}
--                    >
--                        <FormattedMessage {...archiveBtn}/>
--                    </Button>
--                </WithTooltip>
--            );
--        }
--        return (
--            <Button
--                type='button'
--                disabled={isDisabled}
--                emphasis='secondary'
--                destructive={true}
--                onClick={toggleArchive}
--                leadingIcon={(
--                    <Icon
--                        glyph={isArchived ? <ArchiveArrowUpOutlineIcon/> : <ArchiveOutlineIcon/>}
--                    />
--                )}
--            >
--                <FormattedMessage {...archiveBtn}/>
--            </Button>
--        );
--    };
--
-     return (
-         <AdminPanel
-             id='team_profile'
-@@ -153,18 +84,20 @@ export function TeamProfile({team, name, description, onNameChange, onDescriptio
-                         </div>
-                     </div
-```
-
-**File**: `webapp/channels/src/components/advanced_text_editor/advanced_text_editor.tsx` (modified, +1/-7)
-```diff
-@@ -2,7 +2,7 @@
- // See LICENSE.txt for license information.
- 
- import classNames from 'classnames';
--import React, {lazy, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
- import {FormattedMessage, useIntl} from 'react-intl';
- import {useDispatch, useSelector} from 'react-redux';
- 
-@@ -31,7 +31,6 @@ import PostBoxIndicator from 'components/advanced_text_editor/post_box_indicator
- import {applyWysiwygFormatting} from 'components/advanced_text_editor/wysiwyg_editor/apply_wysiwyg_formatting';
- import WysiwygEditor from 'components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor';
- import type {WysiwygEditorHandle} from 'components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor';
--import {makeAsyncComponent} from 'components/async_load';
- import AutoHeightSwitcher from 'components/common/auto_height_switcher';
- import useDidUpdate from 'components/common/hooks/useDidUpdate';
- import useGetAgentsBridgeEnabled from 'components/common/hooks/useGetAgentsBridgeEnabled';
-@@ -97,8 +96,6 @@ import useUploadFiles from './use_upload_files';
- 
- import './advanced_text_editor.scss';
- 
--const FileLimitStickyBanner = makeAsyncComponent('FileLimitStickyBanner', lazy(() => import('components/file_limit_sticky_banner')));
--
- export type Props = {
- 
-     /**
-@@ -855,9 +852,6 @@ const AdvancedTextEditor = ({
-             className={(!rootId && !fullWidthTextBox) ? 'center' : undefined}
-             onSubmit={handleSubmitWithEvent}
-         >
--            {canPost && (draft.fileInfos.length > 0 || draft.uploadsInProgress.length > 0) && (
--                <FileLimitStickyBanner/>
--            )}
-             {showDndWarning && <DoNotDisturbWarning displayName={teammateDisplayName}/>}
-             {showOooWarning && <OutOfOfficeWarning displayName={teammateDisplayName}/>}
-             {!isInEditMode && (
-```
-
----
-
-### Incident Patch 3: `3c0d58fc` (2026-10-30)
-**Commit Message**: Remove unused archived file UI (#39532)
-
-Removes the archived file tooltip, preview and attachment states, the
-archived flag on FileInfo, their strings, and the Cypress Cloud file
-limits spec.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-
-**File**: `e2e-tests/cypress/tests/integration/channels/files_and_attachments/cloud_upload_files_spec.js` (removed, +0/-170)
-```diff
-@@ -1,170 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--// ***************************************************************
--// - [#] indicates a test step (e.g. # Go to a page)
--// - [*] indicates an assertion (e.g. * Check the title)
--// - Use element ID when selecting an element. Create one if none.
--// ***************************************************************
--
--// Group: @channels @files_and_attachments
--
--import {interceptFileUpload, waitUntilUploadComplete} from './helpers';
--
--import * as TIMEOUTS from '@/fixtures/timeouts';
--
--function simulateSubscription(subscription, currentStorageUsageBytes, planLimit) {
--    cy.intercept('GET', '**/api/v4/cloud/subscription', {
--        statusCode: 200,
--        body: subscription,
--    });
--
--    cy.intercept('GET', '**/api/v4/usage/storage', {
--        statusCode: 200,
--        body: {
--            bytes: currentStorageUsageBytes,
--        },
--    });
--
--    cy.intercept('GET', '**/api/v4/cloud/limits', {
--        statusCode: 200,
--        body: {
--            files: {
--                total_storage: planLimit,
--            },
--        },
--    });
--
--    cy.intercept('GET', '**/api/v4/cloud/products', {
--        statusCode: 200,
--        body: [
--            {
--                id: 'prod_1',
--                sku: 'cloud-starter',
--                price_per_seat: 0,
--                name: 'Cloud Free',
--            },
--            {
--                id: 'prod_2',
--                sku: 'cloud-professional',
--                price_per_seat: 10,
--                name: 'Cloud Professional',
--            },
--            {
--                id: 'prod_3',
--                sku: 'cloud-enterprise',
--                price_per_seat: 30,
--                name: 'Cloud Enterprise',
--            },
--        ],
--    });
--}
--
--describe('Cloud Freemium limits Upload Files', () => {
--    let channelUrl;
--    let createdUser;
--
--    before(() => {
--        // * Check if server has license for Cloud
--        cy.apiRequireLicenseForFeature('Cloud');
--    });
--
--    beforeEach(() => {
--        // # Init setup
--        cy.apiInitSetup().then((out) => {
--            channelUrl = out.channelUrl;
--            createdUser = out.user;
--
--            cy.visit(channelUrl);
--            interceptFileUpload();
--        });
--    });
--
--    it('Show file limits banner for admin uploading files when storage usage above current freemium file storage limit', () => {
--        // # Login as sysadmin
--        cy.apiAdminLogin();
--
--        const currentsubscription = {
--            id: 'sub_test1',
--            product_id: 'prod_1',
--            is_free_trial: 'false',
--        };
--
--        const currentFileStorageUsageBytes = 11000000000;
--        const planLimit = 10000000000; // 1.2GB
--
--        simulateSubscription(currentsubscription, currentFileStorageUsageBytes, planLimit);
--
--        const filename = 'svg.svg';
--
--        cy.visit(channelUrl);
--        cy.get('#post_textbox', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
--
--        // # Attach file
--        cy.get('#advancedTextEditorCell').find('#fileUploadInput').attachFile(filename);
--        waitUntilUploadComplete();
--
--        // * Banner shows
--        cy.get('#cloud_file_limit_banner').should('exist');
--        cy.get('#cloud_file_limit_banner').contains('Your free plan is limited to 1.2GB of files. New uploads will automatically archive older files');
--        cy.get('#cloud_file_limit_banner').contains('upgrade to a paid plan');
--    });
--
--    it('Do not show file limits banner for admin uploading files and not above current freemium file storage limit', () => {
--        // # Login as sysadmin
--        cy.apiAdminLogin();
--
--        const currentsubscription = {
--            id: 'sub_test1',
--            product_id: 'prod_1',
--            is_free_trial: 'false',
--        };
--
--        const currentFileStorageUsageBytes = 900000000;
--        const planLimit = 10000000000; // 1.2GB
--
--        simulateSubscription(currentsubscription, currentFileStorageUsageBytes, planLimit);
--
--        const filename = 'svg.svg';
--
--        cy.visit(channelUrl);
--        cy.get('#post_textbox', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
--
--        // # Attach file
--        cy.get('#advancedTextEditorCell').find('#fileUploadInput').attachFile(filename);
--        waitUntilUploadComplete();
--
--        // banner does not show
--        cy.get('#cloud_file_limit_banner').should('not.exist');
--    });
--
--    it('Show file limits banner for non admin uploading files when above current freemium file storage limit', () => {
--        // # Login user
--        cy.apiLogin(createdUser);
--
--        const currentFileStorageUsageBytes = 11000000000;
--        const planLimit = 10000000000; // 1.2GB
--        const currentsubscription = {
--            id: 'sub_test1',
--            product_id: 'prod_1',
--            is_free_trial: 'false',
--        };
--
--        simulateSubsc
-```
-
-**File**: `e2e-tests/playwright/specs/client/schema.ts` (modified, +0/-1)
-```diff
-@@ -16,7 +16,6 @@ const FileInfoSchema = z.object({
-     mime_type: z.string(),
-     mini_preview: z.nullable(z.any()),
-     remote_id: z.string(),
--    archived: z.boolean(),
+ function makeState({
+     linkedField = null,
+     systemValue = null,
+     featureFlagEnabled = true,
++    currentUserId = MOCK_USER_ID,
+ }: StateOptions = {}): DeepPartial<GlobalState> {
+     const fieldsById: Record<string, PropertyField> = {};
+     if (linkedField) {
+@@ -93,7 +95,7 @@ function makeState({
+     return {
+         entities: {
+             users: {
+-                currentUserId: MOCK_USER_ID,
++                currentUserId,
+             },
+             general: {
+                 config: {
+@@ -280,4 +282,18 @@ describe('GlobalClassificationBanner', () => {
+             expect.anything(),
+         );
+     });
++
++    test('does not fetch fields or values while logged out', () => {
++        renderWithContext(
++            <GlobalClassificationBanner position='top'/>,
++            makeState({linkedField: makeLinkedField([DISPLAY_BANNER_TOP]), currentUserId: ''}),
++        );
++        renderWithContext(
++            <GlobalClassificationBanner position='top'/>,
++            makeState({linkedField: null, currentUserId: ''}),
++        );
++
++        expect(Client4.getPropertyFields).not.toHaveBeenCalled();
++        expect(Client4.getSystemPropertyValues).not.toHaveBeenCalled();
++    });
  });
- 
- export const FileUploadResponseSchema = z.object({
 ```
 
-**File**: `e2e-tests/playwright/specs/client/upload_file.spec.ts` (modified, +0/-1)
+**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.tsx` (modified, +5/-2)
 ```diff
-@@ -134,5 +134,4 @@ function validateFileUploadResponse(data: FileUploadResponse, clientId: string,
-     expect(fileInfo.delete_at).toBe(0);
-     expect(fileInfo.extension).toBe('png');
-     expect(fileInfo.mime_type).toBe('image/png');
--    expect(fileInfo.archived).toBe(false);
- }
-```
-
-**File**: `webapp/channels/src/components/apps_form/apps_form_file_upload/apps_form_file_upload.test.tsx` (modified, +0/-1)
-```diff
-@@ -106,7 +106,6 @@ function makeFileInfo(overrides: Partial<FileInfo> = {}): FileInfo {
-         height: 0,
-         has_preview_image: false,
-         clientId: '',
--        archived: false,
-         ...overrides,
-     } as FileInfo;
- }
-```
-
-**File**: `webapp/channels/src/components/archived_preview.tsx` (removed, +0/-41)
-```diff
-@@ -1,41 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import React from 'react';
--import {useIntl} from 'react-intl';
--
--import {ArchiveOutlineIcon} from '@mattermost/compass-icons/components';
--import type {FileInfo} from '@mattermost/types/files';
--
--interface Props {
--    fileInfo: FileInfo;
--}
--
--export default function FileInfoPreview(props: Props) {
--    const intl = useIntl();
--
--    const infoString = intl.formatMessage({
--        id: 'workspace_limits.archived_file.archived',
--        defaultMessage: 'This file is archived',
--    });
--
--    const preview = (
--        <span className='file-details__preview file-details__preview--archived'>
--            <ArchiveOutlineIcon
--                size={80}
--                color={'rgba(var(--center-channel-color-rgb), 0.48)'}
--                data-testid='archived-file-icon'
--            />
--        </span>
--    );
--
--    return (
--        <div className='file-details__container'>
--            {preview}
--            <div className='file-details'>
--                <div className='file-details__name'>{props.fileInfo.name}</div>
--                <div className='file-details__info'>{infoString}</div>
--            </div>
--        </div>
--    );
--}
-```
-
-**File**: `webapp/channels/src/components/file_attachment/archived_tooltip.tsx` (removed, +0/-35)
-```diff
-@@ -1,35 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import React from 'react';
--import {useIntl} from 'react-intl';
--
--import useGetLimits from 'components/common/hooks/useGetLimits';
--
--import {asGBString} from 'utils/limits';
--
--export default function ArchivedTooltip() {
--    const intl = useIntl();
--
--    return (
--        <>
--            <div className='post-image__archived-tooltip-title'>
--                {intl.formatMessage({
--                    id: 'workspace_limits.archived_file.tooltip_title',
--                    defaultMessage: 'Unarchive this file by upgrading',
--                })}
--            </div>
--            <div className='post-image__archived-tooltip-description'>
--                {intl.formatMessage(
--                    {
--                        id: 'workspace_limits.archived_file.tooltip_description',
--                        defaultMessage: 'Your workspace has hit the file storage limit of {storageLimit}. To view this again, upgrade to a paid plan',
--                    },
--                    {
--                        storageLimit: asGBString(useGetLimits()[0].files?.total_storage || 0, intl.formatNumber),
--                    },
--                )}
--            </div>
--        </>
--    );
--}
-```
-
-**File**: `webapp/channels/src/components/file_attachment/file_attachment.test.tsx` (modified, +0/-60)
-```diff
-@@ -4,9 +4,6 @@
- import {screen} from '@testing-library/react';
- import React from 'react';
+@@ -11,6 +11,7 @@ import {fetchPropertyFields, fetchSystemPropertyValues} from 'mattermost-redux/a
+ import {ACCESS_CONTROL_PROPERTY_GROUP, DISPLAY_BANNER_BOTTOM, DISPLAY_BANNER_TOP} from 'mattermost-redux/constants/properties';
+ import {getFeatureFlagValue} from 'mattermost-redux/selectors/entities/general';
+ import {getPropertyValueForTargetField} from 'mattermost-redux/selectors/entities/properties';
++import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
+ import {getContrastingSimpleColor} from 'mattermost-redux/utils/theme_utils';
  
--import type {GlobalState} from '@mattermost/types/store';
--import type {DeepPartial} from '@mattermost/types/utilities';
--
- import {renderWithContext, userEvent} from 'tests/react_testing_utils';
- import {TestHelper} from 'utils/test_helper';
- 
-@@ -48,7 +45,6 @@ describe('FileAttachment', () => {
-         delete_at: 0,
-         mime_type: '',
-         clientId: '',
--        archived: false,
-     };
- 
-     const baseProps = {
-@@ -72,30 +68,6 @@ describe('FileAttachment', () => {
-         expect(container).toMatchSnapshot();
-     });
- 
--    test('non archived file does not show archived elements', () => {
--        const reduxState: DeepPartial<GlobalState> = {
--            entities: {
--                general: {
--                    config: {},
--                },
--                users: {
--                    currentUserId: 'currentUserId',
--                },
--            },
--        };
--        renderWithContext(<FileAttachment {...baseProps}/>, reduxState);
--
--        expect(screen.queryByTestId('archived-file-icon')).not.toBeInTheDocument();
--        expect(screen.queryByText(/This file is archived/)).not.toBeInTheDocument();
--    });
--
--    test('non archived file does not show archived elements in compact display mode', () => {
--        renderWithContext(<FileAttachment {...{...baseProps, compactDisplay: true}}/>);
--
--        expect(screen.queryByTestId('archived-file-icon')).not.toBeInTheDocument();
--        expect(screen.queryByText(/archived/)).not.toBeInTheDocument();
--    });
--
-     test('should match snapshot, regular image', () => {
-         const fileInfo = {
-             ...baseFileInfo,
-@@ -179,38 +151,6 @@ describe('FileAttachment', () => {
-         expect(blur).toHaveBeenCalled();
-     });
- 
--    describe('archived file', () => {
--        test('shows archived image instead of real image and explanatory text in compact mode', () => {
--            const props = {
--                ...baseProps,
--                fileInfo: {
--                    ...baseProps.fileInfo,
--                    archived: true,
--                },
--                compactDisplay: true,
--            };
--            renderWithContext(<FileAttachment {...props}/>);
--            screen.getByTestId('archived-file-icon');
--            screen.getByText(baseProps.fileInfo.name);
--            screen.getByText(/archived/);
--        });
--
--        test('shows archived image instead of real image and explanatory text in full mode', () => {
--            const props = {
--                ...baseProps,
--                fileInfo: {
--                    ...baseProps.fileInfo,
--                    archived: true,
--                },
--                compactDisplay: false,
--            };
--            renderWithContext(<FileAttachment {...props}/>);
--            screen.getByTestId('archived-file-icon');
--            screen.getByText(baseProps.fileInfo.name);
--            screen.getByText(/This file is archived/);
--        });
--    });
--
-     test('should match snapshot when file is deleted', () => {
-         const props = {
-             ...baseProps,
-```
-
-**File**: `webapp/channels/src/components/file_attachment/file_attachment.tsx` (modified, +18/-77)
-```diff
-@@ -3,9 +3,8 @@
- 
- import classNames from 'classnames';
- import React, {useRef, useState, useEffect} from 'react';
--import {FormattedMessage, useIntl} from 'react-intl';
-+import {useIntl} from 'react-intl';
- 
--import {ArchiveOutlineIcon} from '@mattermost/compass-icons/components';
- import {WithTooltip} from '@mattermost/shared/components/tooltip';
- import type {FileInfo} from '@mattermost/types/files';
- 
-@@ -16,14 +15,12 @@ import Menu from 'components/widgets/menu/menu';
- import MenuWrapper from 'components/widgets/menu/menu_wrapper';
- 
- import {Constants, FileTypes, ModalIdentifiers} from 'utils/constants';
--import {trimFilename} from 'utils/file_utils';
  import {
-     fileSizeToString,
-     getFileType,
-     loadImage,
- } from 'utils/utils';
- 
--import ArchivedTooltip from './archived_tooltip';
- import FileThumbnail from './file_thumbnail';
- import FilenameOverlay from './filename_overlay';
- 
-@@ -78,11 +75,6 @@ export default function FileAttachment(props: Props) {
- 
-     const loadFiles = () => {
-         const fileInfo = props.fileInfo;
--        if (fileInfo.archived) {
--            // if archived, file preview will not be accessible anyway.
--            // So skip trying to load.
--            return;
--        }
- 
-         // If file is rejected, don't try to load thumbnail - just mark as loaded
-         // so it shows the file icon instead
-@@ -140,7 +132,7 @@ export default function FileAttachment(props: Props) {
-         e.preventDefault();
-         e.stopPropagation();
- 
--        if (props.fileInfo.archived || props.disablePreview) {
-+        if (props.disablePreview) {
+@@ -45,6 +46,7 @@ function selectLinkedSystemField(state: GlobalState): PropertyField | undefined
+ export default function GlobalClassificationBanner({position}: Props) {
+     const dispatch = useDispatch();
+     const featureEnabled = useSelector((state: GlobalState) => getFeatureFlagValue(state, 'ClassificationMarkings') === 'true');
++    const currentUserId = useSelector(getCurrentUserId);
+     const linkedField = useSelector(selectLinkedSystemField);
+     const systemValue = useSelector((state: GlobalState) => {
+         if (!linkedField) {
+@@ -59,8 +61,9 @@ export default function GlobalClassificationBanner({position}: Props) {
+     //
+     // The effect must re-run when linkedField arrives in the store so the values
+     // fetch can proceed (it depends on linkedField being present).
++    // Both endpoints require a session, so logged out pages such as the login page skip the fetch.
+     useEffect(() => {
+-        if (!featureEnabled) {
++        if (!featureEnabled || !currentUserId) {
              return;
          }
- 
-@@ -303,51 +295,28 @@ export default function FileAttachment(props: Props) {
-             </a>
-         );
- 
--        if (fileInfo.archived) {
--            fileThumbnail = (
--                <ArchiveOutlineIcon
--                    size={48}
--                    color={'rgba(var(--center-channel-color-rgb), 0.48)'}
--                    data-testid='archived-file-icon'
--                />
--            );
--        }
--
-         fileDetail = (
-             <div
-                 className='post-image__detail_wrapper'
-                 onClick={onAttachmentClick}
-             >
-                 <div className='post-image__detail'>
--                    <span
--                        className={classNames('post-image__name', {
--                            'post-image__name--archived': fileInfo.archived,
--                        })}
--                    >
-+                    <span className='post-image__name'>
-                         {fileInfo.name}
-                     </span>
--                    {fileInfo.archived ? <span className={'post-image__archived'}>
--
--                        <FormattedMessage
--                            id='workspace_limits.archived_file.archived'
--                            defaultMessage='This file is archived'
--                        />
--                    </span> : <>
--                        <span className='post-image__type'>{fileInfo.extension.toUpperCase()}</span>
--                        <span className='post-image__size'>{fileSizeToString(fileInfo.size)}</span>
--                    </>
--                    }
-+                    <span className='post-image__type'>{fileInfo.extension.toUpperCase()}</span>
-+                    <span className='post-image__size'>{fileSizeToString(fileInfo.size)}</span>
-                 </div>
-             </div>
-         );
- 
--        if (!fileInfo.archived && !props.disableActions) {
-+        if (!props.disableActions) {
-             fileActions = renderFileMenuItems();
+         if (!linkedField) {
+@@ -74,7 +77,7 @@ export default function GlobalClassificationBanner({position}: Props) {
+         if (linkedField && !systemValue) {
+             dispatch(fetchSystemPropertyValues(ACCESS_CONTROL_PROPERTY_GROUP));
          }
-     }
+-    }, [featureEnabled, linkedField, systemValue, dispatch]);
++    }, [featureEnabled, currentUserId, linkedField, systemValue, dispatch]);
  
-     let filenameOverlay;
--    if (props.canDownloadFiles && !fileInfo.archived) {
-+    if (props.canDownloadFiles) {
-         filenameOverlay = (
-             <FilenameOverlay
-                 fileInfo={fileInfo}
-@@ -360,49 +329,21 @@ export default function FileAttachment(props: Props) {
-                 <i className='icon icon-download-outline'/>
-             </FilenameOverlay>
-         );
--    } else if (fileInfo.archived && compactDisplay) {
--        const fileName = fileInfo.name;
--        const trimmedFilename = trimFilename(fileName);
--        fileThumbnail = (
--            <ArchiveOutlineIcon
--                size={16}
--                color={'rgba(var(--center-channel-color-rgb), 0.48)'}
--                data-testid='archived-file-icon'
--            />
--        );
--        filenameOverlay =
--            (<span className='post-image__archived-name'>
--                <span className='post-image__archived-filename'>
--                    {trimmedFilename}
--                </span>
--                <span className='post-image__archived-label'>
--                    {formatMessage({
--                        id: 'workspace_limits.archived_file.archived_compact',
--                        defaultMessage: '(archived)',
--                    })}
--                </span>
--            </span>);
-     }
- 
-     return (
--        <WithTooltip
--            tit
+     // Display conditions are encoded in the linked field's attrs.actions.
+     const actions = (linkedField?.attrs?.actions as string[] | undefined) ?? [];
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39579** (2026-10-30): [MM-71476] Fix timeout when deleting the last reply in a thread on large Posts tables (@cursor[bot])
-- **PR #39578** (2026-10-30): MM-71482: Update login token handling (@nickmisasi)
-- **PR #39577** (2026-10-30): Fix openApiSync gaps for nested, helper, and multi-method routes (@lieut-data)
-- **PR #39576** (closed): Tooling test, please ignore (@edgarbellot)
-- **PR #39571** (2026-10-30): Cherry pick #39486 to release-10.11 (@mattermost-code)
-- **PR #39569** (2026-10-30): Cherry pick #39543 to release-11.7 (@esarafianou)
+- **PR #39670** (2026-11-03): Fix master CI: update snapshots for compass-ui alpha.25 class names (@marianunez)
+- **PR #39662** (closed): Feat/ec2 deploy (@sespinosab)
+- **PR #39661** (2026-11-03): fix(e2e): repair pre_auth_webapp_plugins.spec.ts on master (classification banner fetches while logged out) (@cursor[bot])
+- **PR #39659** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
+- **PR #39658** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
+- **PR #39654** (2026-11-03): Generate fallback property option IDs without md5 in migration 000223 (@davidkrauser)
 
 ---
 
@@ -3279,84 +2262,34 @@ Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-71476] Fix timeout when deleting the last reply in a thread on large Posts t
+## X. Update snapshots for compass-ui alpha.25 class names (#39670)
 
 **RULE**:
-When implementing operations in `server/channels/store/sqlstore/post_store.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18fb0968`: [MM-71476] Fix timeout when deleting the last reply in a thread on large Posts tables (#39579). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e1eec78`: Update snapshots for compass-ui alpha.25 class names (#39670). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/store/sqlstore/post_store.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	}
-
-	if err != nil {
-		return errors.Wrapf(err, "failed to cleanup Thread with postid=%s", id.RootId)
-	}
-
-	if id.RootId != "" {
-			return errors.Wrapf(err, "failed to update UpdateAt of root post with id=%s", id.RootId)
-// threadReplyStatsQuery selects a thread's LastReplyAt and ReplyCount in that order.
-// Selecting COUNT alongside MAX keeps Postgres from rewriting MAX as a backward scan of
-// idx_posts_create_at, which walks the whole index when no live reply remains.
-func threadReplyStatsQuery(rootId string) sq.SelectBuilder {
-	return sq.Select("COALESCE(MAX(CreateAt), 0) AS LastReplyAt", "COUNT(*) AS ReplyCount").
-		From("Posts").
-		Where(sq.Eq{
-			"RootId":   rootId,
-			"DeleteAt": 0,
-		})
-}
-
-			Set("(LastReplyAt, ReplyCount)", threadReplyStatsQuery(rootId)).
-			var replyStats struct {
-				LastReplyAt int64
-				ReplyCount  int64
-			err := transaction.GetBuilder(&replyStats, threadReplyStatsQuery(rootId))
-				ReplyCount:   replyStats.ReplyCount,
-				LastReplyAt:  replyStats.LastReplyAt,
+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
+                  class="_icon-button__icon-slot_ft92e_41"
+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
+                  class="_icon-button__icon-slot_ft92e_41"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-			rctx.Logger().Warn("Error updating Post UpdateAt.", mlog.Err(err))
-	if err != nil {
-		return errors.Wrapf(err, "failed to cleanup Thread with postid=%s", id.RootId)
-	}
-
-		lastReplyAtSubquery := sq.Select("COALESCE(MAX(CreateAt), 0)").
-			From("Posts").
-			Where(sq.Eq{
-				"RootId":   rootId,
-				"DeleteAt": 0,
-			})
-
-		lastReplyCountSubquery := sq.Select("Count(*)").
-			From("Posts").
-			Where(sq.Eq{
-				"RootId":   rootId,
-				"DeleteAt": 0,
-			})
-
-			Set("LastReplyAt", lastReplyAtSubquery).
-			Set("ReplyCount", lastReplyCountSubquery).
-			// calculate reply count
-			var count int64
-			err := transaction.Get(&count, "SELECT COUNT(Posts.Id) FROM Posts WHERE Posts.RootId=? And Posts.DeleteAt=0", rootId)
-			if err != nil {
-				return err
-			// calculate last reply at
-			var lastReplyAt int64
-			err = transaction.Get(&lastReplyAt, "SELECT COALESCE(MAX(Posts.CreateAt), 0) FROM Posts WHERE Posts.RootID=? and Posts.DeleteAt=0", rootId)
-				ReplyCount:   count,
-				LastReplyAt:  lastReplyAt,
+                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
+                  class="_icon-button__icon-slot_13ryy_41"
+                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
+                  class="_icon-button__icon-slot_13ryy_41"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18fb0968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e1eec78` are properly handled with clean fallback behavior.

@@ -7094,3 +7094,6 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `2b6793e6` | Multi-dimensional audit evidence | 2026-11-04T00:46:24.588Z |
 | `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `114dd59d` | Multi-dimensional audit evidence | 2026-11-04T00:46:25.418Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `59764058` | Multi-dimensional audit evidence | 2026-11-04T00:46:35.946Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `378f4494` | Multi-dimensional audit evidence | 2026-11-04T00:53:17.988Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `4e1eec78` | Multi-dimensional audit evidence | 2026-11-04T00:53:22.819Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `4aa6fc23` | Multi-dimensional audit evidence | 2026-11-04T00:53:28.965Z |
