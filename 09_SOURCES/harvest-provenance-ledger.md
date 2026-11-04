@@ -7243,3 +7243,7 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `7c71db93` | Multi-dimensional audit evidence | 2026-11-04T16:43:05.408Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `36f62871` | Multi-dimensional audit evidence | 2026-11-04T16:43:10.579Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-04T16:43:12.884Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-04T16:50:12.895Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `a441962c` | Multi-dimensional audit evidence | 2026-11-04T16:50:13.739Z |
+| `learn-github-olric-data-olric` | `https://github.com/olric-data/olric` | `9092df94` | Multi-dimensional audit evidence | 2026-11-04T16:50:15.435Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6d3acec0` | Multi-dimensional audit evidence | 2026-11-04T16:50:18.752Z |

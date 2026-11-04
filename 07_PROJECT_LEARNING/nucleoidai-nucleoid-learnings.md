@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `a4d4c4a7`  
+> **Source Version**: `6d3acec0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:04:33.603Z  
+> **Timestamp**: 2026-11-04T16:50:18.239Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:04:33.177Z  
+> **Harvest Timestamp**: 2026-11-04T16:50:17.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Synthesized Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 772 stars
+- **Stars / Engagement**: 771 stars
 
 ---
 
@@ -555,7 +555,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "6150a2bd") {
+export async function start(puzzle_id: string = "44f52bb0") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -985,415 +985,131 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4d4c4a7` (2026-11-04)
-**Commit Message**: NUC 78 Extends Clauses for Subclasses
+### Incident Patch 1: `628b0ad3` (2026-11-04)
+**Commit Message**: Fix Clippy assert_is_empty errors in unit tests
 
-Accepted. The independent evaluator accepted the proposal in continuous
-mode against a7fed6a and its 895-case baseline, which it re-recorded
-byte-identically. Token comparison was skipped as
-language_compatibility, the category's continuous-mode policy; the
-skip is not a passing token gate, and no policy check failed.
+Clippy in Rust 1.99 adds the assert_is_empty lint, which rejects
+assert!(x.is_empty()) and assert!(!x.is_empty()) without a message.
+CI installs the latest stable toolchain, so Run Clippy started failing
+on the lib and bin unit tests. Compare against "" or [] with assert_eq!
+or assert_ne! instead, so the value is shown on failure; every
+assertion keeps its meaning.
 
-Hard criteria, checked independently and again on the integrated tree:
-cargo build --all-targets, warning-denied Clippy and cargo fmt --check
-pass; the full cargo test passes (90 suites, 2,330 passed, 0 failed,
-25 ignored) with all 2,332 accepted test identities present and 23
-added; all 895 pinned accepted programs replay, and a 147,647-program
-differential keeps every one of the 68,002 accepted-valid programs and
-changes only former syntax errors.
+Checked on rustc 1.99.1 (58cf8f9c3): cargo fmt --check, cargo clippy
+--all-targets --all-features --locked -- -D warnings, rustdoc with
+-D warnings, and cargo test --all-features --locked (2330 passed,
+0 failed, 25 ignored).
 
-NUC 78 lets a class header name its parent with extends, as
-JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy do:
-class Dog(name, breed) extends Animal: declares the class that
-class Dog(name, breed): Animal declares, and a bodyless
-class Dog extends Animal ends at the statement boundary as NUC 14's
-bodyless classes do. extends stays an ordinary name everywhere else and
-buil
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
 
-**File**: `README.md` (modified, +35/-0)
+**File**: `src/builtins/mod.rs` (modified, +1/-5)
 ```diff
-@@ -1643,6 +1643,41 @@ assert(lowest.bidder, "ada")
-   numbers compare as numbers, strings as text and dates by time. See the
-   [root contract](nucleoid.spec.md#list-and-population-extreme-items).
+@@ -559,11 +559,7 @@ mod tests {
+             assert_eq!(error.kind(), ErrorKind::Type);
+             assert_eq!(error.message(), "Replaced string is too large");
+         }
+-        assert!(
+-            string_replacement_buffer(0, 0, 0, usize::MAX)
+-                .unwrap()
+-                .is_empty()
+-        );
++        assert_eq!(string_replacement_buffer(0, 0, 0, usize::MAX).unwrap(), "");
+     }
  
-+## Extends clauses
-+
-+**Extends clauses declare subclasses as JavaScript and Java do**
-+
-+```nuc
-+class Sensor(name, reading):
-+    this.name = name
-+    this.reading = reading
-+$Sensor.alarm = $Sensor.reading > 50
-+class Thermometer extends Sensor
-+class Barometer(name, reading, unit) extends Sensor:
-+    this.name = name
-+    this.reading = reading
-+    this.unit = unit
-+kitchen = Thermometer("kitchen", 21)
-+roof = Barometer("roof", 1013, "hPa")
-+assert(kitchen.alarm, false)
-+assert(roof.alarm, true)
-+assert(roof.unit, "hPa")
-+kitchen.reading = 64
-+assert(kitchen.alarm, true)
-+assert(Sensor.length, 0)
-+```
-+
-+- [NUC 78](docs/nuc-0078.md) accepts `extends` in a class header as an
-+  optional spelling of the colon parent. `class Thermometer extends Sensor`
-+  is the bodyless subtype that `class Thermometer: Sensor` with an indented
-+  `pass` declares, and `class Barometer(name, reading, unit) extends Sensor:`
-+  takes the indented body that `class Barometer(name, reading, unit): Sensor`
-+  takes.
-+- `$Sensor.alarm` applies to both subtypes, which use `Sensor`'s constructor
-+  or their own, and each subtype keeps its own instance list. `extends` stays
-+  an ordinary name everywhere else. See the
-+  [root contract](nucleoid.spec.md#extends-clauses-for-subclasses).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+     #[test]
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +6/-0)
+**File**: `src/lang/ast/parser.rs` (modified, +1/-1)
 ```diff
-@@ -611,3 +611,9 @@
- {"id":"spec-0611","description":"Nucleoid uses extreme items in functions methods and conditional expressions","code":"class Shelf(name, items):\n    this.name = name\n    this.items = items\n    def priciest(): return this.items.maxBy(item -> item.price)\ndef cheapest(shelf) => shelf.items.minBy(item -> item.price)\nleft = Shelf(\"left\", [{sku: \"pen\", price: 2}, {sku: \"ink\", price: 9}])\nright = Shelf(\"right\", [{sku: \"pad\", price: 4}, {sku: \"cap\", price: 1}])\ndearer = left.priciest().price > right.priciest().price ? left.name : right.name\ntop = Shelf.maxBy(shelf -> shelf.priciest().price)\nbargain = Shelf.minBy(shelf -> cheapest(shelf).price)\nassert: dearer, \"left\"\nassert: top, left\nassert: bargain, right\nassert: cheapest(left).sku, \"pen\"\nassert: right.priciest().sku, \"pad\"\nright.items.push({sku: \"tape\", price: 15})\nleft.items = [{sku: \"clip\", price: 0.5}]\nassert: dearer, \"right\"\nassert: top, right\nassert: bargain, left\nassert: cheapest(left).sku, \"clip\"","return":null}
- {"id":"spec-0612","description":"Nucleoid keeps maxBy and minBy as ordinary names beside the extreme item queries","code":"maxBy = 3\nminBy = 1\nlimits = {maxBy: size -> size * 10, minBy: 2}\ndef scale minBy => minBy * 2\nclass Crate(items):\n    this.items = items\n    def maxBy(key): return key(this.items.length)\ncrate = Crate([{kg: 6}, {kg: 4}])\nspare = Crate([{kg: 9}])\nheavy = crate.items.maxBy(box -> box.kg)\nfullest = Crate.maxBy(each -> each.maxBy(count -> count))\nlightest = Crate.minBy(each -> each.items.min(box -> box.kg))\nassert: heavy.kg, 6\nassert: fullest, crate\nassert: lightest, crate\nassert: crate.maxBy(count -> count + maxBy), 5\nassert: limits.maxBy(minBy), 10\nassert: scale(minBy), 2\nassert: crate.items.maxBy, null\nspare.items = [{kg: 1}, {kg: 2}, {kg: 3}, {kg: 9}]\ncrate.items.push({kg: 7})\nmaxBy = 5\nassert: heavy.kg, 7\nassert: fullest, spare\nassert: lightest, spare\nassert: crate.maxBy(count -> count + maxBy), 8","return":null}
- {"id":"spec-0613","description":"Nucleoid rolls back failed extreme item updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_MANY\"\n    return value\norders = [{id: 1, qty: 30}, {id: 2, qty: 50}]\nlargest = orders.maxBy(order -> checked(order.qty))\nassert: largest.id, 2\nfailure = \"\"\ntry:\n    orders.push({id: 3, qty: 500})\ncatch error:\n    failure = error\nassert: failure, \"TOO_MANY\"\nassert: orders.length, 2\nassert: largest.id, 2\norders.push({id: 4, qty: 80})\nassert: largest.id, 4\nclass Probe(name, temp):\n    this.name = name\n    this.temp = temp\nProbe(\"a\", 12)\nProbe(\"b\", 30)\ncoldest = Probe.minBy(probe -> checked(probe.temp))\nfailure = \"\"\ntry:\n    Probe(\"c\", 500)\ncatch error:\n    failure = error\nassert: failure, \"TOO_MANY\"\nassert: Probe.length, 2\nassert: coldest.name, \"a\"\nProbe(\"d\", 9)\nassert: coldest.name, \"d\"","return":null}
-+{"id":"spec-0614","description":"Nucleoid declares subclasses with extends clauses","code":"class Animal(name):\n    this.name = name\n$Animal.legs = 4\nclass Dog(name, breed) extends Animal:\n    this.name = name\n    this.breed = breed\n    def speak():\n        return this.name + \" barks\"\nclass Cat extends Animal:\n    def speak() => this.name + \" meows\"\nrex = Dog(\"Rex\", \"lab\")\ntom = Cat(\"Tom\")\nassert(rex.breed, \"lab\")\nassert(rex.speak(), \"Rex barks\")\nassert(tom.name, \"Tom\")\nassert(tom.speak(), \"Tom meows\")\nassert(rex.legs, 4)\nassert(tom.legs, 4)\nassert(Animal.length, 0)\nassert(Dog.length, 1)\nassert(Cat.length, 1)\n$Animal.legs = 3\nassert(rex.legs, 3)\nassert(tom.legs, 3)","return":null}
-+{"id":"spec-0615","description":"Nucleoid declares bodyless subclasses with extends clauses","code":"class Shape(sides):\n    this.sides = sides\n$Shape.polygon = $Shape.sides > 2\nclass Square extends Shape\nsquare = Square(4)\nclass Triangle(sides) extends Shape; triangle = Triangle(3)\n{ class Segment extends Shape }\nsegment = Segment(1)\nassert(square.sides, 4)\nassert(triangle.sides, 3)\nassert(square.polygon, true)\nassert(segment.polygon, false)\nassert(Shape.length, 0)\nassert(Square.length, 1)\nassert(Triangle.length, 1)\nassert(Segment.length, 1)\nsegment.sides = 5\nassert(segment.polygon, true)","return":null}
-+{"id":"spec-0616","description":"Nucleoid keeps extends subclasses equivalent to colon subclasses","code":"class Account(owner, balance):\n    this.owner = owner\n    this.balance = balance\n$Account.overdrawn = $Account.balance < 0\nclass Savings: Account\n    def init(owner, balance, rate):\n        super(owner, balance)\n        this.rate = rate\nclass Deposit extends Account:\n    def init(owner, balance, rate):\n        super(owner, balance)\n        this.rate = rate\nsaving = Savings(\"ada\", 100, 2)\ndeposit = Deposit(rate=2, owner=\"ada\", balance=100)\nassert(deposit.owner, saving.owner)\nassert(deposit.rate, saving.rate)\nassert(deposit.overdrawn, false)\ndeposit.balance = -5\nsavin
+@@ -3096,7 +3096,7 @@ mod tests {
+         let [Stmt::Class(class)] = statements.as_slice() else {
+             panic!("one class with a typed field");
+         };
+-        assert!(class.constructor.is_empty());
++        assert_eq!(class.constructor, []);
+         let [field] = class.fields.as_slice() else {
+             panic!("one typed field");
+         };
 ```
 
-**File**: `dataset/nucleoid.synth.53.jsonl` (added, +8/-0)
+**File**: `src/terminal/mod.rs` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,8 @@
-+{"id":"synth-53-0001","description":"An extends clause names the parent of a subclass that declares its own constructor","code":"class Animal(name):\n    this.name = name\nclass Dog(name, breed) extends Animal:\n    this.name = name\n    this.breed = breed\nrex = Dog(\"Rex\", \"lab\")\n[rex.name, rex.breed, Dog.length, Animal.length]","return":"[\"Rex\",\"lab\",1,0]"}
-+{"id":"synth-53-0002","description":"A bodyless extends header declares a subclass that uses its parent's constructor","code":"class Point(x, y):\n    this.x = x\n    this.y = y\nclass Pixel extends Point\np = Pixel(3, 4)\n[p.x, p.y, Pixel.length, Point.length]","return":"[3,4,1,0]"}
-+{"id":"synth-53-0003","description":"Class-level rules of the parent stay live on instances of an extends subclass","code":"class Employee(name, salary):\n    this.name = name\n    this.salary = salary\n$Employee.senior = $Employee.salary > 5000\nclass Manager extends Employee\nana = Manager(\"ana\", 4000)\nbo = Manager(\"bo\", 7000)\nana.salary = 6000\n[ana.senior, bo.senior, Employee.length]","return":"[true,true,0]"}
-+{"id":"synth-53-0004","description":"An init method in an extends subclass forwards its parent's arguments with super","code":"class Account(owner):\n    this.owner = owner\nclass Savings extends Account:\n    def init(owner, rate):\n        super(owner)\n        this.rate = rate\ns = Savings(\"ada\", 3)\n[s.owner, s.rate]","return":"[\"ada\",3]"}
-+{"id":"synth-53-0005","description":"Bare super runs every constructor of an extends chain on the same instance","code":"class Base:\n    def init():\n        this.log = \"base\"\nclass Middle extends Base:\n    def init():\n        super\n        this.log = this.log + \">middle\"\nclass Leaf extends Middle:\n    def init():\n        super\n        this.log = this.log + \">leaf\"\nleaf = Leaf()\nleaf.log","return":"\"base>middle>leaf\""}
-+{"id":"synth-53-0006","description":"The colon and extends spellings of a subclass declare the same kind of class","code":"class Shape(sides):\n    this.sides = sides\nclass Square: Shape\n    pass\nclass Cube extends Shape\na = Square(4)\nb = Cube(4)\n[a.sides == b.sides, Square.length, Cube.length, Shape.length]","return":"[true,1,1,0]"}
-+{"id":"synth-53-0007","description":"extends stays an ordinary name for variables, properties and parameters","code":"extends = 5\nsettings = {extends: 2}\ndef grow(extends) => extends + 1\n[extends * settings.extends, grow(extends)]","return":"[10,6]"}
-+{"id":"synth-53-0008","description":"An extends clause that would close an inheritance cycle raises a TypeError","code":"class Root\nclass Branch extends Root\nfailure = \"\"\ntry:\n    class Root extends Branch\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: Circular Inheritance\""}
+@@ -1041,7 +1041,7 @@ mod tests {
+                     .map(|column| screen[(column, row)].symbol())
+                     .collect::<String>()
+             };
+-            assert!(line(0).trim().is_empty());
++            assert_eq!(line(0).trim(), "");
+             assert_eq!(screen[(15, 1)].symbol(), "🌿");
+             assert!(line(1).contains("Nucleoid - Logic Language for World Models"));
+             assert_eq!(screen[(15, 2)].symbol(), "🌎");
+@@ -1140,7 +1140,7 @@ mod tests {
+                 flashed[(column, row)].symbol(),
+                 original[(column, row)].symbol()
+             );
+-            assert!(!flashed[(column, row)].symbol().trim().is_empty());
++            assert_ne!(flashed[(column, row)].symbol().trim(), "");
+             assert_eq!(flashed[(column, row)].fg, ratatui::style::Color::White);
+             assert!(
+                 flashed[(column, row)]
 ```
 
-**File**: `docs/README.md` (modified, +20/-2)
+---
+
+### Incident Patch 2: `657f0de7` (2026-11-04)
+**Commit Message**: Require expressive ARC dataset formulations
+
+Require ARC dataset runs to favor concise, declarative higher-order rules and send handoffs back for revision when they fall short.
+
+**File**: `.claude/agents/arc-purposal.agent.md` (modified, +6/-4)
 ```diff
-@@ -739,7 +739,7 @@ Full detail: [NUC 10](nuc-0010.md).
- - `class Entity` declares an empty type without a placeholder body.
- - The explicit `class Entity:` form with an indented `pass` remains valid.
- - A bare header ends at a statement boundary and does not adopt the next statement as a constructor.
--- An indented body still requires a colon; inheritance keeps its existing colon grammar.
-+- An indented body still requires a colon. Inheritance keeps its colon grammar and may also be spelled with `extends`, as [Subtypes](#subtypes) shows.
- - `$Name` is the type; `Name` is the list of its instances.
- - `typeof $Name` is `Class`; `typeof Name` is `List`.
- - Every declared type is added to the global `Class` list.
-@@ -840,6 +840,19 @@ class Truck: Vehicle
-         this.payload = payload
- ```
- 
-+- `extends` is an optional spelling of the parent, as JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy write it ([NUC 78](nuc-0078.md)). It follows the class name and the optional parameter list: `class Truck extends Vehicle:` and `class Truck(make, payload) extends Vehicle:` take the same indented or same-line body as the colon spelling.
-+- Without a colon, `class Van extends Vehicle` is a bodyless subtype, exactly `class Van: Vehicle` with an indented `pass`. Like `class Entity`, it ends at a statement boundary and does not adopt the next statement as a constructor; an indented body still requires the colon.
-+- Every spelling declares the same class: parent, constructors, `super`, populations, class-level rules, graph keys and canonical rendering are unchanged, and canonical source keeps the colon spelling.
-+- `extends` is not a keyword. Only `extends` directly after a class name or its parameter list starts the clause; variables, properties, parameters, functions, methods and classes named `extends` keep their meanings.
-+
-+```
-+class Truck extends Vehicle:
-+    def init make, payload:
-+        super(make)
-+        this.payload = payload
-+class Van extends Vehicle
-+```
-+
- ### Bare zero-argument super calls
- 
- - Bare `super` is the primary expression `super()`; it always passes zero arguments and returns `null` on success.
-@@ -877,7 +890,7 @@ assert(child.code, 7)
- - Deletion is refused while the instance still has properties.
- - A variable name is reusable after its instance is deleted.
- 
--Full detail: [NUC 3](nuc-0003.md); accepted compact headers: [NUC 14](nuc-0014.md); candidate bare calls: [NUC 16](nuc-0016.md).
-+Full detail: [NUC 3](nuc-0003.md); accepted compact headers: [NUC 14](nuc-0014.md); candidate bare calls: [NUC 16](nuc-0016.md); extends clauses: [NUC 78](nuc-0078.md).
- 
- ---
- 
-@@ -3145,6 +3158,8 @@ Messages are exact and are part of the observable behaviour of the language.
- | A postfix chain or a compound path beyond its limit | `Expression has too many parts` |
- | A destructuring with more than 128 targets | `Destructuring has too many targets` |
- | A constructor-header star at a parameter position | `Expected a parameter but found '*'` |
-+| An `extends` clause whose parent is missing or not a name | `Expected a parent class name but found <what>` |
-+| A second parent after `class Name extends Parent:` | `Class '<Name>' already extends '<Parent>'` |
- 
- ### Where an error happened
- 
-@@ -3199,6 +3214,9 @@ class Sub: Super                       subtype
-     def init(a, b):
-         super(a)
-         this.b = b
-+class Sub extends Super:               same subtype, extends spelling (NUC 78)
-+    statement
-+class Sub(param) extends Super         bodyless subtype, as class Sub(param): Super with pass (NUC 78)
- 
- super                                  zero-argument super() expression
- super(arguments)                       explicit parent-constructor arguments
+@@ -39,10 +39,12 @@ Follow `.claude/CLAUDE.md`, the
+   [hint rule](../skills/arc-purposal/SKILL.md#pass-the-hint). It is a
+   suggestion the training pairs must confirm; it never overrides them or
+   these rules.
+-- Always prefer declarative, higher-order logic. When the dataset's rules need
+-  a feature accepted Nucleoid lacks, trigger `/nuc-proposal` for the requested
+-  enhancement through the skill's caller steps instead of accepting an
+-  imperative workaround.
++- Always go with the declarative, higher-order, and most expressive solution,
++  under the skill's [dataset step](../skills/arc-purposal/SKILL.md#write-the-dataset),
++  and pass that requirement to every `arc-dataset` run. When the dataset's
++  rules need a feature accepted Nucleoid lacks, trigger `/nuc-proposal` for
++  the requested enhancement through the skill's caller steps instead of
++  accepting an imperative workaround.
+ - Never change the TypeScript implementation in `arc/`, except that before
+   the run you make the puzzle the solver's default puzzle in `arc/src/app.ts`
+   under the skill's [run step](../skills/arc-purposal/SKILL.md#run-the-puzzle).
 ```
 
-**File**: `docs/examples.md` (modified, +35/-0)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +14/-4)
 ```diff
-@@ -3193,6 +3193,41 @@ neediest.dock.name
- - See [NUC 77](nuc-0077.md) and the
-   [root contract](../nucleoid.spec.md#list-and-population-extreme-items).
+@@ -101,10 +101,20 @@ the previous dataset and README paragraph in the session workspace. If the
+ handoff used external staging, integrate the verified single file before the
+ run and confirm the loader includes it among all JSON instruction datasets.
+ Leave the shared files of the genesis puzzle `3aa6fb7a` unchanged.
+-The dataset always prefers declarative, higher-order logic; when accepted
+-Nucleoid cannot express its rules that way, the handoff requests the missing
+-enhancement instead of an imperative workaround. Continue by the handoff's
+-status:
++
++Always go with the declarative, higher-order, and most expressive solution,
++and pass this requirement to every `/arc-dataset` run. Among the formulations
++the training pairs confirm, the dataset takes the one that says the most with
++the least: each relation stated once over every instance of a class,
++higher-order operations over class populations, such as `filter`, `map`,
++`reduce`, `some`, `every`, `find`, and reasoning selections, wherever they
++express a rule, and no rule or property that only restates what the others
++already determine. When accepted Nucleoid cannot express the rules that way,
++the handoff requests the missing enhancement instead of an imperative
++workaround. Check a `written` handoff's rules against this requirement before
++the run, and send any that fall short back to the arc-dataset worker.
++
++Continue by the handoff's status:
  
-+## Extends clauses
-+
-+**Extends clauses keep a fleet's inherited insurance rule live**
-+
-+```nuc
-+threshold = 1000
-+class Asset(name, worth):
-+    this.name = name
-+    this.worth = worth
-+$Asset.insured = $Asset.worth > threshold
-+class Vehicle(name, worth, wheels) extends Asset:
-+    this.name = name
-+    this.worth = worth
-+    this.wheels = wheels
-+class Drone extends Asset
-+van = Vehicle("van", 30000, 4)
-+probe = Drone("probe", 800)
-+assert([van.insured, probe.insured], [true, false])
-+threshold = 500
-+assert(probe.insured, true)
-+van.worth = 400
-+assert(van.insured, false)
-+[Asset.length, Vehicle.length, Drone.length]
-+# return: [0,1,1]
-+```
-+
-+- `Vehicle` names its parent with `extends` and declares its own
-+  constructor, while the bodyless `class Drone extends Asset` uses the
-+  constructor of `Asset`. The class-level rule `$Asset.insured` applies to
-+  both, so lowering `threshold` insures the drone and a lower worth uninsures
-+  the van.
-+- The populations stay separate: `Asset` has no instances of its own. See
-+  [NUC 78](nuc-0078.md) and the
-+  [root contract](../nucleoid.spec.md#extends-clauses-for-subclasses).
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -121,6 +121,7 @@ Created: 31-Jul-2026
- | --- | --- | --- |
- | [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
- | [76](nuc-0076.md) | Opt-In C-Style Comments | Accepted |
-+| [78](nuc-0078.md) | Extends Clauses for Subclasses | Accepted |
- 
- ### Documentation
- 
-@@ -209,6 +210,7 @@ Created: 31-Jul-2026
- | [75](nuc-0075.md) | List and Population Modes | Standards Track | Utility enhancement | Accepted |
- | [76](nuc-0076.md) | Opt-In C-Style Comments | Standards Track | Language compatibility | Accepted |
- | [77](nuc-0077.md) | List and Population Extreme Items | Standards Track | Utility enhancement | Accepted |
-+| [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0078.md` (added, +570/-0)
-```diff
-@@ -0,0 +1,570 @@
-+# NUC 78 -- Extends Clauses for Subclasses
-+
-+```
-+NUC: 78
-+Title: Extends Clauses for Subclasses
-+Author: Claude <noreply@anthropic.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Language compatibility
-+Created: 04-Nov-2026
-+Requires: 14
-+```
-+
-+## Abstract
-+
-+- A class header may name its parent with `extends`, as JavaScript,
-+  TypeScript, Java, PHP, Dart, Scala and Groovy do. The clause follows the
-+  class name and its optional parameter list:
-+  `class Dog(name, breed) extends Animal:`.
-+- With a colon, the clause takes the body that the colon spelling takes:
-+  `class Dog extends Animal:` with an indented body declares the class that
-+  `class Dog: Animal` with that body declares.
-+- Without a colon, `class Dog extends Animal` is a bodyless subclass, exactly
-+  `class Dog: Animal` with an indented `pass`. Like [NUC 14](nuc-0014.md)'s
-+  `class Entity`, it ends at a statement boundary and does not adopt the
-+  next statement as a constructor.
-+- Every spelling builds the same class declaration. Populations,
-+  constructors, `super`, class-level rules, cycle checks, graph keys, `why`,
-+  rendering and transactions are those of the colon spelling, which canonical
-+  source keeps writing.
-+- `extends` is not a keyword. It starts the clause only directly after a
-+  class name or its parameter list, where the accepted parser raised
-+  `SyntaxError("Expected ':' but found identifier 'extends'")`. Every other
-+  use of the name keeps its meaning, and only such former syntax errors
-+  change.
-+- Malformed clauses raise
-+  `SyntaxError("Expected a parent class name but found <token>")`,
-+  `SyntaxError("Class '<Name>' already extends '<Parent>'")` or the existing
-+  `SyntaxError("Expected ':' but found <token>")`.
-+- No token kind, keyword, syntax tree node, runtime path, dependency, public
-+  Rust API or project version is added or changed. The authoritative contract
-+  is [Extends clauses for subclasses](../nucleoid.spec.md#extends-clauses-for-subclasses).
-+- **Outcome: Accepted.** The independent evaluation and the caller's
-+  integrated-tree checks passed all three hard criteria, and the independent
-+  evaluator decided Accepted with non-blocking documentation findings. Token
-+  comparison was skipped as `language_compatibility`, the category's
-+  continuous-mode policy; no policy check failed.
-+
-+## Motivation
-+
-+- Nucleoid aspires to be a superset of familiar languages. Kotlin, C#, C++
-+  and Swift name a parent after a colon, which Nucleoid already accepts.
-+  JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy write
-+  `class Car extends Vehicle`, which fails at the accepted revision.
-+- World models written by language models routinely use that spelling. Each
-+  such header raises `SyntaxError("Expected ':' but found identifier 'extends'")`
-+  and stops the whole program before any statement runs.
-+- The accepted language has no bodyless subclass. A parent after the colon
-+  leaves the colon open for a body, so `class Dog: Animal` followed by
-+  `d = Dog("rex")` takes that statement as its constructor, and reading `d`
-+  then raises `ReferenceError("d is not defined")`. A subclass without
-+  members needs an indented `pass` before any statement that follows it.
-+- `class Dog extends Animal` gives that common declaration a one-line form
-+  that ends where it appears, as the bodyless root headers of
-+  [NUC 14](nuc-0014.md) do.
-+
-+## Rationale
-+
-+- **Confirmed category and mode.** The caller made one tool-backed uniform
-+  draw over the five categories that NUC 1's registry marks eligible for
-+  automatic selection. It selected Language compatibility, index 4, with
-+  probability 1/5 and no redraw. This is a continuous cycle, so token
-+  comparison is skipped as `language_compatibility`. That skip is
-+  categorical; it is neither a measured comparison nor a passing token gate.
-+- **No counterparts.** Because comparison is skipped, the new cases have no
-+  accepted-syntax counterparts. They execute their assertions and explicit
-+  returns with full coverage. Every pre-existing case, its spelling and its
-+  colon headers are unchanged. Runtime applicability does not apply to this
-+  category.
-+- **Only a former error position.** After a class name and its optional
-+  parameter list, the accepted parser requires a statement terminator or a
-+  colon; any identifier there raises `Expected ':' but found identifier ...`.
-+  So every input with `extends` in that position failed to parse, and giving
-+  it a meaning changes no accepted program.
-+- **Contextual, not reserved.** Reserving `extends` would break variables,
-+  properties, keys, parameters, functions, methods, loop variables, catch
-+  bindings and classes with that name. Only the identifier `extends` directly
-+  after the name or parameter list on the same logical line qualifies. A
-+  newline ends a header, so `class Dog` followed by `extends = 1` on the next
-+  line keeps its meaning.
-+- **Parameters first.** Nucleoi
-```
-
-**File**: `nucleoid.spec.md` (modified, +212/-0)
-```diff
-@@ -87,6 +87,73 @@ semicolon. Other unsupported tokens use `Expected ':' but found <token>` with
- the existing token descriptions. Existing name, parameter, nesting, and
- operator-chain diagnostics and source positions are preserved.
- 
-+## Extends clauses for subclasses
-+
-+- [NUC 78](docs/nuc-0078.md) adds `extends` as an optional spelling of a
-+  class header's parent, as JavaScript, TypeScript, Java, PHP, Dart, Scala and
-+  Groovy write it. `class Name: Parent` keeps its grammar and meaning. No
-+  token, keyword, syntax tree node or runtime path is added.
-+- After a class name and its optional parameter list, the identifier `extends`
-+  and one parent name form the clause, as in `class Dog extends Animal` and
-+  `class Dog(name, breed) extends Animal`. The parent is an ordinary
-+  identifier, as after `class Name:`, and need not be declared yet.
-+- A colon after the clause opens the class body that follows
-+  `class Name(params):`: an indented body of typed fields, constructor
-+  statements, `init` and methods, or one statement on the same line.
-+  `class Dog extends Animal:` with an indented body declares the class that
-+  `class Dog: Animal` with that body declares.
-+- After that colon the accepted class body grammar applies unchanged. As
-+  after `class Dog:` and `class Dog: Animal`, a colon that ends its line
-+  without an indented body takes the next statement, if any, as the class's
-+  one constructor statement, and such a header at the end of an indented
-+  block raises `SyntaxError("Unexpected the end of a block")`.
-+- Without a colon the header is bodyless, as `class Name` and
-+  `class Name(params)` are. It ends at a logical newline, semicolon, end of
-+  input, or the enclosing block's closing brace or dedent, and the following
-+  statement is not part of a constructor. `class Dog extends Animal` declares
-+  the class that `class Dog: Animal` with an indented `pass` declares.
-+- An indented body still requires the colon. A bodyless clause followed by a
-+  newline and indentation raises
-+  `SyntaxError("Expected ':' but found end of line")`, or
-+  `SyntaxError("Expected ':' but found ';'")` when the first separator is a
-+  semicolon.
-+- Every spelling builds the same class declaration: the same name, parent,
-+  parameters, fields, constructor statements and methods. Registration, the
-+  `Class` list, separate parent and child instance lists, `$Parent` rules on
-+  child instances, constructors and the nearest ancestor constructor, `init`,
-+  `super` and bare `super`, named constructor arguments, inheritance cycle
-+  checks, redeclaration, graph keys, `why`, canonical rendering and
-+  transactions are those of the colon spelling, which canonical source keeps
-+  writing.
-+- `extends` is not a keyword. Only the identifier `extends` directly after a
-+  class name or its parameter list starts the clause, a position where the
-+  accepted parser raised
-+  `SyntaxError("Expected ':' but found identifier 'extends'")`. Variables,
-+  properties, parameters, functions, methods, classes and parents named
-+  `extends` keep their meanings, and `class extends extends Animal` declares
-+  a class named `extends` whose parent is `Animal`.
-+- A parent that is not a name raises
-+  `SyntaxError("Expected a parent class name but found <token>")` at that
-+  token, with the existing token descriptions. `class Dog extends` reports
-+  `end of input` at line 1, column 18, and `class Dog extends 5`,
-+  `class Dog extends "A"` and `class Dog extends $Animal` report `number 5`,
-+  `a string` and `'$Animal'` at line 1, column 19.
-+- A second parent raises `SyntaxError("Class 'Dog' already extends 'Animal'")`
-+  for `class Dog extends Animal: Cat`, at `Cat`. The check covers a name
-+  followed by the end of the line or input after the colon, the position that
-+  names the parent in `class Dog: Cat`.
-+- Any other token after the parent raises the existing
-+  `SyntaxError("Expected ':' but found <token>")` at that token, as in
-+  `class Dog extends Animal Cat`, `class Dog extends Animal(x)`,
-+  `class Dog extends Animal, Cat` and `class Dog extends Animal {}`.
-+- Only these former syntax errors change. The REPL runs a bodyless clause at
-+  once and buffers a clause that ends in a colon, as it does other headers;
-+  the terminal workspace indents after that colon and completes `extends`.
-+- The six appended entries beginning
-+  `Nucleoid declares subclasses with extends clauses` through
-+  `Nucleoid rolls back extends class declarations` specify the executable
-+  behavior.
-+
- ## Opt-in C-style comments
- 
- - `#` starts an accepted line comment in every mode. By default, slash
-@@ -19327,4 +19394,149 @@ assert: Probe.length, 2
- assert: coldest.name, "a"
- Probe("d", 9)
- assert: coldest.name, "d"
-+---
-+# Nucleoid declares subclasses with extends clauses
-+
-+class Animal(name):
-+    this.name = name
-+$Animal.legs = 4
-+class Dog(name, breed) extends Animal:
-+    this.name = name
-+    this.breed = breed
-+    def speak():
-+        return this
+ - `written`: run the puzzle.
+ - `nucleoid_enhancement_required`: prepare the requested enhancement.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1422,61 +1138,32 @@ buil
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 78 Extends Clauses for Subclasses
+## X. Clippy assert_is_empty errors in unit tests
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/builtins/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4d4c4a7`: NUC 78 Extends Clauses for Subclasses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `628b0ad3`: Clippy assert_is_empty errors in unit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/builtins/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Extends clauses
-
-**Extends clauses declare subclasses as JavaScript and Java do**
-
-```nuc
-class Sensor(name, reading):
-    this.name = name
-    this.reading = reading
-$Sensor.alarm = $Sensor.reading > 50
-class Thermometer extends Sensor
-class Barometer(name, reading, unit) extends Sensor:
-    this.name = name
-    this.reading = reading
-    this.unit = unit
-kitchen = Thermometer("kitchen", 21)
-roof = Barometer("roof", 1013, "hPa")
-assert(kitchen.alarm, false)
-assert(roof.alarm, true)
-assert(roof.unit, "hPa")
-kitchen.reading = 64
-assert(kitchen.alarm, true)
-assert(Sensor.length, 0)
-```
-
-- [NUC 78](docs/nuc-0078.md) accepts `extends` in a class header as an
-  optional spelling of the colon parent. `class Thermometer extends Sensor`
-  is the bodyless subtype that `class Thermometer: Sensor` with an indented
-  `pass` declares, and `class Barometer(name, reading, unit) extends Sensor:`
-  takes the indented body that `class Barometer(name, reading, unit): Sensor`
-  takes.
-- `$Sensor.alarm` applies to both subtypes, which use `Sensor`'s constructor
-  or their own, and each subtype keeps its own instance list. `extends` stays
-  an ordinary name everywhere else. See the
-  [root contract](
+        assert_eq!(string_replacement_buffer(0, 0, 0, usize::MAX).unwrap(), "");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        assert!(
+            string_replacement_buffer(0, 0, 0, usize::MAX)
+                .unwrap()
+                .is_empty()
+        );
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4d4c4a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `628b0ad3` are properly handled with clean fallback behavior.

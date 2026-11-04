@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-HZ3B",
-    "timestamp": "2026-10-31T22:12:05.735Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-X5OA",
-    "timestamp": "2026-10-31T22:23:54.106Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-6VST",
-    "timestamp": "2026-10-31T22:31:27.869Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "0df77a610a203481c21b201dae4a649f8ac29fbaeb38d69b31707c21db54e17c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-6VTN",
-    "timestamp": "2026-10-31T22:31:27.899Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-8Z4Q",
     "timestamp": "2026-10-31T22:33:05.498Z",
     "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -7492,6 +7432,66 @@
     "contentHash": "664864a7176502d6cc6cbb02f0eee8435e84b505b28723066ef58e3e48d70b99",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RFVG",
+    "timestamp": "2026-11-04T16:50:12.892Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RGIW",
+    "timestamp": "2026-11-04T16:50:13.736Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RHU1",
+    "timestamp": "2026-11-04T16:50:15.433Z",
+    "repository": "olric-data/olric",
+    "learningId": "learn-github-olric-data-olric",
+    "contentHash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-RKE6",
+    "timestamp": "2026-11-04T16:50:18.750Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

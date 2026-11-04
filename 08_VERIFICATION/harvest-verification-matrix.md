@@ -7234,3 +7234,7 @@
 | `CYCLE-20261104-IA0T` | `2026-11-04T16:43:05.405Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6838` | Yes (`aa3dc7fe...`) |
 | `CYCLE-20261104-IE0F` | `2026-11-04T16:43:10.575Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6839` | Yes (`2d40adf1...`) |
 | `CYCLE-20261104-IFSH` | `2026-11-04T16:43:12.881Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6840, Rule 6841, Rule 6842` | Yes (`664864a7...`) |
+| `CYCLE-20261104-RFVG` | `2026-11-04T16:50:12.892Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 6843, Rule 6844` | Yes (`a6508d0b...`) |
+| `CYCLE-20261104-RGIW` | `2026-11-04T16:50:13.736Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6845` | Yes (`426cb9db...`) |
+| `CYCLE-20261104-RHU1` | `2026-11-04T16:50:15.433Z` | `olric-data/olric` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6846` | Yes (`4d562928...`) |
+| `CYCLE-20261104-RKE6` | `2026-11-04T16:50:18.750Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6847` | Yes (`5544fc11...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T16:43:12.892Z",
+  "last_updated": "2026-11-04T16:50:18.758Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
-      "verified_at": "2026-11-04T09:04:33.872Z",
+      "content_hash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
+      "verified_at": "2026-11-04T16:50:18.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:04:33.872Z"
+      "last_updated": "2026-11-04T16:50:18.758Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8391,14 +8391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-olric-data-olric",
-      "content_hash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
-      "verified_at": "2026-10-19T03:53:54.705Z",
+      "content_hash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
+      "verified_at": "2026-11-04T16:50:15.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:53:54.705Z"
+      "last_updated": "2026-11-04T16:50:15.441Z"
     },
     "carbon-design-system/carbon-components-svelte": {
       "repository": "carbon-design-system/carbon-components-svelte",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
-      "verified_at": "2026-11-03T17:22:46.495Z",
+      "content_hash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
+      "verified_at": "2026-11-04T16:50:13.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:22:46.495Z"
+      "last_updated": "2026-11-04T16:50:13.745Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
-      "verified_at": "2026-10-31T00:53:04.885Z",
+      "content_hash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
+      "verified_at": "2026-11-04T16:50:12.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:53:04.885Z"
+      "last_updated": "2026-11-04T16:50:12.901Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",

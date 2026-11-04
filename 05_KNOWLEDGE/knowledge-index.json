@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T16:43:12.811Z",
+  "last_updated": "2026-11-04T16:50:18.675Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42724,8 +42724,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "ca2c4da1",
-      "content_hash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
+      "source_version": "a441962c",
+      "content_hash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -42773,6 +42773,11 @@
           "number": 6552,
           "title": "flaky TestJetStreamClusterAccountUsageDrifts (#8837)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6845,
+          "title": "filestore recovery panic and preserve stream data on failure (#8844)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42780,7 +42785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:22:46.372Z",
+      "verified_at": "2026-11-04T16:50:13.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44048,8 +44053,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a4d4c4a7",
-      "content_hash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
+      "source_version": "6d3acec0",
+      "content_hash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44267,6 +44272,11 @@
           "number": 6780,
           "title": "Require NUC strategy bandit in /arc-purposal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6847,
+          "title": "Clippy assert_is_empty errors in unit tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44274,7 +44284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:04:33.742Z",
+      "verified_at": "2026-11-04T16:50:18.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44920,14 +44930,19 @@
       "slug": "olric-data-olric",
       "platform": "github",
       "source_url": "https://github.com/olric-data/olric",
-      "source_version": "c49c44a8",
-      "content_hash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
+      "source_version": "9092df94",
+      "content_hash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
       "dossier_path": "07_PROJECT_LEARNING/olric-data-olric-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/olric-data-olric-learnings.md",
       "promoted_rules": [
         {
           "number": 2096,
           "title": "minor typo in package documentation for `ramblock`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6846,
+          "title": "Rebuild the routing table without serially probing every partition",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44936,7 +44951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:53:54.646Z",
+      "verified_at": "2026-11-04T16:50:15.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85763,14 +85778,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
-      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T06:11:52.852Z"
+      "verified_at": "2026-11-04T16:50:12.827Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -112775,7 +112790,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
+      "content_hash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
       "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "promoted_rules": [
@@ -112838,6 +112853,16 @@
           "number": 5974,
           "title": "Structured Output Channel Parsing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6843,
+          "title": "MoE Router Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6844,
+          "title": "Structured Output Grammar Enforcement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -112845,7 +112870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:53:04.772Z",
+      "verified_at": "2026-11-04T16:50:12.827Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174950,6 +174975,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T16:43:12.792Z"
+    },
+    "rule-6843": {
+      "learning_id": "rule-6843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6843,
+      "title": "MoE Router Normalization Invariant",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:50:12.827Z"
+    },
+    "rule-6844": {
+      "learning_id": "rule-6844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6844,
+      "title": "Structured Output Grammar Enforcement Invariant",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:50:12.827Z"
+    },
+    "rule-6845": {
+      "learning_id": "rule-6845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6845,
+      "title": "filestore recovery panic and preserve stream data on failure (#8844)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "a441962c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:50:13.674Z"
+    },
+    "rule-6846": {
+      "learning_id": "rule-6846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6846,
+      "title": "Rebuild the routing table without serially probing every partition",
+      "source_url": "https://github.com/olric-data/olric",
+      "source_version": "9092df94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:50:15.363Z"
+    },
+    "rule-6847": {
+      "learning_id": "rule-6847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6847,
+      "title": "Clippy assert_is_empty errors in unit tests",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "6d3acec0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T16:50:18.661Z"
     }
   },
   "aliases": {

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a4d4c4a7",
+    "sourceVersion": "6d3acec0",
     "license": "Apache-2.0",
-    "contentHash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
-    "lastHarvestedAt": "2026-11-04T09:04:33.863Z",
+    "contentHash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
+    "lastHarvestedAt": "2026-11-04T16:50:18.752Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5513,10 +5513,10 @@
     "repository": "olric-data/olric",
     "platform": "github",
     "sourceUrl": "https://github.com/olric-data/olric",
-    "sourceVersion": "c49c44a8",
+    "sourceVersion": "9092df94",
     "license": "Apache-2.0",
-    "contentHash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
-    "lastHarvestedAt": "2026-10-19T03:53:54.699Z",
+    "contentHash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
+    "lastHarvestedAt": "2026-11-04T16:50:15.435Z",
     "learningId": "learn-github-olric-data-olric"
   },
   "carbon-design-system-carbon-components-svelte": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "ca2c4da1",
+    "sourceVersion": "a441962c",
     "license": "Apache-2.0",
-    "contentHash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
-    "lastHarvestedAt": "2026-11-03T17:22:46.485Z",
+    "contentHash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
+    "lastHarvestedAt": "2026-11-04T16:50:13.739Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
-    "lastHarvestedAt": "2026-10-31T00:53:04.876Z",
+    "contentHash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
+    "lastHarvestedAt": "2026-11-04T16:50:12.895Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {

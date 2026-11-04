@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T16:43:15.447Z",
-    "lastVerified": "2026-11-04T16:43:15.447Z",
+    "lastChecked": "2026-11-04T16:50:21.285Z",
+    "lastVerified": "2026-11-04T16:50:21.285Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -434,22 +434,21 @@
     "lastVerified": "2026-11-03T20:11:11.388Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T10:57:37.221Z",
-    "lastVerified": "2026-11-04T10:57:37.221Z",
+    "lastChecked": "2026-11-04T16:50:17.027Z",
+    "lastVerified": "2026-11-04T16:50:17.027Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a4d4c4a7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1635,14 +1634,14 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T17:22:45.143Z",
-    "lastVerified": "2026-11-03T17:22:45.143Z",
+    "lastChecked": "2026-11-04T16:50:12.411Z",
+    "lastVerified": "2026-11-04T16:50:12.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "6c8976ece9af45326b5b0eca4ca3571215ae51908da7b49b6d96ffb71eb6d101",
+    "contentHash": "426cb9db8c931fbde679cb6dad66c9ac013852c3d0d60f3fd9f5108bd3b23289",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1735,8 +1734,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T07:33:20.433Z",
-    "lastVerified": "2026-11-04T07:33:20.433Z",
+    "lastChecked": "2026-11-04T16:50:07.368Z",
+    "lastVerified": "2026-11-04T16:50:07.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -5004,9 +5003,9 @@
   "jpush-aurora-imui": {
     "name": "aurora-imui",
     "officialUrl": "https://github.com/jpush/aurora-imui",
-    "lastChecked": "2026-10-31T09:46:57.373Z",
+    "lastChecked": "2026-11-04T16:50:02.109Z",
     "revisionIdentifier": "fb74b792",
-    "lastVerified": "2026-10-31T09:46:57.373Z"
+    "lastVerified": "2026-11-04T16:50:02.109Z"
   },
   "aquasecurity-trivy": {
     "name": "aquasecurity/trivy",
@@ -6192,9 +6191,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-02T17:31:30.338Z",
+    "lastChecked": "2026-11-04T16:49:57.411Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-02T17:31:30.338Z"
+    "lastVerified": "2026-11-04T16:49:57.411Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -6544,11 +6543,21 @@
     "lastVerified": "2026-11-04T03:57:34.954Z"
   },
   "olric-data-olric": {
-    "name": "olric",
+    "name": "olric-data/olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-03T16:32:23.564Z",
-    "revisionIdentifier": "c49c44a8",
-    "lastVerified": "2026-11-03T16:32:23.564Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-04T16:50:14.571Z",
+    "lastVerified": "2026-11-04T16:50:14.571Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-olric-data-olric",
+    "contentHash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -12444,12 +12453,12 @@
     "officialUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T00:52:50.423Z",
-    "lastVerified": "2026-10-31T00:52:50.423Z",
+    "lastChecked": "2026-11-04T16:49:59.586Z",
+    "lastVerified": "2026-11-04T16:49:59.586Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
+    "contentHash": "a6508d0b7d708d45660f9a3d7c3f99cce75c3d9ad23deb58ff94534dc933de00",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
