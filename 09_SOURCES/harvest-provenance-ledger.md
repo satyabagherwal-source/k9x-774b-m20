@@ -7117,3 +7117,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `89b6cdc1` | Multi-dimensional audit evidence | 2026-11-04T01:34:58.252Z |
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `93b9a2d9` | Multi-dimensional audit evidence | 2026-11-04T01:44:30.928Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `018cd7fa` | Multi-dimensional audit evidence | 2026-11-04T01:44:35.599Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `cbb0bbec` | Multi-dimensional audit evidence | 2026-11-04T01:51:13.615Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `e755a8b6` | Multi-dimensional audit evidence | 2026-11-04T01:51:20.927Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `4290c03d` | Multi-dimensional audit evidence | 2026-11-04T01:51:22.848Z |

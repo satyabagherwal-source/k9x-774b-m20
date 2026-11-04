@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:44:35.612Z",
+  "last_updated": "2026-11-04T01:51:22.857Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
-      "verified_at": "2026-11-03T22:15:25.767Z",
+      "content_hash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
+      "verified_at": "2026-11-04T01:51:22.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:15:25.767Z"
+      "last_updated": "2026-11-04T01:51:22.856Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
-      "verified_at": "2026-10-31T23:08:22.721Z",
+      "content_hash": "48f4cee93fef4f5f6c65ea6323ef42c1d22c1fa742523b543de68be119bd61e4",
+      "verified_at": "2026-11-04T01:51:13.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:08:22.721Z"
+      "last_updated": "2026-11-04T01:51:13.623Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
-      "verified_at": "2026-10-30T00:01:14.086Z",
+      "content_hash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
+      "verified_at": "2026-11-04T01:51:20.935Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:01:14.086Z"
+      "last_updated": "2026-11-04T01:51:20.935Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",

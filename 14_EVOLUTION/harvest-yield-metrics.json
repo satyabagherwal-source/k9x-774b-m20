@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:44:35.607Z",
-  "total_cycles_completed": 7085,
-  "total_learnings_persisted": 7085,
-  "total_rules_promoted": 6729,
+  "last_updated": "2026-11-04T01:51:22.853Z",
+  "total_cycles_completed": 7088,
+  "total_learnings_persisted": 7088,
+  "total_rules_promoted": 6732,
   "history": [
-    {
-      "timestamp": "2026-11-03T12:25:01.720Z",
-      "repository": "alfa546/Crawler",
-      "learningId": "learn-github-alfa546-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:25:09.939Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:25:12.093Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T12:32:12.235Z",
       "repository": "zvec-ai/zvec-grep",
@@ -1403,6 +1382,27 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:51:13.620Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:51:20.932Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:51:22.853Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

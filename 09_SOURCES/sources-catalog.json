@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "ca4e1972",
+    "sourceVersion": "4290c03d",
     "license": "BSD-3-Clause",
-    "contentHash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
-    "lastHarvestedAt": "2026-11-03T22:15:25.757Z",
+    "contentHash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
+    "lastHarvestedAt": "2026-11-04T01:51:22.848Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "8d71e7f5",
+    "sourceVersion": "cbb0bbec",
     "license": "MIT",
-    "contentHash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
-    "lastHarvestedAt": "2026-10-31T23:08:22.714Z",
+    "contentHash": "48f4cee93fef4f5f6c65ea6323ef42c1d22c1fa742523b543de68be119bd61e4",
+    "lastHarvestedAt": "2026-11-04T01:51:13.615Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "7f38d5dd",
+    "sourceVersion": "e755a8b6",
     "license": "MPL-2.0",
-    "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
-    "lastHarvestedAt": "2026-10-30T00:01:14.077Z",
+    "contentHash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
+    "lastHarvestedAt": "2026-11-04T01:51:20.927Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {

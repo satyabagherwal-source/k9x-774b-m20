@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:44:35.497Z",
+  "last_updated": "2026-11-04T01:51:22.775Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12118,8 +12118,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "7f38d5dd",
-      "content_hash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
+      "source_version": "e755a8b6",
+      "content_hash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -12177,6 +12177,11 @@
           "number": 5564,
           "title": "WHATWG Forbidden Response Header Exclusion Invariant in Codegen",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6708,
+          "title": "v2/internals/pkginfo: resolve nested modules missing from the module cache",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12184,7 +12189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:01:13.972Z",
+      "verified_at": "2026-11-04T01:51:20.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44234,8 +44239,8 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "8d71e7f5",
-      "content_hash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
+      "source_version": "cbb0bbec",
+      "content_hash": "48f4cee93fef4f5f6c65ea6323ef42c1d22c1fa742523b543de68be119bd61e4",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
@@ -44263,6 +44268,11 @@
           "number": 5568,
           "title": "Zero-Width Control Sequence Decoupling in Layout Calculators",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6707,
+          "title": "deps): Update site (#1911)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44270,7 +44280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:08:22.617Z",
+      "verified_at": "2026-11-04T01:51:13.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55308,8 +55318,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "ca4e1972",
-      "content_hash": "e7d8656ab1942ffe7e0d17737d30633ef13ea26e69d10f6bf96b1596f4c0e729",
+      "source_version": "4290c03d",
+      "content_hash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -55472,6 +55482,11 @@
           "number": 6640,
           "title": "tstest/natlab/vnet: move PCP/NAT-PMP code to portmapper.go (#22145)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6709,
+          "title": "ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55479,7 +55494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:15:25.647Z",
+      "verified_at": "2026-11-04T01:51:22.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172239,6 +172254,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:44:30.821Z"
+    },
+    "rule-6707": {
+      "learning_id": "rule-6707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6707,
+      "title": "deps): Update site (#1911)",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "cbb0bbec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:51:13.526Z"
+    },
+    "rule-6708": {
+      "learning_id": "rule-6708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6708,
+      "title": "v2/internals/pkginfo: resolve nested modules missing from the module cache",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "e755a8b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:51:20.836Z"
+    },
+    "rule-6709": {
+      "learning_id": "rule-6709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6709,
+      "title": "ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "4290c03d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:51:22.756Z"
     }
   },
   "aliases": {
