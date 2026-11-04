@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:51:22.775Z",
+  "last_updated": "2026-11-04T01:58:25.871Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8637,8 +8637,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "9d35eddd",
-      "content_hash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
+      "source_version": "20a45168",
+      "content_hash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -8661,6 +8661,11 @@
           "number": 6448,
           "title": "Merge pull request #8006 from haarchri/feature/add-drc-shortname",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6713,
+          "title": "composite): don't reconcile an XR we already finished deleting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8668,7 +8673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:04:55.757Z",
+      "verified_at": "2026-11-04T01:58:25.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48067,8 +48072,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "e344f15d",
-      "content_hash": "c40ffb01a0b75350c1869da51be667410ad3fede0d9b57da015fd3c9f36ac9fd",
+      "source_version": "b41fd6bd",
+      "content_hash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -48101,6 +48106,11 @@
           "number": 5997,
           "title": "docs: link TanStack DB trophy to the official RxDB collection docs (#9370)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6712,
+          "title": "flaky RxStorage .cleanup() test with a separate now() instance (#9383)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48108,7 +48118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:46:47.832Z",
+      "verified_at": "2026-11-04T01:58:23.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75638,8 +75648,8 @@
       "slug": "scrapinghub-dateparser",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/dateparser",
-      "source_version": "b1a87f9f",
-      "content_hash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
+      "source_version": "2d93cdc5",
+      "content_hash": "f9074c6e4fc840147bd722795e498e66354aa7cd06ca976d22304a75fd3db4e2",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "promoted_rules": [
@@ -75667,6 +75677,11 @@
           "number": 5824,
           "title": "Deprecate instead of remove (#1556)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6711,
+          "title": "Bump the github-actions group with 5 updates (#1560)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75674,7 +75689,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:18:37.194Z",
+      "verified_at": "2026-11-04T01:58:20.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172296,6 +172311,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:51:22.756Z"
+    },
+    "rule-6711": {
+      "learning_id": "rule-6711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6711,
+      "title": "Bump the github-actions group with 5 updates (#1560)",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "2d93cdc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:58:20.786Z"
+    },
+    "rule-6712": {
+      "learning_id": "rule-6712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6712,
+      "title": "flaky RxStorage .cleanup() test with a separate now() instance (#9383)",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "b41fd6bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:58:23.205Z"
+    },
+    "rule-6713": {
+      "learning_id": "rule-6713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6713,
+      "title": "composite): don't reconcile an XR we already finished deleting",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "20a45168",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:58:25.847Z"
     }
   },
   "aliases": {

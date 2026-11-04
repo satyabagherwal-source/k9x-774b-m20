@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
-> **Source Version**: `b1a87f9f`  
+> **Source Version**: `2d93cdc5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:18:36.778Z  
+> **Timestamp**: 2026-11-04T01:58:20.051Z  
 > **Learning ID**: `learn-github-scrapinghub-dateparser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:13:34.895Z  
+> **Harvest Timestamp**: 2026-11-04T01:58:19.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: python parser for human readable dates
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 2860 stars
+- **Stars / Engagement**: 2861 stars
 
 ---
 
@@ -1299,14 +1299,11 @@ class HijriCalendar(CalendarBase):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1560** (2026-11-02): **Bump the github-actions group with 5 updates**
+  *Symptoms*: Bumps the github-actions group with 5 updates:  | Package | From | To | | --- | --- | --- | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |  Updates `actions/upload-artifact` from 7.0.1 to 7.0.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/upload-artifact/releases">actions/upload-artifact's releases</a>.</em></p> <blockquote> <h2>v7.0.2</h2> <h2>What's Changed</h2> <ul> <li>Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.</li> <li>Updates <code>@​actions/artifact</code> to v6.3.1.</li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> made their first contribution in <a href="https://redirect.github.com/actions/upload-artifact/pull/821">actions/upload-artifact#821</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2">https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2</a>
+
 - **Issue #1557** (2026-10-30): **Replace the VERSION placeholders with 1.5.0**
   *Symptoms*: The `versionadded` directives of the APIs added in 1.5.0 still say `VERSION`, a placeholder that bump-my-version does not replace (its `[[tool.bumpversion.files]]` entries only cover `pyproject.toml`, `dateparser/__init__.py`, `HISTORY.rst` and `SECURITY.md`). Without this change the 1.5.0 documentation would read "New in version VERSION".  It sets the six placeholders to `1.5.0`:  - `PartOfDay` and `PartsOfDay` (`dateparser/_parts_of_day.py`) - `DateData.part_of_day` (`dateparser/date.py`) - the `add_period` argument of `search_dates()` (`dateparser/search/__init__.py`) - the `TIMEZONE_ABBREVIATIONS` and `PARTS_OF_DAY` settings (`docs/settings.rst`)  `git grep -w VERSION` finds no other placeholder, and #1553, #1554 and #1556 add none. The change is text-only inside docstrings and docs, so it does not conflict with those PRs or with the advisory fixes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-
-- **Issue #1556** (2026-10-30): **Deprecate instead of remove**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1556?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.19%. Comparing base ([`533b0df`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/533b0df032f6028b70739b8a1c6fa1ac23f3f8b0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`599afae`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/599afae37d2acca88079760b2f6bfb8cecb264f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #1556      +
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks        ---  <sub>Comparing <code>AdrianAtZyte:deprecate-instead-of-remove</code> (599afae) with <code>master</code> (533b0df)</sub>  <a href="https://app.codspeed.io/scrapinghub/dateparser/branches/AdrianAtZyte%3Adeprecate-instead-of-remove?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1323,337 +1320,120 @@ class HijriCalendar(CalendarBase):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1a87f9f` (2026-10-30)
-**Commit Message**: Deprecate instead of remove (#1556)
+### Incident Patch 1: `2d93cdc5` (2026-11-02)
+**Commit Message**: Bump the github-actions group with 5 updates (#1560)
 
-**File**: `dateparser/calendars/__init__.py` (modified, +29/-4)
+Bumps the github-actions group with 5 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` |
+| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` |
+| [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` |
+| [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |
+
+
+Updates `actions/upload-artifact` from 7.0.1 to 7.0.2
+- [Release notes](https://github.com/actions/upload-artifact/releases)
+- [Commits](https://github.com/actions/upload-artifact/compare/043fb46d1a93c77aae656e7c1c64a875d1fc6a0a...cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+
+Updates `github/codeql-action/upload-sarif` from 4.38.2 to 4.39.1
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0c
+
+**File**: `.github/workflows/cifuzz.yml` (modified, +2/-2)
 ```diff
-@@ -8,11 +8,17 @@
- 
- 
- class _CalendarParser(Protocol):
--    def parse(
-+    def _parse_with_parts(
-         self, datestring: str, settings: Settings
-     ) -> tuple[datetime, str | None, tuple[str, ...]]: ...
- 
- 
-+class _PartlessCalendarParser(Protocol):
-+    def parse(
-+        self, datestring: str, settings: Settings
-+    ) -> tuple[datetime, str | None]: ...
-+
-+
- class CalendarBase:
-     """Base setup class for non-Gregorian calendar system.
- 
-@@ -21,14 +27,20 @@ class CalendarBase:
-     :type source: str
-     """
- 
--    parser: _CalendarParser = NotImplemented
-+    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
- 
-     def __init__(self, source: str) -> None:
-         self.source = source
- 
-     def get_date(self) -> DateData | None:
-         try:
--            date_obj, period, parts = self.parser.parse(self.source, settings)
-+            if hasattr(self.parser, "_parse_with_parts"):
-+                date_obj, period, parts = self.parser._parse_with_parts(
-+                    self.source, settings
-+                )
-+            else:
-+                date_obj, period = self.parser.parse(self.source, settings)
-+                parts = ()
-             return DateData(date_obj=date_obj, period=period, parts=parts)
-         except ValueError:
-             return None
-@@ -150,6 +162,19 @@ def parse(
-         settings: Settings,
-         tz: tzinfo | None = None,
-         date_order: str | None = None,
-+    ) -> tuple[datetime, str | None]:
-+        date_obj, period, _ = cls._parse_with_parts(
-+            datestring, settings, tz, date_order
-+        )
-+        return date_obj, period
-+
-+    @classmethod
-+    def _parse_with_parts(
-+        cls,
-+        datestring: str,
-+        settings: Settings,
-+        tz: tzinfo | None = None,
-+        date_order: str | None = None,
-     ) -> tuple[datetime, str | None, tuple[str, ...]]:
-         datestring = cls.to_latin(datestring)
--        return super().parse(datestring, settings, tz, date_order)
-+        return super()._parse_with_parts(datestring, settings, tz, date_order)
+@@ -21,14 +21,14 @@ jobs:
+         fuzz-seconds: 600
+         output-sarif: true
+     - name: Upload Crash
+-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+       if: failure() && steps.build.outcome == 'success'
+       with:
+         name: artifacts
+         path: ./out/artifacts
+     - name: Upload Sarif
+       if: always() && steps.build.outcome == 'success'
+-      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+       with:
+         # Path to SARIF file relative to the root of the repository
+         sarif_file: cifuzz-sarif/results.sarif
 ```
 
-**File**: `dateparser/calendars/french_republican.py` (modified, +1/-1)
+**File**: `.github/workflows/codspeed.yml` (modified, +1/-1)
 ```diff
-@@ -57,7 +57,7 @@ def _month_length(year: int, month: int) -> int:
- 
- class _french_republican_parser:
-     @classmethod
--    def parse(
-+    def _parse_with_parts(
-         cls, datestring: str, settings: "Settings"
-     ) -> tuple[datetime, str | None, tuple[str, ...]]:
-         normalized = "".join(
+@@ -41,7 +41,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - name: Set up Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.13"
+       - name: Install dependencies
 ```
 
-**File**: `dateparser/calendars/minguo.py` (modified, +2/-2)
+**File**: `.github/workflows/main.yml` (modified, +1/-1)
 ```diff
-@@ -37,14 +37,14 @@ def _get_date_obj(self, token: str, directive: str) -> Any:
-         return super()._get_date_obj(token, directive)
- 
-     @classmethod
--    def parse(
-+    def _parse_with_parts(
-         cls,
-         datestring: str,
-         settings: Settings,
-         tz: tzinfo | None = None,
-         date_order: str | None = None,
-     ) -> tuple[datetime, str | None, tuple[str, ...]]:
--        return super(non_gregorian_parser, cls).parse(
-+        return super(non_gregorian_parser, cls)._parse_with_parts(
-             datestring, settings, tz, date_order or "YMD"
-         )
- 
+@@ -53,7 +53,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - name: 'Set up Python ${{ matrix.python-version }}'
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: ${{ matrix.python-version }}
+       - name: Install language-pack-fr
 ```
 
-**File**: `dateparser/conf.py` (modified, +18/-0)
+**File**: `.github/workflows/publish.yml` (modified, +4/-4)
 ```diff
-@@ -1,3 +1,5 @@
-+import hashlib
-+import warnings
- from collections.abc import Callable, Iterable, Mapping
- from datetime import datetime, timedelta
- from functools import wraps
-@@ -83,6 +85,22 @@ def __init__(self, settings: Mapping[str, Any] | None = None) -> None:
-         else:
-             self._updateall(self._get_settings_from_pyfile().items())
+@@ -16,7 +16,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - name: Set up Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: "3.x"
+       - name: Install dependencies
+@@ -28,7 +28,7 @@ jobs:
+           python -m build .
+           twine check dist/*
+       - name: Upload package
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: packages
+           path: dist/
+@@ -49,12 +49,12 @@ jobs:
  
-+    @classmethod
-+    def get_key(cls, settings: Mapping[str, Any] | None = None) -> str:
-+        warnings.warn(
-+            "dateparser.conf.Settings.get_key() is deprecated and will be "
-+            "removed in a future version.",
-+            FutureWarning,
-+            stacklevel=2,
-+        )
-+        if not settings:
-+            return "default"
-+
-+        keys = sorted([f"{key}-{settings[key]}" for key in settings])
-+        return hashlib.md5(
-+            "".join(keys).encode("utf-8"), usedforsecurity=False
-+        ).hexdigest()
-+
-     @classmethod
-     def _get_settings_from_pyfile(cls) -> dict[str, Any]:
-         if not cls._pyfile_data:
-```
-
-**File**: `dateparser/date.py` (modified, +1/-1)
-```diff
-@@ -608,7 +608,7 @@ def _try_parser(
- 
-         for order in candidates:
-             try:
--                date_obj, period, parts = date_parser.parse(
-+                date_obj, period, parts = date_parser._parse_with_parts(
-                     translated,
-                     parse_method=parse_method,
-                     settings=self._settings,
-```
-
-**File**: `dateparser/date_parser.py` (modified, +23/-3)
-```diff
-@@ -8,11 +8,29 @@
- 
- 
- class DateParser:
--    @apply_settings
-     def parse(
-         self,
-         date_string: str,
--        parse_method: Callable[..., tuple[datetime, str | None, tuple[str, ...]]],
-+        parse_method: Callable[
-+            ...,
-+            tuple[datetime, str | None] | tuple[datetime, str | None, tuple[str, ...]],
-+        ],
-+        settings: Settings | dict[str, Any] | None = None,
-+        date_order: str | None = None,
-+    ) -> tuple[datetime, str | None]:
-+        date_obj, period, _ = self._parse_with_parts(
-+            date_string, parse_method, settings=settings, date_order=date_order
-+        )
-+        return date_obj, period
-+
-+    @apply_settings
-+    def _parse_with_parts(
-+        self,
-+        date_string: str,
-+        parse_method: Callable[
-+            ...,
-+            tuple[datetime, str | None] | tuple[datetime, str | None, tuple[str, ...]],
-+        ],
-         settings: Settings | dict[str, Any] | None = None,
-         date_order: str | None = None,
-     ) -> tuple[datetime, str | None, tuple[str, ...]]:
-@@ -25,9 +43,11 @@ def parse(
-         date_string = strip_braces(date_string)
-         date_string, ptz = pop_tz_offset_from_string(date_string, settings=settings)
- 
--        date_obj, period, parts = parse_method(
-+        result = parse_method(
-             date_string, settings=settings, tz=ptz, date_order=date_order
-         )
-+        date_obj, period = result[:2]
-+        parts = result[2] if len(result) == 3 else ()
- 
-         _settings_tz = settings.TIMEZONE.lower()
- 
-```
-
-**File**: `dateparser/freshness_date_parser.py` (modified, +8/-2)
-```diff
-@@ -58,7 +58,13 @@ def _parse_time(self, date_string: str, settings: "Settings") -> time | None:
-     def get_local_tz(self) -> tzinfo:
-         return _get_localzone()
- 
--    def parse(  # noqa: PLR0912, PLR0915
-+    def parse(
-+        self, date_string: str, settings: "Settings"
-+    ) -> tuple[datetime | None, str | None]:
-+        date, period, _ = self._parse_with_parts(date_string, settings)
-+        return date, period
-+
-+    def _parse_with_parts(  # noqa: PLR0912, PLR0915
-         self, date_string: str, settings: "Settings"
-     ) -> tuple[datetime | None, str | None, tuple[str, ...]]:
-         date_string = strip_braces(date_string)
-@@ -248,7 +254,7 @@ def get_kwargs(
-     def get_date_data(self, date_string: str, settings: "Settings") -> "DateData":
-         from dateparser.date import DateData  # noqa: PLC0415
- 
--        date, period, parts = self.parse(date_string, settings)
-+        date, period, parts = self._parse_with_parts(date_string, settings)
-         return DateData(date_obj=date, period=period, parts=parts)
- 
- 
-```
-
-**File**: `dateparser/parser.py` (modified, +2/-2)
-```diff
-@@ -145,7 +145,7 @@ def _parse_absolute(
-     tz: tzinfo | None = None,
-     date_order: str | None = None,
- ) -> tuple[datetime, str | None, tuple[str, ...]]:
--    return _parser.parse(datestring, settings, tz, date_order=date_order)
-+    return _parser._parse_with_parts(datestring, settings, tz, date_order=date_order)
- 
- 
- def _parse_nospaces(
-@@ -851,7 +851,7 @@ def _correct_for_month(self, dateobj: datetime) -> datetime:
-         )
- 
-     @classmethod
--    def parse(
-+    def _parse_with_parts(
-         cls,
-         datestring: str,
-         settings: "Settings",
-```
-
----
-
-### Incident Patch 2: `533b0df0` (2026-10-30)
-**Commit Message**: Replace the VERSION placeholders with 1.5.0 (#1557)
-
-**File**: `dateparser/_parts_of_day.py` (modified, +2/-2)
-```diff
-@@ -10,7 +10,7 @@ class PartOfDay(str, Enum):
- 
-     See :attr:`DateData.part_of_day <dateparser.date.DateData.part_of_day>`.
- 
--    .. versionadded:: VERSION
-+    .. versionadded:: 1.5.0
-     """
- 
-     EARLY_MORNING = "early_morning"
-@@ -28,7 +28,7 @@ class PartsOfDay:
-     """Time of the day to use for each :class:`PartOfDay`, for the
-     ``PARTS_OF_DAY`` :ref:`setting <settings>`.
- 
--    .. versionadded:: VERSION
-+    .. versionadded:: 1.5.0
-     """
- 
-     early_morning: time = time(3)
-```
-
-**File**: `dateparser/date.py` (modified, +1/-1)
-```diff
-@@ -698,7 +698,7 @@ class DateData:
-     """:class:`~dateparser.PartOfDay` that the date string refers to, e.g.
-     :attr:`~dateparser.PartOfDay.NIGHT` for ``"tonight"``, or ``None``.
- 
--    .. versionadded:: VERSION
-+    .. versionadded:: 1.5.0
- 
-     Its time comes from the ``PARTS_OF_DAY`` :ref:`setting <settings>`, unless
-     the date string also has a time, e.g. ``"tonight at 11pm"``. If it does
-```
-
-**File**: `dateparser/search/__init__.py` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ def search_dates(
-         detected language. ``time`` and ``part_of_day`` require the
-         ``RETURN_TIME_AS_PERIOD`` :ref:`setting <settings>`.
- 
--        .. versionadded:: VERSION
-+        .. versionadded:: 1.5.0
-     :type add_period: bool
- 
-     :return: Returns list of tuples containing:
-```
-
-**File**: `docs/settings.rst` (modified, +2/-2)
-```diff
-@@ -75,7 +75,7 @@ Time by default. Keys are case-sensitive and must be abbreviations that
- dateparser supports, e.g. ``ChST``. ``TIMEZONE`` and ``TO_TIMEZONE`` keep the
- default offsets.
- 
--.. versionadded:: VERSION
-+.. versionadded:: 1.5.0
- 
- >>> from datetime import timedelta
- >>> settings = {
-@@ -328,7 +328,7 @@ Defaults to ``False``.
- to use for each part of the day, e.g. for ``tonight``. Defaults to
- ``PartsOfDay()``.
- 
--.. versionadded:: VERSION
-+.. versionadded:: 1.5.0
- 
-     >>> from datetime import time
-     >>> from dateparser import PartsOfDay
+     steps:
+       - name: Download package
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+           name: packages
+           path: dist/
+       - name: Publish package
+-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
++        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+         with:
+           print-hash: true
+           verbose: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1560** (2026-11-02): Bump the github-actions group with 5 updates (@dependabot[bot])
 - **PR #1557** (2026-10-30): Replace the VERSION placeholders with 1.5.0 (@serhii73)
 - **PR #1556** (2026-10-30): Deprecate instead of remove (@AdrianAtZyte)
 - **PR #1555** (closed): stop rescanning the date string per redundant timezone token (@radhika1314)
 - **PR #1552** (2026-10-27): Limit the name readings tried for date_formats (@serhii73)
 - **PR #1550** (2026-10-26): Fix CI on the ubuntu-26.04 runner image (@AdrianAtZyte)
-- **PR #1549** (2026-10-27): Document how date_formats falls back to the other parsers (@serhii73)
 
 ---
 
@@ -1673,59 +1453,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Deprecate instead of remove (#1556)
+## X. Bump the github-actions group with 5 updates (#1560)
 
 **RULE**:
-When implementing operations in `dateparser/calendars/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cifuzz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1a87f9f`: Deprecate instead of remove (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d93cdc5`: Bump the github-actions group with 5 updates (#1560). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/calendars/__init__.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cifuzz.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    def _parse_with_parts(
-class _PartlessCalendarParser(Protocol):
-    def parse(
-        self, datestring: str, settings: Settings
-    ) -> tuple[datetime, str | None]: ...
-
-
-    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
-            if hasattr(self.parser, "_parse_with_parts"):
-                date_obj, period, parts = self.parser._parse_with_parts(
-                    self.source, settings
-                )
-            else:
-                date_obj, period = self.parser.parse(self.source, settings)
-                parts = ()
-    ) -> tuple[datetime, str | None]:
-        date_obj, period, _ = cls._parse_with_parts(
-            datestring, settings, tz, date_order
-        )
-        return date_obj, period
-
-    @classmethod
-    def _parse_with_parts(
-        cls,
-        datestring: str,
-        settings: Settings,
-        tz: tzinfo | None = None,
-        date_order: str | None = None,
-        return super()._parse_with_parts(datestring, settings, tz, date_order)
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    def parse(
-    parser: _CalendarParser = NotImplemented
-            date_obj, period, parts = self.parser.parse(self.source, settings)
-        return super().parse(datestring, settings, tz, date_order)
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1a87f9f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d93cdc5` are properly handled with clean fallback behavior.

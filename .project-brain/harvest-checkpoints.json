@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:51:22.857Z",
+  "last_updated": "2026-11-04T01:58:25.976Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "c40ffb01a0b75350c1869da51be667410ad3fede0d9b57da015fd3c9f36ac9fd",
-      "verified_at": "2026-10-31T01:46:47.938Z",
+      "content_hash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
+      "verified_at": "2026-11-04T01:58:23.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:46:47.938Z"
+      "last_updated": "2026-11-04T01:58:23.336Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
-      "verified_at": "2026-10-31T23:16:01.728Z",
+      "content_hash": "9a6934b60ac7f3a155d2cb38001dbc94c092898903dcad799b9893c325aa4cf0",
+      "verified_at": "2026-11-04T01:58:20.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:16:01.728Z"
+      "last_updated": "2026-11-04T01:58:20.816Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
-      "verified_at": "2026-11-02T16:04:55.862Z",
+      "content_hash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
+      "verified_at": "2026-11-04T01:58:25.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:04:55.862Z"
+      "last_updated": "2026-11-04T01:58:25.975Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -14931,14 +14931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-dateparser",
-      "content_hash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
-      "verified_at": "2026-10-30T18:18:37.268Z",
+      "content_hash": "f9074c6e4fc840147bd722795e498e66354aa7cd06ca976d22304a75fd3db4e2",
+      "verified_at": "2026-11-04T01:58:20.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:18:37.268Z"
+      "last_updated": "2026-11-04T01:58:20.936Z"
     },
     "google/closure-compiler": {
       "repository": "google/closure-compiler",

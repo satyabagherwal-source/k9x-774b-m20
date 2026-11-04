@@ -7120,3 +7120,7 @@ Every entry in this ledger must capture:
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `cbb0bbec` | Multi-dimensional audit evidence | 2026-11-04T01:51:13.615Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `e755a8b6` | Multi-dimensional audit evidence | 2026-11-04T01:51:20.927Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `4290c03d` | Multi-dimensional audit evidence | 2026-11-04T01:51:22.848Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `2baa819b` | Multi-dimensional audit evidence | 2026-11-04T01:58:20.803Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `2d93cdc5` | Multi-dimensional audit evidence | 2026-11-04T01:58:20.924Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `b41fd6bd` | Multi-dimensional audit evidence | 2026-11-04T01:58:23.324Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `20a45168` | Multi-dimensional audit evidence | 2026-11-04T01:58:25.965Z |

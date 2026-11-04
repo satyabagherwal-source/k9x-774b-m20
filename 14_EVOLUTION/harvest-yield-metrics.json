@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:51:22.853Z",
-  "total_cycles_completed": 7088,
-  "total_learnings_persisted": 7088,
-  "total_rules_promoted": 6732,
+  "last_updated": "2026-11-04T01:58:25.971Z",
+  "total_cycles_completed": 7092,
+  "total_learnings_persisted": 7092,
+  "total_rules_promoted": 6736,
   "history": [
-    {
-      "timestamp": "2026-11-03T12:32:12.235Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:51:35.007Z",
-      "repository": "nduckmink/arkon",
-      "learningId": "learn-github-nduckmink-arkon",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:51:42.990Z",
-      "repository": "sparrowcode/AlertKit",
-      "learningId": "learn-github-sparrowcode-alertkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:51:52.157Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T13:05:09.526Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-04T01:51:22.853Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:58:20.810Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:58:20.932Z",
+      "repository": "scrapinghub/dateparser",
+      "learningId": "learn-github-scrapinghub-dateparser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:58:23.331Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:58:25.971Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `9d35eddd`  
+> **Source Version**: `20a45168`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:04:55.192Z  
+> **Timestamp**: 2026-11-04T01:58:25.173Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:04:53.990Z  
+> **Harvest Timestamp**: 2026-11-04T01:58:24.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12221 stars
+- **Stars / Engagement**: 12222 stars
 
 ---
 
@@ -1380,6 +1380,7 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
+	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	kmeta "k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/discovery"
@@ -1402,6 +1403,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/reconciler/customresourcesgate"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/resource/unstructured"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/xpkg"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/xpkg/parser"
@@ -1490,12 +1492,10 @@ type startCommand struct {
 	EnableProviderDeletionProtection  bool `group:"Alpha Features:" help:"Enable automatic protection of Providers from deletion when they have active managed resources. Requires --enable-usages."`
 	EnablePipelineOCIReferences       bool `group:"Alpha Features:" help:"Enable support for referencing functions by OCI reference in Composition and Operation pipelines."`
 	EnableCompositionRevisionGC       bool `group:"Alpha Features:" help:"Enable garbage collection of unused CompositionRevisions."`
+	EnableFunctionControlledDeletion  bool `group:"Alpha Features:" help:"Enable support for Composition deletion policies (Background, Foreground, Pipeline), which control how a Composition's XRs are deleted."`
 
 	XfnCacheDir             string        `default:"/cache/xfn"                         env:"XFN_CACHE_DIR"             group:"Alpha Features:" help:"Directory used for caching function responses. Requires --enable-function-response-cache."`
-	XfnCacheMaxTTL          time.Duration `default:"24h"                                env:"XFN_CACHE_MAX_TTL"         group:"Alpha Features:" help:"Maximum TTL for cached function responses. Set to 0 to disable. Requires --enable-function-response-cache."`
-	PipelineInspectorSocket string        `default:"/var/run/pipeline-inspector/socket" env:"PIPELINE_INSPECTOR_SOCKET" group:"Alpha Features:" help:"Unix socket path for pipeline inspector sidecar. Requires --enable-pipeline-inspector."`
-
-	EnableDeploymentRuntimeConfigs          bool `default:"true"
+	XfnCacheMaxTTL          time.Duration `default:"24h"                                env:"XFN_CACHE_MAX_TTL"         group:"Alpha Features:" help:"Maximum TTL for cached function responses. Set to 
 ```
 
 
@@ -1525,77 +1525,339 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d35eddd` (2026-11-02)
-**Commit Message**: Merge pull request #8006 from haarchri/feature/add-drc-shortname
+### Incident Patch 1: `b1165006` (2026-11-03)
+**Commit Message**: fix(composite): don't reconcile an XR we already finished deleting
 
-feat(apis): add drc shortName to DeploymentRuntimeConfig
+Once Crossplane removes its finalizer from a deleted XR, another finalizer
+can keep the XR around. Crossplane kept reconciling it, deleting it again on
+every reconcile. A Pipeline XR ran its pipeline again and changed its Deleting
+condition, which triggered another reconcile until the other finalizer was
+removed.
 
-**File**: `apis/pkg/v1beta1/deployment_runtime_config_types.go` (modified, +1/-1)
+Do nothing for a deleted XR that no longer has Crossplane's finalizer.
+
+Signed-off-by: lsviben <[REDACTED_EMAIL]>
+
+**File**: `internal/controller/apiextensions/composite/reconciler.go` (modified, +7/-0)
 ```diff
-@@ -93,7 +93,7 @@ type DeploymentRuntimeConfigSpec struct {
- // Read the Crossplane documentation for
- // [more information about DeploymentRuntimeConfigs](https://docs.crossplane.io/latest/packages/providers/#runtime-configuration).
- // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
--// +kubebuilder:resource:scope=Cluster,categories={crossplane}
-+// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
- type DeploymentRuntimeConfig struct {
- 	metav1.TypeMeta   `json:",inline"`
- 	metav1.ObjectMeta `json:"metadata,omitempty"`
+@@ -660,6 +660,13 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 	if deleting {
+ 		log = log.WithValues("deletion-timestamp", xr.GetDeletionTimestamp())
+ 
++		// We already finished deleting this XR. Another finalizer is keeping
++		// it around, so there's nothing left for us to do.
++		if !slices.Contains(xr.GetFinalizers(), finalizer) {
++			log.Debug("Composite resource is waiting for other finalizers to be removed")
++			return reconcile.Result{}, nil
++		}
++
+ 		// Orphan propagation leaves the composed resources alone.
+ 		if slices.Contains(xr.GetFinalizers(), metav1.FinalizerOrphanDependents) {
+ 			log.Debug("Composite resource is being deleted with orphan propagation, leaving its composed resources alone")
 ```
 
-**File**: `cluster/crds/pkg.crossplane.io_deploymentruntimeconfigs.yaml` (modified, +2/-0)
+**File**: `internal/controller/apiextensions/composite/reconciler_test.go` (modified, +19/-0)
 ```diff
-@@ -12,6 +12,8 @@ spec:
-     kind: DeploymentRuntimeConfig
-     listKind: DeploymentRuntimeConfigList
-     plural: deploymentruntimeconfigs
-+    shortNames:
-+    - drc
-     singular: deploymentruntimeconfig
-   scope: Cluster
-   versions:
+@@ -107,9 +107,11 @@ func TestReconcile(t *testing.T) {
+ 				c: &test.MockClient{
+ 					MockGet: WithComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
++						cr.SetFinalizers([]string{finalizer})
+ 					})),
+ 					MockStatusUpdate: WantComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
++						cr.SetFinalizers([]string{finalizer})
+ 						cr.SetConditions(v1.WatchCircuitClosed(), xpv2.Deleting(), xpv2.ReconcileError(errors.Wrap(errBoom, errRemoveFinalizer)))
+ 					})),
+ 				},
+@@ -132,9 +134,11 @@ func TestReconcile(t *testing.T) {
+ 				c: &test.MockClient{
+ 					MockGet: WithComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
++						cr.SetFinalizers([]string{finalizer})
+ 					})),
+ 					MockStatusUpdate: WantComposite(t, NewComposite(func(cr *composite.Unstructured) {
+ 						cr.SetDeletionTimestamp(&now)
++						cr.SetFinalizers([]string{finalizer})
+ 						cr.SetConditions(v1.WatchCircuitClosed(), xpv2.Deleting(), xpv2.ReconcileSuccess())
+ 					})),
+ 				},
+@@ -150,6 +154,20 @@ func TestReconcile(t *testing.T) {
+ 				err: nil,
+ 			},
+ 		},
++		"AlreadyDeleted": {
++			reason: "We shouldn't do anything with an XR we already finished deleting, which another finalizer keeps around.",
++			args: args{
++				c: &test.MockClient{
++					MockGet: WithComposite(t, NewComposite(func(cr *composite.Unstructured) {
++						cr.SetDeletionTimestamp(&now)
++						cr.SetFinalizers([]string{"example.org/other"})
++					})),
++				},
++			},
++			want: want{
++				r: reconcile.Result{},
++			},
++		},
+ 		"AddFinalizerError": {
+ 			reason: "We should return any error encountered while adding finalizer.",
+ 			args: args{
+@@ -2081,6 +2099,7 @@ func TestReconcileDeleteFollowsDeletionPolicy(t *testing.T) {
+ 				cr.SetDeletionTimestamp(&now)
+ 				cr.SetFinalizers(tc.args.finalizers)
+ 				cr.SetDeletionPolicy(tc.args.recorded)
++				meta.AddFinalizer(cr, finalizer)
+ 			})
+ 
+ 			f := &feature.Flags{}
 ```
 
 ---
 
-### Incident Patch 2: `3fb48d7e` (2026-11-02)
-**Commit Message**: feat(apis): add drc shortName to DeploymentRuntimeConfig
+### Incident Patch 2: `4d9c83b7` (2026-11-03)
+**Commit Message**: fix(composite): don't change a deleting XR's Deleting condition every reconcile
 
-Signed-off-by: Christopher Haar <[REDACTED_EMAIL]>
+A deleting XR was marked Deleting without a message, then again with the
+message for its deletion policy. The two conditions differ, so the condition's
+transition time changed on every reconcile. The status update that wrote it
+triggered another reconcile, so a Pipeline XR kept running its pipeline and a
+Foreground XR kept reconciling while they waited for their composed resources.
 
-**File**: `apis/pkg/v1beta1/deployment_runtime_config_types.go` (modified, +1/-1)
+Mark the XR Deleting once on each deletion path, with that path's message.
+
+Signed-off-by: lsviben <[REDACTED_EMAIL]>
+
+**File**: `internal/controller/apiextensions/composite/reconciler.go` (modified, +6/-4)
 ```diff
-@@ -93,7 +93,7 @@ type DeploymentRuntimeConfigSpec struct {
- // Read the Crossplane documentation for
- // [more information about DeploymentRuntimeConfigs](https://docs.crossplane.io/latest/packages/providers/#runtime-configuration).
- // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
--// +kubebuilder:resource:scope=Cluster,categories={crossplane}
-+// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
- type DeploymentRuntimeConfig struct {
- 	metav1.TypeMeta   `json:",inline"`
- 	metav1.ObjectMeta `json:"metadata,omitempty"`
+@@ -660,8 +660,6 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 	if deleting {
+ 		log = log.WithValues("deletion-timestamp", xr.GetDeletionTimestamp())
+ 
+-		status.MarkConditions(xpv2.Deleting())
+-
+ 		// Orphan propagation leaves the composed resources alone.
+ 		if slices.Contains(xr.GetFinalizers(), metav1.FinalizerOrphanDependents) {
+ 			log.Debug("Composite resource is being deleted with orphan propagation, leaving its composed resources alone")
+@@ -1024,7 +1022,7 @@ func (r *Reconciler) deleteInForeground(ctx, updateCtx context.Context, log logg
+ 	if err != nil {
+ 		err = errors.Wrap(err, errGetExistingCDs)
+ 		r.record.Event(xr, event.Warning(reasonDelete, err))
+-		status.MarkConditions(xpv2.ReconcileError(err))
++		status.MarkConditions(xpv2.Deleting(), xpv2.ReconcileError(err))
+ 		_ = r.client.Status().Update(updateCtx, xr)
+ 
+ 		return reconcile.Result{}, err
+@@ -1038,6 +1036,8 @@ func (r *Reconciler) deleteInForeground(ctx, updateCtx context.Context, log logg
+ 		return r.finishDelete(ctx, updateCtx, log, status, xr)
+ 	}
+ 
++	status.MarkConditions(xpv2.Deleting().WithMessage(fmt.Sprintf("Waiting for %d composed resource(s) to be deleted", len(observed))))
++
+ 	if err := r.gc.GarbageCollectComposedResources(ctx, xr, observed, ComposedResourceStates{}); err != nil {
+ 		if kerrors.IsConflict(err) {
+ 			return reconcile.Result{Requeue: true}, nil
+@@ -1072,7 +1072,7 @@ func (r *Reconciler) deleteInForeground(ctx, updateCtx context.Context, log logg
+ 	}
+ 
+ 	log.Debug("Waiting for composed resources to be deleted", "remaining", len(observed))
+-	status.MarkConditions(xpv2.Deleting().WithMessage(fmt.Sprintf("Waiting for %d composed resource(s) to be deleted", len(observed))), xpv2.ReconcileSuccess())
++	status.MarkConditions(xpv2.ReconcileSuccess())
+ 
+ 	if err := r.client.Status().Update(updateCtx, xr); err != nil {
+ 		return reconcile.Result{}, errors.Wrap(err, errUpdateStatus)
+@@ -1099,6 +1099,8 @@ func (r *Reconciler) startWatches(ctx context.Context, log logging.Logger) error
+ 
+ // finishDelete removes the XR's finalizer.
+ func (r *Reconciler) finishDelete(ctx, updateCtx context.Context, log logging.Logger, status conditions.ConditionSet, xr *composite.Unstructured) (reconcile.Result, error) {
++	status.MarkConditions(xpv2.Deleting())
++
+ 	if err := r.composite.RemoveFinalizer(ctx, xr); err != nil {
+ 		if kerrors.IsConflict(err) {
+ 			return reconcile.Result{Requeue: true}, nil
 ```
 
-**File**: `cluster/crds/pkg.crossplane.io_deploymentruntimeconfigs.yaml` (modified, +2/-0)
+**File**: `internal/controller/apiextensions/composite/reconciler_test.go` (modified, +1/-1)
 ```diff
-@@ -12,6 +12,8 @@ spec:
-     kind: DeploymentRuntimeConfig
-     listKind: DeploymentRuntimeConfigList
-     plural: deploymentruntimeconfigs
-+    shortNames:
-+    - drc
-     singular: deploymentruntimeconfig
-   scope: Cluster
-   versions:
+@@ -1937,7 +1937,7 @@ func TestReconcileDeleteFollowsDeletionPolicy(t *testing.T) {
+ 			},
+ 			want: want{
+ 				synced:           xpv2.ReconcileSuccess(),
+-				ready:            xpv2.Deleting().WithMessage(waitingForPipelineMsg),
++				ready:            xpv2.Deleting(),
+ 				ranPipeline:      true,
+ 				removedFinalizer: true,
+ 				recorded:         v1.CompositionDeletionPolicyPipeline,
+```
+
+---
+
+### Incident Patch 3: `e54991c0` (2026-11-02)
+**Commit Message**: fix(composite): don't return a requeue result with a status update error
+
+When a Foreground XR failed to update its status while waiting for its
+composed resources, we returned both RequeueAfter and the error.
+controller-runtime ignores the result when there's an error, and logs a
+warning about it. Return only the error.
+
+Compare the errors the deletion tests return with cmpopts.EquateErrors,
+not just whether there was one.
+
+Signed-off-by: lsviben <[REDACTED_EMAIL]>
+
+**File**: `internal/controller/apiextensions/composite/reconciler.go` (modified, +5/-1)
+```diff
+@@ -1069,7 +1069,11 @@ func (r *Reconciler) deleteInForeground(ctx, updateCtx context.Context, log logg
+ 	log.Debug("Waiting for composed resources to be deleted", "remaining", len(observed))
+ 	status.MarkConditions(xpv2.Deleting().WithMessage(fmt.Sprintf("Waiting for %d composed resource(s) to be deleted", len(observed))), xpv2.ReconcileSuccess())
+ 
+-	return reconcile.Result{RequeueAfter: jitter(r.effectivePollInterval(xr))}, errors.Wrap(r.client.Status().Update(updateCtx, xr), errUpdateStatus)
++	if err := r.client.Status().Update(updateCtx, xr); err != nil {
++		return reconcile.Result{}, errors.Wrap(err, errUpdateStatus)
++	}
++
++	return reconcile.Result{RequeueAfter: jitter(r.effectivePollInterval(xr))}, nil
+ }
+ 
+ // startWatches watches every kind this controller's XRs depend on.
+```
+
+**File**: `internal/controller/apiextensions/composite/reconciler_test.go` (modified, +26/-11)
+```diff
+@@ -2154,14 +2154,15 @@ func TestDeleteInForeground(t *testing.T) {
+ 		observed   ComposedResourceStates
+ 		observeErr error
+ 		gcErr      error
++		statusErr  error
+ 	}
+ 
+ 	type want struct {
+ 		watched          bool     // Did we start watching?
+ 		deleted          []string // What did we garbage collect?
+ 		requeue          bool     // Did we requeue?
+ 		removedFinalizer bool     // Was our finalizer removed?
+-		err              bool
++		err              error
+ 	}
+ 
+ 	cases := map[string]struct {
+@@ -2210,13 +2211,25 @@ func TestDeleteInForeground(t *testing.T) {
+ 				removedFinalizer: true,
+ 			},
+ 		},
++		"StatusUpdateError": {
++			reason: "We should return any error encountered updating the XR's status while we wait for its composed resources, without also requeueing.",
++			args: args{
++				observed:  ComposedResourceStates{"first": state("Thing", "xr-first")},
++				statusErr: errBoom,
++			},
++			want: want{
++				watched: true,
++				deleted: []string{"first"},
++				err:     errBoom,
++			},
++		},
+ 		"ObserveError": {
+ 			reason: "We should return any error encountered observing the XR's composed resources.",
+ 			args: args{
+ 				observeErr: errBoom,
+ 			},
+ 			want: want{
+-				err: true,
++				err: errBoom,
+ 			},
+ 		},
+ 		"GarbageCollectError": {
+@@ -2227,7 +2240,7 @@ func TestDeleteInForeground(t *testing.T) {
+ 			},
+ 			want: want{
+ 				deleted: []string{"first"},
+-				err:     true,
++				err:     errBoom,
+ 			},
+ 		},
+ 	}
+@@ -2237,7 +2250,7 @@ func TestDeleteInForeground(t *testing.T) {
+ 			got := want{}
+ 
+ 			r := NewReconciler(&test.MockClient{
+-				MockStatusUpdate: test.NewMockSubResourceUpdateFn(nil),
++				MockStatusUpdate: test.NewMockSubResourceUpdateFn(tc.args.statusErr),
+ 			}, schema.GroupVersionKind{},
+ 				WithPollInterval(time.Minute),
+ 				WithCompositeFinalizer(resource.FinalizerFns{
+@@ -2267,19 +2280,21 @@ func TestDeleteInForeground(t *testing.T) {
+ 			xr := NewComposite(func(cr *composite.Unstructured) { cr.SetUID(xrUID) })
+ 
+ 			res, err := r.deleteInForeground(context.Background(), context.Background(), logging.NewNopLogger(), r.conditions.For(xr), xr)
+-			got.err = err != nil
++			got.err = err
+ 			got.requeue = !res.IsZero()
+ 
+ 			slices.Sort(got.deleted)
+ 
+-			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(want{})); diff != "" {
++			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(want{}), cmpopts.EquateErrors()); diff != "" {
+ 				t.Errorf("\n%s\nr.deleteInForeground(...): -want, +got:\n%s", tc.reason, diff)
+ 			}
+ 		})
+ 	}
+ }
+ 
+ func TestReconcileRecordsDeletionPolicy(t *testing.T) {
++	errBoom := errors.New("boom")
++
+ 	type args struct {
+ 		enabled bool
+ 		legacy  bool
+@@ -2290,7 +2305,7 @@ func TestReconcileRecordsDeletionPolicy(t *testing.T) {
+ 	type want struct {
+ 		recorded              v1.CompositionDeletionPolicy
+ 		recordedBeforeCompose v1.CompositionDeletionPolicy
+-		err                   bool
++		err                   error
+ 	}
+ 
+ 	cases := map[string]struct {
+@@ -2319,7 +2334,7 @@ func TestReconcileRecordsDeletionPolicy(t *testing.T) {
+ 			want: want{
+ 				recorded:              v1.CompositionDeletionPolicyPipeline,
+ 				recordedBeforeCompose: v1.CompositionDeletionPolicyPipeline,
+-				err:                   true,
++				err:                   errBoom,
+ 			},
+ 		},
+ 		"Foreground": {
+@@ -2408,7 +2423,7 @@ func TestReconcileRecordsDeletionPolicy(t *testing.T) {
+ 				got.recordedBeforeCompose = got.recorded
+ 
+ 				if tc.args.fails {
+-					return CompositionResult{}, errors.New("boom")
++					return CompositionResult{}, errBoom
+ 				}
+ 
+ 				return CompositionResult{}, nil
+@@ -2417,9 +2432,9 @@ func TestReconcileRecordsDeletionPolicy(t *testing.T) {
+ 			r := newDeletionPolicyReconciler(c, f, rev, compose, WithCompositeFinalizer(resource.NewNopFinalizer()))
+ 
+ 			_, err := r.Reconcile(context.Background(), reconcile.Request{})
+-			got.err = err != nil
++			got.err = err
+ 
+-			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(want{})); diff != "" {
++			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(want{}), cmpopts.EquateErrors()); diff != "" {
+ 				t.Errorf("\n%s\nReconcile(...): -want, +got:\n%s", tc.reason, diff)
+ 			}
+ 		})
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8006** (2026-11-02): feat(apis): add drc shortName to DeploymentRuntimeConfig (@haarchri)
+- **PR #8000** (2026-11-03): feat: function-controlled deletion of composite resources (@lsviben)
 - **PR #7998** (2026-10-30): chore(deps): bump crossplane-runtime (@lsviben)
 - **PR #7997** (2026-10-30): [Backport release-2.2] fix(xpkg): use cached package with PullAlways when digest is unchanged (@jbw976)
 - **PR #7992** (2026-10-29): feat(apis): add a deletion policy to Compositions (@lsviben)
 - **PR #7988** (2026-10-28): chore(deps): lock file maintenance (release-2.4) (@crossplane-renovate[bot])
-- **PR #7987** (2026-10-28): chore(deps): lock file maintenance (release-2.3) (@crossplane-renovate[bot])
 
 ---
 
@@ -1615,28 +1877,34 @@ Signed-off-by: Christopher Haar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8006 from haarchri/feature/add-drc-shortname
+## X. composite): don't reconcile an XR we already finished deleting
 
 **RULE**:
-When implementing operations in `apis/pkg/v1beta1/deployment_runtime_config_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/controller/apiextensions/composite/reconciler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d35eddd`: Merge pull request #8006 from haarchri/feature/add-drc-shortname. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1165006`: composite): don't reconcile an XR we already finished deleting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/pkg/v1beta1/deployment_runtime_config_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/controller/apiextensions/composite/reconciler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
+		// We already finished deleting this XR. Another finalizer is keeping
+		// it around, so there's nothing left for us to do.
+		if !slices.Contains(xr.GetFinalizers(), finalizer) {
+			log.Debug("Composite resource is waiting for other finalizers to be removed")
+			return reconcile.Result{}, nil
+		}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// +kubebuilder:resource:scope=Cluster,categories={crossplane}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d35eddd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1165006` are properly handled with clean fallback behavior.
