@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:02:46.945Z",
+  "last_updated": "2026-11-04T20:10:57.057Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1838,8 +1838,8 @@
       "slug": "amir1376-ab-download-manager",
       "platform": "github",
       "source_url": "https://github.com/amir1376/ab-download-manager",
-      "source_version": "34cd27af",
-      "content_hash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
+      "source_version": "28150ded",
+      "content_hash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
       "dossier_path": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "promoted_rules": [
@@ -1852,6 +1852,11 @@
           "number": 6198,
           "title": "enforce some routes to always use api key (#1512)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6948,
+          "title": "rendering QR codes on dark themes and improve its read speed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1859,7 +1864,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:53:46.717Z",
+      "verified_at": "2026-11-04T20:10:03.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41206,8 +41211,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "1cee5900",
-      "content_hash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
+      "source_version": "f830e57c",
+      "content_hash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -41275,6 +41280,11 @@
           "number": 6604,
           "title": "prevent CDC replicator panic after source scanner termination (#54663)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6949,
+          "title": "release MinioChunkManager's AWS SDK reference when the process exits (#55131)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41282,7 +41292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:27:38.904Z",
+      "verified_at": "2026-11-04T20:10:10.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142899,7 +142909,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
+      "content_hash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "promoted_rules": [
@@ -142934,7 +142944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:09:41.992Z",
+      "verified_at": "2026-11-04T20:10:57.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176972,6 +176982,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:02:46.923Z"
+    },
+    "rule-6948": {
+      "learning_id": "rule-6948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6948,
+      "title": "rendering QR codes on dark themes and improve its read speed",
+      "source_url": "https://github.com/amir1376/ab-download-manager",
+      "source_version": "28150ded",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:10:03.673Z"
+    },
+    "rule-6949": {
+      "learning_id": "rule-6949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6949,
+      "title": "release MinioChunkManager's AWS SDK reference when the process exits (#55131)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "f830e57c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:10:10.867Z"
     }
   },
   "aliases": {

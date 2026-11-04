@@ -7322,3 +7322,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T19:55:31.927Z |
 | `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-04T20:02:42.420Z |
 | `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `444fdf06` | Multi-dimensional audit evidence | 2026-11-04T20:02:47.033Z |
+| `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `28150ded` | Multi-dimensional audit evidence | 2026-11-04T20:10:03.788Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f830e57c` | Multi-dimensional audit evidence | 2026-11-04T20:10:10.983Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-04T20:10:57.177Z |

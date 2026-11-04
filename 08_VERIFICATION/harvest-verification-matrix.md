@@ -7313,3 +7313,6 @@
 | `CYCLE-20261104-DRDF` | `2026-11-04T19:55:31.923Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6943, Rule 6944` | Yes (`44a1dcd4...`) |
 | `CYCLE-20261104-MZJK` | `2026-11-04T20:02:42.416Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6945, Rule 6946` | Yes (`327d116e...`) |
 | `CYCLE-20261104-N33Q` | `2026-11-04T20:02:47.030Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6947` | Yes (`ae503e7e...`) |
+| `CYCLE-20261104-WG3S` | `2026-11-04T20:10:03.784Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6948` | Yes (`711bf781...`) |
+| `CYCLE-20261104-WLNN` | `2026-11-04T20:10:10.979Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6949` | Yes (`ac3186c2...`) |
+| `CYCLE-20261104-XLAO` | `2026-11-04T20:10:57.168Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`92fdb6db...`) |

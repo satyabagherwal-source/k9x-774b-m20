@@ -6533,10 +6533,10 @@
     "repository": "amir1376/ab-download-manager",
     "platform": "github",
     "sourceUrl": "https://github.com/amir1376/ab-download-manager",
-    "sourceVersion": "34cd27af",
+    "sourceVersion": "28150ded",
     "license": "Apache-2.0",
-    "contentHash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
-    "lastHarvestedAt": "2026-10-31T12:53:46.818Z",
+    "contentHash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
+    "lastHarvestedAt": "2026-11-04T20:10:03.788Z",
     "learningId": "learn-github-amir1376-ab-download-manager"
   },
   "bitnami-sealed-secrets": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "1cee5900",
+    "sourceVersion": "f830e57c",
     "license": "Apache-2.0",
-    "contentHash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
-    "lastHarvestedAt": "2026-11-03T20:27:39.018Z",
+    "contentHash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
+    "lastHarvestedAt": "2026-11-04T20:10:10.983Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
-    "lastHarvestedAt": "2026-10-31T04:09:42.092Z",
+    "contentHash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
+    "lastHarvestedAt": "2026-11-04T20:10:57.177Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {

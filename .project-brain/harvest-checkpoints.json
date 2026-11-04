@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T20:02:47.052Z",
+  "last_updated": "2026-11-04T20:10:57.188Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9876,14 +9876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-amir1376-ab-download-manager",
-      "content_hash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
-      "verified_at": "2026-10-31T12:53:46.827Z",
+      "content_hash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
+      "verified_at": "2026-11-04T20:10:03.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:53:46.827Z"
+      "last_updated": "2026-11-04T20:10:03.798Z"
     },
     "bitnami/sealed-secrets": {
       "repository": "bitnami/sealed-secrets",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
-      "verified_at": "2026-11-03T20:27:39.027Z",
+      "content_hash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
+      "verified_at": "2026-11-04T20:10:11.001Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:27:39.027Z"
+      "last_updated": "2026-11-04T20:10:11.001Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
-      "verified_at": "2026-10-31T04:09:42.101Z",
+      "content_hash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
+      "verified_at": "2026-11-04T20:10:57.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:09:42.101Z"
+      "last_updated": "2026-11-04T20:10:57.187Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",

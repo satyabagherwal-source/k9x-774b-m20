@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:02:47.039Z",
-  "total_cycles_completed": 7290,
-  "total_learnings_persisted": 7290,
-  "total_rules_promoted": 6984,
+  "last_updated": "2026-11-04T20:10:57.183Z",
+  "total_cycles_completed": 7293,
+  "total_learnings_persisted": 7293,
+  "total_rules_promoted": 6986,
   "history": [
-    {
-      "timestamp": "2026-11-04T01:58:23.331Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T01:58:25.971Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:04:42.872Z",
-      "repository": "google/closure-compiler",
-      "learningId": "learn-github-google-closure-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T02:04:45.009Z",
       "repository": "microsoft/Mage-VL-Cowork",
@@ -1403,6 +1382,27 @@
       "repository": "run-llama/llama_index",
       "learningId": "learn-github-run-llama-llama_index",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:10:03.794Z",
+      "repository": "amir1376/ab-download-manager",
+      "learningId": "learn-github-amir1376-ab-download-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:10:10.989Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:10:57.183Z",
+      "repository": "baidu/Unlimited-OCR-2",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

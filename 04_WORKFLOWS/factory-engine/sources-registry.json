@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T20:02:49.599Z",
-    "lastVerified": "2026-11-04T20:02:49.599Z",
+    "lastChecked": "2026-11-04T20:10:59.724Z",
+    "lastVerified": "2026-11-04T20:10:59.724Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -443,12 +443,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T19:41:35.693Z",
-    "lastVerified": "2026-11-04T19:41:35.693Z",
+    "lastChecked": "2026-11-04T20:10:07.322Z",
+    "lastVerified": "2026-11-04T20:10:07.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -457,7 +457,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5b3f3e76"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -540,14 +541,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T20:27:37.624Z",
-    "lastVerified": "2026-11-03T20:27:37.624Z",
+    "lastChecked": "2026-11-04T20:10:10.072Z",
+    "lastVerified": "2026-11-04T20:10:10.072Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "4860b1ead71577d03198013afb12c63dc3dd4b06cd81ddee41de003bb59f7ac2",
+    "contentHash": "ac3186c24a74f82f6408f7270eddb246eb5f0d847f137bd0f9699f7bf514e4c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1501,9 +1502,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-04T11:09:21.537Z",
+    "lastChecked": "2026-11-04T20:10:02.389Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-04T11:09:21.537Z"
+    "lastVerified": "2026-11-04T20:10:02.389Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3412,12 +3413,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kumahq/kuma",
+    "name": "kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T21:36:48.676Z",
-    "lastVerified": "2026-11-03T21:36:48.676Z",
+    "lastChecked": "2026-11-04T20:09:59.886Z",
+    "lastVerified": "2026-11-04T20:09:59.886Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
@@ -3426,7 +3427,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a91f7fe5"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -6607,14 +6609,14 @@
     "officialUrl": "https://github.com/amir1376/ab-download-manager",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-31T12:53:46.120Z",
-    "lastVerified": "2026-10-31T12:53:46.120Z",
+    "lastChecked": "2026-11-04T20:10:02.155Z",
+    "lastVerified": "2026-11-04T20:10:02.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-amir1376-ab-download-manager",
-    "contentHash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
+    "contentHash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7655,9 +7657,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-03T15:46:29.065Z",
+    "lastChecked": "2026-11-04T20:09:52.269Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-03T15:46:29.065Z"
+    "lastVerified": "2026-11-04T20:09:52.269Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -12911,13 +12913,13 @@
     "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T04:09:26.338Z",
-    "lastVerified": "2026-10-31T04:09:26.338Z",
+    "lastChecked": "2026-11-04T20:09:54.849Z",
+    "lastVerified": "2026-11-04T20:09:54.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
-    "promotedRulesCount": 3,
+    "contentHash": "92fdb6db138f9c5946a2e8dcfd396e5970ce5c947abf8d61788511c84d7ba4e4",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
