@@ -7127,3 +7127,6 @@ Every entry in this ledger must capture:
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `e2d3152d` | Multi-dimensional audit evidence | 2026-11-04T02:04:42.868Z |
 | `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-04T02:04:45.006Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `501f825c` | Multi-dimensional audit evidence | 2026-11-04T02:04:47.481Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `628098d2` | Multi-dimensional audit evidence | 2026-11-04T02:12:03.457Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `47986461` | Multi-dimensional audit evidence | 2026-11-04T02:12:08.085Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `e66e0fda` | Multi-dimensional audit evidence | 2026-11-04T02:12:12.782Z |

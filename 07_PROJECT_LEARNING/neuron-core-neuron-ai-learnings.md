@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `f63ad4ae`  
+> **Source Version**: `e66e0fda`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:29:44.682Z  
+> **Timestamp**: 2026-11-04T02:12:11.980Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:29:44.675Z  
+> **Harvest Timestamp**: 2026-11-04T02:12:11.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2164 stars
+- **Stars / Engagement**: 2163 stars
 
 ---
 
@@ -540,435 +540,388 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f63ad4ae` (2026-11-02)
-**Commit Message**: fix dependency vulnerabilities
+### Incident Patch 1: `e004fe01` (2026-11-02)
+**Commit Message**: fix failed tools run twice on recovery
 
-**File**: `package-lock.json` (modified, +83/-281)
+**File**: `skills/neuron-agent/SKILL.md` (modified, +5/-1)
 ```diff
-@@ -39,15 +39,6 @@
-         "zod-to-json-schema": "^3.25.2"
-       }
-     },
--    "node_modules/@a2ui/web_core/node_modules/zod": {
--      "version": "3.25.76",
--      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
--      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
--      "license": "MIT",
--      "funding": {
--        "url": "https://github.com/sponsors/colinhacks"
--      }
--    },
-     "node_modules/@ag-ui/a2ui-middleware": {
-       "version": "0.0.10",
-       "resolved": "https://registry.npmjs.org/@ag-ui/a2ui-middleware/-/a2ui-middleware-0.0.10.tgz",
-@@ -86,15 +77,6 @@
-         "zod": "^3.25.76"
-       }
-     },
--    "node_modules/@ag-ui/client/node_modules/zod": {
--      "version": "3.25.76",
--      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
--      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
--      "license": "MIT",
--      "funding": {
--        "url": "https://github.com/sponsors/colinhacks"
--      }
--    },
-     "node_modules/@ag-ui/core": {
-       "version": "1.0.2",
-       "resolved": "https://registry.npmjs.org/@ag-ui/core/-/core-1.0.2.tgz",
-@@ -175,15 +157,6 @@
-         "zod": "^3.25.76"
-       }
-     },
--    "node_modules/@ag-ui/proto/node_modules/zod": {
--      "version": "3.25.76",
--      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
--      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
--      "license": "MIT",
--      "funding": {
--        "url": "https://github.com/sponsors/colinhacks"
--      }
--    },
-     "node_modules/@ai-sdk/anthropic": {
-       "version": "3.0.128",
-       "resolved": "https://registry.npmjs.org/@ai-sdk/anthropic/-/anthropic-3.0.128.tgz",
-@@ -231,9 +204,9 @@
-       }
-     },
-     "node_modules/@ai-sdk/anthropic/node_modules/undici": {
--      "version": "6.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
--      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.17"
-@@ -354,25 +327,13 @@
-         "zod": "^3.25.76 || ^4.1.8"
-       }
-     },
--    "node_modules/@ai-sdk/google-vertex/node_modules/@fastify/busboy": {
--      "version": "2.1.1",
--      "resolved": "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz",
--      "integrity": "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
--      "license": "MIT",
--      "engines": {
--        "node": ">=14"
--      }
--    },
-     "node_modules/@ai-sdk/google-vertex/node_modules/undici": {
--      "version": "5.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-5.29.0.tgz",
--      "integrity": "sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
--      "dependencies": {
--        "@fastify/busboy": "^2.0.0"
--      },
-       "engines": {
--        "node": ">=14.0"
-+        "node": ">=18.17"
-       }
-     },
-     "node_modules/@ai-sdk/google/node_modules/@ai-sdk/provider": {
-@@ -406,9 +367,9 @@
-       }
-     },
-     "node_modules/@ai-sdk/google/node_modules/undici": {
--      "version": "6.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
--      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.17"
-@@ -494,25 +455,13 @@
-         "zod": "^3.25.76 || ^4.1.8"
-       }
-     },
--    "node_modules/@ai-sdk/openai-compatible/node_modules/@fastify/busboy": {
--      "version": "2.1.1",
--      "resolved": "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz",
--      "integrity": "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
--      "license": "MIT",
--      "engines": {
--        "node": ">=14"
--      }
--    },
-     "node_modules/@ai-sdk/openai-compatible/node_modules/undici": {
--      "version": "5.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-5.29.0.tgz",
--      "integrity": "sha512-raqeBD6NQK4
+@@ -557,7 +557,11 @@ Failure does not roll back committed writes.
+ `run(ExecutionRequest::resume())` is an explicit continuation. A new `chat()` supersedes the
+ failed run with a new user turn. A failed node may repeat an external operation
+ if its result was not durably recorded; use `memoize()` inside custom nodes and
+-external idempotency where needed.
++external idempotency where needed. A tool call does not repeat: recovering a run
++whose process died while a tool ran, or whose tool threw, gives the call an error
++result saying its outcome is unknown, and the model decides what to do. To let
++the model read what went wrong instead, turn the exception into a result with
++`toolErrorHandler()`.
+ 
+ The new turn first closes the turn the failed run left open: a tool call left
+ without a result gets an error result saying its outcome is unknown, and a
 ```
 
-**File**: `package.json` (modified, +9/-0)
+**File**: `skills/neuron-symfony-integration/SKILL.md` (modified, +2/-2)
 ```diff
-@@ -17,5 +17,14 @@
-   },
-   "devDependencies": {
-     "typescript": "^7.0.2"
-+  },
-+  "overrides": {
-+    "@ai-sdk/provider-utils@3": {
-+      "undici": "^6.29.1"
-+    },
-+    "@hono/node-server": "^2.1.5",
-+    "graphql-scalars": "^2.0.1",
-+    "katex": "^0.18.2",
-+    "zod": "^4.6.7"
-   }
- }
+@@ -571,8 +571,8 @@ The message is `final class RunSupportAgent` in `src/Message` with public readon
+ 
+ - **`start()`** runs `ExecutionRequest::start(new AgentStartEvent(messages: [new UserMessage($message->message)], options: new AgentRunOptions(stream: true)), runId: $message->runId, recoverFailed: true)` on a copy whose adapter factory seeds a new `AGUIAdapter(threadId:, runId:, messages:, state:)` from the input for every segment, whose channel comes from `RedisRelay::publisher($runId)`, and which carries the browser's tools (`addFrontendTools()`). A redelivery finishes the same run from its last committed step: after an HTTP 500 past a tool, the retry did not run the tool again and history held one question.
+ - **Refused by its own run**: still executing under its lease → `RecoverableMessageHandlingException` with the remaining lease as `retryDelay` (after a `kill -9`, the redelivery waited 27 s of a 30 s lease, then recovered and completed the run); waiting for an approval → nothing.
+-- **Refused by another message's dead run** (failed, or running past its lease): finish it with `ExecutionRequest::resume(expectedRunId: $e->runId, expectedExecutionAttempt: $e->executionAttempt)` on `$this->agent->for($threadId)`, a copy without adapter or channel, then start again. Never `abandon()` it: its work is lost, and the next start only closes its turn. A refund approved while the payment API threw was executed once, when the next turn finished that run. A pending approval or a live turn → `UnrecoverableMessageHandlingException` at once, instead of burning retries.
+-- **`resume()`** stages the answers at handling time, from the run as it is then. A retry that finds its own run failed with no interrupt (the approved tool ran, then the answer failed) finishes that run instead, because staging again throws `There is no current interruption to answer`; an approved tool that threw leaves the approval pending, so its retries stage it again and re-run the tool.
++- **Refused by another message's dead run** (failed, or running past its lease): finish it with `ExecutionRequest::resume(expectedRunId: $e->runId, expectedExecutionAttempt: $e->executionAttempt)` on `$this->agent->for($threadId)`, a copy without adapter or channel, then start again. Never `abandon()` it: its work is lost, and the next start only closes its turn. A refund approved while the payment API threw is not sent again: finishing that run tells the model its outcome is unknown. A pending approval or a live turn → `UnrecoverableMessageHandlingException` at once, instead of burning retries.
++- **`resume()`** stages the answers at handling time, from the run as it is then. A retry that finds its own run failed with no interrupt (the approved tool ran, then the answer failed) finishes that run instead, because staging again throws `There is no current interruption to answer`; an approved tool that threw leaves the approval pending, so a retry stages it again and finishes the run without running the tool: the model is told its outcome is unknown.
+ - **Redelivery after success runs the turn again**: completion deletes the run's records, so a reserved start finds nothing to match (`Hi, One., Hi, Two.`). A failed turn's retry still queued when the next turn finishes that turn asks its question again.
+ 
+ `retainCompletionUntilAcknowledged()` on the copy narrows only this message's own redelivery after success, and never belongs on the copy that finishes another message's run. It works only if the handler calls `acknowledge()` after `run()` and also when a redelivery meets its own completed run: a completion never acknowledged refused the next turn on the thread, HTTP ones included (**neuron-workflow**, "Workflow Lifecycle"). `stream: true` in `AgentRunOptions` makes the provider stream token by token to the channel; continuations follow that choice.
+```
+
+**File**: `skills/neuron-symfony-integration/references/background-runs.md` (modified, +1/-1)
+```diff
+@@ -156,7 +156,7 @@ class SupportAgentHandler
+ | Redelivered while the run waits for approval | Nothing |
+ | A new turn while an approval is pending | Given up (`UnrecoverableMessageHandlingException`); `PublishRunFailure` told the browser |
+ | The previous turn failed on every delivery | Finished it on a copy without the channel, then ran: history held the old question, its tool call and result, the recovered answer, then the new turn, and only the new turn reached the relay |
+-| A refund approved while the payment API threw | The run failed with its approval still pending: each retry staged it again and re-ran the tool. When Messenger gave up, the next turn finished it: the refund executed once, then the new turn ran |
++| A refund approved while the payment API threw | The run failed with its approval still pending: the retry staged it again and finished the run without calling the API, and the model was told the refund's outcome is unknown |
+ | A new turn while the failed turn's retry was still queued | Finished the failed turn and answered; the queued retry then asked the failed turn's question again, as any redelivery after success does |
+ | A continuation retried after the approved refund ran and the answer failed | Finished the run instead of staging the answers again (`There is no current interruption to answer`); the refund ran once |
+ | The same message handled twice after success | Ran the turn twice (`Hi, One., Hi, Two.`): completion deletes the run's records |
+```
+
+**File**: `skills/neuron-symfony-integration/references/testing.md` (modified, +1/-1)
+```diff
+@@ -389,7 +389,7 @@ class SupportAgentHandlerTest extends ChatTestCase
+ ```
+ 
+ - `TestContainer::set()` works on a private service only before it is instantiated: set the relay in `setUp()`, before the handler is fetched.
+-- The suite also covered: a snapshot equal to the synchronous endpoint's, a browser tool handed over and continued in a queued turn, a turn given up while another run waits, a refund approved while the payment API threw and finished by the next turn, a continuation retried after it failed past the approved refund, a stale continuation that never finishes another run, a redelivery after success that runs the turn again, a delivery failure reported as `ChannelError` without failing the run, a channel factory that throws and fails it, and a refused turn published once.
++- The suite also covered: a snapshot equal to the synchronous endpoint's, a browser tool handed over and continued in a queued turn, a turn given up while another run waits, a refund approved while the payment API threw and not sent again by its retry, a continuation retried after it failed past the approved refund, a stale continuation that never finishes another run, a redelivery after success that runs the turn again, a delivery failure reported as `ChannelError` without failing the run, a channel factory that throws and fails it, and a refused turn published once.
+ 
+ ## The relay endpoint
+ 
+```
+
+**File**: `src/Agent/AGENTS.md` (modified, +3/-1)
+```diff
+@@ -165,6 +165,8 @@ Conversation memory uses RAG's `SemanticMemoryRetrieval`, which builds source/th
+ 
+ `ToolNode` gates execution: on every call it asks each tool `requiresApproval()` (declaration and attach-time overrides, see `src/Tools/AGENTS.md`), resolves the call against the segment's tool registry (a `ToolException` for anything else), clones the match, binds the inputs, executes under a durable memo, and settles the result on the `ToolCall`. Escaped exceptions are bugs and propagate unless `toolErrorHandler()` converts them.
+ 
++A tool call runs at most once, whatever recovers the run. Neither a killed process nor a thrown exception proves the effect did not land: a server can complete a request its client timed out on. So `ToolNode` records that a call started before running it (`ParallelToolNode` records one start for the batch it forks), at the cost of one more write per call. A replay that finds the start without a result settles the call with `interruptedResult()`, the error result that also closes an open turn, and the model decides what to do. Calling the tool again is a new call, which passes the approval gate again. A throw still fails the run when it happens, unless `toolErrorHandler()` settles it, and a handler's result is recorded like any other.
++
+ ```php
+ protected function tools(): array
+ {
+@@ -199,7 +201,7 @@ The persisted interruption is authoritative for the current UI request. The pre-
+ 
+ ## Tool run limits
+ 
+-`toolMaxRuns()` bounds logical tool calls across one complete agent run, including approval pauses and external execution waits. A tool's `getMaxRuns()` overrides the agent limit, and `getRunKey()` selects which counter it consumes. Rejected approvals consume no slot; a failed execution retried during recovery remains the same logical call.
++`toolMaxRuns()` bounds logical tool calls across one complete agent run, including approval pauses and external execution waits. A tool's `getMaxRuns()` overrides the agent limit, and `getRunKey()` selects which counter it consumes. Rejected approvals consume no slot; a call settled during recovery remains the same logical call.
+ 
+ `AgentState` persists `__tool_runs`. `AgentStartNode` and RAG's `PreProcessNode` reset counters when initializing a new run; completed entry steps are skipped on resume. Custom entry nodes that replace these should reset counters when starting their new run as well, and build the request's messages through `ClosesOpenTurn::closeOpenTurn()`.
+ 
+```
+
+**File**: `src/Agent/ClosesOpenTurn.php` (modified, +2/-8)
+```diff
+@@ -11,7 +11,6 @@
+ use NeuronAI\Chat\Messages\ToolResultMessage;
+ use NeuronAI\Chat\Messages\UserMessage;
+ use NeuronAI\Tools\ToolCall;
+-use NeuronAI\Tools\ToolOutput;
+ 
+ use function array_filter;
+ use function array_map;
+@@ -29,6 +28,8 @@
+  */
+ trait ClosesOpenTurn
+ {
++    use ReportsInterruptedCall;
++
+     /**
+      * @param Message[] $inbound
+      * @return Message[]
+@@ -81,13 +82,6 @@ protected function unrecordedResults(ToolCallMessage $message): ToolResultMessag
+         ));
+     }
+ 
+-    protected function interruptedResult(ToolCall $call): string|ToolOutput
+-    {
+-        return ToolOutput::error(
+-            'The call was interrupted before its result was recorded: it may or may not have taken effect.'
+-        );
+-    }
+-
+     protected function interruptedAnswer(): AssistantMessage
+     {
+         return new AssistantMessage('My previous response was interrupted before it was completed.');
+```
+
+**File**: `src/Agent/Nodes/ParallelToolNode.php` (modified, +28/-4)
+```diff
+@@ -133,8 +133,9 @@ protected function executeLocalTools(array $calls, string $messageId, AgentState
+         if ($runnable !== []) {
+             $runnableCalls = array_values($runnable);
+             $runnableKeys = array_keys($runnable);
++            $replayed = $this->recallMemo('parallel.tools') !== null;
+ 
+-            $serializedResults = $this->memoize('parallel.tools', function () use ($runnableCalls, $tools): array {
++            $serializedResults = $this->memoizeAtMostOnce('parallel.tools', function () use ($runnableCalls, $tools): array {
+                 // Resolve parent-side, before forking.
+                 $resolved = [];
+                 foreach ($runnableCalls as $pos => $call) {
+@@ -175,18 +176,21 @@ protected function executeLocalTools(array $calls, string $messageId, AgentState
+                         $resolved
+                     )
+                 );
+-            });
++            }, fn (): array => array_map(
++                fn (ToolCall $call): string => serialize($this->interruptedResult($call)),
++                $runnableCalls,
++            ));
+ 
+             foreach ($serializedResults as $pos => $serializedResult) {
+                 $data = unserialize($serializedResult);
+                 $call = $runnableCalls[$pos];
+ 
+                 if (is_array($data) && isset($data['error']) && $data['error'] === true) {
+                     // The original exception lives in the child process: report what it was.
+-                    $this->handleError(new ToolException(
++                    $this->settleChildFailure(new ToolException(
+                         "Tool {$data['tool_name']} failed with {$data['exception_class']}: {$data['exception_message']}",
+                         (int) $data['exception_code'],
+-                    ), $call);
++                    ), $call, $replayed);
+                 } else {
+                     $call->setResult($data);
+                 }
+@@ -208,6 +212,26 @@ protected function executeLocalTools(array $calls, string $messageId, AgentState
+         return $executedCalls;
+     }
+ 
++    /**
++     * A child's exception is recorded with its batch, so a replay would raise it
++     * on every recovery. The first pass fails the run with it; a replay settles
++     * the call like any other whose outcome nobody knows.
++     *
++     * @throws ToolException
++     */
++    protected function settleChildFailure(ToolException $failure, ToolCall $call, bool $replayed): void
++    {
++        try {
++            $this->handleError($failure, $call);
++        } catch (ToolException $e) {
++            if (!$replayed) {
++                throw $e;
++            }
++
++            $call->setResult($this->interruptedResult($call));
++        }
++    }
++
+     /**
+      * spatie/fork replaces the SIGTERM, SIGINT and SIGQUIT handlers with its
+      * own, which kill the process, and never restores them: a queue worker
+```
+
+**File**: `src/Agent/Nodes/ToolNode.php` (modified, +36/-4)
+```diff
+@@ -4,6 +4,7 @@
+ 
+ namespace NeuronAI\Agent\Nodes;
+ 
++use Closure;
+ use Generator;
+ use NeuronAI\Agent\AgentResources;
+ use NeuronAI\Agent\AgentState;
+@@ -16,6 +17,7 @@
+ use NeuronAI\Agent\Interrupt\ApprovalRequest;
+ use NeuronAI\Agent\Observability\ToolCalled;
+ use NeuronAI\Agent\Observability\ToolCalling;
++use NeuronAI\Agent\ReportsInterruptedCall;
+ use NeuronAI\Chat\Messages\Stream\Chunks\ToolCallChunk;
+ use NeuronAI\Chat\Messages\Stream\Chunks\ToolResultChunk;
+ use NeuronAI\Chat\Messages\ToolCallMessage;
+@@ -61,6 +63,7 @@
+ class ToolNode extends Node implements AgentNodeInterface
+ {
+     use ChatHistoryHelper;
++    use ReportsInterruptedCall;
+ 
+     /**
+      * @var callable|null fn(Throwable $e, ToolCall $call): string|ToolOutput|null
+@@ -424,8 +427,9 @@ protected function executeLocalTools(array $calls, string $messageId, AgentState
+      * Execution is wrapped in a durable memo keyed by callId (or name) plus
+      * the call's position, so parallel calls sharing a callId never share a
+      * memo. On crash-replay the recorded result is restored WITHOUT
+-     * re-running, so side-effecting tools execute at most once. An error the
+-     * handler turns into a result is recorded the same way.
++     * re-running, and a call that died running settles as interrupted, so
++     * side-effecting tools execute at most once. An error the handler turns
++     * into a result is recorded the same way.
+      *
+      * @throws ToolRunsExceededException If the tool exceeds its maximum retry attempts
+      * @throws Throwable If the tool execution fails and no error handler is set
+@@ -443,12 +447,12 @@ protected function executeSingleTool(ToolCall $call, int $index, AgentState $sta
+ 
+         try {
+             $this->checkToolRuns($call, $state, $tools);
+-            $result = $this->memoize($memoKey, function () use ($call, $tools): string|ToolOutput {
++            $result = $this->memoizeAtMostOnce($memoKey, function () use ($call, $tools): string|ToolOutput {
+                 $tool = $this->resolveTool($call, $tools);
+ 
+                 $tool->execute();
+                 return $tool->getResult();
+-            });
++            }, fn (): string|ToolOutput => $this->interruptedResult($call));
+ 
+             $call->setResult($result);
+         } catch (Throwable $e) {
+@@ -464,6 +468,34 @@ protected function executeSingleTool(ToolCall $call, int $index, AgentState $sta
+         }
+     }
+ 
++    /**
++     * Neither a call whose process was killed nor one that threw proves the
++     * effect did not land: a database finishes a statement whose client is gone,
++     * a server completes a request its client timed out on. Recording the start
++     * first is what tells such a call from one that never ran, so a replay
++     * settles it with $interrupted instead of running it again under its old
++     * approval. Calling the tool again is the model's choice, and a new call.
++     *
++     * @template T
++     * @param Closure(): T $operation
++     * @param Closure(): T $interrupted
++     * @return T
++     */
++    protected function memoizeAtMostOnce(string $name, Closure $operation, Closure $interrupted): mixed
++    {
++        return $this->memoize($name, function () use ($name, $operation, $interrupted): mixed {
++            $started = $name . '.started';
++
++            if ($this->recallMemo($started) === true) {
++                return $interrupted();
++            }
++
++            $this->memoize($started, fn (): bool => true);
++
++            return $operation();
++        });
++    }
++
+     /**
+      * Accounting is independent of execution-result memos: a replay counts the
+      * batch again from the state its step started with, so a call whose result
 ```
 
 ---
 
-### Incident Patch 2: `81e08ce1` (2026-11-02)
-**Commit Message**: fix weaviate
+### Incident Patch 2: `e66e0fda` (2026-11-02)
+**Commit Message**: fix one-slash redirect passing the same-origin check
 
-**File**: `src/RAG/VectorStore/WeaviateVectorStore.php` (modified, +45/-4)
+**File**: `src/HttpClient/ResolvesHttpRequest.php` (modified, +2/-1)
 ```diff
-@@ -22,6 +22,7 @@
- use function array_column;
- use function array_key_exists;
- use function array_map;
-+use function count;
- use function implode;
- use function in_array;
- use function is_array;
-@@ -118,29 +119,63 @@ public function addDocuments(array $documents): VectorStoreInterface
-         ], $documents);
- 
-         $chunks = array_chunk($objects, 100);
-+        $outcomes = [];
- 
-         foreach ($chunks as $chunk) {
--            $this->httpClient->request(
-+            $outcomes = [...$outcomes, ...$this->httpClient->request(
-                 HttpRequest::post(
-                     uri: rtrim($this->baseUri, '/') . '/v1/batch/objects',
-                     body: ['objects' => $chunk],
-                     headers: $this->httpHeaders,
-                 )
--            );
-+            )->json()];
+@@ -37,7 +37,8 @@ protected function isSameOrigin(string $uri, string $target): bool
+             return false;
          }
  
-+        $this->assertStored($outcomes);
-+
-         return $this;
-     }
+-        if (!isset($redirect['host'])) {
++        // A scheme makes a target absolute even when parse_url() finds no host: libcurl reads http:/example.com as the host example.com
++        if (!isset($redirect['scheme']) && !isset($redirect['host'])) {
+             return true;
+         }
  
-+    /**
-+     * The batch API answers 200 even when it rejects objects: the rejections are listed in the response.
-+     *
-+     * @param array<mixed> $outcomes
-+     * @throws VectorStoreException
-+     */
-+    protected function assertStored(array $outcomes): void
-+    {
-+        $rejections = [];
-+        foreach ($outcomes as $outcome) {
-+            if (isset($outcome['result']['errors'])) {
-+                $rejections[] = "[{$outcome['id']}] {$this->errorMessages($outcome['result']['errors'])}";
-+            }
-+        }
-+
-+        if ($rejections !== []) {
-+            throw new VectorStoreException(
-+                'Weaviate rejected '.count($rejections).' of '.count($outcomes).' documents: '.implode('; ', $rejections)
-+            );
-+        }
-+    }
-+
-+    /**
-+     * @param array{error: array<int, array{message: string}>} $errors
-+     */
-+    protected function errorMessages(array $errors): string
-+    {
-+        return implode(', ', array_column($errors['error'], 'message'));
-+    }
-+
-     /**
-      * @throws HttpException
-      * @throws DocumentSchemaException
-+     * @throws VectorStoreException
+```
+
+**File**: `tests/HttpClient/HttpClientSecurityTest.php` (modified, +9/-6)
+```diff
+@@ -81,7 +81,7 @@ public function test_line_breaks_in_a_header_cannot_inject_headers(Closure $make
+      * Providers authenticate through Authorization and through custom headers (x-api-key,
+      * api-key, x-goog-api-key), set on the request or as client defaults.
+      *
+-     * @return iterable<string, array{Closure(): HttpClientInterface, array<string, string>, bool}>
++     * @return iterable<string, array{Closure(): HttpClientInterface, array<string, string>, bool, string}>
       */
-     public function delete(FilterExpression $filters): VectorStoreInterface
+     public static function credentialsMeetingARedirect(): iterable
      {
-         $this->validateFilters($filters);
-         $this->initialize();
--        $this->httpClient->request(
-+        $response = $this->httpClient->request(
-             HttpRequest::delete(
-                 uri: rtrim($this->baseUri, '/') . '/v1/batch/objects',
-                 body: [
-@@ -151,7 +186,13 @@ public function delete(FilterExpression $filters): VectorStoreInterface
-                 ],
-                 headers: $this->httpHeaders,
-             )
--        );
-+        )->json();
-+
-+        // Also a 200, and its counts don't add up (two matches can report one failure), so only the reasons are shown
-+        if (($response['results']['failed'] ?? 0) > 0) {
-+            $reasons = array_map(fn (array $object): string => $this->errorMessages($object['errors']), $response['results']['objects']);
-+            throw new VectorStoreException('Weaviate rejected the delete: ' . implode('; ', $reasons));
-+        }
+@@ -90,12 +90,15 @@ public static function credentialsMeetingARedirect(): iterable
+             'guzzle' => static fn (array $defaults): HttpClientInterface => new GuzzleHttpClient($defaults),
+             'amp' => static fn (array $defaults): HttpClientInterface => new AmpHttpClient($defaults),
+         ];
++        $redirects = ['two slashes' => '/redirect-to-other-host', 'one slash' => '/redirect-to-other-host-one-slash'];
  
-         return $this;
+         foreach ($clients as $name => $make) {
+             foreach (['request' => false, 'stream' => true] as $call => $streamed) {
+-                yield "{$name} {$call}, Authorization" => [static fn (): HttpClientInterface => $make([]), ['Authorization' => 'Bearer provider-secret'], $streamed];
+-                yield "{$name} {$call}, x-api-key" => [static fn (): HttpClientInterface => $make([]), ['x-api-key' => 'provider-secret'], $streamed];
+-                yield "{$name} {$call}, client default x-api-key" => [static fn (): HttpClientInterface => $make(['x-api-key' => 'provider-secret']), [], $streamed];
++                foreach ($redirects as $slashes => $redirect) {
++                    yield "{$name} {$call}, {$slashes}, Authorization" => [static fn (): HttpClientInterface => $make([]), ['Authorization' => 'Bearer provider-secret'], $streamed, $redirect];
++                    yield "{$name} {$call}, {$slashes}, x-api-key" => [static fn (): HttpClientInterface => $make([]), ['x-api-key' => 'provider-secret'], $streamed, $redirect];
++                    yield "{$name} {$call}, {$slashes}, client default x-api-key" => [static fn (): HttpClientInterface => $make(['x-api-key' => 'provider-secret']), [], $streamed, $redirect];
++                }
+             }
+         }
      }
+@@ -108,10 +111,10 @@ public static function credentialsMeetingARedirect(): iterable
+      * @param array<string, string> $headers
+      */
+     #[DataProvider('credentialsMeetingARedirect')]
+-    public function test_credentials_never_reach_another_origin_on_redirect(Closure $makeClient, array $headers, bool $streamed): void
++    public function test_credentials_never_reach_another_origin_on_redirect(Closure $makeClient, array $headers, bool $streamed, string $redirect): void
+     {
+         $record = sys_get_temp_dir() . '/neuron-redirect-' . bin2hex(random_bytes(6));
+-        $request = HttpRequest::get(static::$baseUri . '/redirect-to-other-host?record=' . basename($record), $headers);
++        $request = HttpRequest::get(static::$baseUri . $redirect . '?record=' . basename($record), $headers);
+ 
+         try {
+             $client = $makeClient();
 ```
 
-**File**: `tests/RAG/VectorStore/WeaviateTest.php` (modified, +51/-0)
+**File**: `tests/HttpClient/fixtures/server.php` (modified, +7/-0)
 ```diff
-@@ -4,6 +4,9 @@
+@@ -79,6 +79,13 @@
+         \header("Location: http://localhost:{$_SERVER['SERVER_PORT']}/headers{$record}");
+         break;
  
- namespace NeuronAI\Tests\RAG\VectorStore;
- 
-+use NeuronAI\Exceptions\VectorStoreException;
-+use NeuronAI\HttpClient\Curl\CurlHttpClient;
-+use NeuronAI\HttpClient\HttpRequest;
- use NeuronAI\RAG\Document;
- use NeuronAI\RAG\Schema\DocumentField;
- use NeuronAI\RAG\Schema\DocumentSchema;
-@@ -210,4 +213,52 @@ public function test_top_k_limits_results(): void
- 
-         $store->destroy();
-     }
++    case '/redirect-to-other-host-one-slash':
++        // PHP's parse_url() sees no host in this target, libcurl sees localhost.
++        \http_response_code(302);
++        $record = isset($_GET['record']) ? '?record=' . \rawurlencode((string) $_GET['record']) : '';
++        \header("Location: http:/localhost:{$_SERVER['SERVER_PORT']}/headers{$record}");
++        break;
 +
-+    public function test_a_document_rejected_by_the_server_raises_an_exception(): void
-+    {
-+        $valid = (new Document('Valid'))->setEmbedding([1, 0, 0]);
-+        $wrongSize = (new Document('Wrong size'))->setEmbedding([1, 0]);
-+        $this->store->addDocument((new Document('Hello World!'))->setEmbedding([0, 1, 0]));
-+
-+        try {
-+            $this->store->addDocuments([$valid, $wrongSize]);
-+            $this->fail('The rejected document must raise an exception.');
-+        } catch (VectorStoreException $exception) {
-+            $this->assertStringStartsWith("Weaviate rejected 1 of 2 documents: [{$wrongSize->getId()}]", $exception->getMessage());
-+        }
-+
-+        $this->assertCount(2, $this->store->search(new SearchRequest([1, 0, 0])));
-+    }
-+
-+    public function test_a_read_only_collection_refuses_additions_and_deletes(): void
-+    {
-+        $this->store->addDocument((new Document('Hello World!'))->setEmbedding([1, 0, 0]));
-+        $this->makeShardsReadOnly();
-+
-+        try {
-+            $this->store->addDocument((new Document('Refused'))->setEmbedding([0, 1, 0]));
-+            $this->fail('The rejected document must raise an exception.');
-+        } catch (VectorStoreException $exception) {
-+            $this->assertStringContainsString('read-only', $exception->getMessage());
-+        }
-+
-+        $this->expectException(VectorStoreException::class);
-+        $this->expectExceptionMessage('Weaviate rejected the delete: store is read-only');
-+
-+        $this->store->delete(Filter::eq('sourceType', 'manual'));
-+    }
-+
-+    protected function makeShardsReadOnly(): void
-+    {
-+        $client = new CurlHttpClient();
-+        $shardsUri = 'http://127.0.0.1:' . self::SERVICE_PORT . '/v1/schema/' . $this->collectionName . '/shards';
-+
-+        foreach ($client->request(HttpRequest::get($shardsUri))->json() as $shard) {
-+            $client->request(HttpRequest::put(
-+                uri: $shardsUri . '/' . $shard['name'],
-+                body: ['status' => 'READONLY'],
-+                headers: ['Content-Type' => 'application/json'],
-+            ));
-+        }
-+    }
- }
+     case '/redirect-loop':
+         \http_response_code(302);
+         \header('Location: /redirect-loop');
 ```
 
-**File**: `tests/RAG/VectorStore/WeaviateVectorStoreTest.php` (modified, +63/-4)
-```diff
-@@ -19,7 +19,10 @@
- use NeuronAI\Tests\RAG\VectorStore\Stub\RejectsInvalidInputBeforeRemoteCalls;
- use PHPUnit\Framework\TestCase;
- 
-+use function array_fill;
-+use function array_map;
- use function count;
-+use function range;
- 
- /**
-  * Offline contract of the Weaviate REST and GraphQL calls; WeaviateTest covers a live server.
-@@ -48,6 +51,11 @@ protected function noObjects(): Response
-         return $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]);
-     }
- 
-+    protected function nothingFailed(): Response
-+    {
-+        return $this->jsonResponse(['results' => ['failed' => 0, 'objects' => null]]);
-+    }
-+
-     protected function schema(): DocumentSchema
-     {
-         return DocumentSchema::of(
-@@ -149,7 +157,7 @@ public function test_adds_objects_with_json_metadata_and_declared_properties():
-             ->setSourceName('a.txt')
-             ->setMetadata(['tenant' => 'acme', 'year' => 2026, 'extra' => ['x' => true]]);
- 
--        $this->store(null, $this->schema(), new Response(200))->addDocument($document);
-+        $this->store(null, $this->schema(), $this->jsonResponse([]))->addDocument($document);
- 
-         $this->assertSame('POST http://weaviate.test:8080/v1/batch/objects', $this->sentTargets()[1]);
-         $this->assertSame(['objects' => [[
-@@ -174,7 +182,7 @@ public function test_unset_declared_fields_are_not_sent_as_null_properties(): vo
-             ->setEmbedding([1, 0])
-             ->setMetadata(['tenant' => 'acme', 'price' => null]);
- 
--        $this->store(null, $this->schema(), new Response(200))->addDocument($document);
-+        $this->store(null, $this->schema(), $this->jsonResponse([]))->addDocument($document);
- 
-         $this->assertSame([
-             'content' => 'Hello',
-@@ -185,6 +193,42 @@ public function test_unset_declared_fields_are_not_sent_as_null_properties(): vo
-         ], $this->sentJson(1)['objects'][0]['properties']);
-     }
- 
-+    public function test_documents_weaviate_rejects_raise_their_errors(): void
-+    {
-+        $store = $this->store(null, null, $this->jsonResponse([
-+            ['id' => 'obj-1', 'result' => ['status' => 'SUCCESS']],
-+            ['id' => 'obj-2', 'result' => ['status' => 'FAILED', 'errors' => ['error' => [['message' => 'store is read-only'], ['message' => 'wrong vector length']]]]],
-+        ]));
-+
-+        $this->expectException(VectorStoreException::class);
-+        $this->expectExceptionMessage('Weaviate rejected 1 of 2 documents: [obj-2] store is read-only, wrong vector length');
-+
-+        $store->addDocuments([
-+            (new Document('Stored'))->setEmbedding([1, 0]),
-+            (new Document('Rejected'))->setEmbedding([0, 1]),
-+        ]);
-+    }
-+
-+    public function test_every_batch_is_sent_before_a_rejection_is_raised(): void
-+    {
-+        $errors = ['error' => [['message' => 'store is read-only']]];
-+        $store = $this->store(
-+            null,
-+            null,
-+            $this->jsonResponse([
-+                ['id' => 'first-batch', 'result' => ['status' => 'FAILED', 'errors' => $errors]],
-+                ...array_fill(0, 99, ['id' => 'stored', 'result' => ['status' => 'SUCCESS']]),
-+            ]),
-+            $this->jsonResponse([['id' => 'second-batch', 'result' => ['status' => 'FAILED', 'errors' => $errors]]]),
-+        );
-+        $documents = array_map(fn (int $number): Document => (new Document("Document {$number}"))->setEmbedding([1, 0]), range(1, 101));
-+
-+        $this->expectException(VectorStoreException::class);
-+        $this->expectExceptionMessage('Weaviate rejected 2 of 101 documents: [first-batch] store is read-only; [second-batch] store is read-only');
-+
-+        $store->addDocuments($documents);
-+    }
-+
-     public function test_search_renders_a_graphql_query_with_escaped_filter_values(): void
-     {
-         $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]));
-@@ -301,7 +345,7 @@ public function test_a_search_weaviate_rejects_raises_its_errors(): void
- 
-     public function test_whole_number_filters_on_float_fields_compare_numbers(): void
-     {
--        $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]), new Response(200));
-+        $store = $this->store(null, $this->schema(), $this->jsonResponse(['data' => ['Get' => ['Articles' => []]]]), $this->nothingFailed());
- 
-         $store->search(new SearchRequest([1.0], Filter::gt('price', 10)));
-         $store->delete(Filter::eq('price', 10));
-@@ -312,7 +356,7 @@ public function test_whole_number_filters_on_float_fields_compare_numbers(): voi
- 
-     public function test_delete_sends_a_batch_delete_with_the_rest_filter(): void
-     {
--        $this->store(null, $this->schema(), new Response(200))->delete(FilterGroup::anyOf(
-+        $this->store(null, $this->schema(), $this->nothingFailed())->delete(FilterGroup::anyOf(
-             Filter::eq('sourceName', 'a.txt'),
-             Filter::containsAny('tags', ['old
-```
+---
 
-**File**: `tests/Tools/Toolkits/FileSystem/ParseFileToolTest.php` (modified, +1/-1)
+### Incident Patch 3: `3413bf3a` (2026-11-02)
+**Commit Message**: fix tests configuration
+
+**File**: `.github/workflows/tests.yml` (modified, +4/-0)
 ```diff
-@@ -140,7 +140,7 @@ public function test_unsupported_formats_are_refused(string $name, string $exten
-         file_put_contents($this->tempDir . '/' . $name, '<?php echo "hello"; ?>');
- 
-         $this->assertToolError(
--            "Unsupported file format '{$extension}'. Supported formats: PDF, HTML. If the file is already in plain text you can access its content directly with other tools like grep_file_content or read_file.",
-+            "Unsupported file format '{$extension}'. Supported formats: PDF, HTML. If the file is already in plain text you can access its content directly with other dedicated tools.",
-             ($this->tool)($this->tempDir . '/' . $name)
-         );
-     }
+@@ -70,6 +70,8 @@ jobs:
+                     discovery.type: single-node
+                     plugins.security.disabled: "true"
+                     DISABLE_INSTALL_DEMO_CONFIG: true
++                    # Pulling the service images can fill the runner's disk past 90%, which would refuse new indexes
++                    cluster.routing.allocation.disk.threshold_enabled: "false"
+                 options: --health-cmd="curl -s http://localhost:9200/_cluster/health | grep '\"status\":\"green\"'" --health-interval=10s --health-timeout=5s --health-retries=5
+             weaviate:
+                 image: cr.weaviate.io/semitechnologies/weaviate:1.39.13
+@@ -81,6 +83,8 @@ jobs:
+                     PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+                     ENABLE_MODULES: ''
+                     CLUSTER_HOSTNAME: 'node1'
++                    # Pulling the service images can fill the runner's disk past 90%, which would make every shard read-only
++                    DISK_USE_READONLY_PERCENTAGE: '100'
+             neo4j:
+                 image: neo4j:5.26.19-ubi9
+                 ports:
 ```
 
 #### Recent Merged Pull Requests:
@@ -997,65 +950,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dependency vulnerabilities
+## X. failed tools run twice on recovery
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `skills/neuron-agent/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f63ad4ae`: dependency vulnerabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e004fe01`: failed tools run twice on recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/neuron-agent/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-      "version": "6.29.1",
-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-      "version": "6.29.1",
-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-        "node": ">=18.17"
-      "version": "6.29.1",
-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+external idempotency where needed. A tool call does not repeat: recovering a run
+whose process died while a tool ran, or whose tool threw, gives the call an error
+result saying its outcome is unknown, and the model decides what to do. To let
+the model read what went wrong instead, turn the exception into a result with
+`toolErrorHandler()`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-    "node_modules/@a2ui/web_core/node_modules/zod": {
-      "version": "3.25.76",
-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
-      "license": "MIT",
-      "funding": {
-        "url": "https://github.com/sponsors/colinhacks"
-      }
-    },
-    "node_modules/@ag-ui/client/node_modules/zod": {
-      "version": "3.25.76",
-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
-      "license": "MIT",
-      "funding": {
-        "url": "https://github.com/sponsors/colinhacks"
-      }
-    },
-    "node_modules/@ag-ui/proto/node_modules/zod": {
-      "version": "3.25.76",
-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
-      "license": "MIT",
-      "funding": {
-        "url": "https://github.com/sponsors/colinhacks"
-      }
-    },
-      "version": "6.29.0",
-      "resolved": "https
+external idempotency where needed.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f63ad4ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e004fe01` are properly handled with clean fallback behavior.

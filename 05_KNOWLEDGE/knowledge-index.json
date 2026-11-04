@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:04:47.430Z",
+  "last_updated": "2026-11-04T02:12:12.694Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5492,8 +5492,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "6a64fae9",
-      "content_hash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
+      "source_version": "47986461",
+      "content_hash": "180b8d084778eaecf307ba736696e24d3be46da33cd0dd0c1c4e1f447fd38b9f",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -5511,6 +5511,11 @@
           "number": 6451,
           "title": "general): harden network and credential handling defaults (#7701)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6720,
+          "title": "terraform): build userinfo test URLs dynamically (#7776)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5518,7 +5523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:18:49.611Z",
+      "verified_at": "2026-11-04T02:12:07.966Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42980,8 +42985,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "f63ad4ae",
-      "content_hash": "b569ef425e695dd457914cd0a898911ae103527e7c122a35072e41e4e11bc6be",
+      "source_version": "e66e0fda",
+      "content_hash": "df15d3e72853029b8a3325c410150daeb4506a268648be831fa1a75927535f52",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -43014,6 +43019,11 @@
           "number": 6435,
           "title": "dependency vulnerabilities",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6721,
+          "title": "failed tools run twice on recovery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43021,7 +43031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:29:45.291Z",
+      "verified_at": "2026-11-04T02:12:12.663Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75764,8 +75774,8 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "fe21fce0",
-      "content_hash": "098168d8626fbdec00d4f4043453a8f2e7000075a978503e4e252123624163f6",
+      "source_version": "628098d2",
+      "content_hash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
@@ -75783,6 +75793,11 @@
           "number": 5828,
           "title": "docs: fix broken Svelte v2 docs link in FAQ (#19088)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6719,
+          "title": "preserve effect tree order across batch traversals (#19132)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75790,7 +75805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:32:29.508Z",
+      "verified_at": "2026-11-04T02:12:03.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172476,6 +172491,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:04:47.417Z"
+    },
+    "rule-6719": {
+      "learning_id": "rule-6719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6719,
+      "title": "preserve effect tree order across batch traversals (#19132)",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "628098d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:12:03.335Z"
+    },
+    "rule-6720": {
+      "learning_id": "rule-6720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6720,
+      "title": "terraform): build userinfo test URLs dynamically (#7776)",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "47986461",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:12:07.966Z"
+    },
+    "rule-6721": {
+      "learning_id": "rule-6721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6721,
+      "title": "failed tools run twice on recovery",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "e66e0fda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:12:12.663Z"
     }
   },
   "aliases": {

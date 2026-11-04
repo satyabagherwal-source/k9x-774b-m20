@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "f63ad4ae",
+    "sourceVersion": "e66e0fda",
     "license": "MIT",
-    "contentHash": "b569ef425e695dd457914cd0a898911ae103527e7c122a35072e41e4e11bc6be",
-    "lastHarvestedAt": "2026-11-02T15:29:45.396Z",
+    "contentHash": "df15d3e72853029b8a3325c410150daeb4506a268648be831fa1a75927535f52",
+    "lastHarvestedAt": "2026-11-04T02:12:12.782Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "6a64fae9",
+    "sourceVersion": "47986461",
     "license": "Apache-2.0",
-    "contentHash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
-    "lastHarvestedAt": "2026-11-02T16:18:49.723Z",
+    "contentHash": "180b8d084778eaecf307ba736696e24d3be46da33cd0dd0c1c4e1f447fd38b9f",
+    "lastHarvestedAt": "2026-11-04T02:12:08.085Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "fe21fce0",
+    "sourceVersion": "628098d2",
     "license": "MIT",
-    "contentHash": "098168d8626fbdec00d4f4043453a8f2e7000075a978503e4e252123624163f6",
-    "lastHarvestedAt": "2026-10-30T18:32:29.610Z",
+    "contentHash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
+    "lastHarvestedAt": "2026-11-04T02:12:03.457Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

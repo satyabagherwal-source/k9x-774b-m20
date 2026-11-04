@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T02:04:47.485Z",
-  "total_cycles_completed": 7095,
-  "total_learnings_persisted": 7095,
-  "total_rules_promoted": 6741,
+  "last_updated": "2026-11-04T02:12:12.787Z",
+  "total_cycles_completed": 7098,
+  "total_learnings_persisted": 7098,
+  "total_rules_promoted": 6744,
   "history": [
-    {
-      "timestamp": "2026-11-03T15:46:42.632Z",
-      "repository": "StikDebug/StikDebug",
-      "learningId": "learn-github-stikdebug-stikdebug",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T15:46:51.153Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T15:54:43.733Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T15:54:45.086Z",
       "repository": "pingcap/talent-plan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T02:04:47.485Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:12:03.463Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:12:08.090Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:12:12.787Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

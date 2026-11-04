@@ -7118,3 +7118,6 @@
 | `CYCLE-20261104-4OHE` | `2026-11-04T02:04:42.866Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6714` | Yes (`066c0451...`) |
 | `CYCLE-20261104-4Q4R` | `2026-11-04T02:04:45.003Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6715, Rule 6716, Rule 6717` | Yes (`0b64c5e5...`) |
 | `CYCLE-20261104-4S1J` | `2026-11-04T02:04:47.479Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6718` | Yes (`fe64b0a5...`) |
+| `CYCLE-20261104-E4FY` | `2026-11-04T02:12:03.454Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6719` | Yes (`9fd83d2a...`) |
+| `CYCLE-20261104-E80H` | `2026-11-04T02:12:08.081Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6720` | Yes (`180b8d08...`) |
+| `CYCLE-20261104-EBMY` | `2026-11-04T02:12:12.778Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6721` | Yes (`df15d3e7...`) |
