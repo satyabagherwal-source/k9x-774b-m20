@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:09:16.839Z",
+  "last_updated": "2026-11-04T03:16:23.691Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6936,14 +6936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-svenstaro-miniserve",
-      "content_hash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
-      "verified_at": "2026-10-19T01:34:48.927Z",
+      "content_hash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
+      "verified_at": "2026-11-04T03:16:22.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:34:48.927Z"
+      "last_updated": "2026-11-04T03:16:22.336Z"
     },
     "founded-labs/react-native-reusables": {
       "repository": "founded-labs/react-native-reusables",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
-      "verified_at": "2026-10-30T19:42:41.916Z",
+      "content_hash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
+      "verified_at": "2026-11-04T03:16:23.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:42:41.916Z"
+      "last_updated": "2026-11-04T03:16:23.691Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",

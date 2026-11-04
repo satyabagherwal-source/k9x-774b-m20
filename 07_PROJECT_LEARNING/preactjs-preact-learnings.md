@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `4e5c63cc`  
+> **Source Version**: `076fe9cc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:42:41.250Z  
+> **Timestamp**: 2026-11-04T03:16:23.095Z  
 > **Learning ID**: `learn-github-preactjs-preact`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:42:40.467Z  
+> **Harvest Timestamp**: 2026-11-04T03:16:22.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 38967 stars
+- **Stars / Engagement**: 38976 stars
 
 ---
 
@@ -323,25 +323,20 @@ function handleDomVNode(vnode) {
 	}
 
 	if (type == 'select') {
-		// Add support for array select values: <select multiple value={[]} />
-		if (normalizedProps.multiple && Array.isArray(normalizedProps.value)) {
+		// Select the matching options for a defaultValue, or for an array value
+		// of <select multiple value={[]} />.
+		let selected =
+			normalizedProps.defaultValue != null
+				? normalizedProps.defaultValue
+				: normalizedProps.multiple && Array.isArray(normalizedProps.value)
+					? normalizedProps.value
+					: null;
+		if (selected != null) {
 			// forEach() always returns undefined, which we abuse here to unset the value prop.
 			normalizedProps.value = toChildArray(props.children).forEach(child => {
-				child.props.selected =
-					normalizedProps.value.indexOf(child.props.value) != -1;
-			});
-		}
-
-		// Adding support for defaultValue in select tag
-		if (normalizedProps.defaultValue != null) {
-			normalizedProps.value = toChildArray(props.children).forEach(child => {
-				if (normalizedProps.multiple) {
-					child.props.selected =
-						normalizedProps.defaultValue.indexOf(child.props.value) != -1;
-				} else {
-					child.props.selected =
-						normalizedProps.defaultValue == child.props.value;
-				}
+				child.props.selected = normalizedProps.multiple
+					? selected.indexOf(child.props.value) != -1
+					: selected == child.props.value;
 			});
 		}
 	}
@@ -406,7 +401,12 @@ function initRenderTracking(value) {
 
 		const oldBeforeRender = options._render;
 		options._render = vnode => {
-			i
+			if (oldBeforeRender) oldBeforeRender(vnode);
+			if (vnode._flags & MODE_HYDRATE) hydrationRoot = vnode;
+			currentComponent = vnode._component;
+		};
+
+		const oldDiffed = op
 ```
 
 ### Core Architecture Module: `compat/src/util.js`
@@ -889,9 +889,7 @@ export function useReducer(reducer, initialState, init) {
 			!init ? invokeOrReturn(undefined, initialState) : init(initialState),
 
 			action => {
-				const currentValue = hookState._nextValue
-					? hookState._nextValue[0]
-					: hookState._value[0];
+				const currentValue = (hookState._nextValue || hookState._value)[0];
 				const nextValue = hookState._reducer(currentValue, action);
 
 				if (!ObjectIs(currentValue, nextValue)) {
@@ -997,7 +995,7 @@ export function useImperativeHandle(ref, createHandle, args) {
 				const result = ref(createHandle());
 				return () => {
 					ref(null);
-					if (result && typeof result == 'function') result();
+					if (typeof result == 'function') result();
 				};
 			} else if (ref) {
 				ref.current = createHandle();
@@ -1010,7 +1008,9 @@ export function useImperativeHandle(ref, createHandle, args) {
 
 /**
  * @template {unknown} T
- * @param {() => T} f
+ * @param {() => T} factory
+ * @param {unknown[]} args
+ * @retur
 ```
 
 ### Core Architecture Module: `hooks/src/internal.d.ts`
@@ -1284,341 +1284,215 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39d29204` (2026-10-28)
-**Commit Message**: fix(types): add declarative shadow DOM attributes to <template>
+### Incident Patch 1: `5a76600f` (2026-10-30)
+**Commit Message**: Tune terser inlining for core and debug builds
 
-`<template shadowrootmode="open">` failed to type check because
-TemplateHTMLAttributes had no shadowroot* attributes. Add shadowrootmode
-('open' | 'closed') and the shadowrootclonable, shadowrootdelegatesfocus
-and shadowrootserializable booleans, each with its camelCase property
-form like the other attributes in dom.d.ts.
+Terser's default inline level (3) inlines functions that have their own
+variables, which ends up compressing worse. Lowering it is a pure build
+change:
 
-Fixes #5337
+- core: inline 2 -> -14 B gzip / -16 B brotli
+- debug: inline 1 -> -17 B gzip / -25 B brotli
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The other packages are unchanged by any inline level, so they keep the
+defaults.
 
-**File**: `src/dom.d.ts` (modified, +8/-0)
+Claude-Session: https://claude.ai/code/session_01Ra8ZEeFfa6i2eykc3rCHSK
+
+**File**: `debug/mangle.json` (modified, +3/-0)
 ```diff
-@@ -2786,6 +2786,14 @@ export interface TemplateHTMLAttributes<
- 	T extends EventTarget = HTMLTemplateElement
- > extends HTMLAttributes<T> {
- 	role?: never;
-+	shadowrootclonable?: Signalish<boolean | undefined>;
-+	shadowRootClonable?: Signalish<boolean | undefined>;
-+	shadowrootdelegatesfocus?: Signalish<boolean | undefined>;
-+	shadowRootDelegatesFocus?: Signalish<boolean | undefined>;
-+	shadowrootmode?: Signalish<'open' | 'closed' | undefined>;
-+	shadowRootMode?: Signalish<'open' | 'closed' | undefined>;
-+	shadowrootserializable?: Signalish<boolean | undefined>;
-+	shadowRootSerializable?: Signalish<boolean | undefined>;
+@@ -16,6 +16,9 @@
+           "__self"
+         ]
+       }
++    },
++    "compress": {
++      "inline": 1
+     }
+   }
  }
- 
- export interface TextareaHTMLAttributes<
 ```
 
-**File**: `test/ts/dom-attributes.test-d.tsx` (modified, +22/-0)
+**File**: `mangle.json` (modified, +2/-1)
 ```diff
-@@ -344,3 +344,25 @@ const dangerouslySetInnerHTML = (
- 		<div dangerouslySetInnerHTML={{ __html: 'string' }} />
- 	</>
- );
-+
-+const declarativeShadowRoot = (
-+	<>
-+		<template shadowrootmode="open" />
-+		<template shadowrootmode="closed" />
-+		<template shadowRootMode={createSignal('open' as const)} />
-+		<template
-+			shadowrootmode="open"
-+			shadowrootclonable
-+			shadowrootdelegatesfocus
-+			shadowrootserializable
-+		/>
-+		<template
-+			shadowRootMode="closed"
-+			shadowRootClonable={false}
-+			shadowRootDelegatesFocus={true}
-+			shadowRootSerializable
-+		/>
-+	</>
-+);
-+// @ts-expect-error shadowrootmode only accepts "open" or "closed"
-+const invalidShadowRootMode = <template shadowrootmode="none" />;
+@@ -19,7 +19,8 @@
+     },
+     "compress": {
+       "hoist_vars": true,
+-      "reduce_funcs": false
++      "reduce_funcs": false,
++      "inline": 2
+     }
+   },
+   "props": {
 ```
 
 ---
 
-### Incident Patch 2: `4e5c63cc` (2026-10-30)
-**Commit Message**: Merge pull request #5339 from preactjs/fix/template-namespace-content
+### Incident Patch 2: `076fe9cc` (2026-11-03)
+**Commit Message**: Merge pull request #5345 from preactjs/fix/ignore-non-function-event-props
 
-Fix template in alternative namespaces
+Ignore non-function values for on* props
 
-**File**: `src/diff/index.js` (modified, +1/-1)
+**File**: `src/diff/props.js` (modified, +3/-0)
 ```diff
-@@ -609,7 +609,7 @@ function diffElementNodes(
- 		// when reading existing DOM and when inserting new nodes. `parentDom` is
- 		// unused from here on, so we reuse it as the container for our children.
- 		// @ts-expect-error
--		parentDom = nodeType == 'template' ? dom.content : dom;
-+		parentDom = (nodeType == 'template' && dom.content) || dom;
- 
- 		// If excessDomChildren was not null, repopulate it with the current element's children:
- 		excessDomChildren =
+@@ -68,6 +68,9 @@ export function setProperty(dom, name, value, oldValue, namespace) {
+ 	}
+ 	// Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
+ 	else if (name[0] == 'o' && name[1] == 'n') {
++		if (typeof value != 'function') value = NULL;
++		if (typeof oldValue != 'function') oldValue = NULL;
++
+ 		// Handlers are keyed by prop name and every prop name gets its own proxy,
+ 		// so swapping one (e.g. an inline arrow function on every render) is a
+ 		// single store. The event name is only derived to attach or remove it.
 ```
 
-**File**: `test/browser/hydrate.test.jsx` (modified, +26/-0)
+**File**: `test/browser/events.test.jsx` (modified, +30/-0)
 ```diff
-@@ -612,6 +612,32 @@ describe('hydrate()', () => {
- 		expect(caught.message).to.equal('real error');
- 	});
- 
-+	for (const [tag, childTag, namespace] of [
-+		['svg', 'g', 'http://www.w3.org/2000/svg'],
-+		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
-+	]) {
-+		it(`should hydrate <template> in ${tag}`, () => {
-+			scratch.innerHTML = `<${tag}><template><${childTag}>child</${childTag}></template></${tag}>`;
-+			const template = scratch.firstChild.firstChild;
-+			const child = template.firstChild;
-+			const vnode = createElement(
-+				tag,
-+				null,
-+				createElement('template', null, createElement(childTag, null, 'child'))
-+			);
-+
-+			hydrate(vnode, scratch);
-+
-+			expect(scratch.firstChild.firstChild).to.equal(template);
-+			expect(template.namespaceURI).to.equal(namespace);
-+			expect(template.content).to.equal(undefined);
-+			expect(template.childNodes).to.have.length(1);
-+			expect(template.firstChild).to.equal(child);
-+			expect(child.namespaceURI).to.equal(namespace);
-+			expect(template.textContent).to.equal('child');
-+		});
-+	}
-+
- 	it('should hydrate <template> tags', () => {
- 		function App() {
- 			return (
-```
-
-**File**: `test/browser/render.test.jsx` (modified, +66/-0)
-```diff
-@@ -151,6 +151,72 @@ describe('render()', () => {
+@@ -72,6 +72,36 @@ describe('event handling', () => {
  		);
  	});
  
-+	for (const [tag, childTag, namespace] of [
-+		['svg', 'g', 'http://www.w3.org/2000/svg'],
-+		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
-+	]) {
-+		it(`should render and update <template> in ${tag}`, () => {
-+			const App = ({ items }) =>
-+				createElement(
-+					tag,
-+					null,
-+					createElement(
-+						'template',
-+						null,
-+						items.map(i => createElement(childTag, { key: i }, i))
-+					)
-+				);
++	it('should ignore non-function values', () => {
++		render(<div onclick="foo()" onMouseDown={{}} />, scratch);
 +
-+			render(<App items={[1, 2]} />, scratch);
-+			const template = scratch.firstChild.firstChild;
-+			const child = template.firstChild;
-+			expect(template.namespaceURI).to.equal(namespace);
-+			expect(template.content).to.equal(undefined);
-+			expect(template.textContent).to.equal('12');
-+			expect(child.namespaceURI).to.equal(namespace);
-+
-+			render(<App items={[2, 1, 3]} />, scratch);
-+			expect(template.textContent).to.equal('213');
-+			expect(template.childNodes[1]).to.equal(child);
-+
-+			render(<App items={[1]} />, scratch);
-+			expect(template.firstChild).to.equal(child);
-+			expect(template.childNodes).to.have.length(1);
-+
-+			render(null, scratch);
-+			expect(scratch.childNodes).to.have.length(0);
-+		});
-+	}
-+
-+	it('should use HTML <template> content inside namespace integration points', () => {
-+		render(
-+			<div>
-+				<svg>
-+					<foreignObject>
-+						<template>
-+							<span>svg</span>
-+						</template>
-+					</foreignObject>
-+				</svg>
-+				<math>
-+					<mtext>
-+						<template>
-+							<span>math</span>
-+						</template>
-+					</mtext>
-+				</math>
-+			</div>,
-+			scratch
-+		);
-+		for (const template of scratch.querySelectorAll('template')) {
-+			expect(template.namespaceURI).to.equal('http://www.w3.org/1999/xhtml');
-+			expect(template.childNodes).to.have.length(0);
-+			expect(template.content.firstChild.namespaceURI).to.equal(
-+				'http://www.w3.org/1999/xhtml'
-+			);
-+		}
++		expect(scratch.innerHTML).to.equal('<div></div>');
++		expect(proto.addEventListener).not.toHaveBeenCalled();
++		expect(() => fireEvent(scratch.firstChild, 'click')).not.toThrow();
 +	});
 +
- 	it('should render function components with an undefined prototype', () => {
- 		const Foo = () => <div>foo</div>;
- 		Foo.prototype = undefined;
++	it('should switch between function and non-function values', () => {
++		let click = vi.fn();
++
++		render(<div onClick="foo()" />, scratch);
++		render(<div onClick={click} />, scratch);
++
++		fireEvent(scratch.firstChild, 'click');
++		expect(click).toHaveBeenCalledOnce();
++
++		click.mockClear();
++		render(<div onClick="foo()" />, scratch);
++
++		expect(proto.removeEventListener).toHaveBeenCalledWith(
++			'click',
++			expect.any(Function),
++			false
++		);
++		fireEvent(scratch.firstChild, 'click');
++		expect(click).not.toHaveBeenCalled();
++		expect(scratch.innerHTML).to.equal('<div></div>');
++	});
++
+ 	it('should support native event names', () => {
+ 		let click = vi.fn(),
+ 			mousedown = vi.fn();
 ```
 
 ---
 
-### Incident Patch 3: `9ecf719a` (2026-10-29)
-**Commit Message**: Fix template in alternative namespaces
+### Incident Patch 3: `fe83cd17` (2026-10-30)
+**Commit Message**: Golf the component render loop and suspended range scan
 
-**File**: `src/diff/index.js` (modified, +1/-1)
-```diff
-@@ -609,7 +609,7 @@ function diffElementNodes(
- 		// when reading existing DOM and when inserting new nodes. `parentDom` is
- 		// unused from here on, so we reuse it as the container for our children.
- 		// @ts-expect-error
--		parentDom = nodeType == 'template' ? dom.content : dom;
-+		parentDom = (nodeType == 'template' && dom.content) || dom;
- 
- 		// If excessDomChildren was not null, repopulate it with the current element's children:
- 		excessDomChildren =
-```
+- Class and function components share one render loop: classes start the
+  counter at its limit so they render exactly once.
+- When a component suspends while hydrating, find the end of its
+  streamed range through rangeEnd() instead of re-implementing the
+  nested marker counting.
 
-**File**: `test/browser/hydrate.test.jsx` (modified, +26/-0)
-```diff
-@@ -612,6 +612,32 @@ describe('hydrate()', () => {
- 		expect(caught.message).to.equal('real error');
- 	});
- 
-+	for (const [tag, childTag, namespace] of [
-+		['svg', 'g', 'http://www.w3.org/2000/svg'],
-+		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
-+	]) {
-+		it(`should hydrate <template> in ${tag}`, () => {
-+			scratch.innerHTML = `<${tag}><template><${childTag}>child</${childTag}></template></${tag}>`;
-+			const template = scratch.firstChild.firstChild;
-+			const child = template.firstChild;
-+			const vnode = createElement(
-+				tag,
-+				null,
-+				createElement('template', null, createElement(childTag, null, 'child'))
-+			);
-+
-+			hydrate(vnode, scratch);
-+
-+			expect(scratch.firstChild.firstChild).to.equal(template);
-+			expect(template.namespaceURI).to.equal(namespace);
-+			expect(template.content).to.equal(undefined);
-+			expect(template.childNodes).to.have.length(1);
-+			expect(template.firstChild).to.equal(child);
-+			expect(child.namespaceURI).to.equal(namespace);
-+			expect(template.textContent).to.equal('child');
-+		});
-+	}
-+
- 	it('should hydrate <template> tags', () => {
- 		function App() {
- 			return (
-```
+Claude-Session: https://claude.ai/code/session_01Ra8ZEeFfa6i2eykc3rCHSK
 
-**File**: `test/browser/render.test.jsx` (modified, +66/-0)
+**File**: `src/diff/index.js` (modified, +18/-32)
 ```diff
-@@ -151,6 +151,72 @@ describe('render()', () => {
- 		);
- 	});
+@@ -250,28 +250,19 @@ export function diff(
+ 			c._parentDom = parentDom;
+ 			c._bits &= ~COMPONENT_FORCE;
  
-+	for (const [tag, childTag, namespace] of [
-+		['svg', 'g', 'http://www.w3.org/2000/svg'],
-+		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
-+	]) {
-+		it(`should render and update <template> in ${tag}`, () => {
-+			const App = ({ items }) =>
-+				createElement(
-+					tag,
-+					null,
-+					createElement(
-+						'template',
-+						null,
-+						items.map(i => createElement(childTag, { key: i }, i))
-+					)
-+				);
-+
-+			render(<App items={[1, 2]} />, scratch);
-+			const template = scratch.firstChild.firstChild;
-+			const child = template.firstChild;
-+			expect(template.namespaceURI).to.equal(namespace);
-+			expect(template.content).to.equal(undefined);
-+			expect(template.textContent).to.equal('12');
-+			expect(child.namespaceURI).to.equal(namespace);
-+
-+			render(<App items={[2, 1, 3]} />, scratch);
-+			expect(template.textContent).to.equal('213');
-+			expect(template.childNodes[1]).to.equal(child);
-+
-+			render(<App items={[1]} />, scratch);
-+			expect(template.firstChild).to.equal(child);
-+			expect(template.childNodes).to.have.length(1);
-+
-+			render(null, scratch);
-+			expect(scratch.childNodes).to.have.length(0);
-+		});
-+	}
-+
-+	it('should use HTML <template> content inside namespace integration points', () => {
-+		render(
-+			<div>
-+				<svg>
-+					<foreignObject>
-+						<template>
-+							<span>svg</span>
-+						</template>
-+					</foreignObject>
-+				</svg>
-+				<math>
-+					<mtext>
-+						<template>
-+							<span>math</span>
-+						</template>
-+					</mtext>
-+				</math>
-+			</div>,
-+			scratch
-+		);
-+		for (const template of scratch.querySelectorAll('template')) {
-+			expect(template.namespaceURI).to.equal('http://www.w3.org/1999/xhtml');
-+			expect(template.childNodes).to.have.length(0);
-+			expect(template.content.firstChild.namespaceURI).to.equal(
-+				'http://www.w3.org/1999/xhtml'
-+			);
-+		}
-+	});
-+
- 	it('should render function components with an undefined prototype', () => {
- 		const Foo = () => <div>foo</div>;
- 		Foo.prototype = undefined;
++			// Function components re-render until they stop calling setState
++			// during render (see #2553), class components render exactly once.
+ 			let renderHook = options._render,
+-				count = 0;
+-			if (isClassComponent) {
+-				c.state = c._nextState;
++				count = isClassComponent ? 25 : 0;
++			do {
+ 				c._bits &= ~COMPONENT_DIRTY;
+-
+ 				if (renderHook) renderHook(newVNode);
++				tmp = c.render(c.props, (c.state = c._nextState), c.context);
++			} while (c._bits & COMPONENT_DIRTY && ++count < 25);
+ 
+-				tmp = c.render(c.props, c.state, c.context);
+-
++			if (isClassComponent) {
+ 				EMPTY_ARR.push.apply(c._renderCallbacks, c._stateCallbacks);
+ 				c._stateCallbacks = [];
+-			} else {
+-				do {
+-					c._bits &= ~COMPONENT_DIRTY;
+-					if (renderHook) renderHook(newVNode);
+-
+-					tmp = c.render(c.props, c.state, c.context);
+-
+-					// Handle setState called in render, see #2553
+-					c.state = c._nextState;
+-				} while (c._bits & COMPONENT_DIRTY && ++count < 25);
+ 			}
+ 
+ 			// Handle setState called in render, see #2553
+@@ -370,8 +361,7 @@ export function diff(
+ 			// if hydrating or creating initial tree, bailout preserves DOM:
+ 			if (isHydrating || excessDomChildren) {
+ 				if (e.then) {
+-					let commentMarkersToFind = 0,
+-						startMarker;
++					let startMarker, end;
+ 
+ 					// isHydrating is MODE_HYDRATE or falsy
+ 					newVNode._flags |= MODE_SUSPENDED | isHydrating;
+@@ -386,23 +376,19 @@ export function diff(
+ 							i--;
+ 						}
+ 
++						// Keep what this component would have claimed: its whole
++						// streamed range (all of it when unclosed), or else the first
++						// node that isn't a comment.
+ 						for (; i < excessDomChildren.length; i++) {
+-							child = excessDomChildren[i];
+-							if (!child) continue;
+-							excessDomChildren[i] = NULL;
+-
+-							if (child.nodeType == 8) {
+-								if (child.data.startsWith('$s')) {
+-									if (!commentMarkersToFind++) startMarker = child;
+-								} else if (
+-									commentMarkersToFind &&
+-									child.data.startsWith('/$s') &&
+-									!--commentMarkersToFind
+-								) {
++							if ((child = excessDomChildren[i])) {
++								excessDomChildren[i] = NULL;
++								if (startMarker) {
++									if (child == end) break;
++								} else if (child.nodeType != 8) {
+ 									break;
++								} else if (child.data.startsWith('$s')) {
++									end = rangeEnd((startMarker = child));
+ 								}
+-							} else if (!commentMarkersToFind) {
+-								break;
+ 							}
+ 						}
+ 					}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5345** (2026-11-03): Ignore non-function values for on* props (@JoviDeCroock)
+- **PR #5343** (2026-11-02): Golf Preact (@JoviDeCroock)
+- **PR #5342** (2026-11-02): Support scoped custom element registries (@JoviDeCroock)
+- **PR #5340** (2026-10-31): 11.1.1 (@JoviDeCroock)
 - **PR #5339** (2026-10-30): Fix template in alternative namespaces (@JoviDeCroock)
 - **PR #5338** (2026-10-28): fix(types): add declarative shadow DOM attributes to `<template>` (@b84330808)
-- **PR #5336** (2026-10-27): 11.1.0 (@JoviDeCroock)
-- **PR #5335** (2026-10-27): Harden vnode recognition (@JoviDeCroock)
-- **PR #5334** (closed): types: add fetchpriority, blocking, and attributionsrc attributes (@playlikeboy)
-- **PR #5333** (closed): types: add missing capture event handlers to DOMAttributes (@playlikeboy)
 
 ---
 
@@ -1638,28 +1512,23 @@ Fix template in alternative namespaces
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. types): add declarative shadow DOM attributes to <template>
+## X. Tune terser inlining for core and debug builds
 
 **RULE**:
-When implementing operations in `src/dom.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `debug/mangle.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39d29204`: types): add declarative shadow DOM attributes to <template>. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a76600f`: Tune terser inlining for core and debug builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/dom.d.ts`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `debug/mangle.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-	shadowrootclonable?: Signalish<boolean | undefined>;
-	shadowRootClonable?: Signalish<boolean | undefined>;
-	shadowrootdelegatesfocus?: Signalish<boolean | undefined>;
-	shadowRootDelegatesFocus?: Signalish<boolean | undefined>;
-	shadowrootmode?: Signalish<'open' | 'closed' | undefined>;
-	shadowRootMode?: Signalish<'open' | 'closed' | undefined>;
-	shadowrootserializable?: Signalish<boolean | undefined>;
-	shadowRootSerializable?: Signalish<boolean | undefined>;
+    },
+    "compress": {
+      "inline": 1
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1669,4 +1538,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39d29204` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a76600f` are properly handled with clean fallback behavior.

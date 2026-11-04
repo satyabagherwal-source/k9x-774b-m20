@@ -7144,3 +7144,5 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `a3ca96f3` | Multi-dimensional audit evidence | 2026-11-04T03:00:16.919Z |
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `d5781a49` | Multi-dimensional audit evidence | 2026-11-04T03:09:05.487Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `658388c9` | Multi-dimensional audit evidence | 2026-11-04T03:09:16.830Z |
+| `learn-github-svenstaro-miniserve` | `https://github.com/svenstaro/miniserve` | `68b6f063` | Multi-dimensional audit evidence | 2026-11-04T03:16:22.330Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `076fe9cc` | Multi-dimensional audit evidence | 2026-11-04T03:16:23.684Z |

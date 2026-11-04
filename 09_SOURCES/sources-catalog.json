@@ -4543,10 +4543,10 @@
     "repository": "svenstaro/miniserve",
     "platform": "github",
     "sourceUrl": "https://github.com/svenstaro/miniserve",
-    "sourceVersion": "e698dbd0",
+    "sourceVersion": "68b6f063",
     "license": "MIT",
-    "contentHash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
-    "lastHarvestedAt": "2026-10-19T01:34:48.921Z",
+    "contentHash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
+    "lastHarvestedAt": "2026-11-04T03:16:22.330Z",
     "learningId": "learn-github-svenstaro-miniserve"
   },
   "founded-labs-react-native-reusables": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "4e5c63cc",
+    "sourceVersion": "076fe9cc",
     "license": "MIT",
-    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
-    "lastHarvestedAt": "2026-10-30T19:42:41.907Z",
+    "contentHash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
+    "lastHarvestedAt": "2026-11-04T03:16:23.684Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

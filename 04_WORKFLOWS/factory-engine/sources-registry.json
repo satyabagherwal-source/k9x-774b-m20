@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:09:19.395Z",
-    "lastVerified": "2026-11-04T03:09:19.395Z",
+    "lastChecked": "2026-11-04T03:16:30.574Z",
+    "lastVerified": "2026-11-04T03:16:30.574Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T02:46:38.408Z",
+    "lastChecked": "2026-11-04T03:16:30.566Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T02:46:38.408Z"
+    "lastVerified": "2026-11-04T03:16:30.566Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -894,9 +894,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-03T23:59:15.744Z",
+    "lastChecked": "2026-11-04T03:16:25.571Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-03T23:59:15.744Z"
+    "lastVerified": "2026-11-04T03:16:25.571Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "NirDiamant/RAG_Techniques",
@@ -2640,9 +2640,9 @@
   "welldone-software-why-did-you-render": {
     "name": "why-did-you-render",
     "officialUrl": "https://github.com/welldone-software/why-did-you-render",
-    "lastChecked": "2026-10-31T03:12:27.097Z",
+    "lastChecked": "2026-11-04T03:16:20.689Z",
     "revisionIdentifier": "3ec3512d",
-    "lastVerified": "2026-10-31T03:12:27.097Z"
+    "lastVerified": "2026-11-04T03:16:20.689Z"
   },
   "goodrain-rainbond": {
     "name": "goodrain/rainbond",
@@ -3902,11 +3902,21 @@
     "lastVerified": "2026-11-04T02:53:32.001Z"
   },
   "svenstaro-miniserve": {
-    "name": "miniserve",
+    "name": "svenstaro/miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-11-01T00:36:11.393Z",
-    "revisionIdentifier": "e698dbd0",
-    "lastVerified": "2026-11-01T00:36:11.393Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-04T03:16:20.352Z",
+    "lastVerified": "2026-11-04T03:16:20.352Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-svenstaro-miniserve",
+    "contentHash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -4053,9 +4063,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-02T16:40:23.163Z",
+    "lastChecked": "2026-11-04T03:16:28.048Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-02T16:40:23.163Z"
+    "lastVerified": "2026-11-04T03:16:28.048Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -6064,12 +6074,12 @@
     "lastVerified": "2026-10-31T12:00:26.567Z"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-02T17:39:14.161Z",
-    "lastVerified": "2026-11-02T17:39:14.161Z",
+    "lastChecked": "2026-11-04T03:16:23.155Z",
+    "lastVerified": "2026-11-04T03:16:23.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -6078,7 +6088,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d9c53b01"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -11533,14 +11544,14 @@
     "officialUrl": "https://github.com/preactjs/preact",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T19:42:40.467Z",
-    "lastVerified": "2026-10-30T19:42:40.467Z",
+    "lastChecked": "2026-11-04T03:16:22.861Z",
+    "lastVerified": "2026-11-04T03:16:22.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-preactjs-preact",
-    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+    "contentHash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

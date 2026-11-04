@@ -7135,3 +7135,5 @@
 | `CYCLE-20261104-451W` | `2026-11-04T03:00:16.916Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6732` | Yes (`f56a0c56...`) |
 | `CYCLE-20261104-FGWB` | `2026-11-04T03:09:05.483Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6733` | Yes (`11f50c59...`) |
 | `CYCLE-20261104-FPNE` | `2026-11-04T03:09:16.826Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6734` | Yes (`8df076c1...`) |
+| `CYCLE-20261104-OTYV` | `2026-11-04T03:16:22.327Z` | `svenstaro/miniserve` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6735` | Yes (`4d82a539...`) |
+| `CYCLE-20261104-OV0H` | `2026-11-04T03:16:23.682Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6736` | Yes (`87ee2cf9...`) |

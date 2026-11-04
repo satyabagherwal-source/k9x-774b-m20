@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:09:16.744Z",
+  "last_updated": "2026-11-04T03:16:23.620Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54647,17 +54647,23 @@
       "slug": "svenstaro-miniserve",
       "platform": "github",
       "source_url": "https://github.com/svenstaro/miniserve",
-      "source_version": "e698dbd0",
-      "content_hash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
+      "source_version": "68b6f063",
+      "content_hash": "4d82a539c381212edfabc0e139ee766444c04a50830527221a5d79f65fe45b40",
       "dossier_path": "07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6735,
+          "title": "Merge pull request #1591 from svenstaro/switch-from-grass-to-sasso",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:34:48.860Z",
+      "verified_at": "2026-11-04T03:16:22.250Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76261,8 +76267,8 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "4e5c63cc",
-      "content_hash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+      "source_version": "076fe9cc",
+      "content_hash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
@@ -76295,6 +76301,11 @@
           "number": 5843,
           "title": "types): add declarative shadow DOM attributes to <template>",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6736,
+          "title": "Tune terser inlining for core and debug builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76302,7 +76313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:42:41.810Z",
+      "verified_at": "2026-11-04T03:16:23.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172786,6 +172797,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:09:16.722Z"
+    },
+    "rule-6735": {
+      "learning_id": "rule-6735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6735,
+      "title": "Merge pull request #1591 from svenstaro/switch-from-grass-to-sasso",
+      "source_url": "https://github.com/svenstaro/miniserve",
+      "source_version": "68b6f063",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:16:22.250Z"
+    },
+    "rule-6736": {
+      "learning_id": "rule-6736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6736,
+      "title": "Tune terser inlining for core and debug builds",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "076fe9cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:16:23.602Z"
     }
   },
   "aliases": {

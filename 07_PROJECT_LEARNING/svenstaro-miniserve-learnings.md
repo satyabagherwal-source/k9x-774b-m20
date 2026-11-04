@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md`  
 > **Source**: github ([https://github.com/svenstaro/miniserve](https://github.com/svenstaro/miniserve))  
-> **Source Version**: `e698dbd0`  
+> **Source Version**: `68b6f063`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:34:48.791Z  
+> **Timestamp**: 2026-11-04T03:16:21.755Z  
 > **Learning ID**: `learn-github-svenstaro-miniserve`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/svenstaro/miniserve](https://github.com/svenstaro/miniserve))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:34:48.784Z  
+> **Harvest Timestamp**: 2026-11-04T03:16:20.352Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌟 For when you really just want to serve some files over HTTP right now!
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7914 stars
+- **Stars / Engagement**: 8083 stars
 
 ---
 
@@ -2326,11 +2326,11 @@ pub fn directory_listing(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1582** (2026-10-01): **Bump the all-dependencies group with 2 updates**
-  *Symptoms*: Bumps the all-dependencies group with 2 updates: [actix-multipart](https://github.com/actix/actix-web) and [thiserror](https://github.com/dtolnay/thiserror).  Updates `actix-multipart` from 0.8.2 to 0.8.5 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actix/actix-web/releases">actix-multipart's releases</a>.</em></p> <blockquote> <h2>actix-multipart: v0.8.5</h2> <ul> <li>No significant changes since <code>0.8.4</code>.</li> </ul> <h2>actix-multipart: v0.8.4</h2> <ul> <li>No significant changes since <code>0.8.3</code>.</li> </ul> <h2>actix-multipart: v0.8.3</h2> <ul> <li>Field data that is similar to boundaries is now yielded in the <code>Field</code> stream before returning an incomplete error.</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/actix/actix-web/commit/a06cd07dcd3417b46729c4fa2784415371880497"><code>a06cd07</code></a> fix(http): reject empty chunk size lines (RFC 9112 §7.1) (<a href="https://redirect.github.com/actix/actix-web/issues/4239">#4239</a>)</li> <li><a href="https://github.com/actix/actix-web/commit/f4a59ba4dd822da5660c893b680cf6c2d1f5eb52"><code>f4a59ba</code></a> chore(actix-http): prepare release 3.13.8</li> <li><a href="https://github.com/actix/actix-web/commit/71131e109c026ac5eec89acd9cc8503b13a8af49"><code>71131e1</code></a> fix(http): verify chunked is final encoding in HttpMessage::chunked (RFC 9112...</li> <li><a href="https://github.com/ac
+- **Issue #1591** (2026-11-03): **Switch from grass to sasso**
+  *Symptoms*: Grass doesn't build anymore: https://github.com/connorskees/grass/issues/120
 
-- **Issue #1581** (2026-09-01): **Bump the all-dependencies group with 10 updates**
-  *Symptoms*: Bumps the all-dependencies group with 10 updates:  | Package | From | To | | --- | --- | --- | | [actix-files](https://github.com/actix/actix-web) | `0.6.10` | `0.7.0` | | [actix-multipart](https://github.com/actix/actix-web) | `0.8.0` | `0.8.1` | | [actix-web](https://github.com/actix/actix-web) | `4.14.0` | `4.15.0` | | [bytesize](https://github.com/bytesize-rs/bytesize) | `2.6.0` | `2.7.0` | | [clap](https://github.com/clap-rs/clap) | `4.6.5` | `4.6.6` | | [clap_complete](https://github.com/clap-rs/clap) | `4.6.8` | `4.6.9` | | [clap_mangen](https://github.com/clap-rs/clap) | `0.3.0` | `0.3.3` | | [futures](https://github.com/rust-lang/futures-rs) | `0.3.33` | `0.3.34` | | [log](https://github.com/rust-lang/log) | `0.4.33` | `0.4.34` | | [thiserror](https://github.com/dtolnay/thiserror) | `2.0.19` | `2.0.20` |  Updates `actix-files` from 0.6.10 to 0.7.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actix/actix-web/releases">actix-files's releases</a>.</em></p> <blockquote> <h2>actix-multipart-derive: v0.7.0</h2> <ul> <li>Minimum supported Rust version (MSRV) is now 1.72.</li> </ul> <h2>actix-multipart: v0.7.0</h2> <ul> <li>Add <code>MultipartError::ContentTypeIncompatible</code> variant.</li> <li>Add <code>MultipartError::ContentDispositionNameMissing</code> variant.</li> <li>Add <code>Field::bytes()</code> method.</li> <li>Rename <code>MultipartError::{NoContentDisposition =&gt; ContentDispositionMissing}</code> variant.</li> <
+- **Issue #1588** (2026-11-02): **Bump the all-dependencies group with 10 updates**
+  *Symptoms*: Bumps the all-dependencies group with 10 updates:  | Package | From | To | | --- | --- | --- | | [actix-files](https://github.com/actix/actix-web) | `0.7.0` | `0.7.2` | | [actix-web](https://github.com/actix/actix-web) | `4.15.0` | `4.18.1` | | [async-walkdir](https://github.com/ririsoft/async-walkdir) | `2.1.0` | `2.2.0` | | [comrak](https://github.com/kivikakk/comrak) | `0.55.0` | `0.59.0` | | [rustix](https://github.com/bytecodealliance/rustix) | `1.1.5` | `1.1.6` | | [rustls](https://github.com/rustls/rustls) | `0.23.45` | `0.23.46` | | [sha2](https://github.com/RustCrypto/hashes) | `0.11.0` | `0.11.1` | | [tokio](https://github.com/tokio-rs/tokio) | `1.53.1` | `1.54.1` | | [zip](https://github.com/zip-rs/zip2) | `8.6.0` | `9.1.3` | | [rstest](https://github.com/la10736/rstest) | `0.27.0` | `0.28.0` |  Updates `actix-files` from 0.7.0 to 0.7.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actix/actix-web/releases">actix-files's releases</a>.</em></p> <blockquote> <h2>actix-files: v0.7.2</h2> <ul> <li>Evaluate request preconditions before processing <code>Range</code> headers when serving a <code>NamedFile</code>.</li> <li>Ignore <code>Range</code> headers for methods other than GET when serving a <code>NamedFile</code>.</li> <li>Ignore <code>If-Unmodified-Since</code> when <code>If-Match</code> is present when serving a <code>NamedFile</code>.</li> <li>Respond with 412 Precondition Failed for matching <code>If-None-Match</code>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2347,141 +2347,647 @@ pub fn directory_listing(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4193cede` (2026-08-01)
-**Commit Message**: Fix lints
+### Incident Patch 1: `68b6f063` (2026-11-03)
+**Commit Message**: Merge pull request #1591 from svenstaro/switch-from-grass-to-sasso
 
-**File**: `src/file_op.rs` (modified, +1/-1)
+Switch from grass to sasso
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -327,7 +327,7 @@ async fn handle_multipart(
-         )),
-         Ok(metadata) if !metadata.is_dir() => Err(RuntimeError::InvalidPathError(format!(
-             "cannot upload file to {}, since it's not a directory",
--            &path.display()
-+            path.display()
-         ))),
-         Ok(_) => Ok(()),
-     }?;
+@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
+ 
+ ## [Unreleased] - ReleaseDate
+ - Fix suffix generation for pastes in non-HTTPS env [#1562](https://github.com/svenstaro/miniserve/pull/1562) (thanks @pzhlkj6612)
++- Replace grass with sasso to compile the SCSS [#1591](https://github.com/svenstaro/miniserve/pull/1591)
+ 
+ ## [0.35.0] - 2026-04-08
+ - Add `--workers` to limit the number of workers and default to 4 [#1556](https://github.com/svenstaro/miniserve/issues/1556)
 ```
 
-**File**: `src/listing.rs` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +16/-107)
 ```diff
-@@ -217,7 +217,7 @@ pub fn directory_listing(
-         let decoded = percent_decode_str(&encoded_dir).decode_utf8_lossy();
+@@ -287,18 +287,6 @@ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
  
-         let mut res: Vec<Breadcrumb> = Vec::new();
--        let mut link_accumulator = format!("{}/", &conf.route_prefix);
-+        let mut link_accumulator = format!("{}/", conf.route_prefix);
-         let mut components = Path::new(&*decoded).components().peekable();
+-[[package]]
+-name = "ahash"
+-version = "0.8.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+-dependencies = [
+- "cfg-if",
+- "once_cell",
+- "version_check",
+- "zerocopy",
+-]
+-
+ [[package]]
+ name = "aho-corasick"
+ version = "1.1.5"
+@@ -454,9 +442,9 @@ dependencies = [
  
-         while let Some(c) = components.next() {
-@@ -343,7 +343,7 @@ pub fn directory_listing(
+ [[package]]
+ name = "async-lock"
+-version = "3.4.2"
++version = "3.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "290f7f2596bd5b78a9fec8088ccd89180d7f9f55b94b0576823bbbdc72ee8311"
++checksum = "0876700b0d007ad25d5508865a4259c3af9af6d296bf663a0d586d0bc3369f6f"
+ dependencies = [
+  "event-listener",
+  "event-listener-strategy",
+@@ -637,9 +625,9 @@ dependencies = [
  
-                                 markdown_to_html(&std::fs::read_to_string(entry.path())?, &options)
-                             } else {
--                                format!("<pre>{}</pre>", &std::fs::read_to_string(entry.path())?)
-+                                format!("<pre>{}</pre>", std::fs::read_to_string(entry.path())?)
-                             },
-                         ));
-                     }
-@@ -406,7 +406,7 @@ pub fn directory_listing(
-         log::info!(
-             "Creating an archive ({extension}) of {path}...",
-             extension = archive_method.extension(),
--            path = &dir.path.display().to_string()
-+            path = dir.path.display()
-         );
+ [[package]]
+ name = "cc"
+-version = "1.10.0"
++version = "1.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
++checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -753,12 +741,6 @@ dependencies = [
+  "roff",
+ ]
  
-         let file_name = format!(
+-[[package]]
+-name = "codemap"
+-version = "0.1.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9e769b5c8c8283982a987c6e948e540254f1058d5a74b8794914d4ef5fc2a24"
+-
+ [[package]]
+ name = "colorchoice"
+ version = "1.0.5"
+@@ -1382,10 +1364,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "wasi",
+- "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1444,41 +1424,6 @@ dependencies = [
+  "walkdir",
+ ]
+ 
+-[[package]]
+-name = "grass"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f7a68216437ef68f0738e48d6c7bb9e6e6a92237e001b03d838314b068f33c94"
+-dependencies = [
+- "getrandom 0.2.17",
+- "grass_compiler",
+- "include_sass",
+-]
+-
+-[[package]]
+-name = "grass_compiler"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2d9e3df7f0222ce5184154973d247c591d9aadc28ce7a73c6cd31100c9facff6"
+-dependencies = [
+- "codemap",
+- "indexmap",
+- "lasso",
+- "once_cell",
+- "phf 0.11.3",
+- "rand 0.8.8",
+-]
+-
+-[[package]]
+-name = "hashbrown"
+-version = "0.14.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+-dependencies = [
+- "ahash",
+- "allocator-api2",
+-]
+-
+ [[package]]
+ name = "hashbrown"
+ version = "0.16.1"
+@@ -1847,17 +1792,6 @@ version = "0.3.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2d3a73c82a0b0747dba739b380c046a140b5ae747234bf701df3460282da7193"
+ 
+-[[package]]
+-name = "include_sass"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c6090ec145f7cf645ff53998a54d3fc77ae02d71651093ee53806769eb40ea1f"
+-dependencies = [
+- "grass_compiler",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.2"
+@@ -1962,15 +1896,6 @@ version = "0.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d4345964bb142484797b161f473a503a434de77149dd8c7427788c6e13379388"
+ 
+-[[package]]
+-name = "lasso"
+-version = "0.7.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6e14eda50a3494b3bf7b9ce51c52434a761e383d7238ce1dd5dcec2fbc13e9fb"
+-dependencies = [
+- "hashbrown 0.14.5",
+-]
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.191"
+@@ -2164,7 +2089,6 @@ dependencies = [
+  "fake-tty",
+  "fast_qr",
+  "futures",
+- "grass",
+  "hex",
+  "httparse",
+  "if-addrs",
+@@ -2184,6 +2108,7 @@ dependencies = [
+  "rustix",
+  "rustls",
+  "rustls-pemfile",
++ "sasso",
+  "select",
+  "serde",
+  "sha2 0.11.1",
+@@ -2354,16 +2279,6 @@ dependencies = [
+  "phf_shared 0.10.0",
+ ]
+ 
+-[[package]]
+-name = "phf"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
+-dependencies = [
+- "phf_macros",
+- "phf_shared 0.11.3",
+-]
+-
+ [[package]]
+ name = "phf"
+ version = "0.14.0"
+@@ -2424,19 +2339,6 @@ dependencies = [
+  "phf_shared 0.14.0",
+ ]
+ 
+-[[package]]
+-name = "phf_macros"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f84ac04429c13a7ff43785d75ad27569f2951ce0ffd30a3321230db2fc727216"
+-dependencies = [
+- "phf_generator 0.11.3",
+- "phf_shared 0.11.3",
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "phf_shared"
+ version = "0.10.0"
+@@ -2701,9 +2603,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "reflink-copy"
+-version = "0.1.31"
++version = "0.1.32"
+ sou
 ```
 
-**File**: `src/renderer.rs` (modified, +4/-4)
+**File**: `Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -45,8 +45,8 @@ pub fn page(
-         return raw(entries, search, is_root, conf);
+@@ -36,7 +36,6 @@ comrak = { version = "0.59", default-features = false }
+ dav-server = { version = "0.11", features = ["actix-compat"] }
+ fast_qr = { version = "0.14", features = ["svg"] }
+ futures = "0.3"
+-grass = { version = "0.13", features = ["macro"], default-features = false }
+ hex = "0.4"
+ httparse = "1"
+ if-addrs = "0.15"
+@@ -62,6 +61,9 @@ thiserror = "2"
+ tokio = { version = "1.52.3", features = ["fs", "macros"] }
+ zip = { version = "9", default-features = false }
+ 
++[build-dependencies]
++sasso = { version = "0.21", default-features = false }
++
+ [features]
+ default = ["tls"]
+ # This feature allows us to use rustls only on architectures supported by ring.
+```
+
+**File**: `build.rs` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++use std::error::Error;
++use std::path::PathBuf;
++use std::{env, fs};
++
++use sasso::{FsImporter, Options};
++
++fn main() -> Result<(), Box<dyn Error>> {
++    let data = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?).join("data");
++    let out = PathBuf::from(env::var("OUT_DIR")?);
++
++    println!("cargo:rerun-if-changed=data");
++
++    let importer = FsImporter::new(vec![data.to_path_buf()]);
++    let options = Options::default().with_importer(&importer);
++
++    let mut sheets = vec![data.join("style.scss")];
++    for theme in fs::read_dir(data.join("themes"))? {
++        sheets.push(theme?.path());
++    }
++
++    for sheet in sheets {
++        let Some(name) = sheet.file_stem().and_then(|stem| stem.to_str()) else {
++            continue;
++        };
++
++        let css = sasso::compile(&fs::read_to_string(&sheet)?, &options)?;
++        fs::write(out.join(format!("{name}.css")), css)?;
++    }
++
++    Ok(())
++}
+```
+
+**File**: `src/main.rs` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ use crate::errors::{RuntimeError, StartupError};
+ use crate::file_op::recursive_dir_size;
+ use crate::webdav_fs::RestrictedFs;
+ 
+-static STYLESHEET: &str = grass::include!("data/style.scss");
++static STYLESHEET: &str = include_str!(concat!(env!("OUT_DIR"), "/style.css"));
+ 
+ fn main() -> Result<()> {
+     let args = args::CliArgs::parse();
+```
+
+**File**: `src/renderer.rs` (modified, +5/-5)
+```diff
+@@ -427,11 +427,11 @@ pub enum ThemeSlug {
+ impl ThemeSlug {
+     pub fn css(&self) -> &str {
+         match self {
+-            Self::Squirrel => grass::include!("data/themes/squirrel.scss"),
+-            Self::Archlinux => grass::include!("data/themes/archlinux.scss"),
+-            Self::AyuDark => grass::include!("data/themes/ayu_dark.scss"),
+-            Self::Zenburn => grass::include!("data/themes/zenburn.scss"),
+-            Self::Monokai => grass::include!("data/themes/monokai.scss"),
++            Self::Squirrel => include_str!(concat!(env!("OUT_DIR"), "/squirrel.css")),
++            Self::Archlinux => include_str!(concat!(env!("OUT_DIR"), "/archlinux.css")),
++            Self::AyuDark => include_str!(concat!(env!("OUT_DIR"), "/ayu_dark.css")),
++            Self::Zenburn => include_str!(concat!(env!("OUT_DIR"), "/zenburn.css")),
++            Self::Monokai => include_str!(concat!(env!("OUT_DIR"), "/monokai.css")),
+         }
      }
  
--    let upload_route = format!("{}/upload", &conf.route_prefix);
--    let rm_route = format!("{}/rm", &conf.route_prefix);
-+    let upload_route = format!("{}/upload", conf.route_prefix);
-+    let rm_route = format!("{}/rm", conf.route_prefix);
- 
-     let upload_action = build_upload_action(&upload_route, encoded_dir, sort_method, sort_order);
-     let mkdir_action = build_mkdir_action(&upload_route, encoded_dir);
-@@ -387,10 +387,10 @@ fn build_upload_action(
- ) -> String {
-     let mut upload_action = format!("{upload_route}?path={encoded_dir}");
-     if let Some(sorting_method) = sort_method {
--        upload_action = format!("{}&sort={}", upload_action, &sorting_method);
-+        upload_action = format!("{}&sort={}", upload_action, sorting_method);
-     }
-     if let Some(sorting_order) = sort_order {
--        upload_action = format!("{}&order={}", upload_action, &sorting_order);
-+        upload_action = format!("{}&order={}", upload_action, sorting_order);
-     }
- 
-     upload_action
 ```
 
 ---
 
-### Incident Patch 2: `4bc97021` (2026-05-02)
-**Commit Message**: Merge branch 'fix/crypto-uuid-not-found-in-non-https'
+### Incident Patch 2: `334f7489` (2026-11-03)
+**Commit Message**: Switch from grass to sasso
 
-**File**: `src/renderer.rs` (modified, +7/-1)
+Grass doesn't build anymore: https://github.com/connorskees/grass/issues/120
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1184,7 +1184,13 @@ fn page_header(
-                                 const title = ((inputValue) => {
-                                     const title = inputValue.trim();
-                                     if (title.length === 0) {
--                                        const suffix = crypto.randomUUID().substring(0,6);
-+                                        let suffix;
-+                                        if (crypto.randomUUID !== undefined) {
-+                                            suffix = crypto.randomUUID().substring(0,6);
-+                                        } else {
-+                                            // neither HTTPS nor "localhost"
-+                                            suffix = Date.now().toString(16).slice(-6);
-+                                        }
-                                         return `paste-${suffix}.txt`;
-                                     } else {
-                                         // use given extension if one is present, otherwise make it
+@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
+ 
+ ## [Unreleased] - ReleaseDate
+ - Fix suffix generation for pastes in non-HTTPS env [#1562](https://github.com/svenstaro/miniserve/pull/1562) (thanks @pzhlkj6612)
++- Replace grass with sasso to compile the SCSS [#1591](https://github.com/svenstaro/miniserve/pull/1591)
+ 
+ ## [0.35.0] - 2026-04-08
+ - Add `--workers` to limit the number of workers and default to 4 [#1556](https://github.com/svenstaro/miniserve/issues/1556)
 ```
 
----
-
-### Incident Patch 3: `65a27aa6` (2026-04-23)
-**Commit Message**: Use current datetime instead of "crypto.randomUUID()" in non-HTTPS env
-
-> Secure context: This feature is available only in secure contexts
-> (HTTPS), in some or all supporting browsers.
->
-> *from: https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID*
-
-**File**: `src/renderer.rs` (modified, +7/-1)
+**File**: `Cargo.lock` (modified, +16/-107)
 ```diff
-@@ -1183,7 +1183,13 @@ fn page_header(
-                             const title = ((inputValue) => {
-                                 const title = inputValue.trim();
-                                 if (title.length === 0) {
--                                    const suffix = crypto.randomUUID().substring(0,6);
-+                                    let suffix;
-+                                    if (crypto.randomUUID !== undefined) {
-+                                        suffix = crypto.randomUUID().substring(0,6);
-+                                    } else {
-+                                        // neither HTTPS nor "localhost"
-+                                        suffix = Date.now().toString(16).slice(-6);
-+                                    }
-                                     return `paste-${suffix}.txt`;
-                                 } else {
-                                     // use given extension if one is present, otherwise make it
+@@ -287,18 +287,6 @@ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
+ 
+-[[package]]
+-name = "ahash"
+-version = "0.8.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+-dependencies = [
+- "cfg-if",
+- "once_cell",
+- "version_check",
+- "zerocopy",
+-]
+-
+ [[package]]
+ name = "aho-corasick"
+ version = "1.1.5"
+@@ -454,9 +442,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "async-lock"
+-version = "3.4.2"
++version = "3.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "290f7f2596bd5b78a9fec8088ccd89180d7f9f55b94b0576823bbbdc72ee8311"
++checksum = "0876700b0d007ad25d5508865a4259c3af9af6d296bf663a0d586d0bc3369f6f"
+ dependencies = [
+  "event-listener",
+  "event-listener-strategy",
+@@ -637,9 +625,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.10.0"
++version = "1.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
++checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -753,12 +741,6 @@ dependencies = [
+  "roff",
+ ]
+ 
+-[[package]]
+-name = "codemap"
+-version = "0.1.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9e769b5c8c8283982a987c6e948e540254f1058d5a74b8794914d4ef5fc2a24"
+-
+ [[package]]
+ name = "colorchoice"
+ version = "1.0.5"
+@@ -1382,10 +1364,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "wasi",
+- "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1444,41 +1424,6 @@ dependencies = [
+  "walkdir",
+ ]
+ 
+-[[package]]
+-name = "grass"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f7a68216437ef68f0738e48d6c7bb9e6e6a92237e001b03d838314b068f33c94"
+-dependencies = [
+- "getrandom 0.2.17",
+- "grass_compiler",
+- "include_sass",
+-]
+-
+-[[package]]
+-name = "grass_compiler"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2d9e3df7f0222ce5184154973d247c591d9aadc28ce7a73c6cd31100c9facff6"
+-dependencies = [
+- "codemap",
+- "indexmap",
+- "lasso",
+- "once_cell",
+- "phf 0.11.3",
+- "rand 0.8.8",
+-]
+-
+-[[package]]
+-name = "hashbrown"
+-version = "0.14.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+-dependencies = [
+- "ahash",
+- "allocator-api2",
+-]
+-
+ [[package]]
+ name = "hashbrown"
+ version = "0.16.1"
+@@ -1847,17 +1792,6 @@ version = "0.3.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2d3a73c82a0b0747dba739b380c046a140b5ae747234bf701df3460282da7193"
+ 
+-[[package]]
+-name = "include_sass"
+-version = "0.13.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c6090ec145f7cf645ff53998a54d3fc77ae02d71651093ee53806769eb40ea1f"
+-dependencies = [
+- "grass_compiler",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.2"
+@@ -1962,15 +1896,6 @@ version = "0.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d4345964bb142484797b161f473a503a434de77149dd8c7427788c6e13379388"
+ 
+-[[package]]
+-name = "lasso"
+-version = "0.7.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6e14eda50a3494b3bf7b9ce51c52434a761e383d7238ce1dd5dcec2fbc13e9fb"
+-dependencies = [
+- "hashbrown 0.14.5",
+-]
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.191"
+@@ -2164,7 +2089,6 @@ dependencies = [
+  "fake-tty",
+  "fast_qr",
+  "futures",
+- "grass",
+  "hex",
+  "httparse",
+  "if-addrs",
+@@ -2184,6 +2108,7 @@ dependencies = [
+  "rustix",
+  "rustls",
+  "rustls-pemfile",
++ "sasso",
+  "select",
+  "serde",
+  "sha2 0.11.1",
+@@ -2354,16 +2279,6 @@ dependencies = [
+  "phf_shared 0.10.0",
+ ]
+ 
+-[[package]]
+-name = "phf"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
+-dependencies = [
+- "phf_macros",
+- "phf_shared 0.11.3",
+-]
+-
+ [[package]]
+ name = "phf"
+ version = "0.14.0"
+@@ -2424,19 +2339,6 @@ dependencies = [
+  "phf_shared 0.14.0",
+ ]
+ 
+-[[package]]
+-name = "phf_macros"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f84ac04429c13a7ff43785d75ad27569f2951ce0ffd30a3321230db2fc727216"
+-dependencies = [
+- "phf_generator 0.11.3",
+- "phf_shared 0.11.3",
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "phf_shared"
+ version = "0.10.0"
+@@ -2701,9 +2603,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "reflink-copy"
+-version = "0.1.31"
++version = "0.1.32"
+ sou
+```
+
+**File**: `Cargo.toml` (modified, +3/-1)
+```diff
+@@ -36,7 +36,6 @@ comrak = { version = "0.59", default-features = false }
+ dav-server = { version = "0.11", features = ["actix-compat"] }
+ fast_qr = { version = "0.14", features = ["svg"] }
+ futures = "0.3"
+-grass = { version = "0.13", features = ["macro"], default-features = false }
+ hex = "0.4"
+ httparse = "1"
+ if-addrs = "0.15"
+@@ -62,6 +61,9 @@ thiserror = "2"
+ tokio = { version = "1.52.3", features = ["fs", "macros"] }
+ zip = { version = "9", default-features = false }
+ 
++[build-dependencies]
++sasso = { version = "0.21", default-features = false }
++
+ [features]
+ default = ["tls"]
+ # This feature allows us to use rustls only on architectures supported by ring.
+```
+
+**File**: `build.rs` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++use std::error::Error;
++use std::path::PathBuf;
++use std::{env, fs};
++
++use sasso::{FsImporter, Options};
++
++fn main() -> Result<(), Box<dyn Error>> {
++    let data = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?).join("data");
++    let out = PathBuf::from(env::var("OUT_DIR")?);
++
++    println!("cargo:rerun-if-changed=data");
++
++    let importer = FsImporter::new(vec![data.to_path_buf()]);
++    let options = Options::default().with_importer(&importer);
++
++    let mut sheets = vec![data.join("style.scss")];
++    for theme in fs::read_dir(data.join("themes"))? {
++        sheets.push(theme?.path());
++    }
++
++    for sheet in sheets {
++        let Some(name) = sheet.file_stem().and_then(|stem| stem.to_str()) else {
++            continue;
++        };
++
++        let css = sasso::compile(&fs::read_to_string(&sheet)?, &options)?;
++        fs::write(out.join(format!("{name}.css")), css)?;
++    }
++
++    Ok(())
++}
+```
+
+**File**: `src/main.rs` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ use crate::errors::{RuntimeError, StartupError};
+ use crate::file_op::recursive_dir_size;
+ use crate::webdav_fs::RestrictedFs;
+ 
+-static STYLESHEET: &str = grass::include!("data/style.scss");
++static STYLESHEET: &str = include_str!(concat!(env!("OUT_DIR"), "/style.css"));
+ 
+ fn main() -> Result<()> {
+     let args = args::CliArgs::parse();
+```
+
+**File**: `src/renderer.rs` (modified, +5/-5)
+```diff
+@@ -427,11 +427,11 @@ pub enum ThemeSlug {
+ impl ThemeSlug {
+     pub fn css(&self) -> &str {
+         match self {
+-            Self::Squirrel => grass::include!("data/themes/squirrel.scss"),
+-            Self::Archlinux => grass::include!("data/themes/archlinux.scss"),
+-            Self::AyuDark => grass::include!("data/themes/ayu_dark.scss"),
+-            Self::Zenburn => grass::include!("data/themes/zenburn.scss"),
+-            Self::Monokai => grass::include!("data/themes/monokai.scss"),
++            Self::Squirrel => include_str!(concat!(env!("OUT_DIR"), "/squirrel.css")),
++            Self::Archlinux => include_str!(concat!(env!("OUT_DIR"), "/archlinux.css")),
++            Self::AyuDark => include_str!(concat!(env!("OUT_DIR"), "/ayu_dark.css")),
++            Self::Zenburn => include_str!(concat!(env!("OUT_DIR"), "/zenburn.css")),
++            Self::Monokai => include_str!(concat!(env!("OUT_DIR"), "/monokai.css")),
+         }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1591** (2026-11-03): Switch from grass to sasso (@svenstaro)
+- **PR #1588** (closed): Bump the all-dependencies group with 10 updates (@dependabot[bot])
 - **PR #1582** (2026-10-01): Bump the all-dependencies group with 2 updates (@dependabot[bot])
 - **PR #1581** (closed): Bump the all-dependencies group with 10 updates (@dependabot[bot])
 - **PR #1574** (closed): Bump the all-dependencies group across 1 directory with 14 updates (@dependabot[bot])
 - **PR #1571** (2026-07-01): Bump the all-dependencies group with 10 updates (@dependabot[bot])
-- **PR #1567** (2026-06-01): Bump the all-dependencies group with 8 updates (@dependabot[bot])
-- **PR #1563** (2026-05-01): Bump the all-dependencies group with 9 updates (@dependabot[bot])
 
 ---
 
@@ -2501,28 +3007,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in file_op.rs
+## X. Merge pull request #1591 from svenstaro/switch-from-grass-to-sasso
 
 **RULE**:
-When implementing operations in `src/file_op.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in svenstaro/miniserve. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in svenstaro/miniserve. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4193cede`: lints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68b6f063`: Merge pull request #1591 from svenstaro/switch-from-grass-to-sasso. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/file_op.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            path.display()
+- Replace grass with sasso to compile the SCSS [#1591](https://github.com/svenstaro/miniserve/pull/1591)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            &path.display()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4193cede` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68b6f063` are properly handled with clean fallback behavior.

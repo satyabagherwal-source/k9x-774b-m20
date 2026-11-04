@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:09:16.835Z",
-  "total_cycles_completed": 7112,
-  "total_learnings_persisted": 7112,
-  "total_rules_promoted": 6758,
+  "last_updated": "2026-11-04T03:16:23.688Z",
+  "total_cycles_completed": 7114,
+  "total_learnings_persisted": 7114,
+  "total_rules_promoted": 6760,
   "history": [
-    {
-      "timestamp": "2026-11-03T16:58:57.113Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:06:26.694Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:06:29.914Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T03:09:16.835Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:16:22.334Z",
+      "repository": "svenstaro/miniserve",
+      "learningId": "learn-github-svenstaro-miniserve",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:16:23.688Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
