@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
-    "lastHarvestedAt": "2026-10-31T04:50:45.692Z",
+    "contentHash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
+    "lastHarvestedAt": "2026-11-04T20:39:19.717Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5b3f3e76",
+    "sourceVersion": "2131caf5",
     "license": "Apache-2.0",
-    "contentHash": "94b6bfe44ed2c595035981b7ddbe1d43d6f40c3d26775316a2229e4cc6fff6e3",
-    "lastHarvestedAt": "2026-11-04T19:41:36.053Z",
+    "contentHash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
+    "lastHarvestedAt": "2026-11-04T20:39:11.054Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "edc9c419",
+    "sourceVersion": "bbd630ae",
     "license": "AGPL-3.0",
-    "contentHash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
-    "lastHarvestedAt": "2026-11-03T22:15:23.288Z",
+    "contentHash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
+    "lastHarvestedAt": "2026-11-04T20:39:33.589Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

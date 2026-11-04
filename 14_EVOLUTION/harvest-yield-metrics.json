@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:32:01.505Z",
-  "total_cycles_completed": 7301,
-  "total_learnings_persisted": 7301,
-  "total_rules_promoted": 6998,
+  "last_updated": "2026-11-04T20:39:33.593Z",
+  "total_cycles_completed": 7304,
+  "total_learnings_persisted": 7304,
+  "total_rules_promoted": 7003,
   "history": [
-    {
-      "timestamp": "2026-11-04T02:26:10.668Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:26:14.161Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:33:13.614Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T02:33:22.352Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T20:32:01.505Z",
       "repository": "TanStack/router",
       "learningId": "learn-github-tanstack-router",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:39:11.060Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:39:19.722Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:39:33.593Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

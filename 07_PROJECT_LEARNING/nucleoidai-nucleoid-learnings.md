@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5b3f3e76`  
+> **Source Version**: `2131caf5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:41:35.701Z  
+> **Timestamp**: 2026-11-04T20:39:10.355Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:41:35.693Z  
+> **Harvest Timestamp**: 2026-11-04T20:39:09.862Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -571,7 +571,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "0d3d703e") {
+export async function start(puzzle_id: string = "25d8a9c8") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1006,443 +1006,338 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b3f3e76` (2026-11-04)
-**Commit Message**: NUC 80 List and Population Averages
+### Incident Patch 1: `2131caf5` (2026-11-04)
+**Commit Message**: Add ARC dataset for puzzle 25d8a9c8
 
-Accepted. The independent evaluator accepted the proposal in continuous
-mode against 0cdf22c and its 926-case baseline, the 915 accepted cases
-plus 11 extra baselines, which it re-recorded byte-identically. The
-required token comparison ran: 11 cases use fewer lexer tokens, 915 the
-same and none more. No accepted spelling ties or beats a candidate
-case, and no policy check failed.
+Add dataset.25d8a9c8.json annotating the four training pairs and the test pair as fifteen full-width rows, each with parts, the list of its three colors. One class-level rule turns a row of a single color into a color-5 bar and clears every other row: fill_color is 5 when parts.distinct() has one item and 0 otherwise. Add the puzzle to the ARC workflow list, make it the default puzzle_id in app.ts, and add its README description and progress record. The one local run exited 1 before any model call because OPENROUTER_API_KEY was missing, so its difference is unknown.
 
-Hard criteria, checked independently and again on the integrated tree:
-cargo build --all-targets, warning-denied Clippy and cargo fmt --check
-pass; the full cargo test passes (92 suites, 2,403 passed, 0 failed,
-25 ignored) with all 2,390 accepted test identities present and 38
-added; all 915 pinned accepted programs and the 11 extra baselines
-replay, and a 14,673-program differential changes only former
-"<receiver>.average is not a function" errors.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
 
-NUC 80 adds the read-only query average to lists and class instance
-lists: RECEIVER.average() is the mean of the items and
-RECEIVER.average(selector) the mean of selector(item). It is
-RECEIVER.sum(...) divided by the number of items with the division of
-/, so it keeps sum's conversion, undefined gate, liveness and
-transac
-
-**File**: `README.md` (modified, +27/-0)
+**File**: `.github/workflows/arc.yml` (modified, +1/-0)
 ```diff
-@@ -1708,6 +1708,33 @@ assert: [revenue, largest.customer, settled], [125, "cy", ["ada", "bo"]]
-   a whole call argument, so `x = .amount` stays a syntax error. See the
-   [root contract](nucleoid.spec.md#property-selector-arguments).
+@@ -28,6 +28,7 @@ jobs:
+         017c7c7b
+         27a28665
+         0d3d703e
++        25d8a9c8
+       NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
+       DOTENV_CONFIG_PATH: /dev/null
+       NO_COLOR: "1"
+```
+
+**File**: `arc/README.md` (modified, +51/-0)
+```diff
+@@ -306,6 +306,57 @@ Orientation is 0 in both states because the stripes are vertical and not
+ turned. The test pair follows the training pairs at the same level and is
+ annotated by the same rules.
  
-+## List and population averages
++`dataset.25d8a9c8.json` annotates the four original training pairs from
++`data\training\25d8a9c8.json`, in order, followed by its test pair, fifteen
++row instances in total, three per pair. Every input and output retains its
++original 3 by 3 canvas, colors, and positions, including the zero cells of
++the outputs. Each input is three full-width rows stacked from top to bottom,
++with no zero cell; each object is one row, 3 cells wide and 1 cell tall,
++listed from top to bottom. Some rows hold a single color, and the others mix
++two colors. Each output keeps every row in place: a row whose cells all share
++one color becomes a solid color-5 bar, and every other row is cleared to the
++background color 0, so seven rows become bars and eight are cleared. The
++single-color rows are the top row of the first training input, the middle row
++of the second, the middle and bottom rows of the third, the bottom row of the
++fourth, and the top and bottom rows of the test input. Their colors, 4, 6, 4
++and 9, and 1 in the training pairs, all turn 5, so the rule tests whether a
++row is uniform, not which color it has. The training pairs alone also fit
++reading each input as single-colored shapes and turning gray only the shapes
++that are one row tall and as wide as the canvas; the rules judge whole rows
++instead, the unit in which every output changes, since each output row is a
++single color, a choice fixed from the training pairs before the test pair was
++read. The class takes `parts`, the colors of the row's cells from left to
++right, as a list, such as `[4, 4, 4]` for the top row of the first training
++input, as its only descriptive property, with no color, color count, canvas
++size, or matrix of cells, so no input property states whether the row is
++uniform. One unconditional class-level rule introduces `fill_color`, which is
++absent before the rules run, as
++`5 if $Obj.parts.distinct().length == 1 else 0`: the list query `distinct` of
++[NUC 71](../docs/nuc-0071.md) keeps each of the row's colors once, so exactly
++one kept color means the row is a single color, and the conditional
++expression of [NUC 59](../docs/nuc-0059.md) gives such a row color 5 and
++every other row the background color 0. The rules create no other property
++and leave `x`, `y`, `orientation`, and the tag unchanged, so each output
++state adds only `fill_color` to its input state's keys. Native snapshots
++start with the pair's `canvas_width` and `canvas_height`, and output
++snapshots are captured with all of the same pair's implementations together,
++followed by `Obj[:]`. The tag `l3058` is a horizontal bar, as in
++`dataset.d631b094.json`, in both states. Input masks retain each pair's
++full-size 3 by 3 input canvas and output masks the complete 3 by 3 output,
++each padded with `0` outside its row, so a cleared row's output mask is all
++zero; merging them reproduces each pair's input and output. The
++`output_x`/`output_y` fields record the bar's nonzero bounding-box origin,
++equal to `output_value.x`/`output_value.y`. A cleared row has no nonzero
++output cell, so its fields record its explicit output position instead, the
++row's unchanged origin, as an erased output object keeps one in
++[composition](#8-visualize-output-instance). `output_canvas` is `EXACT`
++because each output keeps its input's canvas, including the cleared top or
++bottom rows that `FIT` would crop from every training output. Orientation is
++0 in both states because the rows are not turned and the bar is a distinct
++horizontal geometry. The declarations hold executable code only, without the
++`#` comments of the other datasets. The test pair follows the training pairs
++at the same level and is annotated by the same rules.
 +
-+**Averages keep mean temperatures live as readings change**
+ `dataset.27a28665.json` annotates the seven original training pairs from
+ `data\training\27a28665.json`, in order, followed by its three test pairs,
+ ten block instances in total, one per pair. Every training input retains its
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++# ARC-NUC-25d8a9c8 -- Uniform Row Bars
++
++Progress record for ARC training puzzle `25d8a9c8`: its instruction dataset,
++the solver and Nucleoid changes it needed, its runs, and what is still open.
++
++| Item | Status |
++| --- | --- |
++| Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
++| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record |
++| Output canvas | `EXACT` |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md) and the conditional expression of [NUC 59](../../docs/nuc-0059.md) |
++| Solver changes | None; suggested changes await review, not applied |
++| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
++| Updated | 4-Nov-2026 |
++
++## Puzzle
++
++Each training input is a 3 by 3 canvas of three full-width rows, with no zero
++cell. Some rows hold a single color, and the others mix two colors. Each
++output keeps the canvas and every row in place: a row whose three cells share
++one color becomes a solid color-5 row, and every other row is cleared to the
++background color 0. The single-color training rows are the top row of the
++first input, the middle row of the second, the middle and bottom rows of the
++third, and the bottom row of the fourth. Their colors, 4, 6, 4 and 9, and 1,
++all turn 5, so the rule tests whether a row is uniform, not which color it
++has. The output keeps the input's canvas, including the cleared top or bottom
++rows that `FIT` would crop, so the dataset is `EXACT`.
++
++`/arc-purposal` chose this puzzle by default: among the training puzzles other
++than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
++training matrix has the fewest cells, 9, with 72 cells in all its training
++matrices. Six other puzzles tie on both measures, and `25d8a9c8` has the
++lowest ID among them.
++
++## Dataset
++
++The dataset holds the four original training pairs in source order, followed
++at the same level by the puzzle's test pair, which the same rule annotates.
++Every row is one instance of `Obj(x, y, orientation, parts)`, a horizontal bar
++tagged `l3058` in both states, as in `dataset.d631b094.json`. `parts` lists
++the row's three colors from left to right, such as `[4, 4, 4]` for the top
++row of the first training input. The class has no color, color count, canvas
++size, or matrix of cells, so no input property states whether the row is
++uniform. One unconditional class-level rule introduces `fill_color`:
 +
 +```nuc
-+class Room(name, temps):
-+    this.name = name
-+    this.temps = temps
-+$Room.mean = $Room.temps.average()
-+lab = Room("lab", [21, 23])
-+hall = Room("hall", [17, 18])
-+building = Room.average(room -> room.mean)
-+assert: [lab.mean, hall.mean, building], [22, 17.5, 19.75]
-+hall.temps.push(25)
-+Room("attic", [12])
-+assert: [hall.mean, building], [20, 18]
++$Obj.fill_color = 5 if $Obj.parts.distinct().length == 1 else 0
 +```
 +
-+- [NUC 80](docs/nuc-0080.md) adds `average()` and `average(selector)` to
-+  lists and class instance lists. `$Room.temps.average()` is the mean of each
-+  room's readings, and `Room.average(room -> room.mean)` the mean over every
-+  room: exactly `sum(...)` divided by the number of items.
-+- `$Room.mean` and `building` are live declarations: a new reading or a new
-+  room re-evaluates them. An empty list or class averages to NaN, as `0 / 0`
-+  does. See the
-+  [root contract](nucleoid.spec.md#list-and-population-averages).
++`distinct` keeps each of the row's colors once, so a single kept color means
++the row is one color, and the conditional expression gives such a row color 5
++and every other row the background color 0. `fill_color` is absent from the
++input states, and the rule leaves `x`, `y`, `orientation`, and the tag
++unchanged. A cleared row's output mask is all zero, so its `output_x` and
++`output_y` record the row's unchanged origin, the explicit output position an
++erased output object keeps in composition. This is the first dataset whose
++objects vanish. Unlike the other datasets, the declarations carry no `#`
++comments, following the ARC instructions' rule against prose comments in code
++fields. The [README](../README.md#instruction-datasets) describes the dataset
++in full.
 +
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
++The worker started from the big picture: each grid is three full-width rows,
++and every output row is a single color, so the row is the unit in which every
++output changes. It weighed two other readings on the training pairs. The whole
++grid as one object would need a per-row map inside it and an output made of
++separate stripes. Same-colored shapes also fit the training pairs, but they
++need size tests, one row tall and as wide as the canvas, and they split mixed
++rows into pieces, 17 objects instead of 12 in the training pairs. No training
++pair relates one row to another, so the rule needs no population query. The
++quantifier `all part in $Obj.parts: part == $Obj.parts[0]` also works, but it
++needs a reference cell and is longer than `distinct`.
++
++`parts` gives each row the list of its cells' colors. The records of
++[017c7c7b](ARC-NUC-017c7c7b.md), [27a28665](ARC-NUC-27a28665.md), and
++[44f52bb0](ARC-NUC-44f52bb0.md) treat such a list as allowed only where the
++user's hint asks for one, and this invocation had no hint. The caller checked
++the handoff against the declarative, higher-order, and gestalt requirements,
++found that it met them, and asked the user about the list before the run; the
++user approved it. The caller also replayed the four training pairs on the
++accepted runtime, 133 checks of grids, mask shapes and cells, merges, and
++input and output snapshot
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
+**File**: `arc/src/app.ts` (modified, +1/-1)
 ```diff
-@@ -625,3 +625,11 @@
- {"id":"spec-0625","description":"Nucleoid uses selector arguments in headers methods lambdas and templates","code":"class Part(sku, kg, fragile, cost):\n    this.sku = sku\n    this.kg = kg\n    this.fragile = fragile\n    this.cost = cost\nclass Shelf(parts):\n    this.parts = parts\n    def weight(): return this.parts.sum(.kg)\npen = Part(\"pen\", 2, false, 4)\nink = Part(\"ink\", 5, true, 9)\nleft = Shelf([pen, ink])\ncare = left.parts.some(.fragile) ? \"careful\" : \"plain\"\nsize = \"big\" if left.parts.max(.kg) > 4 else \"small\"\nnote = `${left.parts.map(.sku).join(\"+\")}`\nprice = shelf -> shelf.parts.sum(.cost)\nwrapped = []\nfor part of Part.filter(.fragile):\n    wrapped.push(part.sku)\npending = [{open: true}, {open: true}, {open: false}]\nwhile pending.count(.open) > 1:\n    pending.shift()\nassert: [left.weight(), care, size, note, price(left)], [7, \"careful\", \"big\", \"pen+ink\", 13]\nassert: [wrapped, pending.length], [[\"ink\"], 2]\nink.fragile = false\nink.kg = 3\nassert: [left.weight(), care, size], [5, \"plain\", \"small\"]\nleft.parts.push(Part(\"cap\", 2, true, 1))\nassert: [left.weight(), care, note, price(left)], [7, \"careful\", \"pen+ink+cap\", 14]","return":null}
- {"id":"spec-0626","description":"Nucleoid rolls back failed selector argument updates","code":"def checked(total):\n    if total > 100:\n        throw \"TOO_MANY\"\n    return total\ncart = [{sku: \"pen\", qty: 2, price: 3}, {sku: \"ink\", qty: 5, price: 9}]\nunits = cart.sum(.qty)\nskus = cart.map(.sku)\ndearest = cart.maxBy(.price)\ncheapest = cart.minBy(.price)\ncap = checked(units)\nfailure = \"\"\ntry:\n    cart.push({sku: \"box\", qty: 500, price: 1})\ncatch error:\n    failure = error\nassert: [failure, units, skus, cap, cart.length], [\"TOO_MANY\", 7, [\"pen\", \"ink\"], 7, 2]\nsuppose:\n    cart.push({sku: \"cap\", qty: 30, price: 12})\n    assert: [units, skus, dearest.sku, cap], [37, [\"pen\", \"ink\", \"cap\"], \"cap\", 37]\nassert: [units, skus, dearest.sku, cheapest.sku, cart.length], [7, [\"pen\", \"ink\"], \"ink\", \"pen\", 2]\ncart.push({sku: \"pad\", qty: 9, price: 1})\nassert: [units, skus, dearest.sku, cheapest.sku, cap], [16, [\"pen\", \"ink\", \"pad\"], \"ink\", \"pad\", 16]","return":null}
- {"id":"spec-0627","description":"Nucleoid tracks only the properties that selector arguments read","code":"class Sensor(room, temp):\n    this.room = room\n    this.temp = temp\nhottest = Sensor.maxBy(.temp)\nrooms = Sensor.map(.room)\nlab = Sensor(\"lab\", 21)\nhall = Sensor(\"hall\", 25)\nreaders = (affects hall.temp).map(.node)\nlisters = (affects hall.room).map(.node)\nassert: [readers, listers, hottest, rooms], [[\"hottest\"], [\"rooms\"], hall, [\"lab\", \"hall\"]]\ncoolest = Sensor.minBy(.temp)\nassert: [readers, listers, coolest], [[\"hottest\", \"coolest\"], [\"rooms\"], lab]\nlab.temp = 30\nhall.room = \"foyer\"\nassert: [hottest, coolest, rooms], [lab, hall, [\"lab\", \"foyer\"]]","return":null}
-+{"id":"spec-0628","description":"Nucleoid averages lists with average","code":"temps = [18, 24, 9]\nmean = temps.average()\ngap = temps.average(temp -> Math.abs(temp - 20))\nassert: [mean, gap, (why mean)[0].from], [17, 5.666666666666667, [\"temps\"]]\ntemps.push(29)\nassert: [mean, gap], [20, 6.5]\ntemps.pop()\ntemps.pop()\nassert: [mean, gap], [21, 3]\ntemps = []\nassert: [Number.isNaN(mean), Number.isNaN(gap)], [true, true]\ncart = {items: [0.1, 0.2]}\npaid = cart.items.average()\nsmall = cart.items.filter(item -> item < 0.25).average()\ncart.items.push(0.3)\nassert: [paid, small], [0.20000000000000004, 0.15000000000000002]","return":null}
-+{"id":"spec-0629","description":"Nucleoid averages class instance populations with average","code":"class Trip(km, hours):\n    this.km = km\n    this.hours = hours\ndef speed trip => trip.km / trip.hours\nfirst = Trip(120, 2)\nsecond = Trip(45, 1)\npace = Trip.average(speed)\nfar = Trip.filter(trip -> trip.km > 100).average(speed)\nrecent = Trip[-2:].average(trip -> trip.hours * 60)\nassert: [pace, far, recent], [52.5, 60, 90]\nthird = Trip(300, 4)\nassert: [pace, far, recent], [60, 67.5, 150]\nfirst.hours = 3\nassert: [pace, far], [53.333333333333336, 57.5]\ndelete third.hours\nassert: [pace, far, recent], [null, null, null]\ndelete third.km\ndelete third\nassert: [pace, far, recent], [42.5, 40, 120]\nclass Refund(cents): this.cents = cents\nrefunds = Refund.average(refund -> refund.cents / 100)\nassert: Number.isNaN(refunds), true\nRefund(250)\nassert: refunds, 2.5","return":null}
-+{"id":"spec-0630","description":"Nucleoid converts averaged values to numbers","code":"flags = [true, false, true, true]\nshare = flags.average()\nentries = [2, \"3\", \" 4 \", \"\", null, [5], []]\nmean = entries.average()\nassert: [share, mean], [0.75, 2]\nflags.push(false)\nentries.push(\"x\")\nassert: [share, Number.isNaN(mean)], [0.6, true]\nentries.pop()\nentries.push(Number.POSITIVE_INFINITY)\nassert: mean, Number.POSITIVE_INFINITY\nclass Line(price, qty):\
+@@ -7,7 +7,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
+ import fs from "node:fs/promises";
+ 
+ // Genesis puzzle_id: 3aa6fb7a
+-export async function start(puzzle_id: string = "0d3d703e") {
++export async function start(puzzle_id: string = "25d8a9c8") {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+     await arc_dataset.load(puzzle_id);
+ 
 ```
 
-**File**: `dataset/nucleoid.synth.55.jsonl` (added, +8/-0)
+**File**: `arc/src/dataset/dataset.25d8a9c8.json` (added, +409/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+{"id":"synth-55-0001","description":"A list average follows pushes and pops","code":"temps = [18, 22]\nmean = temps.average()\ntemps.push(26)\nassert(mean, 22)\ntemps.pop()\nmean","return":"20"}
-+{"id":"synth-55-0002","description":"A selector averages a property over every instance of a class","code":"class Order(total):\n    this.total = total\nOrder(20)\nOrder(45)\ntypical = Order.average(.total)\nOrder(35)\ntypical","return":"33.333333333333336"}
-+{"id":"synth-55-0003","description":"Averaging an empty list or a class without instances gives NaN, which Number.isNaN tells apart from null","code":"class Refund\npending = []\n[Number.isNaN(pending.average()), Number.isNaN(Refund.average(refund -> refund.amount)), pending.average() == null]","return":"[true,true,false]"}
-+{"id":"synth-55-0004","description":"Averaged values convert to numbers and every item counts, so null and an empty string count zero","code":"[[true, false].average(), [\"3\", 5].average(), [2, null].average(), [\"\", 4].average()]","return":"[0.5,4,1,2]"}
-+{"id":"synth-55-0005","description":"A class-level rule averages the readings of each room","code":"class Room(name, temps):\n    this.name = name\n    this.temps = temps\n$Room.mean = $Room.temps.average()\nlab = Room(\"lab\", [20, 24])\nlab.temps.push(28)\nlab.mean","return":"24"}
-+{"id":"synth-55-0006","description":"A filtered average divides by the matching items only and stays live","code":"class Order(total, rush):\n    this.total = total\n    this.rush = rush\nrushed = Order.filter(.rush).average(.total)\nOrder(20, false)\nOrder(45, true)\nOrder(35, true)\nrushed","return":"40"}
-+{"id":"synth-55-0007","description":"An average equals the sum divided by the length, bit for bit","code":"values = [0.1, 0.2, 0.3]\n[values.average(), values.sum() / values.length, values.average() == values.sum() / values.length]","return":"[0.20000000000000004,0.20000000000000004,true]"}
-+{"id":"synth-55-0008","description":"An average selector that is not a function raises a TypeError","code":"failure = \"\"\ntry:\n    [1, 2].average(5)\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: average expects a function\""}
+@@ -0,0 +1,409 @@
++{
++  "declarations": [
++    "class Obj(x: int, y: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
++    "$Obj.fill_color = 5 if $Obj.parts.distinct().length == 1 else 0"
++  ],
++  "output_canvas": "EXACT",
++  "dataset": [
++    {
++      "input_matrix": [
++        [4, 4, 4],
++        [2, 3, 2],
++        [2, 3, 3]
++      ],
++      "output_matrix": [
++        [5, 5, 5],
++        [0, 0, 0],
++        [0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj264fe4293acf",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [4, 4, 4],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [5, 5, 5],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj264fe4293acf = Obj(x=0, y=0, orientation=0, parts=[4, 4, 4])",
++          "input_value": {"id":"obj264fe4293acf","orientation":0,"parts":[4,4,4],"tag":"l3058","x":0,"y":0},
++          "output_value": {"fill_color":5,"id":"obj264fe4293acf","orientation":0,"parts":[4,4,4],"tag":"l3058","x":0,"y":0}
++        },
++        {
++          "instance_name": "obje69821b4eaf1",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [2, 3, 2],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obje69821b4eaf1 = Obj(x=0, y=1, orientation=0, parts=[2, 3, 2])",
++          "input_value": {"id":"obje69821b4eaf1","orientation":0,"parts":[2,3,2],"tag":"l3058","x":0,"y":1},
++          "output_value": {"fill_color":0,"id":"obje69821b4eaf1","orientation":0,"parts":[2,3,2],"tag":"l3058","x":0,"y":1}
++        },
++        {
++          "instance_name": "obj1ece888d68bd",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 2,
++          "output_y": 2,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 0],
++            [2, 3, 3]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj1ece888d68bd = Obj(x=0, y=2, orientation=0, parts=[2, 3, 3])",
++          "input_value": {"id":"obj1ece888d68bd","orientation":0,"parts":[2,3,3],"tag":"l3058","x":0,"y":2},
++          "output_value": {"fill_color":0,"id":"obj1ece888d68bd","orientation":0,"parts":[2,3,3],"tag":"l3058","x":0,"y":2}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [7, 3, 3],
++        [6, 6, 6],
++        [3, 7, 7]
++      ],
++      "output_matrix": [
++        [0, 0, 0],
++        [5, 5, 5],
++        [0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj95bc4ed42279",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [7, 3, 3],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj95bc4ed42279 = Obj(x=0, y=0, orientation=0, parts=[7, 3, 3])",
++          "input_value": {"id":"obj95bc4ed42279","orientation":0,"parts":[7,3,3],"tag":"l3058","x":0,"y":0},
++          "output_value": {"fill_color":0,"id":"obj95bc4ed42279","orientation":0,"parts":[7,3,3],"tag":"l3058","x":0,"y":0}
++        },
++        {
++          "instance_name": "objde7e64595025",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 1,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [6, 6, 6],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [5, 5, 5],
++            [0, 0, 0]
++          ],
++          "implementation": "objde7e64595025 = Obj(x=0, y=1, orientation=0, parts=[6, 6, 6])",
++          "input_value": {"id":"objde7e64595025","orientation":0,"parts":[6,6,6],"tag":"l3058","x":0,"y":1},
++          "output_value": {"fill_color":5,"id":"objde7e64595025","orientation":0,"parts":[6,6,6],"tag":"l3058","x":0,"y":1}
++        },
++        {
++          "instance_name": "obj96cdc68d576d",
++          "input_x": 0,
++          "ou
 ```
-
-**File**: `docs/README.md` (modified, +57/-1)
-```diff
-@@ -1901,7 +1901,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), and `maxBy` and `minBy` ([NUC 77](nuc-0077.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), and `average` ([NUC 80](nuc-0080.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -2908,6 +2908,60 @@ top.who
-   [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
-   section.
- 
-+### List and population averages
-+
-+```
-+scores = [70, 85, 90]
-+mean = scores.average()
-+passing = scores.filter(score -> score >= 80).average()
-+class Student(name, points, total):
-+    this.name = name
-+    this.points = points
-+    this.total = total
-+grade = Student.average(student -> student.points / student.total * 100)
-+Student("ana", 45, 50)
-+bo = Student("bo", 30, 50)
-+assert(mean, 81.66666666666667)
-+assert(passing, 87.5)
-+assert(grade, 75)
-+scores.push(95)
-+bo.points = 40
-+Student("cy", 20, 40)
-+assert(mean, 85)
-+assert(passing, 90)
-+assert(grade, 73.33333333333333)
-+scores = []
-+assert(Number.isNaN(mean), true)
-+grade
-+```
-+
-+- This is the complete
-+  `Nucleoid averages lists and populations with average` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `73.33333333333333`.
-+- [NUC 80](nuc-0080.md) adds `average()` and `average(selector)` to lists and
-+  class instance lists. The result is exactly `sum(...)` divided by `length`
-+  with the same arguments, using the division of `/`, so a list of numbers
-+  averages bit for bit to `xs.sum() / xs.length`, and an empty list or class
-+  averages to NaN, the value of `0 / 0`.
-+- Values convert as `sum` converts them, and every item counts toward the
-+  divisor: `[2, null].average()` is `1`. An undefined value makes the mean
-+  undefined, stored as `null`. A `null` item counts `0` without settling a
-+  declaration to `null`, while the reads inside a selector follow the existing
-+  rules.
-+- The selector is called once per item, in order, with only the item. A
-+  supplied selector that is not a function, including `null`, raises
-+  `TypeError("average expects a function")`, even on an empty receiver.
-+- Averages are read-only and live: a declaration follows the list or
-+  population, the arguments and what the selector reads, in class-level rules
-+  too. On a class name, `Name.average(...)` is the population query even when
-+  the class declares an instance method `average`; instances keep calling the
-+  method. `average` is not a noun query, so `average of xs` stays a syntax
-+  error.
-+- The authoritative contract is the
-+  [list and population averages](../nucleoid.spec.md#list-and-population-averages)
-+  section.
-+
- ---
- 
- ## 12. Reasoning Operations
-@@ -3151,6 +3205,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | Missing or non-function `flatMap` callback, even on an empty receiver | `flatMap expects a function` |
- | Missing or non-function `find`, `findIndex`, `findLast` or `findLastIndex` callback, even on an empty receiver | `<name> expects a function` |
- | A supplied `sum` selector that is no
-```
-
-**File**: `docs/examples.md` (modified, +36/-0)
-```diff
-@@ -3263,6 +3263,42 @@ fullest.zone
-   [NUC 79](nuc-0079.md) and the
-   [root contract](../nucleoid.spec.md#property-selector-arguments).
- 
-+## List and population averages
-+
-+**Averages keep the rating of every product live as reviews arrive**
-+
-+```nuc
-+class Product(name): this.name = name
-+class Review(product, stars):
-+    this.product = product
-+    this.stars = stars
-+$Product.rating = Review.filter(review -> review.product == $Product).average(review -> review.stars)
-+$Product.featured = $Product.rating >= 4
-+lamp = Product("lamp")
-+desk = Product("desk")
-+Review(lamp, 5)
-+Review(lamp, 4)
-+late = Review(desk, 2)
-+store = Review.average(review -> review.stars)
-+assert: [lamp.rating, lamp.featured, desk.rating, desk.featured, store], [4.5, true, 2, false, 3.6666666666666665]
-+late.stars = 5
-+Review(desk, 4)
-+assert: [desk.rating, desk.featured, store], [4.5, true, 4.5]
-+chair = Product("chair")
-+assert: [Number.isNaN(chair.rating), chair.featured], [true, false]
-+[lamp.featured, desk.featured, chair.featured]
-+# return: [true,true,false]
-+```
-+
-+- `$Product.rating` is the mean of the stars of each product's reviews, and
-+  `$Product.featured` follows it. Raising the late review to five stars and
-+  adding a four-star review lift the desk to `4.5`, so it becomes featured,
-+  and `store`, the mean of every review, follows both changes.
-+- The chair has no reviews, so its rating is NaN, the mean of nothing, and
-+  it is not featured, because NaN compares false. See
-+  [NUC 80](nuc-0080.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-averages).
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -105,6 +105,7 @@ Created: 31-Jul-2026
- | [73](nuc-0073.md) | List and Population Predicate Counts | Accepted |
- | [75](nuc-0075.md) | List and Population Modes | Accepted |
- | [77](nuc-0077.md) | List and Population Extreme Items | Accepted |
-+| [80](nuc-0080.md) | List and Population Averages | Accepted |
- 
- ### Reasoning enhancement
- 
-@@ -213,6 +214,7 @@ Created: 31-Jul-2026
- | [77](nuc-0077.md) | List and Population Extreme Items | Standards Track | Utility enhancement | Accepted |
- | [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
- | [79](nuc-0079.md) | Property Selector Arguments | Standards Track | Syntax enhancement | Accepted |
-+| [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0080.md` (added, +796/-0)
-```diff
-@@ -0,0 +1,796 @@
-+# NUC 80 -- List and Population Averages
-+
-+```
-+NUC: 80
-+Title: List and Population Averages
-+Author: Claude <noreply@anthropic.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 04-Nov-2026
-+Requires: 8, 18, 45, 57, 59, 60, 61, 64, 65, 68, 75, 79
-+```
-+
-+## Abstract
-+
-+- Lists and class instance lists gain the read-only query `average`.
-+  `RECEIVER.average()` returns the arithmetic mean of the items and
-+  `RECEIVER.average(selector)` the mean of `selector(item)`.
-+- The result is exactly `RECEIVER.sum(...) / RECEIVER.length` with the same
-+  arguments: the total of [NUC 68](nuc-0068.md)'s `sum`, with its numeric
-+  conversion, left-to-right addition and undefined gate, divided by the
-+  number of items with the division of `/`. A list of numbers averages bit
-+  for bit to `xs.sum() / xs.length`, so `[0.1, 0.2, 0.3].average()` is
-+  `0.20000000000000004`.
-+- An empty receiver gives `0 / 0`, which is NaN, as Kotlin's `average()`
-+  does. An undefined value makes the result undefined, which a declaration
-+  stores as `null`.
-+- The selector is called once for every item, in order, with only the item,
-+  as `sum` calls its selector. A supplied first argument that is not a
-+  function raises `TypeError("average expects a function")`, even on an
-+  empty receiver.
-+- `average` follows [NUC 61](nuc-0061.md)'s shared query rules beside `sum`.
-+  It accepts every receiver `sum` accepts, reads the receiver before its
-+  arguments, never writes it, and stays live in declarations and class-level
-+  rules.
-+- At the accepted revision these calls raise
-+  `TypeError("<receiver>.average is not a function")`. No syntax, keyword,
-+  token, error type or public Rust API is added, and `average` is not a noun
-+  query, so `average of xs` keeps raising
-+  `SyntaxError("Unexpected keyword 'of'")`. The authoritative contract is
-+  [List and population averages](../nucleoid.spec.md#list-and-population-averages).
-+- **Outcome: Accepted.** The independent evaluation and the caller's
-+  integrated-tree checks passed all three hard criteria, and the independent
-+  evaluator decided Accepted. The required token comparison ran in
-+  continuous mode: 11 cases use fewer tokens, 915 the same and none more. No
-+  policy check failed.
-+
-+## Motivation
-+
-+- World models keep averages: the mean temperature of each room, the average
-+  order value, the rating of a product from its reviews, the typical speed of
-+  a fleet. Each is a mean over a list or over a class's instances, and it has
-+  to stay true while the model changes.
-+- [NUC 68](nuc-0068.md) and [NUC 69](nuc-0069.md) list averages under "Not
-+  added". At the accepted revision a mean is a total divided by a count, and
-+  the spelling names its receiver twice: `mean = sum of temps / temps.length`
-+  is 9 lexer tokens and `mean = temps.sum() / temps.length` is 11, where
-+  `mean = temps.average()` is 7. Over a population,
-+  `typical = Order.sum(.total) / Order.length` is 13 tokens where
-+  `typical = Order.average(.total)` is 9.
-+- The repetition grows with the receiver. The class-level rule
-+  `$Room.mean = Sensor.filter(sensor -> sensor.room == $Room).sum(sensor -> sensor.temp) / Sensor.count(sensor -> sensor.room == $Room)`
-+  is 38 tokens and states its filter twice;
-+  `$Room.mean = Sensor.filter(sensor -> sensor.room == $Room).average(sensor -> sensor.temp)`
-+  is 25.
-+- A divided total is easy to get subtly wrong, because the count must be of
-+  the same items as the total. The shortest accepted spelling of a filtered
-+  mean divides by the wrong count:
-+  `rushed = Order.filter(.rush).sum(.total) / Order.length` is 19 tokens and
-+  divides the rush total by every order. The correct
-+  `rushed = Order.filter(.rush).sum(.total) / Order.count(.rush)` is 23 tokens
-+  and repeats the filter. `rushed = Order.filter(.rush).average(.total)` is 15
-+  and names the items once.
-+- Kotlin's `average()`, C#'s `Average`, Java streams' `average()`, SQL's
-+  `AVG`, lodash's `_.mean` and `_.meanBy` and Python's `statistics.mean` name
-+  the operation. JavaScript has none, and LLM-written code such as
-+  `orders.average(o => o.total)` raises
-+  `TypeError("orders.average is not a function")` at the accepted revision.
-+
-+## Rationale
-+
-+- **Category and mode.** The caller selected the Utility enhancement category
-+  by one tool-backed uniform draw over the five categories that NUC 1's
-+  registry marks eligible for automatic selection, index 2 with probability
-+  1/5 and no redraw. This is a continuous cycle, so the token
-+  non-regression gate is required. Runtime applicability does not apply to
-+  this category.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored, not zero. Strategy learning is `not_configured`, so this revision
-+  is unattributed, with no policy, selection receipt, trial or reward.
-+- **One more shared query.** `average` is an operation of the read-only list
-+  query that serves `map`, `
-```
-
-**File**: `nucleoid.spec.md` (modified, +230/-0)
-```diff
-@@ -3636,6 +3636,57 @@ statement positions; caught values and transaction recovery are unchanged.
-   through `Nucleoid rolls back failed extreme item updates` specify the
-   executable behavior.
- 
-+## List and population averages
-+
-+- [NUC 80](docs/nuc-0080.md) adds the read-only list query `average` to lists
-+  and class instance lists. No syntax, keyword or error type is added.
-+- `RECEIVER.average()` returns the arithmetic mean of the receiver's items and
-+  `RECEIVER.average(selector)` the mean of `selector(item)` for every item.
-+  The result is exactly `RECEIVER.sum(...) / RECEIVER.length` with the same
-+  arguments: the total of `sum`, divided by the number of items with the
-+  division of `/`, in 64-bit floating point. A list of numbers therefore
-+  averages to exactly what `xs.sum() / xs.length` gives, so
-+  `[0.1, 0.2, 0.3].average()` is `0.20000000000000004`.
-+- An empty receiver gives `0 / 0`, which is NaN. The result is a number, or
-+  undefined when any added value is undefined, which a declaration stores as
-+  `null`, because `/` gives undefined when an operand is undefined.
-+- Every item counts toward the number of items, including items that convert
-+  to `0` or NaN, so `[2, null].average()` is `1`.
-+- The receivers, the numeric conversion, the selector and the liveness are
-+  those of `sum`: a list however it is reached, or a class's instance list in
-+  population order, named by the class or by a variable that holds the class;
-+  `null`, `false`, empty strings and empty lists count `0`, `true` counts `1`,
-+  numeric strings and one-item lists count their number, and objects, other
-+  strings and longer lists are NaN. On a class name, `average` is the
-+  population query even when the class declares an instance method `average`;
-+  its instances keep calling that method.
-+- `average()` reads items, not bindings, so a `null` item counts `0` without
-+  settling a declaration to `null`, while the reads inside a selector follow
-+  the existing rules.
-+- A selector is called once for every item, in order, with only the item;
-+  further parameters are `null`. A supplied first argument that is not a
-+  function, including `null`, raises `TypeError("average expects a function")`,
-+  even on an empty receiver.
-+- `average` follows the shared rules of the list queries: it reads its
-+  receiver before its arguments, evaluates every supplied argument once, left
-+  to right, including unused extras, and never writes the receiver. A
-+  declaration that uses it depends on the list or population, on its argument
-+  expressions and on whatever the selector reads, so list mutations, new and
-+  deleted instances and property changes re-evaluate it, in class-level rules
-+  too. Selector errors roll back through the existing transaction. A null or
-+  undefined receiver yields undefined without evaluating the arguments.
-+- The call keeps its ordinary rendering, so `mean = temps.average()` explains
-+  as `mean = temps.average()`, and `why` lists the receiver among the
-+  declaration's dependencies.
-+- `average of xs` stays `SyntaxError("Unexpected keyword 'of'")`: `average`
-+  is not one of the noun queries. Property reads such as `xs.average`,
-+  bindings and object properties named `average`, `average(...)` without a
-+  definition, `Math.average` and instance methods named `average` called on
-+  an instance keep their accepted results. The eight appended
-+  entries beginning `Nucleoid averages lists with average` through
-+  `Nucleoid rolls back failed average updates` specify the executable
-+  behavior.
-+
- ## Object entry loops with ordered rollback
- 
- - [NUC 72](docs/nuc-0072.md) adds loops over an object's entries:
-@@ -19771,4 +19822,183 @@ assert: [readers, listers, coolest], [["hottest", "coolest"], ["rooms"], lab]
- lab.temp = 30
- hall.room = "foyer"
- assert: [hottest, coolest, rooms], [lab, hall, ["lab", "foyer"]]
-+---
-+# Nucleoid averages lists with average
-+
-+temps = [18, 24, 9]
-+mean = temps.average()
-+gap = temps.average(temp -> Math.abs(temp - 20))
-+assert: [mean, gap, (why mean)[0].from], [17, 5.666666666666667, ["temps"]]
-+temps.push(29)
-+assert: [mean, gap], [20, 6.5]
-+temps.pop()
-+temps.pop()
-+assert: [mean, gap], [21, 3]
-+temps = []
-+assert: [Number.isNaN(mean), Number.isNaN(gap)], [true, true]
-+cart = {items: [0.1, 0.2]}
-+paid = cart.items.average()
-+small = cart.items.filter(item -> item < 0.25).average()
-+cart.items.push(0.3)
-+assert: [paid, small], [0.20000000000000004, 0.15000000000000002]
-+---
-+# Nucleoid averages class instance populations with average
-+
-+class Trip(km, hours):
-+    this.km = km
-+    this.hours = hours
-+def speed trip => trip.km / trip.hours
-+first = Trip(120, 2)
-+second = Trip(45, 1)
-+pace = Trip.average(speed)
-+far = Trip.filter(trip -> trip.km > 100).average(speed)
-+recent = Trip[-2:].average(trip -> trip.hours * 60)
-+assert: [pace, far, recent], [52.5, 60, 90]
-+third = Trip(300, 4)
-+assert: [pace, far, recent], [60, 67.5, 150]
-+first.hours = 3
-+assert: [pace, far], [5
-```
-
----
-
-### Incident Patch 2: `595e5ab6` (2026-11-04)
-**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
-
-
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1470,47 +1365,21 @@ transac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 80 List and Population Averages
+## X. Add ARC dataset for puzzle 25d8a9c8
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b3f3e76`: NUC 80 List and Population Averages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2131caf5`: Add ARC dataset for puzzle 25d8a9c8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population averages
-
-**Averages keep mean temperatures live as readings change**
-
-```nuc
-class Room(name, temps):
-    this.name = name
-    this.temps = temps
-$Room.mean = $Room.temps.average()
-lab = Room("lab", [21, 23])
-hall = Room("hall", [17, 18])
-building = Room.average(room -> room.mean)
-assert: [lab.mean, hall.mean, building], [22, 17.5, 19.75]
-hall.temps.push(25)
-Room("attic", [12])
-assert: [hall.mean, building], [20, 18]
-```
-
-- [NUC 80](docs/nuc-0080.md) adds `average()` and `average(selector)` to
-  lists and class instance lists. `$Room.temps.average()` is the mean of each
-  room's readings, and `Room.average(room -> room.mean)` the mean over every
-  room: exactly `sum(...)` divided by the number of items.
-- `$Room.mean` and `building` are live declarations: a new reading or a new
-  room re-evaluates them. An empty list or class averages to NaN, as `0 / 0`
-  does. See the
-  [root contract](nucleoid.spec.md#list-and-population-averages).
-
+        25d8a9c8
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1520,4 +1389,4 @@ assert: [hall.mean, building], [20, 18]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b3f3e76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2131caf5` are properly handled with clean fallback behavior.

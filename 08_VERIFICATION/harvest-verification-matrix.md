@@ -7324,3 +7324,6 @@
 | `CYCLE-20261104-FYGB` | `2026-11-04T20:25:14.027Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6958` | Yes (`3f3c9ab8...`) |
 | `CYCLE-20261104-OM34` | `2026-11-04T20:31:57.904Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6959` | Yes (`aa1cf462...`) |
 | `CYCLE-20261104-OOUV` | `2026-11-04T20:32:01.495Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6960` | Yes (`371e7545...`) |
+| `CYCLE-20261104-XWAZ` | `2026-11-04T20:39:11.051Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6961` | Yes (`ef10d3f4...`) |
+| `CYCLE-20261104-Y2ZM` | `2026-11-04T20:39:19.714Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 431, Rule 507, Rule 1231` | Yes (`6c9a42d0...`) |
+| `CYCLE-20261104-YDOX` | `2026-11-04T20:39:33.585Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6962` | Yes (`a9112ae1...`) |

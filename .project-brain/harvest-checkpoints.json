@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T20:32:01.518Z",
+  "last_updated": "2026-11-04T20:39:33.604Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -37,14 +37,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-convaiinnovations-laya",
-      "content_hash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
-      "verified_at": "2026-10-31T04:50:45.701Z",
+      "content_hash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
+      "verified_at": "2026-11-04T20:39:19.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:50:45.701Z"
+      "last_updated": "2026-11-04T20:39:19.733Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "94b6bfe44ed2c595035981b7ddbe1d43d6f40c3d26775316a2229e4cc6fff6e3",
-      "verified_at": "2026-11-04T19:41:36.064Z",
+      "content_hash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
+      "verified_at": "2026-11-04T20:39:11.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:41:36.064Z"
+      "last_updated": "2026-11-04T20:39:11.063Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
-      "verified_at": "2026-11-03T22:15:23.299Z",
+      "content_hash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
+      "verified_at": "2026-11-04T20:39:33.603Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:15:23.299Z"
+      "last_updated": "2026-11-04T20:39:33.603Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",

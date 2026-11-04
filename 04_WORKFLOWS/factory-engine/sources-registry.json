@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T20:32:06.958Z",
-    "lastVerified": "2026-11-04T20:32:06.958Z",
+    "lastChecked": "2026-11-04T20:39:36.149Z",
+    "lastVerified": "2026-11-04T20:39:36.149Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -67,12 +67,12 @@
     "officialUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T04:50:25.888Z",
-    "lastVerified": "2026-10-31T04:50:25.888Z",
+    "lastChecked": "2026-11-04T20:38:48.518Z",
+    "lastVerified": "2026-11-04T20:38:48.518Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
+    "contentHash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -442,22 +442,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T20:10:07.322Z",
-    "lastVerified": "2026-11-04T20:10:07.322Z",
+    "lastChecked": "2026-11-04T20:39:09.862Z",
+    "lastVerified": "2026-11-04T20:39:09.862Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "94b6bfe44ed2c595035981b7ddbe1d43d6f40c3d26775316a2229e4cc6fff6e3",
-    "promotedRulesCount": 0,
+    "contentHash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5b3f3e76"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -801,8 +800,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T21:17:23.614Z",
-    "lastVerified": "2026-11-03T21:17:23.614Z",
+    "lastChecked": "2026-11-04T20:38:58.522Z",
+    "lastVerified": "2026-11-04T20:38:58.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -1822,12 +1821,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T16:59:17.329Z",
-    "lastVerified": "2026-11-04T16:59:17.329Z",
+    "lastChecked": "2026-11-04T20:38:56.001Z",
+    "lastVerified": "2026-11-04T20:38:56.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1836,7 +1835,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "60d048f6"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3669,14 +3669,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T22:15:21.986Z",
-    "lastVerified": "2026-11-03T22:15:21.986Z",
+    "lastChecked": "2026-11-04T20:39:01.746Z",
+    "lastVerified": "2026-11-04T20:39:01.746Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
+    "contentHash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6891,9 +6891,9 @@
   "kizitonwose-calendar": {
     "name": "Calendar",
     "officialUrl": "https://github.com/kizitonwose/Calendar",
-    "lastChecked": "2026-10-31T13:20:51.508Z",
+    "lastChecked": "2026-11-04T20:38:50.866Z",
     "revisionIdentifier": "c2711b3c",
-    "lastVerified": "2026-10-31T13:20:51.508Z"
+    "lastVerified": "2026-11-04T20:38:50.866Z"
   },
   "databricks-click": {
     "name": "click",
@@ -7855,9 +7855,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-03T16:15:57.497Z",
+    "lastChecked": "2026-11-04T20:38:45.906Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-03T16:15:57.497Z"
+    "lastVerified": "2026-11-04T20:38:45.906Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",

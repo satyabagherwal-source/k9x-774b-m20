@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-9BW2",
-    "timestamp": "2026-11-02T15:36:48.242Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c129acbb3b6fdcb261491ed27f696195643e467b7686b32cdc0415e43d5097f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-9CRW",
-    "timestamp": "2026-11-02T15:36:49.388Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "22427a890648730721eec9a9f427c01533f7ffabf94455f73ee8d0063d84c989",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-9FLY",
-    "timestamp": "2026-11-02T15:36:53.062Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-RK0S",
     "timestamp": "2026-11-02T15:50:58.588Z",
     "repository": "rustls/rustls",
@@ -7490,6 +7445,51 @@
     "repository": "TanStack/router",
     "learningId": "learn-github-tanstack-router",
     "contentHash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-XWAZ",
+    "timestamp": "2026-11-04T20:39:11.051Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-Y2ZM",
+    "timestamp": "2026-11-04T20:39:19.714Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-YDOX",
+    "timestamp": "2026-11-04T20:39:33.585Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

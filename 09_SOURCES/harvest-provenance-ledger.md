@@ -7333,3 +7333,6 @@ Every entry in this ledger must capture:
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `4876e026` | Multi-dimensional audit evidence | 2026-11-04T20:25:14.030Z |
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d02e800f` | Multi-dimensional audit evidence | 2026-11-04T20:31:57.908Z |
 | `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `c5320d7c` | Multi-dimensional audit evidence | 2026-11-04T20:32:01.500Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2131caf5` | Multi-dimensional audit evidence | 2026-11-04T20:39:11.054Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-04T20:39:19.717Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `bbd630ae` | Multi-dimensional audit evidence | 2026-11-04T20:39:33.589Z |

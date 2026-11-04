@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:32:01.423Z",
+  "last_updated": "2026-11-04T20:39:33.514Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22080,7 +22080,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
+      "content_hash": "6c9a42d06869358bc8359e13d58cf75db2ccb2a5bb473cf98628516ba6e592a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -22153,7 +22153,7 @@
         {
           "number": 1231,
           "title": "Dynamic Model Routing Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4082,
@@ -22538,7 +22538,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-31T04:50:45.588Z",
+      "verified_at": "2026-11-04T20:39:19.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44208,8 +44208,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5b3f3e76",
-      "content_hash": "94b6bfe44ed2c595035981b7ddbe1d43d6f40c3d26775316a2229e4cc6fff6e3",
+      "source_version": "2131caf5",
+      "content_hash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44442,6 +44442,11 @@
           "number": 6917,
           "title": "Require gestalt-first design in ARC agents",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6961,
+          "title": "Add ARC dataset for puzzle 25d8a9c8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44449,7 +44454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:41:35.889Z",
+      "verified_at": "2026-11-04T20:39:10.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47114,8 +47119,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "edc9c419",
-      "content_hash": "1dfc17782a8f2b31a1e6fad622e42bf4b8265ce7fa5991378f882537828716aa",
+      "source_version": "bbd630ae",
+      "content_hash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -47173,6 +47178,11 @@
           "number": 6639,
           "title": "clickhouse): normalize tables added to a running mirror through their column set",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6962,
+          "title": "docs: add tricky-areas.md (#5013)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47180,7 +47190,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:15:23.177Z",
+      "verified_at": "2026-11-04T20:39:33.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78538,7 +78548,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T04:50:45.588Z"
+      "verified_at": "2026-11-04T20:39:19.623Z"
     },
     "rule-432": {
       "learning_id": "rule-432",
@@ -79594,15 +79604,15 @@
       "learning_id": "rule-507",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 507,
-      "title": "Strictly Proper Scoring Rule Training Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Strictly Proper Scoring Rule Training Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-11-04T20:39:19.623Z"
     },
     "rule-508": {
       "learning_id": "rule-508",
@@ -89730,15 +89740,15 @@
       "learning_id": "rule-1231",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1231,
-      "title": "Dynamic Model Routing Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Dynamic Model Routing Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-11-04T20:39:19.623Z"
     },
     "rule-1232": {
       "learning_id": "rule-1232",
@@ -177224,6 +177234,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:32:01.404Z"
+    },
+    "rule-6961": {
+      "learning_id": "rule-6961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6961,
+      "title": "Add ARC dataset for puzzle 25d8a9c8",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "2131caf5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:39:10.939Z"
+    },
+    "rule-6962": {
+      "learning_id": "rule-6962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6962,
+      "title": "docs: add tricky-areas.md (#5013)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "bbd630ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:39:33.495Z"
     }
   },
   "aliases": {
