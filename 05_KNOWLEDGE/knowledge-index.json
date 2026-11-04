@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T21:18:56.636Z",
+  "last_updated": "2026-11-04T21:26:28.002Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29283,7 +29283,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
+      "content_hash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -29351,7 +29351,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-31T05:36:01.171Z",
+      "verified_at": "2026-11-04T21:26:27.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41076,8 +41076,8 @@
       "slug": "mikepenz-aboutlibraries",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/AboutLibraries",
-      "source_version": "b499d890",
-      "content_hash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
+      "source_version": "697e4d15",
+      "content_hash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "promoted_rules": [
@@ -41090,6 +41090,11 @@
           "number": 2308,
           "title": "Heterogeneous JSON Primitive Extraction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6977,
+          "title": "deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#1489)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41097,7 +41102,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:29:47.070Z",
+      "verified_at": "2026-11-04T21:26:15.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58412,13 +58417,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "43d885ef",
-      "content_hash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "ff97c223",
+      "content_hash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -58558,7 +58563,7 @@
         {
           "number": 6913,
           "title": "Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58566,7 +58571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:57:42.122Z",
+      "verified_at": "2026-11-04T21:26:22.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71537,13 +71542,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "a7f0c300",
-      "content_hash": "e29c11dc5de58a8e54ecc7704e0f9c57f63ce700adba97fb98144e18b2940641",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "66955b13",
+      "content_hash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -71649,6 +71654,11 @@
           "number": 6778,
           "title": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6978,
+          "title": "Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71656,7 +71666,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:29:59.694Z",
+      "verified_at": "2026-11-04T21:26:19.200Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176606,14 +176616,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6913,
       "title": "Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "43d885ef",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "ff97c223",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T18:57:42.122Z"
+      "verified_at": "2026-11-04T21:26:22.131Z"
     },
     "rule-6914": {
       "learning_id": "rule-6914",
@@ -177528,6 +177538,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T21:18:56.613Z"
+    },
+    "rule-6977": {
+      "learning_id": "rule-6977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6977,
+      "title": "deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#1489)",
+      "source_url": "https://github.com/mikepenz/AboutLibraries",
+      "source_version": "697e4d15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:26:15.143Z"
+    },
+    "rule-6978": {
+      "learning_id": "rule-6978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6978,
+      "title": "Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "66955b13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:26:19.200Z"
     }
   },
   "aliases": {

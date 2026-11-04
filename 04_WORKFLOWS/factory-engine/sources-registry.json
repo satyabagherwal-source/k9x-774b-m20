@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T21:18:59.294Z",
-    "lastVerified": "2026-11-04T21:18:59.294Z",
+    "lastChecked": "2026-11-04T21:26:30.660Z",
+    "lastVerified": "2026-11-04T21:26:30.660Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T20:53:22.230Z",
-    "lastVerified": "2026-11-04T20:53:22.230Z",
+    "lastChecked": "2026-11-04T21:26:19.700Z",
+    "lastVerified": "2026-11-04T21:26:19.700Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -666,12 +666,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T05:36:00.203Z",
-    "lastVerified": "2026-10-31T05:36:00.203Z",
+    "lastChecked": "2026-11-04T21:26:07.090Z",
+    "lastVerified": "2026-11-04T21:26:07.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
+    "contentHash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1356,14 +1356,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T22:15:27.488Z",
-    "lastVerified": "2026-11-03T22:15:27.488Z",
+    "lastChecked": "2026-11-04T21:26:21.732Z",
+    "lastVerified": "2026-11-04T21:26:21.732Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
+    "contentHash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2361,22 +2361,21 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T17:52:21.777Z",
-    "lastVerified": "2026-11-04T17:52:21.777Z",
+    "lastChecked": "2026-11-04T21:26:18.529Z",
+    "lastVerified": "2026-11-04T21:26:18.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
+    "contentHash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a7f0c300"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -3986,9 +3985,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-03T23:06:08.699Z",
+    "lastChecked": "2026-11-04T21:26:12.106Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-03T23:06:08.699Z"
+    "lastVerified": "2026-11-04T21:26:12.106Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -7313,11 +7312,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mikepenz-aboutlibraries": {
-    "name": "AboutLibraries",
+    "name": "mikepenz/AboutLibraries",
     "officialUrl": "https://github.com/mikepenz/AboutLibraries",
-    "lastChecked": "2026-10-31T14:01:15.303Z",
-    "revisionIdentifier": "b499d890",
-    "lastVerified": "2026-10-31T14:01:15.304Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-04T21:26:14.091Z",
+    "lastVerified": "2026-11-04T21:26:14.091Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mikepenz-aboutlibraries",
+    "contentHash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "envoyproxy-envoy": {
     "name": "envoyproxy/envoy",
@@ -8144,9 +8153,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-03T17:06:11.921Z",
+    "lastChecked": "2026-11-04T21:26:04.589Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-03T17:06:11.921Z"
+    "lastVerified": "2026-11-04T21:26:04.589Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",

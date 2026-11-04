@@ -7344,3 +7344,7 @@
 | `CYCLE-20261104-3K8G` | `2026-11-04T21:11:34.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6975` | Yes (`bf837509...`) |
 | `CYCLE-20261104-CQPZ` | `2026-11-04T21:18:43.271Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`9a74f51b...`) |
 | `CYCLE-20261104-D13N` | `2026-11-04T21:18:56.723Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6976` | Yes (`3697ece9...`) |
+| `CYCLE-20261104-MFH5` | `2026-11-04T21:26:15.257Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6977` | Yes (`8167195c...`) |
+| `CYCLE-20261104-MILR` | `2026-11-04T21:26:19.311Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6978` | Yes (`4cba16ee...`) |
+| `CYCLE-20261104-MKVJ` | `2026-11-04T21:26:22.255Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6913` | Yes (`9b79d23c...`) |
+| `CYCLE-20261104-MPDZ` | `2026-11-04T21:26:28.103Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`64fd6ba1...`) |

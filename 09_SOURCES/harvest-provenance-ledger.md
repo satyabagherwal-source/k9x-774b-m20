@@ -7353,3 +7353,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `92602a83` | Multi-dimensional audit evidence | 2026-11-04T21:11:34.964Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-04T21:18:43.282Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `360214e0` | Multi-dimensional audit evidence | 2026-11-04T21:18:56.727Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `697e4d15` | Multi-dimensional audit evidence | 2026-11-04T21:26:15.261Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `66955b13` | Multi-dimensional audit evidence | 2026-11-04T21:26:19.315Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `ff97c223` | Multi-dimensional audit evidence | 2026-11-04T21:26:22.259Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T21:26:28.116Z |

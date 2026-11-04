@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T21:18:56.745Z",
+  "last_updated": "2026-11-04T21:26:28.126Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
-      "verified_at": "2026-10-31T05:36:01.280Z",
+      "content_hash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
+      "verified_at": "2026-11-04T21:26:28.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:36:01.280Z"
+      "last_updated": "2026-11-04T21:26:28.126Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "e29c11dc5de58a8e54ecc7704e0f9c57f63ce700adba97fb98144e18b2940641",
-      "verified_at": "2026-11-04T10:29:59.824Z",
+      "content_hash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
+      "verified_at": "2026-11-04T21:26:19.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:29:59.824Z"
+      "last_updated": "2026-11-04T21:26:19.333Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
-      "verified_at": "2026-11-04T18:57:42.255Z",
+      "content_hash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
+      "verified_at": "2026-11-04T21:26:22.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:57:42.255Z"
+      "last_updated": "2026-11-04T21:26:22.278Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
-      "verified_at": "2026-10-19T07:29:47.131Z",
+      "content_hash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
+      "verified_at": "2026-11-04T21:26:15.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:29:47.131Z"
+      "last_updated": "2026-11-04T21:26:15.278Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",

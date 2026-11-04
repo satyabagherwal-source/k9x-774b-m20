@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
-    "lastHarvestedAt": "2026-10-31T05:36:01.272Z",
+    "contentHash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
+    "lastHarvestedAt": "2026-11-04T21:26:28.116Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "a7f0c300",
+    "sourceVersion": "66955b13",
     "license": "Apache-2.0",
-    "contentHash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
-    "lastHarvestedAt": "2026-11-04T08:28:37.003Z",
+    "contentHash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
+    "lastHarvestedAt": "2026-11-04T21:26:19.315Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -7023,20 +7023,20 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "b499d890",
+    "sourceVersion": "697e4d15",
     "license": "Apache-2.0",
-    "contentHash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
-    "lastHarvestedAt": "2026-10-19T07:29:47.125Z",
+    "contentHash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
+    "lastHarvestedAt": "2026-11-04T21:26:15.261Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "f9446abf",
+    "sourceVersion": "ff97c223",
     "license": "MIT",
-    "contentHash": "dc97f39e3b8576aa5459a9afb7db6a960bb1194ae3e97e9c4eef569a7c829ea4",
-    "lastHarvestedAt": "2026-11-03T22:15:29.185Z",
+    "contentHash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
+    "lastHarvestedAt": "2026-11-04T21:26:22.259Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

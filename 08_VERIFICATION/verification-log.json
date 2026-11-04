@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-SOT9",
-    "timestamp": "2026-11-02T16:47:50.685Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-SS0I",
-    "timestamp": "2026-11-02T16:47:54.834Z",
-    "repository": "joreilly/Confetti",
-    "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-1UGF",
-    "timestamp": "2026-11-02T16:54:57.903Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-1XQ1",
-    "timestamp": "2026-11-02T16:55:02.137Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-O98E",
     "timestamp": "2026-11-02T17:12:23.486Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7432,66 @@
     "contentHash": "3697ece97ee185d37cf546acb818b90c1f2dc77844462cccd2e80aa0b33ccd6f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MFH5",
+    "timestamp": "2026-11-04T21:26:15.257Z",
+    "repository": "mikepenz/AboutLibraries",
+    "learningId": "learn-github-mikepenz-aboutlibraries",
+    "contentHash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MILR",
+    "timestamp": "2026-11-04T21:26:19.311Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MKVJ",
+    "timestamp": "2026-11-04T21:26:22.255Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MPDZ",
+    "timestamp": "2026-11-04T21:26:28.103Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
