@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T07:18:52.553Z",
+  "last_updated": "2026-11-04T07:26:05.648Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
-      "verified_at": "2026-11-04T03:51:14.525Z",
+      "content_hash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
+      "verified_at": "2026-11-04T07:26:05.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:51:14.525Z"
+      "last_updated": "2026-11-04T07:26:05.647Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
-      "verified_at": "2026-11-03T10:45:49.907Z",
+      "content_hash": "05e28f75da32dac122812d2c8a46b30ee0ecd62dc297d55500896ae2b9ada113",
+      "verified_at": "2026-11-04T07:25:58.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:45:49.907Z"
+      "last_updated": "2026-11-04T07:25:58.121Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -15351,14 +15351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jestjs-jest",
-      "content_hash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
-      "verified_at": "2026-10-20T03:46:46.549Z",
+      "content_hash": "466b6ac349128a0cbb92fd063eb55e2a184bbc5c4936222370cbd9a29c77482b",
+      "verified_at": "2026-11-04T07:25:52.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:46:46.549Z"
+      "last_updated": "2026-11-04T07:25:52.873Z"
     },
     "avajs/ava": {
       "repository": "avajs/ava",
@@ -17849,6 +17849,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-04T02:04:45.011Z"
+    },
+    "Qwen/Qwen3-Embedding-0.6B": {
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "content_hash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
+      "verified_at": "2026-11-04T07:25:57.306Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T07:25:57.306Z"
     }
   },
   "repos": {

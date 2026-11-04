@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T02:26:10.666Z",
+  "last_updated": "2026-11-04T07:26:05.642Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3764,6 +3764,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-callstack-react-native-paper"
+    },
+    {
+      "id": "CD-LZ62",
+      "directive_title": "NUC 77 List and Population Extreme Items",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "a7fed6ab",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

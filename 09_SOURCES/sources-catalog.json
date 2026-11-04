@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ee552061",
+    "sourceVersion": "a7fed6ab",
     "license": "Apache-2.0",
-    "contentHash": "937129909886f6547af029b4317d905dfecac74b5558e68d3eca4b8b91c48782",
-    "lastHarvestedAt": "2026-11-04T03:51:14.518Z",
+    "contentHash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
+    "lastHarvestedAt": "2026-11-04T07:26:05.636Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "3c1e052e",
+    "sourceVersion": "ef423267",
     "license": "Apache-2.0",
-    "contentHash": "6db5fe62f89908109920bd93138ed36f5d50403ac320fc7d7614c5d2d95884e9",
-    "lastHarvestedAt": "2026-11-03T10:45:49.901Z",
+    "contentHash": "05e28f75da32dac122812d2c8a46b30ee0ecd62dc297d55500896ae2b9ada113",
+    "lastHarvestedAt": "2026-11-04T07:25:58.112Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -10213,10 +10213,10 @@
     "repository": "jestjs/jest",
     "platform": "github",
     "sourceUrl": "https://github.com/jestjs/jest",
-    "sourceVersion": "61050e93",
+    "sourceVersion": "72614448",
     "license": "MIT",
-    "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
-    "lastHarvestedAt": "2026-10-20T03:46:46.544Z",
+    "contentHash": "466b6ac349128a0cbb92fd063eb55e2a184bbc5c4936222370cbd9a29c77482b",
+    "lastHarvestedAt": "2026-11-04T07:25:52.864Z",
     "learningId": "learn-github-jestjs-jest"
   },
   "avajs-ava": {
@@ -11858,5 +11858,15 @@
     "contentHash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
     "lastHarvestedAt": "2026-11-04T02:04:45.006Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
+  },
+  "hf-qwen-qwen3-embedding-0.6b": {
+    "repository": "Qwen/Qwen3-Embedding-0.6B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+    "sourceVersion": "hf-qwen-qwen3-embedding-0.6b",
+    "license": "Open-Source",
+    "contentHash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
+    "lastHarvestedAt": "2026-11-04T07:25:57.297Z",
+    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
   }
 }

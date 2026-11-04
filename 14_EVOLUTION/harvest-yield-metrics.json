@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T07:18:52.548Z",
-  "total_cycles_completed": 7131,
-  "total_learnings_persisted": 7131,
-  "total_rules_promoted": 6777,
+  "last_updated": "2026-11-04T07:26:05.644Z",
+  "total_cycles_completed": 7135,
+  "total_learnings_persisted": 7135,
+  "total_rules_promoted": 6782,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:53:46.853Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:53:49.936Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:53:53.030Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:53:54.739Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T18:02:27.871Z",
       "repository": "oven-sh/bun",
@@ -1403,6 +1375,34 @@
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:25:52.870Z",
+      "repository": "jestjs/jest",
+      "learningId": "learn-github-jestjs-jest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:25:57.303Z",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:25:58.117Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:26:05.644Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

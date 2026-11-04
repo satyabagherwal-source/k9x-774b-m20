@@ -4822,3 +4822,7 @@ https://github.com/agentlas-ai/Agentlas-OS
 # --- Automatically Discovered by AI Scout Engine [2026-11-04T02:04:28.378Z] ---
 # [HUGGINGFACE-AI-MODELS] microsoft/Mage-VL-Cowork (3101 score) - Verified Hugging Face Model: microsoft/Mage-VL-Cowork (156 likes, 1541 downloads
 https://huggingface.co/microsoft/Mage-VL-Cowork
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T07:25:40.342Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-Embedding-0.6B (15240 score) - Verified Hugging Face Model: Qwen/Qwen3-Embedding-0.6B (1324 likes, 8958817 down
+https://huggingface.co/Qwen/Qwen3-Embedding-0.6B

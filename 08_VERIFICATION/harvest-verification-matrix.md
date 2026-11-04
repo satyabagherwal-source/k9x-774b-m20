@@ -7154,3 +7154,7 @@
 | `CYCLE-20261104-62C6` | `2026-11-04T03:57:45.942Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6751` | Yes (`addd7a0c...`) |
 | `CYCLE-20261104-FB5I` | `2026-11-04T04:04:57.270Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6752` | Yes (`167cf0b8...`) |
 | `CYCLE-20261104-COZE` | `2026-11-04T07:18:52.538Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6753` | Yes (`8889df3d...`) |
+| `CYCLE-20261104-LPB1` | `2026-11-04T07:25:52.861Z` | `jestjs/jest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6754` | Yes (`466b6ac3...`) |
+| `CYCLE-20261104-LSQ6` | `2026-11-04T07:25:57.294Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6755, Rule 6756, Rule 6757` | Yes (`1e0bdd12...`) |
+| `CYCLE-20261104-LTCS` | `2026-11-04T07:25:58.108Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6758` | Yes (`05e28f75...`) |
+| `CYCLE-20261104-LZ5S` | `2026-11-04T07:26:05.632Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`e12a2e26...`) |

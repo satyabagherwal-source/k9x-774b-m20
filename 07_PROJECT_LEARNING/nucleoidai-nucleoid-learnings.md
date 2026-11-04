@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ee552061`  
+> **Source Version**: `a7fed6ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:51:13.903Z  
+> **Timestamp**: 2026-11-04T07:26:05.331Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:51:13.653Z  
+> **Harvest Timestamp**: 2026-11-04T07:26:04.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -985,574 +985,430 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee552061` (2026-11-04)
-**Commit Message**: Create logs directory before writing puzzle log
+### Incident Patch 1: `a7fed6ab` (2026-11-04)
+**Commit Message**: NUC 77 List and Population Extreme Items
 
-Ensure the logs directory exists via fs.mkdir with recursive before writing the debug log, so a fresh checkout no longer fails with ENOENT. Switch to the default fs/promises import to use both mkdir and writeFile.
+Accepted. The independent evaluator accepted the proposal in continuous
+mode against 53f64b5 and its 895-case baseline, which it re-recorded
+byte-identically. The required token gate ran: 11 cases use fewer lexer
+tokens, 884 are unchanged and none uses more, with a minimum margin of
+18 tokens. The evaluator's own search of about 1,000 accepted spellings
+found none more compact than a recorded counterpart.
 
-**File**: `arc/src/app.ts` (modified, +3/-2)
+Hard criteria, checked independently and again on the integrated tree:
+cargo build --all-targets, warning-denied Clippy and cargo fmt --check
+pass; the full cargo test passes (89 suites, 2,307 passed, 0 failed,
+25 ignored) with all 2,298 accepted test identities present and 34
+added; all 895 pinned accepted and counterpart programs replay, and a
+10,722-program differential changes only calls that raised
+"<receiver>.maxBy is not a function" or its minBy counterpart.
+
+NUC 77 adds RECEIVER.maxBy(selector) and RECEIVER.minBy(selector) to the
+read-only list queries of lists and class instance lists. They return
+the item itself whose key is the largest or smallest, compare keys as >
+and < do, keep the first item on a tie, and give undefined for
+
+**File**: `README.md` (modified, +34/-0)
 ```diff
-@@ -4,7 +4,7 @@ import * as Matrix from "./lib/Matrix";
- import * as nucleoid from "./lib/nucleoid";
- import * as milestone from "./lib/milestone.ts";
- import arc_dataset from "./lib/arc_dataset.ts";
--import { writeFile } from "node:fs/promises";
-+import fs from "node:fs/promises";
+@@ -1609,6 +1609,40 @@ assert: [amounts, min of amounts], [[15, 20, 45], 15]
+   `max of Order.map(order -> order.amount)`. See the
+   [root contract](nucleoid.spec.md#noun-list-queries-with-of).
  
- // Genesis puzzle_id: 3aa6fb7a
- export async function start(puzzle_id: string = "6150a2bd") {
-@@ -159,7 +159,8 @@ export async function start(puzzle_id: string = "6150a2bd") {
-     difference,
-   };
++## List and population extreme items
++
++**Extreme items keep the leading and lowest bids live as bids change**
++
++```nuc
++class Bid(bidder, amount):
++    this.bidder = bidder
++    this.amount = amount
++leader = Bid.maxBy(bid -> bid.amount)
++lowest = Bid.minBy(bid -> bid.amount)
++assert(leader, null)
++assert(lowest, null)
++ada = Bid("ada", 120)
++Bid("bo", 90)
++Bid("cy", 120)
++Bid("di", 90)
++assert(leader.bidder, "ada")
++assert(lowest.bidder, "bo")
++ada.amount = 60
++Bid("ed", 150)
++assert(leader.bidder, "ed")
++assert(lowest.bidder, "ada")
++```
++
++- [NUC 77](docs/nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)`
++  to lists and class instance lists. `Bid.maxBy(bid -> bid.amount)` is the
++  bid with the largest amount, the instance itself, so `leader.bidder` names
++  the bidder. Before the first bid `leader` and `lowest` are `null`, and on a
++  tie the earlier bid wins: `cy` and `di` do not displace `ada` and `bo`.
++- `leader` and `lowest` are live declarations: they re-evaluate when a bid is
++  created or an amount changes. Keys compare as `>` and `<` compare them, so
++  numbers compare as numbers, strings as text and dates by time. See the
++  [root contract](nucleoid.spec.md#list-and-population-extreme-items).
++
+ ## Benchmark
  
--  await writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
-+  await fs.mkdir('logs', { recursive: true });
-+  await fs.writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
- 
-   return difference;
- }
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
----
-
-### Incident Patch 2: `53f64b55` (2026-11-04)
-**Commit Message**: Apply Power of 10 rules to the Rust crate
-
-Adopt NASA's Power of 10 rules for production code, with lints, a clippy threshold and a policy test to enforce them.
-
-- Add pedantic and restriction lints to lib.rs and main.rs, plus clippy.toml (60-line function limit) and the power-of-ten rules document.
-- Replace panics, unreachable!, indexing and slicing with typed errors, get() and iterators.
-- Split long functions into helpers.
-- Add debug_assert! invariants and #[must_use] on value-returning functions.
-- Centralize f64/integer casts in the new number.rs.
-- Add tests/power_of_ten.rs to check the lint lists, the threshold, and the ban on macros, dyn, fn pointers and cfg use.
-- Add a daily CI schedule and a rustdoc check.
-- Update CONTRIBUTING.md and the CLAUDE.md index.
-
-No language behavior changes are intended.
-
-**File**: `.claude/CLAUDE.md` (modified, +1/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
 ```diff
-@@ -13,6 +13,7 @@ not a replacement for the policies it links to.
- | [project.instructions.md](rules/project.instructions.md) | Language goals, reference documents, and runtime architecture |
- | [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, JSON-only LLM exchanges, and no automated ARC tests |
- | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
-+| [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits and policy test that enforce them, and the known runtime-value recursion gap |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
- | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
+@@ -603,3 +603,11 @@
+ {"id":"spec-0603","description":"Nucleoid explains noun queries in their written form","code":"prices = [4, 9, 9]\ntop = max of prices\nwords = [\"ab\", \"c\", \"ab\"]\nwidth = (mode of words).length\nsquared = (sum of prices) ** 2\nassert: (why top)[0].rule, \"top = max of prices\"\nassert: (why top)[0].from, [\"prices\"]\nassert: (why width)[0].rule, \"width = (mode of words).length\"\nassert: (why squared)[0].rule, \"squared = (sum of prices)**2\"\nassert: [top, width, squared], [9, 2, 484]","return":null}
+ {"id":"spec-0604","description":"Nucleoid rolls back failed noun query updates","code":"def checked(zone):\n    if zone == \"void\":\n        throw \"BAD_ZONE\"\n    return zone\nzones = [\"a\", \"b\", \"b\"]\nbusiest = mode of zones.map(checked)\nassert: busiest, \"b\"\nfailure = \"\"\ntry:\n    zones.shift()\n    zones.push(\"void\")\ncatch error:\n    failure = error\nassert: failure, \"BAD_ZONE\"\nassert: zones, [\"a\", \"b\", \"b\"]\nassert: busiest, \"b\"\nzones.push(\"a\")\nzones.push(\"a\")\nassert: busiest, \"a\"","return":null}
+ {"id":"spec-0605","description":"Nucleoid reads noun queries of snapshots versions and other receivers","code":"history = [1]\nhistory.push(4)\nfirst = sum of history@first\nfrozen = sum of history.value\nhistory.push(5)\nassert: [first, frozen, sum of history], [1, 5, 10]\nnothing = null\nassert: sum of nothing, null\nassert: mode of [], null\nassert: [max of [], min of []], [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]\nclass Shelf:\n    def mode(): return 9\nshelf = Shelf()\nassert: mode of shelf, 9\nassert: mode of Shelf, shelf\nrecord = {sum: () -> 5}\nassert: sum of record, 5\nfailure = \"\"\ntry:\n    sum of \"abc\"\ncatch error:\n    failure = error\nassert: failure, TypeError(\"abc.sum is not a function\")","return":null}
++{"id":"spec-0606","description":"Nucleoid finds the extreme items of lists with maxBy and minBy","code":"readings = [{at: 9, c: 18}, {at: 12, c: 24}, {at: 15, c: 24}, {at: 18, c: 9}]\nwarmest = readings.maxBy(reading -> reading.c)\ncoldest = readings.minBy(reading -> reading.c)\nassert: warmest.at, 12\nassert: coldest.at, 18\nassert: warmest == readings[1], true\nreadings.push({at: 21, c: 30})\nreadings.shift()\nassert: warmest.at, 21\nassert: coldest.at, 18\nreadings.pop()\nreadings.pop()\nassert: warmest.at, 12\nassert: coldest.at, 12\nreadings = []\nassert: warmest, null\nassert: coldest, null\ntrip = {legs: [{to: \"oslo\", km: 410, mins: 300}, {to: \"voss\", km: 110, mins: 75}]}\nfastest = trip.legs.maxBy(leg -> leg.km / leg.mins)\nshortest = trip.legs.minBy(leg -> leg.km)\nassert: fastest.to, \"voss\"\nassert: shortest.to, \"voss\"\ntrip.legs.push({to: \"lom\", km: 60, mins: 90})\ntrip.legs.push({to: \"alta\", km: 900, mins: 480})\ntrip.legs.push({to: \"bodo\", km: 300, mins: 400})\nassert: fastest.to, \"alta\"\nassert: shortest.to, \"lom\"","return":null}
++{"id":"spec-0607","description":"Nucleoid finds the extreme instances of class populations with maxBy and minBy","code":"class Bid(bidder, amount, open):\n    this.bidder = bidder\n    this.amount = amount\n    this.open = open\nbest = Bid.maxBy(bid -> bid.amount)\ncheapest = Bid.minBy(bid -> bid.amount)\nassert: best, null\nassert: cheapest, null\nada = Bid(\"ada\", 120, true)\nbo = Bid(\"bo\", 90, false)\ncy = Bid(\"cy\", 150, true)\nleading = Bid.filter(bid -> bid.open).minBy(bid -> bid.amount)\nrecent = Bid[-2:].maxBy(bid -> bid.amount)\nassert: best, cy\nassert: cheapest, bo\nassert: leading, ada\nassert: recent, cy\nbo.amount = 200\nada.open = false\nassert: best, bo\nassert: cheapest, ada\nassert: leading, cy\nassert: recent, bo\ndelete cy.amount\nassert: best, null\nassert: leading, null\ndelete cy.open\ndelete cy.bidder\ndelete cy\nassert: best, bo\nassert: cheapest, ada\nassert: leading, null\nassert: recent, bo","return":null}
++{"id":"spec-0608","description":"Nucleoid compares maxBy and minBy keys as the comparison operators do","code":"class Job(name, due, kg):\n    this.name = name\n    this.due = due\n    this.kg = kg\nalpha = Job.minBy(job -> job.name)\nsoonest = Job.minBy(job -> job.due)\nlatest = Job.maxBy(job -> job.due)\nheaviest = Job.maxBy(job -> job.kg)\npress = Job(\"press\", new Date(\"2026-12-01\"), 40)\ncoat = Job(\"Coat\", new Date(\"2026-11-20\"), \"9\")\nweld = Job(\"weld\", new Date(\"2026-11-28\"), 40)\nassert: alpha, coat\nassert: soonest, coat\nassert: latest, press\nassert: heaviest, press\ncoat.kg = \"75\"\nweld.due = new Date(\"2026-11-09\")\nJob(\"Anvil\", new Date(\"2026-12-24\"), \"100\")\nassert: alpha.name, \"Anvil\"\nassert: soonest, weld\nassert: latest.name, \"Anvil\"\nassert: heaviest, coat\npress.kg = 0 / 0\nassert: heaviest, null\npress.kg = 300\ndelete weld.due\nassert: heaviest, press\nassert: soonest, null\nassert: latest, null","return":null}
++{"id":"spec-0609","description":"Nucleoid calls the extreme item selector once per item with only the item","code":"seen = []\ndef weigh(parcel, position):\n    
 ```
 
-**File**: `.claude/rules/power-of-ten.instructions.md` (added, +129/-0)
+**File**: `dataset/nucleoid.synth.52.jsonl` (added, +8/-0)
 ```diff
-@@ -0,0 +1,129 @@
-+---
-+applyTo: "**"
-+---
-+
-+# Power of 10 for the Rust crate
-+
-+Gerard J. Holzmann's "The Power of 10: Rules for Developing Safety-Critical
-+Code" (NASA/JPL, 2006) applies to the crate's production code: the library
-+(`src/lib.rs` and its modules) and the binary (`src/main.rs` and
-+`src/terminal/`). Integration tests, examples and build scripts keep the
-+repository's warning-free default lint set.
-+
-+Each rule is enforced by a lint, a runtime limit, or `tests/power_of_ten.rs`.
-+Review covers what tools cannot prove. Lints are declared `warn` in the crate
-+roots and denied in CI and the NUC hard criteria through
-+`cargo clippy --all-targets -- -D warnings`.
-+
-+## 1. Simple control flow
-+
-+- Production code does not use panics as control flow. These lints are
-+  enforced: `clippy::panic`, `unwrap_used`, `expect_used`, `unreachable`,
-+  `todo`, `unimplemented`, `exit`, `indexing_slicing`, `string_slice` and
-+  `panic_in_result_fn`. Return a typed `Error`, or use `get`, iterators,
-+  slice patterns or fixed-size destructuring such as ratatui's `areas`.
-+- Recursion over syntax follows the grammar and is always bounded. Every
-+  recursive path passes a depth guard (`MAX_NESTING`, `MAX_CHAIN`,
-+  `MAX_DEPTH`) that returns an error before the host stack can overflow. Reach
-+  a new recursive function only through such a guard, or write it as a
-+  worklist, as propagation is.
-+- Known gap: values built at run time are not depth-bounded yet. A list nested
-+  about 25,000 deep overflows the release binary's stack when it is rendered,
-+  compared, cloned or dropped. Closing the gap changes language behaviour, so
-+  it needs a NUC.
-+
-+## 2. Bounded loops
-+
-+- Prefer `for` over finite collections and ranges.
-+- Every `loop` and `while` has a bound a reader can state. Each iteration
-+  consumes input (tokens or characters), or walks a worklist that each item
-+  enters once, or counts against a limit: `MAX_PROPAGATION`, the 100,000
-+  iterations of the `while` statement, or the class count that caps
-+  `State::lineage`.
-+- `clippy::infinite_loop` is enforced. The REPL and terminal event loops are
-+  the only intentionally unbounded loops; they end on user input.
-+
-+## 3. Dynamic memory (adapted)
-+
-+- An interpreter allocates the values its programs create, so this rule is
-+  adapted. Input-driven growth is bounded by the limits above and by fallible
-+  reservation (`try_reserve_exact` for repeated and replaced strings).
-+- Avoid needless allocation: borrow instead of cloning, and use
-+  `clone_from` and `write!` where pedantic and `clippy::format_push_string`
-+  ask for them.
-+
-+## 4. Functions fit on a page
-+
-+- `clippy::too_many_lines` with `too-many-lines-threshold = 60` in
-+  `clippy.toml`.
-+- Split long dispatchers into named helpers by category. Keep each `match`
-+  over a closed enum exhaustive rather than hiding variants behind `_`.
-+
-+## 5. Assertions
-+
-+- Check invariants that must hold with side-effect-free `debug_assert!`
-+  (`clippy::debug_assert_with_mut_call`). Examples are balanced depth
-+  counters, stack and queue bookkeeping, savepoint marks and index
-+  invariants. They run on every `cargo test` and compile out of release
-+  builds.
-+- When public input can reach a violation, recover explicitly by returning a
-+  typed error, as the AST wrappers do for a node of the wrong kind.
-+- Do not add assertions that cannot fail (`clippy::assertions_on_constants`).
-+
-+## 6. Smallest scope
-+
-+- Declare data where it is used.
-+- Do not rebind a name to an unrelated value (`clippy::shadow_unrelated`).
-+- Keep items private or `pub(crate)` unless they are API (`unreachable_pub`).
-+
-+## 7. Checked results and parameters
-+
-+- Mark value-returning functions `#[must_use]` (`clippy::must_use_candidate`,
-+  `return_self_not_must_use`).
-+- Never discard a `#[must_use]` value with `let _ =`
-+  (`clippy::let_underscore_must_use`) or `.ok()` (`clippy::unused_result_ok`).
-+  A deliberate discard names its type, `let _: T = ...`
-+  (`clippy::let_underscore_untyped`).
-+- Validate parameters with typed errors. Keep the numeric conversions of the
-+  language's number model in `src/number.rs`, the only place that casts
-+  between `f64` and integers.
-+
-+## 8. Limited metaprogramming
-+
-+- No `macro_rules!` in `src/`. Use the derive macros of crates already in
-+  `Cargo.toml`.
-+- Conditional compilation is limited to `cfg(test)` and the `cfg!(windows)`
-+  key binding in the terminal.
-+
-+## 9. Restricted indirection
-+
-+- `unsafe_code = "forbid"` in `Cargo.toml`.
-+- No trait objects (`dyn`), function pointers or `Rc`/`RefCell`/`Cell` in
-+  `src/`. Dispatch through enums and `match`; pass behaviour as a statically
-+  dispatched generic `impl Fn` when needed.
-+
-+## 10. Zero warnings, analysed daily
-+
-+- The production crates enable `clippy::pedantic`, the restriction lints
-+  above and strict rustc lints (`missing_debug_implementations`,
-+  `rust_2018_idioms`, `unused_qualifications`, `trivial_casts`,
-+  `trivial_numeric_
+@@ -0,0 +1,8 @@
++{"id":"synth-52-0001","description":"maxBy returns the item with the largest key, not the key itself","code":"bids = [{who: \"ada\", amount: 120}, {who: \"bo\", amount: 150}, {who: \"cy\", amount: 90}]\nleader = bids.maxBy(bid -> bid.amount)\nleader.who","return":"\"bo\""}
++{"id":"synth-52-0002","description":"A live declaration keeps the cheapest open offer as offers change","code":"class Offer(seller, price, open):\n    this.seller = seller\n    this.price = price\n    this.open = open\nbest = Offer.filter(offer -> offer.open).minBy(offer -> offer.price)\nOffer(\"ada\", 40, true)\nlow = Offer(\"bo\", 25, false)\nOffer(\"cy\", 30, true)\nlow.open = true\nbest.seller","return":"\"bo\""}
++{"id":"synth-52-0003","description":"On a tie maxBy and minBy keep the item that comes first","code":"scores = [{name: \"ana\", points: 9}, {name: \"ben\", points: 3}, {name: \"cy\", points: 9}, {name: \"dan\", points: 3}]\n[scores.maxBy(score -> score.points).name, scores.minBy(score -> score.points).name]","return":"[\"ana\",\"ben\"]"}
++{"id":"synth-52-0004","description":"Two strings compare as text, so minBy finds the alphabetically first name","code":"names = [\"mia\", \"Ada\", \"zoe\", \"bo\"]\nfirst = names.minBy(name -> name)\nlast = names.maxBy(name -> name)\nnames.push(\"Abe\")\n[first, last]","return":"[\"Abe\",\"zoe\"]"}
++{"id":"synth-52-0005","description":"Dates compare by time, so maxBy keeps the latest event live","code":"class Event(name, at):\n    this.name = name\n    this.at = at\nlatest = Event.maxBy(event -> event.at)\nEvent(\"deploy\", new Date(\"2026-11-01\"))\nEvent(\"review\", new Date(\"2026-11-03\"))\nEvent(\"standup\", new Date(\"2026-11-02\"))\nlatest.name","return":"\"review\""}
++{"id":"synth-52-0006","description":"A class-level rule keeps the nearest charger of every robot","code":"class Charger(name, x):\n    this.name = name\n    this.x = x\nclass Robot(name, x):\n    this.name = name\n    this.x = x\n$Robot.dock = Charger.minBy(charger -> Math.abs(charger.x - $Robot.x))\nCharger(\"west\", 0)\nCharger(\"east\", 10)\nrex = Robot(\"rex\", 7)\nivy = Robot(\"ivy\", 2)\nrex.x = 3\n[rex.dock.name, ivy.dock.name]","return":"[\"west\",\"west\"]"}
++{"id":"synth-52-0007","description":"A missing key makes the extreme item unknown until the key is set","code":"class Bid(amount): this.amount = amount\nada = Bid(120)\nbo = Bid(90)\nleader = Bid.maxBy(bid -> bid.amount)\ndelete bo.amount\nunknown := leader\nbo.amount = 200\n[unknown, leader == bo]","return":"[null,true]"}
++{"id":"synth-52-0008","description":"maxBy requires a selector function, even on an empty list","code":"failure = \"\"\ntry:\n    [].maxBy(\"amount\")\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: maxBy expects a function\""}
 ```
 
-**File**: `.github/workflows/test.yml` (modified, +7/-0)
+**File**: `docs/README.md` (modified, +57/-1)
 ```diff
-@@ -5,6 +5,8 @@ on:
-     branches: [main]
-   pull_request:
-     branches: [main]
-+  schedule:
-+    - cron: "0 6 * * *"
+@@ -1859,7 +1859,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), and `mode` ([NUC 75](nuc-0075.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), and `maxBy` and `minBy` ([NUC 77](nuc-0077.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
  
- permissions:
-   contents: read
-@@ -30,5 +32,10 @@ jobs:
-       - name: Run Clippy
-         run: cargo clippy --all-targets --all-features --locked -- -D warnings
- 
-+      - name: Check documentation
-+        run: cargo doc --no-deps --lib --document-private-items --locked
-+        env:
-+          RUSTDOCFLAGS: -D warnings
-+
-       - name: Run tests
-         run: cargo test --all-features --locked
-```
-
-**File**: `CONTRIBUTING.md` (modified, +8/-0)
-```diff
-@@ -14,6 +14,14 @@ $ cargo run -- program.nuc    # run a file
- $ cargo run                   # or type statements at a prompt
  ```
+@@ -2812,6 +2812,60 @@ largest
+   [noun list queries with of](../nucleoid.spec.md#noun-list-queries-with-of)
+   section.
  
-+Production code follows NASA's Power of 10 rules for safety-critical code,
-+adapted to Rust in [power-of-ten.instructions.md](.claude/rules/power-of-ten.instructions.md).
-+That means no panics, bounded recursion and loops, functions of at most 60
-+lines, debug assertions for invariants, and checked return values. It also
-+means no macros, trait objects or function pointers, and zero warnings from
-+pedantic Clippy and rustdoc. The lints in `src/lib.rs` and `src/main.rs`,
-+`clippy.toml` and `tests/power_of_ten.rs` enforce them.
++### List and population extreme items
 +
- ### What lives where
++```
++scores = [{name: "ana", points: 9}, {name: "ben", points: 3}, {name: "cy", points: 9}, {name: "dan", points: 3}]
++best = scores.maxBy(score -> score.points)
++worst = scores.minBy(score -> score.points)
++class Bid(who, amount):
++    this.who = who
++    this.amount = amount
++Bid("ada", 40)
++top = Bid.maxBy(bid -> bid.amount)
++assert(best.name, "ana")
++assert(worst.name, "ben")
++assert(top.who, "ada")
++scores.push({name: "eve", points: 1})
++scores.shift()
++Bid("bo", 65)
++Bid("cy", 50)
++assert(best.name, "cy")
++assert(worst.name, "eve")
++assert(top.who, "bo")
++scores = []
++assert(best, null)
++top.who
++```
++
++- This is the complete
++  `Nucleoid finds the extreme items of lists and populations with maxBy and minBy`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `"bo"`.
++- [NUC 77](nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)` to lists
++  and class instance lists. The result is the first item whose selected key
++  is the largest, or the smallest, and it is the item itself. On a tie the
++  item that comes first wins, so `best` is `ana` beside `cy` and `worst` is
++  `ben` beside `dan`. An empty list or class gives undefined, which a
++  declaration stores as `null`.
++- Keys compare as `>` and `<` compare them: two strings as text and every
++  other pair as numbers, so dates compare by time. A key that cannot be
++  compared with itself, such as undefined, NaN or an object, makes the result
++  undefined. For keys that are not strings, the key of `xs.maxBy(f)` converts
++  to `xs.max(f)` and the key of `xs.minBy(f)` to `xs.min(f)`.
++- The selector is required and is called once per item, in order, with only
++  the item. A missing selector, or one that is not a function, including
++  `null`, raises `TypeError("maxBy expects a function")` or
++  `TypeError("minBy expects a function")`, even on an empty receiver.
++- Extreme items are read-only and live: a declaration follows the list or
++  population, the arguments and what the selector reads, in class-level rules
++  too. On a class name, `Name.maxBy(...)` is the population query even when
++  the class declares an instance method `maxBy`; instances keep calling the
++  method.
++- The authoritative contract is the
++  [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
++  section.
++
+ ---
  
- | path | what it is |
+ ## 12. Reasoning Operations
+@@ -3058,6 +3112,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A supplied `distinct` selector that is not a function, including `null`, even on an empty receiver | `distinct expects a function` |
+ | Missing or non-function `count` predicate, including `null`, even on an empty receiver | `count expects a fu
 ```
 
-**File**: `clippy.toml` (added, +1/-0)
+**File**: `docs/examples.md` (modified, +40/-0)
 ```diff
-@@ -0,0 +1 @@
-+too-many-lines-threshold = 60
+@@ -3153,6 +3153,46 @@ widest
+   queries and adds `1`. See [NUC 75](nuc-0075.md) and the
+   [root contract](../nucleoid.spec.md#noun-list-queries-with-of).
+ 
++## List and population extreme items
++
++**Extreme items keep the nearest free charger of every robot live**
++
++```nuc
++class Charger(name, x, free):
++    this.name = name
++    this.x = x
++    this.free = free
++class Robot(name, x, battery):
++    this.name = name
++    this.x = x
++    this.battery = battery
++$Robot.dock = Charger.filter(charger -> charger.free).minBy(charger -> Math.abs(charger.x - $Robot.x))
++neediest = Robot.minBy(robot -> robot.battery)
++north = Charger("north", 0, true)
++south = Charger("south", 10, true)
++rex = Robot("rex", 2, 80)
++ivy = Robot("ivy", 9, 35)
++assert: [rex.dock, ivy.dock, neediest], [north, south, ivy]
++north.free = false
++ivy.battery = 90
++assert: [rex.dock, neediest], [south, rex]
++Charger("mid", 4, true)
++rex.x = 6
++assert: [rex.dock.name, ivy.dock.name], ["mid", "south"]
++neediest.dock.name
++# return: "mid"
++```
++
++- A class-level rule keeps each robot's dock, the free charger nearest to it.
++  `$Robot` inside the selector is the robot the rule is evaluated for, so
++  every robot measures its own distances, and `neediest` keeps the robot with
++  the lowest battery.
++- Taking `north` out of service moves `rex` to `south`. A new charger at `4`
++  becomes the dock of `rex` and stays so when `rex` moves to `6`, while `ivy`
++  keeps `south`, and `neediest.dock` follows both rules.
++- See [NUC 77](nuc-0077.md) and the
++  [root contract](../nucleoid.spec.md#list-and-population-extreme-items).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
 ```
 
-**File**: `src/builtins/date.rs` (modified, +34/-21)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -1,15 +1,18 @@
- use chrono::{DateTime, Datelike, NaiveDate, NaiveDateTime, TimeZone, Timelike, Utc};
+@@ -103,6 +103,7 @@ Created: 31-Jul-2026
+ | [71](nuc-0071.md) | List and Population Distinct Values | Accepted |
+ | [73](nuc-0073.md) | List and Population Predicate Counts | Accepted |
+ | [75](nuc-0075.md) | List and Population Modes | Accepted |
++| [77](nuc-0077.md) | List and Population Extreme Items | Accepted |
  
- use crate::error::{Error, Result};
-+use crate::number;
- use crate::value::Value;
+ ### Reasoning enhancement
  
- /// Milliseconds since the Unix epoch, now.
-+#[must_use]
- pub fn now() -> i64 {
-     Utc::now().timestamp_millis()
- }
+@@ -207,6 +208,7 @@ Created: 31-Jul-2026
+ | [74](nuc-0074.md) | Final Rest Parameters | Standards Track | Runtime features | Accepted |
+ | [75](nuc-0075.md) | List and Population Modes | Standards Track | Utility enhancement | Accepted |
+ | [76](nuc-0076.md) | Opt-In C-Style Comments | Standards Track | Language compatibility | Accepted |
++| [77](nuc-0077.md) | List and Population Extreme Items | Standards Track | Utility enhancement | Accepted |
  
- /// Parses the date forms the language accepts: `YYYY-M-D`, an ISO timestamp, or
- /// an RFC 2822 style string such as `04 Dec 1995 00:12:00 GMT`.
-+#[must_use]
- pub fn parse(input: &str) -> Option<i64> {
-     let trimmed = input.trim();
+ ## Copyright
  
-@@ -56,60 +59,71 @@ fn datetime(millis: i64) -> DateTime<Utc> {
- }
- 
- /// `Wed Jan 01 2020`
-+#[must_use]
- pub fn to_date_string(millis: i64) -> String {
-     datetime(millis).format("%a %b %d %Y").to_string()
- }
- 
-+#[must_use]
- pub fn to_string(millis: i64) -> String {
-     datetime(millis)
-         .format("%a %b %d %Y %H:%M:%S GMT+0000")
-         .to_string()
- }
- 
-+#[must_use]
- pub fn to_iso_string(millis: i64) -> String {
-     datetime(millis)
-         .format("%Y-%m-%dT%H:%M:%S%.3fZ")
-         .to_string()
- }
- 
- /// The year minus 1900, as the language's `getYear` reports it.
-+#[must_use]
- pub fn get_year(millis: i64) -> i64 {
--    datetime(millis).year() as i64 - 1900
-+    i64::from(datetime(millis).year()) - 1900
- }
- 
-+#[must_use]
- pub fn get_full_year(millis: i64) -> i64 {
--    datetime(millis).year() as i64
-+    i64::from(datetime(millis).year())
- }
- 
-+#[must_use]
- pub fn get_month(millis: i64) -> i64 {
--    datetime(millis).month0() as i64
-+    i64::from(datetime(millis).month0())
- }
- 
-+#[must_use]
- pub fn get_date(millis: i64) -> i64 {
--    datetime(millis).day() as i64
-+    i64::from(datetime(millis).day())
- }
- 
-+#[must_use]
- pub fn get_day(millis: i64) -> i64 {
--    datetime(millis).weekday().num_days_from_sunday() as i64
-+    i64::from(datetime(millis).weekday().num_days_from_sunday())
- }
- 
-+#[must_use]
- pub fn get_hours(millis: i64) -> i64 {
--    datetime(millis).hour() as i64
-+    i64::from(datetime(millis).hour())
- }
- 
-+#[must_use]
- pub fn get_minutes(millis: i64) -> i64 {
--    datetime(millis).minute() as i64
-+    i64::from(datetime(millis).minute())
- }
- 
-+#[must_use]
- pub fn get_seconds(millis: i64) -> i64 {
--    datetime(millis).second() as i64
-+    i64::from(datetime(millis).second())
- }
- 
- /// `Date(...)`.
- pub fn construct(arguments: &[Value]) -> Result<Value> {
-     match arguments.first() {
-         None => Ok(Value::Date(now())),
--        Some(Value::Number(millis)) => Ok(Value::Date(*millis as i64)),
-+        Some(Value::Number(millis)) => Ok(Value::Date(number::to_i64(*millis))),
-         Some(Value::Date(millis)) => Ok(Value::Date(*millis)),
-         Some(Value::String(text)) => match parse(text) {
-             Some(millis) => Ok(Value::Date(millis)),
-@@ -125,7 +139,7 @@ pub fn construct(arguments: &[Value]) -> Result<Value> {
- /// `Date.now()` and friends, called on the namespace rather than a date.
- pub fn statics(name: &str, arguments: &[Value]) -> Result<Value> {
-     match name {
--        "now" => Ok(Value::Number(now() as f64)),
-+        "now" | "UTC" => Ok(Value::Number(number::from_i64(now()))),
-         "parse" => {
-             let text = arguments
-                 .first()
-@@ -134,27 +148,26 @@ pub fn statics(name: &str, arguments: &[Value]) -> Result<Value> {
-                 .to_string();
- 
-             Ok(match parse(&text) {
--                Some(millis) => Value::Number(millis as f64),
-+                Some(millis) => Value::Number(number::from_i64(millis)),
-                 None => Value::Number(f64::NAN),
-             })
-         }
--        "UTC" => Ok(Value::Number(now() as f64)),
-         _ => Err(Error::type_error(format!("Date.{name} is not a function"))),
-     }
- }
- 
- /// A method called on a date value.
- pub fn method(millis: i64, name: &str, _arguments: &[Value]) -> Result<Value> {
-     Ok(match name {
--        "getTime" | "valueOf" => Value::Number(millis as f64),
--        "getYear" => Value::Number(get_year(millis) as f64),
--        "getFullYear" => Value::Number(get_full_year(millis) as f64),
--        "getMonth" => Value::Number(get_month(millis) as f64),
--        "getDate" => Value::Number(get_date(millis) as f64),
--        "getDay" => Value::Number(get_day(millis) as f64),
--        "getHours" => Value::Number(get_hours(millis) as f64),
--        "getMinutes" => Value::Number(get_minutes(millis) as f64),
--        "getSeconds" => Value::Number(get_seconds(millis) as f64),
-+        "getTime" | "valueOf" => Value::Number(number::from_i64(millis)),
-+        "getYear" => Value::Number(number::from_i64(get_year(millis))),
-+        "getFullYear" => Value::Number(number::from_i64(get_full_year(millis))),
-+        "getMonth" => Value::Number(number::from_i64(get_month(millis))),
-+        "getDate" => Value::Number(number::from_i64(get_date(millis))),
-+        "getDay" => Value::Number(number::from_i64(get_day(millis))),
-+        "getHours" => Value::Number(number::from_i64(get_hours(millis))),
-+        "getMinutes" => Va
 ```
 
-**File**: `src/builtins/mod.rs` (modified, +164/-118)
+**File**: `docs/nuc-0077.md` (added, +732/-0)
 ```diff
-@@ -1,6 +1,7 @@
- pub mod date;
- 
- use crate::error::{Error, Result};
-+use crate::number;
- use crate::value::{Value, format_number};
- 
- /// A name that resolves to a built-in rather than to state.
-@@ -23,6 +24,7 @@ pub enum Global {
- 
- impl Global {
-     /// The built-in a bare name refers to, if any.
-+    #[must_use]
-     pub fn from_name(name: &str) -> Option<Global> {
-         Some(match name {
-             "Math" => Global::Math,
-@@ -43,13 +45,15 @@ impl Global {
-     /// The built-in a name in call position refers to. `Array` is callable as
-     /// another spelling of `List`, but is not a name that resolves on its own,
-     /// so it is not a [`Global::from_name`].
-+    #[must_use]
-     pub fn from_callee(name: &str) -> Option<Global> {
-         match name {
-             "Array" => Some(Global::List),
-             other => Global::from_name(other),
-         }
-     }
- 
-+    #[must_use]
-     pub fn as_str(self) -> &'static str {
-         match self {
-             Global::Math => "Math",
-@@ -67,6 +71,7 @@ impl Global {
-     }
- }
- 
-+#[must_use]
- pub fn is_global(name: &str) -> bool {
-     Global::from_name(name).is_some()
- }
-@@ -77,9 +82,28 @@ pub fn math(name: &str, arguments: &[Value]) -> Result<Value> {
-         return Ok(Value::Undefined);
-     }
- 
--    let first = arguments.first().map(Value::to_number).unwrap_or(f64::NAN);
-+    let first = numeric_argument(arguments, 0);
- 
-     let result = match name {
-+        "max" | "min" => numeric_extremum(arguments.iter().map(Value::to_number), name == "max"),
-+        "random" => return Err(Error::type_error("Math.random is not supported")),
-+        "PI" => std::f64::consts::PI,
-+        "E" => std::f64::consts::E,
-+        _ => match math_unary(name, first).or_else(|| math_interpolation(name, first, arguments)) {
-+            Some(result) => result,
-+            None => return Err(Error::type_error(format!("Math.{name} is not a function"))),
-+        },
-+    };
+@@ -0,0 +1,732 @@
++# NUC 77 -- List and Population Extreme Items
 +
-+    Ok(Value::Number(result))
-+}
++```
++NUC: 77
++Title: List and Population Extreme Items
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Utility enhancement
++Created: 03-Nov-2026
++Requires: 8, 18, 45, 57, 59, 60, 61, 62, 68, 69
++```
 +
-+fn numeric_argument(arguments: &[Value], index: usize) -> f64 {
-+    arguments.get(index).map_or(f64::NAN, Value::to_number)
-+}
++## Abstract
 +
-+fn math_unary(name: &str, first: f64) -> Option<f64> {
-+    Some(match name {
-         "abs" => first.abs(),
-         "ceil" => first.ceil(),
-         "floor" => first.floor(),
-@@ -127,92 +151,82 @@ pub fn math(name: &str, arguments: &[Value]) -> Result<Value> {
-         "atan" => first.atan(),
-         "asin" => first.asin(),
-         "acos" => first.acos(),
--        "pow" => {
--            let exponent = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
--            first.powf(exponent)
--        }
--        "atan2" => {
--            let second = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
--            first.atan2(second)
--        }
--        "max" | "min" => numeric_extremum(arguments.iter().map(Value::to_number), name == "max"),
--        "clamp" => {
--            let lower = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
--            let upper = arguments.get(2).map(Value::to_number).unwrap_or(f64::NAN);
--            numeric_clamp(first, lower, upper)
--        }
-+        _ => return None,
-+    })
-+}
++- Lists and class instance lists gain the read-only queries `maxBy` and
++  `minBy`. `RECEIVER.maxBy(selector)` returns the first item whose
++  `selector(item)` is the largest, and `RECEIVER.minBy(selector)` the first
++  item whose `selector(item)` is the smallest.
++- The result is the item itself, unchanged: an object or instance stays the
++  same object, and the selected key is not returned.
++- Keys compare as `>` and `<` compare them: two strings as text, and every
++  other pair as numbers, so dates compare by time. On a tie the item that
++  comes first wins. An empty receiver gives undefined, which a declaration
++  stores as `null`, and so does any key that cannot be compared with itself,
++  such as undefined, NaN or an object.
++- The selector is required and is called once per item, in order, with only
++  the item, as [NUC 69](nuc-0069.md)'s `max` calls its selector. A missing
++  selector, or one that is not a function, raises
++  `TypeError("maxBy expects a function")` or
++  `TypeError("minBy expects a function")`.
++- `maxBy` and `minBy` follow [NUC 61](nuc-0061.md)'s shared query rules
++  beside `sum`, `max`, `min`, `distinct`, `count` and `mode`. They accept
++  every receiver the list queries accept, read the receiver before their
++  arguments, never write it, and stay live in declarations and class-level
++  rules.
++- At the accepted revision these calls raise
++  `TypeError("<receiver>.maxBy is not a function")` and its `minBy`
++  counterpart. No syntax, keyword, token, error type or public Rust API is
++  added. The authoritative contract is
++  [List and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria. The independent
++  evaluator decided Accepted, and every required token comparison passed;
++  no policy check failed.
 +
-+fn math_interpolation(name: &str, first: f64, arguments: &[Value]) -> Option<f64> {
-+    let argument = |index| numeric_argument(arguments, index);
++## Motivation
 +
-+    Some(match name {
-+        "pow" => first.powf(argument(1)),
-+        "atan2" => first.atan2(argument(1)),
-+        "clamp" => numeric_clamp(first, argument(1), argument(2)),
-         "saturate" => numeric_clamp(first, 0.0, 1.0),
--        "smoothstep" => {
--            let upper = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
--            let value = arguments.get(2).map(Value::to_number).unwrap_or(f64::NAN);
--            // `first` is the lower bound, not clamp's value-first argument.
--            // Keep normalization and the cubic as separate ordered operations.
--            let numerator = value - first;
--            let denominator = upper - first;
--            let normalize = numerator / denominator;
--            let t = numeric_clamp(normalize, 0.0, 1.0);
--            let square = t * t;
--            let scaled = 2.0 * t;
--            let falloff = 3.0 - scaled;
--            square * falloff
--        }
--        "smootherstep" => {
--            let upper = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
--            let value = arguments.get(2).map(Value::to_number).unwrap_or(f64::NAN);
--            // Match the accepted normalization and quintic expression's order,
--            // including its rounding; do not clamp the polynomial's result.
--            let numerator = value - first;
--            let denominator = upper - first;
--            let normalize = numerator / denominator;
--            let t = numeric_clamp(normalize, 0.0, 1.0);
--            let square = t * t;
--            let cube = square * t;
--            let scaled = 6.0 * t;
--            let offset = scaled - 15.0;
--            let weighted = t *
++- World models select objects by an extreme property: the leading bid, the
++  nearest free charger of each robot, the latest event, the heaviest parcel,
++  the cheapest open offer. The answer is an object, not a number, and it has
++  to stay true while the model changes.
++- [NUC 69](nuc-0069.md) gives the extreme value, `Bid.max(bid -> bid.amount)`,
++  and both NUC 69 and [NUC 75](nuc-0075.md) list `maxBy` and `minBy` as not
++  added. At the accepted revision the item takes a longer spelling, and each
++  has a defect:
++  - `top = Bid.reduce((a, b) -> b.amount > a.amount ? b : a)` is 24 lexer
++    tokens where `top = Bid.maxBy(bid -> bid.amount)` is 12. It writes and
++    runs the key twice per step, and a NaN key decides by position: in first
++    place it wins against every later item, and later it is ignored.
++  - `top = Bid.find(bid -> bid.amount == Bid.max(each -> each.amount))` is 23
++    tokens. It runs `max` again for every item it tests, so it is quadratic,
++    and `max` compares numbers only, so it cannot select by a name.
++  - `top = Bid.find(b -> all c in Bid: b.amount >= c.amount)`, with a
++    [NUC 62](nuc-0062.md) quantifier, is 21 tokens and compares items in
++    pairs, every pair in the worst case.
++  - The helper `def hi xs key => xs[xs.map(key).indexOf(xs.max(key))]` is 24
++    tokens on its own. It runs the key twice per item, compares numbers only,
++    and picks a wrong item when a key is unknown: the first item whose key is
++    missing or `null` when a key is undefined, and the last item when a key
++    is NaN.
++- The duplication grows with the key. The class-level rule
++  `$Robot.dock = Charger.minBy(charger -> Math.abs(charger.x - $Robot.x))` is
++  23 tokens, and its `reduce` spelling is 44.
++- Kotlin's `maxBy` and `minBy`, C#'s `MaxBy` and `MinBy`, lodash's `_.maxBy`
++  and `_.minBy`, Ruby's `max_by` and `min_by`, and Python's `max(xs, key=f)`
++  and `min(xs, key=f)` name the operation. All of them return the item and
++  keep the first of equal keys. LLM-written code such as
++  `orders.maxBy(o => o.total)` raises
++  `TypeError("orders.maxBy is not a function")` at the accepted revision.
++
++## Rationale
++
++- **Category and mode.** The caller selected the Utility enhancement
++  category by one uniform draw over the five eligible registry categories,
++  index 2 with probability 1/5 and no redraw, in continuous mode, so the
++  token non-regression gate applies. Runtime applicability does not apply to
++  this category. Each new case is paired with the most compact accepted-syntax
++  counterpart found, recorded in the evaluation baseline.
++- **Two more shared queries.** `maxBy` and `minBy` are operations of the
++  read-only list query that serves `map`, `filter`, `r
 ```
 
-**File**: `src/error.rs` (modified, +9/-0)
+**File**: `nucleoid.spec.md` (modified, +315/-0)
 ```diff
-@@ -13,6 +13,7 @@ pub struct Position {
- }
+@@ -3437,6 +3437,75 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid reads noun queries of snapshots versions and other receivers`
+   specify the executable behavior.
  
- impl Position {
-+    #[must_use]
-     pub fn new(line: usize, column: usize) -> Self {
-         Position { line, column }
-     }
-@@ -71,27 +72,32 @@ impl Error {
-         Error::reference(format!("{name} is not defined"))
-     }
++## List and population extreme items
++
++- [NUC 77](docs/nuc-0077.md) adds the read-only list queries `maxBy` and
++  `minBy` to lists and class instance lists. No syntax, keyword or error type
++  is added.
++- `RECEIVER.maxBy(selector)` returns the first item of the receiver whose
++  `selector(item)` is the largest, and `RECEIVER.minBy(selector)` the first
++  item whose `selector(item)` is the smallest. The result is the item itself,
++  unchanged: an object or instance stays the same object, and the selected
++  key is not returned.
++- Keys compare as `>` and `<` compare them: two strings as text, and every
++  other pair as numbers with the numeric conversion of the comparisons, so
++  dates compare by time and `true`, `false`, `null`, empty lists and one-item
++  lists count as numbers. `["10", "9"].maxBy(code -> code)` is `"9"`, while
++  `["10", "9"].max()` is `10`.
++- The items are scanned in receiver order. The first item is kept, and a
++  later item replaces the kept one only when its key is greater for `maxBy`,
++  or smaller for `minBy`, so on a tie the item that comes first wins. A
++  string that is not numeric is neither greater nor smaller than a number, so
++  where such strings and other keys mix, the kept item stays.
++- A key that cannot be compared with itself, one for which `key >= key` is
++  `false`, makes the result undefined, which a declaration stores as `null`:
++  undefined, NaN, objects, instances, classes, functions, regular expressions
++  and lists that convert to NaN. Every item is still visited. An empty
++  receiver gives undefined.
++- When every key can be compared with itself, `xs.maxBy(f)` is the item that
++  `xs.reduce((best, item) -> f(item) > f(best) ? item : best)` returns, and
++  `xs.minBy(f)` the item that the same `reduce` with `<` returns, except that
++  `f` runs once per item.
++- When the keys are all strings, or none is a string, `xs.maxBy(f)` is the
++  item that `xs.find(x -> all y in xs: f(x) >= f(y))` finds, and undefined
++  where it finds none; `xs.minBy(f)` corresponds to the same `find` with
++  `<=`.
++- For keys that are not strings and a receiver that is not empty,
++  `xs.maxBy(f)` is undefined exactly when `xs.max(f)` is undefined or NaN,
++  and otherwise it is the first item whose key converts to `xs.max(f)`;
++  `minBy` and `min` correspond the same way.
++- A `null` key compares as `0`, as in `null > -1`. Reads inside a selector
++  follow the existing rules, so a selector that reads a `null` binding or
++  property settles a declaration to `null`.
++- The receiver is a list, however it is reached, or a class's instance list in
++  population order, named by the class or by a variable that holds the class.
++  On a class name, `maxBy` and `minBy` are population queries even when the
++  class declares instance methods `maxBy` or `minBy`; its instances keep
++  calling those methods.
++- The selector is required. It is called once for every item, in order, with
++  only the item; further parameters are `null`. A missing first argument, or
++  one that is not a function, including `null`, raises
++  `TypeError("maxBy expects a function")` or
++  `TypeError("minBy expects a function")`, even on an empty receiver.
++- `maxBy` and `minBy` follow the shared rules of the list queries: they read
++  the receiver before their arguments, evaluate every supplied argument once,
++  left to right, including unused extras, and never write the receiver. A
++  declaration that uses one depends on the list or population, on its
++  argument expressions and on whatever the selector reads for every item, so
++  list mutations, new and deleted instances and property changes re-evaluate
++  it, in class-level rules too. Selector errors roll back through the
++  existing transaction. A null or undefined receiver yields undefined without
++  evaluating the arguments.
++- A call selects each key once and compares it once with itself and at most
++  once with the kept key, in one pass that neither sorts nor copies the
++  receiver.
++- Property reads such as `xs.maxBy`, bindings and object properties named
++  `maxBy` or `minBy`, and instance methods named `maxBy` or `minBy` called on
++  an instance keep their accepted results. The eight appended entries
++  beginning `Nucleoid finds the extreme items of lists with maxBy and minBy`
++  through `Nucleoid rolls back failed extreme item updates` specify the
++  executable behavior.
++
+ ## Object entry loops with ordered rollback
  
-+    #[must_use]
-     pub fn thrown(value: Value) -> Self {
-         Error::new(Detail::Thrown(value))
-     }
- 
-     /// Places the error in the source, replacing any position it already had.
-+    #[must_use]
-     pub fn at(mut self, position: Position) -> Self {
-         self.position = Some(position);
-         self
-     }
- 
-     /// Places the error only if it is not already placed, so the innermost
-     /// report wins.
-+    #[must_use]
-     pub fn or_at(mut self, position: Position) -> Self {
-         self.position = self.position.or(Some(position));
-         self
-     }
- 
-+    #[must_use]
-     pub fn position(&self) -> Option<Position> {
-         self.position
-     }
- 
-+    #[must_use]
-     pub fn kind(&self) -> ErrorKind {
-         match self.detail {
-             Detail::Syntax(_) => ErrorKind::Syntax,
-@@ -101,6 +107,7 @@ impl Error {
-         }
-     }
- 
-+    #[must_use]
-     pub fn message(&self) -> String {
-         match &self.detail {
-             Detail::Syntax(message) | Detail::Reference(message) | Detail::Type(message) => {
-@@ -111,6 +118,7 @@ impl Error {
-     }
- 
-     /// The value a `throw` raised, when that is what this is.
-+    #[must_use]
-     pub fn thrown_value(&self) -> Option<&Value> {
-         match &self.detail {
-             Detail::Thrown(value) => Some(value),
-@@ -142,6 +150,7 @@ pub enum ErrorKind {
- }
- 
- impl ErrorKind {
-+    #[must_use]
-     pub fn as_str(self) -> &'static str {
-         match self {
-             ErrorKind::Syntax => "SyntaxError",
+ - [NUC 72](docs/nuc-0072.md) adds loops over an object's entries:
+@@ -19012,4 +19081,250 @@ try:
+ catch error:
+     failure = error
+ assert: failure, TypeError("abc.sum is not a function")
++---
++# Nucleoid finds the extreme items of lists with maxBy and minBy
++
++readings = [{at: 9, c: 18}, {at: 12, c: 24}, {at: 15, c: 24}, {at: 18, c: 9}]
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -1581,31 +1437,60 @@ No language behavior changes are intended.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Create logs directory before writing puzzle log
+## X. NUC 77 List and Population Extreme Items
 
 **RULE**:
-When implementing operations in `arc/src/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee552061`: Create logs directory before writing puzzle log. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7fed6ab`: NUC 77 List and Population Extreme Items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/app.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import fs from "node:fs/promises";
-  await fs.mkdir('logs', { recursive: true });
-  await fs.writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
+## List and population extreme items
+
+**Extreme items keep the leading and lowest bids live as bids change**
+
+```nuc
+class Bid(bidder, amount):
+    this.bidder = bidder
+    this.amount = amount
+leader = Bid.maxBy(bid -> bid.amount)
+lowest = Bid.minBy(bid -> bid.amount)
+assert(leader, null)
+assert(lowest, null)
+ada = Bid("ada", 120)
+Bid("bo", 90)
+Bid("cy", 120)
+Bid("di", 90)
+assert(leader.bidder, "ada")
+assert(lowest.bidder, "bo")
+ada.amount = 60
+Bid("ed", 150)
+assert(leader.bidder, "ed")
+assert(lowest.bidder, "ada")
+```
+
+- [NUC 77](docs/nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)`
+  to lists and class instance lists. `Bid.maxBy(bid -> bid.amount)` is the
+  bid with the largest amount, the instance itself, so `leader.bidder` names
+  the bidder. Before the first bid `leader` and `lowest` are `null`, and on a
+  tie the earlier bid wins: `cy` and `di` do not displace `ada` and `bo`.
+- `leader` and `lowest` are live declarations: they re-evaluate when a bid is
+  created or an amount changes. Keys compare as `>` and `<` compare them, so
+  numbers compare as numbers, strings as text and dates by time. See the
+  [root contract](nucleoid.spec.md#list-and-population-extreme-item
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-import { writeFile } from "node:fs/promises";
-  await writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee552061` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7fed6ab` are properly handled with clean fallback behavior.

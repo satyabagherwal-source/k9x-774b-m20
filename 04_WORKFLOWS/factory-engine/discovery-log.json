@@ -20221,5 +20221,17 @@
     "downloads": 1541,
     "qualityScore": 3101,
     "discoveredAt": "2026-11-04T02:02:20.232Z"
+  },
+  {
+    "name": "Qwen/Qwen3-Embedding-0.6B",
+    "fullName": "Qwen/Qwen3-Embedding-0.6B",
+    "url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-Embedding-0.6B (1324 likes, 8958817 downloads)",
+    "likes": 1324,
+    "downloads": 8958817,
+    "qualityScore": 15240,
+    "discoveredAt": "2026-11-04T07:23:32.371Z"
   }
 ]

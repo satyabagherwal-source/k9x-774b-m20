@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `3c1e052e`  
+> **Source Version**: `ef423267`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:45:49.384Z  
+> **Timestamp**: 2026-11-04T07:25:57.363Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:48.277Z  
+> **Harvest Timestamp**: 2026-11-04T07:25:56.820Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14618 stars
+- **Stars / Engagement**: 14656 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7798** (2026-11-03): **cmd/dump: warn when flags are ignored with --binary or --subdir**
-  *Symptoms*: `dump --binary` always exports the whole volume and ignores `--subdir`, `--fast` and `--skip-trash`, but this was only mentioned in `--help`. A user running `dump --binary --subdir /a` got a full-volume dump without any notice. `--fast` is also silently ignored for JSON dumps with `--subdir`.  Log a warning for each ignored flag, and document these interactions in the English and Chinese command references. Dump behavior is unchanged.  Validation: `go vet ./cmd/`, and manual dumps on a SQLite volume covering `--binary` with `--subdir`/`--fast`/`--skip-trash`, JSON `--subdir` with `--fast`, and `--subdir /` (no warning). 
+- **Issue #7803** (2026-11-04): **cmd/mount: simplify setFuseOption and GenFuseOpt**
+  *Symptoms*: Simplify how FUSE mount options are generated. No behavior change.  - Inline `genFuseOptExt` (single caller, six return values) into `setFuseOption`. - `GenFuseOpt`:   - drop `mt` (always `1`, so `SingleThreaded` stays `false`);   - take the volume name instead of `*vfs.Config` (only `Format.Name` was used);   - use positive booleans: `enableXattr`, `enableACL`, `readDirPlusAuto`.  xattr/ACL values still come from `format`, and ACL still implies xattr in the caller. The resulting `FuseOpts` are identical, so graceful restart option comparison is unaffected. 
 
-- **Issue #7797** (2026-11-03): **meta: treat .trash as an ordinary name under subdir mounts**
-  *Symptoms*: The `.trash` name reservation in `Mknod`/`Link`/`Unlink`/`Rmdir`/`Rename`/`Clone` was checked before the chroot translation, while `Lookup` checks it after. Under a subdir mount, an ordinary `.trash` directory in the mount root was visible but returned EPERM on create/remove/rename/clone.  Apply `checkRoot` before the reservation checks so the name is reserved only at the real volume root. This matches `Lookup` and the VFS layer, which already drops the `.trash` internal node for subdir mounts.  The change is in `baseMeta`, so all engine families behave the same, and the metadata format does not change. Regression test added in `pkg/meta/subdir_test.go` (fails before the fix); passes on Redis, SQLite, memkv and Badger.
+- **Issue #7802** (2026-11-04): **fuse: add --no-readdirplus-auto mount option**
+  *Symptoms*: ### What Add a `--no-readdirplus-auto` mount flag that turns off `FUSE_READDIRPLUS_AUTO`, so the kernel uses READDIRPLUS for every readdir page. Default behaviour is unchanged.  ### Why Fixes #7801. Since #6299 adaptive READDIRPLUS is always on. Directory walks that stat every entry then send a LOOKUP for about every other entry (plain READDIR pages alternate with READDIRPLUS pages advised by those lookups): `find -newerct` over 151k files took 5.7 s → 371 s and 4 → 75,205 lookups with a MySQL metadata engine. Numbers are in the issue.  ### How - `cmd/mount_unix.go`: new BoolFlag in `fuseFlags()`, passed through `genFuseOptExt` like `noxattr`/`noacl`. - `pkg/fuse/fuse.go`: `GenFuseOpt` sets `opt.EnableReadDirPlusAuto = !noReadDirPlusAuto`. `Serve` already   takes the persisted `FuseOpts.EnableReadDirPlusAuto`. - Docs: command reference (en/zh_cn) and the ReadDirPlusAuto section of `fuse_mount_options.md` (en/zh_cn)   now describe the trade-off instead of "does not require any user configuration".  ### Test - `go test ./pkg/fuse/ -run TestGenFuseOptReadDirPlusAuto` (new: default true, flag → false). - `go vet ./pkg/fuse/ ./cmd/`, `go build .`. - Production A/B in the issue (patched 1.4.1 on a 151k-file subtree: 5.7 s, 4 lookups).  Questions for maintainers: OK with a `--no-*` bool (vs an `-o` option)? Which `VersionAdd` (1.4.3 is a placeholder)? Backport to release-1.4?  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,232 +1176,209 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c1e052e` (2026-11-03)
-**Commit Message**: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
+### Incident Patch 1: `ef423267` (2026-11-04)
+**Commit Message**: cmd/mount: simplify setFuseOption and GenFuseOpt (#7803)
 
-**File**: `cmd/dump.go` (modified, +12/-1)
+**File**: `cmd/mount_unix.go` (modified, +3/-10)
 ```diff
-@@ -164,7 +164,18 @@ func dump(ctx *cli.Context) error {
- 		threads = 1
+@@ -561,8 +561,9 @@ func getFuserMountVersion() string {
+ }
+ 
+ func setFuseOption(c *cli.Context, format *meta.Format, vfsConf *vfs.Config) {
+-	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
+-	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
++	enableXattr := c.Bool("enable-xattr") || format.EnableACL
++	options := vfs.FuseOptions(fuse.GenFuseOpt(format.Name, genFuseOpt(c, format.Name), enableXattr, format.EnableACL,
++		int(utils.ParseBytes(c, "max-fuse-io", 'B')), !c.Bool("no-readdirplus-auto")))
+ 	vfsConf.FuseOpts = &options
+ }
+ 
+@@ -649,14 +650,6 @@ func prepareMp(mp string) {
  	}
+ }
  
--	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
-+	isBinary := ctx.Bool("binary")
-+	if isBinary {
-+		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
-+			if ctx.IsSet(flag) {
-+				logger.Warnf("--%s is ignored with --binary", flag)
-+			}
-+		}
-+	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
-+		logger.Warnf("--fast is ignored with --subdir")
-+	}
-+
-+	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
- 	if err == nil {
- 		if dst == "" {
- 			dst = "STDOUT"
+-func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
+-	enableXattr := c.Bool("enable-xattr")
+-	if format.EnableACL {
+-		enableXattr = true
+-	}
+-	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
+-}
+-
+ func shutdownGraceful(mp string) {
+ 	_, conf, err := loadConfig(mp)
+ 	if err != nil {
 ```
 
-**File**: `docs/en/reference/command_reference.mdx` (modified, +3/-3)
+**File**: `pkg/fuse/fuse.go` (modified, +6/-7)
 ```diff
-@@ -425,11 +425,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
- |-|-|
- |`META-URL`|Database URL of the metadata engine. See [JuiceFS supported metadata engines](../reference/how_to_set_up_metadata_engine.md) for details.|
- |`FILE`|Export file path, if not specified, it will be exported to standard output. If the filename ends with `.gz`, it will be automatically compressed.|
--|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist.|
-+|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist. Ignored with `--binary`, which always exports the whole volume.|
- |`--keep-secret-key` <VersionAdd>1.1</VersionAdd> |Export object storage authentication information, the default is `false`. Since it is exported in plain text, pay attention to data security when using it. If the export file does not contain object storage authentication information, you need to use [`juicefs config`](#config) to reconfigure object storage authentication information after the subsequent import is completed.|
- |`--threads=10` <VersionAdd>1.2</VersionAdd>|number of threads to dump metadata. (default: 10)|
--|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump.|
--|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash.|
-+|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump. Ignored with `--subdir` or `--binary`.|
-+|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash. Ignored with `--binary`.|
+@@ -557,23 +557,22 @@ func Serve(v *vfs.VFS, options string, xattrs, ioctl bool) error {
+ 	return nil
+ }
  
- ### `juicefs load` {#load}
- 
-```
-
-**File**: `docs/zh_cn/reference/command_reference.mdx` (modified, +3/-3)
-```diff
-@@ -422,11 +422,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
- |-|-|
- |`META-URL`|用于元数据存储的数据库 URL，详情查看[「JuiceFS 支持的元数据引擎」](../reference/how_to_set_up_metadata_engine.md)。|
- |`FILE`|导出文件路径，如果不指定，则会导出到标准输出。如果文件名以 `.gz` 结尾，将会自动压缩。|
--|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。|
-+|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。与 `--binary` 同时使用时会被忽略，始终导出整个文件系统。|
- |`--keep-secret-key` <VersionAdd>1.1</VersionAdd>|导出对象存储认证信息，默认为 `false`。由于是明文导出，使用时注意数据安全。如果导出文件不包含对象存储认证信息，后续的导入完成后，需要用 [`juicefs config`](#config) 重新配置对象存储认证信息。|
- |`--threads=10` <VersionAdd>1.2</VersionAdd>|并发线程数，默认 10。|
--|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。|
--|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。|
-+|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。与 `--subdir` 或 `--binary` 同时使用时会被忽略。|
-+|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。与 `--binary` 同时使用时会被忽略。|
- 
- ### `juicefs load` {#load}
- 
+-func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) fuse.MountOptions {
++func GenFuseOpt(name, options string, enableXattr, enableACL bool, maxWrite int, readDirPlusAuto bool) fuse.MountOptions {
+ 	var opt fuse.MountOptions
+-	opt.FsName = "JuiceFS:" + conf.Format.Name
++	opt.FsName = "JuiceFS:" + name
+ 	opt.Name = "juicefs"
+-	opt.SingleThreaded = mt == 0
+ 	opt.MaxBackground = 200
+ 	opt.EnableLocks = true
+ 	opt.EnableSymlinkCaching = true
+-	opt.DisableXAttrs = noxattr
+-	opt.EnableAcl = !noacl
++	opt.DisableXAttrs = !enableXattr
++	opt.EnableAcl = enableACL
+ 	opt.IgnoreSecurityLabels = false
+ 	opt.MaxWrite = maxWrite
+ 	opt.MaxReadAhead = 1 << 20
+ 	opt.DirectMount = true
+ 	opt.DontUmask = true
+ 	opt.Timeout = time.Minute * 15
+-	opt.EnableReadDirPlusAuto = !noReadDirPlusAuto
++	opt.EnableReadDirPlusAuto = readDirPlusAuto
+ 	for _, n := range strings.Split(options, ",") {
+ 		// TODO allow_root
+ 		if n == "allow_other" {
+@@ -591,7 +590,7 @@ func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, m
+ 	}
+ 	opt.Options = append(opt.Options, "default_permissions")
+ 	if runtime.GOOS == "darwin" {
+-		opt.Options = append(opt.Options, "fssubtype=juicefs", "volname="+conf.Format.Name)
++		opt.Options = append(opt.Options, "fssubtype=juicefs", "volname="+name)
+ 		opt.Options = append(opt.Options, "daemon_timeout=60", "iosize=65536", "novncache")
+ 	}
+ 	return opt
 ```
 
 ---
 
-### Incident Patch 2: `db13db48` (2026-11-03)
-**Commit Message**: meta: treat .trash as an ordinary name under subdir mounts (#7797)
+### Incident Patch 2: `40060fe7` (2026-11-04)
+**Commit Message**: fuse: add --no-readdirplus-auto mount option (#7802)
 
-**File**: `pkg/meta/base.go` (modified, +7/-7)
+Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+
+**File**: `cmd/mount_unix.go` (modified, +8/-4)
 ```diff
-@@ -1675,6 +1675,7 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
- 	if _type < TypeFile || _type > TypeSocket {
- 		return syscall.EINVAL
- 	}
-+	parent = m.checkRoot(parent)
- 	if parent.IsTrash() && m.replay.Load() == nil {
- 		return syscall.EPERM
- 	}
-@@ -1692,7 +1693,6 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
- 	}
- 
- 	defer m.timeit("Mknod", time.Now())
--	parent = m.checkRoot(parent)
- 	var space, inodes int64 = align4K(0), 1
- 	// check group quota in transaction
- 	if !(parent == TrashInode && _type == TypeDirectory) {
-@@ -1776,6 +1776,7 @@ func (m *baseMeta) Symlink(ctx Context, parent Ino, name string, path string, in
+@@ -422,6 +422,10 @@ func fuseFlags() []cli.Flag {
+ 			Name:  "enable-ioctl",
+ 			Usage: "enable ioctl (support GETFLAGS/SETFLAGS only)",
+ 		},
++		&cli.BoolFlag{
++			Name:  "no-readdirplus-auto",
++			Usage: "always use READDIRPLUS instead of adaptive mode",
++		},
+ 		&cli.StringFlag{
+ 			Name:  "root-squash",
+ 			Usage: "mapping local root user (uid = 0) to another one specified as <uid>:<gid>",
+@@ -557,8 +561,8 @@ func getFuserMountVersion() string {
  }
  
- func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr) syscall.Errno {
-+	parent = m.checkRoot(parent)
- 	if parent.IsTrash() {
- 		return syscall.EPERM
- 	}
-@@ -1796,7 +1797,6 @@ func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr)
- 	if attr == nil {
- 		attr = &Attr{}
- 	}
--	parent = m.checkRoot(parent)
- 	if st := m.GetAttr(ctx, inode, attr); st != 0 {
- 		return st
- 	}
-@@ -1868,6 +1868,7 @@ func (m *baseMeta) ReadLink(ctx Context, inode Ino, path *[]byte) syscall.Errno
+ func setFuseOption(c *cli.Context, format *meta.Format, vfsConf *vfs.Config) {
+-	rawOpts, mt, noxattr, noacl, maxWrite := genFuseOptExt(c, format)
+-	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite))
++	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
++	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
+ 	vfsConf.FuseOpts = &options
  }
  
- func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash ...bool) syscall.Errno {
-+	parent = m.checkRoot(parent)
- 	if parent == RootInode && name == TrashName || parent.IsTrash() && ctx.Uid() != 0 {
- 		return syscall.EPERM
+@@ -645,12 +649,12 @@ func prepareMp(mp string) {
  	}
-@@ -1876,7 +1877,6 @@ func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash .
- 	}
- 
- 	defer m.timeit("Unlink", time.Now())
--	parent = m.checkRoot(parent)
- 	var attr Attr
- 	err := m.en.doUnlink(ctx, parent, name, &attr, skipCheckTrash...)
- 	if err == 0 {
-@@ -1899,6 +1899,7 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
- 	if name == ".." {
- 		return syscall.ENOTEMPTY
- 	}
-+	parent = m.checkRoot(parent)
- 	if parent == RootInode && name == TrashName || parent == TrashInode && m.replay.Load() == nil || parent.IsTrash() && ctx.Uid() != 0 {
- 		return syscall.EPERM
- 	}
-@@ -1907,7 +1908,6 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
- 	}
- 
- 	defer m.timeit("Rmdir", time.Now())
--	parent = m.checkRoot(parent)
- 	var inode Ino
- 	var oldAttr Attr
- 	st := m.en.doRmdir(ctx, parent, name, &inode, &oldAttr, skipCheckTrash...)
-@@ -1965,6 +1965,8 @@ func (m *baseMeta) BatchClone(ctx Context, srcParent Ino, dstParent Ino, entries
  }
  
- func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst Ino, nameDst string, flags uint32, inode *Ino, attr *Attr) syscall.Errno {
-+	parentSrc = m.checkRoot(parentSrc)
-+	parentDst = m.checkRoot(parentDst)
- 	if parentSrc == RootInode && nameSrc == TrashName || parentDst == RootInode && nameDst == TrashName {
- 		return syscall.EPERM
+-func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int) {
++func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
+ 	enableXattr := c.Bool("enable-xattr")
+ 	if format.EnableACL {
+ 		enableXattr = true
  	}
-@@ -1993,8 +1995,6 @@ func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst
- 	if attr == nil {
- 		attr = &Attr{}
- 	}
--	parentSrc = m.checkRoot(parentSrc)
--	parentDst = m.checkRoot(parentDst)
- 	var quotaSrc, quotaDst Ino
- 	if !parentSrc.IsTrash() {
- 		quotaSrc, _ = m.getQuotaParent(ctx, parentSrc)
-@@ -3461,6 +3461,7 @@ func (m *baseMeta) ScanDeletedObject(ctx Context, tss trashSliceScan, pss pendin
+-	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B'))
++	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
+ }
  
- func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name string, cmode uint8, cumask uint16, concurrency uint8, count, total *uint64) syscall.Errno {
- 
-+	parent = m.checkRoot(parent)
- 	if srcIno.IsTrash() || srcParentIno.IsTrash() || parent.IsTrash() || (parent == RootInode && name == TrashName) {
- 		return syscall.EPERM
- 	}
-@@ -3473,7 +3474,6 @@ func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name str
- 	}
- 
- 	defer m.timeit("Clone", time.Now())
--	parent = m.checkRoot(parent)
- 
- 	var attr Attr
- 	var eno syscall.Errno
+ func shutdownGraceful(mp string) {
 ```
 
-**File**: `pkg/meta/subdir_test.go` (modified, +36/-0)
+**File**: `docs/en/reference/command_reference.mdx` (modified, +1/-0)
 ```diff
-@@ -353,6 +353,42 @@ func testSubdirOperations(t *testing.T, m Meta) {
- 				require.Zero(t, base.en.doLookup(ctx, clone, file, &child, &attr))
- 				assert.Equal(t, uint8(TypeFile), attr.Typ)
- 			}},
-+			{"TrashName", func(t *testing.T, parent, realParent, otherParent Ino) {
-+				var got Ino
-+				var attr Attr
-+				var count, total uint64
-+				if realParent == RootInode { // the trash name is reserved only at the real volume root
-+					target := create(t, parent, file)
-+					var inode Ino
-+					assert.Equal(t, syscall.EPERM, m.Mknod(ctx, parent, TrashName, TypeFile, 0644, 0, 0, "", &inode, nil))
-+					assert.Equal(t, syscall.EPERM, m.Mkdir(ctx, parent, TrashName, 0755, 0, 0, &inode, nil))
-+					assert.Equal(t, syscall.EPERM, m.Link(ctx, target, parent, TrashName, nil))
-+					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
-+					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, TrashName, parent, dir, 0, nil, nil))
-+					assert.Equal(t, syscall.EPERM, m.Unlink(ctx, parent, TrashName))
-+					assert.Equal(t, syscall.EPERM, m.Rmdir(ctx, parent, TrashName))
-+					assert.Equal(t, syscall.EPERM, m.Clone(ctx, parent, target, parent, TrashName, 0, 0, 1, &count, &total))
-+					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
-+					assert.Equal(t, TrashInode, got)
-+				} else { // under a subdir it is an ordinary name
-+					d := mkdir(t, parent, TrashName)
-+					lookup(t, realParent, TrashName, d)
-+					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
-+					assert.Equal(t, d, got)
-+					require.Zero(t, m.Rmdir(ctx, parent, TrashName, true))
-+					lookup(t, realParent, TrashName, 0)
-+					inode := create(t, parent, TrashName)
-+					require.Zero(t, m.Rename(ctx, parent, TrashName, parent, file, 0, nil, nil))
-+					lookup(t, realParent, file, inode)
-+					require.Zero(t, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
-+					lookup(t, realParent, TrashName, inode)
-+					require.Zero(t, m.Link(ctx, inode, parent, link, nil))
-+					require.Zero(t, m.Unlink(ctx, parent, link, true))
-+					require.Zero(t, m.Clone(ctx, parent, inode, parent, dir, 0, 0, 1, &count, &total))
-+					require.Zero(t, m.Unlink(ctx, parent, TrashName, true))
-+					lookup(t, realParent, TrashName, 0)
-+				}
-+			}},
- 			{"SummaryQuotaStatFS", func(t *testing.T, parent, realParent, otherParent Ino) {
- 				var before, after Summary
- 				require.Zero(t, m.GetSummary(ctx, parent, &before, true, true))
+@@ -696,6 +696,7 @@ juicefs mount redis://localhost /mnt/jfs --backup-meta 0
+ |`--enable-cap` <VersionAdd>1.3</VersionAdd>|enable security.capability xattr (default: false)|
+ |`--enable-selinux` <VersionAdd>1.3</VersionAdd>|enable security.selinux xattr (default: false)|
+ |`--enable-ioctl` <VersionAdd>1.1</VersionAdd> |enable ioctl (support GETFLAGS/SETFLAGS only) (default: false)|
++|`--no-readdirplus-auto` <VersionAdd>1.4.3</VersionAdd>|always use READDIRPLUS instead of adaptive mode (default: false)|
+ |`--root-squash value` <VersionAdd>1.1</VersionAdd> |mapping local root user (UID = 0) to another one specified as UID:GID|
+ |`--all-squash value` <VersionAdd>1.3</VersionAdd> |mapping all users to another one specified as UID:GID|
+ |`--umask value` <VersionAdd>1.3</VersionAdd> |umask for new file and directory in octal|
+```
+
+**File**: `docs/en/reference/fuse_mount_options.md` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ These options are used to specify the owner ID and owner group ID of the file sy
+ 
+ Starting from JuiceFS v1.4, `ReadDirPlusAuto` is automatically enabled. This feature allows the FUSE kernel module to automatically decide whether to use the `ReadDirPlus` operation (which returns directory entries along with file attributes) instead of plain `ReadDir`. This reduces the number of subsequent `getattr` calls when listing directories, significantly improving performance for large directory listings.
+ 
+-This is an internal optimization and does not require any user configuration.
++When stat-ing every entry of a large directory (e.g. `ls -l`, `find`, `rsync`), adaptive mode may cause many extra `lookup` requests, which is slow when metadata latency is high. Mount with `--no-readdirplus-auto` to always use `ReadDirPlus`, at the cost of fetching attributes that may not be needed (e.g. plain `ls`).
+ 
+ ## debug
+ 
+```
+
+**File**: `docs/zh_cn/reference/command_reference.mdx` (modified, +1/-0)
+```diff
+@@ -692,6 +692,7 @@ juicefs mount redis://localhost /mnt/jfs --backup-meta 0
+ |`--enable-cap` <VersionAdd>1.3</VersionAdd>|启用 security.capability 扩展属性 (xattr) ，默认为 false。|
+ |`--enable-selinux` <VersionAdd>1.3</VersionAdd>|启用 security.selinux 扩展属性 (xattr) ，默认为 false。|
+ |`--enable-ioctl` <VersionAdd>1.1</VersionAdd>|启用 ioctl (仅支持 GETFLAGS/SETFLAGS) (默认：false)|
++|`--no-readdirplus-auto` <VersionAdd>1.4.3</VersionAdd>|始终使用 READDIRPLUS，而非自适应模式 (默认：false)|
+ |`--root-squash value` <VersionAdd>1.1</VersionAdd>|将本地 root 用户 (UID=0) 映射到一个指定用户，如 UID:GID|
+ |`--all-squash value` <VersionAdd>1.3</VersionAdd>|将所有用户映射到一个指定用户，如 UID:GID|
+ |`--umask value` <VersionAdd>1.3</VersionAdd> |新文件和新目录的 umask 的八进制格式|
+```
+
+**File**: `docs/zh_cn/reference/fuse_mount_options.md` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ FUSE 支持[「writeback-cache 模式」](https://www.kernel.org/doc/Documentati
+ 
+ 从 JuiceFS v1.4 开始，`ReadDirPlusAuto` 已自动启用。该特性允许 FUSE 内核模块自动决定是否使用 `ReadDirPlus` 操作（在返回目录条目的同时返回文件属性），而非仅使用普通的 `ReadDir`。这减少了目录列表时后续的 `getattr` 调用次数，显著提升了大目录的列举性能。
+ 
+-这是一项内部优化，用户无需进行任何配置。
++对大目录中每个条目执行 stat 时（如 `ls -l`、`find`、`rsync`），自适应模式可能产生大量额外的 `lookup` 请求，在元数据延迟较高时会比较慢。此时可使用 `--no-readdirplus-auto` 挂载，始终使用 `ReadDirPlus`，代价是可能获取不需要的属性（如普通的 `ls`）。
+ 
+ ## debug
+ 
+```
+
+**File**: `pkg/fuse/fuse.go` (modified, +2/-2)
+```diff
+@@ -557,7 +557,7 @@ func Serve(v *vfs.VFS, options string, xattrs, ioctl bool) error {
+ 	return nil
+ }
+ 
+-func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int) fuse.MountOptions {
++func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) fuse.MountOptions {
+ 	var opt fuse.MountOptions
+ 	opt.FsName = "JuiceFS:" + conf.Format.Name
+ 	opt.Name = "juicefs"
+@@ -573,7 +573,7 @@ func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, m
+ 	opt.DirectMount = true
+ 	opt.DontUmask = true
+ 	opt.Timeout = time.Minute * 15
+-	opt.EnableReadDirPlusAuto = true
++	opt.EnableReadDirPlusAuto = !noReadDirPlusAuto
+ 	for _, n := range strings.Split(options, ",") {
+ 		// TODO allow_root
+ 		if n == "allow_other" {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
+- **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
+- **PR #7800** (2026-11-04): meta: keep dumped nextInode and nextChunk when loading JSON dump (@jiefenghuang)
+- **PR #7799** (2026-11-04): meta: keep only subtree directory quotas in subdir dump (@jiefenghuang)
 - **PR #7798** (2026-11-03): cmd/dump: warn when flags are ignored with --binary or --subdir (@jiefenghuang)
 - **PR #7797** (2026-11-03): meta: treat .trash as an ordinary name under subdir mounts (@jiefenghuang)
-- **PR #7795** (closed): pkg/object: fix connection retirement aborting Expect: 100-continue u… (@xiaozhuang-a)
-- **PR #7793** (2026-11-03): meta: respect read-only mode and umask when auto-creating subdir (@jiefenghuang)
-- **PR #7791** (2026-11-02): deps: upgrade go-ceph from v0.18.0 to v0.38.0 (@SandyXSD)
-- **PR #7785** (2026-10-30): meta/redis: do not recreate removed dir quotas when flushing usage (@Ducheved)
 
 ---
 
@@ -1421,39 +1398,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
+## X. cmd/mount: simplify setFuseOption and GenFuseOpt (#7803)
 
 **RULE**:
-When implementing operations in `cmd/dump.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/mount_unix.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c1e052e`: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef423267`: cmd/mount: simplify setFuseOption and GenFuseOpt (#7803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dump.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/mount_unix.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	isBinary := ctx.Bool("binary")
-	if isBinary {
-		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
-			if ctx.IsSet(flag) {
-				logger.Warnf("--%s is ignored with --binary", flag)
-			}
-		}
-	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
-		logger.Warnf("--fast is ignored with --subdir")
-	}
-
-	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
+	enableXattr := c.Bool("enable-xattr") || format.EnableACL
+	options := vfs.FuseOptions(fuse.GenFuseOpt(format.Name, genFuseOpt(c, format.Name), enableXattr, format.EnableACL,
+		int(utils.ParseBytes(c, "max-fuse-io", 'B')), !c.Bool("no-readdirplus-auto")))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
+	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
+	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
+func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
+	enableXattr := c.Bool("enable-xattr")
+	if format.EnableACL {
+		enableXattr = true
+	}
+	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
+}
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c1e052e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef423267` are properly handled with clean fallback behavior.

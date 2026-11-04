@@ -7163,3 +7163,7 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `7f1923a3` | Multi-dimensional audit evidence | 2026-11-04T03:57:45.945Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `a106ce63` | Multi-dimensional audit evidence | 2026-11-04T04:04:57.274Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `bcd916ca` | Multi-dimensional audit evidence | 2026-11-04T07:18:52.542Z |
+| `learn-github-jestjs-jest` | `https://github.com/jestjs/jest` | `72614448` | Multi-dimensional audit evidence | 2026-11-04T07:25:52.864Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T07:25:57.297Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `ef423267` | Multi-dimensional audit evidence | 2026-11-04T07:25:58.112Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a7fed6ab` | Multi-dimensional audit evidence | 2026-11-04T07:26:05.636Z |

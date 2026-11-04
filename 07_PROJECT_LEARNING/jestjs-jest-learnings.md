@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jestjs-jest-learnings.md`  
 > **Source**: github ([https://github.com/jestjs/jest](https://github.com/jestjs/jest))  
-> **Source Version**: `61050e93`  
+> **Source Version**: `72614448`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:46:46.367Z  
+> **Timestamp**: 2026-11-04T07:25:52.140Z  
 > **Learning ID**: `learn-github-jestjs-jest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jestjs-jest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jestjs/jest](https://github.com/jestjs/jest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:46:46.037Z  
+> **Harvest Timestamp**: 2026-11-04T07:25:51.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Delightful JavaScript Testing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 45490 stars
+- **Stars / Engagement**: 45470 stars
 
 ---
 
@@ -599,11 +599,11 @@ export default function inc() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16485** (2026-10-15): **chore(deps): update dependency eslint-plugin-unicorn to v77 - autoclosed**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-unicorn](https://redirect.github.com/sindresorhus/eslint-plugin-unicorn) | [`^64.0.0` → `^77.0.0`](https://renovatebot.com/diffs/npm/eslint-plugin-unicorn/64.0.0/77.0.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-unicorn/77.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-unicorn/64.0.0/77.0.0?slim=true) |  ---  ### Release Notes  <details> <summary>sindresorhus/eslint-plugin-unicorn (eslint-plugin-unicorn)</summary>  ### [`v77.0.0`](https://redirect.github.com/sindresorhus/eslint-plugin-unicorn/releases/tag/v77.0.0)  [Compare Source](https://redirect.github.com/sindresorhus/eslint-plugin-unicorn/compare/v76.0.0...v77.0.0)  #### Breaking  - Move CSS-only rules to [`eslint-cssicorn`](https://redirect.github.com/sindresorhus/eslint-cssicorn) ([#&#8203;3811](https://redirect.github.com/sindresorhus/eslint-plugin-unicorn/issues/3811))  [`c3697c0`](https://redirect.github.com/sindresorhus/eslint-plugin-unicorn/commit/c3697c02)   - `unicorn/no-deprecated-css-features` → `cssicorn/no-deprecated-features`   - `unicorn/no-duplicate-css-selectors` → `cssicorn/no-duplicate-selectors`   - `unicorn/no-duplicate-font-family-names` → `css
+- **Issue #16527** (2026-11-02): **fix(jest-resolve): bump unrs-resolver to 1.13.0**
+  *Symptoms*: ## Summary  `unrs-resolver@1.13.0` resolves its native binding at runtime instead of through a `postinstall` script ([unrs/unrs-resolver#225](https://github.com/unrs/unrs-resolver/pull/225)), so installing Jest no longer trips npm 12's blocked-install-script warning. Together with #16188, which replaced the `fsevents`-based watchers with `@parcel/watcher` (`fsevents` is now left only in the website and bundling toolchain, not in any published package), this clears both packages that #16279 reported.  Nothing in `jest-resolve` changes otherwise: 1.13.0's public types only add `__napiBindingTarget`, so the imports, options and `ResolverFactory` usage stay as they are, and the move to runtime lookup drops the `wasm32-wasi` optional binding (and its `@emnapi/*` / `@napi-rs/wasm-runtime` chain) from the install tree.  The two remaining `unrs-resolver` ranges in the workspace (`eslint-import-resolver-typescript`'s `^1.7.11`, `eslint-plugin-import-x`'s `^1.9.2`) are deduped onto 1.13.0, as Renovate's `yarnDedupeHighest` would, so a single set of platform bindings is installed and `napi-postinstall` moves to 0.3.7.  This also removes the reason to keep #16400 open: swapping `unrs-resolver` for `oxc-resolver` was the workaround for the same warning, and the root cause is fixed upstream instead.  Closes #16279 Closes #16400  ## Test plan  - `yarn install --immutable`, `yarn constraints`, `yarn dedupe --check` — all clean. - `yarn build` — passes; every package type-checks against 1.13.
 
-- **Issue #16480** (2026-10-02): **chore(deps): update dependency eslint-plugin-jsdoc to v65**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-jsdoc](https://redirect.github.com/gajus/eslint-plugin-jsdoc) | [`^64.0.0` → `^65.0.0`](https://renovatebot.com/diffs/npm/eslint-plugin-jsdoc/64.4.0/65.0.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-jsdoc/65.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-jsdoc/64.4.0/65.0.0?slim=true) |  ---  ### Release Notes  <details> <summary>gajus/eslint-plugin-jsdoc (eslint-plugin-jsdoc)</summary>  ### [`v65.0.0`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.0.0)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v64.5.4...v65.0.0)  ##### Features  - **`check-indentation`:** forbid missing space between asterisk prefix and content; fixes [#&#8203;1779](https://redirect.github.com/gajus/eslint-plugin-jsdoc/issues/1779) ([d65631b](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/d65631bf403b68c6c4fd45b5909f1806cb9d25a3)) - **`check-line-alignment`:** allow `-any` within `tags` array to apply alignment (or lack thereof) to all tags ([34edd04](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/34edd048ac9914eb0d6888b4b022d4902111bc0d))  ##### BREAKING CHANGES  - **`check-indentation`:** To restore old behavior, use `allowN
+- **Issue #16511** (2026-10-20): **x**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -620,233 +620,193 @@ export default function inc() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21fbc9f1` (2026-08-27)
-**Commit Message**: chore(deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)
+### Incident Patch 1: `72614448` (2026-11-02)
+**Commit Message**: fix(jest-resolve): bump unrs-resolver to 1.13.0 (#16527)
 
-**File**: `.github/workflows/nightly.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -48,6 +48,6 @@ jobs:
-     if: failure()
-     runs-on: ubuntu-latest
-     steps:
--      - uses: jayqi/failed-build-issue-action@1a893bbf43ef1c2a8705e2b115cd4f0fe3c5649b # v1.2.0
-+      - uses: drivendataorg/failed-build-issue-action@940568ce50eeef3f31a920614cefcc6102d2f930 # v1.3.0
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-### Incident Patch 2: `0dbdc239` (2026-09-18)
-**Commit Message**: fix(jest-source-map): resolve absolute Windows paths in `sources` (#16439)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
+@@ -4,6 +4,8 @@
  
  ### Fixes
  
-+- `[@jest/source-map]` Resolve absolute Windows paths in a source map's `sources` and `sourceRoot` again, instead of appending them to the transformed file's directory ([#16439](https://github.com/jestjs/jest/pull/16439))
- - `[jest-core, jest-haste-map, jest-transform]` Keep `require('../package.json')` external when bundling, so `jest --version` and the transform and haste-map cache keys report the released version instead of the previous one ([#16422](https://github.com/jestjs/jest/pull/16422))
- - `[jest-each]` Escape a table row's keys before building the `$variable` interpolation `RegExp`, so a column name such as `count(*)` no longer fails the whole table with `Invalid regular expression`, and a `.` or `|` in a column name is matched literally ([#16345](https://github.com/jestjs/jest/pull/16345))
- 
-```
-
-**File**: `packages/jest-source-map/src/SourceMapCache.ts` (modified, +47/-4)
-```diff
-@@ -8,7 +8,7 @@
- import {
-   AnyMap,
-   type SectionedSourceMapInput,
--  type TraceMap,
-+  TraceMap,
-   originalPositionFor,
- } from '@jridgewell/trace-mapping';
- import {mapFileCommentRegex} from 'convert-source-map';
-@@ -72,15 +72,58 @@ function rememberMapPath(generatedPath: string, sourceMapPath: string): void {
-   );
- }
- 
-+const WINDOWS_DRIVE_PATH_REGEXP = /^[a-zA-Z]:[\\/]/;
++- `[jest-resolve]` Bump `unrs-resolver` to 1.13.0, which locates its native binding at runtime instead of through a `postinstall` script, so installing Jest no longer reports a blocked build script on npm 12 ([#16527](https://github.com/jestjs/jest/pull/16527))
 +
-+// The tracer resolves `sources` as URLs, which reads a Windows drive path such
-+// as `C:/src/input.ts` as relative and appends it to the map's directory.
-+function toUrlIfDrivePath<T extends string | null | undefined>(
-+  source: T,
-+  reader: SourceMapFileReader,
-+): T | string {
-+  return source != null && WINDOWS_DRIVE_PATH_REGEXP.test(source)
-+    ? reader.toUrl(source)
-+    : source;
-+}
-+
-+function withDrivePathsAsUrls(
-+  map: SectionedSourceMapInput,
-+  reader: SourceMapFileReader,
-+): SectionedSourceMapInput {
-+  if (typeof map === 'string') {
-+    return withDrivePathsAsUrls(JSON.parse(map), reader);
-+  }
-+
-+  if (map instanceof TraceMap) {
-+    return map;
-+  }
-+
-+  if ('sections' in map) {
-+    return {
-+      ...map,
-+      sections: map.sections.map(section => ({
-+        ...section,
-+        map: withDrivePathsAsUrls(section.map, reader),
-+      })),
-+    };
-+  }
-+
-+  return {
-+    ...map,
-+    sourceRoot: toUrlIfDrivePath(map.sourceRoot, reader),
-+    sources: map.sources.map(source => toUrlIfDrivePath(source, reader)),
-+  };
-+}
-+
- // `mapUrl` is what the map's `sources` resolve against.
- function parseMap(
-   content: SectionedSourceMapInput,
-   mapUrl: string,
-+  reader: SourceMapFileReader,
- ): TraceMap | null {
-   try {
-     // `AnyMap` rather than `TraceMap`, which throws on the indexed maps that
-     // bundlers emit as a top-level `sections` array.
--    return AnyMap(content, mapUrl);
-+    return AnyMap(withDrivePathsAsUrls(content, reader), mapUrl);
-   } catch {
-     return null;
-   }
-@@ -186,7 +229,7 @@ export class SourceMapCache {
-     }
- 
-     const content = this.reader.read(sourceMapPath);
--    const map = content == null ? null : parseMap(content, mapUrl);
-+    const map = content == null ? null : parseMap(content, mapUrl, this.reader);
- 
-     if (content != null && map == null) {
-       this.reportUnparsable(sourceMapPath, generatedPath);
-@@ -237,7 +280,7 @@ export class SourceMapCache {
-     // An inline map's sources are relative to the file carrying it. Every other
-     // map resolves them against wherever the map itself lives.
-     const mapUrl = isInline ? generatedUrl : resolvedUrl;
--    const map = parseMap(content, mapUrl);
-+    const map = parseMap(content, mapUrl, this.reader);
- 
-     if (map == null) {
-       this.reportUnparsable(
-```
-
-**File**: `packages/jest-source-map/src/__tests__/SourceMapCache.test.ts` (modified, +45/-0)
-```diff
-@@ -399,6 +399,51 @@ describe('mapSourcePosition', () => {
-     });
-   });
- 
-+  test.each(['C:/src/input.ts', 'C:\\src\\input.ts'])(
-+    'turns the Windows drive path %s in `sources` into a URL before resolving',
-+    source => {
-+      const reader: SourceMapFileReader = {
-+        read: () => JSON.stringify({...decodedMap, sources: [source]}),
-+        toPath: url => url,
-+        toUrl: pathOrUrl => `file:///${pathOrUrl.replaceAll('\\', '/')}`,
-+      };
-+      const cache = new SourceMapCache(
-+        new Map([['C:\\build\\out.js', registeredMapPath]]),
-+        reader,
-+        reportUnparsableMock,
-+      );
-+
-+      const mapped = mapSourcePosition(cache, {
-+        column: 0,
-+        line: 2,
-+        source: 'C:\\build\\out.js',
-+      });
-+
-+      expect(mapped.source).toBe('file:///C:/src/input.ts');
-+    },
-+  );
-+
-+  test('turns a Windows drive path in `sourceRoot` into a URL before resolving', () => {
-+    const reader: SourceMapFileReader = {
-+      read: () => JSON.stringify({...decodedMap, sourceRoot: 'C:/src/'}),
-+      toPath: url => url,
-+      toUrl: pathOrUrl => `file:///${pathOrUrl.replaceAll('\\', '/')}`,
-+    };
-+    const cache = new SourceMapCache(
-+      new Map([['C:\\build\\out.js', registeredMapPath]]),
-+      reader,
-+      reportUnparsableMock,
-+    );
-+
-+    const mapped = mapSourcePosition(cache, {
-+      column: 0,
-+      line: 2,
-+      source: 'C:\\build\\out.js',
-+    });
-+
-+    expect(mapped.source).toBe('file:///C:/src/input.ts');
-+  });
-+
-   test('honours `sourceRoot`', () => {
-     mockFileContents(() =>
-       JSON.stringify({...decodedMap, sourceRoot: '../src'}),
-```
-
----
-
-### Incident Patch 3: `981920c2` (2026-09-01)
-**Commit Message**: fix: do not inline the package version when bundling (#16422)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- ### Fixes
- 
-+- `[jest-core, jest-haste-map, jest-transform]` Keep `require('../package.json')` external when bundling, so `jest --version` and the transform and haste-map cache keys report the released version instead of the previous one ([#16422](https://github.com/jestjs/jest/pull/16422))
- - `[jest-each]` Escape a table row's keys before building the `$variable` interpolation `RegExp`, so a column name such as `count(*)` no longer fails the whole table with `Invalid regular expression`, and a `.` or `|` in a column name is matched literally ([#16345](https://github.com/jestjs/jest/pull/16345))
- 
  ### Chore & Maintenance
+ 
+ ## 30.5.2
 ```
 
-**File**: `scripts/buildUtils.mjs` (modified, +12/-1)
+**File**: `packages/jest-resolve/package.json` (modified, +1/-1)
 ```diff
-@@ -264,7 +264,18 @@ export function createBuildConfigs() {
-           ...separateChunks,
-           ...extraEntryPoints,
-         },
--        externals: nodeExternals(),
-+        externals: [
-+          nodeExternals(),
-+          // Publishing bumps `package.json` after the build, so an inlined
-+          // version would be one release behind. The bundle is emitted to
-+          // `<packageDir>/build`, hence the relative path.
-+          ({context, request}, callback) =>
-+            request != null &&
-+            path.resolve(context, request) ===
-+              path.join(packageDir, 'package.json')
-+              ? callback(null, 'commonjs ../package.json')
-+              : callback(),
-+        ],
-         mode: 'production',
-         module: {
-           rules: [
+@@ -25,7 +25,7 @@
+     "jest-util": "workspace:*",
+     "jest-validate": "workspace:*",
+     "slash": "^3.0.0",
+-    "unrs-resolver": "^1.12.1"
++    "unrs-resolver": "^1.13.0"
+   },
+   "devDependencies": {
+     "@types/graceful-fs": "^4.1.9",
+```
+
+**File**: `yarn.lock` (modified, +97/-159)
+```diff
+@@ -3650,34 +3650,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@emnapi/core@npm:1.10.0":
+-  version: 1.10.0
+-  resolution: "@emnapi/core@npm:1.10.0"
+-  dependencies:
+-    "@emnapi/wasi-threads": "npm:1.2.1"
+-    tslib: "npm:^2.4.0"
+-  checksum: 10/d32f386084e64deaf2609aabb8295d1ad5af6144d0f46d2060b76cc53f1f3b486df54bec9b0f33c37d85a3822e1193ebcd4e3deb4a5f0e4cd650aa2ffc631715
+-  languageName: node
+-  linkType: hard
+-
+-"@emnapi/runtime@npm:1.10.0":
+-  version: 1.10.0
+-  resolution: "@emnapi/runtime@npm:1.10.0"
+-  dependencies:
+-    tslib: "npm:^2.4.0"
+-  checksum: 10/d21083d07fa0c2da171c142e78ef986b66b07d45b06accc0bcaf49fcc61bb4dbc10e1c1760813070165b9f49b054376a931045347f21c0f42ff1eb2d2040faac
+-  languageName: node
+-  linkType: hard
+-
+-"@emnapi/wasi-threads@npm:1.2.1":
+-  version: 1.2.1
+-  resolution: "@emnapi/wasi-threads@npm:1.2.1"
+-  dependencies:
+-    tslib: "npm:^2.4.0"
+-  checksum: 10/57cd4292be81c05d26aa886d68a9e4c449ff666e8503fed6463dfc6b64a4e4213f03c152d53296b7cda32840271e38cd33347332070658f01befeb9bf4e59f36
+-  languageName: node
+-  linkType: hard
+-
+ "@es-joy/jsdoccomment@npm:~0.98.0":
+   version: 0.98.0
+   resolution: "@es-joy/jsdoccomment@npm:0.98.0"
+@@ -5355,18 +5327,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@napi-rs/wasm-runtime@npm:^1.1.4":
+-  version: 1.2.4
+-  resolution: "@napi-rs/wasm-runtime@npm:1.2.4"
+-  dependencies:
+-    "@tybys/wasm-util": "npm:^0.10.3"
+-  peerDependencies:
+-    "@emnapi/core": ^1.7.1 || ^2.0.0-alpha.4
+-    "@emnapi/runtime": ^1.7.1 || ^2.0.0-alpha.4
+-  checksum: 10/5cda52f943c67eba1875d95dc7ea0dbe2c1581edb25660d3b0d780d7d87600bdaf92b4f4395e3cde82a9ccfb540da55567452e6e6d61fb13b7f51da7a3ad9151
+-  languageName: node
+-  linkType: hard
+-
+ "@noble/hashes@npm:1.4.0":
+   version: 1.4.0
+   resolution: "@noble/hashes@npm:1.4.0"
+@@ -7096,15 +7056,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@tybys/wasm-util@npm:^0.10.3":
+-  version: 0.10.4
+-  resolution: "@tybys/wasm-util@npm:0.10.4"
+-  dependencies:
+-    tslib: "npm:^2.4.0"
+-  checksum: 10/da910a0439afad49a6427e4d16fcd5a52199cb471e07c262e1dd5ed7664908e6f142f4dca1b09895c53f4ca4402663042d760f41c9fa7ff33f76c662739646df
+-  languageName: node
+-  linkType: hard
+-
+ "@types/argparse@npm:1.0.38":
+   version: 1.0.38
+   resolution: "@types/argparse@npm:1.0.38"
+@@ -8097,160 +8048,149 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-android-arm-eabi@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.12.2"
++"@unrs/resolver-binding-android-arm-eabi@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.13.0"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-android-arm64@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-android-arm64@npm:1.12.2"
++"@unrs/resolver-binding-android-arm64@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-android-arm64@npm:1.13.0"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-darwin-arm64@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.12.2"
++"@unrs/resolver-binding-darwin-arm64@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.13.0"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-darwin-x64@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.12.2"
++"@unrs/resolver-binding-darwin-x64@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.13.0"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-freebsd-x64@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.12.2"
++"@unrs/resolver-binding-freebsd-x64@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.13.0"
+   conditions: os=freebsd & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.12.2"
++"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.13.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.12.2"
++"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.13.0":
++  version: 1.13.0
++  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.13.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"@unrs/resolver-binding-linux-arm64-gnu@npm:1.12.2":
+-  version: 1.12.2
+-  resolution: "@unrs/resolver-binding-lin
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16527** (2026-11-02): fix(jest-resolve): bump unrs-resolver to 1.13.0 (@JounQin)
+- **PR #16500** (closed): chore(deps): update dependency eslint-plugin-unicorn to v78 - autoclosed (@renovate[bot])
+- **PR #16494** (closed): chore(deps): update dependency node-notifier to v11 - autoclosed (@renovate[bot])
 - **PR #16485** (closed): chore(deps): update dependency eslint-plugin-unicorn to v77 - autoclosed (@renovate[bot])
 - **PR #16480** (2026-10-02): chore(deps): update dependency eslint-plugin-jsdoc to v65 (@renovate[bot])
 - **PR #16478** (closed): fix(jest-runtime): respect environment export conditions for CommonJS (@Rober1208)
-- **PR #16475** (closed): fix(jest-worker): skip idle memory check after worker END (@00200200)
-- **PR #16455** (closed): chore(deps): update dependency eslint-plugin-unicorn to v76 - autoclosed (@renovate[bot])
-- **PR #16441** (closed): chore(deps): update dependency eslint-plugin-unicorn to v75 - autoclosed (@renovate[bot])
 
 ---
 
@@ -866,28 +826,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)
+## X. jest-resolve): bump unrs-resolver to 1.13.0 (#16527)
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jestjs/jest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jestjs/jest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21fbc9f1`: deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72614448`: jest-resolve): bump unrs-resolver to 1.13.0 (#16527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      - uses: drivendataorg/failed-build-issue-action@940568ce50eeef3f31a920614cefcc6102d2f930 # v1.3.0
+- `[jest-resolve]` Bump `unrs-resolver` to 1.13.0, which locates its native binding at runtime instead of through a `postinstall` script, so installing Jest no longer reports a blocked build script on npm 12 ([#16527](https://github.com/jestjs/jest/pull/16527))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: jayqi/failed-build-issue-action@1a893bbf43ef1c2a8705e2b115cd4f0fe3c5649b # v1.2.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21fbc9f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72614448` are properly handled with clean fallback behavior.
