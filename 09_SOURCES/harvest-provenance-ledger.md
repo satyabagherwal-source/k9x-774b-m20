@@ -7181,3 +7181,6 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `e3084ac5` | Multi-dimensional audit evidence | 2026-11-04T08:03:21.365Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `422ad407` | Multi-dimensional audit evidence | 2026-11-04T08:04:23.658Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `93633ac7` | Multi-dimensional audit evidence | 2026-11-04T08:06:06.082Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `d1996344` | Multi-dimensional audit evidence | 2026-11-04T08:14:08.605Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `c570669d` | Multi-dimensional audit evidence | 2026-11-04T08:14:13.697Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `3799e0d0` | Multi-dimensional audit evidence | 2026-11-04T08:14:18.570Z |

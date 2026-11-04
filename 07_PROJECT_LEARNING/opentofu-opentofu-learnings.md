@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `1549ae4f`  
+> **Source Version**: `c570669d`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:39:06.662Z  
+> **Timestamp**: 2026-11-04T08:14:13.204Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:39:05.421Z  
+> **Harvest Timestamp**: 2026-11-04T08:14:10.226Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30708 stars
+- **Stars / Engagement**: 30717 stars
 
 ---
 
@@ -1419,310 +1419,280 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1549ae4f` (2026-11-03)
-**Commit Message**: 4713 uiinput context cancellation v02 (#4755)
+### Incident Patch 1: `170d7317` (2026-10-27)
+**Commit Message**: Fix existing paths that should generate action reasons
 
-Signed-off-by: Ron Green <[REDACTED_EMAIL]>
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/command/apply.go` (modified, +4/-0)
+**File**: `internal/engine/internal/exec/resource.go` (modified, +7/-0)
 ```diff
-@@ -70,6 +70,10 @@ type ApplyCommand struct {
- func (c ApplyCommand) Execute(args *arguments.Apply, view views.Apply) int {
- 	var diags tfdiags.Diagnostics
- 	ctx := c.CommandContext()
-+	// This is safe to be done since the execution engine contexts are created by ignoring the cancellation from the parent context.
-+	// internal/backend/local/backend.go
-+	ctx, cancel := c.InterruptibleContext(ctx)
-+	defer cancel()
- 	ctx = tfdiags.ContextWithLintFilterHints(ctx, args.View.LintInclude, args.View.LintExclude)
- 	diags = diags.Append(tfdiags.ExperimentalLintWarn(ctx))
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/opentofu/opentofu/internal/addrs"
+ 	"github.com/opentofu/opentofu/internal/lang/eval"
+ 	"github.com/opentofu/opentofu/internal/lang/exprs"
++	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/resources"
+ 	"github.com/opentofu/opentofu/internal/states"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+@@ -303,6 +304,8 @@ type ResourceInstanceObjectMeta struct {
+ 	// more convenient, finalized form.
  
-```
-
-**File**: `internal/command/apply_test.go` (modified, +1/-1)
-```diff
-@@ -313,7 +313,7 @@ func TestApply_parallelism(t *testing.T) {
- 	// calls until we reach the desired concurrency. The cancel func "begin" is
- 	// called once we reach the desired concurrency, allowing all apply calls
- 	// to proceed in unison.
--	beginCtx, begin := context.WithCancel(context.Background())
-+	beginCtx, begin := context.WithCancel(t.Context())
- 	// Ensure cancel is fired regardless of test
- 	defer begin()
- 
-```
-
-**File**: `internal/command/clistate/state_test.go` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ func TestUnlockWithCancelledContext(t *testing.T) {
- 	view := views.NewView(streams)
- 
- 	// Create a context that is already cancelled (simulates Ctrl+C)
--	ctx, cancel := context.WithCancel(context.Background())
-+	ctx, cancel := context.WithCancel(t.Context())
- 	cancel()
- 
- 	backendView := views.NewBackendHuman(view)
-```
-
-**File**: `internal/command/login.go` (modified, +16/-0)
-```diff
-@@ -74,8 +74,10 @@ func (c LoginCommand) Execute(args *arguments.Login, view views.Login) int {
- 	var diags tfdiags.Diagnostics
- 
- 	ctx := c.CommandContext()
-+	ctx, cancel := c.InterruptibleContext(ctx)
- 	ctx, span := tracing.Tracer().Start(ctx, "Login")
- 	defer span.End()
-+	defer cancel()
- 
- 	if !c.input {
- 		diags = diags.Append(tfdiags.Sourceless(
-@@ -501,6 +503,20 @@ func (c *LoginCommand) interactiveGetTokenByCode(ctx context.Context, hostname s
- 		wg.Wait()
- 		close(codeCh)
- 		return nil, diags
-+	case <-ctx.Done():
-+		diags = diags.Append(
-+			tfdiags.Sourceless(
-+				tfdiags.Error,
-+				"Action aborted",
-+				"Current command was aborted",
-+			),
-+		)
-+		if err := server.Shutdown(ctx); err != nil {
-+			log.Printf("[WARN] login: callback server shutdown failed: %s", err)
-+		}
-+		wg.Wait()
-+		close(codeCh)
-+		return nil, diags
- 	case code = <-codeCh:
- 	}
- 
-```
-
-**File**: `internal/command/login_test.go` (modified, +48/-0)
-```diff
-@@ -7,9 +7,12 @@ package command
- 
- import (
- 	"context"
-+	"io"
- 	"net/http/httptest"
-+	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -364,6 +367,51 @@ func TestLogin(t *testing.T) {
- 			t.Fatalf("missing expected error message\nwant: %s\nfull output:\n%s", want, got)
- 		}
- 	}, false))
+ 	Status states.ObjectStatus
 +
-+	t.Run("cancel input during login confirmation", loginTestCase(func(t *testing.T, m *Meta, closeView func(*testing.T) *terminal.TestOutput) {
-+		// Create a cancelled context to see if it is passed (next I will ask the input to be a pipe so it works)
-+		ctx, cancel := context.WithCancel(t.Context())
-+		defer cancel()
-+
-+		// make suer that the actual call will use the cancellable context
-+		prefCtx := m.CallerContext
-+		m.CallerContext = ctx
-+		defer func() { m.CallerContext = prefCtx }()
-+		// defer func() { abortCh <- struct{}{} }()
-+
-+		// create a pipe that is idle
-+		rx, tx := io.Pipe()
-+
-+		// cancel the context right before you start reading
-+		var once sync.Once
-+		rWrapped := notifyReader{
-+			cancel: cancel,
-+			once:   &once,
-+			Reader: rx,
++	OrphanActionReason plans.ResourceInstanceChangeActionReason
+ }
+ 
+ // BuildResourceInstanceObjectMeta constructs a [ResourceInstanceObjectMeta]
+@@ -383,6 +386,10 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
+ 		// and let it be nil for module instances where that isn't true.
+ 		ret.DeclRange = fromModule.DeclRange
+ 
++		if fromModule.OrphanActionReason != plans.ResourceInstanceChangeNoReason {
++			ret.OrphanActionReason = fromModule.OrphanActionReason
 +		}
 +
-+		// and force the code to use it so it hangs on input for address
-+		defaultInputReader = &rWrapped
+ 		ret.PostCreateProvisioners = append(ret.PostCreateProvisioners, fromModule.PostCreateProvisioners...)
+ 		ret.PreDeleteProvisioners = append(ret.PreDeleteProvisioners, fromModule.PreDeleteProvisioners...)
+ 		if fromModule.ReplaceOrder != nil {
+```
+
+**File**: `internal/engine/planning/plan_managed.go` (modified, +9/-1)
+```diff
+@@ -420,6 +420,11 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		// prevent us from getting here in that case.
+ 	}
+ 
++	if !planResp.RequiresReplace.Empty() {
++		forceReplace = true
++		actionReason = plans.ResourceInstanceReplaceBecauseCannotUpdate
++	}
 +
-+		// reset all things I set when done to not hog resources
-+		defer func() {
-+			defaultInputReader = os.Stdin
-+			rx.Close()
-+			tx.Close()
-+		}()
+ 	if meta.Status == states.ObjectTainted {
+ 		forceReplace = true
+ 		actionReason = plans.ResourceInstanceReplaceBecauseTainted
+@@ -435,7 +440,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 	plannedAction := plans.Update
+ 	if current.Value.IsNull() {
+ 		plannedAction = plans.Create
+-	} else if !planResp.RequiresReplace.Empty() || forceReplace {
++	} else if forceReplace {
+ 		// For "replace" actions the execution graph will include two separate
+ 		// plan and apply operations, where one handles deletion and the other
+ 		// handles creation. There is therefore an implicit third intermediate
+@@ -719,6 +724,8 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 		return ret, diags
+ 	}
+ 
++	reason := meta.OrphanActionReason
 +
-+		out := RunCommander(t, LoginCommander(), *m, []string{"example.com"})
-+		loginOutput := closeView(t).All()
+ 	ret.PlannedChange = &plans.ResourceInstanceChange{
+ 		Addr:        currentRunAddr,
+ 		PrevRunAddr: addr.InstanceAddr,
+@@ -745,6 +752,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 		// should just pass in a reason as an additonal argument to this
+ 		// function, since it presumably already knows how it concluded that
+ 		// this address is "orphaned".
++		ActionReason: reason,
+ 	}
+ 
+ 	diags = diags.Append(checkPreventDestroy(ctx, meta, ret))
+```
+
+**File**: `internal/lang/eval/internal/configgraph/instances.go` (modified, +30/-0)
+```diff
+@@ -15,6 +15,7 @@ import (
+ 	"github.com/opentofu/opentofu/internal/addrs"
+ 	"github.com/opentofu/opentofu/internal/instances"
+ 	"github.com/opentofu/opentofu/internal/lang/exprs"
++	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+ )
+ 
+@@ -288,3 +289,32 @@ func staticCheckTraversalForInstances(selector InstanceSelector, traversal hcl.T
+ 	}
+ 	return diags
+ }
 +
-+		if out != 1 {
-+			t.Fatalf("error code and stdout dont match expected test: %d %s", out, loginOutput)
-+
++func OrphanActionForInstanceKey(selector InstanceSelector, key addrs.InstanceKey) plans.ResourceInstanceChangeActionReason {
++	// Ported from tofu/orphan nodes
++	switch key.(type) {
++	case nil: // no instance key at all
++		if selector.InstanceKeyType() != addrs.NoKeyType {
++			return plans.ResourceInstanceDeleteBecauseWrongRepetition
 +		}
-+		if !strings.Contains(loginOutput, "interrupted: context canceled") {
-+			t.Fatalf("an error occured but not the one I expected %s", loginOutput)
++		return plans.ResourceInstanceDeleteBecauseEnabledFalse
++	case addrs.IntKey:
++		if selector.InstanceKeyType() != addrs.IntKeyType {
++			// This resource isn't using "count" at all, then
++			return plans.ResourceInstanceDeleteBecauseWrongRepetition
++		} else {
++			// This instance key is outside of the configured range
++			return plans.ResourceInstanceDeleteBecauseCountIndex
 +		}
-+	}, false))
++	case addrs.StringKey:
++		if selector.InstanceKeyType() != addrs.StringKeyType {
++			// This resource isn't using "for_each" at all, then
++			return plans.ResourceInstanceDeleteBecauseWrongRepetition
++		} else {
++			// This instance key is outside of the configured range
++			return plans.ResourceInstanceDeleteBecauseEachKey
++		}
++	}
++	// Wildcard?
++	return plans.ResourceInstanceChangeNoReason
++}
+```
+
+**File**: `internal/lang/eval/internal/evalglue/resource.go` (modified, +3/-0)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 
+ 	"github.com/opentofu/opentofu/internal/addrs"
+ 	"github.com/opentofu/opentofu/internal/lang/exprs"
++	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/refactoring"
+ 	"github.com/opentofu/opentofu/internal/resources"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+@@ -98,6 +99,8 @@ type ConfiguredResourceInstanceObjectMeta struct {
+ 	MoveStatements []refactoring.MoveStatement
+ 
+ 	ImportStatement *ImportStatement
 +
++	OrphanActionReason plans.ResourceInstanceChangeActionReason
  }
  
- // TestLoginOAuthCallbackRace verifies that no panic, deadlock, or data race
+ // ResourceInstanceObjectProvider describes the provider-related metadata
 ```
 
-**File**: `internal/command/meta.go` (modified, +2/-2)
+**File**: `internal/lang/eval/internal/tofu2024/module_instance.go` (modified, +9/-5)
 ```diff
-@@ -427,13 +427,13 @@ func (m *Meta) contextOpts(ctx context.Context) (*tofu.ContextOpts, error) {
- }
- 
- // confirm asks a yes/no confirmation.
--func (m *Meta) confirm(opts *tofu.InputOpts) (bool, error) {
-+func (m *Meta) confirm(ctx context.Context, opts *tofu.InputOpts) (bool, error) {
- 	if !m.Input() {
- 		return false, errors.New("input is disabled")
+@@ -20,6 +20,7 @@ import (
+ 	"github.com/opentofu/opentofu/internal/lang/eval/internal/evalglue"
+ 	"github.com/opentofu/opentofu/internal/lang/exprs"
+ 	"github.com/opentofu/opentofu/internal/lang/grapheval"
++	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/refactoring"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+ )
+@@ -169,19 +170,20 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
+ 		return ret
  	}
  
- 	for range 2 {
--		v, err := m.UIInput().Input(context.Background(), opts)
-+		v, err := m.UIInput().Input(ctx, opts)
- 		if err != nil {
- 			return false, fmt.Errorf(
- 				"Error asking for confirmation: %w", err)
++	// Ensure that ret exists, regarless of module statements
++	if ret == nil {
++		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
++	}
++
+ 	rsrc, ok := c.resourceNodes[addr.InstanceAddr.Resource.Resource]
+ 	if !ok {
+ 		// If there's no mention of this resource in this module at all then
+ 		// we have nothing to say about it, and so any metadata will need to
+ 		// come either from an ancestor module or from the previous run state.
++		ret.OrphanActionReason = plans.ResourceInstanceDeleteBecauseNoResourceConfig
+ 		return ret
+ 	}
+ 
+-	// Ensure that ret exists, regarless of module statements
+-	if ret == nil {
+-		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
+-	}
+-
+ 	// We'll start with a suitable placeholder to use if there's no mention
+ 	// of this object in the configuration at all, and then improve it gradually
+ 	// as we find relevant information in the configuration.
+@@ -213,6 +215,8 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
+ 	if !ok {
+ 		// Only the resource-level settings are used when we're dealing with
+ 		// a resource instance that is not currently declared in the configuration.
++		ret.OrphanActionReason = configgraph.OrphanActionForInstanceKey(rsrc.InstanceSelector, addr.InstanceAddr.Resource.Key)
++
+ 		return ret
+ 	}
+ 
 ```
 
-**File**: `internal/command/meta_backend.go` (modified, +3/-3)
+**File**: `internal/lang/eval/resource_instance.go` (modified, +8/-0)
 ```diff
-@@ -243,7 +243,7 @@ func (m *Meta) selectWorkspace(ctx context.Context, b backend.Backend) error {
- 			// len is always 1 if using Name; 0 means we're using Tags and there
- 			// aren't any matching workspaces. Which might be normal and fine, so
- 			// let's just ask:
--			name, err := m.UIInput().Input(context.Background(), &tofu.InputOpts{
-+			name, err := m.UIInput().Input(ctx, &tofu.InputOpts{
- 				Id:          "create-workspace",
- 				Query:       "\n[reset][bold][yellow]No workspaces found.[reset]",
- 				Description: fmt.Sprintf(inputCloudInitCreateWorkspace, strings.Join(c.WorkspaceMapping.Tags, ", ")),
-@@ -290,7 +290,7 @@ func (m *Meta) selectWorkspace(ctx context.Context, b backend.Backend) error {
- 	}
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/opentofu/opentofu/internal/addrs"
+ 	"github.com/opentofu/opentofu/internal/lang/eval/internal/configgraph"
+ 	"github.com/opentofu/opentofu/internal/lang/eval/internal/evalglue"
++	"github.com/opentofu/opentofu/internal/plans"
+ )
  
- 	// Otherwise, ask the user to select a workspace from the list of existing workspaces.
--	v, err := m.UIInput().Input(context.Background(), &tofu.InputOpts{
-+	v, err := m.UIInput().Input(ctx, &tofu.InputOpts{
- 		Id: "select-workspace",
- 		Query: fmt.Sprintf(
- 			"\n[reset][bold][yellow]The currently selected workspace (%s) does not exist.[reset]",
-@@ -1422,7 +1422,7 @@ func (m *Meta) backendInitFromConfig(ctx context.Context, c *configs.Backend, en
- 	// TODO: test
- 	if m.Input() {
- 		var err error
--		configVal, err = m.inputForSchema(configVal, schema, view)
-+		configVal, err = m.inputForSchema(ctx, configVal, schema, view)
- 		if err != nil {
- 			diags = diags.Append(fmt.Errorf("Error asking for input to configure backend %q: %w", canonType, err))
+ // ConfiguredResourceInstanceObjectMeta represents the subset of metadata
+@@ -200,6 +201,13 @@ func collectResourceInstanceObjectMeta(ctx context.Context, addr addrs.AbsResour
+ 			// the configuration, so any info we didn't already learn about
+ 			// this object will need to come from the previous run state, and
+ 			// that's the caller's responsibility to deal with.
++			ret = append(ret, ModuleConfiguredResourceInstanceObjectMeta{
++				ModuleInstance: moduleInstAddr,
++				ConfiguredResourceInstanceObjectMeta: &ConfiguredResourceInstanceObjectMeta{
++					OrphanActionReason: plans.ResourceInstanceDeleteBecauseNoModule,
++				},
++			})
++
+ 			break
  		}
+ 		relativeModuleInst := []addrs.ModuleInstanceStep(leafModuleInstAddr[len(moduleInstAddr):])
 ```
 
-**File**: `internal/command/meta_backend_migrate.go` (modified, +27/-26)
+**File**: `internal/tofu/context_apply2_test.go` (modified, +3/-5)
 ```diff
-@@ -175,7 +175,7 @@ func (m *Meta) backendMigrateState_S_S(ctx context.Context, opts *backendMigrate
- 	if !migrate {
- 		var err error
- 		// Ask the user if they want to migrate their existing remote state
--		migrate, err = m.confirm(&tofu.InputOpts{
-+		migrate, err = m.confirm(ctx, &tofu.InputOpts{
- 			Id: "backend-migrate-multistate-to-multistate",
- 			Query: fmt.Sprintf(
- 				"Do you want to migrate all workspaces to %q?",
-@@ -235,7 +235,7 @@ func (m *Meta) backendMigrateState_S_s(ctx context.Context, opts *backendMigrate
- 	if !migrate {
- 		var err error
- 		// Ask the user if they want to migrate their existing remote state
--		migrate, err = m.confirm(&tofu.InputOpts{
-+		migrate, err = m.confirm(ctx, &tofu.InputOpts{
- 			Id: "backend-migrate-multistate-to-single",
- 			Query: fmt.Sprintf(
- 				"Destination state %q doesn't support workspaces.\n"+
-@@ -292,7 +292,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 		// for a new name and migrate the default state to the given named state.
- 		destinationState, err = func() (statemgr.Full, error) {
- 			log.Print("[TRACE] backendMigrateState: destination doesn't support a default workspace, so we must prompt for a new name")
--			name, err := m.promptNewWorkspaceName(opts.DestinationType)
-+			name, err := m.promptNewWorkspaceName(ctx, opts.DestinationType)
- 			if err != nil {
- 				return nil, err
- 			}
-@@ -384,7 +384,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 		destination = destinationState.State()
- 	}
- 
--	var confirmFunc func(statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error)
-+	var confirmFunc func(context.Context, statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error)
- 	switch {
- 	// No migration necessary
- 	case source.Empty() && destination.Empty():
-@@ -404,7 +404,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 			// whether to migrate state in the cloud case, so we'll skip
- 			// this later prompt for Cloud, even though we do still need it
- 			// for state backends.
--			confirmFunc = func(statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error) {
-+			confirmFunc = func(context.Context, statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error) {
- 				return true, nil // the answer is implied to be "yes" if we reached this point
- 			}
- 		} else {
-@@ -431,7 +431,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
+@@ -6911,11 +6911,9 @@ func TestContext2Apply_enabledForResource(t *testing.T) {
+ 			t.Fatalf("plan for %s has wrong action %s; want %s", resourceInstAddr, got, want)
  		}
  
- 		// Confirm with the user whether we want to copy state over
--		confirm, err := confirmFunc(sourceState, destinationState, opts)
-+		confirm, err := confirmFunc(ctx, sourceState, destinationState, opts)
- 		if err != nil {
- 			log.Print("[TRACE] backendMigrateState: error reading input, so aborting migration")
- 			return err
-@@ -463,7 +463,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 	return nil
- }
+-		if !experimentalRuntimeEnabled() {
+-			SkipExperimental(t, ExperimentalFeatureActionReason)
+-			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseEnabledFalse; got != want {
+-				t.Errorf("wrong action reason for %s %s; want %s", resourceInstAddr, got, want)
+-			}
++		SkipExperimental(t, ExperimentalFeatureActionReason)
++		if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseEnabledFalse; got != want {
++			t.Errorf("wrong action reason for %s %s; want %s", resourceInstAddr, got, want)
+ 		}
  
--func (m *Meta) backendMigrateEmptyConfirm(source, destination statemgr.Full, opts *backendMigrateOpts) (bool, error) {
-+func (m *Meta) backendMigrateEmptyConfirm(ctx context.Context, source, destination statemgr.Full, opts *backendMigrateOpts) (bool, error) {
- 	var inputOpts *tofu.InputOpts
- 	if opts.DestinationType == "cloud" {
- 		inputOpts = &tofu.InputOpts{
-@@ -481,11 +481,11 @@ func (m *Meta) backendMigrateEmptyConfirm(source, destination statemgr.Full, opt
+ 		newState, diags := tfCtx.Apply(context.Background(), plan, m, nil)
+```
+
+**File**: `internal/tofu/context_apply_test.go` (modified, +11/-10)
+```diff
+@@ -2424,11 +2424,9 @@ func TestContext2Apply_countDecreaseToOneCorrupted(t *testing.T) {
+ 		if got, want := change.Action, plans.Delete; got != want {
+ 			t.Errorf("wrong action for instance zero %s; want %s", got, want)
+ 		}
+-		if !experimentalRuntimeEnabled() {
+-			SkipExperimental(t, ExperimentalFeatureActionReason)
+-			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseWrongRepetition; got != want {
+-				t.Errorf("wrong action reason for instance zero %s; want %s", got, want)
+-			}
++		SkipExperimental(t, ExperimentalFeatureActionReason)
++		if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseWrongRepetition; got != want {
++			t.Errorf("wrong action reason for instance zero %s; want %s", got, want)
+ 		}
+ 	}
+ 	{
+@@ -3039,11 +3037,14 @@ func TestContext2Apply_moduleOrphanInheritAlias(t *testing.T) {
+ 		// This should ideally be ResourceInstanceDeleteBecauseNoModule, but
+ 		// the codepath deciding this doesn't currently have enough information
+ 		// to differentiate, and so this is a compromise.
+-		if !experimentalRuntimeEnabled() {
+-			SkipExperimental(t, ExperimentalFeatureActionReason)
+-			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseNoResourceConfig; got != want {
+-				t.Errorf("wrong action for %s %s; want %s", addr, got, want)
+-			}
++		SkipExperimental(t, ExperimentalFeatureActionReason)
++		expected := plans.ResourceInstanceDeleteBecauseNoResourceConfig
++		if experimentalRuntimeEnabled() {
++			// Fixed in the new runtime
++			expected = plans.ResourceInstanceDeleteBecauseNoModule
++		}
++		if got, want := change.ActionReason, expected; got != want {
++			t.Errorf("wrong action for %s %s; want %s", addr, got, want)
  		}
  	}
  
--	return m.confirm(inputOpts)
-+	return m.confirm(ctx, inputOpts)
- }
- 
- func (m *Meta) backendMigrateNonEmptyConfirm(
--	sourceState, destinationState statemgr.Full, opts *backendMigrateOpts) (bool, error) {
-+	ctx context.Context, sourceState, destinationState statemgr.Full, opts *backendMigrateOpts) (bool, error) {
- 	// We need to grab both states so we can write them to a file
- 	source := sourceState.State()
- 	destination := destinationState.State()
-@@ -533,7 +533,7 @@ func (m *Meta) backendMigrateNonEmptyConfirm(
- 	}
- 
- 	// Confirm with the user that the copy should occur
--	return m.confirm(inputOpts)
-+	return m.confirm(ctx, inputOpts)
- }
- 
- func retrieveWorkspaces(ctx context.Context, back backend.Backend, sourceType string) ([]string, bool, error) {
-@@ -617,7 +617,7 @@ func (m *Meta) backendMigrateTFC(ctx context.Context, opts *backendMigrateOpts)
- 		// We do prompt first though, because state migration is mandatory
- 		// for moving to Cloud and the user should get an opportunity to
- 		// confirm that first.
--		if migrate, err := m.promptSingleToCloudSingleStateMigration(opts); err != nil {
-+		if migrate, err := m.promptSingleToCloudSingleStateMigration(ctx, opts); err != nil {
- 			return err
- 		} else if !migrate {
- 			return nil // skip migrating but return successfully
-@@ -638,7 +638,7 @@ func (m *Meta) backendMigrateTFC(ctx context.Context, opts *backendMigrateOpts)
- 
- 		opts.sourceWorkspace = currentWorkspace
- 		opts.destinationWorkspace = cloudBackendDestination.WorkspaceMapping.Name
--		if err := m.promptMultiToSingleCloudMigration(opts); er
 ```
 
 #### Recent Merged Pull Requests:
@@ -1731,7 +1701,7 @@ Signed-off-by: Ron Green <[REDACTED_EMAIL]>
 - **PR #4793** (2026-10-29): [v1.12] Update cosign (@lbordowitz)
 - **PR #4792** (2026-10-29): [v1.13] Update cosign (@lbordowitz)
 - **PR #4791** (2026-10-29): Update cosign (@lbordowitz)
-- **PR #4789** (2026-10-29): Prepare 1.13.4 release (@lbordowitz)
+- **PR #4790** (2026-11-03): Compute RelevantAttributes in the new runtime (@cam72cam)
 
 ---
 
@@ -1751,24 +1721,27 @@ Signed-off-by: Ron Green <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 4713 uiinput context cancellation v02 (#4755)
+## X. existing paths that should generate action reasons
 
 **RULE**:
-When implementing operations in `internal/command/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/internal/exec/resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1549ae4f`: 4713 uiinput context cancellation v02 (#4755). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `170d7317`: existing paths that should generate action reasons. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/apply.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/internal/exec/resource.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// This is safe to be done since the execution engine contexts are created by ignoring the cancellation from the parent context.
-	// internal/backend/local/backend.go
-	ctx, cancel := c.InterruptibleContext(ctx)
-	defer cancel()
+	"github.com/opentofu/opentofu/internal/plans"
+
+	OrphanActionReason plans.ResourceInstanceChangeActionReason
+		if fromModule.OrphanActionReason != plans.ResourceInstanceChangeNoReason {
+			ret.OrphanActionReason = fromModule.OrphanActionReason
+		}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1778,4 +1751,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1549ae4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `170d7317` are properly handled with clean fallback behavior.

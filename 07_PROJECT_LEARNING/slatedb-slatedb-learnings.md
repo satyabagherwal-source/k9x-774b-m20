@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `3d048690`  
+> **Source Version**: `3799e0d0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:45:53.639Z  
+> **Timestamp**: 2026-11-04T08:14:18.091Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:53.240Z  
+> **Harvest Timestamp**: 2026-11-04T08:14:15.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3609 stars
+- **Stars / Engagement**: 3611 stars
 
 ---
 
@@ -1418,6 +1418,7 @@ use crate::block_iterator::BlockIterator;
 use crate::block_iterator_v2::BlockIteratorV2;
 #[allow(deprecated)] // `CachedObjectStore` is deprecated.
 use crate::cached_object_store::CachedObjectStore;
+#[allow(deprecated)] // `PreloadLevel` is deprecated.
 use crate::config::PreloadLevel;
 use crate::db_state::SortedRun;
 use crate::db_state::SsTableHandle;
@@ -1718,10 +1719,7 @@ fn compute_lower_bound(prev_block_last_key: &Bytes, this_block_first_key: &Bytes
 
     // if the keys are equal, just use the full key
     if prev_block_last_key.len() == this_block_first_key.len() {
-        return this_block_first_key.clone();
-    }
-
-    // 
+     
 ```
 
 ### Core Architecture Module: `bindings/go/uniffi/cgo_flags.go`
@@ -2348,287 +2346,535 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d048690` (2026-11-03)
-**Commit Message**: Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)
+### Incident Patch 1: `3799e0d0` (2026-11-03)
+**Commit Message**: Writing up the PR from the uncommitted change to the WAL writer. (#2217)
 
-**File**: `slatedb/src/db_transaction.rs` (modified, +183/-0)
+**File**: `slatedb/src/wal/slatedb/writer.rs` (modified, +78/-33)
 ```diff
-@@ -380,6 +380,36 @@ impl DbTransaction {
-         Ok(())
+@@ -179,7 +179,7 @@ impl SlateDbWalWriter {
+                     .compare_exchange(last, flush_epoch, Ordering::Relaxed, Ordering::Relaxed)
+                     .is_ok()
+             {
+-                self.send_flush_request(None)?;
++                self.send_flush_request()?;
+             }
+         }
+ 
+@@ -191,14 +191,11 @@ impl SlateDbWalWriter {
      }
  
-+    /// Put a key-value pair into the transaction using owned [`Bytes`].
-+    /// This avoids the buffer copies that [`Self::put`] performs.
-+    /// The write stays buffered in the transaction's write batch until commit.
-+    ///
-+    /// # Panics
-+    /// - If the key is empty.
-+    /// - If the key or value size is larger than `u32::MAX`.
-+    pub fn put_bytes(&self, key: Bytes, value: Bytes) -> Result<(), crate::Error> {
-+        self.put_bytes_with_options(key, value, &PutOptions::default())
-+    }
-+
-+    /// Put a key-value pair into the transaction using owned [`Bytes`] with custom options.
-+    /// See [`Self::put_bytes`] for the buffer ownership behavior.
-+    /// The write stays buffered in the transaction's write batch until commit.
-+    ///
-+    /// # Panics
-+    /// - If the key is empty.
-+    /// - If the key or value size is larger than `u32::MAX`.
-+    pub fn put_bytes_with_options(
-+        &self,
-+        key: Bytes,
-+        value: Bytes,
-+        options: &PutOptions,
-+    ) -> Result<(), crate::Error> {
-+        self.write_batch
-+            .write()
-+            .put_bytes_with_options(key, value, options);
-+        Ok(())
-+    }
-+
-     /// Mark keys as read for conflict detection.
-     ///
-     /// This method explicitly tracks read operations for conflict detection. When keys are
-@@ -852,6 +882,159 @@ mod tests {
-         txn.commit().await.unwrap();
+     /// Send a flush request to the background flush worker.
+-    fn send_flush_request(
+-        &self,
+-        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
+-    ) -> Result<(), WalError> {
++    fn send_flush_request(&self) -> Result<(), WalError> {
+         self.stats.flush_requests.increment(1);
+         self.inner
+             .read()
+-            .send_flush_msg(WalFlushWork::Flush { result_tx })
++            .send_flush_msg(WalFlushWork::FreezeAndFlush)
+     }
+ }
+ 
+@@ -236,9 +233,7 @@ impl WalWriter for SlateDbWalWriter {
+             let mut inner = self.inner.write();
+             inner.check_exited()?;
+             let wal_id = inner.freeze_current_wal();
+-            inner.send_flush_msg(WalFlushWork::Flush {
+-                result_tx: Some(result_tx),
+-            })?;
++            inner.send_flush_msg(WalFlushWork::FlushFrozen { result_tx })?;
+             wal_id
+         };
+         self.stats.flush_requests.increment(1);
+@@ -460,8 +455,13 @@ impl WalBufferIterator {
+ }
+ 
+ enum WalFlushWork {
+-    Flush {
+-        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
++    /// Freeze the current WAL, then flush all frozen WALs. Sent by the ticker and
++    /// when the current WAL exceeds its size limit.
++    FreezeAndFlush,
++    /// Flush the already-frozen WALs without freezing the current one. The caller
++    /// must freeze the current WAL first if it wants it included in the flush.
++    FlushFrozen {
++        result_tx: oneshot::Sender<Result<(), WalError>>,
+     },
+     Subscribe {
+         listener: wal::WalStatusListener,
+@@ -471,7 +471,8 @@ enum WalFlushWork {
+ impl Debug for WalFlushWork {
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+         match self {
+-            WalFlushWork::Flush { .. } => f.write_str("Flush"),
++            WalFlushWork::FreezeAndFlush => f.write_str("FreezeAndFlush"),
++            WalFlushWork::FlushFrozen { .. } => f.write_str("FlushFrozen"),
+             WalFlushWork::Subscribe { .. } => f.write_str("Subscribe"),
+         }
+     }
+@@ -486,11 +487,14 @@ struct WalFlushHandler {
+ }
+ 
+ impl WalFlushHandler {
++    /// Writes all frozen WALs. If `freeze` is set, the current WAL is frozen first.
+     #[instrument(level = "trace", skip_all, err(level = tracing::Level::DEBUG))]
+-    async fn do_flush(&self) -> Result<(), SlateDBError> {
++    async fn do_flush(&self, freeze: bool) -> Result<(), SlateDBError> {
+         let flushing_wals = {
+             let mut inner = self.inner.write();
+-            inner.freeze_current_wal();
++            if freeze {
++                inner.freeze_current_wal();
++            }
+             inner.flushing_wals()
+         };
+ 
+@@ -552,22 +556,19 @@ impl MessageHandler<WalFlushWork> for WalFlushHandler {
+         if let Some(max_flush_interval) = self.max_flush_interval {
+             return vec![MessageTickerDef::new(
+                 max_flush_interval,
+-                Box::new(|| WalFlushWork::Flush { result_tx: None }),
++                Box::new(|| WalFlushWork::FreezeAndFlush),
+             )];
+         }
+         vec![]
      }
  
-+    #[rstest]
-+    #[case::default_options(false)]
-+    #[case::custom_options(true)]
-+    #[tokio::test]
-+    async fn test_txn_put_bytes_shares_buffers(#[case] with_options: bool) {
-+        let db = crate::Db::open("test_db", Arc::new(InMemory::new()))
-+            .await
-+            .unwrap();
-+        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
-+        let key = Bytes::from(b"owned_key".to_vec());
-+        let value = Bytes::from(b"owned_value".to_vec());
-+
-+        if with_options {
-+            txn.put_bytes_with_options(key.clone(), value.clone(), &PutOptions::default())
-+                .unwrap();
-+        } else {
-+            txn.put_bytes(key.clone(), value.clone()).unwrap();
-+        }
-+
-+        let kv = txn.get_key_value(&key).await.unwrap().unwrap();
-+        assert_eq!(kv.key, key);
-+        assert_eq!(kv.value, value);
-+        assert_eq!(kv.key.as_ptr(), key.as_ptr());
-+        assert_eq!(kv.value.as_ptr(), value.as_ptr());
-+        txn.rollback();
-+        db.close().await.unwrap();
-+    }
-+
-+    #[tokio::test]
-+    async fn test_txn_put_bytes_visibility_and_overwrite() {
-+        let db = crate::Db::open("test_db", Arc::new(InMemory::new()))
-+            .await
-+            .unwrap();
-+        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
-+        let key = Bytes::from_static(b"key");
-+        let value = Bytes::from_static(b"value");
-+
-+        txn.put(&key, b"initial").unwrap();
-+        txn.put_bytes(key.clone(), value.clone()).unwrap();
-+        assert_eq!(txn.get(&key).await.unwrap(), Some(value.clone()));
-+        assert_eq!(db.get(&key).await.unwrap(), None);
-+
-+        txn.delete(&key).unwrap();
-+        assert_eq!(txn.get(&key).await.unwrap(), None);
-+        txn.put_bytes_with_options(key.clone(), Bytes::new(), &PutOptions::default())
-+            .unwrap();
-+        assert_eq!(txn.get(&key).await.unwrap(), Some(Bytes::new()));
-+        txn.put_bytes_with_options(key.clone(), value.clone(), &PutOptions::default())
-+            .unwrap();
-+        assert_eq!(txn.get(&key).await.unwrap(), Some(value.clone()));
-+        assert_eq!(db.get(&key).await.unwrap(), None);
-+
-+        txn.commit().await.unwrap();
-+        assert_eq!(db.get(&key).await.unwrap(), Some(value));
-+        db.close().await.unwrap();
-+    }
-+
-+    #[tokio::test]
-+    async fn test_txn_put_bytes_with_options_ttl() {
-+        use crate::config::Ttl;
-+        use slatedb_common::clock::MockSystemClock;
-+
-+        let clock = Arc::new(MockSystemClock::new());
-+        let mut settings = test_db_options(0, 1024, None);
-+        settings.default_ttl_millis = Some(1000);
-+        let db = crate::Db::builder("test_db", Arc::new(InMemory::new()))
-+            .with_settings(settings)
-+            .with_system_clock(clock.clone())
-+            .build()
-+            .await
-+            .unwrap();
-+        clock.set(100);
-+        let txn = db.begin(IsolationLevel::Snapshot).unwrap();
-+        let value = Bytes::from_static(b"value");
-+        txn.put_bytes(Bytes::from_static(b"default"), value.clone())
-+            .unwrap();
-+        txn.put_bytes_with_options(
-+            Bytes::from_static(b"custom"),
-+            value.clone(),
-+            &PutOptions {
-+                ttl: Ttl::ExpireAfterMillis(50),
-+            },
-+        )
-+        .unwrap();
-+
-+        clock.set(200);
-+        assert_eq!(txn.get(b"custom").await.unwrap(), Some(value.clone()));
-+        txn.commit().await.unwrap();
-+        let kv = db.get_key_value(b"custom").await.unwrap().
+     async fn handle(&mut self, message: WalFlushWork) -> Result<(), SlateDBError> {
+         match message {
+-            WalFlushWork::Flush { result_tx } => {
+-                if let Some(result_tx) = result_tx {
+-                    let result = self.do_flush().await;
+-                    let _ = result_tx.send(result.clone().map_err(WalError::from));
+-                    Ok(result?)
+-                } else {
+-                    Ok(self.do_flush().await?)
+-                }
++            WalFlushWork::FreezeAndFlush => self.do_flush(true).await,
++            WalFlushWork::FlushFrozen { result_tx } => {
++                let result = self.do_flush(false).await;
++                let _ = result_tx.send(result.clone().map_err(WalError::from));
++                Ok(result?)
+             }
+             WalFlushWork::Subscribe { listener } => {
+                 // TODO: support multiple listeners. For now, the db listener is the only one
+@@ -598,10 +599,9 @@ impl MessageHandler<WalFlushWork> for WalFlushHandler {
+         // drain remaining messages
+         while let Some(msg) = messages.next().await {
+             match msg {
+-                WalFlushWork::Flush { result_tx } => {
+-                    if let Some(result_tx) = result_tx {
+-                        let _ = result_tx.send(Err(error.clone()));
+-                    }
++                WalFlushWork::FreezeAndFlush => {}
++                WalFlushWork::FlushFrozen { result_tx } => {
++                    let _ = result_tx.send(Err(error.clone()));
+          
 ```
 
 ---
 
-### Incident Patch 2: `66b56724` (2026-11-02)
-**Commit Message**: Bump version to 0.18.0
+### Incident Patch 2: `3d8ee6da` (2026-11-03)
+**Commit Message**: Further deprecation of CachedObjectStore (#2220)
 
-**File**: `Cargo.lock` (modified, +9/-9)
+**File**: `bindings/go/uniffi/slatedb.go` (modified, +10/-7)
 ```diff
-@@ -960,7 +960,7 @@ dependencies = [
+@@ -1844,7 +1844,7 @@ func uniffiCheckChecksums() {
+ 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+ 			return C.uniffi_slatedb_uniffi_checksum_method_settings_set()
+ 		})
+-		if checksum != 16989 {
++		if checksum != 6264 {
+ 			// If this happens try cleaning and rebuilding your project
+ 			panic("slatedb: uniffi_slatedb_uniffi_checksum_method_settings_set: UniFFI API checksum mismatch")
+ 		}
+@@ -9425,8 +9425,7 @@ type SettingsInterface interface {
+ 	// Sets a settings field by dotted path using a JSON literal value.
+ 	//
+ 	// `key` identifies the field to update. Use `.` to address nested objects,
+-	// for example `compactor_options.max_sst_size` or
+-	// `object_store_cache_options.root_folder`.
++	// for example `compactor_options.max_sst_size`.
+ 	//
+ 	// `value_json` must be a valid JSON literal matching the target field's
+ 	// expected type. That means strings must be quoted JSON strings, numbers
+@@ -9444,7 +9443,6 @@ type SettingsInterface interface {
+ 	// - `set("default_ttl_millis", "42")`
+ 	// - `set("default_ttl_millis", "null")`
+ 	// - `set("compactor_options.max_sst_size", "33554432")`
+-	// - `set("object_store_cache_options.root_folder", "\"/tmp/slatedb-cache\"")`
+ 	Set(key string, valueJson string) error
+ 	// Serializes the current settings value to a JSON string.
+ 	ToJsonString() (string, error)
+@@ -9530,8 +9528,7 @@ func SettingsLoad() (*Settings, error) {
+ // Sets a settings field by dotted path using a JSON literal value.
+ //
+ // `key` identifies the field to update. Use `.` to address nested objects,
+-// for example `compactor_options.max_sst_size` or
+-// `object_store_cache_options.root_folder`.
++// for example `compactor_options.max_sst_size`.
+ //
+ // `value_json` must be a valid JSON literal matching the target field's
+ // expected type. That means strings must be quoted JSON strings, numbers
+@@ -9549,7 +9546,6 @@ func SettingsLoad() (*Settings, error) {
+ // - `set("default_ttl_millis", "42")`
+ // - `set("default_ttl_millis", "null")`
+ // - `set("compactor_options.max_sst_size", "33554432")`
+-// - `set("object_store_cache_options.root_folder", "\"/tmp/slatedb-cache\"")`
+ func (_self *Settings) Set(key string, valueJson string) error {
+ 	_pointer := _self.ffiObject.incrementPointer("*Settings")
+ 	defer _self.ffiObject.decrementPointer()
+@@ -12120,6 +12116,8 @@ func (_ FfiDestroyerObjectMetadata) Destroy(value ObjectMetadata) {
  
- [[package]]
- name = "examples"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "anyhow",
-  "object_store",
-@@ -3246,7 +3246,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ // The on-disk object-store cache of one reader. Every default is the
+ // engine's; `root_folder` `None` disables the cache.
++//
++// Deprecated: the engine is replacing this cache with a local object mirror.
+ type ObjectStoreCacheOptions struct {
+ 	// Directory the cached parts are written under. `None` disables the
+ 	// cache and every other field is ignored.
+@@ -12329,6 +12327,9 @@ type ReaderOptions struct {
+ 	// up after `n` retries and surfaces the underlying error.
+ 	ObjectStoreMaxRetries *uint32
+ 	// The reader's object-store cache. `None` is the engine's default.
++	//
++	// Deprecated: the engine is replacing this cache with a local object
++	// mirror.
+ 	ObjectStoreCacheOptions *ObjectStoreCacheOptions
+ }
  
- [[package]]
- name = "slatedb"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-channel",
-  "async-trait",
-@@ -3307,7 +3307,7 @@ dependencies = [
+@@ -14651,6 +14652,8 @@ func (_ FfiDestroyerPrefixTarget) Destroy(value PrefixTarget) {
  
- [[package]]
- name = "slatedb-bencher"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "bytes",
-  "chrono",
-@@ -3325,7 +3325,7 @@ dependencies = [
+ // Which SSTs a reader loads into its disk cache at startup, up to
+ // `max_cache_size_bytes`.
++//
++// Deprecated: the engine is replacing this cache with a local object mirror.
+ type PreloadLevel uint
  
- [[package]]
- name = "slatedb-cli"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "chrono",
-  "clap",
-@@ -3345,7 +3345,7 @@ dependencies = [
- 
- [[package]]
- name = "slatedb-common"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-trait",
-  "bytes",
-@@ -3364,7 +3364,7 @@ dependencies = [
- 
- [[package]]
- name = "slatedb-dst"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-trait",
-  "bytes",
-@@ -3389,7 +3389,7 @@ dependencies = [
- 
- [[package]]
- name = "slatedb-mirror"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-trait",
-  "backon",
-@@ -3412,7 +3412,7 @@ dependencies = [
- 
- [[package]]
- name = "slatedb-txn-obj"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-trait",
-  "bytes",
-@@ -3429,7 +3429,7 @@ dependencies = [
- 
- [[package]]
- name = "slatedb-uniffi"
--version = "0.17.0"
-+version = "0.18.0"
- dependencies = [
-  "async-trait",
-  "chrono",
+ const (
 ```
 
-**File**: `Cargo.toml` (modified, +5/-5)
+**File**: `bindings/uniffi/src/config.rs` (modified, +12/-0)
 ```diff
-@@ -13,7 +13,7 @@ members = [
- ]
+@@ -222,6 +222,9 @@ pub struct ReaderOptions {
+     #[uniffi(default = None)]
+     pub object_store_max_retries: Option<u32>,
+     /// The reader's object-store cache. `None` is the engine's default.
++    ///
++    /// Deprecated: the engine is replacing this cache with a local object
++    /// mirror.
+     #[uniffi(default = None)]
+     pub object_store_cache_options: Option<ObjectStoreCacheOptions>,
+ }
+@@ -241,6 +244,8 @@ impl Default for ReaderOptions {
  
- [workspace.package]
--version = "0.17.0"
-+version = "0.18.0"
- edition = "2021"
- repository = "https://github.com/slatedb/slatedb"
- license = "Apache-2.0"
-@@ -72,10 +72,10 @@ serde = "1.0"
- serde_json = "1.0.142"
- siphasher = "1"
- smallvec = "1.15.1"
--slatedb = { path = "slatedb", version = "0.17.0" }
--slatedb-common = { path = "slatedb-common", version = "0.17.0" }
--slatedb-mirror = { path = "slatedb-mirror", version = "0.17.0" }
--slatedb-txn-obj = { path = "slatedb-txn-obj", version = "0.17.0" }
-+slatedb = { path = "slatedb", version = "0.18.0" }
-+slatedb-common = { path = "slatedb-common", version = "0.18.0" }
-+slatedb-mirror = { path = "slatedb-mirror", version = "0.18.0" }
-+slatedb-txn-obj = { path = "slatedb-txn-obj", version = "0.18.0" }
- snap = "1.1.1"
- sysinfo = "0.35.2"
- thiserror = "1.0.63"
+ /// Which SSTs a reader loads into its disk cache at startup, up to
+ /// `max_cache_size_bytes`.
++///
++/// Deprecated: the engine is replacing this cache with a local object mirror.
+ #[derive(Clone, Copy, Debug, uniffi::Enum)]
+ pub enum PreloadLevel {
+     /// The L0 SSTs only, the most recently written.
+@@ -249,6 +254,7 @@ pub enum PreloadLevel {
+     AllSst,
+ }
+ 
++#[allow(deprecated)] // The engine's `PreloadLevel` is deprecated.
+ impl From<PreloadLevel> for slatedb::config::PreloadLevel {
+     fn from(value: PreloadLevel) -> Self {
+         match value {
+@@ -260,6 +266,8 @@ impl From<PreloadLevel> for slatedb::config::PreloadLevel {
+ 
+ /// The on-disk object-store cache of one reader. Every default is the
+ /// engine's; `root_folder` `None` disables the cache.
++///
++/// Deprecated: the engine is replacing this cache with a local object mirror.
+ #[derive(Clone, Debug, uniffi::Record)]
+ pub struct ObjectStoreCacheOptions {
+     /// Directory the cached parts are written under. `None` disables the
+@@ -300,6 +308,7 @@ pub struct ObjectStoreCacheOptions {
+     pub max_open_file_handles: u64,
+ }
+ 
++#[allow(deprecated)] // The engine's `ObjectStoreCacheOptions` is deprecated.
+ impl Default for ObjectStoreCacheOptions {
+     fn default() -> Self {
+         let engine = slatedb::config::ObjectStoreCacheOptions::default();
+@@ -316,6 +325,7 @@ impl Default for ObjectStoreCacheOptions {
+     }
+ }
+ 
++#[allow(deprecated)] // The engine's `ObjectStoreCacheOptions` is deprecated.
+ impl TryFrom<ObjectStoreCacheOptions> for slatedb::config::ObjectStoreCacheOptions {
+     type Error = Error;
+ 
+@@ -346,6 +356,7 @@ impl TryFrom<ObjectStoreCacheOptions> for slatedb::config::ObjectStoreCacheOptio
+     }
+ }
+ 
++#[allow(deprecated)] // The engine's `object_store_cache_options` is deprecated.
+ impl TryFrom<ReaderOptions> for slatedb::config::DbReaderOptions {
+     type Error = Error;
+ 
+@@ -1077,6 +1088,7 @@ impl TryFrom<&CheckpointOptions> for slatedb::config::CheckpointOptions {
+ }
+ 
+ #[cfg(test)]
++#[allow(deprecated)] // The engine's `ObjectStoreCacheOptions` is deprecated.
+ mod reader_options_tests {
+     use super::*;
+ 
 ```
 
-**File**: `bindings/java/gradle.properties` (modified, +1/-1)
+**File**: `bindings/uniffi/src/settings.rs` (modified, +1/-3)
 ```diff
-@@ -1 +1 @@
--version=0.17.0-SNAPSHOT
-+version=0.18.0-SNAPSHOT
+@@ -78,8 +78,7 @@ impl Settings {
+     /// Sets a settings field by dotted path using a JSON literal value.
+     ///
+     /// `key` identifies the field to update. Use `.` to address nested objects,
+-    /// for example `compactor_options.max_sst_size` or
+-    /// `object_store_cache_options.root_folder`.
++    /// for example `compactor_options.max_sst_size`.
+     ///
+     /// `value_json` must be a valid JSON literal matching the target field's
+     /// expected type. That means strings must be quoted JSON strings, numbers
+@@ -97,7 +96,6 @@ impl Settings {
+     /// - `set("default_ttl_millis", "42")`
+     /// - `set("default_ttl_millis", "null")`
+     /// - `set("compactor_options.max_sst_size", "33554432")`
+-    /// - `set("object_store_cache_options.root_folder", "\"/tmp/slatedb-cache\"")`
+     pub fn set(&self, key: String, value_json: String) -> Result<(), Error> {
+         let mut guard = self.inner.lock();
+         let mut settings_json = serde_json::to_value(&*guard)
 ```
 
-**File**: `bindings/node/package.json` (modified, +1/-1)
+**File**: `slatedb/src/config.rs` (modified, +37/-26)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@slatedb/uniffi",
--  "version": "0.17.0",
-+  "version": "0.18.0",
-   "description": "Node.js bindings for SlateDB generated from UniFFI and packaged with native libraries.",
-   "license": "Apache-2.0",
-   "type": "module",
+@@ -69,12 +69,6 @@
+ //! max_compaction_sources = "8"
+ //! include_size_threshold = "4.0"
+ //!
+-//! [object_store_cache_options]
+-//! root_folder = "/tmp/slatedb-cache"
+-//! max_cache_size_bytes = 17179869184
+-//! part_size_bytes = 4194304
+-//! scan_interval = "3600s"
+-//!
+ //! [garbage_collector_options.manifest_options]
+ //! interval = "300s"
+ //! min_age = "86400s"
+@@ -122,12 +116,6 @@
+ //!    }
+ //!  },
+ //!  "compression_codec": null,
+-//!  "object_store_cache_options": {
+-//!    "root_folder": "/tmp/slatedb-cache",
+-//!    "max_cache_size_bytes": 17179869184,
+-//!    "part_size_bytes": 4194304,
+-//!    "scan_interval": "3600s"
+-//!  },
+ //!  "garbage_collector_options": {
+ //!    "manifest_options": {
+ //!      "interval": "300s",
+@@ -175,11 +163,6 @@
+ //!     max_compaction_sources: "8"
+ //!     include_size_threshold: "4.0"
+ //! compression_codec: null
+-//! object_store_cache_options:
+-//!   root_folder: /tmp/slatedb-cache
+-//!   max_cache_size_bytes: 17179869184
+-//!   part_size_bytes: 4194304
+-//!   scan_interval: '3600s'
+ //! garbage_collector_options:
+ //!   manifest_options:
+ //!     interval: '300s'
+@@ -218,6 +201,10 @@ fn default_true() -> bool {
+ }
+ 
+ /// Enum representing different levels of cache preloading on startup
++#[deprecated(
++    since = "0.18.1",
++    note = "Configures `CachedObjectStore`, which is being replaced by the local object mirror, `slatedb_mirror::ObjectStoreMirror`. If you need tiered caching, use `slatedb::db_cache::foyer_hybrid::FoyerHybridCache`."
++)]
+ #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
+ pub enum PreloadLevel {
+     /// Preload only L0 SSTs (most recently written files)
+@@ -689,6 +676,9 @@ pub struct CheckpointOptions {
+ /// Setting both will result in an error.
+ ///
+ /// For backward compatibility, DBOptions is a type alias for Settings.
++// `serde_derive` adds `#[allow(deprecated)]` to its impls only when the
++// container has it. They name the deprecated `ObjectStoreCacheOptions`.
++#[allow(deprecated)]
+ #[derive(Clone, Deserialize, Serialize)]
+ pub struct Settings {
+     /// How frequently to flush the write-ahead log to object storage.
+@@ -821,11 +811,11 @@ pub struct Settings {
+     /// The object store cache options. When `root_folder` is set, the database
+     /// wraps its main object store in a
+     /// [`CachedObjectStore`](crate::cached_object_store::CachedObjectStore)
+-    /// built from these options. To construct and share the cache yourself,
+-    /// build one with
+-    /// [`CachedObjectStore::builder`](crate::cached_object_store::CachedObjectStore::builder)
+-    /// and pass it to [`Db::builder`](crate::Db::builder) instead, leaving
+-    /// these options unset.
++    /// built from these options.
++    #[deprecated(
++        since = "0.18.1",
++        note = "Configures `CachedObjectStore`, which is being replaced by the local object mirror, `slatedb_mirror::ObjectStoreMirror`. If you need tiered caching, use `slatedb::db_cache::foyer_hybrid::FoyerHybridCache`."
++    )]
+     pub object_store_cache_options: ObjectStoreCacheOptions,
+ 
+     /// Configuration options for the garbage collector.
+@@ -865,6 +855,7 @@ pub struct Settings {
+ // Implement Debug manually for DbOptions.
+ // This is needed because DbOptions contains several boxed trait objects
+ // which doesn't implement Debug.
++#[allow(deprecated)] // `object_store_cache_options` is deprecated.
+ impl std::fmt::Debug for Settings {
+     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+         let mut data = f.debug_struct("DbOptions");
+@@ -993,8 +984,8 @@ impl Settings {
+     ///
+     /// For example, if the prefix is "SLATEDB_" and there's an environment variable named "SLATEDB_DB_FLUSH_INTERVAL",
+     /// it would correspond to the `flush_interval` field within the `Settings` struct.
+-    /// If there is an environment variable named "SLATEDB_OBJECT_STORE_CACHE_OPTIONS.ROOT_FOLDER",
+-    /// it would correspond to the `root_folder` field within the `ObjectStoreCacheOptions` within `Settings`".
++    /// If there is an environment variable named "SLATEDB_COMPACTOR_OPTIONS.MAX_CONCURRENT_COMPACTIONS",
++    /// it would correspond to the `max_concurrent_compactions` field within the `CompactorOptions` within `Settings`".
+     ///
+     /// # Arguments
+     ///
+@@ -1031,8 +1022,8 @@ impl Settings {
+     ///
+     /// For example, if the prefix is "SLATEDB_" and there's an environment variable named "SLATEDB_DB_FLUSH_INTERVAL",
+     /// it would correspond to the `flush_interval` field within the `Settings` struct.
+-    /// If there is an environment variable named "SLATEDB_OBJECT_STORE_CACHE_OPTIONS.ROOT_FOLDER",
+-    /// it would correspond to the `root_folder` field within the `ObjectStoreCacheOptions` within `Settings`".
++    /// If there is an environment variable named "SLATEDB_COMPACTOR_OPTIONS.MAX_CONCURRENT_COMPACTIONS",
++    /// it would correspond to the `max_concurrent_compactions` field within the `CompactorOptions` within `Settings`".
+     
+```
+
+**File**: `slatedb/src/db.rs` (modified, +5/-5)
+```diff
+@@ -541,7 +541,7 @@ impl DbInner {
+         Ok(())
+     }
+ 
+-    #[allow(deprecated)] // `CachedObjectStore` is deprecated.
++    #[allow(deprecated)] // `CachedObjectStore` and its options are deprecated.
+     async fn preload_cache(
+         &self,
+         cached_obj_store: &CachedObjectStore,
+@@ -2230,9 +2230,8 @@ mod tests {
+     use crate::config::MetricLevel;
+     use crate::config::{
+         CheckpointOptions, CheckpointScope, CloseOptions, CompactionWorkerOptions,
+-        CompactorOptions, GarbageCollectorDirectoryOptions, GarbageCollectorOptions,
+-        ObjectStoreCacheOptions, PutOptions, ScanOptions, Settings, SstBlockSize, Ttl,
+-        WriteOptions,
++        CompactorOptions, GarbageCollectorDirectoryOptions, GarbageCollectorOptions, PutOptions,
++        ScanOptions, Settings, SstBlockSize, Ttl, WriteOptions,
+     };
+     use crate::db::builder::GarbageCollectorBuilder;
+     use crate::db_stats::IMMUTABLE_MEMTABLE_FLUSHES;
+@@ -7930,6 +7929,7 @@ mod tests {
+         }
+     }
+ 
++    #[allow(deprecated)] // `object_store_cache_options` is deprecated.
+     fn test_db_options_with_ttl(
+         min_filter_keys: u32,
+         l0_sst_size_bytes: usize,
+@@ -7951,7 +7951,7 @@ mod tests {
+             max_wal_flushes_before_l0_flush: 4096,
+             compactor_options,
+             compression_codec: None,
+-            object_store_cache_options: ObjectStoreCacheOptions::default(),
++            object_store_cache_options: crate::config::ObjectStoreCacheOptions::default(),
+             garbage_collector_options: None,
+             metric_level: MetricLevel::default(),
+             default_ttl_millis,
+```
+
+**File**: `slatedb/src/db/builder.rs` (modified, +6/-5)
+```diff
+@@ -207,9 +207,9 @@ impl<P: Into<Path>> DbBuilder<P> {
+     /// Creates a new builder for a database at the given path.
+     ///
+     /// `main_object_store` may be any [`ObjectStore`], including a wrapper
+-    /// like
+-    /// [`CachedObjectStore`](crate::cached_object_store::CachedObjectStore)
+-    /// built over the raw backend to serve SST reads from a local disk cache.
++    /// like [`ObjectStoreMirror`](slatedb_mirror::ObjectStoreMirror) with a
++    /// [`SlateDbMirrorPolicy`](crate::SlateDbMirrorPolicy), built over the
++    /// raw backend to serve compacted SST reads from local disk.
+     pub fn new(path: P, main_object_store: Arc<dyn ObjectStore>) -> Self {
+         Self {
+             path,
+@@ -538,7 +538,7 @@ impl<P: Into<Path>> DbBuilder<P> {
+         // [`CachedObjectStore`] passed to [`DbBuilder::new`]: the cache sits
+         // under the retry and instrumentation layers, so the same cache
+         // instance can be shared with the WAL store, compactor, and GC.
+-        #[allow(deprecated)] // `CachedObjectStore` is deprecated.
++        #[allow(deprecated)] // `CachedObjectStore` and its options are deprecated.
+         let cached_object_store = CachedObjectStore::from_config(
+             self.main_object_store.clone(),
+             &self.settings.object_store_cache_options,
+@@ -2013,7 +2013,7 @@ impl<P: Into<Path>> DbReaderBuilder<P> {
+         // Set up the object store with optional caching from the reader
+         // options, with the cache under the retry and instrumentation layers,
+         // matching a caller-built [`CachedObjectStore`] passed to the reader.
+-        #[allow(deprecated)] // `CachedObjectStore` is deprecated.
++        #[allow(deprecated)] // `CachedObjectStore` and its options are deprecated.
+         let maybe_cached = CachedObjectStore::from_config(
+             self.object_store.clone(),
+             &self.options.object_store_cache_options,
+@@ -2828,6 +2828,7 @@ mod tests {
+     }
+ 
+     #[tokio::test]
++    #[allow(deprecated)] // `object_store_cache_options` is deprecated.
+     async fn test_settings_configured_object_store_cache() {
+         let object_store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
+         let path = Path::from("test_settings_configured_object_store_cache");
+```
+
+**File**: `slatedb/src/db_reader.rs` (modified, +1/-1)
+```diff
+@@ -885,7 +885,7 @@ impl DbReader {
+     }
+ 
+     /// Preload the disk cache from the current manifest state.
+-    #[allow(deprecated)] // `CachedObjectStore` is deprecated.
++    #[allow(deprecated)] // `CachedObjectStore` and its options are deprecated.
+     pub(crate) async fn preload_cache(
+         &self,
+         cached_obj_store: &CachedObjectStore,
+```
+
+**File**: `slatedb/src/db_transaction.rs` (modified, +1/-0)
+```diff
+@@ -2220,6 +2220,7 @@ mod tests {
+         db.close().await.unwrap();
+     }
+ 
++    #[allow(deprecated)] // `object_store_cache_options` is deprecated.
+     fn test_db_options(
+         min_filter_keys: u32,
+         l0_sst_size_bytes: usize,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2220** (2026-11-03): Further deprecation of CachedObjectStore (@nomiero)
 - **PR #2219** (2026-11-03): Add `DbTransaction::put_bytes/put_bytes_with_options` (@criccomini)
+- **PR #2217** (2026-11-03): Writing up the PR from the uncommitted change to the WAL writer. (@criccomini)
 - **PR #2216** (2026-11-02): Close pull requests from unvouched authors with Vouch (@criccomini)
 - **PR #2214** (2026-11-02): Clamp entries in CachedEntry constructors (@hzhou0)
 - **PR #2212** (closed): Clamp entries to allocated size on custom caches (@hzhou0)
-- **PR #2208** (2026-10-30): Drop versions a memtable shadows at flush when the WAL is enabled (@sorenbs)
-- **PR #2207** (2026-10-29): Remove open PR contributions (@criccomini)
 
 ---
 
@@ -2648,60 +2894,73 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)
+## X. Writing up the PR from the uncommitted change to the WAL writer. (#2217)
 
 **RULE**:
-When implementing operations in `slatedb/src/db_transaction.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/wal/slatedb/writer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d048690`: Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3799e0d0`: Writing up the PR from the uncommitted change to the WAL writer. (#2217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/db_transaction.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/wal/slatedb/writer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Put a key-value pair into the transaction using owned [`Bytes`].
-    /// This avoids the buffer copies that [`Self::put`] performs.
-    /// The write stays buffered in the transaction's write batch until commit.
-    ///
-    /// # Panics
-    /// - If the key is empty.
-    /// - If the key or value size is larger than `u32::MAX`.
-    pub fn put_bytes(&self, key: Bytes, value: Bytes) -> Result<(), crate::Error> {
-        self.put_bytes_with_options(key, value, &PutOptions::default())
-    }
-
-    /// Put a key-value pair into the transaction using owned [`Bytes`] with custom options.
-    /// See [`Self::put_bytes`] for the buffer ownership behavior.
-    /// The write stays buffered in the transaction's write batch until commit.
-    ///
-    /// # Panics
-    /// - If the key is empty.
-    /// - If the key or value size is larger than `u32::MAX`.
-    pub fn put_bytes_with_options(
-        &self,
-        key: Bytes,
-        value: Bytes,
-        options: &PutOptions,
-    ) -> Result<(), crate::Error> {
-        self.write_batch
-            .write()
-            .put_bytes_with_options(key, value, options);
-        Ok(())
-    }
-
-    #[rstest]
-    #[case::default_options(false)]
-    #[c
+                self.send_flush_request()?;
+    fn send_flush_request(&self) -> Result<(), WalError> {
+            .send_flush_msg(WalFlushWork::FreezeAndFlush)
+            inner.send_flush_msg(WalFlushWork::FlushFrozen { result_tx })?;
+    /// Freeze the current WAL, then flush all frozen WALs. Sent by the ticker and
+    /// when the current WAL exceeds its size limit.
+    FreezeAndFlush,
+    /// Flush the already-frozen WALs without freezing the current one. The caller
+    /// must freeze the current WAL first if it wants it included in the flush.
+    FlushFrozen {
+        result_tx: oneshot::Sender<Result<(), WalError>>,
+            WalFlushWork::FreezeAndFlush => f.write_str("FreezeAndFlush"),
+            WalFlushWork::FlushFrozen { .. } => f.write_str("FlushFrozen"),
+    /// Writes all frozen WALs. If `freeze` is set, the current WAL is frozen first.
+    async fn do_flush(&self, freeze: bool) -> Result<(), SlateDBError> {
+            if freeze {
+                inner.freeze_current_wal();
+            }
+                Box::new(|| WalFlushWork::FreezeAndFlush),
+            WalFlushWork::FreezeAndFlush => self.do_flush(true).await,
+            WalFlushWork::FlushFrozen { result_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                self.send_flush_request(None)?;
+    fn send_flush_request(
+        &self,
+        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
+    ) -> Result<(), WalError> {
+            .send_flush_msg(WalFlushWork::Flush { result_tx })
+            inner.send_flush_msg(WalFlushWork::Flush {
+                result_tx: Some(result_tx),
+            })?;
+    Flush {
+        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
+            WalFlushWork::Flush { .. } => f.write_str("Flush"),
+    async fn do_flush(&self) -> Result<(), SlateDBError> {
+            inner.freeze_current_wal();
+                Box::new(|| WalFlushWork::Flush { result_tx: None }),
+            WalFlushWork::Flush { result_tx } => {
+                if let Some(result_tx) = result_tx {
+                    let result = self.do_flush().await;
+                    let _ = result_tx.send(result.clone().map_err(WalError::from));
+                    Ok(result?)
+                } else {
+                    Ok(self.do_flush().await?)
+                }
+                WalFlushWork::Flush { result_tx } => {
+                    if let Some(result_tx) = result_tx {
+                        let _ = result_tx.se
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d048690` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3799e0d0` are properly handled with clean fallback behavior.

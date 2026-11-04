@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:06:06.092Z",
+  "last_updated": "2026-11-04T08:14:18.576Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
-      "verified_at": "2026-11-03T10:45:54.123Z",
+      "content_hash": "b6ac7fe9d3af27969984c5f97006b523f7387478638c80456a186eadbbc0a837",
+      "verified_at": "2026-11-04T08:14:18.576Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:45:54.123Z"
+      "last_updated": "2026-11-04T08:14:18.576Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
-      "verified_at": "2026-11-02T14:24:45.214Z",
+      "content_hash": "f95b27cc6d6b8c32303e9c61be580883c6ee94eaadebce433cbbaf3b0ae364a0",
+      "verified_at": "2026-11-04T08:14:08.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T14:24:45.214Z"
+      "last_updated": "2026-11-04T08:14:08.611Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "a4fd673ef0c64ddf5d975f4628c3ca89769f58a84f7c52cabd2cc690f6360908",
-      "verified_at": "2026-11-03T11:39:07.442Z",
+      "content_hash": "084e88395639a4075252bd5da762d6a401105a16e9b3567a4981071327a7c55c",
+      "verified_at": "2026-11-04T08:14:13.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:39:07.442Z"
+      "last_updated": "2026-11-04T08:14:13.703Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

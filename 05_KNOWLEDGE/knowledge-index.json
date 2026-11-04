@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:06:05.988Z",
+  "last_updated": "2026-11-04T08:14:18.505Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11848,8 +11848,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "d5f3406c",
-      "content_hash": "361664f570229a7ad4a24ec5248d8b86caa3206c32a6add52c2731ef0200affd",
+      "source_version": "d1996344",
+      "content_hash": "f95b27cc6d6b8c32303e9c61be580883c6ee94eaadebce433cbbaf3b0ae364a0",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -11912,6 +11912,11 @@
           "number": 6405,
           "title": "[MCXA] tests: rtc_alarm: raise timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6771,
+          "title": "Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11919,7 +11924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:24:45.139Z",
+      "verified_at": "2026-11-04T08:14:08.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45677,8 +45682,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "1549ae4f",
-      "content_hash": "a4fd673ef0c64ddf5d975f4628c3ca89769f58a84f7c52cabd2cc690f6360908",
+      "source_version": "c570669d",
+      "content_hash": "084e88395639a4075252bd5da762d6a401105a16e9b3567a4981071327a7c55c",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -45736,6 +45741,11 @@
           "number": 6510,
           "title": "uiinput context cancellation v02 (#4755)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6772,
+          "title": "existing paths that should generate action reasons",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45743,7 +45753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:39:07.304Z",
+      "verified_at": "2026-11-04T08:14:13.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53120,8 +53130,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "3d048690",
-      "content_hash": "bb829ee589300efe830ff33cebc8a8872e48e68fc0a44b303ae8cd8e34e84df8",
+      "source_version": "3799e0d0",
+      "content_hash": "b6ac7fe9d3af27969984c5f97006b523f7387478638c80456a186eadbbc0a837",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -53159,6 +53169,11 @@
           "number": 6495,
           "title": "Add `DbTransaction::put_bytes/put_bytes_with_options` (#2219)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6773,
+          "title": "Writing up the PR from the uncommitted change to the WAL writer. (#2217)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53166,7 +53181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:45:54.049Z",
+      "verified_at": "2026-11-04T08:14:18.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173499,6 +173514,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:06:05.964Z"
+    },
+    "rule-6771": {
+      "learning_id": "rule-6771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6771,
+      "title": "Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "d1996344",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:14:08.539Z"
+    },
+    "rule-6772": {
+      "learning_id": "rule-6772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6772,
+      "title": "existing paths that should generate action reasons",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "c570669d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:14:13.633Z"
+    },
+    "rule-6773": {
+      "learning_id": "rule-6773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6773,
+      "title": "Writing up the PR from the uncommitted change to the WAL writer. (#2217)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "3799e0d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:14:18.492Z"
     }
   },
   "aliases": {

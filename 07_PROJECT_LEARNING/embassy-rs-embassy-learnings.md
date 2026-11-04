@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `d5f3406c`  
+> **Source Version**: `d1996344`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:24:44.728Z  
+> **Timestamp**: 2026-11-04T08:14:08.075Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:24:43.765Z  
+> **Harvest Timestamp**: 2026-11-04T08:14:03.545Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10058 stars
+- **Stars / Engagement**: 10066 stars
 
 ---
 
@@ -1435,11 +1435,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7401** (2026-11-01): **embassy-net: BorrowMutError panics on preemptive executors (esp_rtos time-slicing) - proposal: preemption-safe spin-token access**
-  *Symptoms*: ### Background  When embassy-net 0.9.1 is used under **esp_rtos** (the preemptive RTOS introduced with esp-hal 1.2, time-slicing scheduler), calls into the stack can panic with:  ``` panicked at embassy-net/src/lib.rs:417:9: already borrowed: BorrowMutError    Inner::borrow_mut   Stack::with_mut   UdpSocket::poll_recv_from   <app task> ```  Decoded backtrace from ESP32-S3 (esp-hal 1.2.2, esp_rtos 0.4.0), reproduces probabilistically under media load.  ### Mechanism  `Stack::with` / `Stack::with_mut` hold a `RefCell` borrow for the duration of the closure. embassy-net assumes the executor is **cooperative** (tasks only yield at `await` points), so two borrows can never overlap.  esp_rtos schedules embassy tasks as preemptive round-robin tasks: a time-slice tick can switch tasks **mid-borrow**, and the next task's `borrow_mut` then panics. To our knowledge this scenario is new with esp_rtos, and distinct from #3904 (that one was about accessing the stack from interrupt/other executor contexts; here the stack is used from a single executor — the preemptive scheduler alone breaks the single-borrow assumption). Main's `WakeRunner` refactor narrows nothing in this regard: `with()` still holds a bare `borrow_mut()`.  ### Proposed fix: preemption-safe spin token (~37 lines)  Replace bare `RefCell` borrows with a token-guarded access — **no interrupts are masked and no critical-section dependency is added**:  ```rust pub(crate) struct SpinToken(core::sync::atomic::AtomicBool);  impl S
+- **Issue #7422** (2026-11-03): **ci: rm bad boards**
+  *Symptoms*: 
 
-- **Issue #7399** (2026-11-02): **[MCXA] update to newest PAC**
-  *Symptoms*: No functional changes, just updating the PAC.
+- **Issue #7419** (2026-11-04): **[MCXA] Add AOI and CMP drivers**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,30 +1456,632 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e105d66` (2026-11-02)
-**Commit Message**: [MCXA] tests: rtc_alarm: raise timeout
+### Incident Patch 1: `d1d3c781` (2026-11-04)
+**Commit Message**: Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery
 
-Test takes longer now.
+stm32/i2c v2: reset the peripheral when a blocking transfer times out
 
-**File**: `tests/mcxa2xx/src/bin/rtc_alarm.rs` (modified, +1/-0)
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -2,6 +2,7 @@
- #![no_main]
+@@ -21,6 +21,7 @@ Time driver:
  
- teleprobe_meta::target!(b"frdm-mcx-a266");
-+teleprobe_meta::timeout!(30);
+ I2C:
+ - fix: stm32/i2c v2: disable own-address recognition before changing an enabled OA1/OA2 address, addressing mode, or OA2 mask.
++- fix: stm32/i2c v2: a blocking controller transfer that times out (e.g. SCL held low by the target) now resets the peripheral (PE toggle, as for BERR/ARLO) instead of requesting STOP and abandoning the transfer. The abandoned transfer's NACKF/STOPF arrived later and the next call returned them after it had started its own transfer, which then ran unserved, so every later blocking transfer timed out until PE was toggled by hand.
+ - fix: stm32/i2c v2: an async slave `respond_to_write` that received more than its buffer holds timed out while discarding the extra bytes, because nothing woke it for them, and could leave the last one in RXDR. It now wakes on every byte and reads a byte that arrived with the STOP.
  
- use defmt_rtt as _;
- use embassy_executor::Spawner;
+ USART:
+```
+
+**File**: `embassy-stm32/src/i2c/v2.rs` (modified, +54/-35)
+```diff
+@@ -167,6 +167,23 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+         self.info.regs.cr2().write(|w| w.set_stop(true));
+     }
+ 
++    /// Aborts the transfer of a blocking call that returned [`Error::Timeout`], leaving the
++    /// peripheral idle.
++    ///
++    /// The timeout abandons the transfer halfway: its START (and STOP, if one was requested) can
++    /// still be pending in CR2, the peripheral can still wait for TXDR/RXDR, and NACKF/STOPF
++    /// arrive once the target lets go of SCL. The next transfer would run into all of that: it
++    /// returns the old transfer's NACK after starting its own transfer, which then runs with
++    /// nobody serving it, and the peripheral stays stuck until PE is toggled. So toggle PE now,
++    /// as `error_occurred` does for BERR and ARLO.
++    fn abort_on_timeout<R>(&self, result: Result<R, Error>) -> Result<R, Error> {
++        if matches!(result, Err(Error::Timeout)) {
++            trace!("Timeout, resetting the peripheral.");
++            self.soft_reset();
++        }
++        result
++    }
++
+     /// Resets the I2C peripheral state machine while preserving configuration.
+     ///
+     /// This can be used to recover from a spurious start condition that leaves the BUSY flag set
+@@ -566,20 +583,15 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+         // I2C start
+         //
+         // ST SAD+W
+-        if let Err(err) = Self::master_write(
++        Self::master_write(
+             self.info,
+             address,
+             write.len().min(255),
+             Stop::Software,
+             last_chunk_idx != 0,
+             false, // restart
+             timeout,
+-        ) {
+-            if send_stop {
+-                self.master_stop();
+-            }
+-            return Err(err);
+-        }
++        )?;
+ 
+         for (number, chunk) in write.chunks(255).enumerate() {
+             if number != 0 {
+@@ -597,8 +609,9 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+                 // (START has been ACKed or last byte when
+                 // through)
+                 if let Err(err) = self.wait_txis(timeout) {
+-                    if send_stop && err != Error::Nack {
+-                        // STOP is sent automatically if a NACK was received
++                    // STOP is sent automatically if a NACK was received, and a timeout is
++                    // aborted by resetting the peripheral instead (see `abort_on_timeout`).
++                    if send_stop && !matches!(err, Error::Nack | Error::Timeout) {
+                         self.master_stop();
+                     }
+                     return Err(err);
+@@ -622,13 +635,15 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+ 
+     /// Blocking read.
+     pub fn blocking_read(&mut self, address: impl Into<Address>, read: &mut [u8]) -> Result<(), Error> {
+-        self.read_internal(address.into(), read, false, self.timeout())
++        let result = self.read_internal(address.into(), read, false, self.timeout());
+         // Automatic Stop
++        self.abort_on_timeout(result)
+     }
+ 
+     /// Blocking write.
+     pub fn blocking_write(&mut self, address: impl Into<Address>, write: &[u8]) -> Result<(), Error> {
+-        self.write_internal(address.into(), write, true, self.timeout())
++        let result = self.write_internal(address.into(), write, true, self.timeout());
++        self.abort_on_timeout(result)
+     }
+ 
+     /// Blocking write, restart, read.
+@@ -640,9 +655,11 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+     ) -> Result<(), Error> {
+         let address = address.into();
+         let timeout = self.timeout();
+-        self.write_internal(address, write, false, timeout)?;
+-        self.read_internal(address, read, true, timeout)
++        let result = self
++            .write_internal(address, write, false, timeout)
++            .and_then(|()| self.read_internal(address, read, true, timeout));
+         // Automatic Stop
++        self.abort_on_timeout(result)
+     }
+ 
+     /// Blocking transaction with operations.
+@@ -665,7 +682,16 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+     ) -> Result<(), Error> {
+         let address = addr.into();
+         let timeout = self.timeout();
++        let result = self.execute_groups(address, operations, timeout);
++        self.abort_on_timeout(result)
++    }
+ 
++    fn execute_groups<O: TransactionOp>(
++        &mut self,
++        address: Address,
++        operations: &mut [O],
++        timeout: Timeout,
++    ) -> Result<(), Error> {
+         // Group consecutive operations of the same type
+         let mut op_idx = 0;
+         let mut is_first_group = true;
+@@ -876,6 +902,11 @@ impl<'d, M: Mode, IM: MasterMode> I2c<'d, M, IM> {
+     ///
+     /// The buffers are concatenated in a single write transaction.
+     pub fn blocking_write_vectored(&mut self, address: u8, write: &[&[u8]]) -> Result<(), Error> {
++        let result = self.write_vectored_internal(address, write);
++        self.abort_on_timeout(result
+```
+
+---
+
+### Incident Patch 2: `df012c99` (2026-11-04)
+**Commit Message**: Merge branch 'main' into stm32-i2c-blocking-timeout-recovery
+
+**File**: `ci.sh` (modified, +2/-0)
+```diff
+@@ -41,6 +41,8 @@ rm -rf out/tests/nrf5340-dk
+ rm -rf out/tests/nrf51422-dk
+ 
+ # temporarily disabled
++rm -rf out/tests/stm32f767zi
++rm -rf out/tests/stm32f429zi
+ 
+ rm -f out/tests/stm32u585ai/saes
+ 
+```
+
+**File**: `embassy-mcxa/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -118,13 +118,13 @@ embassy-time-queue-utils = { version = "0.3.2", path = "../embassy-time-queue-ut
+ grounded = { version = "0.2.1", features = ["cas", "critical-section"] }
+ maitake-sync = { version = "0.3.0", default-features = false, features = ["critical-section", "no-cache-pad"] }
+ nb = "1.1.0"
+-nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "6b12ea6081a31b8920ab36f883df5e966ac8e34f", features = ["rt"] }
++nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "9f0745e0285225b8feac3e53dae0f06f58313dc0", features = ["rt"] }
+ paste = "1.0.15"
+ 
+ rand-core-10 = { package = "rand_core", version = "0.10" }
+ 
+ [build-dependencies]
+-nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "6b12ea6081a31b8920ab36f883df5e966ac8e34f", default-features = false, features = ["metadata"] }
++nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "9f0745e0285225b8feac3e53dae0f06f58313dc0", default-features = false, features = ["metadata"] }
+ proc-macro2 = "1.0.106"
+ quote = "1.0.45"
+ convert_case = "0.12"
+```
+
+**File**: `embassy-mcxa/build.rs` (modified, +58/-2)
+```diff
+@@ -70,6 +70,7 @@ fn main() {
+         generate_instance_calls(),
+         generate_gpio_pin_impls(),
+         generate_adc_pin_impls(),
++        generate_cmp_pin_impls(),
+         generate_clkout_impls(),
+         generate_lpi2c_pin_impls(),
+         generate_i3c_pin_impls(),
+@@ -118,6 +119,16 @@ fn generate_peripherals_call() -> TokenStream {
+             .map(|peripheral| Singleton::just_name(peripheral.name)),
+     );
+ 
++    // Narrow ownership of the digital detector's control register in SECCON.
++    if METADATA
++        .peripherals
++        .iter()
++        .any(|peripheral| peripheral.name == "DGDET0")
++        && !singletons.iter().any(|singleton| singleton.name == "GDET0_CTRL")
++    {
++        singletons.push(Singleton::just_name("GDET0_CTRL"));
++    }
++
+     // Add DMA channels
+     for (dma_num, dma_peripheral) in METADATA
+         .peripherals
+@@ -194,7 +205,9 @@ fn generate_cc_gates() -> TokenStream {
+         let reset = gate.reset.map(|reset| format_ident!("{reset}"));
+         let config = gate.config.map(|config| format_ident!("{config}")).unwrap_or_else(|| {
+             // FREQME's PAC metadata predates its HAL clock helper.
+-            if peripheral.driver_name == "mcxa/FREQME" {
++            if is_numbered(peripheral.name, "CMP") {
++                format_ident!("CmpConfig")
++            } else if peripheral.driver_name == "mcxa/FREQME" {
+                 format_ident!("FreqmeConfig")
+             } else {
+                 format_ident!("NoConfig")
+@@ -230,7 +243,8 @@ fn generate_instance_calls() -> TokenStream {
+     let mut generated = TokenStream::new();
+ 
+     const REQUIRES_INSTANCE: &[&str] = &[
+-        "adc", "crc", "dac", "gpio", "trng", "wwdt", "ctimer", "lpi2c", "i3c", "lpuart", "lpspi", "flexspi", "can",
++        "adc", "cmp", "crc", "dac", "gpio", "trng", "wwdt", "ctimer", "lpi2c", "i3c", "lpuart", "lpspi", "flexspi",
++        "can",
+     ];
+ 
+     for peripheral in METADATA.peripherals {
+@@ -317,6 +331,48 @@ fn generate_adc_pin_impls() -> TokenStream {
+     generated
+ }
+ 
++fn generate_cmp_pin_impls() -> TokenStream {
++    let mut generated = TokenStream::new();
++    let a2 = env::var_os("CARGO_FEATURE__MCXA2XX").is_some();
++    for cmp in METADATA.peripherals.iter().filter(|p| is_numbered(p.name, "CMP")) {
++        let peripheral = format_ident!("{}", cmp.name);
++        for signal in cmp.signals {
++            let (number, positive, negative) = if let Some(n) = signal.name.strip_prefix("INP") {
++                (n, true, false)
++            } else if let Some(n) = signal.name.strip_prefix("INN") {
++                (n, false, true)
++            } else if let Some(n) = signal.name.strip_prefix("IN") {
++                (n, true, true)
++            } else {
++                continue;
++            };
++            let channel: u8 = number.parse().expect("Unexpected comparator input signal");
++            // A2 RM46.1.2: channel4 is internal despite external-pin metadata.
++            // A5 RM56.1.2: channels4/5 have separate positive/negative pins.
++            if (a2 && channel >= 4) || channel >= 6 {
++                continue;
++            }
++            for pin in signal.pins {
++                let pin_name = format_ident!("{}", pin.pin);
++                let gate = pin_feature_gate(pin.pin);
++                if positive {
++                    generated.extend(quote! {
++                        #gate
++                        crate::impl_cmp_positive_pin!(#pin_name, #peripheral, #channel);
++                    });
++                }
++                if negative {
++                    generated.extend(quote! {
++                        #gate
++                        crate::impl_cmp_negative_pin!(#pin_name, #peripheral, #channel);
++                    });
++                }
++            }
++        }
++    }
++    generated
++}
++
+ fn generate_clkout_impls() -> TokenStream {
+     let mut generated = TokenStream::new();
+ 
+```
+
+**File**: `embassy-mcxa/src/aoi.rs` (added, +356/-0)
+```diff
+@@ -0,0 +1,356 @@
++//! Constructor-configured AND/OR/invert logic for peripheral event signals.
++//!
++//! Each of AOI0's four outputs is a sum of four product terms over four routed
++//! inputs. Construct the driver before enabling downstream consumers, and keep
++//! it and the signal producers alive while their outputs are in use. Source
++//! selections route signals; they do not enable or own the producing peripheral.
++//! Borrow an [`Output`] to connect an event to a CTIMER capture input.
++//!
++//! AOI has no enable/stop bit. Its combinational logic does not need the register
++//! interface clock. Initialization and teardown are not atomic or glitch-free:
++//! quiesce consumers first. Dropping the owner forces its outputs low and gates
++//! only AOI0's register interface; INPUTMUX routes are left unchanged.
++//!
++//! # Not yet supported
++//!
++//! - AOI1 and its separate input-routing bank on devices that provide it.
++//! - Runtime reconfiguration, independently owned event channels, or arbitrary
++//!   Boolean-expression compilation.
++//! - Software output sampling or general destination routing beyond CTIMER
++//!   capture. Input routes currently cover ADC0 compare, CMP0, CTIMER match and
++//!   LPTMR0 signals; ADC1 compare, external triggers, GPIO events and FlexIO are
++//!   not exposed by this driver.
++//! - Guaranteed event propagation through deep-sleep/power transitions.
++//!
++//! Registers require 16-bit accesses (A2 RM 17.7; A5 RM 25.7). The PAC's typed
++//! accessors supply that width; a pair of registers must not be combined into a
++//! 32-bit access.
++
++use core::marker::PhantomData;
++
++use embassy_hal_internal::{Peri, PeripheralType};
++
++use crate::clocks::periph_helpers::NoConfig;
++use crate::clocks::{ClockError, Gate, disable, enable_and_reset};
++use crate::pac::aoi::InputConfig;
++use crate::{pac, peripherals};
++
++/// One of the four AOI event outputs, ADC compare results, or timer matches.
++#[derive(Debug, Copy, Clone, PartialEq, Eq)]
++#[cfg_attr(feature = "defmt", derive(defmt::Format))]
++pub enum Event {
++    /// Event/channel 0.
++    Zero,
++    /// Event/channel 1.
++    One,
++    /// Event/channel 2.
++    Two,
++    /// Event/channel 3.
++    Three,
++}
++
++impl Event {
++    pub(crate) const fn index(self) -> usize {
++        match self {
++            Self::Zero => 0,
++            Self::One => 1,
++            Self::Two => 2,
++            Self::Three => 3,
++        }
++    }
++}
++
++/// Contribution of an input to one product term.
++#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
++#[cfg_attr(feature = "defmt", derive(defmt::Format))]
++pub enum Factor {
++    /// Force this factor to zero, making the entire product false.
++    #[default]
++    Zero,
++    /// Force this factor to one, ignoring this input in the product.
++    One,
++    /// Use the input signal unchanged.
++    Direct,
++    /// Use the complement of the input signal.
++    Inverted,
++}
++
++impl From<Factor> for InputConfig {
++    fn from(value: Factor) -> Self {
++        match value {
++            Factor::Zero => Self::Zero,
++            Factor::One => Self::One,
++            Factor::Direct => Self::Pass,
++            Factor::Inverted => Self::Complement,
++        }
++    }
++}
++
++/// Logical AND of the four selected input factors.
++#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
++#[cfg_attr(feature = "defmt", derive(defmt::Format))]
++pub struct ProductTerm {
++    /// Factor for input A.
++    pub a: Factor,
++    /// Factor for input B.
++    pub b: Factor,
++    /// Factor for input C.
++    pub c: Factor,
++    /// Factor for input D.
++    pub d: Factor,
++}
++
++impl ProductTerm {
++    /// Constant false; also the hardware-reset product.
++    pub const FALSE: Self = Self {
++        a: Factor::Zero,
++        b: Factor::Zero,
++        c: Factor::Zero,
++        d: Factor::Zero,
++    };
++
++    /// Constant true; replace individual factors to build a product.
++    pub const TRUE: Self = Self {
++        a: Factor::One,
++        b: Factor::One,
++        c: Factor::One,
++        d: Factor::One,
++    };
++}
++
++/// Logical OR of exactly four product terms. No expression fitting is required.
++#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
++#[cfg_attr(feature = "defmt", derive(defmt::Format))]
++pub struct Function {
++    terms: [ProductTerm; 4],
++}
++
++impl Function {
++    /// Constant-low output, matching the hardware reset configuration.
++    pub const LOW: Self = Self::new([ProductTerm::FALSE; 4]);
++    /// Constant-high output.
++    pub const HIGH: Self = Self::new([ProductTerm::TRUE; 4]);
++
++    /// Form a sum of four products; use [`ProductTerm::FALSE`] for unused terms.
++    pub const fn new(terms: [ProductTerm; 4]) -> Self {
++        Self { terms }
++    }
++}
++
++/// Internal signal routed to one of an event's A/B/C/D inputs.
++///
++/// These selections do not enable the producer or guarantee its power state.
++#[derive(Debug, Copy, Clone, PartialEq, Eq)]
++#[cfg_attr(feature = "defmt", derive(defmt::Format))]
++#[non_exhaustive]
++pub 
+```
+
+**File**: `embassy-mcxa/src/clocks/ecc.rs` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++//! RAM A clock prerequisite for ECC diagnostics. Live SRAM is never reset or gated off.
++
++use super::{CLOCKS, ClockError, PoweredClock, WakeGuard};
++use crate::pac;
++
++/// Enables the RAM A clock without disturbing live SRAM and retains a wake vote.
++pub(crate) fn enable_ecc_ram_a_clock() -> Result<WakeGuard, ClockError> {
++    critical_section::with(|cs| {
++        let clocks = CLOCKS.borrow_ref(cs);
++        let clocks = clocks.as_ref().ok_or(ClockError::NeverInitialized)?;
++        clocks.ensure_cpu_system_clk_active(&PoweredClock::NormalEnabledDeepSleepDisabled)?;
++        let guard = WakeGuard::new();
++        #[cfg(feature = "_mcxa2xx")]
++        let cc = pac::MRCC0.mrcc_glb_cc2();
++        #[cfg(feature = "_mcxa5xx")]
++        let cc = pac::MRCC0.mrcc_glb_cc3();
++        cc.modify(|w| w.set_rama(true));
++        cortex_m::asm::dsb();
++        cortex_m::asm::isb();
++        if !cc.read().rama() {
++            // Do not undo the enable: this clock also supplies live memory.
++            return Err(ClockError::BadConfig {
++                clock: "RAMA",
++                reason: "clock enable readback failed",
++            });
++        }
++        Ok(guard)
++    })
++}
+```
+
+**File**: `embassy-mcxa/src/clocks/gdet.rs` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++//! Read-only access prerequisites for adopting the ROM-configured digital detector.
++
++use crate::pac;
++
++/// Checks the physical access gates and reset without changing retained setup.
++///
++/// CPU/system clocks and security/privilege access remain platform prerequisites.
++/// This does not validate the detector's reference clock or calibration.
++pub(crate) fn gdet_access_ready() -> bool {
++    critical_section::with(|_| {
++        let clocks = pac::MRCC0.mrcc_glb_cc4().read();
++        let reset = pac::MRCC0.mrcc_glb_rst4().read();
++        clocks.dgdet0() && clocks.seccon() && reset.dgdet0()
++    })
++}
+```
+
+**File**: `embassy-mcxa/src/clocks/mod.rs` (modified, +8/-0)
+```diff
+@@ -44,7 +44,13 @@ use critical_section::CriticalSection;
+ use crate::pac;
+ 
+ pub mod config;
++#[cfg(any(mcxa_eim0, mcxa_erm0))]
++pub(crate) mod ecc;
++#[cfg(any(mcxa_eim0, mcxa_erm0))]
++pub(crate) use ecc::enable_ecc_ram_a_clock;
+ mod gate;
++#[cfg(mcxa_gdet)]
++mod gdet;
+ mod operator;
+ pub mod periph_helpers;
+ mod sleep;
+@@ -54,6 +60,8 @@ mod types;
+ pub use config::VddLevel;
+ pub(crate) use gate::default_register_value;
+ pub use gate::{Gate, assert_reset, disable, enable, enable_and_reset, is_reset_released, pulse_reset, release_reset};
++#[cfg(mcxa_gdet)]
++pub(crate) use gdet::gdet_access_ready;
+ pub use sleep::deep_sleep_if_possible;
+ pub use types::{Clock, ClockError, Clocks, PoweredClock, WakeGuard};
+ 
+```
+
+**File**: `embassy-mcxa/src/clocks/periph_helpers.rs` (modified, +48/-0)
+```diff
+@@ -240,6 +240,54 @@ impl SPConfHelper for Clk1MConfig {
+     }
+ }
+ 
++//
++// CMP
++//
++
++/// Comparator instance; its FRO16K input belongs to a chip-specific domain.
++#[derive(Debug, Copy, Clone)]
++pub enum CmpInstance {
++    /// CMP0 uses the VSYS FRO16K output.
++    Cmp0,
++    /// CMP1 uses the VDD_CORE FRO16K output on A2 devices.
++    #[cfg(feature = "_mcxa2xx")]
++    Cmp1,
++}
++
++/// Comparator clock validation. Only FRO16K filtering is currently supported.
++pub struct CmpConfig {
++    /// Comparator whose clock domain is checked.
++    pub instance: CmpInstance,
++    /// Whether the digital filter needs a functional clock.
++    pub filtered: bool,
++}
++
++impl SPConfHelper for CmpConfig {
++    fn pre_enable_config(&self, clocks: &Clocks) -> Result<PreEnableParts, ClockError> {
++        let freq = if self.filtered {
++            let power = PoweredClock::NormalEnabledDeepSleepDisabled;
++            match self.instance {
++                CmpInstance::Cmp0 => clocks.ensure_clk_16k_vsys_active(&power)?,
++                #[cfg(feature = "_mcxa2xx")]
++                CmpInstance::Cmp1 => clocks.ensure_clk_16k_vdd_core_active(&power)?,
++            }
++        } else {
++            0 // The continuous, unfiltered signal path is unclocked.
++        };
++        if self.filtered && freq == 0 {
++            return Err(ClockError::BadConfig {
++                clock: "cmp filter",
++                reason: "FRO16K functional clock is not running",
++            });
++        }
++        Ok(PreEnableParts {
++            freq,
++            // This first driver does not implement deep-sleep/wakeup sequencing.
++            wake_guard: Some(WakeGuard::new()),
++        })
++    }
++}
++
+ //
+ // FREQME
+ //
+```
+
+---
+
+### Incident Patch 3: `d1996344` (2026-11-04)
+**Commit Message**: Merge pull request #7409 from tobymurray/stm32-lptim-irq-lost-overflow
+
+stm32/time-driver-lptim: clear only the interrupt flags the handler read
+
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ Time driver:
+ - fix: stm32/time-driver-lptim: arm alarms that fall in the current counter cycle; they fired at the overflow, up to a quarter cycle late
+ - fix: stm32/time-driver-lptim: on U5, U3 and WBA, clear the previous `CMPOK` before a compare write, as on WL, so the wait is for this write
+ - fix: stm32/low-power, stm32/time-driver-lptim: compile with the `log` feature
++- fix: stm32/time-driver-lptim: the interrupt handler clears only the flags it read; it also cleared every enabled flag, so an overflow that arrived during the handler was lost and time fell back one counter period
+ - fix: stm32/time-driver-lptim: on U5, U3 and WBA, wait for `DIEROK` after each `DIER` change; a `CCIE` write still in flight when entering Stop lost the alarm wakeup until the next overflow
+ 
+ I2C:
+```
+
+**File**: `embassy-stm32/src/time_driver/lptim.rs` (modified, +3/-15)
+```diff
+@@ -31,18 +31,6 @@ fn regs_lptim() -> Lptim {
+ // instead of Icr/Ier. The compare register also changes from a single `cmp()`
+ // to an indexed `ccr(n)`.
+ 
+-/// Read the interrupt enable register value as a raw u32.
+-fn ier_read(r: Lptim) -> u32 {
+-    #[cfg(not(any(stm32wba, stm32u5, stm32u3)))]
+-    {
+-        r.ier().read().0
+-    }
+-    #[cfg(any(stm32wba, stm32u5, stm32u3))]
+-    {
+-        r.dier().read().0
+-    }
+-}
+-
+ /// Check if the compare-capture interrupt is enabled for channel `n`.
+ fn ier_ccie(r: Lptim, n: usize) -> bool {
+     #[cfg(not(any(stm32wba, stm32u5, stm32u3)))]
+@@ -268,10 +256,10 @@ impl RtcDriver {
+ 
+         critical_section::with(|cs| {
+             let sr = r.isr().read();
+-            let ier = ier_read(r);
+ 
+-            // Clear all interrupt flags. Bits in ICR are "write 1 to clear"
+-            icr_write_raw(r, ier);
++            // Clear the flags read, and only those. Bits in ICR are "write 1 to clear". A flag set
++            // since the read stays set and enters this handler again: clearing it here would lose
++            // it, and a lost UE loses a counter period.
+             icr_write_raw(r, sr.0);
+ 
+             // Overflow
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7399** (2026-11-02): [MCXA] update to newest PAC (@felipebalbi)
-- **PR #7398** (2026-10-30): embassy-usb: generate config.rs in a deterministic order (@Sandvoxel)
-- **PR #7397** (2026-10-30): examples/stm32h7: fix off-by-one flash size in qspi_mdma (@Abrahamh08)
-- **PR #7395** (2026-10-30): Revert "stm32/eth: set v2 TX descriptor frame length" (@xoviat)
-- **PR #7394** (2026-10-30): [MCXA] use WAKETIMER for LPTMR time-driver alarms (@felipebalbi)
-- **PR #7391** (2026-10-30): nrf: enable i2s on the nrf91 family (@thijsc)
+- **PR #7422** (2026-11-03): ci: rm bad boards (@xoviat)
+- **PR #7419** (2026-11-04): [MCXA] Add AOI and CMP drivers (@felipebalbi)
+- **PR #7417** (2026-11-04): stm32/time-driver-lptim: wait for DIEROK between DIER writes on U5, U3 and WBA (@tobymurray)
+- **PR #7416** (2026-11-03): [MCXA] Add EIM ERM and GDET drivers (@felipebalbi)
+- **PR #7413** (2026-11-03): stm32: update pac (@xoviat)
+- **PR #7412** (2026-11-04): stm32/usart: keep TC set when a DMA read clears its flags (@Sandvoxel)
 
 ---
 
@@ -1499,21 +2101,21 @@ Test takes longer now.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MCXA] tests: rtc_alarm: raise timeout
+## X. Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery
 
 **RULE**:
-When implementing operations in `tests/mcxa2xx/src/bin/rtc_alarm.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e105d66`: [MCXA] tests: rtc_alarm: raise timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1d3c781`: Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/mcxa2xx/src/bin/rtc_alarm.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-teleprobe_meta::timeout!(30);
+- fix: stm32/i2c v2: a blocking controller transfer that times out (e.g. SCL held low by the target) now resets the peripheral (PE toggle, as for BERR/ARLO) instead of requesting STOP and abandoning the transfer. The abandoned transfer's NACKF/STOPF arrived later and the next call returned them after it had started its own transfer, which then ran unserved, so every later blocking transfer timed out until PE was toggled by hand.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1523,4 +2125,4 @@ teleprobe_meta::timeout!(30);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e105d66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1d3c781` are properly handled with clean fallback behavior.

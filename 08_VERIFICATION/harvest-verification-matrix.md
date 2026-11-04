@@ -7172,3 +7172,6 @@
 | `CYCLE-20261104-XW9D` | `2026-11-04T08:03:21.361Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6768` | Yes (`c4952a70...`) |
 | `CYCLE-20261104-Z8BQ` | `2026-11-04T08:04:23.654Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6769` | Yes (`a784eaa9...`) |
 | `CYCLE-20261104-1FCT` | `2026-11-04T08:06:06.077Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6770` | Yes (`f5439ff5...`) |
+| `CYCLE-20261104-BROA` | `2026-11-04T08:14:08.602Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6771` | Yes (`f95b27cc...`) |
+| `CYCLE-20261104-BVLR` | `2026-11-04T08:14:13.695Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6772` | Yes (`084e8839...`) |
+| `CYCLE-20261104-BZD3` | `2026-11-04T08:14:18.567Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6773` | Yes (`b6ac7fe9...`) |
