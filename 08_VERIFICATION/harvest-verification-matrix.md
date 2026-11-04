@@ -7355,3 +7355,5 @@
 | `CYCLE-20261104-7HCL` | `2026-11-04T21:42:37.461Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6982` | Yes (`c607eaf4...`) |
 | `CYCLE-20261104-7ITO` | `2026-11-04T21:42:39.372Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6983` | Yes (`d706c0df...`) |
 | `CYCLE-20261104-7V33` | `2026-11-04T21:42:55.263Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 801` | Yes (`687d328c...`) |
+| `CYCLE-20261104-GZUU` | `2026-11-04T21:50:01.350Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6984` | Yes (`976839c7...`) |
+| `CYCLE-20261104-HB9K` | `2026-11-04T21:50:16.136Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6985, Rule 6986, Rule 6987` | Yes (`ebd10e60...`) |

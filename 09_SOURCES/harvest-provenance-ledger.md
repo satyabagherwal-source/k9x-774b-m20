@@ -7364,3 +7364,5 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0ac48953` | Multi-dimensional audit evidence | 2026-11-04T21:42:37.464Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `712830f8` | Multi-dimensional audit evidence | 2026-11-04T21:42:39.374Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-04T21:42:55.266Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3d3a6f46` | Multi-dimensional audit evidence | 2026-11-04T21:50:01.354Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-04T21:50:16.140Z |

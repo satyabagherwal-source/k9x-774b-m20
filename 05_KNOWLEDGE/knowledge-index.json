@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T21:42:55.197Z",
+  "last_updated": "2026-11-04T21:50:16.051Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23234,7 +23234,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "4284288e27c0801b6b6ac66a92367ff11b06e95deff27f6ee0f65c11ce898a76",
+      "content_hash": "ebd10e6061dedebf128e41bf8f42f55e87ea98da09e705da243d4e141114b96b",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -23289,6 +23289,21 @@
           "number": 6097,
           "title": "FP8 Quantization with Block-Wise Scaling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6985,
+          "title": "Low-Rank KV Cache Compression Invariant (MLA)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6986,
+          "title": "MoE Expert Routing Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6987,
+          "title": "YaRN Positional Encoding Extrapolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23309,7 +23324,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-31T06:05:28.485Z",
+      "verified_at": "2026-11-04T21:50:16.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46697,8 +46712,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "ae43c804",
-      "content_hash": "f38b343758494242adff301f8657cdec84cba94e68ce19c2f54d9f80ae5e7893",
+      "source_version": "3d3a6f46",
+      "content_hash": "976839c77ad778e43fd05cec97e69c0c2365cfaf81a4aaac07ef4bf4c3bacde1",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -46756,6 +46771,11 @@
           "number": 6554,
           "title": "semantic): keep block type bindings separate from hoisted vars (#28601)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6984,
+          "title": "minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46763,7 +46783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:30:09.378Z",
+      "verified_at": "2026-11-04T21:50:01.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177666,6 +177686,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T21:42:39.305Z"
+    },
+    "rule-6984": {
+      "learning_id": "rule-6984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6984,
+      "title": "minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "3d3a6f46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:50:01.243Z"
+    },
+    "rule-6985": {
+      "learning_id": "rule-6985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6985,
+      "title": "Low-Rank KV Cache Compression Invariant (MLA)",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:50:16.028Z"
+    },
+    "rule-6986": {
+      "learning_id": "rule-6986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6986,
+      "title": "MoE Expert Routing Stability Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:50:16.028Z"
+    },
+    "rule-6987": {
+      "learning_id": "rule-6987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6987,
+      "title": "YaRN Positional Encoding Extrapolation Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:50:16.028Z"
     }
   },
   "aliases": {

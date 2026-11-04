@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `ae43c804`  
+> **Source Version**: `3d3a6f46`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:30:08.969Z  
+> **Timestamp**: 2026-11-04T21:50:00.612Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:30:07.601Z  
+> **Harvest Timestamp**: 2026-11-04T21:50:00.478Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23315 stars
+- **Stars / Engagement**: 23321 stars
 
 ---
 
@@ -65,30 +65,32 @@ export async function initExternalServices(numThreads: number): Promise<void> {
   // In LSP mode, this can be called repeatedly for the lifetime of the process.
   // e.g. on every workspace folder build, config-triggered rebuild, etc
   // The process-wide pool must never be recreated or destroyed on re-init:
-  // that leaks the previous `child_process` workers, and other workspace folders may have formats in-flight.
+  // that leaks the previous workers, and other workspace folders may have formats in-flight.
   // (https://github.com/oxc-project/oxc/issues/24147)
   // NOTE: `numThreads` never changes within a single session, so the first value wins.
   poolSize ??= numThreads;
 }
 
 // Create the pool lazily on first use,
-// so runs that never delegate to Prettier spawn no `child_process` workers at all.
-// (e.g. Rust-tier files only)
+// so runs that never send a task to the pool spawn no workers at all.
+// (e.g. Rust-tier files only, without Tailwind sorting)
 async function getPool(): Promise<Tinypool> {
   // Rust always calls `initExternalServices` before formatting, so this is defensive.
   if (poolSize === null) throw new Error("External services are not initialized");
 
+  // NOTE: Default `runtime: worker_threads` requires napi >= 3.16.1,
+  // older versions deadlock when a worker loads the addon during `block_on`. (napi-rs/napi-rs#3670)
   pool ??= new Tinypool({
     filename: new URL("./cli-worker.js", import.meta.url).href,
-    minThreads: poolSize,
+    // Spawn workers on demand up to `poolSize`, and keep them alive for later tasks.
+    // - Each worker loads its own copy of JS deps (e.g. Prettier, Tailwind sorter),
+    //   and many runs send only a few tasks to the pool
+    // - The default `idleTimeout: 0` removes idle workers above `minThreads` right away
+    // - Unlike Piscina, Tinypool does not special-case `Infinity` and passes it to `setTimeout` as is,
+    //   where Node.js replaces it with 1 ms, so use the max delay `setTimeout` accepts instead
+    minThreads: 1,
     maxThreads: poolSize,
-    // XXX: Use `child_process` instead of `worker_threads`.
-    // Not sure why, but when using `worker_threads`,
-    // calls from NAPI (CLI) -> worker threads -> NAPI (prettier-plugin-oxfmt) causes a hang...
-    runtime: "child_process",
-    // When setting the `runtime: child_process`,
-    // `process.env` is not inherited (likely a bug), so it needs to be explicitly specified.
-    env: process.env as Record<string, string>,
+    idleTimeout: 2 ** 31 - 1,
   });
   return pool;
 }
@@ -1211,14 +1213,17 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28763** (2026-11-03): **fix(linter/unicorn/prefer-single-call): remove duplicate fix status**
-  *Symptoms*: Noticed that `unicorn/prefer-single-call` rule declared both `pending` and `fix` as its fix status, this PR removes `pending` and also changes to `fix` to `conditional_fix` since the fix is skipped in 2 cases.   Also small change to `declare_oxc_lint` so that it rejects a second fix capability
+- **Issue #28820** (2026-11-04): **fix(react-compiler): ignore callback-local reassignments**
+  *Symptoms*: Restrict post-render reassignment tracking to bindings declared in the outer component or hook, matching upstream React Compiler. This stops `react/immutability` from flagging callback-local variables reassigned by nested synchronous or async closures.  Add compiler and Oxlint CLI regressions while retaining errors for render-scope bindings.  Fixes #28401 
   **Post-Mortem & Fix Analysis**:
-  > @codex review
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"918345386d48c63cf54ff86985a8f9597e66d8bc","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-03T14:51:55.995757Z">2026-11-03T14:51:55.995757Z</relative-time> | `9183453` | Manual request |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  C
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"69abfff72bacaf8ea8ef8470f60b2955bc262c37","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T15:29:20.020916Z">2026-11-04T15:29:20.020916Z</relative-time> | `69abfff` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks   `⏩ 86` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>codex/fix-react-immutability-callback-locals</code> (69abfff) with <code>main</code> (1e57a4e)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/codex%2Ffix-react-immutability-callback-locals?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 86 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive t
 
-- **Issue #28760** (2026-11-03): **chore(deps): update dependency oxlint to v1.91.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [oxlint](https://oxc.rs/docs/guide/usage/linter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxlint)) | [`1.90.0` → `1.91.0`](https://renovatebot.com/diffs/npm/oxlint/1.90.0/1.91.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxlint/1.91.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/oxlint/1.91.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/oxlint/1.90.0/1.91.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxlint/1.90.0/1.91.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxlint)</summary>  ### [`v1.91.0`](https://redirect.github.com/oxc-project/oxc/blob/HEAD/npm/oxlint/CHANGELOG.md#1910---2026-11-02)  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxlint_v1.90.0...oxlint_v1.91.0)  ##### 🚀 Features  - [`419c1b0`](https://redirect.github.com/oxc-project/oxc/commit/419c1b0) linter: Add allow and allowPattern options to react/capitalized-calls (Christian Vuerings)  </details>  ---  ### Configuration  📅 **Schedule**: (in timezone Asia/Shanghai)  - Branch creation 
+- **Issue #28819** (2026-11-04): **fix(linter/unicorn/prefer-type-error): report throws in unbraced if branches**
+  *Symptoms*: When an `if` performs a type check, report a lone `throw new Error(...)` in its consequent with or without braces. This matches Unicorn’s branch selection and removes the false positive for a braced `else`. Regression tests cover the reported diagnostic, the `TypeError` autofix, and both forms of `else`.  Fixes #28814 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"38ee142c209e2454f20295cb30ca90c289ee7d81","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T14:02:11.143188Z">2026-11-04T14:02:11.143188Z</relative-time> | `38ee142` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > ### Merge activity  * **Nov 4, 2:06 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 4, 2:06 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 4, 2:12 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1235,548 +1240,664 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec327aa1` (2026-11-03)
-**Commit Message**: fix(semantic): keep block type bindings separate from hoisted vars (#28601)
+### Incident Patch 1: `0b48483b` (2026-11-04)
+**Commit Message**: fix(minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807)
 
-Fixes #28600.
+Hi, I found this while checking a tsdown/Rolldown update.
+Folding `replaceAll` with an empty search string currently inserts the
+replacement between Unicode scalar values, but JavaScript inserts it
+between UTF-16 code units.
+For example:
 
-`var I; interface I {}` in a nested block merged the interface into the
-hoisted `var`, so the type moved out of the block. TypeScript keeps the
-interface in the block. #27936 fixed the opposite order, `interface I {}
-var I;`.
+```js
+export default () => ((replacement) => "a😀z".replaceAll("", replacement))("-");
+```
 
-## Cause
+The original returns `"-a-\ud83d-\ude00-z-"`, while main folds it to
+`"-a-😀-z-"`.
+The IIFE parameter propagation exposes the same problem as a direct
+literal call.
 
-Hoisting a `var` records it in `hoisting_variables` for each
-intermediate scope. `check_redeclaration` falls back to that map, and
-`declare_symbol_on_scope` then reused the returned symbol, even for a
-type declaration.
+The fix uses the existing `JSStrBuilder` to append each UTF-16 code unit
+and its replacement.
+The result reserves its exact WTF-8 byte length once, with checked
+capacity arithmetic, and an empty replacement returns the original
+string.
+`replace`, nonempty searches, and the existing side-effect,
+substitution-pattern, and lone-surrogate input guards keep their current
+paths.
 
-## Changes
+The regression test covers supplementary characters, adjacent surrogate
+pairs, a supplementary replacement, empty receiver/replacement, and the
+IIFE case above.
+It fails on main and passes with the fix.
+On macOS arm64 with Rust 1.99.1 and 
 
-- `declare_symbol_on_scope`: a declaration with no value flags only
-reuses a symbol bound in the target scope. Otherwise it creates a new
-symbol there.
-- `check_redeclaration`: a binding in the scope and a hoisted `var` are
-now checked separately. Without this, the block's type binding would
-hide the conflict and the first change would lose the error in `{ var X;
-interface X {} let X; }`.
-- `check_redeclaration`: only the value flags of a hoisted symbol are
-compared. The symbol can also carry type flags from a declaration in the
-outer scope, and those do not conflict with a declaration in the block.
-
-The second change also fixes a 
-
-**File**: `crates/oxc_semantic/src/builder.rs` (modified, +29/-12)
+**File**: `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs` (modified, +21/-1)
 ```diff
-@@ -544,7 +544,12 @@ impl<'a> SemanticBuilder<'a> {
-         includes: SymbolFlags,
-         excludes: SymbolFlags,
-     ) -> SymbolId {
--        if let Some(symbol_id) = self.check_redeclaration(scope_id, span, name, excludes) {
-+        // A `var` hoisted through this scope is bound in an outer scope. Interfaces and type aliases
-+        // live in a separate declaration space, so they get their own symbol in this scope.
-+        if let Some(symbol_id) = self.check_redeclaration(scope_id, span, name, excludes)
-+            && (includes.intersects(SymbolFlags::Value)
-+                || self.scoping.scope_has_binding(scope_id, name))
-+        {
-             self.add_redeclare_variable(symbol_id, includes, span);
-             self.scoping.union_symbol_flag(symbol_id, includes);
-             return symbol_id;
-@@ -580,25 +585,37 @@ impl<'a> SemanticBuilder<'a> {
-         name: Ident<'a>,
-         excludes: SymbolFlags,
-     ) -> Option<SymbolId> {
--        let symbol_id = self
--            .scoping
--            .get_binding(scope_id, name)
--            .or_else(|| self.hoisting_variables.get(&(scope_id, name)).copied())?;
-+        let binding_id = self.scoping.get_binding(scope_id, name);
-+
-+        if let Some(symbol_id) = binding_id {
-+            let flags = self.scoping.symbol_flags(symbol_id);
+@@ -13,7 +13,7 @@ use smallvec::SmallVec;
  
--        let flags = self.scoping.symbol_flags(symbol_id);
-+            // A named function expression binds its own name in the function's scope, so a same-named
-+            // parameter is not a redeclaration: `(function n(n) {})` - param `n` is fine.
-+            if flags.contains(SymbolFlags::FunctionExpression) {
-+                return None;
-+            }
- 
--        // A named function expression binds its own name in the function's scope, so a same-named
--        // parameter is not a redeclaration: `(function n(n) {})` - param `n` is fine.
--        if flags.contains(SymbolFlags::FunctionExpression) {
--            return None;
-+            if flags.intersects(excludes) {
-+                let symbol_span = self.scoping.symbol_span(symbol_id);
-+                self.error(redeclaration(&name, symbol_span, span));
-+                return Some(symbol_id);
-+            }
-         }
- 
--        if flags.intersects(excludes) {
-+        // A type-only binding in this scope must not hide a conflicting hoisted `var`:
-+        // `{ var x; interface x {} let x; }`
-+        // Only the value meaning conflicts. A type sharing the symbol belongs to the outer scope:
-+        // `type x = 0; { var x; interface x {} }`
-+        let hoisted_id = self.hoisting_variables.get(&(scope_id, name)).copied();
-+        if let Some(symbol_id) = hoisted_id
-+            && self.scoping.symbol_flags(symbol_id).intersects(excludes & SymbolFlags::Value)
-+        {
-             let symbol_span = self.scoping.symbol_span(symbol_id);
-             self.error(redeclaration(&name, symbol_span, span));
-         }
- 
--        Some(symbol_id)
-+        binding_id.or(hoisted_id)
+ use oxc_allocator::ArenaVec;
+ use oxc_ast::ast::*;
+-use oxc_str::{JSStr, JSStrBuilder};
++use oxc_str::{JSChar, JSStr, JSStrBuilder};
+ use oxc_syntax::{
+     identifier::is_white_space, line_terminator::is_line_terminator, number::ToJsString,
+ };
+@@ -429,6 +429,26 @@ fn try_fold_string_replace<'a>(
+     if replace_value.contains('$') {
+         return None;
      }
- 
-     /// Declare an unresolved reference in the current scope.
++    if name == "replaceAll" && search_value.is_empty() {
++        if replace_value.is_empty() {
++            return Some(ConstantValue::String(s.value));
++        }
++        let capacity = value.encode_utf16().try_fold(replace_value.len(), |capacity, unit| {
++            capacity
++                .checked_add(JSChar::from_u32(u32::from(unit))?.len_bytes())?
++                .checked_add(replace_value.len())
++        })?;
++        if capacity > u32::MAX as usize || capacity > isize::MAX as usize {
++            return None;
++        }
++        let mut result = JSStrBuilder::with_capacity_in(capacity, ctx);
++        result.push_str(replace_value);
++        for unit in value.encode_utf16() {
++            result.push_code_unit(unit);
++            result.push_str(replace_value);
++        }
++        return Some(ConstantValue::String(result.into_js_str()));
++    }
+     let result = match name {
+         "replace" => value.cow_replacen(search_value, replace_value, 1),
+         "replaceAll" => value.cow_replace(search_value, replace_value),
 ```
 
-**File**: `crates/oxc_semantic/tests/fixtures/oxc/ts/interfaces/hoisted-var-then-interface.snap` (added, +81/-0)
+**File**: `crates/oxc_minifier/tests/peephole/replace_known_methods.rs` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,81 @@
-+---
-+source: crates/oxc_semantic/tests/main.rs
-+input_file: crates/oxc_semantic/tests/fixtures/oxc/ts/interfaces/hoisted-var-then-interface.ts
-+---
-+[
-+  {
-+    "children": [
-+      {
-+        "children": [
-+          {
-+            "children": [],
-+            "flags": "ScopeFlags(StrictMode)",
-+            "id": 2,
-+            "node": "TSInterfaceDeclaration",
-+            "symbols": []
-+          },
-+          {
-+            "children": [],
-+            "flags": "ScopeFlags(StrictMode)",
-+            "id": 3,
-+            "node": "TSInterfaceDeclaration",
-+            "symbols": []
-+          }
-+        ],
-+        "flags": "ScopeFlags(StrictMode)",
-+        "id": 1,
-+        "node": "SwitchStatement",
-+        "symbols": [
-+          {
-+            "flags": "SymbolFlags(Interface)",
-+            "id": 1,
-+            "name": "I",
-+            "node": "TSInterfaceDeclaration",
-+            "references": [
-+              {
-+                "flags": "ReferenceFlags(Type)",
-+                "id": 1,
-+                "name": "I",
-+                "node_id": 33,
-+                "scope_id": 1
-+              }
-+            ]
-+          },
-+          {
-+            "flags": "SymbolFlags(BlockScopedVariable | ConstVariable)",
-+            "id": 2,
-+            "name": "value",
-+            "node": "VariableDeclarator(value)",
-+            "references": []
-+          }
-+        ]
-+      },
-+      {
-+        "children": [],
-+        "flags": "ScopeFlags(StrictMode)",
-+        "id": 4,
-+        "node": "TSTypeAliasDeclaration",
-+        "symbols": []
-+      }
-+    ],
-+    "flags": "ScopeFlags(StrictMode | Top)",
-+    "id": 0,
-+    "node": "Program",
-+    "symbols": [
-+      {
-+        "flags": "SymbolFlags(FunctionScopedVariable)",
-+        "id": 0,
-+        "name": "I",
-+        "node": "VariableDeclarator(I)",
-+        "references": []
-+      },
-+      {
-+        "flags": "SymbolFlags(TypeAlias)",
-+        "id": 3,
-+        "name": "Outer",
-+        "node": "TSTypeAliasDeclaration",
-+        "references": []
-+      }
-+    ]
-+  }
-+]
-```
-
-**File**: `crates/oxc_semantic/tests/fixtures/oxc/ts/interfaces/hoisted-var-then-interface.ts` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+export {};
-+
-+switch (Number(1)) {
-+  case 1:
-+    var I = 0;
-+    interface I { a: number }
-+  case 2:
-+    interface I { b: number }
-+    const value: I = { a: 1, b: 2 };
-+}
-+
-+type Outer = I;
-```
-
-**File**: `crates/oxc_semantic/tests/integration/symbols.rs` (modified, +44/-2)
-```diff
-@@ -180,6 +180,11 @@ fn test_hoisted_var_does_not_reuse_block_type_binding() {
-         "function f() { { type X = string; var X = 1; type Y = X; X; } X; }",
-         "function f() { { interface X {} var X = 1; type Y = X; X; } X; }",
-         "function f() { { type X = string; { var X = 1; } type Y = X; X; } X; }",
-+        "function f() { { var X = 1; interface X {} type Y = X; X; } X; }",
-+        "function f() { { var X = 1; type X = string; type Y = X; X; } X; }",
-+        "function f() { { { var X = 1; } interface X {} type Y = X; X; } X; }",
-+        "function f() { { var X = 1; interface X {} var X = 2; type Y = X; X; } X; }",
-+        "function f() { switch (0) { case 0: var X = 1; interface X {} case 1: interface X {} type Y = X; X; } X; }",
-     ] {
-         let tester = SemanticTester::ts(source);
-         let semantic = tester.build();
-@@ -196,14 +201,51 @@ fn test_hoisted_var_does_not_reuse_block_type_binding() {
-             .unwrap();
-         let type_symbol = symbols.into_iter().find(|&symbol| symbol != value_symbol).unwrap();
-         assert_ne!(scoping.symbol_scope_id(value_symbol), scoping.symbol_scope_id(type_symbol));
--        assert_eq!(scoping.get_resolved_references(value_symbol).count(), 2);
--        assert_eq!(scoping.get_resolved_references(type_symbol).count(), 1);
-+        assert!(!scoping.symbol_flags(value_symbol).is_type(), "{source}");
-+        assert_eq!(scoping.get_resolved_references(value_symbol).count(), 2, "{source}");
-+        assert_eq!(scoping.get_resolved_references(type_symbol).count(), 1, "{source}");
-         assert!(scoping.get_resolved_references(value_symbol).all(Reference::is_read));
-         assert!(scoping.get_resolved_references(type_symbol).all(Reference::is_type));
-         assert!(!scoping.root_unresolved_references().contains_key("X"));
-     }
+@@ -226,6 +226,19 @@ fn test_fold_string_replace_all() {
+     test_same("'123'.replaceAll('2', '$`')"); // would fold to '113'
  }
  
 +#[test]
-+fn test_block_interface_is_not_visible_outside_of_hoisted_var() {
-+    let tester = SemanticTester::ts(
-+        "switch (0) { case 0: var I = 0; interface I {} case 1: interface I {} } type Outer = I;",
++fn test_fold_string_replace_all_empty_search_utf16() {
++    test(r"x = 'a😀z'.replaceAll('', '-')", r"x = '-a-\uD83D-\uDE00-z-'");
++    test(r"x = '😀😀'.replaceAll('', '-')", r"x = '-\uD83D-\uDE00-\uD83D-\uDE00-'");
++    test(r"x = '😀'.replaceAll('', '😁')", r"x = '😁\uD83D😁\uDE00😁'");
++    test("x = '😀'.replaceAll('', '')", "x = '😀'");
++    test("x = ''.replaceAll('', '-')", "x = '-'");
++    test(
++        r"x = (() => ((p) => 'a😀z'.replaceAll('', p))('-'))()",
++        r"x = ((p) => '-a-\uD83D-\uDE00-z-')('-')",
 +    );
-+    let semantic = tester.build();
-+    let scoping = semantic.scoping();
-+    // `Outer` cannot use the hoisted value `I` as a type, and the interface is out of scope.
-+    assert!(scoping.root_unresolved_references().contains_key("I"));
-+}
-+
-+#[test]
-+fn test_lexical_redeclaration_of_hoisted_var_next_to_block_type_binding() {
-+    for source in [
-+        "function f() { { var X; interface X {} let X; } }",
-+        "function f() { { var X; type X = string; const X = 1; } }",
-+        "function f() { { var X; interface X {} class X {} } }",
-+        "function f() { { interface X {} var X; let X; } }",
-+        "function f() { type X = number; { var X; interface X {} let X; } }",
-+    ] {
-+        SemanticTester::ts(source).has_error("Identifier `X` has already been declared");
-+    }
-+}
-+
-+#[test]
-+fn test_block_type_binding_ignores_outer_type_merged_with_hoisted_var() {
-+    for source in [
-+        "function f() { type X = number; { interface X { a: number } var X = 0; interface X { b: number } const value: X = { a: 1, b: 2 }; } }",
-+        "function f() { type X = number; { var X = 0; interface X {} } }",
-+        "function f() { type X = number; { var X = 0; type X = string; } }",
-+        "function f() { interface X {} { var X = 0; type X = string; } }",
-+    ] {
-+        SemanticTester::ts(source).build();
-+    }
 +}
 +
  #[test]
- fn test_var_read_write() {
-     SemanticTester::js("let x; x += 1")
+ fn test_fold_string_substring() {
+     test("x = 'abcde'.substring(0,2)", "x = 'ab'");
 ```
 
 ---
 
-### Incident Patch 2: `b904d516` (2026-11-03)
-**Commit Message**: fix(react-compiler): avoid panic on non-ASCII ref-like names (#28758)
+### Incident Patch 2: `28a44b74` (2026-11-04)
+**Commit Message**: fix(transformer/class-properties): preserve private accessor assignment receivers (#28790)
 
-Reading `object_name[..1]` panics when a ref-like identifier starts with a multibyte character, such as `한글Ref`. Use `.chars().next()` to preserve the ASCII name check without slicing through a UTF-8 character. Ports the fix and regression fixture from https://github.com/facebook/react/pull/38025.
+When targeting ES2021 or earlier, a logical assignment to a private accessor can use the wrong receiver if the getter reassigns the variable on the left:
 
-Fixes #28278.
+```js
+let receiver;
 
-**File**: `crates/oxc_react_compiler/fixtures/repro-ref-like-name-non-ascii.js` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+import {useRef} from 'react';
-+
-+export function Component() {
-+  const 한글Ref = useRef(0);
-+  return (
-+    <div
-+      onClick={() => {
-+        한글Ref.current += 1;
-+      }}
-+    />
-+  );
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [],
-+};
+class Counter {
+  get #value() {
+    receiver = {};
+    return 1;
+  }
+
+  set #value(value) {
+    console.log("set", value);
+  }
+
+  run(rhs) {
+    return (receiver.#value &&= rhs());
+  }
+}
+
+receiver = new Counter();
+console.log(receiver.run(() => {
+  console.log("rhs");
+  return 2;
+}));
 ```
 
-**File**: `crates/oxc_react_compiler/src/react_compiler_typeinference/infer_types.rs` (modified, +1/-1)
+Before this change, the getter and setter each read `receiver`. The getter changes it to `{}`, so preparing the setter throws `TypeError` before the RHS runs. Nothing is logged.
+
+The relevant generated code changes as follows:
+
+```js
+// Before
+return _get_value.call(babelHelpers.assertClassBrand(_Counter_brand, receiver)) &&
+  (babelHelpers.toSetter(
+    _set_value.bind(babelHelpers.assertClassBrand(_Counter_brand, receiver))
+  )._ = rhs());
+
+// After
+var _receiver;
+return _get_value.call(babelHelpers.assertClassBrand(_Counter_brand, _receiver = receiver)) &&
+  (babelHelpers.toSetter(
+    _set_value.bind(babelHelpers.assertClassBran
+
+**File**: `crates/oxc_transformer/src/es2022/class_properties/private_field.rs` (modified, +26/-2)
 ```diff
-@@ -239,7 +239,7 @@ fn is_ref_like_name(object_name: &str, property_name: &PropertyNameKind) -> bool
-     object_name == "ref"
-         || (object_name.len() > 3
-             && object_name.ends_with("Ref")
--            && object_name[..1]
-+            && object_name
-                 .chars()
-                 .next()
-                 .is_some_and(|c| c.is_ascii_alphabetic() || c == '$' || c == '_'))
-```
-
-**File**: `crates/oxc_react_compiler/tests/snapshots/repro-ref-like-name-non-ascii.snap` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+---
-+source: crates/oxc_react_compiler/tests/snapshot.rs
-+input_file: crates/oxc_react_compiler/fixtures/repro-ref-like-name-non-ascii.js
-+---
-+import { c as _c } from "react/compiler-runtime";
-+import { useRef } from "react";
-+export function Component() {
-+	const $ = _c(1);
-+	const 한글Ref = useRef(0);
-+	let t0;
-+	if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-+		t0 = <div onClick={() => {
-+			한글Ref.current = 한글Ref.current + 1;
-+		}} />;
-+		$[0] = t0;
-+	} else {
-+		t0 = $[0];
-+	}
-+	return t0;
-+}
-+export const FIXTURE_ENTRYPOINT = {
-+	fn: Component,
-+	params: []
-+};
-```
-
----
-
-### Incident Patch 3: `a8a621a4` (2026-11-03)
-**Commit Message**: fix(linter/eslint/no-fallthrough): ignore unreachable exits from infinite loops (#28755)
-
-Cases ending in `while (true)`, `do ... while (true)`, or `for (;;)` cannot fall through unless a reachable break exits the loop. Oxlint reports these cases even though ESLint accepts them.
-
-Traverse CFG edges within each switch and skip the normal exit from statically true loop conditions. Preserve reachable break paths and unused fallthrough comment diagnostics, with regression coverage for async polling, nested breaks, parenthesized conditions, and unreachable breaks.
-
-Linter tests and lint pass. The broader Oxlint suite fails in type-aware suppression tests: one produces different suppression counts, and another aborts because its expected suppression file is missing.
-
-Fixes #28579
-
-**File**: `crates/oxc_linter/src/rules/eslint/no_fallthrough.rs` (modified, +98/-43)
-```diff
-@@ -9,13 +9,13 @@ use serde::Deserialize;
- 
- use oxc_ast::{
-     AstKind,
--    ast::{Statement, SwitchCase, SwitchStatement},
-+    ast::{Expression, Statement, SwitchCase, SwitchStatement},
- };
- use oxc_cfg::{
--    BlockNodeId, EdgeType, ErrorEdgeKind, InstructionKind,
-+    BlockNodeId, EdgeType, ErrorEdgeKind, EvalConstConditionResult, Instruction, InstructionKind,
-     graph::{
-         Direction,
--        visit::{EdgeRef, neighbors_filtered_by_edge_weight},
-+        visit::{Control, DfsEvent, EdgeRef, set_depth_first_search},
+@@ -19,6 +19,7 @@ use crate::{
+     context::TraverseCtx,
+     utils::ast_builder::{
+         create_assignment, create_bind_call, create_call_call, create_member_callee,
++        wrap_expression_in_arrow_function_iife,
      },
  };
- use oxc_diagnostics::OxcDiagnostic;
-@@ -268,53 +268,43 @@ impl Rule for NoFallthrough {
  
-         let (cfg_ids, tests, default, exit) = get_switch_semantic_cases(ctx, node, switch);
+@@ -470,6 +471,24 @@ impl<'a> ClassProperties<'a> {
+     ) {
+         let Expression::AssignmentExpression(assign_expr) = expr else { unreachable!() };
+         if matches!(&assign_expr.left, AssignmentTarget::PrivateFieldExpression(_)) {
++            if !self.private_fields_as_properties
++                && assign_expr.operator.to_logical_operator().is_some()
++                && ctx
++                    .ancestors()
++                    .take_while(|ancestor| {
++                        !matches!(
++                            ancestor,
++                            Ancestor::FunctionBodyStatements(_)
++                                | Ancestor::ArrowFunctionExpressionBody(_)
++                        )
++                    })
++                    .any(|ancestor| matches!(ancestor, Ancestor::FormalParameterInitializer(_)))
++            {
++                // Keep receiver temporaries local to each parameter evaluation, including
++                // recursive calls from getters. The assignment is transformed in the IIFE.
++                *expr = wrap_expression_in_arrow_function_iife(expr.take_in(ctx), ctx);
++                return;
++            }
+             self.transform_assignment_expression_impl(expr, ctx);
+         }
+     }
+@@ -798,8 +817,13 @@ impl<'a> ClassProperties<'a> {
+                 );
+             }
  
--        let Some(default_or_exit) = default.or(exit) else {
-+        if default.or(exit).is_none() {
-             // TODO: our `get_switch_semantic_cases` can't evaluate cfg_ids for switch statements
-             // with conditional discriminant. If we can access the IDs correctly it should never be `None`.
-             return;
--        };
-+        }
+-            // Make 2 copies of `object`
+-            let (object1, object2) = self.duplicate_object(object.into_inner_expression(), ctx);
++            // Logical assignment reads before preparing the setter. A getter can reassign
++            // the receiver binding, so preserve its original value for the subsequent write.
++            let (object1, object2) = duplicate_expression(
++                object.into_inner_expression(),
++                operator.to_logical_operator().is_some(),
++                ctx,
++            );
  
--        let fallthroughs: FxHashSet<BlockNodeId> = neighbors_filtered_by_edge_weight(
--            graph,
--            switch_id,
--            &|edge_type| match edge_type {
--                EdgeType::Normal | EdgeType::Jump | EdgeType::Error(ErrorEdgeKind::Explicit) => {
--                    None
-+        let mut fallthroughs = FxHashSet::default();
-+        let _: Control<()> = set_depth_first_search(graph, Some(switch_id), |event| match event {
-+            DfsEvent::TreeEdge(source, target) => {
-+                if graph.edges_connecting(source, target).any(|edge| match edge.weight() {
-+                    EdgeType::Normal => !is_always_true_loop_condition(source, ctx),
-+                    EdgeType::Jump | EdgeType::Error(ErrorEdgeKind::Explicit) => true,
-+                    _ => false,
-+                }) {
-+                    Control::Continue
+             if let Some(operator) = operator.to_binary_operator() {
+                 // `object.#prop += value`
+```
+
+**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ commit: b835f0c6
+ 
+-Passed: 309/438
++Passed: 310/439
+ 
+ # All Passed:
+ * babel-plugin-transform-class-static-block
+```
+
+**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ commit: b835f0c6
+ 
+ node: v26.12.1
+ 
+-Passed: 44 of 46 (95.65%)
++Passed: 45 of 47 (95.74%)
+ 
+ Failures:
+ 
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/exec.js` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++let receiver;
++let replacement;
++let value;
++let events = [];
++
++class Accessors {
++  get #value() {
++    events.push("get");
++    receiver = replacement;
++    return value;
++  }
++
++  set #value(next) {
++    events.push(["set", this, next]);
++  }
++
++  static get #staticValue() {
++    events.push("get");
++    receiver = replacement;
++    return value;
++  }
++
++  static set #staticValue(next) {
++    events.push(["set", this, next]);
++  }
++
++  run(operator, rhs) {
++    switch (operator) {
++      case "&&=": return (receiver.#value &&= rhs());
++      case "||=": return (receiver.#value ||= rhs());
++      case "??=": return (receiver.#value ??= rhs());
++    }
++  }
++
++  static run(operator, rhs) {
++    switch (operator) {
++      case "&&=": return (receiver.#staticValue &&= rhs());
++      case "||=": return (receiver.#staticValue ||= rhs());
++      case "??=": return (receiver.#staticValue ??= rhs());
++    }
++  }
++}
++
++for (const original of [new Accessors(), Accessors]) {
++  for (const [operator, taken, skipped] of [["&&=", 1, 0], ["||=", 0, 1], ["??=", null, 1]]) {
++    // Rebinding to a wrong-brand object must not redirect the write or throw.
++    // Rebinding to a valid instance must still write to the original instance.
++    for (replacement of [{}, new Accessors()]) {
++      receiver = original;
++      value = taken;
++      events = [];
++      expect(original.run(operator, () => {
++        events.push("rhs");
++        return 2;
++      })).toBe(2);
++      expect(events).toEqual(["get", "rhs", ["set", original, 2]]);
++
++      receiver = original;
++      value = skipped;
++      events = [];
++      expect(original.run(operator, () => {
++        throw new Error("RHS must be skipped");
++      })).toBe(skipped);
++      expect(events).toEqual(["get"]);
++    }
++
++    receiver = {};
++    events = [];
++    expect(() => original.run(operator, () => {
++      events.push("rhs");
++    })).toThrow(TypeError);
++    expect(events).toEqual([]);
++  }
++}
++
++// The temporary receiver must belong to each invocation, including when the
++// assignment is nested inside a default parameter and its getter reenters it.
++class Recursive {
++  constructor(name) {
++    this.name = name;
++  }
++
++  get #value() {
++    events.push("get:" + this.name);
++    if (this.name === "outer") {
++      receiver = inner;
++      expect(inner.run()).toEqual([2]);
++    }
++    receiver = {};
++    return 1;
++  }
++
++  set #value(next) {
++    events.push("set:" + this.name);
++  }
++
++  run(result = [receiver.#value &&= (events.push("rhs:" + this.name), 2)]) {
++    return result;
++  }
++}
++
++const outer = new Recursive("outer");
++const inner = new Recursive("inner");
++receiver = outer;
++events = [];
++expect(outer.run()).toEqual([2]);
++expect(events).toEqual(["get:outer", "get:inner", "rhs:inner", "set:inner", "rhs:outer", "set:outer"]);
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/input.js` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++let receiver;
++
++class Accessor {
++  get #value() {
++    receiver = {};
++    return 1;
++  }
++
++  set #value(value) {}
++
++  run(rhs) {
++    return (receiver.#value &&= rhs());
++  }
++
++  parameter(result = [receiver.#value &&= rhs()]) {
++    return result;
++  }
++}
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/output.js` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++let receiver;
++var _Accessor_brand = /* @__PURE__ */ new WeakSet();
++class Accessor {
++  constructor() {
++    babelHelpers.classPrivateMethodInitSpec(this, _Accessor_brand);
++  }
++  run(rhs) {
++    var _receiver;
++    return _get_value.call(babelHelpers.assertClassBrand(_Accessor_brand, _receiver = receiver)) && (babelHelpers.toSetter(_set_value.bind(babelHelpers.assertClassBrand(_Accessor_brand, _receiver)))._ = rhs());
++  }
++  parameter(result = [(() => {
++    var _receiver2;
++    return _get_value.call(babelHelpers.assertClassBrand(_Accessor_brand, _receiver2 = receiver)) && (babelHelpers.toSetter(_set_value.bind(babelHelpers.assertClassBrand(_Accessor_brand, _receiver2)))._ = rhs());
++  })()]) {
++    return result;
++  }
++}
++function _get_value() {
++  receiver = {};
++  return 1;
++}
++function _set_value(value) {}
+```
+
+---
+
+### Incident Patch 3: `255c5cca` (2026-11-04)
+**Commit Message**: fix(formatter): measure Tailwind class argument after collapsing whitespace (#28745)
+
+## Summary
+
+Follow-up to #28744, same kind of issue in a different place.
+
+With `sortTailwindcss` enabled, an assignment whose right side is a
+Tailwind function call can take two runs to reach a stable output,
+because the "short argument" check measures the argument's **source**
+text while the printed text has its whitespace collapsed.
+
+Input (`{"sortTailwindcss": {"functions": ["cn"]}}`, default
+`printWidth: 100`):
+
+```ts
+const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn("p-4                           flex");
+```
+
+1st run:
+
+```ts
+const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn(
+  "flex p-4",
+);
+```
+
+2nd run (also what Prettier + prettier-plugin-tailwindcss prints in one
+run):
+
+```ts
+const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa =
+  cn("flex p-4");
+```
+
+The same happens for `a.b = cn(...)`, `{ key: cn(...) }` and
+`cn(...).trim()`.
+
+### Cause
+
+`is_poorly_breakable_member_or_call_chain` uses `is_short_argument`
+(Prettier's `isLoneShortArgument`) to check if the only argument is at
+mo
+
+**File**: `apps/oxfmt/test/api/sort_tailwindcss.test.ts` (modified, +30/-2)
+```diff
+@@ -566,6 +566,23 @@ shadow-lg\` : "font-normal"}\`} />;`;
+     expect(result.errors).toStrictEqual([]);
+   });
+ 
++  it("should measure the argument with whitespace when preserveWhitespace is true", async () => {
++    const input = `const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn("p-4                           flex");\n`;
++
++    const result = await format("test.ts", input, {
++      experimentalTailwindcss: { functions: ["cn"], preserveWhitespace: true },
++    });
++
++    // Whitespace is kept, so the argument is long and the call is broken.
++    expect(result.code).toMatchInlineSnapshot(`
++      "const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn(
++        "flex                           p-4",
++      );
++      "
++    `);
++    expect(result.errors).toStrictEqual([]);
++  });
++
+   it("should not break JSX element for multiline class string that gets collapsed", async () => {
+     const input = `const A = (
+   <div
+@@ -660,7 +677,7 @@ const B = (
+     expect(result.errors).toStrictEqual([]);
+   });
+ 
+-  it("should decide layouts from the collapsed template literal and object key", async () => {
++  it("should decide layouts from collapsed Tailwind classes", async () => {
+     const input = `const a = clsx(\`
+   p-4 flex items-center justify-between \${active ? "bg-white" : "bg-black"} text-black hover:bg-gray-100
+ \`);
+@@ -671,13 +688,16 @@ const b = () => tw\`
+   p-4 flex items-center justify-between bg-white text-black hover:bg-gray-100
+ \`;
+ const c = clsx({ "a   b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLongToForceBreakingHereAndMore });
++const ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd = clsx("p-4                           flex");
++const eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = clsx(\`p-4                           flex\`);
++const f = clsx({ kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk: foo(\`p-4                           flex\`) });
+ `;
+     const options = { tabWidth: 4, experimentalTailwindcss: { functions: ["clsx", "tw"] } };
+ 
+     const result = await format("test.ts", input, options);
+ 
+     // The line breaks are collapsed, so the template is not hugged as multiline,
+-    // and the collapsed key is short.
++    // and the collapsed key and call arguments are short.
+     expect(result.code).toMatchInlineSnapshot(`
+       "const a = clsx(
+           \`flex items-center justify-between p-4 \${active ? "bg-white" : "bg-black"} text-black hover:bg-gray-100\`,
+@@ -689,6 +709,14 @@ const c = clsx({ "a   b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLo
+       const c = clsx({
+           "a b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLongToForceBreakingHereAndMore,
+       });
++      const ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd =
++          clsx("flex p-4");
++      const eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee =
++          clsx(\`flex p-4\`);
++      const f = clsx({
++          kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk:
++              foo(\`flex p-4\`),
++      });
+       "
+     `);
+     expect(result.errors).toStrictEqual([]);
+```
+
+**File**: `crates/oxc_formatter/src/utils/assignment_like.rs` (modified, +30/-5)
+```diff
+@@ -21,6 +21,10 @@ use crate::{
+         format_node_without_trailing_comments::FormatNodeWithoutTrailingComments,
+         member_chain::is_member_call_chain,
+         object::{format_property_key, write_member_name},
++        tailwindcss::{
++            collapsed_class_list_width, tailwind_collapses_template_line_breaks,
++            tailwind_context_for_callee,
++        },
+         typecast::is_cast_target,
+     },
+     write,
+@@ -1211,7 +1215,7 @@ fn is_poorly_breakable_member_or_call_chain<'a>(
+                 // An embedded template is formatted, so its source length says nothing
+                 Some(first_argument) => first_argument.as_expression().is_none_or(|e| {
+                     embed_hug(e, Some(call_expression), f).is_some()
+-                        || !is_short_argument(e, threshold, f)
++                        || !is_short_argument(e, threshold, &call_expression.callee, f)
+                 }),
+                 None => false,
+             },
+@@ -1238,11 +1242,19 @@ fn is_poorly_breakable_member_or_call_chain<'a>(
+ /// We need it to decide if [`CallExpression`] with the argument is breakable or not
+ /// If the argument is short the function call isn't breakable
+ /// [Prettier applies]: <https://github.com/prettier/prettier/blob/0273e33fc691e28e4ab3f3c8ee86918b65cf823d/src/language-js/utils/index.js#L433-L484>
+-fn is_short_argument(argument: &Expression, threshold: u16, f: &JsFormatter) -> bool {
++///
++/// A string or template whose whitespace is collapsed by Tailwind sorting under `callee`
++/// is measured as printed, as Prettier measures the plugin's output.
++fn is_short_argument(
++    argument: &Expression,
++    threshold: u16,
++    callee: &Expression,
++    f: &JsFormatter,
++) -> bool {
+     match argument {
+         Expression::Identifier(identifier) => identifier.name.width() <= threshold as usize,
+         Expression::UnaryExpression(unary_expression) => {
+-            is_short_argument(&unary_expression.argument, threshold, f)
++            is_short_argument(&unary_expression.argument, threshold, callee, f)
+         }
+         Expression::RegExpLiteral(regex) => regex.regex.pattern.text.width() <= threshold as usize,
+         Expression::StringLiteral(literal) => {
+@@ -1251,16 +1263,29 @@ fn is_short_argument(argument: &Expression, threshold: u16, f: &JsFormatter) ->
+                 false,
+                 StringLiteralParentKind::Expression,
+             );
++            let text = formatter.clean_text(f);
+ 
+-            formatter.clean_text(f).width() <= threshold as usize
++            let width = if tailwind_context_for_callee(callee, f)
++                .is_some_and(|ctx| !ctx.preserve_whitespace)
++            {
++                // Opening and closing quotes, and the classes
++                2 + collapsed_class_list_width(&text[1..text.len() - 1])
++            } else {
++                text.width()
++            };
++            width <= threshold as usize
+         }
+         Expression::TemplateLiteral(literal) => {
+             // Besides checking length exceed we also need to check that the template doesn't have any expressions.
+             // It means that the elements of the template are empty or have only one `JsTemplateChunkElement` element
+             // Prettier: https://github.com/prettier/prettier/blob/a043ac0d733c4d53f980aa73807a63fc914f23bd/src/language-js/print/assignment.js#L402-L405
+             literal.quasis.len() == 1 && {
+                 let raw = literal.quasis[0].value.raw;
+-                raw.width() <= threshold as usize && !raw.contains('\n')
++                if tailwind_collapses_template_line_breaks(Some(callee), f) {
++                    collapsed_class_list_width(&raw) <= threshold as usize
 +                } else {
-+                    Control::Prune
-                 }
--                _ => Some(None),
--            },
--            &mut |&node, last_cond: Option<BlockNodeId>| {
--                if node == switch_id {
--                    (last_cond, true)
--                } else if node == default_or_exit {
--                    if default.is_some() {
--                        // Continue past default to detect fallthrough FROM default
--                        (last_cond, true)
--                    } else {
--                        // Stop at exit block to prevent exploring outside switch
--                        (last_cond, false)
--                    }
--                } else if default.is_some() && Some(node) == exit {
--                    // When a default exists, stop at the shared end-of-switch block
--                    // to avoid traversing beyond the switch body.
--                    (last_cond, false)
--                } else if tests.contains_key(&node) {
--                    (last_cond, true)
--                } else if cfg.basic_block(node).is_unreachable() {
--                    (None, false)
-+            }
-+            DfsEvent::Discover(node, _) => {
-+                if node == switch_id || Some(node) == default || tests.contains_key(&node) {
-+                    Control::Continue
-+                } else if Some(node) == exit || cfg.basic_block(node).is_unreachable() {
-+                    Control::Prune
-+                } else if let Some(fallthrough) = graph
-+                    .edges_directed(node, Direction::Outgoing)
-+                    .map(|edge| edge.target())
-+                    .find(|target| Some(*target) == default || tests.contains_key(target))
-+                {
-+                    fallthroughs.insert(fallthrough);
-+                    Control::Prune
-                 } else {
--                    let fallthrough = graph
--                        .edges_directed(node, Direction::Outgoing)
--                        .map(|edge| edge.target())
--                        .find(|target| Some(*target) == default || tests.contains_key(target));
--
--                    (fallthrough, fallthrough.is_none())
-+                    Control::Continue
-                 }
--            },
--        )
--        .into_iter()
--        .flatten()
--        .collect();
-+            }
-+            _ => Control::Continue,
-+        });
++                    raw.width() <= threshold as usize && !raw.contains('\n')
++                }
+             }
+         }
+         Expression::CallExpression(call) => {
+```
+
+**File**: `crates/oxc_formatter/src/utils/tailwindcss.rs` (modified, +22/-10)
+```diff
+@@ -84,16 +84,17 @@ pub fn tailwind_context_for_jsx_attribute(
+         .map(|opts| TailwindContextEntry::new(opts.preserve_whitespace))
+ }
  
-         let mut iter = switch.cases.iter().zip(cfg_ids).peekable();
-         while let Some((case, _)) = iter.next() {
-@@ -347,6 +337,31 @@ impl Rule for NoFallthrough {
+-/// Whether a template literal printed at this point (under `tag` when tagged) has its line breaks collapsed.
+-/// - Reads what `TemplateElement` reads: the current Tailwind context, or the one a Tailwind `tag` pushes
++/// Whether a template literal printed at this point has its whitespace, including line breaks, collapsed.
++/// - `callee` is the tag of a tagged template, or the callee of the call it's an argument of
++/// - Reads what `TemplateElement` reads: the current Tailwind context, or the one a Tailwind `callee` pushes
+ pub fn tailwind_collapses_template_line_breaks(
+-    tag: Option<&Expression<'_>>,
++    callee: Option<&Expression<'_>>,
+     f: &JsFormatter<'_, '_>,
+ ) -> bool {
+     f.context()
+         .tailwind_context()
+         .copied()
+-        .or_else(|| tag.and_then(|tag| tailwind_context_for_callee(tag, f)))
++        .or_else(|| callee.and_then(|callee| tailwind_context_for_callee(callee, f)))
+         .is_some_and(|ctx| !ctx.preserve_whitespace)
+ }
+ 
+@@ -151,6 +152,19 @@ fn is_tailwind_function_call(callee: &Expression<'_>, options: &SortTailwindcssO
      }
  }
  
-+fn is_always_true_loop_condition(node: BlockNodeId, ctx: &LintContext) -> bool {
-+    let cfg = ctx.cfg();
-+    let instructions = cfg.basic_block(node).instructions();
-+    if instructions.is_empty() {
-+        return cfg
-+            .is_infinite_loop_start(node, |_| EvalConstConditionResult::NotFound)
-+            .is_some_and(|(_, loop_end)| loop_end == node);
++/// Printed width of a class list with collapsed whitespace:
++/// trimmed, then split on ASCII whitespace and joined with single spaces, as the sorter does.
++/// - Whitespace-only content is printed as a single space
++/// - An upper bound: the sorter also drops duplicates of known classes
++pub fn collapsed_class_list_width(content: &str) -> usize {
++    let trimmed = content.trim();
++    if trimmed.is_empty() {
++        return usize::from(!content.is_empty());
 +    }
++    // Each class plus its separator, minus the last separator
++    trimmed.split_ascii_whitespace().map(|class| class.width() + 1).sum::<usize>() - 1
++}
 +
-+    let [Instruction { kind: InstructionKind::Condition, node_id: Some(id) }] =
-+        instru
-```
-
-**File**: `crates/oxc_linter/src/snapshots/eslint_no_fallthrough.snap` (modified, +49/-0)
-```diff
-@@ -237,3 +237,52 @@ source: crates/oxc_linter/src/tester.rs
-    ·                                        ──────────────────
-    ╰────
-   help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:58]
-+ 1 │ switch(foo) { case 0: while (true) { if (bar()) break; } case 1: baz(); }
-+   ·                                                          ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:62]
-+ 1 │ switch(foo) { case 0: do { if (bar()) break; } while (true); case 1: baz(); }
-+   ·                                                              ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:54]
-+ 1 │ switch(foo) { case 0: for (;;) { if (bar()) break; } case 1: baz(); }
-+   ·                                                      ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:40]
-+ 1 │ switch(foo) { case 0: while (bar()) {} case 1: baz(); }
-+   ·                                        ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:54]
-+ 1 │ switch(foo) { case 0: if (bar()) { while (true) {} } case 1: baz(); }
-+   ·                                                      ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Expected a `break` statement before `case`.
-+   ╭─[no_fallthrough.tsx:1:60]
-+ 1 │ switch(foo) { case 0: label: while (true) { break label; } case 1: baz(); }
-+   ·                                                            ──────────────
-+   ╰────
-+  help: Use a `break` statement to prevent fallthrough, or add a comment to indicate intentional fallthrough.
-+
-+  ⚠ eslint(no-fallthrough): Found a comment that would permit fallthrough, but case cannot fall through.
-+   ╭─[no_fallthrough.tsx:1:38]
-+ 1 │ switch(foo) { case 0: while (true) {} /* falls through */ case 1: baz(); }
-+   ·                                      ─────────────────────
-+   ╰────
-+  help: Remove the fallthrough comment or add code that allows fallthrough (e.g. remove `break`).
+ // ============================================================================
+ // Whitespace Collapse Logic
+ // ============================================================================
+@@ -323,7 +337,7 @@ pub fn write_tailwind_string_literal<'a>(
+         }
+         write!(f, quote);
+         // Quotes, and the single space the content is normalized to
+-        return 2 + usize::from(!content.is_empty());
++        return 2 + collapsed_class_list_width(content);
+     }
+ 
+     let collapse = can_collapse_whitespace(string_literal.span, string_literal.ancestors(), f);
+@@ -347,12 +361,10 @@ pub fn write_tailwind_string_literal<'a>(
+     }
+     write!(f, quote);
+ 
+-    // The sorter joins the classes with single spaces, splitting on ASCII whitespace:
+-    // each class plus its separator, minus the last separator (`trimmed` has at least one class)
+-    let joined_width =
+-        trimmed.split_ascii_whitespace().map(|class| class.width() + 1).sum::<usize>() - 1;
+     // Quotes, the kept boundary spaces, and the classes
+-    2 + usize::from(keeps_leading_space) + joined_width + usize::from(keeps_trailing_space)
++    2 + usize::from(keeps_leading_space)
++        + collapsed_class_list_width(trimmed)
++        + usize::from(keeps_trailing_space)
+ }
+ 
+ /// Writes a template element (quasi) with Tailwind class sorting.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28763** (2026-11-03): fix(linter/unicorn/prefer-single-call): remove duplicate fix status (@baevm)
-- **PR #28760** (2026-11-03): chore(deps): update dependency oxlint to v1.91.0 (@renovate[bot])
-- **PR #28758** (2026-11-03): fix(react-compiler): avoid panic on non-ASCII ref-like names (@camc314)
-- **PR #28755** (2026-11-03): fix(linter/eslint/no-fallthrough): ignore unreachable exits from infinite loops (@camc314)
-- **PR #28754** (2026-11-03): fix(oxlint): prevent --init from overwriting existing configs (@camc314)
-- **PR #28753** (2026-11-03): fix(linter/eslint/prefer-spread): report calls on non-member expressions (@camc314)
+- **PR #28820** (2026-11-04): fix(react-compiler): ignore callback-local reassignments (@camc314)
+- **PR #28819** (2026-11-04): fix(linter/unicorn/prefer-type-error): report throws in unbraced if branches (@camc314)
+- **PR #28817** (2026-11-04): refactor(linter): simplify no-redeclare declaration pairs (@camchenry)
+- **PR #28816** (2026-11-04): feat(linter/eslint/no-redeclare): add `ignoreDeclarationMerge` option (@camchenry)
+- **PR #28812** (2026-11-04): fix(codegen): print infinite numeric literals as `1e400` instead of `Infinity` (@d3lm)
+- **PR #28807** (2026-11-04): fix(minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (@huuyafwww)
 
 ---
 
@@ -1796,59 +1917,48 @@ Fixes #28579
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. semantic): keep block type bindings separate from hoisted vars (#28601)
+## X. minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807
 
 **RULE**:
-When implementing operations in `crates/oxc_semantic/src/builder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec327aa1`: semantic): keep block type bindings separate from hoisted vars (#28601). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b48483b`: minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_semantic/src/builder.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A `var` hoisted through this scope is bound in an outer scope. Interfaces and type aliases
-        // live in a separate declaration space, so they get their own symbol in this scope.
-        if let Some(symbol_id) = self.check_redeclaration(scope_id, span, name, excludes)
-            && (includes.intersects(SymbolFlags::Value)
-                || self.scoping.scope_has_binding(scope_id, name))
-        {
-        let binding_id = self.scoping.get_binding(scope_id, name);
-
-        if let Some(symbol_id) = binding_id {
-            let flags = self.scoping.symbol_flags(symbol_id);
-            // A named function expression binds its own name in the function's scope, so a same-named
-            // parameter is not a redeclaration: `(function n(n) {})` - param `n` is fine.
-            if flags.contains(SymbolFlags::FunctionExpression) {
-                return None;
-            }
-            if flags.intersects(excludes) {
-                let symbol_span = self.scoping.symbol_span(symbol_id);
-                self.error(redeclaration(&name, symbol_span, span));
-                return Some(symbol_id);
-            }
-        // A type-only binding in this scope must not hide a confl
+use oxc_str::{JSChar, JSStr, JSStrBuilder};
+    if name == "replaceAll" && search_value.is_empty() {
+        if replace_value.is_empty() {
+            return Some(ConstantValue::String(s.value));
+        }
+        let capacity = value.encode_utf16().try_fold(replace_value.len(), |capacity, unit| {
+            capacity
+                .checked_add(JSChar::from_u32(u32::from(unit))?.len_bytes())?
+                .checked_add(replace_value.len())
+        })?;
+        if capacity > u32::MAX as usize || capacity > isize::MAX as usize {
+            return None;
+        }
+        let mut result = JSStrBuilder::with_capacity_in(capacity, ctx);
+        result.push_str(replace_value);
+        for unit in value.encode_utf16() {
+            result.push_code_unit(unit);
+            result.push_str(replace_value);
+        }
+        return Some(ConstantValue::String(result.into_js_str()));
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if let Some(symbol_id) = self.check_redeclaration(scope_id, span, name, excludes) {
-        let symbol_id = self
-            .scoping
-            .get_binding(scope_id, name)
-            .or_else(|| self.hoisting_variables.get(&(scope_id, name)).copied())?;
-        let flags = self.scoping.symbol_flags(symbol_id);
-        // A named function expression binds its own name in the function's scope, so a same-named
-        // parameter is not a redeclaration: `(function n(n) {})` - param `n` is fine.
-        if flags.contains(SymbolFlags::FunctionExpression) {
-            return None;
-        if flags.intersects(excludes) {
-        Some(symbol_id)
+use oxc_str::{JSStr, JSStrBuilder};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec327aa1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b48483b` are properly handled with clean fallback behavior.
