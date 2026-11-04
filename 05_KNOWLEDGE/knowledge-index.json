@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:21:43.857Z",
+  "last_updated": "2026-11-04T18:28:48.943Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11238,8 +11238,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "c96ae32c",
-      "content_hash": "190d1fad3b82db56edd8bc2fddfa2a118bbfd15247def82314b4b7ad59ae594d",
+      "source_version": "80b9c969",
+      "content_hash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -11312,6 +11312,11 @@
           "number": 6571,
           "title": "Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6898,
+          "title": "cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11319,7 +11324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:11:29.579Z",
+      "verified_at": "2026-11-04T18:28:48.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15821,8 +15826,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "95970c18",
-      "content_hash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
+      "source_version": "ae8540b0",
+      "content_hash": "f9ebd312ce9ba6870fb43d6694bf0896360dc7896c679f65cffd1186af14c8db",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -15850,6 +15855,11 @@
           "number": 6587,
           "title": "release): stop archiving past versions in the docs version table (#2739)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6895,
+          "title": "ci(release): build the standalone image during release-publish (#2744)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15857,7 +15867,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:15:12.606Z",
+      "verified_at": "2026-11-04T18:28:42.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128273,7 +128283,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
+      "content_hash": "543bd3f64917df61cfcc0a35a4c9ab1934869d8a2d6bb60aabb9343bb7503254",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [
@@ -128311,6 +128321,16 @@
           "number": 6017,
           "title": "Multimodal Token Framing Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6896,
+          "title": "MoE Expert Load Balancing & Routing Bias Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6897,
+          "title": "Quantization-Aware Training (QAT) Fake Quantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -128318,7 +128338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:27:59.048Z",
+      "verified_at": "2026-11-04T18:28:45.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128339,7 +128359,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T02:27:59.048Z"
+      "verified_at": "2026-11-04T18:28:45.143Z"
     },
     "rule-3847": {
       "learning_id": "rule-3847",
@@ -175943,6 +175963,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:21:43.834Z"
+    },
+    "rule-6895": {
+      "learning_id": "rule-6895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6895,
+      "title": "ci(release): build the standalone image during release-publish (#2744)",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "ae8540b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:28:42.697Z"
+    },
+    "rule-6896": {
+      "learning_id": "rule-6896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6896,
+      "title": "MoE Expert Load Balancing & Routing Bias Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:28:45.143Z"
+    },
+    "rule-6897": {
+      "learning_id": "rule-6897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6897,
+      "title": "Quantization-Aware Training (QAT) Fake Quantization Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:28:45.143Z"
+    },
+    "rule-6898": {
+      "learning_id": "rule-6898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6898,
+      "title": "cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "80b9c969",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:28:48.916Z"
     }
   },
   "aliases": {

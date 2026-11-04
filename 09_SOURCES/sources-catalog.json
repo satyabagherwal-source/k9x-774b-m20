@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "95970c18",
+    "sourceVersion": "ae8540b0",
     "license": "NOASSERTION",
-    "contentHash": "beee0f23119282a1fbed636b91358eab94d65eca6c48cca47ba060ea26432782",
-    "lastHarvestedAt": "2026-11-03T19:15:12.715Z",
+    "contentHash": "f9ebd312ce9ba6870fb43d6694bf0896360dc7896c679f65cffd1186af14c8db",
+    "lastHarvestedAt": "2026-11-04T18:28:42.794Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "c96ae32c",
+    "sourceVersion": "80b9c969",
     "license": "MIT",
-    "contentHash": "190d1fad3b82db56edd8bc2fddfa2a118bbfd15247def82314b4b7ad59ae594d",
-    "lastHarvestedAt": "2026-11-03T18:11:29.665Z",
+    "contentHash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
+    "lastHarvestedAt": "2026-11-04T18:28:49.015Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
-    "lastHarvestedAt": "2026-10-31T02:27:59.137Z",
+    "contentHash": "543bd3f64917df61cfcc0a35a4c9ab1934869d8a2d6bb60aabb9343bb7503254",
+    "lastHarvestedAt": "2026-11-04T18:28:45.249Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

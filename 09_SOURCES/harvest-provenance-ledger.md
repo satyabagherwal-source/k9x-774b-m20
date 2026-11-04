@@ -7281,3 +7281,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `d1774d10` | Multi-dimensional audit evidence | 2026-11-04T18:21:37.178Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `a918f763` | Multi-dimensional audit evidence | 2026-11-04T18:21:39.297Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `5d9ae0f9` | Multi-dimensional audit evidence | 2026-11-04T18:21:43.945Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `ae8540b0` | Multi-dimensional audit evidence | 2026-11-04T18:28:42.794Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-04T18:28:45.249Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `80b9c969` | Multi-dimensional audit evidence | 2026-11-04T18:28:49.015Z |
