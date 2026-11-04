@@ -7262,3 +7262,6 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `36e7c1fb` | Multi-dimensional audit evidence | 2026-11-04T17:30:43.237Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T17:30:48.016Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e8ef229c` | Multi-dimensional audit evidence | 2026-11-04T17:30:49.364Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `a89b18dc` | Multi-dimensional audit evidence | 2026-11-04T17:37:25.072Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-04T17:37:26.119Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f851ca27` | Multi-dimensional audit evidence | 2026-11-04T17:37:28.795Z |

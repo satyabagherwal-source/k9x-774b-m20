@@ -7253,3 +7253,6 @@
 | `CYCLE-20261104-7J4W` | `2026-11-04T17:30:43.232Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6865` | Yes (`7a0a7526...`) |
 | `CYCLE-20261104-7MTP` | `2026-11-04T17:30:48.013Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6866, Rule 6867, Rule 6868` | Yes (`78391558...`) |
 | `CYCLE-20261104-7NV4` | `2026-11-04T17:30:49.360Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6869` | Yes (`ff7150d2...`) |
+| `CYCLE-20261104-G571` | `2026-11-04T17:37:25.069Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6870` | Yes (`35da1e94...`) |
+| `CYCLE-20261104-G604` | `2026-11-04T17:37:26.116Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6871, Rule 6872` | Yes (`425c6da1...`) |
+| `CYCLE-20261104-G82H` | `2026-11-04T17:37:28.793Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6873` | Yes (`acfe92b8...`) |

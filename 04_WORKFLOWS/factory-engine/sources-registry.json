@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T17:30:51.930Z",
-    "lastVerified": "2026-11-04T17:30:51.930Z",
+    "lastChecked": "2026-11-04T17:37:31.349Z",
+    "lastVerified": "2026-11-04T17:37:31.349Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T16:59:17.785Z",
-    "lastVerified": "2026-11-04T16:59:17.785Z",
+    "lastChecked": "2026-11-04T17:37:28.180Z",
+    "lastVerified": "2026-11-04T17:37:28.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2097,14 +2097,14 @@
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T18:02:31.307Z",
-    "lastVerified": "2026-11-03T18:02:31.307Z",
+    "lastChecked": "2026-11-04T17:37:24.383Z",
+    "lastVerified": "2026-11-04T17:37:24.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
+    "contentHash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2193,22 +2193,21 @@
     "lastVerified": "2026-11-03T18:11:17.716Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:14:08.278Z",
-    "lastVerified": "2026-11-04T08:14:08.278Z",
+    "lastChecked": "2026-11-04T17:37:28.135Z",
+    "lastVerified": "2026-11-04T17:37:28.135Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
+    "contentHash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4290c03d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -5318,9 +5317,9 @@
   "flipkart-recyclerlistview": {
     "name": "recyclerlistview",
     "officialUrl": "https://github.com/Flipkart/recyclerlistview",
-    "lastChecked": "2026-10-31T10:27:04.476Z",
+    "lastChecked": "2026-11-04T17:37:18.058Z",
     "revisionIdentifier": "3485036e",
-    "lastVerified": "2026-10-31T10:27:04.476Z"
+    "lastVerified": "2026-11-04T17:37:18.058Z"
   },
   "encoredev-encore": {
     "name": "encoredev/encore",
@@ -6507,9 +6506,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-02T21:43:21.046Z",
+    "lastChecked": "2026-11-04T17:37:13.077Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-02T21:43:21.046Z"
+    "lastVerified": "2026-11-04T17:37:13.077Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -6881,9 +6880,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-03T17:14:18.695Z",
+    "lastChecked": "2026-11-04T17:37:25.681Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-03T17:14:18.695Z"
+    "lastVerified": "2026-11-04T17:37:25.681Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -12556,13 +12555,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T01:39:52.372Z",
-    "lastVerified": "2026-10-31T01:39:52.372Z",
+    "lastChecked": "2026-11-04T17:37:15.606Z",
+    "lastVerified": "2026-11-04T17:37:15.606Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
-    "promotedRulesCount": 1,
+    "contentHash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

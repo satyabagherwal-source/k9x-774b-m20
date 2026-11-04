@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "03a91cb3",
+    "sourceVersion": "a89b18dc",
     "license": "Apache-2.0",
-    "contentHash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
-    "lastHarvestedAt": "2026-11-03T18:02:32.754Z",
+    "contentHash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
+    "lastHarvestedAt": "2026-11-04T17:37:25.072Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "4290c03d",
+    "sourceVersion": "f851ca27",
     "license": "BSD-3-Clause",
-    "contentHash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
-    "lastHarvestedAt": "2026-11-04T01:51:22.848Z",
+    "contentHash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
+    "lastHarvestedAt": "2026-11-04T17:37:28.795Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
-    "lastHarvestedAt": "2026-10-31T01:40:03.466Z",
+    "contentHash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
+    "lastHarvestedAt": "2026-11-04T17:37:26.119Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

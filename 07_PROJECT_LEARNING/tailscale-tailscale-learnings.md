@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `4290c03d`  
+> **Source Version**: `f851ca27`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:22.217Z  
+> **Timestamp**: 2026-11-04T17:37:28.296Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:21.873Z  
+> **Harvest Timestamp**: 2026-11-04T17:37:28.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38587 stars
+- **Stars / Engagement**: 38627 stars
 
 ---
 
@@ -821,110 +821,98 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7f595b4` (2026-11-01)
-**Commit Message**: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
+### Incident Patch 1: `f851ca27` (2026-11-04)
+**Commit Message**: cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#22108)
 
-The operator user could serve a path or Unix socket if tailscaled
-found a sudo rule for them, but the check used the GECOS display name
-and so failed for most users with a 401. The check cannot be repaired
-safely: listing another user's sudo rules never prompts, so it proves
-a rule exists, not that the user has authenticated. An operator who
-had not entered their sudo password could serve any root-readable file
-or root-only socket. Require root instead and say so in the error.
+In singleton egress mode (TS_TAILNET_TARGET_FQDN), a failed resolution
+of the target FQDN logged the error but then broke out of the main
+runLoop instead of continuing to the next netmap update. From then on
+containerboot blocked in wg.Wait() while the pod still looked healthy,
+and the egress proxy kept forwarding to stale addresses until restart.
 
-Fixes #21204
-Fixes #21985
-Fixes #21988
+A missing target is typically transient (peer not yet in the netmap,
+ACL change in flight), so log and continue to let the next netmap
+update retry the resolution and reinstall the forwarding rules.
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
+Fixes #22102
 
-**File**: `ipn/ipnauth/actor.go` (modified, +5/-3)
+Signed-off-by: Santhi Prakash <[REDACTED_EMAIL]>
+
+**File**: `cmd/containerboot/main.go` (modified, +1/-1)
 ```diff
-@@ -55,9 +55,11 @@ type Actor interface {
- 	// IsLocalAdmin reports whether the actor has administrative access to the
- 	// local machine, for whatever that means with respect to the current OS.
- 	//
--	// The operatorUID is only used on Unix-like platforms and specifies the ID
--	// of a local user (in the os/user.User.Uid string form) who is allowed to
--	// operate tailscaled without being root or using sudo.
-+	// The operatorUID specifies the ID of a local user (in the
-+	// os/user.User.Uid string form) who is allowed to operate tailscaled
-+	// without being root. No implementation currently consults it: on
-+	// Unix-like platforms only root is a local admin, and on Windows the
-+	// check is whether the caller's token is elevated.
- 	//
- 	// Deprecated: this method exists for compatibility with the current (as of 2024-08-27)
- 	// permission model and will be removed as we progress on tailscale/corp#18342.
+@@ -879,7 +879,7 @@ runLoop:
+ 				egressAddrs, err := resolveTailnetFQDN(nmState, cfg.TailnetTargetFQDN)
+ 				if err != nil {
+ 					log.Print(err.Error())
+-					break
++					continue
+ 				}
+ 
+ 				newCurentEgressIPs := deephash.Hash(&egressAddrs)
 ```
 
-**File**: `ipn/ipnserver/actor.go` (modified, +4/-24)
+**File**: `cmd/containerboot/main_test.go` (modified, +44/-0)
 ```diff
-@@ -8,9 +8,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"net"
--	"os/exec"
- 	"runtime"
--	"time"
- 
- 	"tailscale.com/feature/buildfeatures"
- 	"tailscale.com/ipn"
-@@ -243,29 +241,11 @@ func connIsLocalAdmin(logf logger.Logf, ci *ipnauth.ConnIdentity, operatorUID st
- 			// is omitted for the build.
- 			return true
- 		}
-+		// Only root is a local admin. The operator user is not, even if
-+		// they could run "sudo tailscale": tailscaled cannot tell whether
-+		// they have authenticated to sudo, only that a rule exists.
- 		uid, ok := ci.Creds().UserID()
--		if !ok {
--			return false
--		}
--		// root is always admin.
--		if uid == "0" {
--			return true
--		}
--		// if non-root, must be operator AND able to execute "sudo tailscale".
--		if operatorUID != "" && uid != operatorUID {
--			return false
--		}
--		u, err := osuser.LookupByUID(uid)
--		if err != nil {
--			return false
--		}
--		// Short timeout just in case sudo hangs for some reason.
--		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
--		defer cancel()
--		if err := exec.CommandContext(ctx, "sudo", "--other-user="+u.Name, "--list", "tailscale").Run(); err != nil {
--			return false
--		}
--		return true
-+		return ok && uid == "0"
- 
- 	default:
- 		return false
-```
-
-**File**: `ipn/localapi/serve.go` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ func authorizeServeConfigForGOOSAndUserContext(goos string, configIn *ipn.ServeC
- 	case "windows":
- 		return errors.New("must be a Windows local admin to serve a path or Unix socket")
- 	case "linux", "darwin", "illumos", "solaris":
--		return errors.New("must be root, or be an operator and able to run 'sudo tailscale' to serve a path or Unix socket")
-+		return errors.New("must be root to serve a path or Unix socket")
- 	default:
- 		// We filter goos at the start of the func, this default case
- 		// should never happen.
+@@ -407,6 +407,50 @@ func TestContainerBoot(t *testing.T) {
+ 				},
+ 			}
+ 		},
++		"egress_fqdn_transient_resolve_failure": func(env *testEnv) testCase {
++			return testCase{
++				Env: map[string]string{
++					"TS_AUTHKEY":             "tskey-key",
++					"TS_TAILNET_TARGET_FQDN": "target-node.test.ts.net.",
++					"TS_USERSPACE":           "false",
++				},
++				Phases: []phase{
++					{
++						WantCmds: []string{
++							"/usr/bin/tailscaled --socket=/tmp/tailscaled.sock --state=mem: --statedir=/tmp",
++							"/usr/bin/tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=tskey-key",
++						},
++						WantFiles: map[string]string{
++							"proc/sys/net/ipv4/ip_forward":          "1",
++							"proc/sys/net/ipv6/conf/all/forwarding": "0",
++						},
++					},
++					{
++						// The target peer is not in the netmap yet, so
++						// resolving the FQDN fails. containerboot must keep
++						// processing subsequent netmap updates rather than
++						// exiting its watch loop (issue #22102).
++						Notify:  runningNotify,
++						WantLog: `could not find Tailscale node, service or 4via6 address "target-node.test.ts.net."; it either does not exist, or not reachable because of ACLs`,
++					},
++					{
++						// Once the peer appears, the next netmap update must
++						// resolve the FQDN and install forwarding rules.
++						Notify: &ipn.Notify{
++							State: new(ipn.Running),
++							PeersChanged: []*tailcfg.Node{
++								{
++									StableID:  tailcfg.StableNodeID("targetID"),
++									Name:      "target-node.test.ts.net.",
++									Addresses: []netip.Prefix{netip.MustParsePrefix("100.99.99.99/32")},
++								},
++							},
++						},
++						WantLog: "Installing forwarding rules for destination 100.99.99.99",
++					},
++				},
++			}
++		},
+ 		"authkey_once": func(env *testEnv) testCase {
+ 			return testCase{
+ 				Env: map[string]string{
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
+- **PR #22164** (closed): derp/derpserver,cmd/derper: batch writer flushes, arm the write deadline per write (@mikeodr)
 - **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
 - **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
 - **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
 - **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
-- **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
 
 ---
 
@@ -944,34 +932,28 @@ Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
+## X. cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#221
 
 **RULE**:
-When implementing operations in `ipn/ipnauth/actor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/containerboot/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7f595b4`: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f851ca27`: cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#22108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnauth/actor.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/containerboot/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The operatorUID specifies the ID of a local user (in the
-	// os/user.User.Uid string form) who is allowed to operate tailscaled
-	// without being root. No implementation currently consults it: on
-	// Unix-like platforms only root is a local admin, and on Windows the
-	// check is whether the caller's token is elevated.
+					continue
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// The operatorUID is only used on Unix-like platforms and specifies the ID
-	// of a local user (in the os/user.User.Uid string form) who is allowed to
-	// operate tailscaled without being root or using sudo.
+					break
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7f595b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f851ca27` are properly handled with clean fallback behavior.

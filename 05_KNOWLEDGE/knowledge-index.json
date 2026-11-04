@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:30:49.276Z",
+  "last_updated": "2026-11-04T17:37:28.739Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32314,8 +32314,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "03a91cb3",
-      "content_hash": "d368fcd743844ab3c9754d6cc8e9e9a5ec42d0c562be6a5744c0a1747feb5c45",
+      "source_version": "a89b18dc",
+      "content_hash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -32343,6 +32343,11 @@
           "number": 6568,
           "title": "plugins): add configurable Redis failure handling (#5287)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6870,
+          "title": "mcp-server): support 2025-11-25 Tools clients (5305)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32350,7 +32355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:02:32.625Z",
+      "verified_at": "2026-11-04T17:37:25.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55724,8 +55729,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "4290c03d",
-      "content_hash": "e03c35afb2bb2661c0de9c31c5c38a633cd2c33606dd0270ea575cbe1fe97c5f",
+      "source_version": "f851ca27",
+      "content_hash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -55893,6 +55898,11 @@
           "number": 6709,
           "title": "ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6873,
+          "title": "cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#221",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55900,7 +55910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:51:22.756Z",
+      "verified_at": "2026-11-04T17:37:28.725Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123286,7 +123296,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
+      "content_hash": "425c6da15d8317c5ab10c535a7b047ae29ea061b2f64dc880fad83dc9cc19b19",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [
@@ -123304,6 +123314,16 @@
           "number": 5996,
           "title": "Repository Integrity & Non-Empty Artifact Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6871,
+          "title": "The Null-Reference Integrity Guard for AI Registry Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6872,
+          "title": "The Placeholder Repository Security Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -123311,7 +123331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:40:03.382Z",
+      "verified_at": "2026-11-04T17:37:26.050Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175463,6 +175483,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:30:49.253Z"
+    },
+    "rule-6870": {
+      "learning_id": "rule-6870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6870,
+      "title": "mcp-server): support 2025-11-25 Tools clients (5305)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "a89b18dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:37:25.001Z"
+    },
+    "rule-6871": {
+      "learning_id": "rule-6871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6871,
+      "title": "The Null-Reference Integrity Guard for AI Registry Artifacts",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:37:26.050Z"
+    },
+    "rule-6872": {
+      "learning_id": "rule-6872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6872,
+      "title": "The Placeholder Repository Security Boundary",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:37:26.050Z"
+    },
+    "rule-6873": {
+      "learning_id": "rule-6873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6873,
+      "title": "cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#221",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f851ca27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:37:28.725Z"
     }
   },
   "aliases": {
