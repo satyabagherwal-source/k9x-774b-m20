@@ -7302,3 +7302,6 @@
 | `CYCLE-20261104-LWS0` | `2026-11-04T19:33:52.560Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6931` | Yes (`f6093185...`) |
 | `CYCLE-20261104-LWYS` | `2026-11-04T19:33:52.804Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6932` | Yes (`32a775c3...`) |
 | `CYCLE-20261104-M10O` | `2026-11-04T19:33:58.056Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6933` | Yes (`0a089e86...`) |
+| `CYCLE-20261104-VLFC` | `2026-11-04T19:41:24.408Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6934` | Yes (`afdc08cb...`) |
+| `CYCLE-20261104-VT9B` | `2026-11-04T19:41:34.560Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6935` | Yes (`af306c9b...`) |
+| `CYCLE-20261104-VUEP` | `2026-11-04T19:41:36.049Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`94b6bfe4...`) |

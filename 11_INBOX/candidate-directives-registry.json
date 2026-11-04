@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T10:05:42.219Z",
+  "last_updated": "2026-11-04T19:41:36.059Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3797,6 +3797,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-arangodb-arangodb"
+    },
+    {
+      "id": "CD-VUEZ",
+      "directive_title": "NUC 80 List and Population Averages",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "5b3f3e76",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

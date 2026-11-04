@@ -7311,3 +7311,6 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `2e0f254a` | Multi-dimensional audit evidence | 2026-11-04T19:33:52.565Z |
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `bd7a42f3` | Multi-dimensional audit evidence | 2026-11-04T19:33:52.807Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `3e0c9dcc` | Multi-dimensional audit evidence | 2026-11-04T19:33:58.060Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-04T19:41:24.412Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `eda0eb5e` | Multi-dimensional audit evidence | 2026-11-04T19:41:34.564Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5b3f3e76` | Multi-dimensional audit evidence | 2026-11-04T19:41:36.053Z |
