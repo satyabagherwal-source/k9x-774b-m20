@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T07:42:05.533Z",
+  "last_updated": "2026-11-04T07:49:14.768Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
-      "verified_at": "2026-11-04T01:27:52.256Z",
+      "content_hash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
+      "verified_at": "2026-11-04T07:49:14.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:27:52.256Z"
+      "last_updated": "2026-11-04T07:49:14.768Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
-      "verified_at": "2026-10-27T15:18:54.841Z",
+      "content_hash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
+      "verified_at": "2026-11-04T07:49:07.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:18:54.841Z"
+      "last_updated": "2026-11-04T07:49:07.285Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
-      "verified_at": "2026-11-03T11:07:55.712Z",
+      "content_hash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
+      "verified_at": "2026-11-04T07:49:10.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:07:55.712Z"
+      "last_updated": "2026-11-04T07:49:10.266Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
-      "verified_at": "2026-10-30T21:42:14.728Z",
+      "content_hash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
+      "verified_at": "2026-11-04T07:49:05.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:42:14.728Z"
+      "last_updated": "2026-11-04T07:49:05.536Z"
     },
     "react/react-native": {
       "repository": "react/react-native",

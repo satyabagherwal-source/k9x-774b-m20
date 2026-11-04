@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `f0a4fa6d`  
+> **Source Version**: `fcc0161f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:07:54.967Z  
+> **Timestamp**: 2026-11-04T07:49:09.494Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:07:36.359Z  
+> **Harvest Timestamp**: 2026-11-04T07:49:08.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12423 stars
+- **Stars / Engagement**: 12426 stars
 
 ---
 
@@ -967,600 +967,291 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9c4b8c0` (2026-11-01)
-**Commit Message**: build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updates (#9464)
+### Incident Patch 1: `fcfc1e84` (2026-11-03)
+**Commit Message**: build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (#9495)
 
-Bumps the go-opentelemetry-io group with 12 updates in the / directory:
+Bumps the gha-dependencies group with 1 update:
+[jdx/mise-action](https://github.com/jdx/mise-action).
 
-| Package | From | To |
-| --- | --- | --- |
-|
-[go.opentelemetry.io/contrib/bridges/prometheus](https://github.com/open-telemetry/opentelemetry-go-contrib)
-| `0.71.0` | `0.72.0` |
-|
-[go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp](https://github.com/open-telemetry/opentelemetry-go-contrib)
-| `0.71.0` | `0.72.0` |
-|
-[go.opentelemetry.io/otel](https://github.com/open-telemetry/opentelemetry-go)
-| `1.46.0` | `1.47.0` |
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc](https://github.com/open-telemetry/opentelemetry-go)
-| `1.46.0` | `1.47.0` |
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp](https://github.com/open-telemetry/opentelemetry-go)
-| `1.46.0` | `1.47.0` |
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlptrace](https://github.com/open-telemetry/opentelemetry-go)
-| `1.46.0` | `1.47.0` |
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc](https://github.com/open-telemetry/opentelemetry-go)
-| `1.46.0` | `1.47.0` |
-|
-[go.opentelemetry.io/otel/exporte
-
-**File**: `e2e/go.mod` (modified, +20/-19)
-```diff
-@@ -56,7 +56,7 @@ require (
- 	github.com/golang-sql/sqlexp v0.1.0 // indirect
- 	github.com/google/flatbuffers v25.2.10+incompatible // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0 // indirect
- 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
- 	github.com/huandu/go-clone v1.7.3 // indirect
- 	github.com/huandu/go-sqlbuilder v1.43.0 // indirect
-@@ -94,8 +94,8 @@ require (
- 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
- 	github.com/prometheus/client_golang v1.24.1 // indirect
- 	github.com/prometheus/client_model v0.6.3 // indirect
--	github.com/prometheus/common v0.70.1 // indirect
--	github.com/prometheus/procfs v0.21.1 // indirect
-+	github.com/prometheus/common v0.72.0 // indirect
-+	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/reeflective/readline v1.3.0 // indirect
- 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
- 	github.com/rivo/uniseg v0.4.7 // indirect
-@@ -114,19 +114,20 @@ require (
- 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/bridges/prometheus v0.71.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
--	go.opentelemetry.io/otel v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 // indirect
--	go.opentelemetry.io/otel/metric v1.46.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.46.0 // indirect
--	go.opentelemetry.io/otel/trace v1.46.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-+	go.opentelemetry.io/contrib/bridges/prometheus v0.72.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.47.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/net v0.60.0 // indirect
-@@ -135,9 +136,9 @@ require (
- 	golang.org/x/term v0.46.0 // indirect
- 	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
-+	golang.org/x/tools v0.50.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
- 	google.golang.org/grpc v1.84.0 // indirect
- 	gopkg.in/ini.v1 v1.67.3 // indirect
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
-```
-
-**File**: `e2e/go.sum` (modified, +42/-40)
-```diff
-@@ -114,8 +114,8 @@ github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 h1:LMLX+LgTNWpfvCBdFe
- github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3/go.mod h1:jl5iWTm0/hd5PjEYEOuwAJ57L/CibdZfrqZ5XA5GrCk=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0 h1:Bd7KaOxzULLxtZ/K5s1aLbWhR0+5RToO65TXHsf3bqQ=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0/go.mod h1:nN7ts3dFXKtCZWc//yfkpcQNKJABg16/uDVAZpLDalo=
- github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
- github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
- github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02 h1:AgcIVYPa6XJnU3phs104wLj8l5GEththEw6+F79YsIY=
-@@ -210,10 +210,10 @@ github.com/prometheus/client_golang v1.24.1 h1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59u
- github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/hu68Zo0uoHKetWnzcE=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.70.1 h1:1HvjP4D5oL3t8RsPlwxA9onvvStjtIHYE5XuuwOi/PY=
--github.com/prometheus/common v0.70.1/go.mod h1:VdFUQDMZK3VLkurFUVhia6uys/0suUp86TJz5qbJRhc=
--github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
--github.com/prometheus/procfs v0.21.1/go.mod h1:aB55Cww9pdSJVHk0hUf0inxWyyjPogFIjmHKYgMKmtY=
-+github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
-+github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
-+github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
-+github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/reeflective/readline v1.3.0 h1:uh9c2SEmyoy7A/auequfXZjvK0NP5HVEAJFcL9Uf7qE=
- github.com/reeflective/readline v1.3.0/go.mod h1:bOpqx2/VqGlIoobyWR1Vgt/p5FiMfIHj4OicPuw6RfU=
- github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
-@@ -265,34 +265,36 @@ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo
- github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
- go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
--go.opentelemetry.io/contrib/bridges/prometheus v0.71.0 h1:9qgxsFLskbDMXl8WMqThoF6w8yGJgCumn9qRc67OmnI=
--go.opentelemetry.io/contrib/bridges/prometheus v0.71.0/go.mod h1:2rCjF4F2siiTeLCzJsaGZ3CK0XIoimCSKXEBPdv+Je0=
--go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 h1:3g7B90UzBltIDKq1/5mrTGxTnOFDV0ICOhLoxiZ8jlg=
--go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0/go.mod h1:Ef8SuTh59BT7+ofpDxN9z+yOlc4t2GjLmKDgYNJL/NU=
--go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
--go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 h1:qkDYCAFiZXLcs1L4aY+tP2wguQ4kURANqHOQMA2et2s=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0/go.mod h1:tkipS4DRzmpAmvg+Gw4++O1IdDq6TVDnvnYU6cmbQVs=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0 h1:AP23h/mFgb/lc7tdck1Kfn9qxsM8TAeNPCU5C3pzaps=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0/go.mod h1:K4EqCe1b4kGk5WR690ntg9LaBfsPoV32FwthbyoptuA=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 h1:OFnwLJr+pF3iHrlGSzbxyuo6/6HyBlnlN1CWEJmBVcw=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0/go.mod h1:716wFneO0ov19A2beH5hjfh9AK5z/VWNAtDijp1Y0/g=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 h1:w53CDeOA/Kurp7yRsegSr6pbbr759dOvJ+yNmWM6Hxs=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0/go.mod h1:BOmGMCbAtvcJiSJ+hLuhgPLdDbimnraSl8irz3iY8sY=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 h1:KrC1YrQeSt46ITMWAbgQx1M1eV1/1TKzttrBzymPmss=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0/go.mod h1:zDSEzoEqsOrgBeGvH66KRgxh90VonFyJqBHA0Pk3+rM=
--go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
--go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
--go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
-
-```
-
-**File**: `go.mod` (modified, +20/-19)
-```diff
-@@ -32,18 +32,18 @@ require (
- 	github.com/vektah/gqlparser/v2 v2.5.58
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
- 	github.com/yashtewari/glob-intersection v0.2.0
--	go.opentelemetry.io/contrib/bridges/prometheus v0.71.0
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0
--	go.opentelemetry.io/otel v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0
--	go.opentelemetry.io/otel/sdk v1.46.0
--	go.opentelemetry.io/otel/sdk/metric v1.46.0
--	go.opentelemetry.io/otel/trace v1.46.0
--	go.opentelemetry.io/proto/otlp v1.11.0
-+	go.opentelemetry.io/contrib/bridges/prometheus v0.72.0
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0
-+	go.opentelemetry.io/otel v1.47.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.47.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.47.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.47.0
-+	go.opentelemetry.io/otel/sdk v1.47.0
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0
-+	go.opentelemetry.io/otel/trace v1.47.0
-+	go.opentelemetry.io/proto/otlp v1.11.1
- 	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/sync v0.23.0
- 	golang.org/x/term v0.46.0
-@@ -71,7 +71,7 @@ require (
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/google/flatbuffers v25.2.10+incompatible // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0 // indirect
- 	github.com/huandu/go-clone v1.7.3 // indirect
- 	github.com/huandu/xstrings v1.4.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-@@ -92,23 +92,24 @@ require (
- 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
- 	github.com/olekukonko/errors v1.2.0 // indirect
- 	github.com/olekukonko/ll v0.1.6 // indirect
--	github.com/prometheus/common v0.70.1 // indirect
--	github.com/prometheus/procfs v0.21.1 // indirect
-+	github.com/prometheus/common v0.72.0 // indirect
-+	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/rivo/uniseg v0.4.7 // indirect
- 	github.com/rogpeppe/go-internal v1.16.0 // indirect
- 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
- 	github.com/segmentio/asm v1.2.1 // indirect
- 	github.com/valyala/fastjson v1.6.10 // indirect
- 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
-+	golang.org/x/tools v0.50.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
- )
- 
- // retract directive comment below will be displayed as a warning on pkg.go.dev for the old package name. Please retain
-```
-
-**File**: `go.sum` (modified, +42/-44)
-```diff
-@@ -62,8 +62,8 @@ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0 h1:Bd7KaOxzULLxtZ/K5s1aLbWhR0+5RToO65TXHsf3bqQ=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0/go.mod h1:nN7ts3dFXKtCZWc//yfkpcQNKJABg16/uDVAZpLDalo=
- github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
- github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
- github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02 h1:AgcIVYPa6XJnU3phs104wLj8l5GEththEw6+F79YsIY=
-@@ -133,10 +133,10 @@ github.com/prometheus/client_golang v1.24.1 h1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59u
- github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/hu68Zo0uoHKetWnzcE=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.70.1 h1:1HvjP4D5oL3t8RsPlwxA9onvvStjtIHYE5XuuwOi/PY=
--github.com/prometheus/common v0.70.1/go.mod h1:VdFUQDMZK3VLkurFUVhia6uys/0suUp86TJz5qbJRhc=
--github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
--github.com/prometheus/procfs v0.21.1/go.mod h1:aB55Cww9pdSJVHk0hUf0inxWyyjPogFIjmHKYgMKmtY=
-+github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
-+github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
-+github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
-+github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/reeflective/readline v1.3.0 h1:uh9c2SEmyoy7A/auequfXZjvK0NP5HVEAJFcL9Uf7qE=
- github.com/reeflective/readline v1.3.0/go.mod h1:bOpqx2/VqGlIoobyWR1Vgt/p5FiMfIHj4OicPuw6RfU=
- github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
-@@ -185,34 +185,36 @@ github.com/yashtewari/glob-intersection v0.2.0/go.mod h1:LK7pIC3piUjovexikBbJ26Y
- github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
- go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
--go.opentelemetry.io/contrib/bridges/prometheus v0.71.0 h1:9qgxsFLskbDMXl8WMqThoF6w8yGJgCumn9qRc67OmnI=
--go.opentelemetry.io/contrib/bridges/prometheus v0.71.0/go.mod h1:2rCjF4F2siiTeLCzJsaGZ3CK0XIoimCSKXEBPdv+Je0=
--go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 h1:3g7B90UzBltIDKq1/5mrTGxTnOFDV0ICOhLoxiZ8jlg=
--go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0/go.mod h1:Ef8SuTh59BT7+ofpDxN9z+yOlc4t2GjLmKDgYNJL/NU=
--go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
--go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 h1:qkDYCAFiZXLcs1L4aY+tP2wguQ4kURANqHOQMA2et2s=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0/go.mod h1:tkipS4DRzmpAmvg+Gw4++O1IdDq6TVDnvnYU6cmbQVs=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0 h1:AP23h/mFgb/lc7tdck1Kfn9qxsM8TAeNPCU5C3pzaps=
--go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0/go.mod h1:K4EqCe1b4kGk5WR690ntg9LaBfsPoV32FwthbyoptuA=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 h1:OFnwLJr+pF3iHrlGSzbxyuo6/6HyBlnlN1CWEJmBVcw=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0/go.mod h1:716wFneO0ov19A2beH5hjfh9AK5z/VWNAtDijp1Y0/g=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 h1:w53CDeOA/Kurp7yRsegSr6pbbr759dOvJ+yNmWM6Hxs=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0/go.mod h1:BOmGMCbAtvcJiSJ+hLuhgPLdDbimnraSl8irz3iY8sY=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 h1:KrC1YrQeSt46ITMWAbgQx1M1eV1/1TKzttrBzymPmss=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0/go.mod h1:zDSEzoEqsOrgBeGvH66KRgxh90VonFyJqBHA0Pk3+rM=
--go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
--go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
--go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
--go.opentelemetry.io/otel/metric/x v0.68.0/go.mod h1:agudOmvWhwUTjgibW
-```
-
----
-
-### Incident Patch 2: `b99492a2` (2026-11-01)
-**Commit Message**: build(deps): bump the e2e-prisma group in /e2e/api/compile/prisma with 4 updates (#9466)
-
-Bumps the e2e-prisma group in /e2e/api/compile/prisma with 4 updates:
-[@prisma/adapter-pg](https://github.com/prisma/orm/tree/HEAD/packages/adapter-pg),
-[@prisma/client](https://github.com/prisma/orm/tree/HEAD/packages/client),
-[pg](https://github.com/brianc/node-postgres/tree/HEAD/packages/pg) and
-[prisma](https://github.com/prisma/prisma-cli/tree/HEAD/packages/prisma).
-
-Updates `@prisma/adapter-pg` from 7.10.0 to 7.10.1
+Updates `jdx/mise-action` from 5.2.3 to 5.2.4
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/prisma/orm/releases">@​prisma/adapter-pg's
+href="https://github.com/jdx/mise-action/releases">jdx/mise-action's
 releases</a>.</em></p>
 <blockquote>
-<h2>7.10.1</h2>
-<p>Prisma ORM 7.10.1 is a patch release. It fixes a bug where a nested
-interactive transaction could make later, unrelated transactions run
-inside the wrong transaction. It also updates dependencies that had
-security advisories.</p>
-<h2>Fixes</h2>
-<h3>Prisma Client: nested <code>$transaction</code> no longer changes
-the options object you pass in</h3>
-<p>If you passed the same options object to a nested
-<code>tx.$transaction(...)</code> and later to a top-level
-<code>prisma.$transaction(...)</
+<h2>v5.2.4: Reuse cached signed checksums when restoring mise</h2>
+<p>Jobs that restore mise from the cache no longer have to download its
+signed checksums from GitHub on every run, so a network failure at that
+step no longer fails a job that otherwise restored correctly.</p>
+<h2>Fixed</h2>
+<ul>
+<li><strong>Restoring a cached mise no longer needs a network download
+of the checksums.</strong> The action checks the cached mise binary
+against the signed <code>SHASUMS256.txt</code> and its
+<code>.minisig</code>. Before this release it downloaded both files from
+GitHub on every run, even when the cache restored correctly. When that
+download failed, for example after repeated curl errors, the job failed.
+Now, once the signature checks out, the action saves both files as
+<code>SHASU
 
-**File**: `e2e/api/compile/prisma/package-lock.json` (modified, +121/-120)
+**File**: `.github/workflows/benchmarks-nightly.yaml` (modified, +1/-1)
 ```diff
-@@ -9,12 +9,12 @@
-       "version": "0.0.1",
-       "dependencies": {
-         "@open-policy-agent/ucast-prisma": "^0.1.6",
--        "@prisma/adapter-pg": "^7.10.0",
--        "@prisma/client": "^7.10.0",
--        "pg": "^8.23.0"
-+        "@prisma/adapter-pg": "^7.10.1",
-+        "@prisma/client": "^7.10.1",
-+        "pg": "^8.23.1"
-       },
-       "devDependencies": {
--        "prisma": "^7.10.0"
-+        "prisma": "^7.10.1"
-       }
-     },
-     "node_modules/@electric-sql/pglite": {
-@@ -58,24 +58,24 @@
-       }
-     },
-     "node_modules/@prisma/adapter-pg": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/adapter-pg/-/adapter-pg-7.10.0.tgz",
--      "integrity": "sha512-N7nwSor0HO1Kz6xBv0TPAjAPysKK0fac6p4fVN3ensLOuzc/83Fgmln5k92eK/cvzqdkSR/2kkAqlbcdwVrwpw==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/adapter-pg/-/adapter-pg-7.10.1.tgz",
-+      "integrity": "sha512-EP9ruPYHjKP80WZlb5qVaEXKgZjJieBFjAxcBtQnDAHD6+16UN4keVmBh6L/RUpuDQT2FQRbvKNgq5d4Ix+IkQ==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@prisma/driver-adapter-utils": "7.10.0",
-+        "@prisma/driver-adapter-utils": "7.10.1",
-         "@types/pg": "^8.16.0",
-         "pg": "^8.16.3",
-         "postgres-array": "3.0.4"
-       }
-     },
-     "node_modules/@prisma/client": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/client/-/client-7.10.0.tgz",
--      "integrity": "sha512-Ubw/QS9JGIBSBUsyxAUQuK/Jcu0Tsva7le7QbLd91Kix9yJvYDdj5QkwgEbbZniH80dd+sziQcALPc+HnvQC8Q==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/client/-/client-7.10.1.tgz",
-+      "integrity": "sha512-5tgAbFGh//zVOC6WPNVgziOErJHYkUE+wmqCwbIyq6IrTXUYtv9y2iBFGh/Owo99Mx0+cr0j1FOrxkYBMuyhaQ==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@prisma/client-runtime-utils": "7.10.0"
-+        "@prisma/client-runtime-utils": "7.10.1"
-       },
-       "engines": {
-         "node": "^20.19 || ^22.12 || >=24.0"
-@@ -94,28 +94,28 @@
-       }
-     },
-     "node_modules/@prisma/client-runtime-utils": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/client-runtime-utils/-/client-runtime-utils-7.10.0.tgz",
--      "integrity": "sha512-cnCy7lUV8/CctgKVEmqAbSLAmwqJdE/qAlqTBk/0NDk59zEb2cZ0M0M0E4vVPnqbSEYudRroQDvOWfUZH6RIfw==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/client-runtime-utils/-/client-runtime-utils-7.10.1.tgz",
-+      "integrity": "sha512-AzoATVIgmO3lcZfM443+9SI7+cyLMW2+Psw4op8WQHpHvHCX//CKxv8fwhiL0yGWF8DjdQrFewxrZo5McBdB8g==",
-       "license": "Apache-2.0"
-     },
-     "node_modules/@prisma/config": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/config/-/config-7.10.0.tgz",
--      "integrity": "sha512-Rcg828gIRE3HOQ3pOATFjV5d/P0U9OIobxhd/IMxlfWjA4vru0eGwb0AIwFw0rmcLMVShohZYWPixVxkBHsxUA==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/config/-/config-7.10.1.tgz",
-+      "integrity": "sha512-+0swF5ELUa3P/9cIR26+gpYjjCbGE0qvEBZhV4zMDkYsrtHjZ884MQbOnWFWXj600N0sSJNnHbtBqe12yDngWg==",
-       "devOptional": true,
-       "license": "Apache-2.0",
-       "dependencies": {
-         "c12": "3.3.4",
--        "deepmerge-ts": "7.1.5",
-+        "deepmerge-ts": "8.0.2",
-         "effect": "3.20.0",
-         "empathic": "2.0.0"
-       }
-     },
-     "node_modules/@prisma/debug": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/debug/-/debug-7.10.0.tgz",
--      "integrity": "sha512-caygJKtltmRIgdJ3jRpkOr7yM4DW6zxo5uOmojKWFb3asnxWoRkQOwZmXBgD8FZp4htrX+nMpcWqDwzlQ1+Y4g==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/debug/-/debug-7.10.1.tgz",
-+      "integrity": "sha512-eFCAkGZ13D/qPg48JBlG5IWi9cSBBOC7oG3abDPcAkYioDWlIjh0YJJLK2J7qo5S+xWWD8I6egAN/8KbCaiMCA==",
-       "license": "Apache-2.0"
-     },
-     "node_modules/@prisma/dev": {
-@@ -143,65 +143,65 @@
-       }
-     },
-     "node_modules/@prisma/driver-adapter-utils": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/driver-adapter-utils/-/driver-adapter-utils-7.10.0.tgz",
--      "integrity": "sha512-u8zkcRLlaryO652T4qavBg0HmzNW5tSKdsCn6hc1PhWAp/J6k0vrxLuUs+b9o+HcjsK7Dfa01o4OFSn0frauJA==",
-+      "version": "7.10.1",
-+      "resolved": "https://registry.npmjs.org/@prisma/driver-adapter-utils/-/driver-adapter-utils-7.10.1.tgz",
-+      "integrity": "sha512-DJ4c6xvVnm3s9ZUyql9nCUicADSqyvH+CjXRCM9L6m5zJxCNmebCElG6X4irICq3rosBwlX+S19Dxq/4IrZk3A==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@prisma/debug": "7.10.0"
-+        "@prisma/debug": "7.10.1"
-       }
-     },
-     "node_modules/@prisma/engines": {
--      "version": "7.10.0",
--      "resolved": "https://registry.npmjs.org/@prisma/engines/-/engines-7.10.0.tgz",
--      "integrity": "sha512-KNumN6NHFwybvfdYzTee9pqwx5PvknpWAaHn6L5NsbrKdl+
+@@ -236,7 +236,7 @@ jobs:
+           distribution: 'temurin'
+           java-version: '21'
+       - name: Setup Clojure
+-        uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
++        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           install: true
+           cache: true
 ```
 
-**File**: `e2e/api/compile/prisma/package.json` (modified, +4/-4)
+**File**: `.github/workflows/post-merge.yaml` (modified, +1/-1)
 ```diff
-@@ -11,12 +11,12 @@
-   "description": "",
-   "dependencies": {
-     "@open-policy-agent/ucast-prisma": "^0.1.6",
--    "@prisma/adapter-pg": "^7.10.0",
--    "@prisma/client": "^7.10.0",
--    "pg": "^8.23.0"
-+    "@prisma/adapter-pg": "^7.10.1",
-+    "@prisma/client": "^7.10.1",
-+    "pg": "^8.23.1"
-   },
-   "devDependencies": {
--    "prisma": "^7.10.0"
-+    "prisma": "^7.10.1"
-   },
-   "overrides": {
-     "hono": "^4.11.4"
+@@ -103,7 +103,7 @@ jobs:
+       - name: Git Describe
+         run: git describe --tags
+ 
+-      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           install: true
+           cache: false
+```
+
+**File**: `.github/workflows/post-tag.yaml` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ jobs:
+         with:
+           go-version-file: .go-version
+           cache: false
+-      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
++      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+         with:
+           install: true
+           cache: false
+```
+
+**File**: `.github/workflows/pull-request.yaml` (modified, +1/-1)
+```diff
+@@ -150,7 +150,7 @@ jobs:
+       with:
+         go-version-file: .go-version
+       if: matrix.os != 'linux'
+-    - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
++    - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+       with:
+         install: true
+         cache: true
 ```
 
 ---
 
-### Incident Patch 3: `30ef8b8b` (2026-11-01)
-**Commit Message**: build(deps): bump glob from 13.0.6 to 14.0.2 in /docs (#9469)
+### Incident Patch 2: `ffa002bb` (2026-11-03)
+**Commit Message**: build(deps): bump the dependencies group across 1 directory with 2 updates (#9494)
 
-Bumps [glob](https://github.com/isaacs/node-glob) from 13.0.6 to 14.0.2.
+Bumps the dependencies group with 2 updates in the / directory:
+[github.com/gobwas/glob](https://github.com/gobwas/glob) and
+[google.golang.org/grpc](https://github.com/grpc/grpc-go).
+
+Updates `github.com/gobwas/glob` from 1.0.0 to 1.1.0
 <details>
-<summary>Changelog</summary>
+<summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/isaacs/node-glob/blob/main/changelog.md">glob's
-changelog</a>.</em></p>
+href="https://github.com/gobwas/glob/releases">github.com/gobwas/glob's
+releases</a>.</em></p>
 <blockquote>
-<h1>changeglob</h1>
-<h2>14</h2>
+<h2>v1.1.0</h2>
+<h2>What's Changed</h2>
 <ul>
-<li>Use minimatch 11. Each portion of a pattern with magic is now
-matched with a <code>Matcher</code> from
-<code>@isaacs/nonrecursive-glob-match</code>
-in place of a <code>RegExp</code>, so patterns can no longer cause
-ReDoS.
-Matching follows the minimatch 11 changes, which are closer to
-Bash in some edge cases.</li>
-<li><code>Pattern#pattern()</code> returns a <code>Matcher</code> for a
-portion with
-magic. The <code>MMPattern</code> type is now minimatch's
-<code>ParseReturnFiltered</code>, and the new <code>MMMatcher</code>
-type is the
-<code>Matcher</code> part of it.</li>
-<li>Rename <code>Pattern#isRegExp()</code> to <code>isMatcher()</code>,
-and
-<code>Processor#testRegExp()</code> to <code>testMatcher()</code>.</li>
-<li>Remove the <code>debug</code> option, which minimatch no longer
-has.</li>
-<li>Add the <code>normalize</code> option, to no
+<li>all: modernize source code; require go 1.24 by <a
+href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
+href="https://redirect.github.com/gobwas/glob/pull/75">gobwas/glob#75</a></li>
+<li>tail alternatives: match stateless tail alts with a plain loop by <a
+href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
+href="https://redirect.github.com/gobwas/glob/pull/74">gobwas/glob#74</a></li>
+<li>glob: introduce Compiler with added Globstar option by <a
+href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
+href="https://redirect.github.com/gobwas/glob/pull/82">gobwas/glob#82</a></li>
+</ul>
+<p><strong>Full Changelog</stron
 
-**File**: `docs/package-lock.json` (modified, +23/-16)
+**File**: `e2e/go.mod` (modified, +2/-2)
 ```diff
-@@ -19,7 +19,7 @@
-         "@iconify/react": "^6.0.3",
-         "@mermaid-js/layout-elk": "^0.1.9",
-         "eslint": "^10.13.0",
--        "glob": "^13.0.6",
-+        "glob": "^14.0.2",
-         "js-yaml": "^5.5.0",
-         "markdownlint-cli2": "^0.24.0",
-         "md-front-matter": "^1.0.4",
-@@ -4638,6 +4638,12 @@
-         "mlly": "^1.8.2"
-       }
-     },
-+    "node_modules/@isaacs/nonrecursive-glob-match": {
-+      "version": "1.0.3",
-+      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
-+      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
-+      "license": "BlueOak-1.0.0"
-+    },
-     "node_modules/@jest/schemas": {
-       "version": "29.6.3",
-       "resolved": "https://registry.npmjs.org/@jest/schemas/-/schemas-29.6.3.tgz",
-@@ -10705,14 +10711,14 @@
-       "license": "ISC"
-     },
-     "node_modules/glob": {
--      "version": "13.0.6",
--      "resolved": "https://registry.npmjs.org/glob/-/glob-13.0.6.tgz",
--      "integrity": "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==",
-+      "version": "14.0.2",
-+      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.2.tgz",
-+      "integrity": "sha512-vfMgTR2djMHPUchsJMLpZlYQvtjVL+mHpEr5wPpoCbQs2vr/FBNK+3Gnl9Ara1DSs4Aeg4eG9HiADb5/rkY/ZA==",
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "minimatch": "^10.2.2",
-+        "minimatch": "^11.0.0",
-         "minipass": "^7.1.3",
--        "path-scurry": "^2.0.2"
-+        "path-scurry": "^3.0.0"
+@@ -50,7 +50,7 @@ require (
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
+-	github.com/gobwas/glob v1.0.0 // indirect
++	github.com/gobwas/glob v1.1.0 // indirect
+ 	github.com/goccy/go-json v0.11.2 // indirect
+ 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
+ 	github.com/golang-sql/sqlexp v0.1.0 // indirect
+@@ -139,7 +139,7 @@ require (
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
+-	google.golang.org/grpc v1.84.0 // indirect
++	google.golang.org/grpc v1.85.0 // indirect
+ 	gopkg.in/ini.v1 v1.67.3 // indirect
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+ 	modernc.org/libc v1.79.0 // indirect
+```
+
+**File**: `e2e/go.sum` (modified, +4/-4)
+```diff
+@@ -94,8 +94,8 @@ github.com/go-ole/go-ole v1.3.0 h1:Dt6ye7+vXGIKZ7Xtk4s6/xVdGDQynvom7xCFEdWr6uE=
+ github.com/go-ole/go-ole v1.3.0/go.mod h1:5LS6F96DhAwUc7C+1HLexzMXY1xGRSryjyPPKW6zv78=
+ github.com/go-sql-driver/mysql v1.10.1 h1:arlSnNLq6a5yxGxV7qg9lF4j0C+KwD6NbQyKr9QL6ME=
+ github.com/go-sql-driver/mysql v1.10.1/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
+-github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
+-github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
++github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
++github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
+ github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
+ github.com/goccy/go-json v0.11.2/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
+ github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
+@@ -329,8 +329,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc h1:
+ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:K/n0XLazCJHjD73YuMyNJsN38BPPy1kfFnKxUXaThFU=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc h1:4bNTbnb44EqGVy9HaQxSY2jnafSUdgV3qHtedvNpDKg=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
+-google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
+-google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
++google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
++google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
+ google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
+ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+```
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -10,7 +10,7 @@ require (
+ 	github.com/foxcpp/go-mockdns v1.3.0
+ 	github.com/fsnotify/fsnotify v1.10.1
+ 	github.com/go-logr/logr v1.4.4
+-	github.com/gobwas/glob v1.0.0
++	github.com/gobwas/glob v1.1.0
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/uuid v1.6.0
+ 	github.com/hashicorp/golang-lru/v2 v2.0.7
+@@ -49,7 +49,7 @@ require (
+ 	golang.org/x/term v0.47.0
+ 	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.16.0
+-	google.golang.org/grpc v1.84.0
++	google.golang.org/grpc v1.85.0
+ 	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+ 	gopkg.in/ini.v1 v1.67.3
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -50,8 +50,8 @@ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+ github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
+-github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
+-github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
++github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
++github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
+ github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
+ github.com/goccy/go-json v0.11.2/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+@@ -299,8 +299,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc h1:
+ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:K/n0XLazCJHjD73YuMyNJsN38BPPy1kfFnKxUXaThFU=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc h1:4bNTbnb44EqGVy9HaQxSY2jnafSUdgV3qHtedvNpDKg=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
+-google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
+-google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
++google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
++google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
+ google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
+ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+```
+
+---
+
+### Incident Patch 3: `db327b4b` (2026-11-03)
+**Commit Message**: build(deps-dev): bump baseline-browser-mapping from 2.11.32 to 2.11.33 in /docs in the website group (#9493)
+
+Bumps the website group in /docs with 1 update:
+[baseline-browser-mapping](https://github.com/web-platform-dx/baseline-browser-mapping).
+
+Updates `baseline-browser-mapping` from 2.11.32 to 2.11.33
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/47dde6e6b0119829e7f98308ebc43fd67ede56d0"><code>47dde6e</code></a>
+Patch to 2.11.33 because browser or feature data changed</li>
+<li><a
+href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/7d2362654097fe63f4c71faeba6ec5e1a7eca878"><code>7d23626</code></a>
+Browser or feature data changed</li>
+<li><a
+href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/107852a6972b01dbc5dff85b98551ab0272caf27"><code>107852a</code></a>
+Updating static site</li>
+<li>See full diff in <a
+href="https://github.com/web-platform-dx/baseline-browser-mapping/compare/v2.11.32...v2.11.33">compare
+view</a></li>
+</ul>
+</details>
+<br />
+
+
+[![Dependabot compatibility
+score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=
+
+**File**: `docs/package-lock.json` (modified, +4/-4)
+```diff
+@@ -30,7 +30,7 @@
+         "turndown-plugin-gfm": "^1.0.2"
+       },
+       "devDependencies": {
+-        "baseline-browser-mapping": "^2.11.32",
++        "baseline-browser-mapping": "^2.11.33",
+         "pagefind": "^1.5.2"
        },
        "engines": {
-         "node": "18 || 20 || >=22"
-@@ -10777,12 +10783,13 @@
-       }
-     },
-     "node_modules/glob/node_modules/minimatch": {
--      "version": "10.2.5",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
--      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-+      "version": "11.0.3",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
-+      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.5"
-+        "@isaacs/nonrecursive-glob-match": "^1.0.3",
-+        "brace-expansion": "^5.0.12"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -16034,9 +16041,9 @@
+@@ -6930,9 +6930,9 @@
        "license": "MIT"
      },
-     "node_modules/path-scurry": {
--      "version": "2.0.2",
--      "resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-2.0.2.tgz",
--      "integrity": "sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==",
-+      "version": "3.0.0",
-+      "resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-3.0.0.tgz",
-+      "integrity": "sha512-1pTbQqH1wIwMi/eleQ5leFTTCkzFsPcgXNjwOA8YGGW/W4/kHT3dssE7Z6NH+zuqNLOzOB0uaD61yl7cAcVhgg==",
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
-         "lru-cache": "^11.0.0",
-@@ -16050,9 +16057,9 @@
-       }
-     },
-     "node_modules/path-scurry/node_modules/lru-cache": {
--      "version": "11.5.1",
--      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.1.tgz",
--      "integrity": "sha512-RPimw/7aMdv2oqRrxKwvZXcPfwBrn/JZ2xYcY9Hus/6LaS3VOAKVWKWgNLCFSiOm1ESXinjsDlidVU7JlnCN2A==",
-+      "version": "11.5.3",
-+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
-+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
-       "license": "BlueOak-1.0.0",
-       "engines": {
-         "node": "20 || >=22"
+     "node_modules/baseline-browser-mapping": {
+-      "version": "2.11.32",
+-      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.32.tgz",
+-      "integrity": "sha512-UvuxFU9P3hM29LrQdwu0cD6w6/+SFr+UlB9s/knI7+O2rK9xFxKUwSDWxGdbbqQ9/V7BJ5s0NI5nQAE4uJp3gQ==",
++      "version": "2.11.33",
++      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.33.tgz",
++      "integrity": "sha512-yiVKDX+qCMRKBE084lXvq9EcwFUhKZ2nU8TK1EQQuOgPNR/lmbGxXOeDdlGUqC2Zz11Cs9rk1d/8NfgBmlkt0w==",
+       "license": "Apache-2.0",
+       "bin": {
+         "baseline-browser-mapping": "dist/cli.cjs"
 ```
 
 **File**: `docs/package.json` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@
-     "@iconify/react": "^6.0.3",
-     "@mermaid-js/layout-elk": "^0.1.9",
-     "eslint": "^10.13.0",
--    "glob": "^13.0.6",
-+    "glob": "^14.0.2",
-     "js-yaml": "^5.5.0",
-     "markdownlint-cli2": "^0.24.0",
-     "md-front-matter": "^1.0.4",
+@@ -34,7 +34,7 @@
+     "node": ">=24.0.0"
+   },
+   "devDependencies": {
+-    "baseline-browser-mapping": "^2.11.32",
++    "baseline-browser-mapping": "^2.11.33",
+     "pagefind": "^1.5.2"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9484** (2026-11-03): bundle: parse at most GOMAXPROCS modules at once (@srenatus)
-- **PR #9483** (2026-11-02): wasm: replace non-object values when upserting for with (@sspaink)
-- **PR #9482** (2026-11-03): docs: Make a few index examples more clear (@charlieegan3)
-- **PR #9480** (2026-11-02): build: Allow long PRs from dependabot (@charlieegan3)
-- **PR #9478** (2026-11-02): ast: report template string errors once (@sspaink)
-- **PR #9477** (2026-11-02): website: Add redirect for wrong security.txt path (@charlieegan3)
+- **PR #9495** (2026-11-03): build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (@dependabot[bot])
+- **PR #9494** (2026-11-03): build(deps): bump the dependencies group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #9493** (2026-11-03): build(deps-dev): bump baseline-browser-mapping from 2.11.32 to 2.11.33 in /docs in the website group (@dependabot[bot])
+- **PR #9492** (2026-11-03): build: Edits to non pr workflows to skip checks (@charlieegan3)
+- **PR #9491** (2026-11-03): build: Clear bot comments when validating issues (@charlieegan3)
+- **PR #9490** (2026-11-03): chore: Remove some labels with little signal (@charlieegan3)
 
 ---
 
@@ -1580,64 +1271,28 @@ has.</li>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updat
+## X. build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies gr
 
 **RULE**:
-When implementing operations in `e2e/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmarks-nightly.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9c4b8c0`: build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updates (#9464). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcfc1e84`: build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (#9495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks-nightly.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.31.0 // indirect
-	github.com/prometheus/common v0.72.0 // indirect
-	github.com/prometheus/procfs v0.22.0 // indirect
-	go.opentelemetry.io/contrib/bridges/prometheus v0.72.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
-	golang.org/x/tools v0.50.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd
+        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-	github.com/prometheus/common v0.70.1 // indirect
-	github.com/prometheus/procfs v0.21.1 // indirect
-	go.opentelemetry.io/contrib/bridges/prometheus v0.71.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-	go.opentelemetry.io/otel v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 // indirect
-	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.46.0 // indirect
-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-	google.golang.org/genproto/goo
+        uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9c4b8c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcfc1e84` are properly handled with clean fallback behavior.

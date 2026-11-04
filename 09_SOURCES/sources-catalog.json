@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "7c469256",
+    "sourceVersion": "30de12cd",
     "license": "Apache-2.0",
-    "contentHash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
-    "lastHarvestedAt": "2026-11-04T01:27:52.246Z",
+    "contentHash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
+    "lastHarvestedAt": "2026-11-04T07:49:14.759Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "16a017ee",
+    "sourceVersion": "cbac86f3",
     "license": "MIT",
-    "contentHash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
-    "lastHarvestedAt": "2026-10-27T15:18:54.823Z",
+    "contentHash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
+    "lastHarvestedAt": "2026-11-04T07:49:07.276Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "f0a4fa6d",
+    "sourceVersion": "fcc0161f",
     "license": "Apache-2.0",
-    "contentHash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
-    "lastHarvestedAt": "2026-11-03T11:07:55.702Z",
+    "contentHash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
+    "lastHarvestedAt": "2026-11-04T07:49:10.256Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -10263,10 +10263,10 @@
     "repository": "dubzzz/fast-check",
     "platform": "github",
     "sourceUrl": "https://github.com/dubzzz/fast-check",
-    "sourceVersion": "58ad0125",
+    "sourceVersion": "d0cf851f",
     "license": "MIT",
-    "contentHash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
-    "lastHarvestedAt": "2026-10-30T21:42:14.719Z",
+    "contentHash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
+    "lastHarvestedAt": "2026-11-04T07:49:05.526Z",
     "learningId": "learn-github-dubzzz-fast-check"
   },
   "react-react-native": {

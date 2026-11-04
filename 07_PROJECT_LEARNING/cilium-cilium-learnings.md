@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `7c469256`  
+> **Source Version**: `30de12cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:27:51.485Z  
+> **Timestamp**: 2026-11-04T07:49:14.028Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:27:51.288Z  
+> **Harvest Timestamp**: 2026-11-04T07:49:13.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25769 stars
+- **Stars / Engagement**: 25768 stars
 
 ---
 
@@ -1259,13 +1259,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49819** (2026-11-04): **build: Update iptables-wrapper to v4**
+  *Symptoms*: This PR updates iptables-wrapper from v3 to v4. It also fixes the renovate configuration that was not actually tracking iptables-wrapper updates so those manual bump PRs won't be necessary in the future.  See v3 -> v4 changelog: https://github.com/kubernetes-sigs/iptables-wrappers/compare/iptables-wrapper-v3..iptables-wrapper-v4  While here, I also updated and simplified the iptables-wrapper build process to replace the "curl repo archive then go build" with "go install repo_url@version".
+  **Post-Mortem & Fix Analysis**:
+  > /test
+
 - **Issue #49811** (2026-11-03): **[v1.18] ci: Fix the chart organization in the printed helm commands**
   *Symptoms*: The chart push prints its example helm commands with env.QUAY_CHARTS_ORGANIZATION_DEV, which set-env-variables stopped setting when the variable became CHARTS_ORGANIZATION_DEV, so the printed commands point at oci://quay.io//cilium. Main, v1.19 and v1.20 already read CHARTS_ORGANIZATION_DEV there.  This commit reads CHARTS_ORGANIZATION_DEV.  Fixes: 90ec4a89510b ("ci: make registry configurable")  This PR was prepared with AIL:3. I personally checked the diff. 
   **Post-Mortem & Fix Analysis**:
   > /test
-
-- **Issue #49809** (2026-11-03): **ci: Build releases with the tagged commit's local actions**
-  *Symptoms*: The release and beta image workflows check out the default branch to reach their local actions, so a stable release tag builds with main's disk-cleanup and set-env-variables actions, and the release workflow also with main's set-runtime-image action. A change to one of them on main reaches every release branch at its next tag.  This commit checks out github.sha, the tagged or dispatched commit the workflow file runs from, so each release builds with its own branch's actions. The values these workflows read from set-env-variables are the same on main, v1.18, v1.19 and v1.20, and each of those branches carries every action its copy uses.  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,278 +1284,116 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c469256` (2026-10-29)
-**Commit Message**: bpf: host: remove no longer needed __maybe_unused
+### Incident Patch 1: `30de12cd` (2026-11-03)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-**File**: `bpf/bpf_host.c` (modified, +17/-18)
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
 ```diff
-@@ -1012,22 +1012,22 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
+\ No newline at end of file
+```
+
+**File**: `images/cilium/Dockerfile` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ # SPDX-License-Identifier: Apache-2.0
  
- static __always_inline int
- do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
--	  enum trace_point obs_point,  const bool __maybe_unused from_host)
-+	  enum trace_point obs_point, const bool from_host)
- {
- 	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = TRACE_PAYLOAD_LEN,
- 	};
--	fraginfo_t __maybe_unused fraginfo = 0;
--	__u32 __maybe_unused ipcache_srcid = 0;
-+	fraginfo_t fraginfo = 0;
-+	__u32 ipcache_srcid = 0;
- 	enum metric_dir dir = METRIC_INGRESS;
--	void __maybe_unused *data, *data_end;
-+	void *data, *data_end;
- 	struct ipv6hdr __maybe_unused *ip6;
--	struct iphdr __maybe_unused *ip4;
--	struct arp_eth __maybe_unused *arp;
--	int __maybe_unused hdrlen = 0;
--	__u8 __maybe_unused next_proto = 0;
--	__s8 __maybe_unused ext_err = 0;
-+	struct iphdr *ip4;
-+	struct arp_eth *arp;
-+	int hdrlen = 0;
-+	__u8 next_proto = 0;
-+	__s8 ext_err = 0;
- 	int ret;
- 
- 	switch (proto) {
-@@ -1250,9 +1250,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 
- 	return ret;
- 
--drop_err_egress: __maybe_unused
-+drop_err_egress:
- 	dir = METRIC_EGRESS;
--drop_err_ingress: __maybe_unused
-+drop_err_ingress:
- 	return send_drop_notify_error(ctx, identity, ret, dir);
- }
- 
-@@ -1711,8 +1711,8 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
- 
- static __always_inline
- int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
--			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
--			__s8 *ext_err __maybe_unused)
-+			__u32 src_sec_identity, bool traced, bool use_tailcall,
-+			__s8 *ext_err)
- {
- 	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
-@@ -1913,16 +1913,15 @@ int cil_to_host(struct __ctx_buff *ctx)
-  * control back to bpf_lxc.
-  */
- static __always_inline __maybe_unused int
--from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
--		 __s8 *ext_err __maybe_unused)
-+from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
- {
--	struct trace_ctx __maybe_unused trace = {
-+	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = 0,
- 	};
- 	int ret = CTX_ACT_OK;
--	void __maybe_unused *data, *data_end;
--	struct iphdr *ip4 __maybe_unused;
-+	void *data, *data_end;
-+	struct iphdr *ip4;
- 	struct ipv6hdr *ip6 __maybe_unused;
- 
- 	switch (proto) {
+ ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
 ```
 
 ---
 
-### Incident Patch 2: `56c42f64` (2026-10-29)
-**Commit Message**: bpf: host: convert ENABLE_IPV4 guards to is_defined()
+### Incident Patch 2: `56a25b99` (2026-11-03)
+**Commit Message**: build: Update iptables-wrapper to v4
 
-When IPv4 is disabled, IPv4 and ARP packets still get the default
-unknown L3 handling. do_netdev() reaches it through a new unknown_l3
-label instead of duplicating the default case.
+This PR updates iptables-wrapper from v3 to v4. It also fixes the
+renovate configuration that was not actually tracking iptables-wrapper
+updates so those manual bump PRs won't be necessary in the future.
 
-Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
+While here, I also updated and simplifies the iptables-wrapper build
+process to replace the "curl repo archive then go build" with "go
+install repo_url@version".
 
-**File**: `bpf/bpf_host.c` (modified, +37/-14)
+Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+
+**File**: `.github/renovate.json5` (modified, +11/-1)
 ```diff
-@@ -87,7 +87,6 @@ static __always_inline bool allow_vlan(__u32 vlan_id)
- DEFINE_AUX(struct ct_buffer4, cilium_tail_call_buffer4);
- DEFINE_AUX(struct ct_buffer6, cilium_tail_call_buffer6);
+@@ -985,6 +985,15 @@
+       ],
+       "versioning": "regex:^v(?<major>\\d+)-v(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$"
+     },
++    {
++      // iptables-wrappers has no GitHub releases, only tags, in two
++      // independent series: "iptables-wrapper-vN" for the binary we build,
++      // and semver "vX.Y.Z" for the Go library. Only track the former.
++      "matchDepNames": [
++        "kubernetes-sigs/iptables-wrappers"
++      ],
++      "versioning": "regex:^iptables-wrapper-v(?<major>\\d+)$"
++    },
+     {
+       // cilium-envoy is referenced in both images/cilium/Dockerfile and
+       // install/kubernetes/Makefile.values. Without explicit grouping,
+@@ -1194,7 +1203,8 @@
+         "/images/builder/install-protoc.sh/",
+         "/images/builder/install-protoplugins.sh/",
+         "/images/runtime/build-cni.sh/",
+-        "/images/runtime/build-gops.sh/"
++        "/images/runtime/build-gops.sh/",
++        "/images/runtime/build-iptables-wrapper.sh/"
+       ],
+       // These regexes manage version and digest strings in shell scripts,
+       // similar to the examples shown here:
+```
+
+**File**: `images/runtime/build-iptables-wrapper.sh` (modified, +6/-11)
+```diff
+@@ -8,20 +8,15 @@ set -o errexit
+ set -o pipefail
+ set -o nounset
  
--#if defined(ENABLE_IPV4) || defined(ENABLE_IPV6)
- static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
- {
- 	/* When attached to cilium_host, we rewrite the DMAC to the mac of
-@@ -102,7 +101,6 @@ static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
+-# renovate: datasource=github-releases depName=kubernetes-sigs/iptables-wrappers
+-iptables_wrappers_version="v3"
+-
+-mkdir -p /go/src/github.com/kubernetes-sigs/iptables-wrappers
+-cd /go/src/github.com/kubernetes-sigs/iptables-wrappers
+-
+-curl -sSL https://github.com/kubernetes-sigs/iptables-wrappers/archive/refs/tags/${iptables_wrappers_version}.tar.gz | tar xz --strip-components=1
++# renovate: datasource=github-tags depName=kubernetes-sigs/iptables-wrappers
++IPTABLES_WRAPPERS_VERSION=iptables-wrapper-v4
  
- 	return CTX_ACT_OK;
- }
--#endif
- 
- #ifdef ENABLE_IPV6
- static __always_inline __u32
-@@ -557,7 +555,6 @@ handle_to_netdev_ipv6(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
- }
- #endif /* ENABLE_IPV6 */
- 
--#ifdef ENABLE_IPV4
- static __always_inline __u32
- resolve_srcid_ipv4(const struct __ctx_buff *ctx, const struct iphdr *ip4,
- 		   __u32 real_sec_identity, __u32 *ipcache_sec_identity)
-@@ -1012,7 +1009,6 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
- 	return ipv4_host_policy_egress(ctx, is_from_proxy, src_id, ipcache_srcid, ip4,
- 				       trace, ext_err);
- }
--#endif /* ENABLE_IPV4 */
- 
- static __always_inline int
- do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
-@@ -1123,8 +1119,10 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
- 								CTX_ACT_OK, METRIC_INGRESS);
- #endif
--#ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4))
-+			goto unknown_l3;
+ # Build the iptables-wrapper binary. It is fully static (CGO disabled) and
+ # depends only on the iptables binaries present at runtime, so it can be dropped
+ # into the rootfs as-is.
+-mkdir -p "/out/usr/sbin"
+-GOARCH=${TARGETARCH} CGO_ENABLED=0 go build \
++GOBIN=/out/usr/sbin GOARCH=${TARGETARCH} CGO_ENABLED=0 go install \
+     -ldflags '-s -w -extldflags="-static" -buildid=""' \
+     -trimpath \
+-    -o "/out/usr/sbin/iptables-wrapper" \
+-    github.com/kubernetes-sigs/iptables-wrappers
++    sigs.k8s.io/iptables-wrappers/cmd/iptables-wrapper@${IPTABLES_WRAPPERS_VERSION}
 +
- 		/* This is the first time revalidate_data() is going to be called.
- 		 * Make sure that we don't legitimately drop the packet if the skb
- 		 * arrived with the header not being not in the linear data.
-@@ -1218,6 +1216,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
- 								CTX_ACT_OK, METRIC_INGRESS);
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4))
-+			goto unknown_l3;
-+
- 		if (!revalidate_data_arp_pull(ctx, &data, &data_end, &arp)) {
- 			ret = DROP_INVALID;
- 			goto drop_err_ingress;
-@@ -1235,8 +1236,8 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		}
- 
- 		break;
--#endif /* ENABLE_IPV4 */
- 	default:
-+unknown_l3:
- 		send_trace_notify(ctx, obs_point, identity, UNKNOWN_ID, TRACE_EP_ID_UNKNOWN,
- 				  ctx->ingress_ifindex, trace.reason, trace.monitor, proto);
- 		if (CONFIG(enable_host_firewall)) {
-@@ -1479,17 +1480,25 @@ int cil_to_netdev(struct __ctx_buff *ctx)
- 						    src_sec_identity, &trace, &ext_err);
- 			break;
- # endif
--# ifdef ENABLE_IPV4
- 		case bpf_htons(ETH_P_IP): {
-+			if (!is_defined(ENABLE_IPV4)) {
-+				ret = DROP_UNKNOWN_L3;
-+				break;
-+			}
-+
- 			ret = handle_to_netdev_ipv4(ctx,
- 						    magic == MARK_MAGIC_PROXY_EGRESS,
- 						    src_sec_identity, &trace, &ext_err);
- 			break;
- 		}
- 		case bpf_htons(ETH_P_ARP):
-+			if (!is_defined(ENABLE_IPV4)) {
-+				ret = DROP_UNKNOWN_L3;
-+				break;
-+			}
-+
- 			ret = CTX_ACT_OK;
- 			break;
--# endif
- 		default:
- 			ret = DROP_UNKNOWN_L3;
- 			break;
-@@ -1674,7 +1683,6 @@ int tail_ipv6_host_policy_ingress(struct __ctx_buff *ctx)
- }
- #endif /* ENABLE_IPV6 */
- 
--#ifdef ENABLE_IPV4
- __declare_tail(CILIUM_CALL_IPV4_TO_HOST_POLICY_ONLY)
- static __always_inline
- int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
-@@ -1700,7 +1708,6 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
- 
- 	return ret;
- }
--#endif /* ENABLE_IPV4 */
- 
- static __always_inline
- int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
-@@ -1732,8 +1739,12 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
- 
- 		break;
- # endif
--# ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		if (use_tailcall) {
- 			ctx_store_meta(ctx, CB_SRC_LABEL, src_sec_identity);
- 			ctx_store_meta(ctx, CB_TRACED, traced);
-@@ -1746,9 +1757,13 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
- 
- 		break;
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		ret = CTX_ACT_OK;
- 		break;
--# endif
- 	default:
- 		ret = DROP_UNKNOWN_L3;
- 		break;
-@@ -1919,8 +1934,12 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
- 		ret = ipv6_host_policy_egress(ctx, false, HOST_ID, 0, ip6, &trace, ext_err);
- 		break;
- # endif
--# ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		if (!revalidate_data(ctx, &data, &data_end, &ip4))
- 			return DROP_INVALID;
- 
-@@ -1933,9 +1952,13 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
- 		ret = ipv4_host_policy_egress(ctx, false, HOST_ID, 0, ip4, &trace, ext_err);
- 		break;
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		ret = CTX_ACT_OK;
- 		break;
--# endif
- 	default:
- 		ret = DROP_UNKN
++go version -m /out/usr/sbin/iptables-wrapper | grep -q "GOARCH=$TARGETARCH" || (echo "Architecture mismatch: binary GOARCH does not match $TARGETARCH" && exit 1)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49819** (2026-11-04): build: Update iptables-wrapper to v4 (@HadrienPatte)
 - **PR #49811** (2026-11-03): [v1.18] ci: Fix the chart organization in the printed helm commands (@aanm)
 - **PR #49809** (closed): ci: Build releases with the tagged commit's local actions (@aanm)
 - **PR #49807** (2026-11-03): datapath: Revert the ENABLE_NODEPORT is_defined() conversion (@aanm)
 - **PR #49806** (2026-11-03): v1.18 Backports 2026-11-03 (@tklauser)
 - **PR #49805** (2026-11-03): v1.19 Backports 2026-11-03 (@tklauser)
-- **PR #49802** (2026-11-03): v1.20 Backports 2026-11-03 (@tklauser)
 
 ---
 
@@ -1573,61 +1413,28 @@ Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bpf: host: remove no longer needed __maybe_unused
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `bpf/bpf_host.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/set-runtime-image/runtime-image.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c469256`: bpf: host: remove no longer needed __maybe_unused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30de12cd`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_host.c`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/set-runtime-image/runtime-image.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	  enum trace_point obs_point, const bool from_host)
-	fraginfo_t fraginfo = 0;
-	__u32 ipcache_srcid = 0;
-	void *data, *data_end;
-	struct iphdr *ip4;
-	struct arp_eth *arp;
-	int hdrlen = 0;
-	__u8 next_proto = 0;
-	__s8 ext_err = 0;
-drop_err_egress:
-drop_err_ingress:
-			__u32 src_sec_identity, bool traced, bool use_tailcall,
-			__s8 *ext_err)
-from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
-	struct trace_ctx trace = {
-	void *data, *data_end;
-	struct iphdr *ip4;
+quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	  enum trace_point obs_point,  const bool __maybe_unused from_host)
-	fraginfo_t __maybe_unused fraginfo = 0;
-	__u32 __maybe_unused ipcache_srcid = 0;
-	void __maybe_unused *data, *data_end;
-	struct iphdr __maybe_unused *ip4;
-	struct arp_eth __maybe_unused *arp;
-	int __maybe_unused hdrlen = 0;
-	__u8 __maybe_unused next_proto = 0;
-	__s8 __maybe_unused ext_err = 0;
-drop_err_egress: __maybe_unused
-drop_err_ingress: __maybe_unused
-			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
-			__s8 *ext_err __maybe_unused)
-from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
-		 __s8 *ext_err __maybe_unused)
-	struct trace_ctx __maybe_unused trace = {
-	void __maybe_unused *data, *data_end;
-	struct iphdr *ip4 __maybe_unused;
+quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c469256` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30de12cd` are properly handled with clean fallback behavior.

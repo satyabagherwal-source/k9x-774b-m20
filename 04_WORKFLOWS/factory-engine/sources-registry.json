@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T07:42:08.066Z",
-    "lastVerified": "2026-11-04T07:42:08.067Z",
+    "lastChecked": "2026-11-04T07:49:17.333Z",
+    "lastVerified": "2026-11-04T07:49:17.333Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T07:18:53.779Z",
+    "lastChecked": "2026-11-04T07:49:12.565Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T07:18:53.779Z"
+    "lastVerified": "2026-11-04T07:49:12.565Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1922,14 +1922,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T01:27:51.288Z",
-    "lastVerified": "2026-11-04T01:27:51.288Z",
+    "lastChecked": "2026-11-04T07:49:13.544Z",
+    "lastVerified": "2026-11-04T07:49:13.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
+    "contentHash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3389,11 +3389,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "i18next-react-i18next": {
-    "name": "react-i18next",
+    "name": "i18next/react-i18next",
     "officialUrl": "https://github.com/i18next/react-i18next",
-    "lastChecked": "2026-10-31T05:00:42.751Z",
-    "revisionIdentifier": "16a017ee",
-    "lastVerified": "2026-10-31T05:00:42.751Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-04T07:49:06.136Z",
+    "lastVerified": "2026-11-04T07:49:06.136Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-i18next-react-i18next",
+    "contentHash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
     "name": "kumahq/kuma",
@@ -4591,9 +4601,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-01T02:07:34.311Z",
+    "lastChecked": "2026-11-04T07:48:57.506Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-01T02:07:34.311Z"
+    "lastVerified": "2026-11-04T07:48:57.506Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -4847,9 +4857,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-02T21:43:33.573Z",
+    "lastChecked": "2026-11-04T07:49:10.012Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-02T21:43:33.573Z"
+    "lastVerified": "2026-11-04T07:49:10.012Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -6868,14 +6878,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T11:07:36.359Z",
-    "lastVerified": "2026-11-03T11:07:36.359Z",
+    "lastChecked": "2026-11-04T07:49:08.963Z",
+    "lastVerified": "2026-11-04T07:49:08.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
+    "contentHash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11892,12 +11902,12 @@
     "officialUrl": "https://github.com/dubzzz/fast-check",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T21:41:08.510Z",
-    "lastVerified": "2026-10-30T21:41:08.510Z",
+    "lastChecked": "2026-11-04T07:49:03.285Z",
+    "lastVerified": "2026-11-04T07:49:03.285Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
+    "contentHash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,

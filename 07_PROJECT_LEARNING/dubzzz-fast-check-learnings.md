@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source**: github ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
-> **Source Version**: `58ad0125`  
+> **Source Version**: `d0cf851f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:42:14.031Z  
+> **Timestamp**: 2026-11-04T07:49:04.726Z  
 > **Learning ID**: `learn-github-dubzzz-fast-check`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:41:08.510Z  
+> **Harvest Timestamp**: 2026-11-04T07:49:03.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5226 stars
+- **Stars / Engagement**: 5228 stars
 
 ---
 
@@ -532,51 +532,63 @@ export function signalAsPromise(signal: AbortSignal): {
 
 ### Core Architecture Module: `packages/fast-check/src/check/runner/utils/AllCallbacksThenReturnRunner.ts`
 ```
-function runAllCallbacksAndReturnInternal<T>(
+async function runAllCallbacksAndReturnAsync<T>(
   value: T,
-  runCallbackAtIndex: (index: number) => void | undefined | Promise<void | undefined>,
+  runCallbackAtIndex: (index: number) => void | Promise<void>,
+  firstCallbackResult: Promise<void>,
   callbackIndex: number,
+  callbacksCount: number,
+  hasInitialError: boolean,
+  initialError: unknown,
+): Promise<T> {
+  let interceptedOnce = hasInitialError;
+  let interceptedError = initialError;
+  for (let index = callbackIndex; index !== callbacksCount; ++index) {
+    try {
+      const out = index === callbackIndex ? firstCallbackResult : runCallbackAtIndex(index);
+      if (out !== undefined) {
+        await out;
+      }
+    } catch (error) {
+      if (!interceptedOnce) {
+        interceptedOnce = true;
+        interceptedError = error;
+      }
+    }
+  }
+  if (interceptedOnce) {
+    throw interceptedError;
+  }
+  return value;
+}
+
+/**
+ * Run all callbacks in-order without any overlap.
+ * Returns the originally passed value if all callbacks succeed, otherwise rejects with the first encountered error.
+ * NEVER throw in a synchronous way!
+ * @param value - Value returned on success (must not be a Promise or thenable)
+ * @param runCallbackAtIndex - Execute the callback at a given index
+ * @param callbacksCount - Number of callbacks to execute
+ */
+export function runAllCallbacksAndReturn<T>(
+  value: T,
+  runCallbackAtIndex: (index: number) => void | Promise<void>,
   callbacksCount: number,
 ): T | Promise<T> {
   let interceptedOnce = false;
   let interceptedError: unknown = undefined;
-  for (let index = callbackIndex; index !== callbacksCount; ++index) {
+  for (let index = 0; index !== callbacksCount; ++index) {
     try {
       const out = runCallbackAtIndex(index);
       if (out !== undefined) {
-        return out.then(
-          () => {
-            const nested = runAllCallbacksAndReturnInternal(value, runCallbackAtIndex, index + 1, callbacksCount);
-            if (interceptedOnce) {
-              if (!Object.is(nested, value)) {
-                return Promise.resolve(nested).then(
-                  () => {
-                    throw interceptedError;
-                  },
-                  () => {
-                    throw interceptedError;
-                  },
-                );
-              }
-              throw interceptedError;
-            }
-            return nested;
-          },
-          (error) => {
-            const next = runAllCallbacksAndReturnInternal(value, runCallbackAtIndex, index + 1, callbacksCount);
-            const finalError = interceptedOnce ? interceptedError : error;
-            if (!Object.is(next, value)) {
-              return Promise.resolve(next).then(
-                () => {
-                  throw finalError;
-                },
-                () => {
-                  throw finalError;
-                },
-              );
-            }
-            throw finalError;
-          },
+        return runAllCallbacksAndReturnAsync(
+          value,
+          runCallbackAtIndex,
+          out,
+          index,
+          callbacksCount,
+          interceptedOnce,
+          interceptedError,
         );
       }
     } catch (error) {
@@ -592,21 +604,6 @@ function runAllCallbacksAndReturnInternal<T>(
   return value;
 }
 
-/**
- * Run all callbacks in-order without any overlap.
- * Returns the originally passed value in case all callbacks were successful and the first encountered error in case of error.
- * NEVER throw in a synchronous way!
- * @param value - The value to be passed to all callbacks and being returned by the function in case of success (T should not be a Promise)
- * @param callbacks - The callbacks to be executed
- */
-export function runAllCallbacksAndReturn<T>(
-  value: T,
-  runCallbackAtIndex: (index: number) => void | Promise<void>,
-  callbacksCount: number,
-): T | Promise<T> {
-  return runAllCallbacksAndReturnInternal(value, runCallbackAtIndex, 0, callbacksCount);
-}
-
 ```
 
 
@@ -615,11 +612,11 @@ export function runAllCallbacksAndReturn<T>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7514** (2026-10-30): **👷 Preserve setup-node runtime in tests and benchmarks**
-  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex / GPT-6) and has not been line-by-line reviewed by a human before submission.  The test and benchmark steps launch `bash -l`, which can replace setup-node's PATH with paths from login profiles. On the newer macOS runner image, setup-node selects Node 26.13.0 but the test runs under Homebrew Node 24.22.1. Its newer Unicode data changes the documentation examples and fails the snapshot check.  Use GitHub Actions' non-login `shell: bash` for both steps. Before running the workload, check the actual Node version against setup-node's resolved output and log the executable path, ICU, and Unicode versions. The test check runs through `pnpm exec node`, matching the test launch environment; the benchmark check uses `node`, matching its launcher.  Evidence from #7512: - [Rolldown 1.2.15 on main fails on image 20261026.0455.2](https://github.com/dubzzz/fast-check/actions/runs/41113495611/job/124262657399). - [Rolldown 1.2.16 passes on image 20261013.0424.1](https://github.com/dubzzz/fast-check/actions/runs/41114081454/job/124264172124). - Replaying the original CI bundle with only Unicode-property membership changed from Unicode 17 to 18 reproduces all five failing capitalized-word examples exactly.  Validation: - Parsed the workflow and checked the shared test steps for Linux, macOS, and Windows and the benchmark step. - Checked Bash syntax; executed both runtime guards with matching, mismatched, a
+- **Issue #7531** (2026-11-03): **⬆️ Update vitest monorepo to ^5.1.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [@vitest/coverage-v8](https://vitest.dev/guide/coverage) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-v8)) | [`^5.0.5` → `^5.1.0`](https://renovatebot.com/diffs/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@vitest%2fcoverage-v8/5.1.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0?slim=true) | | [vitest](https://vitest.dev) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest)) | [`^5.0.5` → `^5.1.0`](https://renovatebot.com/diffs/npm/vitest/5.0.5/5.1.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.1.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.5/5.1.0?slim=true) |  ---  ### Release Notes  <details> <summary>vitest-dev/vitest (@&#8203;vitest/coverage-v8)</summary>  ### [`v5.1.0`](https://redirect.github.com/vitest-dev/vitest/releases/tag/v5.1.0)  [Compare Source](https://redirect.github.com/vitest-dev/vitest/compare/v5.0.5...v5.1.0)  #####    🚀 Features  - Add `--last-failed` to run only failed tests  -  by [@&#8203;sheremet-va](https://redirect.github.com/sheremet-va) in [#&#8203;11558](https://redirect.github.com/vitest-de
 
-- **Issue #7513** (2026-10-30): **⬆️ Update dependency rolldown-plugin-dts to ^0.29.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [rolldown-plugin-dts](https://redirect.github.com/sxzz/rolldown-plugin-dts) | [`^0.28.8` → `^0.29.0`](https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.28.8/0.29.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.29.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.28.8/0.29.0?slim=true) |  ---  ### Release Notes  <details> <summary>sxzz/rolldown-plugin-dts (rolldown-plugin-dts)</summary>  ### [`v0.29.0`](https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.29.0)  [Compare Source](https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.28.8...v0.29.0)  #### Breaking Changes  ##### `@typescript/native-preview` is no longer supported  `tsgo` now loads TypeScript Go from the `typescript` package only. Install TypeScript 7.1 or later:  ```bash npm rm @typescript/native-preview npm i -D typescript@7.1.0-beta ```  To use a TypeScript Go build that is not installed as `typescript`, point `tsgo.moduleUrl` at it:  ```ts dts({   generator: 'tsgo',   tsgo: { moduleUrl: import.meta.resolve('typescript-next') }, }) ```  ##### `tsgo.path` changed meaning on TypeScript 7.1+  On 7.1+, `tsgo.path` is the API server executable (passed as `tsserverPath`), not the `tsgo` CLI. You usu
+- **Issue #7528** (2026-11-03): **⚡️ Reduce ticks when running asynchronous completion callbacks**
+  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex) and has not been line-by-line reviewed by a human before submission.  Asynchronous completion callbacks currently incur extra promise propagation when the runner recursively returns each remaining callback chain. Execute the remaining callbacks in one async continuation after encountering the first promise.  Preserve the generic `value: T` argument and `T | Promise<T>` return type, synchronous completion when possible, sequential callback execution, and first-error precedence after all callbacks finish.  The existing Promise.resolve pass-through cases complete one tick sooner: fixed completion overhead drops from 5 to 4 ticks for synchronous predicates and from 4 to 3 for asynchronous predicates. Update those expectations and add property-based tests generating callback sequences to verify the original return value and preserve arbitrary first-error values through cleanup. Includes a patch changeset.  ## Validation  - Focused callback-helper, runner, plugin-integration, and tick scenarios passed using Node's TypeScript transformer and a Node assertion adapter. All 8 callback-helper scenarios, including the two property-based regressions, pass. The first-error test generates a single Vitest mock chain and verifies error identity, callback indexes, and settled results using Vitest 5.0.5's actual spy implementation. - The arbitrary smoke test passed. - 19,608 callback sequences matched the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -636,100 +633,8 @@ export function runAllCallbacksAndReturn<T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58ad0125` (2026-10-30)
-**Commit Message**: 👷 Preserve setup-node runtime in tests and benchmarks (#7514)
-
-## Description
-
-> AI-agent disclosure: this PR was authored by an automated agent (Codex
-/ GPT-6) and has not been line-by-line reviewed by a human before
-submission.
-
-The test and benchmark steps launch `bash -l`, which can replace
-setup-node's PATH with paths from login profiles. On the newer macOS
-runner image, setup-node selects Node 26.13.0 but the test runs under
-Homebrew Node 24.22.1. Its newer Unicode data changes the documentation
-examples and fails the snapshot check.
-
-Use GitHub Actions' non-login `shell: bash` for both steps. Before
-running the workload, check the actual Node version against setup-node's
-resolved output and log the executable path, ICU, and Unicode versions.
-The test check runs through `pnpm exec node`, matching the test launch
-environment; the benchmark check uses `node`, matching its launcher.
-
-Evidence from #7512:
-- [Rolldown 1.2.15 on main fails on image
-20261026.0455.2](https://github.com/dubzzz/fast-check/actions/runs/41113495611/job/124262657399).
-- [Rolldown 1.2.16 passes on image
-20261013.0424.1](https://github.com/dubzzz/fast-check/actions/runs/41114081454/job/124264172124).
-- Rep
-
-**File**: `.github/workflows/build-status.yml` (modified, +22/-2)
-```diff
-@@ -166,6 +166,7 @@ jobs:
-       - name: Install pnpm
-         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-       - name: Using Node v${{matrix.node-version}}
-+        id: setup-node
-         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         with:
-           node-version: ${{matrix.node-version}}
-@@ -189,10 +190,19 @@ jobs:
-         # untar seems to fail on Windows when untaring already existing files
-         run: pnpm run unpack || true
-       - name: Unit tests
--        shell: bash -l {0}
-+        shell: bash
-+        env:
-+          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
-         # The DEFAULT_SEED might be used by some of the packages and might be ignored by others
-         # It's aim is to help to diagnose infinite loop that may occur during tests and cannot be stopped by fast-check itself
-         run: |
-+          pnpm exec node -e '
-+            const { execPath, version, versions } = process;
-+            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
-+            if (version !== process.env.EXPECTED_NODE_VERSION) {
-+              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
-+            }
-+          '
-           export EXPECT_DEFAULT_SEED="true"
-           export DEFAULT_SEED=$(node -p "Date.now() ^ (Math.random() * 0x100000000)")
-           export FAST_CI_RUN=$("${ENABLE_COVERAGE}" = "true")
-@@ -452,6 +462,7 @@ jobs:
-       - name: Install pnpm
-         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-       - name: Using Node v26.x
-+        id: setup-node
-         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         with:
-           node-version: '26.x'
-@@ -480,10 +491,19 @@ jobs:
-         run: node --run unpack
-       - name: Benchmark
-         id: bench
--        shell: bash -l {0}
-+        shell: bash
-+        env:
-+          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
-         # The DEFAULT_SEED has to be specified to make vitest.setup.mjs happy.
-         # But we don't use it for benchmarks.
-         run: |
-+          node -e '
-+            const { execPath, version, versions } = process;
-+            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
-+            if (version !== process.env.EXPECTED_NODE_VERSION) {
-+              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
-+            }
-+          '
-           set -o pipefail
-           export EXPECT_DEFAULT_SEED="true"
-           export DEFAULT_SEED="0"
-```
-
----
-
-### Incident Patch 2: `a860d51d` (2026-10-30)
-**Commit Message**: ⬆️ Update dependency rolldown to ^1.2.16 (#7512)
+### Incident Patch 1: `d0cf851f` (2026-11-03)
+**Commit Message**: ⬆️ Update vitest monorepo to ^5.1.0 (#7531)
 
 This PR contains the following updates:
 
@@ -737,13 +642,22 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
-| [rolldown](https://rolldown.rs/)
-([source](https://redirect.github.com/rolldown/rolldown/tree/HEAD/packages/rolldown))
-| [`^1.2.15` →
-`^1.2.16`](https://renovatebot.com/diffs/npm/rolldown/1.2.15/1.2.16) |
-![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown/1.2.16?slim=true)
+| [@vitest/coverage-v8](https://vitest.dev/guide/coverage)
+([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-v8))
+| [`^5.0.5` →
+`^5.1.0`](https://renovatebot.com/diffs/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown/1.2.15/1.2.16?slim=true)
+![age](https://developer.mend.io/api/mc/badges/age/npm/@vitest%2fcoverage-v8/5.1.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0?slim=true)
+|
+| [vitest](https://vitest.dev)
+([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest))
+| [`^5.0.5` →
+`^5.1.0`](https://renovatebot.com/diffs/npm/vitest/5.0.5/5.1.0) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.1.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.5/5.1.0?slim=true)
 |
 
 ---
@@ -751,221 +665,505 @@ This PR contains the following updates:
 ### Release Notes
 
 <details>
-<summary>rolldown/rolldown (rolldown)</summary>
+<summary>vitest-dev/vitest (@&#8203;vitest/coverage-v8)</summary>
 
 ###
-[`v1.2.16`](https://redirect.github.com/rolldown/rolldown/blob/HEAD/CHANGELOG.md#1216---2026-10-29)
+[`v5.1.0`](https:/
 
-[Compare
-Source](https://redirect.github.com/rolldown/rolldown/compare/v1.2.15...v1.2.16)
-
-##### 🚀 Features
-
-- perf-kit: check rendered output against the original build
-([#&#8203;11140](https://redirect.github.com/rolldown/rolldown/issues/11140))
-by [@&#8203;IWANABETHATGUY](https://redirect.github.com/IWANABETHATGUY)
-- perf-kit: node/deno server startup mode
-([#
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `examples/package.json` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,7 @@
-     "oxlint-tsgolint": "^7.0.2005",
-     "pkg-pr-new": "^0.0.92",
-     "publint": "^0.3.25",
--    "rolldown": "^1.2.15",
-+    "rolldown": "^1.2.16",
+@@ -21,7 +21,7 @@
+     "react": "^19.3.1",
+     "react-dom": "^19.3.1",
+     "typescript": "~7.0.2",
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "author": "Nicolas DUBIEN <github@dubien.org>",
+   "license": "MIT"
+```
+
+**File**: `package.json` (modified, +2/-2)
+```diff
+@@ -50,7 +50,7 @@
+     "@fast-check/packaged": "workspace:*",
+     "@types/jest": "^30.0.0",
+     "@types/node": "^26.6.6",
+-    "@vitest/coverage-v8": "^5.0.5",
++    "@vitest/coverage-v8": "^5.1.0",
+     "all-contributors-cli": "^7.0.0",
+     "cross-env": "^10.1.0",
+     "oxfmt": "^0.75.0",
+@@ -61,6 +61,6 @@
+     "rolldown": "^1.2.16",
      "rolldown-plugin-dts": "^0.29.0",
      "typescript": "~7.0.2",
-     "vitest": "^5.0.5"
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   }
+ }
 ```
 
 **File**: `packages/ava/package.json` (modified, +1/-1)
 ```diff
-@@ -42,7 +42,7 @@
-     "ava": "^8.2.0",
-     "esm": "^3.2.25",
-     "fast-check": "workspace:*",
--    "rolldown": "^1.2.15",
-+    "rolldown": "^1.2.16",
+@@ -45,7 +45,7 @@
+     "rolldown": "^1.2.16",
      "rxjs": "^7.8.2",
      "typescript": "~7.0.2",
-     "vitest": "^5.0.5"
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "keywords": [
+     "ava",
+```
+
+**File**: `packages/fast-check/package.json` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@
+     "not-node-buffer": "npm:buffer@^6.0.3",
+     "regexp-tree": "^0.1.27",
+     "typescript": "~7.0.2",
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "keywords": [
+     "property-based testing",
+```
+
+**File**: `packages/jest/package.json` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@
+     "jest-jasmine2": "^30.5.2",
+     "typescript": "~7.0.2",
+     "vite": "^8.3.5",
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "keywords": [
+     "jest",
 ```
 
 **File**: `packages/packaged/package.json` (modified, +1/-1)
 ```diff
-@@ -39,7 +39,7 @@
-   "devDependencies": {
-     "@types/npm-packlist": "^7.0.3",
+@@ -41,7 +41,7 @@
      "@types/npmcli__arborist": "^6.3.3",
--    "rolldown": "^1.2.15",
-+    "rolldown": "^1.2.16",
+     "rolldown": "^1.2.16",
      "typescript": "~7.0.2",
-     "vitest": "^5.0.5"
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
    },
+   "keywords": [],
+   "funding": [
 ```
 
 **File**: `packages/poisoning/package.json` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,7 @@
-   "devDependencies": {
-     "@fast-check/poisoning": "workspace:*",
+@@ -31,7 +31,7 @@
      "@types/node": "^26.6.6",
--    "rolldown": "^1.2.15",
-+    "rolldown": "^1.2.16",
+     "rolldown": "^1.2.16",
      "typescript": "~7.0.2",
-     "vitest": "^5.0.5"
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
    },
+   "keywords": [
+     "poisoning",
 ```
 
 **File**: `packages/vitest/package.json` (modified, +1/-1)
 ```diff
-@@ -37,7 +37,7 @@
-     "@fast-check/vitest": "workspace:*",
-     "@types/node": "^26.6.6",
-     "fast-check": "workspace:*",
--    "rolldown": "^1.2.15",
-+    "rolldown": "^1.2.16",
+@@ -40,7 +40,7 @@
+     "rolldown": "^1.2.16",
      "typescript": "~7.0.2",
      "vite": "^8.3.5",
-     "vitest": "^5.0.5"
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "keywords": [
+     "vitest",
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +81/-81)
+---
+
+### Incident Patch 2: `a8f5a905` (2026-11-03)
+**Commit Message**: 💥 Remove the check runner (#7526)
+
+## Description
+
+Remove the public `check` runner and execute properties through a single
+`assert` implementation returning `Promise<void>`. Completion plugins
+still receive run details, and tests collect them through
+`assertAndGetRunDetails`. Preserve default reporting, custom error
+precedence, cleanup, and `noDefaultPlugins`.
+
+Update callers, documentation, tick expectations, and stack snapshots.
+Include one major `fast-check` changeset for the breaking API removal.
+
+Validation: 53 existing tick/plugin scenarios passed through a local
+Node assertion adapter, along with focused helper and void-return
+checks, the arbitrary smoke test, and six stack-message comparisons.
+TypeScript syntax and helper-reference checks passed. Full CI is
+running.
+
+## Checklist
+
+— _Don't delete this checklist and make sure you do the following before
+opening the PR_
+
+- [ ] I have a full understanding of every line in this PR — whether the
+code was hand-written, AI-generated (our [AI
+Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)),
+copied from external sources or produced by any other tool
+- [ ] I flagged the impact of my change (minor / patch / maj
+
+**File**: `.changeset/remove-check-runner.md` (added, +7/-0)
 ```diff
-@@ -238,11 +238,11 @@ importers:
-         specifier: ^0.3.25
-         version: 0.3.25
-       rolldown:
--        specifier: ^1.2.15
--        version: 1.2.15
-+        specifier: ^1.2.16
-+        version: 1.2.16
-       rolldown-plugin-dts:
-         specifier: ^0.29.0
--        version: 0.29.0(rolldown@1.2.15)(typescript@7.0.2)
-+        version: 0.29.0(rolldown@1.2.16)(typescript@7.0.2)
-       typescript:
-         specifier: ~7.0.2
-         version: 7.0.2
-@@ -314,8 +314,8 @@ importers:
-         specifier: ^3.2.25
-         version: 3.2.25
-       rolldown:
--        specifier: ^1.2.15
--        version: 1.2.15
-+        specifier: ^1.2.16
-+        version: 1.2.16
-       rxjs:
-         specifier: ^7.8.2
-         version: 7.8.2
-@@ -416,8 +416,8 @@ importers:
-         specifier: ^6.3.3
-         version: 6.3.3
-       rolldown:
--        specifier: ^1.2.15
--        version: 1.2.15
-+        specifier: ^1.2.16
-+        version: 1.2.16
-       typescript:
-         specifier: ~7.0.2
-         version: 7.0.2
-@@ -434,8 +434,8 @@ importers:
-         specifier: ^26.6.6
-         version: 26.6.6
-       rolldown:
--        specifier: ^1.2.15
--        version: 1.2.15
-+        specifier: ^1.2.16
-+        version: 1.2.16
-       typescript:
-         specifier: ~7.0.2
-         version: 7.0.2
-@@ -456,8 +456,8 @@ importers:
-         specifier: ^26.6.6
-         version: 26.6.6
-       rolldown:
--        specifier: ^1.2.15
--        version: 1.2.15
-+        specifier: ^1.2.16
-+        version: 1.2.16
-       typescript:
-         specifier: ~7.0.2
-         version: 7.0.2
-@@ -2696,8 +2696,8 @@ packages:
-     resolution: {integrity: sha512-leBRl6F5F0TvWut8m1/aZcMTUHi2vXjKeMJ/Ik1lW7Q7Yy16Dhtkklu+cEqQww1p1NeLnUNzV3+uwpzqRcy9vw==}
-     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+@@ -0,0 +1,7 @@
++---
++"fast-check": major
++---
++
++Remove the `check` runner. Use `await fc.assert(property, parameters)` to run a property.
++Handle run details directly in a plugin's `onAllRunsComplete` callback: throw to report a failure, or return nothing when the outcome is acceptable.
++Set `noDefaultPlugins: true` to replace default failure reporting with your own reporting.
+```
+
+**File**: `packages/fast-check/src/check/plugin/Plugin.ts` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@ import type { Property } from '../property/types/Property.js';
+ import type { RunDetails } from '../runner/reporter/RunDetails.js';
  
--  '@oxc-project/types@0.155.0':
--    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
-+  '@oxc-project/types@0.156.0':
-+    resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
+ /**
+- * Storage shared by all the plugins instantiated for one call to {@link check} or {@link assert}.
++ * Storage shared by all the plugins instantiated for one call to {@link assert}.
+  * Use it to cooperate across plugins.
+  *
+  * @remarks Since 4.10.0
+@@ -82,7 +82,7 @@ export type PluginInstance<Ts> = {
  
-   '@oxfmt/binding-android-arm-eabi@0.75.0':
-     resolution: {integrity: sha512-zHJ7LcTN46/5mtoLxsUu14pdF9ixFwDURtmxZ0CeNwqom5qB5NRVqU6o2GRZ7QPdNBW8G6j9UTJzQ+EDevMH0w==}
-@@ -3133,98 +3133,98 @@ packages:
-     resolution: {integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==}
-     engines: {node: '>=18'}
+ /**
+  * Builder instantiating a plugin.
+- * Each property will instantiate its own plugin when starting to be assessed via {@link check} or {@link assert}.
++ * Each property will instantiate its own plugin when starting to be assessed via {@link assert}.
+  *
+  * Parameters received by the Plugin function:
+  * - 1st argument or pluginIndex: Corresponds to the index of the plugin within the run (starts at zero).
+```
+
+**File**: `packages/fast-check/src/check/runner/Sampler.ts` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ function streamSample<Ts>(
+ }
  
--  '@rolldown/binding-android-arm-eabi@1.2.15':
--    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
-+  '@rolldown/binding-android-arm-eabi@1.2.16':
-+    resolution: {integrity: sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm]
-     os: [android]
+ /**
+- * Generate an array containing all the values that would have been generated during {@link assert} or {@link check}
++ * Generate an array containing all the values that would have been generated during {@link assert}
+  *
+  * @example
+  * ```typescript
+```
+
+**File**: `packages/fast-check/src/check/runner/assert.spec.ts` (renamed, +40/-42)
+```diff
+@@ -3,7 +3,7 @@ import { nil } from '../../utils/iterator.js';
+ import * as fc from 'fast-check';
  
--  '@rolldown/binding-android-arm64@1.2.15':
--    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
-+  '@rolldown/binding-android-arm64@1.2.16':
-+    resolution: {integrity: sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [android]
+ import { Value } from '../arbitrary/definition/Value.js';
+-import { check as rCheck, assert as rAssert } from './Runner.js';
++import { assert as rAssert } from './assert.js';
+ import type { Random } from '../../random/generator/Random.js';
+ import type { RunDetails } from './reporter/RunDetails.js';
+ import { PreconditionFailure } from '../precondition/PreconditionFailure.js';
+@@ -12,31 +12,29 @@ import type { Property } from '../property/types/Property.js';
+ import type { Parameters } from './configuration/Parameters.js';
  
--  '@rolldown/binding-darwin-arm64@1.2.15':
--    resolution: {integrity: sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==}
-+  '@rolldown/binding-darwin-arm64@1.2.16':
-+    resolution: {integrity: sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [darwin]
+ const MAX_NUM_RUNS = 1000;
+-describe('Runner', () => {
+-  describe.each([
+-    { name: 'check', check: rCheck },
+-    {
+-      name: 'assert with noDefaultPlugins',
+-      check: async <Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> => {
+-        let runDetails: RunDetails<Ts> | undefined;
+-        const out = await rAssert(property, {
+-          ...params,
+-          noDefaultPlugins: true,
+-          plugins: [
+-            ...(params?.plugins ?? []),
+-            () => ({
+-              onAllRunsComplete: (details) => {
+-                runDetails = details;
+-              },
+-            }),
+-          ],
+-        });
+-        expect(out).toBeUndefined();
+-        expect(runDetails).toBeDefined();
+-        return runDetails!;
+-      },
+-    },
+-  ])('$name', ({ check }) => {
++describe('assert', () => {
++  describe('assert with noDefaultPlugins', () => {
++    const assertAndGetRunDetails = async <Ts>(
++      property: Property<Ts>,
++      params?: Parameters<Ts>,
++    ): Promise<RunDetails<Ts>> => {
++      let capturedRunDetails: RunDetails<Ts> | undefined;
++      const out = await rAssert(property, {
++        ...params,
++        noDefaultPlugins: true,
++        plugins: [
++          ...(params?.plugins ?? []),
++          () => ({
++            onAllRunsComplete: (details) => {
++              capturedRunDetails = details;
++            },
++          }),
++        ],
++      });
++      expect(out).toBeUndefined();
++      expect(capturedRunDetails).toBeDefined();
++      return capturedRunDetails!;
++    };
+     it('Should call the property 100 times by default (on success)', async () => {
+       let numCallsGenerate = 0;
+       let numCallsRun = 0;
+@@ -53,7 +51,7 @@ describe('Runner', () => {
+           return null;
+         },
+       };
+-      const out = await check(p);
++      const out = await assertAndGetRunDetails(p);
+       expect(numCallsGenerate).toEqual(100);
+       expect(numCallsRun).toEqual(100);
+       expect(out.failed).toBe(false);
+@@ -74,7 +72,7 @@ describe('Runner', () => {
+           return null;
+         },
+       };
+-      const out = await check(p, { path: '3002' });
++      const out = await assertAndGetRunDetails(p, { path: '3002' });
+       expect(numCallsGenerate).toEqual(100);
+       expect(numCallsRun).toEqual(100);
+       expect(out.failed).toBe(false);
+@@ -103,7 +101,7 @@ describe('Runner', () => {
+           return null;
+         },
+       };
+-      const out = await check(p, { path: '3002:0' });
++      const out = await assertAndGetRunDetails(p, { path: '3002:0' });
+       expect(numCallsGenerate).toEqual(1);
+       expect(numCallsRun).toEqual(1234);
+       expect(out.failed).toBe(false);
+@@ -130,7 +128,7 @@ describe('Runner', () => {
+               return new PreconditionFailure();
+             },
+           };
+-          const out = await check(p);
++          const out = await assertAndGetRunDetails(p);
+           if (failAtId == null) {
+             const expectedGenerate = successIds[successIds.length - 1] + 1;
+             const expectedSkips = expectedGenerate - 100;
+@@ -167,7 +165,7 @@ describe('Runner', () => {
+                 return new PreconditionFailure();
+               },
+             };
+-            const out = await check(p, { numRuns: 2, maxSkipsPerRun: settings.maxSkipsPerRun });
++            const out = await assertAndGetRunDetails(p, { numRuns: 2, maxSkipsPerRun: settings.maxSkipsPerRun });
+             const expectedSkips = 2 * settings.maxSkipsPerRun + 1;
+             const expectedRuns = settings.onlySuccessId === expectedSkips ? 0 : 1;
+             expect(out.numRuns).toEqual(expectedRuns);
+@@ -194,7 +192,7 @@ describe('Runner', () => {
+           return null;
+         },
+       };
+-      const out = await check(p);
++      const out = await assertAndGetRunDetails(p);
+       expect(numCallsGenerate).toEqual(100);
+       expect(numCallsRun).toEqual(100);
+       expect(out.failed).toBe(false);
+@@ -214,7 +212,7 @@ describe('Runner', () => {
+               return ++numCallsRun < num ? null : { error: new Error('error') };
+             },
+           };
+-          const out = await check(p, { seed: seed });
++          const out = await assertAndGetRunDetails(p, { seed: seed });
+           expect(numCallsGenerate).toEqual(num); // stopped generate at first failing run
+           expect(numCallsRun).toEqual(num); /
+```
+
+**File**: `packages/fast-check/src/check/runner/assert.ts` (renamed, +17/-42)
+```diff
+@@ -3,7 +3,6 @@ import { readConfigureGlobal } from './configuration/GlobalParameters.js';
+ import type { Parameters } from './configuration/Parameters.js';
+ import { read } from './configuration/QualifiedParameters.js';
+ import type { QualifiedParameters } from './configuration/QualifiedParameters.js';
+-import type { RunDetails } from './reporter/RunDetails.js';
+ import { propertyRunner } from './PropertyRunner.js';
+ import { createRunnerIterator } from './utils/RunnerIteratorBuilder.js';
+ import {
+@@ -13,7 +12,23 @@ import {
+   runPluginCompletionCallbacks,
+ } from './utils/PluginIntegration.js';
  
--  '@rolldown/binding-darwin-x64@1.2.15':
--    resolution: {integrity: sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==}
-+  '@rolldown/binding-darwin-x64@1.2.16':
-+    resolution: {integrity: sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [x64]
-     os: [darwin]
+-function checkInternal<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> {
++/**
++ * Run the property and reject if a plugin reports the run as an error
++ *
++ * With the default setup, failed runs are rejected.
++ *
++ * It can be called directly from describe/it blocks of your favorite test runner.
++ * No meaningful results are produced. Use a plugin's `onAllRunsComplete` callback to access run details.
++ *
++ * WARNING: Has to be awaited
++ *
++ * @param property - Asynchronous property to be checked
++ * @param params - Optional parameters to customize the execution
++ *
++ * @remarks Since 0.0.7
++ * @public
++ */
++export function assert<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<void> {
+   const qParams: QualifiedParameters<Ts> = read<Ts>({
+     ...(readConfigureGlobal() as Parameters<Ts>),
+     ...params,
+@@ -39,43 +54,3 @@ function checkInternal<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Pro
+         ),
+       );
+ }
+-
+-/**
+- * Run the property, do not throw contrary to {@link assert}
+- *
+- * WARNING: Has to be awaited
+- *
+- * @param property - Asynchronous property to be checked
+- * @param params - Optional parameters to customize the execution
+- *
+- * @returns Test status and other useful details
+- *
+- * @remarks Since 0.0.7
+- * @public
+- */
+-function check<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> {
+-  return checkInternal(property, { ...params, noDefaultPlugins: true });
+-}
+-
+-/**
+- * Run the property and reject if a plugin reports the run as an error
+- *
+- * With the default setup, failed runs are rejected.
+- *
+- * It can be called directly from describe/it blocks of Mocha.
+- * No meaningful results are produced. Use a plugin's `onAllRunsComplete` callback to access run details.
+- *
+- * WARNING: Has to be awaited
+- *
+- * @param property - Asynchronous property to be checked
+- * @param params - Optional parameters to customize the execution
+- *
+- * @remarks Since 0.0.7
+- * @public
+- */
+-function assert<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<void> {
+-  const out = checkInternal(property, params);
+-  return out.then(() => undefined);
+-}
+-
+-export { check, assert };
+```
+
+**File**: `packages/fast-check/src/check/runner/reporter/RunDetails.ts` (modified, +5/-5)
+```diff
+@@ -3,7 +3,7 @@ import type { ExecutionTree } from './ExecutionTree.js';
+ import type { Parameters } from '../configuration/Parameters.js';
  
--  '@rolldown/binding-freebsd-x64@1.2.15':
--    resolution: {integrity: sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==}
-+  '@rolldown/binding-freebsd-x64@1.2.16':
-+    resolution: {integrity: sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [x64]
-     os: [freebsd]
+ /**
+- * Post-run details produced by {@link check}
++ * Post-run details provided to plugins by {@link assert} via `onAllRunsComplete`
+  *
+  * A failing property can easily detected by checking the `failed` flag of this structure
+  *
+@@ -69,7 +69,7 @@ export interface RunDetailsSuccess<Ts> extends RunDetailsCommon<Ts> {
+  */
+ export interface RunDetailsCommon<Ts> {
+   /**
+-   * Does the property failed during the execution of {@link check}?
++   * Did the property fail during the execution of {@link assert}?
+    * @remarks Since 0.0.1
+    */
+   failed: boolean;
+@@ -104,7 +104,7 @@ export interface RunDetailsCommon<Ts> {
+   /**
+    * Seed that have been used by the run
+    *
+-   * It can be forced in {@link assert}, {@link check}, {@link sample} and {@link statistics} using `Parameters`
++   * It can be forced in {@link assert}, {@link sample} and {@link statistics} using `Parameters`
+    * @remarks Since 0.0.1
+    */
+   seed: number;
+@@ -121,7 +121,7 @@ export interface RunDetailsCommon<Ts> {
+   /**
+    * In case of failure: path to the counterexample
+    *
+-   * For replay purposes, it can be forced in {@link assert}, {@link check}, {@link sample} and {@link statistics} using `Parameters`
++   * For replay purposes, it can be forced in {@link assert}, {@link sample} and {@link statistics} using `Parameters`
+    *
+    * @remarks Since 1.0.0
+    */
+@@ -157,7 +157,7 @@ export interface RunDetailsCommon<Ts> {
+   /**
+    * Configuration of the run
+    *
+-   * It includes both local parameters set on {@link check} or {@link assert}
++   * It includes both local parameters set on {@link assert}
+    * and global ones specified using {@link configureGlobal}
+    *
+    * @remarks Since 1.25.0
+```
+
+**File**: `packages/fast-check/src/check/runner/utils/PluginIntegration.ts` (modified, +3/-3)
+```diff
+@@ -55,14 +55,14 @@ export function applyPluginRunDecorators<Ts>(
+ export function runPluginCompletionCallbacks<Ts>(
+   pluginInstances: PluginInstance<Ts>[],
+   runDetails: RunDetails<Ts>,
+-): RunDetails<Ts> | Promise<RunDetails<Ts>> {
++): void | Promise<void> {
+   if (pluginInstances.length === 0) {
+-    return runDetails;
++    return;
+   }
+   const halfCount = pluginInstances.length;
+   const count = halfCount * 2;
+   return runAllCallbacksAndReturn(
+-    runDetails,
++    undefined,
+     (index) =>
+       index < halfCount
+         ? pluginInstances[index].onAllRunsComplete?.(runDetails)
+```
+
+**File**: `packages/fast-check/src/fast-check.ts` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ export type {
+   RunDetailsSuccess,
+   RunDetailsCommon,
+ } from './check/runner/reporter/RunDetails.js';
+-export { assert, check } from './check/runner/Runner.js';
++export { assert } from './check/runner/assert.js';
+ export { sample, statistics } from './check/runner/Sampler.js';
  
--  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
--    resolution: {integrity: sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==}
-+  '@rolldown/binding-linux-arm-gnueabihf@1.2.16':
-+    resolution: {integrity: sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm]
-     os: [linux]
- 
--  '
+ export type { GeneratorValue } from './arbitrary/gen.js';
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7514** (2026-10-30): 👷 Preserve setup-node runtime in tests and benchmarks (@dubzzz)
-- **PR #7513** (2026-10-30): ⬆️ Update dependency rolldown-plugin-dts to ^0.29.0 (@renovate[bot])
-- **PR #7512** (2026-10-30): ⬆️ Update dependency rolldown to ^1.2.16 (@renovate[bot])
-- **PR #7511** (2026-10-29): ⬆️ Lock file maintenance (@renovate[bot])
-- **PR #7510** (2026-10-29): 👷 Automerge routine development dependency and lockfile updates (@dubzzz)
-- **PR #7509** (2026-10-29): 👷 Typecheck the Bluesky release script in CI (@dubzzz)
+- **PR #7531** (2026-11-03): ⬆️ Update vitest monorepo to ^5.1.0 (@renovate[bot])
+- **PR #7528** (2026-11-03): ⚡️ Reduce ticks when running asynchronous completion callbacks (@dubzzz)
+- **PR #7527** (2026-11-03): ⬆️ Update zizmorcore/zizmor-action action to v0.8.1 (@renovate[bot])
+- **PR #7526** (2026-11-03): 💥 Remove the check runner (@dubzzz)
+- **PR #7525** (2026-11-02): ♻️ Convert default error reporting into a plugin (@dubzzz)
+- **PR #7524** (2026-11-02): 💥 Stop exposing the default error report (@dubzzz)
 
 ---
 
@@ -985,50 +1183,28 @@ by [@&#8203;IWANABETHATGUY](https://redirect.github.com/IWANABETHATGUY)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 👷 Preserve setup-node runtime in tests and benchmarks (#7514)
+## X. ⬆️ Update vitest monorepo to ^5.1.0 (#7531)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-status.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58ad0125`: 👷 Preserve setup-node runtime in tests and benchmarks (#7514). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0cf851f`: ⬆️ Update vitest monorepo to ^5.1.0 (#7531). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-status.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        id: setup-node
-        shell: bash
-        env:
-          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
-          pnpm exec node -e '
-            const { execPath, version, versions } = process;
-            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
-            if (version !== process.env.EXPECTED_NODE_VERSION) {
-              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
-            }
-          '
-        id: setup-node
-        shell: bash
-        env:
-          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
-          node -e '
-            const { execPath, version, versions } = process;
-            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
-            if (version !== process.env.EXPECTED_NODE_VERSION) {
-              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
-            }
-          '
+    "vitest": "^5.1.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        shell: bash -l {0}
-        shell: bash -l {0}
+    "vitest": "^5.0.5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58ad0125` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0cf851f` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T07:42:05.411Z",
+  "last_updated": "2026-11-04T07:49:14.673Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7044,8 +7044,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "7c469256",
-      "content_hash": "9ae5e12ba0b0e1e4c1044574f01bd4cec515a71bb31941777ba760c3cfcc77ed",
+      "source_version": "30de12cd",
+      "content_hash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7258,6 +7258,11 @@
           "number": 6701,
           "title": "bpf: host: remove no longer needed __maybe_unused",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6766,
+          "title": "images: update cilium-{runtime,builder}",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7265,7 +7270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:27:52.136Z",
+      "verified_at": "2026-11-04T07:49:14.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32746,8 +32751,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "16a017ee",
-      "content_hash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
+      "source_version": "cbac86f3",
+      "content_hash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [],
@@ -32756,7 +32761,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:18:54.733Z",
+      "verified_at": "2026-11-04T07:49:07.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45218,8 +45223,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "f0a4fa6d",
-      "content_hash": "c0d2cc6abbdbba30ed4679710155536933bace8598ba2362e35ddd8f0d9d379f",
+      "source_version": "fcc0161f",
+      "content_hash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -45282,6 +45287,11 @@
           "number": 6503,
           "title": "build(deps): bump the go-opentelemetry-io group across 1 directory with 12 updat",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6765,
+          "title": "build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies gr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45289,7 +45299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:07:55.594Z",
+      "verified_at": "2026-11-04T07:49:10.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76949,8 +76959,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "58ad0125",
-      "content_hash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
+      "source_version": "d0cf851f",
+      "content_hash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -76974,6 +76984,11 @@
           "number": 5896,
           "title": "👷 Preserve setup-node runtime in tests and benchmarks (#7514)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6764,
+          "title": "⬆️ Update vitest monorepo to ^5.1.0 (#7531)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76981,7 +76996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:42:14.617Z",
+      "verified_at": "2026-11-04T07:49:05.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173366,6 +173381,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T07:41:19.225Z"
+    },
+    "rule-6764": {
+      "learning_id": "rule-6764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6764,
+      "title": "⬆️ Update vitest monorepo to ^5.1.0 (#7531)",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "d0cf851f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:49:05.413Z"
+    },
+    "rule-6765": {
+      "learning_id": "rule-6765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6765,
+      "title": "build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies gr",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "fcc0161f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:49:10.142Z"
+    },
+    "rule-6766": {
+      "learning_id": "rule-6766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6766,
+      "title": "images: update cilium-{runtime,builder}",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "30de12cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T07:49:14.651Z"
     }
   },
   "aliases": {

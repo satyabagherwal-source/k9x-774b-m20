@@ -7164,3 +7164,7 @@
 | `CYCLE-20261104-W57B` | `2026-11-04T07:34:00.023Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6762` | Yes (`8712973b...`) |
 | `CYCLE-20261104-5K6A` | `2026-11-04T07:41:19.330Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6763` | Yes (`8bc39948...`) |
 | `CYCLE-20261104-6JT6` | `2026-11-04T07:42:05.514Z` | `actix/actix-web` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/actix-actix-web-learnings.md` | Yes (`914ed3b9...`) |
+| `CYCLE-20261104-FJW2` | `2026-11-04T07:49:05.522Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6764` | Yes (`75e5101f...`) |
+| `CYCLE-20261104-FL8P` | `2026-11-04T07:49:07.273Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | Yes (`8c12a993...`) |
+| `CYCLE-20261104-FNJF` | `2026-11-04T07:49:10.251Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6765` | Yes (`edea1d32...`) |
+| `CYCLE-20261104-FR0J` | `2026-11-04T07:49:14.755Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6766` | Yes (`5f9777f1...`) |

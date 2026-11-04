@@ -7173,3 +7173,7 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `cbd54239` | Multi-dimensional audit evidence | 2026-11-04T07:34:00.027Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `d13e2b83` | Multi-dimensional audit evidence | 2026-11-04T07:41:19.334Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `81bb9971` | Multi-dimensional audit evidence | 2026-11-04T07:42:05.523Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `d0cf851f` | Multi-dimensional audit evidence | 2026-11-04T07:49:05.526Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `cbac86f3` | Multi-dimensional audit evidence | 2026-11-04T07:49:07.276Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `fcc0161f` | Multi-dimensional audit evidence | 2026-11-04T07:49:10.256Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `30de12cd` | Multi-dimensional audit evidence | 2026-11-04T07:49:14.759Z |
