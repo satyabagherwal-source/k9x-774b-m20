@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:06:28.317Z",
+  "last_updated": "2026-11-04T23:13:29.722Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
-      "verified_at": "2026-10-31T08:14:03.279Z",
+      "content_hash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
+      "verified_at": "2026-11-04T23:13:29.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:14:03.279Z"
+      "last_updated": "2026-11-04T23:13:29.017Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
-      "verified_at": "2026-11-03T19:24:11.991Z",
+      "content_hash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
+      "verified_at": "2026-11-04T23:13:29.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:24:11.991Z"
+      "last_updated": "2026-11-04T23:13:29.721Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",

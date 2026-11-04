@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T23:06:30.866Z",
-    "lastVerified": "2026-11-04T23:06:30.866Z",
+    "lastChecked": "2026-11-04T23:13:39.716Z",
+    "lastVerified": "2026-11-04T23:13:39.716Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:45:37.770Z",
-    "lastVerified": "2026-11-04T22:45:37.770Z",
+    "lastChecked": "2026-11-04T23:13:39.704Z",
+    "lastVerified": "2026-11-04T23:13:39.704Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1236,12 +1236,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T19:48:20.199Z",
-    "lastVerified": "2026-11-04T19:48:20.199Z",
+    "lastChecked": "2026-11-04T23:13:34.677Z",
+    "lastVerified": "2026-11-04T23:13:34.677Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1250,7 +1250,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5aa241a1"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -1789,12 +1790,12 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T08:13:40.408Z",
-    "lastVerified": "2026-10-31T08:13:40.408Z",
+    "lastChecked": "2026-11-04T23:13:27.673Z",
+    "lastVerified": "2026-11-04T23:13:27.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
+    "contentHash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2546,9 +2547,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-04T00:17:24.894Z",
+    "lastChecked": "2026-11-04T23:13:37.203Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-04T00:17:24.894Z"
+    "lastVerified": "2026-11-04T23:13:37.203Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -4884,12 +4885,12 @@
     "revisionIdentifier": "68d01235"
   },
   "openyurtio-openyurt": {
-    "name": "openyurtio/openyurt",
+    "name": "openyurt",
     "officialUrl": "https://github.com/openyurtio/openyurt",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T01:00:49.487Z",
-    "lastVerified": "2026-11-04T01:00:49.487Z",
+    "lastChecked": "2026-11-04T23:13:32.291Z",
+    "lastVerified": "2026-11-04T23:13:32.291Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openyurtio-openyurt",
@@ -4898,7 +4899,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "077652c5"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -8089,9 +8091,9 @@
   "linkwarden-linkwarden": {
     "name": "linkwarden",
     "officialUrl": "https://github.com/linkwarden/linkwarden",
-    "lastChecked": "2026-10-31T15:56:40.770Z",
+    "lastChecked": "2026-11-04T23:13:29.770Z",
     "revisionIdentifier": "eff7c6b7",
-    "lastVerified": "2026-10-31T15:56:40.770Z"
+    "lastVerified": "2026-11-04T23:13:29.770Z"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
     "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -8785,14 +8787,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T19:24:09.414Z",
-    "lastVerified": "2026-11-03T19:24:09.414Z",
+    "lastChecked": "2026-11-04T23:13:28.888Z",
+    "lastVerified": "2026-11-04T23:13:28.888Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
+    "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

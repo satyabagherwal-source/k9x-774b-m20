@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:06:28.197Z",
+  "last_updated": "2026-11-04T23:13:29.613Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32185,7 +32185,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
+      "content_hash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
@@ -32248,7 +32248,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-31T08:14:03.147Z",
+      "verified_at": "2026-11-04T23:13:28.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72440,8 +72440,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "c7606f50",
-      "content_hash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
+      "source_version": "e50ae7c1",
+      "content_hash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -72499,6 +72499,11 @@
           "number": 6589,
           "title": "build(docker): copy only Rust inputs into the cargo stage",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7013,
+          "title": "build(dev): line tables only for the pake crate",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72506,7 +72511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:24:11.873Z",
+      "verified_at": "2026-11-04T23:13:29.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178222,6 +178227,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:06:28.172Z"
+    },
+    "rule-7013": {
+      "learning_id": "rule-7013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7013,
+      "title": "build(dev): line tables only for the pake crate",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "e50ae7c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:13:29.590Z"
     }
   },
   "aliases": {

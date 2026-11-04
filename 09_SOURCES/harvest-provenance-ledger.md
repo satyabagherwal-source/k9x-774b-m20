@@ -7400,3 +7400,5 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `07e84ec5` | Multi-dimensional audit evidence | 2026-11-04T23:06:19.591Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `66955b13` | Multi-dimensional audit evidence | 2026-11-04T23:06:27.618Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `bbeade35` | Multi-dimensional audit evidence | 2026-11-04T23:06:28.286Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-04T23:13:29.007Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `e50ae7c1` | Multi-dimensional audit evidence | 2026-11-04T23:13:29.703Z |

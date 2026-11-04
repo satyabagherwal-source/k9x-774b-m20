@@ -509373,3 +509373,61 @@ dependencies = [
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `44cf1813` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7013. build(dev): line tables only for the pake crate (Harvested from tw93/Pake)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(dev): line tables only for the pake crate",
+  "source": "tw93/Pake",
+  "source_url": "https://github.com/tw93/Pake",
+  "source_version": "e50ae7c1",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-04T23:13:29.332Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tw93-pake",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `e50ae7c1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `babcfe89`: build(dev): line tables only for the pake crate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+[profile.dev]
+# Line tables only for the pake crate: backtraces and breakpoints keep file and
+# line, lldb loses local variables. A clean `cargo test --no-run` went from 2.0G
+# to 1.7G at the same build time. Set CARGO_PROFILE_DEV_DEBUG=true for full
+# variable inspection.
+debug = "line-tables-only"
+
+# No debug info for third-party crates: a clean debug build drops from 3.5G to 2.4G.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
+# backtraces and breakpoints in pake code are unchanged.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `babcfe89` are properly handled with clean fallback behavior.

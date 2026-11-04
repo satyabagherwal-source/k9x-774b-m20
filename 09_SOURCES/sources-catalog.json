@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
-    "lastHarvestedAt": "2026-10-31T08:14:03.269Z",
+    "contentHash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
+    "lastHarvestedAt": "2026-11-04T23:13:29.007Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "c7606f50",
+    "sourceVersion": "e50ae7c1",
     "license": "GPL-3.0",
-    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
-    "lastHarvestedAt": "2026-11-03T19:24:11.981Z",
+    "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
+    "lastHarvestedAt": "2026-11-04T23:13:29.703Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `c7606f50`  
+> **Source Version**: `e50ae7c1`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:24:11.228Z  
+> **Timestamp**: 2026-11-04T23:13:28.896Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:24:09.414Z  
+> **Harvest Timestamp**: 2026-11-04T23:13:28.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 62785 stars
+- **Stars / Engagement**: 62817 stars
 
 ---
 
@@ -938,41 +938,236 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39b0ffe3` (2026-11-01)
-**Commit Message**: build(docker): copy only Rust inputs into the cargo stage
+### Incident Patch 1: `babcfe89` (2026-11-04)
+**Commit Message**: build(dev): line tables only for the pake crate
 
-COPY . /pake invalidated the cargo layer on any change outside src-tauri,
-so 24 of 30 recent Docker runs recompiled all 403 crates (663s against
-78s with the layer cached). The cargo-builder stage now copies
-rust-toolchain.toml and src-tauri and creates the empty ../dist that
-frontendDist points at; every include_str! and config path lives inside
-src-tauri and tauri.conf.json sets its own version. The final stage
-still copies the whole tree and overlays src-tauri and target, so the
-image is unchanged.
+Dependencies already built without debug info; the pake crate now keeps
+only line tables, so backtraces and breakpoints keep file and line while
+lldb loses local variables. The release profile is untouched, so apps
+built by the CLI ship the same binary.
 
-Verified: reviewer traced every path the Rust build reads; the Docker
-Build and Packaging job on the pushed commit builds the image and a
-real deb and AppImage from it.
+Verified: a clean `cargo test --locked --no-run` with an isolated target
+went from 2.00 GiB to 1.71 GiB (29s vs 27s); `cargo test --locked --lib`
+passes 93 tests.
 
-Rollback: git revert this commit; the published image is built from
-the same Dockerfile, so revert before tagging if that job fails.
-
-**File**: `Dockerfile` (modified, +6/-1)
+**File**: `src-tauri/Cargo.toml` (modified, +8/-2)
 ```diff
-@@ -26,7 +26,12 @@ RUN rustc --version && echo "Rust version verified"
+@@ -98,7 +98,13 @@ lto = "thin"
+ opt-level = "z"
+ strip = true
  
- # Share the system toolchain layer between compilation and the final image.
- FROM base AS cargo-builder
--COPY . /pake
-+# Only what the Rust build reads, so a change elsewhere (docs, CLI sources,
-+# the contributors image) keeps the compiled dependency layer cached.
-+# frontendDist points at ../dist, which only has to exist here.
-+COPY rust-toolchain.toml /pake/
-+COPY src-tauri /pake/src-tauri
-+RUN mkdir -p /pake/dist
- WORKDIR /pake/src-tauri
- # Build cargo packages and store cache
- RUN --mount=type=cache,target=/usr/local/cargo/registry \
+-# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
+-# backtraces and breakpoints in pake code are unchanged.
++[profile.dev]
++# Line tables only for the pake crate: backtraces and breakpoints keep file and
++# line, lldb loses local variables. A clean `cargo test --no-run` went from 2.0G
++# to 1.7G at the same build time. Set CARGO_PROFILE_DEV_DEBUG=true for full
++# variable inspection.
++debug = "line-tables-only"
++
++# No debug info for third-party crates: a clean debug build drops from 3.5G to 2.4G.
+ [profile.dev.package."*"]
+ debug = false
+```
+
+---
+
+### Incident Patch 2: `f722f6b7` (2026-11-04)
+**Commit Message**: fix(gallery): shorten three names that wrapped to two lines
+
+In the Pake apps' five-column grid a name gets 96 px, and Gemini
+Notebook, Music For Programming and Readwise Reader broke onto a second
+line. They become NotebookLM (the name people still search for; Google
+now titles the page Gemini Notebook), MFP and Readwise. Ids and versions
+stay, so installed apps are untouched.
+
+Verified: npx vitest run tests/unit/gallery.test.ts (164 passed).
+
+**File**: `gallery/apps/gemini-notebook.json` (modified, +2/-2)
+```diff
+@@ -2,8 +2,8 @@
+   "id": "gemini-notebook",
+   "version": 1,
+   "name": {
+-    "en": "Gemini Notebook",
+-    "zh-Hans": "Gemini Notebook"
++    "en": "NotebookLM",
++    "zh-Hans": "NotebookLM"
+   },
+   "url": "https://notebook.google.com/",
+   "category": "ai",
+```
+
+**File**: `gallery/apps/music-for-programming.json` (modified, +2/-2)
+```diff
+@@ -2,8 +2,8 @@
+   "id": "music-for-programming",
+   "version": 1,
+   "name": {
+-    "en": "Music For Programming",
+-    "zh-Hans": "Music For Programming"
++    "en": "MFP",
++    "zh-Hans": "MFP"
+   },
+   "url": "https://musicforprogramming.net/",
+   "category": "media",
+```
+
+**File**: `gallery/apps/readwise-reader.json` (modified, +2/-2)
+```diff
+@@ -2,8 +2,8 @@
+   "id": "readwise-reader",
+   "version": 1,
+   "name": {
+-    "en": "Readwise Reader",
+-    "zh-Hans": "Readwise Reader"
++    "en": "Readwise",
++    "zh-Hans": "Readwise"
+   },
+   "url": "https://read.readwise.io/",
+   "category": "reading",
+```
+
+---
+
+### Incident Patch 3: `f62e7225` (2026-11-04)
+**Commit Message**: fix(window): always let the page handle drag and drop
+
+--enable-drag-drop kept Tauri's drag-drop handler, which takes file
+drops before the page sees them and breaks HTML5 drag and drop on
+Windows. No Pake code or page can consume its events (the capability
+grants no core:event permission), so the flag only ever broke uploads
+for the users who passed it, as #1030, #1132 and #1210 show.
+
+The handler is now always off, as before bd764f5f. The flag and the
+enableDragDrop config key are still accepted, hidden and ignored, so
+existing build commands and configs keep working; the native field is
+gone and serde ignores it in older pake.json files. The docs section is
+removed.
+
+Verified: npx vitest run (753 passed), cargo fmt --check, cargo clippy
+--lib and cargo test --lib with and without runtime-template (93 passed).
+Roll back with git revert.
+
+**File**: `bin/helpers/cli-program.ts` (modified, +1/-1)
+```diff
+@@ -209,7 +209,7 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with
+     .addOption(
+       new Option(
+         '--enable-drag-drop',
+-        "Use Tauri's file-drop handler (pages stop receiving file drops)",
++        'Deprecated and ignored: pages handle drag and drop by default',
+       )
+         .default(DEFAULT.enableDragDrop)
+         .hideHelp(),
+```
+
+**File**: `bin/helpers/merge.ts` (modified, +0/-1)
+```diff
+@@ -58,7 +58,6 @@ export function buildWindowConfigOverrides(
+     password_autosave: options.passwordAutosave,
+     title: options.title,
+     enable_wasm: options.wasm,
+-    enable_drag_drop: options.enableDragDrop,
+     start_to_tray: options.startToTray && options.showSystemTray,
+     force_internal_navigation: options.forceInternalNavigation,
+     internal_url_regex: options.internalUrlRegex,
+```
+
+**File**: `bin/types.ts` (modified, +0/-1)
+```diff
+@@ -202,7 +202,6 @@ export interface WindowConfig {
+   password_autosave: boolean;
+   title?: string;
+   enable_wasm: boolean;
+-  enable_drag_drop: boolean;
+   start_to_tray: boolean;
+   force_internal_navigation: boolean;
+   internal_url_regex: string;
+```
+
+**File**: `dist/cli.js` (modified, +1/-2)
+```diff
+@@ -963,7 +963,6 @@ function buildWindowConfigOverrides(options, platform = asSupportedPlatform(proc
+         password_autosave: options.passwordAutosave,
+         title: options.title,
+         enable_wasm: options.wasm,
+-        enable_drag_drop: options.enableDragDrop,
+         start_to_tray: options.startToTray && options.showSystemTray,
+         force_internal_navigation: options.forceInternalNavigation,
+         internal_url_regex: options.internalUrlRegex,
+@@ -3737,7 +3736,7 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with
+         .addOption(new Option('--wasm', 'Enable WebAssembly support (Flutter Web, etc.)')
+         .default(DEFAULT_PAKE_OPTIONS.wasm)
+         .hideHelp())
+-        .addOption(new Option('--enable-drag-drop', "Use Tauri's file-drop handler (pages stop receiving file drops)")
++        .addOption(new Option('--enable-drag-drop', 'Deprecated and ignored: pages handle drag and drop by default')
+         .default(DEFAULT_PAKE_OPTIONS.enableDragDrop)
+         .hideHelp())
+         .addOption(new Option('--keep-binary', 'Keep raw binary file alongside installer')
+```
+
+**File**: `docs/cli-usage.md` (modified, +0/-8)
+```diff
+@@ -489,14 +489,6 @@ This option adds necessary HTTP headers (`Cross-Origin-Opener-Policy: same-origi
+ pake https://flutter.dev --name FlutterApp --wasm
+ ```
+ 
+-#### [enable-drag-drop]
+-
+-Turn on Tauri's own file-drop handler for the window. Default is `false`. You do not need it for a site's drag and drop: with the default, the page itself handles dragging items to reorder them and dragging files in to upload, as it does in a browser. With the flag, Tauri takes file drops before the page sees them, so dropping a file onto an upload area or file input does nothing, and on Windows the page's HTML5 drag and drop stops working as well. Pake apps do not use the events this handler sends, so leave it off unless you have a specific reason to test it.
+-
+-```shell
+---enable-drag-drop
+-```
+-
+ #### [keep-binary]
+ 
+ Keep the raw binary file alongside the installer. Default is `false`. When enabled, also outputs a standalone executable that can run without installation.
+```
+
+**File**: `docs/cli-usage_CN.md` (modified, +0/-8)
+```diff
+@@ -487,14 +487,6 @@ pake https://www.rememberthemilk.com --name RememberTheMilk --no-restore-last-ur
+ pake https://flutter.dev --name FlutterApp --wasm
+ ```
+ 
+-#### [enable-drag-drop]
+-
+-打开 Tauri 自己的文件拖放处理，默认为 `false`。网页里的拖拽不需要它，默认情况下拖动元素排序、把文件拖进来上传都由网页自己处理，和在浏览器里一样；加上这个参数后，Tauri 会先截下拖进来的文件，拖到上传区域或文件输入框上没有反应，Windows 上网页的 HTML5 拖拽也会失效。Pake 应用不使用这个处理发出的事件，没有特别需要就不要加。
+-
+-```shell
+---enable-drag-drop
+-```
+-
+ #### [keep-binary]
+ 
+ 构建后保留免安装的独立运行文件，默认为 `false`，除各平台标准安装包外，还会在当前目录额外输出二进制（Unix 为 `AppName-binary`，Windows 为 `AppName.exe`），使用 `--windows-toolchain gnu` 时同步输出 `WebView2Loader.dll`。
+```
+
+**File**: `schema/pake.schema.json` (modified, +1/-1)
+```diff
+@@ -176,7 +176,7 @@
+     },
+     "enableDragDrop": {
+       "type": "boolean",
+-      "description": "Use Tauri's file-drop handler instead of the page's own drag and drop. Off by default; when on, files dropped on the page do not reach it.",
++      "description": "Deprecated and ignored. Pages handle drag and drop and file drops by default.",
+       "default": false
+     },
+     "keepBinary": {
+```
+
+**File**: `src-tauri/pake.json` (modified, +0/-1)
+```diff
+@@ -17,7 +17,6 @@
+       "incognito": false,
+       "password_autosave": false,
+       "enable_wasm": false,
+-      "enable_drag_drop": false,
+       "maximize": false,
+       "start_to_tray": false,
+       "force_internal_navigation": false,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1001,33 +1196,36 @@ the same Dockerfile, so revert before tagging if that job fails.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(docker): copy only Rust inputs into the cargo stage
+## X. build(dev): line tables only for the pake crate
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39b0ffe3`: build(docker): copy only Rust inputs into the cargo stage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `babcfe89`: build(dev): line tables only for the pake crate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Only what the Rust build reads, so a change elsewhere (docs, CLI sources,
-# the contributors image) keeps the compiled dependency layer cached.
-# frontendDist points at ../dist, which only has to exist here.
-COPY rust-toolchain.toml /pake/
-COPY src-tauri /pake/src-tauri
-RUN mkdir -p /pake/dist
+[profile.dev]
+# Line tables only for the pake crate: backtraces and breakpoints keep file and
+# line, lldb loses local variables. A clean `cargo test --no-run` went from 2.0G
+# to 1.7G at the same build time. Set CARGO_PROFILE_DEV_DEBUG=true for full
+# variable inspection.
+debug = "line-tables-only"
+
+# No debug info for third-party crates: a clean debug build drops from 3.5G to 2.4G.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-COPY . /pake
+# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
+# backtraces and breakpoints in pake code are unchanged.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39b0ffe3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `babcfe89` are properly handled with clean fallback behavior.

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-LXTQ",
-    "timestamp": "2026-11-03T11:22:20.414Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-7IUA",
-    "timestamp": "2026-11-03T11:39:07.426Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "a4fd673ef0c64ddf5d975f4628c3ca89769f58a84f7c52cabd2cc690f6360908",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-7MDC",
     "timestamp": "2026-11-03T11:39:12.000Z",
     "repository": "sqlpage/SQLPage",
@@ -7490,6 +7460,36 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "c1cebb1c17fd1a4a53db237c8a90763cff10e008ea0b3ced7ca82eda7bda6865",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-GBS3",
+    "timestamp": "2026-11-04T23:13:28.995Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-GCBN",
+    "timestamp": "2026-11-04T23:13:29.699Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

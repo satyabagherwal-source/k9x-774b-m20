@@ -7391,3 +7391,5 @@
 | `CYCLE-20261104-74G3` | `2026-11-04T23:06:19.587Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7011` | Yes (`c129df18...`) |
 | `CYCLE-20261104-7AN2` | `2026-11-04T23:06:27.614Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6978` | Yes (`33a77c3a...`) |
 | `CYCLE-20261104-7B5M` | `2026-11-04T23:06:28.282Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7012` | Yes (`c1cebb1c...`) |
+| `CYCLE-20261104-GBS3` | `2026-11-04T23:13:28.995Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`96b03126...`) |
+| `CYCLE-20261104-GCBN` | `2026-11-04T23:13:29.699Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7013` | Yes (`733e2aa3...`) |

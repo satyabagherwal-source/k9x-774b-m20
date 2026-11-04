@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T23:06:28.292Z",
-  "total_cycles_completed": 7368,
-  "total_learnings_persisted": 7368,
-  "total_rules_promoted": 7059,
+  "last_updated": "2026-11-04T23:13:29.709Z",
+  "total_cycles_completed": 7370,
+  "total_learnings_persisted": 7370,
+  "total_rules_promoted": 7060,
   "history": [
-    {
-      "timestamp": "2026-11-04T09:25:13.494Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:25:13.786Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T09:33:03.979Z",
       "repository": "expressjs/express",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T23:06:28.292Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:13:29.013Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:13:29.709Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
