@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T21:00:21.668Z",
-  "total_cycles_completed": 7315,
-  "total_learnings_persisted": 7315,
-  "total_rules_promoted": 7015,
+  "last_updated": "2026-11-04T21:11:34.969Z",
+  "total_cycles_completed": 7319,
+  "total_learnings_persisted": 7319,
+  "total_rules_promoted": 7018,
   "history": [
-    {
-      "timestamp": "2026-11-04T03:23:45.672Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:23:53.522Z",
-      "repository": "mufeedvh/code2prompt",
-      "learningId": "learn-github-mufeedvh-code2prompt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:30:35.542Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:30:37.048Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T03:30:44.790Z",
       "repository": "risingwavelabs/risingwave",
@@ -1403,6 +1375,34 @@
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:11:15.347Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:11:23.973Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:11:29.331Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:11:34.969Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

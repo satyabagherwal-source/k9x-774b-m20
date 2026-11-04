@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `2131caf5`  
+> **Source Version**: `92602a83`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:39:10.355Z  
+> **Timestamp**: 2026-11-04T21:11:34.204Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:39:09.862Z  
+> **Harvest Timestamp**: 2026-11-04T21:11:34.198Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -571,7 +571,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "25d8a9c8") {
+export async function start(puzzle_id: string = "25ff71a9") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1006,172 +1006,168 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2131caf5` (2026-11-04)
-**Commit Message**: Add ARC dataset for puzzle 25d8a9c8
+### Incident Patch 1: `92602a83` (2026-11-04)
+**Commit Message**: Add ARC dataset for puzzle 25ff71a9
 
-Add dataset.25d8a9c8.json annotating the four training pairs and the test pair as fifteen full-width rows, each with parts, the list of its three colors. One class-level rule turns a row of a single color into a color-5 bar and clears every other row: fill_color is 5 when parts.distinct() has one item and 0 otherwise. Add the puzzle to the ARC workflow list, make it the default puzzle_id in app.ts, and add its README description and progress record. The one local run exited 1 before any model call because OPENROUTER_API_KEY was missing, so its difference is unknown.
+Add dataset.25ff71a9.json annotating the four training pairs and the two test pairs as six whole figures, one per pair. One class-level rule moves every figure down one row: y becomes y@first + 1. Add the puzzle to the ARC workflow list, make it the default puzzle_id in app.ts, and add its README description and progress record. The one local run exited 1 before any model call because OPENROUTER_API_KEY was missing, so its difference is unknown.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
 
 **File**: `.github/workflows/arc.yml` (modified, +1/-0)
 ```diff
-@@ -28,6 +28,7 @@ jobs:
-         017c7c7b
+@@ -29,6 +29,7 @@ jobs:
          27a28665
          0d3d703e
-+        25d8a9c8
+         25d8a9c8
++        25ff71a9
        NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
        DOTENV_CONFIG_PATH: /dev/null
        NO_COLOR: "1"
 ```
 
-**File**: `arc/README.md` (modified, +51/-0)
+**File**: `arc/README.md` (modified, +42/-0)
 ```diff
-@@ -306,6 +306,57 @@ Orientation is 0 in both states because the stripes are vertical and not
- turned. The test pair follows the training pairs at the same level and is
- annotated by the same rules.
+@@ -357,6 +357,48 @@ horizontal geometry. The declarations hold executable code only, without the
+ `#` comments of the other datasets. The test pair follows the training pairs
+ at the same level and is annotated by the same rules.
  
-+`dataset.25d8a9c8.json` annotates the four original training pairs from
-+`data\training\25d8a9c8.json`, in order, followed by its test pair, fifteen
-+row instances in total, three per pair. Every input and output retains its
-+original 3 by 3 canvas, colors, and positions, including the zero cells of
-+the outputs. Each input is three full-width rows stacked from top to bottom,
-+with no zero cell; each object is one row, 3 cells wide and 1 cell tall,
-+listed from top to bottom. Some rows hold a single color, and the others mix
-+two colors. Each output keeps every row in place: a row whose cells all share
-+one color becomes a solid color-5 bar, and every other row is cleared to the
-+background color 0, so seven rows become bars and eight are cleared. The
-+single-color rows are the top row of the first training input, the middle row
-+of the second, the middle and bottom rows of the third, the bottom row of the
-+fourth, and the top and bottom rows of the test input. Their colors, 4, 6, 4
-+and 9, and 1 in the training pairs, all turn 5, so the rule tests whether a
-+row is uniform, not which color it has. The training pairs alone also fit
-+reading each input as single-colored shapes and turning gray only the shapes
-+that are one row tall and as wide as the canvas; the rules judge whole rows
-+instead, the unit in which every output changes, since each output row is a
-+single color, a choice fixed from the training pairs before the test pair was
-+read. The class takes `parts`, the colors of the row's cells from left to
-+right, as a list, such as `[4, 4, 4]` for the top row of the first training
-+input, as its only descriptive property, with no color, color count, canvas
-+size, or matrix of cells, so no input property states whether the row is
-+uniform. One unconditional class-level rule introduces `fill_color`, which is
-+absent before the rules run, as
-+`5 if $Obj.parts.distinct().length == 1 else 0`: the list query `distinct` of
-+[NUC 71](../docs/nuc-0071.md) keeps each of the row's colors once, so exactly
-+one kept color means the row is a single color, and the conditional
-+expression of [NUC 59](../docs/nuc-0059.md) gives such a row color 5 and
-+every other row the background color 0. The rules create no other property
-+and leave `x`, `y`, `orientation`, and the tag unchanged, so each output
-+state adds only `fill_color` to its input state's keys. Native snapshots
-+start with the pair's `canvas_width` and `canvas_height`, and output
-+snapshots are captured with all of the same pair's implementations together,
-+followed by `Obj[:]`. The tag `l3058` is a horizontal bar, as in
-+`dataset.d631b094.json`, in both states. Input masks retain each pair's
-+full-size 3 by 3 input canvas and output masks the complete 3 by 3 output,
-+each padded with `0` outside its row, so a cleared row's output mask is all
-+zero; merging them reproduces each pair's input and output. The
-+`output_x`/`output_y` fields record the bar's nonzero bounding-box origin,
-+equal to `output_value.x`/`output_value.y`. A cleared row has no nonzero
-+output cell, so its fields record its explicit output position instead, the
-+row's unchanged origin, as an erased output object keeps one in
-+[composition](#8-visualize-output-instance). `output_canvas` is `EXACT`
-+because each output keeps its input's canvas, including the cleared top or
-+bottom rows that `FIT` would crop from every training output. Orientation is
-+0 in both states because the rows are not turned and the bar is a distinct
-+horizontal geometry. The declarations hold executable code only, without the
-+`#` comments of the other datasets. The test pair follows the training pairs
-+at the same level and is annotated by the same rules.
++`dataset.25ff71a9.json` annotates the four original training pairs from
++`data\training\25ff71a9.json`, in order, followed by its two test pairs, six
++figure instances in total, one per pair. Every training input and output
++retains its original 3 by 3 canvas, colors, positions, and zero cells, and the
++test pairs keep their original grids as well. Each training input holds one
++figure, 3 cells of a single color that touch through edges; each object is
++that whole figure, and zero cells are background. The first two figures are
++full-width horizontal bars of color 1, 1 by 3, on the top row and on the
++middle row; the third and fourth are L-shaped trominoes in a 2 by 2 box, of
++color 1 in the canvas's top-left corner and of color 2 in its top-right
++corner. Each output moves the whole figure down one row and keeps its shape,
++color, and columns, so nothing else changes. The step is one row, not a fall
++to the bottom edge: the first bar stops on the middle row above the empty
++bottom row, and the 2-row-tall trominoes also move one row rather than their
++height. Rolling the canvas's rows down with wraparound would also reproduce
++every training output, because every training input's bottom row is empty;
++the rules move the whole figure instead, the unit seen first, a choice fixed
++from the training pairs before the test pairs were read. The class takes no
++descriptive property, with no color, size, cell list, canvas size, or matrix
++of cells, because the rule needs none: the figure's cells travel unchanged in
++its masks. One unconditional class-level rule rewrites `y` as
++`$Obj.y@first + 1`, the row below the figure's input origin, anchored with
++`@first` because the rule rewrites `y` itself. Each training grid holds a
++single figure and shows no relation between objects, so no population
++operation appears; the class-level rule moves every figure on its own. The
++rules create no property and leave `x`, `orientation`, and the tag unchanged,
++so input and output states share the same keys and differ only in `y`. Native
++snapshots start with the pair's `canvas_width` and `canvas_height`, and output
++snapshots are captured with the pair's implementation followed by `Obj[:]`.
++The tag `l9100` is a single shape, as in `dataset.28bf18c6.json` and
++`dataset.6150a2bd.json`, in both states. Input masks retain each pair's
++full-size input canvas and output masks the complete output, each padded with
++`0` outside its figure; merging them reproduces each pair's input and output.
++The `output_x`/`output_y` fields record the moved figure's nonzero
++bounding-box origin, equal to `output_value.x`/`output_value.y`.
++`output_canvas` is `EXACT` because each training output keeps its input's
++3 by 3 canvas, including the empty top row that `FIT` would crop from every
++one of them. Orientation is 0 in both states of the training pairs because no
++training figure is turned. The declarations hold executable code only,
++without `#` comments. The test pairs follow the training pairs at the same
++level and are annotated by the same rules.
 +
  `dataset.27a28665.json` annotates the seven original training pairs from
  `data\training\27a28665.json`, in order, followed by its three test pairs,
  ten block instances in total, one per pair. Every training input retains its
 ```
 
-**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (added, +137/-0)
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (added, +130/-0)
 ```diff
-@@ -0,0 +1,137 @@
-+# ARC-NUC-25d8a9c8 -- Uniform Row Bars
+@@ -0,0 +1,130 @@
++# ARC-NUC-25ff71a9 -- One-Row Downward Shift
 +
-+Progress record for ARC training puzzle `25d8a9c8`: its instruction dataset,
++Progress record for ARC training puzzle `25ff71a9`: its instruction dataset,
 +the solver and Nucleoid changes it needed, its runs, and what is still open.
 +
 +| Item | Status |
 +| --- | --- |
-+| Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
-+| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record |
++| Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
++| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record |
 +| Output canvas | `EXACT` |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md) and the conditional expression of [NUC 59](../../docs/nuc-0059.md) |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
 +| Solver changes | None; suggested changes await review, not applied |
 +| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
 +| Updated | 4-Nov-2026 |
 +
 +## Puzzle
 +
-+Each training input is a 3 by 3 canvas of three full-width rows, with no zero
-+cell. Some rows hold a single color, and the others mix two colors. Each
-+output keeps the canvas and every row in place: a row whose three cells share
-+one color becomes a solid color-5 row, and every other row is cleared to the
-+background color 0. The single-color training rows are the top row of the
-+first input, the middle row of the second, the middle and bottom rows of the
-+third, and the bottom row of the fourth. Their colors, 4, 6, 4 and 9, and 1,
-+all turn 5, so the rule tests whether a row is uniform, not which color it
-+has. The output keeps the input's canvas, including the cleared top or bottom
-+rows that `FIT` would crop, so the dataset is `EXACT`.
++Each training input is a 3 by 3 canvas holding one figure: three cells of a
++single color, joined through their edges, on the background color 0. The
++output keeps the canvas and moves the whole figure down one row, with its
++shape, color, and columns unchanged. The first two figures are full-width bars
++of color 1, on the top row and on the middle row, and they move to the middle
++row and the bottom row. The third is an L-shaped tromino of color 1 in the
++canvas's top-left 2 by 2 box, and the fourth an L-shaped tromino of color 2 in
++its top-right 2 by 2 box; each drops one row within its columns. The step is
++one row, not a fall to the bottom edge, since the first bar stops on the
++middle row above the empty bottom row, and not the figure's height, since the
++two-row trominoes also move one row. Every training output keeps an empty top
++row, which `FIT` would crop, so the dataset is `EXACT`.
 +
-+`/arc-purposal` chose this puzzle by default: among the training puzzles other
-+than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
++`/arc-purposal` chose this puzzle by default: among the 387 training puzzles
++other than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
 +training matrix has the fewest cells, 9, with 72 cells in all its training
-+matrices. Six other puzzles tie on both measures, and `25d8a9c8` has the
-+lowest ID among them.
++matrices. Five other puzzles, `3c9b0459`, `74dd1130`, `9565186b`, `a85d4709`,
++and `ed36ccf7`, tie on both measures, and `25ff71a9` has the lowest ID among
++them.
 +
 +## Dataset
 +
 +The dataset holds the four original training pairs in source order, followed
-+at the same level by the puzzle's test pair, which the same rule annotates.
-+Every row is one instance of `Obj(x, y, orientation, parts)`, a horizontal bar
-+tagged `l3058` in both states, as in `dataset.d631b094.json`. `parts` lists
-+the row's three colors from left to right, such as `[4, 4, 4]` for the top
-+row of the first training input. The class has no color, color count, canvas
-+size, or matrix of cells, so no input property states whether the row is
-+uniform. One unconditional class-level rule introduces `fill_color`:
++at the same level by the puzzle's two test pairs, which the same rule
++annotates. Every figure is one instance of `Obj(x, y, orientation)`, tagged
++`l9100`, a single shape, as in `dataset.28bf18c6.json` and
++`dataset.6150a2bd.json`. The class takes no color, size, cell list, canvas
++size, or matrix of cells: the figure's cells travel unchanged in its masks,
++and the visualizer places each predicted crop at the output position. One
++unconditional class-level rule moves every figure:
 +
 +```nuc
-+$Obj.fill_color = 5 if $Obj.parts.distinct().length == 1 else 0
++$Obj.y = $Obj.y@first + 1
 +```
 +
-+`distinct` keeps each of the row's colors once, so a single kept color means
-+the row is one color, and the conditional expression gives such a row color 5
-+and every other row the background color 0. `fill_color` is absent from the
-+input states, and the rule leaves `x`, `y`, `orientation`, and the tag
-+unchanged. A cleared row's output mask is all zero, so its `output_x` and
-+`output_y` record the row's unchanged origin, the explicit output position an
-+erased output object keeps in composition. This is the first dataset whose
-+objects vanish. Unlike the other datasets, the declarations carry no `#`
-+comments, following the ARC instructions' rule against prose comments in code
-+fields. The [README](../README.md#instruction-datasets) describes the dataset
-+in full.
++`@first` reads the figure's `y` from before the rules ran, which the rule
++needs because it rewrites `y` itself. The rule creates no property and leaves
++`x`, `orientation`, and the tag unchanged, so each input and output state
++differs only in `y`. The declarations carry no `#` comments, as in
++`dataset.25d8a9c8.json`. The [README](../README.md#instruction-datasets)
++describes the dataset in full.
 +
-+The worker started from the big picture: each grid is three full-width rows,
-+and every output row is a single color, so the row is the unit in which every
-+output changes. It weighed two other readings on the training pairs. The whole
-+grid as one object would need a per-row map inside it and an output made of
-+separate stripes. Same-colored shapes also fit the training pairs, but they
-+need size tests, one row tall and as wide as the canvas, and they split mixed
-+rows into pieces, 17 objects instead of 12 in the training pairs. No training
-+pair relates one row to another, so the rule needs no population query. The
-+quantifier `all part in $Obj.parts: part == $Obj.parts[0]` also works, but it
-+needs a reference cell and is longer than `distinct`.
++The worker started from the big picture, the whole figure as the object, and
++that formulation explained every training pair, so it never went down to
++single cells. The training pairs rule out a fall to the bottom edge and a step
++of the figure's height. Rolling the canvas's rows down with wraparound also
++reproduces every training output, because every training input's bottom row
++is empty, but it is a finer row-level model, so the worker kept the figure,
++the unit seen first, and fixed that choice before reading the test pairs. Each
++training grid holds one figure and relates it to nothing else, so the rule
++needs no population operation such as `filter` or `some`; the class-level
++rule already states the move once for every figure.
 +
-+`parts` gives each row the list of its cells' colors. The records of
-+[017c7c7b](ARC-NUC-017c7c7b.md), [27a28665](ARC-NUC-27a28665.md), and
-+[44f52bb0](ARC-NUC-44f52bb0.md) treat such a list as allowed only where the
-+user's hint asks for one, and this invocation had no hint. The caller checked
-+the handoff against the declarative, higher-order, and gestalt requirements,
-+found that it met them, and asked the user about the list before the run; the
-+user approved it. The caller also replayed the four training pairs on the
-+accepted runtime, 133 checks of grids, mask shapes and cells, merges, and
-+input and output snapshot
++The caller checked the handoff against the declarative, higher-order, and
++gestalt requirements, found that it met them, and sent nothing back. The
++caller also replayed the four training pairs on the accepted runtime, 77
++checks of grids, keys, mask shapes and cells, bounding boxes, merges, and
++input and output snapshots, all passing. The worker froze the rules from the
++training pairs before it read the test pairs and reported that the same rules
++reproduce both. It wrote the dataset, its README paragraph, and the puzzle's
++entry in the **ARC puzzle report** workflow's list, its 14th puzzle. The
++caller made the puzzle the solver's default in `src/app.ts`, in place of
++`25d8a9c8`, before the run.
++
++## Runs
++
++| Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
++| --- | --- | --- | --- | --- | --- |
++| 4-Nov-2026 20:51 UTC
 ```
 
 **File**: `arc/src/app.ts` (modified, +1/-1)
@@ -1180,163 +1176,198 @@ Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
  import fs from "node:fs/promises";
  
  // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "0d3d703e") {
-+export async function start(puzzle_id: string = "25d8a9c8") {
+-export async function start(puzzle_id: string = "25d8a9c8") {
++export async function start(puzzle_id: string = "25ff71a9") {
    const { arc_train, test_input_matrix, test_output_matrix } =
      await arc_dataset.load(puzzle_id);
  
 ```
 
-**File**: `arc/src/dataset/dataset.25d8a9c8.json` (added, +409/-0)
+**File**: `arc/src/dataset/dataset.25ff71a9.json` (added, +225/-0)
 ```diff
-@@ -0,0 +1,409 @@
+@@ -0,0 +1,225 @@
 +{
 +  "declarations": [
-+    "class Obj(x: int, y: int, orientation: int, parts: list):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l3058'\n    this.parts = parts",
-+    "$Obj.fill_color = 5 if $Obj.parts.distinct().length == 1 else 0"
++    "class Obj(x: int, y: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'",
++    "$Obj.y = $Obj.y@first + 1"
 +  ],
 +  "output_canvas": "EXACT",
 +  "dataset": [
 +    {
 +      "input_matrix": [
-+        [4, 4, 4],
-+        [2, 3, 2],
-+        [2, 3, 3]
++        [1, 1, 1],
++        [0, 0, 0],
++        [0, 0, 0]
 +      ],
 +      "output_matrix": [
-+        [5, 5, 5],
 +        [0, 0, 0],
++        [1, 1, 1],
 +        [0, 0, 0]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj264fe4293acf",
++          "instance_name": "obj56f6c04f44d8",
 +          "input_x": 0,
 +          "output_x": 0,
 +          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [4, 4, 4],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [5, 5, 5],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obj264fe4293acf = Obj(x=0, y=0, orientation=0, parts=[4, 4, 4])",
-+          "input_value": {"id":"obj264fe4293acf","orientation":0,"parts":[4,4,4],"tag":"l3058","x":0,"y":0},
-+          "output_value": {"fill_color":5,"id":"obj264fe4293acf","orientation":0,"parts":[4,4,4],"tag":"l3058","x":0,"y":0}
-+        },
-+        {
-+          "instance_name": "obje69821b4eaf1",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 1,
 +          "output_y": 1,
 +          "input_orientation": 0,
 +          "output_orientation": 0,
 +          "input_instance_matrix": [
++            [1, 1, 1],
 +            [0, 0, 0],
-+            [2, 3, 2],
 +            [0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
 +            [0, 0, 0],
-+            [0, 0, 0],
++            [1, 1, 1],
 +            [0, 0, 0]
 +          ],
-+          "implementation": "obje69821b4eaf1 = Obj(x=0, y=1, orientation=0, parts=[2, 3, 2])",
-+          "input_value": {"id":"obje69821b4eaf1","orientation":0,"parts":[2,3,2],"tag":"l3058","x":0,"y":1},
-+          "output_value": {"fill_color":0,"id":"obje69821b4eaf1","orientation":0,"parts":[2,3,2],"tag":"l3058","x":0,"y":1}
-+        },
-+        {
-+          "instance_name": "obj1ece888d68bd",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 2,
-+          "output_y": 2,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [2, 3, 3]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obj1ece888d68bd = Obj(x=0, y=2, orientation=0, parts=[2, 3, 3])",
-+          "input_value": {"id":"obj1ece888d68bd","orientation":0,"parts":[2,3,3],"tag":"l3058","x":0,"y":2},
-+          "output_value": {"fill_color":0,"id":"obj1ece888d68bd","orientation":0,"parts":[2,3,3],"tag":"l3058","x":0,"y":2}
++          "implementation": "obj56f6c04f44d8 = Obj(x=0, y=0, orientation=0)",
++          "input_value": {"id":"obj56f6c04f44d8","orientation":0,"tag":"l9100","x":0,"y":0},
++          "output_value": {"id":"obj56f6c04f44d8","orientation":0,"tag":"l9100","x":0,"y":1}
 +        }
 +      ]
 +    },
 +    {
 +      "input_matrix": [
-+        [7, 3, 3],
-+        [6, 6, 6],
-+        [3, 7, 7]
++        [0, 0, 0],
++        [1, 1, 1],
++        [0, 0, 0]
 +      ],
 +      "output_matrix": [
 +        [0, 0, 0],
-+        [5, 5, 5],
-+        [0, 0, 0]
++        [0, 0, 0],
++        [1, 1, 1]
 +      ],
 +      "instances": [
 +        {
-+          "instance_name": "obj95bc4ed42279",
++          "instance_name": "objb2baa9b2270c",
 +          "input_x": 0,
 +          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
++          "input_y": 1,
++          "output_y": 2,
 +          "input_orientation": 0,
 +          "output_orientation": 0,
 +          "input_instance_matrix": [
-+            [7, 3, 3],
 +            [0, 0, 0],
++            [1, 1, 1],
 +            [0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
 +            [0, 0, 0],
 +            [0, 0, 0],
-+            [0, 0, 0]
++            [1, 1, 1]
 +          ],
-+          "implementation": "obj95bc4ed42279 = Obj(x=0, y=0, orientation=0, parts=[7, 3, 3])",
-+          "input_value": {"id":"obj95bc4ed42279","orientation":0,"parts":[7,3,3],"tag":"l3058","x":0,"y":0},
-+          "output_value": {"fill_color":0,"id":"obj95bc4ed42279","orientation":0,"parts":[7,3,3],"tag":"l3058","x":0,"y":0}
-+        },
++          "implementation": "objb2baa9b2270c = Obj(x=0, y=1, orientation=0)",
++          "input_value": {"id":"objb2baa9b2270c","orientation":0,"tag":"l9100","x":0,"y":1},
++          "output_value": {"id":"objb2baa9b2270c","orientation":0,"tag":"l9100","x":0,"y":2}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [0, 1, 0],
++        [1, 1, 0],
++        [0, 0, 0]
++      ],
++      "output_matrix": [
++        [0, 0, 0],
++        [0, 1, 0],
++        [1, 1, 0]
++      ],
++      "instances": [
 +        {
-+          "instance_name": "objde7e64595025",
++          "instance_name": "obj470037f0334e",
 +          "input_x": 0,
 +          "output_x": 0,
-+          "input_y": 1,
++          "input_y": 0,
 +          "output_y": 1,
 +          "input_orientation": 0,
 +          "output_orientation": 0,
 +          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [6, 6, 6],
++            [0, 1, 0],
++            [1, 1, 0],
 +            [0, 0, 0]
 +          ],
 +          "output_instance_matrix": [
 +            [0, 0, 0],
-+            [5, 5, 5],
++            [0, 1, 0],
++            [1, 1, 0]
++          ],
++          "implementation": "obj470037f0334e = Obj(x=0, y=0, orientation=0)",
++          "input_value": {"id":"obj470037f0334e","orientation":0,"tag":"l9100","x":0,"y":0},
++          "output_value": {"id":"obj470037f0334e","orientation":0,"tag":"l9100","x":0,"y":1}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [0, 2, 2],
++        [0, 0, 2],
++        [0, 0, 0]
++      ],
++      "output_matrix": [
++        [0, 0, 0],
++        [0, 2, 2],
++        [0, 0, 2]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj2ad74ac3e6ef",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 0,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 2, 2],
++            [0, 0, 2],
 +            [0, 0, 0]
 +          ],
-+          "implementation": "objde7e64595025 = Obj(x=0, y=1, orientation=0, parts=[6, 6, 6])",
-+          "input_value": {"id":"objde7e64595025","orientation":0,"parts":[6,6,6],"tag":"l3058","x":0,"y":1},
-+          "output_value": {"fill_color":5,"id":"objde7e64595025","orientation":0,"parts":[6,6,6],"tag":"l3058","x":0,"y":1}
-+        },
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [0, 2, 2],
++            [0, 0, 2]
++          ],
++          "implementation": "obj2ad74ac3e6ef = Obj(x=1, y=0, orientation=0)",
++          "input_value": {"id":"obj2ad74ac3e6ef","orientation":0,"tag":"l9100","x":1,"y":0},
++          "output_value": {"id":"obj2ad74ac3e6ef","orientation":0,"tag":"l9100","x":1,"y":1}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [2, 0, 0],
++        [2, 0, 0],
++        [0, 0, 0]
++      ],
++      "output_matrix": [
++        [0, 0, 0],
++        [2, 0, 0],
++        [2, 0, 0]
++      ],
++      "instances": [
 +        {
-+          "instance_name": "obj96cdc68d576d",
++          "instance_name": "objb847b315216d",
 +          "input_x": 0,
-+          "ou
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 1,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [2, 0, 0],
++            [2, 0, 0],
++            [0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0],
++            [2, 0, 0],
++            [2, 0, 0]
++          ],
++          "implementation": "objb847b315216d = Obj(x=0, y=0, orienta
 ```
 
 #### Recent Merged Pull Requests:
@@ -1365,13 +1396,13 @@ Claude-Session: https://claude.ai/code/session_01AJtz8fNcUoqAprYgLUcmwo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ARC dataset for puzzle 25d8a9c8
+## X. Add ARC dataset for puzzle 25ff71a9
 
 **RULE**:
 When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2131caf5`: Add ARC dataset for puzzle 25d8a9c8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92602a83`: Add ARC dataset for puzzle 25ff71a9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
@@ -1379,7 +1410,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        25d8a9c8
+        25ff71a9
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1389,4 +1420,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2131caf5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92602a83` are properly handled with clean fallback behavior.

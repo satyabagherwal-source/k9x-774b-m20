@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
-    "lastHarvestedAt": "2026-10-31T05:21:04.571Z",
+    "contentHash": "6fc2251ed8204842ddd2fc2c57e910ed7552f2644bd6225e58fac06b893bac31",
+    "lastHarvestedAt": "2026-11-04T21:11:15.341Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "2131caf5",
+    "sourceVersion": "92602a83",
     "license": "Apache-2.0",
-    "contentHash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
-    "lastHarvestedAt": "2026-11-04T20:39:11.054Z",
+    "contentHash": "bf83750984c194c4702571f88de0f77a3deaf394e543617a1bd55fbe50439ebb",
+    "lastHarvestedAt": "2026-11-04T21:11:34.964Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "f851ca27",
+    "sourceVersion": "5455bf6a",
     "license": "BSD-3-Clause",
-    "contentHash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
-    "lastHarvestedAt": "2026-11-04T17:37:28.795Z",
+    "contentHash": "967912fcb4329ad0e2b5b74770721c43da9ffe1a8298d710353afcf7405f70b5",
+    "lastHarvestedAt": "2026-11-04T21:11:29.325Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "834340ac",
+    "sourceVersion": "09334632",
     "license": "NOASSERTION",
-    "contentHash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
-    "lastHarvestedAt": "2026-10-31T13:47:18.306Z",
+    "contentHash": "6340fe34013159ed7c25a43b62addf84ff5557ae2339a9f00c80d422f40ae1aa",
+    "lastHarvestedAt": "2026-11-04T21:11:23.967Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

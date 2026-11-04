@@ -7347,3 +7347,7 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `9e152c7c` | Multi-dimensional audit evidence | 2026-11-04T20:53:29.894Z |
 | `learn-github-iconoir-icons-iconoir` | `https://github.com/iconoir-icons/iconoir` | `39834e3f` | Multi-dimensional audit evidence | 2026-11-04T21:00:19.463Z |
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-04T21:00:21.663Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-04T21:11:15.341Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `09334632` | Multi-dimensional audit evidence | 2026-11-04T21:11:23.967Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `5455bf6a` | Multi-dimensional audit evidence | 2026-11-04T21:11:29.325Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `92602a83` | Multi-dimensional audit evidence | 2026-11-04T21:11:34.964Z |

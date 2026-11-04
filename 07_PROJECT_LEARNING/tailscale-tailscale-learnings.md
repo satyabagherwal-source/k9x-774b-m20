@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `f851ca27`  
+> **Source Version**: `5455bf6a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:37:28.296Z  
+> **Timestamp**: 2026-11-04T21:11:28.533Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:37:28.135Z  
+> **Harvest Timestamp**: 2026-11-04T21:11:28.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38627 stars
+- **Stars / Engagement**: 38632 stars
 
 ---
 
@@ -821,98 +821,278 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f851ca27` (2026-11-04)
-**Commit Message**: cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#22108)
+### Incident Patch 1: `5455bf6a` (2026-11-04)
+**Commit Message**: cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157)
 
-In singleton egress mode (TS_TAILNET_TARGET_FQDN), a failed resolution
-of the target FQDN logged the error but then broke out of the main
-runLoop instead of continuing to the next netmap update. From then on
-containerboot blocked in wg.Wait() while the pod still looked healthy,
-and the egress proxy kept forwarding to stale addresses until restart.
+This commit changes the egress ProxyGroup readiness gate to mark a Pod
+ready only when, for each egress Service, the Pod is an endpoint in the
+EndpointSlice of every IP family that the proxy reports in its egress
+status. Before, the gate accepted a Pod that was in either family's
+EndpointSlice. On a dual-stack cluster, the StatefulSet rollout could
+then move to the next Pod before the other family routed to the new Pod.
 
-A missing target is typically transient (peer not yet in the netmap,
-ACL change in flight), so log and continue to let the next netmap
-update retry the resolution and reinstall the forwarding rules.
+The gate reads the families from the proxy's state Secret, because a
+proxy older than v1.102 does not report an IPv6 address. Such a proxy
+never joins the IPv6 EndpointSlice, so its Pod must not wait for it.
 
-Fixes #22102
+Fixes #21077
 
-Signed-off-by: Santhi Prakash <[REDACTED_EMAIL]>
+Signed-off-by: David Bond <[REDACTED_EMAIL]>
 
-**File**: `cmd/containerboot/main.go` (modified, +1/-1)
+**File**: `cmd/k8s-operator/egress-pod-readiness.go` (modified, +58/-7)
 ```diff
-@@ -879,7 +879,7 @@ runLoop:
- 				egressAddrs, err := resolveTailnetFQDN(nmState, cfg.TailnetTargetFQDN)
- 				if err != nil {
- 					log.Print(err.Error())
--					break
-+					continue
- 				}
+@@ -7,6 +7,7 @@ package main
  
- 				newCurentEgressIPs := deephash.Hash(&egressAddrs)
+ import (
+ 	"context"
++	"encoding/json"
+ 	"fmt"
+ 	"slices"
+ 
+@@ -21,6 +22,7 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/kube/egressservices"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tstime"
+ 	"tailscale.com/util/set"
+@@ -48,8 +50,8 @@ type egressPodsReconciler struct {
+ //
+ // The endpoints for each egress service's ClusterIP Service are configured by the operator itself using custom
+ // EndpointSlices (egress-eps-reconciler), which only adds a Pod once the Pod's state Secret shows that the proxy has
+-// set up routing for that egress service. So a Pod is ready once it is an endpoint in an EndpointSlice of every
+-// egress service for the ProxyGroup.
++// set up routing for that egress service. So a Pod is ready once, for every egress service for the ProxyGroup, it is
++// an endpoint in the EndpointSlice of each IP family that the proxy reports an address for in its state Secret.
+ func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Request) (res reconcile.Result, err error) {
+ 	lg := er.logger.With("Pod", req.NamespacedName)
+ 	lg.Debugf("starting reconcile")
+@@ -116,19 +118,37 @@ func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Req
+ 	if err := er.List(ctx, epsList, client.InNamespace(er.tsNamespace), client.MatchingLabels(lbls)); err != nil {
+ 		return res, fmt.Errorf("failed to list EndpointSlices: %w", err)
+ 	}
++	// Each egress service has an EndpointSlice per IP family. A Pod must be an endpoint in the EndpointSlice of
++	// every family that the proxy reports, else it can be marked ready while only one family routes to it. A proxy
++	// older than v1.102 does not report an IPv6 address, so egress-eps-reconciler never adds it to an IPv6
++	// EndpointSlice. Requiring the families that the Pod has addresses for would block such a Pod forever.
++	families, err := er.reportedFamilies(ctx, pod)
++	if err != nil {
++		return res, fmt.Errorf("error determining IP families reported by proxy: %w", err)
++	}
+ 	routed := make(set.Set[string])
++	missing := make(set.Set[string])
+ 	for _, eps := range epsList.Items {
++		svcName := eps.Labels[discoveryv1.LabelServiceName]
+ 		// egress-eps-reconciler sets the endpoint's hostname to the Pod's UID.
+ 		if slices.ContainsFunc(eps.Endpoints, func(ep discoveryv1.Endpoint) bool {
+ 			return ep.Hostname != nil && *ep.Hostname == string(pod.UID)
+ 		}) {
+-			routed.Add(eps.Labels[discoveryv1.LabelServiceName])
++			routed.Add(svcName)
++			continue
++		}
++		if families.Contains(eps.AddressType) {
++			missing.Add(svcName)
+ 		}
+ 	}
+-	if slices.ContainsFunc(svcs.Items, func(svc corev1.Service) bool {
+-		return !routed.Contains(svc.Name)
+-	}) {
+-		lg.Info("Pod is not yet added as an endpoint for all egress targets, waiting...")
++	var waiting []string
++	for _, svc := range svcs.Items {
++		if !routed.Contains(svc.Name) || missing.Contains(svc.Name) {
++			waiting = append(waiting, svc.Name)
++		}
++	}
++	if len(waiting) > 0 {
++		lg.Infof("Pod is not yet added as an endpoint for egress Services %q, waiting...", waiting)
+ 		return reconcile.Result{RequeueAfter: shortRequeue}, nil
+ 	}
+ 	if err := er.setPodReady(ctx, pod, lg); err != nil {
+@@ -137,6 +157,37 @@ func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Req
+ 	return res, nil
+ }
+ 
++// reportedFamilies returns the IP families that the proxy reports addresses for in the egress services status in its
++// state Secret. It returns an empty set if the proxy has not yet written the status.
++func (er *egressPodsReconciler) reportedFamilies(ctx context.Context, pod *corev1.Pod) (set.Set[discoveryv1.AddressType], error) {
++	families := make(set.Set[discoveryv1.AddressType])
++	stateS := &corev1.Secret{}
++	err := er.Get(ctx, types.NamespacedName{Namespace: pod.Namespace, Name: pod.Name}, stateS)
++	switch {
++	case apierrors.IsNotFound(err):
++		return families, nil
++	case err != nil:
++		return nil, fmt.Errorf("error retrieving state Secret: %w", err)
++	}
++
++	svcStatusBS := stateS.Data[egressservices.KeyEgressServices]
++	if len(svcStatusBS) == 0 {
++		return families, nil
++	}
++
++	svcStatus := &egressservices.Status{}
++	if err := json.Unmarshal(svcStatusBS, svcStatus); err != nil {
++		return nil, fmt.Errorf("error unmarshalling egress service status: %w", err)
++	}
++	if svcStatus.PodIPv4 != "" {
++		families.Add(discoveryv1.AddressTypeIPv4)
++	}
++	if svcStatus.PodIPv6 != "" {
++		families.Add(discoveryv1.AddressTypeIPv6)
++	}
++	return families, nil
++}
++
+ func (er *egressPodsReconciler) setPodReady(ctx context.Context, pod *corev1.Pod, lg *zap.SugaredLogger) error {
+ 	if slices.ContainsFunc(pod.Status.Conditions, func(c corev1.PodCondition) bool {
+ 		return c.Type == tsEgressReadinessGate
 ```
 
-**File**: `cmd/containerboot/main_test.go` (modified, +44/-0)
+**File**: `cmd/k8s-operator/egress-pod-readiness_test.go` (modified, +74/-1)
 ```diff
-@@ -407,6 +407,50 @@ func TestContainerBoot(t *testing.T) {
+@@ -6,6 +6,8 @@
+ package main
+ 
+ import (
++	"encoding/json"
++	"net/netip"
+ 	"testing"
+ 	"time"
+ 
+@@ -17,6 +19,7 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+ 
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/kube/egressservices"
+ 	"tailscale.com/kube/kubetypes"
+ 	"tailscale.com/tstest"
+ )
+@@ -26,6 +29,8 @@ func TestEgressPodReadiness(t *testing.T) {
+ 	tests := []struct {
+ 		name      string
+ 		objs      []client.Object
++		podIPs    []string               // defaults to dual-stack
++		status    *egressservices.Status // defaults to a status for podIPs
+ 		wantReady bool
+ 	}{
+ 		{
+@@ -40,13 +45,52 @@ func TestEgressPodReadiness(t *testing.T) {
+ 			},
+ 			wantReady: true,
+ 		},
++		{
++			name: "pod_is_endpoint_in_both_families",
++			objs: []client.Object{
++				newSvc("svc"),
++				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
++				newEps("svc", discoveryv1.AddressTypeIPv6, podUID),
++			},
++			wantReady: true,
++		},
+ 		{
+ 			name: "pod_is_endpoint_in_one_family_only",
+ 			objs: []client.Object{
+ 				newSvc("svc"),
+ 				newEps("svc", discoveryv1.AddressTypeIPv4),
+ 				newEps("svc", discoveryv1.AddressTypeIPv6, podUID),
+ 			},
++		},
++		{
++			name: "single_stack_pod_is_endpoint_in_its_family",
++			objs: []client.Object{
++				newSvc("svc"),
++				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
++				newEps("svc", discoveryv1.AddressTypeIPv6),
++			},
++			podIPs:    []string{"10.0.0.2"},
++			wantReady: true,
++		},
++		{
++			name: "single_stack_pod_is_not_endpoint_in_its_family",
++			objs: []client.Object{
++				newSvc("svc"),
++				newEps("svc", discoveryv1.AddressTypeIPv4),
++				newEps("svc", discoveryv1.AddressTypeIPv6),
++			},
++			podIPs: []string{"fd00::2"},
++		},
++		{
++			// A proxy older than v1.102 reports only PodIPv4, so egress-eps-reconciler never adds it to the IPv6
++			// EndpointSlice.
++			name: "dual_stack_pod_proxy_reports_ipv4_only",
++			objs: []client.Object{
++				newSvc("svc"),
++				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
++				newEps("svc", discoveryv1.AddressTypeIPv6),
++			},
++			status:    &egressservices.Status{PodIPv4: "10.0.0.2"},
+ 			wantReady: true,
+ 		},
+ 		{
+@@ -63,6 +107,32 @@ func TestEgressPodReadiness(t *testing.T) {
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
++			podIPs := tt.podIPs
++			if podIPs == nil {
++				podIPs = []string{"10.0.0.2", "fd00::2"}
++			}
++			status := tt.status
++			if status == nil {
++				status = &egressservices.Status{}
++				for _, ip := range podIPs {
++					if netip.MustParseAddr(ip).Is4() {
++						status.PodIPv4 = ip
++					} else {
++						status.PodIPv6 = ip
++					}
++				}
++			}
++			statusBS, err := json.Marshal(status)
++			if err != nil {
++				t.Fatal(err)
++			}
++			stateS := &corev1.Secret{
++				ObjectMeta: metav1.ObjectMeta{
++					Namespace: "operator-ns",
++					Name:      "pod",
++				},
++				Data: map[string][]byte{egressservices.KeyEgressServices: statusBS},
++			}
+ 			pod := &corev1.Pod{
+ 				ObjectMeta: metav1.ObjectMeta{
+ 					Namespace: "operator-ns",
+@@ -79,6 +149,9 @@ func TestEgressPodReadiness(t *testing.T) {
+ 					}},
  				},
  			}
- 		},
-+		"egress_fqdn_transient_resolve_failure": func(env *testEnv) testCase {
-+			return testCase{
-+				Env: map[string]string{
-+					"TS_AUTHKEY":             "tskey-key",
-+					"TS_TAILNET_TARGET_FQDN": "target-node.test.ts.net.",
-+					"TS_USERSPACE":           "false",
-+				},
-+				Phases: []phase{
-+					{
-+						WantCmds: []string{
-+							"/usr/bin/tailscaled --socket=/tmp/tailscaled.sock --state=mem: --statedir=/tmp",
-+							"/usr/bin/tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=tskey-key",
-+						},
-+						WantFiles: map[string]string{
-+							"proc/sys/net/ipv4/ip_forward":          "1",
-+							"proc/sys/net/ipv6/conf/all/forwarding": "0",
-+						},
-+					},
-+					{
-+						// The target peer is not in the netmap yet, so
-+						// resolving the FQDN fails. containerboot must keep
-+						// processing subsequent netmap updates rather than
-+						// exiting its watch loop (issue #22102).
-+						Notify:  runningNotify,
-+						WantLog: `could not find Tailscale node, service or 4via6 address "target-node.test.ts.net."; it either does not exist, or not reachable because of ACLs`,
-+					},
-+					{
-+						// Once the peer appears, the next netmap update must
-+						// resolve the FQDN and install forwarding rules.
-+						Notify: &ipn.Notify{
-+							State: new(ipn.Running),
-+							PeersChanged: []*tailcfg.Node{
-+								{
-+									StableID:  tailcfg.StableNodeID("targetID"),
-+									Name:      "target-node.test.ts.net.",
-+									Addresses: []netip.Prefix{netip.MustParsePrefix("100.99.99.99/32")},
-+								},
-+							},
-+						},
-+						WantLog: "Installing forwarding rules for destination 100.99.99.99",
-+					},
-+				},
++			for _, ip := range podIPs {
++				pod.Status.PodIPs = append(pod.Status.PodIPs, corev1.PodIP{IP: ip})
 +			}
-+		},
- 		"authkey_once": func(env *testEnv) testCase {
- 			return testCase{
- 				Env: map[string]string{
+ 			pg := &tsapi.ProxyGroup{
+ 				ObjectMeta: metav1.ObjectMeta{Name: "dev"},
+ 				Spec: tsapi.ProxyGroupSpec{
+@@ -90,7 +163,7 @@ func TestEgressPodReadiness(t *testing.T) {
+ 			// works. Without this code we would not be able to update Pod's status further down.
+ 			fc := fake.NewClientBuilder().
+ 				WithScheme(tsapi.GlobalScheme).
+-				WithObjects(append(tt.objs, pod, pg)...).
++				WithObjects(append(tt.objs, pod, pg, stateS)...).
+ 				WithStatusSubresource(&corev1.Pod{}).
+ 				Build()
+ 			zl, _ := zap.NewDevelopment()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22176** (2026-11-04): derp/derpserver: increase pool size to batch writer flushes (@mikeodr)
 - **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
 - **PR #22164** (closed): derp/derpserver,cmd/derper: batch writer flushes, arm the write deadline per write (@mikeodr)
 - **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
 - **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
 - **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
-- **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
 
 ---
 
@@ -932,28 +1112,56 @@ Signed-off-by: Santhi Prakash <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#221
+## X. cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157
 
 **RULE**:
-When implementing operations in `cmd/containerboot/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/egress-pod-readiness.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f851ca27`: cmd/containerboot: keep egress proxy watch alive after failed FQDN resolve (#22108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5455bf6a`: cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/containerboot/main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/egress-pod-readiness.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					continue
+	"encoding/json"
+	"tailscale.com/kube/egressservices"
+// set up routing for that egress service. So a Pod is ready once, for every egress service for the ProxyGroup, it is
+// an endpoint in the EndpointSlice of each IP family that the proxy reports an address for in its state Secret.
+	// Each egress service has an EndpointSlice per IP family. A Pod must be an endpoint in the EndpointSlice of
+	// every family that the proxy reports, else it can be marked ready while only one family routes to it. A proxy
+	// older than v1.102 does not report an IPv6 address, so egress-eps-reconciler never adds it to an IPv6
+	// EndpointSlice. Requiring the families that the Pod has addresses for would block such a Pod forever.
+	families, err := er.reportedFamilies(ctx, pod)
+	if err != nil {
+		return res, fmt.Errorf("error determining IP families reported by proxy: %w", err)
+	}
+	missing := make(set.Set[string])
+		svcName := eps.Labels[discoveryv1.LabelServiceName]
+			routed.Add(svcName)
+			continue
+		}
+		if families.Contains(eps.AddressType) {
+			missing.Add(svcName)
+	var waiting []string
+	for _, svc := range svcs.Items {
+		if !routed.Contains(svc.Name) || missing.Contains(svc.Name) {
+			waiting = app
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-					break
+// set up routing for that egress service. So a Pod is ready once it is an endpoint in an EndpointSlice of every
+// egress service for the ProxyGroup.
+			routed.Add(eps.Labels[discoveryv1.LabelServiceName])
+	if slices.ContainsFunc(svcs.Items, func(svc corev1.Service) bool {
+		return !routed.Contains(svc.Name)
+	}) {
+		lg.Info("Pod is not yet added as an endpoint for all egress targets, waiting...")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f851ca27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5455bf6a` are properly handled with clean fallback behavior.

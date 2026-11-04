@@ -7338,3 +7338,7 @@
 | `CYCLE-20261104-GAZN` | `2026-11-04T20:53:29.891Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6971` | Yes (`5cec20d7...`) |
 | `CYCLE-20261104-P30K` | `2026-11-04T21:00:19.460Z` | `iconoir-icons/iconoir` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6972` | Yes (`68e4694a...`) |
 | `CYCLE-20261104-P4PO` | `2026-11-04T21:00:21.660Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING` | Yes (`e62acb2f...`) |
+| `CYCLE-20261104-3537` | `2026-11-04T21:11:15.331Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`6fc2251e...`) |
+| `CYCLE-20261104-3BQZ` | `2026-11-04T21:11:23.963Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6973` | Yes (`6340fe34...`) |
+| `CYCLE-20261104-3FVU` | `2026-11-04T21:11:29.322Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6974` | Yes (`967912fc...`) |
+| `CYCLE-20261104-3K8G` | `2026-11-04T21:11:34.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6975` | Yes (`bf837509...`) |

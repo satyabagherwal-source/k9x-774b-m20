@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T21:00:21.678Z",
+  "last_updated": "2026-11-04T21:11:34.982Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
-      "verified_at": "2026-10-31T05:21:04.580Z",
+      "content_hash": "6fc2251ed8204842ddd2fc2c57e910ed7552f2644bd6225e58fac06b893bac31",
+      "verified_at": "2026-11-04T21:11:15.350Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:21:04.580Z"
+      "last_updated": "2026-11-04T21:11:15.350Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
-      "verified_at": "2026-11-04T20:39:11.063Z",
+      "content_hash": "bf83750984c194c4702571f88de0f77a3deaf394e543617a1bd55fbe50439ebb",
+      "verified_at": "2026-11-04T21:11:34.980Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:39:11.063Z"
+      "last_updated": "2026-11-04T21:11:34.980Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
-      "verified_at": "2026-11-04T17:37:28.801Z",
+      "content_hash": "967912fcb4329ad0e2b5b74770721c43da9ffe1a8298d710353afcf7405f70b5",
+      "verified_at": "2026-11-04T21:11:29.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:37:28.801Z"
+      "last_updated": "2026-11-04T21:11:29.334Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
-      "verified_at": "2026-10-31T13:47:18.314Z",
+      "content_hash": "6340fe34013159ed7c25a43b62addf84ff5557ae2339a9f00c80d422f40ae1aa",
+      "verified_at": "2026-11-04T21:11:23.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:47:18.314Z"
+      "last_updated": "2026-11-04T21:11:23.984Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
