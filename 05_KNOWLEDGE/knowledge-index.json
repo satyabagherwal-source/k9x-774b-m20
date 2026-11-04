@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:47:17.606Z",
+  "last_updated": "2026-11-04T08:57:37.801Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5696,8 +5696,8 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "46dd7bae",
-      "content_hash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
+      "source_version": "0e8dbd98",
+      "content_hash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
@@ -5720,6 +5720,11 @@
           "number": 6099,
           "title": "Side-Effect Declaration Module Co-location Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6788,
+          "title": "Upgrade nextjs-app-dir-v2 example to Next 16 (#4918)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5727,7 +5732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:07:46.612Z",
+      "verified_at": "2026-11-04T08:57:37.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51122,8 +51127,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "bcddf276",
-      "content_hash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
+      "source_version": "066ea4e4",
+      "content_hash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -51166,6 +51171,11 @@
           "number": 6431,
           "title": "serve-static): reject resolved dot-file paths (#1835)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6787,
+          "title": "build(deps): update saysion requirement from 0.2 to 0.4 (#1838)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51173,7 +51183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:22:21.068Z",
+      "verified_at": "2026-11-04T08:57:33.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173803,6 +173813,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:47:17.584Z"
+    },
+    "rule-6787": {
+      "learning_id": "rule-6787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6787,
+      "title": "build(deps): update saysion requirement from 0.2 to 0.4 (#1838)",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "066ea4e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:57:33.283Z"
+    },
+    "rule-6788": {
+      "learning_id": "rule-6788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6788,
+      "title": "Upgrade nextjs-app-dir-v2 example to Next 16 (#4918)",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "0e8dbd98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:57:37.782Z"
     }
   },
   "aliases": {

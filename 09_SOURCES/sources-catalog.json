@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "46dd7bae",
+    "sourceVersion": "0e8dbd98",
     "license": "MIT",
-    "contentHash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
-    "lastHarvestedAt": "2026-10-31T06:07:46.717Z",
+    "contentHash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
+    "lastHarvestedAt": "2026-11-04T08:57:37.876Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "bcddf276",
+    "sourceVersion": "066ea4e4",
     "license": "Apache-2.0",
-    "contentHash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
-    "lastHarvestedAt": "2026-11-02T15:22:21.158Z",
+    "contentHash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
+    "lastHarvestedAt": "2026-11-04T08:57:33.409Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {

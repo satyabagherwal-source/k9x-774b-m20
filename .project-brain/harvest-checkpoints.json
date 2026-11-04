@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:47:17.703Z",
+  "last_updated": "2026-11-04T08:57:37.884Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
-      "verified_at": "2026-10-31T06:07:46.727Z",
+      "content_hash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
+      "verified_at": "2026-11-04T08:57:37.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:07:46.727Z"
+      "last_updated": "2026-11-04T08:57:37.884Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
-      "verified_at": "2026-11-02T15:22:21.166Z",
+      "content_hash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
+      "verified_at": "2026-11-04T08:57:33.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:22:21.166Z"
+      "last_updated": "2026-11-04T08:57:33.417Z"
     },
     "react/metro": {
       "repository": "react/metro",

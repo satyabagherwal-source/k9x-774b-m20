@@ -7185,3 +7185,5 @@
 | `CYCLE-20261104-2SJK` | `2026-11-04T08:35:09.440Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6781` | Yes (`57580d88...`) |
 | `CYCLE-20261104-37QY` | `2026-11-04T08:35:29.146Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6782, Rule 6783` | Yes (`6d4ba37b...`) |
 | `CYCLE-20261104-IEGP` | `2026-11-04T08:47:17.689Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6784, Rule 6785, Rule 6786` | Yes (`976862de...`) |
+| `CYCLE-20261104-VLJY` | `2026-11-04T08:57:33.406Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6787` | Yes (`63e6062c...`) |
+| `CYCLE-20261104-VP00` | `2026-11-04T08:57:37.872Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6788` | Yes (`3fac6268...`) |

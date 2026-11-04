@@ -7194,3 +7194,5 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `2b723db5` | Multi-dimensional audit evidence | 2026-11-04T08:35:09.442Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-04T08:35:29.148Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ac85e06f` | Multi-dimensional audit evidence | 2026-11-04T08:47:17.693Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `066ea4e4` | Multi-dimensional audit evidence | 2026-11-04T08:57:33.409Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0e8dbd98` | Multi-dimensional audit evidence | 2026-11-04T08:57:37.876Z |

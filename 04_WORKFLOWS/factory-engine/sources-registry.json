@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T08:47:20.263Z",
-    "lastVerified": "2026-11-04T08:47:20.263Z",
+    "lastChecked": "2026-11-04T08:57:42.308Z",
+    "lastVerified": "2026-11-04T08:57:42.308Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -101,9 +101,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-11-03T12:24:59.819Z",
+    "lastChecked": "2026-11-04T08:57:34.884Z",
     "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-11-03T12:24:59.819Z"
+    "lastVerified": "2026-11-04T08:57:34.884Z"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -220,9 +220,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-04T02:26:11.484Z",
+    "lastChecked": "2026-11-04T08:57:37.310Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-04T02:26:11.484Z"
+    "lastVerified": "2026-11-04T08:57:37.310Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T08:21:52.148Z",
+    "lastChecked": "2026-11-04T08:57:42.297Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T08:21:52.148Z"
+    "lastVerified": "2026-11-04T08:57:42.297Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3904,14 +3904,14 @@
     "officialUrl": "https://github.com/BuilderIO/builder",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T06:04:06.602Z",
-    "lastVerified": "2026-10-31T06:04:06.602Z",
+    "lastChecked": "2026-11-04T08:57:36.864Z",
+    "lastVerified": "2026-11-04T08:57:36.864Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-builderio-builder",
-    "contentHash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 3,
+    "contentHash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5128,14 +5128,14 @@
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T15:22:18.937Z",
-    "lastVerified": "2026-11-02T15:22:18.937Z",
+    "lastChecked": "2026-11-04T08:57:31.686Z",
+    "lastVerified": "2026-11-04T08:57:31.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "5bf6afe73dfa4ea076daaa2a73b54bb873840fa6c27c7e22ac265f0622a7a0f3",
+    "contentHash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5367,12 +5367,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
-    "name": "sfu-db/connector-x",
+    "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T11:22:19.677Z",
-    "lastVerified": "2026-11-03T11:22:19.677Z",
+    "lastChecked": "2026-11-04T08:57:39.857Z",
+    "lastVerified": "2026-11-04T08:57:39.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
@@ -5381,7 +5381,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c28cd7c3"
   },
   "nvidia-cuda-rust": {
     "name": "NVIDIA/cuda-rust",
@@ -12119,9 +12120,9 @@
   "rubenverborgh-sparql.js": {
     "name": "SPARQL.js",
     "officialUrl": "https://github.com/RubenVerborgh/SPARQL.js",
-    "lastChecked": "2026-10-30T22:40:51.145Z",
+    "lastChecked": "2026-11-04T08:57:29.792Z",
     "revisionIdentifier": "91cbd01b",
-    "lastVerified": "2026-10-30T22:40:51.145Z"
+    "lastVerified": "2026-11-04T08:57:29.792Z"
   },
   "makecindy-cindy": {
     "name": "makecindy/cindy",

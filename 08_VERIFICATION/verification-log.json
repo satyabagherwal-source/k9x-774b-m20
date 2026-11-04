@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-5X8O",
-    "timestamp": "2026-10-31T19:14:45.768Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-5XQ4",
-    "timestamp": "2026-10-31T19:14:46.396Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-HFDL",
     "timestamp": "2026-10-31T19:23:42.489Z",
     "repository": "google/gemma-4-31B-it",
@@ -7492,6 +7462,36 @@
     "contentHash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-VLJY",
+    "timestamp": "2026-11-04T08:57:33.406Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-VP00",
+    "timestamp": "2026-11-04T08:57:37.872Z",
+    "repository": "BuilderIO/builder",
+    "learningId": "learn-github-builderio-builder",
+    "contentHash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
