@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T21:35:53.433Z",
+  "last_updated": "2026-11-04T21:42:55.279Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
-      "verified_at": "2026-10-31T05:52:33.750Z",
+      "content_hash": "687d328c6bf6db272eb843ebb9d2bd9b0a8f1ac653bea5e9d6244945df9fbab1",
+      "verified_at": "2026-11-04T21:42:55.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:52:33.750Z"
+      "last_updated": "2026-11-04T21:42:55.278Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "bf83750984c194c4702571f88de0f77a3deaf394e543617a1bd55fbe50439ebb",
-      "verified_at": "2026-11-04T21:11:34.980Z",
+      "content_hash": "d706c0df83ea1376875240da9f5dccb69319bfcd675add4890d93278b9f80aa8",
+      "verified_at": "2026-11-04T21:42:39.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:11:34.980Z"
+      "last_updated": "2026-11-04T21:42:39.380Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "092980e3ce074c3fa51cefd85aeb92a0ee55aa467deef7c0741459e084cfeaae",
-      "verified_at": "2026-11-03T22:32:09.647Z",
+      "content_hash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
+      "verified_at": "2026-11-04T21:42:37.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:32:09.647Z"
+      "last_updated": "2026-11-04T21:42:37.476Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "7568ce161436c9f612176d87642327d78d835133e12669f7eef90b49e879caba",
-      "verified_at": "2026-11-03T17:22:45.288Z",
+      "content_hash": "c2c2b18b0c2cd52cc32b51308f54c1fdeab46388d366d53021b98836bb9dd0a9",
+      "verified_at": "2026-11-04T21:42:24.729Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:22:45.288Z"
+      "last_updated": "2026-11-04T21:42:24.729Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

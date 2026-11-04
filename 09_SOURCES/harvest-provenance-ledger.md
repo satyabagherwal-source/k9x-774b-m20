@@ -7360,3 +7360,7 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `cbb7380f` | Multi-dimensional audit evidence | 2026-11-04T21:33:00.937Z |
 | `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `e1178ba3` | Multi-dimensional audit evidence | 2026-11-04T21:33:01.882Z |
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-04T21:35:53.426Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `fe9248e5` | Multi-dimensional audit evidence | 2026-11-04T21:42:24.716Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0ac48953` | Multi-dimensional audit evidence | 2026-11-04T21:42:37.464Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `712830f8` | Multi-dimensional audit evidence | 2026-11-04T21:42:39.374Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-04T21:42:55.266Z |
