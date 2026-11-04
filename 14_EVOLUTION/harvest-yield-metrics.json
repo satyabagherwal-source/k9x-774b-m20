@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:30:44.790Z",
-  "total_cycles_completed": 7120,
-  "total_learnings_persisted": 7120,
-  "total_rules_promoted": 6766,
+  "last_updated": "2026-11-04T03:37:46.033Z",
+  "total_cycles_completed": 7122,
+  "total_learnings_persisted": 7122,
+  "total_rules_promoted": 6768,
   "history": [
-    {
-      "timestamp": "2026-11-03T17:30:09.478Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T17:30:12.313Z",
-      "repository": "sozercan/kaset",
-      "learningId": "learn-github-sozercan-kaset",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T17:30:17.654Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T03:30:44.790Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:37:45.436Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:37:46.033Z",
+      "repository": "wix/Detox",
+      "learningId": "learn-github-wix-detox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

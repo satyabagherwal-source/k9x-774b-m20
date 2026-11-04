@@ -7143,3 +7143,5 @@
 | `CYCLE-20261104-74B2` | `2026-11-04T03:30:35.534Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6740` | Yes (`78fb7b66...`) |
 | `CYCLE-20261104-75GW` | `2026-11-04T03:30:37.040Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6741` | Yes (`a10fba1e...`) |
 | `CYCLE-20261104-7BFY` | `2026-11-04T03:30:44.782Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6742` | Yes (`7c6e0b9b...`) |
+| `CYCLE-20261104-GC0I` | `2026-11-04T03:37:45.426Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6743` | Yes (`41e90f5d...`) |
+| `CYCLE-20261104-GCH4` | `2026-11-04T03:37:46.024Z` | `wix/Detox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6744` | Yes (`c01b154a...`) |

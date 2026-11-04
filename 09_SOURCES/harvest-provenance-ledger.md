@@ -7152,3 +7152,5 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `289caab9` | Multi-dimensional audit evidence | 2026-11-04T03:30:35.537Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `cac23b87` | Multi-dimensional audit evidence | 2026-11-04T03:30:37.044Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `171d005b` | Multi-dimensional audit evidence | 2026-11-04T03:30:44.785Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `d790431a` | Multi-dimensional audit evidence | 2026-11-04T03:37:45.430Z |
+| `learn-github-wix-detox` | `https://github.com/wix/Detox` | `667efcb6` | Multi-dimensional audit evidence | 2026-11-04T03:37:46.028Z |

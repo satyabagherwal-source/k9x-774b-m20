@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:30:44.714Z",
+  "last_updated": "2026-11-04T03:37:45.941Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60074,8 +60074,8 @@
       "slug": "wix-detox",
       "platform": "github",
       "source_url": "https://github.com/wix/Detox",
-      "source_version": "fc34e84a",
-      "content_hash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
+      "source_version": "667efcb6",
+      "content_hash": "c01b154a01ccfbc7a75562a9e6d1532c1bca18281a239d9c4b8d99e79181c4cb",
       "dossier_path": "07_PROJECT_LEARNING/wix-detox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-detox-learnings.md",
       "promoted_rules": [
@@ -60098,6 +60098,11 @@
           "number": 5231,
           "title": "Fail-Fast Exception Pruning Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6744,
+          "title": "ci: wait for npm to make a published version visible",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60105,7 +60110,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T07:36:27.727Z",
+      "verified_at": "2026-11-04T03:37:45.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76466,8 +76471,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "1ecfa9e5",
-      "content_hash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
+      "source_version": "d790431a",
+      "content_hash": "41e90f5d550f263e54aaf3bee049fdd4836f5ba496c2a89a0b42f8b4c1e2cc90",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -76500,6 +76505,11 @@
           "number": 4952,
           "title": "fix @ts- comments in driver test code for ban-ts-comment (#35177)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6743,
+          "title": "throttle unzip progress updates during cypress install (#35243)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76507,7 +76517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:15:11.542Z",
+      "verified_at": "2026-11-04T03:37:45.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172939,6 +172949,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:30:44.695Z"
+    },
+    "rule-6743": {
+      "learning_id": "rule-6743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6743,
+      "title": "throttle unzip progress updates during cypress install (#35243)",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "d790431a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:37:45.317Z"
+    },
+    "rule-6744": {
+      "learning_id": "rule-6744",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6744,
+      "title": "ci: wait for npm to make a published version visible",
+      "source_url": "https://github.com/wix/Detox",
+      "source_version": "667efcb6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:37:45.919Z"
     }
   },
   "aliases": {

@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "1ecfa9e5",
+    "sourceVersion": "d790431a",
     "license": "MIT",
-    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
-    "lastHarvestedAt": "2026-10-30T20:15:11.651Z",
+    "contentHash": "41e90f5d550f263e54aaf3bee049fdd4836f5ba496c2a89a0b42f8b4c1e2cc90",
+    "lastHarvestedAt": "2026-11-04T03:37:45.430Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -3623,10 +3623,10 @@
     "repository": "wix/Detox",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/Detox",
-    "sourceVersion": "fc34e84a",
+    "sourceVersion": "667efcb6",
     "license": "MIT",
-    "contentHash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
-    "lastHarvestedAt": "2026-10-28T07:36:27.832Z",
+    "contentHash": "c01b154a01ccfbc7a75562a9e6d1532c1bca18281a239d9c4b8d99e79181c4cb",
+    "lastHarvestedAt": "2026-11-04T03:37:46.028Z",
     "learningId": "learn-github-wix-detox"
   },
   "koderover-zadig": {

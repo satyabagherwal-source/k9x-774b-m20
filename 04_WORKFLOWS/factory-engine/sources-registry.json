@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T03:30:47.390Z",
-    "lastVerified": "2026-11-04T03:30:47.390Z",
+    "lastChecked": "2026-11-04T03:37:49.603Z",
+    "lastVerified": "2026-11-04T03:37:49.603Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -242,12 +242,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:09:15.884Z",
-    "lastVerified": "2026-11-04T03:09:15.884Z",
+    "lastChecked": "2026-11-04T03:37:49.592Z",
+    "lastVerified": "2026-11-04T03:37:49.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -256,7 +256,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "658388c9"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1146,8 +1147,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T00:24:25.354Z",
-    "lastVerified": "2026-11-04T00:24:25.354Z",
+    "lastChecked": "2026-11-04T03:37:44.617Z",
+    "lastVerified": "2026-11-04T03:37:44.617Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2833,22 +2834,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wix-detox": {
-    "name": "Detox",
+    "name": "wix/Detox",
     "officialUrl": "https://github.com/wix/Detox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-31T03:34:06.978Z",
-    "lastVerified": "2026-10-31T03:34:06.978Z",
+    "lastChecked": "2026-11-04T03:37:44.981Z",
+    "lastVerified": "2026-11-04T03:37:44.981Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-detox",
-    "contentHash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 4,
+    "contentHash": "c01b154a01ccfbc7a75562a9e6d1532c1bca18281a239d9c4b8d99e79181c4cb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fc34e84a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "karmada-io-karmada": {
     "name": "karmada-io/karmada",
@@ -4090,9 +4090,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-01T01:05:04.287Z",
+    "lastChecked": "2026-11-04T03:37:34.446Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-01T01:05:04.287Z"
+    "lastVerified": "2026-11-04T03:37:34.446Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -4290,9 +4290,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-02T17:12:14.071Z",
+    "lastChecked": "2026-11-04T03:37:47.043Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-02T17:12:14.071Z"
+    "lastVerified": "2026-11-04T03:37:47.043Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -6302,9 +6302,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-02T21:22:57.905Z",
+    "lastChecked": "2026-11-04T03:37:41.983Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-02T21:22:57.905Z"
+    "lastVerified": "2026-11-04T03:37:41.983Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -11646,14 +11646,14 @@
     "officialUrl": "https://github.com/cypress-io/cypress",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T20:15:11.422Z",
-    "lastVerified": "2026-10-30T20:15:11.422Z",
+    "lastChecked": "2026-11-04T03:37:43.440Z",
+    "lastVerified": "2026-11-04T03:37:43.440Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 16,
+    "contentHash": "41e90f5d550f263e54aaf3bee049fdd4836f5ba496c2a89a0b42f8b4c1e2cc90",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
