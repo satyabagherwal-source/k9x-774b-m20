@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:14:08.882Z",
+  "last_updated": "2026-11-04T01:20:41.078Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34839,8 +34839,8 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "eaee0c72",
-      "content_hash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
+      "source_version": "46e80093",
+      "content_hash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
@@ -34863,6 +34863,11 @@
           "number": 5976,
           "title": "pin monolith in the linux install script after upstream renamed its release asse",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6697,
+          "title": "docker): drop Linux capabilities and set no_new_privs for the app processes (#32",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34870,7 +34875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:04:52.741Z",
+      "verified_at": "2026-11-04T01:20:36.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48090,8 +48095,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "ea169d03",
-      "content_hash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
+      "source_version": "e6e7c7a5",
+      "content_hash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -48174,6 +48179,11 @@
           "number": 6432,
           "title": "renovate changelog generation (#25502)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6698,
+          "title": "cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48181,7 +48191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:22:29.445Z",
+      "verified_at": "2026-11-04T01:20:39.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52320,8 +52330,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "ef56e699",
-      "content_hash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
+      "source_version": "900536dd",
+      "content_hash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -52379,6 +52389,11 @@
           "number": 4582,
           "title": "Unify attach signature and attestation under new bundle format (#5141)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6699,
+          "title": "Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52386,7 +52401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:21:41.619Z",
+      "verified_at": "2026-11-04T01:20:41.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172049,6 +172064,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:14:08.868Z"
+    },
+    "rule-6697": {
+      "learning_id": "rule-6697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6697,
+      "title": "docker): drop Linux capabilities and set no_new_privs for the app processes (#32",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "46e80093",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:20:36.537Z"
+    },
+    "rule-6698": {
+      "learning_id": "rule-6698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6698,
+      "title": "cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "e6e7c7a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:20:39.452Z"
+    },
+    "rule-6699": {
+      "learning_id": "rule-6699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6699,
+      "title": "Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "900536dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:20:41.065Z"
     }
   },
   "aliases": {

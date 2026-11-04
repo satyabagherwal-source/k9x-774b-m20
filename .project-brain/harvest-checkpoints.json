@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:14:08.943Z",
+  "last_updated": "2026-11-04T01:20:41.136Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
-      "verified_at": "2026-10-31T01:04:52.855Z",
+      "content_hash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
+      "verified_at": "2026-11-04T01:20:36.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:04:52.855Z"
+      "last_updated": "2026-11-04T01:20:36.609Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
-      "verified_at": "2026-10-26T10:21:41.684Z",
+      "content_hash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
+      "verified_at": "2026-11-04T01:20:41.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T10:21:41.684Z"
+      "last_updated": "2026-11-04T01:20:41.135Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
-      "verified_at": "2026-11-02T15:22:29.574Z",
+      "content_hash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
+      "verified_at": "2026-11-04T01:20:39.529Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:22:29.574Z"
+      "last_updated": "2026-11-04T01:20:39.529Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

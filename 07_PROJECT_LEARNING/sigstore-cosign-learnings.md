@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `ef56e699`  
+> **Source Version**: `900536dd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:21:41.335Z  
+> **Timestamp**: 2026-11-04T01:20:40.630Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:21:41.329Z  
+> **Harvest Timestamp**: 2026-11-04T01:20:39.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6386 stars
+- **Stars / Engagement**: 6405 stars
 
 ---
 
@@ -1797,828 +1797,511 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef56e699` (2026-10-26)
-**Commit Message**: Unify attach signature and attestation under new bundle format (#5141)
+### Incident Patch 1: `900536dd` (2026-11-04)
+**Commit Message**: Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)
 
-* Unify attach signature and attestation under new bundle format
+Pass RegistryOptions.NameOptions() to GetEnvTargetRepository and
+ociremote.WithNameOptions so that --allow-http-registry is preserved
+when parsing COSIGN_REPOSITORY and resolving references. Also ensure
+bundle verification/download, experimental OCI 1.1 signature read/write,
+and clean commands consistently respect TargetRepository and
+NameOptions.
 
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+AI found and generated while updating scaffolding e2e tests
 
-* fix(attach): honor --allow-http-registry when writing referrers
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/attach.go` (modified, +15/-51)
+**File**: `cmd/cosign/cli/clean.go` (modified, +17/-10)
 ```diff
-@@ -16,6 +16,7 @@
- package cli
- 
- import (
-+	"errors"
- 	"fmt"
- 	"os"
- 
-@@ -32,42 +33,33 @@ func Attach() *cobra.Command {
+@@ -63,19 +63,22 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
  	}
  
- 	cmd.AddCommand(
--		attachSignature(),
-+		attachBundle(),
- 		attachSBOM(),
--		attachAttestation(),
- 	)
- 
- 	return cmd
- }
- 
--func attachSignature() *cobra.Command {
--	o := &options.AttachSignatureOptions{}
-+func attachBundle() *cobra.Command {
-+	o := &options.AttachBundleOptions{}
- 
- 	cmd := &cobra.Command{
--		Use:   "signature",
--		Short: "Attach signatures to the supplied container image",
--		Example: `  cosign attach signature [--payload <path>] [--signature < path>] [--rekor-response < path>] <image uri>
-+		Use:   "bundle",
-+		Short: "Attach bundles to the supplied container image",
-+		Example: `  cosign attach bundle --bundle <bundle-path> <image uri>
- 
--		cosign attach signature command attaches payload, signature, rekor-bundle, etc in a new layer of provided image.
--		
--		# Attach signature can attach payload to a supplied image
--		cosign attach signature --payload <payload.json>  $IMAGE
-+  # Attach bundle to a supplied image
-+  cosign attach bundle --bundle <bundle.sigstore.json> $IMAGE
- 
--		# Attach signature can attach payload, signature to a supplied image
--		cosign attach signature --payload <payload.json> --signature <base64 signature file> $IMAGE
--
--		# Attach signature can attach payload, signature, time stamped response to a supplied image
--		cosign attach signature --payload <payload.json> --signature <base64 signature file> --tsr=<file> $IMAGE
--
--		# Attach signature attaches payload, signature and rekor-bundle via rekor-response to a supplied image
--		cosign attach signature --payload <payload.json> --signature <base64 signature file>  --rekor-response <proper rekor-response format file> $IMAGE
--
--		# Attach signature attaches payload, signature and rekor-bundle directly to a supplied image
--		cosign attach signature --payload <payload.json> --signature <base64 signature file>  --rekor-response <rekor-bundle file> $IMAGE`,
-+  # Attach multiple bundles to a supplied image
-+  cosign attach bundle --bundle <bundle1.json> --bundle <bundle2.json> $IMAGE`,
- 		PersistentPreRun: options.BindViper,
- 		Args:             cobra.ExactArgs(1),
- 		RunE: func(cmd *cobra.Command, args []string) error {
--			return attach.SignatureCmd(cmd.Context(), o.Registry, o.Signature, o.Payload, o.Cert, o.CertChain, o.TimeStampedSig, o.RekorBundle, args[0])
-+			if len(o.BundlePaths) == 0 {
-+				return errors.New("must specify --bundle")
-+			}
-+			return attach.BundleCmd(cmd.Context(), o.Registry, o.BundlePaths, args[0])
- 		},
- 	}
- 
-@@ -101,31 +93,3 @@ func attachSBOM() *cobra.Command {
- 
- 	return cmd
- }
--
--func attachAttestation() *cobra.Command {
--	o := &options.AttachAttestationOptions{}
--
--	cmd := &cobra.Command{
--		Use:   "attestation",
--		Short: "Attach attestation to the supplied container image",
--		Example: `  cosign attach attestation --attestation <attestation file path> <image uri>
--
--  # attach attestations from multiple files to a container image
--  cosign attach attestation --attestation <attestation file path> --attestation <attestation file path> <image uri>
--
--  # attach attestation from bundle files in form of JSONLines to a container image
--  # https://github.com/in-toto/attestation/blob/main/spec/v1.0-draft/bundle.md
--  cosign attach attestation --attestation <attestation bundle file path> <image uri>
--`,
--
--		Args:             cobra.MinimumNArgs(1),
--		PersistentPreRun: options.BindViper,
--		RunE: func(cmd *cobra.Command, args []string) error {
--			return attach.AttestationCmd(cmd.Context(), o.Registry, o.Attestations, args[0])
--		},
--	}
--
--	o.AddFlags(cmd)
--
--	return cmd
--}
-```
-
-**File**: `cmd/cosign/cli/attach/attach.go` (modified, +22/-77)
-```diff
-@@ -16,51 +16,48 @@ package attach
- 
- import (
- 	"context"
--	"encoding/json"
- 	"fmt"
- 	"os"
- 
- 	"github.com/google/go-containerregistry/pkg/name"
--	ssldsse "github.com/secure-systems-lab/go-securesystemslib/dsse"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
- 	"github.com/sigstore/cosign/v3/internal/ui"
--	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
- 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
--	"github.com/sigstore/cosign/v3/pkg/oci/static"
--	"github.com/sigstore/cosign/v3/pkg/types"
- 	"github.com/sigstore/sigstore-go/pkg/bundle"
- )
- 
--func AttestationCmd(ctx context.Context, regOpts options.RegistryOptions, signedPayloads []string, imageRef string) error {
-+func BundleCmd(ctx context.Context, regOpts options.RegistryOptions, bundlePaths []string, imageRef string) error {
-+	ref, err := name.ParseReference(imageRef, regOpts.NameOptions()...)
+ 	remoteOpts := regOpts.GetRegistryClientOpts(ctx)
+-	ociRemoteOpts := ociremote.WithRemoteOptions(remoteOpts...)
++	ociRemoteOpts, err := regOpts.ClientOpts(ctx)
 +	if err != nil {
 +		return err
 +	}
-+	if _, ok := ref.(name.Digest); !ok {
-+		ui.Warnf(ctx, ui.TagReferenceMessage, imageRef)
-+	}
-+
- 	ociremoteOpts, err := regOpts.ClientOpts(ctx)
+ 
+-	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts)
++	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts...)
  	if err != nil {
- 		return fmt.Errorf("constructing client options: %w", err)
+ 		return err
  	}
-+	if regOpts.AllowHTTPRegistry || regOpts.AllowInsecure {
-+		ociremoteOpts = append(ociremoteOpts, ociremote.WithNameOptions(name.Insecure))
-+	}
  
--	for _, payload := range signedPayloads {
--		fmt.Fprintf(os.Stderr, "Using payload from: %s", payload)
-+	digest, err := ociremote.ResolveDigest(ref, ociremoteOpts...)
-+	if err != nil {
-+		return err
-+	}
+-	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts)
++	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts...)
+ 	if err != nil {
+ 		return err
+ 	}
  
--		ref, err := name.ParseReference(imageRef, regOpts.NameOptions()...)
--		if err != nil {
--			return err
--		}
--		if _, ok := ref.(name.Digest); !ok {
--			ui.Warnf(ctx, ui.TagReferenceMessage, imageRef)
--		}
-+	for _, bundlePath := range bundlePaths {
-+		fmt.Fprintf(os.Stderr, "Using bundle from: %s\n", bundlePath)
- 
--		digest, err := ociremote.ResolveDigest(ref, ociremoteOpts...)
-+		b, err := bundle.LoadJSONFromPath(bundlePath)
+-	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts)
++	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts...)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -84,12 +87,16 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
+ 	digest, ok := ref.(name.Digest)
+ 	if !ok {
+ 		var err error
+-		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts)
++		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts...)
  		if err != nil {
--			return err
--		}
--
--		// Detect if we are using new bundle format
--		b, err := bundle.LoadJSONFromPath(payload)
--		if err == nil {
--			return attachAttestationNewBundle(ociremoteOpts, b, digest)
-+			return fmt.Errorf("loading bundle from %s: %w", bundlePath, err)
- 		}
- 
--		if err := attachAttestation(ociremoteOpts, payload, digest); err != nil {
--			return fmt.Errorf("attaching payload from %s: %w", payload, err)
-+		if err := attachAttestationNewBundle(ociremoteOpts, b, digest); err != nil {
-+			return fmt.Errorf("attaching bundle from %s: %w", bundlePath, err)
+ 			return fmt.Errorf("resolving digest: %w", err)
  		}
  	}
- 
-@@ -88,55 +85,3 @@ func attachAttestationNewBundle(remoteOpts []ociremote.Option, b *bundle.Bundle,
+-	idx, err := remote.Referrers(digest, remoteOpts...)
++	targetRepo := ref.Context()
++	if overrideRepo := ociremote.TargetRepositoryFromOptions(ociRemoteOpts...); (overrideRepo != name.Repository{}) {
++		targetRepo = overrideRepo
++	}
++	idx, err := remote.Referrers(targetRepo.Digest(digest.DigestStr()), remoteOpts...)
+ 	if err != nil {
+ 		return err
  	}
- 	return ociremote.WriteAttestationNewBundleFormat(digest, bundleBytes, statement.PredicateType, remoteOpts...)
- }
--
--func attachAttestation(remoteOpts []ociremote.Option, signedPayload string, digest name.Digest) error {
--	attestationFile, err := os.Open(signedPayload)
--	if err != nil {
--		return err
--	}
--	defer attestationFile.Close()
--
--	env := ssldsse.Envelope{}
--	decoder := json.NewDecoder(attestationFile)
--	for decoder.More() {
--		if err := decoder.Decode(&env); err != nil {
--			return err
--		}
--
--		payload, err := json.Marshal(env)
--		if err != nil {
--			return err
--		}
--
--		if env.PayloadType != types.IntotoPayloadType {
--			return fmt.Errorf("invalid payloadType %s on envelope. Expected %s", env.PayloadType, types.IntotoPayloadType)
--		}
--
--		if len(env.Signatures) == 0 {
--			return fmt.Errorf("could not attach attestation without having signatures")
--		}
--
--		opts := []static.Option{static.WithLayerMediaType(types.DssePayloadType)}
--		att, err := static.NewAttestation(payload, opts...)
--		if err != nil {
--			return err
--		}
--
--		se, err := ociremote.SignedEntity(digest, remoteOpts...)
--		if err != nil {
--			return err
--		}
--
--		newSE, err := mutate.AttachAttestationToEntity(se, att)
--		if err != nil {
--			return err
--		}
--
--		// Publish the signatures associated with this entity
--		err = ociremote.WriteAttestations(digest.Repository, newSE, remoteOpts...)
--		if err != nil {
--			return err
--		}
--	}
--	return nil
--}
+@@ -99,8 +106,8 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
+ 		if err != nil {
+ 			return err
+ 		}
+-		referrerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), imgDigest.String())
+-		referrerDigest, err := name.NewDigest(referrerDigestStr)
++		referrerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), imgDigest.String())
++		referrerDigest, err := name.NewDigest(referrerDigestStr, regOpts.NameOptions()...)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -113,8 +120,8 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
+ 		}
+ 		if idxManifest != nil {
+ 			for _, manifest := range idxManifest.Manifests {
+-				layerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), manifest.Digest.String())
+-				layerDigest, err := name.NewDigest(layerDigestStr)
++				layerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), manifest.Digest.String())
++				layerDigest, err := name.NewDigest(layerDigestStr, regOpts.NameOptions()...)
+ 				if err != nil {
+ 					return err
+ 				}
 ```
 
-**File**: `cmd/cosign/cli/attach/sbom.go` (modified, +2/-9)
+**File**: `cmd/cosign/cli/download/attestation.go` (modified, +1/-1)
 ```diff
-@@ -135,15 +135,8 @@ func sbomCmdOCIExperimental(ctx context.Context, regOpts options.RegistryOptions
- }
+@@ -50,7 +50,7 @@ func AttestationCmd(ctx context.Context, regOpts options.RegistryOptions, attOpt
+ 	var foundMatches bool
  
- func sbomBytes(sbomRef string) ([]byte, error) {
--	// sbomRef can be "-", a string or a file.
--	switch signatureType(sbomRef) {
--	case StdinSignature:
-+	if sbomRef == "-" {
- 		return io.ReadAll(os.Stdin)
--	case RawSignature:
--		return []byte(sbomRef), nil
--	case FileSignature:
--		return os.ReadFile(filepath.Clean(sbomRef))
--	default:
--		return nil, errors.New("unknown SBOM arg type")
+ 	// Try bundles first
+-	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
++	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts, regOpts.NameOptions()...)
+ 	if err == nil && len(newBundles) > 0 {
+ 		for _, eachBundle := range newBundles {
+ 			if predicateType != "" {
+```
+
+**File**: `cmd/cosign/cli/download/signature.go` (modified, +2/-2)
+```diff
+@@ -35,8 +35,8 @@ func SignatureCmd(ctx context.Context, regOpts options.RegistryOptions, imageRef
+ 		return err
  	}
-+	return os.ReadFile(filepath.Clean(sbomRef))
- }
+ 
+-	// Try bundles first
+-	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
++	// Try bundles first
++	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts, regOpts.NameOptions()...)
+ 	if err == nil && len(newBundles) > 0 {
+ 		for _, eachBundle := range newBundles {
+ 			b, err := json.Marshal(eachBundle)
 ```
 
-**File**: `cmd/cosign/cli/attach/sig.go` (removed, +0/-177)
+**File**: `cmd/cosign/cli/options/registry.go` (modified, +4/-1)
 ```diff
-@@ -1,177 +0,0 @@
--//
--// Copyright 2021 The Sigstore Authors.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package attach
--
--import (
--	"bytes"
--	"context"
--	"encoding/json"
--	"errors"
--	"io"
--	"os"
--	"path/filepath"
--
--	"github.com/google/go-containerregistry/pkg/name"
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
--	"github.com/sigstore/cosign/v3/pkg/cosign"
--	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
--	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
--	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
--	"github.com/sigstore/cosign/v3/pkg/oci/static"
--	sgbundle "github.com/sigstore/sigstore-go/pkg/bundle"
--)
--
--func SignatureCmd(ctx context.Context, regOpts options.RegistryOptions, sigRef, payloadRef, certRef, certChainRef, timeStampedSigRef, rekorBundleRef, imageRef string) error {
--	ref, err := name.ParseReference(imageRef, regOpts.NameOptions()...)
--	if err != nil {
--		return err
--	}
--	ociremoteOpts, err := regOpts.ClientOpts(ctx)
--	if err != nil {
--		return err
--	}
--	digest, err := ociremote.ResolveDigest(ref, ociremoteOpts...)
--	if err != nil {
--		return err
--	}
--
--	// Detect if we are using new bundle format
--	b, err := sgbundle.LoadJSONFromPath(payloadRef)
--	if err == nil {
--		return attachAttestationNewBundle(ociremoteOpts, b, digest)
--	}
--
--	var payload []byte
--	if payloadRef == "" {
--		payload, err = cosign.ObsoletePayload(ctx, digest, nil)
--	} else {
--		payload, err = os.ReadFile(filepath.Clean(payloadRef))
--	}
--	if err != nil {
--		return err
--	}
--
--	b64SigBytes, err := signatureBytes(sigRef)
--	if err != nil {
--		return err
--	} else if len(b64SigBytes) == 0 {
--		return errors.New("empty signature")
--	}
--
--	sig, err := static.NewSignature(payload, string(b64SigBytes))
--	if err != nil {
--		return err
--	}
--
--	var cert []byte
--	var certChain []byte
--	var timeStampedSig []byte
--	var rekorBundle *bundle.RekorBundle
--
--	if certRef != "" {
--		cert, err = os.ReadFile(filepath.Clean(certRef))
--		if err != nil {
--			return err
--		}
--	}
--
--	if certChainRef != "" {
--		certChain, err = os.ReadFile(filepath.Clean(certChainRef))
--		if err != nil {
--			return err
--		}
--	}
--
--	if timeStampedSigRef != "" {
--		timeStampedSig, err = os.ReadFile(filepath.Clean(timeStampedSigRef))
--		if err != nil {
--			return err
--		}
--	}
--	tsBundle := bundle.TimestampToRFC3161Timestamp(timeStampedSig)
--
--	if rekorBundleRef != "" {
--		rekorBundleByte, err := os.ReadFile(filepath.Clean(rekorBundleRef))
--		if err != nil {
--			return err
--		}
--
--		var localCosignPayload cosign.LocalSignedPayload
--		err = json.Unmarshal(rekorBundleByte, &localCosignPayload)
--		if err != nil {
--			return err
--		}
--
--		rekorBundle = localCosignPayload.Bundle
--	}
--
--	newSig, err := mutate.Signature(sig, mutate.WithCertChain(cert, certChain), mutate.WithRFC3161Timestamp(tsBundle), mutate.WithBundle(rekorBundle))
--	if err != nil {
--		return err
--	}
--
--	se, err := ociremote.SignedEntity(digest, ociremoteOpts...)
--	if err != nil {
--		return err
--	}
--
--	// Attach the signature to the entity.
--	newSE, err := mutate.AttachSignatureToEntity(se, newSig)
--	if err != nil {
--		return err
--	}
--
--	// Publish the signatures associated with this entity
--	return ociremote.WriteSignatures(digest.Repository, newSE, ociremoteOpts...)
--}
--
--type SignatureArgType uint8
--
--const (
--	StdinSignature SignatureArgType = iota
--	RawSignature   SignatureArgType = iota
--	FileSignature  SignatureArgType = iota
--)
--
--func signatureBytes(sigRef string) ([]byte, error) {
--	// sigRef can be "-", a string or a file.
--	var sig []byte
--	var err error
--	switch signatureType(sigRef) {
--	case StdinSignature:
--		sig, err = io.ReadAll(os.Stdin)
--	case RawSignature:
--		return []byte(sigRef), nil
--	case FileSignature:
--		sig, err = os.ReadFile(filepath.Clean(sigRef))
--	default:
--		return nil, errors.New("unknown signature arg type")
--	}
--	if err != nil {
--		return nil, err
--	}
--	// Files and stdin commonly carry a trailing newline (e.g. from `jq -r ... >
--	// file` or `echo`). Strip surrounding whitespace so it isn't stored verbatim
--	// as part of the signature annotation value.
--	return bytes.TrimSpace(sig), nil
--}
--
--func signatureType(sigRef string) SignatureArgType {
--	if sigRef == "-" {
--		return StdinSignature
--	}
--	return FileSignature
--}
-```
-
-**File**: `cmd/cosign/cli/attach/sig_test.go` (removed, +0/-60)
-```diff
-@@ -1,60 +0,0 @@
--//
--// Copyright 2026 The Sigstore Authors.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package attach
--
--import (
--	"os"
--	"path/filepath"
--	"testing"
--)
--
--func TestSignatureBytesTrimsTrailingWhitespace(t *testing.T) {
--	const want = "MEQCIGnMnU8FiEcNVIgeR6HxNp4Gaqg5q0XLSNhBO5pp+QaNAiB40iDMGGQdthm8U9qQeCAzp6ecLdKCG3R/yq5S2uMa6g=="
--
--	dir := t.TempDir()
--	sigFile := filepath.Join(dir, "signature.sig")
--	// Simulate a signature file produced with `jq -r '.Base64Signature' > signature.sig`,
--	// which appends a trailing newline.
--	if err := os.WriteFile(sigFile, []byte(want+"\n"), 0600); err != nil {
--		t.Fatal(err)
--	}
--
--	got, err := signatureBytes(sigFile)
--	if err != nil {
--		t.Fatal(err)
--	}
--	if string(got) != want {
--		t.Errorf("signatureBytes() = %q, want %q", string(got), want)
--	}
--}
--
--func TestSignatureBytesFileWithoutTrailingWhitespaceUnaffected(t *testing.T) {
--	const want = "MEQCIGnMnU8FiEcNVIgeR6HxNp4Gaqg5q0XLSNhBO5pp+QaNAiB40iDMGGQdthm8U9qQeCAzp6ecLdKCG3R/yq5S2uMa6g=="
--
--	dir := t.TempDir()
--	sigFile := filepath.Join(dir, "signature.sig")
--	if err := os.WriteFile(sigFile, []byte(want), 0600); err != nil {
--		t.Fatal(err)
--	}
--
--	got, err := signatureBytes(sigFile)
--	if err != nil {
--		t.Fatal(err)
--	}
--	if string(got) != want {
--		t.Errorf("signatureBytes() = %q, want %q", string(got), want)
--	}
--}
-```
-
-**File**: `cmd/cosign/cli/options/attach.go` (modified, +8/-46)
-```diff
-@@ -24,44 +24,20 @@ import (
- 	"github.com/spf13/cobra"
- )
- 
--// AttachSignatureOptions is the top level wrapper for the attach signature command.
--type AttachSignatureOptions struct {
--	Signature      string
--	Payload        string
--	Cert           string
--	CertChain      string
--	TimeStampedSig string
--	RekorBundle    string
--	Registry       RegistryOptions
-+// AttachBundleOptions is the top level wrapper for the attach bundle command.
-+type AttachBundleOptions struct {
-+	BundlePaths []string
-+	Registry    RegistryOptions
- }
- 
--var _ Interface = (*AttachSignatureOptions)(nil)
-+var _ Interface = (*AttachBundleOptions)(nil)
- 
- // AddFlags implements Interface
--func (o *AttachSignatureOptions) AddFlags(cmd *cobra.Command) {
-+func (o *AttachBundleOptions) AddFlags(cmd *cobra.Command) {
- 	o.Registry.AddFlags(cmd)
- 
--	cmd.Flags().StringVar(&o.Signature, "signature", "",
--		"path to the signature, or {-} for stdin")
--
--	cmd.Flags().StringVar(&o.Payload, "payload", "",
--		"path to the payload covered by the signature")
--
--	cmd.Flags().StringVar(&o.Payload, "bundle", "",
--		"path to bundle containing signature (alias for payload)")
--
--	cmd.Flags().StringVar(&o.Cert, "certificate", "",
--		"path to the X.509 certificate in PEM format to include in the OCI Signature")
--
--	cmd.Flags().StringVar(&o.CertChain, "certificate-chain", "",
--		"path to a list of CA X.509 certificates in PEM format which will be needed "+
--			"when building the certificate chain for the signing certificate. "+
--			"Must start with the parent intermediate CA certificate of the "+
--			"signing certificate and end with the root certificate. Included in the OCI Signature")
--	cmd.Flags().StringVar(&o.TimeStampedSig, "tsr", "",
--		"path to the Time Stamped Signature Response from RFC3161 compliant TSA")
--	cmd.Flags().StringVar(&o.RekorBundle, "rekor-response", "",
--		"path to the rekor bundle")
-+	cmd.Flags().StringArrayVar(&o.BundlePaths, "bundle", nil,
-+		"path to bundle to attach")
- }
- 
- // AttachSBOMOptions is the top level wrapper for the attach sbom command.
-@@ -127,17 +103,3 @@ func (o *AttachSBOMOptions) MediaType() (types.MediaType, error) {
- 		return "unknown", fmt.Errorf("unknown SBOM type: %q, expected (spdx|cyclonedx|syft)", o.SBOMType)
+@@ -105,13 +105,16 @@ func (o *RegistryOptions) ClientOpts(ctx context.Context) ([]ociremote.Option, e
+ 	if o.RefOpts.TagPrefix != "" {
+ 		opts = append(opts, ociremote.WithPrefix(o.RefOpts.TagPrefix))
  	}
+-	targetRepoOverride, err := ociremote.GetEnvTargetRepository()
++	targetRepoOverride, err := ociremote.GetEnvTargetRepository(o.NameOptions()...)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	if (targetRepoOverride != name.Repository{}) {
+ 		opts = append(opts, ociremote.WithTargetRepository(targetRepoOverride))
+ 	}
++	if nameOpts := o.NameOptions(); len(nameOpts) > 0 {
++		opts = append(opts, ociremote.WithNameOptions(nameOpts...))
++	}
+ 	return opts, nil
  }
--
--// AttachAttestationOptions is the top level wrapper for the attach attestation command.
--type AttachAttestationOptions struct {
--	Attestations []string
--	Registry     RegistryOptions
--}
--
--// AddFlags implements Interface
--func (o *AttachAttestationOptions) AddFlags(cmd *cobra.Command) {
--	o.Registry.AddFlags(cmd)
--
--	cmd.Flags().StringArrayVarP(&o.Attestations, "attestation", "", nil,
--		"path to the attestation envelope")
--}
+ 
 ```
 
-**File**: `test/e2e_attach_test.go` (modified, +13/-297)
+**File**: `cmd/cosign/cli/sign/sign.go` (modified, +7/-2)
 ```diff
-@@ -19,307 +19,23 @@ package test
- import (
- 	"bytes"
- 	"context"
--	"crypto"
--	"crypto/rand"
--	"crypto/sha256"
--	"encoding/base64"
--	"encoding/json"
--	"encoding/pem"
--	"fmt"
+@@ -223,7 +223,12 @@ func signDigestBundle(ctx context.Context, digest name.Digest, ko options.KeyOpt
+ 	}
+ 
+ 	if signOpts.Upload {
+-		ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
++		repo, _ := ociremote.GetEnvTargetRepository(regOpts.NameOptions()...)
++		if repo.RepositoryStr() == "" {
++			ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
++		} else {
++			ui.Infof(ctx, "Pushing signature to: %s", repo.RepositoryStr())
++		}
+ 		if err := ociremote.WriteAttestationNewBundleFormat(digest, bundleBytes, bundleOpts.PredicateType, bundleOpts.OCIRemoteOpts...); err != nil {
+ 			return err
+ 		}
+@@ -440,7 +445,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
+ 	}
+ 
+ 	// Check if we are overriding the signatures repository location
+-	repo, _ := ociremote.GetEnvTargetRepository()
++	repo, _ := ociremote.GetEnvTargetRepository(signOpts.Registry.NameOptions()...)
+ 	if repo.RepositoryStr() == "" {
+ 		ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
+ 	} else {
+```
+
+**File**: `cmd/cosign/cli/verify/verify_test.go` (modified, +128/-0)
+```diff
+@@ -31,13 +31,21 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"log"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
  	"os"
- 	"path"
--	"path/filepath"
--	"strings"
++	"path/filepath"
+ 	"strings"
+ 	"sync"
  	"testing"
  
--	"github.com/go-openapi/strfmt"
- 	"github.com/google/go-cmp/cmp"
--	"github.com/google/go-containerregistry/pkg/name"
--	"github.com/google/go-containerregistry/pkg/v1/types"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/attach"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/download"
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/generate"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
--	cliverify "github.com/sigstore/cosign/v3/cmd/cosign/cli/verify"
--	cert_test "github.com/sigstore/cosign/v3/internal/test"
--	"github.com/sigstore/cosign/v3/pkg/cosign"
--	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
--	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
- )
- 
--func TestAttachSignature(t *testing.T) {
--	ctx := context.Background()
--
--	repo, stop := reg(t)
--	defer stop()
--	td := t.TempDir()
--
--	imgName := path.Join(repo, "cosign-attach-e2e")
--
--	imgRef, desc, cleanup := mkimage(t, imgName)
--	defer cleanup()
--
--	// Generate payload
--	b := bytes.Buffer{}
--	must(generate.GenerateCmd(context.Background(), options.RegistryOptions{}, imgName, nil, &b), t)
--	payloadRef := mkfile(b.String(), td, t)
--	hash := sha256.Sum256(b.Bytes())
--
--	// Scenario 1: attach a single signature with certificate and certificate chain to an artifact
--	// and verify it using the root certificate.
--	rootCert1, rootKey1, _ := cert_test.GenerateRootCa()
--	pemRoot1 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: rootCert1.Raw})
--	pemRootRef1 := mkfile(string(pemRoot1), td, t)
--	subCert1, subKey1, _ := cert_test.GenerateSubordinateCa(rootCert1, rootKey1)
--	leafCert1, privKey1, _ := cert_test.GenerateLeafCert("foo@example.com", "oidc-issuer", subCert1, subKey1)
--	pemSub1 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: subCert1.Raw})
--	pemLeaf1 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: leafCert1.Raw})
--	pemLeafRef1 := mkfile(string(pemLeaf1), td, t)
--	certChainRef1 := mkfile(string(append(pemSub1, pemRoot1...)), td, t)
--
--	signature1, _ := privKey1.Sign(rand.Reader, hash[:], crypto.SHA256)
--	b64signature1 := base64.StdEncoding.EncodeToString(signature1)
--	sigRef1 := mkfile(b64signature1, td, t)
--
--	err := attach.SignatureCmd(ctx, options.RegistryOptions{}, sigRef1, payloadRef, pemLeafRef1, certChainRef1, "", "", imgName)
--	must(err, t)
--
--	remoteSigRef, err := name.ParseReference(fmt.Sprintf("%s:sha256-%s.sig", imgRef, strings.Split(desc.Digest.String(), ":")[1]), name.WeakValidation)
--	must(err, t)
--
--	si, err := ociremote.SignedImage(remoteSigRef, ociremote.WithRemoteOptions(registryClientOpts(ctx)...))
--	must(err, t)
--
--	manifest, err := si.Manifest()
--	must(err, t)
--
--	equals(manifest.Config.MediaType, types.MediaType("application/vnd.oci.image.config.v1+json"), t)
--	if len(manifest.Layers) != 1 {
--		t.Fatal("expected exactly one layer")
--	}
--	_, certOk := manifest.Layers[0].Annotations["dev.sigstore.cosign/certificate"]
--	equals(certOk, true, t)
--	_, chainOk := manifest.Layers[0].Annotations["dev.sigstore.cosign/chain"]
--	equals(chainOk, true, t)
--
--	verifyCmd := cliverify.VerifyCommand{
--		IgnoreSCT:  true,
--		IgnoreTlog: true,
--		CertChain:  pemRootRef1,
--		CertVerifyOptions: options.CertVerifyOptions{
--			CertOidcIssuerRegexp: ".*",
--			CertIdentityRegexp:   ".*",
--		},
--	}
--	args := []string{imgName}
--	must(verifyCmd.Exec(ctx, args), t)
--
--	// Scenario 2: Attaches second signature with another certificate and  certificate chain to the
--	// same artifact and verify it using both root certificates separately.
--	rootCert2, rootKey2, _ := cert_test.GenerateRootCa()
--	pemRoot2 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: rootCert2.Raw})
--	pemRootRef2 := mkfile(string(pemRoot2), td, t)
--	subCert2, subKey2, _ := cert_test.GenerateSubordinateCa(rootCert2, rootKey2)
--	leafCert2, privKey2, _ := cert_test.GenerateLeafCert("foo@exampleclient.com", "oidc-issuer", subCert2, subKey2)
--	pemSub2 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: subCert2.Raw})
--	pemLeaf2 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: leafCert2.Raw})
--	pemLeafRef2 := mkfile(string(pemLeaf2), td, t)
--	certChainRef2 := mkfile(string(append(pemSub2, pemRoot2...)), td, t)
--
--	signature2, _ := privKey2.Sign(rand.Reader, hash[:], crypto.SHA256)
--	b64signature2 := base64.StdEncoding.EncodeToString(signature2)
--	sigRef2 := mkfile(b64signature2, td, t)
--
--	err = attach.SignatureCmd(ctx, options.RegistryOptions{}, sigRef2, payloadRef, pemLeafRef2, certChainRef2, "", "", imgName)
--	must(err, t)
--
--	// verify using first root certificate
--	verifyCmd = cliverify.VerifyCommand{
--		IgnoreSCT:  true,
--		IgnoreTlog: true,
--		CertChain:  pemRootRef1,
--		CertVerifyOptions: options.CertVerifyOptions{
--			CertOidcIssuerRegexp: ".*",
--			CertIdentityRegexp:  
-```
-
-**File**: `test/e2e_insecure_registry_test.go` (modified, +73/-0)
-```diff
-@@ -29,6 +29,7 @@ import (
  	"github.com/google/go-containerregistry/pkg/name"
- 	"github.com/google/go-containerregistry/pkg/v1/random"
- 	"github.com/google/go-containerregistry/pkg/v1/remote"
-+	"github.com/sigstore/cosign/v3/cmd/cosign/cli/attach"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/attest"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/initialize"
++	"github.com/google/go-containerregistry/pkg/registry"
++	"github.com/google/go-containerregistry/pkg/v1/empty"
++	"github.com/google/go-containerregistry/pkg/v1/remote"
  	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
-@@ -196,6 +197,78 @@ func TestAttestInsecureRegistry(t *testing.T) {
- 	must(verifyAttestation.Exec(ctx, []string{imgName}), t)
++	"github.com/sigstore/cosign/v3/cmd/cosign/cli/sign"
+ 	"github.com/sigstore/cosign/v3/internal/pkg/cosign/fulcio/fulcioroots"
+ 	"github.com/sigstore/cosign/v3/internal/test"
+ 	"github.com/sigstore/cosign/v3/internal/ui"
+@@ -474,3 +482,123 @@ func TestVerifySkWithoutIdentities(t *testing.T) {
+ 		t.Fatalf("expected PIV error, got: %v", err)
+ 	}
  }
- 
-+func TestAttachInsecureRegistry(t *testing.T) {
-+	if os.Getenv("COSIGN_TEST_REPO") == "" {
-+		t.Fatal("COSIGN_TEST_REPO must be set to an insecure registry for this test")
-+	}
-+	repo, stop := reg(t)
-+	defer stop()
-+	td := t.TempDir()
 +
-+	imgName := path.Join(repo, "cosign-registry-e2e-attach")
-+	cleanup := makeImageIndexWithInsecureRegistry(t, imgName)
-+	defer cleanup()
++type roundTripperFunc func(*http.Request) (*http.Response, error)
 +
-+	_, privKey, pubKey := keypair(t, td)
-+
-+	rekorURL := os.Getenv(rekorURLVar)
-+
-+	ctx := context.Background()
-+	tufLocalCache := t.TempDir()
-+	t.Setenv("TUF_ROOT", tufLocalCache)
-+	rootPath := os.Getenv("TUF_ROOT_JSON")
-+	mirror := os.Getenv("TUF_MIRROR")
-+	must(initialize.DoInitialize(ctx, rootPath, mirror), t)
-+
-+	regOpts := options.RegistryOptions{
-+		AllowInsecure:     true,
-+		AllowHTTPRegistry: true,
-+	}
-+
-+	bundlePath := filepath.Join(td, "attestation.sigstore.json")
-+	ko := options.KeyOpts{
-+		KeyRef:           privKey,
-+		PassFunc:         passFunc,
-+		RekorURL:         rekorURL,
-+		SkipConfirmation: true,
-+		NewBundleFormat:  true,
-+		BundlePath:       bundlePath,
-+	}
-+	trustedMaterial, err := cosign.TrustedRoot()
-+	must(err, t)
-+	ko.TrustedMaterial = trustedMaterial
-+
-+	slsaAttestation := `{ "buildType": "x", "builder": { "id": "2" }, "recipe": {} }`
-+	slsaAttestationPath := filepath.Join(td, "attestation.slsa.json")
-+	if err := os.WriteFile(slsaAttestationPath, []byte(slsaAttestation), 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// Write the bundle only to disk (only attach will upload it)
-+	attestCmd := attest.AttestCommand{
-+		KeyOpts:         ko,
-+		RegistryOptions: regOpts,
-+		PredicatePath:   slsaAttestationPath,
-+		PredicateType:   "slsaprovenance",
-+		Timeout:         30 * time.Second,
-+		RekorEntryType:  "dsse",
-+		TlogUpload:      true,
-+		NoUpload:        true,
-+	}
-+	must(attestCmd.Exec(ctx, imgName), t)
-+
-+	verifyAttestation := cliverify.VerifyAttestationCommand{
-+		KeyRef:          pubKey,
-+		PredicateType:   "slsaprovenance",
-+		RegistryOptions: regOpts,
-+	}
-+	verifyAttestation.CommonVerifyOptions.NewBundleFormat = true
-+	mustErr(verifyAttestation.Exec(ctx, []string{imgName}), t)
-+
-+	must(attach.BundleCmd(ctx, regOpts, []string{bundlePath}, imgName), t)
-+	must(verifyAttestation.Exec(ctx, []string{imgName}), t)
++func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
++	return f(req)
 +}
 +
- func makeImageIndexWithInsecureRegistry(t *testing.T, n string) func() {
- 	ref, err := name.ParseReference(n, name.WeakValidation, name.Insecure)
- 	if err != nil {
++func TestSignAndVerifyWithHTTPTargetRepository(t *testing.T) {
++	r := registry.New(registry.WithReferrersSupport(true))
++	s := httptest.NewServer(r)
++	defer s.Close()
++
++	u, err := url.Parse(s.URL)
++	assert.NoError(t, err)
++	host := u.Host
++
++	// Route registry.local:5000 over HTTP to the in-memory registry.
++	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
++		reqClone := req.Clone(req.Context())
++		reqClone.URL.Host = host
++		reqClone.Host = host
++		return http.DefaultTransport.RoundTrip(reqClone)
++	})
++
++	td := t.TempDir()
++	keys, err := cosign.GenerateKeyPair(func(bool) ([]byte, error) { return nil, nil })
++	assert.NoError(t, err)
++	privKeyPath := filepath.Join(td, "cosign.key")
++	pubKeyPath := filepath.Join(td, "cosign.pub")
++	assert.NoError(t, os.WriteFile(privKeyPath, keys.PrivateBytes, 0o600))
++	assert.NoError(t, os.WriteFile(pubKeyPath, keys.PublicBytes, 0o600))
++
++	ro := &options.RootOptions{Timeout: options.DefaultTimeout}
++	ko := options.KeyOpts{
++		KeyRef:           privKeyPath,
++		PassFunc:         func(bool) ([]byte, error) { return nil, nil },
++		SkipConfirmation: true,
++	}
++	regOpts := options.RegistryOptions{
++		AllowHTTPRegistry:  true,
++		RegistryClientOpts: []remote.Option{remote.WithTransport(rt)},
++	}
++
++	for _, tc := range []struct {
++		name              string
++		newBundleFormat   bool
++		experimentalOCI11 bool
++	}{
++		{name: "legacy", newBundleFormat: false},
++		{name: "new-bundle-format", newBundleFormat: true},
++		{name: "oci-1-1-referrers", newBundleFormat: false, experimentalOCI11: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			targetRepoStr := fmt.Sprintf("registry.local:5000/target/%s", tc.name)
++			t.Setenv("COSIGN_REPOSITORY", targetRepoStr)
++
++			// Write the image both to the loopback host (which does not need name.Insecure)
++			// and to registry.local:5000 (which requires name.Insecure / AllowHTTPRegistry).
++			loopbackImgRefStr := fmt.Sprintf("%s/source/%s:latest", host, tc.name)
++			loopbackImgRef, err := name.ParseReference(loopbackImgRefStr)
++			assert.NoError(t, err)
++			assert.NoError(t, remote.Write(loopbackImgRef, empty.Image, remote.WithTransport(rt)))
++
++			imgRefStr := fmt.Sprintf("registry.local:5000/source/%s:latest", tc.name)
++			imgRef, err := name.ParseReference(imgRefStr, name.Insecure)
++			assert.NoError(t, err)
++			assert.NoError(t, remote.Write(imgRef, empty.Image, remote.WithTransport(rt)))
++
++			koCase := ko
++			koCase.NewBundleFormat = tc.newBundleFormat
++
++			so := options.SignOptions{
++				Upload:          true,
++				TlogUpload:      false,
++				NewBundleFormat: tc.newBundleFormat,
++				Registry:        regOpts,
++			}
++			if tc.experimentalOCI11 {
++				so.RegistryExperimental.RegistryReferrersMode = options.RegistryReferrersModeOCI11
++			}
++
++			// Without AllowHTTPRegistry, signing even a loopback source image must fail
++			// specifically when pushing to the HTTP COSIGN_REPOSITORY (registry.local:5000).
++			soNoHTTP := so
++			soNoHTTP.Registry.AllowHTTPRegistry = false
++			assert.Error(t, sign.SignCmd(t.Context(), ro, koCase, soNoHTTP, []string{loopbackImgRefStr}))
++
++			// With AllowHTTPRegistry, signing from HTTP source to HTTP COSIGN_REPOSITORY succeeds.
++			assert.NoError(t, sign.SignCmd(t.Context(), ro, koCase, so, []string{imgRefStr}))
++
++			verifyCmd := VerifyCommand{
++				KeyRef:            pubKeyPath,
++				CheckClaims:       true,
++				IgnoreTlog:        true,
++				HashAlgorithm:     crypto.SHA256,
++				RegistryOptions:   regOpts,
++				ExperimentalOCI11: tc.experimentalOCI11,
++				CommonVerifyOptions: options.CommonVerifyOptions{
++					NewBundleFormat:   tc.newBundleFormat,
++					ExperimentalOCI11: tc.experimentalOCI11,
++				},
++			}
++
++			// Without COSIGN_REPOSITORY set, verification must fail because the signature/bundle
++			// was written to the target repository, not the source repository.
++			t.Setenv("COSIGN_REPOSITORY", "")
++			assert.Error(t, verifyCmd.Exec(t.Context(), []string{imgRefStr}))
++			t.Setenv("COSIGN_REPOSITORY", targetRepoStr)
++
++			// Wi
+```
+
+**File**: `pkg/cosign/verify.go` (modified, +13/-7)
+```diff
+@@ -1722,12 +1722,13 @@ func verifyImageSignaturesExperimentalOCI(ctx context.Context, signedImgRef name
+ 			// TODO: if there is more than 1 result.. what does that even mean?
+ 			ui.Warnf(ctx, "there were a total of %d references with artifactType %s\n", numResults, artifactType)
+ 		}
++		bundleRepo := digest.Repository
++		if targetRepo := ociremote.TargetRepositoryFromOptions(co.RegistryClientOpts...); (targetRepo != name.Repository{}) {
++			bundleRepo = targetRepo
++		}
+ 		// TODO: do this smarter using "created" annotations
+ 		lastResult := results[numResults-1]
+-		st, err := name.ParseReference(fmt.Sprintf("%s@%s", digest.Repository, lastResult.Digest.String()))
+-		if err != nil {
+-			return nil, false, err
+-		}
++		st := bundleRepo.Digest(lastResult.Digest.String())
+ 		sigs, err = ociremote.Signatures(st, co.RegistryClientOpts...)
+ 		if err != nil {
+ 			return nil, false, err
+@@ -1774,9 +1775,14 @@ func GetBundles(_ context.Context, signedImgRef name.Reference, registryClientOp
+ 
+ 	var bundles = make([]*sgbundle.Bundle, 0, len(index.Manifests))
+ 	for _, result := range index.Manifests {
+-		st, err := name.ParseReference(fmt.Sprintf("%s@%s", bundleRepo, result.Digest.String()), nameOpts...)
+-		if err != nil {
+-			return nil, nil, err
++		var st name.Reference
++		if len(nameOpts) > 0 {
++			st, err = name.ParseReference(fmt.Sprintf("%s@%s", bundleRepo, result.Digest.String()), nameOpts...)
++			if err != nil {
++				return nil, nil, err
++			}
++		} else {
++			st = bundleRepo.Digest(result.Digest.String())
+ 		}
+ 		bundle, err := ociremote.Bundle(st, registryClientOpts...)
+ 		if err != nil {
+```
+
+**File**: `pkg/cosign/verify_oci_test.go` (modified, +49/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"context"
+ 	_ "embed"
+ 	"fmt"
++	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
+ 	"testing"
+@@ -177,6 +178,54 @@ func TestGetBundles_WithTargetRepository(t *testing.T) {
+ 	if !proto.Equal(bundles[0].Bundle, &expected) {
+ 		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
+ 	}
++
++	// Also test a non-loopback HTTP target repository (e.g. registry.local:5000)
++	// where name.Insecure is required on the target repository and must be
++	// preserved by GetBundles even when nameOpts is omitted.
++	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
++		reqClone := req.Clone(req.Context())
++		reqClone.URL.Host = host
++		reqClone.Host = host
++		return http.DefaultTransport.RoundTrip(reqClone)
++	})
++	httpTargetRepo, err := name.NewRepository("registry.local:5000/http-target-repo", name.Insecure)
++	assert.NoError(t, err)
++	err = ociremote.WriteAttestationNewBundleFormat(sourceDigestRef, testAttestation, "https://cosign.sigstore.dev/attestation/v1",
++		ociremote.WithTargetRepository(httpTargetRepo),
++		ociremote.WithNameOptions(name.Insecure),
++		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
++	)
++	assert.NoError(t, err)
++
++	// Without nameOpts, GetBundles preserves httpTargetRepo's Insecure scheme via bundleRepo.Digest().
++	bundles, hash, err = GetBundles(context.Background(), sourceRef, []ociremote.Option{
++		ociremote.WithTargetRepository(httpTargetRepo),
++		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
++	})
++	assert.NoError(t, err)
++	assert.Len(t, bundles, 1)
++	assert.NotNil(t, hash)
++	if !proto.Equal(bundles[0].Bundle, &expected) {
++		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
++	}
++
++	// With name.Insecure passed in nameOpts, GetBundles parses bundleRepo@digest with nameOpts.
++	bundles, hash, err = GetBundles(context.Background(), sourceRef, []ociremote.Option{
++		ociremote.WithTargetRepository(httpTargetRepo),
++		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
++	}, name.Insecure)
++	assert.NoError(t, err)
++	assert.Len(t, bundles, 1)
++	assert.NotNil(t, hash)
++	if !proto.Equal(bundles[0].Bundle, &expected) {
++		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
++	}
++}
++
++type roundTripperFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
++	return f(req)
+ }
+ 
+ // TODO: This test is getting long and maybe should be refactored into a
+```
+
+---
+
+### Incident Patch 2: `521c39e4` (2026-11-03)
+**Commit Message**: Pin scaffolding setup action by SHA so Dependabot keeps it updated (#5203)
+
+Replace sigstore/scaffolding/actions/setup@main with a SHA-pinned
+reference and version comment, and extract SCAFFOLDING_RELEASE_VERSION
+from the comment so Dependabot updates both the action and release
+version together.
+
+This will also prevent tests from unexpectedly failing when there's a
+breaking change in scaffolding.
+
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/e2e-tests.yml` (modified, +8/-6)
+```diff
+@@ -97,7 +97,6 @@ jobs:
+       VAULT_TOKEN: "root"
+       VAULT_ADDR: "http://localhost:8200"
+       COSIGN_YES: "true"
+-      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -118,8 +117,11 @@ jobs:
+ 
+       - uses: imjasonh/setup-crane@feee3b6bb0d4c68370f256a4502498c9227e5c6b # v0.7
+ 
++      - name: Extract version of scaffolding to use
++        run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/e2e-tests.yml)" >> $GITHUB_ENV
++
+       - name: Install cluster + sigstore
+-        uses: sigstore/scaffolding/actions/setup@main
++        uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
+         with:
+           version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
+ 
+@@ -134,9 +136,6 @@ jobs:
+   e2e-registry:
+     runs-on: ubuntu-latest
+ 
+-    env:
+-      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
+-
+     steps:
+     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       with:
+@@ -156,8 +155,11 @@ jobs:
+       with:
+         mirror: mirror.gcr.io
+ 
++    - name: Extract version of scaffolding to use
++      run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/e2e-tests.yml)" >> $GITHUB_ENV
++
+     - name: Install cluster + sigstore
+-      uses: sigstore/scaffolding/actions/setup@main
++      uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
+       with:
+         version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
+ 
+```
+
+**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +4/-2)
+```diff
+@@ -44,7 +44,6 @@ jobs:
+ 
+     env:
+       KO_DOCKER_REPO: "registry.local:5000/policy-controller"
+-      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
+       GO111MODULE: on
+       GOFLAGS: -ldflags=-s -ldflags=-w
+       KOCACHE: ~/ko
+@@ -74,8 +73,11 @@ jobs:
+       run: |
+         make cosign
+ 
++    - name: Extract version of scaffolding to use
++      run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/kind-verify-attestation.yaml)" >> $GITHUB_ENV
++
+     - name: Install cluster + sigstore
+-      uses: sigstore/scaffolding/actions/setup@main
++      uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
+       with:
+         k8s-version: ${{ matrix.k8s-version }}
+         version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5203** (2026-11-03): Pin scaffolding setup action by SHA so Dependabot keeps it updated (@Hayden-IO)
+- **PR #5202** (2026-11-04): Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (@Hayden-IO)
+- **PR #5201** (closed): Fix failing e2e tests by bumping scaffolding to v0.7.33 (@daescha)
+- **PR #5185** (closed): chore(deps): bump the gomod group with 3 updates (@dependabot[bot])
 - **PR #5182** (2026-10-22): Bump local dev builds to use distroless debian13 image (@Hayden-IO)
 - **PR #5180** (2026-10-22): Move bundle metadata types into a dependency-free package (@mrueg)
-- **PR #5179** (2026-10-21): update builder image and cosign (@cpanato)
-- **PR #5178** (2026-10-20): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #5177** (2026-10-20): Build releases with 1.27.3 (@Hayden-IO)
-- **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
 
 ---
 
@@ -2638,62 +2321,53 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Unify attach signature and attestation under new bundle format (#5141)
+## X. Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/attach.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/clean.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef56e699`: Unify attach signature and attestation under new bundle format (#5141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `900536dd`: Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attach.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/clean.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-		attachBundle(),
-func attachBundle() *cobra.Command {
-	o := &options.AttachBundleOptions{}
-		Use:   "bundle",
-		Short: "Attach bundles to the supplied container image",
-		Example: `  cosign attach bundle --bundle <bundle-path> <image uri>
-  # Attach bundle to a supplied image
-  cosign attach bundle --bundle <bundle.sigstore.json> $IMAGE
-  # Attach multiple bundles to a supplied image
-  cosign attach bundle --bundle <bundle1.json> --bundle <bundle2.json> $IMAGE`,
-			if len(o.BundlePaths) == 0 {
-				return errors.New("must specify --bundle")
-			}
-			return attach.BundleCmd(cmd.Context(), o.Registry, o.BundlePaths, args[0])
+	ociRemoteOpts, err := regOpts.ClientOpts(ctx)
+	if err != nil {
+		return err
+	}
+	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts...)
+	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts...)
+	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts...)
+		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts...)
+	targetRepo := ref.Context()
+	if overrideRepo := ociremote.TargetRepositoryFromOptions(ociRemoteOpts...); (overrideRepo != name.Repository{}) {
+		targetRepo = overrideRepo
+	}
+	idx, err := remote.Referrers(targetRepo.Digest(digest.DigestStr()), remoteOpts...)
+		referrerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), imgDigest.String())
+		referrerDigest, err := name.NewDigest(referrerDigestStr, regOpts.NameOptions()...)
+				layerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), manifest.Digest.String())
+				layerDigest, err := name.NewDigest(layerDigestStr, regOpts.NameOptions()...)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		attachSignature(),
-		attachAttestation(),
-func attachSignature() *cobra.Command {
-	o := &options.AttachSignatureOptions{}
-		Use:   "signature",
-		Short: "Attach signatures to the supplied container image",
-		Example: `  cosign attach signature [--payload <path>] [--signature < path>] [--rekor-response < path>] <image uri>
-		cosign attach signature command attaches payload, signature, rekor-bundle, etc in a new layer of provided image.
-		
-		# Attach signature can attach payload to a supplied image
-		cosign attach signature --payload <payload.json>  $IMAGE
-		# Attach signature can attach payload, signature to a supplied image
-		cosign attach signature --payload <payload.json> --signature <base64 signature file> $IMAGE
-
-		# Attach signature can attach payload, signature, time stamped response to a supplied image
-		cosign attach signature --payload <payload.json> --signature <base64 signature file> --tsr=<file> $IMAGE
-
-		# Attach signature attaches payload, signature and rekor-bundle via rekor-response to a supplied image
-		cosign attach signature --payload <payload.json> --signature <base64 signature file>  --rekor-response <proper rekor-response format file> $IMAGE
-
-		# Attach sign
+	ociRemoteOpts := ociremote.WithRemoteOptions(remoteOpts...)
+	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts)
+	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts)
+	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts)
+		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts)
+	idx, err := remote.Referrers(digest, remoteOpts...)
+		referrerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), imgDigest.String())
+		referrerDigest, err := name.NewDigest(referrerDigestStr)
+				layerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), manifest.Digest.String())
+				layerDigest, err := name.NewDigest(layerDigestStr)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef56e699` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `900536dd` are properly handled with clean fallback behavior.

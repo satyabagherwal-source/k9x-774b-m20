@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T01:14:11.497Z",
-    "lastVerified": "2026-11-04T01:14:11.497Z",
+    "lastChecked": "2026-11-04T01:20:43.662Z",
+    "lastVerified": "2026-11-04T01:20:43.662Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T00:53:25.930Z",
+    "lastChecked": "2026-11-04T01:20:40.359Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T00:53:25.930Z"
+    "lastVerified": "2026-11-04T01:20:40.359Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1297,14 +1297,14 @@
     "officialUrl": "https://github.com/karakeep-app/karakeep",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T01:04:52.145Z",
-    "lastVerified": "2026-10-31T01:04:52.145Z",
+    "lastChecked": "2026-11-04T01:20:35.085Z",
+    "lastVerified": "2026-11-04T01:20:35.085Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
+    "contentHash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1814,11 +1814,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "cosign",
+    "name": "sigstore/cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-03T21:36:43.798Z",
-    "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-11-03T21:36:43.798Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-04T01:20:39.926Z",
+    "lastVerified": "2026-11-04T01:20:39.926Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2918,9 +2928,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-10-31T22:39:48.086Z",
+    "lastChecked": "2026-11-04T01:20:25.346Z",
     "revisionIdentifier": "cf66ef4c",
-    "lastVerified": "2026-10-31T22:39:48.086Z"
+    "lastVerified": "2026-11-04T01:20:25.346Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -3076,9 +3086,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-02T14:39:20.344Z",
+    "lastChecked": "2026-11-04T01:20:37.852Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-02T14:39:20.344Z"
+    "lastVerified": "2026-11-04T01:20:37.852Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -4965,12 +4975,12 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-02T15:22:28.333Z",
-    "lastVerified": "2026-11-02T15:22:28.333Z",
+    "lastChecked": "2026-11-04T01:20:38.545Z",
+    "lastVerified": "2026-11-04T01:20:38.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
+    "contentHash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -11120,9 +11130,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-10-30T17:20:50.799Z",
+    "lastChecked": "2026-11-04T01:20:27.849Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-10-30T17:20:50.799Z"
+    "lastVerified": "2026-11-04T01:20:27.849Z"
   },
   "iziz-libphonenumber-ios": {
     "name": "libPhoneNumber-iOS",

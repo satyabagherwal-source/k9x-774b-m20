@@ -7096,3 +7096,6 @@
 | `CYCLE-20261104-BGGU` | `2026-11-04T01:13:59.838Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`db0ea91c...`) |
 | `CYCLE-20261104-BHY1` | `2026-11-04T01:14:01.753Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6695` | Yes (`d88e3a3d...`) |
 | `CYCLE-20261104-BNHI` | `2026-11-04T01:14:08.934Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6696` | Yes (`10276e33...`) |
+| `CYCLE-20261104-JYM0` | `2026-11-04T01:20:36.600Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6697` | Yes (`845b82ba...`) |
+| `CYCLE-20261104-K0V0` | `2026-11-04T01:20:39.516Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6698` | Yes (`80a8c55e...`) |
+| `CYCLE-20261104-K23R` | `2026-11-04T01:20:41.127Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6699` | Yes (`fc564ce3...`) |

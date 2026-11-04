@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:14:08.941Z",
-  "total_cycles_completed": 7073,
-  "total_learnings_persisted": 7073,
-  "total_rules_promoted": 6719,
+  "last_updated": "2026-11-04T01:20:41.133Z",
+  "total_cycles_completed": 7076,
+  "total_learnings_persisted": 7076,
+  "total_rules_promoted": 6722,
   "history": [
-    {
-      "timestamp": "2026-11-03T11:51:57.827Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:52:01.980Z",
-      "repository": "mazzzystar/Queryable",
-      "learningId": "learn-github-mazzzystar-queryable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:52:06.016Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T11:52:09.983Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T01:14:08.941Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:20:36.607Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:20:39.525Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:20:41.133Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

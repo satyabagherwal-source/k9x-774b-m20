@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "eaee0c72",
+    "sourceVersion": "46e80093",
     "license": "AGPL-3.0",
-    "contentHash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
-    "lastHarvestedAt": "2026-10-31T01:04:52.845Z",
+    "contentHash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
+    "lastHarvestedAt": "2026-11-04T01:20:36.603Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "ef56e699",
+    "sourceVersion": "900536dd",
     "license": "Apache-2.0",
-    "contentHash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
-    "lastHarvestedAt": "2026-10-26T10:21:41.678Z",
+    "contentHash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
+    "lastHarvestedAt": "2026-11-04T01:20:41.129Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "ea169d03",
+    "sourceVersion": "e6e7c7a5",
     "license": "Apache-2.0",
-    "contentHash": "361f6e6055c12dd22b5a38dd74383213c6b33945c2270e15a6f71bfdd4d043b2",
-    "lastHarvestedAt": "2026-11-02T15:22:29.567Z",
+    "contentHash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
+    "lastHarvestedAt": "2026-11-04T01:20:39.519Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

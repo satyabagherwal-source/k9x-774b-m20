@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-7QOD",
-    "timestamp": "2026-10-31T14:08:14.797Z",
-    "repository": "apollographql/apollo-kotlin",
-    "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "56b2f637a9d482399bcba6e55d9832ec70b3b06e6138bacc45b341157c65bb85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-M6ZV",
-    "timestamp": "2026-10-31T14:19:29.131Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-MD35",
-    "timestamp": "2026-10-31T14:19:37.025Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-MH76",
     "timestamp": "2026-10-31T14:19:42.354Z",
     "repository": "MaterializeInc/materialize",
@@ -7490,6 +7445,51 @@
     "repository": "aquasecurity/trivy",
     "learningId": "learn-github-aquasecurity-trivy",
     "contentHash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-JYM0",
+    "timestamp": "2026-11-04T01:20:36.600Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-K0V0",
+    "timestamp": "2026-11-04T01:20:39.516Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-K23R",
+    "timestamp": "2026-11-04T01:20:41.127Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

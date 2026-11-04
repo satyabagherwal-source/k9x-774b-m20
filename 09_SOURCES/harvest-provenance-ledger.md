@@ -7105,3 +7105,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-04T01:13:59.847Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `4253603a` | Multi-dimensional audit evidence | 2026-11-04T01:14:01.756Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `4918c342` | Multi-dimensional audit evidence | 2026-11-04T01:14:08.937Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `46e80093` | Multi-dimensional audit evidence | 2026-11-04T01:20:36.603Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e6e7c7a5` | Multi-dimensional audit evidence | 2026-11-04T01:20:39.519Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `900536dd` | Multi-dimensional audit evidence | 2026-11-04T01:20:41.129Z |

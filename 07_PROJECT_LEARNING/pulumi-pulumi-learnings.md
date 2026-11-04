@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `ea169d03`  
+> **Source Version**: `e6e7c7a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:22:28.931Z  
+> **Timestamp**: 2026-11-04T01:20:39.024Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:22:28.333Z  
+> **Harvest Timestamp**: 2026-11-04T01:20:38.545Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25841 stars
+- **Stars / Engagement**: 25844 stars
 
 ---
 
@@ -1338,6 +1338,7 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/opentracing/opentracing-go"
+	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
 	"go.opentelemetry.io/otel"
 
 	"github.com/pulumi/pulumi/pkg/v3/auth/credentialhelper"
@@ -1534,9 +1535,7 @@ type Client struct {
 	apiToken   accessToken
 	apiUser    string
 	apiOrgs    []string
-	tokenInfo  *workspace.TokenInformation // might be nil if running against old services
-	diag       diag.Sink
-	insecure   bool
+	tokenInfo  *workspace.TokenInformation // might be nil if runni
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/console.go`
@@ -1695,15 +1694,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25494** (2026-11-02): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-02T06:10:19.000Z](https://github.com/pulumi/pulumi/actions/runs/41394244480)
+- **Issue #25520** (2026-11-03): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+1 more)**
+  *Symptoms*: ## Workflow Failure  [On Push](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml>) has failed. See the list of failures below:  * [2026-11-03T12:54:04.000Z](<https://github.com/pulumi/pulumi/actions/runs/41637800576>)   * ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301585>): Package (failure)   * ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301673>)   * ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301735>): Package (cancelled) * [2026-11-03T13:28:32.000Z](<https://github.com/pulumi/pulumi/actions/runs/41642097054>)   * ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299142>): Package (cancelled)   * ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299161>): Package (failure)   * ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299301>): Post Run actions/setup-go@v6 (cancelled)   * ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](<h
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-02T10:32:04.000Z](https://github.com/pulumi/pulumi/actions/runs/41394244480)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-03T21:22:28.000Z](https://github.com/pulumi/pulumi/actions/runs/41718618454)
 
-- **Issue #25482** (2026-10-31): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+5 more)**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-30T17:44:03.000Z](https://github.com/pulumi/pulumi/actions/runs/41097229872)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247714):     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247740):     - ❌ Step: Package (null)     - ❌ Step: Check Windows binaries are signed (null)     - ❌ Step: Run ./.github/actions/retry (null)     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/41097229872/job/124213247882):     - ❌ Step: Package (null)     - ❌ Step: Check Windows binaries are signed (null)     - ❌ Step: Run ./.github/actions/retry (null)     - ❌ Step: Post Run actions/setup-go@v6 (null)     - ❌ Step: Post Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 (null)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pu
+- **Issue #25511** (2026-11-03): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-03T06:10:29.000Z](https://github.com/pulumi/pulumi/actions/runs/41584134055)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-31T00:02:49.000Z](https://github.com/pulumi/pulumi/actions/runs/41146192514)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-03T09:31:41.000Z](https://github.com/pulumi/pulumi/actions/runs/41584134055)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1720,36 +1719,95 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea169d03` (2026-11-02)
-**Commit Message**: Fix renovate changelog generation (#25502)
+### Incident Patch 1: `37d902f2` (2026-11-02)
+**Commit Message**: cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535)
 
-Renovate’s changelog script invokes mise exec without selecting a tool,
-causing Mise to install all configured tools. This fails during Java
-metadata resolution for linux-arm64-musl and prevents changelog
-generation.
+This PR was written in part with the assistance of generative AI.
 
-Explicitly select Changie so Mise only installs the tool needed to
-generate changelog entries, using the version configured in .mise.toml.
+## Where this ended up
 
-**File**: `scripts/renovate-changelog.py` (modified, +1/-0)
+Per the discussion below, actually fixing #16412 by default requires
+avoiding a double load of the backend's deployment state (a checkpoint
+export to check for a fallback secrets manager, then a full snapshot
+load once the deployment operation runs) — a bigger architectural change
+(caching across the `Stack`/backend layers) than fits a PR like this.
+See the thread for the full back-and-forth.
+
+Scaled this down to a documentation-only change:
+`PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER` already does what's needed,
+it's just hard to discover if you're hitting this blind. This adds a
+pointer to it in the three places someone debugging this failure is
+likely to end up:
+
+- The env var's own description (`sdk/go/common/env/env.go`), shown in
+`pulumi help environment-variables`.
+- `SecretsManagerLoader.GetSecretsManager`'s fallback branch
+(`pkg/cmd/pulumi/stack/secrets.go`), where the decision *not* to reuse
+the checkpoint's secrets provider is made.
+- `passphrase.NewPromptingPassphraseSecretsManager`
+(`pkg/secrets/pass
+
+**File**: `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml` (added, +4/-0)
 ```diff
-@@ -38,6 +38,7 @@
-     "mise",
-     "exec",
-     "--yes",
-+    "changie",
-     "--",
-     "changie",
-     "new",
+@@ -0,0 +1,4 @@
++component: cli
++kind: fix
++body: Document PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER as the fix for secret decryption errors when running from a workspace without local stack configuration, such as the Automation API or a saved update plan applied from a different directory
++time: 2026-09-04T00:00:00+00:00
+```
+
+**File**: `pkg/cmd/pulumi/stack/secrets.go` (modified, +2/-0)
+```diff
+@@ -277,6 +277,8 @@ func (l *SecretsManagerLoader) GetSecretsManager(
+ 				ps.EncryptedKey = ""
+ 			}
+ 		} else {
++			// See PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER (env.go) and
++			// https://github.com/pulumi/pulumi/issues/16412.
+ 			sm, err = s.DefaultSecretManager(ctx, ps)
+ 		}
+ 	}
+```
+
+**File**: `pkg/secrets/passphrase/manager.go` (modified, +5/-0)
+```diff
+@@ -298,6 +298,11 @@ func NewStackPromptingPassphraseSecretsManagerFromState(
+ 	}
+ }
+ 
++// NewPromptingPassphraseSecretsManager returns a passphrase secrets manager for the given stack,
++// reusing info.EncryptionSalt if set, or otherwise minting a new one. If info is missing a salt only
++// because local config isn't available (e.g. Automation API, saved plans), this mints an unrelated
++// salt; set PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER=true to reuse the checkpoint's provider instead.
++// See https://github.com/pulumi/pulumi/issues/16412.
+ func NewPromptingPassphraseSecretsManager(info *workspace.ProjectStack,
+ 	rotateSecretsProvider bool,
+ ) (secrets.Manager, error) {
+```
+
+**File**: `sdk/go/common/env/env.go` (modified, +4/-1)
+```diff
+@@ -137,7 +137,10 @@ var NeoSummaryMaxLen = env.Int("NEO_SUMMARY_MAXLEN",
+ var CopilotSummaryMaxLen = NeoSummaryMaxLen
+ 
+ var FallbackToStateSecretsManager = env.Bool("FALLBACK_TO_STATE_SECRETS_MANAGER",
+-	"Use the snapshot secrets manager as a fallback when the stack configuration is missing or incomplete.")
++	"Use the snapshot secrets manager as a fallback when the stack configuration is missing or incomplete. "+
++		"Set this if you see secret decryption errors when running from a workspace that doesn't carry local "+
++		"stack configuration between invocations, such as the Automation API or a saved update plan applied "+
++		"from a different directory (see https://github.com/pulumi/pulumi/issues/16412).")
+ 
+ var Parallel = env.Int("PARALLEL",
+ 	"Allow P resource operations to run in parallel at once (1 for no parallelism)")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25527** (2026-11-03): tag sdk and pkg at the same time (@tgummerer)
+- **PR #25525** (2026-11-03): Clean up some property maps in testing code (@Frassle)
+- **PR #25512** (2026-11-03): Report language runtime downloads to the user (@iwahbe)
+- **PR #25505** (2026-11-03): Wait for Renovate checks before merging (@julienp)
+- **PR #25503** (2026-11-02): Restrict Mise lockfile resolution and run with a frozen lock file (@julienp)
 - **PR #25502** (2026-11-02): Fix renovate changelog generation (@julienp)
-- **PR #25495** (2026-11-02): Provide a clear error message when uv dependency discovery fails (@julienp)
-- **PR #25493** (2026-11-02): Match cty parse precision when converting schema float consts (@Frassle)
-- **PR #25489** (2026-11-01): Serve a package resolver from the conformance test host (@iwahbe)
-- **PR #25486** (2026-11-02): Keep stack-managed ESC flags out of the generated Automation API (@rgharris)
-- **PR #25483** (closed): Regenerate automation APIs (@pulumi-bot)
 
 ---
 
@@ -1769,21 +1827,24 @@ generate changelog entries, using the version configured in .mise.toml.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. renovate changelog generation (#25502)
+## X. cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535
 
 **RULE**:
-When implementing operations in `scripts/renovate-changelog.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea169d03`: renovate changelog generation (#25502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37d902f2`: cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/renovate-changelog.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    "changie",
+component: cli
+kind: fix
+body: Document PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER as the fix for secret decryption errors when running from a workspace without local stack configuration, such as the Automation API or a saved update plan applied from a different directory
+time: 2026-09-04T00:00:00+00:00
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1793,4 +1854,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea169d03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37d902f2` are properly handled with clean fallback behavior.
