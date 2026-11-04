@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:38:40.001Z",
+  "last_updated": "2026-11-04T00:46:35.856Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44814,8 +44814,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "07cd00d1",
-      "content_hash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
+      "source_version": "59764058",
+      "content_hash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -44868,6 +44868,11 @@
           "number": 6180,
           "title": "Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6688,
+          "title": "Revert \"Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relati",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44875,7 +44880,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T11:09:37.576Z",
+      "verified_at": "2026-11-04T00:46:35.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48551,8 +48556,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "21bf834c",
-      "content_hash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
+      "source_version": "2b6793e6",
+      "content_hash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -48595,6 +48600,11 @@
           "number": 6343,
           "title": "docs(buffer): clarify rendering and bounds (#2814)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6686,
+          "title": "build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (#2894)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48602,7 +48612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T22:03:49.739Z",
+      "verified_at": "2026-11-04T00:46:24.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75155,8 +75165,8 @@
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "f87db10f",
-      "content_hash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
+      "source_version": "114dd59d",
+      "content_hash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "promoted_rules": [
@@ -75190,6 +75200,11 @@
           "number": 5801,
           "title": "restrict ConjunctiveGraph.quads() to the requested context (#3499)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6687,
+          "title": "report an unbound prefix as a syntax error (#3656)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75197,7 +75212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:39:35.800Z",
+      "verified_at": "2026-11-04T00:46:25.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171812,6 +171827,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:38:39.987Z"
+    },
+    "rule-6686": {
+      "learning_id": "rule-6686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6686,
+      "title": "build(deps): bump tombi-toml/setup-tombi from 1.9.1 to 1.9.8 (#2894)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "2b6793e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:46:24.475Z"
+    },
+    "rule-6687": {
+      "learning_id": "rule-6687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6687,
+      "title": "report an unbound prefix as a syntax error (#3656)",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "114dd59d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:46:25.293Z"
+    },
+    "rule-6688": {
+      "learning_id": "rule-6688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6688,
+      "title": "Revert \"Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relati",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "59764058",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:46:35.833Z"
     }
   },
   "aliases": {

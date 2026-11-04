@@ -7091,3 +7091,6 @@ Every entry in this ledger must capture:
 | `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `f551cfec` | Multi-dimensional audit evidence | 2026-11-04T00:38:30.651Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `9b54d90e` | Multi-dimensional audit evidence | 2026-11-04T00:38:32.310Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `2308b7ba` | Multi-dimensional audit evidence | 2026-11-04T00:38:40.054Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `2b6793e6` | Multi-dimensional audit evidence | 2026-11-04T00:46:24.588Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `114dd59d` | Multi-dimensional audit evidence | 2026-11-04T00:46:25.418Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `59764058` | Multi-dimensional audit evidence | 2026-11-04T00:46:35.946Z |

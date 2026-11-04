@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T00:38:40.058Z",
-  "total_cycles_completed": 7059,
-  "total_learnings_persisted": 7059,
-  "total_rules_promoted": 6708,
+  "last_updated": "2026-11-04T00:46:35.952Z",
+  "total_cycles_completed": 7062,
+  "total_learnings_persisted": 7062,
+  "total_rules_promoted": 6711,
   "history": [
-    {
-      "timestamp": "2026-11-03T10:59:53.788Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T10:59:55.296Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:07:55.708Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T11:15:07.148Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T00:38:40.058Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:46:24.596Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:46:25.426Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:46:35.952Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

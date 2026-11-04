@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `07cd00d1`  
+> **Source Version**: `59764058`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T11:09:36.982Z  
+> **Timestamp**: 2026-11-04T00:46:35.198Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T11:09:36.880Z  
+> **Harvest Timestamp**: 2026-11-04T00:46:34.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3852 stars
+- **Stars / Engagement**: 3887 stars
 
 ---
 
@@ -1009,1285 +1009,808 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07cd00d1` (2026-10-31)
-**Commit Message**: Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibrate
+### Incident Patch 1: `0f16fa49` (2026-11-02)
+**Commit Message**: Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relationships"
 
-Isolate paired TOC boundaries and recalibrate from last confirmed physical page
+This reverts commit 91b5fa591937dfb8c517f1b631b1adc8e322c9e8, reversing
+changes made to 0b305e96e3485a3cb01e9dec8f794041bc81defa.
 
-**File**: `apps/worker/app/services/document_agent/calibration/procedure.py` (modified, +18/-9)
+**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +4/-12)
 ```diff
-@@ -48,6 +48,7 @@ def offset_guided_anchoring(
-     ctx: ToolContext,
-     page_count: int,
-     calibration_overrides: dict[tuple[str, ...], TitleMatch],
-+    body_start_page: int = 1,
- ) -> dict[tuple[str, ...], TitleMatch] | None:
-     """Forward to production Phase-2 anchoring."""
-     return _anchoring.offset_guided_anchoring(
-@@ -56,6 +57,7 @@ def offset_guided_anchoring(
-         ctx=ctx,
-         page_count=page_count,
-         calibration_overrides=calibration_overrides,
-+        body_start_page=body_start_page,
-     )
+@@ -33,18 +33,10 @@ def iter_block_items(doc_data):
  
- def pick_primary_offset(result: CalibrationResult) -> int | None:
-@@ -273,14 +275,6 @@ def anchor_hierarchy_from_regimes(
-         kind = normalize_kind(regime.kind)
-         offset = int(regime.offset)  # type: ignore[arg-type]
-         entry_titles = _entry_titles_for_regime(regime=regime, entries=flat_entries)
--        working, pruned = prune_regime_out_of_scope(
--            working,
--            kind=kind,
--            entry_titles=entry_titles,
--            offset=offset,
--            page_count=page_count,
--        )
--        total_pruned += pruned
-         if not working:
-             continue
- 
-@@ -304,24 +298,39 @@ def anchor_hierarchy_from_regimes(
-                 bulk_offset_matches,
-             )
- 
-+            working, pruned = prune_regime_out_of_scope(
-+                working,
-+                kind=kind,
-+                entry_titles=entry_titles,
-+                offset=offset,
-+                page_count=page_count,
-+            )
-+            total_pruned += pruned
-+            projected = project_nodes_for_regime(
-+                working, kind=kind, entry_titles=entry_titles
-+            )
-             leaves = [
-                 (path, node)
-                 for path, node in iter_leaf_title_nodes(projected)
-                 if node.printed_page is not None
-             ]
-             if leaves:
--                matches = bulk_offset_matches(leaves, offset)
-+                matches = bulk_offset_matches(
-+                    leaves, offset, page_count=page_count
-+                )
-                 matches.update(regime_seed)
-                 merged.update(matches)
-                 regime_bulk += len(matches)
-             continue
- 
-+        body_start_page = min(body_pages) if body_pages else 1
-         matches = offset_guided_anchoring(
-             nodes=projected,
-             offset=offset,
-             ctx=ctx,
-             page_count=page_count,
-             calibration_overrides=regime_seed,
-+            body_start_page=body_start_page,
-         )
-         if matches:
-             merged.update(matches)
-```
-
-**File**: `apps/worker/app/services/document_agent/structure/anchoring_primitives.py` (modified, +47/-19)
-```diff
-@@ -298,13 +298,17 @@ def _bisect_offset_breakpoint(
- def bulk_offset_matches(
-     leaves: list[tuple[tuple[str, ...], TitleNode]],
-     offset: int,
-+    *,
-+    page_count: int | None = None,
- ) -> dict[tuple[str, ...], TitleMatch]:
-     """Generate TitleMatch overrides for all leaves using offset. No VLM calls."""
-     matches: dict[tuple[str, ...], TitleMatch] = {}
-     for path_titles, node in leaves:
-         if node.printed_page is None:
-             continue
-         page = node.printed_page + offset
-+        if page < 1 or (page_count is not None and page > page_count):
-+            continue
-         matches[path_titles] = TitleMatch(
-             page=page,
-             source="bulk_offset",
-@@ -408,14 +412,17 @@ def _recalibrate_after_breakpoint(
-     *,
-     entry_node: TitleNode,
-     old_offset: int,
-+    start_page: int,
-     ctx: ToolContext,
-     page_count: int,
- ) -> int | None:
-     """Re-find offset for the first remaining leaf after a breakpoint.
- 
-     Same mechanic as Phase-1: forward ``inspect.pages`` scan until the title
--    START is found. Monotonicity says the physical page is strictly after the
--    failed ``printed + old_offset`` slot, so the scan cursor starts there.
-+    START is found. Physical page order is monotonic across TOC entries, so the
-+    scan cursor starts at the last confirmed physical page (not
-+    ``entry_printed_page + old_offset + 1``), allowing the new offset to be
-+    smaller, larger, or negative relative to ``old_offset``.
-     """
-     entry_printed_page = entry_node.printed_page
-     if entry_printed_page is None:
-@@ -424,40 +431,39 @@ def _recalibrate_after_breakpoint(
-     # Lazy import: scan → inspect_pages → tools must not load at module import.
-     from app.services.document_agent.calibration.scan import scan_title_forward
- 
--    start_page = entry_printed_page + old_offset + 1
--    if start_page > page_count:
-+    scan_start = max(int(start_page), 1)
-+    if scan_start > page_count:
-         return None
- 
-     scan = scan_title_forward(
-         ctx=ctx,
-         title=entry_node.title,
--        start_page=start_page,
-+        start_page=scan_start,
-         page_count=page_count,
-     )
-     if not scan.found or scan.found_page is None:
-         logger.info(
-             "[structure_anchoring] recalibrate miss: title={!r} start={} scanned={}",
-             entry_node.title,
--            start_page,
-+            scan_start,
-             scan.scanned_pages,
-         )
-         return None
- 
-     new_offset = int(scan.found_page) - entry_printed_page
--    if new_offset <= old_offset:
-+    if new_offset == old_offset:
-         logger.info(
--            "[structure_anchoring] recalibrate rejected non-monotonic offset: "
--            "title={!r} old={} new={} found_page={}",
-+            "[structure_anchoring] recalibrate unchanged offset: "
-+            "title={!r} offset={} found_page={}",
-             entry_node.title,
--            old_offset,
-             new_offset,
-             scan.found_page,
-         )
-         return None
- 
-     logger.info(
-         "[structure_anchoring] recalibrate: title={!r} new_offset={} "
--        "(delta=+{}, found_page={})",
-+        "(delta={:+d}, found_page={})",
-         entry_node.title,
-         new_offset,
-         new_offset - old_offset,
-@@ -473,6 +479,7 @@ def offset_guided_anchoring(
-     ctx: ToolContext,
-     page_count: int,
-     calibration_overrides: dict[tuple[str, ...], TitleMatch],
-+    body_start_page: int = 1,
- ) -> dict[tuple[str, ...], TitleMatch] | None:
-     """Offset-guided bulk anchoring with recursive recalibrate on breakpoints.
- 
-@@ -481,7 +488,8 @@ def offset_guided_anchoring(
-       2. If pass → bulk apply all leaves (Theorem 1)
-       3. If fail → binary search for last valid index (``-1`` if none)
-       4. Bulk apply only verified prefix (empty when breakpoint is ``-1``)
--      5. Recalibrate remaining[0] via Phase-1 forward scan from printed+old+1
-+      5. Recalibrate remaining[0] via Phase-1 forward scan from the last
-+         confirmed physical page (or ``body_start_page`` when prefix is empty)
-       6. Recurse on remaining segment with new offset
-       7. If recalibrate fails → keep prefix only (caller prunes the rest)
- 
-@@ -502,7 +510,7 @@ def offset_guided_anchoring(
-     # Single-leaf regimes (roman front-matter, F-1 appendix, …) still get a
-     # deterministic printed→physical override; Phase-1 already calibrated them.
-     if len(leaves) == 1:
--        all_matches.update(bulk_offset_matches(leaves, offset))
-+        all_matches.update(bulk_offset_matches(leaves, offset, page_count=page_count))
-     else:
-         _anchor_segment_recursive(
-             leaves=leaves,
-@@ -511,6 +519,7 @@ def offset_guided_anchoring(
-             page_count=page_count,
-             matches=all_matches,
-             depth=0,
-+            scan_floor=max(int(body_start_page), 1),
-         )
- 
-     if not all_matches:
-@@ -532,13 +541,14 @@ def _anchor_segment_recursive(
-     page_count: i
-```
-
-**File**: `apps/worker/app/services/document_agent/structure/toc_anchoring.py` (modified, +164/-12)
-```diff
-@@ -2,6 +2,7 @@
- 
- from __future__ import annotations
- 
-+import os
- from dataclasses import replace
- from pathlib import Path
- from typing import Any
-@@ -56,9 +57,10 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
-     physical overrides (no calibrate VLM). Otherwise keep the extracted TOC tree
-     and run the existing VLM calibration path.
- 
--    After calibration (primary + pending), each forest runs global paged-leaf
--    rehome, then pending forests are classified/grafted. Blackboard writes happen
--    only after that sequence.
-+    Nearby pending TOCs that pair with an earlier host skip pending calibration.
-+    After calibration (primary + unpaired pending), each forest runs global
-+    paged-leaf rehome, then pending forests are classified/grafted. Blackboard
-+    writes happen only after that sequence.
-     """
-     from app.services.document_agent.calibration.orchestrator import (
-         anchor_hierarchy,
-@@ -96,6 +98,8 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
-         hierarchies=hierarchies,
-         filename=filename,
-     )
-+    if not primary:
-+        return
-     nodes = extract_toc_nodes(primary)
-     if not nodes:
-         return
-@@ -112,12 +116,24 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
-     )
-     pending_records: list[dict[str, Any]] = []
-     if pending:
--        pending_records = _calibrate_pending_tocs(
--            pending_tocs=pending,
-+        paired_by_index, unpaired = _split_paired_pending(
-+            primary_toc=primary[0],
-+            pending=pending,
-             ctx=ctx,
--            page_texts=page_texts,
--            page_count=page_count,
--            body_pages=body_pages,
-+        )
-+        calibrated: list[dict[str, Any]] = []
-+        if unpaired:
-+            calibrated = _calibrate_pending_tocs(
-+                pending_tocs=unpaired,
-+                ctx=ctx,
-+                page_texts=page_texts,
-+                page_count=page_count,
-+                body_pages=body_pages,
-+            )
-+        pending_records = _merge_pending_records(
-+            pending=pending,
-+            paired_by_index=paired_by_index,
-+            calibrated=calibrated,
-         )
- 
-     # scope-local TOC pre-pass: future hook (no-op this period)
-@@ -132,6 +148,7 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
-         _assign_toc_relationships(
-             root_anchor=skeleton_anchor,
-             pending_records=pending_records,
-+            root_toc=primary[0],
-         )
-         resolve_nodes, skeleton_anchor = _graft_contained_pending(
-             resolve_nodes=resolve_nodes,
-@@ -495,6 +512,106 @@ def find_tightest_containing_host(
-     return best_key
- 
- 
-+def _split_paired_pending(
-+    *,
-+    primary_toc: dict[str, Any],
-+    pending: list[dict[str, Any]],
-+    ctx: ToolContext,
-+) -> tuple[dict[int, dict[str, Any]], list[dict[str, Any]]]:
-+    """Mark nearby duplicate TOCs as paired and keep the rest for calibration."""
-+    from app.services.document_agent.structure.toc_pairing import check_paired_toc
-+
-+    model = ctx.settings.get("vlm_model") or os.environ.get("IMAGE_MODEL")
-+    paired_by_index: dict[int, dict[str, Any]] = {}
-+    unpaired: list[dict[str, Any]] = []
-+    host_toc = primary_toc
-+    host_is_primary = True
-+    host_pending_index: int | None = None
-+
-+    for index, pending_toc in enumerate(pending):
-+        match = check_paired_toc(host_toc, pending_toc, ctx=ctx, model=model)
-+        if match.is_paired:
-+            host_range = list(host_toc.get("toc_range") or [])
-+            pending_toc["paired_with_range"] = host_range
-+            pending_toc["paired_pattern"] = match.pattern
-+            paired_by_index[index] = {
-+                "toc": pending_toc,
-+                "relationship": "paired",
-+                "host": "root" if host_is_primary else host_pending_index,
-+                "paired_with_range": host_range,
-+                "paired_pattern": match.pattern,
-+                "paired_reason": match.reason,
-+            }
-+            logger.info(
-+                "{} pending TOC toc_range={} paired with {} pattern={}",
-+                _LOG_PREFIX,
-+                pending_toc.get("toc_range"),
-+                host_range,
-+                match.pattern,
-+            )
-+            continue
-+        unpaired.append(pending_toc)
-+        host_toc = pending_toc
-+        host_is_primary = False
-+        host_pending_index = index
-+    return paired_by_index, unpaired
-+
-+
-+def _merge_pending_records(
-+    *,
-+    pending: list[dict[str, Any]],
-+    paired_by_index: dict[int, dict[str, Any]],
-+    calibrated: list[dict[str, Any]],
-+) -> list[dict[str, Any]]:
-+    calibrated_by_id = {id(record.get("toc")): record for record in calibrated}
-+    merged: list[dict[str, Any]] = []
-+    for index, toc in enumerate(pending):
-+        paired = paired_by_index.get(index)
-+        if paired is not None:
-+            merged.append(paired)
-+            continue
-+        calibrated_record = calibrated_by_id.get(id(t
-```
-
-**File**: `apps/worker/app/services/document_agent/structure/toc_pairing.py` (added, +329/-0)
-```diff
-@@ -0,0 +1,329 @@
-+"""Pluggable paired-TOC detection: proximity gate + VLM head/tail check."""
-+
-+from __future__ import annotations
-+
-+import json
-+import os
-+import re
-+from dataclasses import dataclass
-+from pathlib import Path
-+from typing import Any, cast
-+
-+from loguru import logger
-+
-+from app.services.document_agent.manifest import ToolContext
-+from app.services.document_agent.structure.anchoring_primitives import (
-+    toc_range_end,
-+    toc_range_start,
-+)
-+from app.services.document_agent.visual import render_pages
-+
-+_LOG_PREFIX = "[profile.toc_pairing]"
-+_HEAD_TAIL_EDGE = 2
-+_TOC_EXPAND_PNG = re.compile(r"^toc_a\d+_p(\d+)\.png$")
-+_TOC_ANCHOR_PNG = re.compile(r"^toc_anchor_page_(\d+)\.png$")
-+_TOC_PAIR_PNG = re.compile(r"^toc_pair_page_(\d+)\.png$")
-+
-+
-+@dataclass(frozen=True)
-+class PairedTocPattern:
-+    code: str
-+    title: str
-+    description: str
-+
-+
-+@dataclass(frozen=True)
-+class PairedTocMatch:
-+    is_paired: bool
-+    pattern: str | None = None
-+    reason: str = ""
-+
-+
-+PAIRED_TOC_PATTERNS: tuple[PairedTocPattern, ...] = (
-+    PairedTocPattern(
-+        code="bilingual_mirror",
-+        title="Bilingual / Multi-language Mirror TOC",
-+        description=(
-+            "TOC B is a translated version of TOC A (e.g. Chinese '目次/目录' "
-+            "followed by English 'Contents') listing the same document sections "
-+            "and pointing to the same body page numbers."
-+        ),
-+    ),
-+    # Additional paired patterns (e.g. summary-vs-detailed duplicate front TOC)
-+    # can be registered here.
-+)
-+
-+
-+def toc_pages_from_range(hierarchy: dict[str, Any]) -> list[int]:
-+    start = toc_range_start(hierarchy)
-+    end = toc_range_end(hierarchy)
-+    if start is None or end is None or end < start:
-+        return []
-+    return list(range(start, end + 1))
-+
-+
-+def gap_pages_between(toc_a: dict[str, Any], toc_b: dict[str, Any]) -> int | None:
-+    end_a = toc_range_end(toc_a)
-+    start_b = toc_range_start(toc_b)
-+    if end_a is None or start_b is None:
-+        return None
-+    return max(0, start_b - end_a - 1)
-+
-+
-+def proximity_allows_pair_check(
-+    toc_a: dict[str, Any],
-+    toc_b: dict[str, Any],
-+) -> bool:
-+    pages_a = toc_pages_from_range(toc_a)
-+    gap_pages = gap_pages_between(toc_a, toc_b)
-+    if not pages_a or gap_pages is None:
-+        return False
-+    return gap_pages < len(pages_a)
-+
-+
-+def sample_head_tail_pages(
-+    pages: list[int],
-+    *,
-+    max_edge: int = _HEAD_TAIL_EDGE,
-+) -> list[int]:
-+    ordered = sorted({int(page) for page in pages if int(page) >= 1})
-+    if len(ordered) <= max_edge * 2:
-+        return ordered
-+    sampled: list[int] = []
-+    for page in [*ordered[:max_edge], *ordered[-max_edge:]]:
-+        if page not in sampled:
-+            sampled.append(page)
-+    return sampled
-+
-+
-+def check_paired_toc(
-+    toc_a: dict[str, Any],
-+    toc_b: dict[str, Any],
-+    *,
-+    ctx: ToolContext,
-+    model: str | None,
-+) -> PairedTocMatch:
-+    """Return whether ``toc_b`` is a paired duplicate of ``toc_a``.
-+
-+    VLM runs only when the proximity gate holds. A failed or incomplete check
-+    is ``is_paired=False`` so the caller continues on the calibrate path.
-+    """
-+    if not proximity_allows_pair_check(toc_a, toc_b):
-+        return PairedTocMatch(
-+            is_paired=False,
-+            reason="proximity gate not met",
-+        )
-+    if not model:
-+        return PairedTocMatch(
-+            is_paired=False,
-+            reason="no VLM model configured",
-+        )
-+
-+    pages_a = sample_head_tail_pages(toc_pages_from_range(toc_a))
-+    pages_b = sample_head_tail_pages(toc_pages_from_range(toc_b))
-+    if not pages_a or not pages_b:
-+        return PairedTocMatch(
-+            is_paired=False,
-+            reason="missing TOC page range",
-+        )
-+
-+    try:
-+        pngs_a = _resolve_toc_page_pngs(ctx, pages_a)
-+        pngs_b = _resolve_toc_page_pngs(ctx, pages_b)
-+    except Exception as exc:
-+        logger.warning("{} resolve TOC page images failed: {}", _LOG_PREFIX, exc)
-+        return PairedTocMatch(
-+            is_paired=False,
-+            reason=f"resolve page images failed: {exc}",
-+        )
-+
-+    return _vlm_pair_check(
-+        pages_a=pages_a,
-+        pages_b=pages_b,
-+        pngs_a=pngs_a,
-+        pngs_b=pngs_b,
-+        model=model,
-+    )
-+
-+
-+def _toc_pages_dir(ctx: ToolContext) -> Path:
-+    return Path(ctx.output_dir or os.path.expanduser("~/.knowhere/_debug_profile")) / (
-+        "toc_pages"
-+    )
-+
-+
-+def _index_existing_toc_pngs(toc_dir: Path) -> dict[int, str]:
-+    found: dict[int, str] = {}
-+    if not toc_dir.is_dir():
-+        return found
-+    for path in toc_dir.iterdir():
-+        if not path.is_file():
-+            continue
-+        page: int | None = None
-+        for pattern in (_TOC_EXPAND_PNG, _TOC_ANCHOR_PNG, _TOC_PAIR_PNG):
-+            matched = pattern.match(path.name)
-+            if matched:
-+                page = int(matched.group(1))
-+                break
-+      
-```
-
-**File**: `apps/worker/app/services/document_agent/tools/extract_toc_with_boundaries.py` (modified, +28/-17)
-```diff
-@@ -382,6 +382,7 @@ def _extract_region_for_anchor(
-     *,
-     pdf_path: str,
-     page_count: int,
-+    max_page: int,
-     output_dir: str,
-     dpi: int,
-     model: str,
-@@ -395,6 +396,8 @@ def _extract_region_for_anchor(
-     Each VLM batch is truncated to the contiguous TOC prefix before the first
-     non-TOC page. Expand only when that prefix fills a full
-     ``BOUNDARY_STEP_PAGES`` window with ``non_toc_pages == []``.
-+    Expansion never crosses ``max_page`` (the page before the next confirmed
-+    start, or ``page_count`` for the last start).
-     """
-     from app.services.document_agent.tools.vlm_toc_extractor import (
-         vlm_extract_toc_batch,
-@@ -410,8 +413,8 @@ def _extract_region_for_anchor(
-     try:
-         for round_idx in range(MAX_BOUNDARY_ROUNDS):
-             batch_start = anchor_page + round_idx * BOUNDARY_STEP_PAGES
--            batch_end = min(batch_start + BOUNDARY_STEP_PAGES - 1, page_count)
--            if batch_start > page_count:
-+            batch_end = min(batch_start + BOUNDARY_STEP_PAGES - 1, max_page)
-+            if batch_start > max_page:
-                 break
- 
-             batch_pages = list(range(batch_start, batch_end + 1))
-@@ -457,11 +460,12 @@ def _extract_region_for_anchor(
-             if kept_toc_pages:
-                 region_scan_end = kept_toc_pages[-1]
- 
--            should_expand = _should_expand_toc_window(
-+            window_expandable = _should_expand_toc_window(
-                 batch_start=batch_start,
-                 non_toc_pages=list(batch_result.non_toc_pages),
-                 kept_toc_pages=kept_toc_pages,
-             )
-+            should_expand = window_expandable and batch_end < max_page
-             batch_trace.append(
-                 {
-                     "anchor": anchor_page,
-@@ -475,7 +479,7 @@ def _extract_region_for_anchor(
-                 }
-             )
- 
--            if not should_expand:
-+            if not window_expandable:
-                 logger.info(
-                     "[extract.toc] boundary found: kept={} non_toc={} "
-                     "batch={}-{}",
-@@ -485,7 +489,7 @@ def _extract_region_for_anchor(
-                     batch_end,
-                 )
-                 break
--            if batch_end >= page_count:
-+            if batch_end >= max_page:
-                 break
-             logger.info(
-                 "[extract.toc] full TOC window {}-{}, expanding",
-@@ -549,20 +553,27 @@ def _extract_regions_for_confirmed_anchors(
-         len(confirmed),
-         pool_size,
-     )
-+    confirmed = sorted(confirmed, key=lambda item: item.page)
-     pool = GeventPool(size=pool_size)
--    jobs = [
--        pool.spawn(
--            _extract_region_for_anchor,
--            anchor,
--            pdf_path=pdf_path,
--            page_count=page_count,
--            output_dir=output_dir,
--            dpi=dpi,
--            model=model,
--            render_lock=render_lock,
-+    jobs = []
-+    for index, anchor in enumerate(confirmed):
-+        if index + 1 < len(confirmed):
-+            region_max_page = min(page_count, confirmed[index + 1].page - 1)
-+        else:
-+            region_max_page = page_count
-+        jobs.append(
-+            pool.spawn(
-+                _extract_region_for_anchor,
-+                anchor,
-+                pdf_path=pdf_path,
-+                page_count=page_count,
-+                max_page=region_max_page,
-+                output_dir=output_dir,
-+                dpi=dpi,
-+                model=model,
-+                render_lock=render_lock,
-+            )
-         )
--        for anchor in confirmed
--    ]
-     pool.join()
- 
-     by_anchor: dict[int, _TocRegionResult] = {}
-```
-
-**File**: `apps/worker/app/services/page_memory/skeleton_extractor.py` (modified, +55/-6)
-```diff
-@@ -319,7 +319,7 @@ def _parallel_pending_tocs(
-         if record is None:
-             continue
-         relationship = record.get("relationship")
--        if relationship in {"unresolvable", "contained"}:
-+        if relationship in {"unresolvable", "contained", "paired"}:
-             continue
-         if relationship != "parallel":
-             raise ValueError("pending TOC relationship missing after PROFILE classify")
-@@ -442,6 +442,24 @@ def _clamp_page(page: int, page_count: int) -> int:
-     return min(max(page, 1), max(page_count, 1))
- 
- 
-+def _paired_host_range(
-+    hierarchy: dict[str, Any],
-+    records_by_range: dict[tuple[Any, ...], dict[str, Any]],
-+) -> list[int] | None:
-+    record = records_by_range.get(tuple(hierarchy.get("toc_range") or []))
-+    raw = None
-+    if isinstance(record, dict) and record.get("relationship") == "paired":
-+        raw = record.get("paired_with_range")
-+    if raw is None:
-+        raw = hierarchy.get("paired_with_range")
-+    if not isinstance(raw, (list, tuple)) or not raw:
-+        return None
-+    try:
-+        return [int(raw[0]), int(raw[-1])]
-+    except (TypeError, ValueError):
-+        return None
-+
-+
- def _toc_ownership_skeletons(
-     *,
-     skeletons: list[SectionSkeleton],
-@@ -461,19 +479,50 @@ def _toc_ownership_skeletons(
-         return []
- 
-     coverage = _coverage_from_chapter_skeletons(skeletons, filename=filename)
-+    pending_records = list(getattr(anatomy, "pending_skeleton_anchors", None) or [])
-+    records_by_range: dict[tuple[Any, ...], dict[str, Any]] = {}
-+    for record in pending_records:
-+        toc = record.get("toc")
-+        if isinstance(toc, dict):
-+            records_by_range[tuple(toc.get("toc_range") or [])] = record
-+
-+    hierarchies = list(getattr(anatomy, "toc_hierarchies", None) or [])
-+    parent_by_range: dict[tuple[Any, ...], str] = {}
-     pages_by_parent: dict[str, set[int]] = {}
--    for hierarchy in list(getattr(anatomy, "toc_hierarchies", None) or []):
-+
-+    def _parent_path_for_span(start: int, end: int) -> str:
-+        covering = deepest_covering_path(coverage, start=start, end=end)
-+        return join_document_path([filename, *covering]) if covering else filename
-+
-+    for hierarchy in hierarchies:
-         start = toc_range_start(hierarchy)
-         end = toc_range_end(hierarchy)
-         if start is None or end is None:
-             continue
-+        if _paired_host_range(hierarchy, records_by_range) is not None:
-+            continue
-         pages = [page for page in toc_pages if start <= page <= end]
-         if not pages:
-             continue
--        covering = deepest_covering_path(coverage, start=pages[0], end=pages[-1])
--        parent_path = (
--            join_document_path([filename, *covering]) if covering else filename
--        )
-+        parent_path = _parent_path_for_span(pages[0], pages[-1])
-+        parent_by_range[tuple(hierarchy.get("toc_range") or [])] = parent_path
-+        pages_by_parent.setdefault(parent_path, set()).update(pages)
-+
-+    for hierarchy in hierarchies:
-+        start = toc_range_start(hierarchy)
-+        end = toc_range_end(hierarchy)
-+        if start is None or end is None:
-+            continue
-+        host_range = _paired_host_range(hierarchy, records_by_range)
-+        if host_range is None:
-+            continue
-+        pages = [page for page in toc_pages if start <= page <= end]
-+        if not pages:
-+            continue
-+        parent_path = parent_by_range.get(tuple(host_range))
-+        if parent_path is None:
-+            parent_path = _parent_path_for_span(host_range[0], host_range[-1])
-+            parent_by_range[tuple(host_range)] = parent_path
-         pages_by_parent.setdefault(parent_path, set()).update(pages)
- 
-     by_path = {item.section_path: item for item in skeletons}
-```
-
-**File**: `apps/worker/tests/contract/test_page_memory_toc_ownership_contract.py` (modified, +77/-1)
-```diff
-@@ -67,14 +67,15 @@ def _anatomy(
-     overrides: dict[tuple[str, ...], int],
-     hierarchies: list[dict[str, object]],
-     toc_pages: list[int],
-+    pending_skeleton_anchors: list[dict[str, object]] | None = None,
- ) -> SimpleNamespace:
-     return SimpleNamespace(
-         page_count=page_count,
-         toc_result=SimpleNamespace(toc_pages=toc_pages),
-         toc_hierarchies=hierarchies,
-         skeleton_anchor=serialize_skeleton_anchor(_anchor(overrides)),
-         skeleton_nodes=[serialize_title_node(node) for node in nodes],
--        pending_skeleton_anchors=[],
-+        pending_skeleton_anchors=list(pending_skeleton_anchors or []),
-     )
- 
- 
-@@ -86,6 +87,7 @@ def _extract(
-     hierarchies: list[dict[str, object]],
-     toc_pages: list[int],
-     filename: str = "doc.pdf",
-+    pending_skeleton_anchors: list[dict[str, object]] | None = None,
- ) -> list[SectionSkeleton]:
-     return extract_section_skeletons(
-         anatomy=_anatomy(
-@@ -94,6 +96,7 @@ def _extract(
-             overrides=overrides,
-             hierarchies=hierarchies,
-             toc_pages=toc_pages,
-+            pending_skeleton_anchors=pending_skeleton_anchors,
-         ),
-         filename=filename,
-         page_texts={page: "body" for page in range(1, page_count + 1)},
-@@ -399,3 +402,76 @@ def test_prefix_stops_before_front_toc_and_every_page_has_an_owner() -> None:
-     assert 14 not in set(range(prefix.start_page, prefix.end_page + 1))
-     assert 15 not in set(range(prefix.start_page, prefix.end_page + 1))
-     assert owned == set(range(1, 19))
-+
-+
-+def test_paired_toc_does_not_cut_primary_window() -> None:
-+    pending_toc = {
-+        "toc_range": [7, 12],
-+        "toc_range_unit": "page",
-+        "paired_with_range": [1, 6],
-+        "toc_with_level": [
-+            {"heading": "General provisions", "level": 1, "page_number": 13}
-+        ],
-+    }
-+    skeletons = _extract(
-+        page_count=30,
-+        nodes=[TitleNode(title="总则", level=1, printed_page=13)],
-+        overrides={("总则",): 13},
-+        hierarchies=[
-+            {
-+                "toc_range": [1, 6],
-+                "toc_range_unit": "page",
-+                "toc_with_level": [{"heading": "总则", "level": 1, "page_number": 13}],
-+            },
-+            pending_toc,
-+        ],
-+        toc_pages=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-+        pending_skeleton_anchors=[
-+            {
-+                "toc": pending_toc,
-+                "relationship": "paired",
-+                "host": "root",
-+                "paired_with_range": [1, 6],
-+            }
-+        ],
-+    )
-+    chapter = next(item for item in skeletons if item.title == "总则")
-+    assert chapter.end_page == 30
-+    assert all(item.title != "General provisions" for item in skeletons)
-+
-+
-+def test_paired_toc_pages_merge_into_host_toc_node() -> None:
-+    pending_toc = {
-+        "toc_range": [7, 12],
-+        "toc_range_unit": "page",
-+        "paired_with_range": [1, 6],
-+        "toc_tree": {},
-+    }
-+    skeletons = _extract(
-+        page_count=30,
-+        nodes=[TitleNode(title="总则", level=1, printed_page=13)],
-+        overrides={("总则",): 13},
-+        hierarchies=[
-+            {
-+                "toc_range": [1, 6],
-+                "toc_range_unit": "page",
-+                "toc_with_level": [{"heading": "总则", "level": 1, "page_number": 13}],
-+            },
-+            pending_toc,
-+        ],
-+        toc_pages=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-+        pending_skeleton_anchors=[
-+            {
-+                "toc": pending_toc,
-+                "relationship": "paired",
-+                "host": "root",
-+                "paired_with_range": [1, 6],
-+            }
-+        ],
-+    )
-+    toc_nodes = [item for item in skeletons if is_toc_node(item)]
-+    assert len(toc_nodes) == 1
-+    assert toc_nodes[0].section_path == "doc.pdf/TOC"
-+    assert toc_nodes[0].parent_path == "doc.pdf"
-+    assert toc_nodes[0].start_page == 1
-+    assert toc_nodes[0].end_page == 12
-```
-
-**File**: `apps/worker/tests/contract/test_structure_anchoring_contract.py` (modified, +88/-3)
-```diff
-@@ -1336,14 +1336,14 @@ def fake_verify(**kwargs: Any) -> dict[str, Any]:
-     def fake_scan(**kwargs: Any) -> TitleScanResult:
-         title = str(kwargs.get("title") or "")
-         start = int(kwargs.get("start_page") or 0)
--        # Old slot for Ch3 was page 30; scan starts at 31 and finds 36 → offset 16.
-+        # Scan starts at last confirmed physical page (Ch2 = 15) and finds 36 → offset 16.
-         assert title == "Ch3"
--        assert start == 31
-+        assert start == 15
-         return TitleScanResult(
-             title=title,
-             found=True,
-             found_page=36,
--            scanned_pages=[31, 32, 33, 34, 35, 36],
-+            scanned_pages=list(range(15, 37)),
-             next_start=37,
-         )
- 
-@@ -1377,6 +1377,91 @@ def fake_scan(**kwargs: Any) -> TitleScanResult:
-     assert anchor.match_overrides[("Ch4",)].page == 46  # 30+16
- 
- 
-+def test_phase2_recalibrate_allows_smaller_or_negative_offset_and_keeps_tail() -> None:
-+    """When printed TOC over-counts pages after a breakpoint, offset decreases
-+    and tail entries that exceeded page_count under old_offset still survive."""
-+    from app.services.document_agent.calibration.procedure import (
-+        anchor_hierarchy_from_regimes,
-+    )
-+    from app.services.document_agent.calibration.scan import TitleScanResult
-+    from app.services.document_agent.calibration.types import (
-+        CalibrationRegime,
-+        CalibrationResult,
-+        CalibrationSample,
-+    )
-+
-+    leaves = [
-+        _leaf("K.4", 92),
-+        _leaf("L.1", 94),
-+        _leaf("Ref", 143),  # 143 + 12 = 155 > 154, but 143 + 11 = 154 <= 154
-+    ]
-+    phase1 = CalibrationResult(
-+        status="ok",
-+        offset=12,
-+        regimes=[
-+            CalibrationRegime(
-+                kind="decimal",
-+                offset=12,
-+                offset_status="ok",
-+                entry_indices=[0, 1, 2],
-+                samples=[CalibrationSample(title="K.4", physical=104)],
-+            )
-+        ],
-+    )
-+    ctx = _ctx()
-+
-+    def fake_verify(**kwargs: Any) -> dict[str, Any]:
-+        expected = int(kwargs["candidate_matches"][0].page)
-+        title = str(kwargs.get("title") or "")
-+        ok = {
-+            ("K.4", 104),  # 92 + 12
-+            ("L.1", 105),  # 94 + 11
-+            ("Ref", 154),  # 143 + 11
+     with zipfile.ZipFile(io.BytesIO(doc_data), "r") as docx:
+         xml = docx.read("word/document.xml")
+-        rel_map: dict[str | None, str | None] = {}
+-        try:
+-            relationships_xml: bytes = docx.read("word/_rels/document.xml.rels")
+-        except KeyError:
+-            # Documents without relationships may omit this package part.
+-            pass
+-        else:
+-            relationships: etree._Element = etree.fromstring(relationships_xml)
+-            rel_map = {
+-                relationship.get("Id"): relationship.get("Target")
+-                for relationship in relationships.findall(".//{*}Relationship")
+-            }
++        rels = etree.fromstring(docx.read("word/_rels/document.xml.rels"))
++        rel_map = {
++            r.get("Id"): r.get("Target") for r in rels.findall(".//{*}Relationship")
 +        }
-+        if (title, expected) in ok:
-+            return {"selected_page": expected, "reason": "ok"}
-+        return {"selected_page": None, "reason": "miss"}
-+
-+    def fake_scan(**kwargs: Any) -> TitleScanResult:
-+        title = str(kwargs.get("title") or "")
-+        start = int(kwargs.get("start_page") or 0)
-+        assert title == "L.1"
-+        assert start == 104
-+        return TitleScanResult(
-+            title=title,
-+            found=True,
-+            found_page=105,
-+            scanned_pages=[104, 105],
-+            next_start=106,
-+        )
-+
-+    with (
-+        _patch_verify(fake_verify),
-+        patch(
-+            "app.services.document_agent.calibration.scan.scan_title_forward",
-+            fake_scan,
-+        ),
-+    ):
-+        working, anchor = anchor_hierarchy_from_regimes(
-+            nodes=leaves,
-+            result=phase1,
-+            entries=[
-+                {"heading": "K.4", "level": 1, "page_number": 92},
-+                {"heading": "L.1", "level": 1, "page_number": 94},
-+                {"heading": "Ref", "level": 1, "page_number": 143},
-+            ],
-+            page_texts={104: "K.4", 105: "L.1", 154: "Ref"},
-+            body_pages=list(range(13, 155)),
-+            page_count=154,
-+            ctx=ctx,
-+        )
-+
-+    assert [n.title for n in working] == ["K.4", "L.1", "Ref"]
-+    assert anchor.match_overrides[("K.4",)].page == 104
-+    assert anchor.match_overrides[("L.1",)].page == 105
-+    assert anchor.match_overrides[("Ref",)].page == 154
-+
-+
- def test_phase2_recalibrate_miss_drops_suffix_from_tree() -> None:
-     """When suffix cannot be recalibrated, those leaves leave the TOC tree."""
-     from app.services.document_agent.calibration.procedure import (
+         ns = {
+             "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
+             "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+```
+
+**File**: `apps/worker/tests/contract/test_docx_relationships_contract.py` (removed, +0/-117)
+```diff
+@@ -1,117 +0,0 @@
+-from __future__ import annotations
+-
+-import io
+-import os
+-import zipfile
+-
+-os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
+-os.environ.setdefault("TMP_PATH", "/tmp/knowhere-test")
+-os.environ.setdefault("S3_BUCKET_NAME", "test-uploads")
+-os.environ.setdefault("S3_ACCESS_KEY_ID", "test")
+-os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
+-os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+-
+-import pytest  # noqa: E402
+-from docx import Document  # noqa: E402
+-from docx.document import Document as WordDocument  # noqa: E402
+-from docx.opc.constants import CONTENT_TYPE  # noqa: E402
+-from docx.table import Table  # noqa: E402
+-from docx.text.paragraph import Paragraph  # noqa: E402
+-from lxml.etree import XMLSyntaxError  # noqa: E402
+-from PIL import Image  # noqa: E402
+-
+-from app.services.document_parser.formats.docx.block_stream import (  # noqa: E402
+-    iter_block_items,
+-)
+-
+-
+-@pytest.mark.parametrize(
+-    "content_type",
+-    [
+-        CONTENT_TYPE.WML_DOCUMENT_MAIN,
+-        "application/vnd.ms-word.document.macroEnabled.main+xml",
+-        "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml",
+-    ],
+-    ids=["document", "macro-enabled-document", "template"],
+-)
+-def test_iter_block_items_preserves_body_without_relationships(content_type: str) -> None:
+-    document: WordDocument = Document()
+-    document.add_paragraph("Before table")
+-    document.add_table(rows=1, cols=1).cell(0, 0).text = "Table content"
+-    document.add_paragraph("After table")
+-    buffer: io.BytesIO = io.BytesIO()
+-    document.save(buffer)
+-    package_bytes: bytes = _rewrite_document_package(buffer.getvalue(), None, content_type)
+-
+-    with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
+-        assert "word/_rels/document.xml.rels" not in archive.namelist()
+-
+-    blocks: list[tuple[int, object, str, object]] = list(iter_block_items(package_bytes))
+-
+-    assert [block[2] for block in blocks] == ["PTXT", "TABLE", "PTXT"]
+-    before_table: object = blocks[0][1]
+-    table: object = blocks[1][1]
+-    after_table: object = blocks[2][1]
+-    assert isinstance(before_table, Paragraph)
+-    assert isinstance(table, Table)
+-    assert isinstance(after_table, Paragraph)
+-    assert before_table.text == "Before table"
+-    assert table.cell(0, 0).text == "Table content"
+-    assert after_table.text == "After table"
+-
+-
+-def test_iter_block_items_preserves_image_relationships() -> None:
+-    image_buffer: io.BytesIO = io.BytesIO()
+-    Image.new("RGB", (64, 64), color="blue").save(image_buffer, format="BMP")
+-    image_bytes: bytes = image_buffer.getvalue()
+-    document: WordDocument = Document()
+-    document.add_paragraph("Image caption")
+-    document.add_picture(io.BytesIO(image_bytes))
+-    buffer: io.BytesIO = io.BytesIO()
+-    document.save(buffer)
+-
+-    blocks: list[tuple[int, object, str, object]] = list(iter_block_items(buffer.getvalue()))
+-    image_blocks: list[tuple[int, object, str, object]] = [
+-        block for block in blocks if block[2] == "IMAGE"
+-    ]
+-
+-    assert len(image_blocks) == 1
+-    image_metadata: object = image_blocks[0][3]
+-    assert isinstance(image_metadata, dict)
+-    assert image_metadata["data"] == image_bytes
+-
+-
+-def test_iter_block_items_rejects_malformed_relationship_xml() -> None:
+-    document: WordDocument = Document()
+-    document.add_paragraph("Sample paragraph")
+-    buffer: io.BytesIO = io.BytesIO()
+-    document.save(buffer)
+-    package_bytes: bytes = _rewrite_document_package(buffer.getvalue(), b"<Relationships")
+-
+-    with pytest.raises(XMLSyntaxError):
+-        list(iter_block_items(package_bytes))
+-
+-
+-def _rewrite_document_package(
+-    package_bytes: bytes,
+-    relationships_xml: bytes | None,
+-    content_type: str = CONTENT_TYPE.WML_DOCUMENT_MAIN,
+-) -> bytes:
+-    output: io.BytesIO = io.BytesIO()
+-    with (
+-        zipfile.ZipFile(io.BytesIO(package_bytes), "r") as source,
+-        zipfile.ZipFile(output, "w") as destination,
+-    ):
+-        for item in source.infolist():
+-            data: bytes = source.read(item.filename)
+-            if item.filename == "word/_rels/document.xml.rels":
+-                if relationships_xml is None:
+-                    continue
+-                data = relationships_xml
+-            elif item.filename == "[Content_Types].xml":
+-                data = data.replace(
+-                    CONTENT_TYPE.WML_DOCUMENT_MAIN.encode("ascii"),
+-                    content_type.encode("ascii"),
+-                )
+-            destination.writestr(item, data)
+-    return output.getvalue()
 ```
 
 ---
 
-### Incident Patch 2: `21b7d086` (2026-10-31)
-**Commit Message**: Refactor anchoring procedures to improve offset handling
+### Incident Patch 2: `59764058` (2026-11-02)
+**Commit Message**: Merge pull request #494 from Ontos-AI/fix/wuchengke/url-filename-and-section-parts
 
-- Added `body_start_page` parameter to `offset_guided_anchoring` for better control over starting page during anchoring.
-- Updated `bulk_offset_matches` to include optional `page_count` parameter, enhancing validation of page ranges.
-- Modified recalibration logic to allow for smaller or negative offsets while preserving tail entries.
-- Enhanced tests to validate new behaviors in recalibration and anchoring processes.
+fix: prefer URL file_name and keep slash titles as one section
 
-**File**: `apps/worker/app/services/document_agent/calibration/procedure.py` (modified, +18/-9)
+**File**: `apps/api/app/services/document_ingestion/creation_service.py` (modified, +12/-1)
 ```diff
-@@ -48,6 +48,7 @@ def offset_guided_anchoring(
-     ctx: ToolContext,
-     page_count: int,
-     calibration_overrides: dict[tuple[str, ...], TitleMatch],
-+    body_start_page: int = 1,
- ) -> dict[tuple[str, ...], TitleMatch] | None:
-     """Forward to production Phase-2 anchoring."""
-     return _anchoring.offset_guided_anchoring(
-@@ -56,6 +57,7 @@ def offset_guided_anchoring(
-         ctx=ctx,
-         page_count=page_count,
-         calibration_overrides=calibration_overrides,
-+        body_start_page=body_start_page,
+@@ -231,6 +231,7 @@ async def _create_url_job(
+         source_file_name = _resolve_url_source_file_name(
+             source_url=payload.source_url,
+             file_extension=file_extension,
++            file_name=payload.file_name,
+         )
+         s3_key = f"uploads/{job_id}{file_extension}"
+         JobMetadataHelper.set_url_source(
+@@ -306,7 +307,17 @@ def _build_job_response(
      )
  
- def pick_primary_offset(result: CalibrationResult) -> int | None:
-@@ -273,14 +275,6 @@ def anchor_hierarchy_from_regimes(
-         kind = normalize_kind(regime.kind)
-         offset = int(regime.offset)  # type: ignore[arg-type]
-         entry_titles = _entry_titles_for_regime(regime=regime, entries=flat_entries)
--        working, pruned = prune_regime_out_of_scope(
--            working,
--            kind=kind,
--            entry_titles=entry_titles,
--            offset=offset,
--            page_count=page_count,
--        )
--        total_pruned += pruned
-         if not working:
-             continue
  
-@@ -304,24 +298,39 @@ def anchor_hierarchy_from_regimes(
-                 bulk_offset_matches,
+-def _resolve_url_source_file_name(*, source_url: str, file_extension: str) -> str:
++def _resolve_url_source_file_name(
++    *,
++    source_url: str,
++    file_extension: str,
++    file_name: str | None = None,
++) -> str:
++    preferred_name = str(file_name or "").strip()
++    if preferred_name:
++        if os.path.splitext(preferred_name)[1]:
++            return preferred_name
++        return f"{preferred_name}{file_extension}"
+     parsed_url = urlparse(source_url)
+     url_basename = unquote(str(os.path.basename(parsed_url.path)))
+     if url_basename and os.path.splitext(url_basename)[1].lower() == file_extension:
+```
+
+**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +8/-2)
+```diff
+@@ -254,8 +254,14 @@ async def _validate_create_payload(
+                 )
+ 
+         if (
+-            payload.source_type == "file"
+-            and payload.file_name
++            payload.file_name
++            and (
++                payload.source_type == "file"
++                or (
++                    payload.source_type == "url"
++                    and os.path.splitext(payload.file_name)[1]
++                )
++            )
+             and not _is_supported_file_name(payload.file_name)
+         ):
+             raise ValidationException(
+```
+
+**File**: `apps/api/app/services/jobs/result_projection.py` (modified, +11/-6)
+```diff
+@@ -82,14 +82,19 @@ def _resolve_original_request(job_metadata: Optional[dict[str, Any]]) -> dict[st
+ 
+ 
+ def _resolve_source_file_name(original_request: dict[str, Any]) -> str | None:
++    requested_name = original_request.get("file_name")
+     source_url = original_request.get("source_url")
+-    file_name = None
++    url_basename = None
+     if source_url:
+-        parsed_source = urlparse(str(source_url))
+-        file_name = os.path.basename(parsed_source.path) or None
+-    if not file_name:
+-        file_name = original_request.get("file_name")
+-    return str(file_name) if file_name else None
++        url_basename = os.path.basename(urlparse(str(source_url)).path) or None
++    if isinstance(requested_name, str) and requested_name.strip():
++        file_name = requested_name.strip()
++        if not os.path.splitext(file_name)[1]:
++            url_extension = os.path.splitext(url_basename or "")[1]
++            if url_extension:
++                file_name = f"{file_name}{url_extension}"
++        return file_name
++    return str(url_basename) if url_basename else None
+ 
+ 
+ def _resolve_file_extension(file_name: str | None) -> str | None:
+```
+
+**File**: `apps/api/tests/unit/test_document_ingestion_filename.py` (modified, +32/-0)
+```diff
+@@ -1,6 +1,7 @@
+ from app.services.document_ingestion.creation_service import (
+     _resolve_url_source_file_name,
+ )
++from app.services.jobs.result_projection import _resolve_source_file_name
+ 
+ 
+ def test_resolve_url_source_file_name_decodes_percent_encoded_path() -> None:
+@@ -16,3 +17,34 @@ def test_resolve_url_source_file_name_decodes_percent_encoded_path() -> None:
+     )
+ 
+     assert source_file_name == "中文简历-雷翔-中科院(5).doc"
++
++
++def test_resolve_url_source_file_name_prefers_explicit_file_name() -> None:
++    source_file_name = _resolve_url_source_file_name(
++        source_url="https://files.example.test/original.md",
++        file_extension=".md",
++        file_name="hipo-upload-optimization_a884bd1b.plan.md",
++    )
++
++    assert source_file_name == "hipo-upload-optimization_a884bd1b.plan.md"
++
++
++def test_resolve_url_source_file_name_appends_extension_when_missing() -> None:
++    source_file_name = _resolve_url_source_file_name(
++        source_url="https://files.example.test/original.md",
++        file_extension=".md",
++        file_name="uploaded-plan",
++    )
++
++    assert source_file_name == "uploaded-plan.md"
++
++
++def test_resolve_source_file_name_prefers_request_file_name_over_url_basename() -> None:
++    file_name = _resolve_source_file_name(
++        {
++            "source_url": "https://files.example.test/original.md",
++            "file_name": "hipo-upload-optimization_a884bd1b.plan.md",
++        }
++    )
++
++    assert file_name == "hipo-upload-optimization_a884bd1b.plan.md"
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/publication_content.py` (modified, +12/-7)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ from shared.services.retrieval.corpus_storage import CorpusStorage
+ 
++from collections.abc import Sequence
+ from typing import TYPE_CHECKING, Any, cast
+ from uuid import uuid4
+ 
+@@ -26,7 +27,7 @@
+     build_path_lexical_text,
+     build_path_search_text,
+     build_term_search_text,
+-    section_path_from_chunk_path,
++    section_parts_from_chunk_path,
+ )
+ from shared.utils.json_utils import remove_nul_characters
+ 
+@@ -93,11 +94,12 @@ def replace_document_revision_content(
+                 chunk=safe_chunk,
+                 chunk_metadata=chunk_metadata,
+             )
+-            section_path = section_path_from_chunk_path(
+-                source_path,
+-                source_file_name=scope.source_file_name,
++            section = section_publisher.ensure_section(
++                section_parts_from_chunk_path(
++                    source_path,
++                    source_file_name=scope.source_file_name,
++                )
+             )
+-            section = section_publisher.ensure_section(section_path)
+             prepared_chunks.append(
+                 (index, safe_chunk, chunk_metadata, source_path, section)
+             )
+@@ -187,9 +189,13 @@ def _ensure_existing_loaded(self) -> None:
+             self._sections_by_path.setdefault(existing.section_path, existing)
+             self._preexisting_paths.add(existing.section_path)
+ 
+-    def ensure_section(self, section_path: str) -> DocumentSection:
++    def ensure_section(self, section_parts: Sequence[str]) -> DocumentSection:
+         self._ensure_existing_loaded()
+         corpusStorage: CorpusStorage = CorpusStorage.resolve_namespace(self._scope.namespace)
++        path_parts = [part for part in section_parts if part]
++        if not path_parts:
++            path_parts = ["Root"]
++        section_path = " / ".join(path_parts)
+         existing_section = self._sections_by_path.get(section_path)
+         if existing_section is not None:
+             if (
+@@ -201,7 +207,6 @@ def ensure_section(self, section_path: str) -> DocumentSection:
+                 existing_section.summary = summary
+             return existing_section
+ 
+-        path_parts = [part for part in section_path.split(" / ") if part]
+         for depth in range(1, len(path_parts) + 1):
+             ancestor_path = " / ".join(path_parts[:depth])
+             existing_ancestor = self._sections_by_path.get(ancestor_path)
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/publication_scope_content.py` (modified, +17/-11)
+```diff
+@@ -36,7 +36,9 @@
+ )
+ from shared.services.retrieval.publication_models import DocumentPublicationScope
+ from shared.services.retrieval.publication_trace_stage import trace_publication_stage
+-from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
++from shared.services.retrieval.search.lexical_text import (
++    section_parts_from_chunk_path,
++)
+ from shared.services.retrieval.serving_generation import (
+     advance_namespace_generation,
+     lock_namespace_generation,
+@@ -134,11 +136,12 @@ def replace_document_scope_content(
+                 chunk=safe_chunk,
+                 chunk_metadata=chunk_metadata,
+             )
+-            section_path = section_path_from_chunk_path(
+-                source_path,
+-                source_file_name=scope.source_file_name,
++            section = section_publisher.ensure_section(
++                section_parts_from_chunk_path(
++                    source_path,
++                    source_file_name=scope.source_file_name,
++                )
+             )
+-            section = section_publisher.ensure_section(section_path)
+             prepared_chunks.append(
+                 (index, safe_chunk, chunk_metadata, source_path, section)
+             )
+@@ -397,11 +400,14 @@ def _delete_scope_exclusive_leaf_sections(
+             chunk=safe_chunk,
+             chunk_metadata=chunk_metadata,
+         )
+-        section_path = section_path_from_chunk_path(
+-            source_path,
+-            source_file_name=scope.source_file_name,
++        retained_paths.update(
++            _strict_ancestor_paths(
++                section_parts_from_chunk_path(
++                    source_path,
++                    source_file_name=scope.source_file_name,
++                )
++            )
+         )
+-        retained_paths.update(_strict_ancestor_paths(section_path))
+ 
+     stale_section_ids = [
+         section.section_id
+@@ -498,8 +504,8 @@ def _self_and_ancestor_paths(section_path: str) -> list[str]:
+     return [" / ".join(parts[:depth]) for depth in range(1, len(parts) + 1)]
+ 
+ 
+-def _strict_ancestor_paths(section_path: str) -> list[str]:
+-    parts = [part for part in section_path.split(" / ") if part]
++def _strict_ancestor_paths(section_parts: list[str]) -> list[str]:
++    parts = [part for part in section_parts if part]
+     if len(parts) <= 1:
+         return []
+     return [" / ".join(parts[:depth]) for depth in range(1, len(parts))]
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/search/lexical_text.py` (modified, +20/-3)
+```diff
+@@ -75,6 +75,25 @@ def build_content_lexical_text(chunk: dict[str, Any]) -> Optional[str]:
+     return "\n".join(lexical_parts) if lexical_parts else content
+ 
+ 
++def section_parts_from_chunk_path(
++    source_path: Optional[str],
++    *,
++    source_file_name: str | None = None,
++) -> list[str]:
++    """Return unescaped section titles from a parser chunk path.
++
++    Splits on the raw hierarchy ``/`` first, then unescapes ``U+2215`` in each
++    title so a heading that contains `` / `` stays one part.
++    """
++    if not source_path:
++        return []
++    _, section_parts = split_document_path(
++        source_path,
++        source_file_name=source_file_name,
++    )
++    return section_parts
++
++
+ def section_path_from_chunk_path(
+     source_path: Optional[str],
+     *,
+@@ -85,9 +104,7 @@ def section_path_from_chunk_path(
+     Expected format: "<file>.ext/<Section>/<Subsection>/..."
+     Returns " / "-joined section parts, or "Root" if no section hierarchy.
+     """
+-    if not source_path:
+-        return "Root"
+-    _, section_parts = split_document_path(
++    section_parts = section_parts_from_chunk_path(
+         source_path,
+         source_file_name=source_file_name,
+     )
+```
+
+**File**: `packages/shared-python/shared/tests/test_path_segments.py` (modified, +18/-0)
+```diff
+@@ -21,6 +21,7 @@
+     unescape_path_segment,
+ )
+ from shared.services.retrieval.search.lexical_text import (
++    section_parts_from_chunk_path,
+     section_path_from_chunk_path,
+     split_section_path,
+ )
+@@ -89,6 +90,23 @@ def test_section_path_from_chunk_path_preserves_slash_title() -> None:
+     ]
+ 
+ 
++def test_section_parts_from_chunk_path_keep_spaced_slash_title() -> None:
++    chunk_path = join_document_path(
++        ["notes.md", "MD / TXT（2 层）", "Details"]
++    )
++    assert section_parts_from_chunk_path(
++        chunk_path,
++        source_file_name="notes.md",
++    ) == ["MD / TXT（2 层）", "Details"]
++    assert (
++        section_path_from_chunk_path(
++            chunk_path,
++            source_file_name="notes.md",
++        )
++        == "MD / TXT（2 层） / Details"
++    )
++
++
+ def test_doc_nav_keeps_slash_title_as_single_section() -> None:
+     chunk_path = join_document_path(
+         ["manual.pdf", "Index", "Symbols/Numbers"]
+```
+
+---
+
+### Incident Patch 3: `394faf35` (2026-11-02)
+**Commit Message**: fix: preserve DOCX leading content and support explicit repair revisions (#493)
+
+* fix(parser): retain DOCX body text before the first heading
+
+* fix(ingestion): allow explicit repair revisions on the same document
+
+**File**: `apps/worker/app/services/document_ingestion/source_content_admission.py` (modified, +14/-0)
+```diff
+@@ -33,6 +33,7 @@ class _SourceScope:
+     user_id: str
+     namespace: str
+     is_demo: bool
++    reparse_document_id: str | None = None
+ 
+ 
+ class SourceContentAdmission:
+@@ -65,12 +66,22 @@ def _load_scope(self, job_id: str) -> _SourceScope:
+                 raise NotFoundException(resource="Job", resource_id=job_id)
+             metadata: dict[str, object] = dict(job.job_metadata or {})
+             namespace: object = metadata.get("namespace")
++            original_request: object = metadata.get("original_request")
++            reparse_document_id: str | None = None
++            if (
++                isinstance(original_request, dict)
++                and original_request.get("reparse") is True
++            ):
++                target: object = original_request.get("document_id")
++                if isinstance(target, str) and target == metadata.get("document_id"):
++                    reparse_document_id = target
+             return _SourceScope(
+                 user_id=job.user_id,
+                 namespace=normalize_retrieval_namespace(
+                     namespace if isinstance(namespace, str) else None,
+                 ),
+                 is_demo=metadata.get("corpus_target") == "DEMO",
++                reparse_document_id=reparse_document_id,
              )
  
-+            working, pruned = prune_regime_out_of_scope(
-+                working,
-+                kind=kind,
-+                entry_titles=entry_titles,
-+                offset=offset,
-+                page_count=page_count,
-+            )
-+            total_pruned += pruned
-+            projected = project_nodes_for_regime(
-+                working, kind=kind, entry_titles=entry_titles
-+            )
-             leaves = [
-                 (path, node)
-                 for path, node in iter_leaf_title_nodes(projected)
-                 if node.printed_page is not None
-             ]
-             if leaves:
--                matches = bulk_offset_matches(leaves, offset)
-+                matches = bulk_offset_matches(
-+                    leaves, offset, page_count=page_count
-+                )
-                 matches.update(regime_seed)
-                 merged.update(matches)
-                 regime_bulk += len(matches)
-             continue
- 
-+        body_start_page = min(body_pages) if body_pages else 1
-         matches = offset_guided_anchoring(
-             nodes=projected,
-             offset=offset,
-             ctx=ctx,
-             page_count=page_count,
-             calibration_overrides=regime_seed,
-+            body_start_page=body_start_page,
-         )
-         if matches:
-             merged.update(matches)
+     @staticmethod
+@@ -132,6 +143,9 @@ def _build_duplicate_query(
+             .where(Document.user_id == scope.user_id)
+             .where(Document.namespace == scope.namespace)
+             .where(Document.status == "active")
++            # Only an explicit same-document reparse may replace identical bytes.
++            # Other documents and every active content claim remain protected.
++            .where(Document.document_id != scope.reparse_document_id)
+             .union_all(
+                 select(literal("Job"), Job.job_id)
+                 .where(Job.user_id == scope.user_id)
 ```
 
-**File**: `apps/worker/app/services/document_agent/structure/anchoring_primitives.py` (modified, +47/-19)
+**File**: `apps/worker/app/services/document_parser/formats/text/parser.py` (modified, +0/-3)
 ```diff
-@@ -298,13 +298,17 @@ def _bisect_offset_breakpoint(
- def bulk_offset_matches(
-     leaves: list[tuple[tuple[str, ...], TitleNode]],
-     offset: int,
-+    *,
-+    page_count: int | None = None,
- ) -> dict[tuple[str, ...], TitleMatch]:
-     """Generate TitleMatch overrides for all leaves using offset. No VLM calls."""
-     matches: dict[tuple[str, ...], TitleMatch] = {}
-     for path_titles, node in leaves:
-         if node.printed_page is None:
-             continue
-         page = node.printed_page + offset
-+        if page < 1 or (page_count is not None and page > page_count):
-+            continue
-         matches[path_titles] = TitleMatch(
-             page=page,
-             source="bulk_offset",
-@@ -408,14 +412,17 @@ def _recalibrate_after_breakpoint(
-     *,
-     entry_node: TitleNode,
-     old_offset: int,
-+    start_page: int,
-     ctx: ToolContext,
-     page_count: int,
- ) -> int | None:
-     """Re-find offset for the first remaining leaf after a breakpoint.
- 
-     Same mechanic as Phase-1: forward ``inspect.pages`` scan until the title
--    START is found. Monotonicity says the physical page is strictly after the
--    failed ``printed + old_offset`` slot, so the scan cursor starts there.
-+    START is found. Physical page order is monotonic across TOC entries, so the
-+    scan cursor starts at the last confirmed physical page (not
-+    ``entry_printed_page + old_offset + 1``), allowing the new offset to be
-+    smaller, larger, or negative relative to ``old_offset``.
-     """
-     entry_printed_page = entry_node.printed_page
-     if entry_printed_page is None:
-@@ -424,40 +431,39 @@ def _recalibrate_after_breakpoint(
-     # Lazy import: scan → inspect_pages → tools must not load at module import.
-     from app.services.document_agent.calibration.scan import scan_title_forward
- 
--    start_page = entry_printed_page + old_offset + 1
--    if start_page > page_count:
-+    scan_start = max(int(start_page), 1)
-+    if scan_start > page_count:
-         return None
- 
-     scan = scan_title_forward(
-         ctx=ctx,
-         title=entry_node.title,
--        start_page=start_page,
-+        start_page=scan_start,
-         page_count=page_count,
-     )
-     if not scan.found or scan.found_page is None:
-         logger.info(
-             "[structure_anchoring] recalibrate miss: title={!r} start={} scanned={}",
-             entry_node.title,
--            start_page,
-+            scan_start,
-             scan.scanned_pages,
-         )
-         return None
- 
-     new_offset = int(scan.found_page) - entry_printed_page
--    if new_offset <= old_offset:
-+    if new_offset == old_offset:
-         logger.info(
--            "[structure_anchoring] recalibrate rejected non-monotonic offset: "
--            "title={!r} old={} new={} found_page={}",
-+            "[structure_anchoring] recalibrate unchanged offset: "
-+            "title={!r} offset={} found_page={}",
-             entry_node.title,
--            old_offset,
-             new_offset,
-             scan.found_page,
-         )
-         return None
- 
-     logger.info(
-         "[structure_anchoring] recalibrate: title={!r} new_offset={} "
--        "(delta=+{}, found_page={})",
-+        "(delta={:+d}, found_page={})",
-         entry_node.title,
-         new_offset,
-         new_offset - old_offset,
-@@ -473,6 +479,7 @@ def offset_guided_anchoring(
-     ctx: ToolContext,
-     page_count: int,
-     calibration_overrides: dict[tuple[str, ...], TitleMatch],
-+    body_start_page: int = 1,
- ) -> dict[tuple[str, ...], TitleMatch] | None:
-     """Offset-guided bulk anchoring with recursive recalibrate on breakpoints.
- 
-@@ -481,7 +488,8 @@ def offset_guided_anchoring(
-       2. If pass → bulk apply all leaves (Theorem 1)
-       3. If fail → binary search for last valid index (``-1`` if none)
-       4. Bulk apply only verified prefix (empty when breakpoint is ``-1``)
--      5. Recalibrate remaining[0] via Phase-1 forward scan from printed+old+1
-+      5. Recalibrate remaining[0] via Phase-1 forward scan from the last
-+         confirmed physical page (or ``body_start_page`` when prefix is empty)
-       6. Recurse on remaining segment with new offset
-       7. If recalibrate fails → keep prefix only (caller prunes the rest)
- 
-@@ -502,7 +510,7 @@ def offset_guided_anchoring(
-     # Single-leaf regimes (roman front-matter, F-1 appendix, …) still get a
-     # deterministic printed→physical override; Phase-1 already calibrated them.
-     if len(leaves) == 1:
--        all_matches.update(bulk_offset_matches(leaves, offset))
-+        all_matches.update(bulk_offset_matches(leaves, offset, page_count=page_count))
-     else:
-         _anchor_segment_recursive(
-             leaves=leaves,
-@@ -511,6 +519,7 @@ def offset_guided_anchoring(
-             page_count=page_count,
-             matches=all_matches,
-             depth=0,
-+            scan_floor=max(int(body_start_page), 1),
-         )
- 
-     if not all_matches:
-@@ -532,13 +541,14 @@ def _anchor_segment_recursive(
-     page_count: i
+@@ -122,9 +122,6 @@ def postprocess_leaf_dics(
+     # TODO rough dividing of contents (need more smart dividing)
+     df_with_divides = pd.DataFrame(columns=["path", "content_lst", "path_identifier"])
+     for i, row in merge_df.iterrows():
+-        if len(row["path"]) == 0:
+-            continue
+-
+         local_contents = row["content_lst"]
+         if len(local_contents) > 0 and llm_paras["doc_type"] not in "templates":
+             sublists, num = divide_long_contents(
 ```
 
-**File**: `apps/worker/tests/contract/test_structure_anchoring_contract.py` (modified, +88/-3)
+**File**: `apps/worker/tests/contract/test_docx_leading_content_contract.py` (added, +68/-0)
 ```diff
-@@ -1336,14 +1336,14 @@ def fake_verify(**kwargs: Any) -> dict[str, Any]:
-     def fake_scan(**kwargs: Any) -> TitleScanResult:
-         title = str(kwargs.get("title") or "")
-         start = int(kwargs.get("start_page") or 0)
--        # Old slot for Ch3 was page 30; scan starts at 31 and finds 36 → offset 16.
-+        # Scan starts at last confirmed physical page (Ch2 = 15) and finds 36 → offset 16.
-         assert title == "Ch3"
--        assert start == 31
-+        assert start == 15
-         return TitleScanResult(
-             title=title,
-             found=True,
-             found_page=36,
--            scanned_pages=[31, 32, 33, 34, 35, 36],
-+            scanned_pages=list(range(15, 37)),
-             next_start=37,
-         )
- 
-@@ -1377,6 +1377,91 @@ def fake_scan(**kwargs: Any) -> TitleScanResult:
-     assert anchor.match_overrides[("Ch4",)].page == 46  # 30+16
- 
- 
-+def test_phase2_recalibrate_allows_smaller_or_negative_offset_and_keeps_tail() -> None:
-+    """When printed TOC over-counts pages after a breakpoint, offset decreases
-+    and tail entries that exceeded page_count under old_offset still survive."""
-+    from app.services.document_agent.calibration.procedure import (
-+        anchor_hierarchy_from_regimes,
-+    )
-+    from app.services.document_agent.calibration.scan import TitleScanResult
-+    from app.services.document_agent.calibration.types import (
-+        CalibrationRegime,
-+        CalibrationResult,
-+        CalibrationSample,
-+    )
+@@ -0,0 +1,68 @@
++from __future__ import annotations
 +
-+    leaves = [
-+        _leaf("K.4", 92),
-+        _leaf("L.1", 94),
-+        _leaf("Ref", 143),  # 143 + 12 = 155 > 154, but 143 + 11 = 154 <= 154
++import os
++from pathlib import Path
++
++os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
++os.environ.setdefault("TMP_PATH", "/tmp/knowhere-test")
++os.environ.setdefault("S3_BUCKET_NAME", "test-uploads")
++os.environ.setdefault("S3_ACCESS_KEY_ID", "test")
++os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
++os.environ.setdefault("S3_TEMP_PATH", "/tmp")
++
++from docx import Document
++
++from app.services.document_parser.formats.docx.parser import (
++    convert_doc2dics,
++    parse_docx,
++)
++from app.services.document_parser.formats.text.parser import postprocess_leaf_dics
++
++
++def test_docx_preserves_four_paragraphs_before_the_first_heading(
++    tmp_path: Path,
++) -> None:
++    document = Document()
++    document.add_heading("Document title", level=0)
++    references: list[str] = [f"LEADING-PARAGRAPH-{index}" for index in range(1, 5)]
++    for reference in references:
++        document.add_paragraph(f"{reference} Original introduction body.")
++    document.add_heading("First section", level=1)
++    document.add_paragraph("SECTION-BODY Original section body.")
++    source_path: Path = tmp_path / "introduction.docx"
++    document.save(source_path)
++    options: dict[str, object] = {
++        "doc_type": "book",
++        "smart_title_parse": False,
++        "summary_image": False,
++        "summary_table": False,
++        "summary_txt": False,
++        "stopwords": [],
++    }
++    structure, assets = parse_docx(
++        str(source_path), options, str(tmp_path), filename=source_path.name
++    )
++    parsed = convert_doc2dics(
++        structure, assets, str(tmp_path), options, relative_root=source_path.name
++    )
++    body: str = "\n".join(parsed["content"].astype(str))
++    for reference in references:
++        assert reference in body
++    assert "SECTION-BODY" in body
++    introduction = parsed[parsed["content"].str.contains(references[0])]
++    assert introduction.iloc[0]["path"] == source_path.name
++
++
++def test_root_body_splitting_preserves_every_leading_paragraph() -> None:
++    paragraphs: list[str] = [
++        f"ROOT-PARAGRAPH-{index:03d} " + "Original body text. " * 20
++        for index in range(60)
 +    ]
-+    phase1 = CalibrationResult(
-+        status="ok",
-+        offset=12,
-+        regimes=[
-+            CalibrationRegime(
-+                kind="decimal",
-+                offset=12,
-+                offset_status="ok",
-+                entry_indices=[0, 1, 2],
-+                samples=[CalibrationSample(title="K.4", physical=104)],
-+            )
-+        ],
++    parsed = postprocess_leaf_dics(
++        [([], {"heading": [], "content": paragraphs})],
++        {"doc_type": "book", "summary_txt": False},
++        summary_len=200,
 +    )
-+    ctx = _ctx()
++    contents: list[str] = [text for group in parsed["content_lst"] for text in group]
++    assert contents == paragraphs
++    assert len(parsed) > 1
+```
+
+**File**: `apps/worker/tests/contract/test_source_content_admission_contract.py` (modified, +71/-2)
+```diff
+@@ -183,7 +183,51 @@ def test_rejects_unchanged_explicit_document_update(
+     )
+     with pytest.raises(ConflictException) as failure:
+         admit_source(incoming)
+-    assert failure.value.to_client(incoming.job_id)["error"]["details"]["id"] == existing.document_id
++    assert (
++        failure.value.to_client(incoming.job_id)["error"]["details"]["id"]
++        == existing.document_id
++    )
 +
-+    def fake_verify(**kwargs: Any) -> dict[str, Any]:
-+        expected = int(kwargs["candidate_matches"][0].page)
-+        title = str(kwargs.get("title") or "")
-+        ok = {
-+            ("K.4", 104),  # 92 + 12
-+            ("L.1", 105),  # 94 + 11
-+            ("Ref", 154),  # 143 + 11
++
++def test_reparses_unchanged_bytes_only_for_the_explicit_existing_document(
++    worker_contract_environment: None,
++    tmp_path: Path,
++) -> None:
++    from shared.core.database_sync import get_sync_db_context
++    from shared.models.database.job import Job
++    from shared.models.database.document import Document
++
++    contract: WorkerParseContract = WorkerParseContract.create()
++    existing: SourceJob = create_source_job(contract, tmp_path, content=b"repair bytes")
++    admit_source(existing)
++    publish_source(existing)
++    incoming: SourceJob = create_source_job(
++        contract,
++        tmp_path,
++        content=b"repair bytes",
++        user_id=existing.user_id,
++        document_id=existing.document_id,
++    )
++    with get_sync_db_context() as database:
++        job = database.get(Job, incoming.job_id)
++        assert job is not None
++        job.job_metadata = {
++            **dict(job.job_metadata or {}),
++            "original_request": {
++                "document_id": existing.document_id,
++                "reparse": True,
++            },
 +        }
-+        if (title, expected) in ok:
-+            return {"selected_page": expected, "reason": "ok"}
-+        return {"selected_page": None, "reason": "miss"}
-+
-+    def fake_scan(**kwargs: Any) -> TitleScanResult:
-+        title = str(kwargs.get("title") or "")
-+        start = int(kwargs.get("start_page") or 0)
-+        assert title == "L.1"
-+        assert start == 104
-+        return TitleScanResult(
-+            title=title,
-+            found=True,
-+            found_page=105,
-+            scanned_pages=[104, 105],
-+            next_start=106,
++    assert admit_source(incoming)["source_content_sha256"]
++    publish_source(incoming)
++    with get_sync_db_context() as database:
++        documents = list(
++            database.scalars(
++                select(Document).where(Document.user_id == existing.user_id)
++            )
 +        )
++        assert len(documents) == 1
++        assert documents[0].document_id == existing.document_id
+ 
+ 
+ @pytest.mark.parametrize("scope_change", ["user", "namespace", "archived"])
+@@ -380,7 +424,9 @@ def claim_content(source: SourceJob) -> bool:
+ 
+     # Hold the first transaction after its empty snapshot. The second must wait
+     # for its advisory lock, rather than also admitting from an empty snapshot.
+-    event.listen(contract.engine, "after_cursor_execute", pause_first_claim_after_lookup)
++    event.listen(
++        contract.engine, "after_cursor_execute", pause_first_claim_after_lookup
++    )
+     try:
+         with ThreadPoolExecutor(max_workers=2) as executor:
+             first_claim: Future[bool] = executor.submit(claim_content, first)
+@@ -418,3 +464,26 @@ def claim_content(source: SourceJob) -> bool:
+         ).scalar_one()
+         job.status = "failed"
+     assert admit_source(loser)["source_content_sha256"]
 +
-+    with (
-+        _patch_verify(fake_verify),
-+        patch(
-+            "app.services.document_agent.calibration.scan.scan_title_forward",
-+            fake_scan,
-+        ),
-+    ):
-+        working, anchor = anchor_hierarchy_from_regimes(
-+            nodes=leaves,
-+            result=phase1,
-+            entries=[
-+                {"heading": "K.4", "level": 1, "page_number": 92},
-+                {"heading": "L.1", "level": 1, "page_number": 94},
-+                {"heading": "Ref", "level": 1, "page_number": 143},
-+            ],
-+            page_texts={104: "K.4", 105: "L.1", 154: "Ref"},
-+            body_pages=list(range(13, 155)),
-+            page_count=154,
-+            ctx=ctx,
++
++@pytest.mark.parametrize("version", ["v1", "v2"])
++def test_explicit_reparse_requires_an_existing_document_id(
++    worker_contract_environment: None, version: str
++) -> None:
++    from pydantic import ValidationError
++    from shared.models.schemas.job import JobCreate, JobCreateV2
++
++    model = JobCreate if version == "v1" else JobCreateV2
++    with pytest.raises(ValidationError, match="document_id"):
++        model(
++            source_type="url",
++            source_url="https://files.example/source.docx",
++            reparse=True,
 +        )
++    request = model(
++        source_type="url",
++        source_url="https://files.example/source.docx",
++        document_id="doc_existing",
++        reparse=True,
++    )
++    assert request.model_dump()["reparse"] is True
+```
+
+**File**: `packages/shared-python/shared/models/schemas/job.py` (modified, +32/-8)
+```diff
+@@ -1,12 +1,15 @@
+ """Unified job schemas."""
+ 
+ from datetime import datetime
+-from typing import Any, Dict, Literal, Optional
++from typing import Any, Dict, Literal, Optional, Self
+ 
+-from pydantic import BaseModel, ConfigDict, Field
++from pydantic import BaseModel, ConfigDict, Field, model_validator
+ 
+ from shared.models.schemas.llm_config import LLMConfig
+-from shared.models.schemas.progressive_ingestion import EnhancementProgress, PublishedSnapshot
++from shared.models.schemas.progressive_ingestion import (
++    EnhancementProgress,
++    PublishedSnapshot,
++)
+ 
+ IngestionMode = Literal["full", "progressive"]
+ 
+@@ -69,6 +72,17 @@ class JobCreateBase(BaseModel):
+     document_id: Optional[str] = Field(
+         None, description="Existing document ID for update flows"
+     )
++    reparse: bool = Field(
++        False,
++        description="Reparse unchanged original bytes for the specified existing document ID",
++    )
 +
-+    assert [n.title for n in working] == ["K.4", "L.1", "Ref"]
-+    assert anchor.match_overrides[("K.4",)].page == 104
-+    assert anchor.match_overrides[("L.1",)].page == 105
-+    assert anchor.match_overrides[("Ref",)].page == 154
++    @model_validator(mode="after")
++    def validate_reparse_target(self) -> Self:
++        if self.reparse and not str(self.document_id or "").strip():
++            raise ValueError("reparse requires an existing document_id")
++        return self
 +
-+
- def test_phase2_recalibrate_miss_drops_suffix_from_tree() -> None:
-     """When suffix cannot be recalibrated, those leaves leave the TOC tree."""
-     from app.services.document_agent.calibration.procedure import (
+     source_type: Literal["file", "url"] = Field(..., description="Document source type")
+     source_url: Optional[str] = Field(
+         None, description="Source URL; required when source_type=url"
+@@ -163,11 +177,21 @@ class StandardErrorObject(BaseModel):
+ class JobResultResponse(BaseModel):
+     """Job status query response (for GET /jobs/{job_id}/result)"""
+ 
+-    job_result_id: Optional[str] = Field(None, description="Immutable completed publication revision, when available")
+-    enhancement: Optional[EnhancementProgress] = Field(default=None, exclude_if=lambda value: value is None)
+-    snapshots: Optional[list[PublishedSnapshot]] = Field(default=None, exclude_if=lambda value: value is None)
+-    current_snapshot_id: Optional[str] = Field(default=None, exclude_if=lambda value: value is None)
+-    page_count: Optional[int] = Field(default=None, ge=1, exclude_if=lambda value: value is None)
++    job_result_id: Optional[str] = Field(
++        None, description="Immutable completed publication revision, when available"
++    )
++    enhancement: Optional[EnhancementProgress] = Field(
++        default=None, exclude_if=lambda value: value is None
++    )
++    snapshots: Optional[list[PublishedSnapshot]] = Field(
++        default=None, exclude_if=lambda value: value is None
++    )
++    current_snapshot_id: Optional[str] = Field(
++        default=None, exclude_if=lambda value: value is None
++    )
++    page_count: Optional[int] = Field(
++        default=None, ge=1, exclude_if=lambda value: value is None
++    )
+ 
+     job_id: str = Field(..., description="Job ID")
+     namespace: Optional[str] = Field(None, description="Effective retrieval namespace")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #488** (2026-10-31): chore: promote main to staging (TOC pairing and offset recalibrate) (@EricNGOntos)
-- **PR #487** (2026-10-31): Isolate paired TOC boundaries and recalibrate from last confirmed physical page (@EricNGOntos)
-- **PR #486** (2026-10-30): perf: shorten progressive first-ready work and deliver coarse directories (@suguanYang)
-- **PR #485** (2026-10-29): chore: promote main to staging (visual page-num match) (@EricNGOntos)
-- **PR #484** (2026-10-29): Match visual page discovery by page_nums across shared boundaries (@EricNGOntos)
-- **PR #483** (2026-10-28): chore: promote main to staging (Fine boundary titles) (@EricNGOntos)
+- **PR #495** (2026-11-02): chore: promote main to staging (URL file_name and DOCX repair) (@EricNGOntos)
+- **PR #494** (2026-11-02): fix: prefer URL file_name and keep slash titles as one section (@EricNGOntos)
+- **PR #493** (2026-11-02): fix: preserve DOCX leading content and support explicit repair revisions (@suguanYang)
+- **PR #492** (2026-11-02): revert: withdraw DOCX optional relationship compatibility (@suguanYang)
+- **PR #491** (2026-11-02): fix(parser): support DOCX packages without document relationships (@suguanYang)
+- **PR #490** (2026-11-02): chore: promote main to staging (progressive chunk ingest and asset names) (@EricNGOntos)
 
 ---
 
@@ -2307,53 +1830,42 @@ Isolate paired TOC boundaries and recalibrate from last confirmed physical page
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibr
+## X. Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relati
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/document_agent/calibration/procedure.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/worker/app/services/document_parser/formats/docx/block_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07cd00d1`: Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibrate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f16fa49`: Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relationships". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_agent/calibration/procedure.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_parser/formats/docx/block_stream.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    body_start_page: int = 1,
-        body_start_page=body_start_page,
-            working, pruned = prune_regime_out_of_scope(
-                working,
-                kind=kind,
-                entry_titles=entry_titles,
-                offset=offset,
-                page_count=page_count,
-            )
-            total_pruned += pruned
-            projected = project_nodes_for_regime(
-                working, kind=kind, entry_titles=entry_titles
-            )
-                matches = bulk_offset_matches(
-                    leaves, offset, page_count=page_count
-                )
-        body_start_page = min(body_pages) if body_pages else 1
-            body_start_page=body_start_page,
+        rels = etree.fromstring(docx.read("word/_rels/document.xml.rels"))
+        rel_map = {
+            r.get("Id"): r.get("Target") for r in rels.findall(".//{*}Relationship")
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        working, pruned = prune_regime_out_of_scope(
-            working,
-            kind=kind,
-            entry_titles=entry_titles,
-            offset=offset,
-            page_count=page_count,
-        )
-        total_pruned += pruned
-                matches = bulk_offset_matches(leaves, offset)
+        rel_map: dict[str | None, str | None] = {}
+        try:
+            relationships_xml: bytes = docx.read("word/_rels/document.xml.rels")
+        except KeyError:
+            # Documents without relationships may omit this package part.
+            pass
+        else:
+            relationships: etree._Element = etree.fromstring(relationships_xml)
+            rel_map = {
+                relationship.get("Id"): relationship.get("Target")
+                for relationship in relationships.findall(".//{*}Relationship")
+            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07cd00d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f16fa49` are properly handled with clean fallback behavior.

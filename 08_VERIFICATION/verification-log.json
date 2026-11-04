@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-QULW",
-    "timestamp": "2026-10-31T13:27:07.124Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-QYT3",
-    "timestamp": "2026-10-31T13:27:12.567Z",
-    "repository": "kotest/kotest",
-    "learningId": "learn-github-kotest-kotest",
-    "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ZUBF",
-    "timestamp": "2026-10-31T13:34:06.651Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-868A",
     "timestamp": "2026-10-31T13:40:35.338Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7490,6 +7445,51 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-BZ9K",
+    "timestamp": "2026-11-04T00:46:24.584Z",
+    "repository": "ratatui/ratatui",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-BZWL",
+    "timestamp": "2026-11-04T00:46:25.413Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-C812",
+    "timestamp": "2026-11-04T00:46:35.942Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

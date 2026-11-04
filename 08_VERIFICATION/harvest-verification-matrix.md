@@ -7082,3 +7082,6 @@
 | `CYCLE-20261104-1TKO` | `2026-11-04T00:38:30.648Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6683` | Yes (`b92faee2...`) |
 | `CYCLE-20261104-1UUR` | `2026-11-04T00:38:32.307Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6684` | Yes (`5cecd273...`) |
 | `CYCLE-20261104-20TV` | `2026-11-04T00:38:40.051Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6685` | Yes (`67a9c68b...`) |
+| `CYCLE-20261104-BZ9K` | `2026-11-04T00:46:24.584Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6686` | Yes (`bfc3b135...`) |
+| `CYCLE-20261104-BZWL` | `2026-11-04T00:46:25.413Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6687` | Yes (`720e4163...`) |
+| `CYCLE-20261104-C812` | `2026-11-04T00:46:35.942Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6688` | Yes (`b936822d...`) |

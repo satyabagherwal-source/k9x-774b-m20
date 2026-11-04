@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "07cd00d1",
+    "sourceVersion": "59764058",
     "license": "Apache-2.0",
-    "contentHash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
-    "lastHarvestedAt": "2026-10-31T11:09:37.676Z",
+    "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
+    "lastHarvestedAt": "2026-11-04T00:46:35.946Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "21bf834c",
+    "sourceVersion": "2b6793e6",
     "license": "MIT",
-    "contentHash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
-    "lastHarvestedAt": "2026-10-31T22:03:49.842Z",
+    "contentHash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
+    "lastHarvestedAt": "2026-11-04T00:46:24.588Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "f87db10f",
+    "sourceVersion": "114dd59d",
     "license": "BSD-3-Clause",
-    "contentHash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
-    "lastHarvestedAt": "2026-10-30T16:39:35.933Z",
+    "contentHash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
+    "lastHarvestedAt": "2026-11-04T00:46:25.418Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {
