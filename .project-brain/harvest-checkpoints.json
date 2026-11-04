@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-03T23:59:32.403Z",
+  "last_updated": "2026-11-04T00:10:57.076Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
-      "verified_at": "2026-10-31T10:27:16.930Z",
+      "content_hash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
+      "verified_at": "2026-11-04T00:10:57.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:27:16.930Z"
+      "last_updated": "2026-11-04T00:10:57.075Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
-      "verified_at": "2026-10-30T15:37:05.041Z",
+      "content_hash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
+      "verified_at": "2026-11-04T00:10:47.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:37:05.041Z"
+      "last_updated": "2026-11-04T00:10:47.081Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
-      "verified_at": "2026-10-30T23:44:49.378Z",
+      "content_hash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
+      "verified_at": "2026-11-04T00:10:49.746Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:44:49.378Z"
+      "last_updated": "2026-11-04T00:10:49.746Z"
     },
     "expo/expo": {
       "repository": "expo/expo",
@@ -17804,6 +17804,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-03T22:06:37.209Z"
+    },
+    "abenzerps/Qwen-Image-2.1-Turbo-Quantized": {
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "content_hash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
+      "verified_at": "2026-11-04T00:10:50.720Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-04T00:10:50.720Z"
     }
   },
   "repos": {

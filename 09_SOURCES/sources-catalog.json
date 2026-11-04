@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "6e3efd5a",
+    "sourceVersion": "4b2ecad6",
     "license": "AGPL-3.0",
-    "contentHash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
-    "lastHarvestedAt": "2026-10-31T10:27:16.921Z",
+    "contentHash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
+    "lastHarvestedAt": "2026-11-04T00:10:57.066Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "2aa7e9c3",
+    "sourceVersion": "c5347bbd",
     "license": "MIT",
-    "contentHash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
-    "lastHarvestedAt": "2026-10-30T15:37:05.032Z",
+    "contentHash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
+    "lastHarvestedAt": "2026-11-04T00:10:47.071Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "b805c0a5",
+    "sourceVersion": "8f4601d2",
     "license": "BSD-3-Clause",
-    "contentHash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
-    "lastHarvestedAt": "2026-10-30T23:44:49.370Z",
+    "contentHash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
+    "lastHarvestedAt": "2026-11-04T00:10:49.736Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {
@@ -11828,5 +11828,15 @@
     "contentHash": "1c37d312f0c7c4c45549e072ad38bbe1eb9693485c4b352b6db6c3f2eb38fa4d",
     "lastHarvestedAt": "2026-11-03T22:06:37.199Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
+  },
+  "hf-abenzerps-qwen-image-2.1-turbo-quantized": {
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "sourceVersion": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+    "license": "Open-Source",
+    "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
+    "lastHarvestedAt": "2026-11-04T00:10:50.710Z",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
   }
 }

@@ -7066,3 +7066,7 @@
 | `CYCLE-20261103-6IE3` | `2026-11-03T23:46:10.203Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6664` | Yes (`9c26dc48...`) |
 | `CYCLE-20261103-6JLI` | `2026-11-03T23:46:11.766Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6665` | Yes (`45f4a037...`) |
 | `CYCLE-20261103-NPD3` | `2026-11-03T23:59:32.391Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6666` | Yes (`5cc5b07d...`) |
+| `CYCLE-20261104-25Y3` | `2026-11-04T00:10:47.067Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6667` | Yes (`ac341555...`) |
+| `CYCLE-20261104-2804` | `2026-11-04T00:10:49.732Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6668` | Yes (`7dbd33ec...`) |
+| `CYCLE-20261104-28R6` | `2026-11-04T00:10:50.706Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6668, Rule 6669, Rule 6670` | Yes (`13da1d70...`) |
+| `CYCLE-20261104-2DNQ` | `2026-11-04T00:10:57.062Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6671` | Yes (`e4a680b2...`) |

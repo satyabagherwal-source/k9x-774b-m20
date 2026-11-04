@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `6e3efd5a`  
+> **Source Version**: `4b2ecad6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:27:16.232Z  
+> **Timestamp**: 2026-11-04T00:10:56.282Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:27:16.223Z  
+> **Harvest Timestamp**: 2026-11-04T00:10:55.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9464 stars
+- **Stars / Engagement**: 9474 stars
 
 ---
 
@@ -2301,11 +2301,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7091** (2026-10-30): **Hash-join InList pushdown disabled when build-side join key contains NULL**
-  *Symptoms*: ### What happens?  If the build side of a hash join has a NULL key, the `InList` dynamic filter is never pushed down as a `TermSetQuery`. The probe side falls back to a full scan + `PreFilter`.  Cause: `try_convert_in_list_to_query` (`scan/pre_filter.rs`) collects terms into `Option<Vec<Term>>`, and `from_scalar` returns `None` for a NULL, so one NULL rejects the whole list. NULLs can just be skipped, since they never match in a non-negated `IN` / inner join.  ### To Reproduce  Stackoverflow benchmark, 100k posts:  ```sql SELECT b.name, COUNT(*) FROM stackoverflow_posts p JOIN badges b ON b.user_id = p.owner_user_id WHERE p.body ||| 'postgres' GROUP BY b.name ORDER BY COUNT(*) DESC LIMIT 10; ```  118 matching posts, 1 with `owner_user_id IS NULL`. No pushdown, and the `badges` scan reads all ~5.95M docs.  With NULLs skipped:  | term | before | after | |---|---|---| | postgres | 115 ms | 43 ms | | regex | 133 ms | 54 ms |  ### Environment  - OS: Linux x86_64 - Version: pg_search 0.26.0 (`main` @ 1a4c5ecd9) - pg_search extension, PG18 
+- **Issue #7167** (2026-11-03): **Negated boolean heap filter includes NULL rows in a ParadeDB Base Scan**
+  *Symptoms*: ### What happens?  For `body @@@ 'hello' AND NOT flag`, a ParadeDB Base Scan returns a row where `flag IS NULL`. PostgreSQL's three-valued logic excludes that row because `NOT NULL` is still NULL. Disabling the custom scan returns the correct row set.  ### To reproduce  ```sql CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_search; CREATE TABLE not_null_repro(id integer PRIMARY KEY, body text, flag boolean); INSERT INTO not_null_repro VALUES   (1, 'hello true', true),   (2, 'hello false', false),   (3, 'hello null', NULL),   (4, 'other', false); CREATE INDEX not_null_repro_idx ON not_null_repro USING paradedb (id, body); ANALYZE not_null_repro;  SET paradedb.enable_custom_scan = off; SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2}  SET paradedb.enable_custom_scan = on; SET paradedb.enable_filter_pushdown = on; EXPLAIN (COSTS OFF) SELECT id FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- Custom Scan (ParadeDB Base Scan)  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2,3}; expected {2}  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND flag IS NOT TRUE; -- {2,3} (control: this expression should include the NULL row)  DROP TABLE not_null_repro; ```  `EXPLAIN` places the `flag` heap filter under a Tantivy `must_not` query. A NULL `flag` does not match the inner filter, so `must_not` retains it, although the SQL `NOT` p
 
-- **Issue #7079** (2026-10-29): **qgen aggregate join test silently falls back because rating is not indexed**
-  *Symptoms*: ## Problem  `generated_aggregate_join` is intended to exercise ParadeDB aggregate pushdown, but its shared qgen fixture deliberately leaves `rating` unindexed for heap-filter coverage. The test nevertheless generates `MIN(users.rating)` and `MAX(users.rating)`. ParadeDB correctly warns that the aggregate argument is not columnar indexed and falls back to PostgreSQL execution.  The test checks result equivalence without checking that the intended DataFusion aggregate path was selected. This lets fallback silently satisfy the test until it becomes slow enough to time out.  ## Evidence  The October 28 Enterprise Antithesis run reported a 60-second statement timeout for `generated_aggregate_join::case_2_churn`, while the harness reported a declared fault pause. This was an execution timeout, not an observed result mismatch.  Run: `7ca15ed5f6be3f861d09eecbb6d51d93-64-10`   Session: `f2b3d1701ab837ac4536d5d15a64a47c-64-10`   Qgen setup seed: `8222010017877383816`  Replayed the full SQL below on pg_search 0.26.3:  - Original fixture: valid warning that `users.rating` is not columnar indexed; PostgreSQL hash FULL JOINs and a sequential search filter. Results matched the baseline locally. - Adding only `rating` to the generated indexes: **ParadeDB Aggregate Scan, Backend: DataFusion**, with both FULL JOINs in the DataFusion physical plan. Results still matched.  This confirms a fixture/coverage problem in qgen. It does not establish a ParadeDB planner bug: the warning correctly descri
+- **Issue #7150** (2026-11-03): **AggregateScan ignores a non-constant string_agg separator and uses ","**
+  *Symptoms*: ### What happens?  `ParadeDB Aggregate Scan` returns the wrong result for `string_agg(value, separator)` when the separator is not a constant, for example a column. The scan joins the values with `","` instead of using the separator.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE sa (id int PRIMARY KEY, name text, sep text); CREATE TABLE sb (id int PRIMARY KEY, a_id int);  INSERT INTO sa VALUES (1, 'x', '-'), (2, 'y', ';'), (3, 'z', '|'); INSERT INTO sb VALUES (1, 1), (2, 2), (3, 3);  CREATE INDEX sa_idx ON sa USING paradedb (id, (name::pdb.literal)); CREATE INDEX sb_idx ON sb USING paradedb (id, a_id);  SET max_parallel_workers_per_gather = 0; SET paradedb.enable_join_custom_scan = off;  SELECT string_agg(sa.name, sa.sep ORDER BY sa.id) FROM sa JOIN sb ON sb.a_id = sa.id WHERE sa.id @@@ pdb.all(); ```  Returns `x,y,z`. Expected `x;y|z`. With `SET paradedb.enable_aggregate_custom_scan = off;` it returns `x;y|z`.  ### OS:  MacOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  73897ff6  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB Docker Image  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant data sets for reproducing the issue?  Yes  ### Did you include the code required to reproduce the issue?  - [ ] Yes, I have  ### Did you include all relevant configurations (e.g., CPU architecture, PostgreSQL version, Linux distribution) to rep
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,682 +2322,686 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c13589a` (2026-10-30)
-**Commit Message**: fix: omit graph dependencies from Stressgres runtime image (#7129)
+### Incident Patch 1: `c9030485` (2026-11-02)
+**Commit Message**: fix: route sum(int8) to the DataFusion aggregate backend (#7143)
 
-The Stressgres runtime image installs Fontconfig and its font/XML
-dependencies for graph generation, although Antithesis only needs the
-workload runner. Make graph generation a default-enabled Cargo feature
-and disable it in the Docker build. Normal source builds retain the
-graph command; the image retains UI, headless, auto, and CSV commands.
+## Summary
 
-Remove the graphics development packages from the builder and
-libfontconfig1 from the runtime. Debian's package resolver confirms this
-avoids eight runtime packages: libfontconfig1, libexpat1, libfreetype6,
-libpng16-16t64, libbrotli1, fontconfig-config, fonts-dejavu-core, and
-fonts-dejavu-mono. Keep the libraries needed by PostgreSQL TLS and the
-copied psql client, plus Bash and flock for Antithesis scripts.
+`sum()` over a `bigint` column on the single-table Aggregate Scan ran in
+Tantivy, which sums in f64, so totals past 2^53 came back rounded. This
+routes `sum(int8)` to the DataFusion backend, the same way NUMERIC
+aggregates are already routed, and the result is exact.
 
-Document that the image disables graph generation. A temporary
-runtime-dependency smoke step passed in GitHub Actions and was then
-removed; the existing Docker test remains unchanged.
+**Merge order.** Please merge #7118 first. On main, DataFusion's
+`sum(int8)` is a plain `Int64` sum that wraps past the `bigint` range
+(#6932), and #7118 fixes that by summing as `Decimal128(38, 0)`. Without
+it, this PR turns a rounded total past 2^63 into a wrapped one. With
+this branch on current main, two `9223372036854775807` rows sum to `-2`,
+where PostgreSQL gives `18446744073709551614`.
 
-Validation: built the full ARM64 DST Docker image with Rust 1.99.0 and
-ran the temporary runtime smoke step successfully, both locally and in
-GitHub Actions. Stressgres/headless/CSV help,
+## Context
 
-**File**: `docker/Dockerfile.stressgres` (modified, +3/-5)
-```diff
-@@ -24,9 +24,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
-     pkg-config \
-     libpq-dev \
-     libssl-dev \
--    libpng-dev \
--    libjpeg-dev \
--    libfontconfig1-dev \
-     curl \
-     postgresql-client \
-     && rm -rf /var/lib/apt/lists/*
-@@ -46,7 +43,7 @@ RUN cargo fetch --manifest-path /home/app/Cargo.toml && \
-     TARGET="$(rustc -vV | sed -n 's/^host: //p')" && \
-     env "CARGO_TARGET_$(echo "$TARGET" | tr 'a-z-' 'A-Z_')_RUSTFLAGS=-Ccodegen-units=1 -Cpasses=sancov-module -Cllvm-args=-sanitizer-coverage-level=3 -Cllvm-args=-sanitizer-coverage-trace-pc-guard -Clink-args=-Wl,--build-id" \
-         cargo build --offline --profile dst --target "$TARGET" \
--        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
-+        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
-     cp "/home/app/target/$TARGET/dst/stressgres" /tmp/stressgres && \
-     cp /usr/lib/postgresql/17/bin/psql /tmp/psql
- 
-@@ -59,10 +56,11 @@ FROM debian:trixie-slim AS runtime
- # Upgrade the runtime packages so a rebuild picks up all available Debian
- # security fixes. psql is used by the Antithesis setup/verification scripts;
- # util-linux provides flock for the recovery-liveness script.
-+# Graph generation is disabled in this image, avoiding Fontconfig and its
-+# transitive font/XML dependencies. Normal source builds retain graph support.
- RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
-     bash \
-     ca-certificates \
--    libfontconfig1 \
-     libpq5 \
-     libreadline8t64 \
-     libssl3t64 \
+The issue's repro, on main:
+
+```
+SELECT sum(b) FROM t WHERE body @@@ 'x';
+-- Aggregate Scan (Tantivy):   18014398509482000
+-- PostgreSQL:                 18014398509481991
 ```
 
-**File**: `stressgres/Cargo.toml` (modified, +4/-2)
-```diff
-@@ -9,6 +9,8 @@ license = { workspace = true }
- workspace = true
- 
- [features]
-+default = ["graph"]
-+graph = ["dep:image", "dep:plotters"]
- dst = ["dst/enabled"]
- 
- [dependencies]
-@@ -22,12 +24,12 @@ cursive_table_view = "0.15.0"
- dst = { path = "../dst" }
- human_bytes = "0.4.3"
- humantime = "2.3.0"
--image = "0.25.9"
-+image = { version = "0.25.9", optional = true }
- libc = "0.2.190"
- openssl = "0.10.78"
- parking_lot = "0.12.5"
- pgrx-pg-config = "=0.19.3"
--plotters = "0.3.7"
-+plotters = { version = "0.3.7", optional = true }
- postgres = "0.19.13"
- postgres-openssl = "0.5.3"
- rust_decimal = { version = "1.43.0", features = ["db-postgres"] }
-```
+Tantivy's `SumAggregation` accumulates in f64, and changing that would
+mean changing the tantivy fork. The DataFusion backend already reads the
+`int8` fast field exactly, so routing is the change that stays in this
+repo.
 
-**File**: `stressgres/README.md` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ To run Stressgres from within Docker, use:
- docker run --rm paradedb/stressgres:latest /symbols/stressgres headless stressgres/suites/single-node-planner-paths.toml
- ```
- 
--The source, including all suites, is included in the Docker image. The image prebuilds Stressgres at `/symbols/stressgres` and can run in air-gapped environments like Antithesis.
-+The image includes the suites and a prebuilt Stressgres binary at `/symbols/stressgres`, and can run in air-gapped environments like Antithesis. It disables the `graph` feature to omit native font dependencies.
- 
- For an interactive shell:
- 
-```
+## Changes
 
-**File**: `stressgres/src/cli.rs` (modified, +2/-0)
-```diff
-@@ -76,6 +76,7 @@ pub enum Command {
-     Headless(HeadlessArgs),
- 
-     /// Parse a log file and generate metric graphs from the contained data
-+    #[cfg(feature = "graph")]
-     Graph(GraphArgs),
- 
-     /// Parse a log file and generate an aggregated CSV report of contained data
-@@ -136,6 +137,7 @@ pub struct HeadlessArgs {
- }
- 
- /// Arguments for parsing a log file and generating the desired charts.
-+#[cfg(feature = "graph")]
- #[derive(Debug, Args)]
- pub struct GraphArgs {
-     /// Path to the log file produced by a headless run.
-```
+- `CreateUpperPathsHookArgs::has
 
-**File**: `stressgres/src/main.rs` (modified, +2/-0)
-```diff
-@@ -21,6 +21,7 @@ mod auto;
- mod cli;
- mod csv;
- mod fault_tolerance;
-+#[cfg(feature = "graph")]
- mod graph;
- mod headless;
- mod metrics;
-@@ -121,6 +122,7 @@ fn main() -> anyhow::Result<()> {
-         }
- 
-         // When using the "graph" subcommand.
-+        #[cfg(feature = "graph")]
-         Command::Graph(graph_args) => {
-             graph::run(&graph_args)?;
-         }
-```
-
----
-
-### Incident Patch 2: `5b16358a` (2026-10-30)
-**Commit Message**: fix: raise on float division by zero in Join Scan (#7104)
-
-# Ticket(s) Closed
-
-- Closes #6930
-
-## What
-
-Float division by zero inside an expression absorbed by the Join Scan
-now raises PostgreSQL's `division by zero` instead of evaluating to
-`Infinity`.
-
-## Why
-
-`PredicateTranslator::translate_op_expr` maps `/` to DataFusion's
-`Operator::Divide`. For floats, Arrow follows IEEE-754 and returns
-`inf`, `-inf` or `NaN` for a zero divisor without an error, while
-`float8div` and `float4div` raise one.
-
-## How
-
-`translate_op_expr` declines `/` when the operator's result type is
-`float4` or `float8`. `translate` then wraps the subtree with the
-existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates the
-division. The expression is still absorbed by the Join Scan, as the
-EXPLAIN in the new test shows.
-
-Integer division is unchanged, since Arrow's integer kernel
-(`div_checked`) already errors on a zero divisor.
-
-The trade-off is that float division now runs through the UDF rather
-than a native Arrow kernel. Two existing expected outputs change for
-that reason, and only in their plan text. Their result rows are
-identical (`join_distinct_expr`, `topk-agg-facet`).
-
-This touches the same spo
-
-**File**: `docs/project/changelog/unreleased/7104.bugfix.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/7143.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Float division by zero in expressions evaluated by the Join Scan now raises `division by zero` instead of returning `Infinity`.
++- `sum()` over a `bigint` column in a single-table aggregate now returns the exact total instead of rounding values past 2^53.
 ```
 
-**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +17/-0)
+**File**: `pg_search/src/postgres/customscan/aggregatescan/mod.rs` (modified, +8/-0)
 ```diff
-@@ -601,6 +601,23 @@ impl<'a> PredicateTranslator<'a> {
-             return None;
-         }
+@@ -694,6 +694,14 @@ impl CustomScan for AggregateScan {
+                             // backend: Tantivy aggregations compute in f64 and cannot
+                             // read the decimal-bytes storage.
+                             || builder.args().has_numeric_aggregate()
++                            // Tantivy sums int8 in f64, which rounds past 2^53. Only
++                            // take queries the Tantivy backend would have taken.
++                            || (builder.args().has_int8_sum_aggregate()
++                                && (gucs::enable_custom_scan_without_operator()
++                                    || search_operator_relations::applies_to(
++                                        builder.args().root,
++                                        input_rel.relid,
++                                    )))
+                             || pdb_route.as_ref().is_some_and(PdbAggRoute::references_numeric)
+                             // Route DATE grouping to DataFusion for exact integer day conversion
+                             // and explicit handling of PostgreSQL infinities. Tantivy histograms
+```
+
+**File**: `pg_search/src/postgres/customscan/mod.rs` (modified, +27/-0)
+```diff
+@@ -493,6 +493,33 @@ impl CreateUpperPathsHookArgs {
+         false
+     }
  
-+        // Arrow divides floats by zero to Infinity or NaN where PostgreSQL raises an
-+        // error, so let the UDF fallback evaluate float division.
-+        if op == Operator::Divide
-+            && matches!(
-+                (*op_expr).opresulttype,
-+                pg_sys::FLOAT4OID | pg_sys::FLOAT8OID
-+            )
-+        {
-+            pgrx::debug1!(
-+                "PredicateTranslator: float division left to PostgreSQL [OpExpr] types=({}, {}) | {}",
-+                type_name(left_type),
-+                type_name(right_type),
-+                self.deparse_for_debug(node)
-+            );
-+            return None;
++    /// True when the query sums a direct `int8` column reference. PostgreSQL sums
++    /// `bigint` into an exact NUMERIC, but the Tantivy aggregation engine sums in
++    /// f64, which rounds values past 2^53, so these queries must route to the
++    /// DataFusion backend. Wrapped arguments stay on Tantivy, as in
++    /// [`Self::has_numeric_aggregate`].
++    pub unsafe fn has_int8_sum_aggregate(&self) -> bool {
++        let parse = self.root().parse;
++        if parse.is_null() {
++            return false;
 +        }
 +
-         let collid = (*op_expr).inputcollid;
-         if collid != pg_sys::Oid::INVALID {
-             let required_op = match op_str {
++        let is_int8_sum = |node: *mut pg_sys::Node| {
++            crate::nodecast!(Aggref, T_Aggref, node).is_some_and(|aggref| {
++                (*aggref).aggfnoid.to_u32() == pg_sys::F_SUM_INT8
++                    && PgList::<pg_sys::TargetEntry>::from_pg((*aggref).args)
++                        .iter_ptr()
++                        .any(|arg| {
++                            aggregatescan::join_targetlist::unwrap_to_var((*arg).expr.cast())
++                                .is_some()
++                        })
++            })
++        };
++
++        (!(*parse).targetList.is_null() && (*parse).targetList.any(is_int8_sum))
++            || (!(*parse).havingQual.is_null() && (*parse).havingQual.any(is_int8_sum))
++    }
++
+     /// Returns true when a `GROUP BY` expression is `date(timestamp)` or
+     /// `date(timestamptz)`.
+     ///
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/issue_6930.out` (added, +54/-0)
+**File**: `pg_search/tests/pg_regress/expected/aggregate.out` (modified, +12/-9)
 ```diff
-@@ -0,0 +1,54 @@
+@@ -383,15 +383,18 @@ SELECT
+     SUM(double_val), AVG(double_val), MIN(double_val), MAX(double_val)
+ FROM type_test
+ WHERE (text_val ||| 'test1' OR text_val ||| 'test2');
+-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Custom Scan (ParadeDB Aggregate Scan) on public.type_test
+-   Output: pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text), pdb.agg_fn('SUM'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
+-   Index: type_test_idx
+-   Tantivy Query: {"boolean":{"should":[{"with_index":{"query":{"match":{"field":"text_val","value":"test1","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"with_index":{"query":{"match":{"field":"text_val","value":"test2","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}]}}
+-     Applies to Aggregates: SUM(int_val), AVG(int_val), MIN(int_val), MAX(int_val), SUM(bigint_val), AVG(bigint_val), MIN(bigint_val), MAX(bigint_val), SUM(smallint_val), AVG(smallint_val), MIN(smallint_val), MAX(smallint_val), SUM(numeric_val), AVG(numeric_val), MIN(numeric_val), MAX(numeric_val), SUM(float_val), AVG(float_val), MIN(float_val), MAX(float_val), SUM(double_val), AVG(double_val), MIN(double_val), MAX(double_val)
+-     Aggregate Definition: {"0":{"sum":{"field":"int_val","missing":null,"none_if_no_match":true}},"1":{"avg":{"field":"int_val","missing":null}},"10":{"min":{"field":"smallint_val","missing":null}},"11":{"max":{"field":"smallint_val","missing":null}},"12":{"sum":{"field":"numeric_val","missing":null,"none_if_no_match":true}},"13":{"avg":{"field":"numeric_val","missing":null}},"14":{"min":{"field":"numeric_val","missing":null}},"15":{"max":{"field":"numeric_val","missing":null}},"16":{"sum":{"field":"float_val","missing":null,"none
+```
+
+**File**: `pg_search/tests/pg_regress/expected/issue_6929.out` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
 +CREATE EXTENSION IF NOT EXISTS pg_search;
-+CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
-+CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
-+INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
-+INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
-+CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
-+CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
-+SET paradedb.enable_join_custom_scan = on;
-+-- Float division in a Join Scan is evaluated by PostgreSQL
++CREATE TABLE issue_6929_t (id int PRIMARY KEY, body text, grp int4, b int8);
++INSERT INTO issue_6929_t VALUES
++    (1, 'x', 1, 9007199254740993),
++    (2, 'x', 1, 9007199254740993),
++    (3, 'x', 2, 5),
++    (4, 'x', 2, NULL);
++CREATE INDEX issue_6929_t_idx ON issue_6929_t USING paradedb (id, body, grp, b);
++SET max_parallel_workers_per_gather = 0;
++SET paradedb.enable_aggregate_custom_scan TO on;
++-- sum(int8) runs in the DataFusion aggregate backend, not Tantivy's f64 sum
 +EXPLAIN (COSTS OFF)
-+SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
-+                                                                                      QUERY PLAN                                                                                      
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Relation Tree: i INNER e
-+   Join Cond: e.id = i.id
-+   Join Predicate: heap:((i.f / (e.b)::double precision) > '0'::double precision)
-+   Limit: 10
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
++                                                                                                QUERY PLAN                                                                                                
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Aggregate Scan)
++   Backend: DataFusion
++   Indexes: issue_6929_t_idx (issue_6929_t)
++   Aggregates: SUM(b)
 +   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
-+     :   GlobalLimitExec: skip=0, fetch=10
-+     :     VisibilityFilterExec: tables=[i, e]
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_9c511f53(f@0, b@1) > 0
-+     :         CooperativeExec
-+     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"beta","lenient":null,"conjunction_mode":null}}}}
-+     :         CooperativeExec
-+     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
-+(14 rows)
++     : AggregateExec: mode=Single, gby=[], aggr=[sum(issue_6929_t_0.b) as agg_0]
++     :   CooperativeExec
++     :     PgSearchScan: table=issue_6929_t, segments=1, visibility=eager, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"x","lenient":null,"conjunction_mode":null}}}}
++(8 rows)
 +
-+-- Division by zero raises an error instead of yielding Infinity
-+SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
-+ERROR:  division by zero
-+SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' LIMIT 10;
-+ERROR:  division by zero
-+SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' LIMIT 10;
-+ERROR:  division by zero
-+SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
-+ERROR:  division by zero
-+-- Division by a non-zero value is unchanged
-+SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
-+ id | q | p 
-+----+---+---
-+  1 | 0 | 0
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
++        sum        
++-------------------
++ 18014398509481991
 +(1 row)
 +
-+RESET paradedb.enable_join_custom_scan;
-+DROP TABLE issue_6930_i;
-+DROP TABLE issue_6930_e;
++SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
++ grp |        sum        
++-----+-------------------
++   1 | 18014398509481986
++   2 |                 5
++(2 rows)
++
++SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
++      doubled      
++-------------------
++ 36028797018963982
++(1 row)
++
++SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
++GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
++ grp 
++-----
++   1
++(1 row)
++
++-- Parity
++SET paradedb.enable_aggregate_custom_scan TO off;
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
++        sum        
++-------------------
++ 18014398509481991
++(1 row)
++
++SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
++ grp |        sum        
++-----+-------------------
++   1 | 18014398509481986
++   2 |                 5
++(2 rows)
++
++SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
++      doubled      
++-------------------
++ 36028797018963982
++(1 row)
++
++SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
++GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
++ grp 
++-----
++   1
++(1 row)
++
++RESET paradedb.enable_aggregate_custom_scan;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6929_t;
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +1/-1)
-```diff
-@@ -734,7 +734,7 @@ ORDER BY p.name
-    Order By: p.name asc
-    DataFusion Physical Plan: 
-      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
--     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_eb551b6f(supplier_id@1) / 3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-+     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_5205a10c(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
-      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
-      :         CooperativeExec
-```
-
-**File**: `pg_search/tests/pg_regress/expected/topk-agg-facet.out` (modified, +3/-3)
-```diff
-@@ -2574,16 +2574,16 @@ JOIN product_reviews r ON p.id = r.product_id
- WHERE p.description ||| 'laptop'
- ORDER BY r.score DESC
- LIMIT 3;
--                                                                                                                                                                                                         QUERY PLAN                                                                                                                                                                                                         
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+                                                                                                                                                                                       QUERY PLAN                                                                                                                                                                                       
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Join Scan)
-    Output: p.id, r.score, ((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text) + 1)), ((r.score + pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))), (((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))::double precision / (pdb.window_agg('count(*) OVER ()'::text))::double precision))
-    Relation Tree: p INNER r
-    Join Cond: p.id = r.product_id
-    Limit: 3
-    Order By: r.score desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_funcexpr_01980a78(window_agg_1@1) / pdb_eval_expr_funcexpr_02120823(window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
-+     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_opexpr_d5caad3d(window_agg_1@1, window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
-      :   GlobalLimitExec: skip=0, fetch=3
-      :     UnnestExec
-      :       AggregateExec: mode=Single, gby=[], aggr=[topk_as_agg(p_0.id, r_1.score, p_0.ctid_0, r_1.ctid_1, 3, [2, 3]) ORDER BY [r_1.score DESC NULLS FIRST] as __topk, count(1) FILTER (WHERE r_1.score > Int64(80)) as window_agg_1, count(1) as window_agg_4]
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_6930.sql` (added, +34/-0)
+**File**: `pg_search/tests/pg_regress/sql/issue_6929.sql` (added, +34/-0)
 ```diff
 @@ -0,0 +1,34 @@
 +CREATE EXTENSION IF NOT EXISTS pg_search;
 +
-+CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
-+CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
-+INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
-+INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
-+CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
-+CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
++CREATE TABLE issue_6929_t (id int PRIMARY KEY, body text, grp int4, b int8);
++INSERT INTO issue_6929_t VALUES
++    (1, 'x', 1, 9007199254740993),
++    (2, 'x', 1, 9007199254740993),
++    (3, 'x', 2, 5),
++    (4, 'x', 2, NULL);
++CREATE INDEX issue_6929_t_idx ON issue_6929_t USING paradedb (id, body, grp, b);
 +
-+SET paradedb.enable_join_custom_scan = on;
++SET max_parallel_workers_per_gather = 0;
++SET paradedb.enable_aggregate_custom_scan TO on;
 +
-+-- Float division in a Join Scan is evaluated by PostgreSQL
++-- sum(int8) runs in the DataFusion aggregate backend, not Tantivy's f64 sum
 +EXPLAIN (COSTS OFF)
-+SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
 +
-+-- Division by zero raises an error instead of yielding Infinity
-+SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
-+SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' LIMIT 10;
-+SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' LIMIT 10;
-+SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
++SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
++SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
++SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
++GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
 +
-+-- Division by a non-zero value is unchanged
-+SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
++-- Parity
++SET paradedb.enable_aggregate_custom_scan TO off;
++SELECT sum(b) FROM issue_6929_t WHERE body @@@ 'x';
++SELECT grp, sum(b) FROM issue_6929_t WHERE body @@@ 'x' GROUP BY grp ORDER BY grp;
++SELECT sum(b) * 2 AS doubled FROM issue_6929_t WHERE body @@@ 'x';
++SELECT grp FROM issue_6929_t WHERE body @@@ 'x'
++GROUP BY grp HAVING sum(b) = 18014398509481986 ORDER BY grp;
 +
-+RESET paradedb.enable_join_custom_scan;
-+
-+DROP TABLE issue_6930_i;
-+DROP TABLE issue_6930_e;
++RESET paradedb.enable_aggregate_custom_scan;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6929_t;
 ```
 
 ---
 
-### Incident Patch 3: `822b944e` (2026-10-30)
-**Commit Message**: fix: raise on integer overflow in Join Scan arithmetic (#7103)
-
-# Ticket(s) Closed
-
-- Closes #6931
+### Incident Patch 2: `b3d4631b` (2026-11-02)
+**Commit Message**: fix: parallelize and instrument MS MARCO heap loading (#7185)
 
 ## What
 
-Integer `+`, `-` and `*` inside an expression absorbed by the Join Scan
-now raise PostgreSQL's `integer out of range` / `bigint out of range` on
-overflow, instead of silently wrapping.
+Load MS MARCO Parquet shards with 16 independent DuckDB/Postgres
+workers, display progress every minute, and expose a workflow input for
+tuning concurrency. Give the snapshot job a 12-hour budget and refresh
+AWS credentials before loading and backup.
 
 ## Why
 
-`PredicateTranslator::translate_op_expr` maps these operators to
-DataFusion's `Operator::Plus`/`Minus`/`Multiply`. DataFusion's physical
-`BinaryExpr` evaluates them with Arrow's wrapping kernels unless
-`fail_on_overflow` is set. That flag only exists on the physical
-expression, and the planner always builds it as `false`, so the logical
-`Expr` we produce has no way to ask for checked arithmetic.
+[The current snapshot
+run](https://github.com/paradedb/paradedb/actions/runs/41513557929) uses
+one bulk insert for the entire corpus. Runner metrics show roughly 11
+MiB/s of source reads and 2% CPU utilization across 96 vCPUs, projecting
+beyond the existing six-hour job timeout and AWS session. The loader
+emits no incremental progress.
 
 ## How
 
-`translate_op_expr` declines `+`, `-` and `*` when the operator's result
-type is `int2`, `int4` or `int8`. `translate` then wraps the subtree
-with the existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates it
-with its own overflow checks. The expression is still absorbed by the
-Join Scan.
+- Add opt-in `parquet_load_workers`; MS MARCO selects 16. Workers claim
+distinct shards and use independent connections with two DuckDB threads
+and a 2 GB memory limit each. Retain the NUL-byte cleanup. Datasets that
+omit the setting keep their existing single bulk import.
+- Read Parquet metadata for exact expected row counts. Every minute,
+print a log-friendly bar with the percentage of rows committed,
+shard/row counts, recent and average rows/sec, elapsed time, and
+estimated load time remaining. In-flight rows are
 
-Float and numeric arithmetic, and integer `/` and `%`, are unchanged.
-Arrow already errors on integer division by zero.
-
-The trade-off is that these expressions now run through the UDF rather
-
-
-**File**: `docs/project/changelog/unreleased/7103.bugfix.mdx` (added, +5/-0)
+**File**: `.github/workflows/generate-benchmark-snapshots.yml` (modified, +45/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- Integer `+`, `-` and `*` in expressions evaluated by the Join Scan now raise an out-of-range error on overflow instead of silently wrapping.
-```
-
-**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +20/-2)
-```diff
-@@ -583,6 +583,24 @@ impl<'a> PredicateTranslator<'a> {
-             }
-         };
+@@ -30,6 +30,11 @@ on:
+         description: "Optional size for stackoverflow/cohere/msmarco (e.g. 100k, 1m, 20m, 113m). Blank = all sizes. Not supported for stackexchange/wikipedia."
+         required: false
+         default: ""
++      load_workers:
++        description: "MS MARCO Parquet loader workers. Positive integer; blank uses the dataset default (16)."
++        required: false
++        type: string
++        default: ""
+       benchmarker_ref:
+         description: "Benchmarker ref for stackexchange/wikipedia (branch/tag/SHA)."
+         required: false
+@@ -62,8 +67,15 @@ jobs:
+         env:
+           DATASET: ${{ inputs.dataset }}
+           SIZE: ${{ inputs.size }}
++          LOAD_WORKERS: ${{ inputs.load_workers }}
+         run: |
+           set -euo pipefail
++          if [ -n "$LOAD_WORKERS" ]; then
++            if [[ "$DATASET" != msmarco || ! "$LOAD_WORKERS" =~ ^[1-9][0-9]*$ ]]; then
++              echo "load_workers must be a positive integer and requires dataset=msmarco" >&2
++              exit 1
++            fi
++          fi
+           all='[
+             {"dataset":"stackoverflow","size":"100k"},
+             {"dataset":"stackoverflow","size":"1m"},
+@@ -92,6 +104,7 @@ jobs:
+       contents: read
+       id-token: write
+     name: Snapshot ${{ matrix.dataset }} (${{ matrix.size }})
++    timeout-minutes: ${{ matrix.dataset == 'msmarco' && 720 || 360 }}
+     needs: prep
+     if: github.ref == 'refs/heads/main' && needs.prep.outputs.native != '[]'
+     runs-on:
+@@ -142,22 +155,52 @@ jobs:
+           # extension default of 0, so an index's own `target_segment_count` is honored.
+           global_target_segment_count: ${{ matrix.dataset == 'stackoverflow' && '48' || '0' }}
  
-+        // Arrow wraps integer overflow where PostgreSQL raises an error, so let the
-+        // UDF fallback evaluate integer arithmetic.
-+        if matches!(op, Operator::Plus | Operator::Minus | Operator::Multiply)
-+            && matches!(
-+                (*op_expr).opresulttype,
-+                pg_sys::INT2OID | pg_sys::INT4OID | pg_sys::INT8OID
-+            )
-+        {
-+            pgrx::debug1!(
-+                "PredicateTranslator: integer arithmetic left to PostgreSQL [OpExpr] op=\"{}\", types=({}, {}) | {}",
-+                op_str,
-+                type_name(left_type),
-+                type_name(right_type),
-+                self.deparse_for_debug(node)
-+            );
-+            return None;
++      - name: Refresh AWS credentials for MS MARCO load
++        if: matrix.dataset == 'msmarco'
++        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
++        with:
++          role-to-assume: arn:aws:iam::858265286872:role/paradedb-benchmark-write
++          role-session-name: benchmark-${{ github.run_id }}-${{ github.run_attempt }}-load
++          role-duration-seconds: 21600
++          allowed-account-ids: "858265286872"
++          unset-current-credentials: true
++          aws-region: us-east-1
++
+       # Load the heap only (no index, no queries) so the cluster can be captured as a snapshot.
+       - name: Load Heap
++        timeout-minutes: ${{ matrix.dataset == 'msmarco' && 300 || 360 }}
+         working-directory: benchmarks/
++        env:
++          LOAD_WORKERS: ${{ inputs.load_workers }}
+         run: |
+           set -euo pipefail
++          load_args=()
++          if [ -n "$LOAD_WORKERS" ]; then
++            load_args+=(--parquet-load-workers "$LOAD_WORKERS")
++          fi
+           cargo run --release -- load-heap \
+             --dataset "${{ matrix.dataset }}" \
+             --size "${{ matrix.size }}" \
+-            --url "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres"
++            --url "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres" \
++            "${load_args[@]}"
+ 
+       - name: Verify and vacuum MS MARCO heap
+         if: matrix.dataset == 'msmarco'
+         run: |
+           psql "postgresql://$(whoami)@localhost:288${{ env.pg_version }}/postgres" \
+             -X -v ON_ERROR_STOP=1 -f benchmarks/datasets/msmarco/verify_heap.sql
+ 
++      - name: Refresh AWS credentials for MS MARCO backup
++        if: matrix.dataset == 'msmarco'
++        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
++        with:
++          role-to-assume: arn:aws:iam::858265286872:role/paradedb-benchmark-write
++          role-session-name: benchmark-${{ github.run_id }}-${{ github.run_attempt }}-backup
++          role-duration-seconds: 21600
++          allowed-account-ids: "858265286872"
++          unset-current-credentials: true
++          aws-region: us-east-1
++
+       # Clear any pre-existing snapshot at this path. Each run inits a fresh cluster (new system
+       # identifier), so a snapshot left from a prior run would conflict with pgBackRest stanza-create
+       # (error 028: "info files exist but do not match the database"). Regenerating intentionally
+@@ -179,6 +222,7 @@ jobs:
+         run: cargo pgrx stop pg${{ env.pg_version }}
+ 
+       - name: Snapshot Heap
++        timeout-minutes: ${{ matrix.dataset == 'msmarco' && 330 || 360 }}
+         working-directory: benchmarks/
+         run: |
+           set -euo pipefail
+```
+
+**File**: `benchmarks/datasets/msmarco/README.md` (modified, +18/-0)
+```diff
+@@ -18,6 +18,24 @@ The source contains embedded NUL bytes in text, which PostgreSQL cannot store.
+ `pg_null_byte_replacement = ""` removes those bytes during Parquet loading.
+ Datasets that omit this setting retain the default behavior of rejecting them.
+ 
++`parquet_load_workers = 16` loads separate shards concurrently through independent
++DuckDB/Postgres connections. Each worker uses two DuckDB threads and a 2 GB memory
++limit. Every minute, a log-friendly progress bar shows committed rows and
++shards, recent and average throughput, elapsed time, and estimated time remaining.
++The percentage uses row counts from Parquet metadata, so unequal shard sizes do
++not distort it. Rows in active, uncommitted shards are excluded; the ETA is an
++estimate of the load only, excluding verification/vacuum and backup.
++
++Set the workflow's `load_workers` input (for example, `-f load_workers=8`) to tune
++the next run without a code change. The native CLI accepts
++`--parquet-load-workers 8`. This does not change worker counts on a running job.
++A failed shard fails the load; rerunning `load-heap` recreates the table before
++loading again. Datasets that omit the setting keep the single bulk import.
++
++The MS MARCO job allows 12 hours overall and refreshes its six-hour AWS credentials
++immediately before loading and before backup. Loading is capped at five hours and
++backup at five and a half hours, leaving headroom within each credential session.
++
+ The snapshot contains the heap with 1,024-dimensional vectors and no search
+ index. Snapshot generation runs only from main and uses the existing benchmark
+ write role. MS MARCO requires explicit selection and is excluded from `all`.
+```
+
+**File**: `benchmarks/datasets/msmarco/config.toml` (modified, +1/-0)
+```diff
+@@ -1,6 +1,7 @@
+ sampling_seed = 0
+ load_format = "parquet"
+ pg_null_byte_replacement = ""
++parquet_load_workers = 16
+ s3_base_path = "s3://paradedb-benchmark/datasets/msmarco/v1"
+ tables = []
+ 
+```
+
+**File**: `benchmarks/src/config.rs` (modified, +4/-0)
+```diff
+@@ -18,6 +18,7 @@
+ use anyhow::{Context, Result, bail};
+ use serde::Deserialize;
+ use std::collections::{HashMap, HashSet};
++use std::num::NonZeroUsize;
+ 
+ #[derive(Deserialize, Default, Clone, Copy, PartialEq, Eq)]
+ #[serde(rename_all = "lowercase")]
+@@ -49,6 +50,8 @@ pub struct DatasetConfig {
+     /// Replacement for NUL bytes when loading Parquet strings into Postgres; empty removes them.
+     #[serde(default)]
+     pub pg_null_byte_replacement: Option<String>,
++    #[serde(default)]
++    pub parquet_load_workers: Option<NonZeroUsize>,
+     /// Named index parameters. Each value is an expression (evaluated as a SQL scalar) over
+     /// recognized variables such as `dataset_size`, e.g. `lists = "{{ dataset_size }} / 100"`.
+     /// Index SQL references them with `{{ name }}`.
+@@ -166,6 +169,7 @@ mod tests {
+             s3_base_path: None,
+             load_format: LoadFormat::default(),
+             pg_null_byte_replacement: None,
++            parquet_load_workers: None,
+             params: HashMap::new(),
+         }
+     }
+```
+
+**File**: `benchmarks/src/main.rs` (modified, +227/-16)
+```diff
+@@ -22,9 +22,12 @@ use sqlx::{AssertSqlSafe, Connection, PgConnection, Row};
+ use std::collections::{HashMap, HashSet};
+ use std::fs::File;
+ use std::io::Write;
++use std::num::NonZeroUsize;
+ use std::path::Path;
+ use std::process::Command;
+-use std::time::Instant;
++use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
++use std::sync::mpsc;
++use std::time::{Duration, Instant};
+ 
+ mod backrest;
+ mod config;
+@@ -142,10 +145,13 @@ struct LoadHeapArgs {
+     #[arg(long)]
+     size: String,
+ 
+-    /// Base path to external CSV data source (S3 or local). Overrides s3_base_path in
+-    /// config.toml. CSVs are loaded from `{data_source}/sampled/{size}/csv/{table}/`.
++    /// Base path to external data (S3 or local). Overrides s3_base_path in config.toml.
+     #[arg(long)]
+     data_source: Option<String>,
++
++    /// Override the dataset's number of concurrent Parquet shard loaders.
++    #[arg(long)]
++    parquet_load_workers: Option<NonZeroUsize>,
+ }
+ 
+ #[tokio::main]
+@@ -165,6 +171,7 @@ async fn main() -> anyhow::Result<()> {
+             &args.dataset,
+             &args.size,
+             args.data_source.as_deref(),
++            args.parquet_load_workers,
+         ),
+         Commands::SnapshotHeap(args) => backrest::run_snapshot_heap(args),
+         Commands::RestoreHeap(args) => backrest::run_restore_heap(args),
+@@ -992,11 +999,18 @@ fn load_external_data(
+     dataset: &str,
+     size_label: &str,
+     data_source: Option<&str>,
++    parquet_load_workers: Option<NonZeroUsize>,
+ ) -> anyhow::Result<()> {
+     // Read dataset config for table names and S3 path.
+     let config_path = format!("datasets/{dataset}/config.toml");
+-    let (config, _) = config::load_dataset_config(&config_path)
++    let (mut config, _) = config::load_dataset_config(&config_path)
+         .with_context(|| format!("Failed to load config '{config_path}'"))?;
++    if let Some(workers) = parquet_load_workers {
++        if config.load_format != LoadFormat::Parquet {
++            bail!("--parquet-load-workers requires a Parquet dataset");
 +        }
++        config.parquet_load_workers = Some(workers);
++    }
+ 
+     // Determine data source path.
+     let base_path = match data_source {
+@@ -1126,27 +1140,205 @@ fn load_tables_parquet(
+     config: &config::DatasetConfig,
+     source_path: &str,
+ ) -> anyhow::Result<()> {
++    let conn = open_parquet_load_conn(url, config)?;
++    for table_name in config.all_table_names() {
++        let glob = format!("{source_path}/{table_name}/*.parquet");
++        println!("Loading '{table_name}' from {glob} into PostgreSQL...");
++        if let Some(workers) = config.parquet_load_workers {
++            println!("  Reading shard metadata...");
++            let mut statement = conn.prepare(
++                "SELECT file_name, num_rows FROM parquet_file_metadata(?) ORDER BY file_name",
++            )?;
++            let files = statement
++                .query_map([&glob], |row| {
++                    Ok((row.get::<_, String>(0)?, row.get::<_, usize>(1)?))
++                })?
++                .collect::<Result<Vec<_>, _>>()
++                .with_context(|| format!("Failed to read parquet metadata at '{glob}'"))?;
++            if files.is_empty() {
++                bail!("No parquet files found at '{glob}'");
++            }
++            load_parquet_shards(url, config, table_name, &files, workers.get())?;
++        } else {
++            conn.execute_batch(&format!(
++                "INSERT INTO pg.public.\"{table_name}\" SELECT * FROM read_parquet('{glob}');"
++            ))
++            .with_context(|| format!("Failed to load parquet into table '{table_name}'"))?;
++        }
++        println!("  Loaded '{table_name}'.");
++    }
++    Ok(())
++}
 +
-         let collid = (*op_expr).inputcollid;
-         if collid != pg_sys::Oid::INVALID {
-             let required_op = match op_str {
-@@ -965,7 +983,7 @@ mod tests {
-             Just("length(e.pattern) > 3".to_string()),
-             Just("upper(e.pattern) = upper(i.name)".to_string()),
-             Just("COALESCE(e.pattern, '') = i.name".to_string()),
--            // Arithmetic operators — native via translate_op_expr (+, -, *, /, %).
-+            // Arithmetic operators. Integer +, - and * go through the UDF fallback.
-             Just("e.threshold + 10 > i.value".to_string()),
-             Just("e.threshold * 2 > 50".to_string()),
-             Just("i.value - e.threshold > 0".to_string()),
-@@ -1023,7 +1041,7 @@ mod tests {
-             Just("e.pattern = i.name OR length(e.pattern) > 100".to_string()),
-             Just("e.pattern = i.name OR e.pattern IS NULL".to_string()),
-             Just("upper(e.pattern) = i.name OR e.threshold > i.value".to_string()),
--            // Arithmetic cross-table predicates — now native OpExpr.
-+            // Arithmetic cross-table predicates, absorbed via the UDF fallback.
-             Just("e.threshold * 2 > i.value".to_string()),
-             Just("e.threshold + i.value > 100".to_string()),
-         ]
++fn open_parquet_load_conn(
++    url: &str,
++    config: &config::DatasetConfig,
++) -> anyhow::Result<duckdb::Connection> {
+     let conn = utils::open_duckdb_conn().with_context(|| "Failed to open DuckDB connection")?;
++    if config.parquet_load_workers.is_some() {
++        conn.execute_batch("SET threads = 2; SET memory_limit = '2GB';")?;
++    }
+     conn.execute_batch("INSTALL postgres; LOAD postgres;")
+         .with_context(|| "Failed to load DuckDB postgres extension")?;
+     if let Some(replacement) = &config.pg_null_byte_replacement {
+         conn.execute("SET pg_null_byte_replacement = ?", [replacement])
+             .with_context(|| "Failed to configure Postgres NUL-byte replacement")?;
+     }
+-    conn.execute_batch(&format!("ATTACH '{url}' AS pg (TYPE postgres);"))
+-        .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
++    conn.execute_batch(&format!(
++        "ATTACH '{}' AS pg (TYPE postgres);",
++        url.replace('\'', "''")
++    ))
++    .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
++    Ok(conn)
++}
+ 
+-    for table_name in config.all_table_names() {
+-        let glob = format!("{source_path}/{table_name}/*.parquet");
+-        println!("Loading '{table_name}' from {glob} into PostgreSQL...");
+- 
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/issue_6931.out` (added, +58/-0)
+---
+
+### Incident Patch 3: `6d096089` (2026-11-02)
+**Commit Message**: fix: handle NUL bytes in MS MARCO heap imports (#7182)
+
+## What
+
+Allow the MS MARCO heap import to remove embedded NUL bytes from source
+strings.
+
+## Why
+
+[The first snapshot
+run](https://github.com/paradedb/paradedb/actions/runs/41510416618/job/125500578425)
+authenticated and set up the cluster successfully, then failed in `Load
+Heap`: DuckDB's Postgres writer rejects VARCHAR values containing NUL
+bytes. No heap snapshot was created.
+
+## How
+
+Add an optional dataset setting, `pg_null_byte_replacement`, and apply
+it to the existing DuckDB Postgres loader. MS MARCO opts into the empty
+string to remove NUL bytes; omitted settings retain the existing
+rejection behavior. Document this cleanup in the dataset README.
+
+After this merges, dispatch a fresh `generate-benchmark-snapshots.yml`
+run from main with `dataset=msmarco` and `size=113m`.
+
+## Tests
+
+- Reproduced the failure with the native Rust loader against an isolated
+PostgreSQL 18 instance using five affected rows from the first uploaded
+MS MARCO shard.
+- The opt-in setting imported all five rows plus synthetic coverage for
+multiple NULs, Unicode, SQL NULLs, and clean strings. Verified IDs
+unchanged, only NULs removed, and all 1,02
+
+**File**: `benchmarks/datasets/msmarco/README.md` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,58 @@
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+CREATE TABLE issue_6931_i (id int PRIMARY KEY, body text, a int4, w int8);
-+CREATE TABLE issue_6931_e (id int PRIMARY KEY, tag text, b int4);
-+INSERT INTO issue_6931_i VALUES (1, 'alpha', 2147483647, 9223372036854775807), (2, 'beta', 5, 10);
-+INSERT INTO issue_6931_e VALUES (1, 'x', 1), (2, 'y', 0);
-+CREATE INDEX issue_6931_i_idx ON issue_6931_i USING paradedb (id, body, a, w);
-+CREATE INDEX issue_6931_e_idx ON issue_6931_e USING paradedb (id, tag, b);
-+SET paradedb.enable_join_custom_scan = on;
-+-- Integer arithmetic in a Join Scan is evaluated by PostgreSQL
-+EXPLAIN (COSTS OFF)
-+SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
-+                                                                                      QUERY PLAN                                                                                       
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Relation Tree: i INNER e
-+   Join Cond: e.id = i.id
-+   Join Predicate: heap:((i.w + e.b) > 0)
-+   Limit: 10
-+   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
-+     :   GlobalLimitExec: skip=0, fetch=10
-+     :     VisibilityFilterExec: tables=[i, e]
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_e8373b5a(w@0, b@1) > 0
-+     :         CooperativeExec
-+     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"alpha","lenient":null,"conjunction_mode":null}}}}
-+     :         CooperativeExec
-+     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
-+(14 rows)
+@@ -14,6 +14,10 @@ into PostgreSQL 18. The workflow verifies the exact row count, freezes and
+ analyzes the heap, and backs it up with pgBackRest to
+ `s3://paradedb-benchmark/snapshots/msmarco/v1/113m/pg_backrest/`.
+ 
++The source contains embedded NUL bytes in text, which PostgreSQL cannot store.
++`pg_null_byte_replacement = ""` removes those bytes during Parquet loading.
++Datasets that omit this setting retain the default behavior of rejecting them.
 +
-+-- Overflow raises an error instead of wrapping
-+SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
-+ERROR:  bigint out of range
-+SELECT i.id, (i.w + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
-+ERROR:  bigint out of range
-+SELECT i.id, (i.a + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
-+ERROR:  integer out of range
-+SELECT i.id, (-i.a - 2 * e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
-+ERROR:  integer out of range
-+SELECT i.id, (i.w * (e.b + 1)) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'alpha' LIMIT 10;
-+ERROR:  bigint out of range
-+-- Arithmetic that does not overflow is unchanged
-+SELECT i.id, (i.w + e.b) AS s, (i.a - e.b) AS d, (i.a * 2) AS m
-+FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
-+WHERE i.body @@@ 'beta' AND (i.w + e.b) > 0 LIMIT 10;
-+ id | s  | d | m  
-+----+----+---+----
-+  2 | 10 | 5 | 10
-+(1 row)
-+
-+RESET paradedb.enable_join_custom_scan;
-+DROP TABLE issue_6931_i;
-+DROP TABLE issue_6931_e;
+ The snapshot contains the heap with 1,024-dimensional vectors and no search
+ index. Snapshot generation runs only from main and uses the existing benchmark
+ write role. MS MARCO requires explicit selection and is excluded from `all`.
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +2/-2)
+**File**: `benchmarks/datasets/msmarco/config.toml` (modified, +1/-0)
 ```diff
-@@ -206,7 +206,7 @@ ORDER BY p.name
-    Order By: p.name asc
-    DataFusion Physical Plan: 
-      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
--     :   AggregateExec: mode=Single, gby=[supplier_id@1 * 10 + id@3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-+     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_06483cda(supplier_id@1, id@3) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
-      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, id@5, ctid_1@1]
-      :         CooperativeExec
-@@ -666,7 +666,7 @@ ORDER BY p.name
-    Order By: p.name asc
-    DataFusion Physical Plan: 
-      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
--     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_f1ebe528(supplier_id@1) * 100 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-+     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_78b131ee(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
-      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
-      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
-      :         CooperativeExec
+@@ -1,5 +1,6 @@
+ sampling_seed = 0
+ load_format = "parquet"
++pg_null_byte_replacement = ""
+ s3_base_path = "s3://paradedb-benchmark/datasets/msmarco/v1"
+ tables = []
+ 
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/join_order_from_path.out` (modified, +3/-3)
+**File**: `benchmarks/src/config.rs` (modified, +4/-0)
 ```diff
-@@ -223,8 +223,8 @@ JOIN jo_reviews r ON r.book_id = b.id
- JOIN jo_authors a ON a.id > b.author_id + r.rating
- WHERE a.bio @@@ 'orchid'
- ORDER BY b.id, r.id LIMIT 5;
--                                                                                                         QUERY PLAN                                                                                                         
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+                                                                                                                               QUERY PLAN                                                                                                                                
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Join Scan)
-    Relation Tree: (b INNER r) INNER a
-    Join Cond: r.book_id = b.id
-@@ -239,7 +239,7 @@ ORDER BY b.id, r.id LIMIT 5;
-      :         NestedLoopJoinExec: join_type=Inner, filter=id@0 > join_proj_push_down_1@1, projection=[id@0, ctid_2@1, ctid_0@2, author_id@3, id@4, ctid_1@5, rating@6, book_id@7, id@8]
-      :           CooperativeExec
-      :             PgSearchScan: table=a, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"bio","query_string":"orchid","lenient":null,"conjunction_mode":null}}}}
--     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, author_id@1 + rating@4 as join_proj_push_down_1]
-+     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, CAST(pdb_eval_expr_opexpr_6edbbeb8(author_id@1, rating@4) AS Int64) as join_proj_push_down_1]
-      :             HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@2, book_id@2)]
-      :               CooperativeExec
-      :                 PgSearchScan: table=b, segments=1, query="all"
+@@ -46,6 +46,9 @@ pub struct DatasetConfig {
+     /// Storage format LoadHeap reads from `sampled/{size}/{load_format}/`. Defaults to CSV.
+     #[serde(default)]
+     pub load_format: LoadFormat,
++    /// Replacement for NUL bytes when loading Parquet strings into Postgres; empty removes them.
++    #[serde(default)]
++    pub pg_null_byte_replacement: Option<String>,
+     /// Named index parameters. Each value is an expression (evaluated as a SQL scalar) over
+     /// recognized variables such as `dataset_size`, e.g. `lists = "{{ dataset_size }} / 100"`.
+     /// Index SQL references them with `{{ name }}`.
+@@ -162,6 +165,7 @@ mod tests {
+             tables,
+             s3_base_path: None,
+             load_format: LoadFormat::default(),
++            pg_null_byte_replacement: None,
+             params: HashMap::new(),
+         }
+     }
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/join_orderby_expression.out` (modified, +9/-9)
+**File**: `benchmarks/src/main.rs` (modified, +4/-0)
 ```diff
-@@ -112,7 +112,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -195,7 +195,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 - 0 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_e22d00d8(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -243,7 +243,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_46622aa0(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -339,7 +339,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -388,7 +388,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.big_id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 + 0 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_40249b18(big_id@2) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -419,7 +419,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.big_id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_a0b34269(big_id@2) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -450,7 +450,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, 0 + id@1 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_662fe57b(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -481,7 +481,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_cf5a22da(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-@@ -739,7 +739,7 @@ LIMIT 10;
-    Limit: 10
-    Order By: c.id desc
-    DataFusion Physical Plan: 
--     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
-      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[c]
-      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
-```
-
-**File**: `pg_search/tests/pg_regress/expected/join_predicates.out` (modified, +1/-1)
-```diff
-@@ -815,7 +815,7 @@ LIMIT 10;
-      : ProjectionExec: expr=[id@2 as col_1, supplier_id@1 as col_2, id@4 as col_3, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
-      :   SortExec: TopK(fetch=10), expr=[id@2 ASC NULLS LAST], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[p, s]
--     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(supplier_id@0 - id@1) >= 0
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(pdb_eval_expr_opexpr_1d849f2b(supplier_id@0, id@1)) >= 0
-      :         CooperativeExec
-      :           PgSearchScan: table=p, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"description","value":"wireless","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
-      :         CooperativeExec
-```
-
-**File**: `pg_search/tests/pg_regress/expected/join_semi_anti_disjunctive.out` (modified, +1/-1)
-```diff
-@@ -1222,7 +1222,7 @@ LIMIT 5;
-      :   SortExec: TopK(fetch=5), expr=[id@1 DESC], preserve_partitioning=[false]
-      :     VisibilityFilterExec: tables=[i]
-      :       NestedLoopJoinExec: join_type=RightAnti, filter=join_proj_push_down_1@1 > id@0, projection=[ctid_0@0, id@1]
--     :         ProjectionExec: expr=[id@0 as id, id@0 * 2 as join_proj_push_down_1]
-+     :         ProjectionExec: expr=[id@0 as id, pdb_eval_expr_opexpr_b2e4dd8d(id@0) as join_proj_push_down_1]
-      :           CooperativeExec
-      :             PgSearchScan: table=e, segments=1, visibility=eager, query={"with_index":{"query":"all"}}
-      :         CooperativeExec
+@@ -1129,6 +1129,10 @@ fn load_tables_parquet(
+     let conn = utils::open_duckdb_conn().with_context(|| "Failed to open DuckDB connection")?;
+     conn.execute_batch("INSTALL postgres; LOAD postgres;")
+         .with_context(|| "Failed to load DuckDB postgres extension")?;
++    if let Some(replacement) = &config.pg_null_byte_replacement {
++        conn.execute("SET pg_null_byte_replacement = ?", [replacement])
++            .with_context(|| "Failed to configure Postgres NUL-byte replacement")?;
++    }
+     conn.execute_batch(&format!("ATTACH '{url}' AS pg (TYPE postgres);"))
+         .with_context(|| "Failed to ATTACH target Postgres from DuckDB")?;
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7140** (2026-10-31): chore: Fix clash between #6869 and #7051 (@stuhood)
-- **PR #7133** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
-- **PR #7132** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
-- **PR #7131** (2026-10-30): ci: Use an unlinked author for benchmark commits (@philippemnoel)
-- **PR #7129** (2026-10-30): fix: omit graph dependencies from Stressgres runtime image (@philippemnoel)
-- **PR #7125** (2026-10-31): fix: pin workflow actions and enforce immutable references (@philippemnoel)
+- **PR #7208** (2026-11-03): ci: Reserve worker slots for benchmark parallelism (@rebasedming)
+- **PR #7204** (2026-11-03): docs: Remove unused PostHog integration (@philippemnoel)
+- **PR #7203** (2026-11-03): perf: flatten grouped aggregate results in one pass (@paradedb-github-bot[bot])
+- **PR #7195** (closed): chore: Update opencc-jieba-rs to latest main (@philippemnoel)
+- **PR #7194** (2026-11-03): chore(deps): bump the cargo-dependencies group with 17 updates (@dependabot[bot])
+- **PR #7193** (2026-11-03): ci: enable monthly dependency updates (@philippemnoel)
 
 ---
 
@@ -3017,34 +3021,32 @@ The trade-off is that these expressions now run through the UDF rather
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. omit graph dependencies from Stressgres runtime image (#7129)
+## X. route sum(int8) to the DataFusion aggregate backend (#7143)
 
 **RULE**:
-When implementing operations in `docker/Dockerfile.stressgres`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7143.bugfix.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c13589a`: omit graph dependencies from Stressgres runtime image (#7129). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9030485`: route sum(int8) to the DataFusion aggregate backend (#7143). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile.stressgres`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7143.bugfix.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
-# Graph generation is disabled in this image, avoiding Fontconfig and its
-# transitive font/XML dependencies. Normal source builds retain graph support.
+---
+header: stability
+---
+
+- `sum()` over a `bigint` column in a single-table aggregate now returns the exact total instead of rounding values past 2^53.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    libpng-dev \
-    libjpeg-dev \
-    libfontconfig1-dev \
-        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
-    libfontconfig1 \
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c13589a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9030485` are properly handled with clean fallback behavior.

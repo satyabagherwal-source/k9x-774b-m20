@@ -7075,3 +7075,7 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `e4ec6073` | Multi-dimensional audit evidence | 2026-11-03T23:46:10.207Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `6bb987c8` | Multi-dimensional audit evidence | 2026-11-03T23:46:11.769Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `61e6a768` | Multi-dimensional audit evidence | 2026-11-03T23:59:32.394Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `c5347bbd` | Multi-dimensional audit evidence | 2026-11-04T00:10:47.071Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `8f4601d2` | Multi-dimensional audit evidence | 2026-11-04T00:10:49.736Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-04T00:10:50.710Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `4b2ecad6` | Multi-dimensional audit evidence | 2026-11-04T00:10:57.066Z |

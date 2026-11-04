@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-JVDE",
-    "timestamp": "2026-10-31T12:53:41.906Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "5dc9dfe7ea750b0b8a5bb2064be43046aad9ecc29004a82946a3445f12e43c62",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-JVF1",
-    "timestamp": "2026-10-31T12:53:41.965Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "93f4f9d43eda4636a1971b66c2257d168f083ae8254a77b43ff7bf231bc52574",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-JZ5Q",
-    "timestamp": "2026-10-31T12:53:46.814Z",
-    "repository": "amir1376/ab-download-manager",
-    "learningId": "learn-github-amir1376-ab-download-manager",
-    "contentHash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-RWGX",
-    "timestamp": "2026-10-31T12:59:56.577Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-RX8Y",
     "timestamp": "2026-10-31T12:59:57.586Z",
     "repository": "topgrade-rs/topgrade",
@@ -7490,6 +7430,66 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "5cc5b07d3b128638502437d285ede00ce1e959ef51bc3639d1068b168305080f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-25Y3",
+    "timestamp": "2026-11-04T00:10:47.067Z",
+    "repository": "urllib3/urllib3",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-2804",
+    "timestamp": "2026-11-04T00:10:49.732Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-28R6",
+    "timestamp": "2026-11-04T00:10:50.706Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+    "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-2DNQ",
+    "timestamp": "2026-11-04T00:10:57.062Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

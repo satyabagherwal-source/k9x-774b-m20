@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-03T23:59:32.303Z",
-  "total_verified_learnings": 1201,
+  "last_updated": "2026-11-04T00:10:56.973Z",
+  "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2793,8 +2793,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "b805c0a5",
-      "content_hash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
+      "source_version": "8f4601d2",
+      "content_hash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -2822,6 +2822,11 @@
           "number": 5941,
           "title": "docs(functions): tighten email trigger docs and render docs arrow links",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6668,
+          "title": "docs(blog): add Firewall screenshots and fix Free-plan rule advice",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2829,7 +2834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:44:49.247Z",
+      "verified_at": "2026-11-04T00:10:49.582Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46280,8 +46285,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "6e3efd5a",
-      "content_hash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
+      "source_version": "4b2ecad6",
+      "content_hash": "e4a680b299f89c8ca855b36a2c30b17b65e3b2f77d2ef6b7848ceeceab48c7b5",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -46339,6 +46344,11 @@
           "number": 6167,
           "title": "omit graph dependencies from Stressgres runtime image (#7129)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6671,
+          "title": "route sum(int8) to the DataFusion aggregate backend (#7143)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46346,7 +46356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:27:16.817Z",
+      "verified_at": "2026-11-04T00:10:56.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74906,8 +74916,8 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "2aa7e9c3",
-      "content_hash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
+      "source_version": "c5347bbd",
+      "content_hash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
@@ -74930,6 +74940,11 @@
           "number": 5788,
           "title": "Keep the stored key in RecentlyUsedContainer lookups (#5347)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6667,
+          "title": "Bump the github-actions group with 10 updates (#5353)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74937,7 +74952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:37:04.902Z",
+      "verified_at": "2026-11-04T00:10:46.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171418,6 +171433,119 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-03T23:59:32.273Z"
+    },
+    "rule-6667": {
+      "learning_id": "rule-6667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6667,
+      "title": "Bump the github-actions group with 10 updates (#5353)",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "c5347bbd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:10:46.953Z"
+    },
+    "rule-6668": {
+      "learning_id": "rule-6668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6668,
+      "title": "Heterogeneous Quantization Format Isolation",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:10:50.594Z"
+    },
+    "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized": {
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "slug": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "content_hash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6668,
+          "title": "Heterogeneous Quantization Format Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6669,
+          "title": "Layer-Aware Quantization Precision Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6670,
+          "title": "Turbo Model Step-Count Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-04T00:10:50.594Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6669": {
+      "learning_id": "rule-6669",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6669,
+      "title": "Layer-Aware Quantization Precision Allocation",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:10:50.594Z"
+    },
+    "rule-6670": {
+      "learning_id": "rule-6670",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6670,
+      "title": "Turbo Model Step-Count Invariance",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:10:50.594Z"
+    },
+    "rule-6671": {
+      "learning_id": "rule-6671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6671,
+      "title": "route sum(int8) to the DataFusion aggregate backend (#7143)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "4b2ecad6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:10:56.950Z"
     }
   },
   "aliases": {

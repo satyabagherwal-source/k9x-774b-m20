@@ -20182,5 +20182,17 @@
     "downloads": 1229,
     "qualityScore": 2739,
     "discoveredAt": "2026-11-03T22:04:14.508Z"
+  },
+  {
+    "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "fullName": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: abenzerps/Qwen-Image-2.1-Turbo-Quantized (5622 likes, 2508590 downloads)",
+    "likes": 5622,
+    "downloads": 2508590,
+    "qualityScore": 58220,
+    "discoveredAt": "2026-11-04T00:08:23.099Z"
   }
 ]
