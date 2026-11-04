@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T22:20:18.015Z",
-  "total_cycles_completed": 7348,
-  "total_learnings_persisted": 7348,
-  "total_rules_promoted": 7044,
+  "last_updated": "2026-11-04T22:27:29.033Z",
+  "total_cycles_completed": 7350,
+  "total_learnings_persisted": 7350,
+  "total_rules_promoted": 7045,
   "history": [
-    {
-      "timestamp": "2026-11-04T08:06:06.088Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:14:08.609Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T08:14:13.701Z",
       "repository": "opentofu/opentofu",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T22:20:18.015Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:27:27.813Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:27:29.033Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

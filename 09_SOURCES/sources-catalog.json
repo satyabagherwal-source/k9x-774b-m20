@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
-    "lastHarvestedAt": "2026-10-31T06:45:24.611Z",
+    "contentHash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
+    "lastHarvestedAt": "2026-11-04T22:27:27.807Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "28c23b0e",
+    "sourceVersion": "4470c33b",
     "license": "Apache-2.0",
-    "contentHash": "df4d97ed4963643efd1d4b687b542fdb21a7312887093c914a59e58f9484e11c",
-    "lastHarvestedAt": "2026-11-03T18:11:18.223Z",
+    "contentHash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
+    "lastHarvestedAt": "2026-11-04T22:27:29.028Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

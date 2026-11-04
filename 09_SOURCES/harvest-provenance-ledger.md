@@ -7380,3 +7380,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-04T22:20:03.255Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e57d89ba` | Multi-dimensional audit evidence | 2026-11-04T22:20:07.352Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `a82bcc47` | Multi-dimensional audit evidence | 2026-11-04T22:20:18.009Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T22:27:27.807Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `4470c33b` | Multi-dimensional audit evidence | 2026-11-04T22:27:29.028Z |

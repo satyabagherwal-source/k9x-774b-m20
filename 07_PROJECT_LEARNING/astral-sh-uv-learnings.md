@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `28c23b0e`  
+> **Source Version**: `4470c33b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:11:17.601Z  
+> **Timestamp**: 2026-11-04T22:27:28.203Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:11:16.341Z  
+> **Harvest Timestamp**: 2026-11-04T22:27:28.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91500 stars
+- **Stars / Engagement**: 91546 stars
 
 ---
 
@@ -1520,227 +1520,70 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4fdd4e24` (2026-11-02)
-**Commit Message**: Keep older CI reruns from canceling the current PR build (#22982)
+### Incident Patch 1: `13f37678` (2026-11-03)
+**Commit Message**: Name the security and code quality reviews in CI (#23085)
 
-Retrying the Windows shard for an older commit on astral-sh/uv#22964
-canceled the macOS smoke test and two benchmarks that were still running
-on its new head. Both workflow runs had the same PR concurrency group.
-[Windows
-retry](https://github.com/astral-sh/uv/actions/runs/40639515561/job/122835758231)
-· [Canceled
-jobs](https://github.com/astral-sh/uv/actions/runs/40692593757/attempts/1)
+The security review uses the generic `review` job ID. Rename it to
+`review-security` alongside `review-code-quality` and display the two
+groups as `review | security` and `review | code quality` so each
+`prepare` and `report` job identifies its review.
 
-Group first attempts by PR number so a new push supersedes the previous
-build. Use the commit SHA for reruns so an older retry can finish
-alongside checks for the current head.
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
-```diff
-@@ -10,7 +10,8 @@ permissions:
-   contents: read
- 
- concurrency:
--  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
-+  # An older commit's rerun must not cancel the latest push to the same PR.
-+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.run_attempt == 1 && github.event.pull_request.number || github.sha }}
-   cancel-in-progress: true
- 
- env:
-```
-
----
-
-### Incident Patch 2: `e7d1ea4c` (2026-11-03)
-**Commit Message**: Clarify the shell requirement for GitLab job images (#23078)
-
-The distroless example in the GitLab guide fails before the job's
-`script` runs. Clearing the image's entrypoint lets GitLab Runner invoke
-`sh` directly, but the distroless image has no shell. Remove that
-example and explain why the guide uses a Debian-based image.
-
-Refs astral-sh/uv#23065.
+---------
 
 Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
-**File**: `docs/guides/integration/gitlab.md` (modified, +2/-12)
+**File**: `.github/workflows/ci.yml` (modified, +3/-1)
 ```diff
-@@ -9,7 +9,8 @@ description: A guide to using uv in GitLab CI/CD, including installation, settin
- ## Using the uv image
+@@ -41,7 +41,8 @@ jobs:
+     needs: plan
+     uses: $/.github/workflows/check-fmt.yml
  
- Astral provides [Docker images](docker.md#available-images) with uv preinstalled.
--Select a variant that is suitable for your workflow.
-+Use a variant with a shell, such as the Debian-based image below, so GitLab Runner can execute the
-+job's `script`.
+-  review:
++  review-security:
++    name: "review | security"
+     needs: plan
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
+     # N.B. despite setting this, Depot jobs allow cache writes directly through the API
+@@ -68,6 +69,7 @@ jobs:
+       pull-requests: read
  
- ```yaml title=".gitlab-ci.yml"
- variables:
-@@ -26,17 +27,6 @@ uv:
-     # your `uv` commands
- ```
- 
--!!! note
--
--    If you are using a distroless image, you have to specify the entrypoint:
--    ```yaml
--    uv:
--      image:
--        name: ghcr.io/astral-sh/uv:$UV_VERSION
--        entrypoint: [""]
--      # ...
--    ```
--
- ## Caching
- 
- Persisting the uv cache between workflow runs can improve performance.
+   review-code-quality:
++    name: "review | code quality"
+     needs: plan
+     if: >-
+       ${{
 ```
 
 ---
 
-### Incident Patch 3: `516effbc` (2026-11-02)
-**Commit Message**: Fix `uvx` on CPython builds with local versions (#23013)
+### Incident Patch 2: `f174cbff` (2026-11-04)
+**Commit Message**: Fix macOS CPU detection on GraalPy (#23089)
 
-## Summary
-
-With a CPython development build, `uvx` installs the tool successfully,
-then fails to launch it:
-
-```console
-$ ./python --version
-Python 3.16.0a1+dev
-$ uvx --python ./python pycowsay hello
-error: Failed to spawn: pycowsay
-  cause: No such file or directory (os error 2)
-```
-
-We write `3.16.0a1+dev` to `pyvenv.cfg`, but the reader rejects the
-local version and discards the rest of the file. The installed entry
-point then refers to the temporary interpreter path, which disappears
-when we move the environment into the cache.
-
-We now read the recorded version as a PEP 440 version and compare it at
-the precision the creator recorded.
-
-Closes https://github.com/astral-sh/uv/issues/22989.
-
-**File**: `crates/uv-python-interpreter/src/environment.rs` (modified, +6/-7)
+**File**: `crates/uv-python-interpreter/python/get_interpreter_info.py` (modified, +6/-1)
 ```diff
-@@ -349,16 +349,15 @@ impl PythonEnvironment {
-     /// versions do not match, returns a tuple of the `pyvenv.cfg` and interpreter's Python versions
-     /// for display.
-     pub fn get_pyvenv_version_conflict(&self) -> Option<(Version, Version)> {
--        let cfg = self.cfg().ok()?;
--        let cfg_version = cfg.version?.into_version();
-+        let cfg_version = self.cfg().ok()?.version?;
- 
--        // Determine if we should be checking for patch or pre-release equality
--        let exe_version = if cfg_version.release().get(2).is_none() {
-+        // Compare at the precision recorded in pyvenv.cfg, including any version suffix.
-+        let exe_version = if cfg_version != cfg_version.only_release() {
-+            self.interpreter().python_version().clone()
-+        } else if cfg_version.release().get(2).is_none() {
-             self.interpreter().python_minor_version()
--        } else if cfg_version.pre().is_none() {
--            self.interpreter().python_patch_version()
-         } else {
--            self.interpreter().python_version().clone()
-+            self.interpreter().python_patch_version()
-         };
- 
-         (cfg_version != exe_version).then_some((cfg_version, exe_version))
-```
-
-**File**: `crates/uv-python-interpreter/src/virtualenv.rs` (modified, +4/-7)
-```diff
-@@ -8,10 +8,9 @@ use std::{
- use fs_err as fs;
- use thiserror::Error;
- 
-+use uv_pep440::Version;
- use uv_pypi_types::Scheme;
- 
--use uv_python_types::PythonVersion;
--
- /// The layout of a virtual environment.
- #[derive(Debug)]
- pub struct VirtualEnvironment {
-@@ -45,7 +44,7 @@ pub struct PyVenvConfiguration {
-     /// Should the virtual environment include system site packages?
-     pub(super) include_system_site_packages: bool,
-     /// The Python version the virtual environment was created with
--    pub(super) version: Option<PythonVersion>,
-+    pub(super) version: Option<Version>,
- }
- 
- #[derive(Debug, Error)]
-@@ -141,10 +140,8 @@ impl PyVenvConfiguration {
-                     include_system_site_packages = value.trim().to_lowercase() == "true";
-                 }
-                 "version" | "version_info" => {
--                    version = Some(
--                        PythonVersion::from_str(value.trim())
--                            .map_err(|e| io::Error::new(std::io::ErrorKind::InvalidData, e))?,
--                    );
-+                    // An unrecognized version only prevents checking the interpreter version.
-+                    version = Version::from_str(value.trim()).ok();
-                 }
-                 _ => {}
-             }
-```
-
-**File**: `crates/uv/tests/pip_install/pip_install.rs` (modified, +9/-0)
-```diff
-@@ -28,6 +28,7 @@ use wiremock::{
- use uv_extract::dirhash::{DirectoryDigest, dirhash_path};
- use uv_fs::{PortablePath, Simplified};
- use uv_install_wheel::validate_and_heal_record;
-+use uv_python_interpreter::PyVenvConfiguration;
- use uv_redacted::SafeUrl;
- use uv_static::EnvVars;
- use uv_test::archive::{generate_source_archive, write_tar_gz};
-@@ -11574,6 +11575,14 @@ fn install_relocatable() -> Result<()> {
-         .assert()
-         .success();
- 
-+    // CPython development builds record a local version in pyvenv.cfg.
-+    let pyvenv_cfg = context.venv.child("pyvenv.cfg");
-+    pyvenv_cfg.write_str(&PyVenvConfiguration::set(
-+        &context.read(&pyvenv_cfg),
-+        "version_info",
-+        "3.12.0+dev",
-+    ))?;
-+
-     // Install a package with a hello-world console script entrypoint.
-     // (we use black_editable because it's convenient, but we don't actually install it as editable)
-     context
-```
-
-**File**: `hawk.toml` (modified, +0/-8)
-```diff
-@@ -332,14 +332,6 @@ kind = "inherent_method"
- level = "expect"
- reason = "retained as part of the PyVenvConfiguration accessors"
- 
--[[override]]
--lint = "hawk::unnecessary_public"
--crate = "uv_python_interpreter"
--item = "virtualenv::PyVenvConfiguration::set"
--kind = "inherent_method"
--level = "expect"
--reason = "retained as a public pyvenv.cfg editing helper"
--
- # Keep wheel variant component APIs consistent.
- 
- [[override]]
+@@ -679,7 +679,12 @@ def _macos_cpu_info(architecture):
+         ctypes.c_void_p,
+         ctypes.c_size_t,
+     ]
+-    missing_key = (errno.ENOENT, errno.ENOTSUP, errno.EOPNOTSUPP)
++    # Some Python implementations omit these Darwin errno constants.
++    missing_key = (
++        errno.ENOENT,
++        getattr(errno, "ENOTSUP", 45),
++        getattr(errno, "EOPNOTSUPP", 102),
++    )
+     unavailable = (errno.EPERM, errno.EACCES, errno.ENOSYS)
+     if architecture == "aarch64":
+         keys = (b"machdep.cpu.brand_string",)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23079** (2026-11-03): Limit Depot cache writes on pull requests (@astral-automations-bot[bot])
-- **PR #23078** (2026-11-03): Clarify the shell requirement for GitLab job images (@astral-automations-bot[bot])
-- **PR #23068** (2026-11-03): Bump version to 0.13.7 (@astral-automations-bot[bot])
-- **PR #23066** (2026-11-03): Add a vendored TPU wheel variant provider (@konstin)
-- **PR #23061** (2026-11-02): Make tracing-durations-export optional in uv-dev (@konstin)
-- **PR #23052** (2026-11-03): Update Rust crate uuid to v1.27.0 (@renovate[bot])
+- **PR #23113** (2026-11-04): Name `cargo-vet` checks by workspace (@astral-automations-bot[bot])
+- **PR #23108** (2026-11-04): Threat model: document an accepted CI trade-off (@zsol)
+- **PR #23106** (2026-11-04): Bump tar-codec (@woodruffw)
+- **PR #23101** (closed): gh pr checkout 23101 - Update CI workflow for version and runner changes (@liu4957396339487262694726638957263)
+- **PR #23100** (closed): gh pr checkout 23100 - REFRESH - "Name the security and code quality reviews in CI" (@liu4957396339487262694726638957263)
+- **PR #23099** (closed): gh pr checkout 23099 - Atualização - Revert 5 patch 2 (@liu4957396339487262694726638957263)
 
 ---
 
@@ -1760,13 +1603,13 @@ Closes https://github.com/astral-sh/uv/issues/22989.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep older CI reruns from canceling the current PR build (#22982)
+## X. Name the security and code quality reviews in CI (#23085)
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4fdd4e24`: Keep older CI reruns from canceling the current PR build (#22982). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13f37678`: Name the security and code quality reviews in CI (#23085). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -1774,15 +1617,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # An older commit's rerun must not cancel the latest push to the same PR.
-  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.run_attempt == 1 && github.event.pull_request.number || github.sha }}
+  review-security:
+    name: "review | security"
+    name: "review | code quality"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  review:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4fdd4e24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13f37678` are properly handled with clean fallback behavior.

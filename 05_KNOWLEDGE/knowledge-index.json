@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:20:17.913Z",
+  "last_updated": "2026-11-04T22:27:28.931Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3837,8 +3837,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "28c23b0e",
-      "content_hash": "df4d97ed4963643efd1d4b687b542fdb21a7312887093c914a59e58f9484e11c",
+      "source_version": "4470c33b",
+      "content_hash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3916,6 +3916,11 @@
           "number": 6570,
           "title": "Keep older CI reruns from canceling the current PR build (#22982)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6999,
+          "title": "Name the security and code quality reviews in CI (#23085)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3923,7 +3928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:11:18.131Z",
+      "verified_at": "2026-11-04T22:27:28.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28915,7 +28920,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
+      "content_hash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -28960,7 +28965,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-31T06:45:24.497Z",
+      "verified_at": "2026-11-04T22:27:27.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177956,6 +177961,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:20:17.883Z"
+    },
+    "rule-6999": {
+      "learning_id": "rule-6999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6999,
+      "title": "Name the security and code quality reviews in CI (#23085)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "4470c33b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:27:28.905Z"
     }
   },
   "aliases": {

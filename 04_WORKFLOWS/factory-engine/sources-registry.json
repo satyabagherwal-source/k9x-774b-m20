@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T22:20:20.564Z",
-    "lastVerified": "2026-11-04T22:20:20.564Z",
+    "lastChecked": "2026-11-04T22:27:39.205Z",
+    "lastVerified": "2026-11-04T22:27:39.205Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:57:25.325Z",
-    "lastVerified": "2026-11-04T21:57:25.325Z",
+    "lastChecked": "2026-11-04T22:27:39.192Z",
+    "lastVerified": "2026-11-04T22:27:39.192Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -718,9 +718,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-04T18:57:31.081Z",
+    "lastChecked": "2026-11-04T22:27:34.159Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-04T18:57:31.081Z"
+    "lastVerified": "2026-11-04T22:27:34.159Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1290,12 +1290,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T06:45:14.100Z",
-    "lastVerified": "2026-10-31T06:45:14.100Z",
+    "lastChecked": "2026-11-04T22:27:26.732Z",
+    "lastVerified": "2026-11-04T22:27:26.732Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
+    "contentHash": "d8b2592a9ea70a460a09519ccb7785458d48ef67d609d0c4d7779ddac1928497",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2051,9 +2051,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-03T23:20:19.404Z",
+    "lastChecked": "2026-11-04T22:27:36.644Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-11-03T23:20:19.404Z"
+    "lastVerified": "2026-11-04T22:27:36.644Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -4491,9 +4491,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-04T00:17:19.934Z",
+    "lastChecked": "2026-11-04T22:27:31.742Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-04T00:17:19.934Z"
+    "lastVerified": "2026-11-04T22:27:31.742Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -7815,9 +7815,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-10-31T14:59:31.098Z",
+    "lastChecked": "2026-11-04T22:27:29.272Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-10-31T14:59:31.098Z"
+    "lastVerified": "2026-11-04T22:27:29.272Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -8487,14 +8487,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T18:11:16.341Z",
-    "lastVerified": "2026-11-03T18:11:16.341Z",
+    "lastChecked": "2026-11-04T22:27:28.196Z",
+    "lastVerified": "2026-11-04T22:27:28.196Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "df4d97ed4963643efd1d4b687b542fdb21a7312887093c914a59e58f9484e11c",
+    "contentHash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
