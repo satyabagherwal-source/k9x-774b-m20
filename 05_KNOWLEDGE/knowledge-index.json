@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T09:25:13.688Z",
+  "last_updated": "2026-11-04T09:33:09.245Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2393,8 +2393,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "16c646c3",
-      "content_hash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
+      "source_version": "4e468ce3",
+      "content_hash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2462,6 +2462,11 @@
           "number": 6259,
           "title": "Firebird SRP login failure for mismatched authentication plugins (#40392)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6794,
+          "title": "Remove license plugin and fix Jakarta API version management (#40461)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2469,7 +2474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:06:31.626Z",
+      "verified_at": "2026-11-04T09:33:09.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36357,8 +36362,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "745586f6",
-      "content_hash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
+      "source_version": "46813afa",
+      "content_hash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -36411,6 +36416,11 @@
           "number": 5664,
           "title": "Reconcile Phase Decoupling of Requeue Signals from Clean Success Status",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6793,
+          "title": "endpoint): add node ready time for pods that are ready as well (#4941)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36418,7 +36428,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:47:53.032Z",
+      "verified_at": "2026-11-04T09:33:05.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77522,8 +77532,8 @@
       "slug": "expressjs-express",
       "platform": "github",
       "source_url": "https://github.com/expressjs/express",
-      "source_version": "1c6f1b0f",
-      "content_hash": "04142cfaa855a731fa8f7984caad875334b7c91c2d526adc32ebec559987e1ac",
+      "source_version": "43fca52d",
+      "content_hash": "02889aecd6f09370970161d1e2768203bb3c978e0ca54846727940d8c9dac5a5",
       "dossier_path": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
       "promoted_rules": [
@@ -77546,6 +77556,11 @@
           "number": 3913,
           "title": "test: expand coverage for request, response and view behavior (#7112)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6792,
+          "title": "build(deps): bump the github-actions group with 7 updates (#7575)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -77553,7 +77568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:28:28.490Z",
+      "verified_at": "2026-11-04T09:33:03.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173926,6 +173941,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T09:25:13.664Z"
+    },
+    "rule-6792": {
+      "learning_id": "rule-6792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6792,
+      "title": "build(deps): bump the github-actions group with 7 updates (#7575)",
+      "source_url": "https://github.com/expressjs/express",
+      "source_version": "43fca52d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:33:03.861Z"
+    },
+    "rule-6793": {
+      "learning_id": "rule-6793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6793,
+      "title": "endpoint): add node ready time for pods that are ready as well (#4941)",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "46813afa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:33:05.483Z"
+    },
+    "rule-6794": {
+      "learning_id": "rule-6794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6794,
+      "title": "Remove license plugin and fix Jakarta API version management (#40461)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "4e468ce3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:33:09.223Z"
     }
   },
   "aliases": {

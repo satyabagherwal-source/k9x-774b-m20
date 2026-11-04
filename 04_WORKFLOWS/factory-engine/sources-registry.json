@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T09:25:16.353Z",
-    "lastVerified": "2026-11-04T09:25:16.353Z",
+    "lastChecked": "2026-11-04T09:33:11.894Z",
+    "lastVerified": "2026-11-04T09:33:11.894Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T08:57:42.297Z",
+    "lastChecked": "2026-11-04T09:33:05.388Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T08:57:42.297Z"
+    "lastVerified": "2026-11-04T09:33:05.388Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -492,22 +492,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "aws-load-balancer-controller",
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T15:34:37.734Z",
-    "lastVerified": "2026-11-03T15:34:37.734Z",
+    "lastChecked": "2026-11-04T09:33:01.530Z",
+    "lastVerified": "2026-11-04T09:33:01.530Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
-    "promotedRulesCount": 3,
+    "contentHash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "745586f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -607,8 +606,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T02:53:29.505Z",
-    "lastVerified": "2026-11-04T02:53:29.505Z",
+    "lastChecked": "2026-11-04T09:33:00.278Z",
+    "lastVerified": "2026-11-04T09:33:00.278Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -4133,9 +4132,9 @@
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-10-31T06:38:24.422Z",
+    "lastChecked": "2026-11-04T09:32:55.269Z",
     "revisionIdentifier": "ca5acf0c",
-    "lastVerified": "2026-10-31T06:38:24.422Z"
+    "lastVerified": "2026-11-04T09:32:55.269Z"
   },
   "krakend-krakend-ce": {
     "name": "krakend/krakend-ce",
@@ -5321,9 +5320,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-02T15:49:36.443Z",
+    "lastChecked": "2026-11-04T09:32:50.262Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-02T15:49:36.443Z"
+    "lastVerified": "2026-11-04T09:32:50.262Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -5645,14 +5644,14 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-03T12:06:30.099Z",
-    "lastVerified": "2026-11-03T12:06:30.099Z",
+    "lastChecked": "2026-11-04T09:33:07.389Z",
+    "lastVerified": "2026-11-04T09:33:07.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 8,
+    "contentHash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12227,11 +12226,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "expressjs-express": {
-    "name": "express",
+    "name": "expressjs/express",
     "officialUrl": "https://github.com/expressjs/express",
-    "lastChecked": "2026-10-30T23:14:59.586Z",
-    "revisionIdentifier": "1c6f1b0f",
-    "lastVerified": "2026-10-30T23:14:59.586Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-04T09:32:56.527Z",
+    "lastVerified": "2026-11-04T09:32:56.527Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-expressjs-express",
+    "contentHash": "02889aecd6f09370970161d1e2768203bb3c978e0ca54846727940d8c9dac5a5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "unjs-nitro": {
     "name": "nitrojs/nitro",

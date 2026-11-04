@@ -7202,3 +7202,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `8c0f6991` | Multi-dimensional audit evidence | 2026-11-04T09:25:08.990Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `280986c1` | Multi-dimensional audit evidence | 2026-11-04T09:25:13.487Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `311c58a2` | Multi-dimensional audit evidence | 2026-11-04T09:25:13.780Z |
+| `learn-github-expressjs-express` | `https://github.com/expressjs/express` | `43fca52d` | Multi-dimensional audit evidence | 2026-11-04T09:33:03.972Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `46813afa` | Multi-dimensional audit evidence | 2026-11-04T09:33:05.593Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4e468ce3` | Multi-dimensional audit evidence | 2026-11-04T09:33:09.330Z |

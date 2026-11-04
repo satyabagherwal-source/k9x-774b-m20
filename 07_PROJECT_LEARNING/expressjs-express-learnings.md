@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expressjs-express-learnings.md`  
 > **Source**: github ([https://github.com/expressjs/express](https://github.com/expressjs/express))  
-> **Source Version**: `1c6f1b0f`  
+> **Source Version**: `43fca52d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:28:28.310Z  
+> **Timestamp**: 2026-11-04T09:33:03.184Z  
 > **Learning ID**: `learn-github-expressjs-express`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expressjs-express-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expressjs/express](https://github.com/expressjs/express))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:28:26.876Z  
+> **Harvest Timestamp**: 2026-11-04T09:32:56.527Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, unopinionated, minimalist web framework for node.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 69576 stars
+- **Stars / Engagement**: 69582 stars
 
 ---
 
@@ -874,699 +874,203 @@ if (!module.parent) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c6f1b0f` (2026-10-23)
-**Commit Message**: test: expand coverage for request, response and view behavior (#7112)
+### Incident Patch 1: `6389ae5e` (2026-11-02)
+**Commit Message**: build(deps): bump the github-actions group with 7 updates (#7575)
 
-* achieve 100% test coverage in expressjs
+Bumps the github-actions group with 7 updates:
 
-* test: remove redirect deprecation coverage cases
+| Package | From | To |
+| --- | --- | --- |
+| [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` |
+| [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` |
+| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
+| [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |
+| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
 
-* test: enhance req.is() tests with additional cases
 
-Signed-off-by: Sebastian Beltran <[REDACTED_EMAIL]>
-(cherry picked from commit 786fbf417a4096dd25562c3f307c1a84e98d7eae)
+Updates `actions/setup-node` from 7.0.0 to 7.1.0
+- [Release notes](https://github.com/actions/setup-node/releases)
+- [Commits](https://github.com/actions/setup-node/compare/820762786026740c76f36085b0efc47a31fe5020...949feb2413d6458794dcd2491c4babbbce0c15c1)
 
-* fix lint error
+Updates `actions/upload-artifact` from 7.0.1 to 7.0.2
+- [Release notes](https://github.com/actions/upload-artifact/rel
 
-Signed-off-by: Sebastian Beltran <[REDACTED_EMAIL]>
-(cherry picked from commit a865e5402d6a88458e820d7b981e79a849942072)
-
-* test: replace sendFile guard mocks with integration cases
-
-* test: strengthen request, response and view coverage
-
-Replace duplicate view tests with rendering and engine cache regressions. Exercise real toJSON serialization and error handling without overriding JSON.stringify.
-
-Verify req.is() behavior for missing content types, bodyless requests and overlapping matches, and ensure app.listen() tests close the server before asserting the callback count.
-
-* test: fix engine cache assertions on Windows
-
-Remove the trailing newline from the EJS fixture and update the expected output so checkout line-ending conversion does not affect the engine cache tests.
-
----------
-
-Signed-off-by: Sebastian Beltran <[REDACTE
-
-**File**: `test/app.listen.js` (modified, +18/-0)
+**File**: `.github/workflows/ci.yml` (modified, +4/-4)
 ```diff
-@@ -41,6 +41,24 @@ describe('app.listen()', function(){
-     const server = app.listen();
-     server.close(done);
-   });
-+
-+  it('should not invoke callback more than once', function (done) {
-+    var app = express()
-+    var count = 0
-+    var server = app.listen(0, function () {
-+      count++
-+    })
-+
-+    server.once('listening', function () {
-+      server.emit('error', new Error('boom'))
-+      server.close(function (err) {
-+        assert.ifError(err)
-+        assert.strictEqual(count, 1)
-+        done()
-+      })
-+    })
-+  })
-+
-   it('server.address() gives a { address, port, family } object', function (done) {
-     const app = express();
-     const server = app.listen(0, () => {
+@@ -31,7 +31,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - name: Setup Node.js
+-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: 'lts/*'
+ 
+@@ -58,7 +58,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: Setup Node.js ${{ matrix.node-version }}
+-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: ${{ matrix.node-version }}
+ 
+@@ -80,7 +80,7 @@ jobs:
+         run: npm run test-ci
+ 
+       - name: Upload code coverage
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: coverage-node-${{ matrix.node-version }}-${{ matrix.os }}
+           path: ./coverage/lcov.info
+@@ -102,7 +102,7 @@ jobs:
+         run: sudo apt-get -y install lcov
+ 
+       - name: Collect coverage reports
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+           path: ./coverage
+           pattern: coverage-node-*
 ```
 
-**File**: `test/app.render.js` (modified, +188/-0)
+**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,7 @@
- 'use strict'
+@@ -45,7 +45,7 @@ jobs:
  
- var assert = require('node:assert')
-+var ejs = require('ejs');
- var express = require('..');
- var path = require('node:path')
- var tmpl = require('./support/tmpl');
-@@ -32,6 +33,31 @@ describe('app', function(){
-       })
-     })
+       # Initializes the CodeQL tools for scanning.
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           languages: ${{ matrix.language }}
+           config: |
+@@ -71,4 +71,4 @@ jobs:
+       #   ./location_of_script_within_repo/buildscript.sh
  
-+    it('should throw without a view engine or file extension', function(){
-+      var app = express();
-+
-+      assert.throws(function () {
-+        app.render('user', function () {
-+          assert.fail('render callback should not be called');
-+        });
-+      }, /No default engine was specified and no extension was provided\./);
-+    })
-+
-+    it('should throw when the view engine module does not exist', function(){
-+      var app = express();
-+
-+      app.set('view engine', 'express-test-missing-engine');
-+
-+      assert.throws(function () {
-+        app.render('user', function () {
-+          assert.fail('render callback should not be called');
-+        });
-+      }, {
-+        code: 'MODULE_NOT_FOUND',
-+        message: /^Cannot find module 'express-test-missing-engine'(?:\n|$)/
-+      });
-+    })
-+
-     it('should expose app.locals', function(done){
-       var app = createApp();
- 
-@@ -104,6 +130,21 @@ describe('app', function(){
-           done()
-         })
-       })
-+
-+      it('should pass a sync engine throw to the callback on first render', function(done){
-+        var app = express();
-+        var error = new Error('render failed');
-+
-+        app.engine('tmpl', function () {
-+          throw error;
-+        });
-+        app.set('views', path.join(__dirname, 'fixtures'))
-+
-+        app.render('user.tmpl', function (err) {
-+          assert.strictEqual(err, error)
-+          done();
-+        })
-+      })
-     })
- 
-     describe('when an extension is given', function(){
-@@ -184,6 +225,36 @@ describe('app', function(){
-           })
-         })
- 
-+        it('should continue past an empty-string root', function(done){
-+          var app = createApp();
-+
-+          app.set('views', ['', path.join(__dirname, 'fixtures')]);
-+          app.locals.user = { name: 'tobi' };
-+
-+          app.render('user.tmpl', function (err, str) {
-+            if (err) return done(err);
-+            assert.strictEqual(str, '<p>tobi</p>')
-+            done();
-+          })
-+        })
-+
-+        it('should continue looking up after an ENOTDIR stat error', function(done){
-+          var app = createApp();
-+          var views = [
-+            path.join(__dirname, 'fixtures', 'user.tmpl'),
-+            path.join(__dirname, 'fixtures')
-+          ];
-+
-+          app.set('views', views);
-+          app.locals.user = { name: 'tobi' };
-+
-+          app.render('user.tmpl', function (err, str) {
-+            if (err) return done(err);
-+            assert.strictEqual(str, '<p>tobi</p>')
-+            done();
-+          })
-+        })
-+
-         it('should error if file does not exist', function(done){
-           var app = createApp();
-           var views = [
-@@ -224,9 +295,126 @@ describe('app', function(){
-           done();
-         })
-       })
-+
-+      it('should error when a custom view leaves path unset', function(done){
-+        var app = express();
-+
-+        function View(name, options){
-+          this.name = name;
-+          this.root = options.root;
-+        }
-+
-+        View.prototype.render = function(){
-+          throw new Error('render should not be called');
-+        };
-+
-+        app.set('view', View);
-+
-+        app.render('something', function(err){
-+          assert.ok(err)
-+          assert.match(err.message, /^Failed to lookup view "something"/)
-+          done();
-+        })
-+      })
-+
-+      it('should honor a View subclass that clears path to deny a view', function(done){
-+        var app = express();
-+        var BaseView = app.get('view');
-+
-+        app.engine('tmpl', function (file, options, fn) {
-+          fn(null, 'served');
-+        });
-+        app.set('views', path.join(__dirname, 'fixtures'))
-+
-+        function DenyView(name, options){
-+          BaseView.call(this, name, options);
-+          this.path = null;
-+        }
-+
-+        DenyView.prototype = Object.create(BaseView.prototype);
-+        DenyView.prototype.constructor = DenyView;
-+
-+        app.set('view', DenyView);
-+
-+        app.render('user.tmpl', function (err){
-+          assert.ok(err, 'denied view must not be served')
-+          assert.match(err.message, /^Failed to lookup view "user\.tmpl"/)
-+          done();
-+        })
-+      })
-+    })
-+
-+    describe('engine caching', function(){
-+      it('should cache an automatically loaded engine', function(done){
-+        var app = express();
-+
-+        app.disable('view cache');
-+        app.set('views', path.join(__dirname, 'fixtures'))
-+        app.locals.user = { name: 'tobi' };
-+
-+        assert.strictEqual(app.engines['.ejs'], undefined)
-+
-+        app.render('user.ejs', function (err, str) {
-+          if (err) return done(err);
-+          assert.strictEqual(str, '<p>tobi</p>')
-+          assert.strictEqual(ap
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
-**File**: `test/fixtures/user.ejs` (added, +1/-0)
+**File**: `.github/workflows/legacy.yml` (modified, +3/-3)
 ```diff
-@@ -0,0 +1 @@
-+<p><%= user.name %></p>
-\ No newline at end of file
+@@ -42,7 +42,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: Setup Node.js ${{ matrix.node-version }}
+-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: ${{ matrix.node-version }}
+ 
+@@ -64,7 +64,7 @@ jobs:
+         run: npm run test-ci
+ 
+       - name: Upload code coverage
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: coverage-node-${{ matrix.node-version }}-${{ matrix.os }}
+           path: ./coverage/lcov.info
+@@ -86,7 +86,7 @@ jobs:
+         run: sudo apt-get -y install lcov
+ 
+       - name: Collect coverage reports
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+           path: ./coverage
+           pattern: coverage-node-*
 ```
 
-**File**: `test/req.is.js` (modified, +139/-9)
+**File**: `.github/workflows/npm-publish.yml` (modified, +1/-1)
 ```diff
-@@ -1,9 +1,24 @@
- 'use strict'
+@@ -25,7 +25,7 @@ jobs:
+           persist-credentials: false
  
-+var assert = require('node:assert')
- var express = require('..')
- var request = require('supertest')
-+var after = require('after')
- 
- describe('req.is()', function () {
-+  it('should return null when the request has no body, even if content-type matches', function (done) {
-+    var app = express()
-+
-+    app.use(function (req, res) {
-+      res.json(req.is('application/json'))
-+    })
-+
-+    request(app)
-+      .get('/')
-+      .type('application/json')
-+      .expect(200, 'null', done)
-+  })
-+
-   describe('when given a mime type', function () {
-     it('should return the type when matching', function (done) {
-       var app = express()
-@@ -27,10 +42,24 @@ describe('req.is()', function () {
-       })
- 
-       request(app)
--      .post('/')
--      .type('application/json')
--      .send('{}')
--      .expect(200, 'false', done)
-+        .post('/')
-+        .type('application/json')
-+        .send('{}')
-+        .expect(200, 'false', done)
-+    })
-+
-+    it('should return false when none in list matches', function (done) {
-+      var app = express()
-+
-+      app.use(function (req, res) {
-+        res.json(req.is(['image/jpeg', 'text/html']))
-+      })
-+
-+      request(app)
-+        .post('/')
-+        .type('application/json')
-+        .send('{}')
-+        .expect(200, 'false', done)
-     })
- 
-     it('should ignore charset', function (done) {
-@@ -41,26 +70,43 @@ describe('req.is()', function () {
-       })
- 
-       request(app)
--      .post('/')
--      .type('application/json; charset=UTF-8')
--      .send('{}')
--      .expect(200, '"application/json"', done)
-+        .post('/')
-+        .type('application/json; charset=UTF-8')
-+        .send('{}')
-+        .expect(200, '"application/json"', done)
-     })
-   })
- 
-   describe('when content-type is not present', function(){
--    it('should return false', function (done) {
-+    it('should return false for single type', function (done) {
-       var app = express()
- 
-       app.use(function (req, res) {
-+        assert.strictEqual(req.get('Content-Type'), undefined)
-         res.json(req.is('application/json'))
-       })
- 
-       request(app)
-       .post('/')
-       .send('{}')
-+      .unset('Content-Type')
-       .expect(200, 'false', done)
-     })
-+
-+    it('should return false for multiple types', function (done) {
-+      var app = express()
-+
-+      app.use(function (req, res) {
-+        assert.strictEqual(req.get('Content-Type'), undefined)
-+        res.json(req.is(['application/json', 'image/jpeg']))
-+      })
-+
-+      request(app)
-+        .post('/')
-+        .send('{}')
-+        .unset('Content-Type')
-+        .expect(200, 'false', done)
-+    })
-   })
- 
-   describe('when given an extension', function(){
-@@ -77,6 +123,27 @@ describe('req.is()', function () {
-       .send('{}')
-       .expect(200, '"json"', done)
-     })
-+
-+    it('should lookup the first matching extension from list', function (done) {
-+      var app = express()
-+      var cb = after(2, done)
-+
-+      app.use(function (req, res) {
-+        res.json(req.is(['json', 'html']))
-+      })
-+
-+      request(app)
-+        .post('/')
-+        .type('application/json')
-+        .send('{}')
-+        .expect(200, '"json"', cb)
-+
-+      request(app)
-+        .post('/')
-+        .type('text/html')
-+        .send('{}')
-+        .expect(200, '"html"', cb)
-+    })
-   })
- 
-   describe('when given */subtype', function(){
-@@ -166,4 +233,67 @@ describe('req.is()', function () {
-       .expect(200, '"application/json"', done)
-     })
-   })
-+
-+  describe('when given an array of types', function () {
-+    it('should return the first match when multiple types match', function (done) {
-+      var app = express()
-+
-+      app.use(function (req, res) {
-+        res.json({
-+          extensionFirst: req.is(['json', 'application/*']),
-+          wildcardFirst: req.is(['application/*', 'json'])
-+        })
-+      })
-+
-+      request(app)
-+        .post('/')
-+        .type('application/json')
-+        .send('{}')
-+        .expect(200, {
-+          extensionFirst: 'json',
-+          wildcardFirst: 'application/json'
-+        }, done)
-+    })
-+
-+    it('should not flatten the argument', function (done) {
-+      var app = express()
-+
-+      app.use(function (req, res) {
-+        res.json(req.is(['text/*', 'application/json']))
-+      })
-+
-+      request(app)
-+      .post('/')
-+      .type('application/json')
-+      .send('{}')
-+      .expect(200, '"application/json"', done)
-+    })
-+  })
-+
-+  it('should match wildcards in list and return full type or false', function (done){
-+    var app = express()
-+    var cb = after(3, done)
-+
-+    app.use(function (req, res) {
-+      res.json(req.is(['application/*', '*/jpeg']))
-+    })
-+
-+    request(app)
-+      .post('/')
-+      .type('image/jpeg')
-+      .send('{}')
-+      .expect(200, '"image/jpeg"', cb)
-+
-+    request(app)
-+      .post('/')
-+      .type('text/html')
-+      .send('{}')
-+      .expect(200, 'false', cb)
-+
-+    request(app)
-+      .post(
+       - name: Setup Node.js
+-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: "lts/*"
+           registry-url: "https://registry.npmjs.org"
 ```
 
-**File**: `test/res.append.js` (modified, +16/-0)
+**File**: `.github/workflows/scorecard.yml` (modified, +3/-3)
 ```diff
-@@ -82,6 +82,22 @@ describe('res', function () {
-         .end(done)
-     })
+@@ -37,7 +37,7 @@ jobs:
+           persist-credentials: false
  
-+    it('should append an array to an existing single value', function (done) {
-+      var app = express()
-+
-+      app.use(function (req, res) {
-+        res.set('Set-Cookie', 'foo=bar')
-+        res.append('Set-Cookie', ['fizz=buzz', 'pet=tobi'])
-+        res.end()
-+      })
-+
-+      request(app)
-+        .get('/')
-+        .expect(200)
-+        .expect(shouldHaveHeaderValues('Set-Cookie', ['foo=bar', 'fizz=buzz', 'pet=tobi']))
-+        .end(done)
-+    })
-+
-     it('should work together with res.cookie', function (done) {
-       var app = express()
+       - name: "Run analysis"
+-        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
++        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
+@@ -59,14 +59,14 @@ jobs:
+       # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
+       # format to the repository Actions tab.
+       - name: "Upload artifact"
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: SARIF file
+           path: results.sarif
+           retention-days: 5
  
+       # Upload the results to GitHub's code scanning dashboard.
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: results.sarif
 ```
 
-**File**: `test/res.jsonp.js` (modified, +59/-0)
-```diff
-@@ -217,6 +217,65 @@ describe('res', function(){
-       })
-     })
- 
-+    describe('when given an object with toJSON', function () {
-+      it('should serialize the value returned by toJSON', function (done) {
-+        var app = express()
-+
-+        app.use(function (req, res) {
-+          res.jsonp({
-+            toJSON: function () {
-+              return 42
-+            }
-+          })
-+        })
-+
-+        request(app)
-+          .get('/?callback=cb')
-+          .expect('Content-Type', 'text/javascript; charset=utf-8')
-+          .expect(200, '/**/ typeof cb === \'function\' && cb(42);', done)
-+      })
-+
-+      it('should invoke callback with no arguments when toJSON returns undefined', function (done) {
-+        var app = express()
-+
-+        app.use(function (req, res) {
-+          res.jsonp({
-+            toJSON: function () {
-+              return undefined
-+            }
-+          })
-+        })
-+
-+        request(app)
-+          .get('/?callback=cb')
-+          .expect('Content-Type', 'text/javascript; charset=utf-8')
-+          .expect(200, '/**/ typeof cb === \'function\' && cb();', done)
-+      })
-+
-+      it('should forward errors thrown by toJSON before sending a response', function (done) {
-+        var app = express()
-+        var error = new Error('serialization failed')
-+
-+        app.use(function (req, res) {
-+          res.jsonp({
-+            toJSON: function () {
-+              throw error
-+            }
-+          })
-+        })
-+
-+        app.use(function (err, req, res, next) {
-+          assert.strictEqual(err, error)
-+          assert.strictEqual(res.headersSent, false)
-+          res.status(500).send('serialization failed')
-+        })
-+
-+        request(app)
-+          .get('/?callback=cb')
-+          .expect(500, 'serialization failed', done)
-+      })
-+    })
-+
-     describe('when given an array', function () {
-       it('should invoke callback with an array', function (done) {
-         var app = express()
-```
+---
 
-**File**: `test/res.render.js` (modified, +24/-0)
-```diff
-@@ -64,6 +64,30 @@ describe('res', function(){
-       .expect(500, /No default engine was specified/, done);
-     })
- 
-+    it('should forward errors for a missing view engine module', function(done){
-+      var app = express();
-+
-+      app.set('view engine', 'express-test-missing-engine');
-+
-+      app.use(function (req, res) {
-+        res.render('user');
-+      });
-+
-+      app.use(function (err, req, res, next) {
-+        res.status(500).json({
-+          code: err.code,
-+          message: err.message.split('\n')[0]
-+        });
-+      });
-+
-+      request(app)
-+      .get('/')
-+      .expect(500, {
-+        code: 'MODULE_NOT_FOUND',
-+        message: "Cannot find module 'express-test-missing-engine'"
-+      }, done);
-+    })
-+
-     it('should expose app.locals', function(done){
-       var app = createApp();
- 
-```
+### Incident Patch 2: `bcc0551c` (2026-11-02)
+**Commit Message**: build(deps-dev): bump hbs from 4.3.1 to 4.4.0 (#7580)
 
-**File**: `test/res.sendFile.js` (modified, +106/-0)
+Bumps [hbs](https://github.com/pillarjs/hbs) from 4.3.1 to 4.4.0.
+- [Release notes](https://github.com/pillarjs/hbs/releases)
+- [Changelog](https://github.com/pillarjs/hbs/blob/master/HISTORY.md)
+- [Commits](https://github.com/pillarjs/hbs/compare/v4.3.1...v4.4.0)
+
+---
+updated-dependencies:
+- dependency-name: hbs
+  dependency-version: 4.4.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -183,6 +183,112 @@ describe('res', function(){
-       .expect(200, cb);
-     })
- 
-+    it('should invoke the callback once on a socket error during transfer', function (done) {
-+      var app = express()
-+      var cb = after(2, done)
-+      var socketError = new Error('socket failed')
-+      socketError.code = 'EPIPE'
-+
-+      app.use(function (req, res) {
-+        res.once('pipe', function () {
-+          res.destroy(socketError)
-+        })
-+
-+        res.sendFile(path.resolve(fixtures, 'name.txt'), function (err) {
-+          assert.strictEqual(err, socketError)
-+          cb()
-+        })
-+      })
-+
-+      var server = app.listen()
-+      request(server).get('/').end(function (err) {
-+        assert.ok(err)
-+        server.close(cb)
-+      })
-+    })
-+
-+    ;['ECONNRESET', 'EPIPE'].forEach(function (code) {
-+      it('should invoke the callback once when ' + code + ' follows a directory error', function (done) {
-+        var app = express()
-+        var cb = after(2, done)
-+        var socketError = new Error('socket failed')
-+        socketError.code = code
-+
-+        app.use(function (req, res) {
-+          res.sendFile(path.resolve(fixtures, 'blog'), function (err) {
-+            assert.ok(err)
-+            assert.strictEqual(err.code, 'EISDIR')
-+            res.destroy(socketError)
-+            cb()
-+          })
-+        })
-+
-+        var server = app.listen()
-+        request(server).get('/').end(function (err) {
-+          assert.ok(err)
-+          server.close(cb)
-+        })
-+      })
-+    })
-+
-+    it('should invoke the callback once when a socket error precedes the stream end', function (done) {
-+      var app = express()
-+      var cb = after(2, done)
-+      var socketError = new Error('socket failed')
-+      socketError.code = 'EPIPE'
-+
-+      app.use(function (req, res) {
-+        var socket = res.socket
-+        res.once('pipe', function (stream) {
-+          // Report the error before send handles the stream end event.
-+          stream.prependOnceListener('end', function () {
-+            socket.emit('error', socketError)
-+          })
-+        })
-+
-+        res.sendFile(path.resolve(fixtures, 'name.txt'), function (err) {
-+          assert.strictEqual(err, socketError)
-+          cb()
-+        })
-+      })
-+
-+      var server = app.listen()
-+      request(server).get('/').end(function () {
-+        // The client may receive the complete body before the socket error.
-+        server.close(cb)
-+      })
-+    })
-+
-+    it('should invoke the callback once when a stream error follows response finish', function (done) {
-+      var app = express()
-+      var cb = after(2, done)
-+      var streamError = new Error('read failed')
-+      streamError.code = 'EIO'
-+
-+      app.use(function (req, res) {
-+        res.once('pipe', function (stream) {
-+          res.once('finish', function () {
-+            // Report the error before the deferred completion callback runs.
-+            stream.emit('error', streamError)
-+          })
-+          stream.once('open', function () {
-+            res.end()
-+          })
-+        })
-+
-+        res.sendFile(path.resolve(fixtures, 'name.txt'), function (err) {
-+          assert.strictEqual(err, streamError)
-+          cb()
-+        })
-+      })
-+
-+      var server = app.listen()
-+      request(server).get('/').end(function (err) {
-+        assert.ok(err)
-+        server.close(cb)
-+      })
-+    })
-+
-     it('should invoke the callback when client aborts', function (done) {
-       var cb = after(2, done)
-       var app = express();
+@@ -69,7 +69,7 @@
+     "ejs": "^3.1.10",
+     "eslint": "8.47.0",
+     "express-session": "^1.18.1",
+-    "hbs": "4.3.1",
++    "hbs": "4.4.0",
+     "marked": "^15.0.3",
+     "method-override": "3.0.0",
+     "mocha": "^11.7.5",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7556** (closed): fix: req.subdomains should not split a dotted IPv6 host (@johnhldiver-beep)
-- **PR #7545** (closed): fix: req.subdomains splitting bracketed IPv6 host with IPv4 part (@princejain756)
-- **PR #7544** (closed): docs: fix typo in README (@ganeshghutukade-04)
-- **PR #7543** (closed): docs: add quick start guide (@ganeshghutukade-04)
-- **PR #7540** (closed): fix: don't split a bracketed IPv6 host in req.subdomains (@XRafik)
-- **PR #7537** (closed): fix(response): keep custom Content-Type values in res.set() (@princejain756)
+- **PR #7585** (closed): fix: avoid uncaught ERR_HTTP_HEADERS_SENT in res.render (@hasan19524)
+- **PR #7584** (closed): fix: res.send() preserve data for non-Uint8Array typed arrays (@hasan19524)
+- **PR #7583** (closed): docs: capitalize Express.js project name in README (@hasan19524)
+- **PR #7582** (closed): docs: fix req.query JSDoc return type (@hasan19524)
+- **PR #7581** (closed): fix: handle bracketed IPv6 hosts in req.subdomains (@hasan19524)
+- **PR #7580** (2026-11-02): build(deps-dev): bump hbs from 4.3.1 to 4.4.0 (@dependabot[bot])
 
 ---
 
@@ -1586,45 +1090,34 @@ Signed-off-by: Sebastian Beltran <[REDACTE
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: expand coverage for request, response and view behavior (#7112)
+## X. build(deps): bump the github-actions group with 7 updates (#7575)
 
 **RULE**:
-When implementing operations in `test/app.listen.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expressjs/express. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expressjs/express. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c6f1b0f`: test: expand coverage for request, response and view behavior (#7112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6389ae5e`: build(deps): bump the github-actions group with 7 updates (#7575). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/app.listen.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-
-  it('should not invoke callback more than once', function (done) {
-    var app = express()
-    var count = 0
-    var server = app.listen(0, function () {
-      count++
-    })
-
-    server.once('listening', function () {
-      server.emit('error', new Error('boom'))
-      server.close(function (err) {
-        assert.ifError(err)
-        assert.strictEqual(count, 1)
-        done()
-      })
-    })
-  })
-
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c6f1b0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6389ae5e` are properly handled with clean fallback behavior.

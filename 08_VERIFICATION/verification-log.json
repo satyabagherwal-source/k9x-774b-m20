@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-F4YS",
-    "timestamp": "2026-10-31T19:49:55.300Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-F5LW",
-    "timestamp": "2026-10-31T19:49:56.132Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-HT2K",
-    "timestamp": "2026-10-31T19:51:59.852Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "d6d05c4b644b9b9294e7725c93243c2c14e2119e259587945fe4dbe2070c2125",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-XEAZ",
     "timestamp": "2026-10-31T20:04:07.212Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7445,51 @@
     "repository": "nginx/kubernetes-ingress",
     "learningId": "learn-github-nginx-kubernetes-ingress",
     "contentHash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-59I7",
+    "timestamp": "2026-11-04T09:33:03.967Z",
+    "repository": "expressjs/express",
+    "learningId": "learn-github-expressjs-express",
+    "contentHash": "02889aecd6f09370970161d1e2768203bb3c978e0ca54846727940d8c9dac5a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-5ARA",
+    "timestamp": "2026-11-04T09:33:05.590Z",
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-5DN2",
+    "timestamp": "2026-11-04T09:33:09.326Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

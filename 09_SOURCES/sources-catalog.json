@@ -2013,10 +2013,10 @@
     "repository": "expressjs/express",
     "platform": "github",
     "sourceUrl": "https://github.com/expressjs/express",
-    "sourceVersion": "1c6f1b0f",
+    "sourceVersion": "43fca52d",
     "license": "MIT",
-    "contentHash": "04142cfaa855a731fa8f7984caad875334b7c91c2d526adc32ebec559987e1ac",
-    "lastHarvestedAt": "2026-10-24T19:28:28.532Z",
+    "contentHash": "02889aecd6f09370970161d1e2768203bb3c978e0ca54846727940d8c9dac5a5",
+    "lastHarvestedAt": "2026-11-04T09:33:03.972Z",
     "learningId": "learn-github-expressjs-express"
   },
   "unjs-nitro": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "16c646c3",
+    "sourceVersion": "4e468ce3",
     "license": "Apache-2.0",
-    "contentHash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
-    "lastHarvestedAt": "2026-11-03T12:06:31.762Z",
+    "contentHash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
+    "lastHarvestedAt": "2026-11-04T09:33:09.330Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "745586f6",
+    "sourceVersion": "46813afa",
     "license": "Apache-2.0",
-    "contentHash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
-    "lastHarvestedAt": "2026-10-30T07:47:53.130Z",
+    "contentHash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
+    "lastHarvestedAt": "2026-11-04T09:33:05.593Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
