@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:34:58.167Z",
+  "last_updated": "2026-11-04T01:44:35.497Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33239,8 +33239,8 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "98c9711f",
-      "content_hash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
+      "source_version": "93b9a2d9",
+      "content_hash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
@@ -33253,6 +33253,11 @@
           "number": 3850,
           "title": "build with Go 1.26.10 and Alpine 3.24 (#3634)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6706,
+          "title": "ci: release from master by dispatch, not from a pushed tag (#3637)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33260,7 +33265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:20:52.058Z",
+      "verified_at": "2026-11-04T01:44:30.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37721,8 +37726,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "77aa5579",
-      "content_hash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
+      "source_version": "018cd7fa",
+      "content_hash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -37762,7 +37767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:00:57.867Z",
+      "verified_at": "2026-11-04T01:44:35.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172220,6 +172225,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:34:58.145Z"
+    },
+    "rule-6706": {
+      "learning_id": "rule-6706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6706,
+      "title": "ci: release from master by dispatch, not from a pushed tag (#3637)",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "93b9a2d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:44:30.821Z"
     }
   },
   "aliases": {

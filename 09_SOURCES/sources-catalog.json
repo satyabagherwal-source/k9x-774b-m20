@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "77aa5579",
+    "sourceVersion": "018cd7fa",
     "license": "NOASSERTION",
-    "contentHash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
-    "lastHarvestedAt": "2026-11-02T15:00:58.072Z",
+    "contentHash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
+    "lastHarvestedAt": "2026-11-04T01:44:35.599Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "98c9711f",
+    "sourceVersion": "93b9a2d9",
     "license": "Apache-2.0",
-    "contentHash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
-    "lastHarvestedAt": "2026-10-23T09:20:52.094Z",
+    "contentHash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+    "lastHarvestedAt": "2026-11-04T01:44:30.928Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {

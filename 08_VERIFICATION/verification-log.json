@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-BUDK",
-    "timestamp": "2026-10-31T14:39:25.832Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-C23L",
-    "timestamp": "2026-10-31T14:39:35.841Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-JZZ9",
     "timestamp": "2026-10-31T14:45:46.341Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7492,6 +7462,36 @@
     "contentHash": "82d624753a1225202d55e7d85575cac9b4698aee722b8539cd86392f577a19ca",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-EPCD",
+    "timestamp": "2026-11-04T01:44:30.925Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-ESXZ",
+    "timestamp": "2026-11-04T01:44:35.591Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

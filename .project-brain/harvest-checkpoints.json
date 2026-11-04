@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:34:58.263Z",
+  "last_updated": "2026-11-04T01:44:35.612Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
-      "verified_at": "2026-11-02T15:00:58.085Z",
+      "content_hash": "c869f9c03f86a63fdc875afcabf9f991c4c6fe0edfc32ee3fd62b269deffa219",
+      "verified_at": "2026-11-04T01:44:35.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:00:58.085Z"
+      "last_updated": "2026-11-04T01:44:35.611Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
-      "verified_at": "2026-10-23T09:20:52.099Z",
+      "content_hash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+      "verified_at": "2026-11-04T01:44:30.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:20:52.099Z"
+      "last_updated": "2026-11-04T01:44:30.938Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",

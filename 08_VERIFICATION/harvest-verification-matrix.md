@@ -7106,3 +7106,5 @@
 | `CYCLE-20261104-29VP` | `2026-11-04T01:34:51.013Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6703` | Yes (`d180e3a6...`) |
 | `CYCLE-20261104-2DO4` | `2026-11-04T01:34:55.924Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6704` | Yes (`ff047b4d...`) |
 | `CYCLE-20261104-2FGP` | `2026-11-04T01:34:58.249Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6705` | Yes (`82d62475...`) |
+| `CYCLE-20261104-EPCD` | `2026-11-04T01:44:30.925Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6706` | Yes (`7c1f97c5...`) |
+| `CYCLE-20261104-ESXZ` | `2026-11-04T01:44:35.591Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`c869f9c0...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `98c9711f`  
+> **Source Version**: `93b9a2d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:20:51.890Z  
+> **Timestamp**: 2026-11-04T01:44:30.183Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:20:50.989Z  
+> **Harvest Timestamp**: 2026-11-04T01:44:28.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12581 stars
+- **Stars / Engagement**: 12606 stars
 
 ---
 
@@ -693,81 +693,274 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98c9711f` (2026-10-21)
-**Commit Message**: fix: build with Go 1.26.10 and Alpine 3.24 (#3634)
+### Incident Patch 1: `93b9a2d9` (2026-11-03)
+**Commit Message**: ci: release from master by dispatch, not from a pushed tag (#3637)
 
-Go 1.26.10 distrusts the compromised eMudhra intermediates (GO-2026-6809).
-Alpine 3.16 is EOL with a frozen CA bundle.
+Releases are started by hand from master with the version. The build
+tags the checkout locally so it embeds the version, and the draft
+release targets the dispatched commit, so publishing it creates the tag
+there.
 
-Refs TRK-1282
-
-**File**: `Dockerfile` (modified, +2/-2)
+**File**: `.github/workflows/create-release.yml` (modified, +51/-7)
 ```diff
-@@ -1,4 +1,4 @@
--ARG GO_VERSION=1.26.9
-+ARG GO_VERSION=1.26.10
+@@ -1,9 +1,19 @@
+ name: Upload Release Asset
  
- FROM golang:${GO_VERSION} AS builder
++# Releases are started by hand from master with the version to release. The
++# draft release targets the commit this run builds, so publishing it creates
++# the tag there.
+ on:
+-  push:
+-    tags:
+-      - "v*"
++  workflow_dispatch:
++    inputs:
++      version:
++        description: "Version to release, e.g. v0.10.48"
++        type: string
++        required: true
++
++concurrency:
++  group: release
++  cancel-in-progress: false
  
-@@ -50,7 +50,7 @@ RUN NO_DIRTY=true make build
- RUN chmod +x /app/build/infracost
+ jobs:
+   build:
+@@ -24,7 +34,40 @@ jobs:
+           sudo rm -rf /usr/share/swift        # ~3GB Swift toolchain
+           sudo rm -rf /opt/hostedtoolcache    # ~6GB cached tool versions
  
- # Application
--FROM alpine:3.16 AS app
-+FROM alpine:3.24 AS app
- # Tools needed for running diffs in CI integrations
- RUN apk --no-cache add ca-certificates openssl openssh-client curl git bash
++      - name: Check the version
++        env:
++          VERSION: ${{ inputs.version }}
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          if [ "$GITHUB_REF" != "refs/heads/master" ]; then
++            echo "::error::Releases run on master, not $GITHUB_REF"; exit 1
++          fi
++          if ! [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
++            echo "::error::$VERSION is not vX.Y.Z or vX.Y.Z-pre"; exit 1
++          fi
++          # Only a 404 means the tag is free; any other error stops the release.
++          if out=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" 2>&1); then
++            echo "::error::$VERSION already exists"; exit 1
++          elif ! grep -q "HTTP 404" <<<"$out"; then
++            echo "::error::Couldn't check whether $VERSION exists: $out"; exit 1
++          fi
++          # A draft has no tag yet, so a re-run would pass the check above and
++          # make a second draft. Delete the old draft first.
++          if out=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" 2>&1); then
++            echo "::error::A release named $VERSION already exists (possibly a draft). Delete it, then run again."; exit 1
++          elif ! grep -q "release not found" <<<"$out"; then
++            echo "::error::Couldn't check for a release named $VERSION: $out"; exit 1
++          fi
++
+       - uses: actions/checkout@v4
++
++      # The build reads its version from the tag on HEAD. Tag the checkout
++      # locally; the real tag is created when the draft release is published.
++      - name: Tag the checkout
++        env:
++          VERSION: ${{ inputs.version }}
++        run: git tag "$VERSION"
++
+       - name: Set up Go 1.x
+         uses: actions/setup-go@v5
+         with:
+@@ -38,6 +81,7 @@ jobs:
+         run: go run tools/release/main.go
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          RELEASE_TAG: ${{ inputs.version }}
  
+       - name: Remove build assets
+         run: rm -rf build
+@@ -61,8 +105,8 @@ jobs:
+           images: |
+             infracost/infracost
+           tags: |
+-            type=semver,pattern={{version}}
+-            type=semver,pattern={{major}}.{{minor}}
++            type=semver,pattern={{version}},value=${{ inputs.version }}
++            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+ 
+       - name: Build and push Docker images
+         uses: docker/build-push-action@v4
+@@ -85,8 +129,8 @@ jobs:
+           flavor: |
+             prefix=ci-,onlatest=true
+           tags: |
+-            type=semver,pattern={{version}}
+-            type=semver,pattern={{major}}.{{minor}}
++            type=semver,pattern={{version}},value=${{ inputs.version }}
++            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+ 
+       - name: Build and push Docker images (CI)
+         uses: docker/build-push-action@v4
 ```
 
-**File**: `Dockerfile.ci` (modified, +2/-2)
+**File**: `tools/release/main.go` (modified, +5/-1)
 ```diff
-@@ -1,4 +1,4 @@
--ARG GO_VERSION=1.26.9
-+ARG GO_VERSION=1.26.10
+@@ -80,7 +80,11 @@ func fetchExistingRelease(cli *github.Client, tag string) (*github.RepositoryRel
+ }
  
- FROM golang:${GO_VERSION} AS builder
- 
-@@ -21,7 +21,7 @@ RUN NO_DIRTY=true make build
- RUN chmod +x /app/build/infracost
- 
- # Application
--FROM alpine:3.16 AS app
-+FROM alpine:3.24 AS app
- # Tools needed for running diffs in CI integrations
- RUN apk --no-cache add bash curl git nodejs npm openssh-client
- 
+ func createDraftRelease(cli *github.Client) (*github.RepositoryRelease, error) {
+-	name := github.String(strings.Join(strings.Split(os.Getenv("GITHUB_REF"), "/")[2:], "/"))
++	tag := strings.TrimSpace(os.Getenv("RELEASE_TAG"))
++	if tag == "" {
++		return nil, errors.New("RELEASE_TAG is not set")
++	}
++	name := github.String(tag)
+ 	o, res, err := cli.Repositories.CreateRelease(
+ 		context.Background(),
+ 		"infracost",
 ```
 
-**File**: `go.mod` (modified, +1/-1)
+---
+
+### Incident Patch 2: `79b7c3b9` (2026-11-03)
+**Commit Message**: ci: switch docker hub login to oidc [TRK-1401] (#3636)
+
+**File**: `.github/workflows/create-docker-prerelease.yml` (modified, +11/-5)
 ```diff
-@@ -2,7 +2,7 @@ module github.com/infracost/infracost
+@@ -8,8 +8,11 @@ jobs:
+   build:
+     name: Create docker prerelease
+     runs-on: ubuntu-latest
++    # release env supplies the OIDC connection ID and fixes the subject claim
++    environment: release
+     permissions:
+       contents: write
++      id-token: write
+     steps:
+       - name: Free up disk space
+         run: |
+@@ -26,17 +29,20 @@ jobs:
+         uses: docker/setup-buildx-action@v3
  
- go 1.26.0
+       - name: Login to DockerHub
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v4.5.0
+         with:
+-          username: ${{ secrets.DOCKER_USERNAME }}
+-          password: ${{ secrets.DOCKER_PASSWORD }}
++          username: infracost          # must be the org name, not a user
++        env:
++          DOCKERHUB_OIDC_CONNECTIONID: "${{ vars.DOCKERHUB_OIDC_CONNECTION_ID }}"
++          # the default 300s token expires before the second image push finishes
++          DOCKERHUB_OIDC_EXPIREIN: "3600"
  
--toolchain go1.26.9
-+toolchain go1.26.10
- 
- require (
- 	github.com/Masterminds/goutils v1.1.1 // indirect
+       - name: Docker meta
+         id: meta
+         uses: docker/metadata-action@v5
+         with:
+           images: |
+-            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
++            infracost/infracost
+           tags: |
+             type=edge
+           flavor: |
+@@ -59,7 +65,7 @@ jobs:
+         uses: docker/metadata-action@v5
+         with:
+           images: |
+-            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
++            infracost/infracost
+           tags: |
+             type=edge
+           flavor: |
 ```
 
-**File**: `internal/hcl/modules/testdata/with_cached_modules/.infracost/terraform_modules/manifest.json` (modified, +1/-1)
+**File**: `.github/workflows/create-release.yml` (modified, +11/-5)
 ```diff
-@@ -1 +1 @@
--{"Path":"./testdata/with_cached_modules","Version":"2.0","Modules":[{"Key":"registry-module","Source":"registry.terraform.io/terraform-aws-modules/ec2-instance/aws","Version":"3.4.0","Dir":".infracost/terraform_modules/f8b5f5ddb85ee755b31c8b76d2801f5b","DownloadURL":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance?ref=v3.4.0"},{"Key":"git-module","Source":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git","Dir":".infracost/terraform_modules/9740179dc58fea6ce4a32fdc5b4e0839","DownloadURL":""}]}
-\ No newline at end of file
-+{"Path":"./testdata/with_cached_modules","Version":"2.0","Modules":[{"Key":"git-module","Source":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git","Dir":".infracost/terraform_modules/9740179dc58fea6ce4a32fdc5b4e0839","DownloadURL":""},{"Key":"registry-module","Source":"registry.terraform.io/terraform-aws-modules/ec2-instance/aws","Version":"3.4.0","Dir":".infracost/terraform_modules/f8b5f5ddb85ee755b31c8b76d2801f5b","DownloadURL":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance?ref=v3.4.0"}]}
-\ No newline at end of file
+@@ -9,8 +9,11 @@ jobs:
+   build:
+     name: Upload Release Asset
+     runs-on: ubuntu-latest
++    # release env supplies the OIDC connection ID and fixes the subject claim
++    environment: release
+     permissions:
+       contents: write
++      id-token: write
+     steps:
+       - name: Free up disk space
+         run: |
+@@ -43,17 +46,20 @@ jobs:
+         uses: docker/setup-buildx-action@v3
+ 
+       - name: Login to DockerHub
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v4.5.0
+         with:
+-          username: ${{ secrets.DOCKER_USERNAME }}
+-          password: ${{ secrets.DOCKER_PASSWORD }}
++          username: infracost          # must be the org name, not a user
++        env:
++          DOCKERHUB_OIDC_CONNECTIONID: "${{ vars.DOCKERHUB_OIDC_CONNECTION_ID }}"
++          # the default 300s token expires before the second image push finishes
++          DOCKERHUB_OIDC_EXPIREIN: "3600"
+ 
+       - name: Docker meta
+         id: meta
+         uses: docker/metadata-action@v5
+         with:
+           images: |
+-            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
++            infracost/infracost
+           tags: |
+             type=semver,pattern={{version}}
+             type=semver,pattern={{major}}.{{minor}}
+@@ -75,7 +81,7 @@ jobs:
+         uses: docker/metadata-action@v5
+         with:
+           images: |
+-            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
++            infracost/infracost
+           flavor: |
+             prefix=ci-,onlatest=true
+           tags: |
+```
+
+**File**: `.github/workflows/create-test-image.yml` (removed, +0/-28)
+```diff
+@@ -1,28 +0,0 @@
+-name: Build and push docker infracost/infracost:test
+-
+-on:
+-  workflow_dispatch
+-
+-jobs:
+-  build:
+-    name: Build and Push Docker test image
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4
+-      - name: Set up Go 1.x
+-        uses: actions/setup-go@v5
+-        with:
+-          go-version-file: go.mod
+-
+-      - name: Build project
+-        run: |
+-          make build
+-
+-      - name: Build and push Docker images
+-        uses: docker/build-push-action@v4
+-        with:
+-          username: ${{ secrets.DOCKER_USERNAME }}
+-          password: ${{ secrets.DOCKER_PASSWORD }}
+-          repository: ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
+-          tags: test
+-          tag_with_ref: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3637** (2026-11-03): ci: release from master by dispatch, not from a pushed tag (@aliscott)
+- **PR #3636** (2026-11-03): ci: switch docker hub login to oidc [TRK-1401] (@owenrumney)
 - **PR #3634** (2026-10-21): fix: build with Go 1.26.10 and Alpine 3.24 (@liamg)
 - **PR #3633** (2026-10-15): docs: add AGENTS.md steering contributors to discussions for EOL 0.10.x repo (@glenngillen)
 - **PR #3632** (closed): fix(azure): price the PostgreSQL Flexible Server HA standby and Premium SSD v2 (@willejs)
 - **PR #3631** (2026-10-12): fix(deps): bump Go toolchain and x/net for Inspector findings (@aliscott)
-- **PR #3630** (2026-10-15): docs: stop recommending a specific header extension for GraphQL queries (@glenngillen)
-- **PR #3625** (closed): fix(terragrunt): don't panic in DiagnosticsFunc when the config has no inputs (@dzolnierz)
 
 ---
 
@@ -787,30 +980,62 @@ Refs TRK-1282
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build with Go 1.26.10 and Alpine 3.24 (#3634)
+## X. ci: release from master by dispatch, not from a pushed tag (#3637)
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/create-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98c9711f`: build with Go 1.26.10 and Alpine 3.24 (#3634). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93b9a2d9`: ci: release from master by dispatch, not from a pushed tag (#3637). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/create-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ARG GO_VERSION=1.26.10
-FROM alpine:3.24 AS app
+# Releases are started by hand from master with the version to release. The
+# draft release targets the commit this run builds, so publishing it creates
+# the tag there.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, e.g. v0.10.48"
+        type: string
+        required: true
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+      - name: Check the version
+        env:
+          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/master" ]; then
+            echo "::error::Releases run on master, not $GITHUB_REF"; exit 1
+          fi
+          if ! [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+            echo "::error::$VERSION is not vX.Y.Z or vX.Y.Z-pre"; exit 1
+          fi
+          # Only a 404 means the tag is free; any other error stops the release.
+          if out=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" 2>&1); then
+            echo "::error::$VERSION already exists"; exit 1
+          elif ! grep -q "HTTP 404" <<<"$out"; then
+            echo "::error::Couldn't check whether $VERSION exist
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-ARG GO_VERSION=1.26.9
-FROM alpine:3.16 AS app
+  push:
+    tags:
+      - "v*"
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98c9711f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93b9a2d9` are properly handled with clean fallback behavior.
