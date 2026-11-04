@@ -7130,3 +7130,5 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `628098d2` | Multi-dimensional audit evidence | 2026-11-04T02:12:03.457Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `47986461` | Multi-dimensional audit evidence | 2026-11-04T02:12:08.085Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `e66e0fda` | Multi-dimensional audit evidence | 2026-11-04T02:12:12.782Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `210154bd` | Multi-dimensional audit evidence | 2026-11-04T02:19:17.806Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e997c817` | Multi-dimensional audit evidence | 2026-11-04T02:19:24.840Z |

@@ -7121,3 +7121,5 @@
 | `CYCLE-20261104-E4FY` | `2026-11-04T02:12:03.454Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6719` | Yes (`9fd83d2a...`) |
 | `CYCLE-20261104-E80H` | `2026-11-04T02:12:08.081Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6720` | Yes (`180b8d08...`) |
 | `CYCLE-20261104-EBMY` | `2026-11-04T02:12:12.778Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6721` | Yes (`df15d3e7...`) |
+| `CYCLE-20261104-NFL6` | `2026-11-04T02:19:17.802Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6722` | Yes (`180ee9dd...`) |
+| `CYCLE-20261104-NL0K` | `2026-11-04T02:19:24.836Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6723` | Yes (`45c928ee...`) |

@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "fa0684f4",
+    "sourceVersion": "210154bd",
     "license": "GPL-3.0",
-    "contentHash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
-    "lastHarvestedAt": "2026-10-31T02:07:26.635Z",
+    "contentHash": "180ee9dd566ee64070d57313cb346bc4d065680a8386d6b4f2cc0fe058239a71",
+    "lastHarvestedAt": "2026-11-04T02:19:17.806Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "035356d9",
+    "sourceVersion": "e997c817",
     "license": "Apache-2.0",
-    "contentHash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
-    "lastHarvestedAt": "2026-11-02T15:36:53.065Z",
+    "contentHash": "45c928eeb95a06f9c40492fbaec5ea3fed9dba85abdb3226b32c6df61c84e9b5",
+    "lastHarvestedAt": "2026-11-04T02:19:24.840Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {

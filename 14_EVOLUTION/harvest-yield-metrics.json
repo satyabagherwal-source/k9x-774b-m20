@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T02:12:12.787Z",
-  "total_cycles_completed": 7098,
-  "total_learnings_persisted": 7098,
-  "total_rules_promoted": 6744,
+  "last_updated": "2026-11-04T02:19:24.846Z",
+  "total_cycles_completed": 7100,
+  "total_learnings_persisted": 7100,
+  "total_rules_promoted": 6746,
   "history": [
-    {
-      "timestamp": "2026-11-03T15:54:45.086Z",
-      "repository": "pingcap/talent-plan",
-      "learningId": "learn-github-pingcap-talent-plan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T15:54:45.352Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T16:01:31.424Z",
       "repository": "kube-rs/kube",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T02:12:12.787Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:19:17.812Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:19:24.846Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

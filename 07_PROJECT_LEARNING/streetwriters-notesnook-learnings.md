@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
-> **Source Version**: `fa0684f4`  
+> **Source Version**: `210154bd`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:07:25.953Z  
+> **Timestamp**: 2026-11-04T02:19:17.016Z  
 > **Learning ID**: `learn-github-streetwriters-notesnook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:07:25.732Z  
+> **Harvest Timestamp**: 2026-11-04T02:19:15.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14861 stars
+- **Stars / Engagement**: 14884 stars
 
 ---
 
@@ -754,11 +754,11 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10602** (2026-10-30): **web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref**
-  *Symptoms*: ## Description Reading containerRef.current?.offsetTop directly during the render body phase causes TanStack Virtual's scrollMargin to change between the initial render (when containerRef.current is null / offset is 0) and post-mount dynamic item measurement. Under dynamic virtualization (mode="dynamic" as used in the note properties panel when switching or closing tabs), this triggers cascading resizeItem / notify updates and exceeds React's maximum update depth (Minified React error #185). This PR:  Measures offsetTop inside a useLayoutEffect and stores it in state with a change bailout check. Prevents reading mutable DOM ref values during the render pass in both VirtualizedList and VirtualizedGrid.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [ ] Mobile - [x] Desktop  ## Sign-off - [x] QA passed - [x] UI/UX passed 
+- **Issue #10629** (2026-11-03): **web: don't render custom context menu behind native macOS context menu**
+  *Symptoms*:  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
-- **Issue #10596** (2026-10-27): **ci: run web, help & desktop previews on fork PRs**
-  *Symptoms*: ## Description Web, help and desktop previews now run on fork PRs, using the same split as the iOS/Android previews: an untrusted `pull_request` build (no secrets, read-only token) and a trusted `workflow_run` publish that never executes fork code.  - **Web**: fork build is deployed with the base repo's `functions/`; any `_worker.js` in the output is stripped. - **Help**: fork build is uploaded using the base repo's `wrangler.jsonc`. - **Desktop**: same-repo PRs keep the signed + notarized macOS build; fork PRs get an ad-hoc signed dmg (no Developer ID). PR comment moved to the publish workflow, with artifact links resolved via the API. - **All preview publish workflows** (incl. iOS/Android) now verify `pr-meta.env` through a shared `verify-pr-meta` action: only a numeric PR number is accepted and it must match the triggering run's head branch. Previously Android appended the fork-written file straight into `$GITHUB_ENV`.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ## Platform - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
+- **Issue #10628** (2026-11-03): **web: redesign reminder list & dialog fixes**
+  *Symptoms*: * NN-1356 * NN-1355 * NN-1354 * NN-1329  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -775,18 +775,489 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5a5b93c` (2026-10-30)
-**Commit Message**: core: fix attachment locked note check never firing (#10522)
+### Incident Patch 1: `21deef74` (2026-11-03)
+**Commit Message**: web: fix full backup running out of memory with many attachments (#10612)
 
-* core: fix attachment locked note check never firing
+The backup stream read the whole export in a single pull and eagerly
+created a readable for every attachment. Each readable pre-read its first
+chunk, so memory grew with the number of attachments until the backup
+crashed. Pull one entry at a time and make file handle readables lazy.
 
 Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
-* web: don't show success toast when attachment deletion fails
+**File**: `apps/web/src/common/index.ts` (modified, +61/-39)
+```diff
+@@ -37,7 +37,7 @@ import {
+ import { showToast } from "../utils/toast";
+ import { readFile, showFilePicker } from "../utils/file-picker";
+ import { logger } from "../utils/logger";
+-import { TaskManager } from "./task-manager";
++import { ProgressReportCallback, TaskManager } from "./task-manager";
+ import { EVENTS, parseInternalLink } from "@notesnook/core";
+ import { createWritableStream } from "./desktop-bridge";
+ import { FeatureDialog, FeatureKeys } from "../dialogs/feature-dialog";
+@@ -130,7 +130,6 @@ export async function createBackup(
+   const ext = "nnbackupz";
+   const filePath = `${filename}.${ext}`;
+ 
+-  const encoder = new TextEncoder();
+   const error = await TaskManager.startTask<Error | void>({
+     type: background ? "status" : "modal",
+     id: "creating-backup",
+@@ -139,44 +138,23 @@ export async function createBackup(
+     action: async (report) => {
+       const { createZipStream } = await import("../utils/streams/zip-stream");
+       const writeStream = await createWritableStream(filePath);
+-      await new ReadableStream<ZipFile>({
+-        start() {},
+-        async pull(controller) {
+-          for await (const output of db.backup!.export({
+-            type: "web",
+-            encrypt: encryptedBackups,
+-            mode
+-          })) {
+-            if (output.type === "file") {
+-              const file = output;
+-              report({
+-                text: background
+-                  ? strings.creatingBackupNamed(file.path)
+-                  : strings.savingFile(file.path)
+-              });
+-              controller.enqueue({
+-                path: file.path,
+-                data: encoder.encode(file.data)
+-              });
+-            } else if (output.type === "attachment") {
+-              report({
+-                text: background
+-                  ? strings.creatingBackupNamed(output.hash)
+-                  : strings.savingAttachment(output.hash),
+-                total: output.total,
+-                current: output.current
+-              });
+-              const handle = await streamablefs.readFile(output.hash);
+-              if (!handle) continue;
+-              controller.enqueue({
+-                path: output.path,
+-                data: handle.readable
+-              });
+-            }
++      const files = backupToZipFiles(
++        { encrypt: encryptedBackups, mode, background },
++        report
++      );
++      await new ReadableStream<ZipFile>(
++        {
++          async pull(controller) {
++            const { value, done } = await files.next();
++            if (done) controller.close();
++            else controller.enqueue(value);
++          },
++          async cancel() {
++            await files.return(undefined);
+           }
+-          controller.close();
+-        }
+-      })
++        },
++        { highWaterMark: 0 }
++      )
+         .pipeThrough(createZipStream())
+         .pipeTo(writeStream);
+     }
+@@ -201,6 +179,50 @@ export async function createBackup(
+   return false;
+ }
+ 
++async function* backupToZipFiles(
++  options: {
++    encrypt?: boolean;
++    mode?: "full" | "partial";
++    background?: boolean;
++  },
++  report: ProgressReportCallback
++): AsyncGenerator<ZipFile> {
++  const { encrypt, mode, background } = options;
++  const encoder = new TextEncoder();
++  for await (const output of db.backup.export({
++    type: "web",
++    encrypt,
++    mode
++  })) {
++    if (output.type === "file") {
++      const file = output;
++      report({
++        text: background
++          ? strings.creatingBackupNamed(file.path)
++          : strings.savingFile(file.path)
++      });
++      yield {
++        path: file.path,
++        data: encoder.encode(file.data)
++      };
++    } else if (output.type === "attachment") {
++      report({
++        text: background
++          ? strings.creatingBackupNamed(output.hash)
++          : strings.savingAttachment(output.hash),
++        total: output.total,
++        current: output.current
++      });
++      const handle = await streamablefs.readFile(output.hash);
++      if (!handle) continue;
++      yield {
++        path: output.path,
++        data: handle.readable
++      };
++    }
++  }
++}
++
+ export async function selectBackupFile() {
+   const [file] = await showFilePicker({
+     acceptedFileTypes: ".nnbackup,.nnbackupz"
+```
+
+**File**: `apps/web/src/common/task-manager.ts` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ type TaskProgress = {
+   text: string;
+ };
+ 
+-type ProgressReportCallback = (progress: TaskProgress) => void;
++export type ProgressReportCallback = (progress: TaskProgress) => void;
+ 
+ export class TaskManager {
+   static async startTask<T>(task: TaskDefinition<T>): Promise<T | Error> {
+```
+
+**File**: `packages/streamable-fs/src/filehandle.ts` (modified, +2/-1)
+```diff
+@@ -31,7 +31,8 @@ export default class FileHandle {
+ 
+   get readable() {
+     return new ReadableStream(
+-      new FileStreamSource(this.storage, this.file, this.chunks)
++      new FileStreamSource(this.storage, this.file, this.chunks),
++      { highWaterMark: 0 }
+     );
+   }
+ 
+```
+
+---
+
+### Incident Patch 2: `630c28e1` (2026-10-31)
+**Commit Message**: core: fix monthly reminders overflowing into next month & unify upcoming reminder time logic (#10542)
+
+Days that don't exist in a month (e.g. the 31st in April) are now
+clamped to the month's last day instead of rolling over to the 1st of
+the next month.
+
+createUpcomingReminderTimeQuery no longer assumes selectedDays is
+stored sorted, and getUpcomingReminderTime has been rewritten to
+mirror it step by step so both always agree. A seeded fuzz test
+compares the two.
 
 Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
-* mobile: show error when attachment deletion fails
+**File**: `packages/core/__tests__/reminders.test.js` (modified, +111/-0)
+```diff
+@@ -221,6 +221,54 @@ describe("format reminder time", () => {
+     expect(formatReminderTime(reminder)).toBe("Upcoming: Today, 09:00 PM");
+   });
+ 
++  test.each([
++    // [now, selectedDays, expected]
++    [new Date(2026, 3, 15, 5), [31], new Date(2026, 3, 30, 9)],
++    [new Date(2026, 3, 30, 10), [31], new Date(2026, 4, 31, 9)],
++    [new Date(2026, 0, 31, 10), [31], new Date(2026, 1, 28, 9)],
++    [new Date(2026, 0, 31, 10), [30, 31], new Date(2026, 1, 28, 9)],
++    [new Date(2026, 1, 20, 5), [15, 30], new Date(2026, 1, 28, 9)]
++  ])(
++    "monthly reminder [day beyond month length] (now: %s, days: %s)",
++    async (now, selectedDays, expected) => {
++      MockDate.set(now);
++      const reminder = {
++        recurringMode: "month",
++        date: new Date(0).setHours(9),
++        selectedDays,
++        mode: "repeat",
++        title: "Random reminder"
++      };
++
++      expect(getUpcomingReminderTime(reminder)).toBe(expected.getTime());
++      expect(await compareReminder(reminder)).toBe(true);
++    }
++  );
++
++  test.each([
++    // [recurringMode, selectedDays, expected]
++    ["month", [15, 5], new Date(2026, 3, 5, 9)],
++    ["month", [2, 1], new Date(2026, 4, 1, 9)],
++    ["week", [6, 5], new Date(2026, 3, 3, 9)],
++    ["week", [2, 1], new Date(2026, 3, 6, 9)]
++  ])(
++    "%sly reminder [unsorted selected days: %s]",
++    async (recurringMode, selectedDays, expected) => {
++      // Fri, 3 Apr 2026
++      MockDate.set(new Date(2026, 3, 3, 5));
++      const reminder = {
++        recurringMode,
++        date: new Date(0).setHours(9),
++        selectedDays,
++        mode: "repeat",
++        title: "Random reminder"
++      };
++
++      expect(await compareReminder(reminder)).toBe(true);
++      expect(getUpcomingReminderTime(reminder)).toBe(expected.getTime());
++    }
++  );
++
+   test("today", async () => {
+     const reminder = {
+       date: new Date(2022, 5, 6, 8, 5).getTime(),
+@@ -367,6 +415,69 @@ test("sorting reminders by dateEdited shouldn't throw", () =>
+     ).resolves.toBeDefined();
+   }));
+ 
++test("upcoming reminder time matches between js & sql", async () => {
++  const db = await databaseTest();
++  // simple seeded rng so failures are reproducible
++  let seed = 42;
++  const random = (n) => {
++    seed = (seed * 1103515245 + 12345) % 2147483648;
++    return (seed >>> 8) % n;
++  };
++
++  const mismatches = [];
++  for (let i = 0; i < 500; i++) {
++    const recurringMode = ["day", "week", "month", "year"][random(4)];
++    const now = new Date(
++      2024 + random(3),
++      random(12),
++      1 + random(31),
++      random(24),
++      random(60)
++    );
++    MockDate.set(now);
++
++    const selectedDays = Array.from({ length: random(4) }, () =>
++      recurringMode === "week" ? random(7) : 1 + random(31)
++    );
++    const reminder = {
++      recurringMode,
++      date: new Date(
++        2025,
++        random(12),
++        1 + random(31),
++        random(24),
++        random(60)
++      ).getTime(),
++      selectedDays: [...new Set(selectedDays)],
++      mode: "repeat",
++      title: "Random reminder"
++    };
++
++    const id = await db.reminders.add(reminder);
++    const { dueDate } = await db
++      .sql()
++      .selectFrom("reminders")
++      .select(
++        createUpcomingReminderTimeQuery(
++          dayjs().utc().format("YYYY-MM-DDTHH:mm")
++        ).as("dueDate")
++      )
++      .where("id", "=", id)
++      .executeTakeFirstOrThrow();
++    const expected = getUpcomingReminderTime(reminder);
++    if (dueDate !== expected)
++      mismatches.push({
++        now: now.toString(),
++        reminder,
++        sql: new Date(dueDate).toString(),
++        js: new Date(expected).toString()
++      });
++  }
++  MockDate.reset();
++
++  expect(mismatches).toEqual([]);
++});
++
+ async function compareReminder(reminder) {
+   const db = await databaseTest();
+   const id = await db.reminders.add(reminder);
+```
+
+**File**: `packages/core/src/collections/reminders.ts` (modified, +102/-97)
+```diff
+@@ -198,68 +198,72 @@ export function isReminderToday(reminder: Reminder) {
+ export function getUpcomingReminderTime(reminder: Reminder) {
+   if (reminder.mode === "once") return reminder.date;
+ 
+-  const isDay = reminder.recurringMode === "day";
+-  const isWeek = reminder.recurringMode === "week";
+-  const isMonth = reminder.recurringMode === "month";
+-  const isYear = reminder.recurringMode === "year";
+-
+-  // this is only the time (hour & minutes) unless it is a
+-  // yearly reminder
+-  const time = dayjs(reminder.date);
+   const now = dayjs();
+-  const relativeTime = isYear
+-    ? now
+-        .clone()
+-        .hour(time.hour())
+-        .minute(time.minute())
+-        .month(time.month())
+-        .date(time.date())
+-    : now.clone().hour(time.hour()).minute(time.minute());
+-
+-  const isPast = relativeTime.isSameOrBefore(now);
+-
+-  if (isYear) {
+-    if (isPast) return relativeTime.add(1, "year").valueOf();
+-    else return relativeTime.valueOf();
+-  }
+-
+-  if (isDay) {
+-    if (isPast) return relativeTime.add(1, "day").valueOf();
+-    else return relativeTime.valueOf();
+-  }
+-
+-  if (!reminder.selectedDays || !reminder.selectedDays.length)
+-    return relativeTime.valueOf();
+-
+-  const sorted = reminder.selectedDays.sort((a, b) => a - b);
+-  const lastSelectedDay = sorted[sorted.length - 1];
+-  if (isWeek) {
+-    if (
+-      now.day() > lastSelectedDay ||
+-      (now.day() === lastSelectedDay && isPast)
+-    )
+-      return relativeTime.day(sorted[0]).add(1, "week").valueOf();
+-    else {
+-      for (const selectedDay of sorted) {
+-        if (selectedDay > now.day() || (selectedDay === now.day() && !isPast))
+-          return relativeTime.day(selectedDay).valueOf();
+-      }
++  const today = now.startOf("day");
++  // time of day at which the reminder fires
++  const time = dayjs(reminder.date);
++  const at = (date: dayjs.Dayjs) =>
++    date
++      .hour(time.hour())
++      .minute(time.minute())
++      .second(time.second())
++      .millisecond(0);
++  const isPastToday = at(today).isSameOrBefore(now);
++  // earliest date on which the reminder can still fire
++  const fromDate = isPastToday ? today.add(1, "day") : today;
++
++  // selected day of the month starting at `monthStart`, clamped to
++  // the last day of that month (e.g. 31st in April becomes the 30th)
++  const selectedDayOfMonth = (monthStart: dayjs.Dayjs, day: number) =>
++    monthStart.date(Math.min(day, monthStart.daysInMonth()));
++
++  const selectedDays = reminder.selectedDays || [];
++  let date: dayjs.Dayjs | undefined;
++  switch (reminder.recurringMode) {
++    case "day":
++      date = fromDate;
++      break;
++    case "week":
++      date = earliest(
++        selectedDays.map((day) => {
++          const candidate = fromDate.day(day);
++          return candidate.isBefore(fromDate)
++            ? candidate.add(1, "week")
++            : candidate;
++        })
++      );
++      break;
++    case "month": {
++      const thisMonth = today.startOf("month");
++      const nextMonth = thisMonth.add(1, "month");
++      date = earliest(
++        selectedDays.map((day) => {
++          const candidate = selectedDayOfMonth(thisMonth, day);
++          return candidate.isBefore(fromDate)
++            ? selectedDayOfMonth(nextMonth, day)
++            : candidate;
++        })
++      );
++      break;
+     }
+-  } else if (isMonth) {
+-    if (
+-      now.date() > lastSelectedDay ||
+-      (now.date() === lastSelectedDay && isPast)
+-    )
+-      return relativeTime.date(sorted[0]).add(1, "month").valueOf();
+-    else {
+-      for (const selectedDay of sorted) {
+-        if (selectedDay > now.date() || (now.date() === selectedDay && !isPast))
+-          return relativeTime.date(selectedDay).valueOf();
+-      }
++    case "year": {
++      const thisYear = today
++        .startOf("year")
++        .month(time.month())
++        .date(time.date());
++      date = thisYear.isBefore(fromDate) ? thisYear.add(1, "year") : thisYear;
++      break;
+     }
+   }
+ 
+-  return relativeTime.valueOf();
++  return at(date || today).valueOf();
++}
++
++function earliest(dates: dayjs.Dayjs[]) {
++  return dates.reduce<dayjs.Dayjs | undefined>(
++    (min, date) => (!min || date.isBefore(min) ? date : min),
++    undefined
++  );
+ }
+ 
+ export function getUpcomingReminder(reminders: Reminder[]) {
+@@ -281,48 +285,49 @@ export function isReminderActive(reminder: Reminder) {
+ }
+ 
+ export function createUpcomingReminderTimeQuery(unix = "now") {
++  const now = sql`datetime(${unix}, 'localtime')`;
++  const today = sql`date(${unix}, 'localtime')`;
++  // time of day at which the reminder fires
+   const time = sql`time(date / 1000, 'unixepoch', 'localtime')`;
+-  const dateNow = sql`date(${unix}, 'localtime')`;
+-  const dateTime = sql`datetime(${dateNow} || ${time})`;
+-  const dateTimeNow = sql`datetime(${unix}, 'localtime')`;
+-  const weekDayNow = sql`CAST(strftime('%w', ${dateNow}) AS INTEGER)`;
+-  const monthDayNow = sql`CAST(strftime('%d', ${dateNow}) AS INTEGER)`;
+-  const lastSelectedDay = sql`(SELE
+```
+
+---
+
+### Incident Patch 3: `06173080` (2026-11-02)
+**Commit Message**: core: fix string and html helper edge cases (#10534)
+
+* core: fix string and html helper edge cases
+
+- title format: insert headline literally ($& etc.)
+- fuzzy: try sanitized query even if raw query has no matches
+- internal links: split on first "|" so link text can contain it
+- tiptap search: ignore empty tokens
+- html rewriter: close implied non-void tags properly, escape quotes in attributes
+- tiny migration: keep text around images, non-greedy table decode
+- md export: quote color/tags in frontmatter
+- html export: stop prism auto-highlighting the host document
+- content blocks: exclude nested lists from parent list content
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+* core: include nested list content in list blocks
 
 Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
@@ -794,333 +1265,194 @@ Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
 Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
-**File**: `apps/mobile/app/components/attachments/actions.tsx` (modified, +5/-0)
+**File**: `packages/core/__tests__/migrations.test.ts` (modified, +18/-0)
 ```diff
-@@ -245,6 +245,11 @@ const Actions = ({
-                   });
-                 return true;
-               } catch (e) {
-+                ToastManager.error(
-+                  e as Error,
-+                  strings.failedToDelete(),
-+                  "local"
-+                );
-                 return false;
-               }
-             }
-```
-
-**File**: `apps/web/src/common/multi-select.ts` (modified, +4/-2)
-```diff
-@@ -112,6 +112,7 @@ async function deleteAttachments(ids: string[]) {
-   )
-     return;
- 
-+  let deleted = 0;
-   await TaskManager.startTask({
-     type: "status",
-     id: "deleteAttachments",
-@@ -127,11 +128,12 @@ async function deleteAttachments(ids: string[]) {
-           current: i,
-           total: ids.length
-         });
--        await attachmentStore.permanentDelete(attachment);
-+        if (await attachmentStore.permanentDelete(attachment)) deleted++;
-       }
-     }
-   });
--  showToast("success", strings.actions.deleted.attachment(ids.length));
-+  if (deleted > 0)
-+    showToast("success", strings.actions.deleted.attachment(deleted));
- }
- 
- async function moveRemindersToTrash(ids: string[]) {
-```
-
-**File**: `apps/web/src/stores/attachment-store.ts` (modified, +3/-0)
-```diff
-@@ -152,11 +152,14 @@ class AttachmentStore extends BaseStore<AttachmentStore> {
-             silent: true
-           });
-         }
-+        return true;
-       }
-+      return false;
-     } catch (e) {
-       console.error(e);
-       if (e instanceof Error)
-         showToast("error", `${strings.failedToDelete()}: ${e.message}`);
-+      return false;
-     } finally {
-       this._changeWorkingStatus(attachment.hash);
-     }
-```
-
-**File**: `packages/core/__tests__/attachments.test.ts` (modified, +26/-0)
-```diff
-@@ -58,3 +58,29 @@ test("remove orphaned attachments should remove only orphaned attachments", () =
-     expect(await db.attachments.exists(hash1)).toBe(true);
-     expect(await db.attachments.orphaned.count()).toBe(0);
+@@ -89,6 +89,19 @@ test("[5.3] decode wrapped table html entities", () =>
+     );
    }));
-+
-+test("remove should throw if attachment is inside a locked note", () =>
+ 
++test("[5.3] decode only the wrapped table html entities", () =>
 +  databaseTest().then(async (db) => {
-+    await loginFakeUser(db);
-+
-+    const hash = await db.attachments.save(
-+      "iVBORw0KGgoAAAANSUhEUgAAAAEEAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-+      "image/png",
-+      "test.png"
-+    );
-+    if (!hash) throw new Error("Failed to create attachment");
-+    const attachment = await db.attachments.attachment(hash);
-+    if (!attachment) throw new Error("Failed to find attachment");
-+
-+    const noteId = await db.notes.add({ title: "Test Note" });
-+    await db.relations.add(
-+      { id: noteId, type: "note" },
-+      { id: attachment.id, type: "attachment" }
-+    );
-+    await db.vault.create("password");
-+    await db.vault.add(noteId);
-+
-+    await expect(db.attachments.remove(hash, false)).rejects.toThrow(
-+      "locked note"
++    const item = {
++      type: "tiny",
++      dateEdited: Date.now(),
++      data: `&lt;div class="table-container"&gt;&lt;table&gt;&lt;/table&gt;&lt;/div&gt;<p>&lt;b&gt;</p>&lt;div class="table-container"&gt;&lt;table&gt;&lt;/table&gt;&lt;/div&gt;`
++    };
++    expect(await migrateItem(item, 5.3, 5.4, "tiny", db, "local")).toBe(true);
++    expect(item.data).toBe(
++      `<div class="table-container"><table></table></div><p>&lt;b&gt;</p><div class="table-container"><table></table></div>`
 +    );
 +  }));
++
+ describe.concurrent("[5.4] convert tiny to tiptap", () => {
+   const cases = [
+     {
+@@ -106,6 +119,11 @@ describe.concurrent("[5.4] convert tiny to tiptap", () => {
+       from: `<p><img src="hello.jpg" /></p>`,
+       to: `<img src="hello.jpg">`
+     },
++    {
++      name: "keep text around images when moving them out of paragraphs",
++      from: `<p>before<img src="hello.jpg" />after</p>`,
++      to: `<p>before</p><img src="hello.jpg"><p>after</p>`
++    },
+     {
+       name: "replace [data-mce-bogus] elements",
+       from: `<p><br data-mce-bogus="" /></p><br data-mce-bogus="" />`,
 ```
 
-**File**: `packages/core/src/collections/attachments.ts` (modified, +1/-1)
+**File**: `packages/core/src/content-types/__tests__/tiptap.test.js` (modified, +18/-0)
 ```diff
-@@ -280,7 +280,7 @@ export class Attachments implements ICollection {
-     const linkedNotes = await this.db.relations.to(attachment, "note").get();
-     return (
-       (await this.db.relations
--        .to({ ids: linkedNotes.map((n) => n.toId), type: "note" }, "vault")
-+        .to({ ids: linkedNotes.map((n) => n.fromId), type: "note" }, "vault")
-         .count()) <= 0
-     );
+@@ -92,3 +92,21 @@ for (const html in HTMLS) {
+     expect(tiptap.toTXT()).toMatchSnapshot(`html-to-txt-${html}.txt`);
+   });
+ }
++
++test("search ignores empty tokens", () => {
++  const tiptap = new Tiptap("<p>hello world</p>");
++  expect(tiptap.search("zzz ")).toBe(false);
++  expect(tiptap.search(" hello")).toBe(true);
++});
++
++test("list blocks include their nested lists' content", () => {
++  // the editor only assigns block ids to top-level blocks so nested lists have none
++  const tiptap = new Tiptap(
++    `<ul data-block-id="ul1"><li><p>parent</p><ul><li><p>child</p></li></ul></li><li><p>sibling</p></li></ul>`
++  );
++  const blocks = tiptap.extract("blocks").blocks;
++  expect(blocks).toHaveLength(1);
++  expect(blocks[0].content).toContain("parent");
++  expect(blocks[0].content).toContain("child");
++  expect(blocks[0].content).toContain("sibling");
++});
+```
+
+**File**: `packages/core/src/content-types/tiptap.ts` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ export class Tiptap {
+   // }
+ 
+   search(query: string) {
+-    const tokens = query.toLowerCase().split(splitter);
++    const tokens = query.toLowerCase().split(splitter).filter(Boolean);
+     const lowercase = this.toTXT().toLowerCase();
+     return tokens.some((token) => lowercase.indexOf(token) > -1);
    }
 ```
 
----
-
-### Incident Patch 2: `fa0684f4` (2026-10-30)
-**Commit Message**: web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref (#10602)
-
-* web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref
-
-Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
-
-* web: remeasure scrollMargin on layout updates in virtualized components
-
-Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
-
-**File**: `apps/web/src/components/virtualized-grid/index.tsx` (modified, +11/-2)
+**File**: `packages/core/src/migrations.ts` (modified, +17/-2)
 ```diff
-@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+@@ -657,7 +657,8 @@ function removeToxClassFromChecklist(html: string): string {
+     : document.body.innerHTML;
+ }
  
- import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
- import { Box } from "@theme-ui/components";
--import React, { useEffect, useRef } from "react";
-+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+-const regex = /&lt;div class="table-container".*&lt;\/table&gt;&lt;\/div&gt;/gm;
++const regex =
++  /&lt;div class="table-container".*?&lt;\/table&gt;&lt;\/div&gt;/gm;
+ function decodeWrappedTableHtml(html: string) {
+   return html.replace(regex, (match) => {
+     const html = decodeHTML5(match);
+@@ -669,6 +670,12 @@ const NEWLINE_REPLACEMENT_REGEX = /\n|<br>|<br\/>/gm;
+ const PREBLOCK_REGEX = /(<pre.*?>)(.*?)(<\/pre>)/gm;
+ const SPAN_REGEX = /<span class=.*?>(.*?)<\/span>/gm;
  
- type VirtualizedGridProps<T> = {
-   virtualizerRef?: React.MutableRefObject<
-@@ -49,6 +49,15 @@ export function VirtualizedGrid<T>(props: VirtualizedGridProps<T>) {
-     onEndReached
-   } = props;
-   const containerRef = useRef<HTMLDivElement>(null);
-+  const [measuredOffset, setMeasuredOffset] = useState(0);
++function isEmpty(node: Node) {
++  return Array.from(node.childNodes).every(
++    (child) => child.nodeType === 3 && !child.textContent?.trim()
++  );
++}
 +
-+  useLayoutEffect(() => {
-+    if (scrollMargin !== undefined) return;
-+    if (containerRef.current) {
-+      const offset = containerRef.current.offsetTop || 0;
-+      setMeasuredOffset((prev) => (prev !== offset ? offset : prev));
-+    }
-+  });
+ export function tinyToTiptap(html: string) {
+   if (typeof html !== "string") return html;
  
-   const virtualizer = useVirtualizer({
-     lanes: columns,
-@@ -57,7 +66,7 @@ export function VirtualizedGrid<T>(props: VirtualizedGridProps<T>) {
-     getItemKey,
-     getScrollElement: () =>
-       scrollElement || containerRef.current?.closest(".ms-container") || null,
--    scrollMargin: scrollMargin || containerRef.current?.offsetTop || 0
-+    scrollMargin: scrollMargin ?? measuredOffset
-   });
+@@ -703,7 +710,15 @@ export function tinyToTiptap(html: string) {
  
-   useEffect(() => {
+   const images = document.querySelectorAll("p > img");
+   for (const image of images) {
+-    image.parentElement?.replaceWith(image.cloneNode());
++    const paragraph = image.parentElement;
++    if (!paragraph) continue;
++
++    // split the paragraph around the image so sibling content is kept
++    const after = paragraph.cloneNode(false);
++    while (image.nextSibling) after.appendChild(image.nextSibling);
++    paragraph.after(image);
++    if (!isEmpty(after)) image.after(after);
++    if (isEmpty(paragraph)) paragraph.remove();
+   }
+ 
+   const bogus = document.querySelectorAll("[data-mce-bogus]");
 ```
 
-**File**: `apps/web/src/components/virtualized-list/index.tsx` (modified, +13/-2)
+**File**: `packages/core/src/utils/__tests__/content-block.test.ts` (modified, +10/-10)
 ```diff
-@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+@@ -39,36 +39,36 @@ describe("ContentBlock Utils", () => {
+       expect(links[0].text).toBe("link");
+     });
  
- import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
- import { Box, BoxProps } from "@theme-ui/components";
--import React, { useRef } from "react";
-+import React, { useLayoutEffect, useRef, useState } from "react";
+-    it("should return an empty array if no internal links are present", () => {
++    it("should handle link text containing |", () => {
+       const block: ContentBlock = {
+         type: "someType",
+         id: "someId",
+-        content: "This is a test with no links"
++        content: "This is a test [[nn://note/123|a|b]]"
+       };
+       const links = extractInternalLinks(block);
+-      expect(links).toHaveLength(0);
++      expect(links).toHaveLength(1);
++      expect(links[0].id).toBe("123");
++      expect(links[0].text).toBe("a|b");
+     });
  
- export type VirtualizedListProps<T, C> = {
-   virtualizerRef?: React.MutableRefObject<
-@@ -41,6 +41,7 @@ export type VirtualizedListProps<T, C> = {
-   itemGap?: number;
-   overscan?: number;
- } & BoxProps;
-+
- export function VirtualizedList<T, C>(props: VirtualizedListProps<T, C>) {
-   const {
-     items,
-@@ -57,15 +58,25 @@ export function VirtualizedList<T, C>(props: VirtualizedListProps<T, C>) {
-     context,
-     ...containerProps
-   } = props;
-+
-   const containerRef = useRef<HTMLDivElement>(null);
-+  const [measuredOffset, setMeasuredOffset] = useState(0);
-+
-+  useLayoutEffect(() => {
-+    if (scrollMargin !== undefined) return;
-+    if (containerRef.current) {
-+      const offset = containerRef.current.offsetTop || 0;
-+      setMeasuredOffset((prev) => (prev !== offset ? offset : prev));
-+    }
-+  });
+-    it("should skip links with no noteId", () => {
++    it("should return an empty array if no internal links are present", () => {
+       const block: ContentBlock = {
+         type: "someType",
+         id: "someId",
+-        content: "This is a test [[nn://note/|link]] with undefined URL"
++        content: "This is a test with no links"
+       };
+       const links = extractInternalLinks(block);
+       expect(links).toHaveLength(0);
+     });
  
-   const virtualizer = useVirtualizer({
-     count: items.length,
-     estimateSize: () => estimatedSize + (itemGap || 0),
-     getItemKey: (index) => getItemKey(index, items),
-     getScrollElement: () =>
-       scrollElement || containerRef.current?.closest(".ms-container") || null,
--    scrollMargin: scrollMargin || containerRef.current?.offsetTop || 0,
-+    scrollMargin: scrollMargin ?? measuredOffset,
-     overscan
+-    it("should extract internal links with '|' in id", () => {
++    it("should skip links with no noteId", () => {
+       const block: ContentBlock = {
+         type: "someType",
+         id: "someId",
+-        content: "This is a test [[nn://note/myid|ofmyid|actualtext]]"
++        content: "This is a test [[nn://note/|link]] with undefined URL"
+       };
+       const links = extractInternalLinks(block);
+-      expect(links).toHaveLength(1);
+-      expect(links[0].id).toBe("myid|ofmyid");
+-      expect(links[0].text).toBe("actualtext");
++      expect(links).toHaveLength(0);
+     });
    });
  
 ```
 
----
-
-### Incident Patch 3: `b1477075` (2026-10-30)
-**Commit Message**: core: fix backup restore not re-uploading re-keyed attachments (#10524)
-
-* core: fix backup restore not re-uploading re-keyed attachments
-
-Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
-
-* core: keep local attachment key when restoring a backup with a different key
-
-* web: skip restoring backup attachment files that would overwrite local ones
-
-* mobile: skip restoring backup attachment files that would overwrite local ones
-
----------
-
-Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
-
-**File**: `apps/mobile/app/screens/settings/restore-backup/index.tsx` (modified, +4/-2)
+**File**: `packages/core/src/utils/__tests__/fuzzy.test.ts` (modified, +7/-0)
 ```diff
-@@ -156,6 +156,7 @@ const restoreBackup = async (options: {
-         : undefined;
- 
-       let count = 0;
-+      const skippedAttachments = new Set<string>();
-       await db.transaction(async () => {
-         let passwordOrKey: PasswordOrKey | undefined = undefined;
-         for (const path of extractedBackupFiles) {
-@@ -186,10 +187,11 @@ const restoreBackup = async (options: {
-             throw new Error(strings.failedToDecryptBackup());
-           }
- 
--          await db.backup.import(backup, {
-+          const skipped = await db.backup.import(backup, {
-             ...passwordOrKey,
-             attachmentsKey: attachmentsKey
-           });
-+          skipped?.forEach((hash) => skippedAttachments.add(hash));
-         }
-       });
- 
-@@ -205,7 +207,7 @@ const restoreBackup = async (options: {
-         });
-         const hash = path;
-         const attachment = await db.attachments.attachment(hash as string);
--        if (!attachment) continue;
-+        if (!attachment || skippedAttachments.has(hash)) continue;
- 
-         await deleteCacheFileByName(hash);
-         await RNFetchBlob.fs.cp(
+@@ -130,3 +130,10 @@ describe("lookup.fuzzy", () => {
+     });
+   });
+ });
++
++test("sanitized query is tried when the raw query has no matches", () => {
++  const items = [{ id: "1", title: "hello world" }];
++  expect(fuzzy("hello-world", items, (i) => i.id, { title: 1 })).toStrictEqual(
++    items
++  );
++});
 ```
 
-**File**: `apps/web/src/common/index.ts` (modified, +14/-8)
+**File**: `packages/core/src/utils/__tests__/html-rewriter.test.ts` (added, +37/-0)
 ```diff
-@@ -276,6 +276,7 @@ export async function restoreBackupFile(backupFile: File) {
-         const attachments: ZipEntry[] = [];
-         let attachmentsKey: SerializedKey | Cipher<"base64"> | undefined;
-         let filesProcessed = 0;
-+        const skippedAttachments = new Set<string>();
- 
-         let isValid = false;
-         for await (const entry of createUnzipIterator(backupFile)) {
-@@ -304,25 +305,30 @@ export async function restoreBackupFile(backupFile: File) {
-                 const result = await BackupPasswordDialog.show({
-                   validate: async ({ password, key: encryptionKey }) => {
-                     if (!password && !encryptionKey) return false;
--                    await db.backup?.import(backup, {
-+                    const skipped = await db.backup?.import(backup, {
-                       password,
-                       encryptionKey,
-                       attachmentsKey
-                     });
-+                    skipped?.forEach((hash) => skippedAttachments.add(hash));
-                     cachedPassword = password;
-                     cachedKey = encryptionKey;
-                     return true;
-                   }
-                 });
-                 if (!result) break;
-               } else
--                await db.backup?.import(backup, {
--                  password: cachedPassword,
--                  encryptionKey: cachedKey,
--                  attachmentsKey
--                });
-+                (
-+                  await db.backup?.import(backup, {
-+                    password: cachedPassword,
-+                    encryptionKey: cachedKey,
-+                    attachmentsKey
-+                  })
-+                )?.forEach((hash) => skippedAttachments.add(hash));
-             } else {
--              await db.backup?.import(backup, { attachmentsKey });
-+              (await db.backup?.import(backup, { attachmentsKey }))?.forEach(
-+                (hash) => skippedAttachments.add(hash)
-+              );
-             }
- 
-             report({
-@@ -345,7 +351,7 @@ export async function restoreBackupFile(backupFile: File) {
-           });
- 
-           const attachment = await db.attachments.attachment(hash);
--          if (!attachment) continue;
-+          if (!attachment || skippedAttachments.has(hash)) continue;
- 
-           await streamablefs.deleteFile(attachment.hash);
-           const handle = await streamablefs.createFile(
-```
-
-**File**: `packages/core/__tests__/backup.test.ts` (added, +98/-0)
-```diff
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,37 @@
 +/*
 +This file is part of the Notesnook project (https://notesnook.com/)
 +
@@ -1140,153 +1472,72 @@ Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 +along with this program.  If not, see <http://www.gnu.org/licenses/>.
 +*/
 +
++import { test, expect } from "vitest";
++import { HTMLRewriter } from "../html-rewriter.js";
 +
-+import { expect, test } from "vitest";
-+import { databaseTest, loginFakeUser } from "./utils";
-+import Database from "../src/api/index.js";
++test("implied close of a non-void element doesn't write /> into text", () => {
++  expect(new HTMLRewriter().transform("<p>a<p>b")).toBe("<p>a</p><p>b</p>");
++});
 +
-+async function restoreWithDifferentKey(
-+  db: Database,
-+  local: { dateUploaded?: number; fileExists: boolean }
-+) {
-+  await loginFakeUser(db);
-+
-+  const hash = await db.attachments.save(
-+    "iVBORw0KGgoAAAANSUhEUgAAAAEEAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-+    "image/png",
-+    "test.png"
++test("void and self-closing elements are still self-closed", () => {
++  expect(new HTMLRewriter().transform('<p>a<img src="x"><br/>b</p>')).toBe(
++    '<p>a<img src="x"/><br/>b</p>'
 +  );
-+  if (!hash) throw new Error("Failed to create attachment");
-+  const attachment = await db.attachments.attachment(hash);
-+  if (!attachment) throw new Error("Failed to find attachment");
-+  await db.attachments.collection.update([attachment.id], {
-+    dateUploaded: local.dateUploaded,
-+    chunkSize: 1
-+  });
-+  if (!local.fileExists) await db.fs().deleteFile(hash, true);
++});
 +
-+  const attachmentsKey = await db.user?.getAttachmentsKey();
-+  if (!attachmentsKey) throw new Error("Missing attachments key");
-+  const backupKey = await db
-+    .storage()
-+    .encrypt(attachmentsKey, JSON.stringify({ iv: "a", salt: "b", key: "c" }));
-+
-+  const skipped = await (db.backup as any).migrateData(
-+    [
-+      {
-+        ...attachment,
-+        key: backupKey,
-+        iv: "new-iv",
-+        salt: "new-salt",
-+        chunkSize: 4096,
-+        dateUploaded: undefined
-+      }
-+    ],
-+    6.0,
-+    attachmentsKey
++test("attribute values containing quotes are escaped", () => {
++  expect(new HTMLRewriter().transform(`<p title='say "hi"'>a</p>`)).toBe(
++    '<p title="say &quot;hi&quot;">a</p>'
 +  );
-+
-+  return {
-+    skipped,
-+    original: attachment,
-+    restored: await db.attachments.attachment(hash)
-+  };
-+}
-+
-+test("restoring a backup attachment with a different key should keep the uploaded local attachment", () =>
-+  databaseTest().then(async (db) => {
-+    const dateUploaded = Date.now();
-+    const { skipped, original, restored } = await restoreWithDifferentKey(db, {
-+      dateUploaded,
-+      fileExists: true
-+    });
-+
-+    expect(skipped).toEqual([original.hash]);
-+    expect(restored?.key).toEqual(original.key);
-+    expect(restored?.iv).toBe(original.iv);
-+    expect(restored?.chunkSize).toBe(1);
-+    expect(restored?.dateUploaded).toBe(dateUploaded);
-+  }));
-+
-+test("restoring a backup attachment with a different key should adopt the backup key if local file is unavailable", () =>
-+  databaseTest().then(async (db) => {
-+    const { skipped, restored } = await restoreWithDifferentKey(db, {
-+      fileExists: false
-+    });
-+
-+    expect(skipped).toEqual([]);
-+    expect(restored?.iv).toBe("new-iv");
-+    expect(restored?.chunkSize).toBe(4096);
-+    expect(restored?.dateUploaded).toBeFalsy();
-+  }));
++});
 ```
 
-**File**: `packages/core/src/database/backup.ts` (modified, +18/-2)
+**File**: `packages/core/src/utils/__tests__/templates.test.ts` (added, +34/-0)
 ```diff
-@@ -519,7 +519,7 @@ export default class Backup {
-       : typeof data === "object"
-       ? Object.values(data)
-       : [];
--    await this.migrateData(
-+    return await this.migrateData(
-       normalizedData,
-       backup.version === 6.1 && isLegacyBackup(normalizedData)
-         ? 5.9
-@@ -561,6 +561,7 @@ export default class Backup {
-     attachmentsKey?: SerializedKey
-   ) {
-     const queue: Partial<Record<CollectionName, MaybeDeletedItem<Item>[]>> = {};
-+    const skippedAttachments: string[] = [];
-     for (let item of data) {
-       // we do not want to restore deleted items
-       if (
-@@ -622,7 +623,17 @@ export default class Backup {
-           attachment.key.cipher === item.key.cipher &&
-           attachment.key.salt === item.key.salt;
- 
--        if (attachmentsKey && !isSameKey) {
-+        if (
-+          attachmentsKey &&
-+          !isSameKey &&
-+          attachment &&
-+          (attachment.dateUploaded ||
-+            (await this.db.fs().exists(attachment.hash)))
-+        ) {
-+          // the server won't overwrite an uploaded file & other devices may have
-+          // it cached, so we must keep the local key and file.
-+          skippedAttachments.push(attachment.hash);
-+        } else if (attachmentsKey && !isSameKey) {
-           const newKey = await this.db.attachments.encryptKey(
-             JSON.parse(
-               await this.db.storage().decrypt(attachmentsKey, item.key)
-@@ -633,6 +644,10 @@ export default class Backup {
-             attachment.iv = item.iv;
-             attachment.salt = item.salt;
-             attachment.size = item.size;
-+            attachment.chunkSize = item.chunkSize;
-+            attachment.alg = item.alg;
-+            delete attachment.dateUploaded;
-+            delete attachment.failed;
-           } else item.key = newKey;
-           delete item.dateUploaded;
-           delete item.failed;
-@@ -714,6 +729,7 @@ export default class Backup {
- 
-       await collection.put(items as any[]);
-     }
-+    return skippedAttachments;
-   }
- 
-   private validate(backup: LegacyBackupFile | BackupFile) {
+@@ -0,0 +1,34 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++import { test, expect } from "vitest";
++import { templateWithFrontmatter } from "../templates/md.js";
++
++test("frontmatter quotes tags and color", () => {
++  const md = templateWithFrontmatter({
++    title: "Note",
++    content: "",
++    dateCreated: 0,
++    dateEdited: 0,
++    color: "red: #f00",
++    tags: ["a: b", "#c"]
++  } as any);
++  expect(md).toContain('color: "red: #f00"');
++  expect(md).toContain('tags: "a: b, #c"');
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10602** (2026-10-30): web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref (@mohdsultan18)
-- **PR #10596** (2026-10-27): ci: run web, help & desktop previews on fork PRs (@thecodrr)
-- **PR #10592** (2026-10-26): Fix snap build and store upload (pin snapcraft 8.x, explicit plugs) (@thecodrr)
-- **PR #10591** (2026-10-26): Fix snap failing to launch (core24 snap build + desktop actions) (@thecodrr)
-- **PR #10588** (2026-10-26): web: bump version to 3.4.11 (@01zulfi)
-- **PR #10587** (2026-10-26): Theme Server improvements (@thecodrr)
+- **PR #10629** (2026-11-03): web: don't render custom context menu behind native macOS context menu (@01zulfi)
+- **PR #10628** (2026-11-03): web: redesign reminder list & dialog fixes (@01zulfi)
+- **PR #10627** (2026-11-03): core: skip attachments with undecryptable keys when restoring backups (@thecodrr)
+- **PR #10618** (2026-11-02): web: bump version to 3.4.12 (@01zulfi)
+- **PR #10612** (2026-11-03): web: fix full backup running out of memory with many attachments (@thecodrr)
+- **PR #10608** (2026-10-31): web: fix empty message not shown in move notebook dialog (NN-1342) (@01zulfi)
 
 ---
 
@@ -1306,32 +1557,101 @@ Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core: fix attachment locked note check never firing (#10522)
+## X. web: fix full backup running out of memory with many attachments (#10612)
 
 **RULE**:
-When implementing operations in `apps/mobile/app/components/attachments/actions.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/web/src/common/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5a5b93c`: core: fix attachment locked note check never firing (#10522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21deef74`: web: fix full backup running out of memory with many attachments (#10612). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/components/attachments/actions.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/web/src/common/index.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                ToastManager.error(
-                  e as Error,
-                  strings.failedToDelete(),
-                  "local"
-                );
+import { ProgressReportCallback, TaskManager } from "./task-manager";
+      const files = backupToZipFiles(
+        { encrypt: encryptedBackups, mode, background },
+        report
+      );
+      await new ReadableStream<ZipFile>(
+        {
+          async pull(controller) {
+            const { value, done } = await files.next();
+            if (done) controller.close();
+            else controller.enqueue(value);
+          },
+          async cancel() {
+            await files.return(undefined);
+        },
+        { highWaterMark: 0 }
+      )
+async function* backupToZipFiles(
+  options: {
+    encrypt?: boolean;
+    mode?: "full" | "partial";
+    background?: boolean;
+  },
+  report: ProgressReportCallback
+): AsyncGenerator<ZipFile> {
+  const { encrypt, mode, background } = options;
+  const encoder = new TextEncoder();
+  for await (const output of db.backup.export({
+    type: "web",
+    encrypt,
+    mode
+  })) {
+    if (output.type === "file") {
+      const file = output;
+      report({
+        text: background
+          ? strings.creatingBackupNamed(file.path)
+          : strings.savingFile(file.path)
+      });
+      yield {
+        path: file.path,
+        data: encoder.encode(file.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import { TaskManager } from "./task-manager";
+  const encoder = new TextEncoder();
+      await new ReadableStream<ZipFile>({
+        start() {},
+        async pull(controller) {
+          for await (const output of db.backup!.export({
+            type: "web",
+            encrypt: encryptedBackups,
+            mode
+          })) {
+            if (output.type === "file") {
+              const file = output;
+              report({
+                text: background
+                  ? strings.creatingBackupNamed(file.path)
+                  : strings.savingFile(file.path)
+              });
+              controller.enqueue({
+                path: file.path,
+                data: encoder.encode(file.data)
+              });
+            } else if (output.type === "attachment") {
+              report({
+                text: background
+                  ? strings.creatingBackupNamed(output.hash)
+                  : strings.savingAttachment(output.hash),
+                total: output.total,
+                current: output.current
+              });
+              const handle = await streamablefs.readFile(output.hash);
+              if (!handle) continue;
+              controller.enqueue({
+     
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5a5b93c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21deef74` are properly handled with clean fallback behavior.

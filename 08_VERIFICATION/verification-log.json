@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-LGNG",
-    "timestamp": "2026-10-31T15:42:53.836Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-U79Y",
-    "timestamp": "2026-10-31T15:49:41.590Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-UA9L",
     "timestamp": "2026-10-31T15:49:45.465Z",
     "repository": "NativeScript/NativeScript",
@@ -7490,6 +7460,36 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "df15d3e72853029b8a3325c410150daeb4506a268648be831fa1a75927535f52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-NFL6",
+    "timestamp": "2026-11-04T02:19:17.802Z",
+    "repository": "streetwriters/notesnook",
+    "learningId": "learn-github-streetwriters-notesnook",
+    "contentHash": "180ee9dd566ee64070d57313cb346bc4d065680a8386d6b4f2cc0fe058239a71",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-NL0K",
+    "timestamp": "2026-11-04T02:19:24.836Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "45c928eeb95a06f9c40492fbaec5ea3fed9dba85abdb3226b32c6df61c84e9b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

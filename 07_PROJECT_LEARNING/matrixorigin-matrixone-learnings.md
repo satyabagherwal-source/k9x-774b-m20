@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `035356d9`  
+> **Source Version**: `e997c817`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:36:52.471Z  
+> **Timestamp**: 2026-11-04T02:19:24.108Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:36:52.201Z  
+> **Harvest Timestamp**: 2026-11-04T02:19:23.808Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2062 stars
+- **Stars / Engagement**: 2061 stars
 
 ---
 
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32031** (2026-11-02): **perf(tae): index logtail append ranges on demand**
-  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## Which issue(s) this PR fixes:  Related to #31374. Addresses the measured append-range scanning regression, while leaving the HNSW resource-admission incident open for matched combined-load validation.  The earlier source-level report is in [#31350](https://github.com/matrixorigin/matrixone/issues/31350#issuecomment-6486498238).  ## What this PR does / why we need it:  Incremental logtail collection currently scans all retained AppendNodes to find transactions to wait for, construct the physical selection, and build commit/abort vectors. Small intervals therefore become expensive as an object's history grows, and visits to older objects with unknown append bounds amplify that work.  Keep physical rows authoritative and admit a reader-owned timestamp index for repeated large-history reads with stable history or small changes. Completed nodes have immutable timestamp keys; unfinished nodes retain the transaction prepare-window check. Commit/rollback only record membership changes after index activation, with no change to PrepareCommit or the AppendNode layout. Readers build and refresh the index, then emit selection and commit/abort vectors in physical row order.  Use the physical scan for small histories, dense intervals and large completion batches. This avoids transferring the read improvement into writer overhead or batched-write regressions. Empty and single-node selections need no pointer scratch; sparse multi-node selecti
+- **Issue #32108** (2026-11-04): **fix(python): preserve numeric table builder scale**
+  *Symptoms*: ## What type of PR is this?  - [x] BUG  ## Which issue(s) this PR fixes:  Fixes #32091  ## What this PR does / why we need it:  VectorTableBuilder.add_numeric_column accepted scale but discarded it for FLOAT and DOUBLE. With precision=10 and scale=2, FLOAT compiled as FLOAT(10), while DOUBLE raised ArgumentError because SQLAlchemy requires both precision and scale.  Forward scale alongside precision to the MySQL FLOAT/DOUBLE constructors. Add 11 tests covering scale zero and two, unchanged decimal/numeric behavior, omitted precision/scale, FLOAT precision-only support, and generated MatrixOne DDL.  Validation on base c337122982537dcf957705cb6fc5f7f9bdc6a0f6, Python 3.12 and SQLAlchemy 2.1.6:  - Before fix: four regression failures, seven passing controls. - After fix: full offline suite passed, 2990 tests plus 106 subtests. - Black, fatal Flake8 checks (E9,F63,F7,F82), and git diff --check passed.  Two files changed. Validation covers column construction and DDL compilation; no live-server execution is claimed.
 
-- **Issue #32022** (2026-11-02): **fix(disttae): release subscription state locks before diagnostics**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [x] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32021  ## What this PR does / why we need it:  A slow subscription diagnostic sink holds the cross-table subscription state lock and stalls unrelated subscribed-table reads. Move the state owner's response, explicit-unsubscribe and GC-rollback diagnostics after lock release, carrying immutable scalar fields. Remove the common send-success diagnostic, nested cleanup Debug log and mutable subscription-map dump. State transitions, transport sends and cleanup retain their original synchronization and failure semantics.  The removed send-success event is an intentional observability tradeoff: final subscription success remains logged, but it is not a one-to-one replacement for every successful send. Retained transition logs describe the committed event and may appear after a later concurrent transition.  Validation on Go 1.27.1 / macOS arm64:  - Same deterministic reporter-backpressure regressions on clean main: 13 lock-retention failures and eight passing error/cancellation controls. All 21 scenarios pass after the fix, including a real unrelated-table partition lookup while diagnostics remain blocked, Debug cleanup, retained scalar fields, and actual-only GC rollback logging. - Complete owning package on the published head: 629 test roots and 829 subcases passed in normal and race modes, wit
+- **Issue #32103** (2026-11-03): **fix(plan): support LENGTH/OCTET_LENGTH/CHAR_LENGTH on BIT columns**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #31183  ## What this PR does / why we need it:  ### Root cause  `LENGTH`/`OCTET_LENGTH` are backed by the `LENGTH` built-in and `CHAR_LENGTH`/`CHARACTER_LENGTH` by `LENGTH_UTF8` (`pkg/sql/plan/function/function_id.go`). Both were registered with `checkFn: stringDomainFixedTypeMatch`, which never admits `types.T_bit` (BIT's implicit-cast rule row only targets INT64/UINT64), so every call on a BIT column failed function binding with ERROR 20203 `invalid argument ...`. BIT literals worked because they are binary-string constants and never reach that type-match path.  ### Change  - `pkg/sql/plan/function/type_check.go`: new `lengthTypeMatch` — a single BIT argument binds directly with no implicit cast, so the declared width M is preserved; all other inputs keep the previous string-domain behavior. BIT's global implicit-cast rules are untouched. - `pkg/sql/plan/function/list_builtIn.go`: `LENGTH` and `LENGTH_UTF8` use `lengthTypeMatch` and each gains a BIT overload returning INT64, evaluated by the new executor. - `pkg/sql/plan/function/func_unary.go`: new `LengthBit` executor returns `(width+7)/8`, i.e. ceil(M/8), for declared widths 1..64. This matches MySQL 8.0 fixed storage width (`Field_bit::pack_length()`); BIT values stringify with the binary charset, so the character count equals t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,8 +2370,8 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `650a4bb3` (2026-11-02)
-**Commit Message**: fix(function): clamp temporal casts to DECIMAL on overflow (#31999)
+### Incident Patch 1: `1876b2f9` (2026-11-03)
+**Commit Message**: fix(fileservice): bound MinIO range reads without draining on close (#32053)
 
 ## What type of PR is this?
 
@@ -2385,1161 +2385,99 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31930
+Fixes #31692
 
 ## What this PR does / why we need it:
 
-Clamp explicit DATE, DATETIME, TIME, and TIMESTAMP casts to the signed
-DECIMAL64/128 target bounds instead of failing on insufficient
-precision. Reuse the existing numeric CAST range handling,
-NULL/selection handling, and DATETIME arithmetic fast path.
+MinIO bounded reads limited returned bytes but requested an open-ended object suffix and drained it on Close, amplifying small reads into large downloads.
 
-Quantize TIME at the final target scale before checking precision,
-avoiding premature intermediate overflow and missed final overflow.
-Preserve normal parser errors in the underlying TIME helpers rather than
-wrapping them as internal errors. Implicit and strict assignment
-conversions retain their existing range rejection.
+- Set the HTTP Range upper bound on every initial/retry request and avoid Seek overwriting it. Close bounded readers without draining unread data; preserve unbounded-read behavior.
+- Preserve ETag/VersionID conditions and retry offsets. Centralize byte limiting, handle nil starts, reject empty/reversed ranges, and close readers after initialization failures.
+- Add deterministic regression coverage for actual HTTP response bytes, range boundaries, uncached S3FS consumers, partial-response retries, identity failures, early close, and cancellation.
 
-Add UT coverage for positive/negative overflow, rounding boundaries,
-scale changes, NULLs, skipped rows, session time zones, and non-explicit
-mode controls. Add a focused SQL regression for constant and column
-inputs, including DECIMAL128 and result metadata. Broader warning
-text/count compatibility is outside th
+Local validation on macOS arm64 with Go 1.27.1:
+- `mo-cgo-test -json -count=1 -timeout=600s ./pkg/fileservice` and the corresponding `-race` run passed (7 existing skips; no n
 
-**File**: `pkg/container/types/time.go` (modified, +2/-14)
+**File**: `pkg/fileservice/minio_sdk.go` (modified, +20/-12)
 ```diff
-@@ -426,23 +426,11 @@ func (t Time) TruncateToScaleWithoutRounding(scale int32) Time {
- }
- 
- func (t Time) ToDecimal64(ctx context.Context, width, scale int32) (Decimal64, error) {
--	tToStr := t.NumericString(scale)
--	ret, err := ParseDecimal64(tToStr, width, scale)
--	if err != nil {
--		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
--	}
--
--	return ret, nil
-+	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
- }
- 
- func (t Time) ToDecimal128(ctx context.Context, width, scale int32) (Decimal128, error) {
--	tToStr := t.NumericString(scale)
--	ret, err := ParseDecimal128(tToStr, width, scale)
--	if err != nil {
--		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
--	}
--
--	return ret, nil
-+	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
- }
- 
- func TimeFromClock(isNegative bool, hour uint64, minute, sec uint8, msec uint32) Time {
-```
-
-**File**: `pkg/container/types/time_test.go` (modified, +27/-0)
-```diff
-@@ -22,6 +22,33 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestTimeToDecimalPreservesRangeError(t *testing.T) {
-+	for _, negative := range []bool{false, true} {
-+		value := TimeFromClock(negative, 12, 34, 56, 123456)
-+		for _, target := range []struct{ width, scale int32 }{{5, 1}, {8, 6}, {18, 6}} {
-+			text := value.NumericString(target.scale)
-+			want64, wantErr64 := ParseDecimal64(text, target.width, target.scale)
-+			got64, err64 := value.ToDecimal64(context.Background(), target.width, target.scale)
-+			want128, wantErr128 := ParseDecimal128(text, target.width, target.scale)
-+			got128, err128 := value.ToDecimal128(context.Background(), target.width, target.scale)
-+			if wantErr64 != nil {
-+				require.EqualError(t, err64, wantErr64.Error())
-+				require.False(t, moerr.IsMoErrCode(err64, moerr.ErrInternal))
-+			} else {
-+				require.NoError(t, err64)
-+				require.Equal(t, want64, got64)
-+			}
-+			if wantErr128 != nil {
-+				require.EqualError(t, err128, wantErr128.Error())
-+				require.False(t, moerr.IsMoErrCode(err128, moerr.ErrInternal))
-+			} else {
-+				require.NoError(t, err128)
-+				require.Equal(t, want128, got128)
-+			}
-+		}
-+	}
-+}
-+
- func TestTime_StringAndString2(t *testing.T) {
- 	testCases := []struct {
- 		name       string
-```
-
-**File**: `pkg/sql/plan/function/func_cast.go` (modified, +36/-2)
-```diff
-@@ -192,10 +192,41 @@ func numericToDecimalExplicit[S, D types.FixedSizeTExceptStrType](
- func explicitNumericToDecimalTarget[D types.FixedSizeTExceptStrType](
- 	from *vector.Vector, to *vector.FunctionResult[D], length int, proc *process.Process, selectList *FunctionSelectList,
- 	parseString func(string) (D, error), fromFloat func(float64) (D, error),
--	clamp func(bool) (D, error),
-+	fromDatetime func(types.Datetime) (D, error), clamp func(bool) (D, error),
- ) (bool, error) {
-+	// Temporal DECIMAL256 casts are not part of the supported cast overloads.
-+	if fromDatetime == nil {
-+		switch from.GetType().Oid {
-+		case types.T_date, types.T_datetime, types.T_timestamp, types.T_time:
-+			return false, nil
-+		}
-+	}
- 	finite := func(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
- 	switch from.GetType().Oid {
-+	case types.T_date:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Date](from), to, length, proc, selectList,
-+			func(value types.Date) (D, error) { return parseString(strconv.FormatInt(packedDateInt64(value), 10)) },
-+			func(types.Date) bool { return false }, nil, clamp)
-+	case types.T_datetime:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Datetime](from), to, length, proc, selectList,
-+			fromDatetime, func(types.Datetime) bool { return false }, nil, clamp)
-+	case types.T_timestamp:
-+		zone := time.Local
-+		if proc != nil && proc.GetSessionInfo().TimeZone != nil {
-+			zone = proc.GetSessionInfo().TimeZone
-+		}
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Timestamp](from), to, length, proc, selectList,
-+			func(value types.Timestamp) (D, error) { return fromDatetime(value.ToDatetime(zone)) },
-+			func(types.Timestamp) bool { return false }, nil, clamp)
-+	case types.T_time:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Time](from), to, length, proc, selectList,
-+			// Quantize once at the final scale, before checking the target width.
-+			func(value types.Time) (D, error) { return parseString(value.NumericString(6)) },
-+			func(value types.Time) bool { return value < 0 }, nil, clamp)
- 	case types.T_bool:
- 		// TRUE is exactly 1 and FALSE exactly 0, so the explicit cast reuses
- 		// the integer parse path, including the out-of-range clamp that
-@@ -300,6 +331,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			func(value types.Datetime) (types.Decimal64, error) { return packedDatetimeDecimal64(value, toType) },
- 			func(negative bool) (types.Decimal64, error) {
- 				return clampDecimal64Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -317,6 +349,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			func(value types.Datetime) (types.Decimal128, error) { return packedDatetimeDecimal128(value, toType) },
- 			func(negative bool) (types.Decimal128, error) {
- 				return clampDecimal128Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -334,6 +367,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			nil,
- 			func(negative bool) (types.Decimal256, error) {
- 				return clampDecimal256Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -1202,7 +1236,7 @@ func newCastWithoutMediumIntBounds(parameters []*vector.Vector, result vector.Fu
- 			return decimalToUnsignedAssignment(proc.Ctx, vector.GenerateFunctionFixedTypeParameter[types.Decimal256](from), toType.Oid, result, length, selectList, decimal256RoundedIntegerString)
- 		}
+@@ -395,11 +395,7 @@ func (a *MinioSDK) ReadObjectWithIdentity(
+ 		r.Close()
+ 		return nil, mapMinioConditionalReadError(err)
  	}
--	if mode == castModeExplicit && toType.IsDecimal() && (fromType.IsNumeric() || fromType.Oid == types.T_bool) {
-+	if mode == castModeExplicit && toType.IsDecimal() {
- 		if handled, err := explicitNumericToDecimal(from, *toType, result, length, proc, selectList); handled {
- 			return err
- 		}
-```
-
-**File**: `pkg/sql/plan/function/func_cast_temporal_numeric_test.go` (modified, +92/-0)
-```diff
-@@ -26,6 +26,98 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestExplicitCastTemporalDecimalRange(t *testing.T) {
-+	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
-+		for _, tc := range []struct {
-+			name   string
-+			source types.T
-+			input  string
-+			width  int32
-+			scale  int32
-+			want   string
-+		}{
-+			{"date overflow", types.T_date, "2024-01-02", 6, 2, "9999.99"},
-+			{"datetime overflow", types.T_datetime, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
-+			{"timestamp overflow", types.T_timestamp, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
-+			{"time overflow", types.T_time, "12:34:56", 5, 1, "9999.9"},
-+			{"negative time overflow", types.T_time, "-12:34:56", 5, 1, "-9999.9"},
-+			{"time final scale overflow", types.T_time, "12:34:56", 6, 2, "9999.99"},
-+			{"time source scale fits final scale", types.T_time, "12:34:56.123456", 8, 2, "123456.12"},
-+			{"time rounding overflow", types.T_time, "00:00:09.999999", 3, 2, "9.99"},
-+			{"negative time rounding overflow", types.T_time, "-00:00:09.999999", 3, 2, "-9.99"},
-+			{"time exact boundary", types.T_time, "00:00:09.990000", 3, 2, "9.99"},
-+			{"time rounding control", types.T_time, "00:00:09.994999", 3, 2, "9.99"},
-+			{"time zero integral width", types.T_time, "-00:00:01", 2, 2, "-0.99"},
-+			{"time wide target", types.T_time, "-12:34:56.123456", 18, 6, "-123456.123456"},
-+			{"date wide target", types.T_date, "2024-01-02", 10, 2, "20240102.00"},
-+			{"datetime wide target", types.T_datetime, "2024-01-02 03:04:05.123456", 18, 4, "20240102030405.1235"},
-+			{"timestamp session zone", types.T_timestamp, "2024-01-02 03:04:05.123456", 18, 4, "20240102110405.1235"},
-+			{"zero time", types.T_time, "00:00:00", 1, 1, "0.0"},
-+		} {
-+			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
-+				proc := testutil.NewProcess(t)
-+				proc.GetSessionInfo().TimeZone = time.FixedZone("UTC+8", 8*60*60)
-+				nulls := []bool{false, true, false}
-+				var input FunctionTestInput
-+				switch tc.source {
-+				case types.T_date:
-+					v, err := types.ParseDateCast(tc.input)
-+					require.NoError(t, err)
-+					input = NewFunctionTestInput(tc.source.ToType(), []types.Date{v, v, v}, nulls)
-+				case types.T_datetime, types.T_timestamp:
-+					v, err := types.ParseDatetime(tc.input, 6)
-+					require.NoError(t, err)
-+					if tc.source == types.T_timestamp {
-+						ts := v.ToTimestamp(time.UTC)
-+						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Timestamp{ts, ts, ts}, nulls)
-+					} else {
-+						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Datetime{v, v, v}, nulls)
-+					}
-+				case types.T_time:
-+					v, err := types.ParseTime(tc.input, 6)
-+					require.NoError(t, err)
-+					input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Time{v, v, v}, nulls)
-+				}
-+				target := types.New(oid, tc.width, tc.scale)
-+				fc := NewFunctionTestCase(proc, []FunctionTestInput{input, NewFunctionTestInput(target, emptyCastTargetValues(target), nil)},
-+					NewFunctionTestResult(target, false, nil, nil), NewExplicitCast).
-+					WithSelectList(&FunctionSelectList{AnyNull: true, SelectList: []bool{true, true, false}})
-+				t.Cleanup(fc.Free)
-+				got, err := fc.DebugRun()
-+				require.NoError(t, err)
-+				require.Equal(t, tc.want, explicitCastDecimalTestValue(got, 0))
-+				require.True(t, got.IsNull(1))
-+				require.True(t, got.IsNull(2), "unselected temporal operands must not be evaluated")
-+			})
-+		}
-+	}
-+}
-+
-+func TestTemporalDecimalOverflowModes(t *testing.T) {
-+	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
-+		for _, tc := range []struct {
-+			name string
-+			fn   executeLogicOfOverload
-+		}{
-+			{"implicit", NewCast},
-+			{"assignment", NewAssignCast},
-+			{"strict", NewStrictCast},
-+		} {
-+			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
-+				proc := testutil.NewProcess(t)
-+				target := types.New(oid, 6, 2)
-+				fc := NewFunctionTestCase(proc, []FunctionTestInput{
-+					NewFunctionTestInput(types.T_date.ToType(), []types.Date{types.DateFromCalendar(2024, 1, 2)}, nil),
-+					NewFunctionTestInput(target, emptyCastTargetValues(target), nil),
-+				}, NewFunctionTestResult(target, true, nil, nil), tc.fn)
-+				t.Cleanup(fc.Free)
-+				_, err := fc.DebugRun()
-+				require.Error(t, err, "only explicit CAST may clamp a temporal range overflow")
-+			})
-+		}
-+	}
-+}
-+
- func TestPackedDatetimeDecimal128MatchesParser(t *testing.T) {
- 	// Keep the old text conversion as an independent oracle for width, scale,
- 	// rounding, overflow, zero values, and the exact public error text.
-```
-
-**File**: `test/distributed/cases/dtype/TimeToInt.result` (modified, +32/-8)
-```diff
-@@ -16,7 +16,10 @@ null
- select cast(col1 as int) from test01;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,10)) from test01;
--invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,10).
-+➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
-+9999999999.9999999999  𝄀
-+9999999999.9999999999  𝄀
-+null
- drop table test01;
- drop table if exists test01;
- create table test01(col1 datetime(3));
-@@ -31,7 +34,10 @@ null
- select cast(col1 as int) from test01;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,10)) from test01;
--invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,10).
-+➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
-+9999999999.9999999999  𝄀
-+9999999999.9999999999  𝄀
-+null
- drop table test01;
- drop table if exists test02;
- create table test02(col1 date);
-@@ -77,7 +83,10 @@ insert into test06 values(NULL);
- insert into test05 select * from test06;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,18)) from test06;
--invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- insert into test07 select * from test06;
- select * from test05;
- ➤ col1[4,32,0]
-@@ -101,7 +110,10 @@ insert into test06 values(NULL);
- insert into test05 select * from test06;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,18)) from test06;
--invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- insert into test07 select * from test06;
- select * from test05;
- ➤ col1[4,32,0]
-@@ -394,7 +406,10 @@ null
- select cast(col1 as int) from test03;
- Data truncation: data out of range: data type int32, value '19970113122100'
- select cast(col1 as decimal(20,18)) from test03;
--invalid input: 19970113122100.000000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- drop table test03;
- drop table if exists test03;
- create table test03(col1 timestamp(5));
-@@ -409,7 +424,10 @@ null
- select cast(col1 as int) from test03;
- Data truncation: data out of range: data type int32, value '19970113122059'
- select cast(col1 as decimal(20,18)) from test03;
--invalid input: 19970113122059.898610 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- drop table test03;
- drop table if exists test09;
- drop table if exists test10;
-@@ -423,7 +441,10 @@ insert into test10 values(NULL);
- insert into test09 select * from test10;
- Data truncation: data out of range: data type int32, value '20221213122059'
- select cast(col1 as decimal(10,5)) from test10;
--invalid input: 20221213122059.000000 beyond the range, can't be converted to Decimal64(10,5).
-+➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
-+99999.99999  𝄀
-+99999.99999  𝄀
-+null
- insert into test11 select * from test10;
- select * from test09;
- ➤ col1[4,32,0]
-@@ -446,7 +467,10 @@ insert into test10 values(NULL);
- insert into test09 select * from test10;
- Data truncation: data out of range: data type int32, value '20221213122059'
- select cast(col1 as decimal(10,5)) from test10;
--invalid input: 20221213122059.213213 beyond the range, can't be converted to Decimal64(10,5).
-+➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
-+99999.99999  𝄀
-+99999.99999  𝄀
-+null
- insert into test11 select * from test10;
- select * from test09;
- ➤ col1[4,32,0]
-```
-
-**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.result` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
-+cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
-+cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
-+➤ datetime_clamped[3,12,2]  ¦  date_clamped[3,6,2]  ¦  time_clamped[3,5,1]  𝄀
-+9999999999.99  ¦  9999.99  ¦  9999.9
-+select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
-+cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
-+cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
-+➤ negative_time_clamped[3,5,1]  ¦  time_final_scale_clamped[3,6,2]  ¦  time_final_scale_fits[3,8,2]  𝄀
-+-9999.9  ¦  9999.99  ¦  123456.12
-+select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
-+cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
-+cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
-+➤ rounded_time_clamped[3,3,2]  ¦  rounded_negative_time_clamped[3,3,2]  ¦  time_boundary[3,3,2]  𝄀
-+9.99  ¦  -9.99  ¦  9.99
-+select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
-+cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
-+➤ datetime_wide[3,20,2]  ¦  negative_time_wide[3,20,6]  𝄀
-+20240102030405.12  ¦  -123456.123456
-+set @temporal_decimal_saved_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+drop table if exists temporal_decimal_cast_range_t;
-+create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
-+insert into temporal_decimal_cast_range_t values
-+(1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
-+(2, null, null, null, null);
-+select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
-+cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
-+from temporal_decimal_cast_range_t order by id;
-+➤ id[4,32,0]  ¦  d64[3,6,2]  ¦  dt64[3,12,2]  ¦  tm64[3,5,1]  ¦  ts64[3,12,2]  𝄀
-+1  ¦  9999.99  ¦  9999999999.99  ¦  -9999.9  ¦  9999999999.99  𝄀
-+2  ¦  null  ¦  null  ¦  null  ¦  null
-+select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
-+cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
-+from temporal_decimal_cast_range_t order by id;
-+➤ id[4,32,0]  ¦  d128[3,20,16]  ¦  dt128[3,20,16]  ¦  tm128[3,20,16]  ¦  ts128[3,20,16]  𝄀
-+1  ¦  9999.9999999999999999  ¦  9999.9999999999999999  ¦  -9999.9999999999999999  ¦  9999.9999999999999999  𝄀
-+2  ¦  null  ¦  null  ¦  null  ¦  null
-+set time_zone = '+08:00';
-+select cast(ts as decimal(20,6)) as timestamp_session_zone
-+from temporal_decimal_cast_range_t where id = 1;
-+➤ timestamp_session_zone[3,20,6]  𝄀
-+20240102110405.123456
-+drop table temporal_decimal_cast_range_t;
-+set time_zone = @temporal_decimal_saved_time_zone;
-```
-
-**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.test` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+-- @bvt:parallel
-+
-+-- Constant temporal casts clamp at the final DECIMAL precision and scale.
-+select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
-+       cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
-+       cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
-+select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
-+       cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
-+       cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
-+select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
-+       cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
-+       cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
-+select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
-+       cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
-+
-+-- Column inputs exercise both DECIMAL64 and DECIMAL128, including NULLs.
-+set @temporal_decimal_saved_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+drop table if exists temporal_decimal_cast_range_t;
-+create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
-+insert into temporal_decimal_cast_range_t values
-+    (1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
-+    (2, null, null, null, null);
-+select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
-+       cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
-+from temporal_decimal_cast_range_t order by id;
-+select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
-+       cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
-+from temporal_decimal_cast_range_t order by id;
-+set time_zone = '+08:00';
-+select cast(ts as decimal(20,6)) as timestamp_session_zone
-+from temporal_decimal_cast_range_t where id = 1;
-+drop table temporal_decimal_cast_range_t;
-+set time_zone = @temporal_decimal_saved_time_zone;
-```
-
-**File**: `test/distributed/cases/function/func_cast.result` (modified, +2/-1)
-```diff
-@@ -722,7 +722,8 @@ set time_zone="+00:00";
- create table t1(s1 timestamp);
- insert into t1 values ('2020-12-03 11:11:11');
- select cast(s1 as decimal(7,2)) from t1;
--invalid input: 20201203111111.000000 beyond the range, can't be converted to Decimal64(7,2).
-+➤ cast(s1 as decimal(7, 2))[3,7,2]  𝄀
-+99999.99
- drop table t1;
- set time_zone="+00:00";
- create table ts_cast_time(id int primary key, event_ts timestamp(6));
-```
-
----
-
-### Incident Patch 2: `b4d1a674` (2026-11-02)
-**Commit Message**: fix(disttae): release subscription state locks before diagnostics (#32022)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [x] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32021
-
-## What this PR does / why we need it:
-
-A slow subscription diagnostic sink holds the cross-table subscription
-state lock and stalls unrelated subscribed-table reads. Move the state
-owner's response, explicit-unsubscribe and GC-rollback diagnostics after
-lock release, carrying immutable scalar fields. Remove the common
-send-success diagnostic, nested cleanup Debug log and mutable
-subscription-map dump. State transitions, transport sends and cleanup
-retain their original synchronization and failure semantics.
-
-The removed send-success event is an intentional observability tradeoff:
-final subscription success remains logged, but it is not a one-to-one
-replacement for every successful send. Retained transition logs describe
-the committed event and may appear after a later concurrent transition.
-
-Validation on Go 1.27.1 / macOS arm64:
-
-- Same deterministic reporter-backpressure regressions on clean main: 13
-lock-rete
-
-**File**: `pkg/vm/engine/disttae/engine.go` (modified, +0/-1)
-```diff
-@@ -1388,7 +1388,6 @@ func (e *Engine) cleanMemoryTableWithTable(dbId, tblId uint64) {
- 	// deadlock: cleanMemoryTableWithTable holds Engine.mu→GlobalStats.mu,
- 	// while GlobalStats.Get holds GlobalStats.mu→Engine.mu (via GetOrCreateLatestPart).
- 	e.globalStats.RemoveTid(tblId)
--	logutil.Debugf("clean memory table of tbl[dbId: %d, tblId: %d]", dbId, tblId)
- }
- 
- func (e *Engine) PushClient() *PushClient {
-```
-
-**File**: `pkg/vm/engine/disttae/logtail_consumer.go` (modified, +62/-54)
-```diff
-@@ -766,11 +766,6 @@ func (c *PushClient) subscribeTable(
- 		if err != nil {
- 			return err
- 		}
--		logutil.Info(
--			fmt.Sprintf("%s-send-subscribe-ok", logTag),
--			zap.Uint64("table-id", tblId.TbId),
--			zap.Uint64("db-id", tblId.DbId),
--		)
- 		return nil
- 	}
- }
-@@ -1309,24 +1304,25 @@ func (c *PushClient) UnsubscribeTable(ctx context.Context, accId, dbID, tbID uin
- 	if ifShouldNotDistribute(dbID, tbID) {
- 		return moerr.NewInternalErrorf(ctx, "%s cannot unsubscribe table %d-%d as table ID is not allowed", logTag, dbID, tbID)
- 	}
--	c.subscribed.rw.Lock()
--	defer c.subscribed.rw.Unlock()
--	k := tbID
--	ent, ok := c.subscribed.m[k]
--	if !ok || ent.state != Subscribed {
-+	attempted, err := func() (bool, error) {
-+		c.subscribed.rw.Lock()
-+		defer c.subscribed.rw.Unlock()
-+		ent, ok := c.subscribed.m[tbID]
-+		if !ok || ent.state != Subscribed {
-+			return false, nil
-+		}
-+		dbID = ent.dbID
-+		ent.state = Unsubscribing
-+		return true, c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID})
-+	}()
-+	if !attempted {
- 		logutil.Infof("%s table %d-%d is not subscribed yet", logTag, dbID, tbID)
--		return nil
+-	r = mapReadCloserErrors(r, mapMinioConditionalReadError)
+-	if max == nil {
+-		return r, nil
 -	}
--
--	dbID = ent.dbID
--	ent.state = Unsubscribing
--
--	if err := c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID}); err != nil {
-+	} else if err != nil {
- 		logutil.Errorf("%s cannot unsubscribe table %d-%d, err: %v", logTag, dbID, tbID, err)
--		return err
-+	} else {
-+		logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
- 	}
--	logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
--	return nil
-+	return err
+-	return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
++	return mapReadCloserErrors(r, mapMinioConditionalReadError), nil
  }
  
- func (c *PushClient) doGCUnusedTable(ctx context.Context) {
-@@ -1398,18 +1394,22 @@ func (c *PushClient) doGCUnusedTable(ctx context.Context) {
- 	// retried after one GC cycle (20 min) instead of waiting full unsubscribeTimer (1 hour)
- 	if len(failedJobs) > 0 {
- 		backoffTs := time.Now().Add(-unsubscribeTimer + unsubscribeProcessTicker).UnixNano()
-+		rolledBack := failedJobs[:0]
- 		c.subscribed.rw.Lock()
- 		for _, job := range failedJobs {
- 			if ent, ok := c.subscribed.m[job.tId]; ok && ent.state == Unsubscribing {
- 				ent.state = Subscribed
- 				ent.lastTs.Store(backoffTs)
--				logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
--					logTag,
--					job.dbID,
--					job.tId)
-+				rolledBack = append(rolledBack, job)
- 			}
- 		}
- 		c.subscribed.rw.Unlock()
-+		for _, job := range rolledBack {
-+			logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
-+				logTag,
-+				job.dbID,
-+				job.tId)
-+		}
- 	}
- }
- 
-@@ -1957,14 +1957,16 @@ func (c *PushClient) Close() error {
- }
- 
- func (s *subscribedTable) setTableSubNotExist(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: SubRspTableNotExist,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: SubRspTableNotExist,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+	}()
- 	logutil.Error(
- 		"logtail.consumer.set.table.sub.not.exist",
- 		zap.Uint64("db-id", dbId),
-@@ -1979,14 +1981,16 @@ func (s *subscribedTable) clearTable(dbId, tblId uint64) {
- }
- 
- func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: Subscribed,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: Subscribed,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.subscribed",
- 		zap.Uint64("db-id", dbId),
-@@ -1995,28 +1999,32 @@ func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
- }
- 
- func (s *subscribedTable) setTableSubRspReceived(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: SubRspReceived,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	service := func() string {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: SubRspReceived,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+		return s.eng.service
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.sub.rsp.received",
--		zap.String("service", s.eng.service),
-+		zap.String("service", service),
- 		zap.Uint64("db-id", dbId),
- 		zap.Uint64("tbl-id", tblId),
--		zap.Any("subscribed-table", s),
- 	)
- }
- 
- func (s *subscribedTable) setTableUnsubscribe(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	s.eng.cleanMemoryTableWithTable(dbId, tblId)
--	delete(s.m, tblId)
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		s.eng.cleanMemoryTableWithTable(dbId, tblId)
-+		delete(s.m, tblId)
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.unsubscribe",
- 		zap.Uint64("db-id", dbId)
-```
-
-**File**: `pkg/vm/engine/disttae/subscription_diagnostics_test.go` (added, +415/-0)
-```diff
-@@ -0,0 +1,415 @@
-+// Copyright 2026 Matrix Origin
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+// http://www.apache.org/licenses/LICENSE-2.0
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package disttae
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"strings"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/logutil"
-+	"github.com/matrixorigin/matrixone/pkg/pb/api"
-+	"github.com/matrixorigin/matrixone/pkg/pb/statsinfo"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae/logtailreplay"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/buffer"
-+	"go.uber.org/zap/zapcore"
-+)
-+
-+const diagnosticDB, diagnosticCold, diagnosticWarm = uint64(1000), uint64(100), uint64(200)
-+
-+func subscriptionDiagnosticsFixture(t *testing.T) *PushClient {
-+	t.Helper()
-+	e := &Engine{service: "subscription-diagnostics", partitions: make(map[[2]uint64]*logtailreplay.Partition), globalStats: &GlobalStats{}}
-+	c := &PushClient{eng: e, subscriber: newLogTailSubscriber()}
-+	c.subscriber.setReady()
-+	c.receivedLogTailTime.ready.Store(true)
-+	c.subscribed.eng = e
-+	c.subscribed.m = map[uint64]*subEntry{diagnosticWarm: {dbID: diagnosticDB, state: Subscribed}}
-+	c.subscribed.m[diagnosticWarm].lastTs.Store(time.Now().UnixNano())
-+	e.GetOrCreateLatestPart(t.Context(), 0, diagnosticDB, diagnosticWarm)
-+	return c
-+}
-+
-+type subscriptionDiagnosticEvent struct {
-+	entry  zapcore.Entry
-+	fields []zapcore.Field
-+}
-+
-+func (e subscriptionDiagnosticEvent) table(dbID, tableID uint64) bool {
-+	var db, table uint64
-+	var hasDB, hasTable bool
-+	for _, field := range e.fields {
-+		switch field.Key {
-+		case "db-id":
-+			db, hasDB = uint64(field.Integer), true
-+		case "table-id", "tbl-id":
-+			table, hasTable = uint64(field.Integer), true
-+		}
-+	}
-+	if hasDB || hasTable {
-+		return hasDB && hasTable && db == dbID && table == tableID
-+	}
-+	for _, target := range []string{
-+		fmt.Sprintf("%d-%d", dbID, tableID),
-+		fmt.Sprintf("[db: %d, tbl: %d]", dbID, tableID),
-+		fmt.Sprintf("[dbId: %d, tblId: %d]", dbID, tableID),
-+	} {
-+		if strings.Contains(e.entry.Message, target) {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// A blocked diagnostic must not retain the subscription lock or stop another
-+// table's real partition lookup. The optional terminal path also checks removal
-+// of the old send-only diagnostic without using a timeout as an absence oracle.
-+func checkSubscriptionDiagnosticBackpressure(t *testing.T, c *PushClient, optional bool,
-+	matches func(subscriptionDiagnosticEvent) bool, action func(context.Context) error,
-+	check func(subscriptionDiagnosticEvent),
-+) ([]subscriptionDiagnosticEvent, error) {
-+	t.Helper()
-+	ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
-+	entered := make(chan subscriptionDiagnosticEvent, 1)
-+	release := make(chan struct{})
-+	var releaseOnce, blockOnce sync.Once
-+	unblock := func() { releaseOnce.Do(func() { close(release) }) }
-+	previous := logutil.GetReportZapFunc()
-+	var probe atomic.Bool
-+	var recordsMu sync.Mutex
-+	var records []subscriptionDiagnosticEvent
-+	logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: func(enc zapcore.Encoder, entry zapcore.Entry, fields []zapcore.Field) (*buffer.Buffer, error) {
-+		if entry.Message == "subscription-diagnostics-probe" {
-+			probe.Store(true)
-+		}
-+		event := subscriptionDiagnosticEvent{entry: entry, fields: fields}
-+		if matches(event) {
-+			event.fields = append([]zapcore.Field(nil), fields...)
-+			recordsMu.Lock()
-+			records = append(records, event)
-+			recordsMu.Unlock()
-+			blockOnce.Do(func() { entered <- event; <-release })
-+		}
-+		return previous(enc, entry, fields)
-+	}})
-+	done := make(chan error, 1)
-+	joined := false
-+	started := false
-+	t.Cleanup(func() {
-+		cancel()
-+		unblock()
-+		if started && !joined {
-+			select {
-+			case <-done:
-+			case <-time.After(5 * time.Second):
-+				t.Error("subscription operation did not terminate")
-+			}
-+		}
-+		logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: previous})
-+	})
-+	logutil.Info("subscription-diagnostics-probe")
-+	require.True(t, probe.Load(), "the real synchronous reporter must be enabled")
-+	started = true
-+	go func() { done <- action(ctx) }()
-+	var result error
-+	select {
-+	case event := <-entered:
-+		unlocked := c.subscribed.rw.TryRLock()
-+		if unlocked {
-+			c.subscribed.rw.RUnlock()
-+		}
-+		require.True(t, unlocked, "diagnostic backpressure retained the cross-table subscription lock")
-+		want := c.eng.partitions[[2]uint64{diagnosticDB, diagnosticWarm}].Snapshot()
-+		part, ok, state, pending := c.isSubscr
-```
-
----
-
-### Incident Patch 3: `ea184ad9` (2026-11-02)
-**Commit Message**: fix: authorize exclusive SELECT lock targets (#31978)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31916
-
-## What this PR does / why we need it:
-
-A SELECT-only user could execute SELECT ... FOR UPDATE, acquire
-exclusive locks, and block writers. Require SELECT plus UPDATE or DELETE
-for each exclusive locking-read target; existing ALL/ownership grants
-also qualify. Ordinary SELECT and shared locking reads retain their
-SELECT-only requirements. MatrixOne does not currently support granting
-LOCK TABLES. See the [MySQL 8.4 locking-read privilege
-contract](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html).
-
-Capture logical lock targets and view paths during binding, preserve
-them across rewrites and prepared execution, and reauthorize rebuilt
-plans before compilation, including CTAS retry sources. Preserve
-inherited roles and DEFINER account boundaries.
-
-For eligible multi-target view checks, reuse the caller role closure and
-one last-definer closure within one authorization transaction at the
-statement's admitted catalog sna
-
-**File**: `pkg/frontend/authenticate.go` (modified, +321/-30)
-```diff
-@@ -2468,6 +2468,8 @@ const (
- 
- // privilegeItem is the item for in the compound entry
- type privilegeItem struct {
-+	// SELECT is checked separately; this item requires a locking-read alternative.
-+	selectLock            bool
- 	privilegeTyp          PrivilegeType
- 	objType               objectType
- 	viewPath              []*plan.ViewStep
-@@ -5673,6 +5675,9 @@ func resolveViewChainPrivilegeContext(
- 	privType PrivilegeType,
- 	viewPath []*plan.ViewStep,
- 	enableCache bool,
-+	selectLock bool,
-+	lockRoles *btree.Set[int64],
-+	definerRoles ...*selectLockDefinerRoles,
- ) (viewPrivilegePrincipal, bool, bool, error) {
- 	accountID, err := defines.GetAccountId(ctx)
+ func mapMinioConditionalReadError(err error) error {
+@@ -506,15 +502,10 @@ func (a *MinioSDK) Read(
+ 	// eager read to expose file not found error
+ 	_, err = r.Read(nil)
  	if err != nil {
-@@ -5686,7 +5691,7 @@ func resolveViewChainPrivilegeContext(
- 		return caller, false, false, err
++		r.Close()
+ 		return nil, err
  	}
- 	if isSystemViewDatabase(viewPath[0].DatabaseName) {
--		return caller, true, true, nil
-+		return caller, true, !selectLock, nil
- 	}
- 
- 	principal := caller
-@@ -5703,7 +5708,12 @@ func resolveViewChainPrivilegeContext(
- 			cacheToUse = nil
- 		}
- 		grantCtx := defines.AttachAccountId(ctx, principal.accountID)
--		viewAllowed, err := verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache)
-+		var viewAllowed bool
-+		if lockRoles != nil {
-+			viewAllowed, err = verifySelectLockPrivilegeForRoles(grantCtx, bh, ses, lockRoles, objectTypeView, grantDb, viewName)
-+		} else {
-+			viewAllowed, err = verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache, selectLock)
-+		}
- 		if err != nil {
- 			return principal, false, false, err
- 		}
-@@ -5729,6 +5739,21 @@ func resolveViewChainPrivilegeContext(
- 		}
- 		if viewInfo.securityType == viewSecurityDefiner {
- 			principal = viewPrivilegePrincipal{accountID: snapshot.Tenant.TenantID, roleID: viewInfo.definerRoleId}
-+			if lockRoles != nil {
-+				// The caller owns this temporary set. A definer transition replaces
-+				// the complete role namespace, even when numeric IDs collide.
-+				lockRoles.Clear()
-+				lockRoles.Insert(principal.roleID)
-+				definerCtx := defines.AttachAccountId(ctx, principal.accountID)
-+				if len(definerRoles) > 0 {
-+					err = definerRoles[0].load(definerCtx, bh, principal, lockRoles)
-+				} else {
-+					err = expandRoleSetWithInheritedRoles(definerCtx, bh, lockRoles)
-+				}
-+				if err != nil {
-+					return principal, false, false, err
-+				}
-+			}
- 		}
- 	}
- 
-@@ -7542,6 +7567,11 @@ func extractPrivilegeTipsFromPlan(p *plan2.Plan) (privilegeTipsArray, error) {
- 			})
- 		}
- 	}
-+	lockTips, err := selectLockPrivilegeTips(p.GetQuery())
-+	if err != nil {
-+		return nil, err
-+	}
-+	pts = append(pts, lockTips...)
- 	return appendLogicalViewPrivilegeTips(pts, p.GetQuery())
+-	if max == nil {
+-		return r, nil
+-	}
+-	return &readCloser{
+-		r:         io.LimitReader(r, int64(*max-*min)),
+-		closeFunc: r.Close,
+-	}, nil
++	return r, nil
  }
  
-@@ -7856,6 +7886,198 @@ func replaceFunctionPreservesNull(fn *plan.Function) bool {
- 	return strings.Contains(fnName, "cast")
- }
- 
-+// privilegeAlternatives keeps a locking read distinct from a data modification.
-+// The SELECT requirement is checked independently of these alternatives.
-+func privilegeAlternatives(typ PrivilegeType, selectLock bool) []PrivilegeType {
-+	if selectLock {
-+		return []PrivilegeType{PrivilegeTypeUpdate, PrivilegeTypeDelete, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
+ func (a *MinioSDK) Delete(
+@@ -641,8 +632,16 @@ func (a *MinioSDK) getObjectWithOptions(
+ 	if min == nil {
+ 		min = ptrTo[int64](0)
+ 	}
++	if max != nil && *max <= *min {
++		return nil, moerr.NewEmptyRangeNoCtx(key)
 +	}
-+	return []PrivilegeType{typ, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
-+}
-+
-+// selectLockPrivilegeTips uses binding identities rather than an outer AST or
-+// physical table IDs: nested blocks and different view paths retain their own
-+// requirements even when optimization removes their scan nodes.
-+func selectLockPrivilegeTips(q *plan.Query) (privilegeTipsArray, error) {
-+	if q == nil || len(q.SelectLockReferences) == 0 {
-+		return nil, nil
-+	}
-+	var tips privilegeTipsArray
-+	seen := make(map[string]struct{}, len(q.SelectLockReferences))
-+	for _, reference := range q.SelectLockReferences {
-+		obj := reference.GetObjectRef()
-+		if obj == nil || obj.SchemaName == "" || obj.ObjName == "" {
-+			return nil, moerr.NewInternalErrorNoCtx("invalid SELECT lock authorization target")
-+		}
-+		if err := validateViewPath(reference.ViewPath); err != nil {
-+			return nil, err
-+		}
-+		identity, err := reference.Marshal()
-+		if err != nil {
-+			return nil, err
-+		}
-+		key := string(identity)
-+		if _, exists := seen[key]; exists {
-+			continue
-+		}
-+		seen[key] = struct{}{}
-+		tips = append(tips, privilegeTips{
-+			typ: PrivilegeTypeSelect, objType: objectTypeTable,
-+			databaseName: getDbNameForPrivilege(obj), tableName: obj.ObjName,
-+			objectRef: obj, viewPath: reference.ViewPath,
-+			isClusterTable:        reference.IsClusterTable || isClusterTable(obj.SchemaName, obj.ObjName),
-+			clusterTableOperation: clusterTableSelect,
-+		})
-+	}
-+	return tips, nil
-+}
-+
-+// This check consumes one already-validated, statement-local role closure.
-+// It deliberately bypasses the session cache, which has no account/role key.
-+func verifySelectLockPrivilegeForRoles(ctx context.Context, bh BackgroundExec, ses *Session,
-```
-
-**File**: `pkg/frontend/authenticate2.go` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ var checkPrivilegeInCache = func(ctx context.Context, ses *Session, priv *privil
- 							if yes2 {
- 								//At least there is one success
- 								yes = false
--								for i, typ := range [3]PrivilegeType{mi.privilegeTyp, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership} {
-+								for i, typ := range privilegeAlternatives(mi.privilegeTyp, mi.selectLock) {
- 									if i > 0 && mi.objType != objectTypeTable {
- 										break
- 									}
-```
-
-**File**: `pkg/frontend/authenticate_test.go` (modified, +23/-9)
-```diff
-@@ -7608,6 +7608,7 @@ func addTablePrivilegeResultsForRole(
- 	privTypes := []PrivilegeType{
- 		PrivilegeTypeSelect,
- 		PrivilegeTypeInsert,
-+		PrivilegeTypeUpdate,
- 		PrivilegeTypeDelete,
- 		PrivilegeTypeTableAll,
- 		PrivilegeTypeTableOwnership,
-@@ -14386,9 +14387,12 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantOnlyAfterCommit(t *testin
- 			defer backgroundExecStub.Reset()
- 
- 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
--			_, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
-+			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
- 			require.ErrorIs(t, err, commitErr)
--			require.Contains(t, bh.executedSQLs, "rollback;")
-+			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;", "rollback;"}, bh.executedSQLs)
-+			if tc.rows == nil {
-+				require.False(t, valid)
+ 	r, err := newRetryableReader(
+ 		func(offset int64) (io.ReadCloser, error) {
++			if max != nil {
++				if err := options.SetRange(offset, *max-1); err != nil {
++					return nil, err
++				}
 +			}
- 			_, cached := cache.getActiveRoleGrant(2, 3)
- 			require.False(t, cached)
- 		})
-@@ -14406,13 +14410,16 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 	defer cacheHitStub.Reset()
- 
- 	for _, tc := range []struct {
--		name      string
--		rows      [][]interface{}
--		wantValid bool
--		wantError bool
-+		name       string
-+		rows       [][]interface{}
-+		wantValid  bool
-+		wantError  bool
-+		invalidate bool
- 	}{
- 		{name: "granted", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true},
- 		{name: "revoked", wantError: true},
-+		{name: "granted invalidated during commit", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true, invalidate: true},
-+		{name: "revoked invalidated during commit", wantError: true, invalidate: true},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			cache := &privilegeCache{}
-@@ -14433,6 +14440,9 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 				if sql == "commit;" {
- 					_, cached := cache.getActiveRoleGrant(2, 3)
- 					require.False(t, cached)
-+					if tc.invalidate {
-+						cache.invalidate()
-+					}
+ 			obj, err := DoWithRetryContext(
+ 				ctx,
+ 				"s3 get object",
+@@ -658,8 +657,14 @@ func (a *MinioSDK) getObjectWithOptions(
+ 			if err != nil {
+ 				return nil, err
+ 			}
++			if max != nil {
++				// Seek would replace the bounded Range with an open-ended one.
++				// Close the bounded response directly, without draining unread data.
++				return obj, nil
++			}
+ 			if offset > 0 {
+ 				if _, err := obj.Seek(offset, 0); err != nil {
++					obj.Close()
+ 					return nil, err
  				}
  			}
- 			backgroundExecStub := gostub.StubFunc(&NewBackgroundExec, bh)
-@@ -14441,14 +14451,18 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
- 			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
- 			if tc.wantError {
--				require.Error(t, err)
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal))
-+				require.EqualError(t, err, "internal error: do not have privilege to execute the statement")
- 			} else {
- 				require.NoError(t, err)
- 			}
- 			require.Equal(t, tc.wantValid, valid)
- 			cachedValid, cached := cache.getActiveRoleGrant(2, 3)
--			require.True(t, cached)
--			require.Equal(t, tc.wantValid, cachedValid)
-+			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;"}, bh.executedSQLs)
-+			require.Equal(t, !tc.invalidate, cached)
-+			if cached {
-+				require.Equal(t, tc.wantValid, cachedValid)
-+			}
- 		})
+@@ -678,6 +683,9 @@ func (a *MinioSDK) getObjectWithOptions(
+ 	if err != nil {
+ 		return nil, err
  	}
- }
-```
-
-**File**: `pkg/frontend/computation_wrapper.go` (modified, +19/-2)
-```diff
-@@ -3137,11 +3137,28 @@ func preparedExecutionBuildPlanFunc(
- 			// let an EXECUTE-time USE leak into that retry, and always restore the
- 			// session context even when planning fails.
- 			currentDatabase := compilerCtx.GetDatabase()
-+			if session, ok := ses.(*Session); ok {
-+				restoreDatabase := bindSessionDatabaseForStatement(session, bindingDatabase)
-+				defer restoreDatabase()
-+			}
- 			compilerCtx.SetDatabase(bindingDatabase)
- 			defer compilerCtx.SetDatabase(currentDatabase)
- 		}
--		return buildPlanForCompileRetry(
--			ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
-+		p, err := buildPlanForCompileRetry(ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
-+		if err != nil {
-+			return nil, err
-+		}
-+		// A retry can bind a different view body. CTAS discards its source Query
-+		// in ordinary plans, so it must use the source authorization/replanning
-+		// path even when the rebuilt plan has no top-level lock references.
-+		ctas, isCTAS := stmt.(*tree.CreateTable)
-+		needsAuthorization := len(p.GetQuery().GetSelectLockReferences()) > 0 || (isCTAS && ctas.IsAsSelect)
-+		if session, ok := ses.(*Session); ok && !session.IsBackgroundSession() && session.GetTenantInfo() != nil && needsAuthorization {
-+			if _, err = authenticateCanExecuteStatementAndPlan(ctx, session, stmt, p); err != nil {
-+				return nil, err
-+			}
-+		}
-+		return p, nil
- 	}
++	if max != nil {
++		return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
++	}
+ 	return r, nil
  }
  
 ```
 
-**File**: `pkg/frontend/select_lock_ctas_retry_integration_test.go` (added, +261/-0)
+**File**: `pkg/fileservice/minio_sdk_range_lifecycle_test.go` (added, +349/-0)
 ```diff
-@@ -0,0 +1,261 @@
-+//go:build integration
-+
+@@ -0,0 +1,349 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3554,105 +2492,159 @@ statement's admitted catalog sna
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend_test
++package fileservice
 +
 +import (
 +	"context"
++	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"strings"
++	"sync"
++	"sync/atomic"
 +	"testing"
++	"testing/iotest"
 +	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
 +	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/embed"
-+	"github.com/matrixorigin/matrixone/pkg/frontend"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+	"github.com/matrixorigin/matrixone/pkg/sql/plan"
-+	"github.com/matrixorigin/matrixone/pkg/txn/client"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/minio/minio-go/v7"
++	"github.com/minio/minio-go/v7/pkg/credentials"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestSelectLockCTASRetry(t *testing.T) {
-+	t.Cleanup(frontend.InstallNativeSelectLockFailureExecForTest())
-+	runNativeViewSchemaCluster(t, func(cn embed.ServiceOperator, svc cnservice.Service) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+		defer cancel()
-+		admin := openNativeViewSchemaSQL(t, ctx, cn, "dump:111", "")
-+		admin.SetMaxOpenConns(1)
-+		exec := func(query string) {
-+			t.Helper()
-+			_, err := admin.ExecContext(ctx, query)
-+			require.NoError(t, err, query)
++// Object.Close releases its response from the SDK worker, so counters and the
++// completion signal must also be safe to observe from the test goroutine.
++type minioRangeBody struct {
++	io.Reader
++	reads, bytes, closes atomic.Int64
++	closed               chan struct{}
++	once                 sync.Once
++}
++
++func (b *minioRangeBody) Read(p []byte) (int, error) {
++	b.reads.Add(1)
++	n, err := b.Reader.Read(p)
++	b.bytes.Add(int64(n))
++	return n, err
++}
++
++func (b *minioRangeBody) Close() error {
++	b.closes.Add(1)
++	b.once.Do(func() { close(b.closed) })
++	return nil
++}
++
++func (b *minioRangeBody) waitClosed(t *testing.T) {
++	t.Helper()
++	select {
++	case <-b.closed:
++	case <-time.After(5 * time.Second):
++		t.Fatal("MinIO response was not closed")
++	}
++	require.Equal(t, int64(1), b.closes.Load())
++}
++
++func newMinioRangeTestSDK(t *testing.T, transport http.RoundTripper) *MinioSDK {
++	t.Helper()
++	client, err := minio.New("minio.invalid", &minio.Options{
++		Creds: credentials.NewStaticV4("", "", ""), Region: "us-east-1", Transport: transport,
++	})
++	require.NoError(t, err)
++	return &MinioSDK{bucket: "bucket", client: client}
++}
++
++func minioRangeTestResponse(req *http.Request, body io.ReadCloser, size int) *http.Response {
++	return &http.Response{
++		StatusCode: http.StatusPartialContent, Request: req, Body: body, ContentLength: int64(size),
++		Header: http.Header{
++			"Content-Length": {strconv.Itoa(size)},
++			"Last-Modified":  {time.Unix(1, 0).UTC().Format(http.TimeFormat)},
++			"Etag":           {`"etag"`},
++		},
++	}
++}
++
++func openMinioRangeTestReader(t *testing.T, sdk *MinioSDK, identity string) io.ReadCloser {
++	t.Helper()
++	min, max := int64(1), int64(6)
++	var reader io.ReadCloser
++	var err error
++	if identity == "" {
++		reader, err = sdk.Read(t.Context(), "object", &min, &max)
++	} else {
++		expected := ObjectIdentity{ETag: "etag", Size: 16}
++		if identity == "version" {
++			expected.VersionID = "version"
 +		}
-+		const database = "select_lock_ctas_retry"
-+		exec("create database " + database)
-+		defer exec("drop database " + database)
-+		exec("create database select_lock_ctas_other")
-+		defer exec("drop database select_lock_ctas_other")
-+		exec("create role select_lock_retry_role")
-+		defer exec("drop role select_lock_retry_role")
-+		exec("create user select_lock_retry_reader identified by 'test123' default role select_lock_retry_role")
-+		defer exec("drop user select_lock_retry_reader")
-+		for _, query := range []string{
-+			"grant select_lock_retry_role to select_lock_retry_reader",
-+			"create table " + database + ".a(id int primary key)",
-+			"create table " + database + ".b(id int primary key)",
-+			"insert into " + database + ".a values(1)",
-+			"insert into " + database + ".b values(1)",
-+			"set view_security_type='INVOKER'",
-+			"create view " + database + ".v as select id from " + database + ".a",
-+			"grant select on table " + database + ".* to select_lock_retry_role",
-+			"grant select, update on view " + database + ".v to select_lock_retry_role",
-+			"grant update on table " + database + ".a to select_lock_retry_role",
-+			"grant create table on database " + database + " to select_lock_retry_role",
-+		} {
-+			exec(query)
-+		}
-+		reader := frontend.GetBackgroundTenant()
-+		reader.User = "select_lock_retry_reader"
-+		reader.DefaultRole = "select_lock_retry_role"
-+		require.NoError(t, admin.QueryRowContext(ctx, "select user_id from mo_catalog.mo_user where user_name='select_lock_retry_reader'").Scan(&reader.UserID))
-+		require.NoError(t, admin.QueryRowContext(ctx, "select role_id from mo_catalog.mo_role where role_name='select_lock_retry_role'").Scan(&reader.DefaultRoleID))
-+		readerCtx := defines.AttachAccount(ctx, reader.TenantID, reader.UserID, reader.DefaultRoleID)
-+		noLocks := func(t *testing.T) {
-+			t.Helper()
-+			tx, err := admin.BeginTx(ctx, nil)
++		reader, err = sdk.ReadObjectWithIdentity(t.Context(), "object", &min, &max, expected)
++	}
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = reader.Close() })
++	return reader
++}
++
++func TestMinioSDKBoundedCloseDoesNotRead(t *testing.T) {
++	for _, tc := range []struct {
++		name, identity string
++		take           int
++	}{
++		{name: "unread"},
++		{name: "partial", take: 2},
++		{name: "full", take: 5},
++		{name: "etag", identity: "etag", take: 2},
++		{name: "version", identity: "version", take: 2},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			body := &minioRangeBody{Reader: strings.NewReader("12345"), closed: make(chan struct{})}
++			sdk := newMinioRangeTestSDK(t, roundTripperFunc(func(req *http.Request) (*http.Response, error) {
++				return minioRangeTestResponse(req, body, 5), nil
++			}))
++			reader := openMinioRangeTestReader(t, sdk, tc.identity)
++			prefix := make([]byte, tc.take)
++			_, err := io.ReadFull(reader, prefix)
 +			require.NoError(t, err)
-+			defer func() { require.NoError(t, tx.Rollback()) }()
-+			var id int
-+			require.NoError(t, tx.QueryRowContext(ctx, "select id from "+database+".b for update nowait").Scan(&id))
-+			require.Equal(t, 1, id)
-+		}
-+		for _, prepared := range []bool{false, true} {
-+			t.Run(map[bool]string{false: "ordinary", true: "prepared with changed USE"}[prepared], func(t *testing.T) {
-+				exec("alter view " + database + ".v as select id from " + database + ".a")
-+				statement, err := mysql.ParseOne(readerCtx, "create table retry_result as select id from v for update", 1)
-+				require.NoError(t, err)
-+				defer statement.Free()
-+				// Establish the original authorized binding before the catalog transition.
-+				withNativeViewSchemaRead(t, readerCtx, cn, svc, database, reader, func(compiler *frontend.TxnCompilerContext, _ client.TxnOperator, _ *process.Process) {
-+					p, err := plan.BuildPlan(compiler, statement, prepared)
-+					require.NoError(t, err)
-+					require.Nil(t, p.GetQuery())
-+					require.Equal(t, prepared, p.GetDdl().GetQuery() != nil)
-+					require.NoError(t, frontend.AuthorizeNativeViewSchemaPlanForTest(readerCtx, compiler, statement, p))
-+				})
-+				exec("alter view " + database + ".v as select id from " + database + ".b")
-+				retr
++			require.Equal(t, "12345"[:tc.take], string(prefix))
++			reads := body.reads.Load()
++			require.NoError(t, reader.Close())
++			body.waitClosed(t)
++			require.Equal(t, reads, body.reads.Load(), "Close must not read the response")
++			require.Equal(t, int64(tc.take), body.bytes.Load())
++		})
++	}
++}
++
++func TestMinioSDKBoundedReadRetry(t *testing.T) {
++	for _, tc := range []struct {
++		name, identity string
++		prefix         bool
++		failure        int
++	}{
++		{name: "delivered prefix", prefix: true},
++		{name: "bytes and error in one read"},
++		{name: "etag", identity: "etag", prefix: true},
++		{name: "version", identity: "version", prefix: true},
++		{name: "etag changed", identity: "etag", prefix: true, failure: http.StatusPreconditionFailed},
++		{name: "version gone", identity: "version", prefix: true, failure: http.StatusNotFound},
++		{name: "reopen denied", prefix: true, failure: http.StatusForbidden},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			first := &minioRangeBody{
++				Reader: io.MultiReader(strings.NewReader("12"), iotest.ErrReader(io.ErrUnexpectedEOF)),
++				
 ```
 
-**File**: `pkg/frontend/select_lock_privilege_test.go` (added, +576/-0)
+**File**: `pkg/fileservice/minio_sdk_range_test.go` (added, +135/-0)
 ```diff
-@@ -0,0 +1,576 @@
-+// Copyright 2021 Matrix Origin
+@@ -0,0 +1,135 @@
++// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//      http://www.apache.org/licenses/LICENSE-2.0
++//     http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -3660,203 +2652,687 @@ statement's admitted catalog sna
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package fileservice
 +
 +import (
 +	"context"
-+	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
 +	"strings"
++	"sync/atomic"
 +	"testing"
++	"time"
 +
-+	"github.com/golang/mock/gomock"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
-+	lockpb "github.com/matrixorigin/matrixone/pkg/pb/lock"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
-+	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace/statistic"
-+	"github.com/prashantv/gostub"
++	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+	"github.com/tidwall/btree"
 +)
 +
-+// Pair a real parser/planner witness with typed lock identities and independent
-+// catalog grants. A SELECT-only user must never acquire an exclusive SELECT lock.
-+func TestSelectLockPrivilege(t *testing.T) {
++type minioRangeResponse struct {
++	http.ResponseWriter
++	bytes int
++}
++
++func (w *minioRangeResponse) Write(p []byte) (int, error) {
++	n, err := w.ResponseWriter.Write(p)
++	w.bytes += n
++	return n, err
++}
++
++func TestMinioSDKReadRanges(t *testing.T) {
++	const data = "0123456789abcdef"
 +	for _, tc := range []struct {
-+		name, sql  string
-+		targets    []string
-+		grants     map[string]PrivilegeType
-+		denySelect bool
-+		allowed    bool
++		name, wantRange, identity, consumer string
++		min, max                            *int64
++		want                                string
 +	}{
-+		{name: "ordinary read", sql: "select n_nationkey from nation", allowed: true},
-+		{name: "shared read", sql: "select n_nationkey from nation for share", allowed: true},
-+		{name: "legacy shared read", sql: "select n_nationkey from nation lock in share mode", allowed: true},
-+		{name: "read only exclusive", sql: "select n_nationkey from nation for update", targets: []string{"nation"}},
-+		{name: "nowait exclusive", sql: "select n_nationkey from nation for update nowait", targets: []string{"nation"}},
-+		{name: "constant false", sql: "select n_nationkey from nation where 1=0 for update", targets: []string{"nation"}},
-+		{name: "update alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
-+		{name: "delete alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeDelete}, allowed: true},
-+		{name: "write alone lacks select", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, denySelect: true},
-+		{name: "nested exclusive", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}},
-+		{name: "derived exclusive", sql: "select * from (select n_nationkey from nation for update) d", targets: []string{"nation"}},
-+		{name: "cte exclusive", sql: "with d as (select n_nationkey from nation for update) select * from d", targets: []string{"nation"}},
-+		{name: "unlocked source needs no write", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region) for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
-+		{name: "outer grant cannot authorize inner lock", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}},
-+		{name: "mixed alternatives", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate, "region": PrivilegeTypeDelete}, allowed: true},
-+		{name: "sibling lacks write", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeTableOwnership}},
-+		{name: "shared outer exclusive inner", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update) for share", targets: []string{"region"}},
-+		{name: "dml own locks", sql: "update nation set n_name='new' where n_nationkey=1", grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
++		{name: "bounded", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
++		{name: "zero start", min: ptrTo[int64](0), max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
++		{name: "nil start", max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
++		{name: "first byte", max: ptrTo[int64](1), wantRange: "bytes=0-0", want: "0"},
++		{name: "one byte", min: ptrTo[int64](1), max: ptrTo[int64](2), wantRange: "bytes=1-1", want: "1"},
++		{name: "tail", min: ptrTo[int64](13), max: ptrTo[int64](16), wantRange: "bytes=13-15", want: "def"},
++		{name: "past end", min: ptrTo[int64](13), max: ptrTo[int64](20), wantRange: "bytes=13-19", want: "def"},
++		{name: "unbounded", want: data},
++		{name: "unbounded suffix", min: ptrTo[int64](1), wantRange: "bytes=1-", want: data[1:]},
++		{name: "etag", identity: "etag", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
++		{name: "version", identity: "version", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
++		{name: "identity nil start", identity: "etag", max: ptrTo[int64](4), wantRange: "bytes=0-3", want: "0123"},
++		{name: "file service buffered", consumer: "buffered", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
++		{name: "file service stream", consumer: "stream", min: ptrTo[int64](1), max: ptrTo[int64](4), wantRange: "bytes=1-3", want: "123"},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			stmt, err := parsers.ParseOne(t.Context(), dialect.MYSQL, tc.sql, 1)
++			type transfer struct {
++				rangeHeader, ifMatch, version string
++				bytes                         int
++			}
++			transfers := make(chan transfer, 1)
++			var gets atomic.Int32
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.Header().Set("ETag", `"etag"`)
++				response := &minioRangeResponse{ResponseWriter: w}
++				http.ServeContent(response, r, "object", time.Unix(1, 0), strings.NewReader(data))
++				if r.Method == http.MethodGet {
++					gets.Add(1)
++					select {
++					case transfers <- transfer{r.Header.Get("Range"), r.Header.Get("If-Match"), r.URL.Query().Get("versionId"), response.bytes}:
++					default:
++					}
++				}
++			}))
++			t.Cleanup(server.Close)
++			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
++			t.Cleanup(cancel)
++			sdk, err := NewMinioSDK(ctx, ObjectStorageArguments{
++				Endpoint: server.URL, Region: "us-east-1", Bucket: "bucket",
++				NoDefaultCredentials: true, NoBucketValidation: true,
++			}, nil)
 +			require.NoError(t, err)
-+			p, err := plan2.BuildPlan(plan2.NewMockCompilerContext(true, newPlanTestProcess(t)), stmt, false)
-+	
++			var reader io.ReadCloser
++			if tc.consumer != "" {
++				fs := &S3FS{name: "range", storage: sdk, ioMerger: NewIOMerger()}
++				vector := &IOVector{FilePath: "object", Policy: SkipAllCache, Entries: []IOEntry{{Offset: *tc.min, Size: *tc.max - *tc.min}}}
++				t.Cleanup(vector.Release)
++				if tc.consumer == "stream" {
++					vector.Entries[0].ReadCloserForRead = &reader
++				}
++				require.NoError(t, fs.Read(ctx, vector))
++				if tc.consumer == "buffered" {
++					reader = io.NopCloser(strings.NewReader(string(vector.Entries[0].Data)))
++				}
++			} else if tc.identity != "" {
++				identity := ObjectIdentity{ETag: "etag", Size: int64(len(data))}
++				if tc.identity == "version" {
++					identity.VersionID = "version"
++				}
++				reader, err = sdk.ReadObjectWithIdentity(ctx, "object", tc.min, tc.max, identity)
++				require.NoError(t, err)
++			} else {
++				reader, err = sdk.Read(ctx, "object", tc.min, tc.max)
++				require.NoError(t, err)
++			}
++			t.Cleanup(func() { _ = reader.Close() })
++			got, err := io.ReadAll(reader)
++			require.NoError(t, err)
++			require.NoError(t, reader.Close())
++			require.Equal(t, tc.want, string(got))
++			select {
++			cas
 ```
 
-**File**: `pkg/frontend/view_privilege_principal_test.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `d2451d5c` (2026-11-03)
+**Commit Message**: fix: bound compression scratch growth and oversized merge batches (#32052)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32051
+
+## What this PR does / why we need it:
+
+A legal LZ4 scratch request slightly above 1 GiB was rounded to 2 GiB, exceeding mpool's single-allocation limit and panicking. Retain power-of-two growth where it fits; allocate the exact requested size when rounding alone would cross the limit. Actual allocation failures retain the existing panic behavior.
+
+Check the output batch size after every appended row in both sorted merge and reshape. Flush the block and finish the object once its size exceeds 1.5 × target object size (192 MiB for a 128 MiB target), using the existing writer path. Keep the schema row limit and source transfer stride unchanged. The threshold is soft: one indivisible row may exceed it.
+
+Only critical regression coverage is added:
+
+- Compression capacity at 1 GiB and mpool's allocation boundary, without GiB-sized test allocations.
+- Sorted merge and reshape with skewed rows and a deleted row: persist
+
+**File**: `pkg/objectio/writer.go` (modified, +11/-2)
 ```diff
-@@ -119,7 +119,7 @@ func TestViewAdminRoleIsAccountQualified(t *testing.T) {
- 		bh := &backgroundExecTest{}
- 		bh.init()
- 		bh.resultSets = []interface{}{&MysqlResultSet{}}
--		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false)
-+		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false, false)
- 		require.NoError(t, err)
- 		require.Equal(t, tc.allowed, allowed)
+@@ -143,22 +143,31 @@ func arenaNextPow2(n int) int {
+ 
+ // CompressBuf returns a scratch buffer for LZ4 compression, growing as needed.
+ // The buffer is retained across arena Reset() calls.  We round up to the next
+-// power of 2 so that minor size variations don't trigger repeated allocations.
++// power of 2 unless that capacity exceeds mpool's single-allocation limit.
+ func (a *WriteArena) CompressBuf(minSize int) []byte {
+ 	if len(a.compressBuf) < minSize {
+ 		if a.compressBuf != nil {
+ 			arenaMPool.Free(a.compressBuf)
+ 			a.compressBuf = nil // nil immediately so a panic in Alloc doesn't leave a dangling pointer
+ 		}
+ 		var err error
+-		a.compressBuf, err = arenaMPool.Alloc(arenaNextPow2(minSize), true)
++		a.compressBuf, err = arenaMPool.Alloc(arenaCompressBufSize(minSize), true)
+ 		if err != nil {
+ 			panic(err)
+ 		}
  	}
+ 	return a.compressBuf[:minSize]
+ }
+ 
++func arenaCompressBufSize(minSize int) int {
++	size := arenaNextPow2(minSize)
++	limit := mpool.MaxAllocationSize()
++	if int64(minSize) <= limit && int64(size) > limit {
++		return minSize
++	}
++	return size
++}
++
+ // FreeBuffers releases the off-heap allocations and serialization scratch.
+ // Call this before dropping an arena that won't be returned to the pool.
+ func (a *WriteArena) FreeBuffers() {
 ```
 
-**File**: `pkg/frontend/view_schema_native_support_test.go` (modified, +304/-1)
+**File**: `pkg/objectio/writer_test.go` (modified, +10/-0)
 ```diff
-@@ -19,13 +19,21 @@ package frontend
- import (
- 	"context"
- 	"fmt"
-+	"math"
-+	goruntime "runtime"
-+	"strings"
- 	"sync/atomic"
+@@ -493,6 +493,16 @@ func TestWriteArena(t *testing.T) {
+ 		require.GreaterOrEqual(t, len(a.compressBuf), 200)
+ 	})
+ 
++	t.Run("compress capacity respects allocation boundary", func(t *testing.T) {
++		// Exercise the real GiB boundary without allocating a GiB buffer.
++		limit := int(mpool.MaxAllocationSize())
++		require.Equal(t, 1<<30, arenaCompressBufSize(1<<30))
++		require.Equal(t, 1<<30+1, arenaCompressBufSize(1<<30+1))
++		require.Equal(t, limit, arenaCompressBufSize(limit))
++		// An illegal request must still reach Alloc's existing failure path.
++		require.Greater(t, arenaCompressBufSize(limit+1), limit)
++	})
++
+ 	t.Run("zero-size arena falls back to exact make", func(t *testing.T) {
+ 		a := NewArena(0)
+ 		b := a.Alloc(10)
+```
+
+**File**: `pkg/vm/engine/tae/mergesort/merger.go` (modified, +1/-5)
+```diff
+@@ -195,7 +195,6 @@ func (m *merger[T]) merge(ctx context.Context) error {
+ 	defer releaseF()
+ 
+ 	mp := m.host.GetMPool()
+-	bigblk := false
+ 	for m.heap.Len() != 0 {
+ 		select {
+ 		case <-ctx.Done():
+@@ -235,9 +234,7 @@ func (m *merger[T]) merge(ctx context.Context) error {
+ 
+ 		m.stats.blkRowCnt++
+ 		m.stats.objRowCnt++
+-		if m.stats.blkRowCnt%100 == 0 && m.stats.targetObjSize > 0 {
+-			bigblk = m.buffer.Size() > int(m.stats.targetObjSize)*3/2
+-		}
++		bigblk := m.stats.isBlockOversized(m.buffer)
+ 		// write new block
+ 		if m.stats.blkRowCnt == int(m.rowPerBlk) || bigblk {
+ 			m.stats.blkRowCnt = 0
+@@ -264,7 +261,6 @@ func (m *merger[T]) merge(ctx context.Context) error {
+ 				m.stats.objBlkCnt = 0
+ 				m.stats.objRowCnt = 0
+ 				m.stats.objCnt++
+-				bigblk = false
+ 			}
+ 		}
+ 
+```
+
+**File**: `pkg/vm/engine/tae/mergesort/reshaper.go` (modified, +3/-2)
+```diff
+@@ -116,7 +116,8 @@ func reshape(ctx context.Context, host MergeTaskHost) error {
+ 				stats.blkRowCnt++
+ 				stats.objRowCnt++
+ 
+-				if stats.blkRowCnt == int(maxRowCnt) {
++				bigblk := stats.isBlockOversized(buffer)
++				if stats.blkRowCnt == int(maxRowCnt) || bigblk {
+ 					if writer == nil {
+ 						writer = host.PrepareNewWriter()
+ 					}
+@@ -131,7 +132,7 @@ func reshape(ctx context.Context, host MergeTaskHost) error {
+ 
+ 					buffer.CleanOnlyData()
+ 
+-					if stats.needNewObject() {
++					if stats.needNewObject() || bigblk {
+ 						if err := syncObject(ctx, writer, host); err != nil {
+ 							return err
+ 						}
+```
+
+**File**: `pkg/vm/engine/tae/mergesort/row_size_test.go` (added, +169/-0)
+```diff
+@@ -0,0 +1,169 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package mergesort
++
++import (
++	"bytes"
++	"context"
 +	"testing"
 +
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/nulls"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/fileservice"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
++	"github.com/matrixorigin/matrixone/pkg/objectio/ioutil"
++	"github.com/matrixorigin/matrixone/pkg/pb/api"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
 +	"github.com/stretchr/testify/require"
- 
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
- 	"github.com/matrixorigin/matrixone/pkg/sql/plan"
- 	"github.com/matrixorigin/matrixone/pkg/txn/client"
-+	"github.com/matrixorigin/matrixone/pkg/util/fault"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae"
- 	"github.com/matrixorigin/matrixone/pkg/vm/process"
- )
-@@ -164,13 +172,25 @@ func AuthorizeNativeViewSchemaPlanForTest(ctx context.Context, compiler *TxnComp
- 	return err
- }
- 
-+// Invoke the actual compile-retry callback with the fixture-owned session.
-+// The caller controls the catalog transition between initial admission and retry.
-+func RebuildNativeSelectLockCTASForTest(ctx context.Context, compiler *TxnCompilerContext, statement tree.Statement, prepared bool, bindingDatabase string) (*plan.Plan, error) {
-+	ses := compiler.GetSession().(*Session)
-+	var retry *preparedExecutionRetry
-+	if prepared {
-+		ses.SetSql("execute select_lock_ctas")
-+		retry = &preparedExecutionRetry{}
-+	}
-+	return preparedExecutionBuildPlanFunc(ses, statement, false, retry, bindingDatabase, prepared)(ctx)
-+}
++)
 +
- // 测试角色只具有一个明确的 active role，直接复用既有 view privilege 查询。
- // 此 helper 不把它推广为生产 SHOW/查询权限策略。
- func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSchemaAuthorizer {
- 	return func(ctx context.Context, database, name string, _ *plan.Snapshot) error {
- 		ses := compiler.GetSession().(*Session)
- 		allowed, err := verifyViewPrivilegeForRole(ctx, compiler.getOrCreateBackExec(ctx), ses,
--			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false)
-+			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false, false)
- 		if err != nil {
- 			return err
- 		}
-@@ -180,3 +200,286 @@ func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSch
- 		return nil
- 	}
- }
-+
-+// Exercise the real batch admission and transaction owner using the fixture's
-+// engine. Warm membership in this epoch, then count targets consumed together.
-+func AuthorizeNativeSelectLockBatchForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query) (int, bool, error) {
-+	ses := compiler.GetSession().(*Session)
-+	ctx, epoch := beginAuthorizationEpoch(ctx, ses, &ExecCtx{})
-+	defer epoch.end()
-+	tips, err := selectLockPrivilegeTips(q)
-+	if err != nil {
-+		return 0, false, err
-+	}
-+	batch := &selectLockAuthorizationBatch{}
-+	for _, tip := range tips {
-+		batch.items = append(batch.items, privilegeItem{privilegeTyp: PrivilegeTypeSelect, selectLock: true,
-+			objType: objectTypeTable, dbName: tip.databaseName, tableName: tip.tableName,
-+			objectRef: tip.objectRef, viewPath: tip.viewPath,
-+			isClusterTable: tip.isClusterTable, clusterTableOperation: clusterTableSelect})
-+	}
-+	priv := &privilege{objType: objectTypeTable, entries: []privilegeEntry{{privilegeEntryTyp: privilegeEntryTypeCompound,
-+		compound: &compoundEntry{items: batch.items[:1]}}}}
-+	if ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv); err != nil || !ok {
-+		return 0, ok, err
-+	}
-+	ok, _, err := determineUserHasPrivilegeSetWithSelectLockBatch(ctx, ses, priv, batch)
-+	return batch.checked, ok, err
-+}
-+
-+// Pause the real second-target boundary, then change one reuse precondition.
-+// The existing frontend fault point supplies the barrier; production has no
-+// test hook. The count distinguishes legacy resumption from skipping a target.
-+func AuthorizeNativeSelectLockBoundaryForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query, change string) (int64, bool, error) {
-+	ses := compiler.GetSession().(*Session)
-+	runCtx, cancel := context.WithCancel(ctx)
-+	defer cancel()
-+	runCtx, epoch := beginAuthorizationEpoch(runCtx, ses, &ExecCtx{})
-+	defer epoch.end()
-+	if ok, _, err := authenticateSelectLockReferences(runCtx, ses, q); err != nil || !ok {
-+		return 0, ok, err
-+	}
-+	if fault.EnableDomain(fault.DomainFrontend) {
-+		defer fault.DisableDomain(fault.DomainFrontend)
-+	}
-+	const target = "authorization_before_grant_read"
-+	for _, point := range []struct{ name, frequency, action string }{
-+		{target, "2:2::", "wait"},
-+		{"select_lock_batch_waiters", ":::", "getwaiters"},
-+		{"select_lock_batch_notify", ":::", "notifyall"},
-+		{"select_lock_batch_count", ":::", "getcount"},
-+	} {
-+		if err := fault.AddFaultPointInDomain(ctx, fault.DomainFrontend, point.name, point.frequency, point.action, 0, target, false); err != nil {
-+			return 0, false, err
++func TestMergeFlushesOversizedRows(t *testing.T) {
++	for _, sorted := range []bool{true, false} {
++		name := "reshape"
++		if sorted {
++			name = "sorted merge"
 +		}
-+		defer fault.RemoveFaultPointFromDomain(ctx, fault.DomainFrontend, point.name)
-+	}
-+	type result struct {
-+		ok  bool
-+		err error
-+	}
-+	done := make(chan result, 1)
-+	go func() {
-+		ok, _, err := authent
++		t.Run(name, func(t *testing.T) {
++			ctx := context.Background()
++			mp := mpool.MustNewZero()
++			fs := testutil.NewSharedFS()
++			host := &sizeLimitMergeHost{
++				jsonReadbackMergeHost: jsonReadbackMergeHost{mp: mp, loaded: make([]bool, 2)},
++				fs:                    fs,
++				sortKey:               -1,
++				deletes:               []*nulls.Nulls{{}, {}},
++			}
++			if sorted {
++				host.sortKey = 0
++			}
++			t.Cleanup(func() {
++				if host.transfer != nil {
++					host.transfer.Release()
++				}
++				for _, run := range host.runs {
++					run.Clean(mp)
++				}
++				fs.Close(ctx)
++				require.Zero(t, mp.CurrNB())
++				mpool.DeleteMPool(mp)
++			})
++			// Use a scaled byte budget: even a single large row may exceed it.
++			payloadSizes := []int{1, 1, 300, 1, 1, 80, 80, 1}
++			for run := range 2 {
++				bat := batch.NewWithSize(2)
++				bat.Attrs = []string{"key", "payload"}
++				bat.Vecs[0] = vector.NewVec(types.T_int64.ToType())
++				bat.Vecs[1] = vector.NewVec(types.T_varchar.ToType())
++				host.runs = append(host.runs, bat)
++				for row := range 4 {
++					key := row*2 + run
++					require.NoError(t, vector.AppendFixed(bat.Vecs[0], int64(key), false, mp))
++					require.NoError(t, vector.AppendBytes(bat.Vecs[1], bytes.Repeat([]byte{'x'}, payloadSizes[key]), false, mp))
++				}
++				bat.SetRowCount(4)
++			}
++			host.deletes[0].Add(2) // key 4 must retain the NoTransfer sentinel.
++
++			if sorted {
++				require.NoError(t, mergeObjs(ctx, host, 0))
++			} else {
++				require.NoError(t, reshape(ctx, host))
++			}
++			require.NotNil(t, host.transfer)
++			require.Equal(t, 8, host.transfer.Stride, "source block stride must not shrink with output blocks")
++			require.Len(t, host.commitEntry.CreatedObjs, 3, "flush before the row limit and before 100 rows")
++
++			var actual []int64
++			output := make([][][]int64, 0, len(host.commitEntry.CreatedObjs)) // object -> block -> keys
++			for _, raw := range host.commitEntry.CreatedObjs {
++				stat := objectio.ObjectStats(raw)
++				reader, err := ioutil.NewFileReaderNoCache(fs, stat.ObjectName().String())
++				require.NoError(t, err)
++				bats, release, err := reader.LoadAllColumns(ctx, []uint16{0, 1}, mp)
++				require.NoError(t, err)
++				var blocks [][]int64
++				for _, bat := range bats {
++					keys := append([]int64(nil), vector.MustFixedColWithTypeCheck[int64](bat.Vecs[0])...)
++					blocks = append(blocks, keys)
++					actual = append(actual, keys...)
++					// All rows before the last fit the budget: only one row can
++					// overshoot it, including when that row alone is oversized.
++					prefixSize := 0
++					for row, key := range keys {
++						require.LessOrEqual(t, prefixSize, 192)
++						value := bat.Vecs[1].GetBytesAt(row)
++						require.Equal(t, bytes.Repeat([]byte{'x'}, payloadSizes[key]), value)
++						prefixSize += 8 + types.VarlenaSize
++						if len(value) > types.VarlenaInlineSize {
++							prefixSize += len(value)
++						}
++					}
++				}
++				output = append(output, blocks)
++				release()
++			}
++			expected := []int64{0, 2, 6, 1, 3, 5, 7}
++			if sorted {
++				expected = []int64{0, 1, 2, 3, 5, 6, 7}
++			}
++			require.Equal(t, expected, actual)
++			for run := range 2 {
++				mapping := host.transfer.GetBlockMap(run)
++				for row := range 4 {
++					key := int64(row*2 + run)
++					dest := mapping[row]
++					if key == 4 {
++						require.Equal(t, api.NoTransfer, dest.ObjIdx)
++						continue
++					}
++					require.Less(t, int(dest.ObjIdx), len(output))
++					blocks := output[dest.ObjIdx]
++					require.Less(t, int(dest.BlkIdx), len(blocks))
++					keys := bl
+```
+
+**File**: `pkg/vm/engine/tae/mergesort/types.go` (modified, +7/-0)
+```diff
+@@ -15,6 +15,7 @@
+ package mergesort
+ 
+ import (
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/sort"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/options"
+@@ -73,6 +74,12 @@ type mergeStats struct {
+ 	blkRowCnt, objRowCnt, objBlkCnt, objCnt int
+ }
+ 
++// Check the soft byte limit after each appended row so only that row can
++// overshoot the limit, including when a single row is itself oversized.
++func (s *mergeStats) isBlockOversized(bat *batch.Batch) bool {
++	return s.targetObjSize > 0 && bat.Size() > int(s.targetObjSize)*3/2
++}
++
+ func (s *mergeStats) needNewObject() bool {
+ 	if s.targetObjSize == 0 {
+ 		if s.blkPerObj == 0 {
+```
+
+---
+
+### Incident Patch 3: `d036bcf4` (2026-11-03)
+**Commit Message**: fix(python): disable implicit autoincrement for noninteger keys (#32095)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #31650
+
+## What this PR does / why we need it:
+
+SQLAlchemy 1.4 and 2.0 implicitly mark a single numeric primary key as auto-incrementing. MatrixOne only supports AUTO_INCREMENT on integer columns, so simplified DOUBLE/DECIMAL primary keys compile into invalid DDL.
+
+Normalize accepted TypeEngine classes to instances, and decide implicit AUTO_INCREMENT in MatrixOne's DDL compiler using the type resolved by the actual compilation dialect. This preserves integer behavior across sync/async drivers, wrapper types, and dialect variants while suppressing implicit autoincrement for noninteger types. Explicit AUTO_INCREMENT requests remain explicit.
+
+Validation:
+- Before the original fix on SQLAlchemy 1.4.54: 2 failed / 7 passed; DOUBLE and DECIMAL DDL contained unwanted AUTO_INCREMENT.
+- Review regressions reproduced wrapper, differing-affinity variant, and async driver-dependent failures before their fixes.
+- Owning contract file:
+
+**File**: `clients/python/matrixone/sqlalchemy_ext/dialect.py` (modified, +28/-2)
+```diff
+@@ -19,7 +19,12 @@
+ import sqlalchemy
+ from sqlalchemy import event
+ from sqlalchemy.sql.elements import ClauseElement
+-from sqlalchemy.dialects.mysql.base import MySQLTypeCompiler, MySQLDialect, ischema_names as mysql_ischema_names
++from sqlalchemy.dialects.mysql.base import (
++    MySQLDDLCompiler,
++    MySQLTypeCompiler,
++    MySQLDialect,
++    ischema_names as mysql_ischema_names,
++)
+ 
+ from .vector_type import VectorType, VectorPrecision
+ from .._local_infile import _physical_driver
+@@ -276,10 +281,27 @@ def visit_VECTOR(self, type_, **kw):
+         return type_.get_col_spec() if hasattr(type_, 'get_col_spec') else 'VECTOR'
+ 
+ 
++class MatrixOneDDLCompiler(MySQLDDLCompiler):
++    """Render implicit AUTO_INCREMENT only for the type this dialect sees."""
++
++    def get_column_specification(self, column, **kw):
++        specification = super().get_column_specification(column, **kw)
++        resolved_type = column.type.dialect_impl(self.dialect)
++        auto_increment = ' AUTO_INCREMENT'
++        if (
++            column.autoincrement == 'auto'
++            and resolved_type._type_affinity is not sqlalchemy.Integer
++            and specification.endswith(auto_increment)
++        ):
++            specification = specification[: -len(auto_increment)]
++        return specification
++
++
+ # Register the dialect
+ MatrixOneDialect.statement_compiler = MatrixOneCompiler
+ MatrixOneDialect.type_compiler = MatrixOneTypeCompiler
+ MatrixOneDialect.type_compiler_cls = MatrixOneTypeCompiler
++MatrixOneDialect.ddl_compiler = MatrixOneDDLCompiler
+ 
+ 
+ # MatrixOneVectorType removed - use VectorType from vector_type.py instead
+@@ -333,7 +355,11 @@ def adapt_engine_dialect(engine):
+     dialect.__class__ = type(
+         'MatrixOne_' + driver_type.__name__,
+         (driver_type, MatrixOneDialect),
+-        {'supports_statement_cache': True, 'statement_compiler': MatrixOneCompiler},
++        {
++            'supports_statement_cache': True,
++            'statement_compiler': MatrixOneCompiler,
++            'ddl_compiler': MatrixOneDDLCompiler,
++        },
+     )
+     dialect.ischema_names = dict(dialect.ischema_names, **_mo_ischema_names)
+     compiler = MatrixOneTypeCompiler(dialect)
+```
+
+**File**: `clients/python/matrixone/sqlalchemy_ext/table_builder.py` (modified, +6/-4)
+```diff
+@@ -65,6 +65,7 @@ def simplified_table(name, columns, primary_key=None, **kwargs):
+     if any(key not in columns for key in keys):
+         raise ValueError('primary_key must name existing columns')
+     definitions = []
++    dtype: TypeEngine
+     for column_name, definition in columns.items():
+         options = {}
+         inline_primary = False
+@@ -121,13 +122,14 @@ def simplified_table(name, columns, primary_key=None, **kwargs):
+                         dtype = constructor(fsp=precision)
+                 else:
+                     dtype = constructor(*(int(arg) for arg in args), **type_options)
+-        elif isinstance(definition, TypeEngine) or (
+-            isinstance(definition, type) and issubclass(definition, TypeEngine)
+-        ):
++        elif isinstance(definition, TypeEngine):
+             dtype = definition
++        elif isinstance(definition, type) and issubclass(definition, TypeEngine):
++            dtype = definition()
+         else:
+             raise TypeError('Column types must be strings or SQLAlchemy types')
+-        definitions.append(Column(column_name, dtype, primary_key=column_name in keys or inline_primary, **options))
++        is_primary = column_name in keys or inline_primary
++        definitions.append(Column(column_name, dtype, primary_key=is_primary, **options))
+     metadata = kwargs.pop('metadata', None) or MetaData()
+     return Table(name, metadata, *definitions, **kwargs)
+ 
+```
+
+**File**: `clients/python/tests/offline/contracts/test_mapped_query_identity.py` (modified, +110/-1)
+```diff
+@@ -6,7 +6,20 @@
+ from unittest.mock import AsyncMock, Mock
+ 
+ import pytest
+-from sqlalchemy import Column, Enum, Integer, JSON, String, TypeDecorator, create_engine, select
++from sqlalchemy import (
++    BigInteger,
++    Column,
++    Enum,
++    Integer,
++    JSON,
++    MetaData,
++    Numeric,
++    String,
++    Table,
++    TypeDecorator,
++    create_engine,
++    select,
++)
+ from sqlalchemy.orm import aliased, declarative_base
+ from sqlalchemy.schema import CreateTable
+ 
+@@ -32,6 +45,19 @@ def process_result_value(self, value, dialect):
+         return value[len('encoded:') :] if value.startswith('encoded:') else value
+ 
+ 
++class WrappedInteger(TypeDecorator):
++    impl = Integer
++    cache_ok = True
++
++
++class AsyncDriverInteger(TypeDecorator):
++    impl = Integer
++    cache_ok = True
++
++    def load_dialect_impl(self, dialect):
++        return Integer() if dialect.driver == 'aiomysql' else Numeric()
++
++
+ class State(enum.Enum):
+     READY = 'ready'
+ 
+@@ -149,6 +175,89 @@ def test_simplified_types_and_primary_keys(definition, expected):
+     table = simplified_table('typed', {'key': definition}, primary_key='key')
+     ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
+     assert expected in ddl and 'PRIMARY KEY' in ddl and table.c.key.primary_key
++    assert 'AUTO_INCREMENT' not in ddl
++
++
++def test_simplified_integer_primary_key_keeps_implicit_auto_increment():
++    table = simplified_table('typed', {'key': 'int'}, primary_key='key')
++    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
++    assert 'INTEGER' in ddl and 'PRIMARY KEY' in ddl and 'AUTO_INCREMENT' in ddl
++
++
++@pytest.mark.parametrize(
++    'definition',
++    [
++        WrappedInteger,
++        WrappedInteger(),
++        Integer().with_variant(BigInteger(), 'matrixone'),
++    ],
++)
++def test_simplified_wrapped_integer_primary_key_keeps_implicit_auto_increment(definition):
++    table = simplified_table('typed', {'key': definition}, primary_key='key')
++    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
++    assert 'PRIMARY KEY' in ddl and 'AUTO_INCREMENT' in ddl
++
++
++def test_simplified_dialect_integer_variant_keeps_sqlalchemy_autoincrement():
++    definition = Numeric().with_variant(Integer(), 'matrixone')
++    table = simplified_table('typed', {'key': definition}, primary_key='key')
++    control = Table('control', MetaData(), Column('key', definition, primary_key=True))
++    actual = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
++    expected = str(CreateTable(control).compile(dialect=MatrixOneDialect()))
++    assert table.c.key.autoincrement == control.c.key.autoincrement == 'auto'
++    assert ('AUTO_INCREMENT' in actual) == ('AUTO_INCREMENT' in expected)
++
++
++def test_implicit_autoincrement_filter_preserves_column_comment():
++    table = Table(
++        'typed',
++        MetaData(),
++        Column('key', Numeric(), primary_key=True, comment='keep AUTO_INCREMENT text'),
++    )
++    ddl = str(CreateTable(table).compile(dialect=MatrixOneDialect()))
++    assert "COMMENT 'keep AUTO_INCREMENT text'" in ddl
++    assert ddl.count('AUTO_INCREMENT') == 1
++
++
++@pytest.mark.asyncio
++async def test_async_create_table_uses_actual_driver_for_implicit_auto_increment():
++    from sqlalchemy.ext.asyncio import create_async_engine
++    from matrixone.sqlalchemy_ext.dialect import adapt_engine_dialect
++
++    sync_dialect = MatrixOneDialect()
++    sync_dialect.driver = 'pymysql'
++    sync_table = simplified_table('sync_typed', {'key': AsyncDriverInteger}, primary_key='key')
++    sync_ddl = str(CreateTable(sync_table).compile(dialect=sync_dialect))
++    assert 'INTEGER' not in sync_ddl and 'AUTO_INCREMENT' not in sync_ddl
++
++    dialect_owner = create_async_engine('mysql+aiomysql://')
++    adapt_engine_dialect(dialect_owner.sync_engine)
++    dialect = dialect_owner.sync_engine.dialect
++    emitted = []
++
++    class Connection:
++        async def execute(self, statement):
++            emitted.append(str(statement.compile(dialect=dialect)))
++
++    class Begin:
++        async def __aenter__(self):
++            return Connection()
++
++        async def __aexit__(self, *args):
++            pass
++
++    class Engine:
++        def begin(self):
++            return Begin()
++
++    client = AsyncClient()
++    client._engine = Engine()
++    try:
++        await client.create_table('typed', {'key': AsyncDriverInteger}, primary_key='key')
++    finally:
++        await dialect_owner.dispose()
++    assert len(emitted) == 1
++    assert 'INTEGER' in emitted[0] and 'PRIMARY KEY' in emitted[0] and 'AUTO_INCREMENT' in emitted[0]
+ 
+ 
+ def test_unknown_primary_key_fails_instead_of_being_ignored():
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32031** (2026-11-02): perf(tae): index logtail append ranges on demand (@aunjgr)
-- **PR #32022** (2026-11-02): fix(disttae): release subscription state locks before diagnostics (@XuPeng-SH)
-- **PR #32019** (2026-11-02): fix(python): group additional fulltext WHERE predicates (@MatrixAdventurer)
-- **PR #32012** (2026-11-02): fix(plan): decouple simple zone-map filter admission from estimates (@ck89119)
-- **PR #32009** (2026-11-02): fix(function): preserve 64-bit complement of unsigned zero (@aptend)
-- **PR #32007** (2026-11-02): fix(fileservice): report anonymous file unlink failures (@XuPeng-SH)
+- **PR #32108** (2026-11-04): fix(python): preserve numeric table builder scale (@MatrixAdventurer)
+- **PR #32103** (2026-11-03): fix(plan): support LENGTH/OCTET_LENGTH/CHAR_LENGTH on BIT columns (@gouhongshen)
+- **PR #32095** (2026-11-03): fix(python): disable implicit autoincrement for noninteger keys (@MatrixAdventurer)
+- **PR #32092** (2026-11-03): Fix JSON numeric comparisons beyond FLOAT range (@iamlinjunhong)
+- **PR #32090** (closed): fix(import): prevent legacy transaction memory self-waits (@aptend)
+- **PR #32089** (2026-11-03): Improve SORT ROLLUP reuse for MIN and MAX (@iamlinjunhong)
 
 ---
 
@@ -3876,42 +3352,58 @@ statement's admitted catalog sna
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. function): clamp temporal casts to DECIMAL on overflow (#31999)
+## X. fileservice): bound MinIO range reads without draining on close (#32053)
 
 **RULE**:
-When implementing operations in `pkg/container/types/time.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/fileservice/minio_sdk.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `650a4bb3`: function): clamp temporal casts to DECIMAL on overflow (#31999). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1876b2f9`: fileservice): bound MinIO range reads without draining on close (#32053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/types/time.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fileservice/minio_sdk.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
-	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
+	return mapReadCloserErrors(r, mapMinioConditionalReadError), nil
+		r.Close()
+	return r, nil
+	if max != nil && *max <= *min {
+		return nil, moerr.NewEmptyRangeNoCtx(key)
+	}
+			if max != nil {
+				if err := options.SetRange(offset, *max-1); err != nil {
+					return nil, err
+				}
+			}
+			if max != nil {
+				// Seek would replace the bounded Range with an open-ended one.
+				// Close the bounded response directly, without draining unread data.
+				return obj, nil
+			}
+					obj.Close()
+	if max != nil {
+		return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tToStr := t.NumericString(scale)
-	ret, err := ParseDecimal64(tToStr, width, scale)
-	if err != nil {
-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
+	r = mapReadCloserErrors(r, mapMinioConditionalReadError)
+	if max == nil {
+		return r, nil
 	}
-
-	return ret, nil
-	tToStr := t.NumericString(scale)
-	ret, err := ParseDecimal128(tToStr, width, scale)
-	if err != nil {
-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
+	return &readCloser{r: io.LimitReader(r, *max-*min), closeFunc: r.Close}, nil
+	if max == nil {
+		return r, nil
 	}
-
-	return ret, nil
+	return &readCloser{
+		r:         io.LimitReader(r, int64(*max-*min)),
+		closeFunc: r.Close,
+	}, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `650a4bb3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1876b2f9` are properly handled with clean fallback behavior.

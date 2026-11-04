@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:12:12.694Z",
+  "last_updated": "2026-11-04T02:19:24.752Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38915,8 +38915,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "035356d9",
-      "content_hash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
+      "source_version": "e997c817",
+      "content_hash": "45c928eeb95a06f9c40492fbaec5ea3fed9dba85abdb3226b32c6df61c84e9b5",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -38964,6 +38964,11 @@
           "number": 6441,
           "title": "function): clamp temporal casts to DECIMAL on overflow (#31999)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6723,
+          "title": "fileservice): bound MinIO range reads without draining on close (#32053)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38971,7 +38976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:36:52.981Z",
+      "verified_at": "2026-11-04T02:19:24.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54337,8 +54342,8 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "fa0684f4",
-      "content_hash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
+      "source_version": "210154bd",
+      "content_hash": "180ee9dd566ee64070d57313cb346bc4d065680a8386d6b4f2cc0fe058239a71",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
@@ -54366,6 +54371,11 @@
           "number": 6005,
           "title": "core: fix attachment locked note check never firing (#10522)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6722,
+          "title": "web: fix full backup running out of memory with many attachments (#10612)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54373,7 +54383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:07:26.537Z",
+      "verified_at": "2026-11-04T02:19:17.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172533,6 +172543,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:12:12.663Z"
+    },
+    "rule-6722": {
+      "learning_id": "rule-6722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6722,
+      "title": "web: fix full backup running out of memory with many attachments (#10612)",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "210154bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:19:17.693Z"
+    },
+    "rule-6723": {
+      "learning_id": "rule-6723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6723,
+      "title": "fileservice): bound MinIO range reads without draining on close (#32053)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "e997c817",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:19:24.730Z"
     }
   },
   "aliases": {
