@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T17:00:25.284Z",
-  "total_cycles_completed": 7218,
-  "total_learnings_persisted": 7218,
-  "total_rules_promoted": 6879,
+  "last_updated": "2026-11-04T17:10:13.705Z",
+  "total_cycles_completed": 7222,
+  "total_learnings_persisted": 7222,
+  "total_rules_promoted": 6885,
   "history": [
-    {
-      "timestamp": "2026-11-03T22:32:01.534Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:32:03.508Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:32:05.240Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T22:32:09.643Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T22:38:46.755Z",
       "repository": "gauthierpiarrette/highball",
@@ -1403,6 +1375,34 @@
       "repository": "yvgude/lean-ctx",
       "learningId": "learn-github-yvgude-lean-ctx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:09:48.782Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:10:01.474Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:10:05.672Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T17:10:13.705Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "30de12cd",
+    "sourceVersion": "4c9c9518",
     "license": "Apache-2.0",
-    "contentHash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
-    "lastHarvestedAt": "2026-11-04T07:49:14.759Z",
+    "contentHash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
+    "lastHarvestedAt": "2026-11-04T17:09:48.777Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "303b4d91",
+    "sourceVersion": "822e884f",
     "license": "Apache-2.0",
-    "contentHash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
-    "lastHarvestedAt": "2026-11-03T16:50:47.163Z",
+    "contentHash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
+    "lastHarvestedAt": "2026-11-04T17:10:05.666Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "71592e74",
+    "sourceVersion": "13fdf431",
     "license": "Apache-2.0",
-    "contentHash": "06bdd11df0c5a74b14150ab1c715e85e6d9021783f5a388f7fd92bf593f8f937",
-    "lastHarvestedAt": "2026-11-03T17:38:24.420Z",
+    "contentHash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
+    "lastHarvestedAt": "2026-11-04T17:10:01.468Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
-    "lastHarvestedAt": "2026-10-31T01:15:14.704Z",
+    "contentHash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
+    "lastHarvestedAt": "2026-11-04T17:10:13.699Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

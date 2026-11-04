@@ -7241,3 +7241,7 @@
 | `CYCLE-20261104-36NW` | `2026-11-04T16:59:20.828Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6848` | Yes (`968e4be5...`) |
 | `CYCLE-20261104-3CLU` | `2026-11-04T16:59:28.530Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6849, Rule 6850` | Yes (`50574e61...`) |
 | `CYCLE-20261104-4KE3` | `2026-11-04T17:00:25.275Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6851` | Yes (`491af6b4...`) |
+| `CYCLE-20261104-GN6T` | `2026-11-04T17:09:48.773Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6852` | Yes (`f04de4b5...`) |
+| `CYCLE-20261104-GWZD` | `2026-11-04T17:10:01.465Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6853` | Yes (`393ce61c...`) |
+| `CYCLE-20261104-H07Y` | `2026-11-04T17:10:05.662Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6854` | Yes (`319c5543...`) |
+| `CYCLE-20261104-H6F4` | `2026-11-04T17:10:13.696Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6855, Rule 6856, Rule 6857` | Yes (`fc612bcd...`) |

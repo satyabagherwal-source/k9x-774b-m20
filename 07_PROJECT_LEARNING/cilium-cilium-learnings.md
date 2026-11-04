@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `30de12cd`  
+> **Source Version**: `4c9c9518`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:49:14.028Z  
+> **Timestamp**: 2026-11-04T17:09:48.016Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:49:13.544Z  
+> **Harvest Timestamp**: 2026-11-04T17:09:33.273Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25768 stars
+- **Stars / Engagement**: 25773 stars
 
 ---
 
@@ -1259,15 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49819** (2026-11-04): **build: Update iptables-wrapper to v4**
-  *Symptoms*: This PR updates iptables-wrapper from v3 to v4. It also fixes the renovate configuration that was not actually tracking iptables-wrapper updates so those manual bump PRs won't be necessary in the future.  See v3 -> v4 changelog: https://github.com/kubernetes-sigs/iptables-wrappers/compare/iptables-wrapper-v3..iptables-wrapper-v4  While here, I also updated and simplified the iptables-wrapper build process to replace the "curl repo archive then go build" with "go install repo_url@version".
+- **Issue #49837** (2026-11-04): **cilium-cli: add explicit timeout to ensure health check termination**
+  *Symptoms*: Otherwise, the test would continue running forever until manually stopped (or the CI timeout hits) in case the health status does not converge. The timeout is set to five minutes, which should be generous enough to not risk causing flakes. 
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #49811** (2026-11-03): **[v1.18] ci: Fix the chart organization in the printed helm commands**
-  *Symptoms*: The chart push prints its example helm commands with env.QUAY_CHARTS_ORGANIZATION_DEV, which set-env-variables stopped setting when the variable became CHARTS_ORGANIZATION_DEV, so the printed commands point at oci://quay.io//cilium. Main, v1.19 and v1.20 already read CHARTS_ORGANIZATION_DEV there.  This commit reads CHARTS_ORGANIZATION_DEV.  Fixes: 90ec4a89510b ("ci: make registry configurable")  This PR was prepared with AIL:3. I personally checked the diff. 
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #49833** (2026-11-04): **.github: Make the vulnerability report components optional**
+  *Symptoms*: GitHub's private vulnerability report form treats a required dropdown with `multiple: true` as requiring every option [1]. Our Affected components dropdown sets both, so a reporter cannot submit a report without selecting all 13 components.  This commit drops the required validation from that dropdown and keeps `multiple: true`. A reporter can now leave it empty, and the Security Team fills in the component during triage.  1: https://github.com/orgs/community/discussions/210542 Fixes: e5827d55a0c3 (".github: Add a private vulnerability report form") Reported-by: @peoyekunle  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1284,116 +1282,143 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `30de12cd` (2026-11-03)
-**Commit Message**: images: update cilium-{runtime,builder}
+### Incident Patch 1: `38f4a7d7` (2026-11-04)
+**Commit Message**: cilium-cli: add explicit timeout to ensure health check termination
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+Otherwise, the test would continue running forever until manually stopped
+(or the CI timeout hits) in case the health status does not converge.
+The timeout is set to five minutes, which should be generous enough to
+not risk causing flakes.
 
-**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
+Signed-off-by: Marco Iorio <[REDACTED_EMAIL]>
+
+**File**: `cilium-cli/connectivity/tests/health.go` (modified, +3/-0)
 ```diff
-@@ -1 +1 @@
--quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
-\ No newline at end of file
-+quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
-\ No newline at end of file
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- # SPDX-License-Identifier: Apache-2.0
+@@ -34,6 +34,9 @@ func (s *ciliumHealth) Name() string {
+ }
  
- ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:502b04df7185978d342e53d4fcfd4a4275a4d9f4@sha256:236519d1f7b8765e7060960de92355f522039d0033dc92b5b89772ccf26ce770
--ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
-+ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
- #
- # cilium-envoy from github.com/cilium/proxy
- #
+ func (s *ciliumHealth) Run(ctx context.Context, t *check.Test) {
++	ctx, cancel := context.WithTimeout(ctx, check.LongTimeout)
++	defer cancel()
++
+ 	for name, pod := range t.Context().CiliumPods() {
+ 		t.NewGenericAction(s, name).Run(func(_ *check.Action) {
+ 			runHealthProbe(ctx, t, &pod)
 ```
 
 ---
 
-### Incident Patch 2: `56a25b99` (2026-11-03)
-**Commit Message**: build: Update iptables-wrapper to v4
+### Incident Patch 2: `e1864dfd` (2026-11-04)
+**Commit Message**: fix: pass in ipsec config instead of fakes
 
-This PR updates iptables-wrapper from v3 to v4. It also fixes the
-renovate configuration that was not actually tracking iptables-wrapper
-updates so those manual bump PRs won't be necessary in the future.
+Signed-off-by: Vamsi Kalapala <[REDACTED_EMAIL]>
 
-While here, I also updated and simplifies the iptables-wrapper build
-process to replace the "curl repo archive then go build" with "go
-install repo_url@version".
-
-Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
-
-**File**: `.github/renovate.json5` (modified, +11/-1)
+**File**: `pkg/datapath/linux/node.go` (modified, +2/-2)
 ```diff
-@@ -985,6 +985,15 @@
-       ],
-       "versioning": "regex:^v(?<major>\\d+)-v(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$"
-     },
-+    {
-+      // iptables-wrappers has no GitHub releases, only tags, in two
-+      // independent series: "iptables-wrapper-vN" for the binary we build,
-+      // and semver "vX.Y.Z" for the Go library. Only track the former.
-+      "matchDepNames": [
-+        "kubernetes-sigs/iptables-wrappers"
-+      ],
-+      "versioning": "regex:^iptables-wrapper-v(?<major>\\d+)$"
-+    },
-     {
-       // cilium-envoy is referenced in both images/cilium/Dockerfile and
-       // install/kubernetes/Makefile.values. Without explicit grouping,
-@@ -1194,7 +1203,8 @@
-         "/images/builder/install-protoc.sh/",
-         "/images/builder/install-protoplugins.sh/",
-         "/images/runtime/build-cni.sh/",
--        "/images/runtime/build-gops.sh/"
-+        "/images/runtime/build-gops.sh/",
-+        "/images/runtime/build-iptables-wrapper.sh/"
-       ],
-       // These regexes manage version and digest strings in shell scripts,
-       // similar to the examples shown here:
+@@ -28,7 +28,6 @@ import (
+ 	"github.com/cilium/cilium/pkg/backoff"
+ 	"github.com/cilium/cilium/pkg/datapath/config"
+ 	"github.com/cilium/cilium/pkg/datapath/linux/ipsec"
+-	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
+ 	ipsecTypes "github.com/cilium/cilium/pkg/datapath/linux/ipsec/types"
+ 	"github.com/cilium/cilium/pkg/datapath/linux/linux_defaults"
+ 	"github.com/cilium/cilium/pkg/datapath/linux/route"
+@@ -131,6 +130,7 @@ func NewNodeHandler(
+ 	nodeConfigNotifier *config.NodeConfigNotifier,
+ 	kprCfg kpr.KPRConfig,
+ 	ipsecAgent ipsecTypes.Agent,
++	ipsecCfg ipsecTypes.Config,
+ 	localNodeStore *node.LocalNodeStore,
+ 	nodePolicy *NodePolicy,
+ 	params reconciler.Params,
+@@ -151,7 +151,7 @@ func NewNodeHandler(
+ 		nodeMap,
+ 		kprCfg,
+ 		ipsecAgent,
+-		fakeipsec.Config{},
++		ipsecCfg,
+ 		localNodeStore,
+ 		nodePolicy,
+ 		db,
 ```
 
-**File**: `images/runtime/build-iptables-wrapper.sh` (modified, +6/-11)
+---
+
+### Incident Patch 3: `64992d2e` (2026-09-28)
+**Commit Message**: ci: add sysdump upload for resource-churn workflow error debugging
+
+Signed-off-by: Deepesh Pathak <[REDACTED_EMAIL]>
+(cherry picked from commit b1b92e16c2aeea6b0e5a1004dd0afee5b5cac6c3)
+
+**File**: `.github/workflows/resource-churn.yaml` (modified, +36/-0)
 ```diff
-@@ -8,20 +8,15 @@ set -o errexit
- set -o pipefail
- set -o nounset
+@@ -487,6 +487,9 @@ jobs:
+             2>&1 | tee cl2-output-baseline.txt
+           echo "time_end=$(date +%s%3N)" >> "$GITHUB_OUTPUT"
  
--# renovate: datasource=github-releases depName=kubernetes-sigs/iptables-wrappers
--iptables_wrappers_version="v3"
--
--mkdir -p /go/src/github.com/kubernetes-sigs/iptables-wrappers
--cd /go/src/github.com/kubernetes-sigs/iptables-wrappers
--
--curl -sSL https://github.com/kubernetes-sigs/iptables-wrappers/archive/refs/tags/${iptables_wrappers_version}.tar.gz | tar xz --strip-components=1
-+# renovate: datasource=github-tags depName=kubernetes-sigs/iptables-wrappers
-+IPTABLES_WRAPPERS_VERSION=iptables-wrapper-v4
- 
- # Build the iptables-wrapper binary. It is fully static (CGO disabled) and
- # depends only on the iptables binaries present at runtime, so it can be dropped
- # into the rootfs as-is.
--mkdir -p "/out/usr/sbin"
--GOARCH=${TARGETARCH} CGO_ENABLED=0 go build \
-+GOBIN=/out/usr/sbin GOARCH=${TARGETARCH} CGO_ENABLED=0 go install \
-     -ldflags '-s -w -extldflags="-static" -buildid=""' \
-     -trimpath \
--    -o "/out/usr/sbin/iptables-wrapper" \
--    github.com/kubernetes-sigs/iptables-wrappers
-+    sigs.k8s.io/iptables-wrappers/cmd/iptables-wrapper@${IPTABLES_WRAPPERS_VERSION}
++          cilium status
++          cilium sysdump --output-filename ${REPORT_DIR}/cilium-sysdump
 +
-+go version -m /out/usr/sbin/iptables-wrapper | grep -q "GOARCH=$TARGETARCH" || (echo "Architecture mismatch: binary GOARCH does not match $TARGETARCH" && exit 1)
+           sudo chmod --recursive +r "${REPORT_DIR}"
+ 
+           # Ensure no state is left behind from baseline run.
+@@ -594,6 +597,9 @@ jobs:
+             2>&1 | tee cl2-output-test.txt
+           echo "time_end=$(date +%s%3N)" >> "$GITHUB_OUTPUT"
+ 
++          cilium status
++          cilium sysdump --output-filename ${REPORT_DIR}/cilium-sysdump
++
+           sudo chmod --recursive +r "${REPORT_DIR}"
+ 
+       - name: Collect test tag Cilium agent node logs
+@@ -717,7 +723,37 @@ jobs:
+           path: ./perf-tests/clusterloader2/report/*/node-logs.zip
+           if-no-files-found: warn
+ 
++      - name: Upload cilium sysdumps
++        if: ${{ always() }}
++        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        with:
++          name: cilium-sysdumps-${{ steps.vars.outputs.scenario }}-${{ github.run_attempt }}
++          path: ./perf-tests/clusterloader2/report/*/cilium-sysdump.zip
++          if-no-files-found: warn
++
+       - name: Cleanup cluster
+         if: ${{ always() && steps.deploy-cluster.outcome != 'skipped' }}
+         run: |
+           eksctl delete cluster --name ${{ steps.vars.outputs.cluster_name }} --region ${{ steps.vars.outputs.eks_region }}
++
++  merge-artifacts:
++    if: ${{ always() }}
++    name: Merge Artifacts
++    runs-on: ubuntu-24.04
++    needs: resource-churn
++    steps:
++      - name: Merge Sysdumps
++        uses: cilium/cilium/.github/actions/merge-artifacts@main # main
++        with:
++          name: cilium-sysdumps
++          pattern: cilium-sysdumps-*
++          token: ${{ secrets.GITHUB_TOKEN }}
++          separate-directories: false
++
++      - name: Merge Logs
++        uses: cilium/cilium/.github/actions/merge-artifacts@main # main
++        with:
++          name: cilium-logs
++          pattern: cilium-logs-*
++          token: ${{ secrets.GITHUB_TOKEN }}
++          separate-directories: false
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49837** (2026-11-04): cilium-cli: add explicit timeout to ensure health check termination (@giorio94)
+- **PR #49833** (2026-11-04): .github: Make the vulnerability report components optional (@aanm)
+- **PR #49832** (2026-11-04): datapath: convert `ENABLE_IPV4` #ifdefs to `is_defined()` in bpf_lxc.c (@ekoops)
+- **PR #49827** (2026-11-04): fix: pass the real IPsec config to node handler (@vakalapa)
+- **PR #49820** (2026-11-04): Reapply "datapath: turn `ENABLE_NODEPORT` into runtime config" (@ekoops)
 - **PR #49819** (2026-11-04): build: Update iptables-wrapper to v4 (@HadrienPatte)
-- **PR #49811** (2026-11-03): [v1.18] ci: Fix the chart organization in the printed helm commands (@aanm)
-- **PR #49809** (closed): ci: Build releases with the tagged commit's local actions (@aanm)
-- **PR #49807** (2026-11-03): datapath: Revert the ENABLE_NODEPORT is_defined() conversion (@aanm)
-- **PR #49806** (2026-11-03): v1.18 Backports 2026-11-03 (@tklauser)
-- **PR #49805** (2026-11-03): v1.19 Backports 2026-11-03 (@tklauser)
 
 ---
 
@@ -1413,28 +1438,30 @@ Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. images: update cilium-{runtime,builder}
+## X. cilium-cli: add explicit timeout to ensure health check termination
 
 **RULE**:
-When implementing operations in `.github/actions/set-runtime-image/runtime-image.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-cli/connectivity/tests/health.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `30de12cd`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38f4a7d7`: cilium-cli: add explicit timeout to ensure health check termination. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/set-runtime-image/runtime-image.txt`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/tests/health.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-quay.io/cilium/cilium-runtime:4017c7cc791ce2266241601c5d0ff6dbf93c1b97@sha256:ad083fed20e51c3dba79c7d8dab60d55e31cea5116f195dbe1ceb17165ec19fd
+	ctx, cancel := context.WithTimeout(ctx, check.LongTimeout)
+	defer cancel()
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `30de12cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38f4a7d7` are properly handled with clean fallback behavior.

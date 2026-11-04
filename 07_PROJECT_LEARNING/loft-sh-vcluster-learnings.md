@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `71592e74`  
+> **Source Version**: `13fdf431`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:38:23.605Z  
+> **Timestamp**: 2026-11-04T17:10:00.716Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:38:21.844Z  
+> **Harvest Timestamp**: 2026-11-04T17:09:29.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1474,1136 +1474,542 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c54eb304` (2026-11-03)
-**Commit Message**: fix(deps): security updates for main (#2663)
+### Incident Patch 1: `621c6803` (2026-11-04)
+**Commit Message**: fix(deps): bump loft-sh/api to v5.0.0-rc.1 for node pools
 
-* fix(deps): bump golang.org/x/net to v0.62.0
+The node pools change copied the node pool API types into vendor/ by
+hand while go.mod still pinned github.com/loft-sh/api/v5 at
+v5.0.0-alpha.6, so hack/verify-vendor.sh failed: regenerating vendor
+from go.mod dropped those files again.
 
-* fix(deps): bump github.com/klauspost/compress to v1.20.2
+Node pools are now released in loft-enterprise, so pin api/v5 and
+agentapi/v5 to v5.0.0-rc.1 in both the pro and staged OSS modules and
+regenerate vendor with hack/update-vendor.sh. The released types only
+add to what was vendored by hand. The OpenTelemetry and genproto bumps
+are indirect minimums required by the new api module.
 
-* fix(deps): bump github.com/go-jose/go-jose/v4 to v4.1.6
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Monorepo-Commit: 47645a41fa2eb0d7b3d29fcb3948a694c9358bf9
 
----------
-
-Co-authored-by: vcluster-security-bot[bot] <349382719+vcluster-security-bot[bot]@users.noreply.github.com>
-Monorepo-Commit: ed71a63ba2c9c111394a95445f6a03d0b4a60692
-
-**File**: `go.mod` (modified, +9/-9)
+**File**: `go.mod` (modified, +11/-11)
 ```diff
-@@ -49,7 +49,7 @@ require (
- 	go.etcd.io/etcd/server/v3 v3.6.8
- 	go.uber.org/atomic v1.11.0
- 	golang.org/x/mod v0.41.0
--	golang.org/x/sync v0.23.0
-+	golang.org/x/sync v0.24.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -132,7 +132,7 @@ require (
- 	github.com/fatih/color v1.15.0 // indirect
- 	github.com/frankban/quicktest v1.14.5 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/swag/cmdutils v0.26.0 // indirect
- 	github.com/go-openapi/swag/conv v0.28.0 // indirect
-@@ -157,7 +157,7 @@ require (
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
- 	github.com/hashicorp/yamux v0.1.2 // indirect
- 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213 // indirect
--	github.com/klauspost/compress v1.18.5 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/pgzip v1.2.6 // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
- 	github.com/lithammer/dedent v1.1.0 // indirect
-@@ -283,15 +283,15 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
+@@ -23,9 +23,9 @@ require (
+ 	github.com/invopop/jsonschema v0.14.0
+ 	github.com/kubernetes-csi/external-snapshotter/client/v8 v8.6.0
+ 	github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8
+-	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
++	github.com/loft-sh/agentapi/v5 v5.0.0-rc.1
+ 	github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e
+-	github.com/loft-sh/api/v5 v5.0.0-alpha.6
++	github.com/loft-sh/api/v5 v5.0.0-rc.1
+ 	github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958
+ 	github.com/loft-sh/image v0.0.0-20250625154753-87447a6ad364
+ 	github.com/loft-sh/utils v0.0.29
+@@ -192,13 +192,13 @@ require (
+ 	go.etcd.io/bbolt v1.4.3 // indirect
+ 	go.etcd.io/raft/v3 v3.6.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260630182238-925bb5da69e7 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20260904194346-d0f1323225a4 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	k8s.io/cri-api v0.36.0 // indirect
+ 	k8s.io/cri-client v0.36.0 // indirect
+@@ -276,11 +276,11 @@ require (
+ 	go.etcd.io/etcd/client/v3 v3.6.14
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0 // indirect
+-	go.opentelemetry.io/otel v1.44.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.44.0 // indirect
+-	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
++	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel/metric v1.45.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
++	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
  	go.uber.org/multierr v1.11.0 // indirect
  	go.uber.org/zap v1.27.1
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
--	golang.org/x/net v0.59.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.50.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +18/-18)
+**File**: `go.sum` (modified, +24/-24)
 ```diff
-@@ -187,8 +187,8 @@ github.com/gkampitakis/go-snaps v0.5.15 h1:amyJrvM1D33cPHwVrjo9jQxX8g/7E2wYdZ+01
- github.com/gkampitakis/go-snaps v0.5.15/go.mod h1:HNpx/9GoKisdhw9AFOBT1N7DBs9DiHo/hGheFGBZ+mc=
- github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
- github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-@@ -326,8 +326,8 @@ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRt
- github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
--github.com/klauspost/compress v1.18.5/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
- github.com/klauspost/pgzip v1.2.6/go.mod h1:Ch1tH69qFZu15pkjo5kYi6mth2Zzwzt50oCQKQE9RUs=
- github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
-@@ -605,8 +605,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.30.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba h1:Ck8QetSgk912qxWLMCKxd0in+aiyBQyDSMae6e/xmpU=
- golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba/go.mod h1:50RgIsmK7OwqzTTeqcSXQW8SswW0o8fRcDxmqGluJ8E=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -634,8 +634,8 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
- golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20181106182150-f42d05182288/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
-@@ -650,8 +650,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -680,8 +680,8 @@ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdG
+@@ -348,12 +348,12 @@ github.com/lithammer/dedent v1.1.0 h1:VNzHMVCBNG1j0fh3OrsFRkVUwStdDArbgBWoPAffkt
+ github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
+ github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8 h1:cWuxRoc6g0QDRxmibH6DVukNibs88Mmdao56Didm5Vg=
+ github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8/go.mod h1:pp+2PgOsRCTb1DXnEev/HCc0gvj5t0nHuTIMU8C8b90=
+-github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6 h1:72w4OZmI0sMbB6j13XOoH8rpS46wwrTpq/JiscVDYY0=
+-github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6/go.mod h1:sXdRxueSDpaEBDHeyjkEtHyvHdQ3HRyALZ5dIH/dpjk=
++github.com/loft-sh/agentapi/v5 v5.0.0-rc.1 h1:mgykeGqu6J73G8fYnugd/N+FANa7AIziUnSRH5PRiIA=
++github.com/loft-sh/agentapi/v5 v5.0.0-rc.1/go.mod h1:ZMhVAbh8ODozJePM4qCQsCtzzQ9MbBQ0X5BN9GKsDZw=
+ github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e h1:JcPnMaoczikvpasi8OJ47dCkWZjfgFubWa4V2SZo7h0=
+ github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e/go.mod h1:FFWcGASyM2QlWTDTCG/WBVM/XYr8btqYt335TFNRCFg=
+-github.com/loft-sh/api/v5 v5.0.0-alpha.6 h1:hKjdjoQbONk3fooSPFGkw0NxwL8a+dQhFnfEUuR3Jks=
+-github.com/loft-sh/api/v5 v5.0.0-alpha.6/go.mod h1:bTEKAZz9EHt4FM8H9RVjhuUfBjsRnwF53GpWwLl0jlc=
++github.com/loft-sh/api/v5 v5.0.0-rc.1 h1:s4S91haNo37iFPetysQiY8JQg5U3m/g9eHEzJWB7fq0=
++github.com/loft-sh/api/v5 v5.0.0-rc.1/go.mod h1:Ew5TXWExvdTmu+V52U/64V7/a8snBeOm4wRpzAz/65U=
+ github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d h1:i+nBgAm6Wuc/9ALNniOdRWJfgz/og5AOgbs4pJVolqE=
+ github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d/go.mod h1:YfIUirXHfVcUb3bVtj7yzIAVT6etrHj9wkOkMgnEuz0=
+ github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958 h1:ruX0UEryszOsjlDf38QtEK1zn9xMhy4C9iJazauVjIg=
+@@ -560,22 +560,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0/go.mod h1:Sje3i3MjSPKTSPvVWCaL8ugBzJwik3u4smCjUeuupqg=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0 h1:OyrsyzuttWTSur2qN/Lm0m2a8yqyIjUVBZcxFPuXq2o=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0/go.mod h1:C2NGBr+kAB4bk3xtMXfZ94gqFDtg/GkI7e9zqGh5Beg=
+-go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
+-go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 h1:4YsVu3B8+3qtWYYrsUYgn0OG78pN0rnNPRGX4SbokQI=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0/go.mod h1:+wnlSn0mD1ADVMe3v9Z/WIaiz6q6gL2J/ejaAmdmv80=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 h1:qazEJlUOQzhCpzQpFETGby7EdqjI1wsd0W+6Gg1SCTU=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0/go.mod h1:fOD2Yefuxixkx3ahVNf0O/PERb6r4OlbxfATVnYvzCo=
+-go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
+-go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
+-go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
+-go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
+-go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
+-go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
+-go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
+-go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
+-go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
+-go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
++go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
++go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
++go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
++go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
++go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
++go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
++go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
++go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVR
 ```
 
-**File**: `vendor/github.com/go-jose/go-jose/v4/asymmetric.go` (modified, +18/-8)
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/event_types.go` (modified, +3/-0)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 	"crypto/aes"
- 	"crypto/ecdsa"
- 	"crypto/ed25519"
-+	"crypto/elliptic"
- 	"crypto/rand"
- 	"crypto/rsa"
- 	"crypto/sha1"
-@@ -195,11 +196,11 @@ func (ctx rsaEncrypterVerifier) encryptKey(cek []byte, alg KeyAlgorithm) (recipi
- func (ctx rsaEncrypterVerifier) encrypt(cek []byte, alg KeyAlgorithm) ([]byte, error) {
- 	switch alg {
- 	case RSA1_5:
--		return rsa.EncryptPKCS1v15(RandReader, ctx.publicKey, cek)
-+		return rsa.EncryptPKCS1v15(randReader, ctx.publicKey, cek)
- 	case RSA_OAEP:
--		return rsa.EncryptOAEP(sha1.New(), RandReader, ctx.publicKey, cek, []byte{})
-+		return rsa.EncryptOAEP(sha1.New(), randReader, ctx.publicKey, cek, []byte{})
- 	case RSA_OAEP_256:
--		return rsa.EncryptOAEP(sha256.New(), RandReader, ctx.publicKey, cek, []byte{})
-+		return rsa.EncryptOAEP(sha256.New(), randReader, ctx.publicKey, cek, []byte{})
- 	}
- 
- 	return nil, ErrUnsupportedAlgorithm
-@@ -288,9 +289,9 @@ func (ctx rsaDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm
- 		// TODO(https://github.com/go-jose/go-jose/issues/40): As of go1.20, the
- 		// random parameter is legacy and ignored, and it can be nil.
- 		// https://cs.opensource.google/go/go/+/refs/tags/go1.20:src/crypto/rsa/pkcs1v15.go;l=263;bpv=0;bpt=1
--		out, err = rsa.SignPKCS1v15(RandReader, ctx.privateKey, hash, hashed)
-+		out, err = rsa.SignPKCS1v15(randReader, ctx.privateKey, hash, hashed)
- 	case PS256, PS384, PS512:
--		out, err = rsa.SignPSS(RandReader, ctx.privateKey, hash, hashed, &rsa.PSSOptions{
-+		out, err = rsa.SignPSS(randReader, ctx.privateKey, hash, hashed, &rsa.PSSOptions{
- 			SaltLength: rsa.PSSSaltLengthEqualsHash,
- 		})
- 	}
-@@ -391,7 +392,7 @@ func (ctx ecKeyGenerator) keySize() int {
- 
- // Get a content encryption key for ECDH-ES
- func (ctx ecKeyGenerator) genKey() ([]byte, rawHeader, error) {
--	priv, err := ecdsa.GenerateKey(ctx.publicKey.Curve, RandReader)
-+	priv, err := ecdsa.GenerateKey(ctx.publicKey.Curve, randReader)
- 	if err != nil {
- 		return nil, rawHeader{}, err
- 	}
-@@ -483,7 +484,7 @@ func (ctx edDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm)
- 		return Signature{}, ErrUnsupportedAlgorithm
- 	}
- 
--	sig, err := ctx.privateKey.Sign(RandReader, payload, crypto.Hash(0))
-+	sig, err := ctx.privateKey.Sign(randReader, payload, crypto.Hash(0))
- 	if err != nil {
- 		return Signature{}, err
- 	}
-@@ -533,7 +534,7 @@ func (ctx ecDecrypterSigner) signPayload(payload []byte, alg SignatureAlgorithm)
- 	_, _ = hasher.Write(payload)
- 	hashed := hasher.Sum(nil)
- 
--	r, s, err := ecdsa.Sign(RandReader, ctx.privateKey, hashed)
-+	r, s, err := ecdsa.Sign(randReader, ctx.privateKey, hashed)
- 	if err != nil {
- 		return Signature{}, err
- 	}
-@@ -571,12 +572,21 @@ func (ctx ecEncrypterVerifier) verifyPayload(payload []byte, signature []byte, a
- 	case ES256:
- 		keySize = 32
- 		hash = crypto.SHA256
-+		if ctx.publicKey.Curve != elliptic.P256() {
-+			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
-+		}
- 	case ES384:
- 		keySize = 48
- 		hash = crypto.SHA384
-+		if ctx.publicKey.Curve != elliptic.P384() {
-+			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
-+		}
- 	case ES512:
- 		keySize = 66
- 		hash = crypto.SHA512
-+		if ctx.publicKey.Curve != elliptic.P521() {
-+			return fmt.Errorf("go-jose/go-jose: signature uses different algorithm than public key")
-+		}
- 	default:
- 		return ErrUnsupportedAlgorithm
- 	}
-```
-
-**File**: `vendor/github.com/go-jose/go-jose/v4/cipher/cbc_hmac.go` (modified, +5/-1)
-```diff
-@@ -51,6 +51,8 @@ func NewCBCHMAC(key []byte, newBlockCipher func([]byte) (cipher.Block, error)) (
- 		hash = sha512.New384
- 	case 32:
- 		hash = sha512.New
-+	default:
-+		return nil, errors.New("go-jose/go-jose: invalid key size for CBC-HMAC")
- 	}
- 
- 	return &cbcAEAD{
-@@ -176,7 +178,9 @@ func padBuffer(buffer []byte, blockSize int) []byte {
- 
- // Remove padding
- func unpadBuffer(buffer []byte, blockSize int) ([]byte, error) {
--	if len(buffer)%blockSize != 0 {
-+	// A padded buffer can't be empty because an empty input is padded with
-+	// `blockSize` bytes, resulting in a non-empty ciphertext.
-+	if len(buffer) == 0 || len(buffer)%blockSize != 0 {
- 		return nil, errors.New("go-jose/go-jose: invalid padding")
- 	}
- 
-```
-
-**File**: `vendor/github.com/go-jose/go-jose/v4/crypter.go` (modified, +71/-30)
-```diff
-@@ -258,6 +258,10 @@ func (ctx *genericEncrypter) addRecipient(recipient Recipient) (err error) {
- 	}
- 
- 	recipientInfo, err = makeJWERecipient(recipient.Algorithm, recipient.Key)
-+	if err != nil {
-+		return err
-+	}
+@@ -27,4 +27,7 @@ type EventSpec struct {
+ // EventStatus holds the status, which is the parsed raw config
+ type EventStatus struct {
+ 	auditv1.Event `json:",inline"`
 +
- 	if recipient.KeyID != "" {
- 		recipientInfo.keyID = recipient.KeyID
- 	}
-@@ -270,10 +274,8 @@ func (ctx *genericEncrypter) addRecipient(recipient Recipient) (err error) {
- 		}
- 	}
- 
--	if err == nil {
--		ctx.recipients = append(ctx.recipients, recipientInfo)
--	}
--	return err
-+	ctx.recipients = append(ctx.recipients, recipientInfo)
-+	return nil
++	// Tenant is the tenant recorded for the request when it was stored. Empty for operator requests and events stored before tenant recording.
++	Tenant string `json:"tenant,omitempty"`
  }
- 
- func makeJWERecipient(alg KeyAlgorithm, encryptionKey interface{}) (recipientKeyInfo, error) {
-@@ -426,6 +428,13 @@ func (ctx *genericEncrypter) Options() EncrypterOptions {
- 	}
- }
- 
-+func validateContentEncryptionKeySize(cek []byte, cipher contentCipher) error {
-+	if len(cek) != cipher.keySize() {
-+		return ErrInvalidKeySize
-+	}
-+	return nil
-+}
-+
- // Decrypt and validate the object and return the plaintext. This
- // function does not support multi-recipient. If you desire multi-recipient
- // decryption use DecryptMulti instead.
-@@ -490,21 +499,23 @@ func (obj JSONWebEncryption) Decrypt(decryptionKey interface{}) ([]byte, error)
- 	recipientHeaders := obj.mergedHeaders(&recipient)
- 
- 	cek, err := decrypter.decryptKey(recipientHeaders, &recipient, generator)
--	if err == nil {
--		// Found a valid CEK -- let's try to decrypt.
--		plaintext, err = cipher.decrypt(cek, authData, parts)
-+	if err != nil {
-+		return nil, ErrCryptoFailure
-+	}
-+	err = validateContentEncryptionKeySize(cek, cipher)
-+	if err != nil {
-+		return nil, ErrCryptoFailure
- 	}
- 
--	if plaintext == nil {
-+	// Found a valid CEK -- let's try to decrypt.
-+	plaintext, err = cipher.decrypt(cek, authData, parts)
-+	if err != nil {
- 		return nil, ErrCryptoFailure
- 	}
- 
--	// The "zip" header parameter may only be present in the protected header.
--	if comp := obj.protected.getCompression(); comp != "" {
--		plaintext, err = decompress(comp, plaintext)
--		if err != nil {
--			return nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
--		}
-+	plaintext, err = obj.decompress(plaintext)
-+	if err != nil {
-+		return nil, err
- 	}
- 
- 	return plaintext, nil
-@@ -559,31 +570,42 @@ func (obj JSONWebEncryption) DecryptMulti(decryptionKey interface{}) (int, Heade
- 	var plaintext []byte
- 	var headers rawHeader
- 
-+	if len(obj.recipients) == 0 {
-+		return -1, Header{}, nil, errors.New("go-jose/go-jose: no recipients")
-+	}
-+
-+	// Loop sets `err` in the function scope; don't shadow it.
- 	for i, recipient := range obj.recipients {
- 		recipientHeaders := obj.mergedHeaders(&recipient)
- 
--		cek, err := decrypter.decryptKey(recipientHeaders, &recipient, generator)
--		if err == nil {
--			// Found a valid CEK -- let's try to decrypt.
--			plaintext, err = cipher.decrypt(cek, authData, parts)
--			if err == nil {
--				index = i
--				headers = recipientHeaders
--				break
--			}
-+		var cek []byte
-+		cek, err = decrypter.decryptKey(recipientHeaders, &recipient, generator)
-+		if err != nil {
-+			continue
- 		}
-+		err = validateContentEncryptionKeySize(cek, cipher)
-+		if err != nil {
-+			continue
-+		}
-+
-+		// Found a valid CEK -- let's try to decrypt.
-+		plaintext, err = cipher.decrypt(cek, authData, parts)
-+		if err != nil {
-+			continue
-+		}
-+
-+		index = i
-+		headers = recipientHeaders
-+		break
- 	}
- 
--	if plaintext == nil {
-+	if err != nil {
- 		return -1, Header{}, nil, ErrCryptoFailure
- 	}
- 
--	// The "zip" header parameter may only be present in the protected header.
--	if comp := obj.protected.getCompression(); comp != "" {
--		plaintext, err = decompress(comp, plaintext)
--		if err != nil {
--			return -1, Header{}, nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
--		}
-+	plaintext, err = obj.decompress(plaintext)
-+	if err != nil {
-+		return -1, Header{}, nil, err
- 	}
- 
- 	sanitized, err := headers.sanitized()
-@@ -593,3 +615,22 @@ func (obj JSONWebEncryption) DecryptMulti(decryptionKey interface{}) (int, Heade
- 
- 	return index, sanitized, plaintext, err
- }
-+
-+// decompress decompresses plaintext using the protected "zip" header, if present.
-+// It returns plaintext unchanged when there is no protected header or "zip" value.
-+func (obj JSONWebEncryption) decompress(plaintext []byte) ([]byte, error) {
-+	if obj.protected == nil {
-+		return plaintext, nil
-+	}
-+
-+	comp := obj.protected.getCompression()
-+	if comp == "" {
-+		return plaintext, nil
-+	}
-+
-+	plaintext, err := decompress(comp, plaintext)
-+	if err != nil {
-+		return nil, fmt.Errorf("go-jose/go-jose: failed to decompress plaintext: %v", err)
-+	}
-+	return plaintext, nil
-+}
 ```
 
-**File**: `vendor/github.com/go-jose/go-jose/v4/json/scanner.go` (modified, +13/-6)
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/nodepool_types.go` (added, +60/-0)
 ```diff
-@@ -140,6 +140,10 @@ const (
- 	parseArrayValue         // parsing array value
- )
- 
-+// This limits the max nesting depth to prevent stack overflow.
-+// This is permitted by https://tools.ietf.org/html/rfc7159#section-9
-+const maxNestingDepth = 10000
-+
- // reset prepares the scanner for use.
- // It must be called before calling s.step.
- func (s *scanner) reset() {
-@@ -170,8 +174,13 @@ func (s *scanner) eof() int {
- }
- 
- // pushParseState pushes a new parse state p onto the parse stack.
--func (s *scanner) pushParseState(p int) {
--	s.parseState = append(s.parseState, p)
-+// an error state is returned if maxNestingDepth was exceeded, otherwise successState is returned.
-+func (s *scanner) pushParseState(c byte, newParseState int, successState int) int {
-+	s.parseState = append(s.parseState, newParseState)
-+	if len(s.parseState) <= maxNestingDepth {
-+		return successState
-+	}
-+	return s.error(c, "exceeded max depth")
- }
- 
- // popParseState pops a parse state (already obtained) off the stack
-@@ -211,12 +220,10 @@ func stateBeginValue(s *scanner, c byte) int {
- 	switch c {
- 	case '{':
- 		s.step = stateBeginStringOrEmpty
--		s.pushParseState(parseObjectKey)
--		return scanBeginObject
-+		return s.pushParseState(c, parseObjectKey, scanBeginObject)
- 	case '[':
- 		s.step = stateBeginValueOrEmpty
--		s.pushParseState(parseArrayValue)
--		return scanBeginArray
-+		return s.pushParseState(c, parseArrayValue, scanBeginArray)
- 	case '"':
- 		s.step = stateInString
- 		return scanBeginLiteral
-```
-
-**File**: `vendor/github.com/go-jose/go-jose/v4/jwe.go` (modified, +17/-9)
-```diff
-@@ -153,6 +153,10 @@ func ParseEncryptedJSON(
- 	keyEncryptionAlgorithms []KeyAlgorithm,
- 	contentEncryption []ContentEncryption,
- ) (*JSONWebEncryption, error) {
-+	if len(input) == 0 {
-+		return nil, errEmptyInput
-+	}
-+
- 	var parsed rawJSONWebEncryption
- 	err := json.Unmarshal([]byte(input), &parsed)
- 	if err != nil {
-@@ -198,15 +202,6 @@ func (parsed *rawJSONWebEncryption) sanitized(
- 		}
- 	}
- 
--	// Note: this must be called _after_ we parse the protected header,
--	// otherwise fields from the protected header will not get picked up.
--	var err error
--	mergedHeaders := obj.mergedHeaders(nil)
--	obj.Header, err = mergedHeaders.sanitized()
--	if err != nil {
--		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %v (%v)", err, mergedHeaders)
--	}
--
- 	if len(parsed.Recipients) == 0 {
- 		obj.recipients = []recipientInfo{
- 			{
-@@ -260,6 +255,15 @@ func (parsed *rawJSONWebEncryption) sanitized(
- 		}
- 	}
- 
-+	// Note: this must be called _after_ we parse the protected header,
-+	// otherwise fields from the protected header will not get picked up.
-+	mergedHeaders := obj.mergedHeaders(nil)
-+	var err error
-+	obj.Header, err = mergedHeaders.sanitized()
-+	if err != nil {
-+		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %w", err)
-+	}
-+
- 	obj.iv = parsed.Iv.bytes()
- 	obj.ciphertext = parsed.Ciphertext.bytes()
- 	obj.tag = parsed.Tag.bytes()
-@@ -291,6 +295,10 @@ func ParseEncryptedCompact(
- 	var parts [5]string
- 	var ok bool
- 
-+	if len(input) == 0 {
-+		return nil, errEmptyInput
-+	}
-+
- 	for i := range 4 {
- 		parts[i], input, ok = strings.Cut(input, ".")
- 		if !ok {
-```
-
-**File**: `vendor/github.com/go-jose/go-jose/v4/jwk.go` (modified, +217/-47)
-```diff
-@@ -107,7 +107,7 @@ func (k JSONWebKey) MarshalJSON() ([]byte, error) {
- 
- 	switch key := k.Key.(type) {
- 	case ed25519.PublicKey:
--		raw = fromEdPublicKey(key)
-+		raw, err = fromEdPublicKey(key)
- 	case *ecdsa.PublicKey:
- 		raw, err = fromEcPublicKey(key)
- 	case *rsa.PublicKey:
-@@ -177,13 +177,29 @@ func (k JSONWebKey) MarshalJSON() ([]byte, error) {
- // UnmarshalJSON reads a key from its JSON representation.
- //
- // Returns ErrUnsupportedKeyType for unrecognized or unsupported "kty" header values.
--func (k *JSONWebKey) UnmarshalJSON(data []byte) (err error) {
-+//
-+// Directly unmarshaling a JWK is not safe for untrusted input.
-+func (k *JSONWebKey) UnmarshalJSON(data []byte) error {
-+	return k.unmarshalJSON(data, true)
-+}
-+
-+// unmarshalJSON reads a key from its JSON representation.
-+//
-+// If allowPrivate is false, a JWK with private key material is rejected and the
-+// function is safe for use against untrusted input.
-+func (k *JSONWebKey) unmarshalJSON(data []byte, allowPrivate bool) (err error) {
- 	var raw rawJSONWebKey
- 	err = json.Unmarshal(data, &raw)
- 	if err != nil {
- 		return err
- 	}
- 
-+	if !allowPrivate &&
-+		(raw.K != nil || raw.D != nil || raw.P != nil || raw.Q != nil ||
-+			raw.Dp != nil || raw.Dq != nil || raw.Qi != nil) {
-+		return errors.New("go-jose/go-jose: JWK contains private parameters")
-+	}
-+
- 	certs, err := parseCertificateChain(raw.X5c)
- 	if err != nil {
- 		return fmt.Errorf("go-jose/go-jose: failed to unmarshal x5c field: %s", err)
-@@ -207,47 +223,58 @@ func (k *JSONWebKey) UnmarshalJSON(data []byte) (err error) {
- 	case "EC":
- 		if raw.D != nil {
- 			key, err = raw.ecPrivateKey()
--			if err == nil {
--				keyPub = key.(*ecdsa.PrivateKey).Public()
-+			if err != nil {
-+				return err
- 			}
-+			keyPub = key.(*ecdsa.PrivateKey).Public()
- 		} else {
- 			key, err = raw.ecPublicKey()
-+			if err != nil {
-+				return err
-+			}
- 			keyPub = key
- 		}
- 	case "RSA":
- 		if raw.D != nil {
- 			key, err = raw.rsaPrivateKey()
--			if err == nil {
--				keyPub = key.(*rsa.PrivateKey).Public()
-+			if err != nil {
-+				return err
- 			}
-+			keyPub = key.(*rsa.PrivateKey).Public()
- 		} else {
- 			key, err = raw.rsaPublicKey()
-+			if err != nil {
-+				return err
-+			}
- 			keyPub = key
- 		}
- 	case "oct":
- 		if certPub != nil {
- 			return errors.New("go-jose/go-jose: invalid JWK, found 'oct' (symmetric) key with cert chain")
- 		}
- 		key, err = raw.symmetricKey()
-+		if err != nil {
-+			return err
-+		}
- 	case "OKP":
- 		if raw.Crv == "Ed25519" {
- 			if raw.D != nil {
- 				key, err = raw.edPrivateKey()
--				if err == nil {
--					keyPub = key.(ed25519.PrivateKey).Public()
-+				if err != nil {
-+					return err
- 				}
-+				keyPub = key.(ed25519.PrivateKey).Public()
- 			} else {
- 				key, err = raw.edPublicKey()
-+				if err != nil {
-+					return err
-+				}
- 				keyPub = key
- 			}
- 		}
- 	case "":
- 		// kty MUST be present
--		err = fmt.Errorf("go-jose/go-jose: missing json web key type")
--	}
--
--	if err != nil {
--		return
-+		return fmt.Errorf("go-jose/go-jose: missing json web key type")
- 	}
- 
- 	if key == nil {
-@@ -388,11 +415,12 @@ func rsaThumbprintInput(n *big.Int, e int) (string, error) {
- 
- func edThumbprintInput(ed ed25519.PublicKey) (string, error) {
- 	crv := "Ed25519"
--	if len(ed) > 32 {
--		return "", errors.New("go-jose/go-jose: invalid elliptic key (too large)")
-+	err := validateEd25519PublicKey(ed)
-+	if err != nil {
-+		return "", err
- 	}
- 	return fmt.Sprintf(edThumbprintTemplate, crv,
--		newFixedSizeBuffer(ed, 32).base64()), nil
-+		newFixedSizeBuffer(ed, ed25519.PublicKeySize).base64()), nil
- }
- 
- // Thumbprint computes the JWK Thumbprint of a key using the
-@@ -493,23 +521,39 @@ func (k *JSONWebKey) Valid() bool {
- 	return true
- }
- 
-+// MaxRSAModulusBits is the largest RSA modulus size, in bits, that will be
-+// accepted when parsing a JWK. Applications that need larger keys can raise
-+// this limit.
-+//
-+// If modifying MaxRSAModulusBits, do it before any parsing occurs.
-+var MaxRSAModulusBits = 4096
-+
- func (key rawJSONWebKey) rsaPublicKey() (*rsa.PublicKey, error) {
- 	if key.N == nil || key.E == nil {
- 		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, missing n/e values")
- 	}
- 
-+	n := key.N.bigInt()
-+	if n.BitLen() > MaxRSAModulusBits {
-+		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, modulus too large")
-+	}
-+
- 	return &rsa.PublicKey{
--		N: key.N.bigInt(),
-+		N: n,
- 		E: key.E.toInt(),
- 	}, nil
- }
- 
--func fromEdPublicKey(pub ed25519.PublicKey) *rawJSONWebKey {
-+func fromEdPublicKey(pub ed25519.PublicKey) (*rawJSONWebKey, error) {
-+	err := validateEd25519PublicKey(pub)
-+	if err != nil {
-+		return nil, err
-+	}
- 	return &rawJSONWebKey{
- 		Kty: "OKP",
- 		Crv: "Ed25519",
- 		X:   newBuffer(pub),
--	}
-+	}, nil
- }
- 
- func fromRsaPublicKey(pub *rsa.PublicKey) *rawJSONWebKey {
-@@ -604,21 +648,36 @@ func (key rawJSONWebKey) edPrivateKey() (ed25519.PrivateKey, error) {
- 		return nil, fmt.Errorf("go-jose/go-jose: invalid Ed25519 private key, missing %s value(s)", strings.Join(missing, ", "))
- 	}
- 
-```
-
----
-
-### Incident Patch 2: `b8bbb98a` (2026-11-03)
-**Commit Message**: fix(servicesync): avoid invalid load balancer status sync (#4155)
-
-* fix(servicesync): avoid invalid load balancer status sync
-
-* fix(servicesync): suppress expected legacy endpoints deprecation in test
-
-* test(servicesync): avoid deprecated endpoint assertion types
-
-* test(servicesync): use native Go checks for load balancer regression
-
----------
-
-Co-authored-by: Shiqi <[REDACTED_EMAIL]>
-Co-authored-by: Shiqi Yang <[REDACTED_EMAIL]>
-
-**File**: `pkg/controllers/servicesync/servicesync.go` (modified, +3/-1)
-```diff
-@@ -237,7 +237,9 @@ func (e *ServiceSyncer) syncServiceAndEndpoints(ctx context.Context, fromService
- 	}
- 
- 	// sync the loadbalancer status
--	if fromService.Spec.Type == corev1.ServiceTypeLoadBalancer && !apiequality.Semantic.DeepEqual(fromService.Status.LoadBalancer, toService.Status.LoadBalancer) {
-+	if fromService.Spec.Type == corev1.ServiceTypeLoadBalancer &&
-+		toService.Spec.Type == corev1.ServiceTypeLoadBalancer &&
-+		!apiequality.Semantic.DeepEqual(fromService.Status.LoadBalancer, toService.Status.LoadBalancer) {
- 		e.Log.Infof("Update target service %s/%s because the loadbalancer status changed", to.Namespace, to.Name)
- 		toService.Status.LoadBalancer = fromService.Status.LoadBalancer
- 		return ctrl.Result{}, e.To.GetClient().Status().Update(ctx, toService)
-```
-
-**File**: `pkg/controllers/servicesync/servicesync_test.go` (modified, +116/-0)
-```diff
-@@ -1,6 +1,7 @@
- package servicesync
- 
- import (
-+	"reflect"
- 	"testing"
- 
- 	"github.com/loft-sh/vcluster/pkg/scheme"
-@@ -186,3 +187,118 @@ func TestFromHostReconcile(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestFromHostReconcileLoadBalancerCreatesEndpoints(t *testing.T) {
-+	name := "test-map-host-service-syncer"
-+	hostService := &corev1.Service{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Namespace: "host-namespace",
-+			Name:      "host-service",
-+		},
-+		Spec: corev1.ServiceSpec{
-+			Type:      corev1.ServiceTypeLoadBalancer,
-+			ClusterIP: "10.0.0.1",
-+			Ports: []corev1.ServicePort{
-+				{
-+					Name:     "http",
-+					Port:     8080,
-+					Protocol: corev1.ProtocolTCP,
-+				},
-+			},
-+		},
-+		Status: corev1.ServiceStatus{
-+			LoadBalancer: corev1.LoadBalancerStatus{
-+				Ingress: []corev1.LoadBalancerIngress{
-+					{
-+						IP: "10.0.0.2",
-+					},
-+				},
-+			},
-+		},
-+	}
-+	virtualService := &corev1.Service{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Namespace: "virtual-namespace",
-+			Name:      "virtual-service",
-+			Labels: map[string]string{
-+				translate.ControllerLabel: "vcluster",
-+			},
-+		},
-+		Spec: corev1.ServiceSpec{
-+			ClusterIP: corev1.ClusterIPNone,
-+			Ports:     hostService.Spec.Ports,
-+		},
-+	}
-+
-+	pClient := testingutil.NewFakeClient(scheme.Scheme, hostService)
-+	vClient := testingutil.NewFakeClient(scheme.Scheme, virtualService)
-+	fakeConfig := testingutil.NewFakeConfig()
-+	fakeContext := syncertesting.NewFakeRegisterContext(fakeConfig, pClient, vClient)
-+	serviceSyncer := &ServiceSyncer{
-+		Name:        name,
-+		SyncContext: fakeContext.ToSyncContext(name),
-+		SyncServices: map[string]types.NamespacedName{
-+			"host-namespace/host-service": {
-+				Namespace: "virtual-namespace",
-+				Name:      "virtual-service",
-+			},
-+		},
-+		CreateNamespace:       true,
-+		CreateEndpoints:       true,
-+		From:                  fakeContext.HostManager,
-+		IsVirtualToHostSyncer: false,
-+		To:                    fakeContext.VirtualManager,
-+		Log:                   loghelper.New(name),
-+	}
-+
-+	_, err := serviceSyncer.Reconcile(fakeContext, ctrl.Request{
-+		NamespacedName: types.NamespacedName{
-+			Namespace: hostService.Namespace,
-+			Name:      hostService.Name,
-+		},
-+	})
-+	if err != nil {
-+		t.Fatalf("Reconcile() error = %v", err)
-+	}
-+
-+	actualVirtualService := &corev1.Service{}
-+	err = vClient.Get(fakeContext, types.NamespacedName{
-+		Namespace: virtualService.Namespace,
-+		Name:      virtualService.Name,
-+	}, actualVirtualService)
-+	if err != nil {
-+		t.Fatalf("Get virtual Service: %v", err)
-+	}
-+	if got := actualVirtualService.Status.LoadBalancer.Ingress; len(got) != 0 {
-+		t.Errorf("virtual Service load balancer ingress = %+v, want empty", got)
-+	}
-+
-+	//nolint:staticcheck // SA1019: corev1.Endpoints is deprecated, but still required for compatibility
-+	virtualEndpoints := &corev1.Endpoints{}
-+	err = vClient.Get(fakeContext, types.NamespacedName{
-+		Namespace: virtualService.Namespace,
-+		Name:      virtualService.Name,
-+	}, virtualEndpoints)
-+	if err != nil {
-+		t.Fatalf("Get virtual Endpoints: %v", err)
-+	}
-+	//nolint:staticcheck // SA1019: corev1.EndpointSubset is deprecated, but still required for compatibility
-+	if want := []corev1.EndpointSubset{
-+		{
-+			Addresses: []corev1.EndpointAddress{
-+				{
-+					IP: hostService.Spec.ClusterIP,
-+				},
-+			},
-+			Ports: []corev1.EndpointPort{
-+				{
-+					Name:     "http",
-+					Port:     8080,
-+					Protocol: corev1.ProtocolTCP,
-+				},
-+			},
-+		},
-+	}; !reflect.DeepEqual(virtualEndpoints.Subsets, want) {
-+		t.Errorf("virtual Endpoints subsets = %#v, want %#v", virtualEndpoints.Subsets, want)
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `71592e74` (2026-11-03)
-**Commit Message**: fix(chart): allow DNS egress to CoreDNS on vCluster Standalone (#2560)
-
-* fix(chart): allow DNS egress to CoreDNS on vCluster Standalone
-
-* test(e2e): check DNS egress to vcluster-kube-dns CoreDNS at runtime
-
-* test(e2e): keep the control plane DNS spec out of the pro lane
-
-Monorepo-Commit: bdf0c9401a2c0640889930e40da035d0eb0fb988
-
-**File**: `chart/templates/networkpolicy.yaml` (modified, +24/-9)
-```diff
-@@ -86,14 +86,19 @@ spec:
-     - Egress
-     - Ingress
-   egress:
--    # Allow egress to host kube-dns.
-+    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
-+    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
-     - to:
-         - namespaceSelector:
-             matchLabels:
-               kubernetes.io/metadata.name: 'kube-system'
-           podSelector:
--            matchLabels:
--              k8s-app: kube-dns
-+            matchExpressions:
-+              - key: k8s-app
-+                operator: In
-+                values:
-+                  - kube-dns
-+                  - vcluster-kube-dns
- 
-     # Allow egress to host control plane.
-     - ports:
-@@ -188,14 +193,19 @@ spec:
-     - Egress
-     - Ingress
-   egress:
--    # Allow egress to host kube-dns.
-+    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
-+    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
-     - to:
-         - namespaceSelector:
-             matchLabels:
-               kubernetes.io/metadata.name: 'kube-system'
-           podSelector:
--            matchLabels:
--              k8s-app: kube-dns
-+            matchExpressions:
-+              - key: k8s-app
-+                operator: In
-+                values:
-+                  - kube-dns
-+                  - vcluster-kube-dns
- 
-     # Allow egress to vcluster control plane.
-     - ports:
-@@ -240,14 +250,19 @@ spec:
-             matchLabels:
-               release: {{ .Release.Name | quote }}
- 
--    # Allow egress to host kube-dns.
-+    # Allow egress to host kube-dns. CoreDNS deployed by vCluster, for example on
-+    # vCluster Standalone, is labeled k8s-app=vcluster-kube-dns instead.
-     - to:
-         - namespaceSelector:
-             matchLabels:
-               kubernetes.io/metadata.name: 'kube-system'
-           podSelector:
--            matchLabels:
--              k8s-app: kube-dns
-+            matchExpressions:
-+              - key: k8s-app
-+                operator: In
-+                values:
-+                  - kube-dns
-+                  - vcluster-kube-dns
- 
-     # Allow egress to host control plane.
-     - ports:
-```
-
-**File**: `chart/tests/networkpolicy_test.yaml` (modified, +42/-0)
-```diff
-@@ -195,6 +195,48 @@ tests:
-         isNull:
-           path: spec.ingress[0].from
- 
-+  - it: should allow DNS egress to CoreDNS labeled kube-dns or vcluster-kube-dns
-+    release:
-+      name: my-release
-+      namespace: my-namespace
-+    set:
-+      policies:
-+        networkPolicy:
-+          enabled: true
-+    asserts:
-+      # CoreDNS is labeled k8s-app=kube-dns on most control plane clusters and
-+      # k8s-app=vcluster-kube-dns on vCluster Standalone, so every policy that
-+      # allows DNS egress must match both labels.
-+      - documentSelector:
-+          path: metadata.name
-+          value: vc-cp-my-release
-+        contains:
-+          path: spec.egress
-+          content: &kubeDNSEgress
-+            to:
-+              - namespaceSelector:
-+                  matchLabels:
-+                    kubernetes.io/metadata.name: kube-system
-+                podSelector:
-+                  matchExpressions:
-+                    - key: k8s-app
-+                      operator: In
-+                      values:
-+                        - kube-dns
-+                        - vcluster-kube-dns
-+      - documentSelector:
-+          path: metadata.name
-+          value: vc-kube-dns-my-release
-+        contains:
-+          path: spec.egress
-+          content: *kubeDNSEgress
-+      - documentSelector:
-+          path: metadata.name
-+          value: vc-snapshot-my-release
-+        contains:
-+          path: spec.egress
-+          content: *kubeDNSEgress
-+
-   - it: should not create workload or dns policy when privateNodes enabled
-     release:
-       name: my-release
-```
-
-**File**: `e2e/suite_isolation_mode_test.go` (modified, +2/-1)
-```diff
-@@ -1,5 +1,5 @@
- // Suite: isolation-mode-vcluster
--// vCluster: podSecurityStandard, resourceQuota, limitRange.
-+// vCluster: podSecurityStandard, resourceQuota, limitRange, networkPolicy.
- // Run:      just run-e2e 'isolation'
- package e2e
- 
-@@ -34,6 +34,7 @@ func suiteIsolationModeVCluster() {
- 			})
- 
- 			isolation.IsolationModeSpec()
-+			isolation.ControlPlaneDNSSpec()
- 			coredns.CoreDNSSpec()
- 			test_core.PodSyncSpec()
- 			test_core.PVCSyncSpec()
-```
-
-**File**: `e2e/test_security/isolation/test_control_plane_dns.go` (added, +195/-0)
-```diff
-@@ -0,0 +1,195 @@
-+package isolation
+@@ -0,0 +1,60 @@
++package v1
 +
 +import (
-+	"context"
-+	"fmt"
-+
-+	"github.com/loft-sh/e2e-framework/pkg/setup/cluster"
-+	"github.com/loft-sh/vcluster/e2e/constants"
-+	"github.com/loft-sh/vcluster/e2e/labels"
-+	pkgconstants "github.com/loft-sh/vcluster/pkg/constants"
-+	"github.com/loft-sh/vcluster/pkg/util/podhelper"
-+	"github.com/loft-sh/vcluster/pkg/util/random"
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	agentstoragev1 "github.com/loft-sh/agentapi/v5/pkg/apis/loft/storage/v1"
++	storagev1 "github.com/loft-sh/api/v5/pkg/apis/storage/v1"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/intstr"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
-+	"k8s.io/utils/ptr"
 +)
 +
-+// ControlPlaneDNSSpec registers a test that the control plane NetworkPolicy lets the
-+// control plane resolve names through CoreDNS labeled k8s-app=vcluster-kube-dns.
-+// The tenant cluster must have policies.networkPolicy enabled. Register it only in
-+// suites that install the chart from this tree, because it tests a rule that chart renders.
-+func ControlPlaneDNSSpec() {
-+	Describe("Control plane DNS egress",
-+		labels.PR,
-+		labels.Security,
-+		func() {
-+			var (
-+				hostClient        kubernetes.Interface
-+				hostConfig        *rest.Config
-+				vClusterName      string
-+				vClusterNamespace string
-+			)
++// +genclient
++// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
++// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.phase"
++// +kubebuilder:printcolumn:name="VCluster",type="string",JSONPath=".spec.vClusterRef"
++// +kubebuilder:printcolumn:name="Replicas",type="integer",JSONPath=".status.replicas"
++// +kubebuilder:printcolumn:name="Ready",type="integer",JSONPath=".status.readyReplicas"
++// +kubebuilder:printcolumn:name="Network",type="string",JSONPath=".status.networkEnvironment"
++// +kubebuilder:subresource:status
 +
-+			BeforeEach(func(ctx context.Context) {
-+				hostClient = cluster.KubeClientFrom(ctx, constants.GetHostClusterName())
-+				Expect(hostClient).NotTo(BeNil())
-+				hostConfig = cluster.From(ctx, constants.GetHostClusterName()).KubernetesRestConfig()
-+				Expect(hostConfig).NotTo(BeNil())
-+				vClusterName = cluster.CurrentClusterNameFrom(ctx)
-+				// vcluster create installs into "vcluster-<name>" unless told otherwise.
-+				vClusterNamespace = "vcluster-" + vClusterName
-+			})
++// NodePool keeps a set of NodeClaims for a cluster that are all built from one template.
++// +k8s:openapi-gen=true
++// +resource:path=nodepools,rest=NodePoolREST,statusRest=NodePoolStatusREST
++type NodePool struct {
++	metav1.TypeMeta   `json:",inline"`
++	metav1.ObjectMeta `json:"metadata,omitempty"`
 +
-+			It("lets the control plane resolve names through CoreDNS labeled vcluster-kube-dns", func(ctx context.Context) {
-+				// vCluster Standalone runs its own CoreDNS in kube-system, labeled
-+				// k8s-app=vcluster-kube-dns instead of kube-dns. Run one next to the kind
-+				// CoreDNS and resolve through it from the control plane pod, whose egress
-+				// the vc-cp NetworkPolicy controls.
-+				const (
-+					recordName  = "netpol-dns.vcluster-e2e.test"
-+					recordIP    = "192.0.2.53"
-+					selectorKey = "e2e.vcluster.loft.sh/netpol-dns"
-+				)
-+				suffix := random.String(6)
-+				dnsName := "netpol-dns-" + suffix
++	Spec   NodePoolSpec   `json:"spec,omitempty"`
++	Status NodePoolStatus `json:"status,omitempty"`
++}
 +
-+				var serviceIP, controlPlanePod string
-+				lookup := func(ctx context.Context) (string, error) {
-+					execCtx, cancel := context.WithTimeout(ctx, constants.PollingTimeoutShort)
-+					defer cancel()
-+					stdout, _, err := podhelper.ExecBuffered(execCtx, hostConfig, vClusterNamespace, controlPlanePod, "syncer",
-+						[]string{"nslookup", recordName, serviceIP}, nil)
-+					return string(stdout), err
-+				}
++// NodePoolSpec defines spec of node pool.
++type NodePoolSpec struct {
++	storagev1.NodePoolSpec `json:",inline"`
++}
 +
-+				By("Running a CoreDNS server labeled vcluster-kube-dns in the control plane cluster's kube-system namespace", func() {
-+					hostCoreDNS, err := hostClient.AppsV1().Deployments(metav1.NamespaceSystem).Get(ctx, "coredns", metav1.GetOptions{})
-+					Expect(err).To(Succeed(), "failed to get the kind CoreDNS deployment to reuse its image")
-+					Expect(hostCoreDNS.Spec.Template.Spec.Containers).NotTo(BeEmpty())
++type NodePoolStatus struct {
++	storagev1.NodePoolStatus `json:",inline"`
++}
 +
-+					_, err = hostClient.CoreV1().ConfigMaps(metav1.NamespaceSystem).Create(ctx, &corev1.ConfigMap{
-+						ObjectMeta: metav1.ObjectMeta{Name: dnsName},
-+						Data: map[string]string{
-+							"Corefile": fmt.Sprintf(".:1053 {\n    errors\n    hosts {\n        %s %s\n    }\n}\n", recordIP, recordName),
-+						},
-+					}, metav1.CreateOptions{})
-+					Expect(err).To(Succeed())
-+					DeferCleanup(func(ctx context.Context) {
-+						err := hostClient.CoreV1().ConfigMaps(metav1.NamespaceSystem).Delete(ctx, dnsName, metav1.DeleteOptions{})
-+						if !kerrors.IsNotFound(err) {
-+							Expect(err).To(Succeed())
-+						}
-+					})
++func (a *NodePool) GetOwner() *storagev1.UserOrTeam {
++	return a.Spec.Owner
++}
 +
-+					_, err = hostClient.CoreV1().Pods(metav1.NamespaceSystem).Create(ctx, &corev1.Pod{
-+						ObjectMeta: metav1.ObjectMeta{
-+							Name: dnsName,
-+							Labels: map[string]string{
-+								pkgconstants.CoreDNSLabelKey: pkgconstants.CoreDNSLabelValue,
-+								selectorKey:                  suffix,
-+							},
-+						},
-+						Spec: corev1.PodSpec{
-+							TerminationGracePeriodSeconds: ptr.To(int64(1)),
-+							Containers: []corev1.Container{
-+								{
-+									Name:            "coredns",
-+									Image:           hostCoreDNS.Spec.Template.Spec.Containers[0].Image,
-+									ImagePullPolicy: corev1.PullIfNotPresent,
-+									Args:            []string{"-conf", "/etc/coredns/Corefile"},
-+									ReadinessProbe: &corev1.Probe{
-+										ProbeHandler: corev1.ProbeHandler{
-+											TCPSocket: &corev1.TCPSocketAction{Port: intstr.FromInt32(1053)},
-+										},
-+									},
-+									VolumeMounts: []corev1.VolumeMount{{Name: "config", MountPath: "/etc/coredns", ReadOnly: true}},
-+								},
-+							},
-+							Volumes: []corev1.Volume{
-+								{
-+									Name: "
++func (a *NodePool) SetOwner(userOrTeam *storagev1.UserOrTeam) {
++	a.Spec.Owner = userOrTeam
++}
++
++func (a *NodePool) GetAccess() []storagev1.Access {
++	return a.Spec.Access
++}
++
++func (a *NodePool) SetAccess(access []storagev1.Access) {
++	a.Spec.Access = access
++}
++
++func (a *NodePool) GetConditions() agentstoragev1.Conditions {
++	return a.Status.Conditions
++}
++
++func (a *NodePool) SetConditions(conditions agentstoragev1.Conditions) {
++	a.Status.Conditions = conditions
++}
+```
+
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/self_types.go` (modified, +7/-0)
+```diff
+@@ -74,6 +74,13 @@ type SelfStatus struct {
+ 	// ProjectNamespacePrefix is the prefix used to name project namespaces after defaulting has been applied
+ 	// +optional
+ 	ProjectNamespacePrefix *string `json:"projectNamespacePrefix,omitempty"`
++
++	// ExternalClustersAllowed reports whether the described subject's tenant allows
++	// importing externally deployed clusters: its tenant's setting, or true outside any
++	// tenant. It does not account for RBAC: registering a cluster still needs create on
++	// registervirtualclusters. Unset if it could not be determined.
++	// +optional
++	ExternalClustersAllowed *bool `json:"externalClustersAllowed,omitempty"`
+ }
+ 
+ type UserInfo struct {
+```
+
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.api.register.go` (modified, +16/-0)
+```diff
+@@ -76,6 +76,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
+ 		&NetworkPeerDebug{},
+ 		&NodeClaim{},
+ 		&NodeClaimList{},
++		&NodePool{},
++		&NodePoolList{},
+ 		&NodeProfile{},
+ 		&NodeProfileList{},
+ 		&NodeProvider{},
+@@ -288,6 +290,12 @@ var (
+ 			func() runtime.Object { return &NodeClaim{} },     // Register versioned resource
+ 			func() runtime.Object { return &NodeClaimList{} }, // Register versioned resource list
+ 			management.NewNodeClaimStatusREST),
++		management.ManagementNodePoolStorage,
++		builders.NewApiResourceWithStorage(
++			management.InternalNodePoolStatus,
++			func() runtime.Object { return &NodePool{} },     // Register versioned resource
++			func() runtime.Object { return &NodePoolList{} }, // Register versioned resource list
++			management.NewNodePoolStatusREST),
+ 		management.ManagementNodeProfileStorage,
+ 		management.ManagementNodeProviderStorage,
+ 		builders.NewApiResourceWithStorage(
+@@ -877,6 +885,14 @@ type NodeClaimList struct {
+ 
+ // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+ 
++type NodePoolList struct {
++	metav1.TypeMeta `json:",inline"`
++	metav1.ListMeta `json:"metadata,omitempty"`
++	Items           []NodePool `json:"items"`
++}
++
++// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
++
+ type NodeProfileList struct {
+ 	metav1.TypeMeta `json:",inline"`
+ 	metav1.ListMeta `json:"metadata,omitempty"`
+```
+
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.conversion.go` (modified, +138/-0)
+```diff
+@@ -1701,6 +1701,46 @@ func RegisterConversions(s *runtime.Scheme) error {
+ 	}); err != nil {
+ 		return err
+ 	}
++	if err := s.AddGeneratedConversionFunc((*NodePool)(nil), (*management.NodePool)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_v1_NodePool_To_management_NodePool(a.(*NodePool), b.(*management.NodePool), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*management.NodePool)(nil), (*NodePool)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_management_NodePool_To_v1_NodePool(a.(*management.NodePool), b.(*NodePool), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*NodePoolList)(nil), (*management.NodePoolList)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_v1_NodePoolList_To_management_NodePoolList(a.(*NodePoolList), b.(*management.NodePoolList), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*management.NodePoolList)(nil), (*NodePoolList)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_management_NodePoolList_To_v1_NodePoolList(a.(*management.NodePoolList), b.(*NodePoolList), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*NodePoolSpec)(nil), (*management.NodePoolSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_v1_NodePoolSpec_To_management_NodePoolSpec(a.(*NodePoolSpec), b.(*management.NodePoolSpec), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*management.NodePoolSpec)(nil), (*NodePoolSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_management_NodePoolSpec_To_v1_NodePoolSpec(a.(*management.NodePoolSpec), b.(*NodePoolSpec), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*NodePoolStatus)(nil), (*management.NodePoolStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_v1_NodePoolStatus_To_management_NodePoolStatus(a.(*NodePoolStatus), b.(*management.NodePoolStatus), scope)
++	}); err != nil {
++		return err
++	}
++	if err := s.AddGeneratedConversionFunc((*management.NodePoolStatus)(nil), (*NodePoolStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
++		return Convert_management_NodePoolStatus_To_v1_NodePoolStatus(a.(*management.NodePoolStatus), b.(*NodePoolStatus), scope)
++	}); err != nil {
++		return err
++	}
+ 	if err := s.AddGeneratedConversionFunc((*NodeProfile)(nil), (*management.NodeProfile)(nil), func(a, b interface{}, scope conversion.Scope) error {
+ 		return Convert_v1_NodeProfile_To_management_NodeProfile(a.(*NodeProfile), b.(*management.NodeProfile), scope)
+ 	}); err != nil {
+@@ -7322,6 +7362,7 @@ func Convert_management_EventSpec_To_v1_EventSpec(in *management.EventSpec, out
+ 
+ func autoConvert_v1_EventStatus_To_management_EventStatus(in *EventStatus, out *management.EventStatus, s conversion.Scope) error {
+ 	out.Event = in.Event
++	out.Tenant = in.Tenant
+ 	return nil
+ }
+ 
+@@ -7332,6 +7373,7 @@ func Convert_v1_EventStatus_To_management_EventStatus(in *EventStatus, out *mana
+ 
+ func autoConvert_management_EventStatus_To_v1_EventStatus(in *management.EventStatus, out *EventStatus, s conversion.Scope) error {
+ 	out.Event = in.Event
++	out.Tenant = in.Tenant
+ 	return nil
+ }
+ 
+@@ -8698,6 +8740,100 @@ func Convert_management_NodeClaimStatus_To_v1_NodeClaimStatus(in *management.Nod
+ 	return autoConvert_management_NodeClaimStatus_To_v1_NodeClaimStatus(in, out, s)
+ }
+ 
++func autoConvert_v1_NodePool_To_management_NodePool(in *NodePool, out *management.NodePool, s conversion.Scope) error {
++	out.ObjectMeta = in.ObjectMeta
++	if err := Convert_v1_NodePoolSpec_To_management_NodePoolSpec(&in.Spec, &out.Spec, s); err != nil {
++		return err
++	}
++	if err := Convert_v1_NodePoolStatus_To_management_NodePoolStatus(&in.Status, &out.Status, s); err != nil {
++		return err
++	}
++	return nil
++}
++
++// Convert_v1_NodePool_To_management_NodePool is an autogenerated conversion function.
++func Convert_v1_NodePool_To_management_NodePool(in *NodePool, out *management.NodePool, s conversion.Scope) error {
++	return autoConvert_v1_NodePool_To_management_NodePool(in, out, s)
++}
++
++func autoConvert_management_NodePool_To_v1_NodePool(in *management.NodePool, out *NodePool, s conversion.Scope) error {
++	out.ObjectMeta = in.ObjectMeta
++	if err := Convert_management_NodePoolSpec_To_v1_NodePoolSpec(&in.Spec, &out.Spec, s); err != nil {
++		return err
++	}
++	if err := Convert_management_NodePoolStatus_To_v1_NodePoolStatus(&in.Status, &out.Status, s); err != nil {
++		return err
++	}
++	return nil
++}
++
++// Convert_management_NodePool_To_v1_NodePool is an autogenerated conversion function.
++func Convert_management_NodePool_To_v1_NodePool(in *management.NodePool, out *NodePool, s conversion.Scope) error {
++	return autoConvert_management_NodePool_To_v1_NodePool(in, out, s)
++}
++
+
+```
+
+**File**: `vendor/github.com/loft-sh/api/v5/pkg/apis/management/v1/zz_generated.deepcopy.go` (modified, +100/-0)
+```diff
+@@ -4346,6 +4346,101 @@ func (in *NodeClaimStatus) DeepCopy() *NodeClaimStatus {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodePool) DeepCopyInto(out *NodePool) {
++	*out = *in
++	out.TypeMeta = in.TypeMeta
++	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
++	in.Spec.DeepCopyInto(&out.Spec)
++	in.Status.DeepCopyInto(&out.Status)
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePool.
++func (in *NodePool) DeepCopy() *NodePool {
++	if in == nil {
++		return nil
++	}
++	out := new(NodePool)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
++func (in *NodePool) DeepCopyObject() runtime.Object {
++	if c := in.DeepCopy(); c != nil {
++		return c
++	}
++	return nil
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodePoolList) DeepCopyInto(out *NodePoolList) {
++	*out = *in
++	out.TypeMeta = in.TypeMeta
++	in.ListMeta.DeepCopyInto(&out.ListMeta)
++	if in.Items != nil {
++		in, out := &in.Items, &out.Items
++		*out = make([]NodePool, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolList.
++func (in *NodePoolList) DeepCopy() *NodePoolList {
++	if in == nil {
++		return nil
++	}
++	out := new(NodePoolList)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
++func (in *NodePoolList) DeepCopyObject() runtime.Object {
++	if c := in.DeepCopy(); c != nil {
++		return c
++	}
++	return nil
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodePoolSpec) DeepCopyInto(out *NodePoolSpec) {
++	*out = *in
++	in.NodePoolSpec.DeepCopyInto(&out.NodePoolSpec)
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolSpec.
++func (in *NodePoolSpec) DeepCopy() *NodePoolSpec {
++	if in == nil {
++		return nil
++	}
++	out := new(NodePoolSpec)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodePoolStatus) DeepCopyInto(out *NodePoolStatus) {
++	*out = *in
++	in.NodePoolStatus.DeepCopyInto(&out.NodePoolStatus)
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodePoolStatus.
++func (in *NodePoolStatus) DeepCopy() *NodePoolStatus {
++	if in == nil {
++		return nil
++	}
++	out := new(NodePoolStatus)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *NodeProfile) DeepCopyInto(out *NodeProfile) {
+ 	*out = *in
+@@ -7016,6 +7111,11 @@ func (in *SelfStatus) DeepCopyInto(out *SelfStatus) {
+ 		*out = new(string)
+ 		**out = **in
+ 	}
++	if in.ExternalClustersAllowed != nil {
++		in, out := &in.ExternalClustersAllowed, &out.ExternalClustersAllowed
++		*out = new(bool)
++		**out = **in
++	}
+ 	return
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `d38464dd` (2026-11-04)
+**Commit Message**: fix(destroy): delete node pools before node claims
+
+The api bump brings the storage.loft.sh NodePool kind, and destroy
+refuses to start while discovery reports a kind outside resourceOrder,
+which TestResourceOrderCoversEveryStorageKind caught.
+
+Place nodepools right before nodeclaims: a live static pool recreates
+the claims deleted under it, each provisioning a machine, while a
+deleted pool removes its own claims and drops its finalizer once they
+are gone. Pin that order in TestResourceOrderDeletesHoldersFirst.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Monorepo-Commit: 9c6b8da666c0903a7302d10a83e7933511001413
+
+**File**: `pkg/cli/destroy/destroy.go` (modified, +3/-0)
+```diff
+@@ -59,6 +59,9 @@ var resourceOrder = []string{
+ 	"runners",
+ 	"clusters",
+ 	"clusteraccesses",
++	// before nodeclaims: a static pool recreates the claims deleted under it, and a deleted pool
++	// removes its own claims before it goes
++	"nodepools",
+ 	"nodeclaims",
+ 	"machines",
+ 	// after nodeclaims: a claim holds its environment until the claim is gone
+```
+
+**File**: `pkg/cli/destroy/destroy_test.go` (modified, +4/-2)
+```diff
+@@ -65,10 +65,12 @@ func TestResourceOrderIsWellFormed(t *testing.T) {
+ 
+ // TestResourceOrderDeletesHoldersFirst pins the relative positions a finalizer makes load-bearing:
+ // a resource that holds another through a finalizer must be deleted first, or destroy waits on
+-// the held one until its timeout. A node claim holds its network environment, a provider's
+-// finalizer waits on its environments, and a tenant storage names its profile.
++// the held one until its timeout. A static node pool recreates the claims deleted under it, a
++// node claim holds its network environment, a provider's finalizer waits on its environments,
++// and a tenant storage names its profile.
+ func TestResourceOrderDeletesHoldersFirst(t *testing.T) {
+ 	pairs := [][2]string{
++		{"nodepools", "nodeclaims"},
+ 		{"nodeclaims", "networkenvironments"},
+ 		{"networkenvironments", "nodeproviders"},
+ 		{"tenantstorages", "storageprofiles"},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4263** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.32) (@Piotr1215)
+- **PR #4262** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.33) (@Piotr1215)
+- **PR #4261** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.34) (@Piotr1215)
+- **PR #4260** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.35) (@Piotr1215)
+- **PR #4259** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.36) (@Piotr1215)
 - **PR #4256** (2026-10-28): [v0.37] chore: bump minimum platform version to v4.12.5 (@deniseschannon)
-- **PR #4255** (2026-10-28): [v0.34] chore: bump minimum platform version to v4.9.7 (@deniseschannon)
-- **PR #4254** (2026-10-28): [v0.35] chore: bump minimum platform version to v4.10.9 (@deniseschannon)
-- **PR #4253** (2026-10-28): [v0.36] chore: bump minimum platform version to v4.11.4 (@deniseschannon)
-- **PR #4252** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.36 oss) (@loft-bot)
-- **PR #4251** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.34 oss) (@loft-bot)
 
 ---
 
@@ -2623,13 +2029,13 @@ Monorepo-Commit: bdf0c9401a2c0640889930e40da035d0eb0fb988
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): security updates for main (#2663)
+## X. deps): bump loft-sh/api to v5.0.0-rc.1 for node pools
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c54eb304`: deps): security updates for main (#2663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `621c6803`: deps): bump loft-sh/api to v5.0.0-rc.1 for node pools. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -2637,30 +2043,34 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/sync v0.24.0
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
-	github.com/klauspost/compress v1.20.2 // indirect
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+	github.com/loft-sh/agentapi/v5 v5.0.0-rc.1
+	github.com/loft-sh/api/v5 v5.0.0-rc.1
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260904194346-d0f1323225a4 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/sync v0.23.0
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-	github.com/klauspost/compress v1.18.5 // indirect
-	golang.org/x/crypto v0.57.0 // indirect
-	golang.org/x/net v0.59.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.50.0 // indirect
+	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
+	github.com/loft-sh/api/v5 v5.0.0-alpha.6
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260630182238-925bb5da69e7 // indirect
+	go.opentelemetry.io/otel v1.44.0 // indirect
+	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
+	go.opentelemetry.io/otel/trace v1.44.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c54eb304` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `621c6803` are properly handled with clean fallback behavior.

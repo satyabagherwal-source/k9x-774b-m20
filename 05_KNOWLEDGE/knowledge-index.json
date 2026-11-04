@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:00:25.190Z",
+  "last_updated": "2026-11-04T17:10:13.612Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7069,8 +7069,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "30de12cd",
-      "content_hash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
+      "source_version": "4c9c9518",
+      "content_hash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7288,6 +7288,11 @@
           "number": 6766,
           "title": "images: update cilium-{runtime,builder}",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6852,
+          "title": "cilium-cli: add explicit timeout to ensure health check termination",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7295,7 +7300,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:49:14.650Z",
+      "verified_at": "2026-11-04T17:09:48.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38176,8 +38181,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "8bd47ad6",
-      "content_hash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
+      "source_version": "13fdf431",
+      "content_hash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -38225,6 +38230,11 @@
           "number": 6318,
           "title": "coredns): add a default case to the node address switch for the exhaustive linte",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6853,
+          "title": "deps): bump loft-sh/api to v5.0.0-rc.1 for node pools",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38232,7 +38242,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:59:40.785Z",
+      "verified_at": "2026-11-04T17:10:01.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61483,8 +61493,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "303b4d91",
-      "content_hash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
+      "source_version": "822e884f",
+      "content_hash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -61557,6 +61567,11 @@
           "number": 6545,
           "title": "test_schema_coexistence class timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6854,
+          "title": "YT-26829: Fix potential memory leaks and internal errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61564,7 +61579,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:50:47.058Z",
+      "verified_at": "2026-11-04T17:10:05.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117083,7 +117098,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
+      "content_hash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
@@ -117146,6 +117161,21 @@
           "number": 5983,
           "title": "Abliteration Weight Integrity Check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6855,
+          "title": "Quantization-Aware Abliteration Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6856,
+          "title": "MoE Router Stability Under Weight Perturbation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6857,
+          "title": "Long-Context KV-Cache Compression Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -117153,7 +117183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:15:14.599Z",
+      "verified_at": "2026-11-04T17:10:13.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175121,6 +175151,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:00:25.168Z"
+    },
+    "rule-6852": {
+      "learning_id": "rule-6852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6852,
+      "title": "cilium-cli: add explicit timeout to ensure health check termination",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "4c9c9518",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:09:48.665Z"
+    },
+    "rule-6853": {
+      "learning_id": "rule-6853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6853,
+      "title": "deps): bump loft-sh/api to v5.0.0-rc.1 for node pools",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "13fdf431",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:10:01.357Z"
+    },
+    "rule-6854": {
+      "learning_id": "rule-6854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6854,
+      "title": "YT-26829: Fix potential memory leaks and internal errors",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "822e884f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:10:05.554Z"
+    },
+    "rule-6855": {
+      "learning_id": "rule-6855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6855,
+      "title": "Quantization-Aware Abliteration Invariance",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:10:13.589Z"
+    },
+    "rule-6856": {
+      "learning_id": "rule-6856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6856,
+      "title": "MoE Router Stability Under Weight Perturbation",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:10:13.589Z"
+    },
+    "rule-6857": {
+      "learning_id": "rule-6857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6857,
+      "title": "Long-Context KV-Cache Compression Consistency",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:10:13.589Z"
     }
   },
   "aliases": {

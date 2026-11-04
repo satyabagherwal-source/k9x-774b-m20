@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T17:00:25.288Z",
+  "last_updated": "2026-11-04T17:10:13.709Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
-      "verified_at": "2026-11-04T07:49:14.768Z",
+      "content_hash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
+      "verified_at": "2026-11-04T17:09:48.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:49:14.768Z"
+      "last_updated": "2026-11-04T17:09:48.786Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
-      "verified_at": "2026-11-03T16:50:47.172Z",
+      "content_hash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
+      "verified_at": "2026-11-04T17:10:05.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:50:47.172Z"
+      "last_updated": "2026-11-04T17:10:05.675Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "06bdd11df0c5a74b14150ab1c715e85e6d9021783f5a388f7fd92bf593f8f937",
-      "verified_at": "2026-11-03T17:38:24.430Z",
+      "content_hash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
+      "verified_at": "2026-11-04T17:10:01.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:38:24.430Z"
+      "last_updated": "2026-11-04T17:10:01.478Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",
@@ -15576,14 +15576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "content_hash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
-      "verified_at": "2026-10-31T01:15:14.713Z",
+      "content_hash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
+      "verified_at": "2026-11-04T17:10:13.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:15:14.713Z"
+      "last_updated": "2026-11-04T17:10:13.708Z"
     },
     "lodestones/MOSS-Image-SFT-8-steps-dmd": {
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",

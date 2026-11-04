@@ -7250,3 +7250,7 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `60d048f6` | Multi-dimensional audit evidence | 2026-11-04T16:59:20.832Z |
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-04T16:59:28.534Z |
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `28d7f7cc` | Multi-dimensional audit evidence | 2026-11-04T17:00:25.279Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `4c9c9518` | Multi-dimensional audit evidence | 2026-11-04T17:09:48.777Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `13fdf431` | Multi-dimensional audit evidence | 2026-11-04T17:10:01.468Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `822e884f` | Multi-dimensional audit evidence | 2026-11-04T17:10:05.666Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-04T17:10:13.699Z |
