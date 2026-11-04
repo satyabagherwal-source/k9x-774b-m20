@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source**: github ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
-> **Source Version**: `4aa6fc23`  
+> **Source Version**: `d56502a3`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:53:28.329Z  
+> **Timestamp**: 2026-11-04T23:48:30.601Z  
 > **Learning ID**: `learn-github-giancarloerra-socraticode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:53:28.323Z  
+> **Harvest Timestamp**: 2026-11-04T23:48:30.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -969,526 +969,588 @@ main().catch((err) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22cfea1b` (2026-11-02)
-**Commit Message**: fix: use consistent native path canonicalization for graph inputs
+### Incident Patch 1: `106bb398` (2026-11-03)
+**Commit Message**: fix: preserve Ollama policy errors and late-exit cleanup
 
-**File**: `src/services/graph-typescript.ts` (modified, +2/-1)
+**File**: `src/services/provider-ollama.ts` (modified, +4/-2)
 ```diff
-@@ -58,7 +58,8 @@ export function createTypeScriptResolver(
-     if (bindings.has(absolute)) return bindings.get(absolute) ?? null;
-     let canonical: string | null = null;
-     try {
--      canonical = fs.realpathSync(absolute);
-+      // Match the native canonicalization used by the async freshness check.
-+      canonical = fs.realpathSync.native(absolute);
-     } catch (error) {
-       const code = (error as NodeJS.ErrnoException).code;
-       if (code !== "ENOENT" && code !== "ENOTDIR") throw error;
+@@ -145,7 +145,8 @@ export async function isOllamaAvailable(): Promise<boolean> {
+     const client = getClient();
+     await client.list();
+     return true;
+-  } catch {
++  } catch (error) {
++    if (error instanceof OllamaTransportError) throw error;
+     return false;
+   }
+ }
+@@ -159,7 +160,8 @@ export async function isModelAvailable(): Promise<boolean> {
+     return models.models.some(
+       (m) => m.name === config.embeddingModel || m.name.startsWith(`${config.embeddingModel}:`),
+     );
+-  } catch {
++  } catch (error) {
++    if (error instanceof OllamaTransportError) throw error;
+     return false;
+   }
+ }
 ```
 
-**File**: `tests/unit/graph-input-invalidation.test.ts` (modified, +1/-1)
+**File**: `tests/unit/mcp-logging-protocol.test.ts` (modified, +33/-2)
 ```diff
-@@ -829,7 +829,7 @@ describe("graph input invalidation", () => {
-     it("accepts records without bindings and roundtrips an optional binding record", async () => {
-       expect(record.realpaths).toBeUndefined();
-       await expect(decide(JSON.stringify(record))).resolves.toMatchObject({ rebuild: false });
--      const withBinding = { ...record, realpaths: { ".": hashContent(fs.realpathSync(fixture.root).split(path.sep).join("/")) } };
-+      const withBinding = { ...record, realpaths: { ".": hashContent(fs.realpathSync.native(fixture.root).split(path.sep).join("/")) } };
-       await expect(decide(JSON.stringify(withBinding))).resolves.toMatchObject({ rebuild: false });
-       await expect(decide({ ...record, realpaths: { ".": null } })).resolves.toMatchObject({ rebuild: true });
-     });
+@@ -40,7 +40,7 @@ beforeEach(async () => {
+ });
+ 
+ /** Close the server before deleting its files; fail explicitly if shutdown needs forced termination. */
+-async function stopServer(timeoutMs = 15_000): Promise<void> {
++async function stopServer(timeoutMs = 15_000, beforeForcedTermination?: () => Promise<void>): Promise<void> {
+   const proc = child;
+   let shutdownTimedOut = false;
+   if (proc && proc.exitCode === null && proc.signalCode === null) {
+@@ -56,8 +56,13 @@ async function stopServer(timeoutMs = 15_000): Promise<void> {
+         new Promise<true>((resolve) => { timeout = setTimeout(() => resolve(true), timeoutMs); }),
+       ]);
+       if (shutdownTimedOut && proc.pid !== undefined) {
++        if (beforeForcedTermination) await beforeForcedTermination();
+         if (process.platform === "win32") {
+-          await execFileAsync("taskkill", ["/pid", String(proc.pid), "/t", "/f"], { timeout: 10_000 });
++          try {
++            await execFileAsync("taskkill", ["/pid", String(proc.pid), "/t", "/f"], { timeout: 10_000 });
++          } catch (error) {
++            if (proc.exitCode === null && proc.signalCode === null) throw error;
++          }
+         } else {
+           try {
+             process.kill(-proc.pid, "SIGKILL");
+@@ -182,6 +187,32 @@ async function waitFor(check: () => boolean, timeoutMs: number, failed: () => Er
+ const occurrences = (text: string, needle: string): number => text.split(needle).length - 1;
+ 
+ describe("MCP logging over stdio", () => {
++  it.each(["exit", "close"] as const)("cleans up and retains the timeout error when %s precedes forced termination", async (event) => {
++    const descendant = "require('node:child_process').spawn(process.execPath, ['-e', 'setTimeout(() => {}, 1000)'], { stdio: ['ignore', 'inherit', 'inherit'] }).unref(); ";
++    const script = `${event === "exit" ? descendant : ""}process.stdin.resume(); process.stdout.write('ready'); setInterval(() => {}, 1000);`;
++    const proc = spawn(process.execPath, ["-e", script], {
++      stdio: ["pipe", "pipe", "pipe"],
++      detached: process.platform !== "win32",
++    });
++    child = proc;
++    const exited = new Promise<void>((resolve) => proc.once("exit", () => resolve()));
++    const closed = new Promise<void>((resolve) => proc.once("close", () => resolve()));
++    childClosed = closed;
++    proc.stderr.resume();
++    await new Promise<void>((resolve) => proc.stdout.once("data", () => resolve()));
++
++    let terminationStarted = false;
++    await expect(stopServer(100, async () => {
++      terminationStarted = true;
++      proc.kill();
++      await (event === "exit" ? exited : closed);
++    })).rejects.toThrow("process tree was terminated");
++    expect(terminationStarted).toBe(true);
++    expect(child).toBeUndefined();
++    expect(childClosed).toBeUndefined();
++    await expect(fsp.stat(workDir)).rejects.toMatchObject({ code: "ENOENT" });
++  });
++
+   it("fails and removes the whole process tree when EOF shutdown stalls", async () => {
+     const descendant = "process.stdin.resume(); process.stdout.write('ready'); setInterval(() => {}, 1000);";
+     const wrapper = `require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendant)}], { stdio: ['pipe', 'inherit', 'inherit'] }); process.stdin.resume(); setInterval(() => {}, 1000);`;
 ```
 
-**File**: `tests/unit/graph-typescript.test.ts` (modified, +3/-3)
+**File**: `tests/unit/provider-ollama-connection-pool.test.ts` (modified, +28/-2)
 ```diff
-@@ -268,7 +268,7 @@ describe("TS/JS monorepo graph resolution", () => {
-       expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-       graph = await buildCodeGraph(root);
-       expect(dependencies(graph, "apps/crm/main.ts")).toEqual(member ? ["packages/db/index.ts"] : []);
--      expect((await decide(graph.graphInputs)).rebuild).toBe(false);
-+      expect(await decide(graph.graphInputs)).toMatchObject({ rebuild: false });
-       fs.unlinkSync(link);
-     }
-     expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-@@ -284,8 +284,8 @@ describe("TS/JS monorepo graph resolution", () => {
-     fs.mkdirSync(path.dirname(link), { recursive: true });
-     fs.symlinkSync(path.join(root, "packages/db"), link, "junction");
-     const failure = Object.assign(new Error("EACCES: installed binding cannot be inspected"), { code: "EACCES", path: link });
--    const original = fs.realpathSync;
--    vi.spyOn(fs, "realpathSync").mockImplementation((...args) => {
-+    const original = fs.realpathSync.native;
-+    vi.spyOn(fs.realpathSync, "native").mockImplementation((...args) => {
-       if (path.resolve(String(args[0])) === link) throw failure;
-       return Reflect.apply(original, fs, args);
-     });
+@@ -4,7 +4,7 @@ import { createServer, type Server } from "node:http";
+ import type { Socket } from "node:net";
+ import { afterEach, beforeEach, describe, expect, it } from "vitest";
+ import { resetEmbeddingConfig } from "../../src/services/embedding-config.js";
+-import { OllamaEmbeddingProvider, resetOllamaClient, resetOllamaReadinessCache } from "../../src/services/provider-ollama.js";
++import { isModelAvailable, isOllamaAvailable, OllamaEmbeddingProvider, resetOllamaClient, resetOllamaReadinessCache } from "../../src/services/provider-ollama.js";
+ 
+ /**
+  * Issue 114: the Ollama client rode Node's default fetch pool, which has no
+@@ -37,7 +37,7 @@ describe("ollama connection pool", () => {
+       authorizations.push(req.headers.authorization);
+       req.resume();
+       req.on("end", () => {
+-        if (req.url === "/api/embed" && redirectLocation) {
++        if ((req.url === "/api/embed" || req.url === "/api/tags") && redirectLocation) {
+           res.writeHead(redirectStatus, { location: redirectLocation });
+           res.end();
+           return;
+@@ -156,6 +156,32 @@ describe("ollama connection pool", () => {
+     expect(authorizations).toEqual([requiredAuthorization, requiredAuthorization]);
+   });
+ 
++  const availabilityChecks: [string, () => Promise<unknown>][] = [
++    ["reachability", isOllamaAvailable],
++    ["model availability", isModelAvailable],
++    ["readiness", () => new OllamaEmbeddingProvider().ensureReady()],
++    ["health", () => new OllamaEmbeddingProvider().healthCheck()],
++  ];
++
++  it.each(availabilityChecks.flatMap(([name, check]) =>
++    [307, 308].map((status) => [name, status, check] as const),
++  ))("preserves the HTTPS policy error from %s after a %i model-list redirect", async (_name, status, check) => {
++    process.env.OLLAMA_API_KEY = "fixture-redirect-key";
++    redirectStatus = status;
++    redirectLocation = "http://192.0.2.10:11434/api/tags";
++
++    await expect(check()).rejects.toThrow(/OLLAMA_API_KEY.*HTTPS/);
++    expect(authorizations).toEqual(["Bearer fixture-redirect-key"]);
++  });
++
++  it.each([
++    ["reachability", isOllamaAvailable],
++    ["model availability", isModelAvailable],
++  ] as const)("keeps ordinary server failures unavailable for %s", async (_name, check) => {
++    failNext = 1;
++    await expect(check()).resolves.toBe(false);
++  });
++
+   it("uses a changed key without requiring a client reset", async () => {
+     requiredAuthorization = "Bearer fixture-key-one";
+     process.env.OLLAMA_API_KEY = "fixture-key-one";
 ```
 
 ---
 
-### Incident Patch 2: `8be6abb4` (2026-11-02)
-**Commit Message**: fix: preserve installed package bindings in workspace graphs
+### Incident Patch 2: `a5bc960f` (2026-11-04)
+**Commit Message**: fix: preserve Ollama authentication and simplify MCP test teardown
 
-**File**: `DEVELOPER.md` (modified, +1/-0)
+**File**: `CONTRIBUTING.md` (modified, +2/-2)
 ```diff
-@@ -553,6 +553,7 @@ When `codebase_graph_build` is called:
-    ├── Discover declared npm/Yarn and pnpm workspace members
-    │   ├── Read manifests at ancestors of graphable files, including ignored-by-index JSON/YAML
-    │   ├── Supply workspace package links through a read-only compiler resolution host
-+   │   ├── Preserve independently installed packages; track native binding targets for graph invalidation
-    │   ├── Apply compiler module-resolution rules, conditional exports and export encapsulation
-    │   └── Return targets only from the discovered graph file set
-    ├── For each import, resolve module specifier to actual file path
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -1296,7 +1296,7 @@ JavaScript, TypeScript, TSX, Python, Java, Kotlin, Scala, C, C++, C#, Go, Rust,
+@@ -16,8 +16,8 @@ By submitting a pull request, you agree to the [Contributor License Agreement (C
+ - Docker (for integration and E2E tests)
+ - Git
  
- GDScript: `.gd` files use an optional native binary (`tree-sitter-gdscript`) for AST chunking, symbol extraction, and call-site resolution. When the native parser is unavailable, a syntax-aware fallback handles import extraction and line-based chunking without creating edges from comments or strings. `class_name` declarations, `extends`/`preload`/`load` imports, and `res://` paths are resolved. Relative `extends` and `preload` paths use the script directory; relative runtime `load` paths use the Godot project root. Per-file `project.godot` discovery supports nested and sibling Godot projects. Godot scenes and resources (`.tscn`/`.tres`) are indexed with line-based chunking. `[ext_resource]` declarations are extracted as dependency edges via a tokenizer that handles arbitrary whitespace, attribute order, escaped quotes, and both `uid="uid://..."` and `path="..."` attributes. When both are present, the UID takes priority. Both `res://` paths and paths relative to the `.tscn`/`.tres` file are supported, per the [TSCN documentation](https://docs.godotengine.org/en/stable/engine_details/file_formats/tscn.html). `res://` paths resolve to `.gd`, `.tscn`, and `.tres` targets in the code graph.
+-Release tools require Node.js 22.22.2 or newer in the 22.x line, 24.15 or newer
+-in the 24.x line, or 26 and newer.
++Release tools and strict root development installs (`npm ci --engine-strict`) require Node.js
++22.22.2+ in 22.x, 24.15+ in 24.x, or 26+.
  
--JavaScript and TypeScript: bare imports use the nearest ancestor `tsconfig.json` or `jsconfig.json` within the indexed root. Config inheritance, including package and array `extends`, preserves the origin of `baseUrl` and `paths`. Declared npm/Yarn `workspaces` and pnpm `pnpm-workspace.yaml` packages resolve without installed workspace links. The TypeScript compiler applies the config's module-resolution rules, including conditional and wildcard `exports`; unexported or null-blocked subpaths stay external when exports apply. With no module settings, resolution uses bundler mode. Existing relative imports and root aliases are preserved. Normal graph updates pick up config and manifest changes without resetting or re-embedding existing indexes.
-+JavaScript and TypeScript: bare imports use the nearest ancestor `tsconfig.json` or `jsconfig.json` within the indexed root. Config inheritance, including package and array `extends`, preserves the origin of `baseUrl` and `paths`. Declared npm/Yarn `workspaces` and pnpm `pnpm-workspace.yaml` packages resolve without installed workspace links. Existing installations take precedence: links to workspace members resolve locally, while independently installed packages remain external. The TypeScript compiler applies the config's module-resolution rules, including conditional and wildcard `exports`; unexported or null-blocked subpaths stay external when exports apply. With no module settings, resolution uses bundler mode. Existing relative imports and root aliases are preserved. Normal graph updates pick up config, manifest and installed-binding changes without resetting or re-embedding existing indexes.
- 
- Svelte and Vue: imports extracted from `<script>` blocks (re-parsed as TypeScript) use the same importer-specific configuration and workspace resolution, including aliases to component files. CSS `@import`/`@require` from `<style>` blocks (any combination of `lang`, `scoped`, `module`, `global` attributes) and SCSS partial resolution (`_` prefix convention) are supported.
+ ### Setup
  
 ```
 
-**File**: `src/services/graph-inputs.ts` (modified, +37/-0)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -43,6 +43,7 @@ export const GRAPH_INPUTS_VERSION = 1;
-  * | read a file whole | content hash | re-hashing it |
-  * | read a file's head to classify it | head hash | re-reading that head |
-  * | used a file without opening it | its size | a stat |
-+ * | resolved an installed module lookup path | target hash or absence | resolving it again |
-  * | tried to open one and could not | its path | trying again |
-  * | listed a directory | its entry names | listing it again |
-  * | tried to list one and could not | its path | listing it again |
-@@ -78,6 +79,8 @@ export interface GraphInputRecord {
-    * that was unknown.
-    */
-   presence: Record<string, number>;
-+  /** Module lookup path → canonical target hash, or null when absent. */
-+  realpaths?: Record<string, string | null>;
-   /**
-    * Files the build tried to open and could not — a manifest it found and
-    * failed to read, a `tsconfig.json` that exists but is unreadable, a source
-@@ -292,6 +295,8 @@ export interface GraphInputRecorder {
-    * where it got that far.
-    */
-   present(absolutePath: string, size?: number): void;
-+  /** A module lookup's native binding. Optional for existing recorder callers. */
-+  realpath?(absolutePath: string, canonicalPath: string | null): void;
-   /** An input the build tried to open and could not. */
-   unreadable(absolutePath: string): void;
-   /** A directory the walk tried to list and could not. */
-@@ -315,6 +320,7 @@ export function createGraphInputRecorder(projectRoot: string): GraphInputRecorde
-   const files = new Map<string, string>();
-   const heads = new Map<string, string>();
-   const presence = new Map<string, number>();
-+  const realpaths = new Map<string, string | null>();
-   const unreadable = new Set<string>();
-   const unreadableDirectories = new Set<string>();
-   const directories = new Map<string, DirectoryListing>();
-@@ -390,6 +396,15 @@ export function createGraphInputRecorder(projectRoot: string): GraphInputRecorde
-       const key = rel(absolutePath);
-       if (!files.has(key) && !heads.has(key)) presence.set(key, size ?? -1);
-     },
-+    realpath(absolutePath, canonicalPath) {
-+      const key = rel(absolutePath);
-+      const hash = canonicalPath === null ? null : hashContent(toForwardSlash(canonicalPath));
-+      if (realpaths.has(key) && realpaths.get(key) !== hash) {
-+        conflict(key, "resolved twice, with different targets each time");
-+        return;
-+      }
-+      realpaths.set(key, hash);
-+    },
-     unreadable(absolutePath) {
-       const key = rel(absolutePath);
-       // A file the build already read and then could not read is the same mixed
-@@ -419,6 +434,7 @@ export function createGraphInputRecorder(projectRoot: string): GraphInputRecorde
-         files: sortedRecord(files),
-         heads: sortedRecord(heads),
-         presence: sortedRecord(presence),
-+        ...(realpaths.size > 0 ? { realpaths: sortedRecord(realpaths) } : {}),
-         unreadable: [...unreadable].sort(),
-         unreadableDirectories: [...unreadableDirectories].sort(),
-         directories: sortedRecord(directories),
-@@ -459,6 +475,10 @@ export function parseGraphInputRecord(stored: unknown): GraphInputRecord | null
-   if (typeof record.capabilities !== "string") return null;
-   if (!isStringMap(record.files)) return null;
-   if (!isStringMap(record.heads)) return null;
-+  if (record.realpaths !== undefined && (
-+    record.realpaths === null || typeof record.realpaths !== "object" || Array.isArray(record.realpaths)
-+    || Object.values(record.realpaths).some((target) => target !== null && typeof target !== "string")
-+  )) return null;
-   if (
-     record.directories === null ||
-     typeof record.directories !== "object" ||
-@@ -655,6 +675,23 @@ export async function decideGraphRebuild(
-     }
+@@ -598,6 +598,8 @@ On VS Code's 2.45M‑line codebase, SocratiCode answers architectural questions
+ | [Docker](https://www.docker.com/products/docker-desktop/) | Runs Qdrant (vector DB) and by default Ollama (embeddings) | [docker.com](https://www.docker.com/products/docker-desktop/) |
+ | Node.js 18.17+ with `npx` on `PATH` | Runs the MCP server | [nodejs.org](https://nodejs.org/) |
+ 
++On Alpine Linux ARM64, run `apk add --no-cache gcompat` so the bundled Swift parser can load.
++
+ Docker must be **running** when you use the server in the default `managed` mode. 
+ 
+ The Qdrant container is managed automatically. If you set `QDRANT_MODE=external` and point `QDRANT_URL` at a remote or cloud Qdrant instance, Docker is only needed for Ollama (embeddings) in that case.
+```
+
+**File**: `src/services/docker.ts` (modified, +2/-1)
+```diff
+@@ -16,6 +16,7 @@ import {
+   QDRANT_PORT,
+   QDRANT_URL,
+ } from "../constants.js";
++import { ollamaDisplayOrigin } from "./embedding-config.js";
+ import { logger } from "./logger.js";
+ 
+ const execFileAsync = promisify(execFile);
+@@ -388,7 +389,7 @@ export async function ensureOllamaContainerReady(onProgress?: InfraProgressCallb
+  * `api-key` header for Qdrant Cloud, whose /healthz endpoint requires auth).
+  */
+ async function waitForService(url: string, serviceName: string, retries = 30, delayMs = 1000, init?: RequestInit): Promise<void> {
+-  logger.info(`Waiting for ${serviceName} to be ready`, { url });
++  logger.info(`Waiting for ${serviceName} to be ready`, { url: serviceName === "Ollama" ? ollamaDisplayOrigin(url) : url });
+   for (let i = 0; i < retries; i++) {
+     try {
+       const resp = await fetch(url, init);
+```
+
+**File**: `src/services/embedding-config.ts` (modified, +18/-1)
+```diff
+@@ -136,6 +136,23 @@ export function defaultOllamaUrl(mode: OllamaMode, apiKey: string | undefined):
+   return "http://localhost:11434";
+ }
+ 
++/** Parse the endpoint forms supported by the Ollama SDK, including a bare host or :port. */
++export function parseOllamaUrl(host: string): URL | undefined {
++  try {
++    if (host.startsWith(":")) return new URL(`http://127.0.0.1${host}`);
++    if (host.includes("://")) return new URL(host);
++    const url = new URL(`http://${host}`);
++    if (!url.port) url.port = "11434";
++    return url;
++  } catch {
++    return undefined;
++  }
++}
++
++export function ollamaDisplayOrigin(host: string): string {
++  return parseOllamaUrl(host)?.origin ?? "(invalid Ollama endpoint)";
++}
++
+ /**
+  * Well-known model context lengths (in tokens).
+  * Used for client-side pre-truncation to work around Ollama
+@@ -413,7 +430,7 @@ export function loadEmbeddingConfig(): EmbeddingConfig {
+     embeddingProvider: _config.embeddingProvider,
+     ...(embeddingProvider === "ollama" ? {
+       ollamaMode: _config.ollamaMode,
+-      ollamaUrl: _config.ollamaUrl,
++      ollamaUrl: ollamaDisplayOrigin(_config.ollamaUrl),
+       ollamaMaxConnections: _config.ollamaMaxConnections,
+     } : {}),
+     ...(embeddingProvider === "lmstudio" ? {
+```
+
+**File**: `src/services/provider-ollama.ts` (modified, +22/-11)
+```diff
+@@ -12,7 +12,7 @@ import { Ollama } from "ollama";
+ import { Agent, fetch as undiciFetch } from "undici";
+ import type { InfraProgressCallback } from "./docker.js";
+ import { ensureOllamaContainerReady, isDockerAvailable, isOllamaImagePresent, isOllamaRunning, isQdrantRunning } from "./docker.js";
+-import { defaultOllamaUrl, getEmbeddingConfig, setResolvedOllamaMode } from "./embedding-config.js";
++import { defaultOllamaUrl, getEmbeddingConfig, ollamaDisplayOrigin, parseOllamaUrl, setResolvedOllamaMode } from "./embedding-config.js";
+ import type { EmbeddingHealthStatus, EmbeddingProvider, EmbeddingReadinessResult } from "./embedding-types.js";
+ import { logger } from "./logger.js";
+ 
+@@ -30,15 +30,15 @@ loopbackAddresses.addAddress("::1", "ipv6");
+ 
+ class OllamaTransportError extends Error {}
+ 
++function isAuthChallenge(status: number): boolean {
++  return status === 401 || status === 403;
++}
++
+ /** Keep keyed Ollama requests on HTTPS, except for explicitly supported loopback HTTP. */
+ function assertOllamaTransport(host: string, apiKey: string | undefined): void {
+   if (!apiKey) return;
+-  let url: URL;
+-  try {
+-    // Match the SDK's supported scheme-less and port-only host syntax.
+-    const normalized = host.startsWith(":") ? `http://127.0.0.1${host}` : host.includes("://") ? host : `http://${host}`;
+-    url = new URL(normalized);
+-  } catch {
++  const url = parseOllamaUrl(host);
++  if (!url) {
+     throw new TypeError("Invalid OLLAMA_URL. Configure a valid HTTPS URL or an HTTP loopback endpoint.");
    }
+   if (url.protocol === "https:") return;
+@@ -104,11 +104,21 @@ function getClient(): Ollama {
+       // is what the ollama client consumes and matches.
+       fetch: (async (input: Parameters<typeof undiciFetch>[0], init?: Parameters<typeof undiciFetch>[1]) => {
+         try {
+-          return await undiciFetch(input, { ...init, dispatcher: transportDispatcher });
++          const response = await undiciFetch(input, { ...init, dispatcher: transportDispatcher });
++          if (config.ollamaApiKey && isAuthChallenge(response.status)) {
++            await response.body?.cancel();
++            const reason = response.status === 401 ? "Unauthorized" : "Forbidden";
++            throw new OllamaTransportError(`Ollama authentication failed (HTTP ${response.status} ${reason}). Check OLLAMA_API_KEY and server permissions.`);
++          }
++          return response;
+         } catch (error) {
+           // Preserve the actionable policy failure rather than Fetch's generic
+           // "fetch failed" message. Other transport failures keep their cause.
+           if (error instanceof TypeError && error.cause instanceof OllamaTransportError) throw error.cause;
++          // Fetch includes the full URL when rejecting embedded credentials.
++          if (error instanceof TypeError && parseOllamaUrl(config.ollamaUrl)?.username) {
++            throw new TypeError("Ollama cannot use credentials embedded in the URL. Use OLLAMA_API_KEY instead.");
++          }
+           throw error;
+         }
+       }) as unknown as typeof fetch,
+@@ -238,7 +248,8 @@ async function detectNativeOllama(): Promise<boolean> {
+     const timeoutId = setTimeout(() => controller.abort(), 2_000);
+     const resp = await fetch("http://localhost:11434/api/tags", { signal: controller.signal });
+     clearTimeout(timeoutId);
+-    if (resp.ok) {
++    // A protected native listener is present. Authenticate there through the guarded client.
++    if (resp.ok || (getEmbeddingConfig().ollamaApiKey && isAuthChallenge(resp.status))) {
+       _autoDetectedMode = "external";
+       _autoDetectedUrl = "http://localhost:11434";
+       logger.info("Auto-mode: native Ollama detected at http://localhost:11434 — using external mode (GPU-accelerated if available)");
+@@ -306,7 +317,7 @@ export class OllamaEmbeddingProvider implements EmbeddingProvider {
+     if (!(await isOllamaAvailable())) {
+       if (config.ollamaMode === "external") {
+         throw new Error(
+-          `Ollama is not reachable at ${config.ollamaUrl}. ` +
++          `Ollama is not reachable at ${ollamaDisplayOrigin(config.ollamaUrl)}. ` +
+           `Make sure Ollama is running (e.g. "ollama serve") or check OLLAMA_URL in your MCP config.`,
+         );
+       } else {
+@@ -413,7 +424,7 @@ export class OllamaEmbeddingProvider implements EmbeddingProvider {
  
-+  const rebound = await inBatches(
-+    Object.entries(record.realpaths ?? {}),
-+    STAT_BATCH,
-+    async ([relativePath]) => {
-+      try {
-+        return hashContent(toForwardSlash(await fs.realpath(path.resolve(root, relativePath))));
-+      } catch (error) {
-+        const code = (error as NodeJS.ErrnoException).code;
-+        if (code !== "ENOENT" && code !== "ENOTDIR") throw error;
-+        return null;
-+      }
-+    },
-+    ([relativePath, recordedTarget], target) => target !== recordedTarget
-+      ? rebuildFor(`module lookup binding changed: ${relativePath}`) : null,
-+  );
-+  if (rebound) return rebound;
-+
-   const sized = await inBatches(
-     needStatting,
-     STAT_BATCH,
+     // External mode
+     const available = await isOllamaAvailable();
+-    lines.push(`${icon(available)} Ollama (external): ${available ? `Reachable at ${config.ollamaUrl}` : `Not reachable at ${config.ollamaUrl}`}`);
++    lines.push(`${icon(available)} Ollama (external): ${available ? "Reachable" : "Not reachable"} at ${ollamaDisplayOrigin(config.ollamaUrl)}`);
+ 
+     const modelReady = available ? await isModelAvailable() : false;
+     lines.push(`${icon(modelReady)} Embedding model (${config.embeddingModel}): ${modelReady ? "Available" : "Not available — will be pulled on first index"}`);
 ```
 
-**File**: `src/services/graph-typescript.ts` (modified, +27/-1)
+**File**: `tests/unit/docker.test.ts` (modified, +23/-0)
 ```diff
-@@ -52,6 +52,21 @@ export function createTypeScriptResolver(
- ): (sourceFile: string) => ImportContext {
-   const root = path.resolve(projectPath);
-   const reads = new Map<string, string | undefined>();
-+  const bindings = new Map<string, string | null>();
-+  const realpath = (file: string): string | null => {
-+    const absolute = path.resolve(file);
-+    if (bindings.has(absolute)) return bindings.get(absolute) ?? null;
-+    let canonical: string | null = null;
-+    try {
-+      canonical = fs.realpathSync(absolute);
-+    } catch (error) {
-+      const code = (error as NodeJS.ErrnoException).code;
-+      if (code !== "ENOENT" && code !== "ENOTDIR") throw error;
-+    }
-+    recorder.realpath?.(absolute, canonical);
-+    bindings.set(absolute, canonical);
-+    return canonical;
-+  };
-   const read = (file: string): string | undefined => {
-     const absolute = path.resolve(file);
-     if (reads.has(absolute)) return reads.get(absolute);
-@@ -209,12 +224,23 @@ export function createTypeScriptResolver(
-       const rest = parts.slice(at + 1);
-       const length = rest[0]?.startsWith("@") ? 2 : 1;
-       const member = workspace.packages.get(rest.slice(0, length).join("/"));
--      return member ? path.join(member, ...rest.slice(length)) : absolute;
-+      if (!member) return absolute;
-+      const entry = path.join(workspace.root, ...parts.slice(0, at + 1 + length));
-+      const installed = realpath(entry);
-+      // An existing package may be an independent version or npm alias. Only
-+      // actual workspace links and absent (virtual) entries map to a member.
-+      if (installed !== null && installed !== realpath(member)) return absolute;
-+      return path.join(member, ...rest.slice(length));
-     };
-     const host: ts.ModuleResolutionHost = {
-       fileExists: (file) => configHost.fileExists(translate(file)),
-       readFile: (file) => read(translate(file)),
-       directoryExists: (dir) => {
-+        const absolute = path.resolve(dir);
-+        if (workspace && inside(workspace.root, absolute) && (
-+          path.basename(absolute) === "node_modules"
-+          || (path.basename(path.dirname(absolute)) === "node_modules" && path.basename(absolute).startsWith("@"))
-+        )) realpath(absolute);
-         if (virtualRoot && path.resolve(dir) === virtualRoot) return true;
-         if (virtualRoot && path.dirname(path.resolve(dir)) === virtualRoot && path.basename(dir).startsWith("@")) {
-           const scope = `${path.basename(dir)}/`;
-```
-
-**File**: `tests/unit/graph-input-invalidation.test.ts` (modified, +36/-0)
-```diff
-@@ -654,6 +654,30 @@ describe("graph input invalidation", () => {
-       expect(finish(recorder).files["src/a.ts"]).toBe(hashContent("export const a = 1;\n"));
-     });
- 
-+    it("records native bindings as hashes without persisting their absolute targets", () => {
-+      const recorder = recorderFor();
-+      recorder.realpath?.("/project/node_modules/db", "/project/packages/db");
-+      recorder.realpath?.("/project/node_modules/db", "/project/packages/db");
-+      recorder.realpath?.("/project/apps/crm/node_modules", null);
-+      const record = finish(recorder);
-+      expect(record.realpaths).toEqual({
-+        "apps/crm/node_modules": null,
-+        "node_modules/db": hashContent("/project/packages/db"),
-+      });
-+      expect(JSON.stringify(record)).not.toContain("/project/packages/db");
-+    });
-+
-+    it.each([
-+      [null, "/project/packages/db"],
-+      ["/project/packages/db", "/project/node_modules/.installed/db"],
-+      ["/project/packages/db", null],
-+    ])("rejects a binding observed with contradictory targets %s and %s", (before, after) => {
-+      const recorder = recorderFor();
-+      recorder.realpath?.("/project/node_modules/db", before);
-+      recorder.realpath?.("/project/node_modules/db", after);
-+      expect(() => finish(recorder)).toThrow(GraphInputsMovedDuringBuild);
-+    });
-+
-     it("refuses to seal a record for a file read twice with different content", () => {
-       const recorder = recorderFor();
-       recorder.read("/project/src/a.ts", "export const a = 1;\n");
-@@ -801,5 +825,17 @@ describe("graph input invalidation", () => {
-       // actually comes back from Qdrant — and it must decide the same way.
-       await expect(decide(JSON.stringify(record))).resolves.toMatchObject({ rebuild: false });
-     });
-+
-+    it("accepts records without bindings and roundtrips an optional binding record", async () => {
-+      expect(record.realpaths).toBeUndefined();
-+      await expect(decide(JSON.stringify(record))).resolves.toMatchObject({ rebuild: false });
-+      const withBinding = { ...record, realpaths: { ".": hashContent(fs.realpathSync(fixture.root).split(path.sep).join("/")) } };
-+      await expect(decide(JSON.stringify(withBinding))).resolves.toMatchObject({ rebuild: false });
-+      await expect(decide({ ...record, realpaths: { ".": null } })).resolves.toMatchObject({ rebuild: true });
-+    });
-+
-+    it.each([null, [], 7, { "node_modules/db": 7 }])("rejects a malformed optional binding record %j", async (realpaths) => {
-+      await expect(decide({ ...record, realpaths })).resolves.toMatchObject({ rebuild: true });
-+    });
+@@ -242,6 +242,29 @@ describe("startQdrant", () => {
    });
  });
+ 
++it("keeps the configured Ollama readiness path out of Docker logs", async () => {
++  const host = "http://127.0.0.1:11435/private-proxy-path";
++  vi.resetModules();
++  vi.doMock("../../src/constants.js", async (original) => ({
++    ...await original<typeof import("../../src/constants.js")>(), OLLAMA_HOST: host,
++  }));
++  const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 200 }));
++  try {
++    const { startOllama } = await import("../../src/services/docker.js");
++    const { logger } = await import("../../src/services/logger.js");
++    resolveOk(); // stopped
++    resolveOk("socraticode-ollama"); // existing container
++    resolveOk(); // docker start
++    await startOllama();
++    expect(fetch).toHaveBeenCalledWith(`${host}/api/tags`, undefined);
++    expect(logger.info).toHaveBeenCalledWith("Waiting for Ollama to be ready", { url: "http://127.0.0.1:11435" });
++  } finally {
++    fetch.mockRestore();
++    vi.doUnmock("../../src/constants.js");
++    vi.resetModules();
++  }
++});
++
+ // ── ensureQdrantReady (managed mode) — readiness cache ───────────────────
+ 
+ describe("ensureQdrantReady managed mode cache", () => {
 ```
 
-**File**: `tests/unit/graph-typescript.test.ts` (modified, +72/-2)
+**File**: `tests/unit/mcp-logging-protocol.test.ts` (modified, +49/-199)
 ```diff
-@@ -205,7 +205,10 @@ describe("TS/JS monorepo graph resolution", () => {
-     expect((await decide(graph.graphInputs)).rebuild).toBe(true);
+@@ -11,12 +11,12 @@
+  * JSON-RPC to it, the way an MCP host does.
+  */
+ 
+-import { type ChildProcessWithoutNullStreams, type ExecFileException, execFile, spawn } from "node:child_process";
++import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
++import { randomUUID } from "node:crypto";
+ import fsp from "node:fs/promises";
++import Module from "node:module";
+ import os from "node:os";
+ import path from "node:path";
+-import { createInterface } from "node:readline";
+-import { promisify } from "node:util";
+ import { afterEach, beforeEach, describe, expect, it } from "vitest";
+ 
+ interface RpcMessage {
+@@ -30,123 +30,49 @@ interface RpcMessage {
+ 
+ /** Nothing listens here, so external Qdrant readiness fails without touching a real server. */
+ const UNREACHABLE = "http://127.0.0.1:9";
+-const execFileAsync = promisify(execFile);
+ 
+-let child: ChildProcessWithoutNullStreams | undefined;
+-let childClosed: Promise<void> | undefined;
++let child: { proc: ChildProcessWithoutNullStreams; closed: Promise<void> } | undefined;
+ let workDir = "";
+ 
+ beforeEach(async () => {
+   workDir = await fsp.mkdtemp(path.join(os.tmpdir(), "socraticode-logging-protocol-"));
+ });
+ 
+-interface WindowsProcess {
+-  ProcessId: number;
+-  ParentProcessId: number;
+-  CreationDate: string;
++function ownChild(proc: ChildProcessWithoutNullStreams): ChildProcessWithoutNullStreams {
++  child = { proc, closed: new Promise<void>((resolve) => proc.once("close", () => resolve())) };
++  return proc;
+ }
+ 
+-/** Allow bounded PowerShell/CIM startup and retain identities so reused PIDs are not cleanup targets. */
+-async function windowsProcesses(): Promise<WindowsProcess[]> {
+-  const started = Date.now();
+-  const { stdout } = await execFileAsync("powershell.exe", [
+-    "-NoProfile", "-NonInteractive", "-Command",
+-    "$ErrorActionPreference = 'Stop'; Get-CimInstance Win32_Process -Property ProcessId,ParentProcessId,CreationDate | Select-Object ProcessId,ParentProcessId,CreationDate | ConvertTo-Json -Compress",
+-  ], { timeout: 30_000 }).catch((cause) => {
+-    const failure = cause as ExecFileException & { stdout?: string; stderr?: string };
+-    const details = { code: failure.code, signal: failure.signal, killed: failure.killed, stdoutBytes: Buffer.byteLength(failure.stdout ?? ""), stderr: failure.stderr };
+-    throw new Error(`Windows process lookup failed after ${Date.now() - started}ms: ${JSON.stringify(details)}`, { cause });
+-  });
+-  return JSON.parse(stdout);
++function closesWithin(closed: Promise<void>, ms: number): Promise<boolean> {
++  let timeout: ReturnType<typeof setTimeout> | undefined;
++  return Promise.race([
++    closed.then(() => true),
++    new Promise<false>((resolve) => { timeout = setTimeout(() => resolve(false), ms); }),
++  ]).finally(() => clearTimeout(timeout));
+ }
+ 
+-/** Close the server before deleting its files; fail explicitly if shutdown needs forced termination. */
+-async function stopServer(
+-  timeoutMs = 15_000,
+-  beforeForcedTermination?: () => Promise<void>,
+-  lookup = process.platform === "win32" ? windowsProcesses : undefined,
+-): Promise<void> {
+-  const proc = child;
+-  const windowsPids = lookup && proc?.pid !== undefined ? [proc.pid] : [];
+-  let windowsSnapshot: WindowsProcess[] | undefined;
+-  let lookupError: Error | undefined;
+-  if (lookup && windowsPids.length) {
+-    try {
+-      windowsSnapshot = await lookup();
+-      // Retain descendants before EOF can make their wrapper exit.
+-      for (const parent of windowsPids) {
+-        for (const entry of windowsSnapshot) {
+-          if (entry.ParentProcessId === parent && !windowsPids.includes(entry.ProcessId)) windowsPids.push(entry.ProcessId);
+-        }
+-      }
+-    } catch (cause) {
+-      lookupError = cause instanceof Error ? cause : new Error("Windows process lookup failed", { cause });
+-    }
+-  }
+-  let shutdownTimedOut = false;
+-  if (proc && proc.exitCode === null && proc.signalCode === null) {
+-    // EOF reaches the server through the tsx wrapper; wait for its streams
+-    // to close before removing a directory the server can still log into.
+-    proc.stdin.end();
+-  }
+-  if (proc && childClosed) {
+-    let timeout: ReturnType<typeof setTimeout> | undefined;
+-    try {
+-      shutdownTimedOut = await Promise.race([
+-        childClosed.then(() => false),
+-        new Promise<true>((resolve) => { timeout = setTimeout(() => resolve(true), timeoutMs); }),
+-      ]);
+-      if (shutdownTimedOut && proc.pid !== undefined) {
+-        if (beforeForcedTermination) await beforeForcedTermination();
+-        if (lookup) {
+-          if (!windowsSnapshot) {
+-            throw new Error(`MCP logging server did not close within ${timeoutMs} milliseconds after stdin EOF; Windows process identities could not be verified for forced termination; temporary files were retained.`, { cause: lookupError });
+-          }
+-          const currentProcesses = await lookup();
+-          for (const pid of windowsPids.reverse()) {
+-         
+```
+
+**File**: `tests/unit/provider-ollama-connection-pool.test.ts` (modified, +17/-5)
+```diff
+@@ -21,6 +21,7 @@ describe("ollama connection pool", () => {
+   let openSockets: Set<Socket>;
+   let failNext = 0;
+   let requiredAuthorization: string | undefined;
++  let rejectedStatus: number;
+   let authorizations: (string | undefined)[];
+   let redirectLocation: string | undefined;
+   let redirectStatus: number;
+@@ -29,6 +30,7 @@ describe("ollama connection pool", () => {
+     opened = 0;
+     failNext = 0;
+     requiredAuthorization = undefined;
++    rejectedStatus = 401;
+     authorizations = [];
+     redirectLocation = undefined;
+     redirectStatus = 307;
+@@ -43,8 +45,8 @@ describe("ollama connection pool", () => {
+           return;
+         }
+         if (requiredAuthorization && req.headers.authorization !== requiredAuthorization) {
+-          res.writeHead(401, { "content-type": "application/json" });
+-          res.end(JSON.stringify({ error: "Unauthorized" }));
++          res.writeHead(rejectedStatus, { "content-type": "application/json" });
++          res.end(JSON.stringify({ error: "private upstream response" }));
+           return;
+         }
+         if (failNext > 0) {
+@@ -206,7 +208,8 @@ describe("ollama connection pool", () => {
+     expect(authorizations).toEqual(["Bearer fixture-key-one", undefined]);
    });
  
--  it.each(["@ws/db", "db"])("preserves installed package-local workspace links for %s", async (name) => {
-+  it.each([
-+    "node_modules/@ws/db", "node_modules/db", "apps/crm/node_modules/@ws/db", "apps/crm/node_modules/db",
-+  ])("preserves installed workspace links at %s", async (location) => {
-+    const name = location.split("node_modules/")[1];
-     project({
-       "package.json": { workspaces: ["apps/*", "packages/*"] },
-       "tsconfig.json": { compilerOptions: { moduleResolution: "bundler", module: "preserve" } },
-@@ -216,12 +219,79 @@ describe("TS/JS monorepo graph resolution", () => {
-     });
-     const expected = ["packages/db/src/index.ts"];
-     expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual(expected);
--    const link = path.join(root, "apps/crm/node_modules", name);
-+    const link = path.join(root, location);
-     fs.mkdirSync(path.dirname(link), { recursive: true });
-     fs.symlinkSync(path.join(root, "packages/db"), link, "junction");
-     expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual(expected);
+-  it("rejects an invalid key without including it in the error", async () => {
++  it.each([401, 403])("reports HTTP %i without reflecting the key or the upstream response", async (status) => {
++    rejectedStatus = status;
+     requiredAuthorization = "Bearer fixture-key-one";
+     const invalidKey = "fixture-invalid-key";
+     process.env.OLLAMA_API_KEY = invalidKey;
+@@ -217,10 +220,19 @@ describe("ollama connection pool", () => {
+       failure = error;
+     }
+     expect(failure).toBeInstanceOf(Error);
+-    expect(String(failure)).toContain("Unauthorized");
++    expect(String(failure)).toContain(`HTTP ${status}`);
++    expect(String(failure)).not.toContain("private upstream response");
+     expect(String(failure)).not.toContain(invalidKey);
    });
  
-+  it.each([
-+    "node_modules/@ws/db", "node_modules/db", "apps/crm/node_modules/@ws/db", "apps/crm/node_modules/db",
-+  ])("keeps an independently installed package external at %s", async (location) => {
-+    const name = location.split("node_modules/")[1];
-+    project({
-+      "package.json": { workspaces: ["apps/*", "packages/*"] },
-+      "tsconfig.json": { compilerOptions: { moduleResolution: "bundler", module: "preserve" } },
-+      "apps/crm/package.json": { name: "crm", dependencies: { [name]: "npm:external-db@2.0.0" } },
-+      "apps/crm/main.ts": `import "${name}";`,
-+      "packages/db/package.json": { name, exports: "./index.ts" },
-+      "packages/db/index.ts": "export {};",
-+      [`${location}/package.json`]: { name: "external-db", exports: "./index.ts" },
-+      [`${location}/index.ts`]: "export {};",
-+      "node_modules/.installed/db/package.json": { name: "external-db", exports: "./index.ts" },
-+      "node_modules/.installed/db/index.ts": "export {};",
-+    });
-+    expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual([]);
-+    const link = path.join(root, location);
-+    fs.rmSync(link, { recursive: true });
-+    fs.symlinkSync(path.join(root, "node_modules/.installed/db"), link, "junction");
-+    expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual([]);
++  it("keeps URL credentials out of the SDK request error", async () => {
++    process.env.OLLAMA_URL = `http://private-user:private-password@127.0.0.1:${port}/private-path`;
++    await expect(new OllamaEmbeddingProvider().embed(["test"])).rejects.toThrow(
++      /^Ollama cannot use credentials embedded in the URL\. Use OLLAMA_API_KEY instead\.$/,
++    );
++    expect(authorizations).toEqual([]);
 +  });
 +
-+  it.each(["@ws/db", "db"])("invalidates installed binding changes with identical manifests for %s", async (name) => {
-+    const manifest = { name, exports: "./index.ts" };
-+    project({
-+      "package.json": { workspaces: ["apps/*", "packages/*"] },
-+      "tsconfig.json": { compilerOptions: { moduleResolution: "bundler", module: "preserve" } },
-+      "apps/crm/main.ts": `import "${name}";`,
-+      "packages/db/package.json": manifest, "packages/db/index.ts": "export {};",
-+    });
-+    let graph = await buildCodeGraph(root);
-+    expect(dependencies(graph, "apps/crm/main.ts")).toEqual(["packages/db/index.ts"]);
-+    expect((await decide(graph.graphInputs)).rebuild).toBe(false);
-+    write("node_modules/.installed/db/package.json", manifest);
-+    write("node_modules/.installed/db/index.ts", "export {};");
-+    const link = path.join(root, "apps/crm/node_modules", name);
-+    fs.mkdirSync(path.dirname(link), { recursive: true });
-+    for (const member of [false, true, false]) {
-+      fs.symlinkSync(path.join(root, member ? "packages/db" : "node_modules/.installed/db"), link, "junction");
-+      expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-+      graph = await buildCodeGraph(root);
-+      expect(dependencies(graph, "apps/crm/main.ts")).toEqual(member ? ["packages/db/index.ts"] : []);
-+      expect((await decide(graph.graphInputs)).rebuild).toBe(false);
-+      fs.unlinkSync(link);
-+    }
-+    expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-+    expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual(["packages/db/index.ts"]);
-+  });
-+
-+  it("preserves the underlying error when an installed binding cannot be inspected", async () => {
-+    project({
-+      "package.json": { workspaces: ["packages/*"] }, "main.ts": 'import "db";',
-+      "packages/db/package.json": { name: "db", main: "index.ts" }, "packages/db/index.ts": "export {};",
-+    });
-+    const link = path.join(root, "node_modules/db");
-+    fs.mkdirSync(path.dirname(link), { recursive: true });
-+    fs.symlinkSync(path.join(root, "packages/db"), link, "junction");
-+    const failure = Object.assign(new Error("EACCES: installed binding cannot be inspected"), { code: "EACCES", path: link });
-+    const original = fs.realpathSync;
-+    vi.spyOn(fs, "realpathSync").mockImplementation((...args) => {
-+      if (path.resolve(String(args[0])
+   it("rechecks readiness after the configured key changes", async () => {
+     requiredAuthorization = "Bearer fixture-key-one";
+     process.env.OLLAMA_API_KEY = "fixture-key-one";
+@@ -229,7 +241,7 @@ describe("ollama connection pool", () => {
+ 
+     process.env.OLLAMA_API_KEY = "fixture-invalid-key";
+     resetEmbeddingConfig();
+-    await expect(provider.ensureReady()).rejects.toThrow("Ollama is not reachable");
++    await expect(provider.ensureReady()).rejects.toThrow(/HTTP 401.*OLLAMA_API_KEY/);
+     expect(authorizations.at(-1)).toBe("Bearer fixture-invalid-key");
+   });
+ 
 ```
 
 ---
 
-### Incident Patch 3: `6653435e` (2026-11-02)
-**Commit Message**: fix: preserve installed workspace links and missing-base aliases
+### Incident Patch 3: `3d9c5b2d` (2026-11-04)
+**Commit Message**: test: keep Windows descendant fixture alive
 
-**File**: `src/services/graph-typescript.ts` (modified, +12/-9)
+**File**: `tests/unit/mcp-logging-protocol.test.ts` (modified, +8/-3)
 ```diff
-@@ -158,10 +158,11 @@ export function createTypeScriptResolver(
-       // diagnostics retain their compiler-provided cause.
-       // The original alias loader ignored compiler options it did not use.
-       // Keep known paths usable when a project uses another compiler version's
--      // options (5023/5025) or emit/type-library values. Syntax, inheritance and
--      // invalid resolution-option values still fail.
-+      // options (5023/5025) or emit/type-library values. Missing extends bases
-+      // (6053/5083) also retain local aliases, as the original loader did.
-+      // Syntax, circular inheritance and invalid resolution values still fail.
-       const error = parsed.errors.find((diagnostic) =>
--        ![18003, 18002, 5023, 5025].includes(diagnostic.code) && !isCompilerOnlyDiagnostic(diagnostic));
-+        ![18003, 18002, 5023, 5025, 6053, 5083].includes(diagnostic.code) && !isCompilerOnlyDiagnostic(diagnostic));
-       if (error) throw new Error(`Invalid TypeScript configuration ${file}: ${ts.flattenDiagnosticMessageText(error.messageText, "\n")}`);
-       parsedByConfig.set(file, parsed);
-     }
-@@ -201,12 +202,14 @@ export function createTypeScriptResolver(
-     const virtualRoot = workspace && path.join(workspace.root, "node_modules");
-     const translate = (file: string): string => {
-       const absolute = path.resolve(file);
--      if (!virtualRoot || !inside(virtualRoot, absolute)) return absolute;
--      const rest = toForwardSlash(path.relative(virtualRoot, absolute));
--      const parts = rest.split("/");
--      const name = parts[0].startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
--      const member = workspace.packages.get(name);
--      return member ? path.join(member, ...parts.slice(name.startsWith("@") ? 2 : 1)) : absolute;
-+      if (!workspace || !inside(workspace.root, absolute)) return absolute;
-+      const parts = toForwardSlash(path.relative(workspace.root, absolute)).split("/");
-+      const at = parts.lastIndexOf("node_modules");
-+      if (at < 0) return absolute;
-+      const rest = parts.slice(at + 1);
-+      const length = rest[0]?.startsWith("@") ? 2 : 1;
-+      const member = workspace.packages.get(rest.slice(0, length).join("/"));
-+      return member ? path.join(member, ...rest.slice(length)) : absolute;
-     };
-     const host: ts.ModuleResolutionHost = {
-       fileExists: (file) => configHost.fileExists(translate(file)),
-```
-
-**File**: `tests/unit/graph-typescript.test.ts` (modified, +68/-1)
-```diff
-@@ -3,7 +3,7 @@
- import fs from "node:fs";
+@@ -15,6 +15,7 @@ import { type ChildProcessWithoutNullStreams, execFile, spawn } from "node:child
+ import fsp from "node:fs/promises";
  import os from "node:os";
  import path from "node:path";
--import { afterEach, describe, expect, it } from "vitest";
-+import { afterEach, describe, expect, it, vi } from "vitest";
- import { EXTRA_EXTENSIONS } from "../../src/constants.js";
- import { buildCodeGraph, currentGraphCapabilities } from "../../src/services/code-graph.js";
- import { decideGraphRebuild, type GraphInputRecord } from "../../src/services/graph-inputs.js";
-@@ -26,6 +26,7 @@ describe("TS/JS monorepo graph resolution", () => {
-   }, EXTRA_EXTENSIONS, await currentGraphCapabilities());
++import { createInterface } from "node:readline";
+ import { promisify } from "node:util";
+ import { afterEach, beforeEach, describe, expect, it } from "vitest";
  
-   afterEach(() => {
-+    vi.restoreAllMocks();
-     if (root) fs.rmSync(root, { recursive: true, force: true });
-   });
+@@ -227,8 +228,10 @@ const occurrences = (text: string, needle: string): number => text.split(needle)
  
-@@ -204,6 +205,72 @@ describe("TS/JS monorepo graph resolution", () => {
-     expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-   });
+ describe("MCP logging over stdio", () => {
+   it.each(["exit", "close", "exit before EOF"] as const)("cleans up and retains the timeout error when %s precedes forced termination", async (event) => {
+-    const descendant = "const descendant = require('node:child_process').spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: ['ignore', 'inherit', 'inherit'] }); descendant.unref(); process.stdout.write(String(descendant.pid)); ";
+-    const script = `${event !== "close" ? descendant : "process.stdout.write('ready');"}process.stdin.resume(); setInterval(() => {}, 1000);`;
++    // Windows otherwise ends the child with its parent's job instead of retaining the pipes.
++    const descendantScript = "setInterval(() => {}, 1000); process.stdout.write(String(process.pid) + '\\n');";
++    const descendant = `require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantScript)}], { detached: process.platform === 'win32', stdio: ['ignore', 'inherit', 'inherit'] }).unref(); `;
++    const script = `${event !== "close" ? descendant : "process.stdout.write('ready\\n');"}process.stdin.resume(); setInterval(() => {}, 1000);`;
+     const proc = spawn(process.execPath, ["-e", script], {
+       stdio: ["pipe", "pipe", "pipe"],
+       detached: process.platform !== "win32",
+@@ -238,7 +241,9 @@ describe("MCP logging over stdio", () => {
+     const closed = new Promise<void>((resolve) => proc.once("close", () => resolve()));
+     childClosed = closed;
+     proc.stderr.resume();
+-    const descendantPid = await new Promise<number>((resolve) => proc.stdout.once("data", (chunk) => resolve(Number(String(chunk)))));
++    const descendantPid = await new Promise<number>((resolve) => {
++      createInterface({ input: proc.stdout }).once("line", (line) => resolve(Number(line)));
++    });
  
-+  it.each(["@ws/db", "db"])("preserves installed package-local workspace links for %s", async (name) => {
-+    project({
-+      "package.json": { workspaces: ["apps/*", "packages/*"] },
-+      "tsconfig.json": { compilerOptions: { moduleResolution: "bundler", module: "preserve" } },
-+      "apps/crm/package.json": { name: "crm", dependencies: { [name]: "workspace:*" } },
-+      "apps/crm/main.ts": `import "${name}";`,
-+      "packages/db/package.json": { name, exports: "./src/index.ts" },
-+      "packages/db/src/index.ts": "export {};",
-+    });
-+    const expected = ["packages/db/src/index.ts"];
-+    expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual(expected);
-+    const link = path.join(root, "apps/crm/node_modules", name);
-+    fs.mkdirSync(path.dirname(link), { recursive: true });
-+    fs.symlinkSync(path.join(root, "packages/db"), link, "junction");
-+    expect(dependencies(await buildCodeGraph(root), "apps/crm/main.ts")).toEqual(expected);
-+  });
-+
-+  it("preserves implicit Classic resolution for an explicit ESNext module setting", async () => {
-+    project({
-+      "package.json": { workspaces: ["packages/*"] },
-+      "tsconfig.json": { compilerOptions: { module: "esnext" } },
-+      "main.ts": 'import "db";',
-+      "packages/db/package.json": { name: "db", exports: "./src/index.ts" },
-+      "packages/db/src/index.ts": "export {};",
-+    });
-+    expect(dependencies(await buildCodeGraph(root), "main.ts")).toEqual([]);
-+    write("tsconfig.json", { compilerOptions: { module: "esnext", moduleResolution: "bundler" } });
-+    expect(dependencies(await buildCodeGraph(root), "main.ts")).toEqual(["packages/db/src/index.ts"]);
-+  });
-+
-+  it.each(["./missing-base.json", "@missing/config"])("preserves local aliases when the extends base %s is absent", async (base) => {
-+    project({
-+      "tsconfig.json": { extends: base, compilerOptions: { paths: { "@/*": ["src/*"] } } },
-+      "main.ts": 'import "@/util";', "src/util.ts": "export {};", "alternate/src/util.ts": "export {};",
-+    });
-+    const graph = await buildCodeGraph(root);
-+    expect(dependencies(graph, "main.ts")).toEqual(["src/util.ts"]);
-+    expect((await decide(graph.graphInputs)).rebuild).toBe(false);
-+    if (base.startsWith(".")) {
-+      write("missing-base.json", { compilerOptions: { baseUrl: "./alternate" } });
-+    } else {
-+      write("node_modules/@missing/config/package.json", { name: "@missing/config", tsconfig: "tsconfig.json" });
-+      write("node_modules/@missing/config/tsconfig.json", { compilerOptions: { baseUrl: "../../../alternate" } });
-+    }
-+    expect((await decide(graph.graphInputs)).rebuild).toBe(true);
-+    const updated = await buildCodeGraph(root);
-+    expect(dependencies(updated, "main.ts")).toEqual(["alternate/src/util.ts"]);
-+    expect((await decide(updated.graphInputs)).rebuild).toBe(false);
-+  });
-+
-+  it("reports the original cause when an existing config base cannot be read", async () => {
-+    project({
-+      "tsconfig.json": { extends: "./base.jsonc", compilerOptions: { paths: { "@/*": ["src/*"] } } },
-+      "base.jsonc": {}, "main.ts": 'import "@/util";', "src/util.ts": "export {};",
-+    });
-+    expect(dependencies(await buildCodeGraph(root), "main.ts")).toEqual(["src/util.ts"]);
-+    const base = path.join(root, "base.jsonc");
-+    const failure = Object.assign(new Error("EACCES: config base cannot be read"), { code: "EACCES", path: base });
-+    const original = fs.readFileSync;
-+    vi.spyOn(fs, "readFileSync").mockImplementation((...args) => {
-+      if (path.resolve(String(args[0])) === base) throw failure;
-+      return Reflect.apply(original, fs, args);
-+    });
-+    await expect(buildCodeGraph(root)).rejects.toThrow(/EACCES: config base cannot be read/);
-+  });
-+
-   it("reports invalid/circular configuration and recovers after correction", async () => {
-     project({ "tsconfig.json": { extends: "./base.json" }, "base.json": { extends: "./tsconfig.json" }, "main.ts": 'import "missing";' });
-     await expect(buildCodeGraph(root)).rejects.toThrow(/circularity/i);
+     let terminationStarted = false;
+     if (event === "exit before EOF") {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #215** (2026-11-04): Fix Ollama credential handling and MCP test teardown (@giancarloerra)
+- **PR #214** (2026-11-04): chore: update packages and fix Ollama proxy authentication (@giancarloerra)
 - **PR #212** (2026-11-02): fix: resolve TS/JS monorepo imports per importer and workspace exports (@giancarloerra)
 - **PR #210** (2026-10-23): fix(search): name the filter when a filtered codebase_search finds nothing (@gnyan-zadara)
 - **PR #209** (2026-10-23): fix(graph): name C# declarations by their name field and capture type, creation and qualified-call edges (@pcherkashin)
 - **PR #206** (2026-10-15): fix(graph): name attributed PHP declarations by their name field (@pma1999)
-- **PR #204** (2026-10-10): feat(graph): add limit to codebase_symbol, codebase_impact and codebase_flow (@shaitourchin)
-- **PR #202** (2026-10-07): fix(symbol-graph): retry Qdrant requests once on a closed connection (@shaitourchin)
 
 ---
 
@@ -1508,29 +1570,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use consistent native path canonicalization for graph inputs
+## X. preserve Ollama policy errors and late-exit cleanup
 
 **RULE**:
-When implementing operations in `src/services/graph-typescript.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/services/provider-ollama.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22cfea1b`: use consistent native path canonicalization for graph inputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `106bb398`: preserve Ollama policy errors and late-exit cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/graph-typescript.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/provider-ollama.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      // Match the native canonicalization used by the async freshness check.
-      canonical = fs.realpathSync.native(absolute);
+  } catch (error) {
+    if (error instanceof OllamaTransportError) throw error;
+  } catch (error) {
+    if (error instanceof OllamaTransportError) throw error;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      canonical = fs.realpathSync(absolute);
+  } catch {
+  } catch {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22cfea1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `106bb398` are properly handled with clean fallback behavior.

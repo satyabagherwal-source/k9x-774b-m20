@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:41:46.070Z",
+  "last_updated": "2026-11-04T23:53:22.977Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
-      "verified_at": "2026-11-04T00:53:28.972Z",
+      "content_hash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
+      "verified_at": "2026-11-04T23:48:31.100Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:53:28.972Z"
+      "last_updated": "2026-11-04T23:48:31.100Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "82d624753a1225202d55e7d85575cac9b4698aee722b8539cd86392f577a19ca",
-      "verified_at": "2026-11-04T01:34:58.262Z",
+      "content_hash": "2c6365fc1c10c4de05b95412fffe03993de1d89ab1527ce619aca602e05fbffd",
+      "verified_at": "2026-11-04T23:48:28.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:34:58.262Z"
+      "last_updated": "2026-11-04T23:48:28.593Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
-      "verified_at": "2026-10-31T09:29:56.958Z",
+      "content_hash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
+      "verified_at": "2026-11-04T23:53:22.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:29:56.958Z"
+      "last_updated": "2026-11-04T23:53:22.977Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

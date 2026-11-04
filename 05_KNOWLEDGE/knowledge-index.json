@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:41:45.957Z",
+  "last_updated": "2026-11-04T23:53:22.890Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4380,8 +4380,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "89b6cdc1",
-      "content_hash": "82d624753a1225202d55e7d85575cac9b4698aee722b8539cd86392f577a19ca",
+      "source_version": "5aaceb19",
+      "content_hash": "2c6365fc1c10c4de05b95412fffe03993de1d89ab1527ce619aca602e05fbffd",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4444,6 +4444,11 @@
           "number": 6705,
           "title": "docs(bedrockagentcore): note security group deletion behavior when removing a VP",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7029,
+          "title": "security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4451,7 +4456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:34:58.145Z",
+      "verified_at": "2026-11-04T23:48:28.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15103,8 +15108,8 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "4aa6fc23",
-      "content_hash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
+      "source_version": "d56502a3",
+      "content_hash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
@@ -15122,6 +15127,11 @@
           "number": 6691,
           "title": "use consistent native path canonicalization for graph inputs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7030,
+          "title": "preserve Ollama policy errors and late-exit cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15129,7 +15139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:53:28.873Z",
+      "verified_at": "2026-11-04T23:48:31.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18441,7 +18451,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
+      "content_hash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -18670,6 +18680,21 @@
           "number": 6150,
           "title": "**Rule #3 – Mandatory `dtype` Alignment Between Model Weights and Runtime Tensor Type**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7031,
+          "title": "[Causal Attention Bias Invariant]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7032,
+          "title": "[BFloat16 Memory‑Efficiency Invariant]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7033,
+          "title": "[Max‑Position‑Embeddings Consistency Invariant]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18690,7 +18715,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-31T09:29:56.847Z",
+      "verified_at": "2026-11-04T23:53:22.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178526,6 +178551,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:34:47.155Z"
+    },
+    "rule-7029": {
+      "learning_id": "rule-7029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7029,
+      "title": "security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "5aaceb19",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:48:28.520Z"
+    },
+    "rule-7030": {
+      "learning_id": "rule-7030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7030,
+      "title": "preserve Ollama policy errors and late-exit cleanup",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "d56502a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:48:31.021Z"
+    },
+    "rule-7031": {
+      "learning_id": "rule-7031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7031,
+      "title": "[Causal Attention Bias Invariant]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:53:22.876Z"
+    },
+    "rule-7032": {
+      "learning_id": "rule-7032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7032,
+      "title": "[BFloat16 Memory‑Efficiency Invariant]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:53:22.876Z"
+    },
+    "rule-7033": {
+      "learning_id": "rule-7033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7033,
+      "title": "[Max‑Position‑Embeddings Consistency Invariant]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:53:22.876Z"
     }
   },
   "aliases": {

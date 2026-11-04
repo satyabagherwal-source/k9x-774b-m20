@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
-    "lastHarvestedAt": "2026-10-31T09:29:56.949Z",
+    "contentHash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
+    "lastHarvestedAt": "2026-11-04T23:53:22.964Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "4aa6fc23",
+    "sourceVersion": "d56502a3",
     "license": "AGPL-3.0",
-    "contentHash": "6d8599349b3fb763e4367c451298dc035bfbc8cd67f157d3e092e1577c58c5ef",
-    "lastHarvestedAt": "2026-11-04T00:53:28.965Z",
+    "contentHash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
+    "lastHarvestedAt": "2026-11-04T23:48:31.087Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "89b6cdc1",
+    "sourceVersion": "5aaceb19",
     "license": "Apache-2.0",
-    "contentHash": "82d624753a1225202d55e7d85575cac9b4698aee722b8539cd86392f577a19ca",
-    "lastHarvestedAt": "2026-11-04T01:34:58.252Z",
+    "contentHash": "2c6365fc1c10c4de05b95412fffe03993de1d89ab1527ce619aca602e05fbffd",
+    "lastHarvestedAt": "2026-11-04T23:48:28.587Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

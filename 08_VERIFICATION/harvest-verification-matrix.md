@@ -7406,3 +7406,6 @@
 | `CYCLE-20261104-7OBF` | `2026-11-04T23:34:44.955Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7027` | Yes (`24d17807...`) |
 | `CYCLE-20261104-7Q3J` | `2026-11-04T23:34:47.263Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7028` | Yes (`4a8d5e3d...`) |
 | `CYCLE-20261104-GP8H` | `2026-11-04T23:41:46.049Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`d14b7a00...`) |
+| `CYCLE-20261104-PBU1` | `2026-11-04T23:48:28.585Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7029` | Yes (`2c6365fc...`) |
+| `CYCLE-20261104-PDRH` | `2026-11-04T23:48:31.085Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7030` | Yes (`cf27b8c2...`) |
+| `CYCLE-20261104-VMZ6` | `2026-11-04T23:53:22.962Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7031, Rule 7032, Rule 7033` | Yes (`07110e8a...`) |

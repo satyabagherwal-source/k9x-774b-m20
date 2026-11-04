@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `89b6cdc1`  
+> **Source Version**: `5aaceb19`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:34:57.552Z  
+> **Timestamp**: 2026-11-04T23:48:28.091Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:34:56.944Z  
+> **Harvest Timestamp**: 2026-11-04T23:48:27.101Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12961 stars
+- **Stars / Engagement**: 12962 stars
 
 ---
 
@@ -1200,288 +1200,1101 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89b6cdc1` (2026-11-03)
-**Commit Message**: docs(bedrockagentcore): note security group deletion behavior when removing a VPC runtime (#39461)
+### Incident Patch 1: `8e1aaf90` (2026-11-04)
+**Commit Message**: fix(security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (#39513)
 
 ### Issue # (if applicable)
 
-Related to #39201.
+No issue to close. This false positive was discovered while working on the EKS Kubernetes 1.37 support PR https://github.com/aws/aws-cdk/pull/39501; this fix is **independent** of that PR and is submitted standalone.
+
+> ⚠️ **Security-tooling change — needs Security Guardian owner review.** This PR changes how `iam:PassRole` resources are evaluated by the experimental `security-guardian` tool. It is intentionally left in **draft**. Please have the Security Guardian / security team review before marking ready. The change does **not** weaken genuine-wildcard detection (see validation below).
 
 ### Reason for this change
 
-When a VPC-mode `Runtime` is removed, AgentCore releases the network interfaces it created asynchronously. CloudFormation then fails to delete the runtime's security groups with `DependencyViolation`, retries, skips them, and leaves them in the account. This is service-side behavior; the maintainer suggested a README note on the issue.
+The `IAM_NO_OVERLY_PERMISSIVE_PASSROLE` guard rule flags `iam:PassRole` statements whose `Resource` is a **list of CloudFormation intrinsic objects** (e.g. `Fn::GetAtt` role ARNs), even though a list of specific ARNs is correctly scoped and is **not** a wildcard.
 
-### Description of changes
+Security Guardian validates templates in two passes: a **static** pass (raw template, intrinsics unresolved) and a **resolved** pass (intrinsics replaced with concrete ARNs). In the static
 
-Adds a "Removing a VPC Runtime" subsection to the `aws-bedrockagentcore` README, after "Managing Security Groups with VPC Configuration". It explains the behavior and documents the two workarounds from the issue thread:
-
-- Apply `RemovalPolicy.RETAIN` to `runtime.connections.securityGroups` and delete them once the ENIs are gone.
-- Pass a long-lived security group from a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
-
-Docs only, no code changes.
-
-### Describe any new or updated permissions being added
-
-None.
-
-### Description of how you validated changes
-
-Type-checked the new snippet against the mod
-
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +16/-0)
+**File**: `tools/@aws-cdk/security-guardian/rules/iam/iam-no-overly-permissive-passrole.guard` (modified, +36/-8)
 ```diff
-@@ -708,6 +708,22 @@ runtime.connections.allowTo(databaseSecurityGroup, ec2.Port.tcp(5432), 'Allow Po
- runtime.connections.allowToAnyIpv4(ec2.Port.tcp(443), 'Allow HTTPS outbound');
- ```
- 
-+#### Removing a VPC Runtime
-+
-+When a VPC-mode runtime is removed, the AgentCore service releases the network interfaces it created in your VPC asynchronously, and they can stay attached to the runtime's security groups for an extended period after the runtime is deleted. If CloudFormation tries to delete such a security group in that time, the deletion fails with `DependencyViolation`. CloudFormation retries for a while and then skips it, so the stack update can take a long time and the security group remains in your account outside of the stack.
-+
-+To avoid this, keep the runtime's security groups out of CloudFormation's delete path, and delete them yourself once the network interfaces are gone:
-+
-+```typescript fixture=default
-+declare const runtime: agentcore.Runtime;
-+
-+for (const sg of runtime.connections.securityGroups) {
-+  sg.applyRemovalPolicy(RemovalPolicy.RETAIN);
-+}
-+```
-+
-+Alternatively, pass a long-lived security group managed in a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
-+
- ### Runtime IAM Permissions
- 
- The Runtime construct provides convenient methods for granting IAM permissions to principals that need to invoke the runtime or manage its execution role.
+@@ -28,8 +28,15 @@ rule IAM_NO_OVERLY_PERMISSIVE_PASSROLE when %iam_passrole_resources !empty {
+                                             <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                     }
+                                     when Resource is_list {
+-                                        Resource[*] != "*"
+-                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                        # Compare only string elements: a list may hold intrinsic objects
++                                        # (Fn::GetAtt/Sub/Join) resolving to specific ARNs, which are correctly
++                                        # scoped and must not be flagged. A literal "*" element still fails.
++                                        Resource[*] {
++                                            when this is_string {
++                                                this != "*"
++                                                    <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                            }
++                                        }
+                                     }
+                                 }
+                             }
+@@ -42,8 +49,15 @@ rule IAM_NO_OVERLY_PERMISSIVE_PASSROLE when %iam_passrole_resources !empty {
+                                             <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                     }
+                                     when Resource is_list {
+-                                        Resource[*] != "*"
+-                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                        # Compare only string elements: a list may hold intrinsic objects
++                                        # (Fn::GetAtt/Sub/Join) resolving to specific ARNs, which are correctly
++                                        # scoped and must not be flagged. A literal "*" element still fails.
++                                        Resource[*] {
++                                            when this is_string {
++                                                this != "*"
++                                                    <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                            }
++                                        }
+                                     }
+                                 }
+                             }
+@@ -66,8 +80,15 @@ rule IAM_NO_OVERLY_PERMISSIVE_PASSROLE when %iam_passrole_resources !empty {
+                                             <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                     }
+                                     when Resource is_list {
+-                                        Resource[*] != "*"
+-                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                        # Compare only string elements: a list may hold intrinsic objects
++                                        # (Fn::GetAtt/Sub/Join) resolving to specific ARNs, which are correctly
++                                        # scoped and must not be flagged. A literal "*" element still fails.
++                                        Resource[*] {
++                                            when this is_string {
++                                                this != "*"
++                                                    <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
++                                            }
++                                        }
+                                     }
+                                 }
+                             }
+@@ -80,8 +101,15 @@ rule IAM_NO_OVERLY_PERMISSIVE_PASSROLE when %iam_passrole_resources !empty {
+                                             <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                     }
+                                     when Resource is_list {
+-                                        Resource[*] != "*"
+-                                            <<##ERROR:iam:PassRole must not use wildcard resourc
 ```
 
----
-
-### Incident Patch 2: `d7c8aa5c` (2026-11-03)
-**Commit Message**: fix(mediapackagev2-alpha): origin endpoint policy can be created before its origin endpoint (#38946)
-
-### Issue # (if applicable)
-
-Closes #38945.
-
-### Reason for this change
-
-`OriginEndpointPolicy` passes the channel group, channel and endpoint names to `CfnOriginEndpointPolicy` as plain strings, so CloudFormation sees no dependency on the `OriginEndpoint` and can create both at the same time. If the policy statement doesn't reference `originEndpointArn` (for example `resources: ['*']`), the policy can be created before the endpoint exists and the deploy fails.
-
-### Description of changes
-
-When the origin endpoint is defined in the app, the policy now adds a `DependsOn` on its `CfnOriginEndpoint`. This is the same thing `OriginEndpoint` already does for its channel and channel group. Imported endpoints have no default child, so nothing changes for them.
-
-### Describe any new or updated permissions being added
-
-None.
-
-### Description of how you validated changes
-
-Added a unit test that builds a policy with `resources: ['*']` and checks for the `DependsOn`. It fails without the change. The three integ snapshots that contain an origin endpoint policy only gain the new `DependsOn` entr
-
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/lib/origin-endpoint-policy.ts` (modified, +11/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/guard-rules.test.ts` (modified, +113/-0)
 ```diff
-@@ -1,4 +1,4 @@
--import { Resource, Stack } from 'aws-cdk-lib';
-+import { CfnResource, Resource, Stack } from 'aws-cdk-lib';
- import type { IRole } from 'aws-cdk-lib/aws-iam';
- import { PolicyDocument, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
- import { CfnOriginEndpointPolicy } from 'aws-cdk-lib/aws-mediapackagev2';
-@@ -139,5 +139,15 @@ export class OriginEndpointPolicy extends Resource {
-     if (cdnAuthRole) {
-       cfnResource.node.addDependency(cdnAuthRole);
-     }
+@@ -166,6 +166,119 @@ describe('Guard Rules Validation', () => {
+         expect(success).toBe(true);
+       });
+     });
 +
-+    // The channelGroupName/channelName/originEndpointName are rendered as literal strings (not CFN Refs),
-+    // so CloudFormation cannot infer the dependency and may create the policy before the endpoint exists.
-+    // We add a direct CfnResource-level DependsOn to guarantee deploy ordering without triggering CDK's
-+    // subtree-level cycle detection.
-+    // For imported constructs, defaultChild is undefined (no CFN resource to order against).
-+    const endpointCfn = props.originEndpoint.node.defaultChild as CfnResource | undefined;
-+    if (endpointCfn && CfnResource.isCfnResource(endpointCfn)) {
-+      cfnResource.addResourceDependency(endpointCfn);
++    describe('IAM_NO_OVERLY_PERMISSIVE_PASSROLE', () => {
++      const passroleFixturesDir = path.join(ruleFixturesDir, 'iam/iam-no-overly-permissive-passrole');
++      const passroleRule = path.join(rulesDir, 'iam/iam-no-overly-permissive-passrole.guard');
++
++      test('Static: should not flag a PassRole scoped to a list of Fn::GetAtt role ARNs', async () => {
++        // The EKS FargateCluster creation-role pattern (aws/aws-cdk#39501): a resource list of
++        // intrinsic objects is correctly scoped and must pass without intrinsic resolution.
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'compliant-intrinsic-arn-list.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-intrinsic-list-static-test.xml'),
++          'PassRole Intrinsic List Static',
++          new Map(),
++          true,
++        );
++
++        // Should pass - a list of intrinsic ARNs is not a wildcard
++        expect(success).toBe(true);
++      });
++
++      test('Static: should not flag a PassRole scoped to a single specific ARN', async () => {
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'compliant-single-arn.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-single-arn-static-test.xml'),
++          'PassRole Single Arn Static',
++          new Map(),
++          true,
++        );
++
++        // Should pass - a single specific ARN is not a wildcard
++        expect(success).toBe(true);
++      });
++
++      test('Static: should flag a PassRole with Resource "*"', async () => {
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'non-compliant-wildcard.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-wildcard-static-test.xml'),
++          'PassRole Wildcard Static',
++          new Map(),
++          false,
++        );
++
++        // Should fail - a bare "*" resource lets any role be passed
++        expect(success).toBe(false);
++        expect(failedRules(path.join(outputDir, 'passrole-wildcard-static-test.xml'))).toContain('IAM_NO_OVERLY_PERMISSIVE_PASSROLE');
++      });
++
++      test('Static: should flag a PassRole whose resource list contains "*"', async () => {
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'non-compliant-wildcard-in-list.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-wildcard-in-list-static-test.xml'),
++          'PassRole Wildcard In List Static',
++          new Map(),
++          false,
++        );
++
++        // Should fail - a "*" element is a wildcard even next to a scoped intrinsic ARN
++        expect(success).toBe(false);
++        expect(failedRules(path.join(outputDir, 'passrole-wildcard-in-list-static-test.xml'))).toContain('IAM_NO_OVERLY_PERMISSIVE_PASSROLE');
++      });
++
++      test('Resolved: should not flag the intrinsic ARN list after resolution', async () => {
++        // After preprocessing, the Fn::GetAtt list resolves to concrete role ARNs; still not a wildcard.
++        preprocessTemplates(passroleFixturesDir, outputDir);
++
++        const success = await runCfnGuardValidation(
++          path.join(outputDir, 'compliant-intrinsic-arn-list.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-intrinsic-list-resolved-test.xml'),
++          'PassRole Intrinsic List Resolved',
++          new Map(),
++          true,
++        );
++
++        // Should pass - resolved values are valid ARNs, not "*"
++        expect(success).toBe(true);
++      });
++
++      test('Static: should not flag an inline-policy PassRole scoped to a list of Fn::GetAtt role ARNs', async () => {
++        // Covers the Properties.Policies[*].PolicyDocument branch, which cfn-guard evaluates
++        // independently of the Properties.PolicyDocument path.
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'compliant-inline-policy-intrinsic-arn-list.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-inline-intrinsic-list-static-test.xml'),
++          'PassRole Inline Intrinsic List Static',
++          new Map(),
++          true,
++        );
++
++        // Should pass - a list of intrinsic ARNs on the inline-policy path is not a wildcard
++        expect(success).toBe(true);
++      });
++
++      test('Static: should flag an inline-policy PassRole whose resource list contains "*"', async () => {
++        const success = await runCfnGuardValidation(
++          path.join(passroleFixturesDir, 'non-compliant-inline-policy-wildcard-in-list.json'),
++          passroleRule,
++          path.join(outputDir, 'passrole-inline-wildcard-in-list-static-test.xml'),
++          'PassRole Inline Wildcard In List Static',
++          new Map(),
++          false,
++        );
+
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/compliant-inline-policy-intrinsic-arn-list.json` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must not fire on the INLINE-policy path: an AWS::IAM::Role whose Properties.Policies inline PolicyDocument scopes iam:PassRole to a list of Fn::GetAtt role ARNs. Exercises the Properties.Policies[*].PolicyDocument branch, which cfn-guard evaluates independently of the Properties.PolicyDocument path.",
++  "Resources": {
++    "PassTargetRole": {
++      "Type": "AWS::IAM::Role",
++      "Properties": {
++        "AssumeRolePolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Principal": { "Service": "ec2.amazonaws.com" },
++              "Action": "sts:AssumeRole"
++            }
++          ]
++        }
++      }
++    },
++    "CreationRole": {
++      "Type": "AWS::IAM::Role",
++      "Properties": {
++        "AssumeRolePolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Principal": { "Service": "eks.amazonaws.com" },
++              "Action": "sts:AssumeRole"
++            }
++          ]
++        },
++        "Policies": [
++          {
++            "PolicyName": "InlinePassRole",
++            "PolicyDocument": {
++              "Version": "2012-10-17",
++              "Statement": [
++                {
++                  "Action": "iam:PassRole",
++                  "Effect": "Allow",
++                  "Resource": [
++                    { "Fn::GetAtt": ["PassTargetRole", "Arn"] }
++                  ]
++                }
++              ]
++            }
++          }
++        ]
++      }
 +    }
-   }
- }
++  }
++}
 ```
 
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/aws-cdk-mediapackagev2-cloudfront-origin.assets.json` (modified, +2/-2)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/compliant-intrinsic-arn-list.json` (added, +54/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "version": "53.0.0",
-   "files": {
--    "1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246": {
-+    "d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428": {
-       "displayName": "aws-cdk-mediapackagev2-cloudfront-origin Template",
-       "source": {
-         "path": "aws-cdk-mediapackagev2-cloudfront-origin.template.json",
-@@ -10,7 +10,7 @@
-       "destinations": {
-         "current_account-current_region-517ac594": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246.json",
-+          "objectKey": "d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
+@@ -0,0 +1,54 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must not fire: iam:PassRole is scoped to a list of specific role ARNs expressed as Fn::GetAtt intrinsics (the EKS FargateCluster creation-role pattern from aws/aws-cdk#39501). A list of intrinsic objects is a correctly-scoped, non-wildcard resource.",
++  "Resources": {
++    "FargateClusterRole8E36B33A": {
++      "Type": "AWS::IAM::Role",
++      "Properties": {
++        "AssumeRolePolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Principal": { "Service": "eks-fargate-pods.amazonaws.com" },
++              "Action": "sts:AssumeRole"
++            }
++          ]
++        }
++      }
++    },
++    "FargateProfileDefaultPodExecutionRole66F2610E": {
++      "Type": "AWS::IAM::Role",
++      "Properties": {
++        "AssumeRolePolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Principal": { "Service": "eks-fargate-pods.amazonaws.com" },
++              "Action": "sts:AssumeRole"
++            }
++          ]
++        }
++      }
++    },
++    "FargateClusterCreationRoleDefaultPolicy": {
++      "Type": "AWS::IAM::Policy",
++      "Properties": {
++        "PolicyName": "FargateClusterCreationRoleDefaultPolicy",
++        "PolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Action": "iam:PassRole",
++              "Effect": "Allow",
++              "Resource": [
++                { "Fn::GetAtt": ["FargateClusterRole8E36B33A", "Arn"] },
++                { "Fn::GetAtt": ["FargateProfileDefaultPodExecutionRole66F2610E", "Arn"] }
++              ]
++            }
++          ]
++        }
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/aws-cdk-mediapackagev2-cloudfront-origin.template.json` (modified, +4/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/compliant-single-arn.json` (added, +21/-0)
 ```diff
-@@ -93,7 +93,10 @@
-      ],
-      "Version": "2012-10-17"
-     }
--   }
-+   },
-+   "DependsOn": [
-+    "EndpointEEF1FD8F"
-+   ]
-   },
-   "DistributionOrigin1MediaPackageV2OAC7A801A77": {
-    "Type": "AWS::CloudFront::OriginAccessControl",
+@@ -0,0 +1,21 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must not fire: iam:PassRole is scoped to a single specific role ARN string (non-wildcard).",
++  "Resources": {
++    "ScopedPassRolePolicy": {
++      "Type": "AWS::IAM::Policy",
++      "Properties": {
++        "PolicyName": "ScopedPassRolePolicy",
++        "PolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Action": "iam:PassRole",
++              "Effect": "Allow",
++              "Resource": "arn:aws:iam::123456789012:role/MyServiceRole"
++            }
++          ]
++        }
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/manifest.json` (modified, +1/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/non-compliant-inline-policy-wildcard-in-list.json` (added, +38/-0)
 ```diff
-@@ -18,7 +18,7 @@
-         "validateOnSynth": false,
-         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
-         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
--        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246.json",
-+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428.json",
-         "requiresBootstrapStackVersion": 6,
-         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
-         "additionalDependencies": [
+@@ -0,0 +1,38 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must still fire on the INLINE-policy path: an AWS::IAM::Role whose Properties.Policies inline PolicyDocument scopes iam:PassRole to a list that contains a literal '*' alongside a scoped intrinsic ARN. The wildcard element must be detected on the Properties.Policies branch too.",
++  "Resources": {
++    "CreationRole": {
++      "Type": "AWS::IAM::Role",
++      "Properties": {
++        "AssumeRolePolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Principal": { "Service": "eks.amazonaws.com" },
++              "Action": "sts:AssumeRole"
++            }
++          ]
++        },
++        "Policies": [
++          {
++            "PolicyName": "InlinePassRole",
++            "PolicyDocument": {
++              "Version": "2012-10-17",
++              "Statement": [
++                {
++                  "Action": ["iam:PassRole"],
++                  "Effect": "Allow",
++                  "Resource": [
++                    { "Fn::GetAtt": ["SomeRole", "Arn"] },
++                    "*"
++                  ]
++                }
++              ]
++            }
++          }
++        ]
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/aws-cdk-mediapackagev2-endpoint-cdn-auth.assets.json` (modified, +2/-2)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/non-compliant-wildcard-in-list.json` (added, +24/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "version": "53.0.0",
-   "files": {
--    "63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f": {
-+    "c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629": {
-       "displayName": "aws-cdk-mediapackagev2-endpoint-cdn-auth Template",
-       "source": {
-         "path": "aws-cdk-mediapackagev2-endpoint-cdn-auth.template.json",
-@@ -10,7 +10,7 @@
-       "destinations": {
-         "current_account-current_region-dbdea659": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f.json",
-+          "objectKey": "c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
+@@ -0,0 +1,24 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must still fire: iam:PassRole resource list contains a literal wildcard '*' alongside a scoped intrinsic ARN. The wildcard element must be detected even when the list also holds intrinsic objects. Action is a list here to exercise the Action is_list branch.",
++  "Resources": {
++    "WildcardInListPassRolePolicy": {
++      "Type": "AWS::IAM::Policy",
++      "Properties": {
++        "PolicyName": "WildcardInListPassRolePolicy",
++        "PolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Action": ["iam:PassRole"],
++              "Effect": "Allow",
++              "Resource": [
++                { "Fn::GetAtt": ["SomeRole", "Arn"] },
++                "*"
++              ]
++            }
++          ]
++        }
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/aws-cdk-mediapackagev2-endpoint-cdn-auth.template.json` (modified, +2/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-overly-permissive-passrole/non-compliant-wildcard.json` (added, +21/-0)
 ```diff
-@@ -174,7 +174,8 @@
-    },
-    "DependsOn": [
-     "EndpointPolicyCdnAuthRoleDefaultPolicyEF103B96",
--    "EndpointPolicyCdnAuthRole803DA187"
-+    "EndpointPolicyCdnAuthRole803DA187",
-+    "EndpointEEF1FD8F"
-    ]
-   }
-  },
-```
-
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/manifest.json` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-         "validateOnSynth": false,
-         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
-         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
--        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f.json",
-+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629.json",
-         "requiresBootstrapStackVersion": 6,
-         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
-         "additionalDependencies": [
-```
-
-**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-policy-tests.js.snapshot/aws-cdk-mediapackagev2.assets.json` (modified, +4/-4)
-```diff
-@@ -1,16 +1,16 @@
- {
--  "version": "52.0.0",
-+  "version": "54.0.0",
-   "files": {
--    "91cfc990015e92ef7156f6e9acab8b726865af8f99ceda8bfcfb2adb56cb19b4": {
-+    "efd53b11ce339efd2c5571ccb5606b3aca4ddf2b52ff2d0474aff2300df32be5": {
-       "displayName": "aws-cdk-mediapackagev2 Template",
-       "source": {
-         "path": "aws-cdk-mediapackagev2.template.json",
-         "packaging": "file"
-       },
-       "destinations": {
--        "current_account-current_region-937451ed": {
-+        "current_account-current_region-2f28b6fb": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "91cfc990015e92ef7156f6e9acab8b726865af8f99ceda8bfcfb2adb56cb19b4.json",
-+          "objectKey": "efd53b11ce339efd2c5571ccb5606b3aca4ddf2b52ff2d0474aff2300df32be5.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
+@@ -0,0 +1,21 @@
++{
++  "Description": "IAM_NO_OVERLY_PERMISSIVE_PASSROLE must fire: iam:PassRole uses a wildcard '*' resource (any role can be passed).",
++  "Resources": {
++    "WildcardPassRolePolicy": {
++      "Type": "AWS::IAM::Policy",
++      "Properties": {
++        "PolicyName": "WildcardPassRolePolicy",
++        "PolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Action": "iam:PassRole",
++              "Effect": "Allow",
++              "Resource": "*"
++            }
++          ]
++        }
++      }
++    }
++  }
++}
 ```
 
 ---
 
-### Incident Patch 3: `1b565c08` (2026-11-03)
-**Commit Message**: docs: fix broken Maven Central badge in README (#39613)
+### Incident Patch 2: `af41b6ea` (2026-11-04)
+**Commit Message**: fix(medialive-alpha): cannot use out-of-band captions on MediaPackage v2 outputs (#39619)
+
+### Issue # (if applicable)
+
+Closes #<issue number here>.
 
 ### Reason for this change
+Sidecar captions (i.e. TTML) couldn't reach a MediaPackage V2 output group: `captions` rejected
+them and pointed at a caption-only output, which was itself rejected.
 
-The Maven Central badge in the root `README.md` renders as a broken image. It points at `maven-badges.herokuapp.com`, which no longer exists (requests return HTTP 404 "No such app"). The badge's link target uses the same dead host.
 
 ### Description of changes
-
-- Badge image: switched to `https://img.shields.io/maven-central/v/software.amazon.awscdk/aws-cdk-lib`. The README already uses shields.io for the Gitpod badge.
-- Badge link: switched to the package page on Sonatype Central, `https://central.sonatype.com/artifact/software.amazon.awscdk/aws-cdk-lib`.
-
-Alternative considered: `maven-badges.sml.io`, where the old badge service moved. I chose shields.io because it is more widely used and already appears in this README.
+Allow a sidecar caption as an output's `encode`, replacing the blanket rejection with two narrower
+rules: no in-band caption as the primary encode, and `captions` empty when `encode` is a caption.
+Mirrored into CMAF Ingest.
 
 ### Describe any new or updated permissions being added
 
-None.
+
+
 
 ### Description of how you validated changes
 
-- The old badge URL returns `404 text/html` ("No such app").
-- The new badge URL returns `200 image/svg+xml` and shows the current version (`v2.275.0`).
-- The new link target returns `200`.
-
-Only `README.md` changed; there are no code changes.
+New integ test 
 
 ### Checklist
-- [x] My code 
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
 
-**File**: `README.md` (modified, +1/-1)
+----
+
+*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/README.md` (modified, +4/-2)
 ```diff
-@@ -5,7 +5,7 @@
- [![NPM version](https://badge.fury.io/js/aws-cdk.svg)](https://badge.fury.io/js/aws-cdk)
- [![PyPI version](https://badge.fury.io/py/aws-cdk-lib.svg)](https://badge.fury.io/py/aws-cdk-lib)
- [![NuGet version](https://badge.fury.io/nu/Amazon.CDK.Lib.svg)](https://badge.fury.io/nu/Amazon.CDK.Lib)
--[![Maven Central](https://maven-badges.herokuapp.com/maven-central/software.amazon.awscdk/aws-cdk-lib/badge.svg)](https://maven-badges.herokuapp.com/maven-central/software.amazon.awscdk/aws-cdk-lib)
-+[![Maven Central](https://img.shields.io/maven-central/v/software.amazon.awscdk/aws-cdk-lib)](https://central.sonatype.com/artifact/software.amazon.awscdk/aws-cdk-lib)
- [![Go Reference](https://pkg.go.dev/badge/github.com/aws/aws-cdk-go/awscdk/v2.svg)](https://pkg.go.dev/github.com/aws/aws-cdk-go/awscdk/v2)
+@@ -468,7 +468,7 @@ output format via the `CaptionDestination` factory. One selector can feed multip
+ // Define a caption selector on the input attachment (see Input Attachment Settings below)
+ const captionSelector = medialive.CaptionSelector.embedded('captions');
  
- [![View on Construct Hub](https://constructs.dev/badge?package=aws-cdk-lib)](https://constructs.dev/packages/aws-cdk-lib)
+-// WebVTT captions — packaged alongside the video encode in the same output
++// WebVTT captions
+ const webvtt = medialive.EncodeConfiguration.caption({
+   name: 'eng_webvtt',
+   captionSelectorName: captionSelector.name,
+@@ -502,14 +502,15 @@ const burnIn = medialive.EncodeConfiguration.caption({
+ 
+ Use `mediaPackageV2()` and pass a single `channel` — MediaLive maps each pipeline to a MediaPackage ingest endpoint automatically (one for `SINGLE_PIPELINE`, both for `STANDARD`). Each output contains a single encode (one track per output).
+ 
+-In-band captions (burn-in, embedded) ride alongside a video encode via the `captions` prop:
++In-band captions (burn-in, embedded) ride alongside a video encode via the `captions` prop. Out-of-band (sidecar) captions are a track of their own, so they go in their own output as that output's `encode`:
+ 
+ ```ts
+ declare const mpChannel: mediapackagev2.IChannel;
+ declare const hdVideo: medialive.EncodeConfiguration;
+ declare const sdVideo: medialive.EncodeConfiguration;
+ declare const audio: medialive.EncodeConfiguration;
+ declare const burnIn: medialive.EncodeConfiguration;
++declare const ttml: medialive.EncodeConfiguration;
+ 
+ medialive.OutputGroupConfiguration.mediaPackageV2({
+   name: 'emp',
+@@ -518,6 +519,7 @@ medialive.OutputGroupConfiguration.mediaPackageV2({
+     { encode: hdVideo, captions: [burnIn], outputName: 'hd' },
+     { encode: sdVideo, outputName: 'sd' },
+     { encode: audio, outputName: 'audio' },
++    { encode: ttml, outputName: 'eng_ttml' },
+   ],
+ });
+ ```
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/lib/output-group.ts` (modified, +2/-1)
+```diff
+@@ -446,7 +446,8 @@ export interface MediaPackageV2OutputGroupBaseProps {
+    * The outputs for this output group.
+    *
+    * MediaPackage V2 uses CMAF ingest which requires one track per output.
+-   * Create a separate output for each encode (e.g. one for HD video, one for SD video, one for audio).
++   * Create a separate output for each encode (e.g. one for HD video, one for SD video, one for
++   * audio, one for each out-of-band caption).
+    * Do NOT put multiple encodes in a single output.
+    */
+   readonly outputs: MediaPackageV2OutputDefinition[];
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/lib/outputs.ts` (modified, +51/-25)
+```diff
+@@ -212,18 +212,21 @@ export abstract class Output {
+ /**
+  * Output definition for a MediaPackage V2 output group.
+  *
+- * MediaPackage V2 uses CMAF ingest which requires one media track (video or audio) per output.
+- * In-band captions (burn-in, embedded) can ride alongside the primary encode because they do not
+- * produce a separate track.
++ * MediaPackage V2 uses CMAF ingest which requires one track per output. The track is a video
++ * encode, an audio encode, or a caption encode. In-band captions (burn-in,
++ * embedded) ride alongside the primary encode because they do not produce a separate track.
+  */
+ export interface MediaPackageV2OutputDefinition {
+   /**
+-   * The primary encode for this output — one video or one audio track.
++   * The encode that produces this output's track — one video encode, one audio encode, or one caption encode.
++   * Those caption types are packaged as their own track, so they
++   * are set here rather than in `captions`.
+    */
+   readonly encode: EncodeConfiguration;
+   /**
+    * Caption encodes that ride alongside the primary encode. Only in-band caption types are
+-   * allowed (burn-in, embedded) — out-of-band captions must go in their own output.
++   * allowed (burn-in, embedded) — out-of-band captions go in their own output, as that output's
++   * `encode`. Must be empty when `encode` is itself a caption.
+    *
+    * @default - no captions on this output
+    */
+@@ -466,17 +469,21 @@ export interface SrtOutputDefinition extends OutputDefinition {
+ /**
+  * Output definition for a CMAF Ingest output group.
+  *
+- * CMAF Ingest requires one media track (video or audio) per output. In-band captions (burn-in,
+- * embedded) can ride alongside the primary encode.
++ * CMAF Ingest requires one track per output. The track is a video encode, an audio encode, or a
++ * caption encode. In-band captions (burn-in, embedded) ride alongside the primary
++ * encode because they do not produce a separate track.
+  */
+ export interface CmafIngestOutputDefinition {
+   /**
+-   * The primary encode for this output — one video or one audio track.
++   * The encode that produces this output's track — one video encode, one audio encode, or one
++   * caption encode. Those caption types are packaged as their own track, so they
++   * are set here rather than in `captions`.
+    */
+   readonly encode: EncodeConfiguration;
+   /**
+    * Caption encodes that ride alongside the primary encode. Only in-band caption types are
+-   * allowed (burn-in, embedded) — out-of-band captions must go in their own output.
++   * allowed (burn-in, embedded) — out-of-band captions go in their own output, as that output's
++   * `encode`. Must be empty when `encode` is itself a caption.
+    *
+    * @default - no captions on this output
+    */
+@@ -543,15 +550,22 @@ export class MediaPackageV2Output extends Output {
+         `MediaPackage V2 output group '${this.groupName}' requires explicit framerate on video encode '${encode.name}'.`,
+       );
+     }
+-    // Validate the primary encode is not a caption
+-    if (encode._bindCaption()) {
++    // A sidecar caption is a track of its own, so it can be the primary encode. In-band captions
++    // produce no track and must ride alongside a video encode.
++    if (encode._bindCaption() && encode._isInBandCaption()) {
+       throw new UnscopedValidationError(
+-        lit`MediaPackagePrimaryEncodeNotCaption`,
+-        `MediaPackage V2 output '${this.def.outputName}': 'encode' must be a video or audio encode. Captions must go in the 'captions' prop alongside a video encode.`,
++        lit`MediaPackagePrimaryEncodeNotInBandCaption`,
++        `MediaPackage V2 output '${this.def.outputName}': caption '${encode.name}' uses an in-band destination (burn-in, embedded), which produces no track of its own. Set 'encode' to a video encode and pass this caption in the 'captions' prop.`,
++      );
++    }
++    if (encode._bindCaption() && (this.def.captions ?? []).length > 0) {
++      throw new UnscopedValidationError(
++        lit`MediaPackageCaptionOnlyOutputHasCaptions`,
++        `MediaPackage V2 output '${this.def.outputName}': 'captions' must be empty when 'encode' is a caption. Put each out-of-band caption in its own output.`,
+       );
+     }
+     // Validate captions are actually caption encodes and are in-band only
+-    for (const caption of this.def.captions ?? []) {
++    for (const caption of (this.def.captions ?? [])) {
+       if (!caption._bindCaption()) {
+         throw new UnscopedValidationError(
+           lit`MediaPackageCaptionsMustBeCaptions`,
+@@ -561,14 +575,13 @@ export class MediaPackageV2Output extends Output {
+       if (!caption._isInBandCaption()) {
+         throw new UnscopedValidationError(
+           lit`MediaPackageCaptionsMustBeInBand`,
+-          `MediaPackage V2 output '${this.def.outputName}': caption '${caption.name}' uses an out-of-band destination (e.g. WebVTT, TTML). Only in-band types (burn-in, embedded) can ride alongside the primary encode. Put out-of-band
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/test/channel.test.ts` (modified, +223/-4)
+```diff
+@@ -2703,6 +2703,110 @@ describe('CMAF Ingest output group', () => {
+       ],
+     })).toThrow(/must end with '\/'/);
+   });
++
++  test.each([
++    ['ttml', CaptionDestination.ttml()],
++    ['webvtt', CaptionDestination.webvtt()],
++  ])('out-of-band %s caption is the primary encode of its own output', (captionName, destination) => {
++    const video = EncodeConfiguration.video({ name: 'video', width: 1920, height: 1080, codec: VideoCodecSettings.h264() });
++    const caption = EncodeConfiguration.caption({
++      name: captionName,
++      captionSelectorName: 'cc',
++      destination,
++    });
++
++    new Channel(stack, 'CmafChannel', {
++      inputs: [{ input: defaultInput }],
++      outputGroups: [
++        OutputGroupConfiguration.cmafIngest({
++          name: 'cmaf',
++          destinations: [OutputDestination.url('https://ingest.example.com/v1/channel/')],
++          outputs: [
++            { outputName: 'cmaf_video', nameModifier: '_video', encode: video },
++            { outputName: 'cmaf_captions', nameModifier: '_captions', encode: caption },
++          ],
++        }),
++      ],
++    });
++
++    Template.fromStack(stack).hasResourceProperties('AWS::MediaLive::Channel', {
++      EncoderSettings: Match.objectLike({
++        OutputGroups: [Match.objectLike({
++          Outputs: [
++            Match.objectLike({ OutputName: 'cmaf_video', VideoDescriptionName: 'video' }),
++            {
++              OutputName: 'cmaf_captions',
++              CaptionDescriptionNames: [captionName],
++              VideoDescriptionName: Match.absent(),
++              AudioDescriptionNames: Match.absent(),
++              OutputSettings: { CmafIngestOutputSettings: { NameModifier: '_captions' } },
++            },
++          ],
++        })],
++      }),
++    });
++  });
++
++  // MediaLive rejects this: "Outputs must have at least one associated Video Description when
++  // using packaged caption destinations."
++  test.each([
++    ['burn-in', CaptionDestination.burnIn()],
++    ['embedded', CaptionDestination.embedded()],
++  ])('fails when an in-band %s caption is the primary encode', (captionName, destination) => {
++    const caption = EncodeConfiguration.caption({
++      name: captionName,
++      captionSelectorName: 'cc',
++      destination,
++    });
++
++    expect(() => {
++      new Channel(stack, 'CmafChannel', {
++        inputs: [{ input: defaultInput }],
++        outputGroups: [
++          OutputGroupConfiguration.cmafIngest({
++            name: 'cmaf',
++            destinations: [OutputDestination.url('https://ingest.example.com/v1/channel/')],
++            outputs: [{ outputName: 'cmaf_captions', nameModifier: '_captions', encode: caption }],
++          }),
++        ],
++      });
++      Template.fromStack(stack);
++    }).toThrow(/uses an in-band destination/);
++  });
++
++  // MediaLive rejects this: "An output with only caption descriptions cannot have more than one
++  // associated."
++  test('fails when a caption-only output also has captions', () => {
++    const ttml = EncodeConfiguration.caption({
++      name: 'ttml',
++      captionSelectorName: 'cc',
++      destination: CaptionDestination.ttml(),
++    });
++    const burnIn = EncodeConfiguration.caption({
++      name: 'burn-in',
++      captionSelectorName: 'cc',
++      destination: CaptionDestination.burnIn(),
++    });
++
++    expect(() => {
++      new Channel(stack, 'CmafChannel', {
++        inputs: [{ input: defaultInput }],
++        outputGroups: [
++          OutputGroupConfiguration.cmafIngest({
++            name: 'cmaf',
++            destinations: [OutputDestination.url('https://ingest.example.com/v1/channel/')],
++            outputs: [{
++              outputName: 'cmaf_captions',
++              nameModifier: '_captions',
++              encode: ttml,
++              captions: [burnIn],
++            }],
++          }),
++        ],
++      });
++      Template.fromStack(stack);
++    }).toThrow(/'captions' must be empty when 'encode' is a caption/);
++  });
+ });
+ 
+ describe('Per-output settings', () => {
+@@ -3260,7 +3364,7 @@ describe('Caption descriptions', () => {
+   });
+ });
+ 
+-describe('MediaPackage V2 in-band captions', () => {
++describe('MediaPackage V2 captions', () => {
+   test('video output with burn-in caption in captions prop', () => {
+     const video = EncodeConfiguration.video({
+       name: 'v',
+@@ -3421,12 +3525,97 @@ describe('MediaPackage V2 in-band captions', () => {
+     }).toThrow(/only one embedded caption/);
+   });
+ 
+-  test('fails when caption is the primary encode', () => {
++  test.each([
++    ['ttml', CaptionDestination.ttml()],
++    ['webvtt', CaptionDestination.webvtt()],
++  ])('out-of-band %s caption is the primary encode of its own output', (captionName, destination) => {
++    const video = EncodeConfiguration.video({
++      name: 'v',
++      width: 1920,
++      height: 1080,
++      codec: VideoCodecSettings.h264({ framerate: Framerate.FPS_29_97 }),
++    });
++    const caption = EncodeConfiguration.caption({
++      name: captionName,
++      cap
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/test/integ.medialive-mediapackage-sidecar-captions.js.snapshot/aws-cdk-medialive-mediapackage-sidecar-captions.assets.json` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{
++  "version": "55.0.0",
++  "files": {
++    "6ff2de87c884cfbf8df59b5a69c52ab8b2a112f930645d956f0397bc383cc64d": {
++      "displayName": "aws-cdk-medialive-mediapackage-sidecar-captions Template",
++      "source": {
++        "path": "aws-cdk-medialive-mediapackage-sidecar-captions.template.json",
++        "packaging": "file"
++      },
++      "destinations": {
++        "current_account-current_region-8a395f3f": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "6ff2de87c884cfbf8df59b5a69c52ab8b2a112f930645d956f0397bc383cc64d.json",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    }
++  },
++  "dockerImages": {}
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/test/integ.medialive-mediapackage-sidecar-captions.js.snapshot/aws-cdk-medialive-mediapackage-sidecar-captions.metadata.json` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++{
++  "/aws-cdk-medialive-mediapackage-sidecar-captions": [
++    {
++      "type": "aws:cdk:templateFile",
++      "data": "aws-cdk-medialive-mediapackage-sidecar-captions.template.json"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/EmpGroup": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/EmpChannel": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/HlsEndpoint": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/SrtInput": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/MediaLiveRole": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": {
++        "assumedBy": {
++          "principalAccount": "*",
++          "assumeRoleAction": "*"
++        }
++      }
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/SidecarCaptionChannel": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/ChannelArn": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "ChannelArn"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/EmpGroup/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "EmpGroupC5CC4626"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/EmpChannel/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "EmpChannel894EADAC"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/HlsEndpoint/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "HlsEndpointB1B8983D"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/SrtInput/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SrtInputC96BD065"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/MediaLiveRole/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "MediaLiveRole1149D189"
++    }
++  ],
++  "/aws-cdk-medialive-mediapackage-sidecar-captions/SidecarCaptionChannel/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SidecarCaptionChannel1F31CCA9"
++    }
++  ]
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/test/integ.medialive-mediapackage-sidecar-captions.js.snapshot/aws-cdk-medialive-mediapackage-sidecar-captions.template.json` (added, +314/-0)
+```diff
+@@ -0,0 +1,314 @@
++{
++ "Resources": {
++  "EmpGroupC5CC4626": {
++   "Type": "AWS::MediaPackageV2::ChannelGroup",
++   "Properties": {
++    "ChannelGroupName": "integ-sidecar-captions-group"
++   },
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete"
++  },
++  "EmpChannel894EADAC": {
++   "Type": "AWS::MediaPackageV2::Channel",
++   "Properties": {
++    "ChannelGroupName": "integ-sidecar-captions-group",
++    "ChannelName": "integ-sidecar-captions-channel",
++    "InputType": "CMAF"
++   },
++   "DependsOn": [
++    "EmpGroupC5CC4626"
++   ],
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete"
++  },
++  "HlsEndpointB1B8983D": {
++   "Type": "AWS::MediaPackageV2::OriginEndpoint",
++   "Properties": {
++    "ChannelGroupName": "integ-sidecar-captions-group",
++    "ChannelName": "integ-sidecar-captions-channel",
++    "ContainerType": "CMAF",
++    "HlsManifests": [
++     {
++      "ManifestName": "index"
++     }
++    ],
++    "OriginEndpointName": "integ-sidecar-captions-hls",
++    "Segment": {}
++   },
++   "DependsOn": [
++    "EmpChannel894EADAC",
++    "EmpGroupC5CC4626"
++   ],
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete"
++  },
++  "SrtInputC96BD065": {
++   "Type": "AWS::MediaLive::Input",
++   "Properties": {
++    "Name": "integ-sidecar-captions-input",
++    "SrtSettings": {
++     "SrtCallerSources": [
++      {
++       "SrtListenerAddress": "203.0.113.20",
++       "SrtListenerPort": "5000"
++      }
++     ]
++    },
++    "Type": "SRT_CALLER"
++   }
++  },
++  "MediaLiveRole1149D189": {
++   "Type": "AWS::IAM::Role",
++   "Properties": {
++    "AssumeRolePolicyDocument": {
++     "Statement": [
++      {
++       "Action": "sts:AssumeRole",
++       "Effect": "Allow",
++       "Principal": {
++        "Service": "medialive.amazonaws.com"
++       }
++      }
++     ],
++     "Version": "2012-10-17"
++    }
++   }
++  },
++  "SidecarCaptionChannel1F31CCA9": {
++   "Type": "AWS::MediaLive::Channel",
++   "Properties": {
++    "ChannelClass": "SINGLE_PIPELINE",
++    "Destinations": [
++     {
++      "Id": "emp",
++      "MediaPackageSettings": [
++       {
++        "ChannelEndpointId": "ENDPOINT_1",
++        "ChannelGroup": "integ-sidecar-captions-group",
++        "ChannelName": "integ-sidecar-captions-channel",
++        "MediaPackageRegionName": {
++         "Ref": "AWS::Region"
++        }
++       }
++      ]
++     }
++    ],
++    "EncoderSettings": {
++     "AudioDescriptions": [
++      {
++       "AudioTypeControl": "FOLLOW_INPUT",
++       "CodecSettings": {
++        "AacSettings": {
++         "Bitrate": 192000,
++         "CodingMode": "CODING_MODE_2_0",
++         "InputType": "NORMAL",
++         "Profile": "LC",
++         "RateControlMode": "CBR",
++         "RawFormat": "NONE",
++         "SampleRate": 48000,
++         "Spec": "MPEG4"
++        }
++       },
++       "LanguageCodeControl": "FOLLOW_INPUT",
++       "Name": "aac-stereo"
++      }
++     ],
++     "CaptionDescriptions": [
++      {
++       "Accessibility": "DOES_NOT_IMPLEMENT_ACCESSIBILITY_FEATURES",
++       "CaptionSelectorName": "captions",
++       "DestinationSettings": {
++        "TtmlDestinationSettings": {
++         "StyleControl": "PASSTHROUGH"
++        }
++       },
++       "LanguageCode": "eng",
++       "LanguageDescription": "English",
++       "Name": "ttml-eng"
++      }
++     ],
++     "OutputGroups": [
++      {
++       "Name": "emp",
++       "OutputGroupSettings": {
++        "MediaPackageGroupSettings": {
++         "Destination": {
++          "DestinationRefId": "emp"
++         },
++         "MediapackageV2GroupSettings": {
++          "Id3Behavior": "DISABLED",
++          "KlvBehavior": "NO_PASSTHROUGH",
++          "NielsenId3Behavior": "NO_PASSTHROUGH",
++          "Scte35Type": "SCTE_35_WITHOUT_SEGMENTATION",
++          "SegmentLength": 1,
++          "SegmentLengthUnits": "SECONDS",
++          "TimedMetadataId3Frame": "NONE",
++          "TimedMetadataId3Period": 10,
++          "TimedMetadataPassthrough": "DISABLED"
++         }
++        }
++       },
++       "Outputs": [
++        {
++         "OutputName": "video",
++         "OutputSettings": {
++          "MediaPackageOutputSettings": {
++           "MediaPackageV2DestinationSettings": {
++            "HlsAutoSelect": "OMIT",
++            "HlsDefault": "OMIT"
++           }
++          }
++         },
++         "VideoDescriptionName": "video-1080p"
++        },
++        {
++         "AudioDescriptionNames": [
++          "aac-stereo"
++         ],
++         "OutputName": "audio",
++         "OutputSettings": {
++          "MediaPackageOutputSettings": {
++           "MediaPackageV2DestinationSettings": {
++            "HlsAutoSelect": "OMIT",
++            "HlsDefault": "OMIT"
++           }
++          }
++         }
++        },
++        {
++         "CaptionDescriptionNames": [
++          "ttml-eng"
++         ],
++         "OutputName": "ttml",
++         "OutputSettings": {
++          "MediaPackageOutputSettings": {
++           "MediaPackageV2DestinationSettings": {
++            "HlsAutoSelect": "OMIT",
++        
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/test/integ.medialive-mediapackage-sidecar-captions.js.snapshot/cdk.out` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"version":"55.0.0"}
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39616** (2026-11-03): fix(bedrockagentcore): runtime metricTotalErrors to resolve to a proper metric (@kumvprat)
-- **PR #39613** (2026-11-03): docs: fix broken Maven Central badge in README (@ozelalisen)
-- **PR #39603** (2026-11-02): ci(mergify): replace commit_message_template with commit_message_format (@ozelalisen)
-- **PR #39602** (2026-11-02): chore(ci): pin Node 24 in workflows that resolved lts/* or * (@ozelalisen)
-- **PR #39601** (2026-11-03): fix(core): honor rounding for same-unit Size conversions (@proton0210)
-- **PR #39593** (2026-11-01): chore: update Contributors File (@aws-cdk-automation)
+- **PR #39634** (2026-11-04): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
+- **PR #39632** (closed): Update merge queue configuration (@aemada-aws)
+- **PR #39631** (closed): chore(rds): add PostgreSQL instance engine versions 17.10, 17.11, 18.4, 18.6 (@daanvzijl)
+- **PR #39622** (2026-11-04): chore(spec2cdk): ensure only known orgs are generated (@iliapolo)
+- **PR #39621** (closed): feat(core): context-scoped warning suppression via Validations.acknowledge (@matboros)
+- **PR #39620** (2026-11-04): feat(lambda): add authType to WebFunction endpoints (@piotrekwitkowski)
 
 ---
 
@@ -1501,43 +2314,48 @@ Only `README.md` changed; there are no code changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(bedrockagentcore): note security group deletion behavior when removing a VP
+## X. security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/rules/iam/iam-no-overly-permissive-passrole.guard`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89b6cdc1`: docs(bedrockagentcore): note security group deletion behavior when removing a VPC runtime (#39461). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e1aaf90`: security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (#39513). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/rules/iam/iam-no-overly-permissive-passrole.guard`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#### Removing a VPC Runtime
-
-When a VPC-mode runtime is removed, the AgentCore service releases the network interfaces it created in your VPC asynchronously, and they can stay attached to the runtime's security groups for an extended period after the runtime is deleted. If CloudFormation tries to delete such a security group in that time, the deletion fails with `DependencyViolation`. CloudFormation retries for a while and then skips it, so the stack update can take a long time and the security group remains in your account outside of the stack.
-
-To avoid this, keep the runtime's security groups out of CloudFormation's delete path, and delete them yourself once the network interfaces are gone:
-
-```typescript fixture=default
-declare const runtime: agentcore.Runtime;
-
-for (const sg of runtime.connections.securityGroups) {
-  sg.applyRemovalPolicy(RemovalPolicy.RETAIN);
-}
-```
-
-Alternatively, pass a long-lived security group managed in a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
-
+                                        # Compare only string elements: a list may hold intrinsic objects
+                                        # (Fn::GetAtt/Sub/Join) resolving to specific ARNs, which are correctly
+                                        # scoped and must not be flagged. A literal "*" element still fails.
+                                        Resource[*] {
+                                            when this is_string {
+                                                this != "*"
+                                                    <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                            }
+                                        }
+                                        # Compare only string elements: a list may hold intrinsic objects
+                                        # (Fn::GetAtt/Sub/Join) resolving to specific ARNs, which are correctly
+                                        # scoped and must not be flagged. A literal "*" element still fails.
+                                        Resource[*] {
+                                            
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                                        Resource[*] != "*"
+                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                        Resource[*] != "*"
+                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                        Resource[*] != "*"
+                                            <<##ERROR:iam:PassRole must not use wildcard resources. Replace '*' in Resource with specific role ARNs that can be passed.##>>
+                                        Resource[*] != "*"
+                                            <<##ERROR:iam:PassRole must not use wildcard resourc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89b6cdc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e1aaf90` are properly handled with clean fallback behavior.

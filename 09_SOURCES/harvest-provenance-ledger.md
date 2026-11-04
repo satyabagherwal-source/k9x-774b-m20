@@ -7415,3 +7415,6 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `b0bce2a2` | Multi-dimensional audit evidence | 2026-11-04T23:34:44.958Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `a66a1f88` | Multi-dimensional audit evidence | 2026-11-04T23:34:47.266Z |
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-04T23:41:46.059Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `5aaceb19` | Multi-dimensional audit evidence | 2026-11-04T23:48:28.587Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `d56502a3` | Multi-dimensional audit evidence | 2026-11-04T23:48:31.087Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-04T23:53:22.964Z |
