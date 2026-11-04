@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `359b34c7`  
+> **Source Version**: `a4d4c4a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:28:40.853Z  
+> **Timestamp**: 2026-11-04T09:04:33.603Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:28:40.547Z  
+> **Harvest Timestamp**: 2026-11-04T09:04:33.177Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -985,241 +985,415 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `359b34c7` (2026-11-04)
-**Commit Message**: Require NUC strategy bandit in /arc-purposal
+### Incident Patch 1: `a4d4c4a7` (2026-11-04)
+**Commit Message**: NUC 78 Extends Clauses for Subclasses
 
-ARC-requested NUCs now use the existing UCB1 proposal-strategy learner. Callers must supply or reuse a retained policy via --strategy-policy <absolute-json-path>. A missing or invalid policy pauses the invocation before drafting or the solver run, and a policy is never initialized or reset automatically.
+Accepted. The independent evaluator accepted the proposal in continuous
+mode against a7fed6a and its 895-case baseline, which it re-recorded
+byte-identically. Token comparison was skipped as
+language_compatibility, the category's continuous-mode policy; the
+skip is not a passing token gate, and no policy check failed.
 
-The arm is selected before the proposer is dispatched. A caller-owned usefulness rubric is pinned and passed to both NUC agents. The independent evaluator updates the policy checkpoint before the ARC run, and the caller persists the learning result and retained head.
+Hard criteria, checked independently and again on the integrated tree:
+cargo build --all-targets, warning-denied Clippy and cargo fmt --check
+pass; the full cargo test passes (90 suites, 2,330 passed, 0 failed,
+25 ignored) with all 2,332 accepted test identities present and 23
+added; all 895 pinned accepted programs replay, and a 147,647-program
+differential keeps every one of the 68,002 accepted-valid programs and
+changes only former syntax errors.
 
-ARC outcomes (exact match, difference, exit status, timeout) and eventual acceptance are never learning rewards. Dataset-only runs need no policy.
+NUC 78 lets a class header name its parent with extends, as
+JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy do:
+class Dog(name, breed) extends Animal: declares the class that
+class Dog(name, breed): Animal declares, and a bodyless
+class Dog extends Animal ends at the statement boundary as NUC 14's
+bodyless classes do. extends stays an ordinary name everywhere else and
+buil
 
-Updated the arc-purposal agent, skill, ARC rules, CONTRIBUTING.md and arc/README.md.
-
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +16/-2)
+**File**: `README.md` (modified, +35/-0)
 ```diff
-@@ -1,10 +1,11 @@
- ---
- name: arc-purposal
--description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule with the exact-match result, and document the puzzle's progress record in `arc/docs/`.
-+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
- include-custom-instructions: true
- ---
+@@ -1643,6 +1643,41 @@ assert(lowest.bidder, "ada")
+   numbers compare as numbers, strings as text and dates by time. See the
+   [root contract](nucleoid.spec.md#list-and-population-extreme-items).
  
--You coordinate one ARC training puzzle, given its ID and an optional hint;
-+You coordinate one ARC training puzzle, given its ID, an optional
-+`--strategy-policy <absolute-json-path>`, and an optional trailing hint;
- without an ID, select the skill's
- [default puzzle](../skills/arc-purposal/SKILL.md#select-the-default-puzzle).
- Follow `.claude/CLAUDE.md`, the
-@@ -23,6 +24,16 @@ Follow `.claude/CLAUDE.md`, the
-   and return `agent_launch_unavailable` with the puzzle ID and the next step.
- - Handle at most one NUC per invocation, as a single-proposal request, and hold
-   its outcome until the solver run.
-+- Every requested NUC requires the
-+  [existing strategy learner](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
-+  Reuse the latest retained policy, or require an explicitly supplied policy
-+  before drafting; never silently initialize/reset it or proceed unconfigured.
-+  Actually select and pin an arm and caller-owned rubric before launching the
-+  proposer, and require strategy-consumption evidence in its handoff.
-+- Give the unchanged scoring/attribution inputs to the independent evaluator
-+  and require its actual learner update before the ARC run. Persist the
-+  verified new checkpoint or legitimate skip and retained head in the session
-+  learning result. Learner errors pause the invocation; no NUC means no trial.
- - Pass an optional `--hint` unchanged to every `arc-dataset` run and to no
-   other agent, under the skill's
-   [hint rule](../skills/arc-purposal/SKILL.md#pass-the-hint). It is a
-@@ -43,6 +54,9 @@ Follow `.claude/CLAUDE.md`, the
++## Extends clauses
++
++**Extends clauses declare subclasses as JavaScript and Java do**
++
++```nuc
++class Sensor(name, reading):
++    this.name = name
++    this.reading = reading
++$Sensor.alarm = $Sensor.reading > 50
++class Thermometer extends Sensor
++class Barometer(name, reading, unit) extends Sensor:
++    this.name = name
++    this.reading = reading
++    this.unit = unit
++kitchen = Thermometer("kitchen", 21)
++roof = Barometer("roof", 1013, "hPa")
++assert(kitchen.alarm, false)
++assert(roof.alarm, true)
++assert(roof.unit, "hPa")
++kitchen.reading = 64
++assert(kitchen.alarm, true)
++assert(Sensor.length, 0)
++```
++
++- [NUC 78](docs/nuc-0078.md) accepts `extends` in a class header as an
++  optional spelling of the colon parent. `class Thermometer extends Sensor`
++  is the bodyless subtype that `class Thermometer: Sensor` with an indented
++  `pass` declares, and `class Barometer(name, reading, unit) extends Sensor:`
++  takes the indented body that `class Barometer(name, reading, unit): Sensor`
++  takes.
++- `$Sensor.alarm` applies to both subtypes, which use `Sensor`'s constructor
++  or their own, and each subtype keeps its own instance list. `extends` stays
++  an ordinary name everywhere else. See the
++  [root contract](nucleoid.spec.md#extends-clauses-for-subclasses).
++
+ ## Benchmark
  
- - Use training pairs only. Never read the puzzle's `test` entries, and never
-   give the run's output, which shows the expected test grid, to another agent.
-+- Learning uses only the existing independently verified NUC advisory reward.
-+  Never train from ARC grids, exact matches, difference scores, exit statuses,
-+  timeouts, or eventual acceptance; never revise the saved reward after a run.
- - Run `bun start <puzzle-id>` once, after the dataset and any NUC candidate are
-   frozen. Exit status `0` is an exact match; any other status is not.
- - Allow the run up to 30 minutes and wait for it inside the invocation; never
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `.claude/rules/arc.instructions.md` (modified, +10/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +6/-0)
 ```diff
-@@ -20,6 +20,16 @@ and, when the solver would need a change, suggests that change at the end of
- the process.
- Agent-configuration changes alone do not launch a solver run.
- 
-+Every ARC-requested NUC uses the existing proposal-strategy UCB1 bandit under
-+the [arc-purposal skill](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
-+Require a retained policy head or explicit `--strategy-policy <absolute-json-path>`
-+before drafting; never initialize/reset history automatically. Select before
-+dispatch, preserve the pinned rubric and attribution through both NUC agents,
-+and persist the independent evaluator's checkpoint or legitimate unscored skip
-+before the ARC run. Missing/invalid learning state pauses the NUC; a
-+dataset-only invocation needs no policy. ARC results and eventual acceptance
-+are never learning rewards and do not change the existing NUC reward formula.
-+
- ## No automated ARC tests
- 
- Do not add tests for the ARC project. Remove existing ARC-related automated
+@@ -611,3 +611,9 @@
+ {"id":"spec-0611","description":"Nucleoid uses extreme items in functions methods and conditional expressions","code":"class Shelf(name, items):\n    this.name = name\n    this.items = items\n    def priciest(): return this.items.maxBy(item -> item.price)\ndef cheapest(shelf) => shelf.items.minBy(item -> item.price)\nleft = Shelf(\"left\", [{sku: \"pen\", price: 2}, {sku: \"ink\", price: 9}])\nright = Shelf(\"right\", [{sku: \"pad\", price: 4}, {sku: \"cap\", price: 1}])\ndearer = left.priciest().price > right.priciest().price ? left.name : right.name\ntop = Shelf.maxBy(shelf -> shelf.priciest().price)\nbargain = Shelf.minBy(shelf -> cheapest(shelf).price)\nassert: dearer, \"left\"\nassert: top, left\nassert: bargain, right\nassert: cheapest(left).sku, \"pen\"\nassert: right.priciest().sku, \"pad\"\nright.items.push({sku: \"tape\", price: 15})\nleft.items = [{sku: \"clip\", price: 0.5}]\nassert: dearer, \"right\"\nassert: top, right\nassert: bargain, left\nassert: cheapest(left).sku, \"clip\"","return":null}
+ {"id":"spec-0612","description":"Nucleoid keeps maxBy and minBy as ordinary names beside the extreme item queries","code":"maxBy = 3\nminBy = 1\nlimits = {maxBy: size -> size * 10, minBy: 2}\ndef scale minBy => minBy * 2\nclass Crate(items):\n    this.items = items\n    def maxBy(key): return key(this.items.length)\ncrate = Crate([{kg: 6}, {kg: 4}])\nspare = Crate([{kg: 9}])\nheavy = crate.items.maxBy(box -> box.kg)\nfullest = Crate.maxBy(each -> each.maxBy(count -> count))\nlightest = Crate.minBy(each -> each.items.min(box -> box.kg))\nassert: heavy.kg, 6\nassert: fullest, crate\nassert: lightest, crate\nassert: crate.maxBy(count -> count + maxBy), 5\nassert: limits.maxBy(minBy), 10\nassert: scale(minBy), 2\nassert: crate.items.maxBy, null\nspare.items = [{kg: 1}, {kg: 2}, {kg: 3}, {kg: 9}]\ncrate.items.push({kg: 7})\nmaxBy = 5\nassert: heavy.kg, 7\nassert: fullest, spare\nassert: lightest, spare\nassert: crate.maxBy(count -> count + maxBy), 8","return":null}
+ {"id":"spec-0613","description":"Nucleoid rolls back failed extreme item updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_MANY\"\n    return value\norders = [{id: 1, qty: 30}, {id: 2, qty: 50}]\nlargest = orders.maxBy(order -> checked(order.qty))\nassert: largest.id, 2\nfailure = \"\"\ntry:\n    orders.push({id: 3, qty: 500})\ncatch error:\n    failure = error\nassert: failure, \"TOO_MANY\"\nassert: orders.length, 2\nassert: largest.id, 2\norders.push({id: 4, qty: 80})\nassert: largest.id, 4\nclass Probe(name, temp):\n    this.name = name\n    this.temp = temp\nProbe(\"a\", 12)\nProbe(\"b\", 30)\ncoldest = Probe.minBy(probe -> checked(probe.temp))\nfailure = \"\"\ntry:\n    Probe(\"c\", 500)\ncatch error:\n    failure = error\nassert: failure, \"TOO_MANY\"\nassert: Probe.length, 2\nassert: coldest.name, \"a\"\nProbe(\"d\", 9)\nassert: coldest.name, \"d\"","return":null}
++{"id":"spec-0614","description":"Nucleoid declares subclasses with extends clauses","code":"class Animal(name):\n    this.name = name\n$Animal.legs = 4\nclass Dog(name, breed) extends Animal:\n    this.name = name\n    this.breed = breed\n    def speak():\n        return this.name + \" barks\"\nclass Cat extends Animal:\n    def speak() => this.name + \" meows\"\nrex = Dog(\"Rex\", \"lab\")\ntom = Cat(\"Tom\")\nassert(rex.breed, \"lab\")\nassert(rex.speak(), \"Rex barks\")\nassert(tom.name, \"Tom\")\nassert(tom.speak(), \"Tom meows\")\nassert(rex.legs, 4)\nassert(tom.legs, 4)\nassert(Animal.length, 0)\nassert(Dog.length, 1)\nassert(Cat.length, 1)\n$Animal.legs = 3\nassert(rex.legs, 3)\nassert(tom.legs, 3)","return":null}
++{"id":"spec-0615","description":"Nucleoid declares bodyless subclasses with extends clauses","code":"class Shape(sides):\n    this.sides = sides\n$Shape.polygon = $Shape.sides > 2\nclass Square extends Shape\nsquare = Square(4)\nclass Triangle(sides) extends Shape; triangle = Triangle(3)\n{ class Segment extends Shape }\nsegment = Segment(1)\nassert(square.sides, 4)\nassert(triangle.sides, 3)\nassert(square.polygon, true)\nassert(segment.polygon, false)\nassert(Shape.length, 0)\nassert(Square.length, 1)\nassert(Triangle.length, 1)\nassert(Segment.length, 1)\nsegment.sides = 5\nassert(segment.polygon, true)","return":null}
++{"id":"spec-0616","description":"Nucleoid keeps extends subclasses equivalent to colon subclasses","code":"class Account(owner, balance):\n    this.owner = owner\n    this.balance = balance\n$Account.overdrawn = $Account.balance < 0\nclass Savings: Account\n    def init(owner, balance, rate):\n        super(owner, balance)\n        this.rate = rate\nclass Deposit extends Account:\n    def init(owner, balance, rate):\n        super(owner, balance)\n        this.rate = rate\nsaving = Savings(\"ada\", 100, 2)\ndeposit = Deposit(rate=2, owner=\"ada\", balance=100)\nassert(deposit.owner, saving.owner)\nassert(deposit.rate, saving.rate)\nassert(deposit.overdrawn, false)\ndeposit.balance = -5\nsavin
 ```
 
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +127/-11)
+**File**: `dataset/nucleoid.synth.53.jsonl` (added, +8/-0)
 ```diff
-@@ -1,14 +1,16 @@
+@@ -0,0 +1,8 @@
++{"id":"synth-53-0001","description":"An extends clause names the parent of a subclass that declares its own constructor","code":"class Animal(name):\n    this.name = name\nclass Dog(name, breed) extends Animal:\n    this.name = name\n    this.breed = breed\nrex = Dog(\"Rex\", \"lab\")\n[rex.name, rex.breed, Dog.length, Animal.length]","return":"[\"Rex\",\"lab\",1,0]"}
++{"id":"synth-53-0002","description":"A bodyless extends header declares a subclass that uses its parent's constructor","code":"class Point(x, y):\n    this.x = x\n    this.y = y\nclass Pixel extends Point\np = Pixel(3, 4)\n[p.x, p.y, Pixel.length, Point.length]","return":"[3,4,1,0]"}
++{"id":"synth-53-0003","description":"Class-level rules of the parent stay live on instances of an extends subclass","code":"class Employee(name, salary):\n    this.name = name\n    this.salary = salary\n$Employee.senior = $Employee.salary > 5000\nclass Manager extends Employee\nana = Manager(\"ana\", 4000)\nbo = Manager(\"bo\", 7000)\nana.salary = 6000\n[ana.senior, bo.senior, Employee.length]","return":"[true,true,0]"}
++{"id":"synth-53-0004","description":"An init method in an extends subclass forwards its parent's arguments with super","code":"class Account(owner):\n    this.owner = owner\nclass Savings extends Account:\n    def init(owner, rate):\n        super(owner)\n        this.rate = rate\ns = Savings(\"ada\", 3)\n[s.owner, s.rate]","return":"[\"ada\",3]"}
++{"id":"synth-53-0005","description":"Bare super runs every constructor of an extends chain on the same instance","code":"class Base:\n    def init():\n        this.log = \"base\"\nclass Middle extends Base:\n    def init():\n        super\n        this.log = this.log + \">middle\"\nclass Leaf extends Middle:\n    def init():\n        super\n        this.log = this.log + \">leaf\"\nleaf = Leaf()\nleaf.log","return":"\"base>middle>leaf\""}
++{"id":"synth-53-0006","description":"The colon and extends spellings of a subclass declare the same kind of class","code":"class Shape(sides):\n    this.sides = sides\nclass Square: Shape\n    pass\nclass Cube extends Shape\na = Square(4)\nb = Cube(4)\n[a.sides == b.sides, Square.length, Cube.length, Shape.length]","return":"[true,1,1,0]"}
++{"id":"synth-53-0007","description":"extends stays an ordinary name for variables, properties and parameters","code":"extends = 5\nsettings = {extends: 2}\ndef grow(extends) => extends + 1\n[extends * settings.extends, grow(extends)]","return":"[10,6]"}
++{"id":"synth-53-0008","description":"An extends clause that would close an inheritance cycle raises a TypeError","code":"class Root\nclass Branch extends Root\nfailure = \"\"\ntry:\n    class Root extends Branch\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: Circular Inheritance\""}
+```
+
+**File**: `docs/README.md` (modified, +20/-2)
+```diff
+@@ -739,7 +739,7 @@ Full detail: [NUC 10](nuc-0010.md).
+ - `class Entity` declares an empty type without a placeholder body.
+ - The explicit `class Entity:` form with an indented `pass` remains valid.
+ - A bare header ends at a statement boundary and does not adopt the next statement as a constructor.
+-- An indented body still requires a colon; inheritance keeps its existing colon grammar.
++- An indented body still requires a colon. Inheritance keeps its colon grammar and may also be spelled with `extends`, as [Subtypes](#subtypes) shows.
+ - `$Name` is the type; `Name` is the list of its instances.
+ - `typeof $Name` is `Class`; `typeof Name` is `List`.
+ - Every declared type is added to the global `Class` list.
+@@ -840,6 +840,19 @@ class Truck: Vehicle
+         this.payload = payload
+ ```
+ 
++- `extends` is an optional spelling of the parent, as JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy write it ([NUC 78](nuc-0078.md)). It follows the class name and the optional parameter list: `class Truck extends Vehicle:` and `class Truck(make, payload) extends Vehicle:` take the same indented or same-line body as the colon spelling.
++- Without a colon, `class Van extends Vehicle` is a bodyless subtype, exactly `class Van: Vehicle` with an indented `pass`. Like `class Entity`, it ends at a statement boundary and does not adopt the next statement as a constructor; an indented body still requires the colon.
++- Every spelling declares the same class: parent, constructors, `super`, populations, class-level rules, graph keys and canonical rendering are unchanged, and canonical source keeps the colon spelling.
++- `extends` is not a keyword. Only `extends` directly after a class name or its parameter list starts the clause; variables, properties, parameters, functions, methods and classes named `extends` keep their meanings.
++
++```
++class Truck extends Vehicle:
++    def init make, payload:
++        super(make)
++        this.payload = payload
++class Van extends Vehicle
++```
++
+ ### Bare zero-argument super calls
+ 
+ - Bare `super` is the primary expression `super()`; it always passes zero arguments and returns `null` on success.
+@@ -877,7 +890,7 @@ assert(child.code, 7)
+ - Deletion is refused while the instance still has properties.
+ - A variable name is reusable after its instance is deleted.
+ 
+-Full detail: [NUC 3](nuc-0003.md); accepted compact headers: [NUC 14](nuc-0014.md); candidate bare calls: [NUC 16](nuc-0016.md).
++Full detail: [NUC 3](nuc-0003.md); accepted compact headers: [NUC 14](nuc-0014.md); candidate bare calls: [NUC 16](nuc-0016.md); extends clauses: [NUC 78](nuc-0078.md).
+ 
  ---
- name: arc-purposal
--description: Run one ARC training puzzle through its instruction dataset, any Nucleoid enhancement that dataset requires, and one exact-match solver run, then decide the enhancement's outcome under the automatic acceptance rule and document the puzzle's progress record in arc/docs.
--argument-hint: [<puzzle-id>] [--hint <text>]
-+description: Run one ARC training puzzle through its instruction dataset, any required Nucleoid enhancement with the existing NUC strategy bandit, and one exact-match solver run, then decide the enhancement's outcome and document the puzzle's progress.
-+argument-hint: "[<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]"
- ---
  
- # Running an ARC puzzle proposal
+@@ -3145,6 +3158,8 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A postfix chain or a compound path beyond its limit | `Expression has too many parts` |
+ | A destructuring with more than 128 targets | `Destructuring has too many targets` |
+ | A constructor-header star at a parameter position | `Expected a parameter but found '*'` |
++| An `extends` clause whose parent is missing or not a name | `Expected a parent class name but found <what>` |
++| A second parent after `class Name extends Parent:` | `Class '<Name>' already extends '<Parent>'` |
  
--`/arc-purposal [<puzzle-id>] [--hint <text>]` takes one training puzzle through
--its instruction dataset, any Nucleoid enhancement that dataset requires, one
--solver run, the outcome, and its progress record in `arc/docs/`. Follow
-+`/arc-purposal [<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]`
-+takes one training puzzle through its instruction dataset, any Nucleoid
-+enhancement that dataset requires, one solver run, the outcome, and its
-+progress record in `arc/docs/`. A requested enhancement uses the existing
-+[NUC strategy bandit](#learn-the-nuc-proposal-strategy). Follow
- `.claude/CLAUDE.md`, the
- [ARC instructions](../../rules/arc.instructions.md), and the
- [agent profile](../../agents/arc-purposal.agent.md).
-@@ -108,6 +110,106 @@ status:
- - `nucleoid_enhancement_required`: prepare the requested enhancement.
- - `blocked`, including an existing dataset: stop and report it, without a run.
+ ### Where an error happened
  
-+## Learn the NUC proposal strategy
-+
-+Every ARC-requested NUC uses the existing category-conditioned UCB1 learner
-+under the [NUC caller protocol](../nuc-proposal/SKILL.md#select-and-consume-a-proposal-strategy)
-+and [command/schema contract](../../../CONTRIBUTING.md#reward-driven-proposal-strategies).
-+Do not add another bandit, reward formula, strategy registry, or ARC learner.
-+The ordered arms remain `reuse_first` and `evidence_first`; learning chooses
-+the proposal approach, never the feature, category, puzzle, or solver settings.
-+
-+**Policy input.** Reuse the caller's latest retained policy path and raw blob
-+pin, including after resuming from its saved session learning result. When
-+there is no retained head, require `--strategy-policy <absolute-json-path>`
-+pointing to an explicitly supplied empty-history genesis or latest checkpoint
-+with all its immutable ancestors and evidence. Use the exact genesis schema
-+in the command contract; never create a genesis automatically. The file must
-+be an existing absolute external `.json` path, outside the primary checkout
-+and candidate worktree. Pin supplied raw bytes with
-+`git hash-object --no-filters` before selection.
-+
-+Place `--strategy-policy` before any trailing `--hint`. It is a caller-only
-+input, not part of the dataset hint or solver arguments. If a head is already
-+retained, an explicitly supplied policy must match its path and pin; never
-+fork an older checkpoint or silently replace/reset history. A missing policy
-+blocks the requested enhancement with `strategy_policy_required`, before
-+drafting or a solver run. Invalid, changed, stale, or incomplete state is a
-+process blocker, not a fallback to unconfigured learning.
-+
-+Without a requested NUC, report learning as `not_applicable`: do not select an
-+arm, create a trial, or update a checkpoint. A dataset-only run needs no policy.
-+
-+**Before drafting.** After fixing the NUC path, confirmed category, single
-+mode, runtime applicability, accepted revision and immutable baseline:
-+
-+- Allocate a unique trial ID and fresh external session `.json` paths for the
-+  selection, rubric, assessment, evaluator report, checkpoint, and learning
-+  result. All artifacts are create-once; retain them and every policy ancestor.
-+- Freeze and pin a caller-owned usefulness rubric under the
-+  [existing scoring schema](../../../CONTRIBUTING.md#advisory-usefulnesscost-scoring).
-+  Bind its criterion ID, NUC path and accepted baseline. Derive the observable
-+  language-level benefit from the dataset handoff's `requested_change` and
-+  unsupported operation, not from a proposed implementation or ARC outcome.
-+  Use general-purpose Nucleoid evidence, never ARC grids, puzzle fixtures,
-+  held-out answers, or new ARC automated tests.
-+- Set `NUC_PROPOSAL`, `NUC_PROPOSAL_BASELINE`, `NUC_PROPOSAL_MODE=single`,
-+  confirmed runtime inputs when applicable, `NUC_STRATEGY_CATEGORY`,
-+  `NUC_STRATEGY_TRIAL_ID`, `NUC_STRATEGY_POLICY`, its original
-+  `NUC_STRATEGY_POLICY_REVISION`, and fresh `NUC_STRATEGY_SELECTION`.
-+  Preserve `NUC_PROPOSAL_RUBRIC` and `NUC_PROPOSAL_RUBRIC_REVISION` through both
-+  handoffs. Unset old selection pins, checkpoint outputs, assessments and
-+  report pins; never rely on environment state from another tool process.
-+
-+Actually run the sele
+@@ -3199,6 +3214,9 @@ class Sub: Super                       subtype
+     def init(a, b):
+         super(a)
+         this.b = b
++class Sub extends Super:               same subtype, extends spelling (NUC 78)
++    statement
++class Sub(param) extends Super         bodyless subtype, as class Sub(param): Super with pass (NUC 78)
+ 
+ super                                  zero-argument super() expression
+ super(arguments)                       explicit parent-constructor arguments
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +16/-0)
+**File**: `docs/examples.md` (modified, +35/-0)
 ```diff
-@@ -607,6 +607,22 @@ exploration, reward-dependent choice, persistence and provenance; they do not
- measure live-learning success or improved proposal quality. This bandit does
- not implement LLM-weight training or full multi-step reinforcement learning.
+@@ -3193,6 +3193,41 @@ neediest.dock.name
+ - See [NUC 77](nuc-0077.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-extreme-items).
  
-+**ARC caller integration.** `/arc-purposal` requires this existing learner
-+when its dataset handoff requests a NUC; generic NUC invocations remain opt-in.
-+Supply `--strategy-policy <absolute-json-path>` before any trailing `--hint`,
-+or reuse the caller's latest retained session head. For a new chain, explicitly
-+supply the genesis schema above; a resumed chain needs its latest checkpoint
-+and all ancestors/evidence. A genesis is never created or reset automatically.
-+Missing/invalid policy state pauses before NUC drafting or the solver run.
-+A dataset-only invocation has no bandit trial.
++## Extends clauses
 +
-+The [ARC caller](.claude/skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy)
-+freezes a language-level usefulness rubric and selects before dispatching the
-+proposer. Its independent evaluator scores and updates before the ARC run,
-+using the unchanged reward contract. The caller persists the returned head
-+and all provenance artifacts for the next separately authorized NUC. ARC
-+answers, scores, timeouts and eventual acceptance never become rewards.
++**Extends clauses keep a fleet's inherited insurance rule live**
 +
- ## Declarative Runtime Environment
++```nuc
++threshold = 1000
++class Asset(name, worth):
++    this.name = name
++    this.worth = worth
++$Asset.insured = $Asset.worth > threshold
++class Vehicle(name, worth, wheels) extends Asset:
++    this.name = name
++    this.worth = worth
++    this.wheels = wheels
++class Drone extends Asset
++van = Vehicle("van", 30000, 4)
++probe = Drone("probe", 800)
++assert([van.insured, probe.insured], [true, false])
++threshold = 500
++assert(probe.insured, true)
++van.worth = 400
++assert(van.insured, false)
++[Asset.length, Vehicle.length, Drone.length]
++# return: [0,1,1]
++```
++
++- `Vehicle` names its parent with `extends` and declares its own
++  constructor, while the bodyless `class Drone extends Asset` uses the
++  constructor of `Asset`. The class-level rule `$Asset.insured` applies to
++  both, so lowering `threshold` insures the drone and a lower worth uninsures
++  the van.
++- The populations stay separate: `Asset` has no instances of its own. See
++  [NUC 78](nuc-0078.md) and the
++  [root contract](../nucleoid.spec.md#extends-clauses-for-subclasses).
++
+ ## Copyright
  
- Nucleoid records declarative statements in a dependency graph and re-evaluates
+ Copyright 2020 Nucleoid
 ```
 
-**File**: `arc/README.md` (modified, +20/-5)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -500,7 +500,8 @@ by the same rules.
+@@ -121,6 +121,7 @@ Created: 31-Jul-2026
+ | --- | --- | --- |
+ | [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
+ | [76](nuc-0076.md) | Opt-In C-Style Comments | Accepted |
++| [78](nuc-0078.md) | Extends Clauses for Subclasses | Accepted |
  
- ## ARC proposal agent
+ ### Documentation
  
--Run `/arc-purposal [<puzzle-id>]` to take one training puzzle through the
-+Run `/arc-purposal [<puzzle-id>] [--strategy-policy <absolute-json-path>]`
-+to take one training puzzle through the
- [arc-purposal](../.claude/agents/arc-purposal.agent.md) workflow in its
- [skill](../.claude/skills/arc-purposal/SKILL.md):
+@@ -209,6 +210,7 @@ Created: 31-Jul-2026
+ | [75](nuc-0075.md) | List and Population Modes | Standards Track | Utility enhancement | Accepted |
+ | [76](nuc-0076.md) | Opt-In C-Style Comments | Standards Track | Language compatibility | Accepted |
+ | [77](nuc-0077.md) | List and Population Extreme Items | Standards Track | Utility enhancement | Accepted |
++| [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
  
-@@ -512,8 +513,9 @@ Run `/arc-purposal [<puzzle-id>]` to take one training puzzle through the
-    whose idea may come from the [language reference](../docs/README.md) or
-    the documentation it links to.
- 2. A requested enhancement goes through the usual NUC proposal and independent
--   evaluation stages as a single-proposal request. The dataset is then written
--   with the frozen candidate's runtime.
-+   evaluation stages as a single-proposal request, using the existing UCB1
-+   proposal-strategy learner. The dataset is then written with the frozen
-+   candidate's runtime.
- 3. `bun start <puzzle-id>` runs once, with that candidate's runtime when there
-    is one, while the workflow waits up to 30 minutes for it. Exit status `0` is
-    an exact match; a run still going at 30 minutes is killed and does not pass.
-@@ -539,9 +541,22 @@ the [genesis puzzle](#genesis-puzzle) and every puzzle that already has a
- matrix has the fewest cells, breaking ties by the fewest total training cells
- and then by the lowest ID. Only training pairs are measured.
+ ## Copyright
  
-+Every requested NUC requires a retained strategy-policy checkpoint, or an
-+explicit `--strategy-policy <absolute-json-path>` outside the repository.
-+For an initial trial, supply the empty-history policy from the
-+[existing NUC bandit contract](../CONTRIBUTING.md#reward-driven-proposal-strategies).
-+There is no automatic initialization/reset; missing or invalid state pauses
-+before drafting or a solver run. A dataset-only invocation needs no policy.
-+Selection happens before drafting, and the independent evaluator updates
-+from verified NUC usefulness/cost evidence before the ARC run. The session
-+learning result retains the latest checkpoint for the next authorized NUC;
-+unscored trials keep the prior head. ARC answers, scores and acceptance never
-+train this learner, which does not train LLM weights or authorize extra runs.
+```
+
+**File**: `docs/nuc-0078.md` (added, +570/-0)
+```diff
+@@ -0,0 +1,570 @@
++# NUC 78 -- Extends Clauses for Subclasses
 +
- Append `--hint <text>` to suggest the puzzle's objects, their roles, or its
--transformation. Only the arc-dataset agent receives the hint, and it keeps only
--what the training pairs confirm.
-+transformation, placing `--strategy-policy` before it when supplied. Only the
-+arc-dataset agent receives the hint, and it keeps only what the training pairs
-+confirm.
++```
++NUC: 78
++Title: Extends Clauses for Subclasses
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Language compatibility
++Created: 04-Nov-2026
++Requires: 14
++```
++
++## Abstract
++
++- A class header may name its parent with `extends`, as JavaScript,
++  TypeScript, Java, PHP, Dart, Scala and Groovy do. The clause follows the
++  class name and its optional parameter list:
++  `class Dog(name, breed) extends Animal:`.
++- With a colon, the clause takes the body that the colon spelling takes:
++  `class Dog extends Animal:` with an indented body declares the class that
++  `class Dog: Animal` with that body declares.
++- Without a colon, `class Dog extends Animal` is a bodyless subclass, exactly
++  `class Dog: Animal` with an indented `pass`. Like [NUC 14](nuc-0014.md)'s
++  `class Entity`, it ends at a statement boundary and does not adopt the
++  next statement as a constructor.
++- Every spelling builds the same class declaration. Populations,
++  constructors, `super`, class-level rules, cycle checks, graph keys, `why`,
++  rendering and transactions are those of the colon spelling, which canonical
++  source keeps writing.
++- `extends` is not a keyword. It starts the clause only directly after a
++  class name or its parameter list, where the accepted parser raised
++  `SyntaxError("Expected ':' but found identifier 'extends'")`. Every other
++  use of the name keeps its meaning, and only such former syntax errors
++  change.
++- Malformed clauses raise
++  `SyntaxError("Expected a parent class name but found <token>")`,
++  `SyntaxError("Class '<Name>' already extends '<Parent>'")` or the existing
++  `SyntaxError("Expected ':' but found <token>")`.
++- No token kind, keyword, syntax tree node, runtime path, dependency, public
++  Rust API or project version is added or changed. The authoritative contract
++  is [Extends clauses for subclasses](../nucleoid.spec.md#extends-clauses-for-subclasses).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria, and the independent
++  evaluator decided Accepted with non-blocking documentation findings. Token
++  comparison was skipped as `language_compatibility`, the category's
++  continuous-mode policy; no policy check failed.
++
++## Motivation
++
++- Nucleoid aspires to be a superset of familiar languages. Kotlin, C#, C++
++  and Swift name a parent after a colon, which Nucleoid already accepts.
++  JavaScript, TypeScript, Java, PHP, Dart, Scala and Groovy write
++  `class Car extends Vehicle`, which fails at the accepted revision.
++- World models written by language models routinely use that spelling. Each
++  such header raises `SyntaxError("Expected ':' but found identifier 'extends'")`
++  and stops the whole program before any statement runs.
++- The accepted language has no bodyless subclass. A parent after the colon
++  leaves the colon open for a body, so `class Dog: Animal` followed by
++  `d = Dog("rex")` takes that statement as its constructor, and reading `d`
++  then raises `ReferenceError("d is not defined")`. A subclass without
++  members needs an indented `pass` before any statement that follows it.
++- `class Dog extends Animal` gives that common declaration a one-line form
++  that ends where it appears, as the bodyless root headers of
++  [NUC 14](nuc-0014.md) do.
++
++## Rationale
++
++- **Confirmed category and mode.** The caller made one tool-backed uniform
++  draw over the five categories that NUC 1's registry marks eligible for
++  automatic selection. It selected Language compatibility, index 4, with
++  probability 1/5 and no redraw. This is a continuous cycle, so token
++  comparison is skipped as `language_compatibility`. That skip is
++  categorical; it is neither a measured comparison nor a passing token gate.
++- **No counterparts.** Because comparison is skipped, the new cases have no
++  accepted-syntax counterparts. They execute their assertions and explicit
++  returns with full coverage. Every pre-existing case, its spelling and its
++  colon headers are unchanged. Runtime applicability does not apply to this
++  category.
++- **Only a former error position.** After a class name and its optional
++  parameter list, the accepted parser requires a statement terminator or a
++  colon; any identifier there raises `Expected ':' but found identifier ...`.
++  So every input with `extends` in that position failed to parse, and giving
++  it a meaning changes no accepted program.
++- **Contextual, not reserved.** Reserving `extends` would break variables,
++  properties, keys, parameters, functions, methods, loop variables, catch
++  bindings and classes with that name. Only the identifier `extends` directly
++  after the name or parameter list on the same logical line qualifies. A
++  newline ends a header, so `class Dog` followed by `extends = 1` on the next
++  line keeps its meaning.
++- **Parameters first.** Nucleoi
+```
+
+**File**: `nucleoid.spec.md` (modified, +212/-0)
+```diff
+@@ -87,6 +87,73 @@ semicolon. Other unsupported tokens use `Expected ':' but found <token>` with
+ the existing token descriptions. Existing name, parameter, nesting, and
+ operator-chain diagnostics and source positions are preserved.
  
- The run makes paid OpenRouter calls and shows the expected test grid, so it
- runs once, is never repeated to obtain a pass, and its output never feeds back
++## Extends clauses for subclasses
++
++- [NUC 78](docs/nuc-0078.md) adds `extends` as an optional spelling of a
++  class header's parent, as JavaScript, TypeScript, Java, PHP, Dart, Scala and
++  Groovy write it. `class Name: Parent` keeps its grammar and meaning. No
++  token, keyword, syntax tree node or runtime path is added.
++- After a class name and its optional parameter list, the identifier `extends`
++  and one parent name form the clause, as in `class Dog extends Animal` and
++  `class Dog(name, breed) extends Animal`. The parent is an ordinary
++  identifier, as after `class Name:`, and need not be declared yet.
++- A colon after the clause opens the class body that follows
++  `class Name(params):`: an indented body of typed fields, constructor
++  statements, `init` and methods, or one statement on the same line.
++  `class Dog extends Animal:` with an indented body declares the class that
++  `class Dog: Animal` with that body declares.
++- After that colon the accepted class body grammar applies unchanged. As
++  after `class Dog:` and `class Dog: Animal`, a colon that ends its line
++  without an indented body takes the next statement, if any, as the class's
++  one constructor statement, and such a header at the end of an indented
++  block raises `SyntaxError("Unexpected the end of a block")`.
++- Without a colon the header is bodyless, as `class Name` and
++  `class Name(params)` are. It ends at a logical newline, semicolon, end of
++  input, or the enclosing block's closing brace or dedent, and the following
++  statement is not part of a constructor. `class Dog extends Animal` declares
++  the class that `class Dog: Animal` with an indented `pass` declares.
++- An indented body still requires the colon. A bodyless clause followed by a
++  newline and indentation raises
++  `SyntaxError("Expected ':' but found end of line")`, or
++  `SyntaxError("Expected ':' but found ';'")` when the first separator is a
++  semicolon.
++- Every spelling builds the same class declaration: the same name, parent,
++  parameters, fields, constructor statements and methods. Registration, the
++  `Class` list, separate parent and child instance lists, `$Parent` rules on
++  child instances, constructors and the nearest ancestor constructor, `init`,
++  `super` and bare `super`, named constructor arguments, inheritance cycle
++  checks, redeclaration, graph keys, `why`, canonical rendering and
++  transactions are those of the colon spelling, which canonical source keeps
++  writing.
++- `extends` is not a keyword. Only the identifier `extends` directly after a
++  class name or its parameter list starts the clause, a position where the
++  accepted parser raised
++  `SyntaxError("Expected ':' but found identifier 'extends'")`. Variables,
++  properties, parameters, functions, methods, classes and parents named
++  `extends` keep their meanings, and `class extends extends Animal` declares
++  a class named `extends` whose parent is `Animal`.
++- A parent that is not a name raises
++  `SyntaxError("Expected a parent class name but found <token>")` at that
++  token, with the existing token descriptions. `class Dog extends` reports
++  `end of input` at line 1, column 18, and `class Dog extends 5`,
++  `class Dog extends "A"` and `class Dog extends $Animal` report `number 5`,
++  `a string` and `'$Animal'` at line 1, column 19.
++- A second parent raises `SyntaxError("Class 'Dog' already extends 'Animal'")`
++  for `class Dog extends Animal: Cat`, at `Cat`. The check covers a name
++  followed by the end of the line or input after the colon, the position that
++  names the parent in `class Dog: Cat`.
++- Any other token after the parent raises the existing
++  `SyntaxError("Expected ':' but found <token>")` at that token, as in
++  `class Dog extends Animal Cat`, `class Dog extends Animal(x)`,
++  `class Dog extends Animal, Cat` and `class Dog extends Animal {}`.
++- Only these former syntax errors change. The REPL runs a bodyless clause at
++  once and buffers a clause that ends in a colon, as it does other headers;
++  the terminal workspace indents after that colon and completes `extends`.
++- The six appended entries beginning
++  `Nucleoid declares subclasses with extends clauses` through
++  `Nucleoid rolls back extends class declarations` specify the executable
++  behavior.
++
+ ## Opt-in C-style comments
+ 
+ - `#` starts an accepted line comment in every mode. By default, slash
+@@ -19327,4 +19394,149 @@ assert: Probe.length, 2
+ assert: coldest.name, "a"
+ Probe("d", 9)
+ assert: coldest.name, "d"
++---
++# Nucleoid declares subclasses with extends clauses
++
++class Animal(name):
++    this.name = name
++$Animal.legs = 4
++class Dog(name, breed) extends Animal:
++    this.name = name
++    this.breed = breed
++    def speak():
++        return this
 ```
 
 #### Recent Merged Pull Requests:
@@ -1248,40 +1422,61 @@ Updated the arc-purposal agent, skill, ARC rules, CONTRIBUTING.md and arc/README
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require NUC strategy bandit in /arc-purposal
+## X. NUC 78 Extends Clauses for Subclasses
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-purposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `359b34c7`: Require NUC strategy bandit in /arc-purposal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4d4c4a7`: NUC 78 Extends Clauses for Subclasses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-purposal.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
-You coordinate one ARC training puzzle, given its ID, an optional
-`--strategy-policy <absolute-json-path>`, and an optional trailing hint;
-- Every requested NUC requires the
-  [existing strategy learner](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
-  Reuse the latest retained policy, or require an explicitly supplied policy
-  before drafting; never silently initialize/reset it or proceed unconfigured.
-  Actually select and pin an arm and caller-owned rubric before launching the
-  proposer, and require strategy-consumption evidence in its handoff.
-- Give the unchanged scoring/attribution inputs to the independent evaluator
-  and require its actual learner update before the ARC run. Persist the
-  verified new checkpoint or legitimate skip and retai
+## Extends clauses
+
+**Extends clauses declare subclasses as JavaScript and Java do**
+
+```nuc
+class Sensor(name, reading):
+    this.name = name
+    this.reading = reading
+$Sensor.alarm = $Sensor.reading > 50
+class Thermometer extends Sensor
+class Barometer(name, reading, unit) extends Sensor:
+    this.name = name
+    this.reading = reading
+    this.unit = unit
+kitchen = Thermometer("kitchen", 21)
+roof = Barometer("roof", 1013, "hPa")
+assert(kitchen.alarm, false)
+assert(roof.alarm, true)
+assert(roof.unit, "hPa")
+kitchen.reading = 64
+assert(kitchen.alarm, true)
+assert(Sensor.length, 0)
+```
+
+- [NUC 78](docs/nuc-0078.md) accepts `extends` in a class header as an
+  optional spelling of the colon parent. `class Thermometer extends Sensor`
+  is the bodyless subtype that `class Thermometer: Sensor` with an indented
+  `pass` declares, and `class Barometer(name, reading, unit) extends Sensor:`
+  takes the indented body that `class Barometer(name, reading, unit): Sensor`
+  takes.
+- `$Sensor.alarm` applies to both subtypes, which use `Sensor`'s constructor
+  or their own, and each subtype keeps its own instance list. `extends` stays
+  an ordinary name everywhere else. See the
+  [root contract](
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule with the exact-match result, and document the puzzle's progress record in `arc/docs/`.
-You coordinate one ARC training puzzle, given its ID and an optional hint;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `359b34c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4d4c4a7` are properly handled with clean fallback behavior.

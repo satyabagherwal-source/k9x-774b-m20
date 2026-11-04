@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T08:57:37.880Z",
-  "total_cycles_completed": 7164,
-  "total_learnings_persisted": 7164,
-  "total_rules_promoted": 6812,
+  "last_updated": "2026-11-04T09:04:33.869Z",
+  "total_cycles_completed": 7166,
+  "total_learnings_persisted": 7166,
+  "total_rules_promoted": 6813,
   "history": [
-    {
-      "timestamp": "2026-11-03T19:37:49.227Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T19:52:17.493Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T19:52:24.920Z",
       "repository": "karmada-io/karmada",
@@ -1403,6 +1389,20 @@
       "repository": "BuilderIO/builder",
       "learningId": "learn-github-builderio-builder",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T09:04:26.054Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T09:04:33.869Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

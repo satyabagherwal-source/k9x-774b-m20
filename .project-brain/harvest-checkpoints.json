@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:57:37.884Z",
+  "last_updated": "2026-11-04T09:04:33.873Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "d641b1a4893a9f140bb03c13ec066131620daa81545afff56d27cad2580be776",
-      "verified_at": "2026-10-27T19:56:17.659Z",
+      "content_hash": "678a8753077b3aba32687efef3dd0a55658f6d07d41d7f9b571438e4e8a010c4",
+      "verified_at": "2026-11-04T09:04:26.057Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:56:17.659Z"
+      "last_updated": "2026-11-04T09:04:26.057Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ccb05e0d6b15ee0df5d430aac228e13465278fafa15f5025435dc6f723eddfc6",
-      "verified_at": "2026-11-04T08:28:41.355Z",
+      "content_hash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
+      "verified_at": "2026-11-04T09:04:33.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:28:41.355Z"
+      "last_updated": "2026-11-04T09:04:33.872Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",

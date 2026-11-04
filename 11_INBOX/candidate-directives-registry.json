@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T07:26:05.642Z",
+  "last_updated": "2026-11-04T09:04:33.868Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3771,6 +3771,17 @@
       "source_type": "automated_harvester_candidate",
       "source_repo": "NucleoidAI/Nucleoid",
       "source_commit": "a7fed6ab",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-4LZG",
+      "directive_title": "NUC 78 Extends Clauses for Subclasses",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "a4d4c4a7",
       "date_staged": "2026-11-04",
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",

@@ -7196,3 +7196,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ac85e06f` | Multi-dimensional audit evidence | 2026-11-04T08:47:17.693Z |
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `066ea4e4` | Multi-dimensional audit evidence | 2026-11-04T08:57:33.409Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0e8dbd98` | Multi-dimensional audit evidence | 2026-11-04T08:57:37.876Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `5cb6272e` | Multi-dimensional audit evidence | 2026-11-04T09:04:26.049Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4d4c4a7` | Multi-dimensional audit evidence | 2026-11-04T09:04:33.863Z |

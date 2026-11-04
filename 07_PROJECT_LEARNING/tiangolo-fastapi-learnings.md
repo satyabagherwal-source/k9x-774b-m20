@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
-> **Source Version**: `79cab5be`  
+> **Source Version**: `5cb6272e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:56:17.277Z  
+> **Timestamp**: 2026-11-04T09:04:25.645Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:56:16.856Z  
+> **Harvest Timestamp**: 2026-11-04T09:04:23.792Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 104145 stars
+- **Stars / Engagement**: 104395 stars
 
 ---
 
@@ -1505,58 +1505,146 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79cab5be` (2026-10-26)
+### Incident Patch 1: `5cb6272e` (2026-11-02)
 **Commit Message**: 📝 Update release notes
 
 [skip ci]
 
 **File**: `docs/en/docs/release-notes.md` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ hide:
+@@ -23,6 +23,7 @@ hide:
  
  ### Internal
  
-+* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
- * ⬆ Bump black from 26.5.1 to 26.10.1. PR [#16611](https://github.com/fastapi/fastapi/pull/16611) by [@dependabot[bot]](https://github.com/apps/dependabot).
- * ⬆ Bump gitpython from 3.1.62 to 3.2.1. PR [#16612](https://github.com/fastapi/fastapi/pull/16612) by [@dependabot[bot]](https://github.com/apps/dependabot).
- * ⬆ Bump opentelemetry-api from 1.44.0 to 1.45.1. PR [#16610](https://github.com/fastapi/fastapi/pull/16610) by [@dependabot[bot]](https://github.com/apps/dependabot).
++* 👥 Update FastAPI People - Sponsors. PR [#16656](https://github.com/fastapi/fastapi/pull/16656) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
+ * 👥 Update FastAPI GitHub topic repositories. PR [#16660](https://github.com/fastapi/fastapi/pull/16660) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
+ * ⬆ Bump the github-actions group with 7 updates. PR [#16658](https://github.com/fastapi/fastapi/pull/16658) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump pre-commit hooks. PR [#16659](https://github.com/fastapi/fastapi/pull/16659) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
 ```
 
 ---
 
-### Incident Patch 2: `82e79bf9` (2026-10-26)
-**Commit Message**: ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (#16613)
+### Incident Patch 2: `775e456e` (2026-11-02)
+**Commit Message**: 👥 Update FastAPI People - Sponsors (#16656)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Yurii Motov <[REDACTED_EMAIL]>
+Co-authored-by: pr-submit[bot] <pr-submit[bot]@users.noreply.github.com>
 
-**File**: `uv.lock` (modified, +3/-3)
+**File**: `docs/en/data/github_sponsors.yml` (modified, +26/-23)
 ```diff
-@@ -1535,11 +1535,11 @@ wheels = [
- 
- [[package]]
- name = "graphql-core"
--version = "3.2.7"
-+version = "3.3.1"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/ac/9b/037a640a2983b09aed4a823f9cf1729e6d780b0671f854efa4727a7affbe/graphql_core-3.2.7.tar.gz", hash = "sha256:27b6904bdd3b43f2a0556dad5d579bdfdeab1f38e8e8788e555bdcb586a6f62c", size = 513484, upload-time = "2025-11-01T22:30:40.436Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/a4/91/223fbace7c8648690d7fb77855e29bd248c9ed1e0833ed3002ab29bc1441/graphql_core-3.3.1.tar.gz", hash = "sha256:8d9b6f95fb66b58b260904cf9e191f422782620533ec8fa0c96ab941b6659a2a", size = 751402, upload-time = "2026-10-25T09:34:09.764Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/0a/14/933037032608787fb92e365883ad6a741c235e0ff992865ec5d904a38f1e/graphql_core-3.2.7-py3-none-any.whl", hash = "sha256:17fc8f3ca4a42913d8e24d9ac9f08deddf0a0b2483076575757f6c412ead2ec0", size = 207262, upload-time = "2025-11-01T22:30:38.912Z" },
-+    { url = "https://files.pythonhosted.org/packages/57/0e/e51b006267e7fa785abf5d1f86a7d60b84f7f893e3ba4fe23df9be2000cf/graphql_core-3.3.1-py3-none-any.whl", hash = "sha256:43ebcd0d9a0662a71b1a2f6562ba863d253057ec11cbc45835b2e2683a0a3770", size = 349047, upload-time = "2026-10-25T09:34:07.725Z" },
- ]
- 
- [[package]]
+@@ -1,5 +1,8 @@
+ sponsors:
+-- - login: subtotal
++- - login: zyref-llc
++    avatarUrl: https://avatars.githubusercontent.com/u/252782271?v=4
++    url: https://github.com/zyref-llc
++  - login: subtotal
+     avatarUrl: https://avatars.githubusercontent.com/u/176449348?v=4
+     url: https://github.com/subtotal
+   - login: greptileai
+@@ -17,7 +20,10 @@ sponsors:
+   - login: railwayapp
+     avatarUrl: https://avatars.githubusercontent.com/u/66716858?v=4
+     url: https://github.com/railwayapp
+-- - login: dribia
++- - login: encoredev
++    avatarUrl: https://avatars.githubusercontent.com/u/50438175?v=4
++    url: https://github.com/encoredev
++  - login: dribia
+     avatarUrl: https://avatars.githubusercontent.com/u/41189616?v=4
+     url: https://github.com/dribia
+   - login: BairesDev-LLC
+@@ -44,12 +50,12 @@ sponsors:
+ - - login: manulife-ai
+     avatarUrl: https://avatars.githubusercontent.com/u/195145621?v=4
+     url: https://github.com/manulife-ai
+-  - login: ptimizeroracle
+-    avatarUrl: https://avatars.githubusercontent.com/u/99191972?u=ee268f7afba9856cbd30859ba33708849bc2ece4&v=4
+-    url: https://github.com/ptimizeroracle
+   - login: scalar
+     avatarUrl: https://avatars.githubusercontent.com/u/301879?v=4
+     url: https://github.com/scalar
++  - login: sueddeutsche
++    avatarUrl: https://avatars.githubusercontent.com/u/10959413?v=4
++    url: https://github.com/sueddeutsche
+   - login: Trivie
+     avatarUrl: https://avatars.githubusercontent.com/u/8161763?v=4
+     url: https://github.com/Trivie
+@@ -68,18 +74,12 @@ sponsors:
+   - login: ChargeStorm
+     avatarUrl: https://avatars.githubusercontent.com/u/26000165?v=4
+     url: https://github.com/ChargeStorm
+-  - login: justoutofcuriosity
+-    avatarUrl: https://avatars.githubusercontent.com/u/57193655?v=4
+-    url: https://github.com/justoutofcuriosity
+   - login: nilslindemann
+     avatarUrl: https://avatars.githubusercontent.com/u/6892179?u=1dca6a22195d6cd1ab20737c0e19a4c55d639472&v=4
+     url: https://github.com/nilslindemann
+ - - login: samuelcolvin
+     avatarUrl: https://avatars.githubusercontent.com/u/4039449?u=42eb3b833047c8c4b4f647a031eaef148c16d93f&v=4
+     url: https://github.com/samuelcolvin
+-  - login: roboflow
+-    avatarUrl: https://avatars.githubusercontent.com/u/53104118?v=4
+-    url: https://github.com/roboflow
+   - login: otosky
+     avatarUrl: https://avatars.githubusercontent.com/u/42260747?u=69d089387c743d89427aa4ad8740cfb34045a9e0&v=4
+     url: https://github.com/otosky
+@@ -125,6 +125,9 @@ sponsors:
+   - login: dudikbender
+     avatarUrl: https://avatars.githubusercontent.com/u/53487583?u=3a57542938ebfd57579a0111db2b297e606d9681&v=4
+     url: https://github.com/dudikbender
++  - login: roboflow
++    avatarUrl: https://avatars.githubusercontent.com/u/53104118?v=4
++    url: https://github.com/roboflow
+   - login: Ryandaydev
+     avatarUrl: https://avatars.githubusercontent.com/u/4292423?u=87b1afc7f4fff933779959270e2d168339e91402&v=4
+     url: https://github.com/Ryandaydev
+@@ -200,6 +203,9 @@ sponsors:
+ - - login: Artur-Galstyan
+     avatarUrl: https://avatars.githubusercontent.com/u/63471891?u=e8691f386037e51a737cc0ba866cd8c89e5cf109&v=4
+     url: https://github.com/Artur-Galstyan
++  - login: ioseba
++    avatarUrl: https://avatars.githubusercontent.com/u/11636356?u=81655f36caabe33e15108077d009031bf947e648&v=4
++    url: https://github.com/ioseba
+ - - login: pawamoy
+     avatarUrl: https://avatars.githubusercontent.com/u/3999221?u=b030e4c89df2f3a36bc4710b925bdeb6745c9856&v=4
+     url: https://github.com/pawamoy
+@@ -257,9 +263,6 @@ sponsors:
+   - login: TheR1D
+     avatarUrl: https://avatars.githubusercontent.com/u/16740832?u=b0dfdbdb27b79729430c71c6128962f77b7b53f7&v=4
+     url: https://github.com/TheR1D
+-  - login: Zuzah
+-    avatarUrl: https://avatars.githubusercontent.com/u/10934846?u=1ef43e075ddc87bd1178372bf4d95ee6175cae27&v=4
+-    url: https://github.com/Zuzah
+   - login: DMantis
+     avatarUrl: https://avatars.githubusercontent.com/u/9536869?u=652dd0d49717803c0cbcbf44f7740e53cf2d4892&v=4
+     url: https://github.com/DMantis
+@@ -281,9 +284,9 @@ sponsors:
+   - login: danielunderwood
+     avatarUrl: https://avatars.githubusercontent.com/u/4472301?v=4
+     url: https://github.com/danielunderwood
+-- - login: emrahbatigun
+-    avatarUrl: https://avatars.githubusercontent.com/u/52425144?u=ddf9a50b6b5e9d32f0bb50650988ef64b09646e8&v=4
+-    url: https://github.com/emrahbatigun
++- - login: theluckystrike
++    avatarUrl: https://avatars.githubusercontent.com/u/51033404?u=93ded294496e5eea356c2aeffe37b1a53ca57c42&v=4
++    url: https://github.com/theluckystrike
+   - login: morzan1001
+     avatarUrl: https://avatars.githubusercontent.com/u/47593005?u=c30ab7230f82a12a9b938dcb54f84a996931409a&v=4
+     url: https://github.com/morzan1001
+@@ -305,21 +308,21 @@ sponsors:
+   - login: diogotoporcov
+     avatarUrl: https://avatars.githubusercontent.com/u/207575398?u=1fa7cf41b4181faa4d27f38bc37a374c17b5163b&v=4
+     url: https://github.com/diogotoporcov
++  - l
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16617** (closed): 🌐 Update zh-hant translations for form and parameter models (@LiaoAB)
-- **PR #16616** (closed): Fix bare collections.abc stream annotations (@Nikhil-4404)
-- **PR #16615** (closed): Fix OpenAPI generation with more than 128 parameter models (@stupidprogrammer4)
-- **PR #16613** (2026-10-26): ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (@dependabot[bot])
-- **PR #16612** (2026-10-26): ⬆ Bump gitpython from 3.1.62 to 3.2.1 (@dependabot[bot])
-- **PR #16611** (2026-10-26): ⬆ Bump black from 26.5.1 to 26.10.1 (@dependabot[bot])
+- **PR #16677** (closed): Add tests for Decimal integer type preservation, direct Enum encoding, and unmodeled route serialization (@janmejai2002)
+- **PR #16676** (closed): docs: document new parameter validation options from PR #16542 (@puncha1580)
+- **PR #16675** (closed): fix: safely parse mkdocs YAML with custom tag handling in scripts/docs.py (@SuperPiIot)
+- **PR #16668** (closed): 🐛 Fix redundant rebuilds of non-overridden dependencies in solve_dependencies (@saiyam-jain-dev)
+- **PR #16665** (closed): 🐛 Use parameter model defaults when no data is received (@simpleqt)
+- **PR #16660** (2026-11-02): 👥 Update FastAPI GitHub topic repositories (@pr-submit[bot])
 
 ---
 
@@ -1582,7 +1670,7 @@ Co-authored-by: Yurii Motov <[REDACTED_EMAIL]>
 When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79cab5be`: 📝 Update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5cb6272e`: 📝 Update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
@@ -1590,7 +1678,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* 👥 Update FastAPI People - Sponsors. PR [#16656](https://github.com/fastapi/fastapi/pull/16656) by [@pr-submit[bot]](https://github.com/apps/pr-submit).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1600,4 +1688,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79cab5be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5cb6272e` are properly handled with clean fallback behavior.

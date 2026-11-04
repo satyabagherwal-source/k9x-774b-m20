@@ -7187,3 +7187,5 @@
 | `CYCLE-20261104-IEGP` | `2026-11-04T08:47:17.689Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6784, Rule 6785, Rule 6786` | Yes (`976862de...`) |
 | `CYCLE-20261104-VLJY` | `2026-11-04T08:57:33.406Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6787` | Yes (`63e6062c...`) |
 | `CYCLE-20261104-VP00` | `2026-11-04T08:57:37.872Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6788` | Yes (`3fac6268...`) |
+| `CYCLE-20261104-4FY6` | `2026-11-04T09:04:26.046Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4847` | Yes (`678a8753...`) |
+| `CYCLE-20261104-4LZ8` | `2026-11-04T09:04:33.860Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`e418a073...`) |

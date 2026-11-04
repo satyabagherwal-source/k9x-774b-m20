@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T08:57:42.308Z",
-    "lastVerified": "2026-11-04T08:57:42.308Z",
+    "lastChecked": "2026-11-04T09:04:36.398Z",
+    "lastVerified": "2026-11-04T09:04:36.398Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -204,8 +204,8 @@
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T12:32:12.626Z",
-    "lastVerified": "2026-11-03T12:32:12.626Z",
+    "lastChecked": "2026-11-04T09:04:21.438Z",
+    "lastVerified": "2026-11-04T09:04:21.438Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitnami-sealed-secrets",
@@ -323,8 +323,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T02:33:13.176Z",
-    "lastVerified": "2026-11-04T02:33:13.176Z",
+    "lastChecked": "2026-11-04T09:04:23.971Z",
+    "lastVerified": "2026-11-04T09:04:23.972Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -438,14 +438,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T08:28:40.547Z",
-    "lastVerified": "2026-11-04T08:28:40.547Z",
+    "lastChecked": "2026-11-04T09:04:33.177Z",
+    "lastVerified": "2026-11-04T09:04:33.177Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ccb05e0d6b15ee0df5d430aac228e13465278fafa15f5025435dc6f723eddfc6",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "e418a073d7eca6bbd27deed5a155d0b01568fffe732f8a6ba11a0324c3522b5f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3967,9 +3967,9 @@
   "founded-labs-react-native-reusables": {
     "name": "react-native-reusables",
     "officialUrl": "https://github.com/founded-labs/react-native-reusables",
-    "lastChecked": "2026-10-31T06:17:58.993Z",
+    "lastChecked": "2026-11-04T09:04:18.869Z",
     "revisionIdentifier": "385834c2",
-    "lastVerified": "2026-10-31T06:17:58.993Z"
+    "lastVerified": "2026-11-04T09:04:18.869Z"
   },
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
@@ -5211,9 +5211,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-02T15:29:28.358Z",
+    "lastChecked": "2026-11-04T09:04:13.863Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-02T15:29:28.358Z"
+    "lastVerified": "2026-11-04T09:04:13.863Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -5443,12 +5443,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
-    "name": "sqlpage/SQLPage",
+    "name": "SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T11:39:10.712Z",
-    "lastVerified": "2026-11-03T11:39:10.712Z",
+    "lastChecked": "2026-11-04T09:04:26.464Z",
+    "lastVerified": "2026-11-04T09:04:26.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -5457,7 +5457,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d4f206e3"
   },
   "mlua-rs-mlua": {
     "name": "mlua",
@@ -12142,11 +12143,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tiangolo-fastapi": {
-    "name": "fastapi",
+    "name": "fastapi/fastapi",
     "officialUrl": "https://github.com/tiangolo/fastapi",
-    "lastChecked": "2026-10-30T22:49:49.991Z",
-    "revisionIdentifier": "79cab5be",
-    "lastVerified": "2026-10-30T22:49:49.991Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-04T09:04:23.792Z",
+    "lastVerified": "2026-11-04T09:04:23.792Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "678a8753077b3aba32687efef3dd0a55658f6d07d41d7f9b571438e4e8a010c4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "margelo-react-native-blur": {
     "name": "react-native-blur",
