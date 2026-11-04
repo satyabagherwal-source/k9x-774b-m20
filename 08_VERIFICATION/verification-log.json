@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-YPFG",
-    "timestamp": "2026-10-31T14:01:13.276Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-YUI1",
-    "timestamp": "2026-10-31T14:01:19.849Z",
-    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-    "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-7LVM",
-    "timestamp": "2026-10-31T14:08:08.578Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-7QOD",
     "timestamp": "2026-10-31T14:08:14.797Z",
     "repository": "apollographql/apollo-kotlin",
@@ -7490,6 +7445,51 @@
     "repository": "hashicorp/terraform",
     "learningId": "learn-github-hashicorp-terraform",
     "contentHash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-BGGU",
+    "timestamp": "2026-11-04T01:13:59.838Z",
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-BHY1",
+    "timestamp": "2026-11-04T01:14:01.753Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-BNHI",
+    "timestamp": "2026-11-04T01:14:08.934Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

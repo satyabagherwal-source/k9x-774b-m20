@@ -7093,3 +7093,6 @@
 | `CYCLE-20261104-31Z9` | `2026-11-04T01:07:27.813Z` | `agentlas-ai/Agentlas-OS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6693` | Yes (`eed003ab...`) |
 | `CYCLE-20261104-368A` | `2026-11-04T01:07:33.322Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md` | Yes (`ffe51820...`) |
 | `CYCLE-20261104-3AC8` | `2026-11-04T01:07:38.648Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6694` | Yes (`b638ce4d...`) |
+| `CYCLE-20261104-BGGU` | `2026-11-04T01:13:59.838Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`db0ea91c...`) |
+| `CYCLE-20261104-BHY1` | `2026-11-04T01:14:01.753Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6695` | Yes (`d88e3a3d...`) |
+| `CYCLE-20261104-BNHI` | `2026-11-04T01:14:08.934Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6696` | Yes (`10276e33...`) |

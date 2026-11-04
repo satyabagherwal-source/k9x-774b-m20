@@ -7102,3 +7102,6 @@ Every entry in this ledger must capture:
 | `learn-github-agentlas-ai-agentlas-os` | `https://github.com/agentlas-ai/Agentlas-OS` | `33e256b9` | Multi-dimensional audit evidence | 2026-11-04T01:07:27.816Z |
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `bcdc7103` | Multi-dimensional audit evidence | 2026-11-04T01:07:33.326Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `6e64dc15` | Multi-dimensional audit evidence | 2026-11-04T01:07:38.651Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-04T01:13:59.847Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `4253603a` | Multi-dimensional audit evidence | 2026-11-04T01:14:01.756Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `4918c342` | Multi-dimensional audit evidence | 2026-11-04T01:14:08.937Z |

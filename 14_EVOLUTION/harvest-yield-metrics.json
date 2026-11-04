@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:07:38.656Z",
-  "total_cycles_completed": 7070,
-  "total_learnings_persisted": 7070,
-  "total_rules_promoted": 6717,
+  "last_updated": "2026-11-04T01:14:08.941Z",
+  "total_cycles_completed": 7073,
+  "total_learnings_persisted": 7073,
+  "total_rules_promoted": 6719,
   "history": [
-    {
-      "timestamp": "2026-11-03T11:39:12.010Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:44:06.786Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T11:45:01.148Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T11:51:57.827Z",
       "repository": "medialab/xan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T01:07:38.656Z",
       "repository": "hashicorp/terraform",
       "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:13:59.851Z",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:14:01.760Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:14:08.941Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

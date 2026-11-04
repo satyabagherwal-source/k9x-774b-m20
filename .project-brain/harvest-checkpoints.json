@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T01:07:38.660Z",
+  "last_updated": "2026-11-04T01:14:08.943Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
-      "verified_at": "2026-10-31T02:35:22.684Z",
+      "content_hash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
+      "verified_at": "2026-11-04T01:14:01.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:35:22.684Z"
+      "last_updated": "2026-11-04T01:14:01.762Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
-      "verified_at": "2026-11-02T15:15:29.085Z",
+      "content_hash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
+      "verified_at": "2026-11-04T01:14:08.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:15:29.085Z"
+      "last_updated": "2026-11-04T01:14:08.943Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -17421,14 +17421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
-      "verified_at": "2026-10-30T17:21:00.231Z",
+      "content_hash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
+      "verified_at": "2026-11-04T01:13:59.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:21:00.231Z"
+      "last_updated": "2026-11-04T01:13:59.853Z"
     },
     "LiquidAI/LFM3-1.7B-GGUF": {
       "repository": "LiquidAI/LFM3-1.7B-GGUF",

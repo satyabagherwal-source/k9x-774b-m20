@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "89de8e38",
+    "sourceVersion": "4253603a",
     "license": "Apache-2.0",
-    "contentHash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
-    "lastHarvestedAt": "2026-10-31T02:35:22.678Z",
+    "contentHash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
+    "lastHarvestedAt": "2026-11-04T01:14:01.756Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "1d1ab074",
+    "sourceVersion": "4918c342",
     "license": "Apache-2.0",
-    "contentHash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
-    "lastHarvestedAt": "2026-11-02T15:15:29.076Z",
+    "contentHash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
+    "lastHarvestedAt": "2026-11-04T01:14:08.937Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -11585,8 +11585,8 @@
     "sourceUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
     "sourceVersion": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
     "license": "Open-Source",
-    "contentHash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
-    "lastHarvestedAt": "2026-10-30T17:21:00.225Z",
+    "contentHash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
+    "lastHarvestedAt": "2026-11-04T01:13:59.847Z",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism"
   },
   "hf-liquidai-lfm3-1.7b-gguf": {

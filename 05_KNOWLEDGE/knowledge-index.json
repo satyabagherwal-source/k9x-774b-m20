@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T01:07:38.573Z",
+  "last_updated": "2026-11-04T01:14:08.882Z",
   "total_verified_learnings": 1203,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2916,8 +2916,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "1d1ab074",
-      "content_hash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
+      "source_version": "4918c342",
+      "content_hash": "10276e33a4dbf57cc8d5333fdc5ef3f3e69cc54cebadbf0b5e7011d5fb9192ce",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2980,6 +2980,11 @@
           "number": 6429,
           "title": "crypto): clean up crypto code and docs (#11485)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6696,
+          "title": "license): categorize MIT-0 as unencumbered (#11498)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2987,7 +2992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:15:28.970Z",
+      "verified_at": "2026-11-04T01:14:08.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45762,8 +45767,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "89de8e38",
-      "content_hash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
+      "source_version": "4253603a",
+      "content_hash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -45821,6 +45826,11 @@
           "number": 6021,
           "title": "Asymmetric Path Resolution Prefix Jail Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6695,
+          "title": "Use latest alpine v3 for Docker build",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45828,7 +45838,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:35:22.614Z",
+      "verified_at": "2026-11-04T01:14:01.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158665,7 +158675,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
+      "content_hash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
       "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "promoted_rules": [
@@ -158685,7 +158695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:21:00.163Z",
+      "verified_at": "2026-11-04T01:13:59.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172011,6 +172021,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T01:07:38.555Z"
+    },
+    "rule-6695": {
+      "learning_id": "rule-6695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6695,
+      "title": "Use latest alpine v3 for Docker build",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "4253603a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:14:01.687Z"
+    },
+    "rule-6696": {
+      "learning_id": "rule-6696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6696,
+      "title": "license): categorize MIT-0 as unencumbered (#11498)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "4918c342",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T01:14:08.868Z"
     }
   },
   "aliases": {
