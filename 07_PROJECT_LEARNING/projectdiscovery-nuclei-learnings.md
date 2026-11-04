@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `46fbc92a`  
+> **Source Version**: `82d5a8ac`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:58:11.915Z  
+> **Timestamp**: 2026-11-04T17:18:00.859Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:58:11.638Z  
+> **Harvest Timestamp**: 2026-11-04T17:18:00.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32570 stars
+- **Stars / Engagement**: 32586 stars
 
 ---
 
@@ -1446,219 +1446,154 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36d0adba` (2026-11-03)
-**Commit Message**: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
+### Incident Patch 1: `82d5a8ac` (2026-11-04)
+**Commit Message**: exporters: verify TLS certificates (#8042)
 
-Read headless excludes under the dialer lock
+**File**: `pkg/reporting/exporters/es/elasticsearch.go` (modified, +4/-3)
+```diff
+@@ -71,9 +71,10 @@ func New(option *Options) (*Exporter, error) {
+ 			Transport: &http.Transport{
+ 				MaxIdleConns:        10,
+ 				MaxIdleConnsPerHost: 10,
+-				DialContext:         dialers.Fastdialer.Dial,
+-				DialTLSContext:      dialers.Fastdialer.DialTLS,
+-				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
++				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
++				// skips verification; net/http does the handshake with TLSClientConfig.
++				DialContext:     dialers.Fastdialer.Dial,
++				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
+ 			},
+ 		}
+ 	}
+```
 
-**File**: `pkg/protocols/common/protocolstate/exclude_race_test.go` (added, +46/-0)
+**File**: `pkg/reporting/exporters/es/tls_test.go` (added, +46/-0)
 ```diff
 @@ -0,0 +1,46 @@
-+package protocolstate
++package es
 +
 +import (
-+	"sync"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"sync/atomic"
 +	"testing"
 +
-+	"github.com/projectdiscovery/networkpolicy"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
-+	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
-+	require.NoError(t, err)
-+
-+	const executionID = "exclude-race"
-+	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
-+	err = dialers.Set(executionID, entry)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { dialers.Delete(executionID) })
-+
-+	stop := make(chan struct{})
-+	var wg sync.WaitGroup
-+	wg.Add(1)
-+	go func() {
-+		defer wg.Done()
-+		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
-+		i := 0
-+		for {
-+			select {
-+			case <-stop:
-+				return
-+			default:
-+			}
-+			entry.Lock()
-+			entry.ExcludeTargets = lists[i%2]
-+			entry.Unlock()
-+			i++
-+		}
-+	}()
-+
-+	for i := 0; i < 2000; i++ {
-+		_ = IsHostAllowed(executionID, "http://192.0.2.1")
-+	}
-+	close(stop)
-+	wg.Wait()
-+}
-```
-
-**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +5/-2)
-```diff
-@@ -138,11 +138,14 @@ func CanonicalizeHost(host string) string {
- // IsHostAllowed checks if the host is allowed by network policy
- func IsHostAllowed(executionId string, targetUrl string) bool {
- 	dialers, ok := dialers.Get(executionId)
--	if !ok {
-+	if !ok || dialers == nil {
- 		return true
- 	}
- 
-+	dialers.Lock()
- 	np := dialers.NetworkPolicy
-+	excludedTargets := append([]string(nil), dialers.ExcludeTargets...)
-+	dialers.Unlock()
- 	if np == nil {
- 		// no policy present: deny rather than allow.
- 		return false
-@@ -174,7 +177,7 @@ func IsHostAllowed(executionId string, targetUrl string) bool {
- 	canonHost := CanonicalizeHost(host)
- 
- 	// Check explicit ExcludeTargets against raw, host, and canonical host
--	for _, excluded := range dialers.ExcludeTargets {
-+	for _, excluded := range excludedTargets {
- 		ex := CanonicalizeHost(strings.TrimSpace(excluded))
- 		if ex != "" {
- 			if strings.EqualFold(canonHost, ex) || strings.EqualFold(host, ex) || strings.EqualFold(rawTarget, ex) {
-```
-
----
-
-### Incident Patch 2: `46fbc92a` (2026-11-03)
-**Commit Message**: Merge pull request #8023 from projectdiscovery/fix/dns-resolver-client
-
-Give each scan its own DNS resolvers
-
-**File**: `pkg/protocols/dns/dnsclientpool/clientpool.go` (modified, +28/-19)
-```diff
-@@ -26,33 +26,42 @@ var defaultResolvers = []string{
- 	"8.8.4.4:53", // Google
- }
- 
--// Init initializes the client pool implementation
-+// Init initializes the client pool implementation.
-+// Each resolver list gets its own client, so a later scan is not stuck with the first scan's resolvers.
- func Init(options *types.Options) error {
--	m.Lock()
--	defer m.Unlock()
--
--	// Don't create clients if already created in the past.
--	if normalClient != nil {
--		return nil
--	}
--	clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
--
--	resolvers := defaultResolvers
--	if len(options.InternalResolversList) > 0 {
--		resolvers = options.InternalResolversList
--	}
--	var err error
--	normalClient, err = retryabledns.New(resolvers, 1)
-+	client, err := cachedClient(resolversFor(options))
- 	if err != nil {
- 		return errors.Wrap(err, "could not create dns client")
- 	}
-+	m.Lock()
-+	normalClient = client
-+	m.Unlock()
- 	return nil
- }
- 
--func getNormalClient() *retryabledns.Client {
-+func resolversFor(options *types.Options) []string {
-+	if options != nil && len(options.InternalResolversList) > 0 {
-+		return options.InternalResolversList
-+	}
-+	return defaultResolvers
-+}
-+
-+func cachedClient(resolvers []string) (*retryabledns.Client, error) {
- 	m.Lock()
- 	defer m.Unlock()
--	return normalClient
-+	if clientPool == nil {
-+		clientPool = mapsutil.NewSyncLockMap[string, *retryabledns.Client]()
-+	}
-+	key := strings.Join(resolvers, ",")
-+	if client, ok := clientPool.Get(key); ok {
-+		return client, nil
-+	}
-+	client, err := retryabledns.New(resolvers, 1)
-+	if err != nil {
-+		return nil, err
-+	}
-+	_ = clientPool.Set(key, client)
-+	return client, nil
- }
- 
- // Configuration contains the custom configuration options for a client
-@@ -81,7 +90,7 @@ func (c *Configuration) Hash() string {
- // Get creates or gets a client for the protocol based on custom configuration
- func Get(options *types.Options, configuration *Configuration) (*retryabledns.Client, error) {
- 	if (configuration.Retries <= 1) && len(configuration.Resolvers) == 0 {
--		return getNormalClient(), nil
-+		return cachedClient(resolversFor(options))
- 	}
- 	hash := configuration.Hash()
- 	if client, ok := clientPool.Get(hash); ok {
-```
-
-**File**: `pkg/protocols/dns/dnsclientpool/clientpool_test.go` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+package dnsclientpool
-+
-+import (
-+	"testing"
-+
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/types"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestClientsFollowResolverList(t *testing.T) {
-+	previousClient := normalClient
-+	previousPool := clientPool
-+	t.Cleanup(func() {
-+		normalClient = previousClient
-+		clientPool = previousPool
-+	})
-+	normalClient = nil
-+	clientPool = nil
-+
-+	firstOptions := &types.Options{InternalResolversList: []string{"192.0.2.1:53"}}
-+	secondOptions := &types.Options{InternalResolversList: []string{"192.0.2.2:53"}}
-+
-+	require.NoError(t, Init(firstOptions))
-+	require.NoError(t, Init(secondOptions))
-+
-+	first, err := Get(firstOptions, &Configuration{})
++func TestExporterVerifiesTLS(t *testing.T) {
++	var got atomic.Int32
++	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		got.Add(1)
++		w.WriteHeader(http.StatusCreated)
++	}))
++	defer srv.Close()
++	host, port, err := net.SplitHostPort(srv.Listener.Addr().String())
 +	require.NoError(t, err)
-+	second, err := Get(secondOptions, &Configuration{})
++	p, err := strconv.Atoi(port)
 +	require.NoError(t, err)
-+	require.NotSame(t, first, second)
 +
-+	again, err := Get(firstOptions, &Configuration{})
++	opts := types.DefaultOptions()
++	opts.SetExecutionID("es-tls-verify")
++	require.NoError(t, protocolstate.Init(opts))
++	defer protocolstate.Close(opts.ExecutionId)
++
++	newExporter := func(skipVerify bool) *Exporter {
++		e, err := New(&Options{IP: host, Port: p, SSL: true, SSLVerification: skipVerify, Username: "elastic", Password: "secret", IndexName: "nuclei", ExecutionId: opts.ExecutionId})
++		require.NoError(t, err)
++		return e
++	}
++
++	err = newExporter(false).Export(&output.ResultEvent{})
++	require.ErrorContains(t, err, "certificate")
++	require.Zero(t, got.Load(), "the password went to an untrusted server")
++
++	require.NoError(t, newExporter(true).Export(&output.ResultEvent{}))
++	require.EqualValues(t, 1, got.Load())
++}
+```
+
+**File**: `pkg/reporting/exporters/splunk/splunkhec.go` (modified, +4/-3)
+```diff
+@@ -63,9 +63,10 @@ func New(option *Options) (*Exporter, error) {
+ 			Transport: &http.Transport{
+ 				MaxIdleConns:        10,
+ 				MaxIdleConnsPerHost: 10,
+-				DialContext:         dialers.Fastdialer.Dial,
+-				DialTLSContext:      dialers.Fastdialer.DialTLS,
+-				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
++				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
++				// skips verification; net/http does the handshake with TLSClientConfig.
++				DialContext:     dialers.Fastdialer.Dial,
++				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
+ 			},
+ 		}
+ 	}
+```
+
+**File**: `pkg/reporting/exporters/splunk/tls_test.go` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++package splunk
++
++import (
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"sync/atomic"
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestExporterVerifiesTLS(t *testing.T) {
++	var got atomic.Int32
++	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		got.Add(1)
++		w.WriteHeader(http.StatusCreated)
++	}))
++	defer srv.Close()
++	host, port, err := net.SplitHostPort(srv.Listener.Addr().String())
 +	require.NoError(t, err)
-+	require.Same(t, first, again)
++	p, err := strconv.Atoi(port)
++	require.NoError(t, err)
++
++	opts := types.DefaultOptions()
++	opts.SetExecutionID("splunk-tls-verify")
++	require.NoError(t, protocolstate.Init(opts))
++	defer protocolstate.Close(opts.ExecutionId)
++
++	newExporter := func(skipVerify bool) *Exporter {
++		e, err := New(&Options{Host: host, Port: p, SSL: true, SSLVerification: skipVerify, Token: "secret", IndexName: "nuclei", ExecutionId: opts.ExecutionId})
++		require.NoError(t, err)
++		return e
++	}
++
++	err = newExporter(false).Export(&output.ResultEvent{})
++	require.ErrorContains(t, err, "certificate")
++	require.Zero(t, got.Load(), "the token went to an untrusted server")
++
++	require.NoError(t, newExporter(true).Export(&output.ResultEvent{}))
++	require.EqualValues(t, 1, got.Load())
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8042** (2026-11-04): exporters: verify TLS certificates (@Mzack9999)
 - **PR #8024** (2026-11-03): Read headless excludes under the dialer lock (@Mzack9999)
 - **PR #8023** (2026-11-03): Give each scan its own DNS resolvers (@Mzack9999)
 - **PR #8019** (closed): fix(headless): prevent nil pointer dereference on invalid URL in cookie jar (#8015) (@TassioSales)
 - **PR #8018** (2026-11-03): use jev for llm matchers when -llm-provider jev (@dogancanbakir)
 - **PR #8016** (2026-11-03): fix(headless): fail requests whose URL net/url cannot parse (@dwisiswant0)
-- **PR #8014** (2026-11-03): fix(headless): normalize IPv4-mapped IPv6 host forms for -exclude-hosts and -lna (#7982) (@TassioSales)
 
 ---
 
@@ -1678,73 +1613,33 @@ Give each scan its own DNS resolvers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock
+## X. exporters: verify TLS certificates (#8042)
 
 **RULE**:
-When implementing operations in `pkg/protocols/common/protocolstate/exclude_race_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/reporting/exporters/es/elasticsearch.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36d0adba`: Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82d5a8ac`: exporters: verify TLS certificates (#8042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/protocolstate/exclude_race_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/exporters/es/elasticsearch.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package protocolstate
-
-import (
-	"sync"
-	"testing"
-
-	"github.com/projectdiscovery/networkpolicy"
-	"github.com/stretchr/testify/require"
-)
-
-func TestIsHostAllowedRacesExcludeUpdate(t *testing.T) {
-	np, err := networkpolicy.New(networkpolicy.Options{DenyList: []string{"127.0.0.0/8"}})
-	require.NoError(t, err)
-
-	const executionID = "exclude-race"
-	entry := &Dialers{NetworkPolicy: np, ExcludeTargets: []string{"192.0.2.1"}}
-	err = dialers.Set(executionID, entry)
-	require.NoError(t, err)
-	t.Cleanup(func() { dialers.Delete(executionID) })
-
-	stop := make(chan struct{})
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		lists := [][]string{{"192.0.2.1"}, {"192.0.2.2", "192.0.2.3"}}
-		i := 0
-		for {
-			select {
-			case <-stop:
-				return
-			default:
-			}
-			entry.Lock()
-			entry.ExcludeTargets = lists[i%2]
-			entry.Unlock()
-			i++
-		}
-	}()
-
-	for i := 0; i < 2000; i++ {
-		_ = IsHostAllowed(executionID, "http://192.0.2.1")
-	}
-	close(stop)
-	wg.Wait()
-}
+				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
+				// skips verification; net/http does the handshake with TLSClientConfig.
+				DialContext:     dialers.Fastdialer.Dial,
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+				DialContext:         dialers.Fastdialer.Dial,
+				DialTLSContext:      dialers.Fastdialer.DialTLS,
+				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36d0adba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82d5a8ac` are properly handled with clean fallback behavior.

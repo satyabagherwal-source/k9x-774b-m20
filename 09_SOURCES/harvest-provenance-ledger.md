@@ -7254,3 +7254,8 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `13fdf431` | Multi-dimensional audit evidence | 2026-11-04T17:10:01.468Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `822e884f` | Multi-dimensional audit evidence | 2026-11-04T17:10:05.666Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-04T17:10:13.699Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `be77b50a` | Multi-dimensional audit evidence | 2026-11-04T17:17:52.651Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `db6a361c` | Multi-dimensional audit evidence | 2026-11-04T17:17:57.037Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `4d505d50` | Multi-dimensional audit evidence | 2026-11-04T17:18:00.718Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `82d5a8ac` | Multi-dimensional audit evidence | 2026-11-04T17:18:01.635Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-04T17:18:03.816Z |

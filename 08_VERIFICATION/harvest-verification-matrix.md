@@ -7245,3 +7245,8 @@
 | `CYCLE-20261104-GWZD` | `2026-11-04T17:10:01.465Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6853` | Yes (`393ce61c...`) |
 | `CYCLE-20261104-H07Y` | `2026-11-04T17:10:05.662Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6854` | Yes (`319c5543...`) |
 | `CYCLE-20261104-H6F4` | `2026-11-04T17:10:13.696Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6855, Rule 6856, Rule 6857` | Yes (`fc612bcd...`) |
+| `CYCLE-20261104-R0JR` | `2026-11-04T17:17:52.648Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6858` | Yes (`ecad872e...`) |
+| `CYCLE-20261104-R3XK` | `2026-11-04T17:17:57.032Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6859` | Yes (`1a666ffd...`) |
+| `CYCLE-20261104-R6RU` | `2026-11-04T17:18:00.714Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6860` | Yes (`6d4a0aec...`) |
+| `CYCLE-20261104-R7HB` | `2026-11-04T17:18:01.631Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6861` | Yes (`663c0d0f...`) |
+| `CYCLE-20261104-R95W` | `2026-11-04T17:18:03.812Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6862, Rule 6863, Rule 6864` | Yes (`92b0850f...`) |

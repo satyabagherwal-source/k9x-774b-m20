@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:10:13.612Z",
+  "last_updated": "2026-11-04T17:18:03.725Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3976,8 +3976,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "43925140",
-      "content_hash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
+      "source_version": "be77b50a",
+      "content_hash": "ecad872e0a577e15f6eb0cff8055641d6fe0bd98a534eaaddad6211a9ab79fb6",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -4025,6 +4025,11 @@
           "number": 6484,
           "title": "Dual-Path Differential Oracle Invariant for Performance Optimization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6858,
+          "title": "Parse Quarto documents (.qmd) as Markdown (#542)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4032,7 +4037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:58:26.901Z",
+      "verified_at": "2026-11-04T17:17:52.538Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48083,8 +48088,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "46fbc92a",
-      "content_hash": "ac3186230c83c76d83a5eb89f053aa9e9b0817591266ed8360078a05cf41f22c",
+      "source_version": "82d5a8ac",
+      "content_hash": "663c0d0f6f87ea2fe0bd3f73744b3d7c8e6fe4458ba151becfc32bb03d124ba5",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -48197,6 +48202,11 @@
           "number": 6628,
           "title": "Merge pull request #8024 from projectdiscovery/fix/headless-exclude-lock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6861,
+          "title": "exporters: verify TLS certificates (#8042)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48204,7 +48214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:58:12.556Z",
+      "verified_at": "2026-11-04T17:18:01.522Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49221,8 +49231,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "fcced577",
-      "content_hash": "983e73d40e9ed2871bd0d98c55bf028159cad57160ec6930657e7ab4c7570c91",
+      "source_version": "db6a361c",
+      "content_hash": "1a666ffdaf8b1961a0e74b60c10742ca82a85ba55f6d3145dd5e54a60838fb65",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -49255,6 +49265,11 @@
           "number": 6162,
           "title": "Don't clear over output printed outside of Terminal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6859,
+          "title": "JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49262,7 +49277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:07:26.520Z",
+      "verified_at": "2026-11-04T17:17:56.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52473,8 +52488,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "9929d176",
-      "content_hash": "bb45e845583d519a375299a1f7ef9c46b03673858b85947e7bfd58e3fb7a3ec8",
+      "source_version": "4d505d50",
+      "content_hash": "6d4a0aec7fbaa5c757520d2a1697736c354ffffdc99de519193398e6e93a9e19",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -52537,6 +52552,11 @@
           "number": 6560,
           "title": "security): give privileged containers a SELinux domain of their own",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6860,
+          "title": "bump go-blockdevice to 2.0.37",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52544,7 +52564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:45:51.218Z",
+      "verified_at": "2026-11-04T17:18:00.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119000,7 +119020,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
+      "content_hash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "promoted_rules": [
@@ -119028,6 +119048,21 @@
           "number": 5989,
           "title": "Distilled LoRA Inference Configuration Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6862,
+          "title": "Dual-Precision Tensor Partitioning for Diffusion Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6863,
+          "title": "Fused QKV Weight Conversion for ComfyUI Compatibility",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6864,
+          "title": "Distilled LoRA Inference Parameter Locking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -119035,7 +119070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:21:30.824Z",
+      "verified_at": "2026-11-04T17:18:03.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175235,6 +175270,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:10:13.589Z"
+    },
+    "rule-6858": {
+      "learning_id": "rule-6858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6858,
+      "title": "Parse Quarto documents (.qmd) as Markdown (#542)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "be77b50a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:17:52.538Z"
+    },
+    "rule-6859": {
+      "learning_id": "rule-6859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6859,
+      "title": "JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "db6a361c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:17:56.890Z"
+    },
+    "rule-6860": {
+      "learning_id": "rule-6860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6860,
+      "title": "bump go-blockdevice to 2.0.37",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "4d505d50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:18:00.596Z"
+    },
+    "rule-6861": {
+      "learning_id": "rule-6861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6861,
+      "title": "exporters: verify TLS certificates (#8042)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "82d5a8ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:18:01.522Z"
+    },
+    "rule-6862": {
+      "learning_id": "rule-6862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6862,
+      "title": "Dual-Precision Tensor Partitioning for Diffusion Models",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:18:03.702Z"
+    },
+    "rule-6863": {
+      "learning_id": "rule-6863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6863,
+      "title": "Fused QKV Weight Conversion for ComfyUI Compatibility",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:18:03.702Z"
+    },
+    "rule-6864": {
+      "learning_id": "rule-6864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6864,
+      "title": "Distilled LoRA Inference Parameter Locking",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:18:03.702Z"
     }
   },
   "aliases": {
