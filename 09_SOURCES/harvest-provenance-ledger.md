@@ -7178,3 +7178,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `fcc0161f` | Multi-dimensional audit evidence | 2026-11-04T07:49:10.256Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `30de12cd` | Multi-dimensional audit evidence | 2026-11-04T07:49:14.759Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `10eeb7cc` | Multi-dimensional audit evidence | 2026-11-04T07:55:46.201Z |
+| `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `e3084ac5` | Multi-dimensional audit evidence | 2026-11-04T08:03:21.365Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `422ad407` | Multi-dimensional audit evidence | 2026-11-04T08:04:23.658Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `93633ac7` | Multi-dimensional audit evidence | 2026-11-04T08:06:06.082Z |

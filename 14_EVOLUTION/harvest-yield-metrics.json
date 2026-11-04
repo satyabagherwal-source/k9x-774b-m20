@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T07:55:46.206Z",
-  "total_cycles_completed": 7146,
-  "total_learnings_persisted": 7146,
-  "total_rules_promoted": 6791,
+  "last_updated": "2026-11-04T08:06:06.088Z",
+  "total_cycles_completed": 7149,
+  "total_learnings_persisted": 7149,
+  "total_rules_promoted": 6794,
   "history": [
-    {
-      "timestamp": "2026-11-03T18:47:40.502Z",
-      "repository": "pointfreeco/sqlite-data",
-      "learningId": "learn-github-pointfreeco-sqlite-data",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T18:47:40.981Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T18:47:51.090Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T18:47:57.749Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T07:55:46.206Z",
       "repository": "faker-js/faker",
       "learningId": "learn-github-faker-js-faker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:03:21.370Z",
+      "repository": "margelo/react-native-vision-camera",
+      "learningId": "learn-github-margelo-react-native-vision-camera",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:04:23.664Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:06:06.088Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

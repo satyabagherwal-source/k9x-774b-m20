@@ -7169,3 +7169,6 @@
 | `CYCLE-20261104-FNJF` | `2026-11-04T07:49:10.251Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6765` | Yes (`edea1d32...`) |
 | `CYCLE-20261104-FR0J` | `2026-11-04T07:49:14.755Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6766` | Yes (`5f9777f1...`) |
 | `CYCLE-20261104-O51Y` | `2026-11-04T07:55:46.198Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6767` | Yes (`f52cf0c1...`) |
+| `CYCLE-20261104-XW9D` | `2026-11-04T08:03:21.361Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6768` | Yes (`c4952a70...`) |
+| `CYCLE-20261104-Z8BQ` | `2026-11-04T08:04:23.654Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6769` | Yes (`a784eaa9...`) |
+| `CYCLE-20261104-1FCT` | `2026-11-04T08:06:06.077Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6770` | Yes (`f5439ff5...`) |

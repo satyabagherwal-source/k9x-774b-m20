@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T07:55:46.209Z",
+  "last_updated": "2026-11-04T08:06:06.092Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "3ade3e62af0406b9943992b91d9650b873a2f07cb0b584952aad8ba94f24fb16",
-      "verified_at": "2026-11-03T22:06:44.662Z",
+      "content_hash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
+      "verified_at": "2026-11-04T08:06:06.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:06:44.662Z"
+      "last_updated": "2026-11-04T08:06:06.091Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -6426,14 +6426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-vision-camera",
-      "content_hash": "8e4b7dffd916889de6c6d66ab9117d6e013ec3f22d83b718b57df34dc4faf3c5",
-      "verified_at": "2026-10-31T05:14:16.368Z",
+      "content_hash": "c4952a70ee4fe514a8323154718efc0e6fded96a002c0453842e61de976f8003",
+      "verified_at": "2026-11-04T08:03:21.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:14:16.368Z"
+      "last_updated": "2026-11-04T08:03:21.374Z"
     },
     "vinceanalytics/vince": {
       "repository": "vinceanalytics/vince",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "666756b71852ddeac113588b5f614ca7ff372afc2e8e9e322fa45998a64a620e",
-      "verified_at": "2026-11-01T02:22:45.789Z",
+      "content_hash": "a784eaa96e213ca954ae0e6692018cdbd75679f68b70f462e9a31aa3124b4573",
+      "verified_at": "2026-11-04T08:04:23.667Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:22:45.789Z"
+      "last_updated": "2026-11-04T08:04:23.667Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",

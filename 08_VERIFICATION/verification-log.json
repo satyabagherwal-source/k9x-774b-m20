@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-1WBH",
-    "timestamp": "2026-10-31T18:15:38.717Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-A9P7",
-    "timestamp": "2026-10-31T18:22:09.307Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ALAY",
-    "timestamp": "2026-10-31T18:22:24.346Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-AMXJ",
     "timestamp": "2026-10-31T18:22:26.455Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7490,6 +7445,51 @@
     "repository": "faker-js/faker",
     "learningId": "learn-github-faker-js-faker",
     "contentHash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-XW9D",
+    "timestamp": "2026-11-04T08:03:21.361Z",
+    "repository": "margelo/react-native-vision-camera",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "c4952a70ee4fe514a8323154718efc0e6fded96a002c0453842e61de976f8003",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-Z8BQ",
+    "timestamp": "2026-11-04T08:04:23.654Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "a784eaa96e213ca954ae0e6692018cdbd75679f68b70f462e9a31aa3124b4573",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-1FCT",
+    "timestamp": "2026-11-04T08:06:06.077Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
