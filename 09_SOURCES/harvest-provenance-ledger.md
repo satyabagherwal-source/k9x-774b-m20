@@ -7275,3 +7275,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-04T17:59:34.576Z |
 | `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T18:06:05.796Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `8ee17216` | Multi-dimensional audit evidence | 2026-11-04T18:06:14.416Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-04T18:13:49.148Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `27424dee` | Multi-dimensional audit evidence | 2026-11-04T18:13:55.733Z |

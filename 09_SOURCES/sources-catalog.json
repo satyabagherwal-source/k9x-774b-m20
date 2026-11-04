@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "6c452ddc",
+    "sourceVersion": "27424dee",
     "license": "NOASSERTION",
-    "contentHash": "617eb25c95bd74fa584dedb77b4a88138bc6fd495da0afc57fc108523395f86d",
-    "lastHarvestedAt": "2026-11-03T17:53:54.733Z",
+    "contentHash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
+    "lastHarvestedAt": "2026-11-04T18:13:55.733Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "12d22fd02425a58d77a4eac0be717542c73417295c75557edfadc712f0b68194",
-    "lastHarvestedAt": "2026-10-31T02:14:25.835Z",
+    "contentHash": "ceaaad5e1b953b20dc3f03a1fc0a699bcec104db7e724d0e1b55614af9075363",
+    "lastHarvestedAt": "2026-11-04T18:13:49.148Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {

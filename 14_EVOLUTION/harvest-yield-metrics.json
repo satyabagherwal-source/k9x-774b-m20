@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T18:06:14.419Z",
-  "total_cycles_completed": 7243,
-  "total_learnings_persisted": 7243,
-  "total_rules_promoted": 6918,
+  "last_updated": "2026-11-04T18:13:55.739Z",
+  "total_cycles_completed": 7245,
+  "total_learnings_persisted": 7245,
+  "total_rules_promoted": 6921,
   "history": [
-    {
-      "timestamp": "2026-11-04T00:10:47.077Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T00:10:49.742Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T00:10:50.717Z",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T18:06:14.419Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:13:49.153Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T18:13:55.739Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

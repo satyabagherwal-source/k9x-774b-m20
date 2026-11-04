@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261101-FG02",
-    "timestamp": "2026-11-01T00:30:05.762Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-NCVB",
-    "timestamp": "2026-11-01T00:36:14.951Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261101-NH3V",
     "timestamp": "2026-11-01T00:36:20.443Z",
     "repository": "jellyfin/Swiftfin",
@@ -7490,6 +7460,36 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-QYFS",
+    "timestamp": "2026-11-04T18:13:49.144Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "ceaaad5e1b953b20dc3f03a1fc0a699bcec104db7e724d0e1b55614af9075363",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-R3IP",
+    "timestamp": "2026-11-04T18:13:55.729Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

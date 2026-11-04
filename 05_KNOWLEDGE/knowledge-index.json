@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T18:06:14.355Z",
+  "last_updated": "2026-11-04T18:13:55.645Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49814,8 +49814,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "6c452ddc",
-      "content_hash": "617eb25c95bd74fa584dedb77b4a88138bc6fd495da0afc57fc108523395f86d",
+      "source_version": "27424dee",
+      "content_hash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -49878,6 +49878,11 @@
           "number": 6566,
           "title": "[MOD-19944] Add a COMPACT_ALL option to FT.DEBUG GC_FORCEINVOKE to fully compact",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6889,
+          "title": "skills: suggest Box::into_raw over Box::leak in rust-review (#11875)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49885,7 +49890,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:53:54.622Z",
+      "verified_at": "2026-11-04T18:13:55.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126801,7 +126806,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "12d22fd02425a58d77a4eac0be717542c73417295c75557edfadc712f0b68194",
+      "content_hash": "ceaaad5e1b953b20dc3f03a1fc0a699bcec104db7e724d0e1b55614af9075363",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -126834,6 +126839,16 @@
           "number": 6011,
           "title": "Model Artifact Naming as API Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6887,
+          "title": "Precision-Stratified Model Distribution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6888,
+          "title": "Separation of Distillation Logic via Modular Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -126841,7 +126856,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:14:25.727Z",
+      "verified_at": "2026-11-04T18:13:49.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175791,6 +175806,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T18:06:14.340Z"
+    },
+    "rule-6887": {
+      "learning_id": "rule-6887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6887,
+      "title": "Precision-Stratified Model Distribution Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:13:49.038Z"
+    },
+    "rule-6888": {
+      "learning_id": "rule-6888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6888,
+      "title": "Separation of Distillation Logic via Modular Adapters",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:13:49.038Z"
+    },
+    "rule-6889": {
+      "learning_id": "rule-6889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6889,
+      "title": "skills: suggest Box::into_raw over Box::leak in rust-review (#11875)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "27424dee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:13:55.622Z"
     }
   },
   "aliases": {
