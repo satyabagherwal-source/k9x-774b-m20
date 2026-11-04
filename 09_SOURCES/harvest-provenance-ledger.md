@@ -7184,3 +7184,5 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `d1996344` | Multi-dimensional audit evidence | 2026-11-04T08:14:08.605Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `c570669d` | Multi-dimensional audit evidence | 2026-11-04T08:14:13.697Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `3799e0d0` | Multi-dimensional audit evidence | 2026-11-04T08:14:18.570Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `d1670007` | Multi-dimensional audit evidence | 2026-11-04T08:21:57.159Z |
+| `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `7ec78c35` | Multi-dimensional audit evidence | 2026-11-04T08:21:58.591Z |

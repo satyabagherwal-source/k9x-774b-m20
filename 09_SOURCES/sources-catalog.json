@@ -1943,10 +1943,10 @@
     "repository": "scrapinghub/scrapy-poet",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "sourceVersion": "fd700743",
+    "sourceVersion": "7ec78c35",
     "license": "BSD-3-Clause",
-    "contentHash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
-    "lastHarvestedAt": "2026-10-27T19:31:58.631Z",
+    "contentHash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
+    "lastHarvestedAt": "2026-11-04T08:21:58.591Z",
     "learningId": "learn-github-scrapinghub-scrapy-poet"
   },
   "webdriverio-webdriverio": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "8fcaa51f",
+    "sourceVersion": "d1670007",
     "license": "MIT",
-    "contentHash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
-    "lastHarvestedAt": "2026-11-03T11:52:06.011Z",
+    "contentHash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
+    "lastHarvestedAt": "2026-11-04T08:21:57.159Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

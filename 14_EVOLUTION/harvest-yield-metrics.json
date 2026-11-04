@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T08:14:18.574Z",
-  "total_cycles_completed": 7152,
-  "total_learnings_persisted": 7152,
-  "total_rules_promoted": 6797,
+  "last_updated": "2026-11-04T08:21:58.596Z",
+  "total_cycles_completed": 7154,
+  "total_learnings_persisted": 7154,
+  "total_rules_promoted": 6799,
   "history": [
-    {
-      "timestamp": "2026-11-03T19:05:56.190Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T19:06:02.869Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T19:06:07.824Z",
       "repository": "tickernelz/opencode-mem",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T08:14:18.574Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:21:57.164Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T08:21:58.596Z",
+      "repository": "scrapinghub/scrapy-poet",
+      "learningId": "learn-github-scrapinghub-scrapy-poet",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

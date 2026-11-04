@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T08:14:21.124Z",
-    "lastVerified": "2026-11-04T08:14:21.124Z",
+    "lastChecked": "2026-11-04T08:22:01.156Z",
+    "lastVerified": "2026-11-04T08:22:01.156Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T07:49:12.565Z",
+    "lastChecked": "2026-11-04T08:21:52.148Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T07:49:12.565Z"
+    "lastVerified": "2026-11-04T08:21:52.148Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2273,8 +2273,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T01:58:23.386Z",
-    "lastVerified": "2026-11-04T01:58:23.386Z",
+    "lastChecked": "2026-11-04T08:21:47.212Z",
+    "lastVerified": "2026-11-04T08:21:47.212Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3652,9 +3652,9 @@
   "berty-berty": {
     "name": "berty",
     "officialUrl": "https://github.com/berty/berty",
-    "lastChecked": "2026-10-31T05:29:25.913Z",
+    "lastChecked": "2026-11-04T08:21:42.199Z",
     "revisionIdentifier": "e4ea1d8b",
-    "lastVerified": "2026-10-31T05:29:25.913Z"
+    "lastVerified": "2026-11-04T08:21:42.199Z"
   },
   "peerdb-io-peerdb": {
     "name": "PeerDB-io/peerdb",
@@ -4864,12 +4864,12 @@
     "lastVerified": "2026-11-04T07:49:10.012Z"
   },
   "telemt-telemt": {
-    "name": "telemt/telemt",
+    "name": "telemt",
     "officialUrl": "https://github.com/telemt/telemt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T14:39:11.526Z",
-    "lastVerified": "2026-11-02T14:39:11.526Z",
+    "lastChecked": "2026-11-04T08:21:37.183Z",
+    "lastVerified": "2026-11-04T08:21:37.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-telemt-telemt",
@@ -4878,7 +4878,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "84e5b827"
   },
   "hf-zai-org-glm-5.2": {
     "name": "zai-org/GLM-5.2",
@@ -5119,9 +5120,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-03T10:52:44.608Z",
+    "lastChecked": "2026-11-04T08:21:49.619Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-03T10:52:44.608Z"
+    "lastVerified": "2026-11-04T08:21:49.619Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -7161,14 +7162,14 @@
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T11:52:04.226Z",
-    "lastVerified": "2026-11-03T11:52:04.226Z",
+    "lastChecked": "2026-11-04T08:21:49.711Z",
+    "lastVerified": "2026-11-04T08:21:49.711Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
+    "contentHash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12029,11 +12030,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "scrapinghub-scrapy-poet": {
-    "name": "scrapy-poet",
+    "name": "scrapinghub/scrapy-poet",
     "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "lastChecked": "2026-10-30T22:20:12.605Z",
-    "revisionIdentifier": "fd700743",
-    "lastVerified": "2026-10-30T22:20:12.605Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-04T08:21:44.370Z",
+    "lastVerified": "2026-11-04T08:21:44.370Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-scrapinghub-scrapy-poet",
+    "contentHash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "saffsanity-sill": {
     "name": "Saffsanity/sill",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:14:18.505Z",
+  "last_updated": "2026-11-04T08:21:58.504Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -56128,8 +56128,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "8fcaa51f",
-      "content_hash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
+      "source_version": "d1670007",
+      "content_hash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -56197,6 +56197,11 @@
           "number": 6514,
           "title": "Add throttle-aware retry controller for history task processing (#12094)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6774,
+          "title": "Enable cgo for test targets when the race detector is on (#12689)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56204,7 +56209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:52:05.902Z",
+      "verified_at": "2026-11-04T08:21:57.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77265,8 +77270,8 @@
       "slug": "scrapinghub-scrapy-poet",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/scrapy-poet",
-      "source_version": "fd700743",
-      "content_hash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
+      "source_version": "7ec78c35",
+      "content_hash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "promoted_rules": [
@@ -77299,6 +77304,11 @@
           "number": 4964,
           "title": "Upgrade docs requirements (#267)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6775,
+          "title": "Merge pull request #263 from AdrianAtZyte/provider-encoding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -77306,7 +77316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:31:58.544Z",
+      "verified_at": "2026-11-04T08:21:58.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173556,6 +173566,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:14:18.492Z"
+    },
+    "rule-6774": {
+      "learning_id": "rule-6774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6774,
+      "title": "Enable cgo for test targets when the race detector is on (#12689)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "d1670007",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:21:57.049Z"
+    },
+    "rule-6775": {
+      "learning_id": "rule-6775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6775,
+      "title": "Merge pull request #263 from AdrianAtZyte/provider-encoding",
+      "source_url": "https://github.com/scrapinghub/scrapy-poet",
+      "source_version": "7ec78c35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:21:58.482Z"
     }
   },
   "aliases": {

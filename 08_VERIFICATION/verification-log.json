@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-JDEJ",
-    "timestamp": "2026-10-31T18:29:14.011Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-PGYO",
-    "timestamp": "2026-10-31T18:33:58.560Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "804a9566fc93c03a9b5414e8fcd12408ed1f69c96cf8d48e07964952445d4e9c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-Y4KR",
     "timestamp": "2026-10-31T18:40:42.411Z",
     "repository": "Automattic/harper",
@@ -7490,6 +7460,36 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "b6ac7fe9d3af27969984c5f97006b523f7387478638c80456a186eadbbc0a837",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-LT7N",
+    "timestamp": "2026-11-04T08:21:57.155Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-LUBF",
+    "timestamp": "2026-11-04T08:21:58.587Z",
+    "repository": "scrapinghub/scrapy-poet",
+    "learningId": "learn-github-scrapinghub-scrapy-poet",
+    "contentHash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

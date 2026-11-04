@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:14:18.576Z",
+  "last_updated": "2026-11-04T08:21:58.600Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3051,14 +3051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-scrapy-poet",
-      "content_hash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
-      "verified_at": "2026-10-27T19:31:58.639Z",
+      "content_hash": "7e49c89c2d97e1748f7058e7b07b2c546ed401e690decb91b025a6ef70ff4dd2",
+      "verified_at": "2026-11-04T08:21:58.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:31:58.639Z"
+      "last_updated": "2026-11-04T08:21:58.600Z"
     },
     "webdriverio/webdriverio": {
       "repository": "webdriverio/webdriverio",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "40eb3af8aa24e3d3fe78eaf360b832845c3735cb3e2187d31379229331dc5d4b",
-      "verified_at": "2026-11-03T11:52:06.022Z",
+      "content_hash": "bcc8f927390f8423bb8b738f02d31c61726f5b70650fac6a8d10b0036483506b",
+      "verified_at": "2026-11-04T08:21:57.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:52:06.022Z"
+      "last_updated": "2026-11-04T08:21:57.167Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

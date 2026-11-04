@@ -7175,3 +7175,5 @@
 | `CYCLE-20261104-BROA` | `2026-11-04T08:14:08.602Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6771` | Yes (`f95b27cc...`) |
 | `CYCLE-20261104-BVLR` | `2026-11-04T08:14:13.695Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6772` | Yes (`084e8839...`) |
 | `CYCLE-20261104-BZD3` | `2026-11-04T08:14:18.567Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6773` | Yes (`b6ac7fe9...`) |
+| `CYCLE-20261104-LT7N` | `2026-11-04T08:21:57.155Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6774` | Yes (`bcc8f927...`) |
+| `CYCLE-20261104-LUBF` | `2026-11-04T08:21:58.587Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6775` | Yes (`7e49c89c...`) |
