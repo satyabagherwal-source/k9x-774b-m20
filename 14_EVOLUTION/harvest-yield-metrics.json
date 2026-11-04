@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T03:00:16.924Z",
-  "total_cycles_completed": 7110,
-  "total_learnings_persisted": 7110,
-  "total_rules_promoted": 6756,
+  "last_updated": "2026-11-04T03:09:16.835Z",
+  "total_cycles_completed": 7112,
+  "total_learnings_persisted": 7112,
+  "total_rules_promoted": 6758,
   "history": [
-    {
-      "timestamp": "2026-11-03T16:50:42.466Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T16:50:47.168Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T16:58:57.113Z",
       "repository": "zeromicro/go-zero",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-04T03:00:16.924Z",
       "repository": "openreplay/openreplay",
       "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:09:05.493Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T03:09:16.835Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

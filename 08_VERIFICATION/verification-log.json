@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-6I5D",
-    "timestamp": "2026-10-31T16:27:15.169Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-6NQ1",
-    "timestamp": "2026-10-31T16:27:22.393Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-D5CN",
     "timestamp": "2026-10-31T16:32:25.175Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7460,36 @@
     "repository": "openreplay/openreplay",
     "learningId": "learn-github-openreplay-openreplay",
     "contentHash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-FGWB",
+    "timestamp": "2026-11-04T03:09:05.483Z",
+    "repository": "TanStack/query",
+    "learningId": "learn-github-tanstack-query",
+    "contentHash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-FPNE",
+    "timestamp": "2026-11-04T03:09:16.826Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "8df076c18b1f110b7abec7b3e07b5618bf256b58160020774aaab2805861dd3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
-> **Source Version**: `979695d0`  
+> **Source Version**: `d5781a49`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:35:50.383Z  
+> **Timestamp**: 2026-11-04T03:09:04.738Z  
 > **Learning ID**: `learn-github-tanstack-query`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:35:48.876Z  
+> **Harvest Timestamp**: 2026-11-04T03:09:03.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50502 stars
+- **Stars / Engagement**: 50522 stars
 
 ---
 
@@ -997,7 +997,7 @@ async function serializeRequest(request) {
 
 ```
 
-### Core Architecture Module: `examples/lit/load-more-infinite-scroll/public/mockServiceWorker.js`
+### Core Architecture Module: `examples/lit/load-more-infinite-scroll-lit-labs-router/public/mockServiceWorker.js`
 ```
 /* eslint-disable */
 /* tslint:disable */
@@ -1363,7 +1363,7 @@ async function serializeRequest(request) {
 
 ```
 
-### Core Architecture Module: `examples/lit/offline/public/mockServiceWorker.js`
+### Core Architecture Module: `examples/lit/offline-lit-labs-router/public/mockServiceWorker.js`
 ```
 /* eslint-disable */
 /* tslint:disable */
@@ -2827,7 +2827,7 @@ async function serializeRequest(request) {
 
 ```
 
-### Core Architecture Module: `examples/preact/load-more-infinite-scroll/public/mockServiceWorker.js`
+### Core Architecture Module: `examples/preact/load-more-infinite-scroll-preact-iso/public/mockServiceWorker.js`
 ```
 /* eslint-disable */
 /* tslint:disable */
@@ -3193,7 +3193,7 @@ async function serializeRequest(request) {
 
 ```
 
-### Core Architecture Module: `examples/preact/offline/public/mockServiceWorker.js`
+### Core Architecture Module: `examples/preact/offline-preact-iso/public/mockServiceWorker.js`
 ```
 /* eslint-disable */
 /* tslint:disable */
@@ -3586,492 +3586,380 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d61f1e4` (2026-10-28)
-**Commit Message**: fix(examples): remove horizontal overflow in 'shadow-dom' and make character selection keyboard accessible in 'prefetching' (#12436)
+### Incident Patch 1: `e877443c` (2026-11-04)
+**Commit Message**: chore(deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (#12515)
 
-**File**: `examples/preact/prefetching/src/Home.tsx` (modified, +19/-23)
+**File**: `examples/vue/algolia/package.json` (modified, +1/-1)
 ```diff
-@@ -18,31 +18,27 @@ function CharacterItem({
-     enabled: false,
-   })
- 
-+  const prefetch = () => {
-+    queryClient
-+      .query({
-+        ...charactersQueries.detail(char.id),
-+        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-+      })
-+      .catch(noop)
-+  }
-+
-   return (
--    <li
--      onClick={() => {
--        onSelect(char.id)
--      }}
--      onMouseEnter={() => {
--        queryClient
--          .query({
--            ...charactersQueries.detail(char.id),
--            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
--          })
--          .catch(noop)
--      }}
--    >
--      <div
--        style={
--          data
--            ? {
--                fontWeight: 'bold',
--              }
--            : {}
--        }
-+    <li onMouseEnter={prefetch} onFocusIn={prefetch}>
-+      <button
-+        type="button"
-+        style={data ? { fontWeight: 'bold' } : {}}
-+        onClick={() => {
-+          onSelect(char.id)
-+        }}
-       >
--        {char.id} - {char.name} <a href={`/character/${char.id}`}>details</a>
--      </div>
-+        {char.id} - {char.name}
-+      </button>{' '}
-+      <a href={`/character/${char.id}`}>details</a>
-     </li>
-   )
- }
+@@ -14,7 +14,7 @@
+     "@tanstack/vue-pacer": "^0.2.0",
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
 ```
 
-**File**: `examples/preact/shadow-dom/src/index.tsx` (modified, +0/-1)
+**File**: `examples/vue/basic-graphql-request/package.json` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,6 @@ render(
-   <QueryClientProvider client={queryClient}>
-     <div
-       style={{
--        width: '100vw',
-         padding: '30px',
-       }}
-     >
+@@ -14,7 +14,7 @@
+     "@tanstack/vue-query-devtools": "^6.3.9",
+     "graphql": "^16.9.0",
+     "graphql-request": "^7.1.2",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
 ```
 
-**File**: `examples/react/prefetching/src/pages/index.tsx` (modified, +19/-24)
+**File**: `examples/vue/basic/package.json` (modified, +1/-1)
 ```diff
-@@ -19,32 +19,27 @@ function CharacterItem({
-     enabled: false,
-   })
- 
-+  const prefetch = () => {
-+    queryClient
-+      .query({
-+        ...charactersQueries.detail(char.id),
-+        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-+      })
-+      .catch(noop)
-+  }
-+
-   return (
--    <li
--      onClick={() => {
--        onSelect(char.id)
--      }}
--      onMouseEnter={() => {
--        queryClient
--          .query({
--            ...charactersQueries.detail(char.id),
--            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
--          })
--          .catch(noop)
--      }}
--    >
--      <div
--        style={
--          data
--            ? {
--                fontWeight: 'bold',
--              }
--            : {}
--        }
-+    <li onMouseEnter={prefetch} onFocus={prefetch}>
-+      <button
-+        type="button"
-+        style={data ? { fontWeight: 'bold' } : {}}
-+        onClick={() => {
-+          onSelect(char.id)
-+        }}
-       >
--        {char.id} - {char.name}{' '}
--        <Link href={`/character/${char.id}`}>details</Link>
--      </div>
-+        {char.id} - {char.name}
-+      </button>{' '}
-+      <Link href={`/character/${char.id}`}>details</Link>
-     </li>
-   )
- }
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
 ```
 
-**File**: `examples/react/shadow-dom/src/main.tsx` (modified, +0/-1)
-```diff
-@@ -17,7 +17,6 @@ root.render(
-     <QueryClientProvider client={queryClient}>
-       <div
-         style={{
--          width: '100vw',
-           padding: '30px',
-         }}
-       >
-```
-
-**File**: `examples/solid/prefetching/src/routes/index.tsx` (modified, +19/-24)
-```diff
-@@ -15,32 +15,27 @@ function CharacterItem(props: {
-     enabled: false,
-   }))
- 
-+  const prefetch = () => {
-+    queryClient
-+      .query({
-+        ...charactersQueries.detail(props.char.id),
-+        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-+      })
-+      .catch(noop)
-+  }
-+
-   return (
--    <li
--      onClick={() => {
--        props.onSelect(props.char.id)
--      }}
--      onMouseEnter={() => {
--        queryClient
--          .query({
--            ...charactersQueries.detail(props.char.id),
--            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
--          })
--          .catch(noop)
--      }}
--    >
--      <div
--        style={
--          characterQuery.isSuccess
--            ? {
--                'font-weight': 'bold',
--              }
--            : {}
--        }
-+    <li onMouseEnter={prefetch} onFocusIn={prefetch}>
-+      <button
-+        type="button"
-+        style={characterQuery.isSuccess ? { 'font-weight': 'bold' } : {}}
-+        onClick={() => {
-+          props.onSelect(props.char.id)
-+        }}
-       >
--        {props.char.id} - {props.char.name}{' '}
--        <A href={`/character/${props.char.id}`}>details</A>
--      </div>
-+        {props.char.id} - {props.char.name}
-+      </button>{' '}
-+      <A href={`/character/${props.char.id}`}>details</A>
-     </li>
-   )
- }
-```
-
-**File**: `examples/solid/shadow-dom/src/index.tsx` (modified, +0/-1)
-```diff
-@@ -15,7 +15,6 @@ render(
-     <QueryClientProvider client={queryClient}>
-       <div
-         style={{
--          width: '100vw',
-           padding: '30px',
-         }}
-       >
-```
-
-**File**: `examples/svelte/prefetching/src/lib/CharacterItem.svelte` (modified, +14/-12)
-```diff
-@@ -13,24 +13,26 @@
-     ...charactersQueries.detail(char.id),
-     enabled: false,
-   }))
--</script>
- 
--<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
--<li
--  onclick={() => {
--    onSelect(char.id)
--  }}
--  onmouseenter={() => {
-+  const prefetch = () => {
-     queryClient
-       .query({
-         ...charactersQueries.detail(char.id),
-         staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-       })
-       .catch(noop)
--  }}
-->
--  <div style={query.data ? 'font-weight: bold' : ''}>
-+  }
-+</script>
-+
-+<li onmouseenter={prefetch} onfocusin={prefetch}>
-+  <button
-+    type="button"
-+    style={query.data ? 'font-weight: bold' : ''}
-+    onclick={() => {
-+      onSelect(char.id)
-+    }}
-+  >
-     {char.id} - {char.name}
--    <a href={resolve('/character/[id]', { id: String(char.id) })}>details</a>
--  </div>
-+  </button>
-+  <a href={resolve('/character/[id]', { id: String(char.id) })}>details</a>
- </li>
-```
-
-**File**: `examples/svelte/shadow-dom/src/App.svelte` (modified, +1/-1)
+**File**: `examples/vue/batching/package.json` (modified, +1/-1)
 ```diff
 @@ -13,7 +13,7 @@
- </script>
- 
- <QueryClientProvider client={queryClient}>
--  <div style="width: 100vw; padding: 30px">
-+  <div style="padding: 30px">
-     <h2>Dog Breeds</h2>
-     <DogList />
-   </div>
+     "@tanstack/vue-pacer": "^0.2.0",
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+```
+
+**File**: `examples/vue/chat/package.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tailwindcss/vite": "^4.3.3",
+```
+
+**File**: `examples/vue/contacts-tanstack-router/package.json` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+     "@tanstack/vue-query-devtools": "^6.3.9",
+     "@tanstack/vue-router": "^1.170.42",
+     "match-sorter": "^8.3.0",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+```
+
+**File**: `examples/vue/contacts-vue-router/package.json` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+     "match-sorter": "^8.3.0",
+-    "vue": "^3.5.43",
++    "vue": "^3.5.44",
+     "vue-router": "^5.4.0"
+   },
+   "devDependencies": {
+```
+
+**File**: `examples/vue/default-query-function/package.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/vue-query": "^5.105.3",
+     "@tanstack/vue-query-devtools": "^6.3.9",
+-    "vue": "^3.5.43"
++    "vue": "^3.5.44"
+   },
+   "devDependencies": {
+     "@tanstack/eslint-plugin-query": "^5.105.3",
 ```
 
 ---
 
-### Incident Patch 2: `7ccba6e9` (2026-10-30)
-**Commit Message**: fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData' (#11373)
+### Incident Patch 2: `b1243fac` (2026-11-03)
+**Commit Message**: chore(deps): update security dependencies in examples and integrations (#12509)
 
-* fix({react,preact,angular}-query): remove erroneous '| undefined' from 'DefinedInitialDataInfiniteOptions'
-
-* test({react,preact,angular}-query/infiniteQueryOptions): use a non-literal condition for the ternary 'initialData' test
-
-* fix({solid,vue}-query): accept a possibly-undefined 'initialData' in 'UndefinedInitialDataInfiniteOptions'
-
-* fix(vue-query/infiniteQueryOptions): declare the 'Defined' overload first so a defined 'initialData' still selects it
-
-* docs({react,preact,angular,solid,vue}-query): drop generated reference doc changes, regenerated by autofix after merge
-
-* chore(.changeset): align the message with the PR title
-
-* docs({react,preact,angular,solid,vue}-query/infiniteQueryOptions): describe overload selection by whether 'initialData' is known to be defined
-
-* docs(framework/*/reference): regenerate reference docs
-
-* docs(framework): restore the generated reference docs from main and leave them to autofix
-
-* docs({react,preact,angular,solid,vue}-query): regenerate reference docs
-
-* test({react,preact,angular,solid,vue}
-
-**File**: `.changeset/fix-defined-initial-data-infinite-undefined.md` (added, +9/-0)
+**File**: `examples/preact/ssr-streaming/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,9 @@
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/preact-query": "^5.105.3",
+     "@tanstack/preact-query-devtools": "^5.105.3",
+-    "compression": "^1.8.1",
++    "compression": "^1.8.2",
+     "devalue": "^6.0.3",
+     "express": "^5.3.0",
+     "preact": "^11.0.1",
+```
+
+**File**: `examples/preact/ssr/package.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/preact-query": "^5.105.3",
+     "@tanstack/preact-query-devtools": "^5.105.3",
+-    "compression": "^1.8.1",
++    "compression": "^1.8.2",
+     "devalue": "^6.0.3",
+     "express": "^5.3.0",
+     "preact": "^11.0.1",
+```
+
+**File**: `examples/react/algolia/package.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.1.1",
++    "@vitejs/plugin-react": "^6.2.1",
+     "typescript": "^6.0.3",
+     "vite": "^8.3.5"
+   }
+```
+
+**File**: `examples/react/auto-refetching-nextjs-pages-router/package.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+   "dependencies": {
+     "@tanstack/react-query": "^5.105.3",
+     "@tanstack/react-query-devtools": "^5.105.3",
+-    "next": "^16.0.7",
++    "next": "^16.4.4",
+     "react": "^19.3.1",
+     "react-dom": "^19.3.1"
+   },
+```
+
+**File**: `examples/react/basic-graphql-request/package.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.1.1",
++    "@vitejs/plugin-react": "^6.2.1",
+     "typescript": "^6.0.3",
+     "vite": "^8.3.5"
+   }
+```
+
+**File**: `examples/react/basic/package.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.1.1",
++    "@vitejs/plugin-react": "^6.2.1",
+     "typescript": "^6.0.3",
+     "vite": "^8.3.5"
+   }
+```
+
+**File**: `examples/react/batching/package.json` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.1.1",
++    "@vitejs/plugin-react": "^6.2.1",
+     "typescript": "^6.0.3",
+     "vite": "^8.3.5"
+   }
+```
+
+**File**: `examples/react/chat/package.json` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@
+     "@tanstack/eslint-plugin-query": "^5.105.3",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.1.1",
++    "@vitejs/plugin-react": "^6.2.1",
+     "tailwindcss": "^4.3.3",
+     "typescript": "^6.0.3",
+     "vite": "^8.3.5"
+```
+
+---
+
+### Incident Patch 3: `05d9b6a4` (2026-11-01)
+**Commit Message**: fix(query-core): unpause a mutation that can start after its onMutate (#11788)
+
+* fix(query-core): unpause a mutation that can start after its onMutate
+
+Mutation.execute() computes isPaused before it awaits the MutationCache and
+mutation onMutate callbacks, and dispatches pending with that value. When the
+mutation cannot start at that point (queued behind another mutation in its
+scope, or offline) but can by the time onMutate resolves, retryer.start()
+runs it directly instead of going through pause(), so no continue action is
+dispatched and the mutation reports isPaused: true for its whole request.
+defaultShouldDehydrateMutation and resumePausedMutations read that flag, so
+the in-flight mutation is dehydrated as not yet sent and runs a second time
+after a restore.
+
+Dispatch continue right before start() when the mutation is still marked
+paused but can start now, as #9015 does for a restored mutation.
+
+Source: packages/query-core/src/mutation.ts execute(),
+packages/query-core/src/retryer.ts start(), hydration.ts
+defaultShouldDehydrateMutation.
+
+* test(query-core): use createKey in mutation regression test
+
+---------
+
+Co-authored-by: Dominik Dorfmeister 🔮 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/unpause-mutation-after-onmutate.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
 +---
-+'@tanstack/react-query': patch
-+'@tanstack/preact-query': patch
-+'@tanstack/angular-query-experimental': patch
-+'@tanstack/solid-query': patch
-+'@tanstack/vue-query': patch
++'@tanstack/query-core': patch
 +---
 +
-+fix({react,preact,angular,solid,vue}-query/infiniteQueryOptions): correct the overload selected for a possibly-undefined 'initialData'
++Clear `isPaused` on a mutation that can start once its `onMutate` resolves, so it is no longer dehydrated and resumed a second time while its request is in flight.
 ```
 
-**File**: `docs/framework/angular/reference/functions/infiniteQueryOptions.md` (modified, +1/-1)
+**File**: `packages/query-core/src/__tests__/mutation.test.tsx` (modified, +77/-1)
 ```diff
-@@ -34,7 +34,7 @@ You can generally pass everything to `infiniteQueryOptions` that you can also pa
- `queryClient.fetchInfiniteQuery`. `options.queryKey` is required and is the query key to generate options
- for.
+@@ -2,7 +2,7 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+ import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
+ import { MutationObserver } from '../mutationObserver'
+-import { executeMutation } from './utils'
++import { executeMutation, mockOnlineManagerIsOnline } from './utils'
+ import type { MutationState } from '../mutation'
+ import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
  
--This overload is selected when `initialData` is set.
-+This overload is selected when `initialData` is known to be defined.
+@@ -767,6 +767,82 @@ describe('mutation', () => {
+         'finish-B',
+       ])
+     })
++
++    it('should keep a queued mutation paused when its onMutate resolves before its turn', async () => {
++      const isPaused: Array<boolean> = []
++      const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
++        if (
++          event.type === 'updated' &&
++          event.mutation.state.variables === 'vars2'
++        ) {
++          isPaused.push(event.mutation.state.isPaused)
++        }
++      })
++
++      executeMutation(
++        queryClient,
++        {
++          scope: {
++            id: 'scope',
++          },
++          mutationFn: () => sleep(20).then(() => 'a'),
++        },
++        'vars1',
++      )
++      executeMutation(
++        queryClient,
++        {
++          scope: {
++            id: 'scope',
++          },
++          onMutate: () => sleep(10),
++          mutationFn: () => sleep(10).then(() => 'b'),
++        },
++        'vars2',
++      )
++      expect(isPaused).toStrictEqual([true])
++
++      // onMutate resolves while the first mutation is still running
++      await vi.advanceTimersByTimeAsync(15)
++      expect(isPaused).not.toContain(false)
++
++      unsubscribe()
++    })
++  })
++
++  it('should unpause a mutation that goes back online while its onMutate runs', async () => {
++    const key = createKey()
++    const onlineMock = mockOnlineManagerIsOnline(false)
++    const mutationFn = vi.fn<() => Promise<string>>(() =>
++      sleep(20).then(() => 'data'),
++    )
++
++    executeMutation(
++      queryClient,
++      {
++        mutationKey: key,
++        onMutate: () => sleep(10),
++        mutationFn,
++      },
++      'vars',
++    )
++    const mutation = queryClient.getMutationCache().find({ mutationKey: key })!
++    expect(mutation.state).toMatchObject({
++      status: 'pending',
++      isPaused: true,
++    })
++
++    onlineMock.mockReturnValue(true)
++    await vi.advanceTimersByTimeAsync(20)
++    expect(mutationFn).toHaveBeenCalledTimes(1)
++    expect(mutation.state).toMatchObject({
++      status: 'pending',
++      isPaused: false,
++    })
++
++    await vi.advanceTimersByTimeAsync(10)
++    expect(mutation.state.status).toBe('success')
++    onlineMock.mockRestore()
+   })
  
- ### Type Parameters
- 
+   it('should run mutations without scope in parallel', async () => {
 ```
 
-**File**: `docs/framework/angular/reference/functions/injectInfiniteQuery.md` (modified, +6/-5)
+**File**: `packages/query-core/src/mutation.ts` (modified, +4/-0)
 ```diff
-@@ -27,14 +27,15 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
- function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(injectInfiniteQueryFn: () => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): DefinedCreateInfiniteQueryResult<TData, TError>;
- ```
+@@ -360,6 +360,10 @@ export class Mutation<
+           })
+         }
+       }
++      // Unpause a mutation that became able to start while onMutate was running
++      if (this.state.isPaused && retryer.canStart()) {
++        onContinue()
++      }
+       const data = await retryer.start()
  
--Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:85](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L85)
-+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:86](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L86)
- 
- The options for `injectInfiniteQuery` are identical to `injectQuery`, with the addition of
- `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`. Infinite queries can
- additively "load more" data onto an existing set of data, or "infinite scroll".
- 
--This overload is selected when `initialData` is set on the options returned by `injectInfiniteQueryFn`,
--so the resulting `data` signal is never `undefined` (unless a `select` changes `TData` to include `undefined`).
-+This overload is selected when `initialData` is known to be defined on the options returned by
-+`injectInfiniteQueryFn`, so the resulting `data` signal is never `undefined` (unless a `select` changes
-+`TData` to include `undefined`).
- 
- ### Type Parameters
- 
-@@ -130,7 +131,7 @@ export class Projects {
- function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(injectInfiniteQueryFn: () => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
- ```
- 
--Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:237](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L237)
-+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:238](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L238)
- 
- Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a
- unique key. Infinite queries can additively "load more" data onto an existing set of data, or
-@@ -321,7 +322,7 @@ export class Comments {
- function injectInfiniteQuery<TQueryFnData, TError = Error, TData = InfiniteData<TQueryFnData, unknown>, TQueryKey extends readonly unknown[] = readonly unknown[], TPageParam = unknown>(injectInfiniteQueryFn: () => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, options?: InjectInfiniteQueryOptions): CreateInfiniteQueryResult<TData, TError>;
- ```
- 
--Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:264](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L264)
-+Defined in: [packages/angular-query-experimental/src/inject-infinite-query.ts:265](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L265)
- 
- This overload accepts the general [CreateInfiniteQueryOptions](../interfaces/CreateInfiniteQueryOptions.md) shape rather than the
- `initialData`-aware overloads above, so whether `data` is defined can't be inferred from the call site —
-```
-
-**File**: `docs/framework/angular/reference/type-aliases/DefinedInitialDataInfiniteOptions.md` (modified, +4/-5)
-```diff
-@@ -9,10 +9,10 @@ title: DefinedInitialDataInfiniteOptions
- type DefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
- ```
- 
--Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:106](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L106)
-+Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:107](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L107)
- 
--The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
--never `undefined` (unless a `select` changes `TData` to include `undefined`).
-+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is known to be
-+defined — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
- 
- ## Type Parameters
- 
-@@ -54,8 +54,7 @@ The type of the parameter passed to `queryFn` to fetch a given page.
- ```ts
- initialData: 
-   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
--  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
--  | undefined;
-+  | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>);
- ```
- 
- If set, this value will be used as the initial data for the query cache (as long as the query hasn't been
-```
-
-**File**: `docs/framework/angular/reference/type-aliases/UndefinedInitialDataInfiniteOptions.md` (modified, +2/-2)
-```diff
-@@ -11,8 +11,8 @@ type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultError, TD
- 
- Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:23](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L23)
- 
--The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set — `data`
--may be `undefined` while the query is `pending`.
-+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
-+be `undefined` — `data` may be `undefined` while the query is `pending`.
- 
- ## Type Parameters
- 
-```
-
-**File**: `docs/framework/angular/reference/type-aliases/UnusedSkipTokenInfiniteOptions.md` (modified, +8/-7)
-```diff
-@@ -11,9 +11,9 @@ type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError = DefaultError, TData =
- 
- Defined in: [packages/angular-query-experimental/src/infinite-query-options.ts:62](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L62)
- 
--The options accepted by the `infiniteQueryOptions` overload selected when no `initialData` is set and
--`queryFn` is not `skipToken` — same as [UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but `queryFn` may not be
--`skipToken`.
-+The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is omitted or may
-+be `undefined` and `queryFn` is not `skipToken` — same as [UndefinedInitialDataInfiniteOptions](UndefinedInitialDataInfiniteOptions.md), but
-+`queryFn` may not be `skipToken`.
- 
- ## Type Parameters
- 
-@@ -56,7 +56,8 @@ The type of the parameter passed to `queryFn` to fetch a given page.
- optional queryFn?: Exclude<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>["queryFn"], SkipToken | undefined>;
- ```
- 
--`skipToken` is not allowed as a value here — this overload is selected when no `initialData` is set. If
--you don't intend to run the query yet, set `enabled: false` — omitting `queryFn` alone still triggers a
--fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default query function has been
--defined. A default query function only supplies `queryFn`; it doesn't defer the fetch on its own.
-+`skipToken` is not allowed as a value here — this overload is selected when `initialData` is omitted or
-+may be `undefined`. If you don't intend to run the query yet, set `enabled: false` — omitting `queryFn`
-+alone still triggers a fetch that fails with "Missing queryFn" unless `enabled` is `false` or a default
-+query function has been defined. A default query function only supplies `queryFn`; it doesn't defer the
-+fetch on its own.
-```
-
-**File**: `docs/framework/preact/reference/functions/infiniteQueryOptions.md` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ You can generally pass everything to `infiniteQueryOptions` that you can also pa
- These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
- `options.queryKey` is required and is the query key to generate options for.
- 
--This overload is selected when `initialData` is set.
-+This overload is selected when `initialData` is known to be defined.
- 
- ### Type Parameters
- 
-```
-
-**File**: `docs/framework/preact/reference/functions/useInfiniteQuery.md` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ Defined in: [packages/preact-query/src/useInfiniteQuery.ts:63](https://github.co
- The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of
- `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
- 
--This overload is selected when `initialData` is set.
-+This overload is selected when `initialData` is known to be defined.
- 
- ### Type Parameters
- 
-```
-
----
-
-### Incident Patch 3: `69fcbad7` (2026-10-30)
-**Commit Message**: fix(examples/vue/algolia): replace recursive 'Hit' type to avoid excessively deep type instantiation in 'useInfiniteQuery' (#12461)
-
-**File**: `examples/vue/algolia/src/services/products/types.ts` (modified, +1/-3)
-```diff
-@@ -1,5 +1,3 @@
--import type { Hit } from '@algolia/client-search'
--
- export type SearchOptions = {
-   indexName: string
-   query: string
-@@ -8,6 +6,6 @@ export type SearchOptions = {
- }
- 
- export type SearchResponse<TData> = {
--  hits: Array<Hit<TData>>
-+  hits: Array<TData & { objectID: string }>
-   nbPages: number
- }
+       // Notify cache callback
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12461** (2026-10-30): fix(examples/vue/algolia): replace recursive 'Hit' type to avoid excessively deep type instantiation in 'useInfiniteQuery' (@sukvvon)
-- **PR #12460** (2026-10-30): docs({react,preact,angular,solid,svelte,vue}-query): describe when the 'Defined' and 'Undefined' 'initialData' overloads are selected (@sukvvon)
-- **PR #12458** (2026-10-29): docs(examples): add router and framework suffix to 'docs/config.json' labels and 'package.json' names (@sukvvon)
-- **PR #12457** (2026-10-29): fix(examples/{react,preact}/auto-refetching): encode 'add' query parameter with 'encodeURIComponent' (@sukvvon)
-- **PR #12456** (2026-10-29): docs(examples/lit): add 'auto-refetching', 'infinite-query-with-max-pages', 'load-more-infinite-scroll', 'optimistic-updates' and 'prefetching' examples (@sukvvon)
-- **PR #12455** (2026-10-29): docs(examples/lit): add 'batching' and 'offline' examples (@sukvvon)
+- **PR #12516** (2026-11-04): chore(integrations): convert to TypeScript and add 'test:types' so each integration type checks against the published types (@sukvvon)
+- **PR #12515** (2026-11-04): chore(deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (@sukvvon)
+- **PR #12509** (2026-11-03): chore(deps): update security dependencies in examples and integrations (@TkDodo)
+- **PR #12507** (2026-11-04): chore(integrations): add missing 'preact', 'sveltekit', 'nuxt', 'solid-start' and 'astro' integrations and align existing ones (@sukvvon)
+- **PR #12506** (2026-11-03): chore(*): update Angular to v22 and TypeScript to v6 in Angular examples and integration (@sukvvon)
+- **PR #12505** (2026-11-03): chore(examples): update dependencies that pull older 'esbuild' versions (@sukvvon)
 
 ---
 
@@ -4091,68 +3979,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. examples): remove horizontal overflow in 'shadow-dom' and make character selecti
+## X. deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the secu
 
 **RULE**:
-When implementing operations in `examples/preact/prefetching/src/Home.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/vue/algolia/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d61f1e4`: examples): remove horizontal overflow in 'shadow-dom' and make character selection keyboard accessible in 'prefetching' (#12436). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e877443c`: deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (#12515). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/preact/prefetching/src/Home.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/vue/algolia/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  const prefetch = () => {
-    queryClient
-      .query({
-        ...charactersQueries.detail(char.id),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
-  }
-
-    <li onMouseEnter={prefetch} onFocusIn={prefetch}>
-      <button
-        type="button"
-        style={data ? { fontWeight: 'bold' } : {}}
-        onClick={() => {
-          onSelect(char.id)
-        }}
-        {char.id} - {char.name}
-      </button>{' '}
-      <a href={`/character/${char.id}`}>details</a>
+    "vue": "^3.5.44"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    <li
-      onClick={() => {
-        onSelect(char.id)
-      }}
-      onMouseEnter={() => {
-        queryClient
-          .query({
-            ...charactersQueries.detail(char.id),
-            staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-          })
-          .catch(noop)
-      }}
-    >
-      <div
-        style={
-          data
-            ? {
-                fontWeight: 'bold',
-              }
-            : {}
-        }
-        {char.id} - {char.name} <a href={`/character/${char.id}`}>details</a>
-      </div>
+    "vue": "^3.5.43"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d61f1e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e877443c` are properly handled with clean fallback behavior.

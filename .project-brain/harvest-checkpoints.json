@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T03:00:16.927Z",
+  "last_updated": "2026-11-04T03:09:16.839Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "7641d053682a0633a0f84e0c070a7c591620a04b24dd8c740032385b2e492894",
-      "verified_at": "2026-11-03T20:27:38.935Z",
+      "content_hash": "8df076c18b1f110b7abec7b3e07b5618bf256b58160020774aaab2805861dd3b",
+      "verified_at": "2026-11-04T03:09:16.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:27:38.935Z"
+      "last_updated": "2026-11-04T03:09:16.839Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
-      "verified_at": "2026-10-30T19:35:50.833Z",
+      "content_hash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
+      "verified_at": "2026-11-04T03:09:05.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:35:50.833Z"
+      "last_updated": "2026-11-04T03:09:05.496Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

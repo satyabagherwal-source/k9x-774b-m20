@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T03:00:16.839Z",
+  "last_updated": "2026-11-04T03:09:16.744Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9327,8 +9327,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e38898bf",
-      "content_hash": "c83fe9c626186eaacdcda5ceefa59fd4aa3c592184b98000e987f6dbb3f228bc",
+      "source_version": "658388c9",
+      "content_hash": "8df076c18b1f110b7abec7b3e07b5618bf256b58160020774aaab2805861dd3b",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9666,6 +9666,11 @@
           "number": 6490,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (#4995)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6734,
+          "title": "deps: Bump toml to 1.2.0 and update dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9673,7 +9678,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:59:55.180Z",
+      "verified_at": "2026-11-04T03:09:16.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76203,8 +76208,8 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "979695d0",
-      "content_hash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
+      "source_version": "d5781a49",
+      "content_hash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
@@ -76227,6 +76232,11 @@
           "number": 5841,
           "title": "examples): remove horizontal overflow in 'shadow-dom' and make character selecti",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6733,
+          "title": "deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the secu",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -76234,7 +76244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:35:50.758Z",
+      "verified_at": "2026-11-04T03:09:05.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172748,6 +172758,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T03:00:16.821Z"
+    },
+    "rule-6733": {
+      "learning_id": "rule-6733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6733,
+      "title": "deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the secu",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "d5781a49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:09:05.376Z"
+    },
+    "rule-6734": {
+      "learning_id": "rule-6734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6734,
+      "title": "deps: Bump toml to 1.2.0 and update dependencies",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "658388c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T03:09:16.722Z"
     }
   },
   "aliases": {
