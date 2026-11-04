@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:17:25.191Z",
+  "last_updated": "2026-11-04T00:24:32.422Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12869,8 +12869,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "48362988",
-      "content_hash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
+      "source_version": "3dfa4626",
+      "content_hash": "65c91f724cef751ed2df69908890d21f47fd22a5d8182521482081b34a3d1064",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -12898,6 +12898,11 @@
           "number": 5945,
           "title": "[docs] Add Agentic workflows section with four quick start guides (#52087)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6675,
+          "title": "[docs] Land reviewed external-contributor docs fixes (#52842)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12905,7 +12910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:58:42.060Z",
+      "verified_at": "2026-11-04T00:24:25.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33001,8 +33006,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "6e4ce04b",
-      "content_hash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
+      "source_version": "1c3abda1",
+      "content_hash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -33015,6 +33020,11 @@
           "number": 4903,
           "title": "mem-index (#3528)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6677,
+          "title": "storage): make block map access thread-safe and look up block metas by block id",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33022,7 +33032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:38:32.571Z",
+      "verified_at": "2026-11-04T00:24:32.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36500,8 +36510,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "9d8db55f",
-      "content_hash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
+      "source_version": "937b7ae6",
+      "content_hash": "5babd041b2484177b661a83ed5dfc955c55093595e03b56b89ff7186c046a8c5",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -36529,6 +36539,11 @@
           "number": 5532,
           "title": "docs: add WeChat group below README sponsors (#800)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6673,
+          "title": "Show AI task names without duplicate spinner prefixes (#863)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36536,7 +36551,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:37:32.883Z",
+      "verified_at": "2026-11-04T00:24:20.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61337,8 +61352,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "8ae29a1f",
-      "content_hash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
+      "source_version": "049d8557",
+      "content_hash": "fa721e352c2c5d7fe623ab44c01b30cdf51f139f0156cbdafff82e1c2d43b61d",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -61396,6 +61411,11 @@
           "number": 6191,
           "title": "deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6676,
+          "title": "refactor!: replace global architecture state with per-operation options (#5498)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61403,7 +61423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:15:49.956Z",
+      "verified_at": "2026-11-04T00:24:28.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75007,8 +75027,8 @@
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "3df45d98",
-      "content_hash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
+      "source_version": "a2c6c92c",
+      "content_hash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "promoted_rules": [
@@ -75031,6 +75051,11 @@
           "number": 5794,
           "title": "Bump python-discovery from 1.6.4 to 1.6.5 (#14217)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6674,
+          "title": "Add set_max_msg_size to WebSocketResponse (#14176)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75038,7 +75063,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:00:32.310Z",
+      "verified_at": "2026-11-04T00:24:22.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171565,6 +171590,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:17:25.177Z"
+    },
+    "rule-6673": {
+      "learning_id": "rule-6673",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6673,
+      "title": "Show AI task names without duplicate spinner prefixes (#863)",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "937b7ae6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:24:20.481Z"
+    },
+    "rule-6674": {
+      "learning_id": "rule-6674",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6674,
+      "title": "Add set_max_msg_size to WebSocketResponse (#14176)",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "a2c6c92c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:24:22.520Z"
+    },
+    "rule-6675": {
+      "learning_id": "rule-6675",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6675,
+      "title": "[docs] Land reviewed external-contributor docs fixes (#52842)",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "3dfa4626",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:24:25.806Z"
+    },
+    "rule-6676": {
+      "learning_id": "rule-6676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6676,
+      "title": "refactor!: replace global architecture state with per-operation options (#5498)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "049d8557",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:24:28.021Z"
+    },
+    "rule-6677": {
+      "learning_id": "rule-6677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6677,
+      "title": "storage): make block map access thread-safe and look up block metas by block id",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "1c3abda1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:24:32.400Z"
     }
   },
   "aliases": {

@@ -7080,3 +7080,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-04T00:10:50.710Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `4b2ecad6` | Multi-dimensional audit evidence | 2026-11-04T00:10:57.066Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `a7663045` | Multi-dimensional audit evidence | 2026-11-04T00:17:25.246Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `937b7ae6` | Multi-dimensional audit evidence | 2026-11-04T00:24:20.595Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `a2c6c92c` | Multi-dimensional audit evidence | 2026-11-04T00:24:22.636Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `3dfa4626` | Multi-dimensional audit evidence | 2026-11-04T00:24:25.913Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `049d8557` | Multi-dimensional audit evidence | 2026-11-04T00:24:28.129Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `1c3abda1` | Multi-dimensional audit evidence | 2026-11-04T00:24:32.513Z |

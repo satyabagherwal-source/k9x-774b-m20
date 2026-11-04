@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "9d8db55f",
+    "sourceVersion": "937b7ae6",
     "license": "GPL-3.0",
-    "contentHash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
-    "lastHarvestedAt": "2026-10-31T21:37:33.017Z",
+    "contentHash": "5babd041b2484177b661a83ed5dfc955c55093595e03b56b89ff7186c046a8c5",
+    "lastHarvestedAt": "2026-11-04T00:24:20.595Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "8ae29a1f",
+    "sourceVersion": "049d8557",
     "license": "Apache-2.0",
-    "contentHash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
-    "lastHarvestedAt": "2026-10-31T12:15:50.055Z",
+    "contentHash": "fa721e352c2c5d7fe623ab44c01b30cdf51f139f0156cbdafff82e1c2d43b61d",
+    "lastHarvestedAt": "2026-11-04T00:24:28.129Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "6e4ce04b",
+    "sourceVersion": "1c3abda1",
     "license": "Apache-2.0",
-    "contentHash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
-    "lastHarvestedAt": "2026-10-27T16:38:32.646Z",
+    "contentHash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
+    "lastHarvestedAt": "2026-11-04T00:24:32.513Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "3df45d98",
+    "sourceVersion": "a2c6c92c",
     "license": "Apache-2.0",
-    "contentHash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
-    "lastHarvestedAt": "2026-10-30T16:00:32.372Z",
+    "contentHash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
+    "lastHarvestedAt": "2026-11-04T00:24:22.636Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "48362988",
+    "sourceVersion": "3dfa4626",
     "license": "MIT",
-    "contentHash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
-    "lastHarvestedAt": "2026-10-30T23:58:42.162Z",
+    "contentHash": "65c91f724cef751ed2df69908890d21f47fd22a5d8182521482081b34a3d1064",
+    "lastHarvestedAt": "2026-11-04T00:24:25.913Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

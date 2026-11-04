@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T00:17:25.253Z",
+  "last_updated": "2026-11-04T00:24:32.523Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
-      "verified_at": "2026-10-31T21:37:33.028Z",
+      "content_hash": "5babd041b2484177b661a83ed5dfc955c55093595e03b56b89ff7186c046a8c5",
+      "verified_at": "2026-11-04T00:24:20.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T21:37:33.028Z"
+      "last_updated": "2026-11-04T00:24:20.604Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
-      "verified_at": "2026-10-31T12:15:50.065Z",
+      "content_hash": "fa721e352c2c5d7fe623ab44c01b30cdf51f139f0156cbdafff82e1c2d43b61d",
+      "verified_at": "2026-11-04T00:24:28.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:15:50.065Z"
+      "last_updated": "2026-11-04T00:24:28.138Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
-      "verified_at": "2026-10-27T16:38:32.654Z",
+      "content_hash": "60f5a88f64a5b66ebea0449b25f950055ddfa638a08215f386eb0b0e4f090d2f",
+      "verified_at": "2026-11-04T00:24:32.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:38:32.654Z"
+      "last_updated": "2026-11-04T00:24:32.522Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
-      "verified_at": "2026-10-30T16:00:32.378Z",
+      "content_hash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
+      "verified_at": "2026-11-04T00:24:22.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:00:32.378Z"
+      "last_updated": "2026-11-04T00:24:22.646Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
-      "verified_at": "2026-10-30T23:58:42.170Z",
+      "content_hash": "65c91f724cef751ed2df69908890d21f47fd22a5d8182521482081b34a3d1064",
+      "verified_at": "2026-11-04T00:24:25.922Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:58:42.170Z"
+      "last_updated": "2026-11-04T00:24:25.922Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",

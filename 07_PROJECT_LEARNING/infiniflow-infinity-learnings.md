@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `6e4ce04b`  
+> **Source Version**: `1c3abda1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:38:32.234Z  
+> **Timestamp**: 2026-11-04T00:24:31.763Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:38:31.786Z  
+> **Harvest Timestamp**: 2026-11-04T00:24:31.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4746 stars
+- **Stars / Engagement**: 4758 stars
 
 ---
 
@@ -1349,494 +1349,597 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76933d02` (2026-10-26)
-**Commit Message**: Fix mem-index (#3528)
+### Incident Patch 1: `8c81b068` (2026-11-02)
+**Commit Message**: fix(storage): make block map access thread-safe and look up block metas by block id (#3533)
 
-## Problem
-- Crash during a mem-index dump could lose the popped index, and startup recovery aborted with "Chunk index row alignment error" whenever the committed chunk chain was not contiguous.
-- AppendMemIndex leaked the mem-index update slot on early returns, and
-the appender resolved the indexer at dequeue time instead of at submit time.
-- A failed fulltext inversion left a hole in the sorted ring and was retried after later docs were committed, appending smaller doc ids behind larger ones in delta-encoded posting lists.
-
-## Changes
-- Dump transaction now owns the popped mem indexes: rollback puts them
-back, commit clears them and releases the tracer reservation; non-transactional
-  callers (build index, replay) clear immediately.
-- Recovery computes gaps from the full set of covered `[begin, end)`
-ranges (unordered, overlapping, holes), so missing chunks, empty blocks and
-narrow chunk declarations are rebuilt instead of being fatal. Pure helper
-exposed  for tests.
-- AppendMemIndex releases the update slot via RAII on every exit path.
-- AppendMemIndexTask binds its MemoryIndexer at submit time; the
-appender holds shared_ptr instead of raw pointers.
-- Full
-
-**File**: `src/storage/bg_task/bg_task.cppm` (modified, +7/-0)
+**File**: `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp` (modified, +3/-0)
 ```diff
-@@ -31,6 +31,7 @@ struct MemIndex;
- struct ColumnVector;
- class BaseMemIndex;
- class EMVBIndexInMem;
-+class MemoryIndexer;
- class NewTxn;
+@@ -434,6 +434,9 @@ void PhysicalMatchSparseScan::ExecuteInnerT(DistFunc *dist_func,
+         Bitmask bitmask;
  
- export struct BGTask {
-@@ -194,6 +195,12 @@ public:
+         BlockMeta *block_meta = block_index->GetBlockMeta(segment_id, block_id);
++        if (block_meta == nullptr) [[unlikely]] {
++            UnrecoverableError(fmt::format("MatchSparseScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
++        }
+         LOG_DEBUG(fmt::format("MatchSparseScan: segment_id: {}, block_id: {}", segment_id, block_id));
  
- public:
-     std::shared_ptr<MemIndex> mem_index_{};
-+    // The inverted index this task was prepared against. It is bound at submit time (in
-+    // NewTxn::AppendMemIndex, right after AsyncInsertTop), because seq_inserted_/doc_count_
-+    // are computed on that very indexer. Resolving it again at dequeue time (from mem_index_)
-+    // can yield a different -- or already dumped/cleared -- indexer, which silently drops the
-+    // rows. Holding a shared_ptr also keeps the indexer alive while the appender uses it.
-+    std::shared_ptr<MemoryIndexer> memory_indexer_{};
-     std::shared_ptr<ColumnVector> input_column_{};
-     BlockOffset offset_{};
-     BlockOffset row_cnt_{};
+         std::tie(row_cnt, status) = block_meta->GetRowCnt1();
 ```
 
-**File**: `src/storage/bg_task/mem_index_appender_impl.cpp` (modified, +10/-5)
+**File**: `src/executor/operator/physical_scan/physical_match_tensor_scan_impl.cpp` (modified, +4/-1)
 ```diff
-@@ -70,7 +70,10 @@ void MemIndexAppender::Submit(std::shared_ptr<BGTask> bg_task) {
- void MemIndexAppender::Process() {
-     std::deque<std::shared_ptr<BGTask>> tasks;
-     StopProcessorTask *stop_task_{};
--    std::vector<MemoryIndexer *> memory_indexers;
-+    // Hold a shared_ptr here: the same mem index can be popped and cleared by a concurrent
-+    // mem-index dump between the two phases of the loop below, which used to leave these
-+    // raw pointers dangling (use-after-free inside Ring::GetBatch).
-+    std::vector<std::shared_ptr<MemoryIndexer>> memory_indexers;
-     std::unordered_map<MemoryIndexer *, std::shared_ptr<AppendMemIndexBatch>> memory_indexer_map;
-     while (true) {
-         task_queue_.DequeueBulk(tasks);
-@@ -88,13 +91,15 @@ void MemIndexAppender::Process() {
-                     }
-                     if (storage_mode == StorageMode::kWritable) {
-                         auto append_mem_index_task = static_cast<AppendMemIndexTask *>(bg_task.get());
--                        std::shared_ptr<MemoryIndexer> memory_indexer = append_mem_index_task->mem_index_->GetFulltextIndex();
-+                        // Use the indexer the task was prepared against, never re-resolve it from
-+                        // mem_index_ (which may have been dumped, cleared or replaced meanwhile).
-+                        std::shared_ptr<MemoryIndexer> memory_indexer = append_mem_index_task->memory_indexer_;
-                         if (memory_indexer == nullptr) {
-                             // Only used for full text index, currently
-                             UnrecoverableError("Not inverted index");
-                         }
-                         if (memory_indexer_map.find(memory_indexer.get()) == memory_indexer_map.end()) {
--                            memory_indexers.push_back(memory_indexer.get());
-+                            memory_indexers.push_back(memory_indexer);
-                             memory_indexer_map.emplace(memory_indexer.get(), std::make_shared<AppendMemIndexBatch>());
-                         }
-                         AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer.get()].get();
-@@ -115,8 +120,8 @@ void MemIndexAppender::Process() {
+@@ -1270,7 +1270,10 @@ void GetRerankerScore(std::vector<MatchTensorRerankDoc> &rerank_docs,
+         const BlockID block_id = segment_offset / DEFAULT_BLOCK_CAPACITY;
+         const BlockOffset block_offset = segment_offset % DEFAULT_BLOCK_CAPACITY;
+         ColumnVector column_vec;
+-        BlockMeta *block_meta = block_index->new_segment_block_index_.at(segment_id).block_map().at(block_id).get();
++        BlockMeta *block_meta = block_index->GetBlockMeta(segment_id, block_id);
++        if (block_meta == nullptr) [[unlikely]] {
++            UnrecoverableError(fmt::format("MatchTensor rerank: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
++        }
+         ColumnMeta column_meta(column_id, *block_meta);
+         auto [block_row_cnt, status] = block_meta->GetRowCnt1();
+         if (!status.ok()) {
+```
+
+**File**: `src/executor/operator/physical_scan/physical_table_scan_impl.cpp` (modified, +6/-0)
+```diff
+@@ -135,6 +135,9 @@ void PhysicalTableScan::ExecuteInternal(QueryContext *query_context, TableScanOp
+         BlockMeta *current_block_meta = block_index->GetBlockMeta(segment_id, block_id);
+ 
+         std::optional<NewTxnGetVisibleRangeState> &range_state = table_scan_function_data_ptr->get_visible_range_state_;
++        if (current_block_meta == nullptr) [[unlikely]] {
++            UnrecoverableError(fmt::format("TableScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
++        }
+         if (!range_state) {
+             // TODO
+             range_state = NewTxnGetVisibleRangeState();
+@@ -153,6 +156,9 @@ void PhysicalTableScan::ExecuteInternal(QueryContext *query_context, TableScanOp
+                                           block_ids_idx,
+                                           block_ids_count));
+                     ++block_ids_idx;
++                    // Drop the range state of the skipped block, otherwise the next block would be
++                    // read with this block's visible ranges (the state is only rebuilt when empty).
++                    range_state.reset();
+                     continue;
+                 } else {
+                     LOG_TRACE(fmt::format("TableScan: block_ids_idx: {}, block_ids.size(): {}, not skipped after apply FastRoughFilter",
+```
+
+**File**: `src/storage/catalog/meta/segment_meta.cppm` (modified, +0/-1)
+```diff
+@@ -84,7 +84,6 @@ public:
+     Status CommitBlock(BlockID block_id, TxnTimeStamp commit_ts);
+ 
+     std::tuple<std::vector<BlockID> *, Status> GetBlockIDs1();
+-    std::tuple<std::vector<BlockID> *, Status> GetBlockIDs1(TxnTimeStamp commit_ts);
+ 
+     std::tuple<size_t, Status> GetRowCnt1();
+ 
+```
+
+**File**: `src/storage/catalog/meta/segment_meta_impl.cpp` (modified, +13/-16)
+```diff
+@@ -189,22 +189,27 @@ Status SegmentMeta::AddBlockWithID(TxnTimeStamp commit_ts, BlockID block_id) {
+ }
+ 
+ std::pair<BlockID, Status> SegmentMeta::AddBlockID1(TxnTimeStamp commit_ts) {
+-    Status status;
+-
+     BlockID block_id = 0;
+     {
+-        std::vector<BlockID> *block_ids_ptr = nullptr;
+-        std::tie(block_ids_ptr, status) = GetBlockIDs1(commit_ts);
+-        if (!status.ok()) {
+-            return {INVALID_BLOCK_ID, status};
++        // Hold the lock across the whole read-modify-write: otherwise two appends of the same
++        // segment can both read the same last id and hand out the same one, and push_back can
++        // grow the vector while another thread is iterating it.
++        std::lock_guard<std::mutex> lock(mtx_);
++        if (!block_ids1_) {
++            block_ids1_ = infinity::GetTableSegmentBlocks(&kv_instance_,
++                                                          table_meta_.db_id_str(),
++                                                          table_meta_.table_id_str(),
++                                                          segment_id_,
++                                                          begin_ts_,
++                                                          commit_ts);
+         }
+-        block_id = block_ids_ptr->empty() ? 0 : block_ids_ptr->back() + 1;
++        block_id = block_ids1_->empty() ? 0 : block_ids1_->back() + 1;
+         block_ids1_->push_back(block_id);
+     }
+ 
+     std::string block_id_key = KeyEncode::CatalogTableSegmentBlockKey(table_meta_.db_id_str(), table_meta_.table_id_str(), segment_id_, block_id);
+     std::string commit_ts_str = fmt::format("{}", commit_ts);
+-    status = kv_instance_.Put(block_id_key, commit_ts_str);
++    Status status = kv_instance_.Put(block_id_key, commit_ts_str);
+     if (!status.ok()) {
+         return {0, status};
+     }
+@@ -230,14 +235,6 @@ std::tuple<std::vector<BlockID> *, Status> SegmentMeta::GetBlockIDs1() {
+     return {&*block_ids1_, Status::OK()};
+ }
+ 
+-std::tuple<std::vector<BlockID> *, Status> SegmentMeta::GetBlockIDs1(TxnTimeStamp commit_ts) {
+-    if (!block_ids1_) {
+-        block_ids1_ =
+-            infinity::GetTableSegmentBlocks(&kv_instance_, table_meta_.db_id_str(), table_meta_.table_id_str(), segment_id_, begin_ts_, commit_ts);
+-    }
+-    return {&*block_ids1_, Status::OK()};
+-}
+-
+ std::tuple<size_t, Status> SegmentMeta::GetRowCnt1() {
+     std::lock_guard<std::mutex> lock(mtx_);
+     if (row_cnt_) {
+```
+
+**File**: `src/storage/common/block_index.cppm` (modified, +2/-1)
+```diff
+@@ -35,7 +35,8 @@ public:
+     std::unique_ptr<SegmentMeta> segment_meta_;
+ 
+ private:
+-    mutable std::vector<std::unique_ptr<BlockMeta>> block_map_;
++    mutable std::mutex block_map_mtx_;
++    mutable std::vector<std::unique_ptr<BlockMeta>> block_map_; // only used in function block_map()
+ };
+ 
+ export struct BlockIndex {
+```
+
+**File**: `src/storage/common/block_index_impl.cpp` (modified, +10/-4)
+```diff
+@@ -41,6 +41,7 @@ SegmentOffset NewSegmentSnapshot::segment_offset() const {
+ }
+ 
+ const std::vector<std::unique_ptr<BlockMeta>> &NewSegmentSnapshot::block_map() const {
++    std::lock_guard<std::mutex> lock(block_map_mtx_);
+     if (block_map_.size()) {
+         return block_map_;
+     }
+@@ -68,7 +69,7 @@ void BlockIndex::NewInit(const std::shared_ptr<TableMeta> &table_meta) {
+         RecoverableError(status);
+     }
+     for (SegmentID segment_id : *segment_ids_ptr) {
+-        NewSegmentSnapshot &segment_snapshot = new_segment_block_index_.emplace(segment_id, NewSegmentSnapshot()).first->second;
++        NewSegmentSnapshot &segment_snapshot = new_segment_block_index_[segment_id];
+         segment_snapshot.segment_meta_ = std::make_unique<SegmentMeta>(segment_id, *table_meta_);
+     }
+ }
+@@ -105,11 +106,16 @@ BlockMeta *BlockIndex::GetBlockMeta(u32 segment_id, u16 block_id) const {
+     if (seg_it == new_segment_block_index_.end()) {
+         return nullptr;
+     }
+-    const auto &blocks_info = seg_it->second;
+-    if (blocks_info.block_map().size() <= block_id) {
++    // block_map() is sorted by id (GetTableSegmentBlocks sorts the ids) but holds only the blocks
++    // visible to this transaction, so block_id is a key, not a position in the vector.
++    const std::vector<std::unique_ptr<BlockMeta>> &block_map = seg_it->second.block_map();
++    auto it = std::lower_bound(block_map.begin(), block_map.end(), block_id, [](const std::unique_ptr<BlockMeta> &block_meta, BlockID id) {
++        return block_meta->block_id() < id;
++    });
++    if (it == block_map.end() || (*it)->block_id() != block_id) {
+         return nullptr;
+     }
+-    return blocks_info.block_map()[block_id].get();
++    return it->get();
+ }
+ void IndexIndex::Insert(std::string index_name, std::shared_ptr<NewIndexSnapshot> new_index_snapshot) {
+     new_index_snapshots_vec_.push_back(new_index_snapshot.get());
+```
+
+---
+
+### Incident Patch 2: `1c3abda1` (2026-11-03)
+**Commit Message**: fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (#3534)
+
+1. Recycle checkpointed wal.log.* files 
+2. Flush and fsync WAL entries
+
+**File**: `src/storage/io/local_file_handle.cppm` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ import global_resource_usage;
+ 
+ namespace infinity {
+ 
+-export enum class FileAccessMode { kWrite, kRead, kMmapRead, kInvalid };
++export enum class FileAccessMode { kWrite, kAppend, kRead, kMmapRead, kInvalid };
+ 
+ export class LocalFileHandle {
+ public:
+```
+
+**File**: `src/storage/io/local_file_handle_impl.cpp` (modified, +6/-4)
+```diff
+@@ -36,7 +36,7 @@ namespace infinity {
+ LocalFileHandle::~LocalFileHandle() {
+     Status status = Sync();
+     if (!status.ok()) {
+-        return;
++        UnrecoverableError(fmt::format("Fail to sync file {} before closing it: {}", path_, status.message()));
+     }
+ 
+     if (fd_ == -1) {
+@@ -78,7 +78,7 @@ Status LocalFileHandle::Close() {
+ }
+ 
+ Status LocalFileHandle::Append(const void *buffer, u64 nbytes) {
+-    if (access_mode_ != FileAccessMode::kWrite) {
++    if (access_mode_ != FileAccessMode::kWrite && access_mode_ != FileAccessMode::kAppend) {
+         UnrecoverableError(fmt::format("File: {} isn't open.", path_));
+     }
+     i64 written = 0;
+@@ -146,11 +146,13 @@ std::tuple<char *, size_t, Status> LocalFileHandle::MmapRead(const std::string &
+ Status LocalFileHandle::Unmmap(const std::string &name) { return Status::OK(); }
+ 
+ Status LocalFileHandle::Sync() {
+-    if (access_mode_ != FileAccessMode::kWrite) {
++    if (access_mode_ != FileAccessMode::kWrite && access_mode_ != FileAccessMode::kAppend) {
+         return Status::OK();
+     }
+ 
+-    fsync(fd_);
++    if (fsync(fd_) == -1) {
++        return Status::IOError(fmt::format("Can't sync file {}: {}", path_, strerror(errno)));
++    }
+     return Status::OK();
+ }
+ 
+```
+
+**File**: `src/storage/io/virtual_store_impl.cpp` (modified, +4/-0)
+```diff
+@@ -127,6 +127,10 @@ std::tuple<std::unique_ptr<LocalFileHandle>, Status> VirtualStore::Open(const st
+             fd = open(path.c_str(), O_RDWR | O_CREAT, 0666);
+             break;
+         }
++        case FileAccessMode::kAppend: {
++            fd = open(path.c_str(), O_RDWR | O_CREAT | O_APPEND, 0666);
++            break;
++        }
+         case FileAccessMode::kMmapRead: {
+             UnrecoverableError("Unsupported now.");
+             break;
+```
+
+**File**: `src/storage/wal/log_file.cppm` (modified, +2/-2)
+```diff
+@@ -47,8 +47,8 @@ public:
+ 
+     static std::string TempWalFilename();
+ 
+-    // max_commit_ts is the largest commit ts before the latest checkpoint
+-    // static void RecycleWalFile(TxnTimeStamp max_commit_ts, const std::string &wal_dir);
++    // Deletes every rotated wal.log.<ts> file whose ts is covered by the checkpoint at ckp_ts.
++    static void Recycle(TxnTimeStamp ckp_ts, const std::string &wal_dir);
+ };
+ 
+ } // namespace infinity
+```
+
+**File**: `src/storage/wal/log_file_impl.cpp` (modified, +15/-15)
+```diff
+@@ -90,20 +90,20 @@ std::string WalFile::WalFilename(TxnTimeStamp max_commit_ts) { return fmt::forma
+ 
+ std::string WalFile::TempWalFilename() { return std::string(WAL_FILE_TEMP_FILE); }
+ 
+-// /**
+-//  * @brief Gc the old wal files.
+-//  * Only delete the wal.log.* files. the wal.log file is current wal file.
+-//  * Check if the wal.log.* files are too old.
+-//  * if * is less than the max_commit_ts, we will delete it.
+-//  */
+-// void WalFile::RecycleWalFile(TxnTimeStamp max_commit_ts, const std::string &wal_dir) {
+-//     auto [cur_wal_info, wal_infos] = ParseWalFilenames(wal_dir);
+-//     for (const auto &wal_info : wal_infos) {
+-//         if (wal_info.max_commit_ts_ <= max_commit_ts) {
+-//             LOG_INFO(fmt::format("WalManager::Checkpoint delete wal file: {}", wal_info.path_));
+-//             VirtualStore::DeleteFile(wal_info.path_);
+-//         }
+-//     }
+-// }
++// Deletes the rotated wal.log.<ts> files covered by the checkpoint at ckp_ts. The current wal.log is
++// not part of the rotated set, so it is never touched.
++void WalFile::Recycle(TxnTimeStamp ckp_ts, const std::string &wal_dir) {
++    auto [cur_wal_info, wal_infos] = ParseWalFilenames(wal_dir);
++    for (const auto &wal_info : wal_infos) {
++        if (wal_info.max_commit_ts_ < ckp_ts) {
++            Status status = VirtualStore::DeleteFile(wal_info.path_);
++            if (status.ok()) {
++                LOG_INFO(fmt::format("WalManager::Checkpoint delete wal file: {}", wal_info.path_));
++            } else {
++                LOG_WARN(fmt::format("Failed to delete checkpointed wal file {}: {}", wal_info.path_, status.message()));
++            }
++        }
++    }
++}
+ 
+ } // namespace infinity
+\ No newline at end of file
+```
+
+**File**: `src/storage/wal/wal_manager.cppm` (modified, +8/-2)
+```diff
+@@ -15,6 +15,7 @@
+ export module infinity_core:wal_manager;
+ 
+ import :blocking_queue;
++import :local_file_handle;
+ import :log_file;
+ import :options;
+ 
+@@ -99,6 +100,8 @@ public:
+     TxnTimeStamp LastCheckpointTS() const;
+     void SetLastCheckpointTS(TxnTimeStamp new_last_ckp_ts);
+ 
++    void RecycleWalFile(TxnTimeStamp ckp_ts);
++
+     std::vector<std::shared_ptr<std::string>> GetDiffWalEntryString(TxnTimeStamp timestamp) const;
+     void UpdateCommitState(TxnTimeStamp commit_ts, i64 wal_size);
+ 
+@@ -132,8 +135,11 @@ private:
+     BlockingQueue<NewTxn *> new_wait_flush_{"WalManager"};
+ 
+     // Only Flush thread access following members
+-    std::ofstream ofs_{};
+-    FlushOptionType flush_option_{FlushOptionType::kOnlyWrite};
++    // The current wal file
++    std::unique_ptr<LocalFileHandle> wal_handle_{nullptr};
++    // Kept only for configuration compatibility. It is never read: NewFlush() supports a single
++    // behavior and always flushes + fsyncs the WAL, no matter which FlushOptionType is configured.
++    [[maybe_unused]] FlushOptionType flush_option_{FlushOptionType::kOnlyWrite};
+     std::unique_ptr<BottomExecutor> bottom_executor_{nullptr};
+ 
+     // Flush and Checkpoint threads access following members
+```
+
+**File**: `src/storage/wal/wal_manager_impl.cpp` (modified, +43/-27)
+```diff
+@@ -20,6 +20,7 @@ import :new_txn_manager;
+ import :new_txn;
+ import :storage;
+ import :virtual_store;
++import :local_file_handle;
+ import :infinity_context;
+ import :data_access_state;
+ import :status;
+@@ -79,10 +80,11 @@ void WalManager::Start() {
+         VirtualStore::MakeDirectory(wal_dir_);
+     }
+     // TODO: recovery from wal checkpoint
+-    ofs_ = std::ofstream(wal_path_, std::ios::app | std::ios::binary);
+-    if (!ofs_.is_open()) {
+-        UnrecoverableError(fmt::format("Failed to open wal file: {}", wal_path_));
++    auto [wal_handle, open_status] = VirtualStore::Open(wal_path_, FileAccessMode::kAppend);
++    if (!open_status.ok()) {
++        UnrecoverableError(fmt::format("Failed to open wal file {}: {}", wal_path_, open_status.message()));
+     }
++    wal_handle_ = std::move(wal_handle);
+     LOG_INFO(fmt::format("Open wal file: {}", wal_path_));
+ 
+     wal_size_ = 0;
+@@ -120,7 +122,7 @@ void WalManager::Stop() {
+         UnrecoverableError("WAL manager stop failed: txn manager is nullptr");
+     }
+ 
+-    ofs_.close();
++    wal_handle_.reset();
+     LOG_INFO("WAL manager is stopped.");
+ }
+ 
+@@ -144,6 +146,13 @@ void WalManager::SetLastCheckpointTS(TxnTimeStamp new_last_ckp_ts) {
+     return;
+ }
+ 
++void WalManager::RecycleWalFile(TxnTimeStamp ckp_ts) {
++    if (ckp_ts == 0 || ckp_ts == UNCOMMIT_TS) {
++        UnrecoverableError(fmt::format("Unexpected checkpoint ts to recycle wal files: {}", ckp_ts));
++    }
++    WalFile::Recycle(ckp_ts, wal_dir_);
++}
++
+ std::vector<std::shared_ptr<std::string>> WalManager::GetDiffWalEntryString(TxnTimeStamp start_timestamp) const {
+ 
+     std::vector<std::shared_ptr<std::string>> log_strings;
+@@ -260,6 +269,9 @@ void WalManager::NewFlush() {
+ 
+         LOG_TRACE(fmt::format("Attempt to write {} logs", txn_batch.size()));
+ 
++        // Begin ts of the checkpoint written by this batch (0: none), assigned after the swap so that it
++        // names the file the checkpoint entry was really written to.
++        TxnTimeStamp last_ckp_begin_ts{0};
+         for (const auto &txn : txn_batch) {
+             if (txn == nullptr) {
+                 // terminate entry
+@@ -291,6 +303,13 @@ void WalManager::NewFlush() {
+                                      txn->CommitTS(),
+                                      txn->TxnID()));
+                 this->SwapWalFile(max_commit_ts_, true);
++                if (txn->BeginTS() > last_ckp_begin_ts) {
++                    last_ckp_begin_ts = txn->BeginTS();
++                } else {
++                    LOG_WARN(fmt::format("Checkpoint begin ts {} is not newer than the recorded {}, keep the recorded ts",
++                                         txn->BeginTS(),
++                                         last_ckp_begin_ts));
++                }
              }
+ 
+             for (const std::shared_ptr<WalCmd> &cmd : entry->cmds_) {
+@@ -308,7 +327,7 @@ void WalManager::NewFlush() {
+                                                act_size,
+                                                entry->ToString()));
+             }
+-            ofs_.write(buf->data(), ptr - buf->data());
++            wal_handle_->Append(buf->data(), ptr - buf->data());
+ 
+             if (InfinityContext::instance().GetServerRole() == NodeRole::kLeader) {
+                 if (cluster_manager == nullptr) {
+@@ -326,19 +345,11 @@ void WalManager::NewFlush() {
+             break;
          }
  
--        for (auto memory_indexer : memory_indexers) {
--            AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer].get();
-+        for (auto &memory_indexer : memory_indexers) {
-+            AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer.get()].get();
-             append_mem_index_batch->WaitForCompletion();
-             memory_indexer->CommitSync();
-             for (auto &append_task : append_mem_index_batch->append_tasks_) {
+-        switch (flush_option_) {
+-            case FlushOptionType::kFlushAtOnce: {
+-                ofs_.flush();
+-                break;
+-            }
+-            case FlushOptionType::kOnlyWrite: {
+-                ofs_.flush(); // FIXME: not flush, only write
+-                break;
+-            }
+-            case FlushOptionType::kFlushPerSecond: {
+-                ofs_.flush(); // FIXME: not flush, flush per second
+-                break;
+-            }
++        // Appends reach the kernel during the loop above, so this fsync makes the whole batch durable.
++        // It syncs the current file; a mid-batch swap syncs the rotated one before renaming it away.
++        Status status = wal_handle_->Sync();
++        if (!status.ok()) {
++            UnrecoverableError(fmt::format("Fail to sync wal file {}: {}", wal_path_, status.message()));
+         }
+ 
+         if (InfinityContext::instance().GetServerRole() == NodeRole::kLeader) {
+@@ -352,6 +363,10 @@ void WalManager::NewFlush() {
+         }
+         txn_batch.clear();
+ 
++        if (last_ckp_begin_ts != 0) {
++            RecycleWalFile(last_ckp_begin_ts);
++        }
++
+         if (!VirtualStore::Exists(wal_path_)) {
+             LOG_ERROR(fmt::format("WAL file: {} does not exist", wal_path_));
+             LOG_ERROR(fmt::format("To list the files in WAL directory: {}", wal_dir_));
+@@ -433,9 +448,8 @@ void WalManager::FlushLogByReplication(const std::vector<std::string> &synced_lo
+     }
+ 
+     for (const std::string &synced_log : synced_logs) {
+-        ofs_.write(synced_log.c_str(), synced_log.size());
++        wal_handle_-
 ```
 
-**File**: `src/storage/catalog/meta/segment_index_meta.cppm` (modified, +1/-0)
+**File**: `src/unit_test/storage/wal/recycle_log_ut.cpp` (modified, +60/-0)
 ```diff
-@@ -64,6 +64,7 @@ public:
+@@ -34,6 +34,7 @@ import :txn_state;
+ import :new_txn;
+ import :new_txn_manager;
+ import :wal_manager;
++import :virtual_store;
  
-     std::shared_ptr<MemIndex> GetMemIndex(bool for_update = false);
-     std::shared_ptr<MemIndex> PopMemIndex();
-+    bool TrySetMemIndex(const std::shared_ptr<MemIndex> &mem_index);
+ import global_resource_usage;
+ import compilation_config;
+@@ -117,6 +118,21 @@ TEST_P(RecycleLogTest, recycle_wal_after_delta_checkpoint) {
+             status = new_txn_mgr->CommitTxn(txn);
+             EXPECT_TRUE(status.ok());
+         }
++        { // every rotated wal file is covered by the checkpoint, so none of them survives it
++            // The flush thread recycles after releasing the commit threads, so poll instead of asserting once.
++            const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
++            while (true) {
++                auto [temp_wal_info, wal_infos] = WalFile::ParseWalFilenames(wal_dir);
++                if (wal_infos.empty()) {
++                    break;
++                }
++                if (std::chrono::steady_clock::now() > deadline) {
++                    ADD_FAILURE() << "Still " << wal_infos.size() << " rotated wal file(s) after the checkpoint";
++                    break;
++                }
++                std::this_thread::sleep_for(std::chrono::milliseconds(50));
++            }
++        }
+         infinity::InfinityContext::instance().UnInit();
  
-     std::shared_ptr<std::string> GetSegmentIndexDir() const;
- 
-```
-
-**File**: `src/storage/catalog/meta/segment_index_meta_impl.cpp` (modified, +6/-0)
-```diff
-@@ -233,6 +233,12 @@ std::shared_ptr<MemIndex> SegmentIndexMeta::PopMemIndex() {
-     return new_catalog->PopMemIndex(mem_index_key);
+ #ifdef INFINITY_DEBUG
+@@ -151,3 +167,47 @@ TEST_P(RecycleLogTest, recycle_wal_after_delta_checkpoint) {
+ #endif
+     }
  }
- 
-+bool SegmentIndexMeta::TrySetMemIndex(const std::shared_ptr<MemIndex> &mem_index) {
-+    std::string mem_index_key = GetSegmentIndexTag("mem_index");
-+    NewCatalog *new_catalog = InfinityContext::instance().storage()->new_catalog();
-+    return new_catalog->TrySetMemIndex(mem_index_key, mem_index);
-+}
 +
- Status SegmentIndexMeta::LoadChunkIDs1() {
-     chunk_ids_ = std::vector<ChunkID>();
-     std::vector<ChunkID> &chunk_ids = *chunk_ids_;
-```
-
-**File**: `src/storage/catalog/new_catalog.cppm` (modified, +3/-0)
-```diff
-@@ -173,6 +173,9 @@ private:
- public:
-     std::shared_ptr<MemIndex> GetMemIndex(const std::string &mem_index_key, bool for_update);
-     std::shared_ptr<MemIndex> PopMemIndex(const std::string &mem_index_key);
-+    // Insert the mem index only when the key is free. Used to put back an index popped by an
-+    // aborted dump. Returns false when a newer mem index already occupies the key.
-+    bool TrySetMemIndex(const std::string &mem_index_key, const std::shared_ptr<MemIndex> &mem_index);
-     Status DropMemIndexByMemIndexKey(const std::string &mem_index_key);
-     std::vector<std::pair<std::string, std::string>> GetAllMemIndexInfo();
- 
-```
-
-**File**: `src/storage/catalog/new_catalog_impl.cpp` (modified, +9/-0)
-```diff
-@@ -159,6 +159,15 @@ std::shared_ptr<MemIndex> NewCatalog::PopMemIndex(const std::string &mem_index_k
-     return nullptr;
- }
- 
-+bool NewCatalog::TrySetMemIndex(const std::string &mem_index_key, const std::shared_ptr<MemIndex> &mem_index) {
-+    if (mem_index == nullptr) {
-+        return false;
-+    }
-+    std::unique_lock<std::shared_mutex> lck(mem_index_mtx_);
-+    auto [iter, inserted] = mem_index_map_.emplace(mem_index_key, mem_index);
-+    return inserted;
-+}
++// Reclaiming drops exactly the rotated segments the checkpoint already contains, i.e. those whose max
++// commit ts is below ckp_ts. A segment at ckp_ts itself is not covered, and the current wal.log is
++// never part of the rotated set.
++TEST_P(RecycleLogTest, recycle_deletes_only_covered_segments) {
++    infinity::InfinityContext::instance().UnInit();
++    CleanupDbDirs();
++#ifdef INFINITY_DEBUG
++    infinity::GlobalResourceUsage::Init();
++#endif
++    std::shared_ptr<std::string> config_path = RecycleLogTest::test_ckp_recycle_config();
++    infinity::InfinityContext::instance().InitPhase1(config_path);
++    infinity::InfinityContext::instance().InitPhase2();
 +
- Status NewCatalog::DropMemIndexByMemIndexKey(const std::string &mem_index_key) {
-     bool delete_success = false;
-     {
-```
-
-**File**: `src/storage/invertedindex/column_inverter.cppm` (modified, +2/-0)
-```diff
-@@ -56,6 +56,8 @@ public:
- 
-     u32 GetDocCount() { return doc_count_; }
- 
-+    u32 GetBeginDocID() const { return begin_doc_id_; }
++    Storage *storage = infinity::InfinityContext::instance().storage();
++    WalManager *wal_manager = storage->wal_manager();
++    const std::string &wal_dir = storage->config()->WALDir();
 +
-     u32 GetMerged() { return merged_; }
- 
-     struct PosInfo {
-```
-
-**File**: `src/storage/invertedindex/memory_indexer.cppm` (modified, +30/-0)
-```diff
-@@ -81,6 +81,17 @@ public:
-     // InsertGap insert some empty documents. This is for abnormal case.
-     void InsertGap(u32 row_count);
- 
-+    // Called when the inversion of one task failed. It keeps the sorted ring contiguous (a
-+    // missing sequence number would stall every later commit forever) and remembers the task
-+    // so that Dump() can re-invert it before the chunk is written. Doc ids are preserved,
-+    // therefore a successful retry makes the row visible exactly where it belongs.
-+    void MarkInvertFailed(u64 seq, const std::shared_ptr<ColumnVector> &column_vector, u32 row_offset, u32 row_count, u32 start_doc_id);
++    constexpr TxnTimeStamp ckp_ts = 100;
++    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts - 2), 0).ok());
++    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts), 0).ok());
++    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts + 2), 0).ok());
 +
-+    bool HasFailedInvertTasks() const {
-+        std::unique_lock<std::mutex> lock(mutex_);
-+        return !failed_invert_tasks_.empty();
++    wal_manager->RecycleWalFile(ckp_ts);
++
++    {
++        auto [temp_wal_info, wal_infos] = WalFile::ParseWalFilenames(wal_dir);
++        ASSERT_EQ(wal_infos.size(), 2u);
++        std::vector<TxnTimeStamp> remaining;
++        for (const auto &wal_info : wal_infos) {
++            remaining.push_back(wal_info.max_commit_ts_);
++        }
++        std::sort(remaining.begin(), remaining.end());
++        EXPECT_EQ(remaining, (std::vector<TxnTimeStamp>{ckp_ts, ckp_ts + 2}));
 +    }
 +
-     // Commit is non-blocking and thread-safe. There shall be a background thread which call this method regularly.
-     void Commit(bool offline = false);
- 
-@@ -158,6 +169,19 @@ private:
- 
-     void TupleListToIndexFile(std::unique_ptr<SortMergerTermTuple<TermTuple, u32>> &merger);
- 
-+    struct FailedInvertTask {
-+        std::shared_ptr<ColumnVector> column_vector_;
-+        u32 row_offset_{0};
-+        u32 row_count_{0};
-+        u32 start_doc_id_{0};
-+    };
++    infinity::InfinityContext::instance().UnInit();
 +
-+    // Re-invert the tasks that could not even be re-inverted synchronously in MarkInvertFailed.
-+    // Called by Dump() after all in-flight tasks are committed and before the chunk is written.
-+    // Retried postings are appended to the shared posting writers, whose doc lists are delta
-+    // encoded, so the retry is only valid while no larger doc id has been generated yet.
-+    void RetryFailedInvertTasks();
-+
- private:
-     std::string index_dir_;
-     std::string base_name_;
-@@ -175,6 +199,12 @@ private:
-     u64 inflight_tasks_{0};
-     std::condition_variable cv_;
-     mutable std::mutex mutex_;
-+    // Guarded by mutex_. Tasks whose inversion threw; re-inverted by Dump().
-+    std::vector<FailedInvertTask> failed_invert_tasks_;
-+    // Upper bound (exclusive) of the doc ids already generated into the shared posting writers.
-+    // Written by CommitSync (single writer, guarded by mutex_commit_) and read by
-+    // RetryFailedInvertTasks to decide whether a retry can still keep the doc lists ordered.
-+    std::atomic<u32> generated_doc_end_{0};
-     std::mutex mutex_commit_;
-     std::shared_mutex mutex_commit_sync_share_;
- 
++#ifdef INFINITY_DEBUG
++    EXPECT_EQ(infinity::GlobalResourceUsage::GetObjectCount(), 0);
++    EXPECT_EQ(infinity::GlobalResourceUsage::GetRawMemoryCount(), 0);
++    infinity::GlobalResourceUsage::UnInit();
++#endif
++}
 ```
 
 ---
 
-### Incident Patch 2: `6e4ce04b` (2026-10-27)
-**Commit Message**: fix(sdk): parse chained arithmetic left to right in the Go SDK (#3530)
+### Incident Patch 3: `cb2859bc` (2026-11-02)
+**Commit Message**: CI: Fix no tar file in artifacts (#3538)
 
-Fixes #3529
-
-**File**: `go/expression_parser.go` (modified, +69/-3)
+**File**: `.github/workflows/tests.yml` (modified, +3/-0)
 ```diff
-@@ -172,9 +172,11 @@ func parseExpressionInternal(expr string) (*Expression, error) {
- 		}
- 	}
+@@ -2652,6 +2652,7 @@ jobs:
+           echo "chown -R ${USER} ${GITHUB_WORKSPACE}" && sudo chown -R ${USER} ${GITHUB_WORKSPACE}
+           ARTIFACTS_DIR=${RUNNER_WORKSPACE_PREFIX}/artifacts/${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}
+           echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> ${GITHUB_ENV}
++          mkdir -p ${ARTIFACTS_DIR}
+           tar xzf ${ARTIFACTS_DIR}/infinity.tgz && git reset --hard && git clean -ffdx
  
--	// Check for arithmetic operators
--	for _, op := range []string{"+", "-", "*", "/", "%"} {
--		if left, right, found := splitByOperator(expr, op); found {
-+	// Check for arithmetic operators, lowest precedence group first. Operators
-+	// of equal precedence are left associative, so "c1 - c2 - c3" is
-+	// "(c1 - c2) - c3": split at the rightmost operator of the group.
-+	for _, ops := range [][]string{{"+", "-"}, {"*", "/", "%"}} {
-+		if left, right, op, found := splitByLastOperator(expr, ops); found {
- 			return &Expression{
- 				Type:     ExprTypeBinary,
- 				Operator: op,
-@@ -853,6 +855,70 @@ func splitByOperator(expr, op string) (*Expression, *Expression, bool) {
- 	return nil, nil, false
- }
- 
-+// splitByLastOperator splits an expression at the rightmost top-level
-+// occurrence of any of the given single-character operators, respecting
-+// parentheses and string literals. Splitting at the rightmost operator makes
-+// operators of equal precedence left associative.
-+func splitByLastOperator(expr string, ops []string) (*Expression, *Expression, string, bool) {
-+	expr = strings.TrimSpace(expr)
-+
-+	var positions []int
-+	parenCount := 0
-+	inString := false
-+	stringQuote := byte(0)
-+
-+	for i := 0; i < len(expr); i++ {
-+		ch := expr[i]
-+
-+		// Handle string literals
-+		if !inString && (ch == '\'' || ch == '"') {
-+			inString = true
-+			stringQuote = ch
-+			continue
-+		} else if inString && ch == stringQuote {
-+			// Check for escaped quote (e.g., 'it''s')
-+			if i+1 < len(expr) && expr[i+1] == stringQuote {
-+				i++ // Skip the next quote
-+				continue
-+			}
-+			inString = false
-+			stringQuote = 0
-+			continue
-+		}
-+
-+		// Skip processing when inside a string literal
-+		if inString {
-+			continue
-+		}
-+
-+		if ch == '(' {
-+			parenCount++
-+		} else if ch == ')' {
-+			parenCount--
-+		} else if parenCount == 0 {
-+			for _, op := range ops {
-+				if ch == op[0] {
-+					positions = append(positions, i)
-+					break
-+				}
-+			}
-+		}
-+	}
-+
-+	// Try the rightmost operator first. An operator that leaves an
-+	// unparsable side, such as the unary minus in "c1 - -5", is skipped.
-+	for j := len(positions) - 1; j >= 0; j-- {
-+		i := positions[j]
-+		left, err1 := parseExpressionInternal(strings.TrimSpace(expr[:i]))
-+		right, err2 := parseExpressionInternal(strings.TrimSpace(expr[i+1:]))
-+		if err1 == nil && err2 == nil {
-+			return left, right, string(expr[i]), true
-+		}
-+	}
-+
-+	return nil, nil, "", false
-+}
-+
- // isAlpha checks if a byte is an alphabetic character
- func isAlpha(ch byte) bool {
- 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
-```
-
-**File**: `go/tests/expression_parser_test.go` (modified, +17/-10)
-```diff
-@@ -170,10 +170,16 @@ func TestParseExprArithmetic(t *testing.T) {
- 		{"division_slim", "c1/2", "/(c1, 2)"},
- 		{"modulo_slim", "c1%2", "%(c1, 2)"},
- 
--		// Multiple operations (right associative - parser behavior)
--		{"chain_addition", "c1 + c2 + c3", "+(c1, +(c2, c3))"},
--		{"chain_subtraction", "c1 - c2 - c3", "-(c1, -(c2, c3))"},
--		{"chain_multiplication", "c1 * c2 * c3", "*(c1, *(c2, c3))"},
-+		// Multiple operations (left associative)
-+		{"chain_addition", "c1 + c2 + c3", "+(+(c1, c2), c3)"},
-+		{"chain_subtraction", "c1 - c2 - c3", "-(-(c1, c2), c3)"},
-+		{"chain_multiplication", "c1 * c2 * c3", "*(*(c1, c2), c3)"},
-+		{"chain_division", "c1 / c2 / c3", "/(/(c1, c2), c3)"},
-+		{"sub_then_add", "c1 - c2 + c3", "+(-(c1, c2), c3)"},
-+		{"mul_then_div", "c1 * c2 / c3", "/(*(c1, c2), c3)"},
-+		{"div_then_mod", "c1 / c2 % c3", "%(/(c1, c2), c3)"},
-+		{"chain_sub_negative", "c1 - c2 - -5", "-(-(c1, c2), -(5))"},
-+		{"chain_sub_slim", "c1-c2-c3", "-(-(c1, c2), c3)"},
- 
- 		// Mixed operations (precedence)
- 		{"add_mul_precedence", "c1 + c2 * c3", "+(c1, *(c2, c3))"},
-@@ -194,16 +200,16 @@ func TestParseExprArithmetic(t *testing.T) {
- 		{"mul_reverse", "2 * c1", "*(2, c1)"},
- 		{"div_reverse", "100 / c1", "/(100, c1)"},
- 
--		// Multiple terms (right associative - parser behavior)
--		{"three_terms_add", "c1 + c2 + c3", "+(c1, +(c2, c3))"},
--		{"mixed_three_terms", "c1 + c2 - c3", "+(c1, -(c2, c3))"},
--		{"four_terms", "c1 + c2 + c3 + c4", "+(c1, +(c2, +(c3, c4)))"},
-+		// Multiple terms (left associative)
-+		{"three_terms_add", "c1 + c2 + c3", "+(+(c1, c2), c3)"},
-+		{"mixed_three_terms", "c1 + c2 - c3", "-(+(c1, c2), c3)"},
-+		{"four_terms", "c1 + c2 + c3 + c4", "+(+(+(c1, c2), c3), c4)"},
- 
- 		// Complex expressions
- 		{"complex_nested", "c1 * c2 + c3 * c4", "+(*(c1, c2), *(c3, c4))"},
- 		{"complex_nested2", "(c1 + c2) * (c3 - c4)", "*(+(c1, c2), -(c3, c4))"},
--		// Complex expression with all operators - parser groups right due to equal precedence
--		{"all_operators", "c1 + c2 - c3 * c4 / c5 % c6", "+(c1, -(c2, *(c3, /(c4, %(c5, c6)))))"},
-+		// Complex expression with all operators - equal precedence groups left
-+		{"all_operators", "c1 + c2 - c3 * c4 / c5 % c6", "-(+(c1, c2), %(/(*(c3, c4), c5), c6))"},
- 
- 		// Arithmetic with floats
- 		{"add_float", "c1 + 3.14", "+(c1, 3.140000)"},
-@@ -862,6 +868,7 @@ func TestCondition(t *testing.T) {
- 		// Arithmetic in conditions
- 		{"addition in condition", "c1 + c2 > 10", ">(+(c1, c2), 10)"},
- 		{"subtraction in condition", "c1 - c2 = 0", "=(-(c1, c2), 0)"},
-+		{"chained subtraction in condition", "c1 - c2 - c3 > 0", ">(-(-(c1, c2), c3), 0)"},
- 		{"multiplication in condition", "c1 * 2 < 100", "<(*(c1, 2), 100)"},
- 		{"complex arithmetic", "(c1 + c2) * c3 > 100", ">(*(+(c1, c2), c3), 100)"},
- 		// String comparisons
-```
-
----
-
-### Incident Patch 3: `8cd094fe` (2026-10-27)
-**Commit Message**: fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (#3532)
-
-**File**: `.github/workflows/tests.yml` (modified, +36/-18)
-```diff
-@@ -263,9 +263,12 @@ jobs:
- 
-       - name: Install LLVM 20
+       - name: Start builder container
+@@ -2673,6 +2674,7 @@ jobs:
+       - name: Upload artifacts
+         if: ${{ !cancelled() && !failure() && steps.build.outcome == 'success' }}
          run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
++          mkdir -p ${ARTIFACTS_DIR}
+           tar -cf - cmake-build-reldeb/src/infinity cmake-build-reldeb/benchmark/local_infinity/{knn_import_benchmark,knn_query_benchmark} | tar -C ${ARTIFACTS_DIR} -xf -
  
-       - name: Wait for minio and run unit test
-@@ -355,9 +358,12 @@ jobs:
+       - name: Remove build container
+@@ -2693,6 +2695,7 @@ jobs:
+           echo "chown -R ${USER} ${GITHUB_WORKSPACE}" && sudo chown -R ${USER} ${GITHUB_WORKSPACE}
+           ARTIFACTS_DIR=${RUNNER_WORKSPACE_PREFIX}/artifacts/${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}
+           echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> ${GITHUB_ENV}
++          mkdir -p ${ARTIFACTS_DIR}
+           tar xzf ${ARTIFACTS_DIR}/infinity.tgz && git reset --hard && git clean -ffdx
+           tar -C ${ARTIFACTS_DIR} -cf - cmake-build-reldeb/benchmark/local_infinity/{knn_import_benchmark,knn_query_benchmark} | tar -xf -
  
-       - name: Install LLVM 20
-         run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
- 
-       - name: Wait for infinity and run sqllogictest
-@@ -490,9 +496,12 @@ jobs:
- 
-       - name: Install LLVM 20
-         run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
- 
-       - name: Wait for infinity and run pysdk test
-@@ -584,9 +593,12 @@ jobs:
- 
-       - name: Install LLVM 20
-         run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
- 
-       - name: Wait for infinity and run Go tests
-@@ -669,9 +681,12 @@ jobs:
- 
-       - name: Install LLVM 20
-         run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
- 
-       - name: Wait for infinity and run http test
-@@ -752,9 +767,12 @@ jobs:
- 
-       - name: Install LLVM 20
-         run: |
--          wget https://apt.llvm.org/llvm.sh
--          chmod +x llvm.sh
--          sudo ./llvm.sh 20
-+          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
-+          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
-+          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
-+          # llvm-profdata under /usr/lib/llvm-20/bin.
-+          sudo apt-get update
-+          sudo apt-get install -y llvm-20
-           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
- 
-       - name: Wait for infinity and run pysdk test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
+- **PR #3535** (2026-11-01): feat(search): heap-based block-max WAND as the default top-k early-termination iterator (@yingfeng)
+- **PR #3534** (2026-11-03): fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (@qinling0210)
+- **PR #3533** (2026-11-02): fix(storage): make block map access thread-safe and look up block metas by block id (@qinling0210)
 - **PR #3532** (2026-10-27): fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (@qinling0210)
 - **PR #3530** (2026-10-27): fix(sdk): parse chained arithmetic left to right in the Go SDK (@RaphaelFakhri)
-- **PR #3528** (2026-10-26): Fix mem-index (@yingfeng)
-- **PR #3525** (2026-10-13): fix(ci): replace removed quay.io/minio image with pgsty/silo (@qinling0210)
-- **PR #3524** (2026-10-13): fix(sdk): a NOT clause must not swallow the following AND/OR clauses (@qinling0210)
-- **PR #3507** (2026-10-16): fix(optimizer): only extract regex runs every match contains (@Taranum01)
 
 ---
 
@@ -1856,27 +1959,23 @@ Fixes #3529
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mem-index (#3528)
+## X. storage): make block map access thread-safe and look up block metas by block id 
 
 **RULE**:
-When implementing operations in `src/storage/bg_task/bg_task.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76933d02`: mem-index (#3528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c81b068`: storage): make block map access thread-safe and look up block metas by block id (#3533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/bg_task/bg_task.cppm`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-class MemoryIndexer;
-    // The inverted index this task was prepared against. It is bound at submit time (in
-    // NewTxn::AppendMemIndex, right after AsyncInsertTop), because seq_inserted_/doc_count_
-    // are computed on that very indexer. Resolving it again at dequeue time (from mem_index_)
-    // can yield a different -- or already dumped/cleared -- indexer, which silently drops the
-    // rows. Holding a shared_ptr also keeps the indexer alive while the appender uses it.
-    std::shared_ptr<MemoryIndexer> memory_indexer_{};
+        if (block_meta == nullptr) [[unlikely]] {
+            UnrecoverableError(fmt::format("MatchSparseScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1886,4 +1985,4 @@ class MemoryIndexer;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76933d02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c81b068` are properly handled with clean fallback behavior.
