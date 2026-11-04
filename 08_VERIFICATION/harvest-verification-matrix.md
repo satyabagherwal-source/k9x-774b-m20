@@ -7405,3 +7405,4 @@
 | `CYCLE-20261104-7N1L` | `2026-11-04T23:34:43.305Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7024, Rule 7025, Rule 7026` | Yes (`23d4889f...`) |
 | `CYCLE-20261104-7OBF` | `2026-11-04T23:34:44.955Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7027` | Yes (`24d17807...`) |
 | `CYCLE-20261104-7Q3J` | `2026-11-04T23:34:47.263Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7028` | Yes (`4a8d5e3d...`) |
+| `CYCLE-20261104-GP8H` | `2026-11-04T23:41:46.049Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`d14b7a00...`) |

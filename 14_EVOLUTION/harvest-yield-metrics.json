@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T23:34:47.272Z",
-  "total_cycles_completed": 7382,
-  "total_learnings_persisted": 7382,
+  "last_updated": "2026-11-04T23:41:46.065Z",
+  "total_cycles_completed": 7383,
+  "total_learnings_persisted": 7383,
   "total_rules_promoted": 7075,
   "history": [
-    {
-      "timestamp": "2026-11-04T10:05:42.221Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T10:12:25.283Z",
       "repository": "ntex-rs/ntex",
@@ -1403,6 +1396,13 @@
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:41:46.065Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

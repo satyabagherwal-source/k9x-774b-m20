@@ -7414,3 +7414,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-04T23:34:43.309Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `b0bce2a2` | Multi-dimensional audit evidence | 2026-11-04T23:34:44.958Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `a66a1f88` | Multi-dimensional audit evidence | 2026-11-04T23:34:47.266Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-04T23:41:46.059Z |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T23:34:49.833Z",
-    "lastVerified": "2026-11-04T23:34:49.833Z",
+    "lastChecked": "2026-11-04T23:41:57.408Z",
+    "lastVerified": "2026-11-04T23:41:57.408Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -263,8 +263,8 @@
     "officialUrl": "https://github.com/herdrdev/herdr",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T20:10:59.870Z",
-    "lastVerified": "2026-11-03T20:10:59.870Z",
+    "lastChecked": "2026-11-04T23:41:42.397Z",
+    "lastVerified": "2026-11-04T23:41:42.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-herdrdev-herdr",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T23:13:39.704Z",
-    "lastVerified": "2026-11-04T23:13:39.704Z",
+    "lastChecked": "2026-11-04T23:41:57.396Z",
+    "lastVerified": "2026-11-04T23:41:57.396Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1580,9 +1580,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-04T20:18:09.635Z",
+    "lastChecked": "2026-11-04T23:41:52.406Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-04T20:18:09.635Z"
+    "lastVerified": "2026-11-04T23:41:52.406Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2079,13 +2079,13 @@
     "officialUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T09:20:00.988Z",
-    "lastVerified": "2026-10-31T09:20:00.988Z",
+    "lastChecked": "2026-11-04T23:41:44.943Z",
+    "lastVerified": "2026-11-04T23:41:44.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "447f8362eb8b809b3e5aac37a567a3bcc3fe238f86f2e8f8e97a26f94c21ad84",
-    "promotedRulesCount": 3,
+    "contentHash": "d14b7a00955919b2027322f013cdae13a52b5c295c0c1ce0372e988740113b55",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2805,12 +2805,12 @@
     "lastVerified": "2026-11-04T18:42:13.091Z"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T00:46:34.270Z",
-    "lastVerified": "2026-11-04T00:46:34.270Z",
+    "lastChecked": "2026-11-04T23:41:54.913Z",
+    "lastVerified": "2026-11-04T23:41:54.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -2819,7 +2819,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "59764058"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -5148,12 +5149,12 @@
     "lastVerified": "2026-11-04T17:09:22.302Z"
   },
   "saltstack-salt": {
-    "name": "saltstack/salt",
+    "name": "salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T01:27:47.468Z",
-    "lastVerified": "2026-11-04T01:27:47.468Z",
+    "lastChecked": "2026-11-04T23:41:49.972Z",
+    "lastVerified": "2026-11-04T23:41:49.972Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -5162,7 +5163,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4840c2be"
   },
   "tako8ki-gobang": {
     "name": "gobang",
@@ -8255,9 +8257,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-10-31T16:39:34.741Z",
+    "lastChecked": "2026-11-04T23:41:47.485Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-10-31T16:39:34.741Z"
+    "lastVerified": "2026-11-04T23:41:47.485Z"
   },
   "biomejs-biome": {
     "name": "biomejs/biome",
