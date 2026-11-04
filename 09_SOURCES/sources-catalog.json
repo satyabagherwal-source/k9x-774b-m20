@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "8cb33b5f520cdbc0b43cb30c7639f4e26e0fd8e417f047cbd1699aaad1391bca",
-    "lastHarvestedAt": "2026-10-31T06:24:59.839Z",
+    "contentHash": "587b957ba8616540552ffe717504fa0dd308f536a1cf0955bf91419035fe2ea9",
+    "lastHarvestedAt": "2026-11-04T22:05:10.612Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "6bb987c8",
+    "sourceVersion": "118b90ba",
     "license": "Apache-2.0",
-    "contentHash": "45f4a037b6310ac9490b9cb1668862a7ba05406c71af63bd9ce904f2e80aeea7",
-    "lastHarvestedAt": "2026-11-03T23:46:11.769Z",
+    "contentHash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
+    "lastHarvestedAt": "2026-11-04T22:05:19.722Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "5a85f9b0",
+    "sourceVersion": "62852de1",
     "license": "MIT",
-    "contentHash": "ece8775414cc65616cd7add324768a1c5df127eb944cba4337a1df1c021914d1",
-    "lastHarvestedAt": "2026-11-03T17:45:45.713Z",
+    "contentHash": "e939f0f60d053ab814a15ee1aeec1f4fd837298346c7d32f6446a9484553ac5c",
+    "lastHarvestedAt": "2026-11-04T22:05:12.760Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

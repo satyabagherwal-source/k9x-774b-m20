@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T19:41:36.059Z",
+  "last_updated": "2026-11-04T22:05:12.765Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3808,6 +3808,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-0J3X",
+      "directive_title": "[ty] Fix class-pattern exhaustiveness after class identity checks (#30045)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "astral-sh/ruff",
+      "source_commit": "62852de1",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-astral-sh-ruff"
     }
   ]
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T21:58:20.603Z",
-  "total_cycles_completed": 7337,
-  "total_learnings_persisted": 7337,
-  "total_rules_promoted": 7034,
+  "last_updated": "2026-11-04T22:05:19.727Z",
+  "total_cycles_completed": 7340,
+  "total_learnings_persisted": 7340,
+  "total_rules_promoted": 7035,
   "history": [
-    {
-      "timestamp": "2026-11-04T07:33:22.863Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:34:00.033Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T07:41:19.340Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T07:42:05.529Z",
       "repository": "actix/actix-web",
@@ -1403,6 +1382,27 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:05:10.617Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:05:12.767Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:05:19.727Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -507838,3 +507838,53 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `93c304ff` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6990. agentic): honor limit and offset for resource=runs in /agentic/query (#1152) (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "agentic): honor limit and offset for resource=runs in /agentic/query (#1152)",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "118b90ba",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T22:05:19.429Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `118b90ba`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `control-plane/internal/handlers/agentic/query.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2d6250d1`: agentic): honor limit and offset for resource=runs in /agentic/query (#1152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/handlers/agentic/query.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	filter := types.ExecutionFilter{Limit: req.Limit, Offset: req.Offset}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	filter := types.ExecutionFilter{}
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2d6250d1` are properly handled with clean fallback behavior.

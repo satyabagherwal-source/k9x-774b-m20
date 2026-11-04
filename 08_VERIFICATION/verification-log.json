@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261102-WRU4",
-    "timestamp": "2026-11-02T17:47:00.460Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-64PU",
-    "timestamp": "2026-11-02T17:54:17.058Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261102-BHKV",
-    "timestamp": "2026-11-02T17:58:27.007Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261102-MDA3",
     "timestamp": "2026-11-02T21:22:51.963Z",
     "repository": "pyannote/speaker-diarization-3.1",
@@ -7492,6 +7447,51 @@
     "contentHash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-0HFW",
+    "timestamp": "2026-11-04T22:05:10.604Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "587b957ba8616540552ffe717504fa0dd308f536a1cf0955bf91419035fe2ea9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-0J3L",
+    "timestamp": "2026-11-04T22:05:12.753Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "e939f0f60d053ab814a15ee1aeec1f4fd837298346c7d32f6446a9484553ac5c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-0OH3",
+    "timestamp": "2026-11-04T22:05:19.719Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

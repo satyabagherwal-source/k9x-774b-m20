@@ -7369,3 +7369,6 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `c7bea343` | Multi-dimensional audit evidence | 2026-11-04T21:57:16.196Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `c43635ed` | Multi-dimensional audit evidence | 2026-11-04T21:57:20.150Z |
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-04T21:58:20.598Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-04T22:05:10.612Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `62852de1` | Multi-dimensional audit evidence | 2026-11-04T22:05:12.760Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `118b90ba` | Multi-dimensional audit evidence | 2026-11-04T22:05:19.722Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `6bb987c8`  
+> **Source Version**: `118b90ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:46:11.149Z  
+> **Timestamp**: 2026-11-04T22:05:19.072Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:46:11.144Z  
+> **Harvest Timestamp**: 2026-11-04T22:05:19.067Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2643 stars
+- **Stars / Engagement**: 2644 stars
 
 ---
 
@@ -1418,283 +1418,219 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0dc65cd7` (2026-11-03)
-**Commit Message**: fix(sdk/go): don't cut active streams with Client.Timeout (#1147)
+### Incident Patch 1: `2d6250d1` (2026-11-04)
+**Commit Message**: fix(agentic): honor limit and offset for resource=runs in /agentic/query (#1152)
 
-StreamComplete used the shared http.Client, whose Timeout also covers
-reading the body, so any stream longer than Timeout failed with
-'decode stream: context deadline exceeded'. Bound only the wait for the
-response headers instead.
+queryRuns never copied req.Limit/req.Offset into the ExecutionFilter, so the
+storage layer always returned its default page of 20 starting at 0 while the
+response echoed the requested values. Forward both to the filter.
 
-**File**: `sdk/go/ai/client.go` (modified, +21/-1)
+**File**: `control-plane/internal/handlers/agentic/query.go` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"net/http"
- 	"net/url"
- 	"strings"
-+	"time"
- )
+@@ -74,7 +74,7 @@ func QueryHandler(store storage.StorageProvider) gin.HandlerFunc {
+ }
  
- // Client provides AI/LLM capabilities using OpenAI or OpenRouter API.
-@@ -283,8 +284,27 @@ func (c *Client) StreamComplete(ctx context.Context, prompt string, opts ...Opti
- 			applyInfronAttributionHeaders(httpReq.Header, c.config.SiteURL, c.config.SiteName)
- 		}
- 
-+		// http.Client.Timeout covers reading the whole body, which would cut off
-+		// a stream that is still delivering chunks. Bound only the wait for the
-+		// response headers with the same duration instead.
-+		streamClient := c.httpClient
-+		var headerTimer *time.Timer
-+		if headerTimeout := c.httpClient.Timeout; headerTimeout > 0 {
-+			clone := *c.httpClient
-+			clone.Timeout = 0
-+			streamClient = &clone
-+
-+			reqCtx, cancel := context.WithCancel(ctx)
-+			defer cancel()
-+			headerTimer = time.AfterFunc(headerTimeout, cancel)
-+			httpReq = httpReq.WithContext(reqCtx)
-+		}
-+
- 		// Execute request
--		httpResp, err := c.httpClient.Do(httpReq)
-+		httpResp, err := streamClient.Do(httpReq)
-+		if headerTimer != nil {
-+			headerTimer.Stop()
-+		}
- 		if err != nil {
- 			errCh <- fmt.Errorf("execute request: %w", err)
- 			return
+ func queryRuns(c *gin.Context, ctx context.Context, store storage.StorageProvider, req QueryRequest) {
+-	filter := types.ExecutionFilter{}
++	filter := types.ExecutionFilter{Limit: req.Limit, Offset: req.Offset}
+ 	if req.Filters.Status != "" {
+ 		filter.Status = &req.Filters.Status
+ 	}
 ```
 
-**File**: `sdk/go/ai/client_test.go` (modified, +62/-0)
+**File**: `control-plane/internal/handlers/agentic/query_handler_test.go` (modified, +24/-0)
 ```diff
-@@ -707,3 +707,65 @@ func TestStructuredAI(t *testing.T) {
- 	// This test requires a valid config, so we'll skip it in unit tests
- 	t.Skip("Requires actual API key or extensive mocking")
+@@ -417,3 +417,27 @@ func TestQueryHandler_OffsetPastEndReturnsEmptyPage(t *testing.T) {
+ 		})
+ 	}
  }
 +
-+func collectStream(chunks <-chan StreamChunk, errs <-chan error) ([]StreamChunk, error) {
-+	var got []StreamChunk
-+	for chunk := range chunks {
-+		got = append(got, chunk)
++func TestQueryHandler_RunsForwardsLimitAndOffset(t *testing.T) {
++	var got types.ExecutionFilter
++	store := &handlerTestStorage{
++		mockStatusStorage: &mockStatusStorage{},
++		queryRunSummariesFn: func(_ context.Context, filter types.ExecutionFilter) ([]*storage.RunSummaryAggregation, int, error) {
++			got = filter
++			return []*storage.RunSummaryAggregation{{RunID: "run-1"}}, 1, nil
++		},
 +	}
-+	select {
-+	case err := <-errs:
-+		return got, err
-+	case <-time.After(time.Second):
-+		return got, nil
-+	}
-+}
 +
-+// The configured Timeout bounds how long we wait for the server to start
-+// responding; it must not cut off a stream that is still delivering chunks.
-+func TestStreamComplete_TimeoutDoesNotCutActiveStream(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "text/event-stream")
-+		w.WriteHeader(http.StatusOK)
-+		for i := 0; i < 4; i++ {
-+			_, _ = w.Write([]byte(`data: {"id":"chatcmpl-123","choices":[{"delta":{"content":"x"}}]}` + "\n\n"))
-+			w.(http.Flusher).Flush()
-+			time.Sleep(150 * time.Millisecond)
-+		}
-+		_, _ = w.Write([]byte("data: [DONE]\n\n"))
-+		w.(http.Flusher).Flush()
-+	}))
-+	defer server.Close()
++	router := gin.New()
++	router.POST("/query", QueryHandler(store))
 +
-+	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m", Timeout: 300 * time.Millisecond})
-+	require.NoError(t, err)
++	body := `{"resource":"runs","limit":5,"offset":10}`
++	req := httptest.NewRequest(http.MethodPost, "/query", bytes.NewBufferString(body))
++	req.Header.Set("Content-Type", "application/json")
++	rec := httptest.NewRecorder()
++	router.ServeHTTP(rec, req)
 +
-+	chunks, errs := client.StreamComplete(context.Background(), "hi")
-+	got, streamErr := collectStream(chunks, errs)
-+
-+	assert.NoError(t, streamErr)
-+	assert.Len(t, got, 4)
-+}
-+
-+// A server that never starts responding must still be bounded by Timeout.
-+func TestStreamComplete_TimeoutAppliesWhileWaitingForResponse(t *testing.T) {
-+	release := make(chan struct{})
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		select {
-+		case <-release:
-+		case <-r.Context().Done():
-+		}
-+	}))
-+	defer server.Close()
-+	defer close(release)
-+
-+	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m", Timeout: 200 * time.Millisecond})
-+	require.NoError(t, err)
-+
-+	start := time.Now()
-+	chunks, errs := client.StreamComplete(context.Background(), "hi")
-+	_, streamErr := collectStream(chunks, errs)
-+
-+	assert.Error(t, streamErr)
-+	assert.Less(t, time.Since(start), 2*time.Second)
++	require.Equal(t, http.StatusOK, rec.Code)
++	assert.Equal(t, 5, got.Limit)
++	assert.Equal(t, 10, got.Offset)
 +}
 ```
 
 ---
 
-### Incident Patch 2: `addbec51` (2026-11-02)
-**Commit Message**: fix(doctor): recommend current Anthropic and Google models (#1133)
+### Incident Patch 2: `462d1cd3` (2026-11-04)
+**Commit Message**: fix(python-sdk): preserve boolean defaults in agent CLI calls (#1151)
 
-* fix(doctor): recommend current Anthropic and Google models
+**File**: `sdk/python/agentfield/agent_cli.py` (modified, +5/-0)
+```diff
+@@ -116,6 +116,11 @@ def _parse_function_args(
+                 parser.add_argument(
+                     f"--{param_name}",
+                     action="store_true",
++                    default=(
++                        False
++                        if param.default is inspect.Parameter.empty
++                        else param.default
++                    ),
+                     help=f"{param_name} (boolean flag)",
+                 )
+             elif param_type is int:
+```
 
-af doctor suggested claude-3-5-sonnet-20241022 and gemini-1.5-pro as the
-AI_MODEL for an Anthropic or Google key; both models are retired, so a
-scaffold that follows the recommendation fails on its first call. Recommend
-claude-sonnet-5-5 and gemini-3.8-flash, and update the commented examples in
-the docker .env template.
+**File**: `sdk/python/tests/test_agent_cli.py` (modified, +20/-0)
+```diff
+@@ -2,6 +2,8 @@
+ Tests for agent_cli.py CLI functionality.
+ """
+ 
++import json
++
+ import pytest
+ from unittest.mock import MagicMock, patch, Mock
+ from agentfield.agent_cli import AgentCLI
+@@ -269,6 +271,24 @@ def test_run_cli_call_command(mock_agent):
+                 mock_call.assert_called_once_with("func1", ["--arg", "value"])
+ 
+ 
++@pytest.mark.parametrize(
++    ("cli_args", "verbose"),
++    [([], False), (["--verbose"], True)],
++)
++def test_run_cli_call_preserves_boolean_defaults(
++    mock_agent, monkeypatch, capsys, cli_args, verbose
++):
++    def skill1(safe: bool = True, verbose: bool = False) -> dict:
++        return {"safe": safe, "verbose": verbose}
++
++    mock_agent.skill1 = skill1
++    monkeypatch.setattr("sys.argv", ["script", "call", "skill1", *cli_args])
++
++    AgentCLI(mock_agent).run_cli()
++
++    assert json.loads(capsys.readouterr().out) == {"safe": True, "verbose": verbose}
++
++
+ def test_run_cli_help_command(mock_agent):
+     """Test running CLI with help command."""
+     cli = AgentCLI(mock_agent)
+```
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+---
 
-* fix(init): use a current model in the --default-model help example
+### Incident Patch 3: `762d53c6` (2026-11-04)
+**Commit Message**: fix(sdk-python): request stream usage for more LiteLLM providers (#1150)
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
----------
+app.ai(stream=True) only set stream_options.include_usage for openrouter/
+and openai/ models, so azure, groq, deepseek, xai and together_ai streams
+ended with usage_status=missing. LiteLLM accepts stream_options for these.
 
 Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `control-plane/internal/cli/doctor.go` (modified, +2/-2)
+**File**: `sdk/python/agentfield/agent_ai.py` (modified, +15/-1)
 ```diff
-@@ -74,9 +74,9 @@ var providerEnvVars = []struct {
- 	Model  string // suggested default model when this provider is the chosen one
- }{
- 	{Name: "openrouter", EnvVar: "OPENROUTER_API_KEY", Model: "openrouter/google/gemini-2.5-flash"},
--	{Name: "anthropic", EnvVar: "ANTHROPIC_API_KEY", Model: "claude-3-5-sonnet-20241022"},
-+	{Name: "anthropic", EnvVar: "ANTHROPIC_API_KEY", Model: "claude-sonnet-5-5"},
- 	{Name: "openai", EnvVar: "OPENAI_API_KEY", Model: "gpt-4o"},
--	{Name: "google", EnvVar: "GOOGLE_API_KEY", Model: "gemini-1.5-pro"},
-+	{Name: "google", EnvVar: "GOOGLE_API_KEY", Model: "gemini-3.8-flash"},
- }
+@@ -171,6 +171,18 @@ def _reset_litellm_http_clients(litellm_module: Any) -> None:
  
- // doctorHarnessProvider describes one CLI `app.harness()` knows how to drive,
+ _AI_TIMEOUT_RETRIES_DEFAULT = 2
+ 
++# Providers whose chat API (via LiteLLM) accepts ``stream_options``; requesting
++# ``include_usage`` makes the final streamed chunk carry token usage.
++_STREAM_USAGE_PROVIDER_PREFIXES = (
++    "openrouter/",
++    "openai/",
++    "azure/",
++    "groq/",
++    "deepseek/",
++    "xai/",
++    "together_ai/",
++)
++
+ 
+ def _resolve_timeout_retries() -> int:
+     """How many times to retry an LLM call that hit the wall-clock safety-net
+@@ -839,7 +851,9 @@ def has_untrimmable_media(messages_to_check: List[dict]) -> bool:
+             else getattr(self.agent.async_config, "llm_call_timeout", 120.0)
+         )
+         litellm_params.setdefault("timeout", effective_timeout)
+-        if final_config.stream and final_config.model.startswith(("openrouter/", "openai/")):
++        if final_config.stream and final_config.model.startswith(
++            _STREAM_USAGE_PROVIDER_PREFIXES
++        ):
+             litellm_params.setdefault("stream_options", {"include_usage": True})
+ 
+         if schema:
 ```
 
-**File**: `control-plane/internal/cli/doctor_additional_test.go` (modified, +22/-0)
+**File**: `sdk/python/tests/test_agent_ai_comprehensive.py` (modified, +39/-0)
 ```diff
-@@ -32,6 +32,28 @@ func TestDoctorHelpersAndCommand(t *testing.T) {
- 		require.Equal(t, "OPENAI_API_KEY", report.ProviderKeys["openai"].EnvVar)
- 	})
+@@ -154,6 +154,45 @@ async def stream_generator():
+     assert hasattr(result, "__aiter__") or hasattr(result, "__iter__")
  
-+	t.Run("recommended models are not retired ones", func(t *testing.T) {
-+		for _, tc := range []struct {
-+			provider string
-+			envVar   string
-+			model    string
-+		}{
-+			{"anthropic", "ANTHROPIC_API_KEY", "claude-sonnet-5-5"},
-+			{"google", "GOOGLE_API_KEY", "gemini-3.8-flash"},
-+		} {
-+			t.Run(tc.provider, func(t *testing.T) {
-+				for _, p := range providerEnvVars {
-+					t.Setenv(p.EnvVar, "")
-+				}
-+				t.Setenv(tc.envVar, "key")
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "model,expected",
++    [
++        ("openai/gpt-4o", True),
++        ("openrouter/openai/gpt-4o", True),
++        ("azure/my-deployment", True),
++        ("groq/llama-3.3-70b-versatile", True),
++        ("deepseek/deepseek-chat", True),
++        ("xai/grok-3", True),
++        ("together_ai/meta-llama/Llama-3-8b", True),
++        # LiteLLM rejects stream_options for these providers.
++        ("mistral/mistral-large-latest", False),
++        ("anthropic/claude-3-opus", False),
++    ],
++)
++async def test_ai_streaming_requests_usage_for_supported_providers(
++    monkeypatch, agent_with_ai, model, expected
++):
++    """stream_options include_usage is only requested where LiteLLM accepts it."""
++    litellm_module = setup_litellm_stub(monkeypatch)
 +
-+				report := buildDoctorReport("http://127.0.0.1:1")
-+				require.Equal(t, tc.provider, report.Recommendation.Provider)
-+				require.Equal(t, tc.model, report.Recommendation.AIModel)
-+			})
-+		}
-+	})
++    async def stream_generator():
++        yield SimpleNamespace(
++            choices=[SimpleNamespace(delta=SimpleNamespace(content="x"))]
++        )
 +
- 	t.Run("tool and control plane checks cover success and failure", func(t *testing.T) {
- 		tool := checkTool("go", "version")
- 		require.True(t, tool.Available)
-```
-
-**File**: `control-plane/internal/cli/init.go` (modified, +1/-1)
-```diff
-@@ -493,7 +493,7 @@ Example:
- 	// and README.md are intentionally NOT generated — the skill produces them
- 	// after the agent has written real reasoners.
- 	cmd.Flags().BoolVar(&withDocker, "docker", false, "Also generate a Docker scaffold (Dockerfile, docker-compose.yml, .env.example, .dockerignore)")
--	cmd.Flags().StringVar(&defaultModel, "default-model", "openrouter/google/gemini-2.5-flash", "Default AI_MODEL string baked into the docker scaffold (LiteLLM-style, e.g. gpt-4o, anthropic/claude-3-5-sonnet-20241022)")
-+	cmd.Flags().StringVar(&defaultModel, "default-model", "openrouter/google/gemini-2.5-flash", "Default AI_MODEL string baked into the docker scaffold (LiteLLM-style, e.g. gpt-4o, anthropic/claude-sonnet-5-5)")
- 
- 	// Hidden flags — sensible defaults; only set when you have a real reason.
- 	cmd.Flags().StringVar(&controlPlaneImage, "control-plane-image", "agentfield/control-plane:latest", "")
-```
-
-**File**: `control-plane/internal/templates/docker/.env.example.tmpl` (modified, +2/-2)
-```diff
-@@ -15,8 +15,8 @@ OPENROUTER_API_KEY=sk-or-v1-...
- # Must match the provider above. LiteLLM-style model strings.
- AI_MODEL={{.DefaultModel}}
- # AI_MODEL=gpt-4o
--# AI_MODEL=anthropic/claude-3-5-sonnet-20241022
--# AI_MODEL=gemini/gemini-1.5-pro
-+# AI_MODEL=anthropic/claude-sonnet-5-5
-+# AI_MODEL=gemini/gemini-3.8-flash
- 
- # --- Optional overrides ---
- AGENT_NODE_ID={{.NodeID}}
-```
-
----
-
-### Incident Patch 3: `75d8f2a3` (2026-11-03)
-**Commit Message**: fix(python-sdk): preserve Unicode separators in harness JSONL (#1148)
-
-Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
-
-**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +2/-1)
-```diff
-@@ -447,7 +447,8 @@ def _kill_group() -> None:
- def parse_jsonl(text: str) -> List[Dict[str, Any]]:
-     """Parse JSONL (newline-delimited JSON) output. Skips invalid lines."""
-     events = []
--    for line in text.strip().splitlines():
-+    # JSONL uses LF delimiters; Unicode line separators may occur inside strings.
-+    for line in text.strip().split("\n"):
-         line = line.strip()
-         if not line:
-             continue
-```
-
-**File**: `sdk/python/tests/test_harness_cli.py` (modified, +12/-0)
-```diff
-@@ -3,6 +3,7 @@
- from __future__ import annotations
- 
- import asyncio
-+import json
- import sys
- from unittest.mock import AsyncMock, MagicMock, patch
- 
-@@ -239,6 +240,17 @@ async def never_ready(_n):
-     process.wait.assert_awaited()
- 
- 
-+@pytest.mark.parametrize("separator", ["\u0085", "\u2028", "\u2029"])
-+@pytest.mark.parametrize("line_ending", ["\n", "\r\n"])
-+def test_parse_jsonl_preserves_unicode_separators(separator, line_ending):
-+    event = {"type": "result", "result": f"first{separator}second"}
-+    stream = line_ending.join(
-+        [json.dumps(event, ensure_ascii=False), '{"type":"done"}']
-+    )
++    litellm_module.acompletion.return_value = stream_generator()
 +
-+    assert parse_jsonl(stream) == [event, {"type": "done"}]
++    ai = AgentAI(agent_with_ai)
++    await ai.ai("test", model=model, stream=True)
++
++    kwargs = litellm_module.acompletion.call_args[1]
++    if expected:
++        assert kwargs["stream_options"] == {"include_usage": True}
++    else:
++        assert "stream_options" not in kwargs
 +
 +
- def test_parse_jsonl_skips_invalid():
-     events = parse_jsonl('{"type":"a"}\nnot-json\n{"type":"b"}')
- 
+ @pytest.mark.asyncio
+ async def test_ai_multimodal_input_processing(monkeypatch, agent_with_ai):
+     """Test multimodal input processing."""
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1152** (2026-11-04): fix(agentic): honor limit and offset for resource=runs in /agentic/query (@pcbeingused333)
+- **PR #1151** (2026-11-04): fix(python-sdk): preserve boolean defaults in agent CLI calls (@remote-controlled-man)
+- **PR #1150** (2026-11-04): fix(sdk-python): request stream usage for more LiteLLM providers (@pcbeingused333)
 - **PR #1149** (2026-11-03): feat(sdk/go/ai): support the Runcrate provider (@heydryft)
 - **PR #1148** (2026-11-03): fix(python-sdk): preserve Unicode separators in harness JSONL (@remote-controlled-man)
 - **PR #1147** (2026-11-03): fix(sdk/go): don't cut active streams with Client.Timeout (@pcbeingused333)
-- **PR #1146** (2026-11-02): fix(sdk/go): omit temperature for models that reject it (@pcbeingused333)
-- **PR #1145** (2026-11-02): fix(python): retain memory event filters across reconnects (@remote-controlled-man)
-- **PR #1144** (closed): chore(deps): bump esbuild from 0.25.12 to removed in /control-plane/web/client in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1714,48 +1650,28 @@ Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk/go): don't cut active streams with Client.Timeout (#1147)
+## X. agentic): honor limit and offset for resource=runs in /agentic/query (#1152)
 
 **RULE**:
-When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `control-plane/internal/handlers/agentic/query.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0dc65cd7`: sdk/go): don't cut active streams with Client.Timeout (#1147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d6250d1`: agentic): honor limit and offset for resource=runs in /agentic/query (#1152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/handlers/agentic/query.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-		// http.Client.Timeout covers reading the whole body, which would cut off
-		// a stream that is still delivering chunks. Bound only the wait for the
-		// response headers with the same duration instead.
-		streamClient := c.httpClient
-		var headerTimer *time.Timer
-		if headerTimeout := c.httpClient.Timeout; headerTimeout > 0 {
-			clone := *c.httpClient
-			clone.Timeout = 0
-			streamClient = &clone
-
-			reqCtx, cancel := context.WithCancel(ctx)
-			defer cancel()
-			headerTimer = time.AfterFunc(headerTimeout, cancel)
-			httpReq = httpReq.WithContext(reqCtx)
-		}
-
-		httpResp, err := streamClient.Do(httpReq)
-		if headerTimer != nil {
-			headerTimer.Stop()
-		}
+	filter := types.ExecutionFilter{Limit: req.Limit, Offset: req.Offset}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		httpResp, err := c.httpClient.Do(httpReq)
+	filter := types.ExecutionFilter{}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0dc65cd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d6250d1` are properly handled with clean fallback behavior.

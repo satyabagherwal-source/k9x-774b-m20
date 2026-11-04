@@ -7360,3 +7360,6 @@
 | `CYCLE-20261104-QBDS` | `2026-11-04T21:57:16.192Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6988` | Yes (`5a3ea6fa...`) |
 | `CYCLE-20261104-QEFM` | `2026-11-04T21:57:20.146Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6989` | Yes (`7a96298d...`) |
 | `CYCLE-20261104-RP2N` | `2026-11-04T21:58:20.591Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`86e1ea52...`) |
+| `CYCLE-20261104-0HFW` | `2026-11-04T22:05:10.604Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`587b957b...`) |
+| `CYCLE-20261104-0J3L` | `2026-11-04T22:05:12.753Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`e939f0f6...`) |
+| `CYCLE-20261104-0OH3` | `2026-11-04T22:05:19.719Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6990` | Yes (`367ff521...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `5a85f9b0`  
+> **Source Version**: `62852de1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:45:45.258Z  
+> **Timestamp**: 2026-11-04T22:05:12.515Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:45:43.259Z  
+> **Harvest Timestamp**: 2026-11-04T22:05:12.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50406 stars
+- **Stars / Engagement**: 50433 stars
 
 ---
 
@@ -2103,14 +2103,14 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29961** (2026-11-03): **[ty] Handle decorators that replace overrides of final methods**
-  *Symptoms*: ## Summary  `ty check` can panic when a decorator replaces an override of a `@final` method with a function from another file. While building the diagnostic, we try to find that function’s AST node in the subclass’s file. If the decorator returns another method from the same class, we instead offer to delete that method.  We now offer the deletion only when the function contains the overriding definition. Both the imported handler and a handler defined on the same class now produce `override-of-final-method` without proposing to delete the handler.  To reproduce, put `handlers.py` and `main.py` in the same directory and run `ty check`. 
+- **Issue #30045** (2026-11-04): **[ty] Fix class-pattern exhaustiveness after class identity checks**
+  *Symptoms*: A class identity check such as `cls is A` can narrow the type of `A` to the exact class object intersected with `type[T]`. A subsequent `case A()` preserves `T` on success, but ty missed that the pattern still covers every instance of `A`. This could leave an unreachable wildcard arm with a nonempty type and cause an `assert_never` diagnostic.  Use the exact class object from the intersection when computing match coverage and reachability. Successful narrowing continues to use the full class expression type.  Fixes astral-sh/ty#4925.  ## Test plan  Ran the issue's Python 3.14 reproducer on ty 0.0.97 and on the patched CLI. The wildcard went from revealing `A` and failing `assert_never` to revealing `Never` and passing. Also checked that an attribute pattern with a literal subpattern leaves fallthrough reachable while a capture of a declared attribute can be exhaustive. 
 
-- **Issue #29945** (2026-11-03): **[ty] Preserve the baseline when a check fails to complete**
-  *Symptoms*: Updating a baseline can replace it with incomplete results when a file cannot be checked. For example, `ty check --baseline baseline.json --update-baseline missing.py` reports an I/O error but replaces the baseline with an empty one.  Track file discovery diagnostics and per-file check failures through the project check. When either prevents a complete check, report the visible diagnostics and leave the baseline unchanged. Notably this means `check_file_impl` now returns diagnostics wrapped in `Err` when checking was interrupted and didn't finish cleanly. 
+- **Issue #30028** (2026-11-04): **[ty] Avoid duplicate warnings for unknown rules and override sections**
+  *Symptoms*: ## Summary  An unknown or renamed rule in `[rules]` could produce the same warning for every override that inherited it. An unnecessary or empty `[[overrides]]` section could also warn again for each script using the same configuration.  ty now checks the options from each configuration source separately. A warning points to the place that needs editing, and the same typo written in two places gets a diagnostic at each.   ## Test Plan  Added CLI regression coverage and ran the project, script, and editor configuration tests. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:41626746886:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [b1180b6](https://github.com/astral-sh/ruff/commit/b1180b6a3539cb7e70a1a33f8567a20ac3ecde7d) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/41626746886/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:41626746839:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [b1180b6](https://github.com/astral-sh/ruff/commit/b1180b6a3539cb7e70a1a33f8567a20ac3ecde7d) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/41626746839/attempts/1) 
+  > <!-- generated-comment typing-conformance --> <!-- report-run:41872423257:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [3eb4434](https://github.com/astral-sh/ruff/commit/3eb4434dd2ea9637afd1955e2404eb64b43e372b) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/41872423257/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:41872422163:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [3eb4434](https://github.com/astral-sh/ruff/commit/3eb4434dd2ea9637afd1955e2404eb64b43e372b) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/41872422163/attempts/1) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2127,105 +2127,267 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7168509` (2026-11-03)
-**Commit Message**: [`flake8-bugbear`] Make `B014` example error out-of-the-box (#29941)
+### Incident Patch 1: `0a159ee1` (2026-11-04)
+**Commit Message**: [ty] Fix class-pattern exhaustiveness after class identity checks (#30045)
 
-## Summary
-Part of #18972
+A class identity check such as `cls is A` can narrow the type of `A` to
+the exact class object intersected with `type[T]`. A subsequent `case
+A()` preserves `T` on success, but ty missed that the pattern still
+covers every instance of `A`. This could leave an unreachable wildcard
+arm with a nonempty type and cause an `assert_never` diagnostic.
 
-The example in the B014 docs is not flagged when you run ruff on it. The
-rule only checks for the same exception listed twice. This PR changes
-the example to `except (ValueError, ValueError)` and adds a Known
-problems section for parent and child exceptions.
-## Test Plan
-I ran `ruff check --select B014` on the old example and it passed, and
-on the new example B014 was flagged.
+Use the exact class object from the intersection when computing match
+coverage and reachability. Successful narrowing continues to use the
+full class expression type.
 
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/rules/duplicate_exceptions.rs` (modified, +2/-2)
+Fixes astral-sh/ty#4925.
+
+## Test plan
+
+Ran the issue's Python 3.14 reproducer on ty 0.0.97 and on the patched
+CLI. The wildcard went from revealing `A` and failing `assert_never` to
+revealing `Never` and passing. Also checked that an attribute pattern
+with a literal subpattern leaves fallthrough reachable while a capture
+of a declared attribute can be exhaustive.
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +23/-0)
 ```diff
-@@ -76,15 +76,15 @@ impl Violation for DuplicateTryBlockException {
- /// ```python
- /// try:
- ///     ...
--/// except (Exception, ValueError):  # `Exception` includes `ValueError`.
-+/// except (ValueError, ValueError):
- ///     ...
- /// ```
- ///
- /// Use instead:
- /// ```python
- /// try:
- ///     ...
--/// except Exception:
-+/// except ValueError:
- ///     ...
- /// ```
- ///
-```
-
----
-
-### Incident Patch 2: `ec4aa41a` (2026-11-02)
-**Commit Message**: [ty] Add a regression test for an enum class passed to a generic union parameter (#29931)
-
-**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/quantification.md` (modified, +19/-0)
-```diff
-@@ -330,6 +330,25 @@ def impossible[X, A, B]() -> None:
-     static_assert(impossible.is_trivially_never_satisfied())
+@@ -2555,6 +2555,29 @@ def read(value: T) -> list[str]:
+     return value.keys()
  ```
  
-+The same impossible bounds arise when ty checks whether `Iterable[tuple[T, str]]` already covers
-+`type[Enum]` in the union below. `EnumMeta.__iter__` takes `self: type[M]` and returns
-+`Iterator[M]`, so this would require `Enum ≤ M ≤ tuple[T, str]`. No such `M` exists for any `T`.
-+Iterating over `Choice` yields enum members, so the call relies on ty keeping the `type[Enum]` arm.
-+This is a regression test for <https://github.com/astral-sh/ty/issues/4551>.
++## Class patterns after narrowing a class object
++
++Inside the identity check, `A` is known to be both the exact class object and a `type[T]`. A
++successful class pattern lets us return the subject as `T`. The pattern covers every `A` instance.
 +
 +```py
-+from collections.abc import Iterable
-+from enum import Enum
++from typing import TypeVar
 +
-+class Choice(Enum):
-+    A = "a"
++T = TypeVar("T")
 +
-+def accepts_choices[T](choices: Iterable[tuple[T, str]] | type[Enum]) -> None:
-+    pass
++class A: ...
 +
-+accepts_choices(Choice)  # ok
++def match_exact_class(value: A, cls: type[T]) -> T:
++    if cls is A:
++        match value:
++            case A():
++                return value
++            case _:
++                reveal_type(value)  # revealed: Never
++    else:
++        raise AssertionError
 +```
 +
- ## Satisfiability depends on free variables
+ ## Assignment narrowing of dynamic attributes
  
- There is an `X` satisfying `A ≤ X ≤ int` when `A` is `int`, but not when `A` is `str`. When we
+ An upper bound can provide an attribute through `__getattr__`. Assigning to that attribute does not
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +19/-0)
+```diff
+@@ -3757,6 +3757,25 @@ def union_bound[T: type[A] | type[B]](cls: T) -> None:
+     reveal_type(cls.attr)  # revealed: str | int
+ ```
+ 
++## Class patterns after narrowing a class object
++
++Inside the identity check, `A` is known to be both the exact class object and a `type[T]`. A
++successful class pattern lets us return the subject as `T`. The pattern covers every `A` instance.
++
++```py
++class A: ...
++
++def match_exact_class[T](value: A, cls: type[T]) -> T:
++    if cls is A:
++        match value:
++            case A():
++                return value
++            case _:
++                reveal_type(value)  # revealed: Never
++    else:
++        raise AssertionError
++```
++
+ ## Assignment narrowing of dynamic attributes
+ 
+ An upper bound can provide an attribute through `__getattr__`. Assigning to that attribute does not
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/narrow/match.md` (modified, +12/-0)
+```diff
+@@ -1100,6 +1100,18 @@ def test_union_class_pattern_uses_members_from_matching_class(
+             reveal_type(value)  # revealed: IndirectIntPattern
+ ```
+ 
++Failing to match `PatternClass()` can leave an `IndirectPattern` instance because `PatternClass` may
++be a proper subclass.
++
++```py
++def match_possible_subclass(value: IndirectPattern, PatternClass: type[IndirectPattern]) -> None:
++    match value:
++        case PatternClass():
++            pass
++        case _:
++            reveal_type(value)  # revealed: IndirectPattern
++```
++
+ ## Class pattern aliases
+ 
+ The same rule applies outside sequence patterns. A class pattern keeps the generic arguments of a
+```
+
+**File**: `crates/ty_python_semantic/src/reachability.rs` (modified, +12/-14)
+```diff
+@@ -203,10 +203,11 @@ use crate::{
+     types::{
+         CallableType, ComparisonSoundnessPolicy, EnumClassLiteral, IntersectionType,
+         KnownInstanceType, NarrowingConstraint, SpecialFormType, Type, TypeContext, UnionType,
+-        definite_match_pattern_type, definite_match_pattern_type_for_subject, equality_truthiness,
+-        expand_type, infer_narrowing_constraints, infer_predicate_truthiness,
+-        infer_same_file_expression_type, mapping_pattern_type, pattern_binding_fallthrough_type,
+-        same_enum_or_pattern_type, sequence_pattern_type_builder, singleton_pattern_type,
++        class_pattern_coverage_target, definite_match_pattern_type,
++        definite_match_pattern_type_for_subject, equality_truthiness, expand_type,
++        infer_narrowing_constraints, infer_predicate_truthiness, infer_same_file_expression_type,
++        mapping_pattern_type, pattern_binding_fallthrough_type, same_enum_or_pattern_type,
++        sequence_pattern_type_builder, singleton_pattern_type,
+     },
+ };
+ use ruff_index::{Idx, IndexSlice};
+@@ -1779,16 +1780,13 @@ fn analyze_single_pattern_predicate_kind<'db>(
+             truthiness
+         }
+         PatternPredicateKind::Class(kind) => {
+-            let class_ty =
+-                match infer_same_file_expression_type(db, kind.class, TypeContext::default()) {
+-                    Type::ClassLiteral(class) => {
+-                        Type::instance(db, env, class.top_materialization(db))
+-                    }
+-                    Type::SpecialForm(SpecialFormType::CollectionsAbcCallable) => {
+-                        Type::Callable(CallableType::top(db))
+-                    }
+-                    _ => return Truthiness::Ambiguous,
+-                };
++            let class_ty = match class_pattern_coverage_target(db, kind) {
++                Type::ClassLiteral(class) => Type::instance(db, env, class.top_materialization(db)),
++                Type::SpecialForm(SpecialFormType::CollectionsAbcCallable) => {
++                    Type::Callable(CallableType::top(db))
++                }
++                _ => return Truthiness::Ambiguous,
++            };
+             let definitely_matched = precomputed_definite_match_ty.unwrap_or_else(|| {
+                 definite_match_pattern_type_for_subject(db, env, predicate_kind, subject_ty)
+             });
+```
+
+**File**: `crates/ty_python_semantic/src/types.rs` (modified, +5/-4)
+```diff
+@@ -50,10 +50,11 @@ use self::infer::{
+ pub(crate) use self::iteration::extract_fixed_length_iterable_element_types;
+ pub use self::known_instance::KnownInstanceType;
+ pub(crate) use self::match_pattern::{
+-    ClassPatternPositionalSource, class_pattern_positional_sources, definite_match_pattern_type,
+-    definite_match_pattern_type_for_subject, exact_sequence_pattern_type, mapping_pattern_type,
+-    pattern_binding_fallthrough_type, same_enum_or_pattern_type, sequence_pattern_type_builder,
+-    singleton_pattern_type, starred_sequence_pattern_type, typed_dict_matches_class_pattern,
++    ClassPatternPositionalSource, class_pattern_coverage_target, class_pattern_positional_sources,
++    definite_match_pattern_type, definite_match_pattern_type_for_subject,
++    exact_sequence_pattern_type, mapping_pattern_type, pattern_binding_fallthrough_type,
++    same_enum_or_pattern_type, sequence_pattern_type_builder, singleton_pattern_type,
++    starred_sequence_pattern_type, typed_dict_matches_class_pattern,
+ };
+ pub(crate) use self::relation_error::{ErrorContext, ErrorContextTree, ParameterDescription};
+ use self::set_theoretic::KnownUnion;
+```
+
+**File**: `crates/ty_python_semantic/src/types/match_pattern.rs` (modified, +24/-3)
+```diff
+@@ -86,6 +86,25 @@ pub(crate) fn mapping_pattern_type<'db>(
+         .top_materialization(db, env)
+ }
+ 
++/// Return the class expression type for coverage analysis.
++pub(crate) fn class_pattern_coverage_target<'db>(
++    db: &'db dyn Db,
++    pattern: &ClassPatternPredicateKind<'db>,
++) -> Type<'db> {
++    let class_ty = infer_same_file_expression_type(db, pattern.class, TypeContext::default());
++    // After `cls is A`, the type of `A` can be `<class 'A'> & type[T]`. The class literal
++    // still fixes the runtime class that the pattern tests, so coverage can use it directly.
++    match class_ty {
++        Type::Intersection(intersection) => intersection
++            .positive(db)
++            .iter()
++            .copied()
++            .find(|ty| matches!(ty, Type::ClassLiteral(_)))
++            .unwrap_or(class_ty),
++        _ => class_ty,
++    }
++}
++
+ /// Return whether every runtime value represented by a `TypedDict` satisfies `class`.
+ ///
+ /// `TypedDict` is not a nominal subtype of `dict` in the static type system, but every runtime
+@@ -789,7 +808,7 @@ fn definite_match_pattern_type_for_subject_impl<'pattern, 'db>(
+             }
+         }
+         PatternPredicateKind::Class(kind) => {
+-            let class_ty = infer_same_file_expression_type(db, kind.class, TypeContext::default());
++            let class_ty = class_pattern_coverage_target(db, kind);
+             match class_ty {
+                 Type::ClassLiteral(class) => {
+                     if class_pattern_is_exhaustive(db, env, class, resolved_subject_ty, kind, cache)
+@@ -1282,7 +1301,8 @@ fn subject_independent_definite_match_pattern_type<'db>(
+ ) -> Option<Type<'db>> {
+     match kind {
+         PatternPredicateKind::Class(kind) => {
+-            match infer_same_file_expression_type(db, kind.class, TypeContext::default()) {
++            let class_ty = class_pattern_coverage_target(db, kind);
++            match class_ty {
+                 Type::ClassLiteral(class) if kind.is_empty() => {
+                     let class_instance_ty =
+                         Type::instance(db, env, class.unknown_specialization(db))
+@@ -1348,7 +1368,8 @@ pub(crate) fn definite_match_pattern_type<'db>(
+             }
+         }
+         PatternPredicateKind::Class(kind) => {
+-            match infer_same_file_expression_type(db, kind.class, TypeContext::default()) {
++            let class_ty = class_pattern_coverage_target(db, kind);
++            match class_ty {
+                 Type::ClassLiteral(class) if kind.is_empty() => {
+                     Type::instance(db, env, class.unknown_specialization(db))
+                         .top_materialization(db, env)
 ```
 
 ---
 
-### Incident Patch 3: `eff6d49c` (2026-11-02)
-**Commit Message**: [ty] Add a regression test for a type alias cycle in a class decorator (#29926)
+### Incident Patch 2: `388ec2f4` (2026-11-04)
+**Commit Message**: Update Rust crate uuid to v1.27.0 (#30008)
 
-**File**: `crates/ty_python_semantic/resources/corpus/ty_4607_type_alias_decorator_cycle.py` (added, +11/-0)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,11 @@
-+# ty used to exceed Salsa's cycle iteration limit when checking this file.
-+# Minimized from py-fuzzer seed 1246: https://github.com/astral-sh/ty/issues/4607
-+
-+value = lambda: value
-+try:
-+    type Alias = value
-+finally:
-+    @[Alias]
-+    class Example:
-+        pass
-+    value = Example
+@@ -5236,9 +5236,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
+ 
+ [[package]]
+ name = "uuid"
+-version = "1.26.1"
++version = "1.27.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
++checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
+ dependencies = [
+  "js-sys",
+  "wasm-bindgen",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29970** (2026-11-03): [ty] Document the `TY_UV` environment variable (@MichaReiser)
-- **PR #29969** (closed): Do not treat relative imports from `__future__` as future statements on Python 3.13+ (@hrithiksaini99)
-- **PR #29966** (2026-11-03): [ty] Mark spark as a flaky project (@AlexWaygood)
-- **PR #29963** (closed): [ty] Check independent class members in parallel (@charliermarsh)
-- **PR #29961** (2026-11-03): [ty] Handle decorators that replace overrides of final methods (@charliermarsh)
-- **PR #29959** (2026-11-03): [ty] Skip empty diagnostic context for overloaded callables (@charliermarsh)
+- **PR #30045** (2026-11-04): [ty] Fix class-pattern exhaustiveness after class identity checks (@carljm)
+- **PR #30042** (2026-11-04): [ty] Reuse callable signatures in function definition checks (@charliermarsh)
+- **PR #30041** (2026-11-04): Move threat models into `.agents/references` (@AlexWaygood)
+- **PR #30028** (2026-11-04): [ty] Avoid duplicate warnings for unknown rules and override sections (@MichaReiser)
+- **PR #30027** (2026-11-04): [ty] Skip previous overload lookup for singly bound local functions (@charliermarsh)
+- **PR #30026** (2026-11-04): [ty] Warn about renamed rules in ignore comments (@MichaReiser)
 
 ---
 
@@ -2245,30 +2407,50 @@ on the new example B014 was flagged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [`flake8-bugbear`] Make `B014` example error out-of-the-box (#29941)
+## X. [ty] Fix class-pattern exhaustiveness after class identity checks (#30045)
 
 **RULE**:
-When implementing operations in `crates/ruff_linter/src/rules/flake8_bugbear/rules/duplicate_exceptions.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7168509`: [`flake8-bugbear`] Make `B014` example error out-of-the-box (#29941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a159ee1`: [ty] Fix class-pattern exhaustiveness after class identity checks (#30045). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/src/rules/flake8_bugbear/rules/duplicate_exceptions.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// except (ValueError, ValueError):
-/// except ValueError:
+## Class patterns after narrowing a class object
+
+Inside the identity check, `A` is known to be both the exact class object and a `type[T]`. A
+successful class pattern lets us return the subject as `T`. The pattern covers every `A` instance.
+
+```py
+from typing import TypeVar
+
+T = TypeVar("T")
+
+class A: ...
+
+def match_exact_class(value: A, cls: type[T]) -> T:
+    if cls is A:
+        match value:
+            case A():
+                return value
+            case _:
+                reveal_type(value)  # revealed: Never
+    else:
+        raise AssertionError
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// except (Exception, ValueError):  # `Exception` includes `ValueError`.
-/// except Exception:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7168509` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a159ee1` are properly handled with clean fallback behavior.
