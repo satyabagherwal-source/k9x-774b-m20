@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T09:33:09.339Z",
+  "last_updated": "2026-11-04T09:40:21.848Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
-      "verified_at": "2026-10-30T23:21:56.665Z",
+      "content_hash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
+      "verified_at": "2026-11-04T09:40:03.755Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:21:56.665Z"
+      "last_updated": "2026-11-04T09:40:03.755Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -7176,14 +7176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
-      "content_hash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
-      "verified_at": "2026-10-31T06:45:21.708Z",
+      "content_hash": "119efb3b4db00c7f93480f3a1ed0516b72f856ab2384d24525b1a47bba4ac954",
+      "verified_at": "2026-11-04T09:40:05.649Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:45:21.708Z"
+      "last_updated": "2026-11-04T09:40:05.649Z"
     },
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "5a3f09292806a2b885f07218c2b38aadd7647cb37e4ccba871191ee68e804fbc",
-      "verified_at": "2026-11-02T15:57:17.300Z",
+      "content_hash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
+      "verified_at": "2026-11-04T09:40:21.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:57:17.300Z"
+      "last_updated": "2026-11-04T09:40:21.848Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

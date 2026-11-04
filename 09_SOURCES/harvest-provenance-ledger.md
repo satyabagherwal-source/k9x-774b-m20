@@ -7205,3 +7205,6 @@ Every entry in this ledger must capture:
 | `learn-github-expressjs-express` | `https://github.com/expressjs/express` | `43fca52d` | Multi-dimensional audit evidence | 2026-11-04T09:33:03.972Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `46813afa` | Multi-dimensional audit evidence | 2026-11-04T09:33:05.593Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4e468ce3` | Multi-dimensional audit evidence | 2026-11-04T09:33:09.330Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `c7cf4fe9` | Multi-dimensional audit evidence | 2026-11-04T09:40:03.748Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `d86d925a` | Multi-dimensional audit evidence | 2026-11-04T09:40:05.641Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `00f6624c` | Multi-dimensional audit evidence | 2026-11-04T09:40:21.840Z |

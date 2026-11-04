@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "f794c378",
+    "sourceVersion": "c7cf4fe9",
     "license": "NOASSERTION",
-    "contentHash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
-    "lastHarvestedAt": "2026-10-30T23:21:56.655Z",
+    "contentHash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
+    "lastHarvestedAt": "2026-11-04T09:40:03.748Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -4703,10 +4703,10 @@
     "repository": "DylanVann/react-native-fast-image",
     "platform": "github",
     "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "sourceVersion": "df42e80f",
+    "sourceVersion": "d86d925a",
     "license": "MIT",
-    "contentHash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
-    "lastHarvestedAt": "2026-10-31T06:45:21.698Z",
+    "contentHash": "119efb3b4db00c7f93480f3a1ed0516b72f856ab2384d24525b1a47bba4ac954",
+    "lastHarvestedAt": "2026-11-04T09:40:05.641Z",
     "learningId": "learn-github-dylanvann-react-native-fast-image"
   },
   "pulumi-pulumi": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "cced2a35",
+    "sourceVersion": "00f6624c",
     "license": "Apache-2.0",
-    "contentHash": "5a3f09292806a2b885f07218c2b38aadd7647cb37e4ccba871191ee68e804fbc",
-    "lastHarvestedAt": "2026-11-02T15:57:17.294Z",
+    "contentHash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
+    "lastHarvestedAt": "2026-11-04T09:40:21.840Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

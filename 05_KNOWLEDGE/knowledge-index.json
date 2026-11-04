@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T09:33:09.245Z",
+  "last_updated": "2026-11-04T09:40:21.753Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11339,8 +11339,8 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "df42e80f",
-      "content_hash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
+      "source_version": "d86d925a",
+      "content_hash": "119efb3b4db00c7f93480f3a1ed0516b72f856ab2384d24525b1a47bba4ac954",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
@@ -11373,6 +11373,11 @@
           "number": 6108,
           "title": "android): views of one url at different sizes download it once, also when one ge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6796,
+          "title": "FastImage can be rendered from a React Server Component (#1419)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11380,7 +11385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:45:21.595Z",
+      "verified_at": "2026-11-04T09:40:05.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44256,8 +44261,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "cced2a35",
-      "content_hash": "5a3f09292806a2b885f07218c2b38aadd7647cb37e4ccba871191ee68e804fbc",
+      "source_version": "00f6624c",
+      "content_hash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -44330,6 +44335,11 @@
           "number": 6445,
           "title": "cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_me",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6797,
+          "title": "mir-importer): lower is_val_statically_known to false (#1359)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44337,7 +44347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:57:17.230Z",
+      "verified_at": "2026-11-04T09:40:21.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77585,8 +77595,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "f794c378",
-      "content_hash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
+      "source_version": "c7cf4fe9",
+      "content_hash": "b3cf3a5d171cb333cc84ff6cba773c88aed98bc0cc9e20042d40ccef6462dcf9",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -77634,6 +77644,11 @@
           "number": 5936,
           "title": "docs(routing): clarify route rules and middleware are not a security boundary (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6795,
+          "title": "node): exit when the server fails to listen (#5008)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -77641,7 +77656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:21:56.557Z",
+      "verified_at": "2026-11-04T09:40:03.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173983,6 +173998,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T09:33:09.223Z"
+    },
+    "rule-6795": {
+      "learning_id": "rule-6795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6795,
+      "title": "node): exit when the server fails to listen (#5008)",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "c7cf4fe9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:40:03.657Z"
+    },
+    "rule-6796": {
+      "learning_id": "rule-6796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6796,
+      "title": "FastImage can be rendered from a React Server Component (#1419)",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "d86d925a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:40:05.549Z"
+    },
+    "rule-6797": {
+      "learning_id": "rule-6797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6797,
+      "title": "mir-importer): lower is_val_statically_known to false (#1359)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "00f6624c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T09:40:21.734Z"
     }
   },
   "aliases": {

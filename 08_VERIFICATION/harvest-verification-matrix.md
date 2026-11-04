@@ -7196,3 +7196,6 @@
 | `CYCLE-20261104-59I7` | `2026-11-04T09:33:03.967Z` | `expressjs/express` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6792` | Yes (`02889aec...`) |
 | `CYCLE-20261104-5ARA` | `2026-11-04T09:33:05.590Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6793` | Yes (`fcc51985...`) |
 | `CYCLE-20261104-5DN2` | `2026-11-04T09:33:09.326Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6794` | Yes (`29e42f9c...`) |
+| `CYCLE-20261104-E9EO` | `2026-11-04T09:40:03.744Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6795` | Yes (`b3cf3a5d...`) |
+| `CYCLE-20261104-EAVA` | `2026-11-04T09:40:05.638Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6796` | Yes (`119efb3b...`) |
+| `CYCLE-20261104-END9` | `2026-11-04T09:40:21.837Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6797` | Yes (`ee582962...`) |

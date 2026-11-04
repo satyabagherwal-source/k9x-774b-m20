@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `cced2a35`  
+> **Source Version**: `00f6624c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:57:16.825Z  
+> **Timestamp**: 2026-11-04T09:40:21.184Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:57:14.628Z  
+> **Harvest Timestamp**: 2026-11-04T09:39:57.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3949 stars
+- **Stars / Engagement**: 3976 stars
 
 ---
 
@@ -2255,11 +2255,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1655** (2026-10-29): **fix(cuda-oxide-mlir-export): saturate float to int casts**
-  *Symptoms*: ## What This PR Does  Fixes `#1642` in `cuda-oxide-mlir-export` (`cutlass-mlir` backend) so Rust float-to-integer `as` casts (`MirCastKindAttr::FloatToInt`) saturate on out-of-range inputs and map `NaN` to `0`, matching Rust semantics and `mir-lower`:  1. **Lower `MirCastKindAttr::FloatToInt` to `llvm.fptosi.sat` / `llvm.fptoui.sat` via `llvm.call_intrinsic` and reject integer destinations wider than 64 bits (`cuda-oxide-mlir-export`)** 2. **Add unit tests covering `f16` (`FP16Type` and `MirFP16Type`), `f32`, `f64`, and `i128` / `u128` rejection (`cuda-oxide-mlir-export`)**  ---  ### 1. Why `arith.fptosi` / `arith.fptoui` Miscompiled Out-of-Range and `NaN` Casts  Previously, `CastTranslation::translate` in `cuda-oxide-mlir-export/src/mir/core.rs` lowered `MirCastKindAttr::FloatToInt` to MLIR `arith.fptosi` / `arith.fptoui`, which have poison semantics on `NaN` or out-of-range values:  ```text BEFORE (arith.fptosi / arith.fptoui under cutlass-mlir on sm_120a):   300.0f32 as u8    ──► 44          (wrapped low byte instead of clamping to 255)   128.0f32 as i8    ──► -128        (wrapped instead of clamping to 127)   f32::NAN as i64   ──► i64::MIN    (returned -9223372036854775808 instead of 0)  AFTER (llvm.call_intrinsic "llvm.fpto{s|u}i.sat.i{W}.f{F}"):   300.0f32 as u8    ──► 255         (clamped via FMNMX + F2I)   128.0f32 as i8    ──► 127         (clamped to i8::MAX)   f32::NAN as i64   ──► 0           (mapped to 0 via DSETP.NAN + SEL) ```  * Rejects destination integer widt
+- **Issue #1699** (2026-11-03): **fix(mir-importer): bounds-check SharedArray indexing**
+  *Symptoms*: ## What This PR Does  Bounds-checks `SharedArray<T, N, ALIGN>` indexing (`Index` and `IndexMut`) on the GPU by default while honoring `#[kernel(unchecked_indexing)]`:  1. **Emit `index < N` bounds assertions in `emit_shared_array_index` (`mir-importer`)** 2. **Document device trap and `unchecked_indexing` behavior (`cuda-device`, `cuda-oxide-book`)** 3. **Verify `SharedArray` checked vs. opted-out PTX and preserve SOL GEMM inner loops (`unchecked_indexing`, `gemm_sol_final`)**  ---  ### 1. Bounds-Checking `SharedArray` Indexing in `mir-importer`  `SharedArray` implements `Index<usize>` and `IndexMut<usize>` via compiler-intercepted stubs. Previously, `emit_shared_array_index` lowered `arr[idx]` straight to `MirPtrOffsetOp` without checking `idx < N`, allowing an out-of-bounds write on one shared array to silently overwrite adjacent `.shared` allocations.  ```text BEFORE (unchecked offset):   b[idx]  ──►  MirPtrOffsetOp(b, idx)                (b[4] on SharedArray<u32, 4> silently overwrites a[0] in .shared)  AFTER (checked by default, opt-out via unchecked_indexing):   b[idx]  ──►  MirConstantOp(N) + MirLtOp(idx, N) + MirAssertOp  ──►  MirPtrOffsetOp(b, idx)                ├── Default #[kernel]:            setp.gt.u32 + @%p bra trap                └── #[kernel(unchecked_indexing)]: assert elided (0 overhead) ```  * Extracts `N` from `SharedArray<T, N, ALIGN>` via `facts::eval_usize_const` and emits an unsigned `MirLtOp` + `MirAssertOp` when `!value_map.unchecked_indexing()`. *
+  **Post-Mortem & Fix Analysis**:
+  > This pull request requires additional validation before any workflows can run on NVIDIA's runners.  Pull request vetters can view their responsibilities [here](https://docs.gha-runners.nvidia.com/cpr/vetters).  Contributors can view more details about this message [here](https://docs.gha-runners.nvidia.com/cpr/contributors). 
+  > Thanks, this is the right fix and matches our slice bounds-check lowering in `mir-importer`. I layered a small follow-up commit on top: - Reused `types::is_cuda_device_adt` and `facts::eval_usize_const` in `shared_array_len` and derived the `APInt` width from `usize_ty`. - Updated `shared_swap_checked` so both the `IndexMut` write and `Index` read emit traps (`2` in checked, `0` in `shared_swap_unchecked`). - Synced the `SharedArray` bounds-check docs in `cuda-device` and `cuda-oxide-book`, and opted `gemm_sol_final` into `#[kernel(unchecked_indexing)]` so its K-loop PTX stays unchanged (`65` regs, `0` spills).  At `8c6e2a677`, crate tests, repository guards, and `unchecked_indexing` on RTX 5090 (`compute-sanitizer` clean) all pass. Merging once CI is green. 
 
-- **Issue #1612** (2026-10-22): **DivHint::from_ptr loses pointer alignment at 0x80000000 in 0.2.0/0.3.0 (fixed in 0.3.1)**
-  *Symptoms*: `DivHint::from_ptr` in published `cutile-compiler` 0.2.0 and 0.3.0 can return a negative pointer-divisibility hint for an aligned address whose low 32 bits equal `0x8000_0000`. This drops an otherwise valid alignment assumption and can inhibit memory-access optimizations.  **Already fixed:** [NVlabs/cutile-rs#244](https://github.com/NVlabs/cutile-rs/pull/244), merged August 27, 2026, computes alignment from the full `u64` address. The first published version containing the fix is **0.3.1**. This report records the affected versions and verification; it is not an outstanding defect in current `main`.  ### Cause  The affected implementation casts the pointer to `i32` before computing its lowest set bit. At this boundary, `val & val.wrapping_neg()` yields `i32::MIN`, and `.min(16)` preserves the negative result. The entry generator's `div > 1` check then skips the pointer alignment assumption. The conservative omission also produces a different specialization from other equally aligned addresses.  ### Minimal arithmetic reproducer  This reproduces the old arithmetic with a synthetic address. It does not allocate or dereference memory and requires no CUDA or dependencies.  Save as `repro.rs`, then run `rustc repro.rs -o repro && ./repro`:  ```rust fn from_ptr(ptr: u64) -> i32 {     let val = ptr as i32;     let raw = if val == 0 { 16 } else { val & val.wrapping_neg() };     raw.min(16) }  fn main() {     let ptr = 0x0000_0000_8000_0000_u64;     assert_eq!(ptr % 16, 0);     assert
+- **Issue #1687** (2026-11-03): **[BUG]: use-site allocas in mir-lower block inlining and SROA (`core::iter::Zip` with a view iterator becomes a call and a 72-byte frame)**
+  *Symptoms*: ### Description  Related: #1681 reports the same fixed-scratch placement cause on the NVVM route, where it shows up as `stacksave`/`stackrestore` after inlining. This report adds the LLVM NVPTX route, where it blocks ordinary inlining of `core::iter::Zip`'s `next`, plus larger niche payloads (#1590) and timing. Both should be covered by one placement fix, with tests on both routes.  Several mir-lower conversions create their `alloca` at the use site instead of in the function's entry block. LLVM treats an alloca outside the entry block as dynamic, which has two effects:  - It makes the function ineligible for ordinary cost-driven inlining (`opt` remarks: `has uninlinable pattern (dynamic alloca)`, `cost=never`). Forced inlining (`alwaysinline`) can still happen, but leaves `stacksave`/`stackrestore` behind (the #1590 case). - SROA and mem2reg don't promote it.  `spill_enum_value` (`crates/mir-lower/src/convert/ops/aggregate/common.rs:30-37`) documents the placement and assumes "the standard `opt -O2` run (SROA) removes it again". That assumption doesn't hold once the alloca sits outside the entry block.  A visible case: `w.iter().zip(col.iter())` over a slice iterator and a `ColView32` iterator. `<ZipImpl<..> as Iterator>::next` gets a use-site `alloca { ptr, i64 }` to reinterpret its `Option<(&f32, f32)>` result into the `{ ptr, i64 }` return value. So `next` isn't inlined: the kernel keeps 2 `call`s and a 72-byte local frame for the iterator. Moving every alloca of the expo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2276,445 +2279,1404 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cced2a35` (2026-11-02)
-**Commit Message**: fix(cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (#1703)
+### Incident Patch 1: `a38e8446` (2026-11-03)
+**Commit Message**: fix(mir-importer): lower is_val_statically_known to false (#1359)
 
-Fix NVBug 7013424 (`shared_memory_helper` failing barrier assertion on
-H200 `sm_90a`, B200/GB200 `sm_100a`, and R100 `sm_107a` with `left: 2,
-right: 1`):
+## What This PR Does
 
-1. Add `thread::sync_threads()` after `mbarrier_init(full, 1)` and
-   `mbarrier_inval(full)` after phase completion per PTX ISA `mbarrier`
-   lifecycle requirements.
-2. Guard `mbarrier_arrive(full)` on `if pending` so `ptxas` predicates
-   `SYNCS.ARRIVE.TRANS64.A1T0` on `@!P0` and waits on the `TRYWAIT`
-   scoreboard barrier (`SB2`) before issuing the arrival. Without a
-   dependency on `pending`, `ptxas` issues `SYNCS.ARRIVE.TRANS64.A1T0`
-   immediately after `SYNCS.PHASECHK.TRANS64.TRYWAIT P0` with wait mask
-   `0x000`, completing phase 0 while the pre-arrival `TRYWAIT` is still
-   suspended in the SYNCS unit and causing it to report `P0 = true`
-   (`pending = false`).
+Lowers `core::intrinsics::is_val_statically_known` (and
+`std::intrinsics::is_val_statically_known`) in `mir-importer` to a
+constant `false`, unblocking integer `.pow()`, `.checked_pow()`,
+`.overflowing_pow()`, `.saturating_pow()`, `.wrapping_pow()`, `.ilog()`,
+and `.checked_ilog()` in GPU kernels.
 
-Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
+---
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs` (modified, +5/-1)
+### Why `pow` and `ilog` Failed on the Device
+
+Rust's `libcore` implementations of `checked_pow`, `overflowing_pow`,
+and `checked_ilog` call
+`core::intrinsics::is_val_statically_known(base)` to check whether
+`base` is a compile-time constant power of two (so a constant base like
+`2u32.pow(n)` can use a bit shift `1 << n` instead of a multiplication
+loop). Because `is_val_statically_known` is an optimization hint that is
+always allowed to return `false`, lowering it to `MirConstantOp(false)`
++ `MirGotoOp` in `mir-importer` preserves exact Rust semantics and
+directs `libcore` to its standard loop implementation.
+
+```text
+BEFORE:
+  x.checked_pow(e) / x.ilog(10) ──► calls core::intrinsics::is_val_statically_known
+                                ──► mir-importer bail-out: "Unsupported construct..."
+
+
+
+**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs` (modified, +68/-1)
 ```diff
-@@ -18,8 +18,11 @@ macro_rules! shared_probe_body {
-             let full = smem.add(1024).cast::<cuda_device::barrier::Barrier>();
-             let data = smem.add(offset).cast::<u64>();
-             cuda_device::barrier::mbarrier_init(full, 1);
-+            cuda_device::thread::sync_threads();
-             let pending = !cuda_device::barrier::mbarrier_try_wait_parity(full, 0);
--            let _token = cuda_device::barrier::mbarrier_arrive(full);
-+            if pending {
-+                let _token = cuda_device::barrier::mbarrier_arrive(full);
-+            }
-             // A failed barrier must report failure rather than hang the GPU.
-             let mut complete = 0u64;
-             let mut attempts = 0u32;
-@@ -30,6 +33,7 @@ macro_rules! shared_probe_body {
-                 }
-                 attempts += 1;
-             }
-+            cuda_device::barrier::mbarrier_inval(full);
-             let value = core::ptr::read_volatile(data);
-             core::ptr::write_volatile(data, value.wrapping_mul(3) ^ 0x1234_5678);
-             complete
+@@ -23,7 +23,7 @@ use crate::translator::values::{ValueMap, establish_declared_pointer_type};
+ use crate::translator::{payload_store, rvalue};
+ use dialect_mir::{
+     attributes::MirPointerKindAuthorityAttr,
+-    ops::{MirCallOp, MirConstructArrayOp, MirGotoOp},
++    ops::{MirCallOp, MirConstantOp, MirConstructArrayOp, MirGotoOp},
+     types::{MirArrayType, MirPtrType},
+ };
+ use pliron::basic_block::BasicBlock;
+@@ -735,6 +735,73 @@ pub fn emit_unit_noop_intrinsic(
+     )
+ }
+ 
++/// Emits a `bool`-returning intrinsic whose result is a fixed constant.
++///
++/// Used for `core::intrinsics::is_val_statically_known`, which may return
++/// `false` for any argument. The argument is a MIR operand with no side
++/// effects, so it is not evaluated.
++#[allow(clippy::too_many_arguments)]
++pub fn emit_bool_constant_intrinsic(
++    ctx: &mut Context,
++    body: &mir::Body,
++    destination: &mir::Place,
++    target: &Option<usize>,
++    block_ptr: Ptr<BasicBlock>,
++    prev_op: Option<Ptr<Operation>>,
++    value_map: &mut ValueMap,
++    block_map: &[Ptr<BasicBlock>],
++    loc: Location,
++    intrinsic_name: &str,
++    value: bool,
++) -> TranslationResult<Ptr<Operation>> {
++    use pliron::builtin::attributes::IntegerAttr;
++    use pliron::utils::apint::APInt;
++
++    let (prepared_destination, prepared_last_op) = prepare_destination_write(
++        ctx,
++        body,
++        destination,
++        value_map,
++        block_ptr,
++        prev_op,
++        loc.clone(),
++    )?;
++
++    let bool_ty = IntegerType::get(ctx, 1, Signedness::Signless);
++    let const_op = Operation::new(
++        ctx,
++        MirConstantOp::get_concrete_op_info(),
++        vec![bool_ty.into()],
++        vec![],
++        vec![],
++        0,
++    );
++    const_op.deref_mut(ctx).set_loc(loc.clone());
++    MirConstantOp::new(const_op).set_attr_value(
++        ctx,
++        IntegerAttr::new(
++            bool_ty,
++            APInt::from_u64(u64::from(value), std::num::NonZeroUsize::new(1).unwrap()),
++        ),
++    );
++    insert_op(ctx, const_op, block_ptr, prepared_last_op);
++
++    let const_val = const_op.deref(ctx).get_result(0);
++    let no_target_msg = format!("{} call without target not supported", intrinsic_name);
++    emit_prepared_result_and_goto(
++        ctx,
++        prepared_destination,
++        const_val,
++        target,
++        block_ptr,
++        const_op,
++        value_map,
++        block_map,
++        loc,
++        &no_target_msg,
++    )
++}
++
+ #[cfg(test)]
+ // Tests build kinded fixture types directly; production code mints via facts::PointerOrigin.
+ #[allow(clippy::disallowed_methods)]
+```
+
+**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/mod.rs` (modified, +19/-0)
+```diff
+@@ -2998,6 +2998,25 @@ fn try_dispatch_intrinsic(
+                 name,
+             )?))
+         }
++        // `false` is a valid answer for any argument. libcore calls this from
++        // integer `checked_pow`/`overflowing_pow` and `checked_ilog`, so
++        // rejecting it also rejects integer `pow` and `ilog`, which call them.
++        "core::intrinsics::is_val_statically_known"
++        | "std::intrinsics::is_val_statically_known" => {
++            Ok(Some(helpers::emit_bool_constant_intrinsic(
++                ctx,
++                body,
++                destination,
++                target,
++                block_ptr,
++                prev_op,
++                value_map,
++                block_map,
++                loc,
++                name,
++                false,
++            )?))
++        }
+         "core::intrinsics::copy" | "std::intrinsics::copy" => Ok(Some(emit_ptr_memmove(
+             ctx,
+             body,
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/checked_arith/src/main.rs` (modified, +125/-0)
+```diff
+@@ -17,6 +17,11 @@
+ //! Unsigned `u8` and signed `i8` cases cover both overflow and non-overflow
+ //! paths, including `Some(0)` so it cannot be confused with `None`.
+ //!
++//! The `pow_family` kernel covers integer `pow`, `checked_pow`,
++//! `overflowing_pow`, `saturating_pow`, `wrapping_pow`, `ilog` and
++//! `checked_ilog`, which failed to compile while `is_val_statically_known`
++//! was unsupported.
++//!
+ //! Run:
+ //!   cargo oxide run checked_arith
+ //!   CUDA_OXIDE_NO_OPT=1 cargo oxide run checked_arith
+@@ -136,6 +141,75 @@ mod kernels {
+             };
+         }
+     }
++
++    /// Exercise the integer `pow` family and `ilog`. libcore implements them
++    /// with `is_val_statically_known`, so they must compile for the device.
++    ///
++    /// Encodings:
++    /// - `checked_pow`: `None` -> 0, `Some(v)` -> bit 32 set, `v` in bits 0..31
++    /// - `overflowing_pow`: result in bits 0..31, overflow flag in bit 32
++    /// - `pow` on `u64`: the plain result; every input here is in range
++    #[kernel]
++    pub fn pow_family(
++        base: &[i32],
++        exp: &[u32],
++        mut checked_out: DisjointSlice<u64>,
++        mut overflowing_out: DisjointSlice<u64>,
++        mut misc_out: DisjointSlice<u64>,
++        mut pow_out: DisjointSlice<u64>,
++    ) {
++        let i = thread::index_1d().get();
++        if i >= base.len() {
++            return;
++        }
++        let (b, e) = (base[i], exp[i]);
++
++        if let Some(o) = checked_out.get_mut(thread::index_1d()) {
++            *o = match b.checked_pow(e) {
++                Some(value) => (1 << 32) | value as u32 as u64,
++                None => 0,
++            };
++        }
++
++        if let Some(o) = overflowing_out.get_mut(thread::index_1d()) {
++            let (value, overflow) = (b as u32).overflowing_pow(e);
++            *o = value as u64 | ((overflow as u64) << 32);
++        }
++
++        if let Some(o) = misc_out.get_mut(thread::index_1d()) {
++            let saturating = (b as u8).saturating_pow(e) as u64;
++            let wrapping = (b as i16).wrapping_pow(e) as u16 as u64;
++            let ilog = match (b as u32).checked_ilog(10) {
++                Some(value) => 0x80 | value as u64,
++                None => 0,
++            };
++            let ilog10 = (b.unsigned_abs() | 1).ilog(10) as u64;
++            *o = saturating | (wrapping << 8) | (ilog << 24) | (ilog10 << 32);
++        }
++
++        if let Some(o) = pow_out.get_mut(thread::index_1d()) {
++            *o = (b.unsigned_abs() as u64).pow(e);
++        }
++    }
++}
++
++fn expected_pow_family(b: i32, e: u32) -> (u64, u64, u64, u64) {
++    let checked = match b.checked_pow(e) {
++        Some(value) => (1 << 32) | value as u32 as u64,
++        None => 0,
++    };
++    let (value, overflow) = (b as u32).overflowing_pow(e);
++    let overflowing = value as u64 | ((overflow as u64) << 32);
++    let saturating = (b as u8).saturating_pow(e) as u64;
++    let wrapping = (b as i16).wrapping_pow(e) as u16 as u64;
++    let ilog = match (b as u32).checked_ilog(10) {
++        Some(value) => 0x80 | value as u64,
++        None => 0,
++    };
++    let ilog10 = (b.unsigned_abs() | 1).ilog(10) as u64;
++    let misc = saturating | (wrapping << 8) | (ilog << 24) | (ilog10 << 32);
++    let pow = (b.unsigned_abs() as u64).pow(e);
++    (checked, overflowing, misc, pow)
+ }
+ 
+ fn check(label: &str, got: u32, expected_result: u8, expected_overflow: bool) -> bool {
+@@ -300,6 +374,40 @@ fn main() {
+     let checked_i8_sub = checked_i8_sub_dev.to_host_vec(&stream).unwrap();
+     let checked_i8_mul = checked_i8_mul_dev.to_host_vec(&stream).unwrap();
+ 
++    // --- integer pow family and ilog ---
++    //
++    // Includes a zero exponent, negative bases with odd exponents, and both
++    // in-range and overflowing results (7^12 and 46341^2 overflow i32).
++    let pow_base: Vec<i32> = vec![2, -3, 10, 0, 1, -1, 7, 46341];
++    let pow_exp: Vec<u32> = vec![10, 5, 9, 0, 100, 3, 12, 2];
++    let pow_n = pow_base.len();
++    let pow_base_dev = DeviceBuffer::from_host(&stream, &pow_base).unwrap();
++    let pow_exp_dev = DeviceBuffer::from_host(&stream, &pow_exp).unwrap();
++    let mut pow_checked_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
++    let mut pow_overflowing_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
++    let mut pow_misc_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
++    let mut pow_plain_dev = DeviceBuffer::<u64>::zeroed(&stream, pow_n).unwrap();
++
++    // SAFETY: launch shape/resources match the kernel; buffers cover its accesses.
++    unsafe {
++        module.pow_family(
++            &stream,
++            LaunchConfig::for_num_elems(pow_n as u32),
++            &pow_base_dev,
++            &pow_exp_dev,
++            &mut pow_checked_dev,
++            &mut pow_overflowing_dev,
++            &mut pow_misc_dev,
++            &mut pow_plain_dev,
++        )
++    }
++    .expect("pow_family launch");
++
++    let pow_checked = pow_checked_dev.to_host_vec(&stream).unwrap();
++    let pow_ove
 ```
 
 ---
 
-### Incident Patch 2: `ab440d71` (2026-11-02)
-**Commit Message**: fix(cuda-oxide): resolve SWQA v0.5.0 failures on A100, R100, and ARM64 (#1702)
+### Incident Patch 2: `00f6624c` (2026-11-04)
+**Commit Message**: fix(cuda-oxide): resolve --device-debug compile/merge failures in clamp, WGMMA, and multi-crate PTX (#1738)
 
 ## What This PR Does
 
-Fixes five `cuda-oxide` failures uncovered during SWQA v0.5.0
-pre-release testing across **A100 (`sm_80`)**, **R100 (`sm_107` /
-`sm_107a`)**, and **GB200 (`aarch64`)** (tracked under umbrella NVBug
-`7011200`):
+Resolves the three `--device-debug` compile and module-load failures
+(**NVBugs 7038282**, **7038557**, **7038682** and **GH #1219**):
 
-| NVBug | Platform | Issue | Fix |
+| NVBug / Issue | Example(s) | Root Cause | Fix |
 
-|:--------|:--------------------|:--------------------------------------------------------------|:---------------------------------------------------------------|
-| 7019265 | R100 (`sm_107`) | 22 NVVM examples +
-`interop_cubin_identity` reject `sm_107*` | Admit
-`sm_107`/`sm_107a`/`sm_107f` in NVVM target resolution |
-| 7016387 | A100, R100 | `device_global` packed-pointer init aborts
-`llc` on `sm_80` | Detect packed-pointer globals (`<{ ... }>`) ->
-require `+ptx71`|
-| 7016497 | A100 (`sm_80`) | `generated_intrinsics` checks `major < 8`
-for `sm_86` PTX | Require `(major, minor) >= (8, 6)` before loading
-module |
-| 7024178 | GB200 (`aarch64`) | GNU `ld` discards `.oxart` sections
-under `--gc-sections` | Stamp `EI_OSABI = ELFOSABI_GNU (3)` on `.oxart`
-ELF objects |
-| 7024210 | GB200 (`aarch64`) | `libm_math` fails on AArch64 `frintn`
-inline a
+|:-----------------------|:-----------------------------------|:-----------------------------------------------------------------------------|:------------------------------------------------------------------------------|
+| **7038282 / GH #1219** | `warp_sums`, `partial_warp_reduce` | Dead
+`core::fmt::rt::ArgumentType` allocas from dropped `clamp` panic block |
+Prune zero-use entry `MirAllocaOp`s after block translation |
+| **7038557** | `cross_crate_merged_symbols` | Un-inlined `.visible
+.func` helpers collide when merging crate PTX bundles | Disambiguate
+colliding `.func` symbols across bundles in `merge_ptx_bundles` |
+| **7038682 / GH #1219** | `wgmma_mma_bf16` | Skipping `mem2reg` leaves
+WGMMA reborrows and loop descriptors in stack slots| Run `mem2reg` for
+WGMMA MMA modules and accept `mir.dbg_value` in WGMMA loops |
 
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/pipeline.rs` (modified, +21/-1)
+---
+
+### 1. Dead Panic-Block Allocas Under `--d
+
+**File**: `cuda-oxide/crates/cuda-host/src/embedded.rs` (modified, +116/-11)
 ```diff
-@@ -275,7 +275,27 @@ pub fn compile_translated_module(
-         && validated.device_arch.is_some()
-         && has_iket_operations(ctx, module)
-     {
--        validated.options.target_arch = validated.device_arch.map(|arch| arch.as_ref().sm());
-+        let requested_nvvm_ir = matches!(
-+            request.output_policy,
-+            OutputPolicy::ExternalLinkAllowed {
-+                request_nvvm_ir: true
-+            }
-+        );
-+        validated.options.target_arch = validated.device_arch.map(|arch| {
-+            let arch = arch.as_ref();
-+            if !requested_nvvm_ir
-+                && cuda_target_spec::recorded_ptx_floor(arch).is_err()
-+                && arch.capability() == 107
-+            {
-+                match arch.suffix() {
-+                    Some('a') => "sm_100a".to_string(),
-+                    Some('f') => "sm_100f".to_string(),
-+                    _ => "sm_100".to_string(),
-+                }
-+            } else {
-+                arch.sm()
-+            }
-+        });
-         validated.options.target_arch_source = "the detected GPU, pinned by IKET materialization";
-     }
-     let backend = validated.options();
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/arch.rs` (modified, +15/-15)
-```diff
-@@ -4,7 +4,7 @@
-  */
+@@ -162,10 +162,12 @@ pub fn merge_ptx_bundles<'a>(
+     let mut merged = String::new();
+     let mut found_any = false;
  
- use super::features::DetectedFeatures;
--use cuda_target_spec::{CudaArch, recorded_ptx_floor};
-+use cuda_target_spec::{CudaArch, is_known_nvvm_target};
+-    // Keep each bundle's debug file indices distinct in the merged module.
++    // Keep each bundle's debug file indices and helper `.func` names distinct
++    // in the merged module.
+     let mut file_index_offset = 0;
++    let mut seen_functions = std::collections::HashSet::new();
  
- /// Does `arch` (e.g. `"sm_120a"`, `"sm_90"`) support the kernel's detected
- /// features?
-@@ -22,7 +22,7 @@ use cuda_target_spec::{CudaArch, recorded_ptx_floor};
- /// IR requires instead.
- pub fn arch_satisfies(arch: &CudaArch, features: DetectedFeatures) -> bool {
-     let (capability, suffix) = (arch.capability(), arch.suffix());
--    if recorded_ptx_floor(arch).is_err() {
-+    if !is_known_nvvm_target(arch) {
-         return false;
-     }
-     features
-@@ -74,54 +74,54 @@ fn supports_tcgen_target(capability: u32, suffix: Option<char>) -> bool {
-     match suffix {
-         // Architecture-specific targets are exact, not numerically forward
-         // compatible. `sm_101a` is the PTX 8.x spelling later renamed to
--        // `sm_110a`; accept both spellings plus the distinct sm_103 target.
--        Some('a') => matches!(capability, 100 | 101 | 103 | 110),
--        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
-+        // `sm_110a`; accept both spellings plus the distinct sm_103/sm_107 targets.
-+        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110),
-+        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
-         _ => false,
-     }
+-    for bundle in bundles {
++    for (bundle_index, bundle) in bundles.into_iter().enumerate() {
+         if let Some(ptx_bytes) = bundle.payload(ArtifactPayloadKind::Ptx) {
+             let ptx_str = std::str::from_utf8(ptx_bytes)
+                 .map_err(|_| EmbeddedModuleError::UnsupportedPayload {
+@@ -174,13 +176,17 @@ pub fn merge_ptx_bundles<'a>(
+                 .trim_end_matches('\0');
+ 
+             let strip_headers = found_any;
+-            let (body, max_file_index) =
+-                prepare_bundle_body(ptx_str, strip_headers, file_index_offset).map_err(
+-                    |reason| EmbeddedModuleError::InvalidPtx {
+-                        name: bundle.name.clone(),
+-                        reason,
+-                    },
+-                )?;
++            let (body, max_file_index) = prepare_bundle_body_with_functions(
++                ptx_str,
++                strip_headers,
++                file_index_offset,
++                bundle_index,
++                &mut seen_functions,
++            )
++            .map_err(|reason| EmbeddedModuleError::InvalidPtx {
++                name: bundle.name.clone(),
++                reason,
++            })?;
+             file_index_offset = file_index_offset.max(max_file_index);
+             merged.push_str(&body);
+             if !body.ends_with('\n') {
+@@ -196,17 +202,63 @@ pub fn merge_ptx_bundles<'a>(
+     Ok(merged)
  }
  
- fn supports_blackwell_accelerated_target(capability: u32, suffix: Option<char>) -> bool {
-     match suffix {
--        Some('a') => matches!(capability, 100 | 101 | 103 | 110),
--        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
-+        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110),
-+        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
-         _ => false,
-     }
- }
- 
- fn supports_blackwell_family_target(capability: u32, suffix: Option<char>) -> bool {
-     match suffix {
--        Some('a') => matches!(capability, 100 | 101 | 110 | 120),
--        Some('f') => matches!(capability, 100 | 101 | 103 | 110 | 120 | 121),
-+        Some('a') => matches!(capability, 100 | 101 | 107 | 110 | 120),
-+        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121),
-         _ => false,
-     }
- }
- 
- fn supports_blackwell_matrix_target(capability: u32, suffix: Option<char>) -> bool {
-     // LLVM's sm_101 aliases stop selecting these instructions at PTX 9.0.
-     match suffix {
--        Some('a' | 'f') => matches!(capability, 100 | 103 | 110 | 120 | 121),
-+        Some('a' | 'f') => matches!(capability, 100 | 103 | 107 | 110 | 120 | 121),
-         _ => false,
-     }
- }
- 
--/// Floating-point `redux.sync` is scoped to the sm_100/sm_103 family.
-+/// Floating-point `redux.sync` is scoped to the sm_100/sm_103/sm_107 family.
- fn supports_redux_f32_target(capability: u32, suffix: Option<char>) -> bool {
--    matches!(suffix, Some('a' | 'f')) && matches!(capability, 100 | 103)
-+    matches!(suffix, Some('a' | 'f')) && matches!(capability, 100 | 103 | 107)
- }
- 
- /// FP8 / f16-accumulator multimem forms span several Blackwell architecture
- /// targets, but consumer family (`f`) targets do not support the sm_120 line.
- fn supports_multimem_fp8_target(capability: u32, suffix: Option<char>) -> bool {
-     match suffix {
--        Some('a') => matches!(capability, 100 | 101 | 103 | 110 | 120 | 121),
--        Some('f') => matches!(capability, 100 | 101 | 103 | 110),
-+        Some('a') => matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121),
-+        Some('f') => matches!(capability, 100 | 101 | 103 | 107 | 110),
-         _ => false,
-     }
- }
- 
- fn is_known_blackwell_capability(capability: u32) -> bool {
--    matches!(capability, 100 | 101 | 103 | 110 | 120 | 121)
-+    matches!(capability, 100 | 101 | 103 | 107 | 110 | 120 | 121)
- }
- 
- /// Extract the compute-capability *major* version from an `sm_…` target string.
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/detect.rs` (modified, +36/-4)
-```diff
-@@ -731,6 +731,38 @@ fn contains_dynamic_stack_features(contents: &str) -> bool {
-         || contains_llvm_pointer_intrinsic_call(contents, "@llvm.stackrestore")
- }
- 
-+/// Detect packed aggregate global initializers that contain symbol addresses.
-+///
-+/// LLVM's `NVPTXAsmPrinter::printModuleLevelGV` lowers pointers inside a packed
-+/// struct initializer (`<{ ... }>`) using PTX byte-mask expressions
-+/// (`mask(0xFF)`), which require PTX ISA 7.1 (`+ptx71`) and abort `llc` when
-+/// targeting `sm_80` at its default PTX 7.0 floor.
-+fn contains_packed_pointer_global_initializer(contents: &str) -> bool {
-+    contents.lines().any(|line| {
-+        if !line.contains("<{") {
-+            return false;
-+        }
-+        let code = llvm_code_without_comments_or_strings(line);
-+        let trimmed = code.trim_start();
-+        if !trimmed.starts_with('@')
-+            || !(contains_llvm_keyword(trimmed, "global")
-+                || contains_llvm_keyword(trimmed, "constant"))
-+        {
-+            return false;
-+        }
-+        let Some((_, after_first_open)) = trimmed.split_once("<{") else {
-+            return false;
-+        };
-+        let Some((_, initializer_region)) = after_first_open.split_once("<{") else {
-+            return false;
-+        };
-+        initializer_region.contains('@')
-+            || contains_llvm_keyword(initializer_region, "ptrtoint")
-+            || contains_llvm_keyword(initializer_region, "addrspacecast")
-+            || contains_llvm_keyword(initializer_region, "getelementptr")
-+    })
+-/// Strip repeated headers and shift debug indices past the previous bundles.
+-/// Returns the rewritten text and its highest debug file index.
++/// Single-bundle test wrapper around [`prepare_bundle_body_with_functions`]
++/// that starts with an empty seen-function set at bundle index zero.
++#[cfg(test)]
+ fn prepare_bundle_body(
+     ptx: &str,
+     strip_headers: bool,
+     file_index_offset: u64,
++) -> Result<(String, u64), String> {
++    let mut seen_functions = std::collections::HashSet::new();
++    prepare_bundle_body_with_functions(
++        ptx,
++        strip_headers,
++        file_index_offset,
++        0,
++        &mut seen_functions,
++    )
 +}
 +
- /// Detect every architecture requirement in exported LLVM text.
- ///
- /// Both the ordinary PTX path and automatic libdevice mode use this exact
-@@ -837,10 +869,10 @@ pub(super) fn detect_module_requirements_in_llvm_text(contents: &str) -> ModuleR
-     {
-         ptx_isa = ptx_isa.max(PtxIsaRequirement::new(70));
-     }
--    if contains_mbarrier_ptx71_features(contents) {
--        ptx_isa = ptx_isa.max(PtxIsaRequirement::new(71));
--    }
--    if contains_b1_and_mma_features(contents) {
-+    if contains_mbarrier_ptx71_features(contents)
-+        || contains_b1_and_mma_features(contents)
-+        || contains_packed_pointer_global_initializer(contents)
-+    {
-         ptx_isa = ptx_isa.max(PtxIsaRequirement::new(71));
-     }
-     if contains_dynamic_stack_features(contents) {
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/generated_requirements.rs` (modified, +7/-5)
-```diff
-@@ -11,7 +11,7 @@ use crate::generated_intrinsic_targets::{
-     GeneratedHardwareAlternative, GeneratedHardwareTarget, GeneratedTargetContract,
-     GeneratedTargetRequirement,
- };
--use cuda_target_spec::{CudaArch, PtxSpelling, recorded_ptx_floor};
-+use cuda_target_spec::{CudaArch, PtxSpelling, is_known_nvvm_target};
++/// Strip repeated headers, disambiguate colliding helper `.func` symbols, and
++/// shift debug indices past the previous bundles. Returns the rewritten text
++/// and its highest debug file index.
++fn prepare_bundle_body_with_functions(
++    ptx: &str,
++    strip_headers: bool,
++    file_index_offset: u64,
++    bundle_index: usize,
++    seen_functions: &mut std::collections::HashSet<String>,
+ ) -> Result<(String, u64), String> {
+     let document = ptx_parse::Document::parse(ptx).map_err(|error| error.to_string())?;
+     let mut edits = ptx_parse::EditScript::new();
+     let mut max_file_index = 0u64;
  
- /// Convert catalog PTX floors to the discrete `llc` feature spellings this
- /// compiler supports. A floor between two spellings rounds upward; a future
-@@ -175,7 +175,7 @@ fn resolved_hardware_satisfied(arch: &CudaArch, requirement: GeneratedResolvedRe
- 
- fn generated_hardware_satisfied(arch: &CudaArch, hardware: GeneratedHardwareTarget) -> bool {
-     let (capability, suffix) = (arch.capability(), arch.suffix());
--    if recorded_ptx_floor(arch).is_err() {
-+    if !is_known_nvvm_target(arch) {
-         return false;
-     }
- 
-@@ -194,7 +194,7 @@ fn generated_hardware_satisfied(arch: &CudaArch, hardware: GeneratedHardwareTarg
- 
- fn generated_contract_satisfied(arch: &CudaArch, contract: &GeneratedTargetContract) -> bool {
-     let (capability, suffix) = (arch.capability(), arch.suffix());
--    recorded_ptx_floor(arch).is_ok()
-+    is_known_nvvm_target(arch)
-         && contract.alternatives.iter().any(|alternative| {
-             generated_hardware_alternative_satisfied(capability, suffix, alternative.hardware)
-         })
-@@ -278,7 +278,7 @@ pub(super) fn generated_requirement_ptx_floor(
-     requirement: GeneratedTargetRequirement,
- ) -> Option<u16> {
-     let (capability, suffix) = (arch.capability(), arch.suffix());
--    if recorded_ptx_floor(arch).is_err() {
-+    if !is_known_nvvm_target(arch) {
-         return None;
-     }
-     match requirement.hardware {
-@@ -310,7 +310,9 @@ fn resolved_requirement_ptx_floor(
-         }
-         GeneratedResolvedRequirement::Contract(contract) => {
-             let (capability, suffix) = (arch.capability(), arch.suffix());
--            recorded_ptx_floor(arch).ok()?;
-+            if !is_known_nvvm_target(arch) {
-+                return None;
++    let mut bundle_functions = std::collections::HashSet::new();
++    let mut colliding_functions = std::collections::HashMap::new();
++    for callable in document.callables() {
++        if callable.kind() == ptx_parse::CallableKind::Function && !callable.is_extern() {
++            let name = callable.name();
++            bundle_functions.insert(name.to_string());
++            if seen_functions.contains(name) {
++                colliding_functions.insert(name, format!("{name}__bundle_{bundle_index}"));
 +            }
-             contract
-                 .alternatives
-                 .iter()
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/select.rs` (modified, +3/-1)
-```diff
-@@ -201,7 +201,9 @@ pub(crate) fn resolve_ptx_target_with_generated(
++        }
++    }
++    seen_functions.extend(bundle_functions);
++
++    if !colliding_functions.is_empty() {
++        for token in document.tokens() {
++            if token.kind() == ptx_parse::TokenKind::Word
++                && let Some(renamed) = colliding_functions.get(token.text(ptx))
++            {
++                edits
++                    .replace(token.span(), renamed.clone())
++                    .map_err(|error| error.to_string())?;
++            }
++        }
++    }
++
+     for directive in document.directives() {
+         match directive.name() {
+             ".version" | ".target" | ".address_size" if strip_headers => {
+@@ -555,6 +607,59 @@ mod tests {
+         );
      }
  
-     if let Some(device) = device_hint.filter(|target| {
--        arch_satisfies(target, detected) && generated_target_satisfied(target, generated)
-+        recorded_ptx_floor(target).is_ok()
-+            && arch_satisfies(target, detected)
-+            && generated_target_satisfied(target, generated)
-     }) {
-         return Ok((device.clone(), "detected GPU"));
-     }
++    #[test]
++    fn merged_bundles_disambiguate_colliding_helper_functions() {
++        let first = ptx_bundle(
++            "first",
++            "\
++.version 8.9
++.target sm_80, debug
++.address_size 64
++.visible .func (.param .b64 retval) shared_helper()
++{
++\tret;
++}
++.visible .entry a()
++{
++\tcall.uni (r0), shared_helper, ();
++\tret;
++}
++",
++        );
++        let second = ptx_bundle(
++            "second",
++            "\
++.version 8.9
++.target sm_80, debug
++.address_size 64
++.visible .func (.param .b64 retval) shared_helper()
++{
++\tret;
++}
++.visible .entry b()
++{
++\tcall.uni (r0), shared_helper, ();
++\tret;
++}
++",
++        );
++
++        let merged = merge_ptx_bundles([&first,
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/generated_floors.rs` (modified, +31/-0)
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/prep.rs` (modified, +37/-0)
 ```diff
-@@ -228,6 +228,37 @@ fn dynamic_stack_mentions_without_calls_do_not_raise_requirements() {
-     );
+@@ -95,6 +95,17 @@ pub fn prepare_mir_module(
+                     .to_string(),
+             ));
+         }
++        if has_wgmma_mma_operations(ctx, module) {
++            let mut analyses = pliron::pass::AnalysisManager::default();
++            pliron::opts::mem2reg::mem2reg(module, ctx, &mut analyses).map_err(|error| {
++                PipelineError::Verification {
++                    name: "mem2reg".to_string(),
++                    message: error.disp(ctx).to_string(),
++                    operation: None,
++                }
++            })?;
++            verify_operation(ctx, module, "module post-wgmma-debug-mem2reg")?;
++        }
+         return Ok(Vec::new());
+     }
+ 
+@@ -236,6 +247,32 @@ pub fn prepare_mir_module(
+     Ok(warnings)
  }
  
-+#[test]
-+fn packed_pointer_global_initializers_require_ptx71() {
-+    let packed_relocation = concat!(
-+        "@target = addrspace(1) global [4 x i8] c\"\\01\\02\\03\\04\", align 4\n",
-+        "@packed = local_unnamed_addr addrspace(1) global <{ [3 x i8], i64, [2 x i8] }> ",
-+        "<{ [3 x i8] c\"\\11\\223\", i64 ptrtoint (ptr addrspacecast (ptr addrspace(1) @target to ptr) to i64), [2 x i8] c\"UD\" }>, align 1\n",
-+    );
-+    let requirements = detect_module_requirements_in_llvm_text(packed_relocation);
-+    assert_eq!(requirements.ptx_isa, PtxIsaRequirement::new(71));
-+    assert_eq!(
-+        required_ptx_feature(&"sm_80".parse().unwrap(), requirements.ptx_isa).unwrap(),
-+        Some("+ptx71")
-+    );
-+    assert_eq!(
-+        required_ptx_feature(&"sm_86".parse().unwrap(), requirements.ptx_isa).unwrap(),
-+        None
-+    );
++/// Return whether `root` contains any pointer-form WGMMA MMA operation whose
++/// accumulator lifetime must be fused into register SSA values before lowering.
++fn has_wgmma_mma_operations(ctx: &Context, root: Ptr<Operation>) -> bool {
++    use dialect_nvvm::ops::{
++        WgmmaMmaM64N64K8F32Tf32Op, WgmmaMmaM64N64K16F32Bf16Op, WgmmaMmaM64N64K16F32F16Op,
++        WgmmaMmaM64N128K16F32Bf16Op,
++    };
 +
-+    for non_packed_or_scalar in [
-+        "@unpacked = addrspace(1) global { i64 } { i64 ptrtoint (ptr addrspacecast (ptr addrspace(1) @target to ptr) to i64) }, align 8\n",
-+        "@packed_bytes = addrspace(1) global <{ [3 x i8], i32 }> <{ [3 x i8] c\"abc\", i32 7 }>, align 1\n",
-+        "; @commented = addrspace(1) global <{ [1 x i8], i64 }> <{ [1 x i8] c\"x\", i64 ptrtoint (ptr @target to i64) }>\n",
-+    ] {
-+        assert_eq!(
-+            detect_module_requirements_in_llvm_text(non_packed_or_scalar).ptx_isa,
-+            PtxIsaRequirement::Default,
-+            "{non_packed_or_scalar}"
++    let mut pending = vec![root];
++    while let Some(operation) = pending.pop() {
++        if Operation::is_op::<WgmmaMmaM64N64K16F32Bf16Op>(operation, ctx)
++            || Operation::is_op::<WgmmaMmaM64N64K16F32F16Op>(operation, ctx)
++            || Operation::is_op::<WgmmaMmaM64N64K8F32Tf32Op>(operation, ctx)
++            || Operation::is_op::<WgmmaMmaM64N128K16F32Bf16Op>(operation, ctx)
++        {
++            return true;
++        }
++        for region in operation.deref(ctx).regions() {
++            for block in region.deref(ctx).iter(ctx) {
++                pending.extend(block.deref(ctx).iter(ctx));
++            }
++        }
++    }
++    false
++}
++
+ fn has_high_level_cute_operations(ctx: &Context, root: Ptr<Operation>) -> bool {
+     let mut pending = vec![root];
+     while let Some(operation) = pending.pop() {
+```
+
+**File**: `cuda-oxide/crates/mir-importer/src/translator/body.rs` (modified, +25/-0)
+```diff
+@@ -2665,6 +2665,31 @@ pub fn translate_body(
+         }
+     }
+ 
++    // Remove entry-block allocas that have zero uses after translating all
++    // reachable blocks (such as locals belonging exclusively to unreachable
++    // blocks or dropped panic-formatting blocks like `core::fmt::rt::Argument`).
++    // In normal builds `mem2reg` erases unused allocas; pruning them here keeps
++    // `--device-debug` (which skips `mem2reg`) from lowering dead panic types.
++    use pliron::linked_list::ContainsLinkedList;
++    let dead_allocas: Vec<Ptr<Operation>> = block_map[0]
++        .deref(ctx)
++        .iter(ctx)
++        .filter(|&op| {
++            Operation::get_op::<dialect_mir::ops::MirAllocaOp>(op, ctx).is_some()
++                && op.deref(ctx).get_result(0).uses(ctx).is_empty()
++        })
++        .collect();
++    if !dead_allocas.is_empty() {
++        use pliron::irbuild::{
++            listener::Recorder,
++            rewriter::{IRRewriter, Rewriter},
++        };
++        let mut rewriter = IRRewriter::<Recorder>::default();
++        for dead in dead_allocas {
++            rewriter.erase_operation(ctx, dead);
++        }
++    }
++
+     Ok(op_ptr)
+ }
+ 
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/wgmma_deferred_accumulator.rs` (modified, +8/-3)
+```diff
+@@ -58,9 +58,10 @@
+ use dialect_mir::attributes::MirCastKindAttr;
+ use dialect_mir::{
+     ops::{
+-        MirAddOp, MirArrayElementAddrOp, MirCastOp, MirCondBranchOp, MirConstantOp, MirFuncOp,
+-        MirGeOp, MirGotoOp, MirGtOp, MirLeOp, MirLoadOp, MirLtOp, MirNoUnrollHintOp, MirNotOp,
+-        MirStorageDeadOp, MirStorageLiveOp, MirStoreOp, MirSubOp,
++        MirAddOp, MirArrayElementAddrOp, MirCastOp, MirCondBranchOp, MirConstantOp,
++        MirDbgValueListOp, MirDbgValueOp, MirFuncOp, MirGeOp, MirGotoOp, MirGtOp, MirLeOp,
++        MirLoadOp, MirLtOp, MirNoUnrollHintOp, MirNotOp, MirStorageDeadOp, MirStorageLiveOp,
++        MirStoreOp, MirSubOp,
+     },
+     types::{MirArrayType, MirPtrType, address_space},
+ };
+@@ -290,6 +291,8 @@ fn counted_loop_operation_is_supported(ctx: &Context, operation: Ptr<Operation>)
+     // `#[nounroll]` on the K loop leaves a hint in it until lowering. Fusion
+     // replaces the loop and moves the request onto the fused operation
+     Operation::get_op::<MirNoUnrollHintOp>(operation, ctx).is_some()
++        || Operation::get_op::<MirDbgValueOp>(operation, ctx).is_some()
++        || Operation::get_op::<MirDbgValueListOp>(operation, ctx).is_some()
+         || Operation::get_op::<MirConstantOp>(operation, ctx).is_some()
+         || Operation::get_op::<ConstantOp>(operation, ctx).is_some()
+         || Operation::get_op::<MirStorageLiveOp>(operation, ctx).is_some()
+@@ -1605,6 +1608,8 @@ fn apply_pointer_fallback(
+ 
+ fn is_ignorable(ctx: &Context, op: Ptr<Operation>) -> bool {
+     Operation::get_op::<MirNoUnrollHintOp>(op, ctx).is_some()
++        || Operation::get_op::<MirDbgValueOp>(op, ctx).is_some()
++        || Operation::get_op::<MirDbgValueListOp>(op, ctx).is_some()
+         || Operation::get_op::<MirConstantOp>(op, ctx).is_some()
+         || Operation::get_op::<ConstantOp>(op, ctx).is_some()
+         || Operation::get_op::<MirStorageLiveOp>(op, ctx).is_some()
+```
+
+---
+
+### Incident Patch 3: `8a04da1b` (2026-11-03)
+**Commit Message**: fix(mir-lower): lower float % to libdevice fmod (#1537)
+
+## What This PR Does
+
+Lowers floating-point `mir.rem` (`%`, `%=`, and `rem_euclid`) to
+libdevice `__nv_fmodf` / `__nv_fmod` instead of `llvm.frem`, and records
+float `mir.rem` as strict libdevice use in
+`cuda-oxide-codegen::select_pre_lowering_backend`.
+
+---
+
+### Why `llvm.frem` Miscompiled Float `%` on NVPTX
+
+In Rust, floating-point `a % b` is exact C `fmod(a, b)`. LLVM's NVPTX
+backend expands `llvm.frem` to naive floating-point `a - trunc(a / b) *
+b`, which drifts by multiples of `b` when `a / b` exceeds mantissa
+precision, loses the sign of `-0.0 % 3.0`, and overflows to `-inf` on
+`f64::MAX % f64::MIN_POSITIVE`.
+
+```text
+Computing `1e20_f64 % 7.0` on the GPU:
+
+BEFORE (emitted `llvm.frem`):
+  NVPTX expands `frem` to `a - trunc(a / b) * b` in fp64 ──► returns `-6144.0` (38/104 cases fail)
+
+AFTER (calls libdevice `__nv_fmod` / `__nv_fmodf`):
+  Calls exact libdevice `fmod`                           ──► returns `2.0` (104/104 match host bit-for-bit)
+```
+
+---
+
+## Verification
+
+* **GPU Execution (`RTX 5090`, `sm_120a`)**: `cargo oxide run
+float_rem_smoke` matches host `fmod` bit-for-bit across all `26 x 4 =
+104` `f32`/`f64` `%` a
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/pipeline.rs` (modified, +123/-2)
+```diff
+@@ -1064,8 +1064,9 @@ fn select_pre_lowering_backend(
+     // Only strict use participates in the emit-NVVM-IR decision; otherwise a
+     // kernel using only rounding or sign ops would drag in the libNVVM
+     // dependency it no longer needs.
+-    let uses_strict_libdevice =
+-        typed_mir_uses_libdevice(ctx, module) || module_uses_libdevice(ctx, module);
++    let uses_strict_libdevice = typed_mir_uses_libdevice(ctx, module)
++        || typed_mir_has_float_rem(ctx, module)
++        || module_uses_libdevice(ctx, module);
+     let uses_backend_dependent_libdevice = typed_mir_calls_match(
+         ctx,
+         module,
+@@ -1101,6 +1102,37 @@ fn typed_mir_uses_libdevice(ctx: &Context, module: Ptr<Operation>) -> bool {
+     })
+ }
+ 
++/// Whether `module` contains a float `mir.rem`.
++///
++/// Float remainder lowers to libdevice `__nv_fmod` / `__nv_fmodf` under
++/// every intrinsic backend (see `mir_lower::convert::ops::arithmetic`), so
++/// it is strict libdevice use that carries no `mir.call` to inspect.
++fn typed_mir_has_float_rem(ctx: &Context, op: Ptr<Operation>) -> bool {
++    use pliron::builtin::type_interfaces::FloatTypeInterface;
++    use pliron::r#type::{Typed, type_cast};
++
++    if Operation::get_op::<dialect_mir::ops::MirRemOp>(op, ctx).is_some() {
++        let lhs_ty = op.deref(ctx).get_operand(0).get_type(ctx);
++        if type_cast::<dyn FloatTypeInterface>(&*lhs_ty.deref(ctx)).is_some() {
++            return true;
++        }
++    }
++
++    let op_ref = op.deref(ctx);
++    for region in op_ref.regions() {
++        let region_ref = region.deref(ctx);
++        for block in region_ref.iter(ctx) {
++            let block_ref = block.deref(ctx);
++            for child_op in block_ref.iter(ctx) {
++                if typed_mir_has_float_rem(ctx, child_op) {
++                    return true;
++                }
++            }
++        }
++    }
++    false
++}
++
+ /// Walk `op` and its regions and return whether any `mir.call` callee
+ /// satisfies `matches`.
+ fn typed_mir_calls_match(
+@@ -1802,6 +1834,95 @@ mod tests {
+         }
+     }
+ 
++    /// Build a typed MIR module whose kernel takes two `f32` arguments and
++    /// one `i32` argument and applies `mir.rem` to the pair `rem_float`
++    /// selects: the float pair or the integer argument with itself.
++    fn typed_mir_rem_module(ctx: &mut Context, rem_float: bool) -> Ptr<Operation> {
++        use pliron::basic_block::BasicBlock;
++        use pliron::builtin::attributes::TypeAttr;
++        use pliron::builtin::op_interfaces::SymbolOpInterface;
++        use pliron::builtin::types::{FP32Type, FunctionType, IntegerType, Signedness};
++        use pliron::op::Op;
++        use pliron::r#type::TypeHandle;
++
++        dialect_mir::register(ctx);
++        dialect_nvvm::register(ctx);
++        let module = pliron::builtin::ops::ModuleOp::new(ctx, "test".try_into().unwrap());
++        let module_op = module.get_operation();
++
++        let f32_ty: TypeHandle = FP32Type::get(ctx).into();
++        let i32_ty: TypeHandle = IntegerType::get(ctx, 32, Signedness::Signed).into();
++        let arg_tys = vec![f32_ty, f32_ty, i32_ty];
++        let function_type = FunctionType::get(ctx, arg_tys.clone(), vec![]);
++        let function_op = Operation::new(
++            ctx,
++            dialect_mir::ops::MirFuncOp::get_concrete_op_info(),
++            vec![],
++            vec![],
++            vec![],
++            1,
 +        );
++        let function =
++            dialect_mir::ops::MirFuncOp::new(ctx, function_op, TypeAttr::new(function_type.into()));
++        function.set_symbol_name(ctx, "kernel".try_into().unwrap());
++
++        let body = function_op.deref(ctx).get_region(0);
++        let block = BasicBlock::new(ctx, None, arg_tys);
++        block.insert_at_back(body, ctx);
++        let (lhs, rhs, result_ty) = if rem_float {
++            (
++                block.deref(ctx).get_argument(0),
++                block.deref(ctx).get_argument(1),
++                f32_ty,
++            )
++        } else {
++            (
++                block.deref(ctx).get_argument(2),
++                block.deref(ctx).get_argument(2),
++                i32_ty,
++            )
++        };
++        let rem = Operation::new(
++            ctx,
++            dialect_mir::ops::MirRemOp::get_concrete_op_info(),
++            vec![result_ty],
++            vec![lhs, rhs],
++            vec![],
++            0,
++        );
++        rem.insert_at_back(block, ctx);
++
++        let module_body = module_op.deref(ctx).get_region(0);
++        let module_block = module_body.deref(ctx).iter(ctx).next().unwrap();
++        function_op.insert_at_back(module_block, ctx);
++        module_op
++    }
++
++    /// Float `mir.rem` lowers to `__nv_fmodf` under every backend, so the
++    /// prediction must flag libdevice before lowering or the post-lowering
++    /// consistency check would abort the build. Integer `mir.rem` lowers to
++    /// `srem`/`urem` and contributes nothing.
++    #[test]
++    fn float_rem_module_is_predicted_as_st
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/arithmetic.rs` (modified, +94/-7)
+```diff
+@@ -13,7 +13,8 @@
+ //! | Category      | MIR Operations                    | LLVM Operations                              |
+ //! |---------------|-----------------------------------|----------------------------------------------|
+ //! | Integer Arith | `add`, `sub`, `mul`, `div`, `rem` | `add`, `sub`, `mul`, `sdiv`/`udiv`, `srem`/`urem` |
+-//! | Float Arith   | `add`, `sub`, `mul`, `div`, `rem` | `fadd`, `fsub`, `fmul`, `fdiv`, `frem`       |
++//! | Float Arith   | `add`, `sub`, `mul`, `div`        | `fadd`, `fsub`, `fmul`, `fdiv`               |
++//! | Float Rem     | `rem`                             | `call __nv_fmodf` / `call __nv_fmod`         |
+ //! | Unary         | `neg`, `not`                      | `fneg` / `sub 0, x`, `xor`                   |
+ //! | Bitwise       | `and`, `or`, `xor`, `not`         | `and`, `or`, `xor`                           |
+ //! | Shifts        | `shl`, `shr`                      | `shl`, `lshr`/`ashr`                         |
+@@ -30,6 +31,7 @@
+ use crate::convert::intrinsics::common::call_intrinsic;
+ use crate::convert::types::convert_type;
+ use crate::convert::types::{StructLayoutInfo, build_struct_slot_map};
++use crate::helpers;
+ use dialect_mir::types::MirTupleType;
+ use llvm_export::attributes::{
+     FCmpPredicateAttr, FastmathFlags, FastmathFlagsAttr, ICmpPredicateAttr,
+@@ -39,6 +41,7 @@ use llvm_export::op_interfaces::{BinArithOp, CastOpInterface, IntBinArithOpWithO
+ use llvm_export::ops as llvm;
+ use llvm_export::types as llvm_types;
+ use pliron::builtin::attributes::IntegerAttr;
++use pliron::builtin::op_interfaces::CallOpCallable;
+ use pliron::builtin::types::{FP32Type, FP64Type, IntegerType, Signedness};
+ use pliron::context::{Context, Ptr};
+ use pliron::irbuild::dialect_conversion::{DialectConversionRewriter, OperandsInfo};
+@@ -244,7 +247,8 @@ pub(crate) fn convert_div(
+     Ok(())
+ }
+ 
+-/// Convert `mir.rem` to `llvm.srem` (signed), `llvm.urem` (unsigned), or `llvm.frem` (float).
++/// Convert `mir.rem` to `llvm.srem` (signed), `llvm.urem` (unsigned), or a
++/// libdevice `fmod` call (float).
+ ///
+ /// Uses pre-conversion MIR operand type signedness to select between signed
+ /// and unsigned integer remainder.
+@@ -256,11 +260,11 @@ pub(crate) fn convert_rem(
+ ) -> Result<()> {
+     let (lhs, rhs) = get_binary_operands(op, ctx)?;
+ 
+-    let llvm_op = if is_float_type(ctx, lhs) {
+-        let frem = llvm::FRemOp::new(ctx, lhs, rhs);
+-        add_fastmath_flags(ctx, frem.get_operation());
+-        frem.get_operation()
+-    } else if is_signed_int_op(ctx, op, operands_info)? {
++    if is_float_type(ctx, lhs) {
++        return convert_float_rem(ctx, rewriter, op, lhs, rhs);
++    }
++
++    let llvm_op = if is_signed_int_op(ctx, op, operands_info)? {
+         llvm::SRemOp::new(ctx, lhs, rhs).get_operation()
+     } else {
+         llvm::URemOp::new(ctx, lhs, rhs).get_operation()
+@@ -271,6 +275,89 @@ pub(crate) fn convert_rem(
+     Ok(())
+ }
+ 
++/// libdevice entry point for `f64` remainder.
++pub const LIBDEVICE_FMOD_F64: &str = "__nv_fmod";
++/// libdevice entry point for `f32` remainder (also used for `f16` after widening).
++pub const LIBDEVICE_FMOD_F32: &str = "__nv_fmodf";
++
++/// Convert float `mir.rem` to a libdevice `fmod` call.
++///
++/// Rust float `%` is C `fmod`: exact for every finite operand pair, with
++/// the sign of the dividend. `llvm.frem` is not a usable lowering on NVPTX,
++/// whose backend expands it to `a - trunc(a / b) * b` in floating point.
++/// That drifts by whole multiples of `b` once `a / b` is too large to be an
++/// exact integer (`1e20_f64 % 7.0` gave `-6144.0` instead of `2.0`), loses
++/// the sign of a zero result, and overflows to infinity when `a / b` does.
++///
++/// `f16` has no libdevice entry. It widens to `f32`, where `fmod` of two
++/// `f16` values is still exact and its result is representable in `f16`,
++/// then narrows back.
++fn convert_float_rem(
++    ctx: &mut Context,
++    rewriter: &mut DialectConversionRewriter,
++    op: Ptr<Operation>,
++    lhs: Value,
++    rhs: Value,
++) -> Result<()> {
++    let loc = op.deref(ctx).loc().clone();
++    let value_ty = lhs.get_type(ctx);
++    let (callee, call_ty) = if value_ty.deref(ctx).is::<FP64Type>() {
++        (LIBDEVICE_FMOD_F64, value_ty)
++    } else {
++        (LIBDEVICE_FMOD_F32, FP32Type::get(ctx).into())
++    };
++    let widen = value_ty != call_ty;
++
++    let (a, b) = if widen {
++        let a = llvm::FPExtOp::new(ctx, lhs, call_ty).get_operation();
++        set_empty_fastmath_flags(ctx, a);
++        rewriter.insert_operation(ctx, a);
++        let b = llvm::FPExtOp::new(ctx, rhs, call_ty).get_operation();
++        set_empty_fastmath_flags(ctx, b);
++        rewriter.insert_operation(ctx, b);
++        (a.deref(ctx).get_result(0), b.deref(ctx).get_result(0))
++    } else {
++        (lhs, rhs)
++    };
++
++    let func_ty = llvm_types::FuncType::get(ctx, call_ty, vec![call_ty, call_ty], false);
++    let parent_block = op
++        .deref(ctx)
++        .get_parent_block()
++        .ok_or_el
+```
+
+**File**: `cuda-oxide/crates/mir-lower/tests/lowering_test/math_conversions.rs` (modified, +70/-0)
+```diff
+@@ -3265,3 +3265,73 @@ fn test_float_to_int_unchecked_rejects_wide_destination() {
+         .to_string();
+     assert!(error.contains("wider than 64 bits"), "{error}");
+ }
++
++/// Rust float `%` is C `fmod`, exact for every finite pair. NVPTX expands
++/// `llvm.frem` inexactly (`a - trunc(a / b) * b`), so float `mir.rem` must
++/// lower to a libdevice `fmod` call on both widths, while integer `mir.rem`
++/// keeps lowering to `srem` / `urem`.
++#[test]
++fn test_float_rem_lowers_to_libdevice_fmod() -> Result<(), anyhow::Error> {
++    use mir_lower::convert::ops::arithmetic::{LIBDEVICE_FMOD_F32, LIBDEVICE_FMOD_F64};
++    use pliron::builtin::types::{FP32Type, FP64Type, IntegerType, Signedness};
++    use pliron::r#type::TypeHandle;
++
++    let mut ctx = make_test_ctx();
++    let f32_ty: TypeHandle = FP32Type::get(&ctx).into();
++    let f64_ty: TypeHandle = FP64Type::get(&ctx).into();
++    let i32_ty: TypeHandle = IntegerType::get(&ctx, 32, Signedness::Signed).into();
++    let u32_ty: TypeHandle = IntegerType::get(&ctx, 32, Signedness::Unsigned).into();
++    let (module_ptr, entry) = build_test_kernel(
++        &mut ctx,
++        vec![f32_ty, f32_ty, f64_ty, f64_ty, i32_ty, u32_ty],
++    );
++    let arg = |ctx: &Context, i: usize| entry.deref(ctx).get_argument(i);
++    let operands = [
++        (arg(&ctx, 0), arg(&ctx, 1), f32_ty),
++        (arg(&ctx, 2), arg(&ctx, 3), f64_ty),
++        (arg(&ctx, 4), arg(&ctx, 4), i32_ty),
++        (arg(&ctx, 5), arg(&ctx, 5), u32_ty),
++    ];
++    for (lhs, rhs, result_ty) in operands {
++        let rem = Operation::new(
++            &mut ctx,
++            mir::MirRemOp::get_concrete_op_info(),
++            vec![result_ty],
++            vec![lhs, rhs],
++            vec![],
++            0,
++        );
++        rem.insert_at_back(entry, &ctx);
++    }
++    append_return(&mut ctx, entry);
++
++    mir_lower::lower_mir_to_llvm(&mut ctx, module_ptr).map_err(|e| anyhow::anyhow!("{}", e))?;
++
++    let mut callees = Vec::new();
++    let mut frem = 0usize;
++    let mut srem = 0usize;
++    let mut urem = 0usize;
++    for body_op in lowered_kernel_body(&ctx, module_ptr) {
++        if let Some(call) = Operation::get_op::<llvm::CallOp>(body_op, &ctx)
++            && let CallOpCallable::Direct(sym) = call.callee(&ctx)
++        {
++            callees.push(sym.to_string());
++        }
++        frem += usize::from(Operation::get_op::<llvm::FRemOp>(body_op, &ctx).is_some());
++        srem += usize::from(Operation::get_op::<llvm::SRemOp>(body_op, &ctx).is_some());
++        urem += usize::from(Operation::get_op::<llvm::URemOp>(body_op, &ctx).is_some());
++    }
++
++    assert_eq!(
++        callees,
++        vec![
++            LIBDEVICE_FMOD_F32.to_string(),
++            LIBDEVICE_FMOD_F64.to_string()
++        ],
++        "float mir.rem must lower to libdevice fmod on each width"
++    );
++    assert_eq!(frem, 0, "float mir.rem must not lower to llvm.frem");
++    assert_eq!(srem, 1, "signed mir.rem must lower to llvm.srem");
++    assert_eq!(urem, 1, "unsigned mir.rem must lower to llvm.urem");
++    Ok(())
++}
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/Cargo.lock` (added, +630/-0)
+```diff
+@@ -0,0 +1,630 @@
++# This file is automatically @generated by Cargo.
++# It is not intended for manual editing.
++version = 4
++
++[[package]]
++name = "aho-corasick"
++version = "1.1.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ddd31a130427c27518df266943a5308ed92d4b226cc639f5a8f1002816174301"
++dependencies = [
++ "memchr",
++]
++
++[[package]]
++name = "anyhow"
++version = "1.0.102"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
++
++[[package]]
++name = "bindgen"
++version = "0.72.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
++dependencies = [
++ "bitflags",
++ "cexpr",
++ "clang-sys",
++ "itertools",
++ "log",
++ "prettyplease",
++ "proc-macro2",
++ "quote",
++ "regex",
++ "rustc-hash",
++ "shlex",
++ "syn",
++]
++
++[[package]]
++name = "bitflags"
++version = "2.13.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
++
++[[package]]
++name = "block-buffer"
++version = "0.10.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
++dependencies = [
++ "generic-array",
++]
++
++[[package]]
++name = "bytemuck"
++version = "1.25.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c8efb64bd706a16a1bdde310ae86b351e4d21550d98d056f22f8a7f7a2183fec"
++dependencies = [
++ "bytemuck_derive",
++]
++
++[[package]]
++name = "bytemuck_derive"
++version = "1.10.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f9abbd1bc6865053c427f7198e6af43bfdedc55ab791faed4fbd361d789575ff"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "cexpr"
++version = "0.6.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6fac387a98bb7c37292057cffc56d62ecb629900026402633ae9160df93a8766"
++dependencies = [
++ "nom",
++]
++
++[[package]]
++name = "cfg-if"
++version = "1.0.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
++
++[[package]]
++name = "clang-sys"
++version = "1.8.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0b023947811758c97c59bf9d1c188fd619ad4718dcaa767947df1cadb14f39f4"
++dependencies = [
++ "glob",
++ "libc",
++ "libloading",
++]
++
++[[package]]
++name = "cpufeatures"
++version = "0.2.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
++dependencies = [
++ "libc",
++]
++
++[[package]]
++name = "crc32fast"
++version = "1.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
++dependencies = [
++ "cfg-if",
++]
++
++[[package]]
++name = "crunchy"
++version = "0.2.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
++
++[[package]]
++name = "crypto-common"
++version = "0.1.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
++dependencies = [
++ "generic-array",
++ "typenum",
++]
++
++[[package]]
++name = "cuda-artifact-finalizer"
++version = "0.3.0"
++dependencies = [
++ "libnvvm-sys",
++ "nvjitlink-sys",
++ "serde",
++ "sha2",
++ "thiserror",
++]
++
++[[package]]
++name = "cuda-bindings"
++version = "0.5.0"
++dependencies = [
++ "bindgen",
++ "libloading",
++ "prettyplease",
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "cuda-core"
++version = "0.5.0"
++dependencies = [
++ "anyhow",
++ "bytemuck",
++ "cuda-bindings",
++ "cuda-core-derive",
++ "cuda-repr",
++ "half",
++ "oxide-artifacts",
++]
++
++[[package]]
++name = "cuda-core-derive"
++version = "0.5.0"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "cuda-device"
++version = "0.3.0"
++dependencies = [
++ "bytemuck",
++ "cuda-macros",
++ "cuda-repr",
++]
++
++[[package]]
++name = "cuda-host"
++version = "0.3.0"
++dependencies = [
++ "cuda-artifact-finalizer",
++ "cuda-core",
++ "cuda-device",
++ "cuda-macros",
++ "half",
++ "libc",
++ "oxide-artifacts",
++ "ptx-parse",
++ "sha2",
++ "thiserror",
++]
++
++[[package]]
++name = "cuda-macros"
++version = "0.3.0"
++dependencies = [
++ "oxide-tile-export",
++ "proc-macro2",
++ "quote",
++ "reserved-oxide-symbols",
++ "syn",
++]
++
++[[package]]
++name = "cuda-repr"
++version = "0.5.0"
++
++[[package]]
++name = "cuda-target-spec"
++version = "0.3.0"
++
++[[package]]
++name = "digest"
++version = "0.10.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
++dependencies = [
++ "block-buffer",
++ "crypto-common",
++]
++
+
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/Cargo.toml` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++[package]
++name = "float_rem_smoke"
++version = "0.1.0"
++edition = "2024"
++license = "Apache-2.0"
++
++# Standalone crate (not part of parent workspace).
++[workspace]
++
++[dependencies]
++cuda-device = { path = "../../../cuda-device" }
++cuda-host = { path = "../../../cuda-host" }
++cuda-core = { path = "../../../../../cuda-core" }
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/README.md` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++# float_rem_smoke
++
++## Float `%` is exact
++
++This example checks that the float remainder operator (`%`, `%=` and the
++`rem_euclid` helper built on it) in device code matches the host for the
++same operands, bit for bit.
++
++## What This Example Does
++
++- Four kernels (`%` and `rem_euclid`, one per float width) compute
++  `xs[i] % ys[i]` per element.
++- The host evaluates the same expressions with stdlib `f{32,64}` and
++  compares bit patterns. Rust float remainder is C `fmod`, which is exact
++  for every finite operand pair, so no tolerance is needed.
++- The operand set includes quotients far beyond `2^53` (`1e20 % 7.0`,
++  `3e17 % 0.7`), sign combinations, signed zero, subnormal divisors, and
++  NaN/infinity edge cases. The large-quotient cases are the regression:
++  a lowering that computes `a - trunc(a / b) * b` is off by thousands
++  there.
++
++Exits 0 on PASS, 1 on FAIL.
++
++## Pipeline
++
++The kernels lower `%` to libdevice `__nv_fmodf` / `__nv_fmod`, so the
++pipeline resolves them the same way it resolves the other libdevice math
++calls (IR-level link or libNVVM, depending on the toolkit).
++
++## Run
++
++```bash
++cargo oxide run float_rem_smoke
++```
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/float_rem_smoke/src/main.rs` (added, +227/-0)
+```diff
+@@ -0,0 +1,227 @@
++/*
++ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ * SPDX-License-Identifier: Apache-2.0
++ */
++
++//! Smoke test for float `%` in device code.
++//!
++//! Rust defines `a % b` on floats as C `fmod`: the result is exact for every
++//! finite pair, `a - n * b` for the truncated integer quotient `n`, with the
++//! sign of `a`. Lowering `%` to LLVM `frem` is not enough on NVPTX, whose
++//! backend expands `frem` to `a - trunc(a / b) * b` in floating point. Once
++//! `a / b` is too large to be an exact integer in the operand width, the
++//! expansion drifts by whole multiples of `b`: `1e20_f64 % 7.0` came back as
++//! `-6144.0` instead of `2.0`.
++//!
++//! Each kernel computes the same expression the host computes, and the host
++//! compares the bit patterns (NaN matches NaN). `%=` and `rem_euclid` are
++//! covered because both reach the same remainder lowering.
++//!
++//! Run:
++//!     cargo oxide run float_rem_smoke
++//!
++//! Exits 0 on PASS, 1 on FAIL.
++
++use cuda_core::LaunchConfig;
++use cuda_core::{CudaContext, DeviceBuffer};
++use cuda_device::{DisjointSlice, kernel, thread};
++use cuda_host::{cuda_module, ltoir};
++
++#[cuda_module]
++mod kernels {
++    use super::*;
++
++    #[kernel]
++    pub fn rem_f32(xs: &[f32], ys: &[f32], mut out: DisjointSlice<f32>) {
++        let idx = thread::index_1d();
++        let i = idx.get();
++        if i < xs.len()
++            && i < ys.len()
++            && let Some(slot) = out.get_mut(idx)
++        {
++            let mut r = xs[i];
++            r %= ys[i];
++            *slot = r;
++        }
++    }
++
++    #[kernel]
++    pub fn rem_f64(xs: &[f64], ys: &[f64], mut out: DisjointSlice<f64>) {
++        let idx = thread::index_1d();
++        let i = idx.get();
++        if i < xs.len()
++            && i < ys.len()
++            && let Some(slot) = out.get_mut(idx)
++        {
++            *slot = xs[i] % ys[i];
++        }
++    }
++
++    #[kernel]
++    pub fn rem_euclid_f32(xs: &[f32], ys: &[f32], mut out: DisjointSlice<f32>) {
++        let idx = thread::index_1d();
++        let i = idx.get();
++        if i < xs.len()
++            && i < ys.len()
++            && let Some(slot) = out.get_mut(idx)
++        {
++            *slot = xs[i].rem_euclid(ys[i]);
++        }
++    }
++
++    #[kernel]
++    pub fn rem_euclid_f64(xs: &[f64], ys: &[f64], mut out: DisjointSlice<f64>) {
++        let idx = thread::index_1d();
++        let i = idx.get();
++        if i < xs.len()
++            && i < ys.len()
++            && let Some(slot) = out.get_mut(idx)
++        {
++            *slot = xs[i].rem_euclid(ys[i]);
++        }
 +    }
 +}
 +
- #[test]
- fn ptx73_feature_is_requested_only_when_the_target_default_is_older() {
-     assert_eq!(
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/selection.rs` (modified, +22/-0)
-```diff
-@@ -464,6 +464,28 @@ fn valid_device_hints_and_explicit_compute_targets_preserve_selection() {
-                 .unwrap();
-         assert_eq!(nvvm.sm(), expected);
-     }
-+
-+    // R100 (`sm_107a`) is supported by libNVVM/nvJitLink, while the pinned LLVM
-+    // 23 `llc` backend has no `-mcpu=sm_107a` entry and must fall back to the
-+    // feature floor when given `sm_107a` as an advisory device hint.
-+    let r100_hint = "sm_107a".parse::<cuda_target_spec::DeviceArch>().unwrap();
-+    let (ptx_on_r100, ptx_provenance) = resolve_ptx_target(
-+        None,
-+        "test override",
-+        Some(&r100_hint),
-+        DetectedFeatures::Basic,
-+    )
-+    .unwrap();
-+    assert_eq!(ptx_on_r100.sm(), "sm_80");
-+    assert_eq!(ptx_provenance, "feature requirement");
-+    let nvvm_on_r100 =
-+        crate::export::resolve_nvvm_target(None, Some(&r100_hint), Some(DetectedFeatures::Basic))
-+            .unwrap();
-+    assert_eq!(nvvm_on_r100.sm(), "sm_107a");
-+    let explicit_nvvm_r100 =
-+        crate::export::resolve_nvvm_target(Some("sm_107"), None, Some(DetectedFeatures::Sm80))
-+            .unwrap();
-+    assert_eq!(explicit_nvvm_r100.sm(), "sm_107");
- }
- 
- #[test]
-```
-
-**File**: `cuda-oxide/crates/cuda-target-spec/src/lib.rs` (modified, +16/-0)
-```diff
-@@ -480,6 +480,16 @@ pub fn recorded_ptx_floor(arch: &CudaArch) -> Result<u16, UnsupportedTargetError
-         })
- }
- 
-+/// Whether `arch` is a known CUDA target supported by the NVVM IR / toolkit pipeline.
-+///
-+/// Includes every target with a recorded LLVM 23 PTX floor plus CUDA 13.4+
-+/// Rubin (`sm_107`, `sm_107a`, `sm_107f`) targets that `libNVVM` and `nvJitLink`
-+/// compile natively before the pinned `llc` backend gains `-mcpu=sm_107*`.
-+pub fn is_known_nvvm_target(arch: &CudaArch) -> bool {
-+    recorded_ptx_floor(arch).is_ok()
-+        || (arch.capability == 107 && matches!(arch.suffix, None | Some('a' | 'f')))
++/// Operand pairs. The host-side cast to `f32` keeps the two widths on the
++/// same table; the f32 cases are still large-quotient cases after rounding.
++fn operands_f64() -> Vec<(f64, f64)> {
++    vec![
++        // Large quotients: trunc(a / b) is not an exact integer anymore.
++        (1e20, 7.0),
++        (-1e20, 7.0),
++        (1e20, -3.0),
++        (-1e20, -3.0),
++        (3e17, 0.7),
++        (f64::from(0xCAFE_BABE_u32), 3.0),
++        (f64::MAX, 3.0),
++        (f64::MAX, f64::MIN_POSITIVE),
++        (1e300, 1e-300),
++        // Small quotients, where the naive expansion also happens to work.
++        (5.5, 2.0),
++        (-5.5, 2.0),
++        (5.5, -2.0),
++        (-5.5, -2.0),
++        (0.0, 3.0),
++        (-0.0, 3.0),
++        (2.0, 8.0),
++        (-2.0, 8.0),
++        (7.0, 7.0),
++        (-7.0, 7.0),
++        // Subnormal divisor, infinite and NaN edges.
++        (1.0, 5e-324),
++        (1.0, f64::INFINITY),
++        (-1.0, f64::INFINITY),
++        (f64::INFINITY, 2.0),
++        (2.0, 0.0),
++        (f64::NAN, 2.0),
++        (2.0, f64::NAN),
++    ]
 +}
 +
- /// Discrete PTX ISA feature spellings supported by the pinned LLVM backend.
- pub const PTX_ISA_SPELLINGS: &[u16] = &[62, 65, 70, 71, 73, 78, 80, 86, 87, 88, 90, 91];
- 
-@@ -583,6 +593,12 @@ mod tests {
-         ] {
-             assert!(raw.parse::<DeviceArch>().is_err(), "{raw}");
-         }
-+        for nvvm_only in ["sm_107", "sm_107a", "sm_107f"] {
-+            let arch: CudaArch = nvvm_only.parse().unwrap();
-+            assert!(is_known_nvvm_target(&arch), "{nvvm_only}");
-+            assert!(recorded_ptx_floor(&arch).is_err(), "{nvvm_only}");
-+        }
-+        assert!(!is_known_nvvm_target(&"sm_102a".parse().unwrap()));
-     }
- 
-     #[test]
++fn same_f32(a: f32, b: f32) -> bool {
++    (a.is_nan() && b.is_nan()) || a.to_bits() == b.to_bits()
++}
++
++fn same_f64(a: f64, b: f64) -> bool {
++    (a.is_nan() && b.is_nan()) || a.to_bits() == b.to_bits()
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    println!("=== float_rem_smoke: f32/f64 % against host fmod ===\n");
++
++    let ctx = CudaContext::new(0)?;
++    let stream = ctx.default_stream();
++    let module = ltoir::load_kernel_module(&ctx, "float_rem_smoke")?;
++    let module = kernels::from_module(module)?;
++
++    let pairs = operands_f64();
++    let xs_f64: Vec<f64> = pairs.iter().map(|p| p.0).collect();
++    let ys_f64: Vec<f64> = pairs.iter().map(|p| p.1).collect();
++    let xs_f32: Vec<f32> = xs_f64.iter().map(|&v| v as f32).collect();
++    let ys_f32: Vec<f32> = ys_f64.iter().map(|&v| v as f32).collect();
++    let n = pairs.len();
++    let cfg = LaunchConfig::for_num_elems(n as u32);
++
++    let xs32 = DeviceBuffer::from_host(&stream, &xs_f32)?;
++    let ys32 = DeviceBuffer::from_host(&stream, &ys_f32)?;
++    let xs64 = DeviceBuffer::from_host(&stream, &xs_f64)?;
++    let ys64 = DeviceBuffer::from_host(&stream, &ys_f64)?;
++
++    let mut out_rem_f32 = DeviceBuffer::<f32>::zeroed(&stream, n)?;
++    let mut out_rem_f64 = De
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1738** (2026-11-04): fix(cuda-oxide): resolve --device-debug compile/merge failures in clamp, WGMMA, and multi-crate PTX (@nihalpasham)
+- **PR #1735** (2026-11-04): fix(cuda-oxide): anchor relative DIFile paths, emit 32-bit AS3 pointer DWARF, and preserve store !dbg (@nihalpasham)
+- **PR #1733** (2026-11-04): fix(mir-importer): unwrap rustc_public Debug template in libm inline asm (NVBug 7024210) (@nihalpasham)
 - **PR #1703** (2026-11-02): fix(cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (@nihalpasham)
 - **PR #1702** (2026-11-02): fix(cuda-oxide): resolve SWQA v0.5.0 failures on A100, R100, and ARM64 (@nihalpasham)
 - **PR #1701** (2026-11-02): refactor(cute-rs): unify layout algebra in cute-layout and eliminate hand-rolled kernel index math (@nihalpasham)
-- **PR #1697** (2026-11-01): perf(gemm_sol_final): restore 1.857 PFLOP/s 4096³ throughput on B200 (@nihalpasham)
-- **PR #1696** (2026-10-31): docs(cuda-oxide): unify SVG dark-mode palette, relocate gemm_sol_final to examples/, and tighten READMEs (@nihalpasham)
-- **PR #1686** (2026-10-31): feat(cute-rs): add SM100 fused QKV + RMSNorm + FP8 + Paged KV Scatter on Blackwell (@nihalpasham)
 
 ---
 
@@ -2734,32 +3696,64 @@ inline a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_me
+## X. mir-importer): lower is_val_statically_known to false (#1359)
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cced2a35`: cuda-oxide): order mbarrier init, pre-arrival try_wait, and arrival in shared_memory_helper (#1703). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a38e8446`: mir-importer): lower is_val_statically_known to false (#1359). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/shared_memory_helper/helper-lib/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            cuda_device::thread::sync_threads();
-            if pending {
-                let _token = cuda_device::barrier::mbarrier_arrive(full);
-            }
-            cuda_device::barrier::mbarrier_inval(full);
+    ops::{MirCallOp, MirConstantOp, MirConstructArrayOp, MirGotoOp},
+/// Emits a `bool`-returning intrinsic whose result is a fixed constant.
+///
+/// Used for `core::intrinsics::is_val_statically_known`, which may return
+/// `false` for any argument. The argument is a MIR operand with no side
+/// effects, so it is not evaluated.
+#[allow(clippy::too_many_arguments)]
+pub fn emit_bool_constant_intrinsic(
+    ctx: &mut Context,
+    body: &mir::Body,
+    destination: &mir::Place,
+    target: &Option<usize>,
+    block_ptr: Ptr<BasicBlock>,
+    prev_op: Option<Ptr<Operation>>,
+    value_map: &mut ValueMap,
+    block_map: &[Ptr<BasicBlock>],
+    loc: Location,
+    intrinsic_name: &str,
+    value: bool,
+) -> TranslationResult<Ptr<Operation>> {
+    use pliron::builtin::attributes::IntegerAttr;
+    use pliron::utils::apint::APInt;
+
+    let (prepared_destination, prepared_last_op) = prepare_destination_write(
+        ctx,
+        body,
+        destination,
+        value_map,
+        block_ptr,
+        prev_op,
+        loc.clone(),
+    )?;
+
+    let bool_ty = IntegerType::get(ctx, 1, Signedness::Signless);
+    let const_op = Operation::new(
+        ctx,
+        MirConstantOp::get_concrete_op_inf
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let _token = cuda_device::barrier::mbarrier_arrive(full);
+    ops::{MirCallOp, MirConstructArrayOp, MirGotoOp},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cced2a35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a38e8446` are properly handled with clean fallback behavior.

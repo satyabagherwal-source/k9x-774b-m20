@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `f794c378`  
+> **Source Version**: `c7cf4fe9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:21:55.937Z  
+> **Timestamp**: 2026-11-04T09:40:03.115Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:21:55.316Z  
+> **Harvest Timestamp**: 2026-11-04T09:40:01.434Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11329 stars
+- **Stars / Engagement**: 11356 stars
 
 ---
 
@@ -181,7 +181,7 @@ import { isCaseInsensitiveFS, writeFile, prettyPath } from "../utils/fs.ts";
 import type { Nitro, NormalizedRouteRules, PrerenderRoute, PublicAssetDir } from "nitro/types";
 import { join, relative, resolve } from "pathe";
 import { createRouter, addRoute, findAllRoutes } from "rou3";
-import { joinURL, withBase, withoutBase, withTrailingSlash } from "ufo";
+import { decodePath, joinURL, withBase, withoutBase, withTrailingSlash } from "ufo";
 import { build } from "../build/build.ts";
 import { resolveRolldown } from "../build/rolldown/_import.ts";
 import { viteDepPaths } from "../build/vite/_import.ts";
@@ -237,6 +237,7 @@ export async function prerender(nitro: Nitro) {
     compressPublicAssets: false,
     rootDir: nitro.options.rootDir,
     renderer: nitro.options.renderer,
+    services: nitro.options.services,
     virtual: { ...nitro.options.virtual },
     logLevel: 0,
     preset: "nitro-prerender",
@@ -247,6 +248,8 @@ export async function prerender(nitro: Nitro) {
   const nitroRenderer = await createNitro(prerendererConfig, {
     c12: { envName: [nitro.options.envName, "prerender"] },
   });
+  nitroRenderer._pageTemplate = nitro._pageTemplate;
+  nitroRenderer._serviceLoader = nitro._serviceLoader;
   const prerenderStartTime = Date.now();
   await nitro.hooks.callHook("prerender:init", nitroRenderer);
   await nitroRenderer.routing.sync();
@@ -299,6 +302,15 @@ export async function prerender(nitro: Nitro) {
         !!a.baseURL && a.baseURL !== "/" && !a.fallthrough
     )
     .map((a) => withTrailingSlash(a.baseURL));
+
+  for (const route of routes) {
+    const base = publicAssetBases.find((base) => decodePath(route).startsWith(base));
+    if (base) {
+      nitro.logger.warn(
+        `Skipping prerender of \`${route}\`: \`${base}\` is a public assets directory, which only serves its own files. Move the route out of it.`
+      );
+    }
+  }
 
   const scannedPublicAssets = nitro.options.prerender.ignoreUnprefixedPublicAssets
     ? new Set(await scanUnprefixedPublicAssets(nitro))
@@ -430,19 +442,7 @@ export async function prerender(nitro: Nitro) {
       // @ts-expect-error (typed as readonly)
       _route.error!.status = res.status;
       // @ts-expect-error (typed as readonly)
-      _route.error!.statusText = res.statusText;
-    }
-
-    // Measure actual time taken for generating route
-    _route.generateTimeMS = Date.now() - start;
-
-    // Guess route type and populate fileName
-    const contentType = res.headers.get("content-type") || "";
-    const isImplicitHTML =
-      !routePath.endsWith(".html") &&
-      contentType.includes("html") &&
-      !JsonSigRx.test(dataBuff!.subarray(0, 32).toString("utf8"));
-    const routeWithIndex = routePath.endsWith("/")
+    
 ```
 
 ### Core Architecture Module: `src/prerender/utils.ts`
@@ -619,11 +619,11 @@ export default [baseWorker] as const;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4951** (2026-10-28): **rolldown: `require()` of builtins from bundled CommonJS fails on worker and edge presets**
-  *Symptoms*: Follow-up to #4949.  With the Rolldown builder and a non-node platform (Cloudflare, Deno, Netlify Edge), a `require()` of a builtin from bundled CommonJS is kept as a runtime call through Rolldown's `__require` helper, for example `__require("node:events")`. Deno has no global `require`, so the call throws when the module loads. On workerd without `nodejs_compat_v2`, `require()` returns the module namespace instead of the module itself. The Rollup builder hoists these requires to ESM imports, so it is not affected.  This was already the case before #4949, and it also applies to ids that are already prefixed (`require("node:path")`).  Possible fix: turn `require()` of external builtins into ESM imports on non-node platforms, either with Rolldown's `esmExternalRequirePlugin` or with a facade like `src/build/vite/_require-externals.ts`.  Once fixed, remove the `skipIf(ctx.isWorker && builder !== "rollup")` on the "requires builtins from bundled CommonJS" test in `test/tests.ts`, and run the `/cjs-builtins` fixture route on an edge runtime.  _Triaged with AI assistance._ 
+- **Issue #4993** (2026-11-01): **App broken with latest v3.0.261029-rc due to "Unknown suffix" errors**
+  *Symptoms*: ### Environment  v3.0.261029-rc  ### Reproduction  -  ### Describe the bug  Having file names as described in the [docs](https://nitro.build/docs/routing#middleware) break the app startup:  ```ts middleware/   1.logger.ts <-- First   2.auth.ts <-- Second   3.... <-- Third ```  ``` [nitro 2:30:43 PM]  ERROR  Unknown suffix .cors in middleware/1.cors.ts. Nitro reserves dotted suffixes in scanned file names; known file extensions (e.g. .json, .md) are kept as-is. Add "cors" to the scanSuffixes config to keep it as part of the name. The file is ignored. ```  Also I do have other files with `.` notation that are no routes but throw errors:  ``` Unknown suffix .dto in routes/notion-sdk/dbs/inventar/response.dto.ts. Nitro reserves dotted suffixes in scanned file names; known file extensions (e.g. .json, .md) are kept as-is. Add "dto" to the scanSuffixes config to keep it as part of the name. The file is ignored. ```  ### Additional context  _No response_  ### Logs  ```sh  ```
 
-- **Issue #4938** (2026-10-27): **cloudflare: CommonJS dependencies fail in dev with the miniflare runner**
-  *Symptoms*: With a Cloudflare preset, `vite dev` fails on CommonJS dependencies. The Node runner and production builds work.  ### Reproduction  ```ts // vite.config.ts export default defineConfig({ plugins: [nitro({ serverDir: "./server" })] })  // server/routes/limit.ts import promiseLimit from "promise-limit" export default async () => ({ ok: await promiseLimit(1)(() => Promise.resolve(42)) }) ```  Add a `wrangler.jsonc` with a `name` and a `compatibility_date`, run `NITRO_PRESET=cloudflare_module vite dev`, and open `/limit`:  ``` ReferenceError: module is not defined     at WorkerdModuleEvaluator.runInlinedModule (nitro/dist/runtime/internal/vite/dev-worker.mjs:20:11) ```  A route that imports `better-auth` fails the same way, with `exports is not defined`, in `@opentelemetry/semantic-conventions`.  Versions: `nitro 3.0.260903-beta`, `vite-plus 0.3.3` (Vite 8), `miniflare 4.20260730.0`.  ### Cause  With the miniflare runner, the `nitro` environment sets `resolve.noExternal: true`, so workerd runs every dependency as source. Vite does not pre-bundle dependencies for server environments by default, so nothing converts CommonJS.  [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare) turns pre-bundling on for its Workers for this reason ([source](https://github.com/cloudflare/workers-sdk/blob/8d98a15a05fa1f4d27654168ed16df1ff4ff1173/packages/vite-plugin-cloudflare/src/cloudflare-environment.ts#L328-L342)). `wrangler dev` bundles 
+- **Issue #4972** (2026-11-01): **Two builds of the same app give different server output**
+  *Symptoms*: `nitro build` doesn't give the same output twice. I built the same app 3 times on `main` and got 3 different `.output/server` folders. The app has 150 files in `public/`. I ignored file mtimes when I compared the folders.  To reproduce, add 150 files to `public/`, run `nitro build` 3 times, and compare `.output/server` after each build. Nitro `main` at 3f1c8af0, Node 24.21.0, Linux.  The cause is in `#nitro/virtual/public-assets-data`. Nitro reads the public files 25 at a time, and it adds each file to the list when its read finishes. The reads finish in a different order on each build. So the list order changes, and the server chunk changes with it.  Sorting the list by path fixes it. With the sort, 3 builds gave the same output, and every route still returns the same response.  I have the fix and a test on a branch. The test fails on `main`. https://github.com/nitrojs/nitro/compare/main...onmax:nitro:fix/public-assets-manifest-order  I can open a PR if you want it. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -640,388 +640,1168 @@ export default [baseWorker] as const;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a9a371c` (2026-10-28)
-**Commit Message**: docs(routing): clarify route rules and middleware are not a security boundary (#4954)
+### Incident Patch 1: `81dd71ed` (2026-11-02)
+**Commit Message**: fix(node): exit when the server fails to listen (#5008)
 
-**File**: `docs/1.docs/5.routing.md` (modified, +50/-6)
+**File**: `src/presets/node/runtime/node-cluster.ts` (modified, +11/-1)
 ```diff
-@@ -437,6 +437,10 @@ export default defineHandler((event) => {
- });
- ```
+@@ -17,14 +17,24 @@ if (clusterId) {
  
-+::warning
-+Middleware are not a security boundary. Global and route-scoped middleware are **implicit** guards: they protect the URLs they happen to match, not the handlers themselves. A path check like `startsWith('/auth')` also matches `/authors`, and any route added outside the pattern is silently left unprotected. Use them for cross-cutting concerns (logging, context, defense in depth), and enforce access control explicitly in the handler. See [Authentication](#authentication).
-+::
+ const nitroApp = useNitroApp();
+ 
++const silent = !!clusterId && clusterId !== "1";
 +
- ### Route-scoped middleware
+ const server = serve(
+   resolveServeOptions({
+     fetch: nitroApp.fetch,
+     node: { exclusive: false },
+-    ...(clusterId && clusterId !== "1" ? { silent: true } : {}),
++    ...(silent ? { silent: true } : {}),
+   })
+ );
  
- You can register middleware for specific route patterns using the [`handlers`](#handlers-config) config with the `middleware` option and a specific `route`:
-@@ -475,7 +479,7 @@ See [`inlineDynamicImports`](/config/build#inlinedynamicimports) to bundle every
- 
- ## Route rules
- 
--Route rules let you attach behavior (redirects, proxying, caching, authentication, custom headers) to route patterns directly from your configuration, without writing handler code.
-+Route rules let you attach behavior (redirects, proxying, caching, CORS, custom headers) to route patterns directly from your configuration, without writing handler code.
- 
- Each rule maps a route pattern (using [rou3](https://github.com/h3js/rou3) syntax) to a set of options, built on [h3 route rules](https://h3.dev/guide/rules). When the `cache` option is set, matching handlers are automatically wrapped with `defineCachedHandler`. See the [cache guide](/docs/cache) to learn more.
- 
-@@ -500,6 +504,10 @@ export default defineConfig({
- });
- ```
- 
-+::warning
-+Route rules are not a security boundary. Like global middleware, they are **implicit** guards: they apply to whatever request URLs match a pattern, not to the handlers they are meant to protect. A rule can be overridden by a more specific one, and a handler stays unprotected when it is reachable from a path the pattern does not match (a new route, a renamed file, a `proxy` target, a different `baseURL`). Some rules are also applied by the platform edge and others only by the server runtime. Enforce access control explicitly where the protected code runs. See [Authentication](#authentication).
-+::
++// srvx only sets `process.exitCode` on listen errors; the IPC channel and other handles would keep the worker alive.
++server.ready().catch((error) => {
++  if (!silent) {
++    console.error("[nitro] Failed to start server:", error);
++  }
++  process.exit(1);
++});
 +
- ::note
- Netlify and Cloudflare `_headers` and `_redirects` only support static segments, `:name` params and a single `*` splat (as the last segment in `_redirects`). Rules with other patterns, such as `/num/:id(\d+)` or `/a/:id?`, are left out of them (with a build warning) and only the runtime applies them, which means static assets don't get their headers. A `redirect` rule that also matches the requests of a skipped one, such as `/num/**` next to `/num/:id(\d+)`, is left out of `_redirects` too, so that it cannot take precedence over it.
- ::
-@@ -635,19 +643,55 @@ export default defineConfig({
+ if (import.meta._websocket) {
+   const { handleUpgrade } = wsAdapter({ resolve: resolveWebsocketHooks });
+   server.node!.server!.on("upgrade", (req, socket, head) => {
+```
+
+**File**: `src/presets/node/runtime/node-server.ts` (modified, +6/-0)
+```diff
+@@ -13,6 +13,12 @@ const nitroApp = useNitroApp();
  
- ### Authentication
+ const server = serve(resolveServeOptions({ fetch: nitroApp.fetch }));
  
--There is no `auth` route rule: authentication needs executable logic, so it belongs in [middleware](#middleware). Use h3's [`basicAuth`](https://h3.dev/utils/security#basicauthopts) middleware for a single route:
-+There is no `auth` route rule. Route rules and middleware match request URLs, so they can only guard routes [implicitly](#route-rules). Instead, enforce access control **explicitly** in the code you want to protect, using composable h3 utilities such as [`requireBasicAuth`](https://h3.dev/utils/security#requirebasicauthevent-opts).
++// srvx only sets `process.exitCode` on listen errors; other handles (e.g. scheduled tasks) would keep the process alive.
++server.ready().catch((error) => {
++  console.error("[nitro] Failed to start server:", error);
++  process.exit(1);
++});
 +
-+Wrap the check in a small reusable utility, reading the credentials from environment variables rather than hardcoding them:
+ if (import.meta._websocket) {
+   const { handleUpgrade } = wsAdapter({ resolve: resolveWebsocketHooks });
+   server.node!.server!.on("upgrade", (req, socket, head) => {
+```
+
+**File**: `test/presets/_close-hook.ts` (modified, +3/-2)
+```diff
+@@ -1,9 +1,10 @@
+ import { execa } from "execa";
+-import { getRandomPort, waitForPort } from "get-port-please";
++import { getRandomPort } from "get-port-please";
+ import { resolve } from "pathe";
+ import { isWindows } from "std-env";
+ import { expect, it } from "vitest";
+ import type { Context } from "../tests.ts";
++import { waitForServer } from "./_wait-for-server.ts";
+ 
+ const CLOSE_HOOK_MARKER = "[fixture] close hook called";
+ 
+@@ -56,7 +57,7 @@ export function testCloseHook(
+       child.nodeChildProcess.once("close", () => (exited = true));
+ 
+       try {
+-        await waitForPort(port, { delay: 1000, retries: 20, host: "127.0.0.1" });
++        await waitForServer(`http://127.0.0.1:${port}/`, child.nodeChildProcess);
+ 
+         child.kill("SIGTERM");
+ 
+```
+
+**File**: `test/presets/_listen-error.ts` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++import { createServer } from "node:net";
++import { execa } from "execa";
++import { resolve } from "pathe";
++import { expect, it } from "vitest";
++import type { Context } from "../tests.ts";
 +
-+```ts [utils/auth.ts]
-+import type { H3Event } from "nitro";
-+import { requireBasicAuth } from "nitro/h3";
++/**
++ * Assert that a built server exits non-zero when it cannot listen (`EADDRINUSE`).
++ *
++ * The child runs without `TEST` so the fixture `scheduledTasks` runner starts and keeps the
++ * event loop alive, like it would in production (without it, Node.js would exit on its own).
++ */
++export function testListenError(
++  ctx: Context,
++  opts: {
++    command: string;
++    args: (entry: string) => string[];
++    env?: Record<string, string>;
++    skip?: boolean;
++  }
++): void {
++  it.skipIf(opts.skip)(
++    "exits non-zero when the port is already in use",
++    async () => {
++      const blocker = createServer();
++      await new Promise<void>((r) => blocker.listen(0, "127.0.0.1", r));
++      const { port } = blocker.address() as { port: number };
 +
-+export async function requireAdmin(event: H3Event) {
-+  await requireBasicAuth(event, {
-+    username: process.env.ADMIN_USERNAME,
-+    password: process.env.ADMIN_PASSWORD!,
-+    realm: "Admin Area",
-+  });
-+  return event.context.basicAuth!.username;
++      const env: Record<string, string | undefined> = {
++        ...process.env,
++        ...opts.env,
++        NITRO_PORT: String(port),
++        NITRO_HOST: "127.0.0.1",
++      };
++      delete env.CI;
++      delete env.TEST;
++
++      const child = execa(opts.command, opts.args(resolve(ctx.outDir, "server/index.mjs")), {
++        env,
++        extendEnv: false,
++        reject: false,
++        timeout: 10_000,
++        all: true,
++      });
++
++      try {
++        const result = await child;
++        expect(result.timedOut, result.all).toBe(false);
++        expect(result.exitCode).toBe(1);
++        expect(result.all).toContain("EADDRINUSE");
++      } finally {
++        child.kill("SIGKILL");
++        await new Promise((r) => blocker.close(r));
++      }
++    },
++    20_000
++  );
 +}
-+```
+```
+
+**File**: `test/presets/_wait-for-server.ts` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++import type { ChildProcess } from "node:child_process";
 +
-+Then call it at the top of each handler that needs it. The request fails with `401` before any protected logic runs (or with `500` if `ADMIN_PASSWORD` is not set):
++/**
++ * Wait until a spawned server answers HTTP requests at `url`.
++ *
++ * Polls with `fetch` instead of binding the port (like `get-port-please`'s `waitForPort`),
++ * which can race with the server's own `listen()` and make it fail with `EADDRINUSE`.
++ * Fails fast when the child process exits before the server is ready.
++ */
++export async function waitForServer(
++  url: string,
++  child: ChildProcess,
++  opts: { timeout?: number } = {}
++): Promise<void> {
++  const deadline = Date.now() + (opts.timeout ?? 20_000);
++  while (Date.now() < deadline) {
++    if (child.exitCode !== null || child.signalCode !== null) {
++      throw new Error(
++        `Server process exited before it was ready (code: ${child.exitCode}, signal: ${child.signalCode})`
++      );
++    }
++    try {
++      const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
++      await res.body?.cancel();
++      return;
++    } catch {
++      await new Promise((r) => setTimeout(r, 100));
++    }
++  }
++  throw new Error(`Timed out waiting for the server at ${url}`);
++}
+```
+
+**File**: `test/presets/bun.test.ts` (modified, +3/-2)
+```diff
+@@ -1,9 +1,10 @@
+ import { execa, execaSync } from "execa";
+-import { getRandomPort, waitForPort } from "get-port-please";
++import { getRandomPort } from "get-port-please";
+ import { resolve } from "pathe";
+ import { describe } from "vitest";
+ import { setupTest, testNitro } from "../tests.ts";
+ import { testCloseHook } from "./_close-hook.ts";
++import { waitForServer } from "./_wait-for-server.ts";
+ import { testUnixSocket } from "./_unix-socket.ts";
  
- ```ts [routes/admin/index.ts]
- import { defineHandler } from "nitro";
--import { basicAuth } from "nitro/h3";
-+import { requireAdmin } from "../../utils/auth.ts";
+ const hasBun = execaSync("bun", ["--version"], { stdio: "ignore", reject: false }).exitCode === 0;
+@@ -23,7 +24,7 @@ describe.runIf(hasBun)("nitro:preset:bun", async () => {
+         p.kill();
+       },
+     } as any;
+-    await waitForPort(port);
++    await waitForServer(`http://127.0.0.1:${port}/`, p.nodeChildProcess);
+     return async ({ url, ...opts }) => {
+       const res = await ctx.fetch(url, opts);
+       return res;
+```
+
+**File**: `test/presets/deno-server.test.ts` (modified, +3/-2)
+```diff
+@@ -1,8 +1,9 @@
+ import { execa, execaSync } from "execa";
+-import { getRandomPort, waitForPort } from "get-port-please";
++import { getRandomPort } from "get-port-please";
+ import { describe } from "vitest";
+ import { setupTest, testNitro } from "../tests.ts";
+ import { testCloseHook } from "./_close-hook.ts";
++import { waitForServer } from "./_wait-for-server.ts";
+ import { testUnixSocket } from "./_unix-socket.ts";
+ 
+ const hasDeno = execaSync("deno", ["--version"], { stdio: "ignore", reject: false }).exitCode === 0;
+@@ -26,7 +27,7 @@ describe.runIf(hasDeno)("nitro:preset:deno-server", async () => {
+         p.kill();
+       },
+     } as any;
+-    await waitForPort(port, { delay: 1000, retries: 20, host: "127.0.0.1" });
++    await waitForServer(`http://127.0.0.1:${port}/`, p.nodeChildProcess);
+     return async ({ url, ...opts }) => {
+       const res = await ctx.fetch(url, opts);
+       return res;
+```
+
+**File**: `test/presets/node.test.ts` (modified, +14/-4)
+```diff
+@@ -1,12 +1,14 @@
+ import { existsSync } from "node:fs";
+ import { execa } from "execa";
+-import { getRandomPort, waitForPort } from "get-port-please";
++import { getRandomPort } from "get-port-please";
+ import { resolve } from "pathe";
+ import { isBun, isWindows } from "std-env";
+ import { describe, expect, it } from "vitest";
+ import { setupTest, startServer, testNitro } from "../tests.ts";
+ import { testCloseHook } from "./_close-hook.ts";
++import { testListenError } from "./_listen-error.ts";
+ import { testUnixSocket } from "./_unix-socket.ts";
++import { waitForServer } from "./_wait-for-server.ts";
+ 
+ // Tests spawning the output are skipped on Bun: under `bun --bun`, `node` resolves to Bun,
+ // where the crossws Node.js adapter refuses to run (the `bun` preset is the native path)
+@@ -72,7 +74,7 @@ describe("nitro:preset:node-server", async () => {
+       reject: false,
+     });
+     try {
+-      await waitForPort(port, { delay: 1000, retries: 20, host: "127.0.0.1" });
++      await waitForServer(`http://127.0.0.1:${port}/`, child.nodeChildProcess);
+       const res = await fetch(`http://127.0.0.1:${port}/srvx-middleware`);
+       expect(await res.text()).not.toBe("server entry middleware works!");
+       expect(res.headers.get("x-srvx-plugin")).toBeNull();
+@@ -97,7 +99,7 @@ describe("nitro:preset:node-server", async () => {
+         reject: false,
+       });
+       try {
+-        await waitForPort(port, { delay: 1000, retries: 20, host: "127.0.0.1" });
++        await waitForServer(`http://127.0.0.1:${port}/`, child.nodeChildProcess);
+         await expect(
+           negotiateProtocol(`ws://127.0.0.1:${port}/_ws-protocol`, ["graphql-transport-ws"])
+         ).resolves.toBe("graphql-transport-ws");
+@@ -115,6 +117,7 @@ describe("nitro:preset:node-server", async () => {
+   if (!isBun) {
+     testCloseHook(ctx, { command: process.execPath, args: (entry) => [entry] });
+     testUnixSocket(ctx, { command: process.execPath, args: (entry) => [entry] });
++    testListenError(ctx, { command: process.execPath, args: (entry) => [entry] });
+   }
+ });
+ 
+@@ -145,7 +148,7 @@ describe("nitro:preset:node-cluster", async () => {
+       });
+ 
+       try {
+-        await waitForPort(port, { delay: 1000, retries: 20, host: "127.0.0.1" });
++        await waitForServer(`http://127.0.0.1:${port}/`, child.nodeChildProcess);
+ 
+         // SIGKILL the sole worker (child of the primary) like a crash would.
+         const { stdout: workerPids } = await execa("pgrep", [
+@@ -168,6 +171,13 @@ describe("nitro:preset:node-cluster", async () => {
+     args: (entry) => [entry],
+     env: { NITRO_CLUSTER_WORKERS: "2" },
+   });
 +
-+export default defineHandler(async (event) => {
-+  const username = await requireAdmin(event);
-+  return `Hello, ${username}!`;
++  testListenError(ctx, {
++    command: process.execPath,
++    args: (entry) => [entry],
++    env: { NITRO_CLUSTER_WORKERS: "2" },
++    skip: isBun,
++  });
+ });
+ 
+ // Opens a connection offering `protocols` and resolves with the subprotocol the server accepted.
+```
+
+---
+
+### Incident Patch 2: `5a9688e6` (2026-11-02)
+**Commit Message**: fix(vite): find the entry of a service environment marked as built (#5007)
+
+Nitro only learned a service's entry file in that environment's `generateBundle`, so a service marked `isBuilt` before Nitro's `buildApp` imported its output folder, which fails unless the entry is `index.mjs`. Service builds now write a `nitro-service.json` manifest next to their output, read back when the environment is skipped.
+
+Resolves #5005
+
+Co-authored-by: Pooya Parsa <[REDACTED_EMAIL]>
+Co-authored-by: onmax <[REDACTED_EMAIL]>
+
+**File**: `src/build/vite/plugin.ts` (modified, +6/-1)
+```diff
+@@ -33,7 +33,7 @@ import { nitroPreviewPlugin } from "./preview.ts";
+ import { nitroAssetsImport } from "./_assets.ts";
+ import { defu } from "defu";
+ import type { Nitro, NitroConfig, NitroModule } from "nitro/types";
+-import { nitroDevServiceProxy, viteServicesTemplate } from "./services.ts";
++import { nitroDevServiceProxy, SERVICE_MANIFEST_FILE, viteServicesTemplate } from "./services.ts";
+ import { nitroRequireExternals } from "./_require-externals.ts";
+ import { nitroServerAliases } from "./_server-aliases.ts";
+ import { importVite, setRunningVite, viteImportOptions } from "./_import.ts";
+@@ -361,6 +361,11 @@ function nitroMain(ctx: NitroPluginContext): VitePlugin {
+             this.error(`No entry point found for service "${this.environment.name}".`);
+           }
+           ctx._entryPoints![this.environment.name] = entryFile!;
++          this.emitFile({
++            type: "asset",
++            fileName: SERVICE_MANIFEST_FILE,
++            source: JSON.stringify({ entry: entryFile }),
++          });
+         }
+       },
+     },
+```
+
+**File**: `src/build/vite/prod.ts` (modified, +8/-0)
+```diff
+@@ -10,6 +10,7 @@ import { existsSync } from "node:fs";
+ import { writeBuildInfo } from "../info.ts";
+ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+ import { isTest, isCI } from "std-env";
++import { readBuiltServiceEntry } from "./services.ts";
+ import type { RolldownOutput } from "rolldown";
+ 
+ const BuilderNames = {
+@@ -28,6 +29,13 @@ export async function buildEnvironments(ctx: NitroPluginContext, builder: ViteBu
+   for (const [envName, env] of Object.entries(builder.environments)) {
+     // prettier-ignore
+     const fmtName = BuilderNames[envName] || (envName.length <= 3 ? envName.toUpperCase() : envName[0].toUpperCase() + envName.slice(1));
++    if (env.isBuilt && ctx.services[envName] && !ctx._entryPoints[envName]) {
++      const outDir = resolve(env.config.root, env.config.build.outDir);
++      const entry = await readBuiltServiceEntry(outDir);
++      if (entry) {
++        ctx._entryPoints[envName] = entry;
++      }
++    }
+     if (envName === "nitro" || !env.config.build.rollupOptions.input || env.isBuilt) {
+       if (!["nitro", "ssr", "client"].includes(envName)) {
+         nitro.logger.info(
+```
+
+**File**: `src/build/vite/services.ts` (modified, +15/-1)
+```diff
+@@ -1,6 +1,20 @@
+ import type { NitroPluginContext } from "./types.ts";
+ import type { Plugin as VitePlugin } from "vite";
+-import { resolve } from "pathe";
++import { readFile } from "node:fs/promises";
++import { join, resolve } from "pathe";
++
++// Written next to each service output so a later build that skips it (`isBuilt`) finds its entry.
++export const SERVICE_MANIFEST_FILE = "nitro-service.json";
++
++// Without a manifest (e.g. output of an older Nitro), the output dir itself is imported (`index.{mjs,js}`).
++export async function readBuiltServiceEntry(outDir: string): Promise<string | undefined> {
++  try {
++    const { entry } = JSON.parse(await readFile(join(outDir, SERVICE_MANIFEST_FILE), "utf8"));
++    return typeof entry === "string" ? entry : undefined;
++  } catch {
++    return undefined;
++  }
++}
+ 
+ export function viteServicesTemplate(ctx: NitroPluginContext): string {
+   const serviceNames = Object.keys(ctx.services);
+```
+
+**File**: `test/vite/built-service-fixture/entry-server.ts` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++export default {
++  fetch: () => new Response("ssr service"),
++};
+```
+
+**File**: `test/vite/built-service-fixture/vite.config.ts` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++import { defineConfig } from "vite";
++import { nitro } from "nitro/vite";
++
++export default defineConfig({
++  environments: {
++    ssr: {
++      build: {
++        rollupOptions: {
++          input: "./entry-server.ts",
++          output: { entryFileNames: "[name]-[hash].mjs" },
++        },
++      },
++    },
++  },
++  plugins: [nitro({ preset: "standard", serverDir: "./" })],
++});
+```
+
+**File**: `test/vite/built-service.test.ts` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++import { fileURLToPath, pathToFileURL } from "node:url";
++import { rm } from "node:fs/promises";
++import { join } from "pathe";
++import { afterAll, describe, expect, it } from "vitest";
++import type { Plugin } from "vite";
++
++const { createBuilder } = (await import(
++  process.env.NITRO_VITE_PKG || "vite"
++)) as typeof import("vite");
++
++describe("vite: service environment marked as built", () => {
++  const rootDir = fileURLToPath(new URL("./built-service-fixture", import.meta.url));
++
++  const cleanup = () =>
++    Promise.all(
++      [".output", "node_modules"].map((dir) =>
++        rm(join(rootDir, dir), { recursive: true, force: true })
++      )
++    );
++
++  async function build(skipSsr: boolean) {
++    const skipPlugin: Plugin = {
++      name: "skip-ssr",
++      buildApp: {
++        order: "pre",
++        async handler(builder) {
++          builder.environments.ssr.isBuilt = skipSsr;
++        },
++      },
++    };
++    const builder = await createBuilder({ root: rootDir, logLevel: "warn", plugins: [skipPlugin] });
++    await builder.buildApp();
++  }
++
++  // https://github.com/nitrojs/nitro/issues/5005
++  it("reuses the existing output when the entry is not `index.mjs`", async () => {
++    await cleanup();
++    await build(false);
++    await build(true);
++
++    const entry = pathToFileURL(join(rootDir, ".output/server/index.mjs")).href;
++    const { default: server } = await import(entry);
++    const res = await server.fetch(new Request("http://localhost/"));
++    expect(await res.text()).toBe("ssr service");
++  }, 60_000);
++
++  afterAll(cleanup);
++});
+```
+
+---
+
+### Incident Patch 3: `e2c4d577` (2026-11-03)
+**Commit Message**: feat: experimental `nitro/rsbuild` plugin (#5011)
+
+**File**: `build.config.ts` (modified, +14/-1)
+```diff
+@@ -35,7 +35,13 @@ export default defineBuildConfig({
+   entries: [
+     {
+       type: "bundle",
+-      input: ["src/builder.ts", "src/cli/index.ts", "src/types/index.ts", "src/vite.ts"],
++      input: [
++        "src/builder.ts",
++        "src/cli/index.ts",
++        "src/rsbuild.ts",
++        "src/types/index.ts",
++        "src/vite.ts",
++      ],
+       minifyLibs: true,
+       license: { gzip: true },
+     },
+@@ -118,6 +124,7 @@ export default defineBuildConfig({
+         "@scalar/api-reference",
+         "cloudflare:workers",
+         "@cloudflare/workers-types",
++        "@rsbuild/core",
+         // unplugin deps
+         "@rspack/core",
+         "@farmfe/core",
+@@ -218,6 +225,12 @@ export default defineBuildConfig({
+         "dist/vite.d.mts",
+         `import "vite/client";\nimport "nitro/vite/types";\n${await readFile("dist/vite.d.mts", "utf8")}`
+       );
++
++      // Rsbuild types
++      await writeFile(
++        "dist/rsbuild.d.mts",
++        `import "nitro/rsbuild/types";\n${await readFile("dist/rsbuild.d.mts", "utf8")}`
++      );
+     },
+   },
+ });
+```
+
+**File**: `docs/1.docs/61.rsbuild.md` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++---
++icon: i-lucide-box
++navigation:
++  title: Rsbuild
++---
++
++# Rsbuild Integration
++
++> Use Nitro as an Rsbuild plugin to add a server to your Rsbuild app (experimental).
++
++::warning
++The Rsbuild plugin is experimental. Its behavior may change in minor releases.
++::
++
++Nitro integrates with [Rsbuild](https://rsbuild.rs) (v2.3+) as a plugin. It adds a full server to your Rsbuild app (API routes, server-side rendering, WebSockets) and builds client and server into a single `.output/` directory that deploys with any [deployment preset](/deploy).
++
++## Nitro as an Rsbuild plugin
++
++Add the plugin to your Rsbuild config:
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  plugins: [nitro({ serverDir: "./" })],
 +});
 +```
 +
-+The guard is visible next to the code it protects and keeps working wherever the handler is mounted or however it is reached. The same utility can be reused by any handler, or called only on the code paths that need it.
++With the plugin enabled, you use the Rsbuild CLI:
 +
-+To attach the guard declaratively, pass it to the handler's `middleware` option. Like the call above, it stays bound to the handler rather than to a URL pattern. Middleware should not return a value, so wrap the utility:
++- **`rsbuild dev`**: One dev server for both frontend and backend. Nitro routes are handled before the Rsbuild middlewares, so they take precedence over client assets. Other requests are served by Rsbuild first (compiled assets, the public directory and HTML pages), then by Nitro. Server code reloads when server files change, while client code keeps Rsbuild's hot module replacement.
++- **`rsbuild build`**: Builds the client into the Nitro public output, then the server with the configured preset. Hashed client assets (`static/` by default) are served with immutable cache headers (unless a `/static/**` route rule sets its own `cache-control`), without fallthrough: a request for a missing file there gets a `404` with `Cache-Control: no-store` instead of reaching your routes or renderer.
++- **`rsbuild build --watch`**: Builds again when files change. Public assets are copied and routes prerendered again before each server build, and added or removed server routes rebuild the server. The output is only cleaned before the first build. With the `static` preset, only changes of the client trigger a rebuild.
++- **`rsbuild preview`**: Serves the production build locally through Nitro, including static assets and WebSocket support.
 +
-+```ts [routes/admin/settings.ts]
-+import { defineHandler } from "nitro";
-+import { requireAdmin } from "../../utils/auth.ts";
- 
- export default defineHandler({
--  middl
-```
-
----
-
-### Incident Patch 2: `02295c5e` (2026-10-29)
-**Commit Message**: fix(presets): skip empty route rule headers in platform configs (#4963)
-
-`cors` is applied at runtime, so a rule like `{ cors: true, headers: {} }`
-has empty headers, which Vercel rejects in config.json.
-
-Co-authored-by: Pooya Parsa <[REDACTED_EMAIL]>
-
-**File**: `docs/1.docs/5.routing.md` (modified, +6/-2)
-```diff
-@@ -574,8 +574,12 @@ export default defineConfig({
- Handle CORS at runtime with the `cors` rule. `cors: true` applies permissive defaults (origin, methods, and allowed headers `*`): a simple request gets `access-control-allow-origin: *` and `access-control-expose-headers: *`, and an `OPTIONS` preflight is answered directly (`204`) with the matching `access-control-allow-*` headers.
- 
- > [!NOTE]
--> CORS is applied by the running server (h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options)), and not from the static/CDN config. 
--> On platforms that can serve prerendered/static assets straight from the edge, CORS headers are only added when the request reaches the server handler.
-+> CORS is applied by the running server (h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options)), and not from the static/CDN config.
-+> On platforms that serve public and prerendered assets straight from the CDN, those responses only get the platform's default headers (e.g. Vercel sends `access-control-allow-origin: *`, Netlify sends none). To set CORS headers there, also add them with `headers`, which are written to the platform config:
-+>
-+> ```ts
-+> '/**': { cors: true, headers: { 'access-control-allow-origin': '*' } },
-+> ```
- 
- Pass an object for finer control: an origin allowlist, `credentials`, `maxAge`, etc. (h3 `CorsOptions`). Combining `credentials: true` with a wildcard origin is invalid and throws at build time:
- 
-```
-
-**File**: `docs/1.docs/99.migration.md` (modified, +7/-0)
-```diff
-@@ -201,6 +201,13 @@ Use a regular `.ts` file in your server directory and import it directly.
- 
- Route rule matching and handling moved to [h3-rules](https://github.com/h3js/h3-rules). The rule shapes for `redirect`, `proxy`, `cors`, `headers`, `cache`, and `swr` are now defined by h3-rules, while `isr`, `prerender`, and `static` remain Nitro-specific rules.
- 
-+`cors` is now handled at runtime by h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options) (including `OPTIONS` preflight requests) and no longer expands into static `headers`. On platforms that serve public and prerendered assets from the CDN, those responses now only get the platform's default headers (e.g. none on Netlify). To keep CORS headers there, set them explicitly:
++Nitro options are passed to `nitro()` (or set in `nitro.config.ts`). The server is bundled with the [`rspack`](/config/build#builder) builder config, using the Rspack instance of Rsbuild.
 +
-+```diff
-+- '/**': { cors: true },
-++ '/**': { cors: true, headers: { 'access-control-allow-origin': '*' } },
++In development, asset loads that Rsbuild cannot serve (a script, style or image request) respond with a 404, even when a catch-all route or the SSR renderer would answer them with a page.
++
++The [`baseURL`](/config/routing#baseurl) of Nitro is the base of the Rsbuild server ([`server.base`](https://rsbuild.rs/config/server/base)): client pages and assets are served under it. When only `server.base` is set, it is used as the `baseURL` of Nitro.
++
++## Environments
++
++The plugin uses Rsbuild [environments](https://rsbuild.rs/guide/advanced/environments) and adds a `nitro` environment, which builds the server. Every environment with `output.target: "web"` (the default `web` environment, unless you define environments) is a client environment, emitted to the public output. With several client environments, pages (the HTML template and the client assets of server-side rendering) are owned by the `client` environment, then `web`, then the first one defined.
++
++Every other environment with `output.target: "node"` is a **service**: Nitro bundles its output with the server, and you fetch it with `fetchService()` from `nitro/services`. Services of the [`services`](/config/build#services) option are built in a server environment of the same name:
++
++```ts [rsbuild.config.ts]
++export default defineConfig({
++  plugins: [nitro({ services: { api: { entry: "./src/api-entry.ts" } } })],
++});
 +```
 +
- The `NitroRouteConfig` and `NitroRouteRules` types are deprecated in favor of `RouteRuleConfig` and `NormalizedRouteRules`, re-exported from `nitro/types`:
- 
- ```diff
++```ts [routes/api/[...].ts]
++import { defineHandler } from "nitro";
++import { fetchService } from "nitro/services";
++
++export default defineHandler((event) => fetchService("api", event.req));
++```
++
++The entry of a service exports a `fetch` method (as `default.fetch` or `fetch`). Services share the Nitro runtime of the server, so imports of `nitro/*` (such as `nitro/runtime-config` or `nitro/storage`) work in their code.
++
++## Server-side rendering
++
++Nitro detects a file named `entry-server.(ts|js|tsx|jsx|mts|mjs)` (in the project root, `app/`, `src/`, or the server directory) and adds an `ssr` environment for it, if you have not defined one.
++
++- **HTML template**: when the Rsbuild [`html.template`](https://rsbuild.rs/config/html/template) contains an `<!--ssr-outlet-->` comment, Nitro renders pages from the HTML generated by Rsbuild (with the client scripts injected) and replaces the comment with the response of the `ssr` entry.
++- **Full response**: otherwise, the `ssr` entry renders pages itself, and its `fetch` method returns the full `Response`.
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  source: { entry: { index: "./app/en
 ```
 
-**File**: `src/presets/_utils/routes.ts` (modified, +10/-1)
+**File**: `docs/3.config/5.routing.md` (modified, +2/-0)
 ```diff
-@@ -1,4 +1,4 @@
--import type { Nitro } from "nitro/types";
-+import type { Nitro, NormalizedRouteRules } from "nitro/types";
- import { addRoute, compareRoutes, createRouter, findOverlappingRoutes } from "rou3";
+@@ -32,6 +32,8 @@ With the Vite plugin, a Vite [`base`](https://vite.dev/config/shared-options#bas
+ Frameworks that read the Vite `base` in an early `config` hook (e.g. TanStack Start) do not see the one set from `baseURL`. Set the Vite `base` for them.
+ ::
  
- const CATCH_ALL_RE = /\*\*(?::\w+)?/g;
-@@ -133,6 +133,15 @@ export function routeToSplat(route: string): string {
-   return route.replace(CATCH_ALL_RE, "*");
- }
- 
-+/**
-+ * Whether a route rule sets any static `headers`. A rule can have empty
-+ * `headers` (`cors` alone is applied at runtime), which platform configs
-+ * reject (Vercel) or would write as an empty entry.
-+ */
-+export function hasHeaders(routeRules: Pick<NormalizedRouteRules, "headers">): boolean {
-+  return Object.keys(routeRules.headers || {}).length > 0;
-+}
++With the [Rsbuild plugin](/docs/rsbuild), `baseURL` sets the Rsbuild [`server.base`](https://rsbuild.rs/config/server/base), and a `server.base` set alone is the default `baseURL`.
 +
- /**
-  * `$n` reference to the trailing `/**` capture of a rou3 `routeToRegExp` regex,
-  * which h3 interpolates for `**` in a `redirect` or `proxy` target.
+ ### `apiBaseURL`
+ 
+ - Default: `"/api"`{lang=ts}
 ```
 
-**File**: `src/presets/cloudflare/utils.ts` (modified, +2/-2)
+**File**: `docs/3.config/8.build.md` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@ import {
-   withoutTrailingSlash,
- } from "ufo";
- import { unenvCfNodeCompat } from "./unenv/preset.ts";
--import { routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
-+import { hasHeaders, routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
- import { extendEnv } from "../../build/env.ts";
+@@ -164,7 +164,7 @@ export default defineConfig({
+ - Type: `Record<string, { entry: string }>`{lang=ts}
+ - Default: `{}`{lang=ts}
  
- // https://github.com/nitrojs/nitro/issues/4527
-@@ -120,7 +120,7 @@ export async function writeCFHeaders(nitro: Nitro, outdir: "public" | "output" |
+-Server entries exporting a `fetch` handler, built in their own environment by the [`nitro/vite`](/docs/vite) plugin and fetched with `fetchService(name, input, init?)` from `nitro/services`.
++Server entries exporting a `fetch` handler, built in their own environment by the [`nitro/vite`](/docs/vite) or [`nitro/rsbuild`](/docs/rsbuild) plugin and fetched with `fetchService(name, input, init?)` from `nitro/services`.
  
-   for (const path of sortRoutes(Object.keys(nitro.options.routeRules))) {
-     const routeRules = nitro.options.routeRules[path];
--    if (!routeRules.headers || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
-+    if (!hasHeaders(routeRules) || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
-       continue;
-     }
-     const headers = [
+ An `ssr` service is detected from an `entry-server` file in `app/`, `src/` or the root of the project and server directories, and server environments with an entry are registered automatically. When no renderer is set, unmatched routes are rendered by the `ssr` service.
+ 
 ```
 
-**File**: `src/presets/edgeone/utils.ts` (modified, +2/-2)
+**File**: `docs/4.examples/rsbuild-ssr-html.md` (added, +129/-0)
 ```diff
-@@ -12,7 +12,7 @@ import { join } from "pathe";
- import { compareRoutes, routeToRegExp } from "rou3";
- import { joinURL } from "ufo";
- import { writeFile } from "../../utils/fs.ts";
--import { catchAllRef, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
-+import { catchAllRef, hasHeaders, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
- 
- const NAMED_GROUP_RE = /\(\?<(?![=!])[^>]+>/g;
- 
-@@ -54,7 +54,7 @@ export async function writeEdgeOneConfig(nitro: Nitro) {
-   config.routes.push(
-     // Header-only rules (least specific first, so more specific headers override on `continue`)
-     ...rules
--      .filter(([_, routeRules]) => routeRules.headers && !routeRules.redirect)
-+      .filter(([_, routeRules]) => hasHeaders(routeRules) && !routeRules.redirect)
-       .reverse()
-       .map(([{ path, methods }, routeRules]) => ({
-         src: routeToRE2(joinURL(baseURL, path)).source,
-```
-
-**File**: `src/presets/netlify/utils.ts` (modified, +2/-2)
-```diff
-@@ -3,7 +3,7 @@ import type { Nitro, PublicAssetDir } from "nitro/types";
- import { dirname, join } from "pathe";
- import { joinURL, withoutTrailingSlash } from "ufo";
- import { escapeRegExp } from "../../utils/regex.ts";
--import { routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
-+import { hasHeaders, routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
- 
- export async function writeRedirects(nitro: Nitro) {
-   let contents = "";
-@@ -45,7 +45,7 @@ export async function writeHeaders(nitro: Nitro) {
- 
-   for (const path of sortRoutes(Object.keys(nitro.options.routeRules))) {
-     const routeRules = nitro.options.routeRules[path];
--    if (!routeRules.headers || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
-+    if (!hasHeaders(routeRules) || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
-       continue;
-     }
-     const headers = [
-```
-
-**File**: `src/presets/vercel/utils.ts` (modified, +4/-4)
-```diff
-@@ -22,7 +22,7 @@ import {
-   type RouterContext,
- } from "rou3";
- import { escapeRegExp } from "../../utils/regex.ts";
--import { catchAllRef, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
-+import { catchAllRef, hasHeaders, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
- import { joinURL, withLeadingSlash, withoutLeadingSlash } from "ufo";
- import type {
-   PrerenderFunctionConfig,
-@@ -264,7 +264,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
-       ...rules
-         .filter(
-           ([path, routeRules]) =>
--            routeRules.headers && !cdnRedirectPaths.has(path) && !cdnProxyPaths.has(path)
-+            hasHeaders(routeRules) && !cdnRedirectPaths.has(path) && !cdnProxyPaths.has(path)
-         )
-         .reverse()
-         .map(([path, routeRules]) => {
-@@ -289,7 +289,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
-             ...(methods && { methods }),
-             dest: (routeRules.proxy as ProxyRuleOptions).to.replaceAll("**", catchAllRef(src)),
-           };
--          if (routeRules.headers) {
-+          if (hasHeaders(routeRules)) {
-             route.headers = routeRules.headers;
-           }
-           return [route];
-@@ -305,7 +305,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
-               Location: redirect.to.replaceAll("**", catchAllRef(src)),
-             },
-           };
--          if (routeRules.headers) {
-+          if (hasHeaders(routeRules)) {
-             route = defu(route, { headers: routeRules.headers });
-           }
-           return [route];
-```
-
-**File**: `test/presets/vercel.test.ts` (modified, +20/-0)
-```diff
-@@ -51,6 +51,10 @@ describe("nitro:preset:vercel:web", async () => {
-         "/rules/isr-true/**": { isr: true },
-         "/rules/isr-query-empty/**": { isr: { allowQuery: [] } },
-         "/rules/isr-query-nopass/**": { isr: { allowQuery: ["q"], passQuery: false } },
-+        // Vercel rejects routes with empty `headers`
-+        "/rules/cors-only": { cors: true },
-+        "/rules/cors-empty-headers/**": { cors: true, headers: {} },
-+        "/rules/cdn-empty-headers/**": { proxy: "https://cdn.jsdelivr.net/**", headers: {} },
-       },
-       vercel: {
-         queues: {
-@@ -190,6 +194,10 @@ describe("nitro:preset:vercel:web", async () => {
-                 "src": "^\\/rules\\/method-scoped\\/redirect\\/?$",
-                 "status": 307,
-               },
-+              {
-+                "dest": "https://cdn.jsdelivr.net/$1",
-+                "src": "^\\/rules\\/cdn-empty-headers(?:\\/(?<_0>(?:[\\s\\S]*[^/])?\\/*?))??\\/?$",
-+              },
-               {
-                 "headers": {
-                   "Location": "/base",
-@@ -606,6 +614,18 @@ describe("nitro:preset:vercel:web", async () => {
-         expect(manifest.hashes).toBeTypeOf("object");
-       });
- 
-+      it("should not write routes with empty headers", async () => {
-+        const config = await fsp
-+          .readFile(resolve(ctx.outDir, "config.json"), "utf8")
-+          .then((r) => JSON.parse(r));
-+        expect(
-+          config.routes.filter(
-+            (route: { headers?: object }) =>
-+              route.headers && Object.keys(route.headers).length === 0
-+          )
-+        ).toEqual([]);
-+      });
+@@ -0,0 +1,129 @@
++---
++navigation:
++  category: server side rendering
++icon: i-material-symbols-html
++---
 +
-       it("should not cache missing immutable public assets", async () => {
-         const config = await fsp
-           .readFile(resolve(ctx.outDir, "config.json"), "utf8")
-```
-
----
-
-### Incident Patch 3: `3f1c8af0` (2026-10-29)
-**Commit Message**: fix(ci): clean release notes and use github usernames for contributors
-
-**File**: `.github/workflows/npm-publish.yml` (modified, +2/-3)
-```diff
-@@ -48,6 +48,5 @@ jobs:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           TAG: ${{ github.ref_name }}
-         run: |
--          gh release create "$TAG" \
--            --notes "$(pnpm changelogen --from=$(git describe --tags --abbrev=0 "$TAG^"))" \
--            --title "$TAG"
-+          node scripts/release-notes.ts "$TAG" > release-notes.md
-+          gh release create "$TAG" --notes-file release-notes.md --title "$TAG"
-```
-
-**File**: `scripts/release-notes.ts` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+#!/bin/env node
-+import { execSync } from "node:child_process";
-+import { generateMarkDown, getGitDiff, loadChangelogConfig, parseCommits } from "changelogen";
++# Rsbuild SSR HTML
 +
-+const to = process.argv[2];
-+if (!to) {
-+  console.error("Usage: node scripts/release-notes.ts <tag>");
-+  process.exit(1);
-+}
++> Server-side rendering with vanilla HTML, Rsbuild, and Nitro.
 +
-+const from = execSync(`git describe --tags --abbrev=0 "${to}^"`, { encoding: "utf8" }).trim();
++<!-- automd:ui-code-tree src="../../examples/rsbuild-ssr-html" default="app/entry-server.ts" ignore="README.md,GUIDE.md" expandAll -->
 +
-+const config = await loadChangelogConfig(process.cwd(), { from, to, noAuthors: true });
-+const commits = parseCommits(await getGitDiff(from, to), config)
-+  .map((c) => ({ ...c, type: c.type.toLowerCase() }))
-+  .filter(
-+    (c) => config.types[c.type] && !(c.type === "chore" && c.scope === "deps" && !c.isBreaking)
-+  );
++::code-tree{defaultValue="app/entry-server.ts" expandAll}
 +
-+const markdown = (await generateMarkDown(commits, config)).replace(/^\s*## .*\n/, "").trim();
++```html [index.html]
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <title>Rsbuild + Nitro</title>
++  </head>
++  <body>
++    <main id="app">
++      <!--ssr-outlet-->
++    </main>
++  </body>
++</html>
++```
 +
-+const contributors = getContributors(commits.map((c) => c.shortHash));
-+
-+process.stdout.write(
-+  [markdown, contributors.length > 0 && `### ❤️ Contributors\n\n${contributors.join("\n")}`]
-+    .filter(Boolean)
-+    .join("\n\n") + "\n"
-+);
-+
-+function getContributors(hashes: string[]): string[] {
-+  const out = execSync(
-+    `gh api --paginate "repos/${config.repo!.repo}/compare/${from}...${to}?per_page=100" --jq '.commits[] | [.sha, .author.login // "", .author.type // "", .commit.author.name] | @tsv'`,
-+    { encoding: "utf8" }
-+  );
-+  const contributors = new Set<string>();
-+  for (const line of out.trim().split("\n")) {
-+    const [sha, login, type, name] = line.split("\t");
-+    if (!hashes.some((h) => sha.startsWith(h)) || type === "Bot" || name.includes("[bot]")) {
-+      continue;
-+    }
-+    contributors.add(login ? `- @${login}` : `- ${name}`);
++```json [package.json]
++{
++  "type": "module",
++  "scripts": {
++    "build": "rsbuild build",
++    "dev": "rsbuild dev",
++    "preview": "rsbuild preview"
++  },
++  "devDependencies": {
++    "@rsbuild/core": "^2.3.0",
++    "nitro": "latest"
 +  }
-+  return [...contributors];
 +}
++```
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  source: {
++    entry: { index: "./app/entry-client.ts" },
++  },
++  html: {
++    template: "./index.html",
++  },
++  plugins: [nitro({ serverDir: "./" })],
++});
++```
++
++```json [tsconfig.json]
++{
++  "extends": "nitro/tsconfig"
++}
++```
++
++```ts [app/entry-client.ts]
++const button = document.querySelector<HTMLButtonElement>("#counter")!;
++
++let count = 0;
++button.disabled = false;
++button.addEventListener("click", () => {
++  button.textContent = `Count: ${++count}`;
++});
++```
++
++```ts [app/entry-server.ts]
++import { fetch } from "nitro";
++
++export default {
++  async fetch(req: Request) {
++    const { message } = (await fetch("/api/hello").then((res) => res.json())) as {
++      message: string;
++    };
++    return /* html */ `
++      <h1>${message}</h1>
++      <p>Rendered on the server for <code>${new URL(req.url).pathname}</code>.</p>
++      <button id="counter" disabled>Count: 0</button>
++    `;
++  },
++};
++```
++
++```ts [routes/api/hello.ts]
++import { defineHandler } from "nitro";
++
++export default defineHandler(() => ({ message: "Hello from Nitro and Rsbuild!" }));
++```
++
++::
++
++<!-- /automd -->
++
++<!-- automd:file src="../../examples/rsbuild-ssr-html/README.md" -->
++
++This example renders an HTML template on the server with [Rsbuild](https://rsbuild.rs) and the experimental `nitro/rsbuild` plugin, without a framework.
++
++## Overview
++
++1. **Add the Nitro Rsbuild plugin** to your Rsbuild config
++2. **Create an HTML template** with a `<!--ssr-outlet-->` comment where server content goes
++3. **Create a server entry** (`app/entry-server.ts`) that renders the page content
++4. **Create a client entry** (`app/entry-client.ts`) that makes the page interactive
++5. **Add API routes** for server-side data
++
++## How It Works
++
++Nitro detects `app/entry-server.ts` and adds an `ssr` environment to the Rsbuild app. The server entry exports an object with a `fetch` method, which calls the `/api/hello` route with Nitro's internal fetch and returns the HTML of the page.
++
++The `index.html` template is the Rsbuild HTML template of the client: Rsbuild injects the client scripts, and Nitro renders the `<!--ssr-outlet-->` comment with the server entry for each page request.
++
++Run `rsbuild dev` for development, and `rsbuild build` to build the client and the server into `.output/`.
++
++<!-- /automd -->
++
++## Learn More
++
++- [Rsbuild Integration](/docs/rsbuild)
++- [Renderer](/docs/renderer)
+```
+
+**File**: `docs/4.examples/rsbuild-ssr-react.md` (added, +255/-0)
+```diff
+@@ -0,0 +1,255 @@
++---
++navigation:
++  category: server side rendering
++icon: i-logos-react
++---
++
++# Rsbuild SSR with React
++
++> Server-side rendering with React in Nitro using Rsbuild.
++
++<!-- automd:ui-code-tree src="../../examples/rsbuild-ssr-react" default="src/entry-server.tsx" ignore="README.md,GUIDE.md" expandAll -->
++
++::code-tree{defaultValue="src/entry-server.tsx" expandAll}
++
++```json [package.json]
++{
++  "type": "module",
++  "scripts": {
++    "build": "rsbuild build",
++    "dev": "rsbuild dev",
++    "preview": "rsbuild preview"
++  },
++  "devDependencies": {
++    "@rsbuild/core": "^2.3.0",
++    "@rsbuild/plugin-react": "^2.1.1",
++    "@types/react": "^19.3.0",
++    "@types/react-dom": "^19.3.0",
++    "nitro": "latest",
++    "react": "^19.3.1",
++    "react-dom": "^19.3.1"
++  }
++}
++```
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { pluginReact } from "@rsbuild/plugin-react";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  source: {
++    entry: { index: "./src/entry-client.tsx" },
++  },
++  // Pages are rendered by the server entry
++  tools: { htmlPlugin: false },
++  plugins: [pluginReact(), nitro({ serverDir: "./" })],
++});
++```
++
++```json [tsconfig.json]
++{
++  "extends": "nitro/tsconfig",
++  "compilerOptions": {
++    "jsx": "react-jsx",
++    "jsxImportSource": "react"
++  }
++}
++```
++
++```tsx [src/app.tsx]
++import { useState } from "react";
++
++export function App() {
++  const [count, setCount] = useState(0);
++  return (
++    <>
++      <h1 className="hero">Nitro + Rsbuild + React</h1>
++      <button onClick={() => setCount((c) => c + 1)}>Count is {count}</button>
++    </>
++  );
++}
++```
++
++```tsx [src/entry-client.tsx]
++import "./styles.css";
++import { hydrateRoot } from "react-dom/client";
++import { App } from "./app.tsx";
++
++hydrateRoot(document.querySelector("#app")!, <App />);
++```
++
++```tsx [src/entry-server.tsx]
++import { renderToReadableStream } from "react-dom/server.edge";
++import { App } from "./app.tsx";
++
++import clientAssets from "./entry-client.tsx?assets=client";
++
++export default {
++  async fetch(_req: Request) {
++    return new Response(
++      await renderToReadableStream(
++        <html lang="en">
++          <head>
++            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++            {clientAssets.css.map((attr) => (
++              <link key={attr.href} rel="stylesheet" {...attr} />
++            ))}
++            {clientAssets.js.map((attr) => (
++              <script key={attr.href} defer src={attr.href} />
++            ))}
++          </head>
++          <body id="app">
++            <App />
++          </body>
++        </html>
++      ),
++      { headers: { "Content-Type": "text/html;charset=utf-8" } }
++    );
++  },
++};
++```
++
++```ts [src/env.d.ts]
++/// <reference types="@rsbuild/core/types" />
++/// <reference types="nitro/rsbuild/types" />
++```
++
++```css [src/styles.css]
++.hero {
++  color: orange;
++}
++
++button {
++  background-color: lightskyblue;
++}
++```
++
++```ts [routes/api/hello.ts]
++import { defineHandler } from "nitro";
++
++export default defineHandler(() => ({ message: "Hello from Nitro!" }));
++```
++
++::
++
++<!-- /automd -->
++
++<!-- automd:file src="../../examples/rsbuild-ssr-react/README.md" -->
++
++Set up server-side rendering (SSR) with React, [Rsbuild](https://rsbuild.rs), and the experimental `nitro/rsbuild` plugin. This setup enables streaming HTML responses, client asset injection with `?assets` imports, and client hydration.
++
++## Overview
++
++1. Add the Nitro and React plugins to your Rsbuild config
++2. Configure the client entry point
++3. Create a server entry that renders your app to HTML
++4. Create a client entry that hydrates the server-rendered HTML
++5. Add API routes for server-side data
++
++## 1. Configure Rsbuild
++
++Add the Nitro and React plugins to your Rsbuild config, and set the client entry point:
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { pluginReact } from "@rsbuild/plugin-react";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  source: {
++    entry: { index: "./src/entry-client.tsx" },
++  },
++  // Pages are rendered by the server entry
++  tools: { htmlPlugin: false },
++  plugins: [pluginReact(), nitro({ serverDir: "./" })],
++});
++```
++
++Nitro automatically detects the SSR entry from a file named `entry-server` in `app/`, `src/`, or the project root, and adds an `ssr` environment for it. The server entry renders the whole document, so the Rsbuild HTML generation is disabled with `tools.htmlPlugin: false`.
++
++## 2. Create the App Component
++
++Create a shared React component that runs on both server and client:
++
++```tsx [src/app.tsx]
++import { useState } from "react";
++
++export function App() {
++  const [count, setCount] = useState(0);
++  return (
++    <>
++      <h1 className="hero">Nitro + Rsbuild + React</h1>
++      <button onClick={() => setCount((c) => c + 1)}>Count is {count}</button>
++    </>
+
+```
+
+**File**: `docs/4.examples/rsbuild-ssr-tss-react.md` (added, +456/-0)
+```diff
+@@ -0,0 +1,456 @@
++---
++navigation:
++  category: server side rendering
++icon: i-simple-icons-tanstack
++---
++
++# Rsbuild SSR with TanStack Start
++
++> Full-stack React with TanStack Start on Rsbuild and Nitro.
++
++<!-- automd:ui-code-tree src="../../examples/rsbuild-ssr-tss-react" default="rsbuild.config.ts" ignore="README.md,GUIDE.md" expandAll -->
++
++::code-tree{defaultValue="rsbuild.config.ts" expandAll}
++
++```json [package.json]
++{
++  "type": "module",
++  "scripts": {
++    "build": "rsbuild build",
++    "dev": "rsbuild dev",
++    "preview": "rsbuild preview"
++  },
++  "dependencies": {
++    "@tanstack/react-router": "^1.170.46",
++    "@tanstack/react-router-devtools": "^1.167.2",
++    "@tanstack/react-start": "^1.169.4",
++    "nitro": "latest",
++    "react": "^19.3.1",
++    "react-dom": "^19.3.1"
++  },
++  "devDependencies": {
++    "@rsbuild/core": "^2.3.0",
++    "@rsbuild/plugin-react": "^2.1.1",
++    "@types/react": "^19.3.0",
++    "@types/react-dom": "^19.3.0"
++  }
++}
++```
++
++```ts [rsbuild.config.ts]
++import { defineConfig } from "@rsbuild/core";
++import { pluginReact } from "@rsbuild/plugin-react";
++import { tanstackStart } from "@tanstack/react-start/plugin/rsbuild";
++import { nitro } from "nitro/rsbuild";
++
++export default defineConfig({
++  plugins: [
++    pluginReact(),
++    // Nitro serves the `ssr` environment (pages, server functions and server routes)
++    tanstackStart({ rsbuild: { installDevServerMiddleware: false } }),
++    nitro(),
++  ],
++});
++```
++
++```json [tsconfig.json]
++{
++  "extends": "nitro/tsconfig",
++  "compilerOptions": {
++    "baseUrl": ".",
++    "jsx": "react-jsx",
++    "paths": {
++      "~/*": ["./src/*"]
++    }
++  }
++}
++```
++
++```js [public/customScript.js]
++console.log("customScript.js loaded");
++```
++
++```ts [src/env.d.ts]
++/// <reference types="@rsbuild/core/types" />
++```
++
++```tsx [src/router.tsx]
++import { createRouter } from "@tanstack/react-router";
++import { routeTree } from "./routeTree.gen.ts";
++
++export function getRouter() {
++  const router = createRouter({
++    routeTree,
++    defaultPreload: "intent",
++    defaultErrorComponent: () => <div>Internal Server Error</div>,
++    defaultNotFoundComponent: () => <div>Not Found</div>,
++    scrollRestoration: true,
++  });
++  return router;
++}
++```
++
++```ts [src/routeTree.gen.ts]
++/* eslint-disable */
++
++// @ts-nocheck
++
++// noinspection JSUnusedGlobalSymbols
++
++// This file was automatically generated by TanStack Router.
++// You should NOT make any changes in this file as it will be overwritten.
++// Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
++
++import { Route as rootRouteImport } from './routes/__root'
++import { Route as IndexRouteImport } from './routes/index'
++import { Route as AboutRouteImport } from './routes/about'
++import { Route as ApiTestRouteImport } from './routes/api/test'
++
++const IndexRoute = IndexRouteImport.update({
++  id: '/',
++  path: '/',
++  getParentRoute: () => rootRouteImport,
++} as any)
++const AboutRoute = AboutRouteImport.update({
++  id: '/about',
++  path: '/about',
++  getParentRoute: () => rootRouteImport,
++} as any)
++const ApiTestRoute = ApiTestRouteImport.update({
++  id: '/api/test',
++  path: '/api/test',
++  getParentRoute: () => rootRouteImport,
++} as any)
++
++export interface FileRoutesByFullPath {
++  '/': typeof IndexRoute
++  '/about': typeof AboutRoute
++  '/api/test': typeof ApiTestRoute
++}
++export interface FileRoutesByTo {
++  '/': typeof IndexRoute
++  '/about': typeof AboutRoute
++  '/api/test': typeof ApiTestRoute
++}
++export interface FileRoutesById {
++  __root__: typeof rootRouteImport
++  '/': typeof IndexRoute
++  '/about': typeof AboutRoute
++  '/api/test': typeof ApiTestRoute
++}
++export interface FileRouteTypes {
++  fileRoutesByFullPath: FileRoutesByFullPath
++  fullPaths: '/' | '/about' | '/api/test'
++  fileRoutesByTo: FileRoutesByTo
++  to: '/' | '/about' | '/api/test'
++  id: '__root__' | '/' | '/about' | '/api/test'
++  fileRoutesById: FileRoutesById
++}
++export interface RootRouteChildren {
++  IndexRoute: typeof IndexRoute
++  AboutRoute: typeof AboutRoute
++  ApiTestRoute: typeof ApiTestRoute
++}
++
++declare module '@tanstack/react-router' {
++  interface FileRoutesByPath {
++    '/': {
++      id: '/'
++      path: '/'
++      fullPath: '/'
++      preLoaderRoute: typeof IndexRouteImport
++      parentRoute: typeof rootRouteImport
++    }
++    '/about': {
++      id: '/about'
++      path: '/about'
++      fullPath: '/about'
++      preLoaderRoute: typeof AboutRouteImport
++      parentRoute: typeof rootRouteImport
++    }
++    '/api/test': {
++      id: '/api/test'
++      path: '/api/test'
++      fullPath: '/api/test'
++      preLoaderRoute: typeof ApiTestRouteImport
++      parentRoute: typeof rootRouteImport
++    }
++  }
++}
++
++const rootRouteChildren: RootRouteChildren = {
++  IndexRoute: IndexRoute,
++  AboutRoute: AboutRoute,
++  ApiTestRoute: ApiTestRoute,
++}
++export const routeTree = rootRouteImport
++  ._addFileChildren(roo
+```
+
+**File**: `docs/4.examples/vite-ssr-tss-react.md` (modified, +5/-1)
+```diff
+@@ -82,6 +82,10 @@ export default defineConfig({
+ });
+ ```
+ 
++```js [public/customScript.js]
++console.log("customScript.js loaded");
++```
++
+ ```tsx [src/router.tsx]
+ import { createRouter } from "@tanstack/react-router";
+ import { routeTree } from "./routeTree.gen.ts";
+@@ -201,7 +205,7 @@ export const Route = createRootRoute({
+       { name: "viewport", content: "width=device-width, initial-scale=1" },
+     ],
+     links: [{ rel: "stylesheet", href: appCss }],
+-    scripts: [{ src: "/customScript.js", type: "text/javascript" }],
++    scripts: [{ src: `${import.meta.env.BASE_URL}customScript.js`, type: "text/javascript" }],
+   }),
+   errorComponent: () => <h1>500: Internal Server Error</h1>,
+   notFoundComponent: () => <h1>404: Page Not Found</h1>,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4965** (2026-10-30): chore(deps): update pnpm to v11.28.9 (@renovate[bot])
-- **PR #4963** (2026-10-29): fix(presets): skip empty route rule headers in platform configs (@pi0x)
-- **PR #4961** (2026-10-29): feat(prerender): support rou3 patterns in `prerender.ignore` (@pi0x)
-- **PR #4960** (2026-10-29): refactor!: remove deprecated v3 beta aliases (@pi0x)
-- **PR #4959** (2026-10-29): fix: make server entry `fetch` handler optional (@pi0x)
-- **PR #4958** (2026-10-29): feat(cli): add `nitro fetch` command (@pi0x)
+- **PR #5023** (2026-11-03): feat: shared `services` in core (@pi0x)
+- **PR #5022** (2026-11-03): fix(vite): use vite `base` as nitro `baseURL` and vice versa (@pi0x)
+- **PR #5020** (2026-11-03): fix(vite): return `no-store` 404 for missing hashed client assets (@pi0x)
+- **PR #5019** (2026-11-03): refactor: compile renderer template at build time in core (@pi0x)
+- **PR #5014** (2026-11-03): fix(dev): compile renderer template with workerd eval binding (@pi0x)
+- **PR #5013** (2026-11-03): refactor(vite): built-in `?assets` imports (@pi0x)
 
 ---
 
@@ -1041,37 +1821,38 @@ Co-authored-by: Pooya Parsa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(routing): clarify route rules and middleware are not a security boundary (#
+## X. node): exit when the server fails to listen (#5008)
 
 **RULE**:
-When implementing operations in `docs/1.docs/5.routing.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/presets/node/runtime/node-cluster.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a9a371c`: docs(routing): clarify route rules and middleware are not a security boundary (#4954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81dd71ed`: node): exit when the server fails to listen (#5008). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/1.docs/5.routing.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/presets/node/runtime/node-cluster.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-::warning
-Middleware are not a security boundary. Global and route-scoped middleware are **implicit** guards: they protect the URLs they happen to match, not the handlers themselves. A path check like `startsWith('/auth')` also matches `/authors`, and any route added outside the pattern is silently left unprotected. Use them for cross-cutting concerns (logging, context, defense in depth), and enforce access control explicitly in the handler. See [Authentication](#authentication).
-::
+const silent = !!clusterId && clusterId !== "1";
 
-Route rules let you attach behavior (redirects, proxying, caching, CORS, custom headers) to route patterns directly from your configuration, without writing handler code.
-::warning
-Route rules are not a security boundary. Like global middleware, they are **implicit** guards: they apply to whatever request URLs match a pattern, not to the handlers they are meant to protect. A rule can be overridden by a more specific one, and a handler stays unprotected when it is reachable from a path the pattern does not match (a new route, a renamed file, a `proxy` target, a different `baseURL`). Some rules are also applied by the platform edge and others only by the server runtime. Enforce access control explicitly 
+    ...(silent ? { silent: true } : {}),
+// srvx only sets `process.exitCode` on listen errors; the IPC channel and other handles would keep the worker alive.
+server.ready().catch((error) => {
+  if (!silent) {
+    console.error("[nitro] Failed to start server:", error);
+  }
+  process.exit(1);
+});
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Route rules let you attach behavior (redirects, proxying, caching, authentication, custom headers) to route patterns directly from your configuration, without writing handler code.
-There is no `auth` route rule: authentication needs executable logic, so it belongs in [middleware](#middleware). Use h3's [`basicAuth`](https://h3.dev/utils/security#basicauthopts) middleware for a single route:
-import { basicAuth } from "nitro/h3";
-  middl
+    ...(clusterId && clusterId !== "1" ? { silent: true } : {}),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a9a371c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81dd71ed` are properly handled with clean fallback behavior.
