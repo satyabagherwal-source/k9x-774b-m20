@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ecab5ce6",
+    "sourceVersion": "a7f0c300",
     "license": "Apache-2.0",
-    "contentHash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
-    "lastHarvestedAt": "2026-11-03T22:32:05.233Z",
+    "contentHash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
+    "lastHarvestedAt": "2026-11-04T08:28:37.003Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a7fed6ab",
+    "sourceVersion": "359b34c7",
     "license": "Apache-2.0",
-    "contentHash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
-    "lastHarvestedAt": "2026-11-04T07:26:05.636Z",
+    "contentHash": "ccb05e0d6b15ee0df5d430aac228e13465278fafa15f5025435dc6f723eddfc6",
+    "lastHarvestedAt": "2026-11-04T08:28:41.350Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "83109877",
+    "sourceVersion": "af90d05b",
     "license": "Apache-2.0",
-    "contentHash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
-    "lastHarvestedAt": "2026-11-03T10:59:53.782Z",
+    "contentHash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
+    "lastHarvestedAt": "2026-11-04T08:28:39.006Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "952e87ee",
+    "sourceVersion": "22f55f55",
     "license": "BSD-3-Clause",
-    "contentHash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
-    "lastHarvestedAt": "2026-10-31T05:36:06.677Z",
+    "contentHash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
+    "lastHarvestedAt": "2026-11-04T08:28:35.118Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "4edefad7",
+    "sourceVersion": "1e2e354e",
     "license": "Apache-2.0",
-    "contentHash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
-    "lastHarvestedAt": "2026-11-03T11:59:19.333Z",
+    "contentHash": "5b2917a2a5fe709047fa92750c50682e58372ee4e04e8ce5d63a8dd421397207",
+    "lastHarvestedAt": "2026-11-04T08:28:35.669Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

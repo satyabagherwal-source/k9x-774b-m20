@@ -7177,3 +7177,8 @@
 | `CYCLE-20261104-BZD3` | `2026-11-04T08:14:18.567Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6773` | Yes (`b6ac7fe9...`) |
 | `CYCLE-20261104-LT7N` | `2026-11-04T08:21:57.155Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6774` | Yes (`bcc8f927...`) |
 | `CYCLE-20261104-LUBF` | `2026-11-04T08:21:58.587Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6775` | Yes (`7e49c89c...`) |
+| `CYCLE-20261104-UCA4` | `2026-11-04T08:28:35.116Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6776` | Yes (`9e13bbe9...`) |
+| `CYCLE-20261104-UCPF` | `2026-11-04T08:28:35.667Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6777` | Yes (`5b2917a2...`) |
+| `CYCLE-20261104-UDQH` | `2026-11-04T08:28:37.001Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6778` | Yes (`adc4dd3c...`) |
+| `CYCLE-20261104-UFA3` | `2026-11-04T08:28:39.003Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6779` | Yes (`02ef7814...`) |
+| `CYCLE-20261104-UH38` | `2026-11-04T08:28:41.348Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6780` | Yes (`ccb05e0d...`) |

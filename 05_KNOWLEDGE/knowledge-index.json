@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T08:21:58.504Z",
+  "last_updated": "2026-11-04T08:28:41.273Z",
   "total_verified_learnings": 1205,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12241,8 +12241,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "4edefad7",
-      "content_hash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
+      "source_version": "1e2e354e",
+      "content_hash": "5b2917a2a5fe709047fa92750c50682e58372ee4e04e8ce5d63a8dd421397207",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -12300,6 +12300,11 @@
           "number": 6517,
           "title": "router: fix crash in addDownstreamSetCookie when no downstream connection (#4598",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6777,
+          "title": "build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12307,7 +12312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:59:19.210Z",
+      "verified_at": "2026-11-04T08:28:35.606Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15219,14 +15224,19 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "83109877",
-      "content_hash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
+      "source_version": "af90d05b",
+      "content_hash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
         {
           "number": 6502,
           "title": "Plan custom functions before execution (#2053)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6779,
+          "title": "Apply table alias column names when copying CTAS schemas (#2060)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15235,7 +15245,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:59:53.677Z",
+      "verified_at": "2026-11-04T08:28:38.940Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35310,8 +35320,8 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "952e87ee",
-      "content_hash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
+      "source_version": "22f55f55",
+      "content_hash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
@@ -35334,6 +35344,11 @@
           "number": 6087,
           "title": "migrate to btcsuite/btcd (#29858)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6776,
+          "title": "e2e: iOS release gate command, census and report; crash and render recovery (#29",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35341,7 +35356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:36:06.594Z",
+      "verified_at": "2026-11-04T08:28:35.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43933,8 +43948,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a7fed6ab",
-      "content_hash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
+      "source_version": "359b34c7",
+      "content_hash": "ccb05e0d6b15ee0df5d430aac228e13465278fafa15f5025435dc6f723eddfc6",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -44147,6 +44162,11 @@
           "number": 6749,
           "title": "Create logs directory before writing puzzle log",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6780,
+          "title": "Require NUC strategy bandit in /arc-purposal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44154,7 +44174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:26:05.493Z",
+      "verified_at": "2026-11-04T08:28:41.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70985,8 +71005,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "ecab5ce6",
-      "content_hash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
+      "source_version": "a7f0c300",
+      "content_hash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -71089,6 +71109,11 @@
           "number": 6600,
           "title": "Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6778,
+          "title": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71096,7 +71121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:32:05.106Z",
+      "verified_at": "2026-11-04T08:28:36.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -173594,6 +173619,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T08:21:58.482Z"
+    },
+    "rule-6776": {
+      "learning_id": "rule-6776",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6776,
+      "title": "e2e: iOS release gate command, census and report; crash and render recovery (#29",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "22f55f55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:28:35.056Z"
+    },
+    "rule-6777": {
+      "learning_id": "rule-6777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6777,
+      "title": "build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "1e2e354e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:28:35.606Z"
+    },
+    "rule-6778": {
+      "learning_id": "rule-6778",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6778,
+      "title": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "a7f0c300",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:28:36.939Z"
+    },
+    "rule-6779": {
+      "learning_id": "rule-6779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6779,
+      "title": "Apply table alias column names when copying CTAS schemas (#2060)",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "af90d05b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:28:38.940Z"
+    },
+    "rule-6780": {
+      "learning_id": "rule-6780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6780,
+      "title": "Require NUC strategy bandit in /arc-purposal",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "359b34c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T08:28:41.260Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T08:21:58.600Z",
+  "last_updated": "2026-11-04T08:28:41.356Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "cc6e7a2c07244a626ce07c687e21e5f5ab6c875aee81e89e315bafef4f9a00db",
-      "verified_at": "2026-11-03T22:32:05.244Z",
+      "content_hash": "adc4dd3c6a5ede02b9279302d8b8ad34492fb5c3a15bbd7a0545b46fbc5a5479",
+      "verified_at": "2026-11-04T08:28:37.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:32:05.244Z"
+      "last_updated": "2026-11-04T08:28:37.008Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "e12a2e26d80800b3b6859a9d0a9c2b6aae56901adc54f63943ff949aa513b004",
-      "verified_at": "2026-11-04T07:26:05.647Z",
+      "content_hash": "ccb05e0d6b15ee0df5d430aac228e13465278fafa15f5025435dc6f723eddfc6",
+      "verified_at": "2026-11-04T08:28:41.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:26:05.647Z"
+      "last_updated": "2026-11-04T08:28:41.355Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "64c421217583e331768d9c8362e120d55b8daa5b59513a9d8c19a1afb1d4ffc3",
-      "verified_at": "2026-11-03T10:59:53.791Z",
+      "content_hash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
+      "verified_at": "2026-11-04T08:28:39.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:59:53.791Z"
+      "last_updated": "2026-11-04T08:28:39.012Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
-      "verified_at": "2026-10-31T05:36:06.685Z",
+      "content_hash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
+      "verified_at": "2026-11-04T08:28:35.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:36:06.685Z"
+      "last_updated": "2026-11-04T08:28:35.124Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
-      "verified_at": "2026-11-03T11:59:19.342Z",
+      "content_hash": "5b2917a2a5fe709047fa92750c50682e58372ee4e04e8ce5d63a8dd421397207",
+      "verified_at": "2026-11-04T08:28:35.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:59:19.342Z"
+      "last_updated": "2026-11-04T08:28:35.675Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",

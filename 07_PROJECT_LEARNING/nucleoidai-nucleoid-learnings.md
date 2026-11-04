@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `a7fed6ab`  
+> **Source Version**: `359b34c7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:26:05.331Z  
+> **Timestamp**: 2026-11-04T08:28:40.853Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:26:04.260Z  
+> **Harvest Timestamp**: 2026-11-04T08:28:40.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -985,430 +985,241 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7fed6ab` (2026-11-04)
-**Commit Message**: NUC 77 List and Population Extreme Items
+### Incident Patch 1: `359b34c7` (2026-11-04)
+**Commit Message**: Require NUC strategy bandit in /arc-purposal
 
-Accepted. The independent evaluator accepted the proposal in continuous
-mode against 53f64b5 and its 895-case baseline, which it re-recorded
-byte-identically. The required token gate ran: 11 cases use fewer lexer
-tokens, 884 are unchanged and none uses more, with a minimum margin of
-18 tokens. The evaluator's own search of about 1,000 accepted spellings
-found none more compact than a recorded counterpart.
+ARC-requested NUCs now use the existing UCB1 proposal-strategy learner. Callers must supply or reuse a retained policy via --strategy-policy <absolute-json-path>. A missing or invalid policy pauses the invocation before drafting or the solver run, and a policy is never initialized or reset automatically.
 
-Hard criteria, checked independently and again on the integrated tree:
-cargo build --all-targets, warning-denied Clippy and cargo fmt --check
-pass; the full cargo test passes (89 suites, 2,307 passed, 0 failed,
-25 ignored) with all 2,298 accepted test identities present and 34
-added; all 895 pinned accepted and counterpart programs replay, and a
-10,722-program differential changes only calls that raised
-"<receiver>.maxBy is not a function" or its minBy counterpart.
+The arm is selected before the proposer is dispatched. A caller-owned usefulness rubric is pinned and passed to both NUC agents. The independent evaluator updates the policy checkpoint before the ARC run, and the caller persists the learning result and retained head.
 
-NUC 77 adds RECEIVER.maxBy(selector) and RECEIVER.minBy(selector) to the
-read-only list queries of lists and class instance lists. They return
-the item itself whose key is the largest or smallest, compare keys as >
-and < do, keep the first item on a tie, and give undefined for
+ARC outcomes (exact match, difference, exit status, timeout) and eventual acceptance are never learning rewards. Dataset-only runs need no policy.
 
-**File**: `README.md` (modified, +34/-0)
+Updated the arc-purposal agent, skill, ARC rules, CONTRIBUTING.md and arc/README.md.
+
+**File**: `.claude/agents/arc-purposal.agent.md` (modified, +16/-2)
 ```diff
-@@ -1609,6 +1609,40 @@ assert: [amounts, min of amounts], [[15, 20, 45], 15]
-   `max of Order.map(order -> order.amount)`. See the
-   [root contract](nucleoid.spec.md#noun-list-queries-with-of).
- 
-+## List and population extreme items
-+
-+**Extreme items keep the leading and lowest bids live as bids change**
-+
-+```nuc
-+class Bid(bidder, amount):
-+    this.bidder = bidder
-+    this.amount = amount
-+leader = Bid.maxBy(bid -> bid.amount)
-+lowest = Bid.minBy(bid -> bid.amount)
-+assert(leader, null)
-+assert(lowest, null)
-+ada = Bid("ada", 120)
-+Bid("bo", 90)
-+Bid("cy", 120)
-+Bid("di", 90)
-+assert(leader.bidder, "ada")
-+assert(lowest.bidder, "bo")
-+ada.amount = 60
-+Bid("ed", 150)
-+assert(leader.bidder, "ed")
-+assert(lowest.bidder, "ada")
-+```
-+
-+- [NUC 77](docs/nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)`
-+  to lists and class instance lists. `Bid.maxBy(bid -> bid.amount)` is the
-+  bid with the largest amount, the instance itself, so `leader.bidder` names
-+  the bidder. Before the first bid `leader` and `lowest` are `null`, and on a
-+  tie the earlier bid wins: `cy` and `di` do not displace `ada` and `bo`.
-+- `leader` and `lowest` are live declarations: they re-evaluate when a bid is
-+  created or an amount changes. Keys compare as `>` and `<` compare them, so
-+  numbers compare as numbers, strings as text and dates by time. See the
-+  [root contract](nucleoid.spec.md#list-and-population-extreme-items).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
-```diff
-@@ -603,3 +603,11 @@
- {"id":"spec-0603","description":"Nucleoid explains noun queries in their written form","code":"prices = [4, 9, 9]\ntop = max of prices\nwords = [\"ab\", \"c\", \"ab\"]\nwidth = (mode of words).length\nsquared = (sum of prices) ** 2\nassert: (why top)[0].rule, \"top = max of prices\"\nassert: (why top)[0].from, [\"prices\"]\nassert: (why width)[0].rule, \"width = (mode of words).length\"\nassert: (why squared)[0].rule, \"squared = (sum of prices)**2\"\nassert: [top, width, squared], [9, 2, 484]","return":null}
- {"id":"spec-0604","description":"Nucleoid rolls back failed noun query updates","code":"def checked(zone):\n    if zone == \"void\":\n        throw \"BAD_ZONE\"\n    return zone\nzones = [\"a\", \"b\", \"b\"]\nbusiest = mode of zones.map(checked)\nassert: busiest, \"b\"\nfailure = \"\"\ntry:\n    zones.shift()\n    zones.push(\"void\")\ncatch error:\n    failure = error\nassert: failure, \"BAD_ZONE\"\nassert: zones, [\"a\", \"b\", \"b\"]\nassert: busiest, \"b\"\nzones.push(\"a\")\nzones.push(\"a\")\nassert: busiest, \"a\"","return":null}
- {"id":"spec-0605","description":"Nucleoid reads noun queries of snapshots versions and other receivers","code":"history = [1]\nhistory.push(4)\nfirst = sum of history@first\nfrozen = sum of history.value\nhistory.push(5)\nassert: [first, frozen, sum of history], [1, 5, 10]\nnothing = null\nassert: sum of nothing, null\nassert: mode of [], null\nassert: [max of [], min of []], [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]\nclass Shelf:\n    def mode(): return 9\nshelf = Shelf()\nassert: mode of shelf, 9\nassert: mode of Shelf, shelf\nrecord = {sum: () -> 5}\nassert: sum of record, 5\nfailure = \"\"\ntry:\n    sum of \"abc\"\ncatch error:\n    failure = error\nassert: failure, TypeError(\"abc.sum is not a function\")","return":null}
-+{"id":"spec-0606","description":"Nucleoid finds the extreme items of lists with maxBy and minBy","code":"readings = [{at: 9, c: 18}, {at: 12, c: 24}, {at: 15, c: 24}, {at: 18, c: 9}]\nwarmest = readings.maxBy(reading -> reading.c)\ncoldest = readings.minBy(reading -> reading.c)\nassert: warmest.at, 12\nassert: coldest.at, 18\nassert: warmest == readings[1], true\nreadings.push({at: 21, c: 30})\nreadings.shift()\nassert: warmest.at, 21\nassert: coldest.at, 18\nreadings.pop()\nreadings.pop()\nassert: warmest.at, 12\nassert: coldest.at, 12\nreadings = []\nassert: warmest, null\nassert: coldest, null\ntrip = {legs: [{to: \"oslo\", km: 410, mins: 300}, {to: \"voss\", km: 110, mins: 75}]}\nfastest = trip.legs.maxBy(leg -> leg.km / leg.mins)\nshortest = trip.legs.minBy(leg -> leg.km)\nassert: fastest.to, \"voss\"\nassert: shortest.to, \"voss\"\ntrip.legs.push({to: \"lom\", km: 60, mins: 90})\ntrip.legs.push({to: \"alta\", km: 900, mins: 480})\ntrip.legs.push({to: \"bodo\", km: 300, mins: 400})\nassert: fastest.to, \"alta\"\nassert: shortest.to, \"lom\"","return":null}
-+{"id":"spec-0607","description":"Nucleoid finds the extreme instances of class populations with maxBy and minBy","code":"class Bid(bidder, amount, open):\n    this.bidder = bidder\n    this.amount = amount\n    this.open = open\nbest = Bid.maxBy(bid -> bid.amount)\ncheapest = Bid.minBy(bid -> bid.amount)\nassert: best, null\nassert: cheapest, null\nada = Bid(\"ada\", 120, true)\nbo = Bid(\"bo\", 90, false)\ncy = Bid(\"cy\", 150, true)\nleading = Bid.filter(bid -> bid.open).minBy(bid -> bid.amount)\nrecent = Bid[-2:].maxBy(bid -> bid.amount)\nassert: best, cy\nassert: cheapest, bo\nassert: leading, ada\nassert: recent, cy\nbo.amount = 200\nada.open = false\nassert: best, bo\nassert: cheapest, ada\nassert: leading, cy\nassert: recent, bo\ndelete cy.amount\nassert: best, null\nassert: leading, null\ndelete cy.open\ndelete cy.bidder\ndelete cy\nassert: best, bo\nassert: cheapest, ada\nassert: leading, null\nassert: recent, bo","return":null}
-+{"id":"spec-0608","description":"Nucleoid compares maxBy and minBy keys as the comparison operators do","code":"class Job(name, due, kg):\n    this.name = name\n    this.due = due\n    this.kg = kg\nalpha = Job.minBy(job -> job.name)\nsoonest = Job.minBy(job -> job.due)\nlatest = Job.maxBy(job -> job.due)\nheaviest = Job.maxBy(job -> job.kg)\npress = Job(\"press\", new Date(\"2026-12-01\"), 40)\ncoat = Job(\"Coat\", new Date(\"2026-11-20\"), \"9\")\nweld = Job(\"weld\", new Date(\"2026-11-28\"), 40)\nassert: alpha, coat\nassert: soonest, coat\nassert: latest, press\nassert: heaviest, press\ncoat.kg = \"75\"\nweld.due = new Date(\"2026-11-09\")\nJob(\"Anvil\", new Date(\"2026-12-24\"), \"100\")\nassert: alpha.name, \"Anvil\"\nassert: soonest, weld\nassert: latest.name, \"Anvil\"\nassert: heaviest, coat\npress.kg = 0 / 0\nassert: heaviest, null\npress.kg = 300\ndelete weld.due\nassert: heaviest, press\nassert: soonest, null\nassert: latest, null","return":null}
-+{"id":"spec-0609","description":"Nucleoid calls the extreme item selector once per item with only the item","code":"seen = []\ndef weigh(parcel, position):\n    
-```
-
-**File**: `dataset/nucleoid.synth.52.jsonl` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+{"id":"synth-52-0001","description":"maxBy returns the item with the largest key, not the key itself","code":"bids = [{who: \"ada\", amount: 120}, {who: \"bo\", amount: 150}, {who: \"cy\", amount: 90}]\nleader = bids.maxBy(bid -> bid.amount)\nleader.who","return":"\"bo\""}
-+{"id":"synth-52-0002","description":"A live declaration keeps the cheapest open offer as offers change","code":"class Offer(seller, price, open):\n    this.seller = seller\n    this.price = price\n    this.open = open\nbest = Offer.filter(offer -> offer.open).minBy(offer -> offer.price)\nOffer(\"ada\", 40, true)\nlow = Offer(\"bo\", 25, false)\nOffer(\"cy\", 30, true)\nlow.open = true\nbest.seller","return":"\"bo\""}
-+{"id":"synth-52-0003","description":"On a tie maxBy and minBy keep the item that comes first","code":"scores = [{name: \"ana\", points: 9}, {name: \"ben\", points: 3}, {name: \"cy\", points: 9}, {name: \"dan\", points: 3}]\n[scores.maxBy(score -> score.points).name, scores.minBy(score -> score.points).name]","return":"[\"ana\",\"ben\"]"}
-+{"id":"synth-52-0004","description":"Two strings compare as text, so minBy finds the alphabetically first name","code":"names = [\"mia\", \"Ada\", \"zoe\", \"bo\"]\nfirst = names.minBy(name -> name)\nlast = names.maxBy(name -> name)\nnames.push(\"Abe\")\n[first, last]","return":"[\"Abe\",\"zoe\"]"}
-+{"id":"synth-52-0005","description":"Dates compare by time, so maxBy keeps the latest event live","code":"class Event(name, at):\n    this.name = name\n    this.at = at\nlatest = Event.maxBy(event -> event.at)\nEvent(\"deploy\", new Date(\"2026-11-01\"))\nEvent(\"review\", new Date(\"2026-11-03\"))\nEvent(\"standup\", new Date(\"2026-11-02\"))\nlatest.name","return":"\"review\""}
-+{"id":"synth-52-0006","description":"A class-level rule keeps the nearest charger of every robot","code":"class Charger(name, x):\n    this.name = name\n    this.x = x\nclass Robot(name, x):\n    this.name = name\n    this.x = x\n$Robot.dock = Charger.minBy(charger -> Math.abs(charger.x - $Robot.x))\nCharger(\"west\", 0)\nCharger(\"east\", 10)\nrex = Robot(\"rex\", 7)\nivy = Robot(\"ivy\", 2)\nrex.x = 3\n[rex.dock.name, ivy.dock.name]","return":"[\"west\",\"west\"]"}
-+{"id":"synth-52-0007","description":"A missing key makes the extreme item unknown until the key is set","code":"class Bid(amount): this.amount = amount\nada = Bid(120)\nbo = Bid(90)\nleader = Bid.maxBy(bid -> bid.amount)\ndelete bo.amount\nunknown := leader\nbo.amount = 200\n[unknown, leader == bo]","return":"[null,true]"}
-+{"id":"synth-52-0008","description":"maxBy requires a selector function, even on an empty list","code":"failure = \"\"\ntry:\n    [].maxBy(\"amount\")\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: maxBy expects a function\""}
-```
-
-**File**: `docs/README.md` (modified, +57/-1)
-```diff
-@@ -1859,7 +1859,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), and `mode` ([NUC 75](nuc-0075.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), and `maxBy` and `minBy` ([NUC 77](nuc-0077.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -2812,6 +2812,60 @@ largest
-   [noun list queries with of](../nucleoid.spec.md#noun-list-queries-with-of)
-   section.
- 
-+### List and population extreme items
-+
-+```
-+scores = [{name: "ana", points: 9}, {name: "ben", points: 3}, {name: "cy", points: 9}, {name: "dan", points: 3}]
-+best = scores.maxBy(score -> score.points)
-+worst = scores.minBy(score -> score.points)
-+class Bid(who, amount):
-+    this.who = who
-+    this.amount = amount
-+Bid("ada", 40)
-+top = Bid.maxBy(bid -> bid.amount)
-+assert(best.name, "ana")
-+assert(worst.name, "ben")
-+assert(top.who, "ada")
-+scores.push({name: "eve", points: 1})
-+scores.shift()
-+Bid("bo", 65)
-+Bid("cy", 50)
-+assert(best.name, "cy")
-+assert(worst.name, "eve")
-+assert(top.who, "bo")
-+scores = []
-+assert(best, null)
-+top.who
-+```
-+
-+- This is the complete
-+  `Nucleoid finds the extreme items of lists and populations with maxBy and minBy`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `"bo"`.
-+- [NUC 77](nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)` to lists
-+  and class instance lists. The result is the first item whose selected key
-+  is the largest, or the smallest, and it is the item itself. On a tie the
-+  item that comes first wins, so `best` is `ana` beside `cy` and `worst` is
-+  `ben` beside `dan`. An empty list or class gives undefined, which a
-+  declaration stores as `null`.
-+- Keys compare as `>` and `<` compare them: two strings as text and every
-+  other pair as numbers, so dates compare by time. A key that cannot be
-+  compared with itself, such as undefined, NaN or an object, makes the result
-+  undefined. For keys that are not strings, the key of `xs.maxBy(f)` converts
-+  to `xs.max(f)` and the key of `xs.minBy(f)` to `xs.min(f)`.
-+- The selector is required and is called once per item, in order, with only
-+  the item. A missing selector, or one that is not a function, including
-+  `null`, raises `TypeError("maxBy expects a function")` or
-+  `TypeError("minBy expects a function")`, even on an empty receiver.
-+- Extreme items are read-only and live: a declaration follows the list or
-+  population, the arguments and what the selector reads, in class-level rules
-+  too. On a class name, `Name.maxBy(...)` is the population query even when
-+  the class declares an instance method `maxBy`; instances keep calling the
-+  method.
-+- The authoritative contract is the
-+  [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
-+  section.
-+
+@@ -1,10 +1,11 @@
+ ---
+ name: arc-purposal
+-description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule with the exact-match result, and document the puzzle's progress record in `arc/docs/`.
++description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
+ include-custom-instructions: true
  ---
  
- ## 12. Reasoning Operations
-@@ -3058,6 +3112,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | A supplied `distinct` selector that is not a function, including `null`, even on an empty receiver | `distinct expects a function` |
- | Missing or non-function `count` predicate, including `null`, even on an empty receiver | `count expects a fu
+-You coordinate one ARC training puzzle, given its ID and an optional hint;
++You coordinate one ARC training puzzle, given its ID, an optional
++`--strategy-policy <absolute-json-path>`, and an optional trailing hint;
+ without an ID, select the skill's
+ [default puzzle](../skills/arc-purposal/SKILL.md#select-the-default-puzzle).
+ Follow `.claude/CLAUDE.md`, the
+@@ -23,6 +24,16 @@ Follow `.claude/CLAUDE.md`, the
+   and return `agent_launch_unavailable` with the puzzle ID and the next step.
+ - Handle at most one NUC per invocation, as a single-proposal request, and hold
+   its outcome until the solver run.
++- Every requested NUC requires the
++  [existing strategy learner](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
++  Reuse the latest retained policy, or require an explicitly supplied policy
++  before drafting; never silently initialize/reset it or proceed unconfigured.
++  Actually select and pin an arm and caller-owned rubric before launching the
++  proposer, and require strategy-consumption evidence in its handoff.
++- Give the unchanged scoring/attribution inputs to the independent evaluator
++  and require its actual learner update before the ARC run. Persist the
++  verified new checkpoint or legitimate skip and retained head in the session
++  learning result. Learner errors pause the invocation; no NUC means no trial.
+ - Pass an optional `--hint` unchanged to every `arc-dataset` run and to no
+   other agent, under the skill's
+   [hint rule](../skills/arc-purposal/SKILL.md#pass-the-hint). It is a
+@@ -43,6 +54,9 @@ Follow `.claude/CLAUDE.md`, the
+ 
+ - Use training pairs only. Never read the puzzle's `test` entries, and never
+   give the run's output, which shows the expected test grid, to another agent.
++- Learning uses only the existing independently verified NUC advisory reward.
++  Never train from ARC grids, exact matches, difference scores, exit statuses,
++  timeouts, or eventual acceptance; never revise the saved reward after a run.
+ - Run `bun start <puzzle-id>` once, after the dataset and any NUC candidate are
+   frozen. Exit status `0` is an exact match; any other status is not.
+ - Allow the run up to 30 minutes and wait for it inside the invocation; never
 ```
 
-**File**: `docs/examples.md` (modified, +40/-0)
+**File**: `.claude/rules/arc.instructions.md` (modified, +10/-0)
 ```diff
-@@ -3153,6 +3153,46 @@ widest
-   queries and adds `1`. See [NUC 75](nuc-0075.md) and the
-   [root contract](../nucleoid.spec.md#noun-list-queries-with-of).
+@@ -20,6 +20,16 @@ and, when the solver would need a change, suggests that change at the end of
+ the process.
+ Agent-configuration changes alone do not launch a solver run.
  
-+## List and population extreme items
++Every ARC-requested NUC uses the existing proposal-strategy UCB1 bandit under
++the [arc-purposal skill](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
++Require a retained policy head or explicit `--strategy-policy <absolute-json-path>`
++before drafting; never initialize/reset history automatically. Select before
++dispatch, preserve the pinned rubric and attribution through both NUC agents,
++and persist the independent evaluator's checkpoint or legitimate unscored skip
++before the ARC run. Missing/invalid learning state pauses the NUC; a
++dataset-only invocation needs no policy. ARC results and eventual acceptance
++are never learning rewards and do not change the existing NUC reward formula.
 +
-+**Extreme items keep the nearest free charger of every robot live**
-+
-+```nuc
-+class Charger(name, x, free):
-+    this.name = name
-+    this.x = x
-+    this.free = free
-+class Robot(name, x, battery):
-+    this.name = name
-+    this.x = x
-+    this.battery = battery
-+$Robot.dock = Charger.filter(charger -> charger.free).minBy(charger -> Math.abs(charger.x - $Robot.x))
-+neediest = Robot.minBy(robot -> robot.battery)
-+north = Charger("north", 0, true)
-+south = Charger("south", 10, true)
-+rex = Robot("rex", 2, 80)
-+ivy = Robot("ivy", 9, 35)
-+assert: [rex.dock, ivy.dock, neediest], [north, south, ivy]
-+north.free = false
-+ivy.battery = 90
-+assert: [rex.dock, neediest], [south, rex]
-+Charger("mid", 4, true)
-+rex.x = 6
-+assert: [rex.dock.name, ivy.dock.name], ["mid", "south"]
-+neediest.dock.name
-+# return: "mid"
-+```
-+
-+- A class-level rule keeps each robot's dock, the free charger nearest to it.
-+  `$Robot` inside the selector is the robot the rule is evaluated for, so
-+  every robot measures its own distances, and `neediest` keeps the robot with
-+  the lowest battery.
-+- Taking `north` out of service moves `rex` to `south`. A new charger at `4`
-+  becomes the dock of `rex` and stays so when `rex` moves to `6`, while `ivy`
-+  keeps `south`, and `neediest.dock` follows both rules.
-+- See [NUC 77](nuc-0077.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-extreme-items).
-+
- ## Copyright
+ ## No automated ARC tests
  
- Copyright 2020 Nucleoid
+ Do not add tests for the ARC project. Remove existing ARC-related automated
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +127/-11)
 ```diff
-@@ -103,6 +103,7 @@ Created: 31-Jul-2026
- | [71](nuc-0071.md) | List and Population Distinct Values | Accepted |
- | [73](nuc-0073.md) | List and Population Predicate Counts | Accepted |
- | [75](nuc-0075.md) | List and Population Modes | Accepted |
-+| [77](nuc-0077.md) | List and Population Extreme Items | Accepted |
+@@ -1,14 +1,16 @@
+ ---
+ name: arc-purposal
+-description: Run one ARC training puzzle through its instruction dataset, any Nucleoid enhancement that dataset requires, and one exact-match solver run, then decide the enhancement's outcome under the automatic acceptance rule and document the puzzle's progress record in arc/docs.
+-argument-hint: [<puzzle-id>] [--hint <text>]
++description: Run one ARC training puzzle through its instruction dataset, any required Nucleoid enhancement with the existing NUC strategy bandit, and one exact-match solver run, then decide the enhancement's outcome and document the puzzle's progress.
++argument-hint: "[<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]"
+ ---
  
- ### Reasoning enhancement
+ # Running an ARC puzzle proposal
  
-@@ -207,6 +208,7 @@ Created: 31-Jul-2026
- | [74](nuc-0074.md) | Final Rest Parameters | Standards Track | Runtime features | Accepted |
- | [75](nuc-0075.md) | List and Population Modes | Standards Track | Utility enhancement | Accepted |
- | [76](nuc-0076.md) | Opt-In C-Style Comments | Standards Track | Language compatibility | Accepted |
-+| [77](nuc-0077.md) | List and Population Extreme Items | Standards Track | Utility enhancement | Accepted |
+-`/arc-purposal [<puzzle-id>] [--hint <text>]` takes one training puzzle through
+-its instruction dataset, any Nucleoid enhancement that dataset requires, one
+-solver run, the outcome, and its progress record in `arc/docs/`. Follow
++`/arc-purposal [<puzzle-id>] [--strategy-policy <absolute-json-path>] [--hint <text>]`
++takes one training puzzle through its instruction dataset, any Nucleoid
++enhancement that dataset requires, one solver run, the outcome, and its
++progress record in `arc/docs/`. A requested enhancement uses the existing
++[NUC strategy bandit](#learn-the-nuc-proposal-strategy). Follow
+ `.claude/CLAUDE.md`, the
+ [ARC instructions](../../rules/arc.instructions.md), and the
+ [agent profile](../../agents/arc-purposal.agent.md).
+@@ -108,6 +110,106 @@ status:
+ - `nucleoid_enhancement_required`: prepare the requested enhancement.
+ - `blocked`, including an existing dataset: stop and report it, without a run.
  
- ## Copyright
- 
++## Learn the NUC proposal strategy
++
++Every ARC-requested NUC uses the existing category-conditioned UCB1 learner
++under the [NUC caller protocol](../nuc-proposal/SKILL.md#select-and-consume-a-proposal-strategy)
++and [command/schema contract](../../../CONTRIBUTING.md#reward-driven-proposal-strategies).
++Do not add another bandit, reward formula, strategy registry, or ARC learner.
++The ordered arms remain `reuse_first` and `evidence_first`; learning chooses
++the proposal approach, never the feature, category, puzzle, or solver settings.
++
++**Policy input.** Reuse the caller's latest retained policy path and raw blob
++pin, including after resuming from its saved session learning result. When
++there is no retained head, require `--strategy-policy <absolute-json-path>`
++pointing to an explicitly supplied empty-history genesis or latest checkpoint
++with all its immutable ancestors and evidence. Use the exact genesis schema
++in the command contract; never create a genesis automatically. The file must
++be an existing absolute external `.json` path, outside the primary checkout
++and candidate worktree. Pin supplied raw bytes with
++`git hash-object --no-filters` before selection.
++
++Place `--strategy-policy` before any trailing `--hint`. It is a caller-only
++input, not part of the dataset hint or solver arguments. If a head is already
++retained, an explicitly supplied policy must match its path and pin; never
++fork an older checkpoint or silently replace/reset history. A missing policy
++blocks the requested enhancement with `strategy_policy_required`, before
++drafting or a solver run. Invalid, changed, stale, or incomplete state is a
++process blocker, not a fallback to unconfigured learning.
++
++Without a requested NUC, report learning as `not_applicable`: do not select an
++arm, create a trial, or update a checkpoint. A dataset-only run needs no policy.
++
++**Before drafting.** After fixing the NUC path, confirmed category, single
++mode, runtime applicability, accepted revision and immutable baseline:
++
++- Allocate a unique trial ID and fresh external session `.json` paths for the
++  selection, rubric, assessment, evaluator report, checkpoint, and learning
++  result. All artifacts are create-once; retain them and every policy ancestor.
++- Freeze and pin a caller-owned usefulness rubric under the
++  [existing scoring schema](../../../CONTRIBUTING.md#advisory-usefulnesscost-scoring).
++  Bind its criterion ID, NUC path and accepted baseline. Derive the observable
++  language-level benefit from the dataset handoff's `requested_change` and
++  unsupported operation, not from a proposed implementation or ARC outcome.
++  Use general-purpose Nucleoid evidence, never ARC grids, puzzle fixtures,
++  held-out answers, or new ARC automated tests.
++- Set `NUC_PROPOSAL`, `NUC_PROPOSAL_BASELINE`, `NUC_PROPOSAL_MODE=single`,
++  confirmed runtime inputs when applicable, `NUC_STRATEGY_CATEGORY`,
++  `NUC_STRATEGY_TRIAL_ID`, `NUC_STRATEGY_POLICY`, its original
++  `NUC_STRATEGY_POLICY_REVISION`, and fresh `NUC_STRATEGY_SELECTION`.
++  Preserve `NUC_PROPOSAL_RUBRIC` and `NUC_PROPOSAL_RUBRIC_REVISION` through both
++  handoffs. Unset old selection pins, checkpoint outputs, assessments and
++  report pins; never rely on environment state from another tool process.
++
++Actually run the sele
 ```
 
-**File**: `docs/nuc-0077.md` (added, +732/-0)
+**File**: `CONTRIBUTING.md` (modified, +16/-0)
 ```diff
-@@ -0,0 +1,732 @@
-+# NUC 77 -- List and Population Extreme Items
+@@ -607,6 +607,22 @@ exploration, reward-dependent choice, persistence and provenance; they do not
+ measure live-learning success or improved proposal quality. This bandit does
+ not implement LLM-weight training or full multi-step reinforcement learning.
+ 
++**ARC caller integration.** `/arc-purposal` requires this existing learner
++when its dataset handoff requests a NUC; generic NUC invocations remain opt-in.
++Supply `--strategy-policy <absolute-json-path>` before any trailing `--hint`,
++or reuse the caller's latest retained session head. For a new chain, explicitly
++supply the genesis schema above; a resumed chain needs its latest checkpoint
++and all ancestors/evidence. A genesis is never created or reset automatically.
++Missing/invalid policy state pauses before NUC drafting or the solver run.
++A dataset-only invocation has no bandit trial.
 +
-+```
-+NUC: 77
-+Title: List and Population Extreme Items
-+Author: Claude <noreply@anthropic.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 03-Nov-2026
-+Requires: 8, 18, 45, 57, 59, 60, 61, 62, 68, 69
-+```
++The [ARC caller](.claude/skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy)
++freezes a language-level usefulness rubric and selects before dispatching the
++proposer. Its independent evaluator scores and updates before the ARC run,
++using the unchanged reward contract. The caller persists the returned head
++and all provenance artifacts for the next separately authorized NUC. ARC
++answers, scores, timeouts and eventual acceptance never become rewards.
 +
-+## Abstract
-+
-+- Lists and class instance lists gain the read-only queries `maxBy` and
-+  `minBy`. `RECEIVER.maxBy(selector)` returns the first item whose
-+  `selector(item)` is the largest, and `RECEIVER.minBy(selector)` the first
-+  item whose `selector(item)` is the smallest.
-+- The result is the item itself, unchanged: an object or instance stays the
-+  same object, and the selected key is not returned.
-+- Keys compare as `>` and `<` compare them: two strings as text, and every
-+  other pair as numbers, so dates compare by time. On a tie the item that
-+  comes first wins. An empty receiver gives undefined, which a declaration
-+  stores as `null`, and so does any key that cannot be compared with itself,
-+  such as undefined, NaN or an object.
-+- The selector is required and is called once per item, in order, with only
-+  the item, as [NUC 69](nuc-0069.md)'s `max` calls its selector. A missing
-+  selector, or one that is not a function, raises
-+  `TypeError("maxBy expects a function")` or
-+  `TypeError("minBy expects a function")`.
-+- `maxBy` and `minBy` follow [NUC 61](nuc-0061.md)'s shared query rules
-+  beside `sum`, `max`, `min`, `distinct`, `count` and `mode`. They accept
-+  every receiver the list queries accept, read the receiver before their
-+  arguments, never write it, and stay live in declarations and class-level
-+  rules.
-+- At the accepted revision these calls raise
-+  `TypeError("<receiver>.maxBy is not a function")` and its `minBy`
-+  counterpart. No syntax, keyword, token, error type or public Rust API is
-+  added. The authoritative contract is
-+  [List and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items).
-+- **Outcome: Accepted.** The independent evaluation and the caller's
-+  integrated-tree checks passed all three hard criteria. The independent
-+  evaluator decided Accepted, and every required token comparison passed;
-+  no policy check failed.
-+
-+## Motivation
-+
-+- World models select objects by an extreme property: the leading bid, the
-+  nearest free charger of each robot, the latest event, the heaviest parcel,
-+  the cheapest open offer. The answer is an object, not a number, and it has
-+  to stay true while the model changes.
-+- [NUC 69](nuc-0069.md) gives the extreme value, `Bid.max(bid -> bid.amount)`,
-+  and both NUC 69 and [NUC 75](nuc-0075.md) list `maxBy` and `minBy` as not
-+  added. At the accepted revision the item takes a longer spelling, and each
-+  has a defect:
-+  - `top = Bid.reduce((a, b) -> b.amount > a.amount ? b : a)` is 24 lexer
-+    tokens where `top = Bid.maxBy(bid -> bid.amount)` is 12. It writes and
-+    runs the key twice per step, and a NaN key decides by position: in first
-+    place it wins against every later item, and later it is ignored.
-+  - `top = Bid.find(bid -> bid.amount == Bid.max(each -> each.amount))` is 23
-+    tokens. It runs `max` again for every item it tests, so it is quadratic,
-+    and `max` compares numbers only, so it cannot select by a name.
-+  - `top = Bid.find(b -> all c in Bid: b.amount >= c.amount)`, with a
-+    [NUC 62](nuc-0062.md) quantifier, is 21 tokens and compares items in
-+    pairs, every pair in the worst case.
-+  - The helper `def hi xs key => xs[xs.map(key).indexOf(xs.max(key))]` is 24
-+    tokens on its own. It runs the key twice per item, compares numbers only,
-+    and picks a wrong item when a key is unknown: the first item whose key is
-+    missing or `null` when a key is undefined, and the last item when a key
-+    is NaN.
-+- The duplication grows with the key. The class-level rule
-+  `$Robot.dock = Charger.minBy(charger -> Math.abs(charger.x - $Robot.x))` is
-+  23 tokens, and its `reduce` spelling is 44.
-+- Kotlin's `maxBy` and `minBy`, C#'s `MaxBy` and `MinBy`, lodash's `_.maxBy`
-+  and `_.minBy`, Ruby's `max_by` and `min_by`, and Python's `max(xs, key=f)`
-+  and `min(xs, key=f)` name the operation. All of them return the item and
-+  keep the first of equal keys. LLM-written code such as
-+  `orders.maxBy(o => o.total)` raises
-+  `TypeError("orders.maxBy is not a function")` at the accepted revision.
-+
-+## Rationale
-+
-+- **Category and mode.** The caller selected the Utility enhancement
-+  category by one uniform draw over the five eligible registry categories,
-+  index 2 with probability 1/5 and no redraw, in continuous mode, so the
-+  token non-regression gate applies. Runtime applicability does not apply to
-+  this category. Each new case is paired with the most compact accepted-syntax
-+  counterpart found, recorded in the evaluation baseline.
-+- **Two more shared queries.** `maxBy` and `minBy` are operations of the
-+  read-only list query that serves `map`, `filter`, `r
+ ## Declarative Runtime Environment
+ 
+ Nucleoid records declarative statements in a dependency graph and re-evaluates
 ```
 
-**File**: `nucleoid.spec.md` (modified, +315/-0)
+**File**: `arc/README.md` (modified, +20/-5)
 ```diff
-@@ -3437,6 +3437,75 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid reads noun queries of snapshots versions and other receivers`
-   specify the executable behavior.
+@@ -500,7 +500,8 @@ by the same rules.
  
-+## List and population extreme items
-+
-+- [NUC 77](docs/nuc-0077.md) adds the read-only list queries `maxBy` and
-+  `minBy` to lists and class instance lists. No syntax, keyword or error type
-+  is added.
-+- `RECEIVER.maxBy(selector)` returns the first item of the receiver whose
-+  `selector(item)` is the largest, and `RECEIVER.minBy(selector)` the first
-+  item whose `selector(item)` is the smallest. The result is the item itself,
-+  unchanged: an object or instance stays the same object, and the selected
-+  key is not returned.
-+- Keys compare as `>` and `<` compare them: two strings as text, and every
-+  other pair as numbers with the numeric conversion of the comparisons, so
-+  dates compare by time and `true`, `false`, `null`, empty lists and one-item
-+  lists count as numbers. `["10", "9"].maxBy(code -> code)` is `"9"`, while
-+  `["10", "9"].max()` is `10`.
-+- The items are scanned in receiver order. The first item is kept, and a
-+  later item replaces the kept one only when its key is greater for `maxBy`,
-+  or smaller for `minBy`, so on a tie the item that comes first wins. A
-+  string that is not numeric is neither greater nor smaller than a number, so
-+  where such strings and other keys mix, the kept item stays.
-+- A key that cannot be compared with itself, one for which `key >= key` is
-+  `false`, makes the result undefined, which a declaration stores as `null`:
-+  undefined, NaN, objects, instances, classes, functions, regular expressions
-+  and lists that convert to NaN. Every item is still visited. An empty
-+  receiver gives undefined.
-+- When every key can be compared with itself, `xs.maxBy(f)` is the item that
-+  `xs.reduce((best, item) -> f(item) > f(best) ? item : best)` returns, and
-+  `xs.minBy(f)` the item that the same `reduce` with `<` returns, except that
-+  `f` runs once per item.
-+- When the keys are all strings, or none is a string, `xs.maxBy(f)` is the
-+  item that `xs.find(x -> all y in xs: f(x) >= f(y))` finds, and undefined
-+  where it finds none; `xs.minBy(f)` corresponds to the same `find` with
-+  `<=`.
-+- For keys that are not strings and a receiver that is not empty,
-+  `xs.maxBy(f)` is undefined exactly when `xs.max(f)` is undefined or NaN,
-+  and otherwise it is the first item whose key converts to `xs.max(f)`;
-+  `minBy` and `min` correspond the same way.
-+- A `null` key compares as `0`, as in `null > -1`. Reads inside a selector
-+  follow the existing rules, so a selector that reads a `null` binding or
-+  property settles a declaration to `null`.
-+- The receiver is a list, however it is reached, or a class's instance list in
-+  population order, named by the class or by a variable that holds the class.
-+  On a class name, `maxBy` and `minBy` are population queries even when the
-+  class declares instance methods `maxBy` or `minBy`; its instances keep
-+  calling those methods.
-+- The selector is required. It is called once for every item, in order, with
-+  only the item; further parameters are `null`. A missing first argument, or
-+  one that is not a function, including `null`, raises
-+  `TypeError("maxBy expects a function")` or
-+  `TypeError("minBy expects a function")`, even on an empty receiver.
-+- `maxBy` and `minBy` follow the shared rules of the list queries: they read
-+  the receiver before their arguments, evaluate every supplied argument once,
-+  left to right, including unused extras, and never write the receiver. A
-+  declaration that uses one depends on the list or population, on its
-+  argument expressions and on whatever the selector reads for every item, so
-+  list mutations, new and deleted instances and property changes re-evaluate
-+  it, in class-level rules too. Selector errors roll back through the
-+  existing transaction. A null or undefined receiver yields undefined without
-+  evaluating the arguments.
-+- A call selects each key once and compares it once with itself and at most
-+  once with the kept key, in one pass that neither sorts nor copies the
-+  receiver.
-+- Property reads such as `xs.maxBy`, bindings and object properties named
-+  `maxBy` or `minBy`, and instance methods named `maxBy` or `minBy` called on
-+  an instance keep their accepted results. The eight appended entries
-+  beginning `Nucleoid finds the extreme items of lists with maxBy and minBy`
-+  through `Nucleoid rolls back failed extreme item updates` specify the
-+  executable behavior.
-+
- ## Object entry loops with ordered rollback
+ ## ARC proposal agent
  
- - [NUC 72](docs/nuc-0072.md) adds loops over an object's entries:
-@@ -19012,4 +19081,250 @@ try:
- catch error:
-     failure = error
- assert: failure, TypeError("abc.sum is not a function")
-+---
-+# Nucleoid finds the extreme items of lists with maxBy and minBy
+-Run `/arc-purposal [<puzzle-id>]` to take one training puzzle through the
++Run `/arc-purposal [<puzzle-id>] [--strategy-policy <absolute-json-path>]`
++to take one training puzzle through the
+ [arc-purposal](../.claude/agents/arc-purposal.agent.md) workflow in its
+ [skill](../.claude/skills/arc-purposal/SKILL.md):
+ 
+@@ -512,8 +513,9 @@ Run `/arc-purposal [<puzzle-id>]` to take one training puzzle through the
+    whose idea may come from the [language reference](../docs/README.md) or
+    the documentation it links to.
+ 2. A requested enhancement goes through the usual NUC proposal and independent
+-   evaluation stages as a single-proposal request. The dataset is then written
+-   with the frozen candidate's runtime.
++   evaluation stages as a single-proposal request, using the existing UCB1
++   proposal-strategy learner. The dataset is then written with the frozen
++   candidate's runtime.
+ 3. `bun start <puzzle-id>` runs once, with that candidate's runtime when there
+    is one, while the workflow waits up to 30 minutes for it. Exit status `0` is
+    an exact match; a run still going at 30 minutes is killed and does not pass.
+@@ -539,9 +541,22 @@ the [genesis puzzle](#genesis-puzzle) and every puzzle that already has a
+ matrix has the fewest cells, breaking ties by the fewest total training cells
+ and then by the lowest ID. Only training pairs are measured.
+ 
++Every requested NUC requires a retained strategy-policy checkpoint, or an
++explicit `--strategy-policy <absolute-json-path>` outside the repository.
++For an initial trial, supply the empty-history policy from the
++[existing NUC bandit contract](../CONTRIBUTING.md#reward-driven-proposal-strategies).
++There is no automatic initialization/reset; missing or invalid state pauses
++before drafting or a solver run. A dataset-only invocation needs no policy.
++Selection happens before drafting, and the independent evaluator updates
++from verified NUC usefulness/cost evidence before the ARC run. The session
++learning result retains the latest checkpoint for the next authorized NUC;
++unscored trials keep the prior head. ARC answers, scores and acceptance never
++train this learner, which does not train LLM weights or authorize extra runs.
 +
-+readings = [{at: 9, c: 18}, {at: 12, c: 24}, {at: 15, c: 24}, {at: 18, c: 9}]
-
+ Append `--hint <text>` to suggest the puzzle's objects, their roles, or its
+-transformation. Only the arc-dataset agent receives the hint, and it keeps only
+-what the training pairs confirm.
++transformation, placing `--strategy-policy` before it when supplied. Only the
++arc-dataset agent receives the hint, and it keeps only what the training pairs
++confirm.
+ 
+ The run makes paid OpenRouter calls and shows the expected test grid, so it
+ runs once, is never repeated to obtain a pass, and its output never feeds back
 ```
 
 #### Recent Merged Pull Requests:
@@ -1437,60 +1248,40 @@ and < do, keep the first item on a tie, and give undefined for
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 77 List and Population Extreme Items
+## X. Require NUC strategy bandit in /arc-purposal
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-purposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7fed6ab`: NUC 77 List and Population Extreme Items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `359b34c7`: Require NUC strategy bandit in /arc-purposal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-purposal.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population extreme items
-
-**Extreme items keep the leading and lowest bids live as bids change**
-
-```nuc
-class Bid(bidder, amount):
-    this.bidder = bidder
-    this.amount = amount
-leader = Bid.maxBy(bid -> bid.amount)
-lowest = Bid.minBy(bid -> bid.amount)
-assert(leader, null)
-assert(lowest, null)
-ada = Bid("ada", 120)
-Bid("bo", 90)
-Bid("cy", 120)
-Bid("di", 90)
-assert(leader.bidder, "ada")
-assert(lowest.bidder, "bo")
-ada.amount = 60
-Bid("ed", 150)
-assert(leader.bidder, "ed")
-assert(lowest.bidder, "ada")
-```
-
-- [NUC 77](docs/nuc-0077.md) adds `maxBy(selector)` and `minBy(selector)`
-  to lists and class instance lists. `Bid.maxBy(bid -> bid.amount)` is the
-  bid with the largest amount, the instance itself, so `leader.bidder` names
-  the bidder. Before the first bid `leader` and `lowest` are `null`, and on a
-  tie the earlier bid wins: `cy` and `di` do not displace `ada` and `bo`.
-- `leader` and `lowest` are live declarations: they re-evaluate when a bid is
-  created or an amount changes. Keys compare as `>` and `<` compare them, so
-  numbers compare as numbers, strings as text and dates by time. See the
-  [root contract](nucleoid.spec.md#list-and-population-extreme-item
+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
+You coordinate one ARC training puzzle, given its ID, an optional
+`--strategy-policy <absolute-json-path>`, and an optional trailing hint;
+- Every requested NUC requires the
+  [existing strategy learner](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
+  Reuse the latest retained policy, or require an explicitly supplied policy
+  before drafting; never silently initialize/reset it or proceed unconfigured.
+  Actually select and pin an arm and caller-owned rubric before launching the
+  proposer, and require strategy-consumption evidence in its handoff.
+- Give the unchanged scoring/attribution inputs to the independent evaluator
+  and require its actual learner update before the ARC run. Persist the
+  verified new checkpoint or legitimate skip and retai
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule with the exact-match result, and document the puzzle's progress record in `arc/docs/`.
+You coordinate one ARC training puzzle, given its ID and an optional hint;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7fed6ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `359b34c7` are properly handled with clean fallback behavior.

@@ -7186,3 +7186,8 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `3799e0d0` | Multi-dimensional audit evidence | 2026-11-04T08:14:18.570Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `d1670007` | Multi-dimensional audit evidence | 2026-11-04T08:21:57.159Z |
 | `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `7ec78c35` | Multi-dimensional audit evidence | 2026-11-04T08:21:58.591Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `22f55f55` | Multi-dimensional audit evidence | 2026-11-04T08:28:35.118Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `1e2e354e` | Multi-dimensional audit evidence | 2026-11-04T08:28:35.669Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a7f0c300` | Multi-dimensional audit evidence | 2026-11-04T08:28:37.003Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `af90d05b` | Multi-dimensional audit evidence | 2026-11-04T08:28:39.006Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `359b34c7` | Multi-dimensional audit evidence | 2026-11-04T08:28:41.350Z |

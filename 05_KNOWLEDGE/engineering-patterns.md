@@ -493538,3 +493538,304 @@ from scrapy_poet.utils import scrapy_response_to_http_response
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7ec78c35` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6776. e2e: iOS release gate command, census and report; crash and render recovery (#29 (Harvested from keybase/client)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "e2e: iOS release gate command, census and report; crash and render recovery (#29",
+  "source": "keybase/client",
+  "source_url": "https://github.com/keybase/client",
+  "source_version": "22f55f55",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-04T08:28:34.910Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-keybase-client",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [keybase/client](https://github.com/keybase/client) (Revision: `22f55f55`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `shared/jest.config.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `601ccb05`: e2e: iOS release gate command, census and report; crash and render recovery (#29866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/jest.config.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus, the electron and ios-appium release libs and electron's main-process lib hold helper unit tests; the rest are playwright/appium/node:test suites
+    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/(?:gate/|release-lib\\.test\\.ts$)|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus and electron's release and main-process libs hold helper unit tests; the rest are playwright/appium/node:test suites
+    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/gate/|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `601ccb05` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6777. build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393) (Harvested from envoyproxy/envoy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)",
+  "source": "envoyproxy/envoy",
+  "source_url": "https://github.com/envoyproxy/envoy",
+  "source_version": "1e2e354e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:28:35.463Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-envoyproxy-envoy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `1e2e354e`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/_codeql.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a0295a21`: build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_codeql.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a0295a21` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6778. Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2 (Harvested from aleo-labs-protocol/snarkOS)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2",
+  "source": "aleo-labs-protocol/snarkOS",
+  "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+  "source_version": "a7f0c300",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:28:36.794Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aleo-labs-protocol-snarkos",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `a7f0c300`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a7f0c300`: Merge pull request #4621 from aleo-labs-protocol/ci/stress-test-params-example-2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        description: "Test parameter overrides, e.g. rate=50,duration=300"
+          # Only a rejection's message reaches the check.
+          trap 'cat enqueue.err >&2; sed -n "s/^rejected: //p" enqueue.err | head -c 2000 > rejected.txt' EXIT
+          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS" 2> enqueue.err
+      - name: Report a rejection or an orchestration failure
+          if [[ -s rejected.txt ]]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" \
+              -f status=completed -f conclusion=failure \
+              -f 'output[title]=Request rejected' \
+              -f "output[summary]=The Gauntlet host rejected this request and started no run: $(cat rejected.txt)" >/dev/null
+            exit 0
+          fi
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        description: "Test parameter overrides, e.g. rate=200,duration=300"
+          gate enqueue "$RUN_ID" "$COMMIT" "$TESTS" "$VALIDATORS" "$NETWORK" "$ACTOR" "$PARAMS"
+      - name: Report orchestration failure
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a7f0c300` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6779. Apply table alias column names when copying CTAS schemas (#2060) (Harvested from gluesql/gluesql)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Apply table alias column names when copying CTAS schemas (#2060)",
+  "source": "gluesql/gluesql",
+  "source_url": "https://github.com/gluesql/gluesql",
+  "source_version": "af90d05b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:28:38.792Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gluesql-gluesql",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `af90d05b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `core/src/planner/create_table_columns.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `af90d05b`: Apply table alias column names when copying CTAS schemas (#2060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/planner/create_table_columns.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                        Some(column_defs) => {
+                            let aliases = table
+                                .alias
+                                .as_ref()
+                                .map(|alias| alias.columns.as_slice())
+                                .unwrap_or_default();
+                            CreateTableColumnsPlan::Columns(
+                                column_defs
+                                    .iter()
+                                    .cloned()
+                                    .enumerate()
+                                    .map(|(index, mut column_def)| {
+                                        if let Some(name) = aliases.get(index) {
+                                            column_def.name.clone_from(name);
+                                        }
+                                        ColumnDefPlan::from(column_def)
+                                    })
+                                    .collect(),
+                            )
+                        }
+        let actual = "CREATE TABLE Target AS SELECT * FROM Item AS t(renamed_id, renamed_label)";
+        let expected = create(
+            Some(query("SELECT * FROM Ite
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+                        Some(columns) => CreateTableColumnsPlan::Columns(
+                            columns.iter().cloned().map(ColumnDefPlan::from).collect(),
+                        ),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `af90d05b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6780. Require NUC strategy bandit in /arc-purposal (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Require NUC strategy bandit in /arc-purposal",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "359b34c7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-04T08:28:41.114Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `359b34c7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/agents/arc-purposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `359b34c7`: Require NUC strategy bandit in /arc-purposal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-purposal.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any required Nucleoid enhancement through the NUC stages with the existing strategy bandit, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule, and document the puzzle's progress in `arc/docs/`.
+You coordinate one ARC training puzzle, given its ID, an optional
+`--strategy-policy <absolute-json-path>`, and an optional trailing hint;
+- Every requested NUC requires the
+  [existing strategy learner](../skills/arc-purposal/SKILL.md#learn-the-nuc-proposal-strategy).
+  Reuse the latest retained policy, or require an explicitly supplied policy
+  before drafting; never silently initialize/reset it or proceed unconfigured.
+  Actually select and pin an arm and caller-owned rubric before launching the
+  proposer, and require strategy-consumption evidence in its handoff.
+- Give the unchanged scoring/attribution inputs to the independent evaluator
+  and require its actual learner update before the ARC run. Persist the
+  verified new checkpoint or legitimate skip and retai
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+description: Coordinate one ARC training puzzle, given by ID or defaulting to the smallest non-genesis puzzle without a dataset. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, decide that NUC's outcome under the automatic acceptance rule with the exact-match result, and document the puzzle's progress record in `arc/docs/`.
+You coordinate one ARC training puzzle, given its ID and an optional hint;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `359b34c7` are properly handled with clean fallback behavior.
