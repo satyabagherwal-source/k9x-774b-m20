@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-XC4F",
-    "timestamp": "2026-11-03T11:59:11.775Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "9e0b05c72601cbab430fdb9707297a5950ed30a6a178e31f0a3fbbd2a13a7220",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-XHY8",
-    "timestamp": "2026-11-03T11:59:19.328Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "156281a02c013fb4f035de295983ca796c4bd47943265b22c2bbf6e5c5987f44",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-XIOS",
-    "timestamp": "2026-11-03T11:59:20.284Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "8d5891590e462102d9a1e63abe23566ee620c0b3d89e52473d4092b26f3fe56f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-6M86",
-    "timestamp": "2026-11-03T12:06:24.774Z",
-    "repository": "LiconStudio/Minimax-H3-VBVR",
-    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-6RM6",
-    "timestamp": "2026-11-03T12:06:31.758Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "7f5e607ae16018bc640a2ae32f3d5eed1231a8e694ce34d9ce2b4154aed09fdd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-FUG7",
     "timestamp": "2026-11-03T12:13:35.335Z",
     "repository": "prometheus/prometheus",
@@ -7490,6 +7415,81 @@
     "repository": "aquasecurity/trivy",
     "learningId": "learn-github-aquasecurity-trivy",
     "contentHash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7H6A",
+    "timestamp": "2026-11-04T23:34:35.698Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7LLX",
+    "timestamp": "2026-11-04T23:34:41.445Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7N1L",
+    "timestamp": "2026-11-04T23:34:43.305Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7OBF",
+    "timestamp": "2026-11-04T23:34:44.955Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "24d1780718f39a985f06ba19c138e3de0ca3133c9996fcd85c2bf0295a27c943",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-7Q3J",
+    "timestamp": "2026-11-04T23:34:47.263Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

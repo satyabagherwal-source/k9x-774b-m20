@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
-    "lastHarvestedAt": "2026-10-31T08:54:54.742Z",
+    "contentHash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
+    "lastHarvestedAt": "2026-11-04T23:34:43.309Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "2308b7ba",
+    "sourceVersion": "a66a1f88",
     "license": "Apache-2.0",
-    "contentHash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
-    "lastHarvestedAt": "2026-11-04T00:38:40.054Z",
+    "contentHash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
+    "lastHarvestedAt": "2026-11-04T23:34:47.266Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "e6e7c7a5",
+    "sourceVersion": "b0bce2a2",
     "license": "Apache-2.0",
-    "contentHash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
-    "lastHarvestedAt": "2026-11-04T01:20:39.519Z",
+    "contentHash": "24d1780718f39a985f06ba19c138e3de0ca3133c9996fcd85c2bf0295a27c943",
+    "lastHarvestedAt": "2026-11-04T23:34:44.958Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "3f2d26fa",
+    "sourceVersion": "3ff3e5fc",
     "license": "AGPL-3.0",
-    "contentHash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
-    "lastHarvestedAt": "2026-10-31T16:27:15.172Z",
+    "contentHash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
+    "lastHarvestedAt": "2026-11-04T23:34:41.449Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "606096f6",
+    "sourceVersion": "b4f0d123",
     "license": "MIT",
-    "contentHash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
-    "lastHarvestedAt": "2026-11-03T20:00:47.066Z",
+    "contentHash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
+    "lastHarvestedAt": "2026-11-04T23:34:35.702Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T23:27:34.360Z",
-  "total_cycles_completed": 7377,
-  "total_learnings_persisted": 7377,
-  "total_rules_promoted": 7068,
+  "last_updated": "2026-11-04T23:34:47.272Z",
+  "total_cycles_completed": 7382,
+  "total_learnings_persisted": 7382,
+  "total_rules_promoted": 7075,
   "history": [
-    {
-      "timestamp": "2026-11-04T09:57:48.254Z",
-      "repository": "nativewind/nativewind",
-      "learningId": "learn-github-nativewind-nativewind",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:57:50.940Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T09:57:54.552Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:05:35.250Z",
-      "repository": "midudev/preguntas-entrevista-react",
-      "learningId": "learn-github-midudev-preguntas-entrevista-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:05:36.992Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T10:05:42.221Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-04T23:27:34.360Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:34:35.707Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:34:41.455Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:34:43.315Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:34:44.964Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T23:34:47.272Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

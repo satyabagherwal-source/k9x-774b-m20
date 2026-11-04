@@ -7409,3 +7409,8 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `b47e05b5` | Multi-dimensional audit evidence | 2026-11-04T23:27:27.827Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `4ef33ee9` | Multi-dimensional audit evidence | 2026-11-04T23:27:34.092Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `e8a68c1b` | Multi-dimensional audit evidence | 2026-11-04T23:27:34.356Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `b4f0d123` | Multi-dimensional audit evidence | 2026-11-04T23:34:35.702Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `3ff3e5fc` | Multi-dimensional audit evidence | 2026-11-04T23:34:41.449Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-04T23:34:43.309Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `b0bce2a2` | Multi-dimensional audit evidence | 2026-11-04T23:34:44.958Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `a66a1f88` | Multi-dimensional audit evidence | 2026-11-04T23:34:47.266Z |

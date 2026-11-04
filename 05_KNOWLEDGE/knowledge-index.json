@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:27:34.298Z",
+  "last_updated": "2026-11-04T23:34:47.178Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8583,8 +8583,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "2308b7ba",
-      "content_hash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
+      "source_version": "a66a1f88",
+      "content_hash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -8642,6 +8642,11 @@
           "number": 6685,
           "title": "Revert \"Remove LR integration test retries added to suppress flakiness\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7028,
+          "title": "typo in change entries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8649,7 +8654,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:38:39.987Z",
+      "verified_at": "2026-11-04T23:34:47.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8739,8 +8744,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "3f2d26fa",
-      "content_hash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
+      "source_version": "3ff3e5fc",
+      "content_hash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -8768,6 +8773,11 @@
           "number": 6244,
           "title": ":arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7023,
+          "title": ":bug: keep bringing the window to the front when AttachThreadInput fails on Wind",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8775,7 +8785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:27:15.073Z",
+      "verified_at": "2026-11-04T23:34:41.333Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18754,7 +18764,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
+      "content_hash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -18978,6 +18988,21 @@
           "number": 6143,
           "title": "Hybrid Linear-Attention / Full-Attention Cache Synchronization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7024,
+          "title": "Consistent Cache Flag Across Configs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7025,
+          "title": "EOS Token Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7026,
+          "title": "Pad Token Uniformity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18998,7 +19023,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-31T08:54:54.639Z",
+      "verified_at": "2026-11-04T23:34:43.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48865,8 +48890,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "e6e7c7a5",
-      "content_hash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
+      "source_version": "b0bce2a2",
+      "content_hash": "24d1780718f39a985f06ba19c138e3de0ca3133c9996fcd85c2bf0295a27c943",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -48954,6 +48979,11 @@
           "number": 6698,
           "title": "cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7027,
+          "title": "Windows signer checks across Ubuntu runner versions (#25543)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48961,7 +48991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:20:39.452Z",
+      "verified_at": "2026-11-04T23:34:44.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55645,8 +55675,8 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "606096f6",
-      "content_hash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
+      "source_version": "b4f0d123",
+      "content_hash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
@@ -55684,6 +55714,11 @@
           "number": 6598,
           "title": "invalidate affected directories after file operations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7022,
+          "title": "compress files (#4477)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55691,7 +55726,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:00:46.995Z",
+      "verified_at": "2026-11-04T23:34:35.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178393,6 +178428,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:27:34.283Z"
+    },
+    "rule-7022": {
+      "learning_id": "rule-7022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7022,
+      "title": "compress files (#4477)",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "b4f0d123",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:35.590Z"
+    },
+    "rule-7023": {
+      "learning_id": "rule-7023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7023,
+      "title": ":bug: keep bringing the window to the front when AttachThreadInput fails on Wind",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "3ff3e5fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:41.333Z"
+    },
+    "rule-7024": {
+      "learning_id": "rule-7024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7024,
+      "title": "Consistent Cache Flag Across Configs",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:43.198Z"
+    },
+    "rule-7025": {
+      "learning_id": "rule-7025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7025,
+      "title": "EOS Token Consistency",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:43.198Z"
+    },
+    "rule-7026": {
+      "learning_id": "rule-7026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7026,
+      "title": "Pad Token Uniformity",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:43.198Z"
+    },
+    "rule-7027": {
+      "learning_id": "rule-7027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7027,
+      "title": "Windows signer checks across Ubuntu runner versions (#25543)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "b0bce2a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:44.850Z"
+    },
+    "rule-7028": {
+      "learning_id": "rule-7028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7028,
+      "title": "typo in change entries",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "a66a1f88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T23:34:47.155Z"
     }
   },
   "aliases": {

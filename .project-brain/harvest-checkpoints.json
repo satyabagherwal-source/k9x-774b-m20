@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:27:34.371Z",
+  "last_updated": "2026-11-04T23:34:47.284Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
-      "verified_at": "2026-10-31T08:54:54.750Z",
+      "content_hash": "23d4889fcc73a0bbb4ae948ef49e7b7298f1724fe32d5aa60dd76c8ae59d85c7",
+      "verified_at": "2026-11-04T23:34:43.326Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T08:54:54.750Z"
+      "last_updated": "2026-11-04T23:34:43.326Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
-      "verified_at": "2026-11-04T00:38:40.060Z",
+      "content_hash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
+      "verified_at": "2026-11-04T23:34:47.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:38:40.060Z"
+      "last_updated": "2026-11-04T23:34:47.283Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
-      "verified_at": "2026-11-04T01:20:39.529Z",
+      "content_hash": "24d1780718f39a985f06ba19c138e3de0ca3133c9996fcd85c2bf0295a27c943",
+      "verified_at": "2026-11-04T23:34:44.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:20:39.529Z"
+      "last_updated": "2026-11-04T23:34:44.976Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
-      "verified_at": "2026-10-31T16:27:15.180Z",
+      "content_hash": "511a9f81605110208241671520239f3a61b6eb33fdd3fa5bfd930d8b7ca647dd",
+      "verified_at": "2026-11-04T23:34:41.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:27:15.180Z"
+      "last_updated": "2026-11-04T23:34:41.468Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "375a66de2c30e8fd83c715d2f320c15a6d116301b8fe56faff6a29ab27c4e615",
-      "verified_at": "2026-11-03T20:00:47.073Z",
+      "content_hash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
+      "verified_at": "2026-11-04T23:34:35.718Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:00:47.073Z"
+      "last_updated": "2026-11-04T23:34:35.718Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",

@@ -7400,3 +7400,8 @@
 | `CYCLE-20261104-YB0W` | `2026-11-04T23:27:27.824Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7019` | Yes (`f0f5642c...`) |
 | `CYCLE-20261104-YFUX` | `2026-11-04T23:27:34.089Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7020` | Yes (`a7736658...`) |
 | `CYCLE-20261104-YG29` | `2026-11-04T23:27:34.353Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7021` | Yes (`5cec5bda...`) |
+| `CYCLE-20261104-7H6A` | `2026-11-04T23:34:35.698Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7022` | Yes (`4e4f067d...`) |
+| `CYCLE-20261104-7LLX` | `2026-11-04T23:34:41.445Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7023` | Yes (`511a9f81...`) |
+| `CYCLE-20261104-7N1L` | `2026-11-04T23:34:43.305Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7024, Rule 7025, Rule 7026` | Yes (`23d4889f...`) |
+| `CYCLE-20261104-7OBF` | `2026-11-04T23:34:44.955Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7027` | Yes (`24d17807...`) |
+| `CYCLE-20261104-7Q3J` | `2026-11-04T23:34:47.263Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7028` | Yes (`4a8d5e3d...`) |

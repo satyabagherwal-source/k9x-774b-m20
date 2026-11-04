@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `e6e7c7a5`  
+> **Source Version**: `b0bce2a2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:20:39.024Z  
+> **Timestamp**: 2026-11-04T23:34:44.206Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:20:38.545Z  
+> **Harvest Timestamp**: 2026-11-04T23:34:44.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25844 stars
+- **Stars / Engagement**: 25846 stars
 
 ---
 
@@ -616,6 +616,8 @@ type Backend interface {
 
 	StackConsoleURL(stackRef backend.StackReference) (string, error)
 	Client() *client.Client
+	// ESCClient returns a client for the Pulumi ESC API, which also has the change request routes that approvals use.
+	ESCClient() esc_client.Client
 
 	RunDeployment(ctx context.Context, stackRef backend.StackReference, req apitype.CreateDeploymentRequest,
 		opts display.Options, deploymentInitiator string, streamDeploymentLogs bool) error
@@ -697,14 +699,7 @@ func New(ctx context.Context, d diag.Sink,
 		}
 		if beConfig, ok := config.BackendConfig[cloudURL]; ok {
 			if beConfig.DefaultOrg != "" {
-				org = beConfig.DefaultOrg
-			}
-		}
-	}
-
-	var defaultOrg *promise.Promise[string]
-	if org == "" {
-		defaultOrg = promise.Run(func() (string, error)
+		
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/ai.go`
@@ -1694,15 +1689,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25520** (2026-11-03): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+1 more)**
-  *Symptoms*: ## Workflow Failure  [On Push](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml>) has failed. See the list of failures below:  * [2026-11-03T12:54:04.000Z](<https://github.com/pulumi/pulumi/actions/runs/41637800576>)   * ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301585>): Package (failure)   * ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301673>)   * ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](<https://github.com/pulumi/pulumi/actions/runs/41637800576/job/125926301735>): Package (cancelled) * [2026-11-03T13:28:32.000Z](<https://github.com/pulumi/pulumi/actions/runs/41642097054>)   * ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299142>): Package (cancelled)   * ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299161>): Package (failure)   * ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](<https://github.com/pulumi/pulumi/actions/runs/41642097054/job/125941299301>): Post Run actions/setup-go@v6 (cancelled)   * ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](<h
+- **Issue #25559** (2026-11-04): **Workflow failure: On Push at dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64 (+4 more)**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-04T16:40:42.000Z](https://github.com/pulumi/pulumi/actions/runs/41867336799)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767201): Package (cancelled)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767496): Package (cancelled)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709767865): Package (cancelled)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709768157): Package (cancelled)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/41867336799/job/126709768244): Package (failure)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-03T21:22:28.000Z](https://github.com/pulumi/pulumi/actions/runs/41718618454)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-04T16:45:24.000Z](https://github.com/pulumi/pulumi/actions/runs/41868585487)
 
-- **Issue #25511** (2026-11-03): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-03T06:10:29.000Z](https://github.com/pulumi/pulumi/actions/runs/41584134055)
+- **Issue #25558** (2026-11-04): **Workflow failure: Pull Request on #25550**
+  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25550  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-04T15:27:31.000Z](https://github.com/pulumi/pulumi/actions/runs/41847172520)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-03T09:31:41.000Z](https://github.com/pulumi/pulumi/actions/runs/41584134055)
+  > This issue has been automatically closed because the associated PR #25550 was merged.  PR: https://github.com/pulumi/pulumi/pull/25550
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1719,95 +1714,269 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37d902f2` (2026-11-02)
-**Commit Message**: cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535)
+### Incident Patch 1: `e80a544a` (2026-11-04)
+**Commit Message**: Fix Windows signer checks across Ubuntu runner versions (#25543)
 
-This PR was written in part with the assistance of generative AI.
+Windows binary signature checks fail after ubuntu-latest moves from
+Ubuntu 24.04 to 26.04. This upgrades osslsigncode from 2.8 to 2.13.
+Version 2.10 changed certificate subjects from slash-separated output to
+RFC 2253 format. Our signer check expects the old format and rejects
+valid Pulumi signatures.
 
-## Where this ended up
+Accept both formats to support runners during the image transition.
 
-Per the discussion below, actually fixing #16412 by default requires
-avoiding a double load of the backend's deployment state (a checkpoint
-export to check for a fallback secrets manager, then a full snapshot
-load once the deployment operation runs) — a bigger architectural change
-(caching across the `Stack`/backend layers) than fits a PR like this.
-See the thread for the full back-and-forth.
+Fixes https://github.com/pulumi/pulumi/issues/25542
 
-Scaled this down to a documentation-only change:
-`PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER` already does what's needed,
-it's just hard to discover if you're hitting this blind. This adds a
-pointer to it in the three places someone debugging this failure is
-likely to end up:
-
-- The env var's own description (`sdk/go/common/env/env.go`), shown in
-`pulumi help environment-variables`.
-- `SecretsManagerLoader.GetSecretsManager`'s fallback branch
-(`pkg/cmd/pulumi/stack/secrets.go`), where the decision *not* to reuse
-the checkpoint's secrets provider is made.
-- `passphrase.NewPromptingPassphraseSecretsManager`
-(`pkg/secrets/pass
-
-**File**: `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml` (added, +4/-0)
+**File**: `scripts/check-windows-signatures.sh` (modified, +7/-2)
 ```diff
-@@ -0,0 +1,4 @@
-+component: cli
-+kind: fix
-+body: Document PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER as the fix for secret decryption errors when running from a workspace without local stack configuration, such as the Automation API or a saved update plan applied from a different directory
-+time: 2026-09-04T00:00:00+00:00
+@@ -3,7 +3,11 @@
+ set -euo pipefail
+ 
+ ROOT_CA="$(dirname "$0")/microsoft-identity-verification-root-ca-2020.pem"
+-EXPECTED_SIGNER="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
++# osslsigncode 2.10 switched from slash-separated subjects to RFC 2253 format.
++# Accept both Ubuntu 24.04's osslsigncode 2.8 and Ubuntu 26.04's osslsigncode 2.13
++# while ubuntu-latest runners transition between these images.
++EXPECTED_SIGNER="CN=PULUMI CORPORATION,O=PULUMI CORPORATION"
++EXPECTED_SIGNER_LEGACY="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
+ 
+ if [[ $# -eq 0 ]]; then
+     echo "no binaries to check" >&2
+@@ -16,7 +20,8 @@ for binary in "$@"; do
+         echo "invalid signature: ${binary}"
+         echo "${output}" | tail -5
+         failed=1
+-    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' | grep -q "${EXPECTED_SIGNER}$"; then
++    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' |
++        grep -Eq -e "^[[:space:]]*Subject: ${EXPECTED_SIGNER}(,|$)" -e "${EXPECTED_SIGNER_LEGACY}$"; then
+         echo "unexpected signer: ${binary}"
+         echo "${output}" | grep -m1 -A1 'Signer #0:' | head -2
+         failed=1
 ```
 
-**File**: `pkg/cmd/pulumi/stack/secrets.go` (modified, +2/-0)
+---
+
+### Incident Patch 2: `d31c4b4a` (2026-11-04)
+**Commit Message**: Update Python installation guidance to match the SDK minimum (#25553)
+
+When Pulumi cannot find a Python executable, its error recommends
+installing Python 3.6 or greater. The current Python SDK requires Python
+3.10 or greater, so following that guidance can leave users with an
+unsupported version.
+
+Update the error to recommend Python 3.10 or greater. Add a maintenance
+instruction in `sdk/python/AGENTS.md` to keep this guidance aligned with
+`requires-python` in `pyproject.toml`.
+
+**File**: `sdk/python/AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -277,6 +277,8 @@ func (l *SecretsManagerLoader) GetSecretsManager(
- 				ps.EncryptedKey = ""
- 			}
- 		} else {
-+			// See PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER (env.go) and
-+			// https://github.com/pulumi/pulumi/issues/16412.
- 			sm, err = s.DefaultSecretManager(ctx, ps)
+@@ -14,3 +14,4 @@ All commands run from `sdk/python/`. Prefix with `mise exec --` if mise is not a
+ ## If you change...
+ 
+ - Python files → `mise exec -- make lint && mise exec -- make test_fast`
++- When changing `requires-python` in `pyproject.toml`, update the Python installation guidance in `toolchain/pip.go` to match.
+```
+
+**File**: `sdk/python/toolchain/pip.go` (modified, +1/-1)
+```diff
+@@ -361,7 +361,7 @@ func CommandPath() (string /*pythonPath*/, string /*pythonCmd*/, error) {
+ 		}
+ 		if err != nil {
+ 			return "", "", fmt.Errorf(
+-				"failed to locate any of %q on your PATH. Have you installed Python 3.6 or greater?",
++				"failed to locate any of %q on your PATH. Have you installed Python 3.10 or greater?",
+ 				pythonCmds)
  		}
  	}
 ```
 
-**File**: `pkg/secrets/passphrase/manager.go` (modified, +5/-0)
+---
+
+### Incident Patch 3: `c52b2f28` (2026-11-04)
+**Commit Message**: Print model-built comments and template delimiters in PCL (#25530)
+
+Tools that build PCL with `pkg/codegen/hcl2/model` cannot print
+comments. `syntax.Comment` and `syntax.TemplateDelimiter` print only
+their private `bytes` field, and only the parser sets it. A
+`syntax.Comment{Lines: ...}` or `syntax.TemplateDelimiter{Type: ...}`
+built by a tool therefore prints nothing.
+
+Tokens already print from their meaning when they have no source text.
+`Token.Format` uses the text of the token type, and the model printer
+fills identifiers and literals from the model. This PR applies the same
+rule to trivia. A parsed comment or delimiter always has a source range,
+so a zero `Range` marks one that a tool built. If a `Comment` has a zero
+`Range`, `Bytes` renders each of its `Lines` as a `//` line comment, and
+a newline in a line starts a new line comment. A line comment ends only
+at a newline, so the output always parses back to the same lines. If a
+`TemplateDelimiter` has a zero `Range`, `Bytes` renders the text of its
+`Type`. `Whitespace` has no other source for its text.
+
+pulumi-yaml needs this to keep YAML comments when `pulumi convert`
+ejects a YAML program (pulumi/pulumi-yaml#318).
+
+Fixes h
+
+**File**: `changelog/pending/20261103--codegen-pcl--new-comment.yaml` (added, +4/-0)
 ```diff
-@@ -298,6 +298,11 @@ func NewStackPromptingPassphraseSecretsManagerFromState(
- 	}
- }
- 
-+// NewPromptingPassphraseSecretsManager returns a passphrase secrets manager for the given stack,
-+// reusing info.EncryptionSalt if set, or otherwise minting a new one. If info is missing a salt only
-+// because local config isn't available (e.g. Automation API, saved plans), this mints an unrelated
-+// salt; set PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER=true to reuse the checkpoint's provider instead.
-+// See https://github.com/pulumi/pulumi/issues/16412.
- func NewPromptingPassphraseSecretsManager(info *workspace.ProjectStack,
- 	rotateSecretsProvider bool,
- ) (secrets.Manager, error) {
+@@ -0,0 +1,4 @@
++component: codegen/pcl
++kind: improvement
++body: Print `syntax.Comment` and `syntax.TemplateDelimiter` trivia that tools build without source text
++time: 2026-11-03T00:00:00Z
 ```
 
-**File**: `sdk/go/common/env/env.go` (modified, +4/-1)
+**File**: `pkg/codegen/hcl2/syntax/comments_test.go` (modified, +55/-0)
 ```diff
-@@ -137,7 +137,10 @@ var NeoSummaryMaxLen = env.Int("NEO_SUMMARY_MAXLEN",
- var CopilotSummaryMaxLen = NeoSummaryMaxLen
+@@ -16,6 +16,7 @@ package syntax
  
- var FallbackToStateSecretsManager = env.Bool("FALLBACK_TO_STATE_SECRETS_MANAGER",
--	"Use the snapshot secrets manager as a fallback when the stack configuration is missing or incomplete.")
-+	"Use the snapshot secrets manager as a fallback when the stack configuration is missing or incomplete. "+
-+		"Set this if you see secret decryption errors when running from a workspace that doesn't carry local "+
-+		"stack configuration between invocations, such as the Automation API or a saved update plan applied "+
-+		"from a different directory (see https://github.com/pulumi/pulumi/issues/16412).")
+ import (
+ 	"bytes"
++	"fmt"
+ 	"os"
+ 	"strings"
+ 	"testing"
+@@ -247,3 +248,57 @@ func TestComments(t *testing.T) {
+ func normString(s string) string {
+ 	return strings.TrimSuffix(s, "\r")
+ }
++
++func TestCommentLinesRoundTrip(t *testing.T) {
++	t.Parallel()
++
++	tests := []struct {
++		name     string
++		lines    []string
++		expected string
++		parsed   []string
++	}{
++		{"no lines", nil, "", nil},
++		{"empty line", []string{""}, "//\n", []string{""}},
++		{"multiline", []string{" a", "", " b"}, "// a\n//\n// b\n", []string{" a", "", " b"}},
++		{"newline in line", []string{" a\n b"}, "// a\n// b\n", []string{" a", " b"}},
++		{"trailing newline", []string{" a\n"}, "// a\n//\n", []string{" a", ""}},
++		{"line comment", []string{" // a"}, "// // a\n", []string{" // a"}},
++		{"hash comment", []string{"# a"}, "//# a\n", []string{"# a"}},
++		{"block comment", []string{"/* a", "*/ b"}, "///* a\n//*/ b\n", []string{"/* a", "*/ b"}},
++		{"carriage return", []string{"a\r", "b\r"}, "//a\r\n//b\r\n", []string{"a\r", "b\r"}},
++		{"invalid utf8", []string{"\xff"}, "//\xff\n", []string{"\xff"}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++
++			comment := fmt.Sprintf("%v", TriviaList{Comment{Lines: tt.lines}})
++			assert.Equal(t, tt.expected, comment)
++
++			parser := NewParser()
++			require.NoError(t, parser.ParseFile(strings.NewReader(comment+"x = 1\n"), "main.pp"))
++			require.False(t, parser.Diagnostics.HasErrors(), parser.Diagnostics.Error())
++
++			file := parser.Files[0]
++			attrTokens := file.Tokens.ForNode(file.Body.Attributes["x"]).(*AttributeTokens)
++			var parsed []string
++			for _, trivia := range attrTokens.Name.LeadingTrivia {
++				if comment, ok := trivia.(Comment); ok {
++					parsed = append(parsed, comment.Lines...)
++				}
++			}
++			assert.Equal(t, tt.parsed, parsed)
++		})
++	}
++}
++
++func TestTemplateDelimiterBytes(t *testing.T) {
++	t.Parallel()
++
++	assert.Equal(t, []byte("${"), TemplateDelimiter{Type: hclsyntax.TokenTemplateInterp}.Bytes())
++	assert.Equal(t, []byte("%{"), TemplateDelimiter{Type: hclsyntax.TokenTemplateControl}.Bytes())
++	assert.Equal(t, []byte("}"), TemplateDelimiter{Type: hclsyntax.TokenTemplateSeqEnd}.Bytes())
++	assert.Nil(t, TemplateDelimiter{Type: hclsyntax.TokenOBrace}.Bytes())
++	assert.Equal(t, []byte("${"), NewTemplateDelimiter(hclsyntax.TokenTemplateInterp).Bytes())
++}
+```
+
+**File**: `pkg/codegen/hcl2/syntax/tokens.go` (modified, +24/-16)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"fmt"
+ 	"math/big"
+ 	"strconv"
++	"strings"
+ 	"unicode"
+ 	"unicode/utf8"
  
- var Parallel = env.Int("PARALLEL",
- 	"Allow P resource operations to run in parallel at once (1 for no parallelism)")
+@@ -180,7 +181,18 @@ func (c Comment) Range() hcl.Range {
+ 
+ // Bytes returns the raw bytes that comprise the comment.
+ func (c Comment) Bytes() []byte {
+-	return c.bytes
++	if c.rng != (hcl.Range{}) {
++		return c.bytes
++	}
++	var b bytes.Buffer
++	for _, l := range c.Lines {
++		for line := range strings.SplitSeq(l, "\n") {
++			b.WriteString("//")
++			b.WriteString(line)
++			b.WriteByte('\n')
++		}
++	}
++	return b.Bytes()
+ }
+ 
+ func (Comment) isTrivia() {}
+@@ -221,22 +233,15 @@ type TemplateDelimiter struct {
+ // NewTemplateDelimiter creates a new TemplateDelimiter value with the given delimiter type. If the token type is not a
+ // template delimiter, this function will panic.
+ func NewTemplateDelimiter(typ hclsyntax.TokenType) TemplateDelimiter {
+-	var s string
+-	//nolint:exhaustive // Only some tokens are template delimiters.
+-	switch typ {
+-	case hclsyntax.TokenTemplateInterp:
+-		s = "${"
+-	case hclsyntax.TokenTemplateControl:
+-		s = "%{"
+-	case hclsyntax.TokenTemplateSeqEnd:
+-		s = "}"
+-	default:
++	if !isTemplateDelimiter(typ) {
+ 		panic(fmt.Errorf("%v is not a template delimiter", typ))
+ 	}
+-	return TemplateDelimiter{
+-		Type:  typ,
+-		bytes: []byte(s),
+-	}
++	return TemplateDelimiter{Type: typ}
++}
++
++func isTemplateDelimiter(typ hclsyntax.TokenType) bool {
++	return typ == hclsyntax.TokenTemplateInterp || typ == hclsyntax.TokenTemplateControl ||
++		typ == hclsyntax.TokenTemplateSeqEnd
+ }
+ 
+ // Range returns the range of the delimiter in the source file.
+@@ -246,7 +251,10 @@ func (t TemplateDelimiter) Range() hcl.Range {
+ 
+ // Bytes returns the raw bytes that comprise the delimiter.
+ func (t TemplateDelimiter) Bytes() []byte {
+-	return t.bytes
++	if t.rng != (hcl.Range{}) || !isTemplateDelimiter(t.Type) {
++		return t.bytes
++	}
++	return []byte(tokenStrings[t.Type])
+ }
+ 
+ func (TemplateDelimiter) isTrivia() {}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25527** (2026-11-03): tag sdk and pkg at the same time (@tgummerer)
-- **PR #25525** (2026-11-03): Clean up some property maps in testing code (@Frassle)
-- **PR #25512** (2026-11-03): Report language runtime downloads to the user (@iwahbe)
-- **PR #25505** (2026-11-03): Wait for Renovate checks before merging (@julienp)
-- **PR #25503** (2026-11-02): Restrict Mise lockfile resolution and run with a frozen lock file (@julienp)
-- **PR #25502** (2026-11-02): Fix renovate changelog generation (@julienp)
+- **PR #25557** (2026-11-04): Bump pulumi-cloud-sdk/go to v1.20261104.0 (@aacotroneo)
+- **PR #25554** (2026-11-04): Skip full PR CI for changelog-only changes (@julienp)
+- **PR #25553** (2026-11-04): Update Python installation guidance to match the SDK minimum (@kramhuber)
+- **PR #25550** (2026-11-04): Changelog for v3.274.0 (@pulumi-bot)
+- **PR #25547** (2026-11-04): recover 3.274.0 release (@julienp)
+- **PR #25546** (2026-11-04): Use the current version matrix for releases (@julienp)
 
 ---
 
@@ -1827,31 +1996,35 @@ the checkpoint's secrets provider is made.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535
+## X. Windows signer checks across Ubuntu runner versions (#25543)
 
 **RULE**:
-When implementing operations in `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/check-windows-signatures.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37d902f2`: cmd/pulumi/stack: document the fix for #16412 secret decryption failures (#24535). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e80a544a`: Windows signer checks across Ubuntu runner versions (#25543). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20260904--cli--document-fallback-to-state-secrets-manager.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check-windows-signatures.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli
-kind: fix
-body: Document PULUMI_FALLBACK_TO_STATE_SECRETS_MANAGER as the fix for secret decryption errors when running from a workspace without local stack configuration, such as the Automation API or a saved update plan applied from a different directory
-time: 2026-09-04T00:00:00+00:00
+# osslsigncode 2.10 switched from slash-separated subjects to RFC 2253 format.
+# Accept both Ubuntu 24.04's osslsigncode 2.8 and Ubuntu 26.04's osslsigncode 2.13
+# while ubuntu-latest runners transition between these images.
+EXPECTED_SIGNER="CN=PULUMI CORPORATION,O=PULUMI CORPORATION"
+EXPECTED_SIGNER_LEGACY="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
+    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' |
+        grep -Eq -e "^[[:space:]]*Subject: ${EXPECTED_SIGNER}(,|$)" -e "${EXPECTED_SIGNER_LEGACY}$"; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+EXPECTED_SIGNER="/O=PULUMI CORPORATION/CN=PULUMI CORPORATION"
+    elif ! echo "${output}" | grep -m1 -A1 'Signer #0:' | grep -q "${EXPECTED_SIGNER}$"; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37d902f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e80a544a` are properly handled with clean fallback behavior.
