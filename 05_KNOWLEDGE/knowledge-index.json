@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:53:29.835Z",
+  "last_updated": "2026-11-04T21:00:21.580Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29508,7 +29508,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "d2200d483591e512da029f3d4e199f70e506de3aa35acedf2ec6cc7717068e31",
+      "content_hash": "e62acb2f8731bfd1a840f60c3d00f97055fe1778e1f7198656d6cda43d9dc595",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -29528,7 +29528,7 @@
         },
         {
           "number": 996,
-          "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
+          "title": "Masked Mean Pooling Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -29896,7 +29896,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-31T05:14:21.756Z",
+      "verified_at": "2026-11-04T21:00:21.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33026,14 +33026,19 @@
       "slug": "iconoir-icons-iconoir",
       "platform": "github",
       "source_url": "https://github.com/iconoir-icons/iconoir",
-      "source_version": "285be69c",
-      "content_hash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
+      "source_version": "39834e3f",
+      "content_hash": "68e4694aa6ff5ed18890727bd574615a27153fc91f81092e0fa15266a0930413",
       "dossier_path": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
       "promoted_rules": [
         {
           "number": 2266,
           "title": "site): changelog survives GitHub outages; star count in parentheses",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6972,
+          "title": "Release Version v7.12.2",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33042,7 +33047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:44:03.563Z",
+      "verified_at": "2026-11-04T21:00:19.372Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86491,14 +86496,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
       "title": "Masked Mean Pooling Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T17:30:14.082Z"
+      "verified_at": "2026-11-04T21:00:21.561Z"
     },
     "rule-997": {
       "learning_id": "rule-997",
@@ -177433,6 +177438,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:53:29.822Z"
+    },
+    "rule-6972": {
+      "learning_id": "rule-6972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6972,
+      "title": "Release Version v7.12.2",
+      "source_url": "https://github.com/iconoir-icons/iconoir",
+      "source_version": "39834e3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:00:19.372Z"
     }
   },
   "aliases": {

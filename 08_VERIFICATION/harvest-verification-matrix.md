@@ -7336,3 +7336,5 @@
 | `CYCLE-20261104-G3H3` | `2026-11-04T20:53:20.151Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6968` | Yes (`d7a4adf1...`) |
 | `CYCLE-20261104-G5GW` | `2026-11-04T20:53:22.736Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6969, Rule 6970` | Yes (`cc6cff66...`) |
 | `CYCLE-20261104-GAZN` | `2026-11-04T20:53:29.891Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6971` | Yes (`5cec20d7...`) |
+| `CYCLE-20261104-P30K` | `2026-11-04T21:00:19.460Z` | `iconoir-icons/iconoir` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6972` | Yes (`68e4694a...`) |
+| `CYCLE-20261104-P4PO` | `2026-11-04T21:00:21.660Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING` | Yes (`e62acb2f...`) |

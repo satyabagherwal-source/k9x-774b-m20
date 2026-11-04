@@ -7345,3 +7345,5 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `ef6638a9` | Multi-dimensional audit evidence | 2026-11-04T20:53:20.153Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-04T20:53:22.738Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `9e152c7c` | Multi-dimensional audit evidence | 2026-11-04T20:53:29.894Z |
+| `learn-github-iconoir-icons-iconoir` | `https://github.com/iconoir-icons/iconoir` | `39834e3f` | Multi-dimensional audit evidence | 2026-11-04T21:00:19.463Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-04T21:00:21.663Z |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T20:53:32.444Z",
-    "lastVerified": "2026-11-04T20:53:32.444Z",
+    "lastChecked": "2026-11-04T21:00:24.217Z",
+    "lastVerified": "2026-11-04T21:00:24.217Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,9 +354,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T20:32:06.947Z",
+    "lastChecked": "2026-11-04T21:00:22.775Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T20:32:06.947Z"
+    "lastVerified": "2026-11-04T21:00:22.775Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -370,13 +370,13 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T05:14:09.636Z",
-    "lastVerified": "2026-10-31T05:14:09.636Z",
+    "lastChecked": "2026-11-04T21:00:10.501Z",
+    "lastVerified": "2026-11-04T21:00:10.501Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "d2200d483591e512da029f3d4e199f70e506de3aa35acedf2ec6cc7717068e31",
-    "promotedRulesCount": 3,
+    "contentHash": "e62acb2f8731bfd1a840f60c3d00f97055fe1778e1f7198656d6cda43d9dc595",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1085,9 +1085,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-03T21:44:52.042Z",
+    "lastChecked": "2026-11-04T21:00:20.573Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-03T21:44:52.042Z"
+    "lastVerified": "2026-11-04T21:00:20.573Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -2125,8 +2125,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T17:30:39.953Z",
-    "lastVerified": "2026-11-04T17:30:39.953Z",
+    "lastChecked": "2026-11-04T21:00:17.913Z",
+    "lastVerified": "2026-11-04T21:00:17.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3811,8 +3811,8 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T22:38:42.588Z",
-    "lastVerified": "2026-11-03T22:38:42.588Z",
+    "lastChecked": "2026-11-04T21:00:15.364Z",
+    "lastVerified": "2026-11-04T21:00:15.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
@@ -7077,11 +7077,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "iconoir-icons-iconoir": {
-    "name": "iconoir",
+    "name": "iconoir-icons/iconoir",
     "officialUrl": "https://github.com/iconoir-icons/iconoir",
-    "lastChecked": "2026-10-31T13:40:36.331Z",
-    "revisionIdentifier": "285be69c",
-    "lastVerified": "2026-10-31T13:40:36.331Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-04T21:00:18.685Z",
+    "lastVerified": "2026-11-04T21:00:18.685Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-iconoir-icons-iconoir",
+    "contentHash": "68e4694aa6ff5ed18890727bd574615a27153fc91f81092e0fa15266a0930413",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkerd-linkerd2": {
     "name": "linkerd2",
@@ -7980,9 +7990,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-03T16:40:18.009Z",
+    "lastChecked": "2026-11-04T21:00:07.898Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-03T16:40:18.009Z"
+    "lastVerified": "2026-11-04T21:00:07.898Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",

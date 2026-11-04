@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:53:29.897Z",
-  "total_cycles_completed": 7313,
-  "total_learnings_persisted": 7313,
-  "total_rules_promoted": 7012,
+  "last_updated": "2026-11-04T21:00:21.668Z",
+  "total_cycles_completed": 7315,
+  "total_learnings_persisted": 7315,
+  "total_rules_promoted": 7015,
   "history": [
-    {
-      "timestamp": "2026-11-04T03:16:23.688Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:23:36.702Z",
-      "repository": "QwikDev/qwik",
-      "learningId": "learn-github-qwikdev-qwik",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T03:23:45.672Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1389,20 @@
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:00:19.468Z",
+      "repository": "iconoir-icons/iconoir",
+      "learningId": "learn-github-iconoir-icons-iconoir",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:00:21.668Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
