@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T07:34:00.033Z",
-  "total_cycles_completed": 7139,
-  "total_learnings_persisted": 7139,
-  "total_rules_promoted": 6786,
+  "last_updated": "2026-11-04T07:42:05.529Z",
+  "total_cycles_completed": 7141,
+  "total_learnings_persisted": 7141,
+  "total_rules_promoted": 6787,
   "history": [
-    {
-      "timestamp": "2026-11-03T18:11:18.228Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T18:11:29.669Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T18:22:42.939Z",
       "repository": "chaos-mesh/chaos-mesh",
@@ -1403,6 +1389,20 @@
       "repository": "kucherenko/jscpd",
       "learningId": "learn-github-kucherenko-jscpd",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:41:19.340Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T07:42:05.529Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

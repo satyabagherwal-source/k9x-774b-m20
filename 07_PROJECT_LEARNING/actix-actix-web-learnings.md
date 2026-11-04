@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `067b1b93`  
+> **Source Version**: `81bb9971`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T02:00:46.213Z  
+> **Timestamp**: 2026-11-04T07:42:05.199Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T02:00:46.207Z  
+> **Harvest Timestamp**: 2026-11-04T07:41:08.039Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24903 stars
+- **Stars / Engagement**: 24906 stars
 
 ---
 
@@ -1332,13 +1332,14 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4374** (2026-10-31): **fix(web): return allowed methods for macro route mismatches**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  When separate `#[get("/items")]` and `#[post("/items")]` services are registered, a `DELETE /items` request currently reaches the built-in app default and returns 404. This change reads the request's existing `RegisteredMethods` accumulator in that default and returns 405 with `Allow: GET, POST`.  The change also applies to scopes that inherit the built-in default. Explicit custom defaults remain in control. Tests cover both service registration orders, all six GET/POST/DELETE request orders, direct and scoped registration, unknown paths, and a custom default.  This is a minimal implementation with broader behavior changes: other method-guarded services and scopes also return 405 where they previously returned 404. The accumulator still records guards that ran, rather than all eligible routes. Scope method guards can record methods after a prefix match before a child path is checked; compound and custom guards retain the existing accumulator limitations. These cases need review before this draft is made ready.  Validation:  - The new macro-routing regression failed with 404 before the production change. - `cargo test -p actix-web --lib`: 419 
+- **Issue #4380** (2026-11-03): **ci: use ubuntu-slim for lightweight jobs**
+  *Symptoms*: Move only `Lint / zizmor` and `Lint / fmt` to `ubuntu-slim`. Both run static checks without compiling the workspace. Keep tests, doctests, Clippy and coverage on their current runners because they compile Rust. Keep Read MSRV unchanged: its pinned upstream reusable workflow fixes the runner and exposes no runner input.  GitHub documents slim for public and private repositories: x64, 1 CPU, 5 GB RAM, 14 GB storage, unprivileged container, 15-minute job limit. Privileged operations and Docker-in-Docker are unsupported. The current image includes Bash, Git, curl, Python/pip, Node and archive tools, but no Rust. The pinned Rust setup action installs rustup if absent; the pinned zizmor action downloads a wheel through pip and does not use Docker. No tests, action versions or permissions change.  Sources: https://docs.github.com/en/actions/reference/runners/github-hosted-runners and https://github.com/actions/runner-images/blob/main/images/ubuntu-slim/ubuntu-slim-Readme.md  Validation: `zizmor --offline .github/workflows` passed (v1.29.0; six existing suppressions). The justfile has no workflow validation recipe. Hosted compatibility checks are pending.  Historical baseline, `Lint` (`.github/workflows/clippy-fmt.yml`), no matrix, ubuntu-latest, all jobs successful. Seconds are completed_at minus started_at; queue time is excluded and not measured.  | Run | Head SHA | zizmor seconds | fmt seconds | | --- | --- | ---: | ---: | | https://github.com/actix/actix/actions/runs/41349823891
 
-- **Issue #4373** (2026-10-31): **test(files): cover directory listing hrefs on Windows**
-  *Symptoms*: ## PR Type  Other: test coverage.  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. (Not applicable: tests only.) - [x] A changelog entry has been made for the appropriate packages. (Not applicable: tests only.) - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status. (`A-files` is applied; no release impact.)  ## Overview  The directory listing href regression previously ran only on Unix. Run it on all platforms and restrict only filenames containing Windows-incompatible characters to Unix. Windows now gets coverage for backticks, ampersands, hashes, spaces, percent signs, plus signs, and unreserved characters.  Add a nested-directory regression that checks literal URL separators and encoded file and folder names. Production behavior and public APIs are unchanged.  Validation on macOS:  - `cargo test -p actix-files`: 83 unit, 11 integration, and 9 doc tests passed; 1 doc test ignored. Run outside the sandbox so test servers could bind sockets. - `cargo clippy -p actix-files --all-targets`: passed. - `cargo fmt -p actix-files`: completed without changes; emitted warnings for nightly-only settings. - `cargo +nightly fmt -p actix-files`: passed.  Windows execution has not been verified locally. 
+- **Issue #4378** (2026-11-03): **fix(web): encode non-ASCII attachment filenames**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [ ] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  `ContentDisposition::attachment()` now adds a UTF-8 encoded `filename*` parameter when the filename contains non-ASCII characters. It keeps the existing `filename` parameter and leaves ASCII filenames unchanged. Tests cover both cases.
   **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/976f633e0b40b9f953695df9adec04432d9a85e3">976f633</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:test-directory-listing-windows">test-directory-listi...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/89670dc3d33217ff19c98682e0ccb86e6e907384">89670dc</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  --- <sub>Updated <relative-time datetime="2026-10-31T18:30:38Z">October 31, 2026 18:30 UTC</relative-time></sub> 
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/49a6a56dca87fcffaf4e6844850480069bfabde1">49a6a56</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:fix/attachment-filename-encoding">fix/attachment-filen...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ebd88be216fd2cda0c9499d658c3708471def4d0">ebd88be</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 2 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/49a6a56dca87fcffaf4e6844850480069bfabde1">49a6a56</a></th> <th scope="col"><span id="cc-
+  > @codesmith prove it
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1355,333 +1356,113 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `067b1b93` (2026-10-31)
-**Commit Message**: fix(web): return allowed methods for macro route mismatches (#4374)
+### Incident Patch 1: `879808a8` (2026-11-03)
+**Commit Message**: fix(web): encode non-ASCII attachment filenames (#4378)
 
-**File**: `actix-web-codegen/tests/routes.rs` (modified, +5/-1)
+- Add a UTF-8 `filename*` parameter for non-ASCII attachment names
+
+**File**: `actix-http/src/header/shared/extended.rs` (modified, +1/-0)
 ```diff
-@@ -400,5 +400,9 @@ async fn test_query() {
- 
-     let request = srv.request(http::Method::GET, srv.url("/test"));
-     let response = request.send().await.unwrap();
--    assert_eq!(response.status(), StatusCode::NOT_FOUND);
-+    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
-+    assert_eq!(
-+        response.headers().get(http::header::ALLOW).unwrap(),
-+        "QUERY"
-+    );
- }
+@@ -99,6 +99,7 @@ pub fn parse_extended_value(val: &str) -> Result<ExtendedValue, crate::error::Pa
+ impl fmt::Display for ExtendedValue {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         let encoded_value = percent_encoding::percent_encode(&self.value[..], HTTP_VALUE);
++
+         if let Some(ref lang) = self.language_tag {
+             write!(f, "{}'{}'{}", self.charset, lang, encoded_value)
+         } else {
 ```
 
-**File**: `actix-web/CHANGES.md` (modified, +2/-0)
+**File**: `actix-web/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  
  ## Unreleased
  
-+- Return 405 with an `Allow` header from the built-in app default when method guards reject matching resources, including macro routes.
-+
++- Add a UTF-8 encoded `filename*` parameter in `ContentDisposition::attachment()` for non-ASCII filenames.
+ - Return 405 with an `Allow` header from the built-in app default when method guards reject matching resources, including macro routes.
+ 
  ## 4.18.1
- 
- - Add `TestRequest::query()` method for constructing HTTP `QUERY` test requests.
 ```
 
-**File**: `actix-web/src/app_service.rs` (modified, +125/-9)
+**File**: `actix-web/src/http/header/content_disposition.rs` (modified, +42/-2)
 ```diff
-@@ -11,14 +11,15 @@ use crate::{
-     config::{AppConfig, AppService},
-     data::FnDataFactory,
-     dev::Extensions,
--    guard::Guard,
-+    guard::{Guard, RegisteredMethods},
-+    http::header,
-     request::{HttpRequest, HttpRequestPool},
-     rmap::ResourceMap,
-     service::{
-         AppServiceFactory, BoxedHttpService, BoxedHttpServiceFactory, ServiceRequest,
-         ServiceResponse,
-     },
--    Error, HttpResponse,
-+    Error, HttpMessage as _, HttpResponse,
- };
- 
- /// Service factory to convert [`Request`] to a [`ServiceRequest<S>`].
-@@ -64,13 +65,24 @@ where
-     type Future = LocalBoxFuture<'static, Result<Self::Service, Self::InitError>>;
- 
-     fn new_service(&self, config: AppConfig) -> Self::Future {
--        // set AppService's default service to 404 NotFound
--        // if no user defined default service exists.
--        let default = self.default.clone().unwrap_or_else(|| {
--            Rc::new(boxed::factory(fn_service(|req: ServiceRequest| async {
--                Ok(req.into_response(HttpResponse::NotFound()))
--            })))
--        });
-+        async fn default_handler(req: ServiceRequest) -> Result<ServiceResponse, Error> {
-+            let allowed = req.extensions().get::<RegisteredMethods>().cloned();
+@@ -322,6 +322,9 @@ pub struct ContentDisposition {
+ impl ContentDisposition {
+     /// Constructs a Content-Disposition header suitable for downloads.
+     ///
++    /// Includes a `filename` parameter and adds a UTF-8 encoded `filename*` parameter if the
++    /// filename contains non-ASCII characters.
++    ///
+     /// # Examples
+     /// ```
+     /// use actix_web::http::header::{ContentDisposition, TryIntoHeaderValue as _};
+@@ -332,9 +335,25 @@ impl ContentDisposition {
+     /// assert_eq!(cd_val, "attachment; filename=\"files.zip\"");
+     /// ```
+     pub fn attachment(filename: impl Into<String>) -> Self {
++        let filename = filename.into();
++        let is_ascii = filename.is_ascii();
 +
-+            let response = match allowed {
-+                Some(methods) => HttpResponse::MethodNotAllowed()
-+                    .insert_header(header::Allow(methods.0))
-+                    .finish(),
-+                None => HttpResponse::NotFound().finish(),
-+            };
++        let mut parameters = Vec::new();
 +
-+            Ok(req.into_response(response))
++        if is_ascii {
++            parameters.push(DispositionParam::Filename(filename));
++        } else {
++            parameters.push(DispositionParam::Filename(filename.clone()));
++            parameters.push(DispositionParam::FilenameExt(ExtendedValue {
++                charset: header::Charset::Ext(String::from("UTF-8")),
++                language_tag: None,
++                value: filename.into_bytes(),
++            }));
 +        }
 +
-+        // Use the built-in routing fallback if no user-defined default service exists.
-+        let default = self
-+            .default
-+            .clone()
-+            .unwrap_or_else(|| Rc::new(boxed::factory(fn_service(default_handler))));
- 
-         // create App config to pass to child services
-         let mut config = AppService::new(config, Rc::clone(&default));
-@@ -421,4 +433,108 @@ mod tests {
+         Self {
+             disposition: DispositionType::Attachment,
+-            parameters: vec![DispositionParam::Filename(filename.into())],
++            parameters,
          }
-         assert!(data.load(Ordering::Relaxed));
-     }
-+
-+    #[cfg(feature = "macros")]
-+    mod macro_routing {
-+        use crate::{
-+            get,
-+            http::{header, Method, StatusCode},
-+            post,
-+            test::{call_service, init_service, TestRequest},
-+            web, App, HttpResponse,
-+        };
-+
-+        #[get("/items")]
-+        async fn get_items() -> HttpResponse {
-+            HttpResponse::Ok().finish()
-+        }
-+
-+        #[post("/items")]
-+        async fn post_items() -> HttpResponse {
-+            HttpResponse::Created().finish()
-+        }
-+
-+        #[actix_rt::test]
-+        async fn macro_routes_allow_methods_in_any_order() {
-+            for reverse_registration in [false, true] {
-+                for scoped in [false, true] {
-+                    let app = App::new().configure(|cfg| {
-+                        let mut services = web::scope(if scoped { "/api" } else { "" });
-+
-+                        services = if reverse_registration {
-+                            services.service(post_items).service(get_items)
-+                        } else {
-+                            services.service(get_items).service(post_items)
-+                        };
-+
-+                        if scoped {
-+                            cfg.service(services);
-+                        } else if reverse_registration {
-+                            cfg.service(post_items).service(get_items);
-+                        } else {
-+                            cfg.service(get_items).service(post_items);
-+                        }
-+                    });
-+                    let app = init_service(app).await;
-+                    let path = if scoped { "/api/items" } else { "/items" };
-+
-+                    for methods in [
-+                        [Method::DELETE, Method::GET, Method::POST],
-+                        [Method::DELETE, Method::POST, Method::GET],
-+                        [Method::POST, Method::GET, Method::DELETE],
-+                        [Method::POST, Method::DELETE, Method::GET],
-+                        [Method::GET, Method::DELETE, Method::POST],
-+                        [Method::GET, Method::POST, Method::DELETE],
-+                    ] {
-+                        for method in methods {
-+                            let expected = match method {
-+                                Method::GET => StatusCode::OK,
-+                                Method::POST => StatusCode::CREATED,
-+                                _ => StatusCode::METHOD_NOT_ALLOWED,
-+                            };
-+                            let req = TestRequest::with_uri(path).method(method).to_request();
-+                            let res = call_service(&app, req).await;
-+
-+                            assert_eq!(res.status(), expected);
-+
-+                            if expected == StatusCode::METHOD_NOT_ALLOWED {
-+                                let mut allowed: Vec<_> = res
-+                                    .hea
-```
-
-**File**: `actix-web/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -83,6 +83,9 @@
- #![doc(html_favicon_url = "https://actix.rs/favicon.ico")]
- #![cfg_attr(docsrs, feature(doc_cfg))]
- 
-+#[cfg(all(test, feature = "macros"))]
-+extern crate self as actix_web;
-+
- pub use actix_http::{body, HttpMessage};
- #[cfg(feature = "cookies")]
- #[doc(inline)]
-```
-
-**File**: `actix-web/src/scope.rs` (modified, +3/-3)
-```diff
-@@ -716,7 +716,7 @@ mod tests {
-             .method(Method::POST)
-             .to_request();
-         let resp = srv.call(req).await.unwrap();
--        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
-+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
      }
  
-     #[actix_rt::test]
-@@ -764,7 +764,7 @@ mod tests {
-             .method(Method::POST)
-             .to_request();
-         let resp = srv.call(req).await.unwrap();
--        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
-+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
- 
-         let req = TestRequest::with_uri("/app/path1")
-             .method(Method::GET)
-@@ -856,7 +856,7 @@ mod tests {
-             .method(Method::POST)
-             .to_request();
-         let resp = srv.call(req).await.unwrap();
--        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
-+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
- 
-         let req = TestRequest::with_uri("/app/t1/path1")
-             .method(Method::GET)
-```
-
-**File**: `actix-web/src/service.rs` (modified, +1/-1)
-```diff
-@@ -757,7 +757,7 @@ mod tests {
-             .method(http::Method::PUT)
-             .to_request();
-         let resp = srv.call(req).await.unwrap();
--        assert_eq!(resp.status(), http::StatusCode::NOT_FOUND);
-+        assert_eq!(resp.status(), http::StatusCode::METHOD_NOT_ALLOWED);
-     }
- 
-     // allow deprecated App::data
-```
-
----
-
-### Incident Patch 2: `e390a71d` (2026-10-30)
-**Commit Message**: fix(files): encode directory listing hrefs per path segment
-
-**File**: `actix-files/src/directory.rs` (modified, +19/-3)
-```diff
-@@ -6,7 +6,7 @@ use std::{
- };
- 
- use actix_web::{dev::ServiceResponse, HttpRequest, HttpResponse};
--use percent_encoding::{utf8_percent_encode, CONTROLS};
-+use percent_encoding::{utf8_percent_encode, AsciiSet, NON_ALPHANUMERIC};
- use v_htmlescape::escape_fmt;
- 
- /// A directory; responds with the generated directory listing.
-@@ -45,10 +45,26 @@ impl Directory {
- pub(crate) type DirectoryRenderer =
-     dyn Fn(&Directory, &HttpRequest) -> Result<ServiceResponse, io::Error>;
- 
--/// Returns percent encoded file URL path.
-+// Leave only RFC 3986 unreserved characters unencoded within each path segment.
-+const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC
-+    .remove(b'-')
-+    .remove(b'.')
-+    .remove(b'_')
-+    .remove(b'~');
+@@ -591,7 +610,28 @@ impl fmt::Display for ContentDisposition {
+ #[cfg(test)]
+ mod tests {
+     use super::{ContentDisposition, DispositionParam, DispositionType};
+-    use crate::http::header::{Charset, ExtendedValue, HeaderValue};
++    use crate::http::header::{Charset, ExtendedValue, HeaderValue, TryIntoHeaderValue as _};
 +
-+/// Returns a percent encoded file URL path escaped for an HTML attribute.
- macro_rules! encode_file_url {
-     ($path:ident) => {
--        utf8_percent_encode(&$path, CONTROLS)
-+        escape_fmt(
-+            &$path
-+                .split('/')
-+                .map(|segment| utf8_percent_encode(segment, PATH_SEGMENT).to_string())
-+                .collect::<Vec<_>>()
-+                .join("/"),
-+        )
-+        .to_string()
-+        // Slashes are safe in a quoted attribute. Keep path separators literal.
-+        .replace("&#x2f;", "/")
-     };
- }
- 
-```
-
-**File**: `actix-files/src/lib.rs` (modified, +48/-0)
-```diff
-@@ -1609,6 +1609,54 @@ mod tests {
-         assert!(format!("{:?}", bytes).contains("/tests/test.png"));
-     }
- 
-+    #[cfg(unix)]
-+    #[actix_rt::test]
-+    async fn test_directory_listing_href_escaping() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let cases = [
-+            ("safe.txt", "/safe.txt"),
-+            (
-+                "x\"><img src=x onerror=alert(1)>.txt",
-+                "/x%22%3E%3Cimg%20src%3Dx%20onerror%3Dalert%281%29%3E.txt",
-+            ),
-+            ("`&#? %+ .txt", "/%60%26%23%3F%20%25%2B%20.txt"),
-+            ("AZaz09-._~.txt", "/AZaz09-._~.txt"),
-+        ];
-+
-+        for (name, _) in cases {
-+            std::fs::write(dir.path().join(name), "file contents").unwrap();
-+        }
-+
-+        let service = Files::new("/", dir.path())
-+            .show_files_listing()
-+            .new_service(())
-+            .await
++    #[test]
++    fn test_attachment_ascii() {
++        let header = ContentDisposition::attachment("file name.zip")
++            .try_into_value()
 +            .unwrap();
 +
-+        let req = TestRequest::with_uri("/").to_srv_request();
-+        let resp = test::call_service(&service, req).await;
-+        assert_eq!(resp.status(), StatusCode::OK);
-+
-+        let body = test::read_body(resp).await;
-+        let body = std::str::from_utf8(&body).unwrap();
-+        assert_eq!(body.matches("<a ").count(), cases.len());
-+        assert_eq!(body.matches("</a>").count(), cases.len());
-+
-+        for anchor in body.split("<a href=\"").skip(1) {
-+            let href = anchor.split('"').next().unwrap();
-+            assert!(!href.contains('<'));
-+            assert!(
-+                href.ends_with(".txt"),
-+                "href does not contain the whole file name: {href}"
-+            );
-+        }
-+
-+        for (name, href) in cases {
-+            let text = v_htmlescape::escape_fmt(name);
-+            assert!(body.contains(&format!("<a href=\"{href}\">{text}</a>")));
-+        }
++        assert_eq!(header, "attachment; filename=\"file name.zip\"");
 +    }
 +
-     #[actix_rt::test]
-     async fn test_path_filter() {
-         // prevent searching subdirectories
++    #[test]
++    fn test_attachment_non_ascii() {
++        let header = ContentDisposition::attachment("café.pdf")
++            .try_into_value()
++            .unwrap();
++
++        assert_eq!(
++            header.as_bytes(),
++            "attachment; filename=\"café.pdf\"; filename*=UTF-8''caf%C3%A9.pdf".as_bytes()
++        );
++    }
+ 
+     #[test]
+     fn test_from_raw_basic() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4380** (2026-11-03): ci: use ubuntu-slim for lightweight jobs (@robjtede)
+- **PR #4378** (2026-11-03): fix(web): encode non-ASCII attachment filenames (@robjtede)
+- **PR #4377** (2026-11-03): perf(http): avoid allocations when matching known charsets (@robjtede)
+- **PR #4375** (closed): feat(http): experimental sendfile support on macOS and Linux (@robjtede)
 - **PR #4374** (2026-10-31): fix(web): return allowed methods for macro route mismatches (@robjtede)
 - **PR #4373** (2026-10-31): test(files): cover directory listing hrefs on Windows (@robjtede)
-- **PR #4371** (2026-10-31): docs(actix-http): document encoding module behavior (@robjtede)
-- **PR #4370** (closed): ci: probe Windows Defender status (@robjtede)
-- **PR #4366** (2026-10-28): build(deps): bump smallvec from 1.16.3 to 1.16.4 (@dependabot[bot])
-- **PR #4365** (2026-10-28): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
 
 ---
 
@@ -1695,38 +1476,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. web): return allowed methods for macro route mismatches (#4374)
-
-**RULE**:
-When implementing operations in `actix-web-codegen/tests/routes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `067b1b93`: web): return allowed methods for macro route mismatches (#4374). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-web-codegen/tests/routes.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
-    assert_eq!(
-        response.headers().get(http::header::ALLOW).unwrap(),
-        "QUERY"
-    );
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    assert_eq!(response.status(), StatusCode::NOT_FOUND);
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `067b1b93` are properly handled with clean fallback behavior.

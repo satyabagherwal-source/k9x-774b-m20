@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `900536dd`  
+> **Source Version**: `d13e2b83`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:20:40.630Z  
+> **Timestamp**: 2026-11-04T07:41:18.591Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:20:39.926Z  
+> **Harvest Timestamp**: 2026-11-04T07:41:17.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6405 stars
+- **Stars / Engagement**: 6406 stars
 
 ---
 
@@ -1797,511 +1797,99 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `900536dd` (2026-11-04)
-**Commit Message**: Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)
+### Incident Patch 1: `d13e2b83` (2026-11-04)
+**Commit Message**: Add TrustedRootWithContext to stop the trusted root refresh (#5200)
 
-Pass RegistryOptions.NameOptions() to GetEnvTargetRepository and
-ociremote.WithNameOptions so that --allow-http-registry is preserved
-when parsing COSIGN_REPOSITORY and resolving references. Also ensure
-bundle verification/download, experimental OCI 1.1 signature read/write,
-and clean commands consistently respect TargetRepository and
-NameOptions.
+TrustedRoot starts a TUF refresh goroutine that runs until the process exits.
+Long-running callers pass a context that stops it.
 
-AI found and generated while updating scaffolding e2e tests
+Signed-off-by: d.schlatter <[REDACTED_EMAIL]>
 
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/clean.go` (modified, +17/-10)
+**File**: `pkg/cosign/tuf.go` (modified, +7/-1)
 ```diff
-@@ -63,19 +63,22 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
- 	}
+@@ -15,6 +15,7 @@
+ package cosign
  
- 	remoteOpts := regOpts.GetRegistryClientOpts(ctx)
--	ociRemoteOpts := ociremote.WithRemoteOptions(remoteOpts...)
-+	ociRemoteOpts, err := regOpts.ClientOpts(ctx)
-+	if err != nil {
-+		return err
-+	}
- 
--	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts)
-+	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts...)
- 	if err != nil {
- 		return err
- 	}
- 
--	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts)
-+	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts...)
- 	if err != nil {
- 		return err
- 	}
- 
--	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts)
-+	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts...)
- 	if err != nil {
- 		return err
- 	}
-@@ -84,12 +87,16 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
- 	digest, ok := ref.(name.Digest)
- 	if !ok {
- 		var err error
--		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts)
-+		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts...)
- 		if err != nil {
- 			return fmt.Errorf("resolving digest: %w", err)
- 		}
- 	}
--	idx, err := remote.Referrers(digest, remoteOpts...)
-+	targetRepo := ref.Context()
-+	if overrideRepo := ociremote.TargetRepositoryFromOptions(ociRemoteOpts...); (overrideRepo != name.Repository{}) {
-+		targetRepo = overrideRepo
-+	}
-+	idx, err := remote.Referrers(targetRepo.Digest(digest.DigestStr()), remoteOpts...)
- 	if err != nil {
- 		return err
- 	}
-@@ -99,8 +106,8 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
- 		if err != nil {
- 			return err
- 		}
--		referrerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), imgDigest.String())
--		referrerDigest, err := name.NewDigest(referrerDigestStr)
-+		referrerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), imgDigest.String())
-+		referrerDigest, err := name.NewDigest(referrerDigestStr, regOpts.NameOptions()...)
- 		if err != nil {
- 			return err
- 		}
-@@ -113,8 +120,8 @@ func CleanCmd(ctx context.Context, regOpts options.RegistryOptions, cleanType op
- 		}
- 		if idxManifest != nil {
- 			for _, manifest := range idxManifest.Manifests {
--				layerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), manifest.Digest.String())
--				layerDigest, err := name.NewDigest(layerDigestStr)
-+				layerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), manifest.Digest.String())
-+				layerDigest, err := name.NewDigest(layerDigestStr, regOpts.NameOptions()...)
- 				if err != nil {
- 					return err
- 				}
-```
-
-**File**: `cmd/cosign/cli/download/attestation.go` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ func AttestationCmd(ctx context.Context, regOpts options.RegistryOptions, attOpt
- 	var foundMatches bool
- 
- 	// Try bundles first
--	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
-+	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts, regOpts.NameOptions()...)
- 	if err == nil && len(newBundles) > 0 {
- 		for _, eachBundle := range newBundles {
- 			if predicateType != "" {
-```
-
-**File**: `cmd/cosign/cli/download/signature.go` (modified, +2/-2)
-```diff
-@@ -35,8 +35,8 @@ func SignatureCmd(ctx context.Context, regOpts options.RegistryOptions, imageRef
- 		return err
- 	}
- 
--	// Try bundles first
--	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
-+	// Try bundles first
-+	newBundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts, regOpts.NameOptions()...)
- 	if err == nil && len(newBundles) > 0 {
- 		for _, eachBundle := range newBundles {
- 			b, err := json.Marshal(eachBundle)
-```
-
-**File**: `cmd/cosign/cli/options/registry.go` (modified, +4/-1)
-```diff
-@@ -105,13 +105,16 @@ func (o *RegistryOptions) ClientOpts(ctx context.Context) ([]ociremote.Option, e
- 	if o.RefOpts.TagPrefix != "" {
- 		opts = append(opts, ociremote.WithPrefix(o.RefOpts.TagPrefix))
- 	}
--	targetRepoOverride, err := ociremote.GetEnvTargetRepository()
-+	targetRepoOverride, err := ociremote.GetEnvTargetRepository(o.NameOptions()...)
- 	if err != nil {
- 		return nil, err
- 	}
- 	if (targetRepoOverride != name.Repository{}) {
- 		opts = append(opts, ociremote.WithTargetRepository(targetRepoOverride))
- 	}
-+	if nameOpts := o.NameOptions(); len(nameOpts) > 0 {
-+		opts = append(opts, ociremote.WithNameOptions(nameOpts...))
-+	}
- 	return opts, nil
- }
- 
-```
-
-**File**: `cmd/cosign/cli/sign/sign.go` (modified, +7/-2)
-```diff
-@@ -223,7 +223,12 @@ func signDigestBundle(ctx context.Context, digest name.Digest, ko options.KeyOpt
- 	}
- 
- 	if signOpts.Upload {
--		ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
-+		repo, _ := ociremote.GetEnvTargetRepository(regOpts.NameOptions()...)
-+		if repo.RepositoryStr() == "" {
-+			ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
-+		} else {
-+			ui.Infof(ctx, "Pushing signature to: %s", repo.RepositoryStr())
-+		}
- 		if err := ociremote.WriteAttestationNewBundleFormat(digest, bundleBytes, bundleOpts.PredicateType, bundleOpts.OCIRemoteOpts...); err != nil {
- 			return err
- 		}
-@@ -440,7 +445,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
- 	}
- 
- 	// Check if we are overriding the signatures repository location
--	repo, _ := ociremote.GetEnvTargetRepository()
-+	repo, _ := ociremote.GetEnvTargetRepository(signOpts.Registry.NameOptions()...)
- 	if repo.RepositoryStr() == "" {
- 		ui.Infof(ctx, "Pushing signature to: %s", digest.Repository)
- 	} else {
-```
-
-**File**: `cmd/cosign/cli/verify/verify_test.go` (modified, +128/-0)
-```diff
-@@ -31,13 +31,21 @@ import (
+ import (
++	"context"
+ 	"encoding/json"
+ 	"errors"
  	"fmt"
- 	"io"
- 	"log"
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
- 	"os"
-+	"path/filepath"
- 	"strings"
- 	"sync"
- 	"testing"
+@@ -29,11 +30,16 @@ import (
+ )
  
- 	"github.com/google/go-containerregistry/pkg/name"
-+	"github.com/google/go-containerregistry/pkg/registry"
-+	"github.com/google/go-containerregistry/pkg/v1/empty"
-+	"github.com/google/go-containerregistry/pkg/v1/remote"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
-+	"github.com/sigstore/cosign/v3/cmd/cosign/cli/sign"
- 	"github.com/sigstore/cosign/v3/internal/pkg/cosign/fulcio/fulcioroots"
- 	"github.com/sigstore/cosign/v3/internal/test"
- 	"github.com/sigstore/cosign/v3/internal/ui"
-@@ -474,3 +482,123 @@ func TestVerifySkWithoutIdentities(t *testing.T) {
- 		t.Fatalf("expected PIV error, got: %v", err)
- 	}
- }
-+
-+type roundTripperFunc func(*http.Request) (*http.Response, error)
-+
-+func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-+	return f(req)
+ func TrustedRoot() (root.TrustedMaterial, error) {
++	return TrustedRootWithContext(context.Background())
 +}
 +
-+func TestSignAndVerifyWithHTTPTargetRepository(t *testing.T) {
-+	r := registry.New(registry.WithReferrersSupport(true))
-+	s := httptest.NewServer(r)
-+	defer s.Close()
-+
-+	u, err := url.Parse(s.URL)
-+	assert.NoError(t, err)
-+	host := u.Host
-+
-+	// Route registry.local:5000 over HTTP to the in-memory registry.
-+	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
-+		reqClone := req.Clone(req.Context())
-+		reqClone.URL.Host = host
-+		reqClone.Host = host
-+		return http.DefaultTransport.RoundTrip(reqClone)
-+	})
-+
-+	td := t.TempDir()
-+	keys, err := cosign.GenerateKeyPair(func(bool) ([]byte, error) { return nil, nil })
-+	assert.NoError(t, err)
-+	privKeyPath := filepath.Join(td, "cosign.key")
-+	pubKeyPath := filepath.Join(td, "cosign.pub")
-+	assert.NoError(t, os.WriteFile(privKeyPath, keys.PrivateBytes, 0o600))
-+	assert.NoError(t, os.WriteFile(pubKeyPath, keys.PublicBytes, 0o600))
-+
-+	ro := &options.RootOptions{Timeout: options.DefaultTimeout}
-+	ko := options.KeyOpts{
-+		KeyRef:           privKeyPath,
-+		PassFunc:         func(bool) ([]byte, error) { return nil, nil },
-+		SkipConfirmation: true,
-+	}
-+	regOpts := options.RegistryOptions{
-+		AllowHTTPRegistry:  true,
-+		RegistryClientOpts: []remote.Option{remote.WithTransport(rt)},
-+	}
-+
-+	for _, tc := range []struct {
-+		name              string
-+		newBundleFormat   bool
-+		experimentalOCI11 bool
-+	}{
-+		{name: "legacy", newBundleFormat: false},
-+		{name: "new-bundle-format", newBundleFormat: true},
-+		{name: "oci-1-1-referrers", newBundleFormat: false, experimentalOCI11: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			targetRepoStr := fmt.Sprintf("registry.local:5000/target/%s", tc.name)
-+			t.Setenv("COSIGN_REPOSITORY", targetRepoStr)
-+
-+			// Write the image both to the loopback host (which does not need name.Insecure)
-+			// and to registry.local:5000 (which requires name.Insecure / AllowHTTPRegistry).
-+			loopbackImgRefStr := fmt.Sprintf("%s/source/%s:latest", host, tc.name)
-+			loopbackImgRef, err := name.ParseReference(loopbackImgRefStr)
-+			assert.NoError(t, err)
-+			assert.NoError(t, remote.Write(loopbackImgRef, empty.Image, remote.WithTransport(rt)))
-+
-+			imgRefStr := fmt.Sprintf("registry.local:5000/source/%s:latest", tc.name)
-+			imgRef, err := name.ParseReference(imgRefStr, name.Insecure)
-+			assert.NoError(t, err)
-+			assert.NoError(t, remote.Write(imgRef, empty.Image, remote.WithTransport(rt)))
-+
-+			koCase := ko
-+			koCase.NewBundleFormat = tc.newBundleFormat
-+
-+			so := options.SignOptions{
-+				Upload:          true,
-+				TlogUpload:      false,
-+				NewBundleFormat: tc.newBundleFormat,
-+				Registry:        regOpts,
-+			}
-+			if tc.experimentalOCI11 {
-+				so.RegistryExperimental.RegistryReferrersMode = options.RegistryReferrersModeOCI11
-+			}
-+
-+			// Without AllowHTTPRegistry, signing even a loopback source image must fail
-+			// specifically when pushing to the HTTP COSIGN_REPOSITORY (registry.local:5000).
-+			soNoHTTP := so
-+			soNoHTTP.Registry.AllowHTTPRegistry = false
-+			assert.Error(t, sign.SignCmd(t.Context(), ro, koCase, soNoHTTP, []string{loopbackImgRefStr}))
-+
-+			// With AllowHTTPRegistry, signing from HTTP source to HTTP COSIGN_REPOSITORY succeeds.
-+			assert.NoError(t, sign.SignCmd(t.Context(), ro, koCase, so, []string{imgRefStr}))
-+
-+			verifyCmd := VerifyCommand{
-+				KeyRef:            pubKeyPath,
-+				CheckClaims:       true,
-+				IgnoreTlog:        true,
-+				HashAlgorithm:     crypto.SHA256,
-+				RegistryOptions:   regOpts,
-+				ExperimentalOCI11: tc.experimentalOCI11,
-+				CommonVerifyOptions: options.CommonVerifyOptions{
-+					NewBundleFormat:   tc.newBundleFormat,
-+					ExperimentalOCI11: tc.experimentalOCI11,
-+				},
-+			}
-+
-+			// Without COSIGN_REPOSITORY set, verification must fail because the signature/bundle
-+			// was written to the target repository, not the source repository.
-+			t.Setenv("COSIGN_REPOSITORY", "")
-+			assert.Error(t, verifyCmd.Exec(t.Context(), []string{imgRefStr}))
-+			t.Setenv("COSIGN_REPOSITORY", targetRepoStr)
-+
-+			// Wi
-```
-
-**File**: `pkg/cosign/verify.go` (modified, +13/-7)
-```diff
-@@ -1722,12 +1722,13 @@ func verifyImageSignaturesExperimentalOCI(ctx context.Context, signedImgRef name
- 			// TODO: if there is more than 1 result.. what does that even mean?
- 			ui.Warnf(ctx, "there were a total of %d references with artifactType %s\n", numResults, artifactType)
- 		}
-+		bundleRepo := digest.Repository
-+		if targetRepo := ociremote.TargetRepositoryFromOptions(co.RegistryClientOpts...); (targetRepo != name.Repository{}) {
-+			bundleRepo = targetRepo
-+		}
- 		// TODO: do this smarter using "created" annotations
- 		lastResult := results[numResults-1]
--		st, err := name.ParseReference(fmt.Sprintf("%s@%s", digest.Repository, lastResult.Digest.String()))
--		if err != nil {
--			return nil, false, err
--		}
-+		st := bundleRepo.Digest(lastResult.Digest.String())
- 		sigs, err = ociremote.Signatures(st, co.RegistryClientOpts...)
- 		if err != nil {
- 			return nil, false, err
-@@ -1774,9 +1775,14 @@ func GetBundles(_ context.Context, signedImgRef name.Reference, registryClientOp
- 
- 	var bundles = make([]*sgbundle.Bundle, 0, len(index.Manifests))
- 	for _, result := range index.Manifests {
--		st, err := name.ParseReference(fmt.Sprintf("%s@%s", bundleRepo, result.Digest.String()), nameOpts...)
--		if err != nil {
--			return nil, nil, err
-+		var st name.Reference
-+		if len(nameOpts) > 0 {
-+			st, err = name.ParseReference(fmt.Sprintf("%s@%s", bundleRepo, result.Digest.String()), nameOpts...)
-+			if err != nil {
-+				return nil, nil, err
-+			}
-+		} else {
-+			st = bundleRepo.Digest(result.Digest.String())
- 		}
- 		bundle, err := ociremote.Bundle(st, registryClientOpts...)
- 		if err != nil {
-```
-
-**File**: `pkg/cosign/verify_oci_test.go` (modified, +49/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"context"
- 	_ "embed"
- 	"fmt"
-+	"net/http"
- 	"net/http/httptest"
- 	"net/url"
- 	"testing"
-@@ -177,6 +178,54 @@ func TestGetBundles_WithTargetRepository(t *testing.T) {
- 	if !proto.Equal(bundles[0].Bundle, &expected) {
- 		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
++// TrustedRootWithContext returns a trusted root that refreshes from TUF until ctx is done.
++func TrustedRootWithContext(ctx context.Context) (root.TrustedMaterial, error) {
+ 	opts, err := setTUFOpts()
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error setting TUF options: %w", err)
  	}
+-	tr, err := root.NewLiveTrustedRoot(opts)
++	tr, err := root.NewLiveTrustedRoot(opts.WithContext(ctx))
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error getting live trusted root: %w", err)
+ 	}
+```
+
+**File**: `pkg/cosign/tuf_test.go` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// Copyright 2026 The Sigstore Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+	// Also test a non-loopback HTTP target repository (e.g. registry.local:5000)
-+	// where name.Insecure is required on the target repository and must be
-+	// preserved by GetBundles even when nameOpts is omitted.
-+	rt := roundTripperFunc(func(req *http.Request) (*http.Response, error) {
-+		reqClone := req.Clone(req.Context())
-+		reqClone.URL.Host = host
-+		reqClone.Host = host
-+		return http.DefaultTransport.RoundTrip(reqClone)
-+	})
-+	httpTargetRepo, err := name.NewRepository("registry.local:5000/http-target-repo", name.Insecure)
-+	assert.NoError(t, err)
-+	err = ociremote.WriteAttestationNewBundleFormat(sourceDigestRef, testAttestation, "https://cosign.sigstore.dev/attestation/v1",
-+		ociremote.WithTargetRepository(httpTargetRepo),
-+		ociremote.WithNameOptions(name.Insecure),
-+		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
-+	)
-+	assert.NoError(t, err)
++package cosign
 +
-+	// Without nameOpts, GetBundles preserves httpTargetRepo's Insecure scheme via bundleRepo.Digest().
-+	bundles, hash, err = GetBundles(context.Background(), sourceRef, []ociremote.Option{
-+		ociremote.WithTargetRepository(httpTargetRepo),
-+		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
-+	})
-+	assert.NoError(t, err)
-+	assert.Len(t, bundles, 1)
-+	assert.NotNil(t, hash)
-+	if !proto.Equal(bundles[0].Bundle, &expected) {
-+		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
++import (
++	"context"
++	"runtime"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++func TestTrustedRootWithContextStopsRefresh(t *testing.T) {
++	t.Setenv("TUF_ROOT", t.TempDir())
++	refreshRunning := func() bool {
++		buf := make([]byte, 1<<20)
++		return strings.Contains(string(buf[:runtime.Stack(buf, true)]), "root.NewLiveTrustedRootFromTargetWithPeriod.func")
 +	}
++	ctx, cancel := context.WithCancel(context.Background())
 +
-+	// With name.Insecure passed in nameOpts, GetBundles parses bundleRepo@digest with nameOpts.
-+	bundles, hash, err = GetBundles(context.Background(), sourceRef, []ociremote.Option{
-+		ociremote.WithTargetRepository(httpTargetRepo),
-+		ociremote.WithRemoteOptions(remote.WithTransport(rt)),
-+	}, name.Insecure)
-+	assert.NoError(t, err)
-+	assert.Len(t, bundles, 1)
-+	assert.NotNil(t, hash)
-+	if !proto.Equal(bundles[0].Bundle, &expected) {
-+		t.Errorf("got %v, want %v", bundles[0].Bundle, &expected)
-+	}
++	trustedRoot, err := TrustedRootWithContext(ctx)
++	require.NoError(t, err)
++	require.NotNil(t, trustedRoot)
++	require.True(t, refreshRunning())
++
++	cancel()
++	assert.Eventually(t, func() bool { return !refreshRunning() }, 5*time.Second, 10*time.Millisecond)
 +}
-+
-+type roundTripperFunc func(*http.Request) (*http.Response, error)
-+
-+func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-+	return f(req)
- }
- 
- // TODO: This test is getting long and maybe should be refactored into a
-```
-
----
-
-### Incident Patch 2: `521c39e4` (2026-11-03)
-**Commit Message**: Pin scaffolding setup action by SHA so Dependabot keeps it updated (#5203)
-
-Replace sigstore/scaffolding/actions/setup@main with a SHA-pinned
-reference and version comment, and extract SCAFFOLDING_RELEASE_VERSION
-from the comment so Dependabot updates both the action and release
-version together.
-
-This will also prevent tests from unexpectedly failing when there's a
-breaking change in scaffolding.
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/e2e-tests.yml` (modified, +8/-6)
-```diff
-@@ -97,7 +97,6 @@ jobs:
-       VAULT_TOKEN: "root"
-       VAULT_ADDR: "http://localhost:8200"
-       COSIGN_YES: "true"
--      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
-     steps:
-       - name: Checkout
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -118,8 +117,11 @@ jobs:
- 
-       - uses: imjasonh/setup-crane@feee3b6bb0d4c68370f256a4502498c9227e5c6b # v0.7
- 
-+      - name: Extract version of scaffolding to use
-+        run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/e2e-tests.yml)" >> $GITHUB_ENV
-+
-       - name: Install cluster + sigstore
--        uses: sigstore/scaffolding/actions/setup@main
-+        uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
-         with:
-           version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
- 
-@@ -134,9 +136,6 @@ jobs:
-   e2e-registry:
-     runs-on: ubuntu-latest
- 
--    env:
--      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
--
-     steps:
-     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       with:
-@@ -156,8 +155,11 @@ jobs:
-       with:
-         mirror: mirror.gcr.io
- 
-+    - name: Extract version of scaffolding to use
-+      run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/e2e-tests.yml)" >> $GITHUB_ENV
-+
-     - name: Install cluster + sigstore
--      uses: sigstore/scaffolding/actions/setup@main
-+      uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
-       with:
-         version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
- 
-```
-
-**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +4/-2)
-```diff
-@@ -44,7 +44,6 @@ jobs:
- 
-     env:
-       KO_DOCKER_REPO: "registry.local:5000/policy-controller"
--      SCAFFOLDING_RELEASE_VERSION: "v0.7.41"
-       GO111MODULE: on
-       GOFLAGS: -ldflags=-s -ldflags=-w
-       KOCACHE: ~/ko
-@@ -74,8 +73,11 @@ jobs:
-       run: |
-         make cosign
- 
-+    - name: Extract version of scaffolding to use
-+      run: echo "SCAFFOLDING_RELEASE_VERSION=$(awk '/sigstore\/scaffolding\/actions\/setup@/{print $NF; exit}' .github/workflows/kind-verify-attestation.yaml)" >> $GITHUB_ENV
-+
-     - name: Install cluster + sigstore
--      uses: sigstore/scaffolding/actions/setup@main
-+      uses: sigstore/scaffolding/actions/setup@c9e7cb4a331fad6ff917e0f912a37035487f6d55 # v0.7.41
-       with:
-         k8s-version: ${{ matrix.k8s-version }}
-         version: ${{ env.SCAFFOLDING_RELEASE_VERSION }}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5203** (2026-11-03): Pin scaffolding setup action by SHA so Dependabot keeps it updated (@Hayden-IO)
 - **PR #5202** (2026-11-04): Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (@Hayden-IO)
 - **PR #5201** (closed): Fix failing e2e tests by bumping scaffolding to v0.7.33 (@daescha)
+- **PR #5200** (2026-11-04): Add TrustedRootWithContext to stop the trusted root refresh (@daescha)
 - **PR #5185** (closed): chore(deps): bump the gomod group with 3 updates (@dependabot[bot])
 - **PR #5182** (2026-10-22): Bump local dev builds to use distroless debian13 image (@Hayden-IO)
-- **PR #5180** (2026-10-22): Move bundle metadata types into a dependency-free package (@mrueg)
 
 ---
 
@@ -2321,53 +1909,34 @@ Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202)
+## X. Add TrustedRootWithContext to stop the trusted root refresh (#5200)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/clean.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cosign/tuf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `900536dd`: Honor --allow-http-registry and COSIGN_REPOSITORY across OCI operations (#5202). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d13e2b83`: Add TrustedRootWithContext to stop the trusted root refresh (#5200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/clean.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cosign/tuf.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ociRemoteOpts, err := regOpts.ClientOpts(ctx)
-	if err != nil {
-		return err
-	}
-	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts...)
-	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts...)
-	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts...)
-		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts...)
-	targetRepo := ref.Context()
-	if overrideRepo := ociremote.TargetRepositoryFromOptions(ociRemoteOpts...); (overrideRepo != name.Repository{}) {
-		targetRepo = overrideRepo
-	}
-	idx, err := remote.Referrers(targetRepo.Digest(digest.DigestStr()), remoteOpts...)
-		referrerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), imgDigest.String())
-		referrerDigest, err := name.NewDigest(referrerDigestStr, regOpts.NameOptions()...)
-				layerDigestStr := fmt.Sprintf("%s@%s", targetRepo.Name(), manifest.Digest.String())
-				layerDigest, err := name.NewDigest(layerDigestStr, regOpts.NameOptions()...)
+	"context"
+	return TrustedRootWithContext(context.Background())
+}
+
+// TrustedRootWithContext returns a trusted root that refreshes from TUF until ctx is done.
+func TrustedRootWithContext(ctx context.Context) (root.TrustedMaterial, error) {
+	tr, err := root.NewLiveTrustedRoot(opts.WithContext(ctx))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	ociRemoteOpts := ociremote.WithRemoteOptions(remoteOpts...)
-	sigRef, err := ociremote.SignatureTag(ref, ociRemoteOpts)
-	attRef, err := ociremote.AttestationTag(ref, ociRemoteOpts)
-	sbomRef, err := ociremote.SBOMTag(ref, ociRemoteOpts)
-		digest, err = ociremote.ResolveDigest(ref, ociRemoteOpts)
-	idx, err := remote.Referrers(digest, remoteOpts...)
-		referrerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), imgDigest.String())
-		referrerDigest, err := name.NewDigest(referrerDigestStr)
-				layerDigestStr := fmt.Sprintf("%s@%s", ref.Context().Name(), manifest.Digest.String())
-				layerDigest, err := name.NewDigest(layerDigestStr)
+	tr, err := root.NewLiveTrustedRoot(opts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `900536dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d13e2b83` are properly handled with clean fallback behavior.

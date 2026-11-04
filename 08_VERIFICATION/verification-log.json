@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-5GHS",
-    "timestamp": "2026-10-31T17:50:25.216Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "bd83119637c49d8ce7315206e5773a20e18aa453bbf634a896b3a2a958df7c54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-JWP1",
-    "timestamp": "2026-10-31T18:01:39.397Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "a7ffcdc25316083cd828f2ef4bf11d945323fe4e316aa6c5461668d0451a761b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-JZ0M",
     "timestamp": "2026-10-31T18:01:42.406Z",
     "repository": "openai-community/gpt2",
@@ -7492,6 +7462,36 @@
     "contentHash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-5K6A",
+    "timestamp": "2026-11-04T07:41:19.330Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "8bc3994897907c2f9635d413bceaf2b4f2dc49fcb9ee83dd5aaeca0e5fddf741",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-6JT6",
+    "timestamp": "2026-11-04T07:42:05.514Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "914ed3b9c03c423d7cde42020d5e44775e3a2b1842fbd0d8bdae547105de0aa4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

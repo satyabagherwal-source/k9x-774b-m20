@@ -7171,3 +7171,5 @@ Every entry in this ledger must capture:
 | `learn-github-runanywhereai-runanywhere-sdks` | `https://github.com/RunanywhereAI/runanywhere-sdks` | `a403990b` | Multi-dimensional audit evidence | 2026-11-04T07:33:20.843Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `a3780453` | Multi-dimensional audit evidence | 2026-11-04T07:33:22.858Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `cbd54239` | Multi-dimensional audit evidence | 2026-11-04T07:34:00.027Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `d13e2b83` | Multi-dimensional audit evidence | 2026-11-04T07:41:19.334Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `81bb9971` | Multi-dimensional audit evidence | 2026-11-04T07:42:05.523Z |

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T07:34:02.581Z",
-    "lastVerified": "2026-11-04T07:34:02.581Z",
+    "lastChecked": "2026-11-04T07:42:08.066Z",
+    "lastVerified": "2026-11-04T07:42:08.067Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T04:04:53.232Z",
-    "lastVerified": "2026-11-04T04:04:53.232Z",
+    "lastChecked": "2026-11-04T07:41:18.407Z",
+    "lastVerified": "2026-11-04T07:41:18.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1819,12 +1819,12 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T01:20:39.926Z",
-    "lastVerified": "2026-11-04T01:20:39.926Z",
+    "lastChecked": "2026-11-04T07:41:17.909Z",
+    "lastVerified": "2026-11-04T07:41:17.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
+    "contentHash": "8bc3994897907c2f9635d413bceaf2b4f2dc49fcb9ee83dd5aaeca0e5fddf741",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3346,9 +3346,9 @@
   "devhubapp-devhub": {
     "name": "devhub",
     "officialUrl": "https://github.com/devhubapp/devhub",
-    "lastChecked": "2026-10-31T04:50:28.366Z",
+    "lastChecked": "2026-11-04T07:41:08.300Z",
     "revisionIdentifier": "1d0d66a3",
-    "lastVerified": "2026-10-31T04:50:28.366Z"
+    "lastVerified": "2026-11-04T07:41:08.300Z"
   },
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
@@ -4538,14 +4538,14 @@
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T02:00:46.207Z",
-    "lastVerified": "2026-11-01T02:00:46.207Z",
+    "lastChecked": "2026-11-04T07:41:08.039Z",
+    "lastVerified": "2026-11-04T07:41:08.039Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "914ed3b9c03c423d7cde42020d5e44775e3a2b1842fbd0d8bdae547105de0aa4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4772,9 +4772,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-02T21:36:35.357Z",
+    "lastChecked": "2026-11-04T07:41:15.831Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-11-02T21:36:35.357Z"
+    "lastVerified": "2026-11-04T07:41:15.831Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -6811,9 +6811,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-03T10:59:42.104Z",
+    "lastChecked": "2026-11-04T07:41:10.869Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-03T10:59:42.104Z"
+    "lastVerified": "2026-11-04T07:41:10.869Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -11853,12 +11853,12 @@
     "lastVerified": "2026-11-03T21:36:38.777Z"
   },
   "mochajs-mocha": {
-    "name": "mochajs/mocha",
+    "name": "mocha",
     "officialUrl": "https://github.com/mochajs/mocha",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T21:29:54.542Z",
-    "lastVerified": "2026-10-30T21:29:54.542Z",
+    "lastChecked": "2026-11-04T07:41:05.841Z",
+    "lastVerified": "2026-11-04T07:41:05.841Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mochajs-mocha",
@@ -11867,7 +11867,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5b5afa7b"
   },
   "software-mansion-react-native-screens": {
     "name": "software-mansion/react-native-screens",
