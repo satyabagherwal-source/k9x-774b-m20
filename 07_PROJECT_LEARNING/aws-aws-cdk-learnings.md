@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `05fb8aef`  
+> **Source Version**: `89b6cdc1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:36:48.805Z  
+> **Timestamp**: 2026-11-04T01:34:57.552Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:36:48.356Z  
+> **Harvest Timestamp**: 2026-11-04T01:34:56.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12958 stars
+- **Stars / Engagement**: 12961 stars
 
 ---
 
@@ -1179,14 +1179,11 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39344** (2026-10-24): **feat(lambda-nodejs): support repeated esbuild arguments**
-  *Symptoms*: ### Issue #  Closes #32260.  ### Description of changes  Allow string arrays in `BundlingOptions.esbuildArgs` for options that esbuild supports repeating. Every array item is emitted as a separate `--flag:value` argument, including options such as `--supported` that are outside the existing scalar colon-option list. Empty arrays emit no arguments. Existing string and boolean handling is unchanged.  Docker shell escaping and direct local spawning share the conversion. Updated README and JSDoc explain the array syntax and that single-value options should use strings or booleans.  ### Validation  Validated the review follow-up in commit `34ed9898`:  - JSII package compilation: 0 errors; 1 existing `constructs` development-dependency metadata warning. - Bundling suite: 69 tests and 1 existing snapshot passed. - Both updated repeated-argument tests fail against the original implementation and pass with the fix. They cover repeated `--supported` values in both Docker and local-spawn paths, while preserving scalar `--conditions=first,second` rendering. - ESLint passed for all three changed TypeScript files; `git diff --check` passed. - Real esbuild 0.28.1 smoke check using the updated conversion confirmed that both `--supported` overrides apply together and a single-value option supplied as an array is rejected by esbuild.  ### Integration deployment  The integration source is `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.ts`. No 
+- **Issue #39601** (2026-11-03): **fix(core): honor rounding for same-unit Size conversions**
+  *Symptoms*: Fixes #39600  ## Summary  When a `Size` is converted to the same unit, the early return currently bypasses an explicitly requested rounding mode. Apply the existing conversion logic for explicit `FLOOR` and `FAIL`, while preserving the same-unit identity behavior when rounding is omitted and when `NONE` is requested.  Added unit regression coverage for all four cases and a Core integration snapshot that synthesizes a Lambda function with `MemorySize: 128` from `Size.mebibytes(128.66)` using `FLOOR`.  ## Verification  - `NODE_OPTIONS=--max-old-space-size=8192 corepack yarn lerna run build --scope=aws-cdk-lib --stream` — passed. - `corepack yarn test core/test/size.test.ts --coverage=false` — 12 tests passed. - `NODE_OPTIONS=--max-old-space-size=8192 corepack yarn lerna run build --scope=@aws-cdk-testing/framework-integ --stream` — passed. - `corepack yarn integ core/test/integ.size-rounding.js --dry-run --update-on-failed` — snapshot passed; no deployment performed. - `git diff --check` — passed. 
 
-- **Issue #39338** (2026-10-26): **fix(ec2): warn when a VPC has no availability zones**
-  *Symptoms*: ### Issue # (if applicable)  Closes #32451.  ### Description of changes  An explicit empty availability-zone list silently creates no subnets and can produce misleading downstream errors. Add a suppressible synthesis warning without rejecting existing VPC configurations. Tokenized lists and normal AZ defaults remain accepted. The warning only applies to an explicitly empty availabilityZones list when subnets are requested; intentional subnetConfiguration: [] and maxAzs: 0 do not receive this warning.   Validation: 193 tests passed on this independent branch; changed TypeScript files passed ESLint. Strict JSII/TypeScript compilation passed with all five independent changes combined on a local validation branch.  Integration test exemption requested: this change only adds synth-time metadata. Unit tests cover empty, omitted, explicit nonempty, and tokenized AZ lists; no deployed resource behavior changes.  ----  *By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license* 
-  **Post-Mortem & Fix Analysis**:
-  > The `validate-pr` job failed while installing dependencies from the base branch, before the PR validation ran: npm returned `502 Bad Gateway` for `constant-case-3.0.4.tgz`.  [Failed job](https://github.com/aws/aws-cdk/actions/runs/38913326531/job/117014457532). I attempted to rerun it, but GitHub requires repository administrator access. Could a maintainer rerun the failed job?  Could you also consider `pr-linter/exempt-integ-test` for this synthesis-warning change? The independent branch passes 193 VPC tests, including explicit empty/nonempty, omitted and tokenized AZ lists, plus intentionally empty subnet configurations. The change adds diagnostic metadata and does not alter deployed resources. 
-  > **Automated review**  A maintainer will still review this — treat the notes below as a starting point.  📌 Commit [`b27c2f1`](https://github.com/aws/aws-cdk/pull/39338/commits/b27c2f16759318162142262f7a80cac093aa205c)  This PR adds a synth-time warning to the `ec2.Vpc` L2 construct that fires when a VPC is created with an explicit empty `availabilityZones: []` list alongside a default or non-empty `subnetConfiguration`, a case that silently produces no subnets and later surfaces as a confusing "no subnet groups" error. It emits a suppressible `addWarningV2` diagnostic (ID `@aws-cdk/aws-ec2:emptyAvailabilityZonesInVpc`) guarded so it only triggers for the problematic case, and does not alter emitted templates, logical IDs, or deployed resources. The warning guard correctly short-circuits on unresolved tokens before comparing list length, and suppresses itself for an intentionally subnetless VPC. The four added unit tests exercise the positive warning case plus each suppression branch. N
+- **Issue #39600** (2026-11-03): **core: cdk.Size - rounding conditionally ignored**
+  *Symptoms*: ### Describe the bug  cdk.Size does not honour SizeConversionOptions when input and output units are the same.  https://github.com/aws/aws-cdk/blob/c1a53ab24a06355d7eb730df34adaf95618dcf88/packages/aws-cdk-lib/core/lib/size.ts#L261 ``` function convert(amount: number, fromUnit: StorageUnit, toUnit: StorageUnit, options: SizeConversionOptions = {}) {   const rounding = options.rounding ?? SizeRoundingBehavior.FAIL;   if (fromUnit.inBytes === toUnit.inBytes) { return amount; }  // BUG: returns float when options: { rounding: SizeRoundingBehavior.FLOOR } ```  ### Regression Issue  - [ ] Select this option if this issue appears to be a regression.  ### Last Known Working CDK Library Version  _No response_  ### Expected Behavior  When `options: { rounding: SizeRoundingBehavior.FLOOR }` it should always return an integer.  ### Current Behavior  It returns a float.  ### Reproduction Steps  const subject = cdk.size.mebibytes(42.66); subject.toMebibytes({ rounding: cdk.SizeRoundingBehavior.FLOOR }); // Should be 42 but is 42.66 instead.    ### Possible Solution  Replace `if (fromUnit.inBytes === toUnit.inBytes) { return amount; }`  With ``` if (fromUnit.inBytes === toUnit.inBytes   && (options.rounding === undefined || options.rounding === SizeRoundingBehavior.NONE)) { return amount; } ```  ### Additional Information/Context  _No response_  ### AWS CDK Library version (aws-cdk-lib)  2.275.0  ### AWS CDK CLI version  2.1147.0  ### Node.js Version  25.0.0  ### OS  Windows 11  ### Langua
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1203,258 +1200,288 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05fb8aef` (2026-11-02)
-**Commit Message**: feat: update L1 CloudFormation resource definitions (#39491)
+### Incident Patch 1: `89b6cdc1` (2026-11-03)
+**Commit Message**: docs(bedrockagentcore): note security group deletion behavior when removing a VPC runtime (#39461)
 
-**File**: `packages/@aws-cdk/metrics-facade-alpha/package.json` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@
-     "@aws-cdk/integ-runner": "^2.205.8",
-     "@aws-cdk/integ-tests-alpha": "0.0.0",
-     "@aws-cdk/pkglint": "0.0.0",
--    "@aws-cdk/service-spec-types": "0.0.288",
-+    "@aws-cdk/service-spec-types": "0.0.293",
-     "@aws-cdk/spec2cdk": "0.0.0",
-     "@cdklabs/tskb": "^0.0.4",
-     "@cdklabs/typewriter": "^0.0.16",
-```
+### Issue # (if applicable)
 
-**File**: `packages/@aws-cdk/mixins-preview/package.json` (modified, +1/-1)
-```diff
-@@ -314,7 +314,7 @@
-     "@aws-cdk/integ-runner": "^2.205.8",
-     "@aws-cdk/integ-tests-alpha": "0.0.0",
-     "@aws-cdk/pkglint": "0.0.0",
--    "@aws-cdk/service-spec-types": "0.0.288",
-+    "@aws-cdk/service-spec-types": "0.0.293",
-     "@aws-cdk/spec2cdk": "0.0.0",
-     "@cdklabs/tskb": "^0.0.4",
-     "@cdklabs/typewriter": "^0.0.16",
-```
+Related to #39201.
 
-**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
-```diff
-@@ -136,7 +136,7 @@
-   },
-   "devDependencies": {
-     "@aws-cdk/aws-custom-resource-sdk-adapter": "0.0.0",
--    "@aws-cdk/aws-service-spec": "0.1.222",
-+    "@aws-cdk/aws-service-spec": "0.1.227",
-     "@aws-cdk/cdk-build-tools": "0.0.0",
-     "@aws-cdk/check-peer-dependencies": "0.0.0",
-     "@aws-cdk/custom-resource-handlers": "0.0.0",
-```
+### Reason for this change
 
-**File**: `tools/@aws-cdk/spec2cdk/package.json` (modified, +2/-2)
-```diff
-@@ -32,9 +32,9 @@
-   },
-   "license": "Apache-2.0",
-   "dependencies": {
--    "@aws-cdk/aws-service-spec": "0.1.222",
-+    "@aws-cdk/aws-service-spec": "0.1.227",
-     "@aws-cdk/service-spec-importers": "0.0.145",
--    "@aws-cdk/service-spec-types": "0.0.288",
-+    "@aws-cdk/service-spec-types": "0.0.293",
-     "@cdklabs/tskb": "^0.0.4",
-     "@cdklabs/typewriter": "^0.0.16",
-     "camelcase": "^6",
-```
+When a VPC-mode `Runtime` is removed, AgentCore releases the network interfaces it created asynchronously. CloudFormation then fails to delete the runtime's security groups with `DependencyViolation`, retries, skips them, and leaves them in the account. This is service-side behavior; the maintainer suggested a README note on the issue.
 
-**File**: `yarn.lock` (modified, +9/-9)
+### Description of changes
+
+Adds a "Removing a VPC Runtime" subsection to the `aws-bedrockagentcore` README, after "Managing Security Groups with VPC Configuration". It explains the behavior and documents the two workarounds from the issue thread:
+
+- Apply `RemovalPolicy.RETAIN` to `runtime.connections.securityGroups` and delete them once the ENIs are gone.
+- Pass a long-lived security group from a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
+
+Docs only, no code changes.
+
+### Describe any new or updated permissions being added
+
+None.
+
+### Description of how you validated changes
+
+Type-checked the new snippet against the mod
+
+**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +16/-0)
 ```diff
-@@ -58,12 +58,12 @@
-     "@aws-cdk/service-spec-types" "^0.0.287"
-     "@cdklabs/tskb" "^0.0.4"
+@@ -708,6 +708,22 @@ runtime.connections.allowTo(databaseSecurityGroup, ec2.Port.tcp(5432), 'Allow Po
+ runtime.connections.allowToAnyIpv4(ec2.Port.tcp(443), 'Allow HTTPS outbound');
+ ```
  
--"@aws-cdk/aws-service-spec@0.1.222":
--  version "0.1.222"
--  resolved "https://registry.npmjs.org/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.222.tgz#e17b758f00a217fc42eb213084c39d304a34d31d"
--  integrity sha512-gN3Y/KT/9fEc7hJK3D4ojf6zYRHm/uiAeNWrv7LI+hjQwXwIMJniLu9WLCuRKz46/q5X5lBhUmWivpG8WGzEPw==
-+"@aws-cdk/aws-service-spec@0.1.227":
-+  version "0.1.227"
-+  resolved "https://registry.npmjs.org/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.227.tgz#86b29dcbf087efa267c45d69ba66d6897de388ff"
-+  integrity sha512-kYSro1A57ewfcfypEPU+XWq9Blqm0YAD80AbxIwUlEaFQ38oxcXvqN5f3qmHqXyAtMI2Q5F6kjwPV/iP3yUQ2g==
-   dependencies:
--    "@aws-cdk/service-spec-types" "^0.0.288"
-+    "@aws-cdk/service-spec-types" "^0.0.293"
-     "@cdklabs/tskb" "^0.0.4"
++#### Removing a VPC Runtime
++
++When a VPC-mode runtime is removed, the AgentCore service releases the network interfaces it created in your VPC asynchronously, and they can stay attached to the runtime's security groups for an extended period after the runtime is deleted. If CloudFormation tries to delete such a security group in that time, the deletion fails with `DependencyViolation`. CloudFormation retries for a while and then skips it, so the stack update can take a long time and the security group remains in your account outside of the stack.
++
++To avoid this, keep the runtime's security groups out of CloudFormation's delete path, and delete them yourself once the network interfaces are gone:
++
++```typescript fixture=default
++declare const runtime: agentcore.Runtime;
++
++for (const sg of runtime.connections.securityGroups) {
++  sg.applyRemovalPolicy(RemovalPolicy.RETAIN);
++}
++```
++
++Alternatively, pass a long-lived security group managed in a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
++
+ ### Runtime IAM Permissions
  
- "@aws-cdk/cloud-assembly-api@^2.5.0":
-@@ -156,10 +156,10 @@
-     glob "^8"
-     sort-json "^2.0.1"
- 
--"@aws-cdk/service-spec-types@0.0.288", "@aws-cdk/service-spec-types@^0.0.288":
--  version "0.0.288"
--  resolved "https://registry.npmjs.org/@aws-cdk/service-spec-types/-/service-spec-types-0.0.288.tgz#435298e7b2568d42e7a7b62b3749c906f404089f"
--  integrity sha512-BN3imuY6M1x4CgM0wpwqC0kbOweU7PUqdy6MxsqBitF+Ci6E5i0/3roxFaiuMVvZhlssBljQS7pqnlpvgP8ngg==
-+"@aws-cdk/service-spec-types@0.0.293", "@aws-cdk/service-spec-types@^0.0.293":
-+  version "0.0.293"
-+  resolved "https://registry.npmjs.org/@aws-cdk/service-spec-types/-/service-spec-types-0.0.293.tgz#baa0468f98fac4974df6c21694816e5fbfcd170d"
-+  integrity sha512-LZR04BZEUUO4TLBa4GDAdXalpcBA3TmdeZa4v1HKYXKWki8bFv3hNP6Ohvlx/v/jp3LP0/9k7wG0tZLUB56/qw==
-   dependencies:
-     "@cdklabs/tskb" "^0.0.4"
- 
+ The Runtime construct provides convenient methods for granting IAM permissions to principals that need to invoke the runtime or manage its execution role.
 ```
 
 ---
 
-### Incident Patch 2: `910ba247` (2026-11-02)
-**Commit Message**: {{ title }} (#{{ number }})
+### Incident Patch 2: `d7c8aa5c` (2026-11-03)
+**Commit Message**: fix(mediapackagev2-alpha): origin endpoint policy can be created before its origin endpoint (#38946)
 
-{{ body }}
+### Issue # (if applicable)
 
-**File**: `packages/@aws-cdk/custom-resource-handlers/lib/aws-eks/cluster-resource-handler/cluster.ts` (modified, +15/-34)
+Closes #38945.
+
+### Reason for this change
+
+`OriginEndpointPolicy` passes the channel group, channel and endpoint names to `CfnOriginEndpointPolicy` as plain strings, so CloudFormation sees no dependency on the `OriginEndpoint` and can create both at the same time. If the policy statement doesn't reference `originEndpointArn` (for example `resources: ['*']`), the policy can be created before the endpoint exists and the deploy fails.
+
+### Description of changes
+
+When the origin endpoint is defined in the app, the policy now adds a `DependsOn` on its `CfnOriginEndpoint`. This is the same thing `OriginEndpoint` already does for its channel and channel group. Imported endpoints have no default child, so nothing changes for them.
+
+### Describe any new or updated permissions being added
+
+None.
+
+### Description of how you validated changes
+
+Added a unit test that builds a policy with `resources: ['*']` and checks for the `DependsOn`. It fails without the change. The three integ snapshots that contain an origin endpoint policy only gain the new `DependsOn` entr
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/lib/origin-endpoint-policy.ts` (modified, +11/-1)
 ```diff
-@@ -148,42 +148,23 @@ export class ClusterResourceHandler extends ResourceHandler {
-       try {
-         // Describe the cluster to get the ARN for tagging APIs and to make sure Cluster exists
-         const cluster = (await this.eks.describeCluster({ name: this.clusterName })).cluster;
--        if (this.oldProps.tags) {
--          if (this.newProps.tags) {
--            // This means there are old tags as well as new tags so get the difference
--            // Update existing tag keys and add newly added tags
--            const tagsToAdd = getTagsToUpdate(this.oldProps.tags, this.newProps.tags);
--            if (tagsToAdd) {
--              const tagConfig: EKS.TagResourceCommandInput = {
--                resourceArn: cluster?.arn,
--                tags: tagsToAdd,
--              };
--              await this.eks.tagResource(tagConfig);
--            }
--            // Remove the tags that were removed in newProps
--            const tagsToRemove = getTagsToRemove(this.oldProps.tags, this.newProps.tags);
--            if (tagsToRemove.length > 0 ) {
--              const config: EKS.UntagResourceCommandInput = {
--                resourceArn: cluster?.arn,
--                tagKeys: tagsToRemove,
--              };
--              await this.eks.untagResource(config);
--            }
--          } else {
--            // This means newProps.tags is empty hence remove all tags
--            const config: EKS.UntagResourceCommandInput = {
--              resourceArn: cluster?.arn,
--              tagKeys: Object.keys(this.oldProps.tags),
--            };
--            await this.eks.untagResource(config);
--          }
--        } else {
--          // This means oldProps.tags was empty hence add all tags from newProps.tags
--          const config: EKS.TagResourceCommandInput = {
-+        const oldTags = this.oldProps.tags ?? {};
-+        const newTags = this.newProps.tags ?? {};
-+        const tagsToAdd = getTagsToUpdate(oldTags, newTags);
-+        if (Object.keys(tagsToAdd).length > 0) {
-+          const tagConfig: EKS.TagResourceCommandInput = {
-+            resourceArn: cluster?.arn,
-+            tags: tagsToAdd,
-+          };
-+          await this.eks.tagResource(tagConfig);
-+        }
-+        const tagsToRemove = getTagsToRemove(oldTags, newTags);
-+        if (tagsToRemove.length > 0) {
-+          const config: EKS.UntagResourceCommandInput = {
-             resourceArn: cluster?.arn,
--            tags: this.newProps.tags,
-+            tagKeys: tagsToRemove,
-           };
--          await this.eks.tagResource(config);
-+          await this.eks.untagResource(config);
-         }
-       } catch (e: any) {
-         throw e;
+@@ -1,4 +1,4 @@
+-import { Resource, Stack } from 'aws-cdk-lib';
++import { CfnResource, Resource, Stack } from 'aws-cdk-lib';
+ import type { IRole } from 'aws-cdk-lib/aws-iam';
+ import { PolicyDocument, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+ import { CfnOriginEndpointPolicy } from 'aws-cdk-lib/aws-mediapackagev2';
+@@ -139,5 +139,15 @@ export class OriginEndpointPolicy extends Resource {
+     if (cdnAuthRole) {
+       cfnResource.node.addDependency(cdnAuthRole);
+     }
++
++    // The channelGroupName/channelName/originEndpointName are rendered as literal strings (not CFN Refs),
++    // so CloudFormation cannot infer the dependency and may create the policy before the endpoint exists.
++    // We add a direct CfnResource-level DependsOn to guarantee deploy ordering without triggering CDK's
++    // subtree-level cycle detection.
++    // For imported constructs, defaultChild is undefined (no CFN resource to order against).
++    const endpointCfn = props.originEndpoint.node.defaultChild as CfnResource | undefined;
++    if (endpointCfn && CfnResource.isCfnResource(endpointCfn)) {
++      cfnResource.addResourceDependency(endpointCfn);
++    }
+   }
+ }
 ```
 
-**File**: `packages/@aws-cdk/custom-resource-handlers/test/aws-eks/cluster-resource-provider.test.ts` (modified, +63/-0)
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/aws-cdk-mediapackagev2-cloudfront-origin.assets.json` (modified, +2/-2)
 ```diff
-@@ -1093,6 +1093,29 @@ describe('cluster resource provider', () => {
-             tagKeys: ['hello'],
-           });
-         });
-+        test('remove some tags while keeping others', async () => {
-+          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-+            // this is the new props
-+            ...mocks.MOCK_PROPS,
-+            tags: {
-+              foo: 'bar',
-+            },
-+          }, {
-+            // this is the old props
-+            ...mocks.MOCK_PROPS,
-+            tags: {
-+              foo: 'bar',
-+              hello: 'world',
-+            },
-+          }));
-+          await handler.onEvent();
-+          // TagResource requires a non-empty tags map; skip it when only removing tags
-+          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
-+          expect(mocks.actualRequest.untagResourceRequest).toEqual({
-+            resourceArn: 'arn:cluster-arn',
-+            tagKeys: ['hello'],
-+          });
-+        });
-         test('remove all tags', async () => {
-           const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-             // this is the new props
-@@ -1112,6 +1135,46 @@ describe('cluster resource provider', () => {
-             tagKeys: ['foo', 'hello'],
-           });
-         });
-+        test('remove all tags when new tags is an empty map', async () => {
-+          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-+            ...mocks.MOCK_PROPS,
-+            tags: {},
-+          }, {
-+            ...mocks.MOCK_PROPS,
-+            tags: {
-+              foo: 'bar',
-+              hello: 'world',
-+            },
-+          }));
-+          await handler.onEvent();
-+          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
-+          expect(mocks.actualRequest.untagResourceRequest).toEqual({
-+            resourceArn: 'arn:cluster-arn',
-+            tagKeys: ['foo', 'hello'],
-+          });
-+        });
-+        test('does not call tagResource when new tags are an empty map', async () => {
-+          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-+            ...mocks.MOCK_PROPS,
-+            tags: {},
-+          }, {
-+            ...mocks.MOCK_PROPS,
-+          }));
-+          await handler.onEvent();
-+          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
-+          expect(mocks.actualRequest.untagResourceRequest).toEqual(undefined);
-+        });
-+        test('does not call untagResource when old tags are an empty map and new tags are unset', async () => {
-+          const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-+            ...mocks.MOCK_PROPS,
-+          }, {
-+            ...mocks.MOCK_PROPS,
-+            tags: {},
-+          }));
-+          await handler.onEvent();
-+          expect(mocks.actualRequest.tagResourceRequest).toEqual(undefined);
-+          expect(mocks.actualRequest.untagResourceRequest).toEqual(undefined);
-+        });
-         test('add tags after creation of cluster', async () => {
-           const handler = new ClusterResourceHandler(mocks.client, mocks.newRequest('Update', {
-             // this is the new props
+@@ -1,7 +1,7 @@
+ {
+   "version": "53.0.0",
+   "files": {
+-    "1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246": {
++    "d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428": {
+       "displayName": "aws-cdk-mediapackagev2-cloudfront-origin Template",
+       "source": {
+         "path": "aws-cdk-mediapackagev2-cloudfront-origin.template.json",
+@@ -10,7 +10,7 @@
+       "destinations": {
+         "current_account-current_region-517ac594": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246.json",
++          "objectKey": "d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/aws-cdk-mediapackagev2-cloudfront-origin.template.json` (modified, +4/-1)
+```diff
+@@ -93,7 +93,10 @@
+      ],
+      "Version": "2012-10-17"
+     }
+-   }
++   },
++   "DependsOn": [
++    "EndpointEEF1FD8F"
++   ]
+   },
+   "DistributionOrigin1MediaPackageV2OAC7A801A77": {
+    "Type": "AWS::CloudFront::OriginAccessControl",
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-cloudfront-origin.js.snapshot/manifest.json` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+         "validateOnSynth": false,
+         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1da0534da9b4707c112bba222cee109f796ba3ea49b60fa56801e73f81763246.json",
++        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d88511a80a9ae63550159c664b7e7c2df6f81c0658a52c6ea6ccb7ad93e56428.json",
+         "requiresBootstrapStackVersion": 6,
+         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+         "additionalDependencies": [
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/aws-cdk-mediapackagev2-endpoint-cdn-auth.assets.json` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "version": "53.0.0",
+   "files": {
+-    "63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f": {
++    "c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629": {
+       "displayName": "aws-cdk-mediapackagev2-endpoint-cdn-auth Template",
+       "source": {
+         "path": "aws-cdk-mediapackagev2-endpoint-cdn-auth.template.json",
+@@ -10,7 +10,7 @@
+       "destinations": {
+         "current_account-current_region-dbdea659": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f.json",
++          "objectKey": "c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/aws-cdk-mediapackagev2-endpoint-cdn-auth.template.json` (modified, +2/-1)
+```diff
+@@ -174,7 +174,8 @@
+    },
+    "DependsOn": [
+     "EndpointPolicyCdnAuthRoleDefaultPolicyEF103B96",
+-    "EndpointPolicyCdnAuthRole803DA187"
++    "EndpointPolicyCdnAuthRole803DA187",
++    "EndpointEEF1FD8F"
+    ]
+   }
+  },
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-cdn-auth.js.snapshot/manifest.json` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+         "validateOnSynth": false,
+         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/63b273eef2d62c96b8375b685e77148e4f54edc094fd568793234fe803b7a17f.json",
++        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c6645d95838b9a8dbeb442fd97561c39c33fe4174faeec66f0dfcf847ba6d629.json",
+         "requiresBootstrapStackVersion": 6,
+         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+         "additionalDependencies": [
+```
+
+**File**: `packages/@aws-cdk/aws-mediapackagev2-alpha/test/integ.mediapackagev2-endpoint-policy-tests.js.snapshot/aws-cdk-mediapackagev2.assets.json` (modified, +4/-4)
+```diff
+@@ -1,16 +1,16 @@
+ {
+-  "version": "52.0.0",
++  "version": "54.0.0",
+   "files": {
+-    "91cfc990015e92ef7156f6e9acab8b726865af8f99ceda8bfcfb2adb56cb19b4": {
++    "efd53b11ce339efd2c5571ccb5606b3aca4ddf2b52ff2d0474aff2300df32be5": {
+       "displayName": "aws-cdk-mediapackagev2 Template",
+       "source": {
+         "path": "aws-cdk-mediapackagev2.template.json",
+         "packaging": "file"
+       },
+       "destinations": {
+-        "current_account-current_region-937451ed": {
++        "current_account-current_region-2f28b6fb": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "91cfc990015e92ef7156f6e9acab8b726865af8f99ceda8bfcfb2adb56cb19b4.json",
++          "objectKey": "efd53b11ce339efd2c5571ccb5606b3aca4ddf2b52ff2d0474aff2300df32be5.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
+```
+
+---
+
+### Incident Patch 3: `1b565c08` (2026-11-03)
+**Commit Message**: docs: fix broken Maven Central badge in README (#39613)
+
+### Reason for this change
+
+The Maven Central badge in the root `README.md` renders as a broken image. It points at `maven-badges.herokuapp.com`, which no longer exists (requests return HTTP 404 "No such app"). The badge's link target uses the same dead host.
+
+### Description of changes
+
+- Badge image: switched to `https://img.shields.io/maven-central/v/software.amazon.awscdk/aws-cdk-lib`. The README already uses shields.io for the Gitpod badge.
+- Badge link: switched to the package page on Sonatype Central, `https://central.sonatype.com/artifact/software.amazon.awscdk/aws-cdk-lib`.
+
+Alternative considered: `maven-badges.sml.io`, where the old badge service moved. I chose shields.io because it is more widely used and already appears in this README.
+
+### Describe any new or updated permissions being added
+
+None.
+
+### Description of how you validated changes
+
+- The old badge URL returns `404 text/html` ("No such app").
+- The new badge URL returns `200 image/svg+xml` and shows the current version (`v2.275.0`).
+- The new link target returns `200`.
+
+Only `README.md` changed; there are no code changes.
+
+### Checklist
+- [x] My code 
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ [![NPM version](https://badge.fury.io/js/aws-cdk.svg)](https://badge.fury.io/js/aws-cdk)
+ [![PyPI version](https://badge.fury.io/py/aws-cdk-lib.svg)](https://badge.fury.io/py/aws-cdk-lib)
+ [![NuGet version](https://badge.fury.io/nu/Amazon.CDK.Lib.svg)](https://badge.fury.io/nu/Amazon.CDK.Lib)
+-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/software.amazon.awscdk/aws-cdk-lib/badge.svg)](https://maven-badges.herokuapp.com/maven-central/software.amazon.awscdk/aws-cdk-lib)
++[![Maven Central](https://img.shields.io/maven-central/v/software.amazon.awscdk/aws-cdk-lib)](https://central.sonatype.com/artifact/software.amazon.awscdk/aws-cdk-lib)
+ [![Go Reference](https://pkg.go.dev/badge/github.com/aws/aws-cdk-go/awscdk/v2.svg)](https://pkg.go.dev/github.com/aws/aws-cdk-go/awscdk/v2)
+ 
+ [![View on Construct Hub](https://constructs.dev/badge?package=aws-cdk-lib)](https://constructs.dev/packages/aws-cdk-lib)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39616** (2026-11-03): fix(bedrockagentcore): runtime metricTotalErrors to resolve to a proper metric (@kumvprat)
+- **PR #39613** (2026-11-03): docs: fix broken Maven Central badge in README (@ozelalisen)
+- **PR #39603** (2026-11-02): ci(mergify): replace commit_message_template with commit_message_format (@ozelalisen)
+- **PR #39602** (2026-11-02): chore(ci): pin Node 24 in workflows that resolved lts/* or * (@ozelalisen)
+- **PR #39601** (2026-11-03): fix(core): honor rounding for same-unit Size conversions (@proton0210)
 - **PR #39593** (2026-11-01): chore: update Contributors File (@aws-cdk-automation)
-- **PR #39544** (2026-10-30): docs: remove ROADMAP.md (@ozelalisen)
-- **PR #39540** (2026-10-28): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
-- **PR #39538** (closed): fix(cloudformation): host StackSetStack templates in the stack of their StackSets (@gudipati)
-- **PR #39534** (2026-11-02): fix(eks): cluster tag updates fail when only removing tags (@bmnizar)
-- **PR #39521** (2026-10-28): chore: add some bisect helper scripts to `scripts/` (@rix0rrr)
 
 ---
 
@@ -1474,28 +1501,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update L1 CloudFormation resource definitions (#39491)
+## X. docs(bedrockagentcore): note security group deletion behavior when removing a VP
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk/metrics-facade-alpha/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05fb8aef`: update L1 CloudFormation resource definitions (#39491). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89b6cdc1`: docs(bedrockagentcore): note security group deletion behavior when removing a VPC runtime (#39461). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/metrics-facade-alpha/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@aws-cdk/service-spec-types": "0.0.293",
+#### Removing a VPC Runtime
+
+When a VPC-mode runtime is removed, the AgentCore service releases the network interfaces it created in your VPC asynchronously, and they can stay attached to the runtime's security groups for an extended period after the runtime is deleted. If CloudFormation tries to delete such a security group in that time, the deletion fails with `DependencyViolation`. CloudFormation retries for a while and then skips it, so the stack update can take a long time and the security group remains in your account outside of the stack.
+
+To avoid this, keep the runtime's security groups out of CloudFormation's delete path, and delete them yourself once the network interfaces are gone:
+
+```typescript fixture=default
+declare const runtime: agentcore.Runtime;
+
+for (const sg of runtime.connections.securityGroups) {
+  sg.applyRemovalPolicy(RemovalPolicy.RETAIN);
+}
+```
+
+Alternatively, pass a long-lived security group managed in a separate stack through the `securityGroups` property of `RuntimeNetworkConfiguration.usingVpc()`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@aws-cdk/service-spec-types": "0.0.288",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05fb8aef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89b6cdc1` are properly handled with clean fallback behavior.

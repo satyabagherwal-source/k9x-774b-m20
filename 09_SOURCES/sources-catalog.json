@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "c803cca1",
+    "sourceVersion": "888b7bc2",
     "license": "Apache-2.0",
-    "contentHash": "dc6b3bdba2a9708c5a5644b7362e5755a1721f830e6417a7b220ac5cda78de08",
-    "lastHarvestedAt": "2026-10-31T01:21:27.088Z",
+    "contentHash": "ff047b4d07f8aec1dc440bb3e894f8afb9ec3408c50c75c829c40101de327ed4",
+    "lastHarvestedAt": "2026-11-04T01:34:55.928Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "4b6a033f",
+    "sourceVersion": "f637446f",
     "license": "MIT",
-    "contentHash": "02a92cd9495b4743fcf4fcc14ddc87e3fdbb45310081dbc714d20ef2dd4a571c",
-    "lastHarvestedAt": "2026-10-31T22:53:35.826Z",
+    "contentHash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
+    "lastHarvestedAt": "2026-11-04T01:34:51.017Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "05fb8aef",
+    "sourceVersion": "89b6cdc1",
     "license": "Apache-2.0",
-    "contentHash": "22427a890648730721eec9a9f427c01533f7ffabf94455f73ee8d0063d84c989",
-    "lastHarvestedAt": "2026-11-02T15:36:49.391Z",
+    "contentHash": "82d624753a1225202d55e7d85575cac9b4698aee722b8539cd86392f577a19ca",
+    "lastHarvestedAt": "2026-11-04T01:34:58.252Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

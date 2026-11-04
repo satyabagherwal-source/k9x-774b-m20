@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:27:53.769Z",
-  "total_cycles_completed": 7080,
-  "total_learnings_persisted": 7080,
-  "total_rules_promoted": 6725,
+  "last_updated": "2026-11-04T01:34:58.259Z",
+  "total_cycles_completed": 7083,
+  "total_learnings_persisted": 7083,
+  "total_rules_promoted": 6728,
   "history": [
-    {
-      "timestamp": "2026-11-03T12:06:24.783Z",
-      "repository": "LiconStudio/Minimax-H3-VBVR",
-      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:06:31.767Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T12:13:35.352Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T12:13:39.363Z",
       "repository": "rqlite/rqlite",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T01:27:53.769Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:34:51.022Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:34:55.933Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T01:34:58.259Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

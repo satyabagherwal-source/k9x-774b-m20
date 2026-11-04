@@ -7112,3 +7112,6 @@ Every entry in this ledger must capture:
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `4840c2be` | Multi-dimensional audit evidence | 2026-11-04T01:27:48.519Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7c469256` | Multi-dimensional audit evidence | 2026-11-04T01:27:52.246Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b7800483` | Multi-dimensional audit evidence | 2026-11-04T01:27:53.763Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `f637446f` | Multi-dimensional audit evidence | 2026-11-04T01:34:51.017Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `888b7bc2` | Multi-dimensional audit evidence | 2026-11-04T01:34:55.928Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `89b6cdc1` | Multi-dimensional audit evidence | 2026-11-04T01:34:58.252Z |

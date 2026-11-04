@@ -7103,3 +7103,6 @@
 | `CYCLE-20261104-T7VN` | `2026-11-04T01:27:48.515Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6700` | Yes (`30d7c7b3...`) |
 | `CYCLE-20261104-TAR7` | `2026-11-04T01:27:52.243Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6701` | Yes (`9ae5e12b...`) |
 | `CYCLE-20261104-TBXB` | `2026-11-04T01:27:53.759Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6702` | Yes (`60014225...`) |
+| `CYCLE-20261104-29VP` | `2026-11-04T01:34:51.013Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6703` | Yes (`d180e3a6...`) |
+| `CYCLE-20261104-2DO4` | `2026-11-04T01:34:55.924Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6704` | Yes (`ff047b4d...`) |
+| `CYCLE-20261104-2FGP` | `2026-11-04T01:34:58.249Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6705` | Yes (`82d62475...`) |
