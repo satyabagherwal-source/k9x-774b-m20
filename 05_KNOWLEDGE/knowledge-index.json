@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:34:56.037Z",
+  "last_updated": "2026-11-04T22:45:38.869Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2312,8 +2312,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "0ab78e2d",
-      "content_hash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
+      "source_version": "6bddeb67",
+      "content_hash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2361,6 +2361,11 @@
           "number": 6576,
           "title": "GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7003,
+          "title": "GH-55362: [C++] Fix jemalloc ReleaseUnused implementation (#55363)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2368,7 +2373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:30:15.889Z",
+      "verified_at": "2026-11-04T22:45:29.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3432,8 +3437,8 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "42fd8933",
-      "content_hash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
+      "source_version": "c9780062",
+      "content_hash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "promoted_rules": [
@@ -3456,6 +3461,11 @@
           "number": 5085,
           "title": "Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullab",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7004,
+          "title": "Merge pull request #1056 from arkivanov/ci/macos-15-master",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3463,7 +3473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:00:10.476Z",
+      "verified_at": "2026-11-04T22:45:33.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27690,7 +27700,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
+      "content_hash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [
@@ -27702,6 +27712,21 @@
         {
           "number": 4272,
           "title": "FIFO Context Window for Temporal Coherence",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7005,
+          "title": "Temporal Subsampling Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7006,
+          "title": "Arrival-Order Permutation Resolution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7007,
+          "title": "Streaming State Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27723,7 +27748,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-31T06:59:10.988Z",
+      "verified_at": "2026-11-04T22:45:38.845Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178032,6 +178057,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:34:56.009Z"
+    },
+    "rule-7003": {
+      "learning_id": "rule-7003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7003,
+      "title": "GH-55362: [C++] Fix jemalloc ReleaseUnused implementation (#55363)",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "6bddeb67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:45:29.134Z"
+    },
+    "rule-7004": {
+      "learning_id": "rule-7004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7004,
+      "title": "Merge pull request #1056 from arkivanov/ci/macos-15-master",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "c9780062",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:45:33.750Z"
+    },
+    "rule-7005": {
+      "learning_id": "rule-7005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7005,
+      "title": "Temporal Subsampling Alignment Invariant",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:45:38.845Z"
+    },
+    "rule-7006": {
+      "learning_id": "rule-7006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7006,
+      "title": "Arrival-Order Permutation Resolution Invariant",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:45:38.845Z"
+    },
+    "rule-7007": {
+      "learning_id": "rule-7007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7007,
+      "title": "Streaming State Consistency Invariant",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:45:38.845Z"
     }
   },
   "aliases": {

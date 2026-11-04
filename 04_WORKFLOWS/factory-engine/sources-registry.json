@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T22:34:58.700Z",
-    "lastVerified": "2026-11-04T22:34:58.700Z",
+    "lastChecked": "2026-11-04T22:45:41.537Z",
+    "lastVerified": "2026-11-04T22:45:41.537Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,12 +444,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:12:48.198Z",
-    "lastVerified": "2026-11-04T22:12:48.198Z",
+    "lastChecked": "2026-11-04T22:45:37.770Z",
+    "lastVerified": "2026-11-04T22:45:37.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -458,7 +458,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "55fbddc1"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -904,9 +905,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-04T19:15:28.905Z",
+    "lastChecked": "2026-11-04T22:45:32.721Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-04T19:15:28.905Z"
+    "lastVerified": "2026-11-04T22:45:32.721Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1456,13 +1457,13 @@
     "officialUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T06:59:09.981Z",
-    "lastVerified": "2026-10-31T06:59:09.981Z",
+    "lastChecked": "2026-11-04T22:45:25.335Z",
+    "lastVerified": "2026-11-04T22:45:25.335Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
-    "promotedRulesCount": 0,
+    "contentHash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2226,9 +2227,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-03T23:39:24.135Z",
+    "lastChecked": "2026-11-04T22:45:35.345Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-03T23:39:24.135Z"
+    "lastVerified": "2026-11-04T22:45:35.346Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -4631,9 +4632,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-04T00:31:57.824Z",
+    "lastChecked": "2026-11-04T22:45:30.384Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-04T00:31:57.824Z"
+    "lastVerified": "2026-11-04T22:45:30.384Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -7912,11 +7913,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "arkivanov-decompose": {
-    "name": "Decompose",
+    "name": "arkivanov/Decompose",
     "officialUrl": "https://github.com/arkivanov/Decompose",
-    "lastChecked": "2026-10-31T15:29:42.104Z",
-    "revisionIdentifier": "42fd8933",
-    "lastVerified": "2026-10-31T15:29:42.104Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-04T22:45:33.032Z",
+    "lastVerified": "2026-11-04T22:45:33.032Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-arkivanov-decompose",
+    "contentHash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "bahdotsh-wrkflw": {
     "name": "bahdotsh/wrkflw",
@@ -8589,14 +8600,14 @@
     "officialUrl": "https://github.com/apache/arrow",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-03T18:30:13.991Z",
-    "lastVerified": "2026-11-03T18:30:13.991Z",
+    "lastChecked": "2026-11-04T22:45:28.330Z",
+    "lastVerified": "2026-11-04T22:45:28.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-arrow",
-    "contentHash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
+    "contentHash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

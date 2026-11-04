@@ -7387,3 +7387,6 @@ Every entry in this ledger must capture:
 | `learn-github-kosi-libs-kodein` | `https://github.com/kosi-libs/Kodein` | `8ef0da27` | Multi-dimensional audit evidence | 2026-11-04T22:34:47.690Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `c7fc4d48` | Multi-dimensional audit evidence | 2026-11-04T22:34:51.861Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `2dedde9b` | Multi-dimensional audit evidence | 2026-11-04T22:34:56.146Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `6bddeb67` | Multi-dimensional audit evidence | 2026-11-04T22:45:29.250Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `c9780062` | Multi-dimensional audit evidence | 2026-11-04T22:45:33.866Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-04T22:45:38.962Z |

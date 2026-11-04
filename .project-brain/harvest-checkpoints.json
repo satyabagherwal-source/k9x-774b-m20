@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T22:34:56.164Z",
+  "last_updated": "2026-11-04T22:45:38.981Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
-      "verified_at": "2026-10-31T06:59:11.110Z",
+      "content_hash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
+      "verified_at": "2026-11-04T22:45:38.980Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T06:59:11.110Z"
+      "last_updated": "2026-11-04T22:45:38.980Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -11061,14 +11061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arkivanov-decompose",
-      "content_hash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
-      "verified_at": "2026-10-28T01:00:10.568Z",
+      "content_hash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
+      "verified_at": "2026-11-04T22:45:33.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:00:10.568Z"
+      "last_updated": "2026-11-04T22:45:33.883Z"
     },
     "langchain4j/langchain4j": {
       "repository": "langchain4j/langchain4j",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "f01722f47f5ccd406d3c690b03b9858733c541bfd90c31fef04a5e675970c33e",
-      "verified_at": "2026-11-03T18:30:16.005Z",
+      "content_hash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
+      "verified_at": "2026-11-04T22:45:29.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:30:16.005Z"
+      "last_updated": "2026-11-04T22:45:29.269Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

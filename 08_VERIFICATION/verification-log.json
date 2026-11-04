@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-JX1P",
-    "timestamp": "2026-11-03T10:52:46.477Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "e4480195a5c0703fba17edf6332f7e623b0bb34b6fe9f3286f2442a37d195cb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-JY5H",
-    "timestamp": "2026-11-03T10:52:47.909Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "072f8eb4f562e4fca33514e98d30d3f361ba49bbd95fb7a914eed60cbfde0213",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-SXJL",
-    "timestamp": "2026-11-03T10:59:47.025Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "68efc7cbef24df291afc3a90270414e606e562612c7722d45df7062c43378b16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-T08V",
     "timestamp": "2026-11-03T10:59:50.527Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7447,51 @@
     "contentHash": "dbdb02f70712865256f0a251b420150b954390f8cdfa9db7aa496225b9f8645c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-GBOE",
+    "timestamp": "2026-11-04T22:45:29.246Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-GF8M",
+    "timestamp": "2026-11-04T22:45:33.862Z",
+    "repository": "arkivanov/Decompose",
+    "learningId": "learn-github-arkivanov-decompose",
+    "contentHash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-GJ66",
+    "timestamp": "2026-11-04T22:45:38.958Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
