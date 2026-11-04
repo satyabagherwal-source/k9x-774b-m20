@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "3f1257ce",
+    "sourceVersion": "9b54d90e",
     "license": "MIT",
-    "contentHash": "5eff67aaea5eeff3fe989c37a873c28786cb12c6a1ac375f2c0a97292fb7b415",
-    "lastHarvestedAt": "2026-10-31T00:20:33.412Z",
+    "contentHash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
+    "lastHarvestedAt": "2026-11-04T00:38:32.310Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "fa1943a8",
+    "sourceVersion": "2308b7ba",
     "license": "Apache-2.0",
-    "contentHash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
-    "lastHarvestedAt": "2026-10-30T18:00:12.835Z",
+    "contentHash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
+    "lastHarvestedAt": "2026-11-04T00:38:40.054Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -9713,10 +9713,10 @@
     "repository": "rdfjs/N3.js",
     "platform": "github",
     "sourceUrl": "https://github.com/rdfjs/N3.js",
-    "sourceVersion": "ce8f71be",
+    "sourceVersion": "f551cfec",
     "license": "NOASSERTION",
-    "contentHash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
-    "lastHarvestedAt": "2026-10-27T14:04:08.456Z",
+    "contentHash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
+    "lastHarvestedAt": "2026-11-04T00:38:30.651Z",
     "learningId": "learn-github-rdfjs-n3-js"
   },
   "iziz-libphonenumber-ios": {

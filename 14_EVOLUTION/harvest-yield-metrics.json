@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T00:32:08.492Z",
-  "total_cycles_completed": 7056,
-  "total_learnings_persisted": 7056,
-  "total_rules_promoted": 6705,
+  "last_updated": "2026-11-04T00:38:40.058Z",
+  "total_cycles_completed": 7059,
+  "total_learnings_persisted": 7059,
+  "total_rules_promoted": 6708,
   "history": [
-    {
-      "timestamp": "2026-11-03T10:52:47.915Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T10:59:47.034Z",
-      "repository": "RevenueCat/purchases-ios",
-      "learningId": "learn-github-revenuecat-purchases-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T10:59:50.536Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T10:59:53.788Z",
       "repository": "gluesql/gluesql",
@@ -1403,6 +1382,27 @@
       "repository": "dkhamsing/open-source-ios-apps",
       "learningId": "learn-github-dkhamsing-open-source-ios-apps",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:38:30.656Z",
+      "repository": "rdfjs/N3.js",
+      "learningId": "learn-github-rdfjs-n3-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:38:32.313Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T00:38:40.058Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

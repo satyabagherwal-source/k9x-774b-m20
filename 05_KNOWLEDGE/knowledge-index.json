@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T00:32:08.400Z",
+  "last_updated": "2026-11-04T00:38:40.001Z",
   "total_verified_learnings": 1202,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8403,8 +8403,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "fa1943a8",
-      "content_hash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
+      "source_version": "2308b7ba",
+      "content_hash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -8457,6 +8457,11 @@
           "number": 5820,
           "title": "Test: fix publisher/subscriber cluster resource leaks when cleanup fails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6685,
+          "title": "Revert \"Remove LR integration test retries added to suppress flakiness\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8464,7 +8469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:00:12.741Z",
+      "verified_at": "2026-11-04T00:38:39.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48748,8 +48753,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "3f1257ce",
-      "content_hash": "5eff67aaea5eeff3fe989c37a873c28786cb12c6a1ac375f2c0a97292fb7b415",
+      "source_version": "9b54d90e",
+      "content_hash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -48787,6 +48792,11 @@
           "number": 5952,
           "title": "🐞 fix(validate): apply a submit's own form-level validate result when a newer c",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6684,
+          "title": "🐞 fix: preserve falsy submission callback failures (#13967)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48794,7 +48804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:20:33.298Z",
+      "verified_at": "2026-11-04T00:38:32.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113444,8 +113454,8 @@
       "slug": "rdfjs-n3.js",
       "platform": "github",
       "source_url": "https://github.com/rdfjs/N3.js",
-      "source_version": "ce8f71be",
-      "content_hash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
+      "source_version": "f551cfec",
+      "content_hash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
       "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "promoted_rules": [
@@ -113458,6 +113468,11 @@
           "number": 4827,
           "title": "deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6683,
+          "title": "deps-dev): Bump @babel/core (#876)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -113465,7 +113480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:04:08.416Z",
+      "verified_at": "2026-11-04T00:38:30.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171755,6 +171770,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T00:32:08.378Z"
+    },
+    "rule-6683": {
+      "learning_id": "rule-6683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6683,
+      "title": "deps-dev): Bump @babel/core (#876)",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "f551cfec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:38:30.581Z"
+    },
+    "rule-6684": {
+      "learning_id": "rule-6684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6684,
+      "title": "🐞 fix: preserve falsy submission callback failures (#13967)",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "9b54d90e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:38:32.247Z"
+    },
+    "rule-6685": {
+      "learning_id": "rule-6685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6685,
+      "title": "Revert \"Remove LR integration test retries added to suppress flakiness\"",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "2308b7ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T00:38:39.987Z"
     }
   },
   "aliases": {

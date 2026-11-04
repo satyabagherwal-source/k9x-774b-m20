@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source**: github ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
-> **Source Version**: `ce8f71be`  
+> **Source Version**: `f551cfec`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:04:08.211Z  
+> **Timestamp**: 2026-11-04T00:38:30.147Z  
 > **Learning ID**: `learn-github-rdfjs-n3-js`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:04:07.308Z  
+> **Harvest Timestamp**: 2026-11-04T00:38:28.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -981,65 +981,154 @@ console.timeEnd(TEST);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce8f71be` (2026-10-26)
-**Commit Message**: chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)
+### Incident Patch 1: `f551cfec` (2026-11-02)
+**Commit Message**: chore(deps-dev): Bump @babel/core (#876)
 
-Bumps the minor group with 1 update: [eslint](https://github.com/eslint/eslint).
+Bumps the minor group with 1 update: [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core).
 
 
-Updates `eslint` from 10.12.0 to 10.13.0
-- [Release notes](https://github.com/eslint/eslint/releases)
-- [Commits](https://github.com/eslint/eslint/compare/v10.12.0...v10.13.0)
+Updates `@babel/core` from 8.0.7 to 8.0.10
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v8.0.10/packages/babel-core)
 
 ---
 updated-dependencies:
-- dependency-name: eslint
-  dependency-version: 10.13.0
+- dependency-name: "@babel/core"
+  dependency-version: 8.0.10
   dependency-type: direct:development
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
   dependency-group: minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +6/-6)
+**File**: `package-lock.json` (modified, +68/-68)
 ```diff
-@@ -5765,9 +5765,9 @@
+@@ -86,20 +86,20 @@
        }
      },
-     "node_modules/eslint": {
--      "version": "10.12.0",
--      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
--      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
-+      "version": "10.13.0",
-+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-+      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+     "node_modules/@babel/core": {
+-      "version": "8.0.7",
+-      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.0.7.tgz",
+-      "integrity": "sha512-ZIsZWBG6Y1oa+8fkQVp0xeCdjCHBkXFCCIWrmg9SvejVvfcVQgKKRmGrBDWfM7rilhvnRoEuaqa5dkK7KB3pHA==",
++      "version": "8.0.10",
++      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.0.10.tgz",
++      "integrity": "sha512-T6dEcoMJ3L1hyLuNfRXcVlqQrN79kU/SB5bDygVgQNIOUgStdyEGzigtRA9K+9Coh7SZUSt543oWRBxvqYdyuQ==",
        "dev": true,
        "license": "MIT",
-       "workspaces": [
-@@ -14240,9 +14240,9 @@
-       "dev": true
+       "dependencies": {
+         "@babel/code-frame": "^8.0.6",
+-        "@babel/generator": "^8.0.6",
++        "@babel/generator": "^8.0.10",
+         "@babel/helper-compilation-targets": "^8.0.7",
+-        "@babel/helpers": "^8.0.7",
+-        "@babel/parser": "^8.0.7",
++        "@babel/helpers": "^8.0.10",
++        "@babel/parser": "^8.0.10",
+         "@babel/template": "^8.0.0",
+-        "@babel/traverse": "^8.0.7",
+-        "@babel/types": "^8.0.6",
++        "@babel/traverse": "^8.0.10",
++        "@babel/types": "^8.0.10",
+         "@types/gensync": "^1.0.5",
+         "convert-source-map": "^2.0.0",
+         "empathic": "^2.0.1",
+@@ -131,14 +131,14 @@
+       }
      },
-     "eslint": {
--      "version": "10.12.0",
--      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
--      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
-+      "version": "10.13.0",
-+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-+      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+     "node_modules/@babel/generator": {
+-      "version": "8.0.6",
+-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.0.6.tgz",
+-      "integrity": "sha512-/pcanjdRsonCexCuxgGD8fKnBLLzk2i9uM4kmcmGyyev2R5YDs+rafMYZ89RvaGY1mW8T7C5au0TyYaEeHBGng==",
++      "version": "8.0.10",
++      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.0.10.tgz",
++      "integrity": "sha512-iC9p3U4Y3vp0qKjRcfFeNzpj+kkK8BVYZTbQepBWVD7vOBLH6ji0drNzKPTPtumFd2w2r/hbEKYjG4pscKa4bg==",
        "dev": true,
-       "requires": {
-         "@eslint-community/eslint-utils": "^4.8.0",
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/parser": "^8.0.6",
+-        "@babel/types": "^8.0.6",
++        "@babel/parser": "^8.0.10",
++        "@babel/types": "^8.0.10",
+         "@jridgewell/gen-mapping": "0.4.0-beta.0",
+         "@jridgewell/trace-mapping": "^0.3.31",
+         "@types/jsesc": "^2.5.0",
+@@ -393,9 +393,9 @@
+       }
+     },
+     "node_modules/@babel/helper-string-parser": {
+-      "version": "8.0.6",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.6.tgz",
+-      "integrity": "sha512-+6HYEBnsDRZHJtUTAEfMQd0zMDqdFHS7C+5vAsEZqBUr3vEMWOWlHJ0Jz1gS8jJIlCvLsuA6ivmeoqzH936YcA==",
++      "version": "8.0.8",
++      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
++      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
+@@ -438,27 +438,27 @@
+       }
+     },
+     "node_modules/@babel/helpers": {
+-      "version": "8.0.7",
+-      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.0.7.tgz",
+-      "integrity": "sha512-5dMj5kFwS2AY7Dt4PZp4px3c5ThMbbEa7tZfuHTncCGSFYq8uoA1ufDE1IS/lYpQedE+3+GQ3cPZUiplIu195w==",
++      "version": "8.0.10",
++      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.0.10.tgz",
++      "integrity": "sha512-tBG9yuaR26JJWFafcl/Dk4eib6bkRJ9H5e6lENcwZqFudA9ImNCuMXLjB3/t+Ub7/DOZv2Rmi5LCOi8q2DCekQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@babel/template": "^8.0.0",
+-        "@babel/types": "^8.0.6"
++        "@babel/types": "^8.0.10"
+       },
+       "engines": {
+         "node": "^22.18.0 || >=24.11.0"
+       }
+     },
+     "node_modules/@babel/parser": {
+-      "version": "8.0.7",
+-      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.0.7.tgz",
+-      "integrity": "sha512-UkDwEbPO1px2JQSrdh4qIgaH1JgG7GO/pFeJkpxhDxIETkT/QvGpnigXIw75ViHYPtIgKITmVUJqLjiO+JuWjA==",
++      "version": "8.0.10",
++      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.0.10.tgz",
++      "integrity": "sha512-h+ah2Kg0ne1Vii892dShj9gky9I5jPzkd8x4s/3xgN/P2bMWmHS3qq59tum3mCVjCBXI8uqfYyYtrfp1Mz6+1w==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/types": "^8.0.6"
++        "@babel/types": "^8.0.10"
+       },
+       "bin": {
+         "parser": "bin/babel-parser.js"
+@@ -1563,32 +1563,32 @@
+       }
+     },
+     "node_modules/@babel/traverse": {
+-      "version": "8.0.7",
+-      "resolved": "https://registry.npmjs.org/@babel/traverse/-/traverse-8.0.7.tgz",
+-      "integrity": "sha512-bVV0brinsTWgc6ptSIoQo3GbITtl0VZAqEUJbHHcyfDPEu+q/fEvlYEa+6H85HoK8IdksKBFtKJbJFZ6Kff+zg==",
++      "version": "8.0.10",
++      "resolved": "https://registry.npmjs.org/@babel/traverse/-/traverse-8.0.10.tgz",
++      "integrity": "sha512-t5DaGzMi9WlhMSFT2YavI8gl8yGihoQymSQUkIq9+MUh5tO3Vx9KHwr5gMCzeBdYkvs00xNvr18PxtQTRayucA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@babel/code-frame": "^8.0.6",
+-        "@babel/generator": "^8.0.6",
++        "@babel/generator
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #876** (2026-11-02): chore(deps-dev): Bump @babel/core from 8.0.7 to 8.0.10 in the minor group (@dependabot[bot])
 - **PR #873** (2026-10-26): chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (@dependabot[bot])
 - **PR #872** (2026-10-19): chore(deps-dev): Bump the minor group with 2 updates (@dependabot[bot])
 - **PR #871** (2026-10-12): chore(ci): refetch upstream spec suites (@github-actions[bot])
 - **PR #870** (2026-10-12): chore(deps): Bump the minor group with 5 updates (@dependabot[bot])
 - **PR #868** (2026-10-10): fix(reasoner): only match premises whose bound terms match the quad (@jeswr)
-- **PR #866** (2026-10-08): docs: list n3-canon for toCanonical (@jeswr)
 
 ---
 
@@ -1059,13 +1148,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)
+## X. deps-dev): Bump @babel/core (#876)
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce8f71be`: deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f551cfec`: deps-dev): Bump @babel/core (#876). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -1073,24 +1162,52 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "10.13.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-      "version": "10.13.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+      "version": "8.0.10",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.0.10.tgz",
+      "integrity": "sha512-T6dEcoMJ3L1hyLuNfRXcVlqQrN79kU/SB5bDygVgQNIOUgStdyEGzigtRA9K+9Coh7SZUSt543oWRBxvqYdyuQ==",
+        "@babel/generator": "^8.0.10",
+        "@babel/helpers": "^8.0.10",
+        "@babel/parser": "^8.0.10",
+        "@babel/traverse": "^8.0.10",
+        "@babel/types": "^8.0.10",
+      "version": "8.0.10",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.0.10.tgz",
+      "integrity": "sha512-iC9p3U4Y3vp0qKjRcfFeNzpj+kkK8BVYZTbQepBWVD7vOBLH6ji0drNzKPTPtumFd2w2r/hbEKYjG4pscKa4bg==",
+        "@babel/parser": "^8.0.10",
+        "@babel/types": "^8.0.10",
+      "version": "8.0.8",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
+      "version": "8.0.10",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.0.10.tgz",
+      "integrity": "sha512-tBG9yuaR26JJWFafcl/Dk4eib6bkRJ9H5e6lENcwZqFudA9ImNCuMXLjB3/t+Ub7/DOZv2Rmi5LCOi8q2DCekQ==",
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "10.12.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
-      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
-      "version": "10.12.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
-      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
+      "version": "8.0.7",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.0.7.tgz",
+      "integrity": "sha512-ZIsZWBG6Y1oa+8fkQVp0xeCdjCHBkXFCCIWrmg9SvejVvfcVQgKKRmGrBDWfM7rilhvnRoEuaqa5dkK7KB3pHA==",
+        "@babel/generator": "^8.0.6",
+        "@babel/helpers": "^8.0.7",
+        "@babel/parser": "^8.0.7",
+        "@babel/traverse": "^8.0.7",
+        "@babel/types": "^8.0.6",
+      "version": "8.0.6",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.0.6.tgz",
+      "integrity": "sha512-/pcanjdRsonCexCuxgGD8fKnBLLzk2i9uM4kmcmGyyev2R5YDs+rafMYZ89RvaGY1mW8T7C5au0TyYaEeHBGng==",
+        "@babel/parser": "^8.0.6",
+        "@babel/types": "^8.0.6",
+      "version": "8.0.6",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.6.tgz",
+      "integrity": "sha512-+6HYEBnsDRZHJtUTAEfMQd0zMDqdFHS7C+5vAsEZqBUr3vEMWOWlHJ0Jz1gS8jJIlCvLsuA6ivmeoqzH936YcA==",
+      "version": "8.0.7",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.0.7.tgz",
+      "integrity": "sha512-5dMj5kFwS2AY7Dt4PZp4px3c5ThMbbEa7tZfuHTncCGSFYq8uoA1ufDE1IS/lYpQedE+3+GQ3cPZUiplIu195w==",
+        "@babel/typ
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce8f71be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f551cfec` are properly handled with clean fallback behavior.

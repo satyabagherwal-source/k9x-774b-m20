@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-A41T",
-    "timestamp": "2026-10-31T13:14:06.209Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ISVX",
-    "timestamp": "2026-10-31T13:20:51.645Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "0670f865bf2f00ccaf0f0aa95b0144ef9ecc311843e60e622fdc67a6cadb4f01",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-IYV7",
-    "timestamp": "2026-10-31T13:20:59.395Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-QULW",
     "timestamp": "2026-10-31T13:27:07.124Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7492,6 +7447,51 @@
     "contentHash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-1TKO",
+    "timestamp": "2026-11-04T00:38:30.648Z",
+    "repository": "rdfjs/N3.js",
+    "learningId": "learn-github-rdfjs-n3-js",
+    "contentHash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-1UUR",
+    "timestamp": "2026-11-04T00:38:32.307Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-20TV",
+    "timestamp": "2026-11-04T00:38:40.051Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

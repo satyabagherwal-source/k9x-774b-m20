@@ -7088,3 +7088,6 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `f587409b` | Multi-dimensional audit evidence | 2026-11-04T00:31:55.868Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c54e83c8` | Multi-dimensional audit evidence | 2026-11-04T00:32:05.390Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `4fcd74ac` | Multi-dimensional audit evidence | 2026-11-04T00:32:08.487Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `f551cfec` | Multi-dimensional audit evidence | 2026-11-04T00:38:30.651Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `9b54d90e` | Multi-dimensional audit evidence | 2026-11-04T00:38:32.310Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `2308b7ba` | Multi-dimensional audit evidence | 2026-11-04T00:38:40.054Z |
