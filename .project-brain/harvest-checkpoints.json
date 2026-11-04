@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T09:57:54.556Z",
+  "last_updated": "2026-11-04T10:05:42.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
-      "verified_at": "2026-10-31T01:15:16.023Z",
+      "content_hash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
+      "verified_at": "2026-11-04T10:05:42.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:15:16.023Z"
+      "last_updated": "2026-11-04T10:05:42.225Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -7701,14 +7701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-midudev-preguntas-entrevista-react",
-      "content_hash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
-      "verified_at": "2026-10-19T02:55:01.675Z",
+      "content_hash": "ad8d209cee9e442eec64672dabbcac79c3382128097eefd9782ef809a98d4f6f",
+      "verified_at": "2026-11-04T10:05:35.254Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:55:01.675Z"
+      "last_updated": "2026-11-04T10:05:35.254Z"
     },
     "Orange-Cyberdefense/GOAD": {
       "repository": "Orange-Cyberdefense/GOAD",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
-      "verified_at": "2026-11-03T16:01:31.427Z",
+      "content_hash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
+      "verified_at": "2026-11-04T10:05:36.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:01:31.427Z"
+      "last_updated": "2026-11-04T10:05:36.996Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",

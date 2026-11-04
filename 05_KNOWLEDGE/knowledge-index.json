@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T09:57:54.455Z",
+  "last_updated": "2026-11-04T10:05:42.096Z",
   "total_verified_learnings": 1206,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3019,8 +3019,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "a714386f",
-      "content_hash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
+      "source_version": "ad2fd90c",
+      "content_hash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -3080,7 +3080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:15:15.889Z",
+      "verified_at": "2026-11-04T10:05:42.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36213,8 +36213,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "28e3d13a",
-      "content_hash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
+      "source_version": "e737551c",
+      "content_hash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -36257,6 +36257,11 @@
           "number": 6291,
           "title": "Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6803,
+          "title": "Round down LogParams::since_time to the second (#2136)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36264,7 +36269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:14:38.554Z",
+      "verified_at": "2026-11-04T10:05:36.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40758,14 +40763,19 @@
       "slug": "midudev-preguntas-entrevista-react",
       "platform": "github",
       "source_url": "https://github.com/midudev/preguntas-entrevista-react",
-      "source_version": "7093d802",
-      "content_hash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
+      "source_version": "99d805f1",
+      "content_hash": "ad8d209cee9e442eec64672dabbcac79c3382128097eefd9782ef809a98d4f6f",
       "dossier_path": "07_PROJECT_LEARNING/midudev-preguntas-entrevista-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/midudev-preguntas-entrevista-react-learnings.md",
       "promoted_rules": [
         {
           "number": 2045,
           "title": "ui): redesign with minimal monochrome theme and Geist fonts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6802,
+          "title": "build: actualiza Node.js a 26.x en Vercel (#139)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40774,7 +40784,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:55:01.607Z",
+      "verified_at": "2026-11-04T10:05:35.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174116,6 +174126,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T09:57:54.433Z"
+    },
+    "rule-6802": {
+      "learning_id": "rule-6802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6802,
+      "title": "build: actualiza Node.js a 26.x en Vercel (#139)",
+      "source_url": "https://github.com/midudev/preguntas-entrevista-react",
+      "source_version": "99d805f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:05:35.129Z"
+    },
+    "rule-6803": {
+      "learning_id": "rule-6803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6803,
+      "title": "Round down LogParams::since_time to the second (#2136)",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "e737551c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T10:05:36.870Z"
     }
   },
   "aliases": {

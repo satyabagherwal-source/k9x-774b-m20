@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T09:04:33.868Z",
+  "last_updated": "2026-11-04T10:05:42.219Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3786,6 +3786,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-B8I3",
+      "directive_title": "Empirical Invariant Guard in LogicalCollection.cpp",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "ad2fd90c",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-arangodb-arangodb"
     }
   ]
 }

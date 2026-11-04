@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "a714386f",
+    "sourceVersion": "ad2fd90c",
     "license": "NOASSERTION",
-    "contentHash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
-    "lastHarvestedAt": "2026-10-31T01:15:16.008Z",
+    "contentHash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
+    "lastHarvestedAt": "2026-11-04T10:05:42.213Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -5053,10 +5053,10 @@
     "repository": "midudev/preguntas-entrevista-react",
     "platform": "github",
     "sourceUrl": "https://github.com/midudev/preguntas-entrevista-react",
-    "sourceVersion": "7093d802",
+    "sourceVersion": "99d805f1",
     "license": "MIT",
-    "contentHash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
-    "lastHarvestedAt": "2026-10-19T02:55:01.670Z",
+    "contentHash": "ad8d209cee9e442eec64672dabbcac79c3382128097eefd9782ef809a98d4f6f",
+    "lastHarvestedAt": "2026-11-04T10:05:35.243Z",
     "learningId": "learn-github-midudev-preguntas-entrevista-react"
   },
   "orange-cyberdefense-goad": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "d956e12a",
+    "sourceVersion": "e737551c",
     "license": "Apache-2.0",
-    "contentHash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
-    "lastHarvestedAt": "2026-11-03T16:01:31.418Z",
+    "contentHash": "9dbc7e969ac89093b199dcd9c720c491e4a929b9b85a2f864e3fc5e5a88a4b0d",
+    "lastHarvestedAt": "2026-11-04T10:05:36.986Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

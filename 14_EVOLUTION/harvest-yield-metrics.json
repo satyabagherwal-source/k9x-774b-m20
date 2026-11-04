@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T09:57:54.552Z",
-  "total_cycles_completed": 7180,
-  "total_learnings_persisted": 7180,
-  "total_rules_promoted": 6827,
+  "last_updated": "2026-11-04T10:05:42.221Z",
+  "total_cycles_completed": 7183,
+  "total_learnings_persisted": 7183,
+  "total_rules_promoted": 6829,
   "history": [
-    {
-      "timestamp": "2026-11-03T21:00:09.292Z",
-      "repository": "taubyte/tau",
-      "learningId": "learn-github-taubyte-tau",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:00:12.026Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T21:08:53.243Z",
-      "repository": "kortix-ai/CompanyOS",
-      "learningId": "learn-github-kortix-ai-companyos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T21:09:02.473Z",
       "repository": "webrecorder/browsertrix-crawler",
@@ -1403,6 +1382,27 @@
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:05:35.250Z",
+      "repository": "midudev/preguntas-entrevista-react",
+      "learningId": "learn-github-midudev-preguntas-entrevista-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:05:36.992Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T10:05:42.221Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

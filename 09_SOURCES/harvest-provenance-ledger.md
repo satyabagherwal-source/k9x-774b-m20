@@ -7212,3 +7212,6 @@ Every entry in this ledger must capture:
 | `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `ddcfd806` | Multi-dimensional audit evidence | 2026-11-04T09:57:48.246Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `7514fb8b` | Multi-dimensional audit evidence | 2026-11-04T09:57:50.935Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `a647b2f2` | Multi-dimensional audit evidence | 2026-11-04T09:57:54.546Z |
+| `learn-github-midudev-preguntas-entrevista-react` | `https://github.com/midudev/preguntas-entrevista-react` | `99d805f1` | Multi-dimensional audit evidence | 2026-11-04T10:05:35.243Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `e737551c` | Multi-dimensional audit evidence | 2026-11-04T10:05:36.986Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `ad2fd90c` | Multi-dimensional audit evidence | 2026-11-04T10:05:42.213Z |

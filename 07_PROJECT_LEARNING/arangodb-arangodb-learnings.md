@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `a714386f`  
+> **Source Version**: `ad2fd90c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:15:15.752Z  
+> **Timestamp**: 2026-11-04T10:05:41.906Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:15:15.156Z  
+> **Harvest Timestamp**: 2026-11-04T10:05:41.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14290 stars
+- **Stars / Engagement**: 14292 stars
 
 ---
 
@@ -37,949 +37,1602 @@
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/beast/example/websocket/server/chat-multi/shared_state.cpp`
+### Core Architecture Module: `3rdParty/fastText/src/utils.h`
 ```
-//
-// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-// Official repository: https://github.com/vinniefalco/CppCon2018
-//
+/**
+ * Copyright (c) 2016-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-#include "shared_state.hpp"
-#include "websocket_session.hpp"
+#pragma once
 
-shared_state::
-shared_state(std::string doc_root)
-    : doc_root_(std::move(doc_root))
-{
-}
+#include "real.h"
 
-void
-shared_state::
-join(websocket_session* session)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    sessions_.insert(session);
-}
-
-void
-shared_state::
-leave(websocket_session* session)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    sessions_.erase(session);
-}
-
-// Broadcast a message to all websocket client sessions
-void
-shared_state::
-send(std::string message)
-{
-    // Put the message in a shared pointer so we can re-use it for each client
-    auto const ss = boost::make_shared<std::string const>(std::move(message));
-
-    // Make a local list of all the weak pointers representing
-    // the sessions, so we can do the actual sending without
-    // holding the mutex:
-    std::vector<boost::weak_ptr<websocket_session>> v;
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        v.reserve(sessions_.size());
-        for(auto p : sessions_)
-            v.emplace_back(p->weak_from_this());
-    }
-
-    // For each session in our local list, try to acquire a strong
-    // pointer. If successful, then send the message on that session.
-    for(auto const& wp : v)
-        if(auto sp = wp.lock())
-            sp->send(ss);
-}
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/bimap/example/tutorial_info_hook.cpp`
-```
-// Boost.Bimap
-//
-// Copyright (c) 2006-2007 Matias Capeletto
-//
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-
-//  VC++ 8.0 warns on usage of certain Standard Library and API functions that
-//  can be cause buffer overruns or other possible security issues if misused.
-//  See https://web.archive.org/web/20071014014301/http://msdn.microsoft.com/msdnmag/issues/05/05/SafeCandC/default.aspx
-//  But the wording of the warning is misleading and unsettling, there are no
-//  portable alternative functions, and VC++ 8.0's own libraries use the
-//  functions in question. So turn off the warnings.
-#define _CRT_SECURE_NO_DEPRECATE
-#define _SCL_SECURE_NO_DEPRECATE
-
-// Boost.Bimap Example
-//-----------------------------------------------------------------------------
-
-#include <boost/config.hpp>
-
-#include <string>
-#include <iostream>
-
-#include <boost/bimap/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
-
-using namespace boost::bimaps;
-
-
-void tutorial_about_info_hook()
-{
-    //[ code_tutorial_info_hook_first
-
-    typedef bimap<
-
-        multiset_of< std::string >, // author
-             set_of< std::string >, // title
-
-          with_info< std::string >  // abstract
-
-    > bm_type;
-    typedef bm_type::value_type book;
-
-    bm_type bm;
-
-    bm.insert(
-
-        book( "Bjarne Stroustrup"   , "The C++ Programming Language",
-
-              "For C++ old-timers, the first edition of this book is"
-              "the one that started it all—the font of our knowledge." )
-    );
-
-
-    // Print the author of the bible
-    std::cout << bm.right.at("The C++ Programming Language");
-
-    // Print the abstract of this book
-    bm_type::left_iterator i = bm.left.find("Bjarne Stroustrup");
-    std::cout << i->info;
-    //]
-
-    // Contrary to the two key types, the information will be mutable
-    // using iterators.
-
-    //[ code_tutorial_info_hook_mutable
-
-    i->info += "More details about this book";
-    //]
-
-    // A new function is included in unique map views: info_at(key), that
-    // mimics the standard at(key) function but returned the associated
-    // information instead of the data.
-
-    //[ code_tutorial_info_hook_info_at
-
-    // Print the new abstract
-    std::cout << bm.right.info_at("The C++ Programming Language");
-    //]
-}
-
-struct author {};
-struct title {};
-struct abstract {};
-
-void tutorial_about_tagged_info_hook()
-{
-    //[ code_tutorial_info_hook_tagged_info
-
-    typedef bimap<
-
-        multiset_of< tagged< std::string, author   > >,
-             set_of< tagged< std::string, title    > >,
-
-          with_info< tagged< std::string, abstract > >
-
-    > bm_type;
-    typedef bm_type::value_type book;
-
-    bm_type bm;
-
-    bm.insert(
-
-        book( "Bjarne Stroustrup"   , "The C++ Programming Language",
-
-              "For C++ old-timers, the first edition of this book is"
-              "the one that started it all—the font of our knowledge." )
-    );
-
-    // Print the author of the bible
-    std::cout << bm.by<title>().at("The C++ Programming Language");
-
-    // Print the abstract of this book
-    bm_type::map_by<author>::iterator i = bm.by<author>().find("Bjarne Stroustrup");
-    std::cout << i->get<abstract>();
-
-    // Contrary to the two key types, the information will be mutable
-    // using iterators.
-
-    i->get<abstract>() += "More details about this book";
-
-    // Print the new abstract
-    std::cout << bm.by<title>().info_at("The C++ Programming Language");
-    //]
-}
-
-
-void bimap_without_an_info_hook()
-{
-    //[ code_tutorial_info_hook_nothing
-
-    typedef bimap<
-
-        multiset_of< std::string >, // author
-             set_of< std::string >  // title
-
-    > bm_type;
-    typedef bm_type::value_type book;
-
-    bm_type bm;
-
-    bm.insert( book( "Bjarne Stroustrup"   , "The C++ Programming Language" ) );
-    bm.insert( book( "Scott Meyers"        , "Effective C++"                ) );
-    bm.insert( book( "Andrei Alexandrescu" , "Modern C++ Design"            ) );
-
-    // Print the author of Modern C++
-    std::cout << bm.right.at( "Modern C++ Design" );
-    //]
-}
-
-
-int main()
-{
-    tutorial_about_info_hook();
-    tutorial_about_tagged_info_hook();
-    bimap_without_an_info_hook();
-
-    return 0;
-}
-
-
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/compute/example/threefry_engine.cpp`
-```
-//---------------------------------------------------------------------------//
-// Copyright (c) 2013 Muhammad Junaid Muzammil <mjunaidmuzammil@gmail.com>
-//
-// Distributed under the Boost Software License, Version 1.0
-// See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt
-//
-// See http://kylelutz.github.com/compute for more information.
-//---------------------------------------------------------------------------//
-
-
-#include <boost/compute/random/threefry_engine.hpp>
-#include <boost/compute/container/vector.hpp>
-#include <boost/compute/command_queue.hpp>
-#include <boost/compute/context.hpp>
-#include <boost/compute/device.hpp>
-#include <boost/compute/system.hpp>
-#include <iostream>
-
-int main() 
-{
-    using boost::compute::uint_;
-    boost::compute::device device = boost::compute::system::default_device();
-    boost::compute::context context(device);
-    boost::compute::command_queue queue(context, device);
-    boost::compute::threefry_engine<> rng(queue);
-    boost::compute::vector<uint_> vector_ctr(20, context);
-    
-    uint32_t ctr[20];
-    for(int i = 0; i < 10; i++) {
-        ctr[i*2] = i;
-        ctr[i*2+1] = 0;
-    }
-    boost::compute::copy(ctr, ctr+20, vector_ctr.begin(), queue);
-    rng.generate(vector_ctr.begin(), vector_ctr.end(), queue);
-    boost::compute::copy(vector_ctr.begin(), vector_ctr.end(), ctr, queue);
-
-    for(int i = 0; i < 10; i++) {
-        std::cout << std::hex << ctr[i*2] << " " << ctr[i*2+1] << std::endl;
-    }
-    return 0;
-}
-
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/context/example/callcc/endless_loop.cpp`
-```
-
-//          Copyright Oliver Kowalke 2016.
-// Distributed under the Boost Software License, Version 1.0.
-//    (See accompanying file LICENSE_1_0.txt or copy at
-//          http://www.boost.org/LICENSE_1_0.txt)
-
-#include <cstdlib>
-#include <iostream>
-
-#include <boost/context/continuation.hpp>
-
-namespace ctx = boost::context;
-
-ctx::continuation foo( ctx::continuation && c) {
-    do {
-        std::cout << "foo\n";
-    } while ( ( c = c.resume() ) );
-    return std::move( c);
-}
-
-int main() {
-    ctx::continuation c = ctx::callcc( foo);
-    do {
-        std::cout << "bar\n";
-    } while ( ( c = c.resume() ) );
-    std::cout << "main: done" << std::endl;
-    return EXIT_SUCCESS;
-}
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/context/example/fiber/endless_loop.cpp`
-```
-
-//          Copyright Oliver Kowalke 2016.
-// Distributed under the Boost Software License, Version 1.0.
-//    (See accompanying file LICENSE_1_0.txt or copy at
-//          http://www.boost.org/LICENSE_1_0.txt)
-
-#include <cstdlib>
-#include <iostream>
-
-#include <boost/context/fiber.hpp>
-
-namespace ctx = boost::context;
-
-ctx::fiber bar( ctx::fiber && f) {
-    do {
-        std::cout << "bar\n";
-        f = std::move( f).resume();
-    } while ( f);
-    return std::move( f);
-}
-
-int main() {
-    ctx::fiber f{ bar };
-    do {
-        std::cout << "foo\n";
-        f = std::move( f).resume();
-    } while ( f);
-    std::cout << "main: done" << std::endl;
-    return EXIT_SUCCESS;
-}
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/contract/example/features/loop.cpp`
-```
-
-// Copyright (C) 2008-2018 Lorenzo Caminiti
-// Distributed under the Boost Software License, Version 1.0 (see accompanying
-// file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt).
-// See: http://www.boost.org/doc/libs/release/libs/contract/doc/html/index.html
-
-#include <boost/contract.hpp>
-#include <vector>
 #include <algorithm>
-#include <limits>
+#include <chrono>
+#include <fstream>
+#include <ostream>
+#include <vector>
 
-int main() {
-    std::vector<int> v;
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
+#if defined(__clang__) || defined(__GNUC__)
+#define FASTTEXT_DEPRECATED(msg) __attribute__((__deprecated__(msg)))
+#elif defined(_MSC_VER)
+#define FASTTEXT_DEPRECATED(msg) __declspec(deprecated(msg))
+#else
+#define FASTTEXT_DEPRECATED(msg)
+#endif
 
-    //[loop
-    int total = 0;
-    // Contract for a for-loop (same for while- and all other loops).
-    for(std::vector<int>::const_iterator i = v.begin(); i != v.end(); ++i) {
-        boost::contract::old_ptr<int> old_total = BOOST_CONTRACT_OLDOF(total);
-        boost::contract::check c = boost::contract::function()
-            .precondition([&] {
-                BOOST_CONTRACT_ASSERT(
-                        total < std::numeric_limits<int>::max() - *i);
-            })
-            .postcondition([&] {
-                BOOST_CONTRACT_ASSERT(total == *old_total + *i);
-            })
-        ;
+namespace fasttext {
 
-        total += *i; // For-loop body.
-    }
-    //]
+using Predictions = std::vector<std::pair<real, int32_t>>;
 
-    assert(total == 6);
-    return 0;
+namespace utils {
+
+int64_t size(std::ifstream&);
+
+void seek(std::ifstream&, int64_t);
+
+template <typename T>
+bool contains(const std::vector<T>& container, const T& value) {
+  return std::find(container.begin(), container.end(), value) !=
+      container.end();
 }
 
+template <typename T1, typename T2>
+bool containsSecond(
+    const std::vector<std::pair<T1, T2>>& container,
+    const T2& value) {
+  return std::find_if(
+             container.begin(),
+             container.end(),
+             [&value](const std::pair<T1, T2>& item) {
+               return item.second == value;
+             }) != container.end();
+}
 
-```
+double getDuration(
+    const std::chrono::steady_clock::time_point& start,
+    const std::chrono::steady_clock::time_point& end);
 
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/contract/example/mitchell02/simple_queue.cpp`
-```
+class ClockPrint {
+ public:
+  explicit ClockPrint(int32_t duration);
+  friend std::ostream& operator<<(std::ostream& out, const ClockPrint& me);
 
-// Copyright (C) 2008-2018 Lorenzo Caminiti
-// Distributed under the Boost Software License, Version 1.0 (see accompanying
-// file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt).
-// See: http://www.boost.org/doc/libs/release/libs/contract/doc/html/index.html
-
-//[mitchell02_simple_queue
-#include <boost/contract.hpp>
-#include <boost/optional.hpp>
-#include <vector>
-#include <cassert>
-
-template<typename T>
-class simple_queue
-    #define BASES private boost::contract::constructor_precondition< \
-            simple_queue<T> >
-    : BASES
-{
-    friend class boost::contract::access;
-
-    typedef BOOST_CONTRACT_BASE_TYPES(BASES) base_types;
-    #undef BASES
-
-    void invariant() const {
-        BOOST_CONTRACT_ASSERT(count() >= 0); // Non-negative count.
-    }
-
-public:
-    /* Creation */
-
-    // Create empty queue.
-    explicit simple_queue(int a_capacity) :
-        boost::contract::constructor_precondition<simple_queue>([&] {
-            BOOST_CONTRACT_ASSERT(a_capacity > 0); // Positive capacity.
-        })
-    {
-        boost::contract::check c = boost::contract::constructor(this)
-            .postcondition([&] {
-                // Capacity set.
-                BOOST_CONTRACT_ASSERT(capacity() == a_capacity);
-                BOOST_CONTRACT_ASSERT(is_empty()); // Empty.
-            })
-        ;
-
-        items_.reserve(a_capacity);
-    }
-
-    // Destroy queue.
-    virtual ~simple_queue() {
-        // Check invariants.
-        boost::contract::check c = boost::contract::destructor(this);
-    }
-
-    /* Basic Queries */
-
-    // Items in queue (in their order).
-    // (Somewhat exposes implementation but allows to check more contracts.)
-    std::vector<T> const& items() const {
-        // Check invariants.
-        boost::contract::check c = boost::contract::public_function(this);
-        return items_;
-    }
-
-    // Max number of items queue can hold.
-    int capacity() const {
-        // Check invariants.
-        boost::contract::check c = boost::contract::public_function(this);
-        return items_.capacity();
-    }
-
-    /* Derived Queries */
-
-    // Number of items.
-    int count() const {
-        int result;
-        boost::contract::check c = boost::contract::public_function(this)
-            .postcondition([&] {
-                // Return items count.
-                BOOST_CONTRACT_ASSERT(result == int(items().size()));
-            })
-        ;
-
-        return result = items_.size();
-    }
-
-    // Item at head.
-    T const& head() const {
-        boost::optional<T const&> result;
-        boost::contract::check c = boost::contract::public_function(this)
-            .precondition([&] {
-                BOOST_CONTRACT_ASSERT(!is_empty()); // Not empty.
-            })
-            .postcondition([&] {
-                // Return item on top.
-                BOOST_CONTRACT_ASSERT(*result == items().at(0));
-            })
-        ;
-
-        return *(result = items_.at(0));
-    }
-
-    // If queue contains no item.
-    bool is_empty() const {
-        bool result;
-        boost::contract::check c = boost::contract::public_function(this)
-            .postcondition([&] {
-                // Consistent with count.
-                BOOST_CONTRACT_ASSERT(result == (count() == 0));
-            })
-        ;
-
-        return result = (items_.size() == 0);
-    }
-
-    // If queue has no room for another item.
-    bool is_full() const {
-        bool result;
-        boost::contract::check c = boost::contract::public_function(this)
-            .postcondition([&] {
-                BOOST_CONTRACT_ASSERT( // Consistent with size and capacity.
-                        result == (capacity() == int(items().size())));
-            })
-        ;
-
-        return result = (items_.size() == items_.capacity());
-    }
-
-    /* Commands */
-
-    // Remove head itme and shift all other items.
-    void remove() {
-        // Expensive all_equal postcond. and old_items copy might be skipped.
-        boost::contract::old_ptr<std::vector<T> > old_items;
-            #ifdef BOOST_CONTRACT_AUDIITS
-                = BOOST_CONTRACT_OLDOF(items())
-            #endif // Else, leave old pointer null...
-        ;
-        boost::contract::old_ptr<int> old_count = BOOST_CONTRACT_OLDOF(count());
-        boost::contract::check c = boost::contract::public_function(this)
-            .precondition([&] {
-                BOOST_CONTRACT_ASSERT(!is_empty()); // Not empty.
-            })
-            .postcondition([&] {
-                BOOST_CONTRACT_ASSERT(count() == *old_count - 1); // Count dec.
-                // ...following skipped #ifndef AUDITS.
-                if(old_items) all_equal(items(), *old_items, /* shifted = */ 1);
-            })
-        ;
-        
-        items_.erase(items_.begin());
-    }
-
-    // Add item to tail.
-    void put(T const& item) {
-        // Expensive all_equal postcond. and old_items copy might be skipped.
-        boost::contract::old_ptr<std::vector<T> > old_items;
-            #ifdef BOOST_CONTRACT_AUDITS
-                = BOOST_CONTRACT_OLDOF(items())
-            #endif // Else, leave old pointer null...
-        ;
-        boost::contract::old_ptr<int> old_count = BOOST_CONTRACT_OLDOF(count());
-        boost::contract::check c = boost::contract::public_function(this)
-            .precondition([&] {
-                BOOST_CONTRACT_ASSERT(count() < capacity()); // Room for add.
-            })
-            .postcondition([&] {
-                BOOST_CONTRACT_ASSERT(count() == *old_count + 1); // Count inc.
-                // Second to last item.
-                BOOST_CONTRACT_ASSERT(items().at(count() - 1) == item);
-                // ...following skipped #ifndef AUDITS.
-                if(old_items) all_equal(items(), *old_items);
-            })
-        ;
-        
-        items_.push_back(item);
-    }
-
-private:
-    // Contract helper.
-    static bool all_equal(std::vector<T> const& left,
-            std::vector<T> const& right, unsigned offset = 0) {
-        boost::contract::check c = boost::contract::function()
-            .precondition([&] {
-                // Correct offset.
-                BOOST_CONTRACT_ASSERT(right.size() == left.size() + offset);
-            })
-        ;
-
-        for(unsigned i = offset; i < right.size(); ++i) {
-            if(left.at(i - offset) != right.at(i)) return false;
-        }
-        return true;
-    }
-
-    std::vector<T> items_;
+ private:
+  int32_t duration_;
 };
 
-int main() {
-    simple_queue<int> q(10);
-    q.put(123);
-    q.put(456);
+bool compareFirstLess(const std::pair<double, double>& l, const double& r);
 
-    assert(q.capacity() == 10);
-    assert(q.head() == 123);
+} // namespace utils
 
-    assert(!q.is_empty());
-    assert(!q.is_full());
-
-    std::vector<int> const& items = q.items();
-    assert(items.at(0) == 123);
-    assert(items.at(1) == 456);
-    
-    q.remove();
-    assert(q.count() == 1);
-
-    return 0;
-}
-//]
-
+} // namespace fasttext
 
 ```
 
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/geometry/doc/src/docutils/tools/doxygen_xml2qbk/doxygen_xml2qbk.cpp`
+### Core Architecture Module: `3rdParty/fuerte/include/fuerte/loop.h`
 ```
-// doxml2qbk (developed in the context of Boost.Geometry documentation)
-//
-// Copyright (c) 2010-2013 Barend Gehrels, Amsterdam, the Netherlands.
-// Copyright (c) 2012-2013 Adam Wulkiewicz, Lodz, Poland.
-//
-// This file was modified by Oracle on 2020.
-// Modifications copyright (c) 2020, Oracle and/or its affiliates.
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
-//
-// Use, modification and distribution is subject to the Boost Software License,
-// Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
-//
-// Barend Gehrels, Aug 1, 2010
-// In continuation of the QuickBook documentation of Boost.Geometry
-//
-// Converts XML files created by Doxygen to Quickbook
-// Notes:
-// - basically generic, but implemented with Boost.Geometry in mind
-// - makes use of some specific XML elements, which can be created by Doxygen
-//       using /xmlonly
-//     currently this is the element <qbk.example> which will make a reference
-//     to an example.
-// - currently still in draft
+////////////////////////////////////////////////////////////////////////////////
+/// DISCLAIMER
+///
+/// Copyright 2016 ArangoDB GmbH, Cologne, Germany
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+/// Copyright holder is ArangoDB GmbH, Cologne, Germany
+///
+/// @author Jan Christoph Uhde
+/// @author Ewout Prangsma
+////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#ifndef ARANGO_CXX_DRIVER_SERVER
+#define ARANGO_CXX_DRIVER_SERVER
+
+#include <fuerte/asio_ns.h>
+
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <utility>
 #include <vector>
-#include <map>
 
-#include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/split.hpp>
+// run / runWithWork / poll for Loop mapping to ioservice
+// free function run with threads / with thread group barrier and work
 
+namespace arangodb { namespace fuerte { inline namespace v1 {
 
-#include <boost/program_options.hpp>
+// need partial rewrite so it can be better integrated in client applications
 
-#include <rapidxml.hpp>
+using asio_work_guard = asio_ns::executor_work_guard<asio_ns::io_context::executor_type>;
 
-#include <configuration.hpp>
-#include <file_to_string.hpp>
-#include <doxygen_elements.hpp>
-#include <doxygen_xml_parser.hpp>
-#include <parameter_predicates.hpp>
-#include <quickbook_output.hpp>
-#include <rapidxml_util.hpp>
+/// @brief EventLoopService implements single-threaded event loops
+/// Idea is to shard connections across io context's to avoid
+/// unnecessary synchronization overhead. Please note that on
+/// linux epoll has max 64 instances, so there is a limit on the
+/// number of io_context instances.
+class EventLoopService {
+ public:
+  // Initialize an EventLoopService with a given number of threads
+  //  and a given number of io_contexts
+  explicit EventLoopService(unsigned int threadCount = 1,
+                            char const* name = "");
+  virtual ~EventLoopService();
 
-static const std::string version = "1.1.1";
+  // Prevent copying
+  EventLoopService(EventLoopService const& other) = delete;
+  EventLoopService& operator=(EventLoopService const& other) = delete;
 
-inline std::string program_description(bool decorated)
-{
-    std::string result;
-    if (decorated)
-    {
-        result = "=== ";
+  // io_service returns a reference to the boost io_service.
+  std::shared_ptr<asio_ns::io_context>& nextIOContext();
+
+  asio_ns::ssl::context& sslContext();
+
+  // stop and join threads
+  void stop();
+
+ private:
+  /// number of last used io_context
+  std::atomic<uint32_t> _lastUsed;
+
+  /// protect ssl context creation
+  std::mutex _sslContextMutex;
+  /// global SSL context to use here
+  std::unique_ptr<asio_ns::ssl::context> _sslContext;
+
+  /// io contexts
+  std::vector<std::shared_ptr<asio_ns::io_context>> _ioContexts;
+  /// Threads powering each io_context
+  std::vector<std::thread> _threads;
+  /// Used to keep the io-context alive.
+  std::vector<asio_work_guard> _guards;
+};
+}}}  // namespace arangodb::fuerte::v1
+#endif
+
+```
+
+### Core Architecture Module: `3rdParty/fuerte/src/loop.cpp`
+```
+////////////////////////////////////////////////////////////////////////////////
+/// DISCLAIMER
+///
+/// Copyright 2016 ArangoDB GmbH, Cologne, Germany
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+/// Copyright holder is ArangoDB GmbH, Cologne, Germany
+///
+/// @author Jan Christoph Uhde
+////////////////////////////////////////////////////////////////////////////////
+
+#include <fuerte/loop.h>
+#include <fuerte/types.h>
+
+#include "debugging.h"
+
+#include <memory>
+
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+
+namespace arangodb { namespace fuerte { inline namespace v1 {
+
+EventLoopService::EventLoopService(unsigned int threadCount, char const* name)
+    : _lastUsed(0) {
+  _ioContexts.reserve(threadCount);
+  _guards.reserve(threadCount);
+  _threads.reserve(threadCount);
+  for (unsigned i = 0; i < threadCount; i++) {
+    _ioContexts.emplace_back(std::make_shared<asio_ns::io_context>(1));
+    _guards.emplace_back(asio_ns::make_work_guard(*_ioContexts.back()));
+    asio_ns::io_context* ctx = _ioContexts.back().get();
+    _threads.emplace_back([=]() {
+#ifdef __linux__
+      // set name of threadpool thread, so threads can be distinguished from
+      // each other
+      if (name != nullptr && *name != '\0') {
+        prctl(PR_SET_NAME, name, 0, 0, 0);
+      }
+#endif
+      ctx->run();
+    });
+  }
+}
+
+EventLoopService::~EventLoopService() { stop(); }
+  
+// io_service returns a reference to the boost io_service.
+std::shared_ptr<asio_ns::io_context>& EventLoopService::nextIOContext() {
+  FUERTE_ASSERT(!_ioContexts.empty());
+  return _ioContexts[_lastUsed.fetch_add(1, std::memory_order_relaxed) %
+                     _ioContexts.size()];
+}
+
+asio_ns::ssl::context& EventLoopService::sslContext() {
+  std::lock_guard<std::mutex> guard(_sslContextMutex);
+  if (!_sslContext) {
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    _sslContext = std::make_unique<asio_ns::ssl::context>(asio_ns::ssl::context::tls);
+#else
+    _sslContext = std::make_unique<asio_ns::ssl::context>(asio_ns::ssl::context::sslv23);
+#endif
+    _sslContext->set_default_verify_paths();
+  }
+  return *_sslContext;
+}
+
+void EventLoopService::stop() {
+  // allow run() to exit, wait for threads to finish only then stop the context
+  std::for_each(_guards.begin(), _guards.end(), [](auto& g) { g.reset(); });
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  std::for_each(_ioContexts.begin(), _ioContexts.end(),
+                [](auto& c) { c->stop(); });
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  std::for_each(_threads.begin(), _threads.end(), [](auto& t) {
+    if (t.joinable()) {
+      t.join();
     }
-    result += "doxygen_xml2qbk ";
-    result += version;
-    if (decorated)
-    {
-        result += " ===";
+  });
+  _threads.clear();
+  _ioContexts.clear();
+  _guards.clear();
+}
+
+}}}  // namespace arangodb::fuerte::v1
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/bytesinkutil.cpp`
+```
+// © 2017 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+
+// bytesinkutil.cpp
+// created: 2017sep14 Markus W. Scherer
+
+#include "unicode/utypes.h"
+#include "unicode/bytestream.h"
+#include "unicode/edits.h"
+#include "unicode/stringoptions.h"
+#include "unicode/utf8.h"
+#include "unicode/utf16.h"
+#include "bytesinkutil.h"
+#include "charstr.h"
+#include "cmemory.h"
+#include "uassert.h"
+
+U_NAMESPACE_BEGIN
+
+UBool
+ByteSinkUtil::appendChange(int32_t length, const char16_t *s16, int32_t s16Length,
+                           ByteSink &sink, Edits *edits, UErrorCode &errorCode) {
+    if (U_FAILURE(errorCode)) { return FALSE; }
+    char scratch[200];
+    int32_t s8Length = 0;
+    for (int32_t i = 0; i < s16Length;) {
+        int32_t capacity;
+        int32_t desiredCapacity = s16Length - i;
+        if (desiredCapacity < (INT32_MAX / 3)) {
+            desiredCapacity *= 3;  // max 3 UTF-8 bytes per UTF-16 code unit
+        } else if (desiredCapacity < (INT32_MAX / 2)) {
+            desiredCapacity *= 2;
+        } else {
+            desiredCapacity = INT32_MAX;
+        }
+        char *buffer = sink.GetAppendBuffer(U8_MAX_LENGTH, desiredCapacity,
+                                            scratch, UPRV_LENGTHOF(scratch), &capacity);
+        capacity -= U8_MAX_LENGTH - 1;
+        int32_t j = 0;
+        for (; i < s16Length && j < capacity;) {
+            UChar32 c;
+            U16_NEXT_UNSAFE(s16, i, c);
+            U8_APPEND_UNSAFE(buffer, j, c);
+        }
+        if (j > (INT32_MAX - s8Length)) {
+            errorCode = U_INDEX_OUTOFBOUNDS_ERROR;
+            return FALSE;
+        }
+        sink.Append(buffer, j);
+        s8Length += j;
+    }
+    if (edits != nullptr) {
+        edits->addReplace(length, s8Length);
+    }
+    return TRUE;
+}
+
+UBool
+ByteSinkUtil::appendChange(const uint8_t *s, const uint8_t *limit,
+                           const char16_t *s16, int32_t s16Length,
+                           ByteSink &sink, Edits *edits, UErrorCode &errorCode) {
+    if (U_FAILURE(errorCode)) { return FALSE; }
+    if ((limit - s) > INT32_MAX) {
+        errorCode = U_INDEX_OUTOFBOUNDS_ERROR;
+        return FALSE;
+    }
+    return appendChange((int32_t)(limit - s), s16, s16Length, sink, edits, errorCode);
+}
+
+void
+ByteSinkUtil::appendCodePoint(int32_t length, UChar32 c, ByteSink &sink, Edits *edits) {
+    char s8[U8_MAX_LENGTH];
+    int32_t s8Length = 0;
+    U8_APPEND_UNSAFE(s8, s8Length, c);
+    if (edits != nullptr) {
+        edits->addReplace(length, s8Length);
+    }
+    sink.Append(s8, s8Length);
+}
+
+namespace {
+
+// See unicode/utf8.h U8_APPEND_UNSAFE().
+inline uint8_t getTwoByteLead(UChar32 c) { return (uint8_t)((c >> 6) | 0xc0); }
+inline uint8_t getTwoByteTrail(UChar32 c) { return (uint8_t)((c & 0x3f) | 0x80); }
+
+}  // namespace
+
+void
+ByteSinkUtil::appendTwoBytes(UChar32 c, ByteSink &sink) {
+    U_ASSERT(0x80 <= c && c <= 0x7ff);  // 2-byte UTF-8
+    char s8[2] = { (char)getTwoByteLead(c), (char)getTwoByteTrail(c) };
+    sink.Append(s8, 2);
+}
+
+void
+ByteSinkUtil::appendNonEmptyUnchanged(const uint8_t *s, int32_t length,
+                                      ByteSink &sink, uint32_t options, Edits *edits) {
+    U_ASSERT(length > 0);
+    if (edits != nullptr) {
+        edits->addUnchanged(length);
+    }
+    if ((options & U_OMIT_UNCHANGED_TEXT) == 0) {
+        sink.Append(reinterpret_cast<const char *>(s), length);
+    }
+}
+
+UBool
+ByteSinkUtil::appendUnchanged(const uint8_t *s, const uint8_t *limit,
+                              ByteSink &sink, uint32_t options, Edits *edits,
+                              UErrorCode &errorCode) {
+    if (U_FAILURE(errorCode)) { return FALSE; }
+    if ((limit - s) > INT32_MAX) {
+        errorCode = U_INDEX_OUTOFBOUNDS_ERROR;
+        return FALSE;
+    }
+    int32_t length = (int32_t)(limit - s);
+    if (length > 0) {
+        appendNonEmptyUnchanged(s, length, sink, options, edits);
+    }
+    return TRUE;
+}
+
+CharStringByteSink::CharStringByteSink(CharString* dest) : dest_(*dest) {
+}
+
+CharStringByteSink::~CharStringByteSink() = default;
+
+void
+CharStringByteSink::Append(const char* bytes, int32_t n) {
+    UErrorCode status = U_ZERO_ERROR;
+    dest_.append(bytes, n, status);
+    // Any errors are silently ignored.
+}
+
+char*
+CharStringByteSink::GetAppendBuffer(int32_t min_capacity,
+                                    int32_t desired_capacity_hint,
+                                    char* scratch,
+                                    int32_t scratch_capacity,
+                                    int32_t* result_capacity) {
+    if (min_capacity < 1 || scratch_capacity < min_capacity) {
+        *result_capacity = 0;
+        return nullptr;
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    char* result = dest_.getAppendBuffer(
+            min_capacity,
+            desired_capacity_hint,
+            *result_capacity,
+            status);
+    if (U_SUCCESS(status)) {
+        return result;
+    }
+
+    *result_capacity = scratch_capacity;
+    return scratch;
+}
+
+U_NAMESPACE_END
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/bytesinkutil.h`
+```
+// © 2017 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+
+// bytesinkutil.h
+// created: 2017sep14 Markus W. Scherer
+
+#include "unicode/utypes.h"
+#include "unicode/bytestream.h"
+#include "unicode/edits.h"
+#include "cmemory.h"
+#include "uassert.h"
+
+U_NAMESPACE_BEGIN
+
+class ByteSink;
+class CharString;
+class Edits;
+
+class U_COMMON_API ByteSinkUtil {
+public:
+    ByteSinkUtil() = delete;  // all static
+
+    /** (length) bytes were mapped to valid (s16, s16Length). */
+    static UBool appendChange(int32_t length,
+                              const char16_t *s16, int32_t s16Length,
+                              ByteSink &sink, Edits *edits, UErrorCode &errorCode);
+
+    /** The bytes at [s, limit[ were mapped to valid (s16, s16Length). */
+    static UBool appendChange(const uint8_t *s, const uint8_t *limit,
+                              const char16_t *s16, int32_t s16Length,
+                              ByteSink &sink, Edits *edits, UErrorCode &errorCode);
+
+    /** (length) bytes were mapped/changed to valid code point c. */
+    static void appendCodePoint(int32_t length, UChar32 c, ByteSink &sink, Edits *edits = nullptr);
+
+    /** The few bytes at [src, nextSrc[ were mapped/changed to valid code point c. */
+    static inline void appendCodePoint(const uint8_t *src, const uint8_t *nextSrc, UChar32 c,
+                                       ByteSink &sink, Edits *edits = nullptr) {
+        appendCodePoint((int32_t)(nextSrc - src), c, sink, edits);
+    }
+
+    /** Append the two-byte character (U+0080..U+07FF). */
+    static void appendTwoBytes(UChar32 c, ByteSink &sink);
+
+    static UBool appendUnchanged(const uint8_t *s, int32_t length,
+                                 ByteSink &sink, uint32_t options, Edits *edits,
+                                 UErrorCode &errorCode) {
+        if (U_FAILURE(errorCode)) { return FALSE; }
+        if (length > 0) { appendNonEmptyUnchanged(s, length, sink, options, edits); }
+        return TRUE;
+    }
+
+    static UBool appendUnchanged(const uint8_t *s, const uint8_t *limit,
+                                 ByteSink &sink, uint32_t options, Edits *edits,
+                                 UErrorCode &errorCode);
+
+private:
+    static void appendNonEmptyUnchanged(const uint8_t *s, int32_t length,
+                                        ByteSink &sink, uint32_t options, Edits *edits);
+};
+
+class CharStringByteSink : public ByteSink {
+public:
+    CharStringByteSink(CharString* dest);
+    ~CharStringByteSink() override;
+
+    CharStringByteSink() = delete;
+    CharStringByteSink(const CharStringByteSink&) = delete;
+    CharStringByteSink& operator=(const CharStringByteSink&) = delete;
+
+    void Append(const char* bytes, int32_t n) override;
+
+    char* GetAppendBuffer(int32_t min_capacity,
+                          int32_t desired_capacity_hint,
+                          char* scratch,
+                          int32_t scratch_capacity,
+                          int32_t* result_capacity) override;
+
+private:
+    CharString& dest_;
+};
+
+U_NAMESPACE_END
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/cpputils.h`
+```
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+/*
+******************************************************************************
+*
+*   Copyright (C) 1997-2011, International Business Machines
+*   Corporation and others.  All Rights Reserved.
+*
+******************************************************************************
+*   file name:  cpputils.h
+*   encoding:   UTF-8
+*   tab size:   8 (not used)
+*   indentation:4
+*/
+
+#ifndef CPPUTILS_H
+#define CPPUTILS_H
+
+#include "unicode/utypes.h"
+#include "unicode/unistr.h"
+#include "cmemory.h"
+
+/*==========================================================================*/
+/* Array copy utility functions */
+/*==========================================================================*/
+
+static
+inline void uprv_arrayCopy(const double* src, double* dst, int32_t count)
+{ uprv_memcpy(dst, src, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const double* src, int32_t srcStart,
+              double* dst, int32_t dstStart, int32_t count)
+{ uprv_memcpy(dst+dstStart, src+srcStart, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int8_t* src, int8_t* dst, int32_t count)
+    { uprv_memcpy(dst, src, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int8_t* src, int32_t srcStart,
+              int8_t* dst, int32_t dstStart, int32_t count)
+{ uprv_memcpy(dst+dstStart, src+srcStart, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int16_t* src, int16_t* dst, int32_t count)
+{ uprv_memcpy(dst, src, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int16_t* src, int32_t srcStart,
+              int16_t* dst, int32_t dstStart, int32_t count)
+{ uprv_memcpy(dst+dstStart, src+srcStart, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int32_t* src, int32_t* dst, int32_t count)
+{ uprv_memcpy(dst, src, (size_t)count * sizeof(*src)); }
+
+static
+inline void uprv_arrayCopy(const int32_t* src, int32_t srcStart,
+              int32_t* dst, int32_t dstStart, int32_t count)
+{ uprv_memcpy(dst+dstStart, src+srcStart, (size_t)count * sizeof(*src)); }
+
+static
+inline void
+uprv_arrayCopy(const UChar *src, int32_t srcStart,
+        UChar *dst, int32_t dstStart, int32_t count)
+{ uprv_memcpy(dst+dstStart, src+srcStart, (size_t)count * sizeof(*src)); }
+
+/**
+ * Copy an array of UnicodeString OBJECTS (not pointers).
+ * @internal
+ */
+static inline void
+uprv_arrayCopy(const icu::UnicodeString *src, icu::UnicodeString *dst, int32_t count)
+{ while(count-- > 0) *dst++ = *src++; }
+
+/**
+ * Copy an array of UnicodeString OBJECTS (not pointers).
+ * @internal
+ */
+static inline void
+uprv_arrayCopy(const icu::UnicodeString *src, int32_t srcStart,
+               icu::UnicodeString *dst, int32_t dstStart, int32_t count)
+{ uprv_arrayCopy(src+srcStart, dst+dstStart, count); }
+
+/**
+ * Checks that the string is readable and writable.
+ * Sets U_ILLEGAL_ARGUMENT_ERROR if the string isBogus() or has an open getBuffer().
+ */
+inline void
+uprv_checkCanGetBuffer(const icu::UnicodeString &s, UErrorCode &errorCode) {
+    if(U_SUCCESS(errorCode) && s.isBogus()) {
+        errorCode=U_ILLEGAL_ARGUMENT_ERROR;
+    }
+}
+
+#endif /* _CPPUTILS */
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/locutil.cpp`
+```
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+/*
+ *******************************************************************************
+ * Copyright (C) 2002-2014, International Business Machines Corporation and
+ * others. All Rights Reserved.
+ *******************************************************************************
+ */
+#include "unicode/utypes.h"
+
+#if !UCONFIG_NO_SERVICE || !UCONFIG_NO_TRANSLITERATION
+
+#include "unicode/resbund.h"
+#include "unicode/uenum.h"
+#include "cmemory.h"
+#include "ustrfmt.h"
+#include "locutil.h"
+#include "charstr.h"
+#include "ucln_cmn.h"
+#include "uassert.h"
+#include "umutex.h"
+
+// see LocaleUtility::getAvailableLocaleNames
+static icu::UInitOnce   LocaleUtilityInitOnce = U_INITONCE_INITIALIZER;
+static icu::Hashtable * LocaleUtility_cache = NULL;
+
+#define UNDERSCORE_CHAR ((UChar)0x005f)
+#define AT_SIGN_CHAR    ((UChar)64)
+#define PERIOD_CHAR     ((UChar)46)
+
+/*
+ ******************************************************************
+ */
+
+/**
+ * Release all static memory held by Locale Utility.  
+ */
+U_CDECL_BEGIN
+static UBool U_CALLCONV service_cleanup(void) {
+    if (LocaleUtility_cache) {
+        delete LocaleUtility_cache;
+        LocaleUtility_cache = NULL;
+    }
+    return TRUE;
+}
+
+
+static void U_CALLCONV locale_utility_init(UErrorCode &status) {
+    using namespace icu;
+    U_ASSERT(LocaleUtility_cache == NULL);
+    ucln_common_registerCleanup(UCLN_COMMON_SERVICE, service_cleanup);
+    LocaleUtility_cache = new Hashtable(status);
+    if (U_FAILURE(status)) {
+        delete LocaleUtility_cache;
+        LocaleUtility_cache = NULL;
+        return;
+    }
+    if (LocaleUtility_cache == NULL) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
+    LocaleUtility_cache->setValueDeleter(uhash_deleteHashtable);
+}
+
+U_CDECL_END
+
+U_NAMESPACE_BEGIN
+
+UnicodeString&
+LocaleUtility::canonicalLocaleString(const UnicodeString* id, UnicodeString& result)
+{
+  if (id == NULL) {
+    result.setToBogus();
+  } else {
+    // Fix case only (no other changes) up to the first '@' or '.' or
+    // end of string, whichever comes first.  In 3.0 I changed this to
+    // stop at first '@' or '.'.  It used to run out to the end of
+    // string.  My fix makes the tests pass but is probably
+    // structurally incorrect.  See below.  [alan 3.0]
+
+    // TODO: Doug, you might want to revise this...
+    result = *id;
+    int32_t i = 0;
+    int32_t end = result.indexOf(AT_SIGN_CHAR);
+    int32_t n = result.indexOf(PERIOD_CHAR);
+    if (n >= 0 && n < end) {
+        end = n;
+    }
+    if (end < 0) {
+        end = result.length();
+    }
+    n = result.indexOf(UNDERSCORE_CHAR);
+    if (n < 0) {
+      n = end;
+    }
+    for (; i < n; ++i) {
+      UChar c = result.charAt(i);
+      if (c >= 0x0041 && c <= 0x005a) {
+        c += 0x20;
+        result.setCharAt(i, c);
+      }
+    }
+    for (n = end; i < n; ++i) {
+      UChar c = result.charAt(i);
+      if (c >= 0x0061 && c <= 0x007a) {
+        c -= 0x20;
+        result.setCharAt(i, c);
+      }
+    }
+  }
+  return result;
+
+#if 0
+    // This code does a proper full level 2 canonicalization of id.
+    // It's nasty to go from UChar to char to char to UChar -- but
+    // that's what you have to do to use the uloc_canonicalize
+    // function on UnicodeStrings.
+
+    // I ended up doing the alternate fix (see above) not for
+    // performance reasons, although performance will certainly be
+    // better, but because doing a full level 2 canonicalization
+    // causes some tests to fail.  [alan 3.0]
+
+    // TODO: Doug, you might want to revisit this...
+    result.setToBogus();
+    if (id != 0) {
+        int32_t buflen = id->length() + 8; // space for NUL
+        char* buf = (char*) uprv_malloc(buflen);
+        char* canon = (buf == 0) ? 0 : (char*) uprv_malloc(buflen);
+        if (buf != 0 && canon != 0) {
+            U_ASSERT(id->extract(0, INT32_MAX, buf, buflen) < buflen);
+            UErrorCode ec = U_ZERO_ERROR;
+            uloc_canonicalize(buf, canon, buflen, &ec);
+            if (U_SUCCESS(ec)) {
+                result = UnicodeString(canon);
+            }
+        }
+        uprv_free(buf);
+        uprv_free(canon);
+    }
+    return result;
+#endif
+}
+
+Locale&
+LocaleUtility::initLocaleFromName(const UnicodeString& id, Locale& result)
+{
+    enum { BUFLEN = 128 }; // larger than ever needed
+
+    if (id.isBogus() || id.length() >= BUFLEN) {
+        result.setToBogus();
+    } else {
+        /*
+         * We need to convert from a UnicodeString to char * in order to
+         * create a Locale.
+         *
+         * Problem: Locale ID strings may contain '@' which is a variant
+         * character and cannot be handled by invariant-character conversion.
+         *
+         * Hack: Since ICU code can handle locale IDs with multiple encodings
+         * of '@' (at least for EBCDIC; it's not known to be a problem for
+         * ASCII-based systems),
+         * we use regular invariant-character conversion for everything else
+         * and manually convert U+0040 into a compiler-char-constant '@'.
+         * While this compilation-time constant may not match the runtime
+         * encoding of '@', it should be one of the encodings which ICU
+         * recognizes.
+         *
+         * There should be only at most one '@' in a locale ID.
+         */
+        char buffer[BUFLEN];
+        int32_t prev, i;
+        prev = 0;
+        for(;;) {
+            i = id.indexOf((UChar)0x40, prev);
+            if(i < 0) {
+                // no @ between prev and the rest of the string
+                id.extract(prev, INT32_MAX, buffer + prev, BUFLEN - prev, US_INV);
+                break; // done
+            } else {
+                // normal invariant-character conversion for text between @s
+                id.extract(prev, i - prev, buffer + prev, BUFLEN - prev, US_INV);
+                // manually "convert" U+0040 at id[i] into '@' at buffer[i]
+                buffer[i] = '@';
+                prev = i + 1;
+            }
+        }
+        result = Locale::createFromName(buffer);
     }
     return result;
 }
 
-
-int main(int argc, char** argv)
+UnicodeString&
+LocaleUtility::initNameFromLocale(const Locale& locale, UnicodeString& result)
 {
-    std::string filename;
-    try
-    {
-        configuration config;
-        std::string copyright_filename;
-        std::string output_style;
+    if (locale.isBogus()) {
+        result.setToBogus();
+    } else {
+        result.append(UnicodeString(locale.getName(), -1, US_INV));
+    }
+    return result;
+}
 
-        // Read/get configuration
-        {
-            namespace po = boost::program_options;
-            po::options_description description;
+const Hashtable*
+LocaleUtility::getAvailableLocaleNames(const UnicodeString& bundleID)
+{
+    // LocaleUtility_cache is a hash-of-hashes.  The top-level keys
+    // are path strings ('bundleID') passed to
+    // ures_openAvailableLocales.  The top-level values are
+    // second-level hashes.  The second-level keys are result strings
+    // from ures_openAvailableLocales.  The second-level values are
+    // garbage ((void*)1 or other random pointer).
 
-            std::string convenience_headers;
+    UErrorCode status = U_ZERO_ERROR;
+    umtx_initOnce(LocaleUtilityInitOnce, locale_utility_init, status);
+    Hashtable *cache = LocaleUtility_cache;
+    if (cache == NULL) {
+        // Catastrophic failure.
+        return NULL;
+    }
 
-            description.add_options()
-                ("help", "Help message")
-                ("version", "Version description")
-                ("xml", po::value<std::string>(&filename),
-                            "Name of XML file written by Doxygen")
-                ("start_include", po::value<std::string>(&config.start_include),
-                            "Start include")
-                ("convenience_header_path", po::value<std::string>(&config.convenience_header_path),
-                            "Convenience header path")
-                ("convenience_headers", po::value<std::string>(&convenience_headers),
-                            "Convenience header(s) (comma-separated)")
-                ("skip_namespace", po::value<std::string>(&config.skip_namespace),
-                            "Namespace to skip (e.g. boost::mylib::)")
-                ("copyright", po::value<std::string>(&copyright_filename),
-                            "Name of QBK file including (commented) copyright and license")
+    Hashtable* htp;
+    umtx_lock(NULL);
+    htp = (Hashtable*) cache->get(bundleID);
+    umtx_unlock(NULL);
 
-                ("output_style", po::value<std::string>(&output_style),
-                            "Docbook output style. Available values: 'alt'")
-                ("output_member_variables", po::value<bool>(&config.output_member_variables),
-                            "Output member variables inside the class")
-                ("alt_max_synopsis_length", po::value<unsigned>(&config.alt_max_synopsis_length),
-                            "Maximum length of function synopsis used without shortened QBK section name.")
-            ;
-
-            po::variables_map varmap;
-
-            if (argc == 2 && ! boost::starts_with(argv[1], "--"))
-            {
-                // (especially for debugging) options might go into an INI file
-                std::ifstream config_file (argv[1], std::ifstream::in);
-                po::store(po::parse_config_file(config_file, description), varmap);
-            }
-            else
-            {
-                po::store(po::parse_command_line(argc, argv, description), varmap);
-            }
-
-            po::notify(varmap);
-
-            if (varmap.count("version"))
-            {
-                std::cout << version << std::endl;
-                return 0;
-            }
-            else if (varmap.count("help"))
-            {
-                std::cout
-                    << program_description(true) << std::endl
-                    << "Available options:" << std::endl
-                    << description << std::endl;
-                return 0;
-            }
-            else if (filename.empty())
-            {
-                std::cout
-                    << program_description(true) << std::endl
-                    << "Allowed options:" << std::endl
-                    << description << std::endl;
-                return 1;
-            }
-
-            // Split CSV with headerfile names into configuration
-            if (! convenience_headers.empty())
-            {
-                boost::split(config.convenience_headers, convenience_headers, boost::is_any_of(","));
-            }
-        }
-
-        // Set output style
-        if ("alt" == output_style)
-        {
-            config.output_style = configuration::alt;
-        }
-
-        // Read files into strings
-        std::string xml_string = file_to_string(filename);
-        std::string license = copyright_filename.empty()
-            ? ""
-            : file_to_string(copyright_filename);
-
-        // Parse the XML outputted by Doxygen
-        xml_doc xml(xml_string.c_str());
-
-        documentation doc;
-        parse(xml.first_node(), config, doc);
-
-        // Check for duplicate function names
-        for (std::size_t i = 0; i < doc.functions.size(); i++)
-        {
-            function& f1 = doc.functions[i];
-            for (std::size_t j = i + 1; j < doc.functions.size(); j++)
-            {
-                function& f2 = doc.functions[j];
-
-                if (f1.name == f2.name)
-                {
-                    // It is not a unique function, so e.g. an overload,
-                    // so a description must distinguish them.
-                    // Difference is either the number of parameters, or a const / non-const version
-                    // Use the "\qbk{distinguish,with strategy}" in the source code to distinguish
-                    f1.unique = false;
-                    f2.unique = false;
+    if (htp == NULL) {
+        htp = new Hashtable(status);
+        if (htp && U_SUCCESS(status)) {
+            CharString cbundleID;
+            cbundleID.appendInvariantChars(bundleID, status);
+            const char* path = cbundleID.isEmpty() ? NULL : cbundleID.data();
+            icu::LocalUEnumerationPointer uenum(ures_openAvailableLocales(path, &status));
+            for (;;) {
+                const UChar* id = uenum_unext(uenum.getAlias(), NULL, &status);
+                if (id == NULL) {
+                    break;
                 }
+                htp->put(UnicodeString(id), (void*)htp, status);
             }
-        }
-
-
-        // Write copyright/license (keep inspect silent)
-        if (! license.empty())
-        {
-            std::cout << license << std::endl;
-        }
-
-        // Write warning comment
-        std::cout
-            << "[/ Generated by " << program_description(false) << ", don't change, will be overwritten automatically]" << std::endl
-            << "[/ Generated from " << filename << "]" << std::endl;
-
-        if ( configuration::def == config.output_style )
-        {
-            // Write the rest: functions, defines, classes or structs
-            BOOST_FOREACH(function const& f, doc.functions)
-            {
-                quickbook_output(f, config, std::cout);
+            if (U_FAILURE(status)) {
+                delete htp;
+                return NULL;
             }
-            BOOST_FOREACH(function const& f, doc.defines)
-            {
-                quickbook_output(f, config, std::cout);
-            }
-            BOOST_FOREACH(enumeration const& e, doc.enumerations)
-            {
-                quickbook_output(e, config, std::cout);
-            }
-
-            if (! doc.cos.name.empty())
-            {
-                std::sort(doc.cos.functions.begin(), doc.cos.functions.end(), sort_on_line<function>());
-                quickbook_output(doc.cos, config, std::cout);
-            }
-        }
-        else if ( configuration::alt == config.output_style )
-        {
-            if (! doc.cos.name.empty())
-            {
-                std::sort(doc.cos.functions.begin(), doc.cos.functions.end(), sort_on_line<function>());
-                quickbook_output_alt(doc.cos, config, std::cout);
-            }
-
-            if (! doc.group_id.empty())
-            {
-                quickbook_output_alt(doc, config, std::cout);
+            umtx_lock(NULL);
+            Hashtable *t = static_cast<Hashtable *>(cache->get(bundleID));
+            if (t != NULL) {
+                // Another thread raced through this code, creating the cache entry first.
+                // Discard ours and return theirs.
+                umtx_unlock(NULL);
+                delete htp;
+                htp = t;
+            } else {
+                cache->put(bundleID, (void*)htp, status);
+                umtx_unlock(NULL);
             }
         }
     }
-    catch(std::exception const& e)
-    {
-        std::cerr << "Exception in doxygen_xml2qbk: " << std::endl
-            << "   Message: " << e.what() << std::endl
-            << "   File: " << filename << std::endl
-            << "   Type: " << typeid(e).name() << std::endl
-            << std::endl;
-        return 1;
-    }
-    catch(...)
-    {
-        std::cerr << "Unknown exception in doxygen_xml2qbk"
-            << std::endl;
-        return 1;
-    }
-    return 0;
+    return htp;
 }
 
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/geometry/doc/src/docutils/tools/doxygen_xml2qbk/sample/make_qbk.py`
-```
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-# ===========================================================================
-#  Copyright (c) 2011-2012 Barend Gehrels, Amsterdam, the Netherlands.
-# 
-#  Use, modification and distribution is subject to the Boost Software License,
-#  Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-#  http://www.boost.org/LICENSE_1_0.txt)9
-# ============================================================================
-
-import os, sys
-
-cmd = "doxygen_xml2qbk"
-cmd = cmd + " --xml xml/%s.xml"
-cmd = cmd + " --start_include sample/"
-cmd = cmd + " > generated\%s.qbk"
-
-
-os.system("doxygen fruit.dox")
-os.system(cmd % ("group__fruit", "grouped"))
-os.system(cmd % ("classfruit_1_1apple", "apple"))
-os.system(cmd % ("classfruit_1_1rose", "rose"))
-os.system(cmd % ("structfruit_1_1fruit__value", "fruit_value"))
-os.system(cmd % ("structfruit_1_1fruit__type", "fruit_type"))
-
-os.system("bjam") 
-
-```
-
-### Core Architecture Module: `3rdParty/boost/1.78.0/libs/geometry/doc/src/docutils/tools/doxygen_xml2qbk/sample/src/examples/apple_example.cpp`
-```
-// Boost.Geometry (aka GGL, Generic Geometry Library)
-// doxygen_xml2qbk Example
-
-// Copyright (c) 2011-2012 Barend Gehrels, Amsterdam, the Netherlands.
-
-// Use, modification and distribution is subject to the Boost Software License,
-// Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-
-//[apple
-//` Call eat for the apple
-
-#include "fruit.hpp"
-
-int main()
+UBool
+LocaleUtility::isFallbackOf(const UnicodeString& root, const UnicodeString& child)
 {
-    fruit::apple<> a("my sample apple");
-    eat(a);
-    return 0;
+    return child.indexOf(root) == 0 &&
+      (child.length() == root.length() ||
+       child.charAt(root.length()) == UNDERSCORE_CHAR);
 }
-//]
+
+U_NAMESPACE_END
+
+/* !UCONFIG_NO_SERVICE */
+#endif
 
 
-//[apple_output
-/*`
-Output:
-[pre
-my sample apple
-]
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/locutil.h`
+```
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+/**
+ *******************************************************************************
+ * Copyright (C) 2002-2005, International Business Machines Corporation and    *
+ * others. All Rights Reserved.                                                *
+ *******************************************************************************
+ *
+ *******************************************************************************
+ */
+#ifndef LOCUTIL_H
+#define LOCUTIL_H
+
+#include "unicode/utypes.h"
+#include "hash.h"
+
+#if !UCONFIG_NO_SERVICE || !UCONFIG_NO_TRANSLITERATION
+
+
+U_NAMESPACE_BEGIN
+
+// temporary utility functions, till I know where to find them
+// in header so tests can also access them
+
+class U_COMMON_API LocaleUtility {
+public:
+  static UnicodeString& canonicalLocaleString(const UnicodeString* id, UnicodeString& result);
+  static Locale& initLocaleFromName(const UnicodeString& id, Locale& result);
+  static UnicodeString& initNameFromLocale(const Locale& locale, UnicodeString& result);
+  static const Hashtable* getAvailableLocaleNames(const UnicodeString& bundleID);
+  static UBool isFallbackOf(const UnicodeString& root, const UnicodeString& child);
+};
+
+U_NAMESPACE_END
+
+
+#endif
+
+#endif
+
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/putil.cpp`
+```
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+/*
+******************************************************************************
+*
+*   Copyright (C) 1997-2016, International Business Machines
+*   Corporation and others.  All Rights Reserved.
+*
+******************************************************************************
+*
+*  FILE NAME : putil.c (previously putil.cpp and ptypes.cpp)
+*
+*   Date        Name        Description
+*   04/14/97    aliu        Creation.
+*   04/24/97    aliu        Added getDefaultDataDirectory() and
+*                            getDefaultLocaleID().
+*   04/28/97    aliu        Rewritten to assume Unix and apply general methods
+*                            for assumed case.  Non-UNIX platforms must be
+*                            special-cased.  Rewrote numeric methods dealing
+*                            with NaN and Infinity to be platform independent
+*                             over all IEEE 754 platforms.
+*   05/13/97    aliu        Restored sign of timezone
+*                            (semantics are hours West of GMT)
+*   06/16/98    erm         Added IEEE_754 stuff, cleaned up isInfinite, isNan,
+*                             nextDouble..
+*   07/22/98    stephen     Added remainder, max, min, trunc
+*   08/13/98    stephen     Added isNegativeInfinity, isPositiveInfinity
+*   08/24/98    stephen     Added longBitsFromDouble
+*   09/08/98    stephen     Minor changes for Mac Port
+*   03/02/99    stephen     Removed openFile().  Added AS400 support.
+*                            Fixed EBCDIC tables
+*   04/15/99    stephen     Converted to C.
+*   06/28/99    stephen     Removed mutex locking in u_isBigEndian().
+*   08/04/99    jeffrey R.  Added OS/2 changes
+*   11/15/99    helena      Integrated S/390 IEEE support.
+*   04/26/01    Barry N.    OS/400 support for uprv_getDefaultLocaleID
+*   08/15/01    Steven H.   OS/400 support for uprv_getDefaultCodepage
+*   01/03/08    Steven L.   Fake Time Support
+******************************************************************************
 */
-//]
 
+// Defines _XOPEN_SOURCE for access to POSIX functions.
+// Must be before any other #includes.
+#include "uposixdefs.h"
+
+// First, the platform type. Need this for U_PLATFORM.
+#include "unicode/platform.h"
+
+#if U_PLATFORM == U_PF_MINGW && defined __STRICT_ANSI__
+/* tzset isn't defined in strict ANSI on MinGW. */
+#undef __STRICT_ANSI__
+#endif
+
+/*
+ * Cygwin with GCC requires inclusion of time.h after the above disabling strict asci mode statement.
+ */
+#include <time.h>
+
+#if !U_PLATFORM_USES_ONLY_WIN32_API
+#include <sys/time.h>
+#endif
+
+/* include the rest of the ICU headers */
+#include "unicode/putil.h"
+#include "unicode/ustring.h"
+#include "putilimp.h"
+#include "uassert.h"
+#include "umutex.h"
+#include "cmemory.h"
+#include "cstring.h"
+#include "locmap.h"
+#include "ucln_cmn.h"
+#include "charstr.h"
+
+/* Include standard headers. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <locale.h>
+#include <float.h>
+
+#ifndef U_COMMON_IMPLEMENTATION
+#error U_COMMON_IMPLEMENTATION not set - must be set for all ICU source files in common/ - see http://userguide.icu-project.org/howtouseicu
+#endif
+
+
+/* include system headers */
+#if U_PLATFORM_USES_ONLY_WIN32_API
+    /*
+     * TODO: U_PLATFORM_USES_ONLY_WIN32_API includes MinGW.
+     * Should Cygwin be included as well (U_PLATFORM_HAS_WIN32_API)
+     * to use native APIs as much as possible?
+     */
+#ifndef WIN32_LEAN_AND_MEAN
+#   define WIN32_LEAN_AND_MEAN
+#endif
+#   define VC_EXTRALEAN
+#   define NOUSER
+#   define NOSERVICE
+#   define NOIME
+#   define NOMCX
+#   include <windows.h>
+#   include "unicode/uloc.h"
+#   include "wintz.h"
+#elif U_PLATFORM == U_PF_OS400
+#   include <float.h>
+#   include <qusec.h>       /* error code structure */
+#   include <qusrjobi.h>
+#   include <qliept.h>      /* EPT_CALL macro  - this include must be after all other "QSYSINCs" */
+#   include <mih/testptr.h> /* For uprv_maximumPtr */
+#elif U_PLATFORM == U_PF_OS390
+#   include "unicode/ucnv.h"   /* Needed for UCNV_SWAP_LFNL_OPTION_STRING */
+#elif U_PLATFORM_IS_DARWIN_BASED || U_PLATFORM_IS_LINUX_BASED || U_PLATFORM == U_PF_BSD || U_PLATFORM == U_PF_SOLARIS
+#   include <limits.h>
+#   include <unistd.h>
+#   if U_PLATFORM == U_PF_SOLARIS
+#       ifndef _XPG4_2
+#           define _XPG4_2
+#       endif
+#   endif
+#elif U_PLATFORM == U_PF_QNX
+#   include <sys/neutrino.h>
+#endif
+
+/*
+ * Only include langinfo.h if we have a way to get the codeset. If we later
+ * depend on more feature, we can test on U_HAVE_NL_LANGINFO.
+ *
+ */
+
+#if U_HAVE_NL_LANGINFO_CODESET
+#include <langinfo.h>
+#endif
+
+/**
+ * Simple things (presence of functions, etc) should just go in configure.in and be added to
+ * icucfg.h via autoheader.
+ */
+#if U_PLATFORM_IMPLEMENTS_POSIX
+#   if U_PLATFORM == U_PF_OS400
+#    define HAVE_DLFCN_H 0
+#    define HAVE_DLOPEN 0
+#   else
+#   ifndef HAVE_DLFCN_H
+#    define HAVE_DLFCN_H 1
+#   endif
+#   ifndef HAVE_DLOPEN
+#    define HAVE_DLOPEN 1
+#   endif
+#   endif
+#   ifndef HAVE_GETTIMEOFDAY
+#    define HAVE_GETTIMEOFDAY 1
+#   endif
+#else
+#   define HAVE_DLFCN_H 0
+#   define HAVE_DLOPEN 0
+#   define HAVE_GETTIMEOFDAY 0
+#endif
+
+U_NAMESPACE_USE
+
+/* Define the extension for data files, again... */
+#define DATA_TYPE "dat"
+
+/* Leave this copyright notice here! */
+static const char copyright[] = U_COPYRIGHT_STRING;
+
+/* floating point implementations ------------------------------------------- */
+
+/* We return QNAN rather than SNAN*/
+#define SIGN 0x80000000U
+
+/* Make it easy to define certain types of constants */
+typedef union {
+    int64_t i64; /* This must be defined first in order to allow the initialization to work. This is a C89 feature. */
+    double d64;
+} BitPatternConversion;
+static const BitPatternConversion gNan = { (int64_t) INT64_C(0x7FF8000000000000) };
+static const BitPatternConversion gInf = { (int64_t) INT64_C(0x7FF0000000000000) };
+
+/*---------------------------------------------------------------------------
+  Platform utilities
+  Our general strategy is to assume we're on a POSIX platform.  Platforms which
+  are non-POSIX must declare themselves so.  The default POSIX implementation
+  will sometimes work for non-POSIX platforms as well (e.g., the NaN-related
+  functions).
+  ---------------------------------------------------------------------------*/
+
+#if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_OS400
+#   undef U_POSIX_LOCALE
+#else
+#   define U_POSIX_LOCALE    1
+#endif
+
+/*
+    WARNING! u_topNBytesOfDouble and u_bottomNBytesOfDouble
+    can't be properly optimized by the gcc compiler sometimes (i.e. gcc 3.2).
+*/
+#if !IEEE_754
+static char*
+u_topNBytesOfDouble(double* d, int n)
+{
+#if U_IS_BIG_ENDIAN
+    return (char*)d;
+#else
+    return (char*)(d + 1) - n;
+#endif
+}
+
+static char*
+u_bottomNBytesOfDouble(double* d, int n)
+{
+#if U_IS_BIG_ENDIAN
+    return (char*)(d + 1) - n;
+#else
+    return (char*)d;
+#endif
+}
+#endif   /* !IEEE_754 */
+
+#if IEEE_754
+static UBool
+u_signBit(double d) {
+    uint8_t hiByte;
+#if U_IS_BIG_ENDIAN
+    hiByte = *(uint8_t *)&d;
+#else
+    hiByte = *(((uint8_t *)&d) + sizeof(double) - 1);
+#endif
+    return (hiByte & 0x80) != 0;
+}
+#endif
+
+
+
+#if defined (U_DEBUG_FAKETIME)
+/* Override the clock to test things without having to move the system clock.
+ * Assumes POSIX gettimeofday() will function
+ */
+UDate fakeClock_t0 = 0; /** Time to start the clock from **/
+UDate fakeClock_dt = 0; /** Offset (fake time - real time) **/
+UBool fakeClock_set = FALSE; /** True if fake clock has spun up **/
+
+static UDate getUTCtime_real() {
+    struct timeval posixTime;
+    gettimeofday(&posixTime, NULL);
+    return (UDate)(((int64_t)posixTime.tv_sec * U_MILLIS_PER_SECOND) + (posixTime.tv_usec/1000));
+}
+
+static UDate getUTCtime_fake() {
+    static UMutex fakeClockMutex = U_MUTEX_INTIALIZER;
+    umtx_lock(&fakeClockMutex);
+    if(!fakeClock_set) {
+        UDate real = getUTCtime_real();
+        const char *fake_start = getenv("U_FAKETIME_START");
+        if((fake_start!=NULL) && (fake_start[0]!=0)) {
+            sscanf(fake_start,"%lf",&fakeClock_t0);
+            fakeClock_dt = fakeClock_t0 - real;
+            fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, so the ICU clock will start at a preset value\n"
+                    "env variable U_FAKETIME_START=%.0f (%s) for an offset of %.0f ms from the current time %.0f\n",
+                    fakeClock_t0, fake_start, fakeClock_dt, real);
+        } else {
+          fakeClock_dt = 0;
+            fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, but U_FAKETIME_START was not set.\n"
+                    "Set U_FAKETIME_START to the number of milliseconds since 1/1/1970 to set the ICU clock.\n");
+        }
+        fakeClock_set = TRUE;
+    }
+    umtx_unlock(&fakeClockMutex);
+
+    return getUTCtime_real() + fakeClock_dt;
+}
+#endif
+
+#if U_PLATFORM_USES_ONLY_WIN32_API
+typedef union {
+    int64_t int64;
+    FILETIME fileTime;
+} FileTimeConversion;   /* This is like a ULARGE_INTEGER */
+
+/* Number of 100 nanoseconds from 1/1/1601 to 1/1/1970 */
+#define EPOCH_BIAS  INT64_C(116444736000000000)
+#define HECTONANOSECOND_PER_MILLISECOND   10000
+
+#endif
+
+/*---------------------------------------------------------------------------
+  Universal Implementations
+  These are designed to work on all platforms.  Try these, and if they
+  don't work on your platform, then special case your platform with new
+  implementations.
+---------------------------------------------------------------------------*/
+
+U_CAPI UDate U_EXPORT2
+uprv_getUTCtime()
+{
+#if defined(U_DEBUG_FAKETIME)
+    return getUTCtime_fake(); /* Hook for overriding the clock */
+#else
+    return uprv_getRawUTCtime();
+#endif
+}
+
+/* Return UTC (GMT) time measured in milliseconds since 0:00 on 1/1/70.*/
+U_CAPI UDate U_EXPORT2
+uprv_getRawUTCtime()
+{
+#if U_PLATFORM_USES_ONLY_WIN32_API
+
+    FileTimeConversion winTime;
+    GetSystemTimeAsFileTime(&winTime.fileTime);
+    return (UDate)((winTime.int64 -
+```
+
+### Core Architecture Module: `3rdParty/icu-legacy/icu64/common/putilimp.h`
+```
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+/*
+******************************************************************************
+*
+*   Copyright (C) 1997-2016, International Business Machines
+*   Corporation and others.  All Rights Reserved.
+*
+******************************************************************************
+*
+*  FILE NAME : putilimp.h
+*
+*   Date        Name        Description
+*   10/17/04    grhoten     Move internal functions from putil.h to this file.
+******************************************************************************
+*/
+
+#ifndef PUTILIMP_H
+#define PUTILIMP_H
+
+#include "unicode/utypes.h"
+#include "unicode/putil.h"
+
+/**
+ * \def U_SIGNED_RIGHT_SHIFT_IS_ARITHMETIC
+ * Nearly all CPUs and compilers implement a right-shift of a signed integer
+ * as an Arithmetic Shift Right which copies the sign bit (the Most Significant Bit (MSB))
+ * into the vacated bits (sign extension).
+ * For example, (int32_t)0xfff5fff3>>4 becomes 0xffff5fff and -1>>1=-1.
+ *
+ * This can be useful for storing a signed value in the upper bits
+ * and another bit field in the lower bits.
+ * The signed value can be retrieved by simple right-shifting.
+ *
+ * This is consistent with the Java language.
+ *
+ * However, the C standard allows compilers to implement a right-shift of a signed integer
+ * as a Logical Shift Right which copies a 0 into the vacated bits.
+ * For example, (int32_t)0xfff5fff3>>4 becomes 0x0fff5fff and -1>>1=0x7fffffff.
+ *
+ * Code that depends on the natural behavior should be guarded with this macro,
+ * with an alternate path for unusual platforms.
+ * @internal
+ */
+#ifdef U_SIGNED_RIGHT_SHIFT_IS_ARITHMETIC
+    /* Use the predefined value. */
+#else
+    /*
+     * Nearly all CPUs & compilers implement a right-shift of a signed integer
+     * as an Arithmetic Shift Right (with sign extension).
+     */
+#   define U_SIGNED_RIGHT_SHIFT_IS_ARITHMETIC 1
+#endif
+
+/** Define this to 1 if your platform supports IEEE 754 floating point,
+   to 0 if it does not. */
+#ifndef IEEE_754
+#   define IEEE_754 1
+#endif
+
+/**
+ * uintptr_t is an optional part of the standard definitions in stdint.h.
+ * The opengroup.org documentation for stdint.h says
+ * "On XSI-conformant systems, the intptr_t and uintptr_t types are required;
+ * otherwise, they are optional."
+ * We assume that when uintptr_t is defined, UINTPTR_MAX is defined as well.
+ *
+ * Do not use ptrdiff_t since it is signed. size_t is unsigned.
+ */
+/* TODO: This check fails on some z environments. Filed a ticket #9357 for this. */
+#if !defined(__intptr_t_defined) && !defined(UINTPTR_MAX) && (U_PLATFORM != U_PF_OS390)
+typedef size_t uintptr_t;
+#endif
+
+/*===========================================================================*/
+/** @{ Information about POSIX support                                       */
+/*===========================================================================*/
+
+#ifdef U_HAVE_NL_LANGINFO_CODESET
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_ANDROID || U_PLATFORM == U_PF_QNX
+#   define U_HAVE_NL_LANGINFO_CODESET 0
+#else
+#   define U_HAVE_NL_LANGINFO_CODESET 1
+#endif
+
+#ifdef U_NL_LANGINFO_CODESET
+    /* Use the predefined value. */
+#elif !U_HAVE_NL_LANGINFO_CODESET
+#   define U_NL_LANGINFO_CODESET -1
+#elif U_PLATFORM == U_PF_OS400
+   /* not defined */
+#else
+#   define U_NL_LANGINFO_CODESET CODESET
+#endif
+
+#if defined(U_TZSET) || defined(U_HAVE_TZSET)
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+    // UWP doesn't support tzset or environment variables for tz
+#if U_PLATFORM_HAS_WINUWP_API == 0
+#   define U_TZSET _tzset
+#endif
+#elif U_PLATFORM == U_PF_OS400
+   /* not defined */
+#else
+#   define U_TZSET tzset
+#endif
+
+#if defined(U_TIMEZONE) || defined(U_HAVE_TIMEZONE)
+    /* Use the predefined value. */
+#elif U_PLATFORM == U_PF_ANDROID
+#   define U_TIMEZONE timezone
+#elif defined(__UCLIBC__)
+    // uClibc does not have __timezone or _timezone.
+#elif defined(_NEWLIB_VERSION)
+#   define U_TIMEZONE _timezone
+#elif defined(__GLIBC__)
+    // glibc
+#   define U_TIMEZONE __timezone
+#elif U_PLATFORM_IS_LINUX_BASED
+    // not defined
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+#   define U_TIMEZONE _timezone
+#elif U_PLATFORM == U_PF_BSD && !defined(__NetBSD__)
+   /* not defined */
+#elif U_PLATFORM == U_PF_OS400
+   /* not defined */
+#elif U_PLATFORM == U_PF_IPHONE
+   /* not defined */
+#else
+#   define U_TIMEZONE timezone
+#endif
+
+#if defined(U_TZNAME) || defined(U_HAVE_TZNAME)
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+    /* not usable on all windows platforms */
+#if U_PLATFORM_HAS_WINUWP_API == 0
+#   define U_TZNAME _tzname
+#endif
+#elif U_PLATFORM == U_PF_OS400
+   /* not defined */
+#else
+#   define U_TZNAME tzname
+#endif
+
+#ifdef U_HAVE_MMAP
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+#   define U_HAVE_MMAP 0
+#else
+#   define U_HAVE_MMAP 1
+#endif
+
+#ifdef U_HAVE_POPEN
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+#   define U_HAVE_POPEN 0
+#elif U_PLATFORM == U_PF_OS400
+#   define U_HAVE_POPEN 0
+#else
+#   define U_HAVE_POPEN 1
+#endif
+
+/**
+ * \def U_HAVE_DIRENT_H
+ * Defines whether dirent.h is available.
+ * @internal
+ */
+#ifdef U_HAVE_DIRENT_H
+    /* Use the predefined value. */
+#elif U_PLATFORM_USES_ONLY_WIN32_API
+#   define U_HAVE_DIRENT_H 0
+#else
+#   define U_HAVE_DIRENT_H 1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/** @{ GCC built in functions for atomic memory operations                   */
+/*===========================================================================*/
+
+/**
+ * \def U_HAVE_GCC_ATOMICS
+ * @internal
+ */
+#ifdef U_HAVE_GCC_ATOMICS
+    /* Use the predefined value. */
+#elif U_PLATFORM == U_PF_MINGW
+    #define U_HAVE_GCC_ATOMICS 0
+#elif U_GCC_MAJOR_MINOR >= 404 || defined(__clang__)
+    /* TODO: Intel icc and IBM xlc on AIX also support gcc atomics.  (Intel originated them.)
+     *       Add them for these compilers.
+     * Note: Clang sets __GNUC__ defines for version 4.2, so misses the 4.4 test here.
+     */
+#   define U_HAVE_GCC_ATOMICS 1
+#else
+#   define U_HAVE_GCC_ATOMICS 0
+#endif
+
+/** @} */
+
+/**
+ * \def U_HAVE_STD_ATOMICS
+ * Defines whether to use the C++11 std::atomic functions.
+ * If false, ICU will fall back to compiler or platform specific alternatives.
+ * Note: support for these fall back options for atomics will be removed in a future version
+ *       of ICU, and the use of C++ 11 atomics will be required.
+ * @internal
+ */
+#ifdef U_HAVE_STD_ATOMICS
+    /* Use the predefined value. */
+#else
+#    define U_HAVE_STD_ATOMICS 1
+#endif
+
+/**
+ *  \def U_HAVE_CLANG_ATOMICS
+ *  Defines whether Clang c11 style built-in atomics are available.
+ *  These are used in preference to gcc atomics when both are available.
+ */
+#ifdef U_HAVE_CLANG_ATOMICS
+    /* Use the predefined value. */
+#elif __has_builtin(__c11_atomic_load) && \
+    __has_builtin(__c11_atomic_store) && \
+    __has_builtin(__c11_atomic_fetch_add) && \
+    __has_builtin(__c11_atomic_fetch_sub)
+#    define U_HAVE_CLANG_ATOMICS 1
+#else
+#    define U_HAVE_CLANG_ATOMICS 0
+#endif
+
+
+/**
+ * \def U_HAVE_STD_MUTEX
+ * Defines whether to use the C++11 std::mutex functions.
+ * If false, ICU will fall back to compiler or platform specific alternatives.
+ * std::mutex is preferred, and used by default unless this setting is overridden.
+ * Note: support for other options for mutexes will be removed in a future version
+ *       of ICU, and the use of std::mutex will be required.
+ * @internal
+ */
+#ifdef U_HAVE_STD_MUTEX
+    /* Use the predefined value. */
+#else
+#    define U_HAVE_STD_MUTEX 1
+#endif
+
+/*===========================================================================*/
+/** @{ Programs used by ICU code                                             */
+/*===========================================================================*/
+
+/**
+ * \def U_MAKE_IS_NMAKE
+ * Defines whether the "make" program is Windows nmake.
+ */
+#ifdef U_MAKE_IS_NMAKE
+    /* Use the predefined value. */
+#elif U_PLATFORM == U_PF_WINDOWS
+#   define U_MAKE_IS_NMAKE 1
+#else
+#   define U_MAKE_IS_NMAKE 0
+#endif
+
+/** @} */
+
+/*==========================================================================*/
+/* Platform utilities                                                       */
+/*==========================================================================*/
+
+/**
+ * Platform utilities isolates the platform dependencies of the
+ * library.  For each platform which this code is ported to, these
+ * functions may have to be re-implemented.
+ */
+
+/**
+ * Floating point utility to determine if a double is Not a Number (NaN).
+ * @internal
+ */
+U_INTERNAL UBool   U_EXPORT2 uprv_isNaN(double d);
+/**
+ * Floating point utility to determine if a double has an infinite value.
+ * @internal
+ */
+U_INTERNAL UBool   U_EXPORT2 uprv_isInfinite(double d);
+/**
+ * Floating point utility to determine if a double has a positive infinite value.
+ * @internal
+ */
+U_INTERNAL UBool   U_EXPORT2 uprv_isPositiveInfinity(double d);
+/**
+ * Floating point utility to determine if a double has a negative infinite value.
+ * @internal
+ */
+U_INTERNAL UBool   U_EXPORT2 uprv_isNegativeInfinity(double d);
+/**
+ * Floating point utility that returns a Not a Number (NaN) value.
+ * @internal
+ */
+U_INTERNAL double  U_EXPORT2 uprv_getNaN(void);
+/**
+ * Floating point utility that returns an infinite value.
+ * @internal
+ */
+U_INTERNAL double  U_EXPORT2 uprv_getInfinity(void);
+
+/**
+ * Floating point utility to truncate a double.
+ * @internal
+ */
+U_INTERNAL double  U_EXPORT2 uprv_trunc(double d);
+/**
+ * Floating point utility to calculate the floor of a double.
+ * @internal
+ */
+U_INTERNAL double  U_EXPORT2 uprv_floor(double d);
+/**
+ * Floating point utility to calculate the ceiling of a double.
+ * @internal
+ */
+U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
+/**
+ * Floating point utility to calculate the absolute value of a
 ```
 
 
@@ -988,11 +1641,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23556** (2026-10-30): **[COR-1200] Delete the old 1.78.0 boost version.**
-  *Symptoms*: ### Scope & Purpose  As boost is now updated to 1.92.0 and is downloaded via cmakes FetchContent, this 1.78.0 source is not needed anymore. 
+- **Issue #23581** (2026-11-04): **[COR-1240] [3.12.14] `arangodbtests_rocksdb` gets ICU setup and light crash handler**
+  *Symptoms*: ### Scope & Purpose  ### Problem `tests/RocksDBEngine/LogicalCollectionDescriptorTest.cpp::Serialization_loadOnlyFieldsRoundTripIsStable` hung in the middle; didin't finish forever: <img width="2270" height="456" alt="image" src="https://github.com/user-attachments/assets/993c81d1-e92e-46f4-9598-316298943b2f" />  ### Cause A light crash handler is not set in `arangodbtests_rocksdb` binary. So, no one catch the assertion. In the CI, it runs `arangodbtests` which contains a light crash handler, so it was fine.  After adding a light crash handler, it caught the assertion: ``` [ RUN      ] LogicalCollectionDescriptorTest.Serialization_loadOnlyFieldsRoundTripIsStable [LightCrashHandler] Assertion failed in file lib/Basics/Utf8Helper.cpp:87, expression _coll with message  terminate called without an active exception Aborted (core dumped) ``` The code is: ``` int Utf8Helper::compareUtf8(char const* left, size_t leftLength,                             char const* right, size_t rightLength) const {   TRI_ASSERT(left != nullptr);   TRI_ASSERT(right != nullptr);   TRI_ASSERT(_coll); ``` `_coll` is a collation table that should be created by ICU setup. However, `tests/RocksDBEngine/main.cpp` doesn't set up ICU, so `_coll` is empty.  - [x] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilien
 
-- **Issue #23550** (2026-10-28): **[COR-1230] (3.12.13) dont shutdown before upgrade**
-  *Symptoms*: ### Scope & Purpose  Port of https://github.com/arangodb/arangodb/pull/23549 to the 3.12.13 release branch.
+- **Issue #23568** (2026-11-03): **Merge latest devel into 4.0**
+  *Symptoms*: ### Scope & Purpose  Enterprise companion: https://github.com/arangodb/enterprise/pull/1735 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,156 +1662,273 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1a1582f` (2026-10-30)
-**Commit Message**: Fix unit tests
+### Incident Patch 1: `b0435e6e` (2026-11-02)
+**Commit Message**: Fix formatting
 
-**File**: `tests/ClusterEngine/ClusterIndexFactoryTest.cpp` (modified, +2/-2)
+**File**: `arangod/VocBase/LogicalCollection.cpp` (modified, +7/-8)
 ```diff
-@@ -53,7 +53,7 @@ TEST_F(ClusterIndexFactoryTest, edgeIndexCannotBeCreatedDirectly) {
-         IndexType::Edge, ctx);
-     FAIL() << "expected an exception";
-   } catch (basics::Exception const& ex) {
--    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
-+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
-   }
- }
+@@ -1450,14 +1450,13 @@ auto LogicalCollection::getDocumentStateLeader() -> std::shared_ptr<
+     replication2::replicated_state::document::DocumentLeaderState> {
+   auto stateMachine = getDocumentState();
  
-@@ -71,6 +71,6 @@ TEST_F(ClusterIndexFactoryTest, primaryIndexCannotBeCreatedDirectly) {
-         IndexType::Primary, ctx);
-     FAIL() << "expected an exception";
-   } catch (basics::Exception const& ex) {
--    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
-+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
-   }
- }
+-  static constexpr auto throwUnavailable =
+-      []<typename... Args>(basics::SourceLocation location,
+-                           std::format_string<Args...> formatString,
+-                           Args&&... args) {
+-        throw basics::Exception(
+-            TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
+-            std::format(formatString, std::forward<Args>(args)...), location);
+-      };
++  static constexpr auto throwUnavailable = []<typename... Args>(
++      basics::SourceLocation location, std::format_string<Args...> formatString,
++      Args && ... args) {
++    throw basics::Exception(
++        TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
++        std::format(formatString, std::forward<Args>(args)...), location);
++  };
+ 
+   auto leader = stateMachine->getLeader();
+   if (leader == nullptr) {
 ```
 
 ---
 
-### Incident Patch 2: `0f4c5ea5` (2026-10-30)
-**Commit Message**: Fix fullCount double-counting for COLLECT WITH COUNT (#23539)
+### Incident Patch 2: `60027d8d` (2026-11-02)
+**Commit Message**: Fix and adjust merge
 
-**File**: `CHANGELOG` (modified, +3/-0)
+**File**: `arangod/Aql/CalculationQueryContext.cpp` (modified, +0/-7)
 ```diff
-@@ -1,6 +1,9 @@
- 3.12.14 (XXXX-XX-XX)
- --------------------
- 
-+* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-+  when used with LIMIT and {fullCount: true}. The single result row was counted
-+  twice: once when produced and again during the fullCount skip phase.
- 
- 3.12.13 (2026-10-28)
- --------------------
-```
-
-**File**: `arangod/Aql/Executor/CountCollectExecutor.cpp` (modified, +4/-2)
-```diff
-@@ -55,7 +55,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
-   // within a single call
-   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
-              inputRange.upstreamState() == ExecutorState::DONE);
--  if (inputRange.upstreamState() == ExecutorState::DONE) {
-+  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
-     // We have skipped all, report it.
-     // In general, we do not have an input row. In fact, we never fetch one.
-     output.setAllowSourceRowUninitialized();
-@@ -65,6 +65,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
-                           InputAqlItemRow{CreateInvalidInputRowHint{}},
-                           AqlValue(AqlValueHintUInt(inputRange.skipAll())));
-     output.advanceRow();
-+    _rowAccounted = true;
-   }
-   // We always send a hardLimit with fullcount to upstream
-   return {inputRange.upstreamState(), NoStats{},
-@@ -82,12 +83,13 @@ auto CountCollectExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
-   // within a single call
-   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
-              inputRange.upstreamState() == ExecutorState::DONE);
--  if (inputRange.upstreamState() == ExecutorState::DONE) {
-+  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
-     // We have skipped all, report it.
-     auto skipped = inputRange.skipAll();
-     // We request to just forward, we do not even care how much
-     TRI_ASSERT(skipped == 0);
-     call.didSkip(1);
-+    _rowAccounted = true;
-   }
-   // We always send a hardLimit with fullcount to upstream
-   return {inputRange.upstreamState(), NoStats{}, call.getSkipCount(),
-```
-
-**File**: `arangod/Aql/Executor/CountCollectExecutor.h` (modified, +3/-0)
-```diff
-@@ -108,6 +108,9 @@ class CountCollectExecutor {
- 
-  private:
-   Infos const& _infos;
-+  // COLLECT WITH COUNT produces exactly one row. After it was produced or
-+  // skipped, fullCount must not count that same row again.
-+  bool _rowAccounted{false};
- };
- 
- }  // namespace aql
-```
-
-**File**: `tests/Aql/Executor/CountCollectExecutorTest.cpp` (modified, +17/-0)
-```diff
-@@ -238,6 +238,23 @@ TEST_P(CountCollectExecutorTest, count_input_fullCount) {
-       .run();
+@@ -55,11 +55,4 @@ void CalculationQueryContext::resetRuntimeClock() {
+   _startTime = aql::currentSteadyClockValue();
  }
  
-+// Produce the single count row, then fullCount-skip: the produced row must not
-+// be counted again (LIMIT 0,1 RETURN n with {fullCount: true}).
-+TEST_P(CountCollectExecutorTest, count_input_produce_then_fullCount) {
-+  makeExecutorTestHelper<1, 1>()
-+      .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
-+                                         MakeCountCollectExecutorInfos(1),
-+                                         ExecutionNode::COLLECT)
-+      .expectedStats(ExecutionStats{})
-+      .setInputSplitType(GetSplit())
-+      .setInputValue({{0}, {1}, {2}, {3}})
-+      .expectedState(ExecutionState::DONE)
-+      .expectOutput({1}, {{4}})
-+      .expectSkipped(0)
-+      .setCall(AqlCall{0, true, 1, AqlCall::LimitType::HARD})
-+      .run();
-+}
-+
- TEST_P(CountCollectExecutorTest, count_input_softlimit) {
-   makeExecutorTestHelper<1, 1>()
-       .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
+-void CalculationQueryContext::enterV8Executor() {
+-  TRI_ASSERT(false);
+-  THROW_ARANGO_EXCEPTION_MESSAGE(
+-      TRI_ERROR_NOT_IMPLEMENTED,
+-      "CalculationQueryContext: entering V8 executor is not implemented");
+-}
+-
+ }  // namespace arangodb::aql
+\ No newline at end of file
 ```
 
-**File**: `tests/js/client/aql/aql-fullcount.js` (modified, +11/-0)
+**File**: `arangod/Aql/CalculationQueryContext.h` (modified, +0/-2)
 ```diff
-@@ -245,6 +245,17 @@ function optimizerFullcountTestSuite () {
+@@ -86,8 +86,6 @@ class CalculationQueryContext final : public arangodb::aql::QueryContext {
  
-       assertEqual(3, result.getExtra().stats.fullCount);
-       assertEqual(1, result.toArray().length);
-+    },
-+
-+    // COLLECT WITH COUNT always yields one row, fullCount must not count that
-+    // row twice when LIMIT consumes it and then fast-forwards for fullCount.
-+    testCollectWithCountLimitFullCount : function () {
-+      let result = executeQuery(
-+        "FOR doc IN UnitTestsCollection COLLECT WITH COUNT INTO n LIMIT 0, 1 RETURN n",
-+        null, { fullCount: true });
-+
-+      assertEqual([3], result.toArray());
-+      assertEqual(1, result.getExtra().stats.fullCount);
-     }
+   bool isAsyncQuery() const noexcept override { return false; }
  
-   };
+-  void enterV8Executor() override;
+-
+  private:
+   arangodb::aql::QueryOptions _queryOptions;
+   arangodb::CollectionNameResolver _resolver;
+```
+
+**File**: `arangod/Aql/StandaloneCalculation.cpp` (modified, +1/-5)
+```diff
+@@ -25,19 +25,15 @@
+ #include "Aql/Ast.h"
+ #include "Aql/CalculationQueryContext.h"
+ #include "Aql/Expression.h"
++#include "Aql/Function.h"
+ #include "Aql/Parser/Parser.h"
+ #include "Aql/QueryContext.h"
+ #include "Aql/QueryString.h"
+-#include "Aql/Timing.h"
+ #include "Basics/Exceptions.h"
+-#include "VocBase/Identifiers/DataSourceId.h"
+ #include "VocBase/vocbase.h"
+ 
+ #include <absl/strings/str_cat.h>
+ 
+-using namespace arangodb;
+-using namespace arangodb::aql;
+-
+ namespace arangodb::aql {
+ 
+ std::unique_ptr<CalculationQueryContext>
+```
+
+**File**: `arangod/Indexes/CMakeLists.txt` (modified, +2/-1)
+```diff
+@@ -1,5 +1,6 @@
+ add_library(arango_indexes STATIC
+   EdgeIndexDefinition.cpp
++  DeprecatedSecondaryIndexDefinition.cpp
+   FulltextIndexDefinition.cpp
+   Geo1IndexDefinition.cpp
+   Geo2IndexDefinition.cpp
+@@ -30,7 +31,7 @@ target_link_libraries(arango_indexes
+     faiss
+   PRIVATE
+     date_interface)
+-  
++
+ target_include_directories(arango_indexes
+     PUBLIC ${IRESEARCH_INCLUDE}
+ )
+```
+
+**File**: `arangod/Indexes/DeprecatedSecondaryIndexDefinition.cpp` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++////////////////////////////////////////////////////////////////////////////////
++/// DISCLAIMER
++///
++/// Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
++/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
++///
++/// Licensed under the Business Source License 1.1 (the "License");
++/// you may not use this file except in compliance with the License.
++/// You may obtain a copy of the License at
++///
++///     https://github.com/arangodb/arangodb/blob/devel/LICENSE
++///
++/// Unless required by applicable law or agreed to in writing, software
++/// distributed under the License is distributed on an "AS IS" BASIS,
++/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++/// See the License for the specific language governing permissions and
++/// limitations under the License.
++///
++/// Copyright holder is ArangoDB GmbH, Cologne, Germany
++///
++////////////////////////////////////////////////////////////////////////////////
++
++#include "DeprecatedSecondaryIndexDefinition.h"
++
++namespace arangodb {
++
++Result DeprecatedSecondaryIndexDefinition::normalize(
++    velocypack::Builder& normalized, velocypack::Slice definition,
++    bool isCreation, Database const& vocbase) const {
++  if (isCreation) {
++    // deprecated index types cannot be created anymore
++    return Result(TRI_ERROR_BAD_PARAMETER,
++                  std::string(_deprecatedName) +
++                      " index type is deprecated and cannot be created "
++                      "anymore. Please use 'persistent' index type instead.");
++  }
++  return SecondaryIndexDefinition::normalize(normalized, definition, isCreation,
++                                             vocbase);
++}
++
++}  // namespace arangodb
+```
+
+**File**: `arangod/Indexes/DeprecatedSecondaryIndexDefinition.h` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++////////////////////////////////////////////////////////////////////////////////
++/// DISCLAIMER
++///
++/// Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
++/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
++///
++/// Licensed under the Business Source License 1.1 (the "License");
++/// you may not use this file except in compliance with the License.
++/// You may obtain a copy of the License at
++///
++///     https://github.com/arangodb/arangodb/blob/devel/LICENSE
++///
++/// Unless required by applicable law or agreed to in writing, software
++/// distributed under the License is distributed on an "AS IS" BASIS,
++/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++/// See the License for the specific language governing permissions and
++/// limitations under the License.
++///
++/// Copyright holder is ArangoDB GmbH, Cologne, Germany
++///
++////////////////////////////////////////////////////////////////////////////////
++
++#pragma once
++
++#include "Indexes/SecondaryIndexDefinition.h"
++
++namespace arangodb {
++
++// Hash/Persistent/Skiplist share the same normalize() rules
++struct DeprecatedSecondaryIndexDefinition : public SecondaryIndexDefinition {
++  explicit DeprecatedSecondaryIndexDefinition(IndexType type,
++                                              std::string_view deprecatedName)
++      : SecondaryIndexDefinition(type), _deprecatedName(deprecatedName) {}
++
++  Result normalize(velocypack::Builder& normalized,
++                   velocypack::Slice definition, bool isCreation,
++                   Database const& vocbase) const override;
++
++ private:
++  std::string_view _deprecatedName;
++};
++
++}  // namespace arangodb
+```
+
+**File**: `arangod/Indexes/FulltextIndexDefinition.cpp` (modified, +6/-0)
+```diff
+@@ -35,6 +35,12 @@ Result FulltextIndexDefinition::normalize(velocypack::Builder& normalized,
+                                           velocypack::Slice definition,
+                                           bool isCreation,
+                                           Database const& /*vocbase*/) const {
++  if (isCreation) {
++    return Result(TRI_ERROR_BAD_PARAMETER,
++                  "fulltext indexes are no longer supported since ArangoDB "
++                  "4.0. Please use ArangoSearch instead.");
++  }
++
+   TRI_ASSERT(normalized.isOpenObject());
+   normalized.add(StaticStrings::IndexType,
+                  velocypack::Value(Index::oldtypeName(IndexType::Fulltext)));
+```
+
+**File**: `arangod/Indexes/IndexTypeCatalog.cpp` (modified, +6/-14)
+```diff
+@@ -34,14 +34,13 @@
+ using namespace arangodb;
+ 
+ IndexTypeCatalog::IndexTypeCatalog(
+-    application_features::ApplicationServer& server,
+-    IVectorIndexProvider const& vectorIndexProvider)
+-    : _hash(IndexType::Hash),
+-      _persistent(IndexType::Persistent),
+-      _skiplist(IndexType::Skiplist),
++    application_features::ApplicationServer& server)
++    : _persistent(IndexType::Persistent),
++      _hash(IndexType::Hash, "hash"),
++      _skiplist(IndexType::Skiplist, "skiplist"),
+       _zkd(IndexType::Zkd),
+       _mdi(IndexType::MDI),
+-      _vector(vectorIndexProvider) {
++      _vector() {
+   // a definition is registered under its persisted name, see Index::oldtypeName
+   auto reg = [&](IndexDefinition const& definition) {
+     _byName.try_emplace(std::string{Index::oldtypeName(definition.type())},
+@@ -117,14 +116,7 @@ bool IndexTypeCatalog::equal(velocypack::Slice lhs, velocypack::Slice rhs,
+ }
+ 
+ std::vector<std::pair<std::string_view, std::string_view>>
+-IndexTypeCatalog::aliases(ApiVersion apiVersion) const {
+-  if (apiVersion == ApiVersion::V0) {
+-    return {
+-        {"hash", "persistent"},
+-        {"skiplist", "persistent"},
+-        {"zkd", "mdi"},
+-    };
+-  }
++IndexTypeCatalog::aliases() const {
+   return {{"zkd", "mdi"}};
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23581** (closed): [COR-1240] [3.12.14] `arangodbtests_rocksdb` gets ICU setup and light crash handler (@knakatasf)
+- **PR #23568** (2026-11-03): Merge latest devel into 4.0 (@mpoeter)
+- **PR #23567** (2026-11-03): Docs: Fix version remark for `--http.decompressed-request-body-global-memory-limit` startup option (@Simran-B)
+- **PR #23558** (2026-10-31): Merge latest devel into 4.0 (@mpoeter)
 - **PR #23556** (2026-10-30): [COR-1200] Delete the old 1.78.0 boost version. (@johann-listunov)
 - **PR #23550** (2026-10-28): [COR-1230] (3.12.13) dont shutdown before upgrade (@goedderz)
-- **PR #23549** (2026-10-28): [COR-1230] dont shutdown before upgrade (@goedderz)
-- **PR #23548** (2026-10-28): [COR-1229] Refactor ApiVersion handling in RestHandlerFactory (@mpoeter)
-- **PR #23547** (2026-10-28): [BTS-2503] smart-join-smart-edge requires one vertex and direction in all OR branches (@maierlars)
-- **PR #23546** (2026-10-27): Bug fix/handle makedata timeoout (@dothebart)
 
 ---
 
@@ -1178,30 +1948,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ClusterIndexFactoryTest.cpp
+## X. Empirical Invariant Guard in LogicalCollection.cpp
 
 **RULE**:
-When implementing operations in `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arangod/VocBase/LogicalCollection.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1a1582f`: unit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0435e6e`: formatting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/VocBase/LogicalCollection.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
-    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+  static constexpr auto throwUnavailable = []<typename... Args>(
+      basics::SourceLocation location, std::format_string<Args...> formatString,
+      Args && ... args) {
+    throw basics::Exception(
+        TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
+        std::format(formatString, std::forward<Args>(args)...), location);
+  };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
+  static constexpr auto throwUnavailable =
+      []<typename... Args>(basics::SourceLocation location,
+                           std::format_string<Args...> formatString,
+                           Args&&... args) {
+        throw basics::Exception(
+            TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
+            std::format(formatString, std::forward<Args>(args)...), location);
+      };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1a1582f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0435e6e` are properly handled with clean fallback behavior.
