@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:18:13.443Z",
+  "last_updated": "2026-11-04T20:25:13.957Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38633,8 +38633,8 @@
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "61d53efb",
-      "content_hash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
+      "source_version": "1926f022",
+      "content_hash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "promoted_rules": [
@@ -38652,6 +38652,11 @@
           "number": 6202,
           "title": "Update actions/setup-python action to v7.1.0 (#1890)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6953,
+          "title": "Update dependency com.android.tools.build:gradle to v9.5.0 (#1894)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38659,7 +38664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:06:42.153Z",
+      "verified_at": "2026-11-04T20:25:07.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44929,8 +44934,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "e2b40f1d",
-      "content_hash": "8ff794dda9a02eda46381796fb26b1084a1063bb2358a27a6320f3b020dd6df8",
+      "source_version": "ff11b355",
+      "content_hash": "c3cbf40ea57d8aa6b99e78539fb6f357fa076f2b1899b58c411707dc7b15ffbc",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -44973,6 +44978,11 @@
           "number": 6627,
           "title": "update vulnerable dependencies (#5240)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6954,
+          "title": "Support IPv6 addresses when joining hosts and ports (#5236)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44980,7 +44990,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:58:11.763Z",
+      "verified_at": "2026-11-04T20:25:07.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59327,8 +59337,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "646deeb6",
-      "content_hash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
+      "source_version": "4876e026",
+      "content_hash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -59386,6 +59396,11 @@
           "number": 6610,
           "title": "flash): sequential parse holds one page at a time instead of the whole document",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6958,
+          "title": "cloud): submit_document(mode=\"flash\") builds the tree with Flash on the cloud",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59393,7 +59408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:00:11.912Z",
+      "verified_at": "2026-11-04T20:25:13.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148481,7 +148496,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
+      "content_hash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "promoted_rules": [
@@ -148514,6 +148529,21 @@
           "number": 6070,
           "title": "ML-Inline Grammatical Parse Anchor Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6955,
+          "title": "Hybrid Attention Layer Topology Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6956,
+          "title": "Convolutional Causal Cache Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6957,
+          "title": "Sandwich Normalization Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -148521,7 +148551,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:26:54.080Z",
+      "verified_at": "2026-11-04T20:25:09.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177072,6 +177102,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:18:13.420Z"
+    },
+    "rule-6953": {
+      "learning_id": "rule-6953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6953,
+      "title": "Update dependency com.android.tools.build:gradle to v9.5.0 (#1894)",
+      "source_url": "https://github.com/lysine-dev/okio",
+      "source_version": "1926f022",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:07.061Z"
+    },
+    "rule-6954": {
+      "learning_id": "rule-6954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6954,
+      "title": "Support IPv6 addresses when joining hosts and ports (#5236)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "ff11b355",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:07.824Z"
+    },
+    "rule-6955": {
+      "learning_id": "rule-6955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6955,
+      "title": "Hybrid Attention Layer Topology Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:09.174Z"
+    },
+    "rule-6956": {
+      "learning_id": "rule-6956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6956,
+      "title": "Convolutional Causal Cache Boundary",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:09.174Z"
+    },
+    "rule-6957": {
+      "learning_id": "rule-6957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6957,
+      "title": "Sandwich Normalization Stability Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:09.174Z"
+    },
+    "rule-6958": {
+      "learning_id": "rule-6958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6958,
+      "title": "cloud): submit_document(mode=\"flash\") builds the tree with Flash on the cloud",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "4876e026",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:25:13.938Z"
     }
   },
   "aliases": {

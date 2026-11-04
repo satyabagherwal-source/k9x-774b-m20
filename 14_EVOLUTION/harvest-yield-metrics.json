@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T20:18:13.543Z",
-  "total_cycles_completed": 7295,
-  "total_learnings_persisted": 7295,
-  "total_rules_promoted": 6990,
+  "last_updated": "2026-11-04T20:25:14.034Z",
+  "total_cycles_completed": 7299,
+  "total_learnings_persisted": 7299,
+  "total_rules_promoted": 6996,
   "history": [
-    {
-      "timestamp": "2026-11-04T02:12:03.463Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:12:08.090Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:12:12.787Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T02:19:17.812Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T02:19:24.846Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-04T20:18:13.543Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:25:07.160Z",
+      "repository": "lysine-dev/okio",
+      "learningId": "learn-github-lysine-dev-okio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:25:07.932Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:25:09.269Z",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T20:25:14.034Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

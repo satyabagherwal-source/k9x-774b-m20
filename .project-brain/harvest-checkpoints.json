@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T20:18:13.557Z",
+  "last_updated": "2026-11-04T20:25:14.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "8ff794dda9a02eda46381796fb26b1084a1063bb2358a27a6320f3b020dd6df8",
-      "verified_at": "2026-11-03T21:58:11.915Z",
+      "content_hash": "c3cbf40ea57d8aa6b99e78539fb6f357fa076f2b1899b58c411707dc7b15ffbc",
+      "verified_at": "2026-11-04T20:25:07.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:58:11.915Z"
+      "last_updated": "2026-11-04T20:25:07.942Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
-      "verified_at": "2026-11-03T21:00:12.029Z",
+      "content_hash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
+      "verified_at": "2026-11-04T20:25:14.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:00:12.029Z"
+      "last_updated": "2026-11-04T20:25:14.044Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -10041,14 +10041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lysine-dev-okio",
-      "content_hash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
-      "verified_at": "2026-10-31T13:06:42.250Z",
+      "content_hash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
+      "verified_at": "2026-11-04T20:25:07.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:06:42.250Z"
+      "last_updated": "2026-11-04T20:25:07.170Z"
     },
     "nginx/kubernetes-ingress": {
       "repository": "nginx/kubernetes-ingress",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
-      "verified_at": "2026-10-31T04:26:54.146Z",
+      "content_hash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
+      "verified_at": "2026-11-04T20:25:09.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:26:54.146Z"
+      "last_updated": "2026-11-04T20:25:09.279Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

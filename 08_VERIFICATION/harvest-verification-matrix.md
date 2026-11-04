@@ -7318,3 +7318,7 @@
 | `CYCLE-20261104-XLAO` | `2026-11-04T20:10:57.168Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`92fdb6db...`) |
 | `CYCLE-20261104-6V8K` | `2026-11-04T20:18:09.956Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6950, Rule EXISTING, Rule 6951` | Yes (`601c12eb...`) |
 | `CYCLE-20261104-6XZX` | `2026-11-04T20:18:13.533Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6952` | Yes (`aef741d4...`) |
+| `CYCLE-20261104-FT5C` | `2026-11-04T20:25:07.152Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6953` | Yes (`ec0cfead...`) |
+| `CYCLE-20261104-FTQS` | `2026-11-04T20:25:07.924Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6954` | Yes (`c3cbf40e...`) |
+| `CYCLE-20261104-FURY` | `2026-11-04T20:25:09.262Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6955, Rule 6956, Rule 6957` | Yes (`111b2c24...`) |
+| `CYCLE-20261104-FYGB` | `2026-11-04T20:25:14.027Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6958` | Yes (`3f3c9ab8...`) |

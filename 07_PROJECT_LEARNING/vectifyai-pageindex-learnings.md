@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `646deeb6`  
+> **Source Version**: `4876e026`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:00:11.272Z  
+> **Timestamp**: 2026-11-04T20:25:13.391Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:00:11.263Z  
+> **Harvest Timestamp**: 2026-11-04T20:25:13.186Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 39965 stars
+- **Stars / Engagement**: 39986 stars
 
 ---
 
@@ -1133,12 +1133,12 @@ class CloudAPI:
         metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Upload a PDF document for processing. The system will automatically process both tree generation and OCR.
+        Upload a PDF document for processing; the tree is built in the background.
         Immediately returns a document identifier (`doc_id`) for subsequent operations.
 
         Args:
             file_path (str): Path to the PDF file.
-            mode (str, optional): Processing mode (e.g., "mcp"). Defaults to None.
+            mode (str, optional): None (default), the OCR-based cloud pipeline, or "flash".
             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
                 to enable block-level content with bounding boxes). Defaults to None.
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
@@ -1150,9 +1150,16 @@ class CloudAPI:
                 (a taken name gains a numeric suffix), when the server
                 returns it.
         """
+        if mode not in (None, "flash"):
+            raise PageIndexAPIError(
+                f"Failed to submit document: unknown cloud processing mode {mode!r}. "
+                "Cloud supports only 'flash'."
+            )
         data: Dict[str, Any] = {'if_retrieval': True}
-        if mode is not None:
-            data['mode'] = mode
+        if mode == "flash":
+            # The server rejects if_retrieval alongside algorithm=flash, and
+            # keeps node text for Flash trees by default.
+            data = {'algorithm': 'flash'}
         if beta_headers is not None:
             data['beta_headers'] = json.dumps(beta_headers)
         if folder_id is not None:
@@ -1346,17 +1353,7 @@ class CloudAPI:
             dict: Retrieval status and results.
         """
         response = self._http.get(
-            f"{self.BASE_URL}/retrieval/{_enc(retrieval_id)}/",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get retrieval result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # -------
+            f"{self.BASE_UR
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1408,11 +1405,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #645** (2026-11-03): **perf(flash): sequential parse holds one page at a time instead of the whole document**
-  *Symptoms*: ## Summary  Flash's single-process parser (`parse_charlevel_meta`, taken when only one worker is available or the document has fewer than 64 pages) held every page open and kept one dict per character for the whole document until the end. A 1,000+ page PDF peaked at over 3 GB, and larger ones can exceed 8 GB.  - **Parse pages one at a time** (`perf(flash): parse pages one at a time, …`). Each page runs pass 1 → pass 2 → spans and is closed right away. The only cross-page input is the document-wide size of identity-matrix Type-3 fonts. A page with chars that `_apply_type3_sizes` may resize is held open with its chars dropped, then re-extracted once those sizes are known.   - Held pages stay open to the end, because the sizes are keyed on the `FPDF_FONT` pointer value.   - The deferral check and `_apply_type3_sizes` share one predicate, `_type3_sized`. It includes whitespace, which the extent accumulation skips.   - BytesIO input and the `pdf_doc = None` fallback when PyPDF2 can't open the file are unchanged. Pages and documents are closed in `finally`. The whole-document path is removed. - **Tokenize each page's content stream once** (`perf(flash): tokenize each page's content stream once`). `_page_pass1` hands its tokens to `_page_show_codes`, which used to tokenize the same stream again. - **Parse each distinct ToUnicode CMap once per document** (`perf(flash): parse each distinct ToUnicode CMap once per document`). Fonts often carry identical CMaps, and a single 0000-FFFF ra
+- **Issue #658** (2026-11-04): **fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing**
+  *Symptoms*: Two follow-ups to #657. The `CloudAPI.submit_document` docstring no longer says every upload runs OCR (false for `mode="flash"`), and the bad-mode test now proves a rejected mode sends no request.  ## Changes  - `pageindex/cloud_api.py`: summary line reads "Upload a PDF document for processing; the tree is built in the background." It used to say the system processes both tree generation and OCR. - `tests/test_client.py`: `test_cloud_request_wiring` asserts the request count is unchanged after the four rejected modes (`"Flash"`, `" flash"`, `"standard"`, `"mcp"`). Before this, moving the mode check below the upload would still pass while every bad call uploaded the document.  ## Verification  - `pytest` (without `tests/test_local_chat.py`, whose local anthropic is too old): 805 passed, 7 skipped. - Mutation check: with the mode check moved below the POST, `test_cloud_request_wiring` fails on the new assert. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"19a61bba6043e924ededa7e0168afec2236a5f4e","mergeGateEnabled":false,"pullRequestNumber":658,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T10:43:34.424118Z">2026-11-04T10:43:34.424118Z</relative-time> | `19a61bb` | PR opened | | 🔒 **Security Review** | ✅ **Completed** <relative-time da
 
-- **Issue #644** (2026-10-29): **fix: follow-ups to #622 (indexing learns newer models, forked processes drop LiteLLM's connections, and five more)**
-  *Symptoms*: Seven fixes on top of #622, to review here and then merge into #622's branch. One commit each; the docs fix has a second commit from review.  - Indexing with a model LiteLLM's packaged map lacks (Fireworks, xAI) no longer runs the summaries at the model's default reasoning. LiteLLM dropped the effort without a refusal, so only `chat()` learned the published map. A spawned worker now learns it too. - `claude-code/` chat re-sends a stream that went silent after 30 s, as indexing does, instead of the CLI's 3 minutes. A timeout the caller set wins, on both. - A forked process no longer shares LiteLLM's pooled HTTP connections with its parent. In a fork `Pool(8)` of 240 index calls, one call got another process's reply and two of three runs hung; with this change, 240 of 240 correct in each of three runs. - With LiteLLM 1.106+ beside an older `mcp`, chat says which versions clash and that `pip install -U mcp` fixes it, instead of "cannot import name 'CacheableResult' from 'mcp.types'". - On the LiteLLM lanes, Claude's stop at its context window reads as a cut-off answer: chat raises it and standard mode sees the cut. LiteLLM read it as a normal stop. - The MCP bridge no longer resends a tool call (an upload, a delete) whose reply a TLS error cut off. - `chat()` and `chat_completions()` no longer say the managed chat scopes `doc_id` and `folder_id` server-side. It targets them in its prompt, and its tools reach the key's whole library.  `openai_agent_config()` gets none of these. T
+- **Issue #657** (2026-11-04): **feat(cloud): submit_document(mode="flash") builds the tree with Flash on the cloud**
+  *Symptoms*: ## Summary  The cloud API now builds trees with Flash when an upload carries `algorithm=flash`. The SDK already spells Flash as `mode="flash"` locally, so the cloud client takes the same spelling:  ```python client = PageIndexClient(index="cloud") client.submit_document("report.pdf", mode="flash") ```  `CloudAPI.submit_document` maps `mode` like this:  - **`"flash"`**: sends `algorithm=flash` and drops `if_retrieval`, which the API rejects alongside it. The API keeps node text for Flash trees by default. `folder_id`, `metadata` and `beta_headers` are still sent. - **`None`**: the OCR-based cloud pipeline, unchanged. - **Anything else** raises `PageIndexAPIError`, `"standard"` included. `"standard"` stays local-only: it names local's full LLM-built tree, a different pipeline from the cloud's, and the server's `algorithm` field only knows `flash` or nothing. Before this change, every `mode` string, `"flash"` included, was sent as a raw `mode` field and silently ran the cloud pipeline. `"mcp"` put the document on a surface that `list_documents`, Dash and `chat()` don't read.  Cloud uploads without `mode` behave as they did before. Local still defaults to Flash.  The `mode` docstrings list each side's values: local `"flash"` (default) or `"standard"`; cloud `None` (default, the OCR-based cloud pipeline) or `"flash"`.  ## Test plan  - [x] `test_cloud_request_wiring` asserts the form data for `mode="flash"` (with `folder_id`), and that `"Flash"`, `" flash"`, `"standard"` and `"mcp"
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"83f4c1c91fa57645fd6abdc6bae56f91f747aa16","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"5df70b0f595e098449921b037aaaa88955431f69","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"5df70b0f595e098449921b037aaaa88955431f69","mergeGateEnabled":false,"pullRequestNumber":657,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T09:15:25.125310Z">2026-11-04T09:15:25.125310Z</relative-time> | `83f4c1c` | New commits | | 🔒 **Security Review** | ✅ **Completed** <relative-time 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,333 +1430,205 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `646deeb6` (2026-11-03)
-**Commit Message**: perf(flash): sequential parse holds one page at a time instead of the whole document (#645)
+### Incident Patch 1: `5df70b0f` (2026-11-04)
+**Commit Message**: feat(cloud): submit_document(mode="flash") builds the tree with Flash on the cloud
 
-The single-process Flash parser kept every page open and one dict per
-character until the end, so a 1,665-page textbook peaked at 3,136 MB.
-It now parses pages one at a time and peaks at 434 MB; PRML goes from
-3,056 to 658 MB.
+mode="flash" now uploads with algorithm=flash and without if_retrieval,
+which the API rejects alongside it. mode="standard" sends nothing, the
+cloud default. Other modes pass through unchanged.
 
-- Each page runs pass 1, pass 2 and spans, then closes. A page with
-  Type-3 glyphs that may be resized stays open with its chars dropped
-  and is extracted again once the document-wide Type-3 sizes are
-  known, so a document set entirely in Type-3 fonts takes about a
-  third longer.
-- Each page's content stream is tokenized once instead of twice.
-- Each distinct ToUnicode CMap is parsed once per document; fonts with
-  equal CMaps share the parsed dict.
-- A stray ), { or } in a ToUnicode CMap no longer hangs the parse. The
-  tokenizer never advanced on these bytes and grew its token list until
-  memory ran out; they are now skipped, as the content-stream tokenizer
-  skips { and }.
-
-The parallel path is unchanged. Span and page-meta hashes match main on
-all 15 repo PDFs.
-
-**File**: `pageindex/flash/parser_pdfium_charlevel/char_extract.py` (modified, +7/-1)
+**File**: `pageindex/client.py` (modified, +4/-2)
 ```diff
-@@ -238,13 +238,19 @@ def _type3_size_by_font(acc: dict) -> dict:
-     return out
- 
- 
-+def _type3_sized(char: dict) -> bool:
-+    """True for a char ``_apply_type3_sizes`` may resize: an identity-matrix Type-3 glyph, whitespace included (the extent accumulation skips whitespace, the sizing does not)."""
-+    obj = char["obj"]
-+    return obj["fs_raw"] < 1.5 and obj["scale_y"] < 1.5
-+
-+
- def _apply_type3_sizes(raw_chars: list[dict], size_by_font: dict) -> None:
-     """Override fs_eff with the document-wide Type-3 size and reset each char's span top to baseline + that size."""
-     if not size_by_font:
-         return
-     for candidate_item in raw_chars:
-         item_value = candidate_item["obj"]
--        if item_value["fs_raw"] >= 1.5 or item_value["scale_y"] >= 1.5:
-+        if not _type3_sized(candidate_item):
-             continue
-         font_size_value = size_by_font.get(item_value["font_key"])
-         if font_size_value:
+@@ -806,8 +806,10 @@ def submit_document(
+         Args:
+             file_path (str): Path to the PDF file.
+             mode (str, optional): Processing mode. Local defaults to "flash";
+-                pass "standard" for a full LLM-built tree. Cloud modes are
+-                passed through (e.g. "mcp").
++                pass "standard" for a full LLM-built tree. Cloud defaults to
++                "standard"; "flash" builds the tree from the PDF's text layer
++                without OCR (a scanned PDF ends "failed"). Other cloud modes
++                are passed through (e.g. "mcp").
+             beta_headers (list[str], optional): Cloud-only beta feature headers.
+             folder_id (str, optional): Cloud-only folder (workspace) ID.
+             metadata (dict, optional): Your own JSON-serializable tags for the
 ```
 
-**File**: `pageindex/flash/parser_pdfium_charlevel/cmap_parse.py` (modified, +2/-0)
+**File**: `pageindex/cloud_api.py` (modified, +7/-2)
 ```diff
-@@ -137,6 +137,8 @@ def _parse_tounicode_cmap(data: bytes) -> dict[int, str]:
-         elif candidate_item in b"[]":
-             tokens.append(("delim", chr(candidate_item)))
-             index_value += 1
-+        elif candidate_item in b"){}":  # stray delimiter
-+            index_value += 1
-         elif candidate_item == 0x2F:  # /name
-             state_item = index_value + 1
-             while state_item < count_item and data[state_item] not in _PDF_WHITESPACE_BYTES and data[state_item] not in _PDF_DELIMITER_BYTES:
+@@ -60,7 +60,9 @@ def submit_document(
+ 
+         Args:
+             file_path (str): Path to the PDF file.
+-            mode (str, optional): Processing mode (e.g., "mcp"). Defaults to None.
++            mode (str, optional): "flash" builds the tree from the PDF's text layer
++                (no OCR; a scanned PDF ends "failed"); "standard" or None is the
++                default pipeline. Other modes are passed through (e.g., "mcp").
+             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
+                 to enable block-level content with bounding boxes). Defaults to None.
+             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
+@@ -73,7 +75,10 @@ def submit_document(
+                 returns it.
+         """
+         data: Dict[str, Any] = {'if_retrieval': True}
+-        if mode is not None:
++        if mode == "flash":
++            # The server rejects if_retrieval alongside algorithm=flash.
++            data = {'algorithm': 'flash'}
++        elif mode not in (None, "standard"):
+             data['mode'] = mode
+         if beta_headers is not None:
+             data['beta_headers'] = json.dumps(beta_headers)
 ```
 
-**File**: `pageindex/flash/parser_pdfium_charlevel/code_walk.py` (modified, +7/-5)
+**File**: `tests/test_client.py` (modified, +7/-0)
 ```diff
-@@ -69,18 +69,19 @@ def _resource_dict_xrefs(pdf_doc, owner_xref: int, sub: str) -> dict[bytes, int]
+@@ -1952,6 +1952,13 @@ def test_cloud_request_wiring(cloud, sample_pdf):
+     client.submit_document(sample_pdf, metadata={"project": "alpha"})
+     assert calls[-1]["data"]["metadata"] == json.dumps({"project": "alpha"})
  
- 
- def _page_show_codes(
--    pdf_doc, page_idx: int,
-+    pdf_doc, page_idx: int, page_tokens: tuple | None = None,
- ) -> list[tuple[int | None, tuple[int, ...], float]] | None:
--    """Every show op the page paints, in paint order, as ``(font_xref | None, charcode units, horizontal scale)-- including text inside Form XObjects, spliced at their ``Do`` position with the XObject's own font redefinitions (span merger text-content extraction recurses the same way; PDFium's textpage flattens them inline). The recursion runs on a CLONE of the live text state, so a form inherits both the active font and the horizontal scale; a Tz inside the form REPLACES it and never leaks back out. None when the page can't be read."""
-+    """Every show op the page paints, in paint order, as ``(font_xref | None, charcode units, horizontal scale)-- including text inside Form XObjects, spliced at their ``Do`` position with the XObject's own font redefinitions (span merger text-content extraction recurses the same way; PDFium's textpage flattens them inline). The recursion runs on a CLONE of the live text state, so a form inherits both the active font and the horizontal scale; a Tz inside the form REPLACES it and never leaks back out. None when the page can't be read. ``page_tokens`` is the page's own stream already run through ``_tokenize_show_operators`` (the caller tokenized it), so it is not parsed twice."""
-     page_xref = pdf_doc.page_xref(page_idx)
- 
-     def walk(stream: bytes, fonts_res: dict[bytes, int],
-              xobjs_res: dict[bytes, int], cur_font: int | None, cur_tz: float,
-              visited: frozenset, depth: int,
--             out: list[tuple[int | None, tuple[int, ...], float]]) -> None:
-+             out: list[tuple[int | None, tuple[int, ...], float]],
-+             tokens: tuple | None = None) -> None:
-         if depth > 8:
-             return
--        flush_ids, fonts, show_text_units, horizontal_scales, xobject_paints = _tokenize_show_operators(stream, cur_tz)
-+        flush_ids, fonts, show_text_units, horizontal_scales, xobject_paints = tokens or _tokenize_show_operators(stream, cur_tz)
-         dict_index = 0
-         for key_value in range(len(show_text_units) + 1):
-             while dict_index < len(xobject_paints) and xobject_paints[dict_index][0] == key_value:
-@@ -114,10 +115,11 @@ def walk(stream: bytes, fonts_res: dict[bytes, int],
-     try:
-         out: list[tuple[int | None, tuple[int, ...], float]] = []
-         walk(
--            pdf_doc[page_idx].read_contents(),
-+            b"" if page_tokens else pdf_doc[page_idx].read_contents(),
-             _resource_dict_xrefs(pdf_doc, page_xref, "Font"),
-             _resource_dict_xrefs(pdf_doc, page_xref, "XObject"),
-             None, 1.0, frozenset(), 0, out,   # the initial text state starts at scale 1
-+            page_tokens,
-         )
-         return out
-     except Exception:
++    client.submit_document(sample_pdf, mode="flash", folder_id="f-1")
++    assert calls[-1]["data"] == {"algorithm": "flash", "folder_id": "f-1"}
++    client.submit_document(sample_pdf, mode="standard")
++    assert calls[-1]["data"] == {"if_retrieval": True}
++    client.submit_document(sample_pdf, mode="mcp")
++    assert calls[-1]["data"] == {"if_retrieval": True, "mode": "mcp"}
++
+     fake.payload = {"status": "processing", "retrieval_ready": False}
+     client.get_tree("pi-1", node_summary=True)
+     assert calls[-1]["url"].endswith("/doc/pi-1/?type=tree&summary=True&include_text=true")
 ```
 
-**File**: `pageindex/flash/parser_pdfium_charlevel/font_unicode.py` (modified, +13/-5)
+---
+
+### Incident Patch 2: `4876e026` (2026-11-04)
+**Commit Message**: fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing (#658)
+
+fix(cloud): CloudAPI.submit_document no longer claims OCR always runs; a rejected mode is proven to send nothing
+
+The docstring summary said every upload runs OCR, which is false for mode="flash". The bad-mode test now also asserts no request went out, so moving the check below the upload fails it.
+
+**File**: `pageindex/cloud_api.py` (modified, +1/-1)
 ```diff
-@@ -187,8 +187,17 @@ def _simple_font_to_unicode(
-     return to_unicode
+@@ -55,7 +55,7 @@ def submit_document(
+         metadata: Optional[Dict[str, Any]] = None,
+     ) -> Dict[str, Any]:
+         """
+-        Upload a PDF document for processing. The system will automatically process both tree generation and OCR.
++        Upload a PDF document for processing; the tree is built in the background.
+         Immediately returns a document identifier (`doc_id`) for subsequent operations.
  
- 
--def _font_unicode_map(pdf_doc, xref: int) -> tuple[int, dict[int, str]] | None:
--    """Return the final per-charcode glyph-unicode map for one font as ``(bytes_per_code, {charcode: unicode})``. Simple fonts use 1-byte codes; Identity-H/V composite fonts use 2-byte codes with the included ToUnicode map. ``None`` means uncovered input such as non-Identity composite CMaps or unreadable dictionaries; callers then skip the page patch walk and keep PDFium's output."""
-+def _tounicode_map(pdf_doc, stream_xref: int, map_cache: dict) -> dict[int, str]:
-+    """Parse a ToUnicode stream once per distinct content per document: fonts, and each page's own copy of a font, often carry the same CMap, and one 0000-FFFF range expands to 65,536 entries. Fonts with equal CMaps share the parsed dict, so it is read-only."""
-+    data = pdf_doc.xref_stream(stream_xref)
-+    key = ("tounicode", data)
-+    if key not in map_cache:
-+        map_cache[key] = _parse_tounicode_cmap(data)
-+    return map_cache[key]
-+
-+
-+def _font_unicode_map(pdf_doc, xref: int, map_cache: dict) -> tuple[int, dict[int, str]] | None:
-+    """Return the final per-charcode glyph-unicode map for one font as ``(bytes_per_code, {charcode: unicode})``. Simple fonts use 1-byte codes; Identity-H/V composite fonts use 2-byte codes with the included ToUnicode map. ``None`` means uncovered input such as non-Identity composite CMaps or unreadable dictionaries; callers then skip the page patch walk and keep PDFium's output. ``map_cache`` is the caller's per-document cache; parsed ToUnicode streams are kept there."""
-     glyphs, encs = _load_glyph_tables()
- 
-     def _xref_key(number: int, other_text: str) -> tuple[str, str]:
-@@ -219,8 +228,7 @@ def _xref_key(number: int, other_text: str) -> tuple[str, str]:
-         tu_map: dict[int, str] | None = None
-         if pdf_value_type == "xref":
-             try:
--                tu_map = _parse_tounicode_cmap(
--                    pdf_doc.xref_stream(int(pdf_value.split()[0])))
-+                tu_map = _tounicode_map(pdf_doc, int(pdf_value.split()[0]), map_cache)
-             except Exception:
-                 tu_map = None  # ToUnicode parsing rejects -> no ToUnicode map
-         # The "font carries a ToUnicode map" flag is set only for a present,
-@@ -347,7 +355,7 @@ def _xref_key(number: int, other_text: str) -> tuple[str, str]:
-     pdf_value_type, pdf_value = _xref_key(xref, "ToUnicode")
-     if pdf_value_type == "xref":
-         try:
--            included = _parse_tounicode_cmap(pdf_doc.xref_stream(int(pdf_value.split()[0])))
-+            included = _tounicode_map(pdf_doc, int(pdf_value.split()[0]), map_cache)
-         except Exception:
-             included = None  # ToUnicode parsing error path: treat as absent
- 
+         Args:
 ```
 
-**File**: `pageindex/flash/parser_pdfium_charlevel/pipeline.py` (modified, +48/-57)
+**File**: `tests/test_client.py` (modified, +2/-0)
 ```diff
-@@ -37,6 +37,7 @@
-     _accumulate_type3_extents,
-     _type3_size_by_font,
-     _apply_type3_sizes,
-+    _type3_sized,
-     _finalize_chars,
-     _inherited_box,
-     _page_view_rect,
-@@ -53,8 +54,8 @@ def _page_pass1(pdf, pdf_doc, page_idx: int, type3_ext: dict, font_map_cache: di
-     """Pass-1 body for ONE page: extract raw chars, tag objects, accumulate
-     Type-3 extents into ``type3_ext``. Returns ``(page, raw_chars, page_vb,
-     page_rot)``; the PAGE is returned still open — the caller owns closing it
--    (the sequential driver must keep every page open until pass 2's Type-3
--    size lookups are done; see keep_pages in ``parse_charlevel_meta``)."""
-+    (the sequential driver holds pages with Type-3 sized glyphs open until
-+    their pass 2 is done; see ``parse_charlevel_meta``)."""
-     page = pdf[page_idx]
-     text_page = page.get_textpage()
-     raw_chars, objects = _extract_raw_chars(page, text_page.raw)
-@@ -72,12 +73,14 @@ def _page_pass1(pdf, pdf_doc, page_idx: int, type3_ext: dict, font_map_cache: di
-     show_tzs: list[float] = []
-     vert_names: set[bytes] = set()
-     if pdf_doc is not None and page_idx < pdf_doc.page_count:
-+        page_tokens = None
-         try:
-             # show-op flush ids (q/Q flush scope) are no longer used -- the merge-id
-             # grouping was removed; only show_fonts (per-op font resname)
--            # feeds vertical tagging.
--            show_flush_ids, show_fonts, show_text_units, horizontal_scales, xobject_paints = _tokenize_show_operators(
--                pdf_doc[page_idx].read_contents())
-+            # feeds vertical tagging. The same tokens seed _page_show_codes'
-+            # walk, so the stream is parsed once.
-+            page_tokens = _tokenize_show_operators(pdf_doc[page_idx].read_contents())
-+            show_fonts = page_tokens[1]
-         except Exception:
-             show_fonts = []
-         vert_names = _page_vertical_resource_names(pdf_doc, page_idx)
-@@ -87,7 +90,7 @@ def _page_pass1(pdf, pdf_doc, page_idx: int, type3_ext: dict, font_map_cache: di
-         # the page's own stream alone under-counts every form page and the
-         # ordinal gate below would then drop the tag for the whole page.
-         try:
--            show_codes = _page_show_codes(pdf_doc, page_idx)
-+            show_codes = _page_show_codes(pdf_doc, page_idx, page_tokens)
-             if show_codes:
-                 show_tzs = [horizontal_scale for _fx, _s, horizontal_scale in show_codes]
-                 # Patch per-char unicode to span merger glyph Unicode where
-@@ -231,62 +234,50 @@ def parse_charlevel_meta(doc_handle: Union[str, Path, BytesIO]) -> tuple[list[li
-     except Exception:
-         pdf_doc = None
+@@ -1954,9 +1954,11 @@ def test_cloud_request_wiring(cloud, sample_pdf):
  
--    # Pass 1: extract raw chars for every page (including each glyph's raw
--    # advance) and accumulate per-font identity-matrix Type-3 glyph-bbox
--    # extents document-wide, so each Type-3 font is sized once over every
--    # glyph it renders anywhere (coverage-independent), matching span merger
--    # synthesizing font.bbox once from the CharProcs. Font handles are only
--    # stable per document while their pages stay open (see keep_pages below).
--    per_page: list[list[dict]] = []
--    page_view_boxes: list = []   # parallel to per_page: text extraction page view box per page
--    page_rotations: list = []   # parallel: PDFium page /Rotate in degrees per page
--    type3_ext: dict = {}
--    font_map_cache: dict = {}
--    # Hold every page open until pass 2's Type-3 size lookups are done.
-+    # Pages are parsed one at a time and closed at once, so memory holds one
-+    # page's chars, not the whole document's. The one cross-page input is the
-+    # document-wide identity-matrix Type-3 extent union (``type3_ext``): each
-+    # Type-3 font is sized once over every glyph it renders anywhere
-+    # (coverage-independent), matching span merger synthesizing font.bbox once
-+    # from the CharProcs. A page carrying chars ``_apply_type3_sizes`` may
-+    # resize is therefore held open with its chars dropped, and re-extracted
-+    # once the union is complete. Held pages stay open to the end:
-     # type3_ext / size_by_font key on the raw FPDF_FONT pointer VALUE, and
-     # PDFium frees a font once the last page using it closes -- a later
--    # page's (different) font can then be allocated at the same address,
--    # silently merging two fonts' extent bins. Which addresses get reused
--    # depends on the process's prior malloc state, so the output could vary
--    # with whatever ran earlier in the process. Keeping the pages alive makes
--    # the handle a true per-document
--    # font identity (PDFium's document-level font cache returns one handle
--    # per font redefinition).
--    keep_pages = []
--    for page_idx in range(len(pdf)):
--        page, raw_chars, page_vb, page_rot = _page_pass1(
--            pdf, pdf_doc, page_idx, type3_ext, font_map_cache)
--        keep_pages.append(page)
--        per_page.append(raw_chars)
--        page_view_bo
+     client.submit_document(sample_pdf, mode="flash", folder_id="f-1")
+     assert calls[-1]["data"] == {"algorithm": "flash", "folder_id": "f-1"}
++    sent = len(calls)
+     for bad in ("Flash", " flash", "standard", "mcp"):
+         with pytest.raises(PageIndexAPIError, match="unknown cloud processing mode"):
+             client.submit_document(sample_pdf, mode=bad)
++    assert len(calls) == sent
+ 
+     fake.payload = {"status": "processing", "retrieval_ready": False}
+     client.get_tree("pi-1", node_summary=True)
 ```
 
-**File**: `pageindex/flash/parser_pdfium_charlevel/unicode_apply.py` (modified, +1/-1)
+---
+
+### Incident Patch 3: `1ba26835` (2026-11-04)
+**Commit Message**: fix(cloud): Flash uploads keep node text, and near-miss mode spellings raise
+
+if_retrieval was what made the server keep node text. With it dropped,
+the /doc route's if_add_node_text="no" default left every cloud Flash
+tree without text. Flash uploads now ask for it directly.
+
+"Flash", " flash" or "STANDARD" fell through to the raw mode field and
+silently ran the standard pipeline. They now raise, as local does.
+
+The mode docstrings now say what Flash does with textless pages: they
+come back empty, and only a PDF with no text, or with no headings past
+10 pages, fails.
+
+**File**: `pageindex/client.py` (modified, +3/-2)
 ```diff
-@@ -34,7 +34,7 @@ def targets_for(font_xref: int | None, other_numbers: tuple[int, ...]) -> list[s
-             return None
-         if font_xref not in map_cache:
-             try:
--                map_cache[font_xref] = _font_unicode_map(pdf_doc, font_xref)
-+                map_cache[font_xref] = _font_unicode_map(pdf_doc, font_xref, map_cache)
-             except Exception:
-                 map_cache[font_xref] = None
-         entry = map_cache[font_xref]
+@@ -808,8 +808,9 @@ def submit_document(
+             mode (str, optional): Processing mode. Local defaults to "flash";
+                 pass "standard" for a full LLM-built tree. Cloud defaults to
+                 "standard"; "flash" builds the tree from the PDF's text layer
+-                without OCR (a scanned PDF ends "failed"). Other cloud modes
+-                are passed through (e.g. "mcp").
++                without OCR: pages with no text come back empty, and a PDF with
++                no text, or no headings past 10 pages, ends "failed". Other
++                cloud modes are passed through (e.g. "mcp").
+             beta_headers (list[str], optional): Cloud-only beta feature headers.
+             folder_id (str, optional): Cloud-only folder (workspace) ID.
+             metadata (dict, optional): Your own JSON-serializable tags for the
 ```
 
-**File**: `tests/test_flash_extraction.py` (modified, +63/-0)
+**File**: `pageindex/cloud_api.py` (modified, +12/-4)
 ```diff
-@@ -1323,3 +1323,66 @@ def test_flash_cli_summary_flags_refuse_standard_mode(monkeypatch, tmp_path):
-     for flag in ("--summary-concurrency", "--summary-max-words", "--summary-reasoning-effort"):
-         with pytest.raises(ValueError, match=f"{flag} requires Flash mode"):
-             _run_flash_cli(monkeypatch, tmp_path, ["--mode", "standard", flag, "8"], [])
-+
-+
-+def _fields(value):
-+    """Every ``__slots__`` field, recursively -- Span and Rect define no __eq__."""
-+    slots = [s for c in type(value).__mro__ for s in getattr(c, "__slots__", ())]
-+    if slots:
-+        return {s: _fields(getattr(value, s)) for s in slots if hasattr(value, s)}
-+    if isinstance(value, (list, tuple)):
-+        return [_fields(v) for v in value]
-+    return repr(value)
-+
-+
-+def test_sequential_parse_defers_only_type3_sized_pages(tmp_path, monkeypatch):
-+    """Pages are parsed one at a time and closed at once, except pages carrying
-+    identity-matrix Type-3 glyphs: those are re-extracted after the whole
-+    document's Type-3 sizes are known. The result must equal the two-pass
-+    parse that holds every page open and sizes them all at the end."""
-+    import PyPDF2
-+    import pypdfium2 as pdfium
-+
-+    from pageindex.flash.parser_pdfium_charlevel import pipeline as mod
-+
-+    plain = PyPDF2.PdfReader(str(PDF))
-+    lectures = PyPDF2.PdfReader(str(PDF.parent / "four-lectures.pdf"))  # Type-3 bitmap fonts
-+    writer = PyPDF2.PdfWriter()
-+    for page in (plain.pages[0], lectures.pages[0], plain.pages[1], lectures.pages[1]):
-+        writer.add_page(page)
-+    mixed = tmp_path / "mixed.pdf"
-+    with open(mixed, "wb") as f:
-+        writer.write(f)
-+
-+    pdf = pdfium.PdfDocument(str(mixed))
-+    pdf_doc = mod._PdfDoc(PyPDF2.PdfReader(str(mixed)))
-+    type3_ext: dict = {}
-+    firsts = [mod._page_pass1(pdf, pdf_doc, i, type3_ext, {}) for i in range(len(pdf))]
-+    sizes = mod._type3_size_by_font(type3_ext)
-+    assert sizes  # the sizing is live, not a no-op
-+    want = [mod._page_spans(mod._page_pass2(raw, vb, sizes)) for _p, raw, vb, _r in firsts]
-+    want_meta = [(vb, rot) for _p, _raw, vb, rot in firsts]
-+    for page, *_ in firsts:
-+        page.close()
-+    pdf.close()
-+
-+    calls = []
-+    real_pass1 = mod._page_pass1
-+    monkeypatch.setattr(mod, "_page_pass1",
-+                        lambda pdf, pdf_doc, i, *a: calls.append(i) or real_pass1(pdf, pdf_doc, i, *a))
-+    got, meta = mod.parse_charlevel_meta(str(mixed))
-+    assert calls == [0, 1, 2, 3, 1, 3]  # only the Type-3 pages are extracted twice
-+    assert meta == want_meta
-+    assert _fields(got) == _fields(want)
-+
-+
-+@pytest.mark.parametrize("stray", [")", "{", "}"])
-+def test_tounicode_parser_gets_past_a_stray_delimiter(stray):
-+    import subprocess
-+    import sys
-+
-+    code = ("from pageindex.flash.parser_pdfium_charlevel.cmap_parse import _parse_tounicode_cmap\n"
-+            f"print(_parse_tounicode_cmap(b'1 beginbfrange <01> <02> [<0041> {stray} <0042>] endbfrange'))")
-+    res = subprocess.run([sys.executable, "-c", code], capture_output=True,
-+                         cwd=Path(__file__).parent.parent, timeout=15)
-+    assert res.stdout.strip() == b"{1: 'A', 2: 'B'}", res.stderr.decode()
+@@ -61,8 +61,9 @@ def submit_document(
+         Args:
+             file_path (str): Path to the PDF file.
+             mode (str, optional): "flash" builds the tree from the PDF's text layer
+-                (no OCR; a scanned PDF ends "failed"); "standard" or None is the
+-                default pipeline. Other modes are passed through (e.g., "mcp").
++                without OCR: pages with no text come back empty, and a PDF with no
++                text, or no headings past 10 pages, ends "failed". "standard" or
++                None is the default pipeline. Other modes are passed through (e.g., "mcp").
+             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
+                 to enable block-level content with bounding boxes). Defaults to None.
+             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
+@@ -74,10 +75,17 @@ def submit_document(
+                 (a taken name gains a numeric suffix), when the server
+                 returns it.
+         """
++        word = (mode or "").strip().lower()
++        if word in ("flash", "standard") and mode != word:
++            raise PageIndexAPIError(
++                f"Failed to submit document: unknown cloud processing mode {mode!r}. "
++                f"Did you mean {word!r}?"
++            )
+         data: Dict[str, Any] = {'if_retrieval': True}
+         if mode == "flash":
+-            # The server rejects if_retrieval alongside algorithm=flash.
+-            data = {'algorithm': 'flash'}
++            # The server rejects if_retrieval alongside algorithm=flash, and
++            # node text was if_retrieval's side effect, so ask for it directly.
++            data = {'algorithm': 'flash', 'if_add_node_text': 'yes'}
+         elif mode not in (None, "standard"):
+             data['mode'] = mode
+         if beta_headers is not None:
+```
+
+**File**: `tests/test_client.py` (modified, +5/-1)
+```diff
+@@ -1953,7 +1953,11 @@ def test_cloud_request_wiring(cloud, sample_pdf):
+     assert calls[-1]["data"]["metadata"] == json.dumps({"project": "alpha"})
+ 
+     client.submit_document(sample_pdf, mode="flash", folder_id="f-1")
+-    assert calls[-1]["data"] == {"algorithm": "flash", "folder_id": "f-1"}
++    assert calls[-1]["data"] == {"algorithm": "flash", "if_add_node_text": "yes",
++                                 "folder_id": "f-1"}
++    for variant in ("Flash", " flash", "STANDARD"):
++        with pytest.raises(PageIndexAPIError, match="Did you mean"):
++            client.submit_document(sample_pdf, mode=variant)
+     client.submit_document(sample_pdf, mode="standard")
+     assert calls[-1]["data"] == {"if_retrieval": True}
+     client.submit_document(sample_pdf, mode="mcp")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #658** (2026-11-04): fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing (@rejojer)
+- **PR #657** (2026-11-04): feat(cloud): submit_document(mode="flash") builds the tree with Flash on the cloud (@BukeLy)
 - **PR #645** (2026-11-03): perf(flash): sequential parse holds one page at a time instead of the whole document (@BukeLy)
 - **PR #644** (2026-10-29): fix: follow-ups to #622 (indexing learns newer models, forked processes drop LiteLLM's connections, and five more) (@rejojer)
 - **PR #643** (closed): fix: claude-code/ chat runs at the reasoning_effort it is given, not an inherited CLAUDE_CODE_EFFORT_LEVEL (@rejojer)
 - **PR #642** (closed): fix: reasoning_effort "none" turns Claude's thinking off, in indexing and chat (@rejojer)
-- **PR #641** (2026-10-27): README: Page Search API at the top of the updates (@zmtomorrow)
-- **PR #640** (closed): claude-code/ flash summaries run as one workflow's agents, and the route's processes run 16 at a time without the unread cache write (@rejojer)
 
 ---
 
@@ -1775,34 +1648,32 @@ all 15 repo PDFs.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flash): sequential parse holds one page at a time instead of the whole document 
+## X. cloud): submit_document(mode="flash") builds the tree with Flash on the cloud
 
 **RULE**:
-When implementing operations in `pageindex/flash/parser_pdfium_charlevel/char_extract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `646deeb6`: flash): sequential parse holds one page at a time instead of the whole document (#645). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5df70b0f`: cloud): submit_document(mode="flash") builds the tree with Flash on the cloud. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/flash/parser_pdfium_charlevel/char_extract.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-def _type3_sized(char: dict) -> bool:
-    """True for a char ``_apply_type3_sizes`` may resize: an identity-matrix Type-3 glyph, whitespace included (the extent accumulation skips whitespace, the sizing does not)."""
-    obj = char["obj"]
-    return obj["fs_raw"] < 1.5 and obj["scale_y"] < 1.5
-
-
-        if not _type3_sized(candidate_item):
+                pass "standard" for a full LLM-built tree. Cloud defaults to
+                "standard"; "flash" builds the tree from the PDF's text layer
+                without OCR (a scanned PDF ends "failed"). Other cloud modes
+                are passed through (e.g. "mcp").
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        if item_value["fs_raw"] >= 1.5 or item_value["scale_y"] >= 1.5:
+                pass "standard" for a full LLM-built tree. Cloud modes are
+                passed through (e.g. "mcp").
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `646deeb6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5df70b0f` are properly handled with clean fallback behavior.
