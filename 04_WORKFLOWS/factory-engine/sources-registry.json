@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T17:59:32.514Z",
-    "lastVerified": "2026-11-04T17:59:32.514Z",
+    "lastChecked": "2026-11-04T21:33:01.244Z",
+    "lastVerified": "2026-11-04T21:33:01.244Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "12890d87"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T21:26:30.660Z",
-    "lastVerified": "2026-11-04T21:26:30.660Z",
+    "lastChecked": "2026-11-04T21:35:55.959Z",
+    "lastVerified": "2026-11-04T21:35:55.959Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T21:00:22.775Z",
+    "lastChecked": "2026-11-04T21:33:06.147Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T21:00:22.775Z"
+    "lastVerified": "2026-11-04T21:33:06.147Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -818,13 +819,13 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T05:42:38.706Z",
-    "lastVerified": "2026-10-31T05:42:38.706Z",
+    "lastChecked": "2026-11-04T21:32:53.834Z",
+    "lastVerified": "2026-11-04T21:32:53.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
-    "promotedRulesCount": 3,
+    "contentHash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1437,9 +1438,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-03T22:23:40.771Z",
+    "lastChecked": "2026-11-04T21:33:03.799Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-03T22:23:40.771Z"
+    "lastVerified": "2026-11-04T21:33:03.799Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
@@ -4040,9 +4041,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-03T23:13:09.694Z",
+    "lastChecked": "2026-11-04T21:32:58.676Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-03T23:13:09.694Z"
+    "lastVerified": "2026-11-04T21:32:58.676Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -7402,13 +7403,13 @@
     "officialUrl": "https://github.com/apollographql/apollo-kotlin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-31T14:08:14.508Z",
-    "lastVerified": "2026-10-31T14:08:14.508Z",
+    "lastChecked": "2026-11-04T21:33:01.414Z",
+    "lastVerified": "2026-11-04T21:33:01.414Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "56b2f637a9d482399bcba6e55d9832ec70b3b06e6138bacc45b341157c65bb85",
-    "promotedRulesCount": 0,
+    "contentHash": "b3389017efa9d109838d20bbecc0055f8a26145316ef57b168f8b92e4088003d",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -8196,14 +8197,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T17:14:11.950Z",
-    "lastVerified": "2026-11-03T17:14:11.950Z",
+    "lastChecked": "2026-11-04T21:32:59.015Z",
+    "lastVerified": "2026-11-04T21:32:59.015Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
+    "contentHash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

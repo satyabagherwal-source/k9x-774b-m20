@@ -7357,3 +7357,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `66955b13` | Multi-dimensional audit evidence | 2026-11-04T21:26:19.315Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `ff97c223` | Multi-dimensional audit evidence | 2026-11-04T21:26:22.259Z |
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-04T21:26:28.116Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `cbb7380f` | Multi-dimensional audit evidence | 2026-11-04T21:33:00.937Z |
+| `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `e1178ba3` | Multi-dimensional audit evidence | 2026-11-04T21:33:01.882Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-04T21:35:53.426Z |

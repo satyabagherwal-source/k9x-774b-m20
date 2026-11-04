@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T21:26:28.002Z",
+  "last_updated": "2026-11-04T21:35:53.354Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2604,8 +2604,8 @@
       "slug": "apollographql-apollo-kotlin",
       "platform": "github",
       "source_url": "https://github.com/apollographql/apollo-kotlin",
-      "source_version": "c4701d11",
-      "content_hash": "56b2f637a9d482399bcba6e55d9832ec70b3b06e6138bacc45b341157c65bb85",
+      "source_version": "e1178ba3",
+      "content_hash": "b3389017efa9d109838d20bbecc0055f8a26145316ef57b168f8b92e4088003d",
       "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "promoted_rules": [
@@ -2628,6 +2628,11 @@
           "number": 4274,
           "title": "Allow GET for introspection queries (#7041)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6980,
+          "title": "Update plugin com.gradle.develocity to v4.6.1 (#7021)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2635,7 +2640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:08:14.660Z",
+      "verified_at": "2026-11-04T21:33:01.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8131,13 +8136,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "f4978e8f",
-      "content_hash": "b0fa7d904b29c8a23fa2439232bf194b2528955f8d3e79e5697d730516d46233",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "cbb7380f",
+      "content_hash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8238,6 +8243,11 @@
           "number": 6549,
           "title": "runtime): bind file rewind to the selected reviewed range [skip ci]",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6979,
+          "title": "app-server): project thread/read onto the pinned ThreadReadResponse",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8245,7 +8255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:23:36.867Z",
+      "verified_at": "2026-11-04T21:33:00.872Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150125,7 +150135,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
       "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
+      "content_hash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "promoted_rules": [
@@ -150165,7 +150175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:45:34.985Z",
+      "verified_at": "2026-11-04T21:35:53.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177566,6 +177576,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T21:26:19.200Z"
+    },
+    "rule-6979": {
+      "learning_id": "rule-6979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6979,
+      "title": "app-server): project thread/read onto the pinned ThreadReadResponse",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "cbb7380f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:33:00.872Z"
+    },
+    "rule-6980": {
+      "learning_id": "rule-6980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6980,
+      "title": "Update plugin com.gradle.develocity to v4.6.1 (#7021)",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "e1178ba3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T21:33:01.816Z"
     }
   },
   "aliases": {

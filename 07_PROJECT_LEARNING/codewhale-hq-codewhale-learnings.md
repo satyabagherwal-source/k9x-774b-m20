@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `f4978e8f`  
+> **Source Version**: `cbb7380f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:14:13.432Z  
+> **Timestamp**: 2026-11-04T21:33:00.429Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:14:11.950Z  
+> **Harvest Timestamp**: 2026-11-04T21:32:59.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41163 stars
+- **Stars / Engagement**: 41157 stars
 
 ---
 
@@ -1845,931 +1845,636 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb17ae0e` (2026-11-03)
-**Commit Message**: fix(runtime): bind file rewind to the selected reviewed range [skip ci]
+### Incident Patch 1: `81317c5d` (2026-11-04)
+**Commit Message**: fix(app-server): project thread/read onto the pinned ThreadReadResponse
 
-Refs CW-7670, CW-6966. patch-undo ignored turn_id and undid the latest turn. Reuse the selected-user-turn preparer already used by conversation undo, retain restore admission through file changes and fork publication, and advertise thread_patch_undo_turn_id. GET previews share the physical restore planner; POST can require the exact dropped turn IDs and affected paths so changed selections fail before writes. Existing trust, owned-snapshot attribution, safety backup and later-edit refusal stay authoritative. Default depth and public restore helper behavior remain compatible. Generated protocol/SDK contracts and feature docs are updated.
+thread/read now takes the pinned camelCase params (threadId, includeTurns) and
+returns {thread} with the same wire-only Thread projection as thread/list;
+with includeTurns it also returns Turn[] built from the canonical record
+(user/agent messages, reasoning, context compaction). Queued maps to
+inProgress and canceled to interrupted because the pinned enum has four
+values. The legacy snake_case thread_id is refused as an unknown field. Owner
+checks and alias resolution are untouched.
 
-Verified 22 distinct focused existing checks, 0 failed: 14 AppServer/protocol after the file-plan amendment; 8 Engine fork/restore cases reused against the exact same built binary. All 4,249 inputs matched the guarded native26 build and frozen source. Actual native macOS development CLI: five tool-write turns plus stale/foreign/range/path/later-edit/active-work refusals, named selection overriding depth, exact restoration/deletion, retained source and restart passed. Mounted E
+Verified (local, existing checks, source only): the wave run of 823 selected
+existing checks across app-server, protocol schema+wire, engine, tui-kit and
+tui passed 822; the one failure, tui work_surface
+fleet_row_repaints_resolved_model_and_each_distinct_usage_total, also fails on
+every codewhale-tui test binary built since 2026-11-02 16:25 and is unrelated.
+Not verified: the pinned-schema validator on a native build. Command
+execution, file change and MCP tool-call items cannot be supplied by the
+canonical record and are omitted (turns then report itemsView "summary").
 
-**File**: `crates/app-server-protocol/schema/json/runtime.schema.json` (modified, +5/-0)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +83/-0)
 ```diff
-@@ -281,6 +281,10 @@
-           "type": "boolean",
-           "default": false
-         },
-+        "thread_patch_undo_turn_id": {
-+          "type": "boolean",
-+          "default": false
-+        },
-         "thread_shell_consent": {
-           "type": "boolean",
-           "description": "Explicit per-thread shell opt-in is checked against loaded policy and\ncannot broaden a conversation while it has an active turn.",
-@@ -444,6 +448,7 @@
-         "threads",
-         "thread_create_idempotency",
-         "thread_idle_precondition",
-+        "thread_patch_undo_turn_id",
-         "thread_shell_consent",
-         "turns",
-         "turn_operation_idempotency",
-```
-
-**File**: `crates/app-server-protocol/schema/typescript/runtime.d.ts` (modified, +1/-0)
-```diff
-@@ -47,6 +47,7 @@ export type RuntimeCapabilities = {
-   threads: boolean
-   thread_create_idempotency: boolean
-   thread_idle_precondition: boolean
-+  thread_patch_undo_turn_id: boolean
-   thread_shell_consent: boolean
-   turns: boolean
-   turn_operation_idempotency: boolean
-```
-
-**File**: `crates/app-server-protocol/src/runtime.rs` (modified, +14/-0)
-```diff
-@@ -86,6 +86,8 @@ pub struct RuntimeCapabilities {
-     pub thread_create_idempotency: bool,
-     #[serde(default)]
-     pub thread_idle_precondition: bool,
-+    #[serde(default)]
-+    pub thread_patch_undo_turn_id: bool,
-     /// Explicit per-thread shell opt-in is checked against loaded policy and
-     /// cannot broaden a conversation while it has an active turn.
-     #[serde(default)]
-@@ -495,6 +497,7 @@ mod tests {
-             threads: true,
-             thread_create_idempotency: true,
-             thread_idle_precondition: true,
-+            thread_patch_undo_turn_id: true,
-             thread_shell_consent: true,
-             turns: true,
-             turn_operation_idempotency: true,
-@@ -543,6 +546,17 @@ mod tests {
-                 .client_token_intents
-         );
-         assert_eq!(obj.get("threads").unwrap(), &json!(true));
-+        assert_eq!(obj.get("thread_patch_undo_turn_id"), Some(&json!(true)));
-+        let mut legacy_patch_undo = value.clone();
-+        legacy_patch_undo
-+            .as_object_mut()
-+            .unwrap()
-+            .remove("thread_patch_undo_turn_id");
-+        assert!(
-+            !serde_json::from_value::<RuntimeCapabilities>(legacy_patch_undo)
-+                .unwrap()
-+                .thread_patch_undo_turn_id
-+        );
-         assert_eq!(obj.get("thread_shell_consent"), Some(&json!(true)));
-         assert!(
-             serde_json::from_value::<RuntimeCapabilities>(value.clone())
-```
-
-**File**: `crates/app-server/src/runtime_api.rs` (modified, +163/-34)
-```diff
-@@ -1569,6 +1569,7 @@ fn default_runtime_capabilities() -> RuntimeCapabilities {
-         threads: true,
-         thread_create_idempotency: true,
-         thread_idle_precondition: true,
-+        thread_patch_undo_turn_id: true,
-         thread_shell_consent: true,
-         turns: true,
-         turn_operation_idempotency: true,
-@@ -3081,7 +3082,10 @@ pub fn build_router(state: RuntimeApiState) -> Router {
-         .route("/v1/threads/{id}/fork", post(fork_thread))
-         .route("/v1/threads/{id}/undo", post(undo_thread_turn))
-         .route("/v1/threads/{id}/fork-at-turn", post(fork_thread_at_turn))
--        .route("/v1/threads/{id}/patch-undo", post(patch_undo_thread_turn))
-+        .route(
-+            "/v1/threads/{id}/patch-undo",
-+            get(preview_patch_undo_thread_turn).post(patch_undo_thread_turn),
-+        )
-         .route("/v1/threads/{id}/file-revert", post(revert_thread_file))
-         .route("/v1/threads/{id}/retry", post(retry_thread_turn))
-         .route(
-@@ -8703,6 +8707,10 @@ struct UndoTurnRequest {
-     /// The user turn to undo, with every turn after it. Wins over `depth`.
-     #[serde(default)]
-     turn_id: Option<String>,
-+    #[serde(default)]
-+    expected_turn_ids: Option<Vec<String>>,
-+    #[serde(default)]
-+    expected_paths: Option<Vec<String>>,
+@@ -167,6 +167,89 @@ pub enum ThreadListSource {
+     Unknown,
  }
  
- #[derive(Debug, Serialize)]
-@@ -8814,12 +8822,92 @@ struct PatchUndoResponse {
-     original_user_images: Vec<codewhale_app_server_protocol::runtime::RuntimeImageInput>,
- }
- 
-+async fn prepare_patch_undo(
-+    state: &RuntimeApiState,
-+    id: &str,
-+    req: &UndoTurnRequest,
-+) -> Result<codewhale_engine::runtime_threads::manager::PreparedThreadFork, ApiError> {
-+    let prepared = match req.turn_id.as_deref() {
-+        Some(turn_id) => {
-+            state
-+                .runtime_threads
-+                .prepare_fork_dropping_user_turn_in_sessions_dir(id, turn_id, &state.sessions_dir)
-+                .await
-+        }
-+        None => {
-+            state
-+                .runtime_threads
-+                .prepare_fork_at_user_message_in_sessions_dir(
-+                    id,
-+                    req.depth.unwrap_or(0),
-+                    &state.sessions_dir,
-+                )
-+                .await
-+        }
-+    }
-+    .map_err(map_thread_err)?;
-+    if let Some(expected) = &req.expected_turn_ids {
-+        let actual: Vec<_> = prepared
-+            .dropped_turns()
-+            .iter()
-+            .map(|turn| &turn.turn_id)
-+            .collect();
-+        if actual != expected.iter().collect::<Vec<_>>() {
-+            return Err(ApiError::conflict(
-+                "The selected turn range changed; review it again before undoing files.",
-+            )
-+            .with_code("undo_selection_changed"));
-+        }
-+    }
-+    Ok(prepared)
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase", deny_unknown_fields)]
++pub struct ThreadReadParams {
++    pub thread_id: String,
++    #[serde(default)]
++    pub include_turns: bool,
 +}
 +
-+#[derive(Debug, Serialize)]
-+struct PatchUndoPreview {
-+    turn_ids: Vec<String>,
-+    paths: Vec<String>,
-+    summary: Option<String>,
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadReadResponse {
++    pub thread: ThreadListItem,
 +}
 +
-+async fn preview_patch_undo_thread_turn(
-+    State(state): State<RuntimeApiState>,
-+    Path(id): Path<String>,
-+    Query(req): Query<UndoTurnRequest>,
-+) -> Result<Json<PatchUndoPreview>, ApiError> {
-+    let (_reservation, thread) = state
-+        .runtime_threads
-+        .thread_restore_guard(&id)
-+        .await
-+        .map_err(map_thread_err)?;
-+    let prepared = prepare_patch_undo(&state, &id, &req).await?;
-+    let dropped_turns = prepared.dropped_turns().to_vec();
-+    let turn_ids = dropped_turns
-+        .iter()
-+        .map(|turn| turn.turn_id.clone())
-+        .collect();
-+    let trusted = thread.trust_mode || thread.auto_approve;
-+    #[cfg(any(test, feature = "test-support"))]
-+    let env_ticket = codewhale_engine::test_support::env_scope_ticket();
-+    let (result, paths) = tokio::task::spawn_blocking(move || {
-+        let _reservation = _reservation;
-+        #[cfg(any(test, feature = "test-support"))]
-+        let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
-+        patch_undo_workspace_files_impl(&thread.workspace, &dropped_turns, trusted, true, None)
-+    })
-+    .await
-+    .map_err(|error| ApiError::internal(format!("Patch undo preview failed: {error}")))??;
-+    Ok(Json(PatchUndoPreview {
-+        turn_ids,
-+        paths,
-+        summary: result.summary,
-+    }))
-+}
-+
- async fn patch_undo_thread_turn(
-     State(state): State<RuntimeApiState>,
-     Path(id): Path<String>,
-     Json(req): Json<UndoTurnRequest>,
- ) -> Result<(StatusCode, Json<PatchUndoResponse>), ApiError> {
--    let depth = req.depth.unwrap_or(0);
-     // Admission first, then the thread record under it: trust, session
-     // binding and workspace are the values that hold while files change.
-     // Active turns in an overlapping workspace are rejected (409). The wait
-@@ -8838,13 +8926,9 @@ async fn patch_undo_thread_turn(
-     let env_ticket = codewhale_engine::test_support::env_scope_ticket();
-     tokio::spawn(async move {
-         let reservation = reservation;
--        // Validate de
-```
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +52/-0)
-```diff
-@@ -7917,6 +7917,36 @@ async fn patch_undo_endpoint_refuses_turns_it_cannot_prove() -> Result<()> {
-         create_seeded_thread(&addr, &runtime_threads, &root, "Roll back the patch").await?;
-     let client = codewhale_release::tls::reqwest_client();
- 
-+    let info: serde_json::Value = client
-+        .get(format!("http://{addr}/v1/runtime/info"))
-+        .send()
-+        .await?
-+        .error_for_status()?
-+        .json()
-+        .await?;
-+    assert_eq!(info["capabilities"]["thread_patch_undo_turn_id"], true);
-+    let resp = client
-+        .get(format!(
-+            "http://{addr}/v1/threads/{thread_id}/patch-undo?turn_id=foreign_turn"
-+        ))
-+        .send()
-+        .await?;
-+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-+    let resp = client
-+        .post(format!("http://{addr}/v1/threads/{thread_id}/patch-undo"))
-+        .json(&json!({"turn_id": "foreign_turn", "depth": 0}))
-+        .send()
-+        .await?;
-+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-+    let resp = client
-+        .post(format!("http://{addr}/v1/threads/{thread_id}/patch-undo"))
-+        .json(&json!({"expected_turn_ids": []}))
-+        .send()
-+        .await?;
-+    assert_eq!(resp.status(), StatusCode::CONFLICT);
-+    let refused: serde_json::Value = resp.json().await?;
-+    assert_eq!(refused["error"]["code"], "undo_selection_changed");
-+
-     // A workspace directory that is not available proves nothing about the
-     // files a turn changed: the undo is refused instead of forking the
-     // conversation away from them.
-@@ -8055,6 +8085,28 @@ fn patch_undo_helper_restores_only_the_dropped_turns_changes() -> Result<()> {
-         true,
-         shell_turn_receipts(&repo, &pre, &post, "thr_a"),
-     );
-+    let snapshot_count = repo.list(usize::MAX)?.len();
-+    let (preview, paths) =
-+        patch_undo_workspace_files_impl(&workspace, std::slice::from_ref(&turn), true, true, None)
-+            .expect("a trusted preview should succeed");
-+    assert!(!preview.files_restored);
-+    assert_eq!(paths, vec!["a.txt", "made/new.txt"]);
-+    let refused = patch_undo_workspace_files_impl(
-+        &workspace,
-+        std::slice::from_ref(&turn),
-+        true,
-+        false,
-+        Some(&[]),
-+    )
-+    .expect_err("an unreviewed file plan must refuse before restoring");
-+    assert_eq!(refused.status, StatusCode::CONFLICT);
-+    assert_eq!(refused.code, Some("undo_selection_changed"));
-+
-+    assert_eq!(fs::read_to_string(&a)?, "second write");
-+    assert!(workspace.join("made/new.txt").is_file());
-+    assert_eq!(fs::read_to_string(&other)?, "later work");
-+    assert_eq!(repo.list(usize::MAX)?.len(), snapshot_count);
-+
-     let restored = patch_undo_workspace_files(&workspace, std::slice::from_ref(&turn), true)
-         .expect("a trusted rollback should succeed");
-     assert!(restored.files_restored, "{:?}", restored.summary);
-```
-
-**File**: `crates/engine/src/runtime_threads/manager.rs` (modified, +15/-5)
-```diff
-@@ -9984,12 +9984,8 @@ impl RuntimeThreadManager {
-         let dir = sessions_dir.to_path_buf();
-         tokio::spawn(async move {
-             let _admission = admission;
--            let turns = runtime.store.list_turns_for_thread(&id)?;
--            let items_by_turn = runtime.prepared_items_for_turns(&turns)?;
--            let (_, _, depth_from_tail) =
--                runtime.fork_cut_for_user_turn(&turns, &items_by_turn, &turn_id)?;
-             let prepared = runtime
--                .prepare_fork_at_user_message_in_sessions_dir(&id, depth_from_tail, &dir)
-+                .prepare_fork_dropping_user_turn_in_sessions_dir(&id, &turn_id, &dir)
-                 .await?;
-             runtime.publish_prepared_fork(prepared).await
-         })
-@@ -10126,6 +10122,20 @@ impl RuntimeThreadManager {
-         )
-     }
- 
-+    pub async fn prepare_fork_dropping_user_turn_in_sessions_dir(
-+        &self,
-+        id: &str,
-+        turn_id: &str,
-+        sessions_dir: &Path,
-+    ) -> Result<PreparedThreadFork> {
-+        let turns = self.store.list_turns_for_thread(id)?;
-+        let items_by_turn = self.prepared_items_for_turns(&turns)?;
-+        let (_, _, depth_from_tail) =
-+            self.fork_cut_for_user_turn(&turns, &items_by_turn, turn_id)?;
-+        self.prepare_fork_at_user_message_in_sessions_dir(id, depth_from_tail, sessions_dir)
-+            .await
-+    }
-+
-     pub async fn prepare_fork_at_user_turn_in_sessions_dir(
-         &self,
-         id: &str,
-```
-
-**File**: `docs/RUNTIME_API.md` (modified, +5/-2)
-```diff
-@@ -1451,7 +1451,8 @@ latest turn and publishes a `thread.permissions_changed` event (`from`, `to`,
- - `POST /v1/threads/{id}/compact` (manual compaction)
- - `POST /v1/threads/{id}/undo` - fork the thread with the last N turns removed (`{"depth": N}`, default 0 = last turn only); returns the forked thread plus `original_user_text` so a GUI can pre-populate the input box. `{"turn_id": "turn_…"}` instead names the user turn to remove, together with every turn after it, and wins over `depth`; the Runtime resolves it under the thread's restore guard, so a turn another client appends meanwhile cannot move the cut. `400` when the turn is not a user turn of that thread
- - `POST /v1/threads/{id}/fork-at-turn` - fork at one named user turn (`{"turn_id": "turn_…"}`, as `GET /v1/threads/{id}` reports it). The fork *keeps* that turn and every turn before it, and drops the turns after it; naming the last turn therefore keeps the whole conversation. The receipt is `/undo`'s (`thread`, `original_user_text`, `original_user_images`), carrying the *first dropped* user turn's prompt — what was asked next, even when a prompt-less turn such as a manual `/compact` sits between — so a client can put it back in the composer for editing. The source thread, its session document and the workspace are untouched, and there is no file rollback: a fork is a sibling conversation, and rewinding the workspace would rewind the branch left behind with it. Clients should name the turn instead of computing a `depth` — the transcript they render and the turn list this cuts are not the same list (steers, image-only prompts and injected handoffs each sit on one side only), and a client-side count that is off by one forks the wrong prefix while answering `201`. `400` when the turn is not a user turn of that thread.
--- `POST /v1/threads/{id}/patch-undo` - rolls back the files the dropped turns changed, then the same fork (`{"depth": N}`); returns `patch_result` (`files_restored`, `summary`, `snapshot_label`) alongside the forked thread. See [Workspace restore endpoints](#workspace-restore-endpoints) for ownership, the trust, admission and abort rules, and the `error.code` values of a refusal.
-+- `GET /v1/threads/{id}/patch-undo?turn_id=turn_…` - validates the selected restore without changing files or publishing a fork; returns `turn_ids`, the exact dropped range, `paths` needing restoration and an optional no-change `summary`. Requires the `thread_patch_undo_turn_id` capability.
-+- `POST /v1/threads/{id}/patch-undo` - rolls back the files the dropped turns changed, then the same fork (`{"depth": N}` or `{"turn_id": "turn_…"}`, with `turn_id` taking precedence); returns `patch_result` (`files_restored`, `summary`, `snapshot_label`) alongside the forked thread. See [Workspace restore endpoints](#workspace-restore-endpoints) for ownership, the trust, admission and abort rules, and the `error.code` values of a refusal.
- - `POST /v1/threads/{id}/file-revert` - restore exactly one file from one restore point the thread owns (`{"path", "snapshot_id", "expected_hash"}`); never forks the conversation. See [Workspace restore endpoints](#workspace-restore-endpoints).
- - `POST /v1/threads/{id}/retry` - fork with the last N turns removed and immediately start a new turn (`{"depth": N, "prompt": "..."}`; `prompt` overrides the original user text, which is re-used when omitted)
- 
-@@ -1845,7 +1846,9 @@ For `file-revert` the backup is mandatory: if it cannot be written, or the
- requested file is excluded from it (for example by `.gitignore`), the request
- fails and nothing is changed.
- 
--**`patch-undo`.** Undoes whole turns. For each dropped turn's `pre_turn` →
-+**`patch-undo`.** Undoes whole turns. A named `turn_id` removes that user turn and every turn after it, under the same restore admission as `/undo`. Clients must require `thread_patch_undo_turn_id` before sending selected-turn requests: older Engines may ignore that field. Preview with `GET`, then send its exact `turn_ids` as `expected_turn_ids` and `paths` as `expected_paths` on `POST`; `409 undo_selection_changed` refuses an altered range or file plan before file changes. A preview does not reserve future execution or promise idempotency. The mutation is not automatically retryable after a lost response.
-+
-+ For each dropped turn's `pre_turn` →
- `post_turn` window, the paths that differ between the two snapshots must all be
- the turn's own: changed only in the span of one of the turn's tool calls (a
- `tool` → `post_tool` span, or a shell turn's whole window), and, inside a file
-```
-
-**File**: `docs/features.toml` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@
- [[feature]]
- id = "undo-range"
- name = "Request range undo"
--summary = "Select a request with /undo select to restore its file changes and later requests with visible progress."
-+summary = "Select a request with /undo select to restore its file changes and later requests with visible progress; Runtime clients can preview and confirm an exact named-turn range."
- status = "experimental"
- surfaces = { tui = "preview" }
- since = "unreleased"
-```
-
----
-
-### Incident Patch 2: `daae24cd` (2026-11-03)
-**Commit Message**: fix(app-server): omit the disabled goal setter from discovery [skip ci]
-
-Refs CW-7704. Compatibility goal execution stays closed, so do not advertise thread/goal/set as available in either global or thread discovery. Keep the typed refusal for older clients calling the known method and keep goal read/clear discovery. Update both language docs and existing capability expectations. Correct the existing goal-read fixture to seed its fake owner through the captured Runtime API: its former direct compatibility setter is deliberately refused after the native owner migration. Production still uses no self-HTTP.
-
-Verified 4 focused existing checks, 0 failed, after the fixture repair. The first three passed in v1; the fourth exposed that stale seeding path (runtime_unavailable: goal execution requires the canonical Runtime interaction API). All 4,249 inputs matched the guarded native28 build. Actual native stdio initialize/capability/closed-gate probe passed with 0 model POSTs and clean shutdown; its capability payloads differ from native26 only by removal of goal/set. No new repository tests or code comments.
-
-Separately compared actual native responses with the immutable Codex rust-v0.166
-
-**File**: `crates/app-server/src/stdio.rs` (modified, +2/-4)
-```diff
-@@ -827,7 +827,6 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
-                 "thread/read",
-                 "thread/name/set",
-                 "thread/set_name",
--                "thread/goal/set",
-                 "thread/goal/get",
-                 "thread/goal/clear",
-                 "thread/archive",
-@@ -887,11 +886,10 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
-                     "thread/resume",
-                     "thread/fork",
-                     "thread/list",
--                "thread/loaded/list",
-+                    "thread/loaded/list",
-                     "thread/read",
-                     "thread/name/set",
--                "thread/set_name",
--                    "thread/goal/set",
-+                    "thread/set_name",
-                     "thread/goal/get",
-                     "thread/goal/clear",
-                     "thread/archive",
-```
-
-**File**: `crates/app-server/src/tests.rs` (modified, +15/-8)
-```diff
-@@ -1785,7 +1785,7 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
-         .unwrap();
-     assert_eq!(capabilities.result["goal_execution"], false);
-     assert!(
--        capabilities.result["methods"]
-+        !capabilities.result["methods"]
-             .as_array()
-             .unwrap()
-             .iter()
-@@ -1810,12 +1810,20 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
-         set.wire.data.unwrap()["error"],
-         "interactive_execution_unsupported"
-     );
--    thread_control::handle(
--        &state,
--        serde_json::from_value(json!({"kind":"goal_set","thread_id":id,"objective":"Release 0.10.1","token_budget":59000})).unwrap(),
--    )
--    .await
--    .unwrap();
-+    let (endpoint, token) = {
-+        let shared = state.runtime_bridge.lock().await.clone().unwrap();
-+        let bridge = shared.lock().await;
-+        (bridge.base_url.clone(), bridge.auth_token.clone().unwrap())
-+    };
-+    codewhale_release::tls::reqwest_client()
-+        .put(format!("{endpoint}/v1/threads/{id}/goal"))
-+        .bearer_auth(token)
-+        .json(&json!({"objective":"Release 0.10.1","token_budget":59000}))
-+        .send()
-+        .await
-+        .unwrap()
-+        .error_for_status()
-+        .unwrap();
-     let got = dispatch_stdio_request(&state, "thread/goal/get", json!({"thread_id":id}))
-         .await
-         .unwrap();
-@@ -3038,7 +3046,6 @@ const EXPECTED_CAPABILITY_METHODS: &[&str] = &[
-     "thread/read",
-     "thread/name/set",
-     "thread/set_name",
--    "thread/goal/set",
-     "thread/goal/get",
-     "thread/goal/clear",
-     "thread/archive",
-```
-
-**File**: `docs/RUNTIME_API.md` (modified, +6/-3)
-```diff
-@@ -479,7 +479,9 @@ native frontend directly; they do not make loopback HTTP requests.
- `prompt/*`) and the full method list; `thread/capabilities`,
- `app/capabilities`, and `prompt/capabilities` scope it per family. The method
- set is pinned by a drift test in `crates/app-server/src/tests.rs`, so SDK and
--local integration clients can rely on it not changing silently.
-+local integration clients can rely on it not changing silently. The permanently
-+refused compatibility goal setter is omitted from discovery while
-+`goal_execution` is false; goal reads and clears remain advertised.
- 
- ### Daemon socket: `codewhale app-server --socket`
- 
-@@ -561,8 +563,9 @@ HTTP reports 400 with `error.code: "invalid_request"`, `error.jsonrpc_code: -326
- and the same detail in `error.data`. Compatibility `thread/goal/set` and
- `ThreadRequest::GoalSet` also refuse before changing the goal: setting an active
- goal starts background Engine work. Reading and clearing existing goals remain
--available; starting goals uses the full Runtime HTTP API. The known method
--remains dispatchable so older clients get this actionable refusal. For example:
-+available; starting goals uses the full Runtime HTTP API. The known setter
-+remains recognized for older clients to get this actionable refusal, but it is
-+not advertised as an available method. For example:
- 
- ```json
- {"jsonrpc":"2.0","id":3,"method":"thread/message","params":{"thread_id":"thr_...","input":"Summarize this conversation","allowed_tools":[]}}
-```
-
-**File**: `docs/zh_hans/RUNTIME_API.md` (modified, +5/-3)
-```diff
-@@ -365,7 +365,8 @@ printf '%s\n' \
- `prompt/*`）以及完整的方法清单；`thread/capabilities`、
- `app/capabilities` 与 `prompt/capabilities` 则按族缩小范围。方法集合由
- `crates/app-server/src/tests.rs` 中的一个漂移测试钉住，因此 SDK 与本地集成客户端
--可以依赖它不会悄悄变化。
-+可以依赖它不会悄悄变化。`goal_execution` 为 false 时，始终拒绝执行的兼容目标设置
-+不会出现在方法清单中；读取和清除现有目标仍会声明。
- 
- ### 兼容执行限制
- 
-@@ -375,13 +376,14 @@ HTTP 兼容路由、stdio 和 socket 均声明 `interactive_execution: false`、
- `thread/message`、`thread/request` 的 message、`prompt/run`、`prompt/request`
- 以及 HTTP `/prompt`、`/thread` 的 message 必须显式提供 `allowed_tools: []`。
- 省略、null 或非空列表返回 `interactive_execution_unsupported`，不会创建 Runtime
--线程或启动回合；错误类型的值也会被拒绝。桥在实际回合请求中继续传递空工具列表，
-+线程或启动回合；错误类型的值也会被拒绝。捕获的原生 owner 在实际回合请求中继续传递空工具列表，
- 只转发助手文本和最终状态；意外的审批或澄清请求会报错并中断该回合。
- 工具客户端须迁移到带 bearer 认证的完整 HTTP/SSE API。
- JSON-RPC 返回 `-32602` 和 `data.error: "interactive_execution_unsupported"`；
- HTTP 返回 400，`error.code` 为 `invalid_request`，同一详情位于 `error.data`。
- 兼容 `thread/goal/set` 以及 `ThreadRequest::GoalSet` 也在修改目标前拒绝，
--因为设为活动目标会启动后台工作。读取、清除现有目标仍可用；开始目标请用完整 HTTP API。
-+因为设为活动目标会启动后台工作。它不会列为可用方法，但旧客户端直接调用仍得到明确拒绝。
-+读取、清除现有目标仍可用；开始目标请用完整 HTTP API。
- 
- `@codewhale/runtime-sdk` 当前只封装 Fleet 和线程事件读取，未封装线程创建、
- 回合开始/引导/中断、审批、澄清或模型发现。完整集成请使用
-```
-
----
-
-### Incident Patch 3: `f4978e8f` (2026-11-03)
-**Commit Message**: fix(fleet): preserve reviewed profiles and drafts on concurrent saves [skip ci]
-
-Both legacy TUI profile writers now use the same bounded, confined writer.
-A directory-wide cross-process lock covers exact preimage comparison, profile
-validation, duplicate identity checking and pinned atomic replacement. Keep
-create-only semantics and classify uncertain replacement outcomes separately.
-Route-assignment reads reuse the same bounded confined reader; model drafts
-preview the actual sanitized filename rather than the original role filename.
-
-A refused save keeps the original editor, exact draft and reviewed preimage.
-Reuse the view's UUID to reject events after cancellation or reopening, reset
-the replacement confirmation and show the failure inline. Close only after a
-confirmed save; retain provider readiness, project scope and roster controls.
-
-Verified: 54 existing Fleet setup cases passed on the final frozen batch;
-35 existing Engine profile cases reused from the exact same test-binary hash
-(89 total, zero failures). Native33 ordinary macOS arm64 CLI built with all
-4,249 inputs unchanged, default Engine and no test-support. Two actual TUI
-processes proved stale-save refusal, model-d
-
-**File**: `crates/engine/src/fleet/profile.rs` (modified, +179/-1)
-```diff
-@@ -70,6 +70,180 @@ pub fn agent_profile_dir_for_scope(scope: FleetProfileScope, workspace: &Path) -
-     }
- }
- 
-+pub const MAX_PROFILE_DOCUMENT_BYTES: usize = 1024 * 1024;
-+
-+#[derive(Debug, thiserror::Error)]
-+#[error("Profile source changed; reopen {} before saving", path.display())]
-+pub struct AgentProfileWriteConflict {
-+    pub path: PathBuf,
-+}
-+
-+#[derive(Debug, thiserror::Error)]
-+#[error("Profile {id} is already defined in {}", path.display())]
-+pub struct AgentProfileIdentityConflict {
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadTurn {
 +    pub id: String,
-+    pub path: PathBuf,
++    pub items: Vec<ThreadTurnItem>,
++    pub items_view: ThreadTurnItemsView,
++    pub status: ThreadTurnStatus,
++    pub error: Option<ThreadTurnError>,
++    pub started_at: Option<i64>,
++    pub completed_at: Option<i64>,
++    pub duration_ms: Option<i64>,
 +}
 +
-+#[derive(Debug, thiserror::Error)]
-+#[error("Profile save outcome is unconfirmed for {}; read the file before saving again: {source}", path.display())]
-+pub struct AgentProfileWriteUnconfirmed {
-+    pub path: PathBuf,
-+    #[source]
-+    source: std::io::Error,
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub enum ThreadTurnItemsView {
++    Summary,
++    Full,
 +}
 +
-+fn profile_document_location(
-+    scope: FleetProfileScope,
-+    workspace: &Path,
-+    path: &Path,
-+) -> Result<(PathBuf, PathBuf)> {
-+    let directory = agent_profile_dir_for_scope(scope, workspace)?;
-+    let root = match scope {
-+        FleetProfileScope::Project => workspace.to_path_buf(),
-+        FleetProfileScope::Personal => directory
-+            .parent()
-+            .context("Personal profile directory has no state root")?
-+            .to_path_buf(),
-+    };
-+    anyhow::ensure!(
-+        root.is_absolute()
-+            && path.parent() == Some(directory.as_path())
-+            && path.extension().and_then(|value| value.to_str()) == Some("toml"),
-+        "Profile source is outside its selected directory"
-+    );
-+    let relative = path.strip_prefix(&root)?.to_path_buf();
-+    anyhow::ensure!(
-+        codewhale_util::files::path_is_confined(&relative),
-+        "Profile source is outside its selected directory"
-+    );
-+    Ok((root, relative))
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub enum ThreadTurnStatus {
++    Completed,
++    Interrupted,
++    Failed,
++    InProgress,
 +}
 +
-+fn read_profile_document_file(
-+    file: &codewhale_util::files::WorkspaceFile,
-+) -> Result<Option<String>> {
-+    use std::io::Read as _;
-+    let handle = match file.open_file_shared() {
-+        Ok(file) => file,
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-+        Err(error) => return Err(error.into()),
-+    };
-+    let mut raw = String::new();
-+    handle
-+        .take((MAX_PROFILE_DOCUMENT_BYTES + 1) as u64)
-+        .read_to_string(&mut raw)?;
-+    anyhow::ensure!(
-+        raw.len() <= MAX_PROFILE_DOCUMENT_BYTES,
-+        "Profile document exceeds the one MiB editing limit"
-+    );
-+    Ok(Some(raw))
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadTurnError {
++    pub message: String,
 +}
 +
-+pub fn read_agent_profile_document(
-+    scope: FleetProfileScope,
-+    workspace: &Path,
-+    path: &Path,
-+) -> Result<Option<String>> {
-+    let (root, relative) = profile_document_location(scope, workspace, path)?;
-+    let file = match codewhale_util::files::WorkspaceFile::open(&root, &relative, false) {
-+        Ok(file) => file,
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-+        Err(error) => return Err(error.into()),
-+    };
-+    read_profile_document_file(&file)
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(tag = "type", rename_all = "camelCase")]
++pub enum ThreadTurnItem {
++    UserMessage {
++        id: String,
++        content: Vec<ThreadUserInput>,
++    },
++    AgentMessage {
++        id: String,
++        text: String,
++    },
++    Reasoning {
++        id: String,
++        content: Vec<String>,
++    },
++    ContextCompaction {
++        id: String,
++    },
 +}
 +
-+pub fn save_agent_profile_document(
-+    scope: FleetProfileScope,
-+    workspace: &Path,
-+    path: &Path,
-+    expected: Option<&str>,
-+    id: &str,
-+    text: &str,
-+) -> Result<()> {
-+    anyhow::ensure!(
-+        text.len() <= MAX_PROFILE_DOCUMENT_BYTES,
-+        "Profile document exceeds the one MiB editing limit"
-+    );
-+    anyhow::ensure!(
-+        scope != FleetProfileScope::Project || super::roster::project_agent_profiles_enabled(),
-+        "Project profiles are disabled for this launch"
-+    );
-+    let (root, relative) = profile_document_location(scope, workspace, path)?;
-+    let file = match scope {
-+        FleetProfileScope::Project => {
-+            codewhale_util::files::WorkspaceFile::open_shared(&root, &relative, true)?
-+        }
-+        FleetProfileScope::Personal => {
-+            codewhale_util::files::WorkspaceFile::open(&root, &relative, true)?
-+        }
-+    };
-+    let lock_relative = relative
-+        .parent()
-+        .context("Profile source has no directory")?
-+        .join(".codewhale-profile-write.lock");
-+    let lock_entry = file.sibling(".codewhale-profile-write.lock")?;
-+    let lock_file = lock_entry.open_update(true, false)?;
-+    codewhale_config::private_directory::tighten_mode_of(
-+        &lock_file,
-+        &root.join(&lock_relative),
-+        0o600,
-+    )?;
-+    let mut lock = fd_lock::RwLock::new(lock_file);
-+    let guard = lock.write()?;
-+    anyhow::ensure!(
-+        codewhale_util::files::same_file(
-+            &guard,
-+            &codewhale_util::files::WorkspaceFile::open(&root, &lock_relative, false)?
-+                .open_file()?,
-+        )?,
-+        "Profile write lock changed; reopen the source"
-+    );
-+    let current = read_profile_document_file(&file)?;
-+    if current.as_deref() != expected {
-+        return Err(AgentProfileWriteConflict {
-+            path: path.to_path_buf(),
-+        }
-+        .into());
-+    }
-+    let profile = parse_agent_profile_text(path, text)?;
-+    anyhow::e
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(tag = "type", rename_all = "camelCase")]
++pub enum ThreadUserInput {
++    Text { text: String },
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+ #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+ #[serde(rename_all = "camelCase")]
 ```
 
-**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +116/-131)
+**File**: `crates/app-server/src/stdio.rs` (modified, +9/-2)
 ```diff
-@@ -2641,89 +2641,63 @@ pub(crate) async fn handle_view_events(
-                 }
-                 app.needs_redraw = true;
+@@ -1064,10 +1064,17 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
              }
--            ViewEvent::FleetProfileDraftCommitRequested { draft, scope } => {
--                // A project-scope save is refused (never silently redirected)
--                // when project profiles are disabled for this launch: the file
--                // would be written where nothing loads it.
--                if scope == codewhale_engine::fleet::profile::FleetProfileScope::Project
--                    && !codewhale_engine::fleet::roster::project_agent_profiles_enabled()
--                {
--                    app.set_sticky_status(
--                        tr(app.ui_locale, MessageId::FleetDestProjectDisabledSave).into_owned(),
--                        StatusToastLevel::Error,
--                        None,
--                    );
--                    app.needs_redraw = true;
-+            ViewEvent::FleetProfileDraftCommitRequested {
-+                editor_id,
-+                draft,
-+                scope,
-+                expected,
-+            } => {
-+                if app.view_stack.top_kind() != Some(ModalKind::FleetSetup) {
-                     continue;
-                 }
--                // The TOML is rendered deterministically from the validated
--                // draft and written atomically; the target path is derived
--                // from the sanitized id, never model-chosen.
--                let profile_dir =
--                    match codewhale_engine::fleet::profile::agent_profile_dir_for_scope(
--                        scope,
--                        &app.workspace,
--                    ) {
--                        Ok(dir) => dir,
--                        Err(err) => {
--                            app.set_sticky_status(
--                                format!("Team {} scope is unavailable: {err:#}", scope.label()),
--                                StatusToastLevel::Error,
--                                None,
--                            );
--                            app.needs_redraw = true;
--                            continue;
--                        }
--                    };
--                let target = profile_dir.join(draft.file_name());
--                // A ratified profile must not silently clobber a differently
--                // named existing profile that shares this id (which would also
--                // make the whole agents dir fail to load on the duplicate).
--                // Overwriting the SAME file is fine — that is an intentional
--                // re-draft of this profile.
--                // The collision gate only needs file identities. Accept
--                // otherwise legacy profile fields here so an old, unrelated
--                // profile cannot block saving a current one. Malformed TOML,
--                // unreadable files, and invalid ids still fail closed because
--                // then we cannot prove there is no collision.
--                let existing_profiles =
--                    if scope == codewhale_engine::fleet::profile::FleetProfileScope::Project {
--                        codewhale_engine::fleet::profile::load_workspace_agent_profile_identities(
--                            &app.workspace,
--                        )
--                    } else {
--                        codewhale_engine::fleet::profile::load_agent_profile_identities_from_dir(
--                            &profile_dir,
--                        )
--                    };
--                if let Err(err) = &existing_profiles {
--                    let message = tr(app.ui_locale, MessageId::FleetProfileIdentityVerifyFailed)
--                        .replace("{error}", &format!("{err:#}"));
--                    app.set_sticky_status(message, StatusToastLevel::Error, None);
--                    app.needs_redraw = true;
-+                let Some(mut boxed) = app.view_stack.pop() else {
-                     continue;
--                }
--                let id_conflict = existing_profiles
--                    .into_iter()
--                    .flatten()
--                    .find(|p| p.id.eq_ignore_ascii_case(&draft.id) && p.source != target);
--                if let Some(existing) = id_conflict {
--                    let message = tr(app.ui_locale, MessageId::FleetProfileIdConflict)
--                        .replace("{id}", &draft.id)
--                        .replace("{path}", &existing.source.display().to_string());
--                    app.set_sticky_status(message, StatusToastLevel::Error, None);
--                    app.needs_redraw = true;
-+                };
-+                let matches = boxed
-+                    .as_any_mut()
-+                    .downcast_mut::<crate::tui::views::fleet_setup::FleetSetupView>()
-+                    .is_some_and(|view| view.profile_commit_matches(editor_id));
-+                if !matches {
-+                    app.view_stack.push_boxed(boxed);
-                     continue;
-      
+         }
+         "thread/read" => {
+-            let request = ThreadRequest::Read(parse_params(params_or_object(params))?);
++            let params: codewhale_app_server_protocol::rpc::ThreadReadParams =
++                parse_params(params_or_object(params))?;
++            let include_turns = params.include_turns;
++            let request = ThreadRequest::Read(codewhale_protocol::ThreadReadParams {
++                thread_id: params.thread_id,
++            });
+             let response = handle_thread_request(state, request).await?;
++            let wire = thread_control::read_wire(response, include_turns)
++                .map_err(|err| DispatchError::internal(format!("{err:#}")))?;
+             StdioDispatchResult {
+-                result: serde_json::to_value(response)
++                result: serde_json::to_value(wire)
+                     .map_err(|err| DispatchError::internal(err.to_string()))?,
+                 should_exit: false,
+             }
 ```
 
-**File**: `crates/tui/src/tui/views/fleet_setup.rs` (modified, +169/-86)
+**File**: `crates/app-server/src/thread_control.rs` (modified, +148/-36)
 ```diff
-@@ -542,6 +542,7 @@ struct DestinationStatus {
-     target: PathBuf,
-     /// Whether `target` already exists (saving would replace it).
-     target_exists: bool,
-+    original: Option<String>,
+@@ -379,51 +379,163 @@ pub(super) async fn loaded(state: &AppState) -> Result<ThreadResponse> {
+     Ok(result)
  }
  
- /// Which control on the Review step owns keyboard focus.
-@@ -698,7 +699,6 @@ fn deterministic_composition_advisory(
- /// A role assignment edits only route keys in the original document. The
- /// source and possible destinations are captured before opening the picker.
- struct RouteAssignment {
--    editor_id: uuid::Uuid,
-     id: String,
-     template: toml::Table,
-     original_member: codewhale_engine::fleet::profile::AgentProfile,
-@@ -718,15 +718,8 @@ struct ModelDraftRequest {
-     reasoning_effort: Option<String>,
- }
- 
--fn assignment_source(path: &Path) -> Result<Option<String>, String> {
--    match std::fs::read_to_string(path) {
--        Ok(text) => Ok(Some(text)),
--        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
--        Err(err) => Err(format!("Cannot read {}: {err}", path.display())),
--    }
--}
--
- pub struct FleetSetupView {
-+    editor_id: uuid::Uuid,
-     snapshot: FleetSetupSnapshot,
-     assignment: Option<RouteAssignment>,
-     step: Step,
-@@ -803,6 +796,7 @@ impl FleetSetupView {
-     /// validates a dormant external-consent route so the same row becomes
-     /// Ready without closing and reopening the modal.
-     pub fn refresh_from_snapshot(&mut self, snapshot: FleetSetupSnapshot) {
-+        let old_editor_id = self.editor_id;
-         let old_step = self.step;
-         let old_role_idx = self.role_idx;
-         let old_model_idx = self.model_idx;
-@@ -820,6 +814,7 @@ impl FleetSetupView {
- 
-         *self = Self::from_snapshot(snapshot);
- 
-+        self.editor_id = old_editor_id;
-         self.step = old_step;
-         self.role_idx = old_role_idx;
-         self.model_idx = old_model_idx.min(self.filtered_model_indices().len().saturating_sub(1));
-@@ -898,11 +893,16 @@ impl FleetSetupView {
-             }
-             _ => None,
-         };
--        let source = if source_scope.is_some() {
-+        let source = if let Some(scope) = source_scope {
-             Some((
-                 member.source.clone(),
--                assignment_source(&member.source)?
--                    .ok_or_else(|| "The saved role disappeared. Reopen Fleet.".to_string())?,
-+                codewhale_engine::fleet::profile::read_agent_profile_document(
-+                    scope,
-+                    &app.workspace,
-+                    &member.source,
-+                )
-+                .map_err(|err| err.to_string())?
-+                .ok_or_else(|| "The saved role disappeared. Reopen Fleet.".to_string())?,
-             ))
-         } else {
-             None
-@@ -924,7 +924,6 @@ impl FleetSetupView {
-             toml::from_str::<toml::Table>(&draft.render_toml()).map_err(|err| err.to_string())?
-         };
-         view.assignment = Some(RouteAssignment {
--            editor_id: uuid::Uuid::new_v4(),
-             id: member.id.clone(),
-             template,
-             original_member: member.clone(),
-@@ -942,26 +941,29 @@ impl FleetSetupView {
-             .into_iter()
-             .flatten()
-             .filter(|destination| destination.unavailable_reason.is_none())
--            .map(|destination| {
--                Ok((
--                    destination.target.clone(),
--                    assignment_source(&destination.target)?,
--                ))
--            })
--            .collect::<Result<Vec<_>, String>>()?;
-+            .map(|destination| (destination.target.clone(), destination.original.clone()))
-+            .collect();
-         view.assignment.as_mut().unwrap().destinations = targets;
-         view.step = Step::Destination;
-         Ok(view)
-     }
- 
-     pub(crate) fn route_pick_request(&self) -> ViewAction {
--        self.assignment
--            .as_ref()
--            .map_or(ViewAction::None, |assignment| {
--                ViewAction::Emit(ViewEvent::FleetProfileRoutePickRequested {
--                    editor_id: assignment.editor_id,
--                })
-+        self.assignment.as_ref().map_or(ViewAction::None, |_| {
-+            ViewAction::Emit(ViewEvent::FleetProfileRoutePickRequested {
-+                editor_id: self.editor_id,
-             })
-+        })
++fn wire_thread(thread: Thread) -> codewhale_app_server_protocol::rpc::ThreadListItem {
++    use codewhale_app_server_protocol::rpc::{ThreadListItem, ThreadListSource, ThreadListStatus};
++    ThreadListItem {
++        session_id: thread.id.clone(),
++        id: thread.id,
++        preview: thread.preview,
++        ephemeral: thread.ephemeral,
++        model_provider: thread.model_provider,
++        created_at: thread.created_at,
++        updated_at: thread.updated_at,
++        status: match thread.status {
++            ThreadStatus::Running => ThreadListStatus::Active {
++                active_flags: Vec::new(),
++            },
++            ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
++                ThreadListStatus::Idle
++            }
++            ThreadStatus::Archived => ThreadListStatus::NotLoaded,
++            ThreadStatus::Failed => ThreadListStatus::SystemError,
++        },
++        cwd: thread.cwd.to_string_lossy().into_owned(),
++        cli_version: thread.cli_version,
++        source: match thread.source {
++            SessionSource::Interactive => ThreadListSource::Cli,
++            SessionSource::Api => ThreadListSource::AppServer,
++            SessionSource::Resume | SessionSource::Fork | SessionSource::Unknown => {
++                ThreadListSource::Unknown
++            }
++        },
++        project_id: None,
++        turns: Vec::new(),
++        name: thread.name,
 +    }
++}
 +
-+    pub(crate) fn profile_commit_matches(&self, editor_id: uuid::Uuid) -> bool {
-+        self.editor_id == editor_id && self.assignment.is_none() && self.step == Step::Review
+ pub(super) fn list_wire(
+     response: ThreadResponse,
+ ) -> codewhale_app_server_protocol::rpc::ThreadListResponse {
++    codewhale_app_server_protocol::rpc::ThreadListResponse {
++        data: response.threads.into_iter().map(wire_thread).collect(),
++        next_cursor: None,
++        backwards_cursor: None,
 +    }
++}
 +
-+    pub(crate) fn profile_save_failed(&mut self, reason: String) {
-+        self.notice = Some(reason);
-+        self.replace_armed = false;
-+        self.review_scroll = 0;
-     }
- 
-     pub(crate) fn assignment_context(&self) -> (String, String) {
-@@ -975,7 +977,7 @@ impl FleetSetupView {
-         let assignment = self
-             .assignment
-             .as_ref()
--            .filter(|assignment| assignment.editor_id == editor_id)?;
-+            .filter(|_| self.editor_id == editor_id)?;
-         Some(super::flee
++#[derive(serde::Deserialize)]
++struct WireTurnRow {
++    id: String,
++    status: String,
++    started_at: Option<chrono::DateTime<chrono::Utc>>,
++    ended_at: Option<chrono::DateTime<chrono::Utc>>,
++    duration_ms: Option<u64>,
++    error: Option<String>,
++    #[serde(default)]
++    item_ids: Vec<String>,
++}
++
++#[derive(serde::Deserialize)]
++struct WireItemRow {
++    id: String,
++    turn_id: String,
++    kind: String,
++    summary: String,
++    detail: Option<String>,
++}
++
++fn wire_turns(data: &Value) -> Result<Vec<codewhale_app_server_protocol::rpc::ThreadTurn>> {
+     use codewhale_app_server_protocol::rpc::{
+-        ThreadListItem, ThreadListResponse, ThreadListSource, ThreadListStatus,
++        ThreadTurn, ThreadTurnError, ThreadTurnItem, ThreadTurnItemsView, ThreadTurnStatus,
++        ThreadUserInput,
+     };
+-    ThreadListResponse {
+-        data: response
+-            .threads
+-            .into_iter()
+-            .map(|thread| ThreadListItem {
+-                session_id: thread.id.clone(),
+-                id: thread.id,
+-                preview: thread.preview,
+-                ephemeral: thread.ephemeral,
+-                model_provider: thread.model_provider,
+-                created_at: thread.created_at,
+-                updated_at: thread.updated_at,
+-                status: match thread.status {
+-                    ThreadStatus::Running => ThreadListStatus::Active {
+-                        active_flags: Vec::new(),
+-                    },
+-                    ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
+-                        ThreadListStatus::Idle
+-                    }
+-                    ThreadStatus::Archived => ThreadListStatus::NotLoaded,
+-                    ThreadStatus::Failed => ThreadListStatus::SystemError,
++    let turns: Vec<WireTurnRow> =
++        serde_json::from_value(data.get("turns").cloned().unwrap_or(Value::Null))
++            .context("canonical turn records are malformed")?;
++    let items: Vec<WireItemRow> =
++        serde_json::from_value(data.get("items").cloned().unwrap_or(Value::Null))
++            .context("canonical item records are malformed")?;
++    anyhow::ensure!(
++        turns.len() <= MAX_CANONICAL_HISTORY_ENTRIES
++            && items.len() <= MAX_CANONICAL_HISTORY_ENTRIES,
++        "canonical turn history exceeds bound"
++    );
++    turns
++        .into_iter()
++        .map(|turn| {
++            let mut own: Vec<&WireItemRow> = items
++                .iter()
++                .filter(|item| item.turn_id == turn.id)
++                .collect();
++            own.sort_by_key(|item| {
++                turn.item_ids
++                    .iter()
++                    .position(|id| *id == item.id)
++                    .unwrap_or(usize::MAX)
++            });
++            let mut complete = true;
++            let mut mapped = Vec::with_capacity(own.len());
++            for item in own {
++                let text = item.detail.clone().unwrap_or_else(|| item.summary.clone());
++                let id = item.id.clone();
++                match item.kind.as_str() {
++          
 ```
 
-**File**: `crates/tui/src/tui/views/mod.rs` (modified, +2/-0)
+---
+
+### Incident Patch 2: `1b17cad0` (2026-11-04)
+**Commit Message**: fix(app-server): return the pinned thread/list response shape
+
+thread/list returned the internal ThreadResponse, so the pinned `data` array
+was the unused default `{}` and the threads sat under a non-schema key. Adds
+a wire-only projection (ThreadListResponse/Item/Status/Source) with the pinned
+camelCase fields; sessionId is the public thread id, projectId null, turns [],
+cursors null, no invented metadata. The internal Thread type and
+thread/request kind=list are unchanged; strict unknown-parameter refusal stays.
+
+Verified (local, existing checks, source only): 65 passed, 0 failed across
+thread_list, thread_control, stdio, rpc, config_update, thread_message and the
+protocol schema+wire tests. Not verified: the pinned-schema validator harness
+against a native build; thread/start (13 issues) and thread/read (9) remain.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +52/-0)
 ```diff
-@@ -1077,8 +1077,10 @@ pub enum ViewEvent {
-     /// renders TOML deterministically from the validated draft and persists it
-     /// atomically in the explicitly selected project or personal scope.
-     FleetProfileDraftCommitRequested {
-+        editor_id: uuid::Uuid,
-         draft: Box<codewhale_engine::fleet::profile::FleetProfileDraft>,
-         scope: codewhale_engine::fleet::profile::FleetProfileScope,
-+        expected: Option<String>,
-     },
-     /// Emitted by the Fleet setup Model step when the user selects a route that
-     /// has structurally valid external-consent credentials but is not the
+@@ -115,6 +115,58 @@ pub struct ThreadLoadedListResponse {
+     pub next_cursor: Option<String>,
+ }
+ 
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadListResponse {
++    pub data: Vec<ThreadListItem>,
++    pub next_cursor: Option<String>,
++    pub backwards_cursor: Option<String>,
++}
++
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadListItem {
++    pub id: String,
++    pub session_id: String,
++    pub preview: String,
++    pub ephemeral: bool,
++    pub model_provider: String,
++    pub created_at: i64,
++    pub updated_at: i64,
++    pub status: ThreadListStatus,
++    pub cwd: String,
++    pub cli_version: String,
++    pub source: ThreadListSource,
++    pub project_id: Option<String>,
++    pub turns: Vec<serde_json::Value>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub name: Option<String>,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(tag = "type", rename_all = "camelCase")]
++pub enum ThreadListStatus {
++    NotLoaded,
++    Idle,
++    SystemError,
++    Active {
++        #[serde(rename = "activeFlags")]
++        active_flags: Vec<String>,
++    },
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub enum ThreadListSource {
++    Cli,
++    AppServer,
++    Unknown,
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+ #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+ #[serde(rename_all = "camelCase")]
+```
+
+**File**: `crates/app-server/src/stdio.rs` (modified, +1/-1)
+```diff
+@@ -1002,7 +1002,7 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
+             let request = ThreadRequest::List(parse_params(params_or_object(params))?);
+             let response = handle_thread_request(state, request).await?;
+             StdioDispatchResult {
+-                result: serde_json::to_value(response)
++                result: serde_json::to_value(thread_control::list_wire(response))
+                     .map_err(|err| DispatchError::internal(err.to_string()))?,
+                 should_exit: false,
+             }
+```
+
+**File**: `crates/app-server/src/thread_control.rs` (modified, +47/-0)
+```diff
+@@ -379,6 +379,53 @@ pub(super) async fn loaded(state: &AppState) -> Result<ThreadResponse> {
+     Ok(result)
+ }
+ 
++pub(super) fn list_wire(
++    response: ThreadResponse,
++) -> codewhale_app_server_protocol::rpc::ThreadListResponse {
++    use codewhale_app_server_protocol::rpc::{
++        ThreadListItem, ThreadListResponse, ThreadListSource, ThreadListStatus,
++    };
++    ThreadListResponse {
++        data: response
++            .threads
++            .into_iter()
++            .map(|thread| ThreadListItem {
++                session_id: thread.id.clone(),
++                id: thread.id,
++                preview: thread.preview,
++                ephemeral: thread.ephemeral,
++                model_provider: thread.model_provider,
++                created_at: thread.created_at,
++                updated_at: thread.updated_at,
++                status: match thread.status {
++                    ThreadStatus::Running => ThreadListStatus::Active {
++                        active_flags: Vec::new(),
++                    },
++                    ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
++                        ThreadListStatus::Idle
++                    }
++                    ThreadStatus::Archived => ThreadListStatus::NotLoaded,
++                    ThreadStatus::Failed => ThreadListStatus::SystemError,
++                },
++                cwd: thread.cwd.to_string_lossy().into_owned(),
++                cli_version: thread.cli_version,
++                source: match thread.source {
++                    SessionSource::Interactive => ThreadListSource::Cli,
++                    SessionSource::Api => ThreadListSource::AppServer,
++                    SessionSource::Resume | SessionSource::Fork | SessionSource::Unknown => {
++                        ThreadListSource::Unknown
++                    }
++                },
++                project_id: None,
++                turns: Vec::new(),
++                name: thread.name,
++            })
++            .collect(),
++        next_cursor: None,
++        backwards_cursor: None,
++    }
++}
++
+ async fn list(
+     state: &AppState,
+     params: codewhale_protocol::ThreadListParams,
+```
+
+---
+
+### Incident Patch 3: `cbb7380f` (2026-11-04)
+**Commit Message**: fix(app-server): accept and return the pinned thread/start contract
+
+thread/start now parses the pinned camelCase ThreadStartParams (deny unknown
+fields) and returns the pinned seven-field ThreadStartResponse with the shared
+wire Thread projection. model, modelProvider, cwd, a false/absent ephemeral and
+operationKey are honored; personality and threadSource are accepted and ignored
+(deprecated / analytics-only in the pinned schema). Fields the Engine cannot
+honor (ephemeral true, approvalPolicy, approvalsReviewer, sandbox, config,
+baseInstructions, developerInstructions, serviceName, serviceTier,
+sessionStartSource) are refused together with a typed -32602
+unsupported_thread_start_parameter error instead of being ignored. Pinned
+clients cannot send an operationKey, so one is minted: retry idempotency is
+weaker for them. approvalPolicy/approvalsReviewer/sandbox report never/user/
+readOnly because native turns run tool-free while the full-tool gate is closed.
+The existing goal-methods test now sends operationKey and reads thread.id.
+
+Verified (local, existing checks, source only): 151 passed, 0 failed across
+thread, stdio, rpc, goal, dispatch and the protocol schema+wire tests. Not
+v
+
+**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +42/-0)
+```diff
+@@ -167,6 +167,48 @@ pub enum ThreadListSource {
+     Unknown,
+ }
+ 
++#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase", deny_unknown_fields)]
++pub struct ThreadStartParams {
++    pub operation_key: Option<String>,
++    pub model: Option<String>,
++    pub model_provider: Option<String>,
++    pub cwd: Option<String>,
++    pub ephemeral: Option<bool>,
++    pub approval_policy: Option<Value>,
++    pub approvals_reviewer: Option<Value>,
++    pub sandbox: Option<Value>,
++    pub config: Option<Value>,
++    pub base_instructions: Option<String>,
++    pub developer_instructions: Option<String>,
++    pub service_name: Option<String>,
++    pub service_tier: Option<String>,
++    pub session_start_source: Option<Value>,
++    pub personality: Option<Value>,
++    pub thread_source: Option<String>,
++}
++
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(rename_all = "camelCase")]
++pub struct ThreadStartResponse {
++    pub thread: ThreadListItem,
++    pub model: String,
++    pub model_provider: String,
++    pub cwd: String,
++    pub approval_policy: String,
++    pub approvals_reviewer: String,
++    pub sandbox: ThreadSandboxPolicy,
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
++#[serde(tag = "type", rename_all = "camelCase")]
++pub enum ThreadSandboxPolicy {
++    ReadOnly,
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+ #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+ #[serde(rename_all = "camelCase", deny_unknown_fields)]
+```
+
+**File**: `crates/app-server/src/stdio.rs` (modified, +6/-2)
+```diff
+@@ -967,11 +967,15 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
+             }
+         }
+         "thread/start" => {
+-            let request = ThreadRequest::Start(parse_params(params_or_object(params))?);
++            let params: codewhale_app_server_protocol::rpc::ThreadStartParams =
++                parse_params(params_or_object(params))?;
++            let request = ThreadRequest::Start(thread_control::start_params(params)?);
+             let response = handle_thread_request(state, request).await?;
+             record_stdio_thread_hint(state, &response).await;
++            let wire = thread_control::start_wire(response)
++                .map_err(|err| DispatchError::internal(format!("{err:#}")))?;
+             StdioDispatchResult {
+-                result: serde_json::to_value(response)
++                result: serde_json::to_value(wire)
+                     .map_err(|err| DispatchError::internal(err.to_string()))?,
+                 should_exit: false,
+             }
+```
+
+**File**: `crates/app-server/src/tests.rs` (modified, +2/-2)
+```diff
+@@ -1785,11 +1785,11 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
+     let started = dispatch_stdio_request(
+         &state,
+         "thread/start",
+-        json!({"operation_key":"goal-start"}),
++        json!({"operationKey":"goal-start"}),
+     )
+     .await
+     .unwrap();
+-    let id = started.result["thread_id"].as_str().unwrap();
++    let id = started.result["thread"]["id"].as_str().unwrap();
+     let set = dispatch_stdio_request(
+         &state,
+         "thread/goal/set",
+```
+
+**File**: `crates/app-server/src/thread_control.rs` (modified, +71/-0)
+```diff
+@@ -521,6 +521,77 @@ fn wire_turns(data: &Value) -> Result<Vec<codewhale_app_server_protocol::rpc::Th
+         .collect()
+ }
+ 
++pub(super) fn start_params(
++    params: codewhale_app_server_protocol::rpc::ThreadStartParams,
++) -> std::result::Result<codewhale_protocol::ThreadStartParams, DispatchError> {
++    let refused: Vec<&str> = [
++        ("ephemeral", params.ephemeral == Some(true)),
++        ("approvalPolicy", params.approval_policy.is_some()),
++        ("approvalsReviewer", params.approvals_reviewer.is_some()),
++        ("sandbox", params.sandbox.is_some()),
++        ("config", params.config.is_some()),
++        ("baseInstructions", params.base_instructions.is_some()),
++        (
++            "developerInstructions",
++            params.developer_instructions.is_some(),
++        ),
++        ("serviceName", params.service_name.is_some()),
++        ("serviceTier", params.service_tier.is_some()),
++        ("sessionStartSource", params.session_start_source.is_some()),
++    ]
++    .into_iter()
++    .filter_map(|(name, set)| set.then_some(name))
++    .collect();
++    if !refused.is_empty() {
++        return Err(DispatchError {
++            wire: RpcErrorDetails {
++                code: -32602,
++                message: format!(
++                    "thread/start cannot honor {}: threads are durable and tool-free with a fixed read-only sandbox, and these settings are not applied",
++                    refused.join(", ")
++                ),
++                data: Some(json!({
++                    "error": "unsupported_thread_start_parameter",
++                    "parameters": refused,
++                })),
++            },
++            transport_error: None,
++        });
++    }
++    Ok(codewhale_protocol::ThreadStartParams {
++        operation_key: Some(
++            params
++                .operation_key
++                .unwrap_or_else(|| Uuid::new_v4().to_string()),
++        ),
++        model: params.model,
++        model_provider: params.model_provider,
++        cwd: params.cwd.map(PathBuf::from),
++        persist_extended_history: false,
++    })
++}
++
++pub(super) fn start_wire(
++    response: ThreadResponse,
++) -> Result<codewhale_app_server_protocol::rpc::ThreadStartResponse> {
++    let thread = wire_thread(
++        response
++            .thread
++            .context("canonical start returned no thread")?,
++    );
++    Ok(codewhale_app_server_protocol::rpc::ThreadStartResponse {
++        model: response
++            .model
++            .context("canonical start returned no model")?,
++        model_provider: thread.model_provider.clone(),
++        cwd: thread.cwd.clone(),
++        approval_policy: "never".to_owned(),
++        approvals_reviewer: "user".to_owned(),
++        sandbox: codewhale_app_server_protocol::rpc::ThreadSandboxPolicy::ReadOnly,
++        thread,
++    })
++}
++
+ pub(super) fn read_wire(
+     response: ThreadResponse,
+     include_turns: bool,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7204** (closed): fix(ci): qualify session ownership and terminal regressions after #7138 (@zhuowp)
 - **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
 - **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
 - **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
 - **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
 - **PR #7198** (2026-11-03): fix(tui): stop math with non-ASCII text from crashing the TUI (@Lstarsky0)
-- **PR #7197** (2026-11-03): fix(tui): size table columns from their content (@Lstarsky0)
 
 ---
 
@@ -2789,25 +2494,59 @@ processes proved stale-save refusal, model-d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): bind file rewind to the selected reviewed range [skip ci]
+## X. app-server): project thread/read onto the pinned ThreadReadResponse
 
 **RULE**:
-When implementing operations in `crates/app-server-protocol/schema/json/runtime.schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/app-server-protocol/src/rpc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb17ae0e`: runtime): bind file rewind to the selected reviewed range [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81317c5d`: app-server): project thread/read onto the pinned ThreadReadResponse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server-protocol/schema/json/runtime.schema.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server-protocol/src/rpc.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "thread_patch_undo_turn_id": {
-          "type": "boolean",
-          "default": false
-        },
-        "thread_patch_undo_turn_id",
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ThreadReadParams {
+    pub thread_id: String,
+    #[serde(default)]
+    pub include_turns: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "camelCase")]
+pub struct ThreadReadResponse {
+    pub thread: ThreadListItem,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "camelCase")]
+pub struct ThreadTurn {
+    pub id: String,
+    pub items: Vec<ThreadTurnItem>,
+    pub items_view: ThreadTurnItemsView,
+    pub status: ThreadTurnStatus,
+    pub error: Option<ThreadTurnError>,
+    pub started_at: Option<i64>,
+    pub completed_at: Option<i64>,
+    pub duration_ms: Option<i64>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "camelCase")]
+pub enum ThreadTurnItemsView {
+    Summary,
+    Full,
+}
+
+#[deri
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2817,4 +2556,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb17ae0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81317c5d` are properly handled with clean fallback behavior.

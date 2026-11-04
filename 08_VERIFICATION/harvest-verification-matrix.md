@@ -7348,3 +7348,6 @@
 | `CYCLE-20261104-MILR` | `2026-11-04T21:26:19.311Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6978` | Yes (`4cba16ee...`) |
 | `CYCLE-20261104-MKVJ` | `2026-11-04T21:26:22.255Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6913` | Yes (`9b79d23c...`) |
 | `CYCLE-20261104-MPDZ` | `2026-11-04T21:26:28.103Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`64fd6ba1...`) |
+| `CYCLE-20261104-V4HZ` | `2026-11-04T21:33:00.935Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6979` | Yes (`8df5b79c...`) |
+| `CYCLE-20261104-V588` | `2026-11-04T21:33:01.880Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6980` | Yes (`b3389017...`) |
+| `CYCLE-20261104-YTL8` | `2026-11-04T21:35:53.420Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | Yes (`1a901e8e...`) |

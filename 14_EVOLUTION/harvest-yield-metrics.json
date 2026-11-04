@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T21:26:28.122Z",
-  "total_cycles_completed": 7325,
-  "total_learnings_persisted": 7325,
-  "total_rules_promoted": 7022,
+  "last_updated": "2026-11-04T21:35:53.430Z",
+  "total_cycles_completed": 7328,
+  "total_learnings_persisted": 7328,
+  "total_rules_promoted": 7024,
   "history": [
-    {
-      "timestamp": "2026-11-04T03:51:14.220Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:51:14.523Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T03:57:39.775Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T03:57:45.948Z",
       "repository": "HelixDB/helix-db",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T21:26:28.122Z",
       "repository": "Qwen/Qwen3.8-27B",
       "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:33:00.941Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:33:01.886Z",
+      "repository": "apollographql/apollo-kotlin",
+      "learningId": "learn-github-apollographql-apollo-kotlin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T21:35:53.430Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

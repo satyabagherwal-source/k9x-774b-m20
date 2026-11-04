@@ -7063,10 +7063,10 @@
     "repository": "apollographql/apollo-kotlin",
     "platform": "github",
     "sourceUrl": "https://github.com/apollographql/apollo-kotlin",
-    "sourceVersion": "c4701d11",
+    "sourceVersion": "e1178ba3",
     "license": "MIT",
-    "contentHash": "56b2f637a9d482399bcba6e55d9832ec70b3b06e6138bacc45b341157c65bb85",
-    "lastHarvestedAt": "2026-10-31T14:08:14.800Z",
+    "contentHash": "b3389017efa9d109838d20bbecc0055f8a26145316ef57b168f8b92e4088003d",
+    "lastHarvestedAt": "2026-11-04T21:33:01.882Z",
     "learningId": "learn-github-apollographql-apollo-kotlin"
   },
   "crate-ci-typos": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "f4978e8f",
+    "sourceVersion": "cbb7380f",
     "license": "MIT",
-    "contentHash": "18b09878035c7f7d6a4840dc639c46d3fa2727c625a9a1529c4dc3c2b1578579",
-    "lastHarvestedAt": "2026-11-03T17:14:14.163Z",
+    "contentHash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
+    "lastHarvestedAt": "2026-11-04T21:33:00.937Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
-    "lastHarvestedAt": "2026-10-31T05:45:35.083Z",
+    "contentHash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
+    "lastHarvestedAt": "2026-11-04T21:35:53.426Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
