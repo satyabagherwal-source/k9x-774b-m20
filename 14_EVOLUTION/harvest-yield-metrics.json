@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T22:12:49.064Z",
-  "total_cycles_completed": 7345,
-  "total_learnings_persisted": 7345,
-  "total_rules_promoted": 7042,
+  "last_updated": "2026-11-04T22:20:18.015Z",
+  "total_cycles_completed": 7348,
+  "total_learnings_persisted": 7348,
+  "total_rules_promoted": 7044,
   "history": [
-    {
-      "timestamp": "2026-11-04T07:55:46.206Z",
-      "repository": "faker-js/faker",
-      "learningId": "learn-github-faker-js-faker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:03:21.370Z",
-      "repository": "margelo/react-native-vision-camera",
-      "learningId": "learn-github-margelo-react-native-vision-camera",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T08:04:23.664Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T08:06:06.088Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-04T22:12:49.064Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:20:03.262Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:20:07.358Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T22:20:18.015Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

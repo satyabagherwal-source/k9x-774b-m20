@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T22:12:48.966Z",
+  "last_updated": "2026-11-04T22:20:17.913Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32065,7 +32065,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
+      "content_hash": "5986e129ecfdbd47cb8280d43fcbfc6bf3f1e0ad16a000244c8ad2fb79fb8f3f",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -32132,7 +32132,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-31T06:38:22.823Z",
+      "verified_at": "2026-11-04T22:20:03.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37287,8 +37287,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "28f8ba4a",
-      "content_hash": "3a36ea3ccd9b8e09a1528e09b173a14ffe733b5c4e534a59a9de2dfabe60c170",
+      "source_version": "a82bcc47",
+      "content_hash": "0737dd76b0f1d00f25101c72710783aca083da77f6ad688356911c9d794ef4b3",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -37346,6 +37346,11 @@
           "number": 6653,
           "title": "mcp): limit the size of messages received by the Streamable HTTP and WebSocket t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6998,
+          "title": "VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37353,7 +37358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:13:19.136Z",
+      "verified_at": "2026-11-04T22:20:17.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46664,8 +46669,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "675ee5b9",
-      "content_hash": "9220c2d6414fb83bb14dace9ffefab48c3ba78017b28ec3fab5069245f0408e0",
+      "source_version": "e57d89ba",
+      "content_hash": "50de829d661300f4bda062b954b19367ff13c4aeb8edcbd85907dcec083087a9",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -46723,6 +46728,11 @@
           "number": 6567,
           "title": "node:crypto, webcrypto: a third batch of Node compatibility fixes (#47591)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6997,
+          "title": "Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46730,7 +46740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:02:27.746Z",
+      "verified_at": "2026-11-04T22:20:07.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177918,6 +177928,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T22:12:48.934Z"
+    },
+    "rule-6997": {
+      "learning_id": "rule-6997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6997,
+      "title": "Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "e57d89ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:20:07.227Z"
+    },
+    "rule-6998": {
+      "learning_id": "rule-6998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6998,
+      "title": "VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through o",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "a82bcc47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T22:20:17.883Z"
     }
   },
   "aliases": {

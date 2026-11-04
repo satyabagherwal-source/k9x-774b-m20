@@ -7368,3 +7368,6 @@
 | `CYCLE-20261104-A6G3` | `2026-11-04T22:12:42.915Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6993, Rule 498, Rule 6994` | Yes (`7d5d6fdb...`) |
 | `CYCLE-20261104-A9GV` | `2026-11-04T22:12:46.831Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6995` | Yes (`09aa0dc1...`) |
 | `CYCLE-20261104-AB6M` | `2026-11-04T22:12:49.054Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6996` | Yes (`8f9f0f76...`) |
+| `CYCLE-20261104-JM7H` | `2026-11-04T22:20:03.245Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`5986e129...`) |
+| `CYCLE-20261104-JPDG` | `2026-11-04T22:20:07.348Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6997` | Yes (`50de829d...`) |
+| `CYCLE-20261104-JXLH` | `2026-11-04T22:20:18.005Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6998` | Yes (`0737dd76...`) |

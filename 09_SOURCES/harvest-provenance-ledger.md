@@ -7377,3 +7377,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-04T22:12:42.919Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0d48b774` | Multi-dimensional audit evidence | 2026-11-04T22:12:46.835Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `55fbddc1` | Multi-dimensional audit evidence | 2026-11-04T22:12:49.058Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-04T22:20:03.255Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e57d89ba` | Multi-dimensional audit evidence | 2026-11-04T22:20:07.352Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `a82bcc47` | Multi-dimensional audit evidence | 2026-11-04T22:20:18.009Z |
