@@ -7341,3 +7341,7 @@ Every entry in this ledger must capture:
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `b5012d56` | Multi-dimensional audit evidence | 2026-11-04T20:46:42.885Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `97df5a8b` | Multi-dimensional audit evidence | 2026-11-04T20:46:46.771Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `6c1f8d15` | Multi-dimensional audit evidence | 2026-11-04T20:46:50.105Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `f302922e` | Multi-dimensional audit evidence | 2026-11-04T20:53:16.403Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `ef6638a9` | Multi-dimensional audit evidence | 2026-11-04T20:53:20.153Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-04T20:53:22.738Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `9e152c7c` | Multi-dimensional audit evidence | 2026-11-04T20:53:29.894Z |

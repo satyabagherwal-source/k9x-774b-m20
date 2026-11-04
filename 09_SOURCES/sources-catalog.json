@@ -130,13 +130,13 @@
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
-    "lastHarvestedAt": "2026-10-31T05:07:17.205Z",
+    "contentHash": "cc6cff66e5b12794f0d6c91b88cda834fd03856f3b5bb044813ae9c77387597c",
+    "lastHarvestedAt": "2026-11-04T20:53:22.738Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "f481da3f",
+    "sourceVersion": "9e152c7c",
     "license": "NOASSERTION",
-    "contentHash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
-    "lastHarvestedAt": "2026-11-03T21:36:52.832Z",
+    "contentHash": "5cec20d7e0b7cb9cdef1a31c41782a1b02f13b57b755293a2d5351996e9402dc",
+    "lastHarvestedAt": "2026-11-04T20:53:29.894Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "6b406fe8",
+    "sourceVersion": "f302922e",
     "license": "MIT",
-    "contentHash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
-    "lastHarvestedAt": "2026-11-03T16:32:18.727Z",
+    "contentHash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
+    "lastHarvestedAt": "2026-11-04T20:53:16.403Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "c7fd75f9",
+    "sourceVersion": "ef6638a9",
     "license": "MIT",
-    "contentHash": "603c8c55c7bf24c32a734b499124cccf55caa5d66bfc03153040207a1f5e77d9",
-    "lastHarvestedAt": "2026-11-03T22:32:03.502Z",
+    "contentHash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
+    "lastHarvestedAt": "2026-11-04T20:53:20.153Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

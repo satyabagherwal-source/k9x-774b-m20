@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T20:46:50.015Z",
+  "last_updated": "2026-11-04T20:53:29.835Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -869,8 +869,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "6b406fe8",
-      "content_hash": "fd09ef163bbca330d55cdf429a2b579357631f6bc0c5da072fdf5e7763aa0500",
+      "source_version": "f302922e",
+      "content_hash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -938,6 +938,11 @@
           "number": 6541,
           "title": "serve): retry an idle workerless session whose queue is stranded (#5203)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6967,
+          "title": "worktree): revalidate cleanup candidates after the confirmation prompt (#5263)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -945,7 +950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:32:18.638Z",
+      "verified_at": "2026-11-04T20:53:16.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17593,13 +17598,13 @@
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "slug": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
+      "content_hash": "cc6cff66e5b12794f0d6c91b88cda834fd03856f3b5bb044813ae9c77387597c",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -17641,6 +17646,16 @@
         {
           "number": 6077,
           "title": "Quantization Format-Specific Tensor Layout Compliance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6969,
+          "title": "Quantization Format-Backend Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6970,
+          "title": "Turbo Model Inference Parameter Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17984,7 +17999,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-31T05:07:17.142Z",
+      "verified_at": "2026-11-04T20:53:22.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60472,8 +60487,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "f481da3f",
-      "content_hash": "d49175d9469eb19f030075d4ed945457e9f97050a964bddffab838fefb941fa8",
+      "source_version": "9e152c7c",
+      "content_hash": "5cec20d7e0b7cb9cdef1a31c41782a1b02f13b57b755293a2d5351996e9402dc",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -60501,6 +60516,11 @@
           "number": 6620,
           "title": "Merge pull request #13646 from weaviate/fix/close-busy-http-servers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6971,
+          "title": "rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60508,7 +60528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:36:52.723Z",
+      "verified_at": "2026-11-04T20:53:29.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155000,8 +155020,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "c7fd75f9",
-      "content_hash": "603c8c55c7bf24c32a734b499124cccf55caa5d66bfc03153040207a1f5e77d9",
+      "source_version": "ef6638a9",
+      "content_hash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -155029,6 +155049,11 @@
           "number": 6645,
           "title": "The owl-dl headline says consistent: null when the search that would decide it d",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6968,
+          "title": "Merge pull request #363 from fabio-rovai/deps/calamine-0.38",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -155036,7 +155061,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:32:03.387Z",
+      "verified_at": "2026-11-04T20:53:20.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177338,6 +177363,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T20:46:49.992Z"
+    },
+    "rule-6967": {
+      "learning_id": "rule-6967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6967,
+      "title": "worktree): revalidate cleanup candidates after the confirmation prompt (#5263)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "f302922e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:53:16.338Z"
+    },
+    "rule-6968": {
+      "learning_id": "rule-6968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6968,
+      "title": "Merge pull request #363 from fabio-rovai/deps/calamine-0.38",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "ef6638a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:53:20.088Z"
+    },
+    "rule-6969": {
+      "learning_id": "rule-6969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6969,
+      "title": "Quantization Format-Backend Compatibility Invariant",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:53:22.673Z"
+    },
+    "rule-6970": {
+      "learning_id": "rule-6970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6970,
+      "title": "Turbo Model Inference Parameter Invariant",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:53:22.673Z"
+    },
+    "rule-6971": {
+      "learning_id": "rule-6971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6971,
+      "title": "rbac): remove `policy.csv` and rebuild RBAC state from raft (#13638)",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "9e152c7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T20:53:29.822Z"
     }
   },
   "aliases": {

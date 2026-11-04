@@ -7332,3 +7332,7 @@
 | `CYCLE-20261104-7KXS` | `2026-11-04T20:46:42.880Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6964` | Yes (`bf18c488...`) |
 | `CYCLE-20261104-7NXR` | `2026-11-04T20:46:46.767Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6965` | Yes (`371c9917...`) |
 | `CYCLE-20261104-7QID` | `2026-11-04T20:46:50.101Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6966` | Yes (`853567fc...`) |
+| `CYCLE-20261104-G0KW` | `2026-11-04T20:53:16.400Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6967` | Yes (`c02400cd...`) |
+| `CYCLE-20261104-G3H3` | `2026-11-04T20:53:20.151Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6968` | Yes (`d7a4adf1...`) |
+| `CYCLE-20261104-G5GW` | `2026-11-04T20:53:22.736Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6969, Rule 6970` | Yes (`cc6cff66...`) |
+| `CYCLE-20261104-GAZN` | `2026-11-04T20:53:29.891Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6971` | Yes (`5cec20d7...`) |

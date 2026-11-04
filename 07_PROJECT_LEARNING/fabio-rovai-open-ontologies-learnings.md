@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `c7fd75f9`  
+> **Source Version**: `ef6638a9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:32:02.702Z  
+> **Timestamp**: 2026-11-04T20:53:19.674Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:32:01.941Z  
+> **Harvest Timestamp**: 2026-11-04T20:53:19.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2797 stars
+- **Stars / Engagement**: 2810 stars
 
 ---
 
@@ -730,6 +730,9 @@ class OntologyEngine:
 
 ### Core Architecture Module: `src/borderline_loop.rs`
 ```
+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+// SPDX-License-Identifier: MIT
+
 //! Generalised iterative borderline-pair review loop (#37, NORA NeurIPS
 //! 2025).
 //!
@@ -962,6 +965,9 @@ mod tests {
 
 ### Core Architecture Module: `src/boundary_core.rs`
 ```
+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+// SPDX-License-Identifier: MIT
+
 //! The pure core of the certificate boundary, over bytes and nothing else.
 //!
 //! `docs/trusted-computing-base.md` says that every Lean theorem in `lean/` is
@@ -1140,6 +1146,9 @@ pub fn push_triple_fields_bytes(
 
 ### Core Architecture Module: `src/state.rs`
 ```
+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+// SPDX-License-Identifier: MIT
+
 use anyhow::Result;
 use rusqlite::Connection;
 use std::path::Path;
@@ -1429,12 +1438,14 @@ fn column_exists(conn: &Connection, table: &str, column: &str) -> Result<bool> {
 ///
 /// Not a [`MIGRATIONS`] entry, by that list's own rule: it exists for *columns
 /// added to tables that already shipped*, and `plans` has never appeared in a
-/// release — it was added and then given an owner within the same unreleased
-//
+///
 ```
 
 ### Core Architecture Module: `src/webhook.rs`
 ```
+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+// SPDX-License-Identifier: MIT
+
 use std::time::Duration;
 
 /// Fire-and-forget webhook delivery. Timeout is configurable via
@@ -1505,6 +1516,9 @@ console.log(`Prepared bundled engine binary: ${destination}`);
 
 ### Core Architecture Module: `studio/src-tauri/src/engine.rs`
 ```
+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+// SPDX-License-Identifier: MIT
+
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
@@ -1740,677 +1754,462 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `842cad59` (2026-11-01)
-**Commit Message**: The owl-dl headline says consistent: null when the search that would decide it did not finish
+### Incident Patch 1: `ef6638a9` (2026-11-04)
+**Commit Message**: Merge pull request #363 from fabio-rovai/deps/calamine-0.38
 
-`consistent` was `tbox_consistent && abox.consistent`, and both default to
-consistent when their search runs out. An inconsistent knowledge base whose
-ABox phase hit the clock or the node cap therefore printed a definite
-`"consistent": true` beside `complete: false` and `abox.undecided: true`
-(#355). It is now false when either phase proves a clash, null when the TBox
-consistency test or the ABox check ran out without one, and true only when
-both finished. `tbox_consistent` and `abox.consistent` follow the same rule.
+XLSX ingest reads with calamine 0.38, so main's audit passes again
 
-The TBox consistency test had the same fold one level up and was never
-counted as a phase that ran out. `decide_consistency_within` returns its
-three-valued verdict and the clock that stopped it, so `consistency` now
-appears in `budget_exhausted_in`, makes `search_finished` false, and is
-named in `budget.note`. `ABoxResult` and the public `is_consistent()` keep
-their documented "not proven inconsistent" reading; only the JSON changes.
-
-The regression test drives the binary with `[reasoner] tableaux_max_nodes =
-50`, the trigger reported on the issue, because the step cap cann
-
-**File**: `CHANGELOG.md` (modified, +16/-0)
+**File**: `.cargo/audit.toml` (modified, +26/-40)
 ```diff
-@@ -151,6 +151,22 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **`reason --profile owl-dl` says `consistent: null` when the search that
-+  would decide it did not finish** (#355). The headline was `tbox &&
-+  abox.consistent`, and both default to consistent when their search runs
-+  out, so an inconsistent knowledge base whose ABox phase hit the clock or
-+  the node cap printed a definite `"consistent": true` beside `complete:
-+  false` and `abox.undecided: true`. `consistent` is now `false` when either
-+  phase proves a clash, `null` when the TBox consistency test or the ABox
-+  check ran out without one, and `true` only when both finished.
-+  `tbox_consistent` and `abox.consistent` follow the same rule. The TBox
-+  consistency test had the same fold one level up and was never counted as a
-+  phase that ran out: it is now listed as `consistency` in
-+  `budget_exhausted_in`, it makes `search_finished` false, and `budget.note`
-+  names the clock or cap that stopped it. A run whose search finished reports
-+  exactly what it did before, `complete: false` over unmodelled constructs
-+  included. The human rendering prints `consistent: undetermined`.
-+
- - **`--human` renders each command's result by the command's name, so `diff`
-   counts the triples it found and an undetermined `shacl` run says so**
-   (#350, #345). The one-shot CLI called a renderer that picked a rendering by
+@@ -1,48 +1,34 @@
+ [advisories]
+ ignore = [
+-    # quick-xml denial of service advisories, both patched in 0.41.0. This
+-    # project's direct dependency is still quick-xml 0.37 (see Cargo.toml), and
+-    # Cargo.lock resolves exactly one quick-xml, version 0.37.5, shared by that
+-    # direct dependency, calamine 0.30.1, and oxrdfxml 0.2.5 and sparesults
+-    # 0.3.5. Those two come from the oxigraph fork that [patch.crates-io] in
+-    # Cargo.toml pins by rev, not from crates.io, so no upstream release can
+-    # move them on its own. Bumping the direct pin alone would not clear the
+-    # advisory either, because the fork's oxrdfxml and sparesults still require
+-    # quick-xml "0.37" and the 0.37.5 lockfile entry would stay.
+-    # Our own call site is Ingest::parse_xml in src/ingest.rs, which uses a
+-    # plain quick_xml Reader and never constructs an NsReader or calls
++    # quick-xml denial of service advisories, both patched in 0.41.0.
++    # Cargo.lock holds two quick-xml, so a bare `cargo tree -i quick-xml` asks
++    # which. `cargo tree -i quick-xml@0.37.5`, with or without --all-features,
++    # names three users of the advised one: this crate's direct dependency
++    # (quick-xml 0.37 in Cargo.toml), oxrdfxml 0.2.5 through oxrdfio and
++    # oxigraph, and sparesults 0.3.5 through oxigraph and spareval.
++    # `cargo tree -i quick-xml@0.42.0` names calamine 0.38.0 alone, and 0.42.0
++    # is patched. oxrdfxml and sparesults come from the oxigraph fork that
++    # [patch.crates-io] in Cargo.toml pins by rev, not from crates.io, so no
++    # upstream release can move them on its own. Bumping the direct pin alone
++    # would not clear the advisory either, because the fork's oxrdfxml and
++    # sparesults still require quick-xml "0.37" and the 0.37.5 lockfile entry
++    # would stay.
++    # Our own call sites are two. DataIngester::parse_xml in src/ingest.rs uses
++    # a plain quick_xml Reader and never constructs an NsReader or calls
+     # attributes(), so it falls outside the affected code paths of both
+-    # advisories. The oxigraph RDF/XML path falls inside them, because oxrdfxml
+-    # parses with NsReader and iterates start tag attributes, and that path is
+-    # reachable from third-party input: src/marketplace.rs accepts the "rdfxml"
+-    # format for community packs fetched over HTTP, and src/server.rs loads
+-    # that fetched content into the store. The risk accepted here is
+-    # availability only, and the HTTP transport binds 127.0.0.1 by default.
++    # advisories. The RIF Core reader in src/rulesyntax.rs (`rules-import
++    # --from rif` on the CLI and in batch, and onto_rules_import) builds an
++    # NsReader and iterates attributes, so it falls inside both, on a local
++    # file its caller names. The oxigraph RDF/XML path falls inside them too,
++    # because oxrdfxml parses with NsReader and iterates start tag attributes,
++    # and that path is reachable from third-party input: src/marketplace.rs
++    # accepts the "rdfxml" format for community packs fetched over HTTP, and
++    # src/server.rs loads that fetched content into the store. The risk
++    # accepted here is availability only, and the HTTP transport binds
++    # 127.0.0.1 by default.
+     # Remove these entries once the patched fork's oxrdfxml and sparesults
+     # build on quick-xml 0.41 or later, or the patch is dropped for an oxigraph
+-    # release whose crates do.
++    # release whose crates do, and the direct dependency moves with them.
+     "RUSTSEC-2026-0194",
+     "RUSTSEC-2026-0195",
+-    # zip archive-extraction advisories (symlink escape, SUID/SGID bits kept,
+-    # permissions applied through symlinks, and since 2 Nov 2026 an abort on a
+-    # symlink entry with a large declared size), all patched only in zip 9.0.0.
+-    # Every one of them is in ZipArchive::extract / ZipStreamReader::extract,
+-    # which write an archive out to disk. The one remaining path to an affected
+-    # zip is calamine 0.30.1 -> zip 4.6.1 (`cargo tree --all-features -i zip`),
+-    # and calamine never extracts: it opens the workbook with ZipArchive::new
+-    # and reads entries into memory with by_name and by_index, and its source
+-    # contains no call to extract or ZipStreamReader. calamine 0.37.0
+-    # (18 Oct 2026) requires zip "^9.0", so moving Cargo.toml's calamine from
+-    # 0.30 to 0.37 clears all three. That bump crosses seven breaking calamine
+-    # releases and also pulls in quick-xml "^0.42" beside the 0.37.5 above, so
+-    # it is a change to the spreadsheet reader to be made and tested on its
+-    # own, not a lockfile edit.
+-    # The other path, duckdb's build-dependency libduckdb-sys, was cleared by
+-    # updating duckdb to 1.10506.1, which requires zip "^9". That same update
+-    # dropped rust_decimal and with it rkyv, so the RUSTSEC-2026-0235 entry
+-    # that stood here is gone. Remove these with that calamine bump.
+-    "RUSTSEC-2026-0367",
+-    "RUSTSEC-2026-0368",
+-    "RUSTSEC-2026-0369",
+-    
 ```
 
-**File**: `src/tableaux.rs` (modified, +50/-11)
+**File**: `CHANGELOG.md` (modified, +48/-0)
 ```diff
-@@ -3536,9 +3536,26 @@ impl DlReasoner {
-     /// `is_consistent` under a ceiling the caller already opened. This is the
-     /// first phase of a run and used to be outside the global budget entirely.
-     pub fn is_consistent_within(&self, global: Option<Instant>) -> bool {
--        !self
--            .decide_satisfiable_within(&Concept::Top, self.phase_deadline_within(global))
--            .is_unsat()
-+        !self.decide_consistency_within(global).0.is_unsat()
-+    }
+@@ -214,6 +214,54 @@ All notable changes to Open Ontologies are documented here.
+   `--locked`. A lockfile update clears three `cargo audit` warnings (tokio,
+   event-listener, chacha20), and an ignore entry that matched nothing is gone.
+ 
++- **XLSX ingest reads with calamine 0.38, and `cargo audit` no longer finds
++  zip 4.6.1 or calamine 0.30.** calamine 0.30 required zip 4, and zip 4.6.1
++  carries four advisories patched only in zip 9, RUSTSEC-2026-0367, 0368, 0369
++  and 0429, which `.cargo/audit.toml` ignored; the last reached the advisory
++  database on 2 Nov 2026. All four are in `ZipArchive::extract` or
++  `ZipStreamReader::extract`, which calamine never calls. calamine 0.37 and
++  later require zip 9, and the four ignores are gone. RUSTSEC-2026-0436, a
++  panic and unbounded allocation in calamine's CFB parser on a malformed
++  compound file, failed the scheduled audit of main on 3 Nov 2026 and is
++  patched in 0.38.0. The CFB parser reads XLS files and VBA projects, and
++  ingest opens only XLSX and never reads a VBA project, but the audit fails
++  on the lockfile whatever the call sites, and 0.38.0 is the release. No call
++  site changed. 0.38.0 also reads an XLSX package whose workbook part is not
++  `xl/workbook.xml`, by following `_rels/.rels`, and decodes every `_xHHHH_`
++  escape, surrogate pairs included, where 0.37 decoded `_x00HH_` alone.
++  Measured on calamine 0.37.0 against 0.30, on 28 workbooks of ordinary content (the four
++  committed fixtures, and 24 built to cover every cell type, 32 built-in and
++  44 custom number formats in both date systems, rich, phonetic and inline
++  strings, offset and sparse layouts, formulas and Strict OOXML), the rows
++  `parse_xlsx_file` returns, the header order and the datatypes `onto_induce`
++  infers are identical. On 37 workbooks built to isolate the changes in
++  calamine's changelog, and in three of 63 LibreOffice 26.2 re-saves, cells
++  that calamine 0.30 read wrongly now read as the workbook says. An empty
++  shared string, `<si/>` or one holding only a phonetic run, no longer moves
++  every later shared string onto the wrong cell. An empty `<v/>` in a
++  shared-string, boolean or untyped cell is empty, where the first two read
++  the first shared string and `true`, so none of them makes its row the header
++  any more. A boolean `FALSE` is false. Excel's `_x00HH_` escapes are decoded,
++  so the `_x000D_` Excel writes for a carriage return is one. A custom number
++  format is tested for dates after its entities are decoded, so
++  `"Week of "d mmm yyyy` formats a date, and a `*` fill takes the next
++  character literally, so `0*s` formats a number. The East Asian built-in
++  formats 27 to 36 and 50 to 58 are dates, and a 1904 workbook that prefixes
++  its SpreadsheetML elements is read in the 1904 system. Rich text after a
++  plain run, CDATA, and an inline string after a redundant `<v>` are read, and
++  a worksheet outside `xl/worksheets/`, or bound under a prefix other than
++  `r:`, opens. Text follows XML and Excel: a literal CR LF reads as LF, while
++  `&#13;` stays a carriage return, and a `<t>` without `xml:space="preserve"`
++  loses its leading and trailing ASCII whitespace, which can change a header
++  name. Two malformed inputs are now refused: a boolean cell whose value is
++  not `0`, `1`, `true` or `false`, and a package with no `_rels/.rels`. A
++  shared-string index past the end of the table is an error where it was a
++  panic. Three malformed cells changed the other way: a `<v>` placed after an
++  inline string, against the schema's order, or holding a digit as a character
++  reference, now reads as empty, and an `<is/>` with no `<t>` is an empty
++  string, as `<is><t/></is>` already was. `tests/ingest_xlsx_cell_test.rs`
++  holds five of the corrections, and each of its tests fails on calamine 0.30.
 +
-+    /// TBox consistency as a three-valued verdict, with the wall clock that
-+    /// stopped it when one did (`"phase"` or `"global"`, as `expired_clock`).
-+    ///
-+    /// `is_consistent_within` collapses `Unknown` to consistent, which is the
-+    /// safe direction for a caller that only needs "not proven inconsistent".
-+    /// `run` states a headline verdict, and a verdict the search did not reach
-+    /// must not be printed as one (#355), so it reads this instead.
-+    fn decide_consistency_within(&self, global: Option<Instant>) -> (Verdict, Option<&'static str>) {
-+        let mut tableau =
-+            Tableau::with_deadline(Arc::clone(&self.tbox), self.phase_deadline_within(global));
-+        let verdict = tableau.decide(&Concept::Top);
-+        let clock = if verdict.is_unknown() && tableau.budget.stopped_by == Some("time") {
-+            expired_clock(tableau.budget.deadline, global)
-+        } else {
-+            None
-+        };
-+        (verdict, clock)
-     }
+ - **`reason --profile owl-dl` says `consistent: null` when the search that
+   would decide it did not finish** (#355). The headline was `tbox &&
+   abox.consistent`, and both default to consistent when their search runs
+```
+
+**File**: `Cargo.lock` (modified, +21/-45)
+```diff
+@@ -124,15 +124,6 @@ dependencies = [
+  "num-traits",
+ ]
  
-     /// Explain why a class is unsatisfiable. Returns None if satisfiable.
-@@ -4309,15 +4326,30 @@ impl DlReasoner {
-         // and the explanation loop had no wall clock at all.
-         let global_deadline = Self::global_deadline();
+-[[package]]
+-name = "arbitrary"
+-version = "1.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
+-dependencies = [
+- "derive_arbitrary",
+-]
+-
+ [[package]]
+ name = "arrow"
+ version = "58.3.0"
+@@ -555,11 +546,12 @@ dependencies = [
  
--        let tbox_consistent = reasoner.is_consistent_within(global_deadline);
-+        let (tbox_verdict, consistency_clock) = reasoner.decide_consistency_within(global_deadline);
-         let result = reasoner.classify_parallel_within(global_deadline);
-         let abox_result = reasoner.check_abox_within(global_deadline);
+ [[package]]
+ name = "atoi_simd"
+-version = "0.16.1"
++version = "0.18.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c2a49e05797ca52e312a0c658938b7d00693ef037799ef7187678f212d7684cf"
++checksum = "f3cdb3708a128e559a30fb830e8a77a5022ee6902806925c216658652b452a44"
+ dependencies = [
+  "debug_unsafe",
++ "rustversion",
+ ]
  
--        // The headline flag answers for the whole knowledge base. Reporting the TBox alone
--        // while the ABox check has PROVEN an inconsistency in the same output is a false
--        // claim; the three-valued discipline is preserved because an undecided ABox already
--        // defaults to consistent inside check_abox.
--        let consistent = tbox_consistent && abox_result.consistent;
-+        // The headline flag answers for the whole knowledge base, in three values.
-+        // Reporting the TBox alone while the ABox check has PROVEN an inconsistency in
-+        // the same output is a false claim, so a proof from either phase makes it
-+        // `false`. It used to be `tbox && abox.consistent`, and both of those default
-+        // to consistent when their search runs out, so an inconsistent KB whose ABox
-+        // phase hit its budget printed a definite `true` beside `complete: false`
-+        // (#355). A phase that ran out and proved nothing now makes it `null`: only a
-+        // finished search says `true`.
-+        let tbox_consistent: Option<bool> = match tbox_verdict {
-+            Verdict::Satisfiable => Some(true),
-+            Verdict::Unsatisfiable => Some(false),
-+            Verdict::Unknown => None,
-+        };
-+        let consistent: Option<bool> = if tbox_verdict.is_unsat() || !abox_result.consistent {
-+            Some(false)
-+        } else if tbox_verdict.is_unknown() || abox_result.undecided {
-+            None
-+        } else {
-+            Some(true)
-+        };
+ [[package]]
+@@ -744,9 +736,9 @@ checksum = "8ae3f5d315924270530207e2a68396c3cc547f6dca3fbdca317cfb1a51edb593"
  
-         // Collect explanations for unsatisfiable classes. One phase, one budget,
-         // under the same ceiling as the three before it.
-@@ -4356,7 +4388,8 @@ impl DlReasoner {
-         // `ObjectOneOf`, every phase decided, `complete: true`, and none of the
-         // six subsumptions HermiT infers.
-         let unmodelled = DlReasoner::unmodelled_constructs(graph);
--        let search_finished = undetermined_names.is_empty()
-+        let search_finished = !tbox_verdict.is_unknown()
-+            && undetermined_names.is_empty()
-             && !result.subsumption_cut_short
-             && !abox_result.undecided;
-         let complete = search_finished && unmodelled.is_empty();
-@@ -4376,6 +4409,9 @@ impl DlReasoner {
-         // the one reporting `undecided`. Naming the phases makes that visible
-         // rather than leaving it to be inferred.
-         let mut budget_exhausted_in: Vec<&str> = Vec::new();
-+        if tbox_verdict.is_unknown() {
-+            budget_exhausted_in.push("consistency");
+ [[package]]
+ name = "calamine"
+-version = "0.30.1"
++version = "0.38.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b1a9acfeb1555aa8def91fe8ff208aadaea850c109968ec35ac965edbe7d210b"
++checksum = "f431b67cba6122a1f7d26b7adafc71bbdf07026095fe811f5efc025d8748e1d8"
+ dependencies = [
+  "atoi_simd",
+  "byteorder",
+@@ -755,9 +747,9 @@ dependencies = [
+  "encoding_rs",
+  "fast-float2",
+  "log",
+- "quick-xml",
++ "quick-xml 0.42.0",
+  "serde",
+- "zip 4.6.1",
++ "zip",
+ ]
+ 
+ [[package]]
+@@ -1221,17 +1213,6 @@ dependencies = [
+  "syn 1.0.109",
+ ]
+ 
+-[[package]]
+-name = "derive_arbitrary"
+-version = "1.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e567bd82dcff979e4b03460c307b3cdc9e96fde3d73bed1496d2bc75d9dd62a"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.118",
+-]
+-
+ [[package]]
+ name = "derive_builder"
+ version = "0.20.2"
+@@ -2241,7 +2222,7 @@ dependencies = [
+  "tar",
+  "ureq",
+  "vcpkg",
+- "zip 9.0.4",
++ "zip",
+ ]
+ 
+ [[package]]
+@@ -2737,7 +2718,7 @@ dependencies = [
+  "oxigraph",
+  "parquet",
+  "proptest",
+- "quick-xml",
++ "quick-xml 0.37.5",
+  "rayon",
+  "reqwest",
+  "rmcp",
+@@ -2913,7 +2894,7 @@ dependencies = [
+  "oxilangtag",
+  "oxiri",
+  "oxrdf",
+- "quick-xml",
++ "quick-xml 0.37.5",
+  "thiserror",
+ ]
+ 
+@@ -3233,11 +3214,20 @@ version = "0.37.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
+ dependencies = [
+- "encoding_rs",
+  "memchr",
+  "serde",
+ ]
+ 
++[[package]]
++name = "quick-xml"
++version = "0.42.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
++dependencies = [
++ "encoding_rs",
++ "memchr",
++]
++
+ [[package]]
+ name = "quote"
+ version = "1.0.46"
+@@ -4039,7 +4029,7 @@ dependencies = [
+  "json-event-parser",
+  "memchr",
+  "oxrdf",
+- "quick-xml",
++ "quick-xml 0.37.5",
+  "thiserror",
+ ]
+ 
+@@ -5754,20 +5744,6 @@ dependencies = [
+  "syn 2.0.118",
+ ]
+ 
+-[[package]]
+-name = "zip"
+-version = "4.6.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "caa8cd6af31c3b31c6631b8f483848b91589021b28fffe50adada48d4f4d2ed1"
+-dependencies = [
+- "arbitrary",
+- "crc32fast",
+- "flate2",
+- "indexmap",
+- "memchr",
+- "zopfli",
+-]
+-
+ [[package]]
+ name = "zip"
+ version = "9.0.4"
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -56,7 +56,7 @@ rayon = "1.10"
+ csv = "1"
+ quick-xml = { version = "0.37", features = ["serialize"] }
+ serde_yaml = "0.9"
+-calamine = { version = "0.30", features = ["dates"] }
++calamine = { version = "0.38", features = ["chrono"] }
+ arrow = { version = "60", default-features = false, features = ["csv", "json"] }
+ parquet = { version = "60", default-features = false, features = ["arrow"] }
+ sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres"], optional = true }
+```
+
+**File**: `tests/ingest_xlsx_cell_test.rs` (added, +288/-0)
+```diff
+@@ -0,0 +1,288 @@
++// SPDX-FileCopyrightText: 2026 Fabio Rovai
++// SPDX-License-Identifier: MIT
++
++//! Cells that calamine 0.30 read wrongly, read as the workbook says.
++//!
++//! Each workbook is assembled here from its XML parts, so the input behind
++//! every assertion is on the page. The archive is stored, not deflated: the
++//! reader does not care, and the test needs no zip library.
++use open_ontologies::ingest::DataIngester;
++
++const MAIN: &str = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
++const REL: &str = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
++const PKG: &str = "http://schemas.openxmlformats.org/package/2006/relationships";
++
++fn crc32(data: &[u8]) -> u32 {
++    let mut crc = !0u32;
++    for &byte in data {
++        crc ^= u32::from(byte);
++        for _ in 0..8 {
++            crc = (crc >> 1) ^ (0xEDB8_8320 & (crc & 1).wrapping_neg());
 +        }
-         if !undetermined_names.is_empty() {
-             budget_exhausted_in.push("satisfiability");
-         }
-@@ -4474,6 +4510,7 @@ impl DlReasoner {
-             ),
-         };
-         let stopped_by_clock: Vec<(&str, &str)> = [
-+            ("consistency", consistency_clock),
-             ("satisfiability", result.satisfiability_clock),
-             ("subsumption", result.subsumption_clo
-```
-
-**File**: `tests/reason_undecided_headline_test.rs` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+//! The owl-dl headline says `consistent: null` when the search that would
-+//! decide it did not finish.
-+//!
-+//! `consistent` was `tbox && abox.consistent`, and both default to consistent
-+//! when their search runs out. So an inconsistent knowledge base whose ABox
-+//! phase hit its budget printed a definite `"consistent": true`, with
-+//! `complete: false` and `abox.undecided: true` further down the same report
-+//! (#355). A consumer reading the field it would naturally read got a false
-+//! claim. Only a finished search may say `true`; a proof of a clash in either
-+//! phase still says `false`.
-+//!
-+//! Caps rather than clocks, because a cap stops a tableau at the same place on
-+//! every machine. The ABox case runs the binary with `[reasoner]
-+//! tableaux_max_nodes` in its own `config.toml`, the trigger reported on the
-+//! issue: the ABox tableau needs a node per individual and the TBox test needs
-+//! one, so the cap stops the first and not the second. The step cap cannot
-+//! separate them, since the clash below is on asserted types and found in two
-+//! steps. The TBox case moves the PROCESS-WIDE step cap in this binary, so every
-+//! in-process run takes `CAP`.
-+
-+use std::path::Path;
-+use std::process::{Command, Stdio};
-+use std::sync::{Arc, Mutex};
-+
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::reason::Reasoner;
-+use open_ontologies::runtime;
-+
-+static CAP: Mutex<()> = Mutex::new(());
-+
-+const PREFIXES: &str = "@prefix : <http://example.org/t#> .\n\
-+    @prefix owl: <http://www.w3.org/2002/07/owl#> .\n\
-+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n";
-+
-+/// The #355 repro at a size a test can afford: `n` individuals, each in its own
-+/// class with a disjoint partner, and one individual in both classes of a pair.
-+fn abox_clash(n: usize) -> String {
-+    let mut s = PREFIXES.to_string();
-+    for i in 0..n {
-+        s.push_str(&format!(
-+            ":C{i} a owl:Class . :D{i} a owl:Class . :D{i} owl:disjointWith :C{i} .\n\
-+             :x{i} a owl:NamedIndividual , :C{i} .\n"
-+        ));
 +    }
-+    s.push_str(&format!(":x{} a :D{} .\n", n - 1, n - 1));
-+    s
++    !crc
 +}
 +
-+/// A consistent TBox whose consistency test has work to do: every individual
-+/// of `owl:Thing` must pick a side of two disjoint pairs.
-+const BRANCHING_TBOX: &str = ":A a owl:Class . :B a owl:Class . :A owl:disjointWith :B .\n\
-+    :P a owl:Class . :Q a owl:Class . :P owl:disjointWith :Q .\n\
-+    owl:Thing rdfs:subClassOf [ owl:unionOf ( :A :B ) ] , [ owl:unionOf ( :P :Q ) ] .\n";
-+
-+fn store(ttl: &str) -> Arc<GraphStore> {
-+    let g = Arc::new(GraphStore::new());
-+    g.load_turtle(ttl, None).expect("ontology must parse");
-+    g
-+}
-+
-+/// Run owl-dl under a step cap (`None` leaves the default), putting the cap
-+/// back before anything can panic.
-+fn owl_dl(ttl: &str, cap: Option<usize>) -> serde_json::Value {
-+    let _serial = CAP.lock().unwrap_or_else(|e| e.into_inner());
-+    let previous = runtime::tableaux_max_steps().unwrap_or(0) as usize;
-+    if let Some(c) = cap {
-+        runtime::set_tableaux_max_steps(c);
++/// A zip archive of `parts`, each stored uncompressed.
++fn stored_zip(parts: &[(&str, String)]) -> Vec<u8> {
++    let (mut out, mut directory) = (Vec::new(), Vec::new());
++    for (name, body) in parts {
++        let (name, body) = (name.as_bytes(), body.as_bytes());
++        let offset = out.len() as u32;
++        // Version needed, flags, method (stored), time, date (1980-01-01),
++        // CRC-32, compressed and uncompressed size, name length, extra length.
++        let mut fields = Vec::new();
++        for half in [20u16, 0, 0, 0, 0x21] {
++            fields.extend_from_slice(&half.to_le_bytes());
++        }
++        for word in [crc32(body), body.len() as u32, body.len() as u32] {
++            fields.extend_from_slice(&word.to_le_bytes());
++        }
++        for half in [name.len() as u16, 0] {
++            fields.extend_from_slice(&half.to_le_bytes());
++        }
++        out.extend_from_slice(&0x0403_4b50u32.to_le_bytes());
++        out.extend_from_slice(&fields);
++        out.extend_from_slice(name);
++        out.extend_from_slice(body);
++        // Version made by, the same fields, then comment length, disk number,
++        // internal and external attributes, and where the local header starts.
++        directory.extend_from_slice(&0x0201_4b50u32.to_le_bytes());
++        directory.extend_from_slice(&20u16.to_le_bytes());
++        directory.extend_from_slice(&fields);
++        directory.extend_from_slice(&[0; 10]);
++        directory.extend_from_slice(&offset.to_le_bytes());
++        directory.extend_from_slice(name);
 +    }
-+    let out = Reasoner::run(&store(ttl), "owl-dl", false);
-+    runtime::set_tableaux_max_steps(previous);
-+    serde_json::from_str(&out.expect("owl-dl run")).unwrap()
++    // End of central directory: disk numbers, the entry count for this disk
++    // and in all, the directory's size and offset, and no comment.
++    let (start, size, count) = (out.len() as u32, directory.len() as u32, parts.len() as u16);
++    out.extend_from_slice(&directory);
++    out.extend_from_slice(&0x0605_4b50u32.to_le_bytes());
++    out.extend_from_slice(&[0; 4]);
++    for half in [count, count] {
++        out.extend_from_slice(&half.to_le_bytes());
++    }
++    for word in [size, start] {
++        out.extend_from_slice(&word.to_le_bytes());
++    }
++    out.extend_from_slice(&[0; 2]);
++    out
 +}
 +
-+/// Run owl-dl in the binary over a data directory whose `config.toml` caps the
-+/// tableau at `max_nodes` nodes. `batch` loads and reasons in one process, so
-+/// the store is the one the file was loaded into.
-+fn owl_dl_with_node_cap(dir: &Path, ttl: &str, max_nodes: usize) -> serde_json::Value {
-+    use std::io::Write as _;
-+    let data = dir.join("data");
-+    std::fs::create_dir_all(&data).unwrap();
-+    std::fs::write(
-+        data.join("config.toml"),
-+        format!("[reasoner]\ntableaux_max_nodes = {max_nodes}\n"),
-+    )
-+    .unwrap();
-+    let file = dir.join("abox_clash.ttl");
-+    std::fs::write(&file, ttl).unwrap();
-+    let mut child = Command::new(env!("CARGO_BIN_EXE_open-ontologies"))
-+        .arg("--no-connect")
-+        .arg("--data-dir")
-+        .arg(&data)
-+        .args(["batch", "-"])
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("binary should run");
-+    child
-+        .stdin
-+        .take()
-+        .unwrap()
-+        .write_all(format!("load {}\nreason --profile owl-dl\n", file.display()).as_bytes())
-+        .unwrap();
-+    let out = child.wait_with_output().unwrap();
-+    let stdout = String::from_utf8_lossy(&out.stdout);
-+    let last = stdout.lines().rfind(|l| !l.trim().is_empty()).unwrap_or_else(|| {
-+        panic!("batch printed nothing; stderr: {}", String::from_utf8_lossy(&out.stderr))
-+    });
-+    let envelope: serde_json::Value = serde_json::from_str(last).unwrap();
-+    assert_eq!(envelope["command"], "reason", "{envelope:#}");
-+    envelope["result"].clone()
-+}
-+
-+#[test]
-+fn the_uncapped_run_proves_the_repro_inconsistent() {
-+    let v
-```
-
-**File**: `tests/reasoner_soundness_test.rs` (modified, +8/-3)
-```diff
-@@ -307,10 +307,15 @@ fn a_giant_min_cardinality_is_bounded_not_an_oom() {
-             [ a owl:Restriction ; owl:onProperty ex:R ; owl:minCardinality 2000000000 ] .\n\
-         ex:x a ex:C .\n";
-     let result = classify(ttl);
--    // Budget exhaustion is never a proof of inconsistency.
-+    // Budget exhaustion is never a proof of inconsistency, and it is not a
-+    // proof of consistency either. This asserted `true` until #355, which was
-+    // the undecided ABox's default printed as a verdict; the headline is now
-+    // undetermined, and still never `false`.
-     assert_eq!(
--        result["consistent"], true,
--        "a giant min-cardinality must not be reported inconsistent: {result}"
-+        result["consistent"],
-+        serde_json::Value::Null,
-+        "a giant min-cardinality must not be reported inconsistent, nor consistent on a run \
-+         that did not finish: {result}"
-     );
-     // And the reasoner reports it could not decide the ABox rather than fabricating one.
-     assert_eq!(
++/// A one-sheet workbook. `rows` is the content of `<sheetData>`, `shared`
++/// the `<si>` elements of the shared string table, and `formats` the
++/// `numFmtId` of each cell style, where style `s="i"` is `formats[i]`.
++/// `custom` declares number formats as (id, formatCode attribute text).
++fn workbook(
++    dir: &tempfile::TempDir,
++    rows: &str,
++    shared: &[&str],
++    formats: &[u32],
++    custom: &[(u32, &str)],
++) -> String {
++    let num_fmts: String = custom
++        .iter()
++        .map(|(id, code)| format!(r#"<numFmt numFmtId="{id}" formatCode="{code}"/>"#))
++        .collect();
++    let xfs: String = formats
++        .iter()
++        .map(|id| format!(r#"<xf numFmtId="{id}" xfId="0" applyNumberFormat="1"/>"#))
++        .collect();
++    let parts = [
++        (
++            "[Content_Types].xml",
++            concat!(
++                r#"<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">"#,
++                r#"<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>"#,
++                r#"<Default Extension="xml" ContentType="application/xml"/>"#,
++                r#"<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>"#,
++                r#"</Types>"#
++            )
++            .to_string(),
++        ),
++        (
++            "_rels/.rels",
++            format!(
++                r#"<Relationships xmlns="{PKG}"><Relationship Id="rId1" Type="{REL}/officeDocument" Target="xl/workbook.xml"/></Relationships>"#
++            ),
++        ),
++        (
++            "xl/workbook.xml",
++            format!(
++                r#"<workbook xmlns="{MAIN}" xmlns:r="{REL}"><sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"/></sheets></workbook>"#
++            ),
++        ),
++        (
++            "x
 ```
 
 ---
 
-### Incident Patch 2: `842e702e` (2026-11-01)
-**Commit Message**: A reason line in batch honours --phase-timeout-ms and --classify-timeout-ms
+### Incident Patch 2: `97ddf543` (2026-11-04)
+**Commit Message**: tests/ingest_xlsx_cell_test.rs arrived without the SPDX header every other Rust file now has, added it
 
-`exec_reason` never read either flag, so a batch line carrying them ran at
-the configured budgets, reported those in its `budget` block and said nothing
-(#352). A local batch now applies them to that line through `BudgetOverride`,
-which restores the previous budgets on drop, so later lines run at the
-budgets the batch started with. A missing or non-numeric value is an error
-naming the flag rather than another silent drop.
-
-The daemon serves every client from one process, so its `/batch` route marks
-the runner `in_daemon` and a line carrying either flag is refused with the
-same reason `daemon_refuses` gives the one-shot command. Checked against a
-live daemon as well as in the test.
-
-Closes #352
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
+**File**: `tests/ingest_xlsx_cell_test.rs` (modified, +3/-0)
 ```diff
-@@ -178,6 +178,16 @@ All notable changes to Open Ontologies are documented here.
-   `scope.not_considered`, and its descriptions no longer say its fragment is
-   exactly the one `defects` judges.
- 
-+- **A `reason` line in `batch` honours `--phase-timeout-ms` and
-+  `--classify-timeout-ms`** (#352). Both flags were accepted and dropped, so
-+  the run used the configured budgets and reported those in its `budget`
-+  block, with nothing to say the flags had been ignored. A local batch now
-+  applies them to that line and puts the previous budgets back afterwards, so
-+  later lines run at the budgets the batch started with. A missing or
-+  non-numeric value is an error naming the flag. A batch the daemon runs
-+  refuses either flag, as the one-shot `reason` already was refused, because
-+  one request may not move the budgets of every other client.
+@@ -1,3 +1,6 @@
++// SPDX-FileCopyrightText: 2026 Fabio Rovai
++// SPDX-License-Identifier: MIT
 +
- - **`--human` renders each command's result by the command's name, so `diff`
-   counts the triples it found and an undetermined `shacl` run says so**
-   (#350, #345). The one-shot CLI called a renderer that picked a rendering by
-```
-
-**File**: `src/batch.rs` (modified, +98/-1)
-```diff
-@@ -15,6 +15,9 @@ pub struct BatchRunner {
-     graph: Arc<GraphStore>,
-     pretty: bool,
-     human: bool,
-+    /// True when the daemon runs this batch for a client, in the one process
-+    /// that serves every client. See [`BatchRunner::in_daemon`].
-+    in_daemon: bool,
- }
- 
- /// A parsed batch command with its arguments.
-@@ -26,7 +29,19 @@ struct BatchCmd {
- 
- impl BatchRunner {
-     pub fn new(db: StateDb, graph: Arc<GraphStore>, pretty: bool) -> Self {
--        Self { db, graph, pretty, human: false }
-+        Self { db, graph, pretty, human: false, in_daemon: false }
-+    }
-+
-+    /// Mark the runner as the daemon's, which serves every client from one
-+    /// process.
-+    ///
-+    /// The reasoner clocks are process-wide. A local batch owns its process,
-+    /// so a `reason` line may set them for its own run (#352); in the daemon
-+    /// the same setting would move every other client's budget, so the line is
-+    /// refused there, as the one-shot `reason` is (`daemon_refuses`).
-+    pub fn in_daemon(mut self, in_daemon: bool) -> Self {
-+        self.in_daemon = in_daemon;
-+        self
-     }
- 
-     /// Print each result as human-readable text instead of an NDJSON envelope.
-@@ -481,6 +496,32 @@ impl BatchRunner {
-             .unwrap_or("rdfs".to_string());
-         let certificate = Self::flag_value(args, "--certificate");
-         let rules = Self::flag_value(args, "--rules");
-+        // #352. These two were never read here, so a batch line carrying them
-+        // ran at the configured budgets, reported those in its `budget` block,
-+        // and said nothing about the flags it had dropped. Batch is the one
-+        // place a run can load and reason in one process, so it was also the
-+        // one place a caller could not bound the tableau.
-+        let phase_ms = match Self::ms_flag(args, "--phase-timeout-ms") {
-+            Ok(v) => v,
-+            Err(e) => return json!({"error": e}),
-+        };
-+        let ceiling_ms = match Self::ms_flag(args, "--classify-timeout-ms") {
-+            Ok(v) => v,
-+            Err(e) => return json!({"error": e}),
-+        };
-+        if self.in_daemon && (phase_ms.is_some() || ceiling_ms.is_some()) {
-+            return json!({
-+                "error": format!(
-+                    "reason --phase-timeout-ms / --classify-timeout-ms cannot be sent to the \
-+                     running daemon (pid {}). Its reasoner budgets are fixed when it starts, from \
-+                     [reasoner] in its data directory's config.toml, and one request may not \
-+                     change them for every other client. Pass --no-connect to run the batch in \
-+                     its own process, or set [reasoner] and restart the daemon.",
-+                    std::process::id()
-+                )
-+            });
-+        }
-+        let _budgets = BudgetOverride::apply(phase_ms, ceiling_ms);
-         // #108. Batch is the only entry point that can load and certify in one
-         // process, so it is the one a certified run over a versioned store
-         // actually uses. A batch runner that did not understand these flags
-@@ -1471,6 +1512,22 @@ impl BatchRunner {
-             .and_then(|i| args.get(i + 1).cloned())
-     }
- 
-+    /// A millisecond budget flag, as clap reads it on the one-shot command.
-+    ///
-+    /// `flag_value` alone would turn a missing or malformed value into "no
-+    /// flag", which is the silent drop #352 was about, one step further down.
-+    fn ms_flag(args: &[String], flag: &str) -> Result<Option<usize>, String> {
-+        if !args.iter().any(|a| a == flag) {
-+            return Ok(None);
-+        }
-+        let Some(v) = Self::flag_value(args, flag) else {
-+            return Err(format!("{flag} needs a value in milliseconds"));
-+        };
-+        v.parse::<usize>().map(Some).map_err(|_| {
-+            format!("{flag} takes a whole number of milliseconds (0 means no limit), not {v:?}")
-+        })
-+    }
-+
-     /// Every value of a repeatable flag, in order (e.g. `--seed A --seed B`).
-     ///
-     /// `flag_value` returns the FIRST, which silently drops the rest. A seed
-@@ -1485,6 +1542,46 @@ impl BatchRunner {
-     }
- }
- 
-+/// The reasoner budgets one `reason` line asked for, in force until the line
-+/// is done.
-+///
-+/// The clocks are process-wide, and the lines after this one in the same batch
-+/// must run at the budgets the batch started with, so the previous values are
-+/// put back on drop, an early return or a panic included.
-+struct BudgetOverride {
-+    phase_ms: Option<usize>,
-+    ceiling_ms: Option<usize>,
-+}
-+
-+impl BudgetOverride {
-+    fn apply(phase_ms: Option<usize>, ceiling_ms: Option<usize>) -> Self {
-+        let previous = Self {
-+            phase_ms: phase_ms
-+                .map(|_| crate::runtime::tableaux_test_timeout_ms().unwrap_or(0) as usize),
-+            ceiling_ms: ceiling_ms
-+                .map(|_| crate::runtime::classify_timeout_ms().unwrap_or(0) as usize),
-+        };
-+        if let
-```
-
-**File**: `src/main.rs` (modified, +8/-4)
-```diff
-@@ -602,7 +602,8 @@ enum Commands {
-         /// tableaux_test_timeout_ms` in `<data-dir>/config.toml` > 10000. No
-         /// environment variable sets it. The run's `budget` block reports the
-         /// value in force. Never proxied: a running daemon fixes its budgets
--        /// at start, so with one up this is refused unless --no-connect.
-+        /// at start, so with one up this is refused unless --no-connect. A
-+        /// `reason` line in a local `batch` takes it too, for that line only.
-         #[arg(long, value_name = "MS")]
-         phase_timeout_ms: Option<usize>,
-         /// `owl-dl` only: wall-clock CEILING for the whole run, in
-@@ -1174,8 +1175,10 @@ impl Commands {
-             } => {
-                 // The reasoner clocks are process-wide, and the daemon serves
-                 // every client from one process. A per-request budget would leak
--                // into concurrent and later runs, so the batch handler takes
--                // none, and the command stays local (see `daemon_refuses`).
-+                // into concurrent and later runs, so the daemon's batch handler
-+                // refuses one, and the command stays local (see
-+                // `daemon_refuses`). A local batch owns its process and honours
-+                // both flags on a `reason` line (#352).
-                 if phase_timeout_ms.is_some() || classify_timeout_ms.is_some() {
-                     return None;
-                 }
-@@ -2591,7 +2594,8 @@ async fn async_main() -> anyhow::Result<()> {
-                         // daemon exists to make fast, and it was paying a SQLite
-                         // open on every call while the adjacent /lineage route
-                         // already cloned the shared one.
--                        let runner = open_ontologies::batch::BatchRunner::new(db, g, false);
-+                        let runner = open_ontologies::batch::BatchRunner::new(db, g, false)
-+                            .in_daemon(true);
-                         let (results, _) = runner.run_collect(&input, bail).await;
-                         (axum::http::StatusCode::OK, axum::Json(serde_json::json!(results)))
-                     }
-```
-
-**File**: `tests/batch_reason_budget_test.rs` (added, +143/-0)
-```diff
-@@ -0,0 +1,143 @@
-+//! A `reason` line in a batch takes the same budgets as the one-shot command.
-+//!
-+//! `batch` accepted `reason --phase-timeout-ms N --classify-timeout-ms M` and
-+//! dropped both flags without a word, so the run used the configured budgets
-+//! and its `budget` block reported those (#352). Batch is the one entry point
-+//! that can load and reason in one process, so it was also the one place a
-+//! caller could not bound the tableau, and nothing in the output said so.
-+//!
-+//! The end-to-end cases run the binary with `--no-connect`, so each batch owns
-+//! its process and none of them can move another test's reasoner clocks.
-+
-+use std::path::Path;
-+use std::process::{Command, Stdio};
-+use std::sync::Arc;
-+
-+use open_ontologies::batch::BatchRunner;
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::state::StateDb;
-+
-+const ONTOLOGY: &str = r#"
-+@prefix :     <http://example.org/t#> .
-+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+<http://example.org/t> a owl:Ontology .
-+:A a owl:Class ; rdfs:subClassOf :B .
-+:B a owl:Class .
-+:C a owl:Class .
-+"#;
-+
-+/// Run `batch -` locally over `lines`, one envelope per line of output.
-+fn batch(dir: &Path, lines: &[&str]) -> Vec<serde_json::Value> {
-+    use std::io::Write as _;
-+    let mut child = Command::new(env!("CARGO_BIN_EXE_open-ontologies"))
-+        .arg("--no-connect")
-+        .arg("--data-dir")
-+        .arg(dir.join("data"))
-+        .args(["batch", "-"])
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("binary should run");
-+    child
-+        .stdin
-+        .take()
-+        .unwrap()
-+        .write_all(lines.join("\n").as_bytes())
-+        .unwrap();
-+    let out = child.wait_with_output().unwrap();
-+    let stdout = String::from_utf8_lossy(&out.stdout);
-+    stdout
-+        .lines()
-+        .filter(|l| !l.trim().is_empty())
-+        .map(|l| {
-+            serde_json::from_str(l).unwrap_or_else(|e| {
-+                panic!(
-+                    "batch printed a line that is not JSON ({e}): {l}\nstderr: {}",
-+                    String::from_utf8_lossy(&out.stderr)
-+                )
-+            })
-+        })
-+        .collect()
-+}
-+
-+fn ontology(dir: &Path) -> String {
-+    let p = dir.join("t.ttl");
-+    std::fs::write(&p, ONTOLOGY).unwrap();
-+    p.to_str().unwrap().to_string()
-+}
-+
-+#[test]
-+fn a_batch_reason_line_runs_at_the_budgets_it_names_and_only_that_line_does() {
-+    let d = tempfile::tempdir().unwrap();
-+    let load = format!("load {}", ontology(d.path()));
-+    let out = batch(
-+        d.path(),
-+        &[
-+            &load,
-+            "reason --profile owl-dl",
-+            "reason --profile owl-dl --phase-timeout-ms 7 --classify-timeout-ms 9",
-+            "reason --profile owl-dl",
-+        ],
-+    );
-+    assert_eq!(out.len(), 4, "{out:#?}");
-+    let budget = |i: usize| out[i]["result"]["budget"].clone();
-+
-+    assert_eq!(budget(2)["phase_timeout_ms"], 7, "{:#}", out[2]);
-+    assert_eq!(budget(2)["classify_timeout_ms"], 9, "{:#}", out[2]);
-+
-+    // The flags hold for their own line. The line after it runs at the budgets
-+    // the batch started with, which are whatever the one before it ran at.
-+    assert_ne!(budget(1)["phase_timeout_ms"], 7, "{:#}", out[1]);
-+    assert_eq!(budget(3)["phase_timeout_ms"], budget(1)["phase_timeout_ms"], "{out:#?}");
-+    assert_eq!(budget(3)["classify_timeout_ms"], budget(1)["classify_timeout_ms"], "{out:#?}");
-+}
-+
-+#[test]
-+fn a_budget_flag_without_a_whole_number_is_an_error_and_not_a_dropped_flag() {
-+    let d = tempfile::tempdir().unwrap();
-+    let load = format!("load {}", ontology(d.path()));
-+    for line in [
-+        "reason --profile owl-dl --phase-timeout-ms soon",
-+        "reason --profile owl-dl --classify-timeout-ms -1",
-+        "reason --profile owl-dl --phase-timeout-ms",
-+    ] {
-+        let out = batch(d.path(), &[&load, line]);
-+        let err = out[1]["result"]["error"].as_str().unwrap_or_default();
-+        assert!(
-+            err.contains("--phase-timeout-ms") || err.contains("--classify-timeout-ms"),
-+            "`{line}` must fail and name its flag, not run at the default budget: {:#}",
-+            out[1]
-+        );
-+    }
-+}
-+
-+/// The daemon serves every client from one process and fixes its budgets when
-+/// it starts, so a line that would move them is refused there, as the one-shot
-+/// `reason` is refused by `daemon_refuses`. Asked of the runner directly: no
-+/// clock is changed on the way to the refusal, so this cannot disturb anything
-+/// else in this binary.
-+#[tokio::test]
-+async fn the_daemon_refuses_a_batch_reason_line_that_sets_a_budget() {
-+    let d = tempfile::tempdir().unwrap();
-+    let db = StateDb::open(&d.path().join("state.db")).unwrap();
-+    let store = Arc::new(GraphStore::new());
-+    store.load_turtle(ONTOLOGY, None).unwrap();
-+    let runner = Bat
-```
-
----
-
-### Incident Patch 3: `f796dd96` (2026-11-02)
-**Commit Message**: The documented Rust floor is 1.88, which the locked dependencies require
-
-README.md, README.zh-CN.md and CONTRIBUTING.md said Rust 1.85+. Measured on this tree with the committed Cargo.lock: rustc 1.87.0 stops at resolution because darling 0.23.0 requires rustc 1.88.0, and rustc 1.88.0 passes `cargo check --locked` with default features and with the release set `--features embeddings,plugins`.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ Thanks for your interest in contributing! This document explains how to get star
- ## Development Setup
- 
- **Requirements:**
--- Rust 1.85+ (edition 2024)
-+- Rust 1.88+ (edition 2024)
- - For PostgreSQL schema import: `libpq-dev`
- - For embeddings: build with `--features embeddings`, then run `open-ontologies init`, which downloads a 448 MB ONNX model and a 16 MB tokenizer
- 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -406,7 +406,7 @@ chmod +x open-ontologies-x86_64-unknown-linux-gnu && mv open-ontologies-x86_64-u
- # Docker
- docker pull ghcr.io/fabio-rovai/open-ontologies:latest
- 
--# From source (Rust 1.85+)
-+# From source (Rust 1.88+)
- cargo build --release --features embeddings,plugins,sql
- ```
- 
-```
-
-**File**: `README.zh-CN.md` (modified, +1/-1)
-```diff
-@@ -369,7 +369,7 @@ chmod +x open-ontologies-x86_64-unknown-linux-gnu && mv open-ontologies-x86_64-u
- # Docker
- docker pull ghcr.io/fabio-rovai/open-ontologies:latest
- 
--# From source (Rust 1.85+)
-+# From source (Rust 1.88+)
- cargo build --release --features embeddings,plugins,sql
- ```
- 
+ //! Cells that calamine 0.30 read wrongly, read as the workbook says.
+ //!
+ //! Each workbook is assembled here from its XML parts, so the input behind
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #363** (2026-11-04): XLSX ingest reads with calamine 0.38, so main's audit passes again (@fabio-rovai)
+- **PR #362** (2026-11-04): Add SPDX license headers to Rust source (@fabio-rovai)
 - **PR #360** (2026-11-02): Fix main's audit: parquet 60 drops vulnerable thrift; zip extract advisory joins the documented group (@fabio-rovai)
 - **PR #359** (2026-11-02): Decision: a pull request fails cargo audit only on an advisory it brings in (@fabio-rovai)
 - **PR #358** (2026-11-02): CI/CD: pinned images and tools, a release that dry-runs on PRs and publishes in order (@fabio-rovai)
 - **PR #357** (2026-11-01): Fix #352, #353, #354, #355: owl-dl undecided headline, n-ary disjointness in defects, batch reason budgets, lint documentation properties (@fabio-rovai)
-- **PR #351** (2026-10-30): Fix #343 #345 #349 #350, add weighted repair (#346) and disjointness exceptions (#347), land #348 (@fabio-rovai)
-- **PR #348** (2026-10-30): An impossible date is a violation, and the day is judged where a regex cannot judge it (@fabio-rovai)
 
 ---
 
@@ -2430,43 +2229,59 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. The owl-dl headline says consistent: null when the search that would decide it d
+## X. Merge pull request #363 from fabio-rovai/deps/calamine-0.38
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `842cad59`: The owl-dl headline says consistent: null when the search that would decide it did not finish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef6638a9`: Merge pull request #363 from fabio-rovai/deps/calamine-0.38. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`reason --profile owl-dl` says `consistent: null` when the search that
-  would decide it did not finish** (#355). The headline was `tbox &&
-  abox.consistent`, and both default to consistent when their search runs
-  out, so an inconsistent knowledge base whose ABox phase hit the clock or
-  the node cap printed a definite `"consistent": true` beside `complete:
-  false` and `abox.undecided: true`. `consistent` is now `false` when either
-  phase proves a clash, `null` when the TBox consistency test or the ABox
-  check ran out without one, and `true` only when both finished.
-  `tbox_consistent` and `abox.consistent` follow the same rule. The TBox
-  consistency test had the same fold one level up and was never counted as a
-  phase that ran out: it is now listed as `consistency` in
-  `budget_exhausted_in`, it makes `search_finished` false, and `budget.note`
-  names the clock or cap that stopped it. A run whose search finished reports
-  exactly what it did before, `complete: false` over unmodelled constructs
-  included. The human rendering prints `consistent: undetermined`.
-
+    # quick-xml denial of service advisories, both patched in 0.41.0.
+    # Cargo.lock holds two quick-xml, so a bare `cargo tree -i quick-xml` asks
+    # which. `cargo tree -i quick-xml@0.37.5`, with or without --all-features,
+    # names three users of the advised one: this crate's direct dependency
+    # (quick-xml 0.37 in Cargo.toml), oxrdfxml 0.2.5 through oxrdfio and
+    # oxigraph, and sparesults 0.3.5 through oxigraph and spareval.
+    # `cargo tree -i quick-xml@0.42.0` names calamine 0.38.0 alone, and 0.42.0
+    # is patched. oxrdfxml and sparesults come from the oxigraph fork that
+    # [patch.crates-io] in Cargo.toml pins by rev, not from crates.io, so no
+    # upstream release can move them on its own. Bumping the direct pin alone
+    # would not clear the advisory either, because the fork's oxrdfxml and
+    # sparesults still require quick-xml "0.37" and the 0.37.5 lockfile entry
+    # would stay.
+    # Our own call sites are two. DataIngester::parse_xml in src/ingest.rs uses
+    # a plain quick_xml Reader and never constructs an NsReader or calls
+    # advisories. The RIF Core reader in src/rulesyntax.rs (`rules-import
+    # --from rif` on the CLI and in batch, and on
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    # quick-xml denial of service advisories, both patched in 0.41.0. This
+    # project's direct dependency is still quick-xml 0.37 (see Cargo.toml), and
+    # Cargo.lock resolves exactly one quick-xml, version 0.37.5, shared by that
+    # direct dependency, calamine 0.30.1, and oxrdfxml 0.2.5 and sparesults
+    # 0.3.5. Those two come from the oxigraph fork that [patch.crates-io] in
+    # Cargo.toml pins by rev, not from crates.io, so no upstream release can
+    # move them on its own. Bumping the direct pin alone would not clear the
+    # advisory either, because the fork's oxrdfxml and sparesults still require
+    # quick-xml "0.37" and the 0.37.5 lockfile entry would stay.
+    # Our own call site is Ingest::parse_xml in src/ingest.rs, which uses a
+    # plain quick_xml Reader and never constructs an NsReader or calls
+    # advisories. The oxigraph RDF/XML path falls inside them, because oxrdfxml
+    # parses with NsReader and iterates start tag attributes, and that path is
+    # reachable from third-party input: src/marketplace.rs accepts the "rdfxml"
+    # format for community packs fetched over HTTP, and src/server.rs loads
+    # that fetched content into the store. The risk
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `842cad59` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef6638a9` are properly handled with clean fallback behavior.

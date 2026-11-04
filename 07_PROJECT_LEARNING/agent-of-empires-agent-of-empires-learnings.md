@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `6b406fe8`  
+> **Source Version**: `f302922e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:32:18.100Z  
+> **Timestamp**: 2026-11-04T20:53:15.930Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:32:16.500Z  
+> **Harvest Timestamp**: 2026-11-04T20:53:15.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3407 stars
+- **Stars / Engagement**: 3546 stars
 
 ---
 
@@ -64,6 +64,7 @@ import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { appendTurn, createTranscript, loadTranscript } from "./transcript.ts";
 import { classifyKind } from "./toolKind.ts";
+import { createAgentStream } from "./transport.ts";
 
 const DEFAULT_MODEL = "claude-opus-4-7";
 
@@ -336,15 +337,14 @@ function randomHexId(): string {
 function main() {
   const input = Writable.toWeb(process.stdout);
   const output = Readable.toWeb(process.stdin) as ReadableStream<Uint8Array>;
-  const stream = acp.ndJsonStream(input, output);
+  const stream = createAgentStream(input, output);
 
   acp
     .agent({ name: "aoe-agent" })
     .onRequest("initialize", ({ params }) => ({
       protocolVersion: params.protocolVersion ?? acp.PROTOCOL_VERSION,
       agentCapabilities: {
-        loadSession: Boolean(process.env.AOE_ARTIFACT_DIR),
-        promptCapabil
+        loadSession: Boolean
 ```
 
 ### Core Architecture Module: `acp-worker/aoe-agent/src/toolKind.ts`
@@ -484,6 +484,22 @@ function isTurnMessage(value: unknown): value is TurnMessage {
   return (
     (role === "user" || role === "assistant") && typeof content === "string"
   );
+}
+
+```
+
+### Core Architecture Module: `acp-worker/aoe-agent/src/transport.ts`
+```
+import { ndJsonStream } from "@agentclientprotocol/sdk";
+
+export function createAgentStream(
+  output: WritableStream<Uint8Array>,
+  input: ReadableStream<Uint8Array>,
+) {
+  return ndJsonStream(output, input, {
+    // Match MAX_AGENT_FRAME_BYTES in src/acp/control_protocol.rs.
+    maxMessageBytes: 64 * 1024 * 1024,
+  });
 }
 
 ```
@@ -2090,128 +2106,6 @@ fn render_list(
         return Ok(Projection::text(fo
 ```
 
-### Core Architecture Module: `src/daemon/lifecycle.rs`
-```
-use std::fs::File;
-use std::os::fd::AsFd;
-use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
-use std::time::{Duration, Instant};
-
-use anyhow::{Context, Result};
-use fs2::FileExt;
-
-pub(crate) struct Transaction(File);
-
-pub(crate) struct Lifetime {
-    _file: File,
-}
-
-fn lock_path(name: &str) -> Result<std::path::PathBuf> {
-    let socket = super::transport::local_socket_path()?;
-    let parent = socket.parent().context("Daemon socket has no directory")?;
-    super::transport::prepare_runtime_directory(parent)?;
-    Ok(parent.join(name))
-}
-
-fn open_lock(name: &str) -> Result<File> {
-    let file = std::fs::OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .mode(0o600)
-        .custom_flags(nix::libc::O_NOFOLLOW)
-        .open(lock_path(name)?)?;
-    let meta = file.metadata()?;
-    anyhow::ensure!(
-        meta.is_file()
-            && meta.uid() == nix::unistd::geteuid().as_raw()
-            && meta.mode() & 0o777 == 0o600
-            && meta.nlink() == 1,
-        "Unsafe daemon lock file"
-    );
-    Ok(file)
-}
-
-impl Transaction {
-    /// Acquire the transaction, giving up after `wait`.
-    ///
-    /// The only blocking acquisition: a daemon transition holds the lock for as
-    /// long as it takes to start or stop, so a caller needs a bound and a message
-    /// naming the transition that is in the way. Its only caller is the TUI key
-    /// handler, where an unbounded wait would freeze the whole UI.
-    pub(crate) fn acquire_blocking_for(wait: Duration) -> Result<Self> {
-        let file = open_lock("transaction.lock")?;
-        let deadline = Instant::now() + wait;
-        loop {
-            match file.try_lock_exclusive() {
-                Ok(()) => return Ok(Self(file)),
-                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
-                    anyhow::ensure!(
-                        Instant::now() < deadline,
-                        "the aoe serve daemon is starting, restarting or stopping and holds the \
-                         daemon lifecycle lock; retry this command in a moment"
-                    );
-                    std::thread::sleep(Duration::from_millis(25));
-                }
-                Err(error) => return Err(error.into()),
-            }
-        }
-    }
-
-    pub(crate) async fn acquire() -> Result<Self> {
-        let file = open_lock("transaction.lock")?;
-        let deadline = Instant::now() + Duration::from_secs(60);
-        loop {
-            match file.try_lock_exclusive() {
-                Ok(()) => return Ok(Self(file)),
-                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
-                    anyhow::ensure!(
-                        Instant::now() < deadline,
-                        "Daemon lifecycle transaction timed out"
-                    );
-                    tokio::time::sleep(Duration::from_millis(25)).await;
-                }
-                Err(error) => return Err(error.into()),
-            }
-        }
-    }
-
-    pub(crate) fn receive() -> Result<Self> {
-        let file = File::from(std::io::stdin().as_fd().try_clone_to_owned()?);
-        let expected = open_lock("transaction.lock")?.metadata()?;
-        let received = file.metadata()?;
-        anyhow::ensure!(
-            received.dev() == expected.dev() && received.ino() == expected.ino(),
-            "Missing daemon transaction handoff"
-        );
-        file.try_lock_exclusive()
-            .context("Invalid daemon transaction handoff")?;
-        crate::process::detach_daemon_stdin()?;
-        Ok(Self(file))
-    }
-
-    pub(crate) fn handoff(&self) -> Result<std::process::Stdio> {
-        Ok(self.0.try_clone()?.into())
-    }
-
-    pub(crate) fn lifetime(&self) -> Result<Lifetime> {
-        self.try_lifetime()?
-            .context("A daemon already owns this namespace")
-    }
-
-    pub(crate) fn try_lifetime(&self) -> Result<Option<Lifetime>> {
-        let file = open_lock("lifetime.lock")?;
-        match file.try_lock_exclusive() {
-            Ok(()) => Ok(Some(Lifetime { _file: file })),
-            Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => Ok(None),
-            Err(error) => Err(error.into()),
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2221,8 +2115,8 @@ impl Transaction {
 - **Issue #5226** (2026-11-03): **Dependabot: group Vitest and its V8 coverage provider across major updates**
   *Symptoms*: ## What happened?  Dependabot opened separate major upgrades for `vitest` (#5191) and `@vitest/coverage-v8` (#5193). Each PR updates only one direct dependency, leaving incompatible peers and preventing normal npm installation.  At [main@9ffbbf24](https://github.com/agent-of-empires/agent-of-empires/blob/9ffbbf24be690929ea6a61d02fc4cbdefc1db924/.github/dependabot.yml#L91-L138), minor/patch upgrades already match `web-minor-patch`. Major upgrades match no group and therefore receive individual PRs, as [documented by GitHub](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).  The coverage provider requires an exact Vitest peer: [4.1.11](https://registry.npmjs.org/@vitest/coverage-v8/4.1.11) requires `vitest: 4.1.11`; [5.0.3](https://registry.npmjs.org/@vitest/coverage-v8/5.0.3) requires `vitest: 5.0.3`.  ## Reproduction and evidence  Copy `web/package.json`, `web/package-lock.json` and `web/.npmrc` from each revision into an isolated temporary directory, then run:  ```sh npm ci --dry-run --ignore-scripts --no-audit --no-fund \   --legacy-peer-deps=false --force=false ```  Observed locally:  | Revision | Exit | Result | | --- | --- | --- | | `main@9ffbbf24` | 0 | Dependency resolution succeeds | | #5191 at `2564fdbe1bd6e1d0737b5606939d5eb8744dced5` | 1 | `ERESOLVE`: coverage 4.1.11 requires Vitest 4.1.11, but Vitest resolves to 5.0.3 | | #5193 at `932bfaf06365868baf74ed378e18adb32430ece6` | 1 | `ERESOLVE`: coverage 5.
 
-- **Issue #5198** (2026-11-02): **Wait for a usable control connection when starting integration runners**
-  *Symptoms*: ### What happened?  Nonblocking P3 follow-up from #4842.  The ACP integration fixture treats the control socket’s pathname as readiness, then connects once with `unwrap()` ([fixture:229–245](https://github.com/agent-of-empires/agent-of-empires/blob/ee916d9640b6cf51aadf7f766b3b285fd9a461ff/tests/integration/common/mod.rs#L229-L245)). Hello/Initialized/SessionReady reads are outside its 10-second startup deadline (`:245–301`).  **Observed:** [Linux CI failed with `ConnectionRefused` at line 245](https://github.com/agent-of-empires/agent-of-empires/actions/runs/41145340472/job/124378928669). The helper in tested merge `454aa3b5` is byte-identical to `main@ee916d96`. This is a pre-existing test-fixture problem found while reviewing #4842, not a demonstrated production regression.  **Source-derived scenarios, not locally reproduced:** a runner paused between socket bind and listen, or exiting after creating the path, can make the one-shot connection fail. A connected peer that stalls before the expected bootstrap frame has no fixture-level handshake deadline. The historical log does not establish which startup failure occurred.  Expected: fixture success means a usable retained connection and completed bootstrap through SessionReady, within one bounded budget. Startup failure should report its phase, last connection error and child exit status instead of an unexplained connect panic or unbounded setup wait.  Acceptance: - Retry only expected transient startup errors, retaining the
+- **Issue #5224** (2026-11-04): **[bug] Structured view (ACP): every UserPromptSent stored and rendered twice with vibe-acp**
+  *Symptoms*: ### What happened?  In Structured view sessions (ACP, agent: vibe / vibe-acp), every user prompt is stored twice in `acp_events.db` (~30 ms apart) and therefore rendered twice in the TUI and web transcript. Terminal sessions are unaffected. The agent itself receives and processes the prompt exactly once — only the event/transcript is duplicated.  ### Environment  - AoE 1.21.0 (binary install), current latest release - Vibe 3.0.4, vibe-acp 3.0.4 (current latest) - Debian 12/13, reproduced on two hosts  ### Evidence  ```sql sqlite3 ~/.config/agent-of-empires/acp_events.db "SELECT seq, discriminant, substr(event_json,1,300), created_at FROM acp_events WHERE session_id='16f71f008d6d424f' AND discriminant='UserPromptSent' ORDER BY seq LIMIT 6;" ```  ``` seq=4953   UserPromptSent | {"UserPromptSent":{"text":"...","prompt_id":"abc-123...","synthesized"\:false}} | 1730285358156 seq=4954 | UserPromptSent | {"UserPromptSent":{"text":"...","synthesized"\:false}}                          | 1730285358391 ```  - 44 `UserPromptSent` events in one session = 22 prompts × 2, gap 27–156 ms (avg 39 ms) - First copy usually carries `prompt_id`, second copy has none (on a second host both copies lacked `prompt_id`, so dedup on `prompt_id` alone is not reliable) - `synthesized: false` in **both** copies → the synthesized suppression introduced in #4041 does not apply - No `rate_limited`/`Stopped` events, no idle phase, not a replay pattern  Reproduced again after updating to Vibe/vibe-acp 3.0.4, so
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2239,640 +2133,573 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9daf6d52` (2026-11-02)
-**Commit Message**: fix(serve): retry an idle workerless session whose queue is stranded (#5203)
+### Incident Patch 1: `ebd5a774` (2026-11-04)
+**Commit Message**: fix(worktree): revalidate cleanup candidates after the confirmation prompt (#5263)
 
-* fix(serve): retry an idle workerless session whose queue is stranded
+* fix(worktree): revalidate cleanup candidates against all profiles after confirmation
 
-A resume attempt that launch admission cancelled (row still Stopped,
-for example right after unarchive) pins the id in the reconciler's
-attempted set. When the row then reads Idle with queued prompts and no
-worker, nothing ever starts one: the prompt POST parks as WorkerDown
-and the queue drain only wakes dormant rows.
-
-Lift the pin for Idle rows with a queue and no worker so they go
-through the normal respawn budget. Stopped rows stay pinned, and a row
-with a live worker is never unpinned, so crash-loop parking still
-applies.
+Cleanup removed every listed orphan after the y/N prompt without
+rechecking, so a session created on or inside a candidate meanwhile
+lost its checkout. Rows from every profile are now read and the
+removal done under the store locks, and candidates a session sits on
+or inside are skipped. An unreadable store removes nothing.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): keep retrying a queued session after a failed spawn
+* fix(worktree): hold the transition lock while cleanup lists profiles
 
-A failed queued retry publishes AgentStartupError, which sets the row
-to Error. The queue retry only matched Idle rows, so the session
-re-pinned after the first failure and the respawn budget never ran out.
+A profile created between listing profiles and locking their stores was
+never read, so a session inside a candidate could lose its checkout.
+Cleanup now takes the shared transition lock first, which profile
+creation needs exclusively.
 
-Key the retry on the queue and the absent worker, excluding only
-Stopped so a deliberate stop stays pinned.
-
-Addresses review comment from @coderabbitai on #5203.
-
-Co-Authored-By: Claude 
-
-**File**: `src/server/acp_reconciler/mod.rs` (modified, +60/-5)
-```diff
-@@ -230,7 +230,11 @@ pub async fn reconcile_acp_workers(
-     };
- 
-     // Triaged sessions are excluded so an archive/snooze teardown is not undone (#1581).
--    let (targets, with_queued_prompts): (Vec<ResumeTarget>, HashSet<String>) = {
-+    let (targets, with_queued_prompts, queued_not_stopped): (
-+        Vec<ResumeTarget>,
-+        HashSet<String>,
-+        HashSet<String>,
-+    ) = {
-         let instances = state.instances.read().await;
-         (
-             instances
-@@ -243,6 +247,13 @@ pub async fn reconcile_acp_workers(
-                 .filter(|i| !i.queued_prompts.is_empty())
-                 .map(|i| i.id.clone())
-                 .collect(),
-+            instances
-+                .iter()
-+                .filter(|i| {
-+                    !i.queued_prompts.is_empty() && i.status != crate::session::Status::Stopped
-+                })
-+                .map(|i| i.id.clone())
-+                .collect(),
-         )
-     };
-     let live: HashSet<&String> = targets.iter().map(|t| &t.id).collect();
-@@ -261,15 +272,23 @@ pub async fn reconcile_acp_workers(
-     let mut tasks = Vec::new();
-     for mut target in targets {
-         let id = target.id.clone();
-+        // A session with a queue and no worker is retried under the normal
-+        // budget, whatever its status short of Stopped (a failed spawn leaves
-+        // Error): an earlier attempt must not strand the queue (#5200).
-+        let retry_for_queue = attempted.contains(&id)
-+            && queued_not_stopped.contains(&id)
-+            && supervisor.worker_state(&id).await == AcpWorkerState::Absent;
-         if attempted.contains(&id) {
-             // A restart marker can land after the reaper ran: add-project (#3103)
-             // writes it only once the moved workspace is durable.
--            if supervisor.worker_state(&id).await == AcpWorkerState::Stopping
--                || !supervisor.take_late_restart_marker(&id)
--            {
-+            let restart_marker = supervisor.worker_state(&id).await != AcpWorkerState::Stopping
-+                && supervisor.take_late_restart_marker(&id);
-+            if !retry_for_queue && !restart_marker {
-                 continue;
-             }
--            forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
-+            if restart_marker {
-+                forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
-+            }
-         }
-         match supervisor.worker_state(&id).await {
-             AcpWorkerState::Running | AcpWorkerState::Resuming => {
-@@ -876,6 +895,42 @@ mod tests {
-         }
-     }
- 
-+    /// A resume attempt that launch admission cancelled (row still `Stopped`)
-+    /// pins the id; once the row reads `Idle` with a queue, the pin must lift
-+    /// so the queue is not stranded behind a worker nothing starts (#5200).
-+    #[tokio::test]
-+    #[serial_test::serial]
-+    async fn a_pinned_idle_session_with_a_queue_is_resumed() {
-+        use crate::session::Status;
-+
-+        let cases = [
-+            ("idle with a queue", Status::Idle, 1),
-+            ("error with a queue", Status::Error, 1),
-+            ("deliberately stopped with a queue", Status::Stopped, 0),
-+        ];
-+        for (name, status, expected_attempts) in cases {
-+            let id = "sess-pinned";
-+            let (_home, state, _project) = test_fixtures::test_state(id);
-+            {
-+                let mut instances = state.instances.write().await;
-+                instances[0].status = status;
-+                instances[0]
-+                    .queued_prompts
-+                    .push(test_fixtures::queued_prompt());
-+            }
-+
-+            let mut tick = test_fixtures::Tick::default();
-+            tick.attempted.insert(id.to_string());
-+            tick.run(&state).await;
-+
-+            assert_eq!(
-+                test_fixtures::startup_errors(&state, id),
-+                expected_attempts,
-+                "{name}"
-+            );
-+        }
-+    }
-+
-     /// A launch-prep race (here: memory and disk disagree on the row) must not
-     /// pin the session out of the resume set, or a queued prompt never drains.
-     #[tokio::test]
-```
-
----
-
-### Incident Patch 2: `2d1ee322` (2026-11-02)
-**Commit Message**: fix(acp): end a background task when TaskStop kills it (#5217)
-
-* fix(acp): end a background task when TaskStop kills it
-
-Claude writes no task-notification for a task it killed, so the tailer
-never reported an end and the session stayed Running after its turn.
-Treat a successful TaskStop result as the end and cancel the tailer so
-it stops following and no longer blocks conversation reset.
+Addresses review comment from @jerome-benoit on #5263.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(acp): settle a stopped workflow's agents before ending its task
+* test(worktree): fail when cleanup lists profiles without the transition lock
 
-TaskStop cancelled the tailer owner, which also stopped the workflow
-journal before it completed open agents, so they kept the session
-Running. Give TaskStop its own stop signal: the tailer settles the
-journal, then publishes the end itself.
+The earlier test also passed without the lock, because the store locks
+block on the same file. A hook after the listing now checks that profile
+creat
 
-Addresses review comment from CodeRabbit on #5217.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(acp): keep a TaskStop seen before task tailing resumes
-
-A replayed TaskStop can arrive before ResumeTaskTailing, when no tailer
-follows the task yet. Remember it and end the task on resume instead of
-tailing it for a notification that never comes.
-
-Addresses review comment from CodeRabbit on #5217.
-
-Co-Authored-By: Claude So
-
-**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +5/-0)
+**File**: `src/cli/worktree.rs` (modified, +136/-1)
 ```diff
-@@ -322,6 +322,11 @@ impl Shared {
-                 }
-                 continue;
-             }
-+            // Only `TaskStop` ends a task here; the tailer publishes the end.
-+            if let Event::BackgroundTaskFinished { task_id, .. } = &event {
-+                self.bg_tasks.stop(task_id);
-+                continue;
-+            }
-             update_tool_context_cache(&self.tool_context_cache, &event, &update_for_tool_context);
-             if self.event_tx.send(event).await.is_err() {
-                 break;
-```
-
-**File**: `src/acp/acp_client/raw_input.rs` (modified, +55/-0)
-```diff
-@@ -131,6 +131,27 @@ pub(super) fn background_task_started_from_value(v: &serde_json::Value) -> Optio
-     }
+@@ -296,6 +296,49 @@ pub(crate) fn remove_orphaned_worktrees(
+     removed
  }
  
-+/// A successful `TaskStop`. Claude writes no `<task-notification>` for a task
-+/// it killed, so the tool result is the only end signal.
-+pub(super) fn background_task_stopped_from_value(v: &serde_json::Value) -> Option<Event> {
-+    let cc = v.get("_meta")?.get("claudeCode")?;
-+    if cc.get("toolName").and_then(|t| t.as_str()) != Some("TaskStop") {
-+        return None;
-+    }
-+    let tr = cc.get("toolResponse")?;
-+    if !tr
-+        .get("message")?
-+        .as_str()?
-+        .starts_with("Successfully stopped task")
-+    {
-+        return None;
-+    }
-+    Some(Event::BackgroundTaskFinished {
-+        task_id: tr.get("task_id")?.as_str()?.to_string(),
-+        ended_at: Some(chrono::Utc::now()),
-+    })
++#[cfg(test)]
++thread_local! {
++    static AFTER_PROFILE_LISTING: std::cell::RefCell<Option<Box<dyn FnOnce()>>> =
++        const { std::cell::RefCell::new(None) };
 +}
 +
- /// A Claude async sub-agent launch, arriving as `_meta.claudeCode` with
- /// `toolName: "Agent"` and a `toolResponse` whose `status` is
- /// `"async_launched"`. `agentId` is the only required field; anything else
-@@ -215,6 +236,40 @@ mod tests {
-         .is_none());
++/// Removes the confirmed worktrees that no session in any profile sits on or inside. The rows are
++/// read, and the removal done, while every store is locked, so no session can adopt a path in
++/// between. Fails closed: if a store cannot be read, nothing is removed.
++pub(crate) fn remove_confirmed_worktrees(
++    git_wt: &GitWorktree,
++    orphans: &[WorktreeEntry],
++    purging: &HashSet<PathBuf>,
++) -> Result<usize> {
++    let _transition = crate::session::StorageTransition::acquire()?;
++    let storages = crate::session::list_profiles()?
++        .iter()
++        .map(|profile| Storage::open_unwatched(profile))
++        .collect::<Result<Vec<_>>>()?;
++    #[cfg(test)]
++    if let Some(hook) = AFTER_PROFILE_LISTING.with(|slot| slot.borrow_mut().take()) {
++        hook();
++    }
++    crate::session::with_storages_locked(&storages, || {
++        let mut session_paths = Vec::new();
++        for storage in &storages {
++            for inst in storage.load_instances_complete()? {
++                let path = PathBuf::from(&inst.project_path);
++                session_paths.extend(path.canonicalize().ok());
++                session_paths.push(path);
++            }
++        }
++        let (kept, free): (Vec<_>, Vec<_>) = orphans
++            .iter()
++            .cloned()
++            .partition(|wt| session_paths.iter().any(|path| path.starts_with(&wt.path)));
++        for wt in &kept {
++            eprintln!("✗ Skipped {}: a session now uses it", wt.path.display());
++        }
++        Ok(remove_orphaned_worktrees(git_wt, &free, purging))
++    })?
++}
++
+ async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
+     let storage = Storage::open_unwatched(profile)?;
+     let (instances, _groups) = storage.load_with_groups()?;
+@@ -389,7 +432,7 @@ async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
+         let main_repo = GitWorktree::find_main_repo(&current_dir)?;
+         let git_wt = GitWorktree::new(main_repo)?;
+ 
+-        removed_count += remove_orphaned_worktrees(&git_wt, &orphaned_worktrees, &purging);
++        removed_count += remove_confirmed_worktrees(&git_wt, &orphaned_worktrees, &purging)?;
      }
  
+     println!("\n✓ Cleanup complete: {} items removed", removed_count);
+@@ -515,6 +558,98 @@ mod tests {
+         assert_eq!(ids(&left), ["restored", "locked", "reserved"]);
+     }
+ 
++    /// A session created on, or inside, a listed candidate after listing keeps its checkout.
 +    #[test]
-+    fn task_stop_ends_the_task() {
-+        let update = |tool: &str, response: serde_json::Value| serde_json::json!({"_meta": {"claudeCode": {"toolName": tool, "toolResponse": response}}});
-+        let stopped = serde_json::json!({
-+            "message": "Successfully stopped task: b21uzuute (cargo check)",
-+            "task_id": "b21uzuute",
-+        });
-+        match background_task_stopped_from_value(&update("TaskStop", stopped.clone())) {
-+            Some(Event::BackgroundTaskFinished { task_id, ended_at }) => {
-+                assert_eq!(task_id, "b21uzuute");
-+                assert!(ended_at.is_some());
-+            }
-+            other => panic!("expected BackgroundTaskFinished, got {other:?}"),
++    #[serial_test::serial]
++    fn cleanup_spares_candidates_a_session_adopted_after_listing() {
++        let tmp = tempfile::TempDir::new().unwrap();
++        let _home = crate::session::test_support::isolate_app_dir_at(&tmp.path().join("home"));
++        let repo = tmp.path().join("repo");
++        std::fs::create_dir(&repo).unwrap();
++        let git = |args: &[&str]| {
++            let status = std::process::Command::new("git")
++                .args(["-c", "user.name=t", "-c", "user.email=t@t"])
++                .args(args)
++                .current_dir(&repo)
++                .status()
++                .unwrap();
++            assert!(status.success(), "git {args:?}");
++        };
++        git(&["init", "-q"]);
++        git(&["commit", "-q", "--allow-empty", "-m", "init"]);
++        let git_wt = GitWorktree::new(repo.clone()).unwrap();
++        let mut paths = Vec::new();
++        for name in ["inside", "equal", "free"] {
++            let path = tmp.path().join(name);
++            git_wt.create_worktree(name, &path, true, None).unwrap();
++            paths.push(path.canonicalize().unwrap());
 +        }
-+        for (label, tool, response) in [
-+            ("other tool", "Bash", stopped.clone()),
-+            (
-+                "not stopped",
-+                "TaskStop",
-+                serde_json::json!({"message": "No task found", "task_id": "b21uzuute"}),
-+            ),
-+            (
-+                "no task id",
-+                "TaskStop",
-+                serde_json::json!({"message": "Successfully stopped task: x"}),
-+            ),
-+        ] {
-+            assert!(
-+                background_task_stopped_from_value(&update(tool, response)).is_none(),
-+                "{label}"
-+            );
++
++        let (orphans, _) = find_orphaned_worktrees(&[], &git_wt).unwrap();
++        assert_eq!(orphans.len(), 3);
++        let purging = purging_paths(&orphans);
++
++        let nested = paths[0].join("sub");
++        std::fs::create_dir(&nested).unwrap();
++        for (profile, path) in [("one", &nested), ("two", &paths[1])] {
++            Storage::new_unwatched(profile)
++                .unwrap()
++                .update(|instances, _groups| {
++                    instances.push(Instance::new("adopted", path.to_str().unwrap()));
++                    Ok(())
++                })
++                .unwrap();
 +        }
++
++        let removed = remove_confirmed_worktrees(&git_wt, &orphans, &purging).unwrap();
++        assert_eq!(removed, 1);
++        assert!(paths[0].exists() && paths[1].exists());
++        assert!(!paths[2].exists());
 +    }
 +
-     #[test]
-     fn workflow_launch_starts_a_task() {
-         // Trimmed from a real claude-agent-acp 0.96 launch result.
++    /// Cleanup holds the catalogue lock across the profile listing, so a profile cannot be created
++    /// after the listing and go unread.
++    #[test]
++    #[serial_test::serial]
++    fn cleanup_blocks_profile_creation_after_listing() {
++        let tmp = tempfile::TempDir::new().unwrap();
++       
 ```
 
-**File**: `src/acp/acp_client/update_events.rs` (modified, +3/-1)
+**File**: `src/git/worktree/mod.rs` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,8 @@ use super::lifecycle::{detect_off_protocol_work_completed, OffProtocolWorkKind};
- use super::plan::{extract_plan_from_switch_mode, map_plan_status, plan_status_to_str};
- use super::raw_input::{
-     background_agent_launched_from_value, background_command_launched_from_value,
--    background_task_started_from_value, monitor_event_from_raw, wakeup_event_from_raw,
-+    background_task_started_from_value, background_task_stopped_from_value, monitor_event_from_raw,
-+    wakeup_event_from_raw,
+@@ -44,6 +44,7 @@ pub(crate) struct WorktreeCreation {
+     pub branch_created: bool,
+     pub checkout_created: bool,
+ }
++#[derive(Clone)]
+ pub struct WorktreeEntry {
+     pub path: PathBuf,
+     pub branch: Option<String>,
+```
+
+**File**: `src/session/mod.rs` (modified, +3/-1)
+```diff
+@@ -120,7 +120,9 @@ pub(crate) use storage::observe_lock_contention_for_test;
+ pub(crate) use storage::{
+     duplicate_reports, reconcile_profile_duplicates, DuplicateIdReport, ProfileMovePlan,
  };
- use super::tool_output::{
-     extract_diffs_from_content, extract_memory_recall, extract_tool_content_text,
-@@ -481,6 +482,7 @@ pub(super) fn map_update_to_events(
-                         if profile.supports_wakeup_tools {
-                             events.extend(background_command_launched_from_value(&payload));
-                             events.extend(background_task_started_from_value(&payload));
-+                            events.extend(background_task_stopped_from_value(&payload));
-                         }
-                         events.push(Event::RawAgentUpdate { payload });
-                     }
-```
-
-**File**: `src/acp/task_transcript.rs` (modified, +194/-6)
-```diff
-@@ -142,12 +142,18 @@ fn shared_watch() -> Arc<FileWatchService> {
- #[derive(Default)]
- pub(crate) struct ActiveTasks {
-     owners: Mutex<HashMap<String, Arc<TaskOwner>>>,
-+    /// Tasks `TaskStop` ended before any tailer followed them, as when the
-+    /// result is replayed ahead of the resumed tailing.
-+    stopped_early: Mutex<HashSet<String>>,
-     publication: tokio::sync::Mutex<()>,
- }
+-pub(crate) use storage::{try_acquire_terminal_handoff_driver, TerminalHandoffDriver};
++pub(crate) use storage::{
++    try_acquire_terminal_handoff_driver, with_storages_locked, TerminalHandoffDriver,
++};
  
- struct TaskOwner {
-     tool_call_id: Option<String>,
-+    /// Another launch took over the task: stop without reporting an end.
-     cancellation: CancellationToken,
-+    /// `TaskStop` killed the task: settle its agents, then report the end.
-+    stop: CancellationToken,
- }
+ use std::sync::atomic::{AtomicBool, Ordering};
  
- impl ActiveTasks {
-@@ -159,6 +165,28 @@ impl ActiveTasks {
-         self.lock().is_empty()
-     }
- 
-+    /// Ends `task_id` because `TaskStop` killed it. A following tailer
-+    /// publishes the end itself; with none, the stop is kept for the resumed
-+    /// tailer that registers next.
-+    pub(crate) fn stop(&self, task_id: &str) {
-+        match self.lock().get(task_id) {
-+            Some(owner) => owner.stop.cancel(),
-+            None => {
-+                self.stopped_early
-+                    .lock()
-+                    .unwrap_or_else(PoisonError::into_inner)
-+                    .insert(task_id.to_string());
-+            }
-+        }
-+    }
-+
-+    fn take_early_stop(&self, task_id: &str) -> bool {
-+        self.stopped_early
-+            .lock()
-+            .unwrap_or_else(PoisonError::into_inner)
-+            .remove(task_id)
-+    }
-+
-     fn owns(&self, task_id: &str, owner: &Arc<TaskOwner>) -> bool {
-         self.lock()
-             .get(task_id)
-@@ -216,8 +244,15 @@ impl TaskTailer {
-             let owner = Arc::new(TaskOwner {
-                 tool_call_id: self.tool_call_id.clone(),
-                 cancellation: CancellationToken::new(),
-+                stop: CancellationToken::new(),
-             });
-             owners.insert(self.task_id.clone(), owner.clone());
-+            // Under the owners lock, so a concurrent `stop` either finds this
-+            // owner or leaves its marker here. A live launch supersedes a
-+            // stale marker.
-+            if self.active.take_early_stop(&self.task_id) && self.start == TailerStart::Resumed {
-+                owner.stop.cancel();
-+            }
-             owner
-         };
-         let guard = ActiveGuard {
-@@ -241,6 +276,7 @@ impl TaskTailer {
-             });
-             let ended_at = tokio::select! {
-                 () = owner.cancellation.cancelled() => return,
-+                () = owner.stop.cancelled() => Some(Utc::now()),
-                 ended_at = self.follow() => ended_at,
-             };
-             ended.cancel();
-@@ -699,11 +735,20 @@ mod tests {
- 
-     impl Fixture {
-         async fn spawn_with(&self, watch: Arc<FileWatchService>, start: TailerStart) {
-+            self.spawn_task("t-1", watch, start).await;
-+        }
-+
-+        async fn spawn_task(
-+            &self,
-+            task_id: &str,
-+            watch: Arc<FileWatchService>,
-+            start: TailerStart,
-+        ) {
-             let _ = TaskTailer {
-                 tool_call_id: Some("toolu_1".into()),
-                 claude_home: Some(self.home.clone()),
-                 watch,
--                task_id: "t-1".into(),
-+                task_id: task_id.into(),
-                 session_id: "sess".into(),
-                 active: self.active.clone(),
-                 event_tx: self.tx.as_ref().expect("sender kept").downgrade(),
-@@ -753,6 +798,16 @@ mod tests {
-             self.tx = None;
-         }
- 
-+        async fn released_task(&self, task_id: &str) {
-+            tokio::time::timeout(Duration::from_secs(5), async {
-+                while self.active.lock().contains_key(task_id) {
-+                    tokio::task::yield_now().await;
-+                }
-+            })
-+            .await
-+            .expect("the tailer released its slot");
-+        }
-+
-         async fn released(&self) {
-             tokio::time::timeout(Duration::from_secs(5), async {
-                 while !self.active.is_empty() {
-@@ -798,18 +853,131 @@ mod tests {
-         assert_eq!(finished_id(f.next().await), "t-1");
-     }
- 
-+    #[tokio::test]
-+    async fn a_stopped_task_reports_one_end_and_releases_its_slot() {
-+        let mut f = fixture("{\"type\":\"user\"}\n");
-+        f.spawn(TailerStart::Live).await;
-+        f.parked().await;
-+        f.active.stop("t-1");
-+        match f.next().await {
-+            Event::BackgroundTaskFinished { task_id, ended_at } => {
-+                assert_eq!(task_id, "t-1");
-+                assert!(ended_at.is_some());
-+            }
-+            other => panic!("expected BackgroundTaskFinished, got {other:?}"),
-+        }
-+        f.released().await;
-+        f.active.stop("t-1");
-+        assert!(
-+            f.active.take_early_stop("t-1"),
-+            "a stop with no tailer is kept"
-+        );
-+        f.append(&notification_line("t-1", Some("completed
 ```
 
 ---
 
-### Incident Patch 3: `2523d822` (2026-11-02)
-**Commit Message**: fix(serve): give a wedged Tailscale the --no-tailscale advice in the CLI pre-check too (#5138)
+### Incident Patch 2: `e0830982` (2026-11-04)
+**Commit Message**: fix(serve): let the Daemon stop before the launcher kills it on a readiness timeout (#5259)
 
-* fix(serve): give a wedged Tailscale the --no-tailscale advice in the CLI pre-check too
+* fix(serve): stop a Daemon start in flight on SIGTERM so its guards run
 
-#4866 taught the Daemon to fail closed when the `tailscale` probe times out,
-but `aoe serve --remote`'s own pre-check still used the sync probe, which
-reads a timeout as "unavailable". With no `cloudflared` installed, it
-bailed with the cloudflared install error instead of the probe's message.
+The signal handler was installed only after the Tunnel start, so a
+signal during it used the default action and skipped every Drop,
+including the one that turns off a Funnel the start switched on.
+Register the handler first and race the Tunnel start against it.
 
-- The pre-check now makes the same decision as `start_server`: it skips the
-  probe for `--no-tailscale` or a named tunnel, and otherwise uses
-  `tailscale_probe().use_funnel()`, so a timeout fails with "`tailscale`
-  didn't answer… pass `--no-tailscale`".
-- `skips_tailscale` is the one rule both use, with a table test (none,
-  `--no-tailscale`, named tunnel, a name without a URL).
-- The comment in `tailscale_probe_with` says a timeout fails the start,
-  not that it falls back to Cloudflare.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-The e2e test puts a hanging `tailscale` and a failing `cloudflared` on
-PATH and checks the error.
+* fix(serve): give an unready Daemon a grace to stop before killing it
 
-Closes #5127.
+On a readiness failure the launcher sent SIGKILL at once. Send SIGTERM
+and wait up to 5 s, longer than the 3 s Funnel reset bound, then kill.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* test(e2e): don't let an inherited AGENT_OF_EMPIRES_P
+* fix(serve): do not signal an unready Daemon child that is already reaped
 
-**File**: `src/cli/serve.rs` (modified, +12/-2)
+Addresses review comment from @jerome-benoit on #5259.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(serve): size the unready Daemon grace to the Funnel cleanup budget
+
+The guard runs two commands bounded at 3 s each, so 5 s could cut it
+short. Derive the grace from that bound plus margin.
+
+Addresses review comment from @jerome-benoit on #5259.
+
+Co-Autho
+
+**File**: `src/cli/serve.rs` (modified, +77/-2)
 ```diff
-@@ -1260,8 +1260,18 @@ async fn validate_launch_args(profile: &str, args: &ServeArgs) -> Result<AuthMod
-         if args.passphrase.is_none() {
-             bail!("Remote exposure requires --passphrase or AOE_SERVE_PASSPHRASE");
-         }
--        let tailscale_ok =
--            tokio::task::spawn_blocking(crate::server::tunnel::tailscale_available_sync).await?;
-+        // The same decision `start_server` makes, so a wedged Tailscale fails here with the
-+        // probe's `--no-tailscale` advice rather than the cloudflared install error below.
-+        use crate::server::tunnel::{skips_tailscale, tailscale_probe};
-+        let tailscale_ok = if skips_tailscale(
-+            args.no_tailscale,
-+            args.tunnel_name.as_deref(),
-+            args.tunnel_url.as_deref(),
-+        ) {
-+            false
-+        } else {
-+            tailscale_probe().await.use_funnel()?
-+        };
-         if cloudflared_required(args.no_tailscale, args.tunnel_name.is_some(), tailscale_ok) {
-             tokio::task::spawn_blocking(crate::server::tunnel::check_cloudflared).await??;
-         }
-```
-
-**File**: `src/server/startup.rs` (modified, +1/-2)
-```diff
-@@ -616,8 +616,7 @@ pub(crate) async fn start_server(
-     let tunnel_handle = if remote {
-         // Choosing and starting the tunnel is the part that can hang, so it shares one deadline.
-         let handle = within_tunnel_deadline(tunnel_deadline, async {
--            let named = tunnel_name.is_some() && tunnel_url.is_some();
--            let tailscale_ok = if no_tailscale || named {
-+            let tailscale_ok = if tunnel::skips_tailscale(no_tailscale, tunnel_name, tunnel_url) {
-                 tracing::debug!(target: "http.middleware", "tunnel: --no-tailscale or a named tunnel, skipping Tailscale auto-detection");
-                 false
-             } else {
-```
-
-**File**: `src/server/tunnel.rs` (modified, +32/-2)
-```diff
-@@ -533,6 +533,16 @@ impl TailscaleProbe {
+@@ -1890,8 +1890,7 @@ async fn start_daemon(
+     )
+     .await;
+     if let Err(error) = ready {
+-        let _ = child.kill();
+-        let _ = child.wait();
++        stop_unready_daemon(&mut child).await;
+         return Err(error);
      }
+ 
+@@ -1932,6 +1931,34 @@ async fn await_daemon_ready<'a>(
+     })
  }
  
-+/// Whether tunnel selection skips Tailscale: `--no-tailscale`, or a named Cloudflare tunnel
-+/// (name and URL both set), makes the probe's answer irrelevant.
-+pub fn skips_tailscale(
-+    no_tailscale: bool,
-+    tunnel_name: Option<&str>,
-+    tunnel_url: Option<&str>,
-+) -> bool {
-+    no_tailscale || (tunnel_name.is_some() && tunnel_url.is_some())
++/// Covers the Funnel guard's two sequential cleanup commands, each bounded by
++/// `FUNNEL_OFF_TIMEOUT`, plus margin.
++const UNREADY_DAEMON_GRACE: std::time::Duration = crate::server::tunnel::FUNNEL_OFF_TIMEOUT
++    .saturating_mul(2)
++    .saturating_add(std::time::Duration::from_secs(2));
++
++/// SIGTERM, then SIGKILL after the grace.
++async fn stop_unready_daemon(child: &mut std::process::Child) {
++    stop_child_within(child, UNREADY_DAEMON_GRACE).await;
 +}
 +
- /// Probe whether `tailscale` is on PATH and its daemon is running and signed in.
- pub async fn tailscale_probe() -> TailscaleProbe {
-     tailscale_probe_with(std::ffi::OsStr::new("tailscale"), PROBE_TIMEOUT).await
-@@ -542,8 +552,9 @@ async fn tailscale_probe_with(
-     program: &std::ffi::OsStr,
-     timeout: std::time::Duration,
- ) -> TailscaleProbe {
--    // Each probe is bounded so a wedged `tailscale` falls back to Cloudflare at once instead of
--    // holding tunnel selection until the startup deadline; dropping one kills its child.
-+    // Each probe is bounded so a wedged `tailscale` reads as `TimedOut` at once, which fails the
-+    // start, instead of holding tunnel selection until the startup deadline; dropping one kills
-+    // its child.
-     let probe = |arg: &'static str| async move {
-         let output = Command::new(program).arg(arg).kill_on_drop(true).output();
-         match tokio::time::timeout(timeout, output).await {
-@@ -1339,6 +1350,25 @@ mod tests {
++async fn stop_child_within(child: &mut std::process::Child, grace: std::time::Duration) {
++    // A reaped child's pid may be reused, so signal only one `try_wait` shows still running.
++    if !matches!(child.try_wait(), Ok(None)) {
++        return;
++    }
++    let _ = nix::sys::signal::kill(
++        nix::unistd::Pid::from_raw(child.id() as i32),
++        nix::sys::signal::Signal::SIGTERM,
++    );
++    let deadline = tokio::time::Instant::now() + grace;
++    while !matches!(child.try_wait(), Ok(Some(_))) && tokio::time::Instant::now() < deadline {
++        tokio::time::sleep(std::time::Duration::from_millis(25)).await;
++    }
++    let _ = child.kill();
++    let _ = child.wait();
++}
++
+ async fn migrate_managed_launch(
+     transaction: crate::daemon::lifecycle::Transaction,
+     full: bool,
+@@ -2247,6 +2274,54 @@ mod tests {
  
      use super::*;
  
-+    #[test]
-+    fn tailscale_is_skipped_only_when_its_answer_cannot_matter() {
-+        // (--no-tailscale, tunnel name, tunnel URL, skipped)
-+        let cases = [
-+            (false, None, None, false),
-+            (true, None, None, true),
-+            (false, Some("work"), Some("https://aoe.example.com"), true),
-+            // A name without a URL is refused earlier; it isn't a named tunnel.
-+            (false, Some("work"), None, false),
-+        ];
-+        for (no_tailscale, name, url, skipped) in cases {
-+            assert_eq!(
-+                skips_tailscale(no_tailscale, name, url),
-+                skipped,
-+                "{no_tailscale} {name:?} {url:?}"
-+            );
++    #[tokio::test]
++    async fn an_already_exited_daemon_is_not_signalled() {
++        let mut child = std::process::Command::new("true").spawn().unwrap();
++        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
++        // Reap it as the readiness loop does, then keep the pid from a stale signal.
++        while child.try_wait().unwrap().is_none() {
++            assert!(std::time::Instant::now() < deadline, "child never exited");
++            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
++        }
++        let started = std::time::Instant::now();
++        stop_child_within(&mut child, std::time::Duration::from_secs(30)).await;
++        assert!(started.elapsed() < std::time::Duration::from_secs(5));
++    }
++
++    #[tokio::test]
++    async fn an_unready_daemon_is_stopped_within_the_grace() {
++        // The ready file is touched once the shell has installed its trap.
++        for (trap, kill_expected) in [("exit 0", false), ("", true)] {
++            let dir = tempfile::tempdir().unwrap();
++            let ready = dir.path().join("ready");
++            let mut child = std::process::Command::new("sh")
++                .args([
++                    "-c",
++                    r#"trap "$2" TERM; touch "$1"; while :; do sleep 0.05; done"#,
++                    "sh",
++                ])
++                .arg(&ready)
++                .arg(trap)
++                .spawn()
++                .unwrap();
++            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
++            while !ready.exists() {
++                assert!(std::time::Instant::now() < deadline, "shell never started");
++                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
++            }
++            let grace = std::time::Duration::from_millis(500);
++            let started = std::time::Instant::now();
++            stop_child_within(&mut child, grace).await;
++            let elapsed = started.elapsed();
++            assert!(child.try_wait().unwrap().is_some(), "child must be reaped");
++            if kill_expected {
++                assert!(elapsed >= grace, "{elapsed:?}");
++            } else {
++                assert!(elapsed < grace, "{elapsed:?}");
++            }
 +        }
 +    }
 +
-     #[test]
-     fn funnel_preflight_starts_only_where_it_can_put_back_what_it_changes() {
-         let web =
+     #[tokio::test]
+     async fn cityhall_refusal_cannot_reflect_the_bearer_into_errors() {
+         use tokio::io::{AsyncReadExt, AsyncWriteExt};
 ```
 
-**File**: `tests/e2e/harness.rs` (modified, +4/-0)
+**File**: `src/server/startup.rs` (modified, +89/-28)
 ```diff
-@@ -918,6 +918,7 @@ last_seen_version = "{}"
-             .env("TERM", "xterm-256color")
-             .env_remove("NO_COLOR")
-             .env_remove("AOE_NO_AUTOSTART")
-+            .env_remove("AGENT_OF_EMPIRES_PROFILE")
-             .envs(self.extra_env.iter().map(|(key, value)| (key, value)))
-             .output()
-             .expect("failed to run tmux new-session");
-@@ -977,6 +978,7 @@ last_seen_version = "{}"
-             .env("PATH", self.env_path())
-             .env("TERM", "xterm-256color")
-             .env_remove("NO_COLOR")
-+            .env_remove("AGENT_OF_EMPIRES_PROFILE")
-             .envs(self.extra_env.iter().map(|(key, value)| (key, value)))
-             .output()
-             .expect("failed to run tmux new-session");
-@@ -1419,6 +1421,8 @@ last_seen_version = "{}"
-             .env_remove("AOE_NO_AUTOSTART")
-             .env_remove("AOE_DAEMON_URL")
-             .env_remove("AOE_DAEMON_TOKEN")
-+            // The harness creates only the `default` profile.
-+            .env_remove("AGENT_OF_EMPIRES_PROFILE")
-             .envs(self.extra_env.iter().map(|(key, value)| (key, value)));
-         for key in &self.extra_env_remove {
-             command.env_remove(key);
-```
-
-**File**: `tests/e2e/serve.rs` (modified, +44/-0)
-```diff
-@@ -4061,3 +4061,47 @@ fn cli_serve_restart_reports_replacement_startup_failure() {
-         "not a directory"
-     );
+@@ -307,10 +307,66 @@ async fn within_tunnel_deadline<T>(
+         })
  }
-+
-+#[test]
-+#[parallel]
-+fn remote_serve_with_a_wedged_tailscale_says_to_skip_tailscale_not_to_install_cloudflared() {
-+    use std::os::unix::fs::PermissionsExt;
-+    let mut h = TuiTestHarness::new_in_tmp("wedged_tailscale");
-+    // A `tailscale` that never answers, and a `cloudflared` that fails as a missing one would,
-+    // both ahead of any real ones on PATH.
-+    let bin = h.home_path().join("fake-bin");
-+    std::fs::create_dir_all(&bin).unwrap();
-+    for (name, body) in [("tailscale", "exec sleep 600"), ("cloudflared", "exit 1")] {
-+        let fake = bin.join(name);
-+        std::fs::write(&fake, format!("#!/bin/sh\n{body}\n")).unwrap();
-+        std::fs::set_permissions(&fake, std::fs::Permissions::from_mode(0o755)).unwrap();
+ 
++/// Drops `start` on a signal so its guards run their cleanup.
++async fn until_terminated<T>(
++    terminated: &CancellationToken,
++    start: impl Future<Output = anyhow::Result<T>>,
++) -> anyhow::Result<T> {
++    tokio::select! {
++        biased;
++        _ = terminated.cancelled() => anyhow::bail!("Stopped by a signal before startup finished"),
++        result = start => result,
 +    }
-+    h.add_path_dir(&bin);
-+
-+    let mut child = h.spawn_cli(&[
-+        "serve",
-+        "--remote",
-+        "--passphrase",
-+        "wedged-tailscale-check",
-+    ]);
-+    // The probe gives up after 3 s; a start that got past the check would keep running.
-+    let deadline = Instant::now() + Duration::from_secs(30);
-+    let status = loop {
-+        if let Some(status) = child.try_wait().unwrap() {
-+            break status;
-+        }
-+        if Instant::now() > deadline {
-+            let _ = child.kill();
-+            panic!("`aoe serve --remote` didn't stop at the pre-check");
-+        }
-+        std::thread::sleep(Duration::from_millis(100));
-+    };
-+    let output = child.wait_with_output().unwrap();
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(!status.success(), "{stderr}");
-+    assert!(
-+        stderr.contains("didn't answer") && stderr.contains("--no-tailscale"),
-+        "{stderr}"
-+    );
-+    assert!(!stderr.contains("cloudflared"), "{stderr}");
 +}
++
++/// Cancelled by the first SIGINT, SIGTERM or SIGHUP. Registered up front so a signal during
++/// startup stops it, rather than killing the process with no `Drop` run.
++fn watch_termination_signals() -> CancellationToken {
++    let token = CancellationToken::new();
++    let cancel = token.clone();
++    #[cfg(unix)]
++    {
++        use tokio::signal::unix::{signal, SignalKind};
++        let register = |kind: SignalKind, name: &str| {
++            signal(kind)
++                .inspect_err(|error| {
++                    tracing::warn!(target: "serve.shutdown", signal = name, %error, "could not register signal handler");
++                })
++                .ok()
++        };
++        let mut sigterm = register(SignalKind::terminate(), "SIGTERM");
++        let mut sighup = register(SignalKind::hangup(), "SIGHUP");
++        tokio::spawn(async move {
++            tokio::select! {
++                _ = async { if tokio::signal::ctrl_c().await.is_err() { std::future::pending().await } } => {
++                    tracing::info!(target: "serve.shutdown", signal = "SIGINT", "received signal, shutting down");
++                }
++                _ = async { match sigterm { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
++                    tracing::info!(target: "serve.shutdown", signal = "SIGTERM", "received signal, shutting down");
++                }
++                _ = async { match sighup { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
++                    tracing::info!(target: "serve.shutdown", signal = "SIGHUP", "received signal, shutting down");
++                }
++            }
++            cancel.cancel();
++        });
++    }
++    #[cfg(not(unix))]
++    tokio::spawn(async move {
++        if tokio::signal::ctrl_c().await.is_err() {
++            return;
++        }
++        tracing::info!(target: "serve.shutdown", "received ctrl-c, shutting down");
++        cancel.cancel();
++    });
++    token
++}
++
+ pub(crate) async fn start_server(
+     config: ServerConfig<'_>,
+     transaction: crate::daemon::lifecycle::Transaction,
+ ) -> anyhow::Result<()> {
++    let terminated = watch_termination_signals();
+     let tunnel_deadline = tokio::time::Instant::now() + TUNNEL_STARTUP_DEADLINE;
+     let ServerConfig {
+         profile,
+@@ -615,7 +671,7 @@ pub(crate) async fn start_server(
+ 
+     let tunnel_handle = if remote {
+         // Choosing and starting the tunnel is the part that can hang, so it shares one deadline.
+-        let handle = within_tunnel_deadline(tunnel_deadline, async {
++        let handle = until_terminated(&terminated, within_tunnel_deadline(tunnel_deadline, async {
+             let tailscale_ok = if tunnel::skips_tailscale(no_tailscale, tunnel_name, tunnel_url) {
+                 tracing::debug!(target: "http.middleware", "tunnel: --no-tailscale or a named tunnel, skipping Tailscale auto-detection");
+                 false
+@@ -652,7 +708,7 @@ pub(crate) async fn start_server(
+             } else {
+                 tunnel::TunnelHandle::spawn_quick(local_port).await?
+             })
+-        })
++        }))
+         .await?;
+ 
+         let tunnel_url_with_token = if let Some(ref token) = auth_token {
+@@ -1214,32 +1270,9 @@ pub(crate) async fn start_server(
+     // Both listeners drain on the same cancellation signal and deadline.
+     let shutdown_state = state.clone();
+     let shutdown_signal = async move {
+-        #[cfg(unix)]
+-        {
+-            use tokio::signal::unix::{signal, SignalKind};
+-            let mut sigterm = signal(SignalKind::terminate()).ok();
+-            let mut sighup = signal(SignalKind::hangup()).ok();
+-            tokio::select! {
+-                _ = shutdown_state.shutdown.cancelled() => {}
+-                _ = tokio::signal::ctrl_c() => {
+-                    tracing::info!(target: "serve.shutdown", signal = "SIGINT", "received signal, shutting down");
+-                }
+-                _ = async { match sigterm { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
+-                    tracing::info!(target: "serve.shutdown", signal = "SIGTERM", "received signal, shutting down");
+-                }
+-                _ = async { match sighup { Some(ref mut s) => { s.recv().await; } None => std::future::pending().await } } => {
+-                    tracing::info!(target: "serve.shutdown", signal = "SIGHUP", "received signal, shutting down");
+-                }
+-            }
+-        }
+-        #[cfg(no
+```
+
+**File**: `src/server/tunnel.rs` (modified, +1/-1)
+```diff
+@@ -674,7 +674,7 @@ async fn lock_funnel_starts(path: &std::path::Path) -> anyhow::Result<std::fs::F
+ }
+ 
+ /// How long turning the Funnel back off may take.
+-const FUNNEL_OFF_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
++pub(crate) const FUNNEL_OFF_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
+ 
+ /// Turns off the :443 Funnel a Tailscale start switched on, unless the start finishes.
+ /// Every error return after `--bg` starts awaits [`Self::fail`]; `Drop` covers a start that was
+```
+
+---
+
+### Incident Patch 3: `7935c8db` (2026-11-04)
+**Commit Message**: fix(web): clear seeded model and effort when the wizard agent changes (#5265)
+
+* fix(web): clear seeded model and effort when the wizard agent changes
+
+The wizard seeds agentModel and agentEffort from the starting agent's
+acp_defaults. Switching agent kept them, so the create request sent the
+previous agent's model and the session failed to switch to it.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* test(web): record agent-switch model reset in the coverage matrix
+
+Addresses review comment from @jerome-benoit on #5265.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* test(web): assert the create request omits the previous agent's model
+
+Addresses review comment from CodeRabbit on #5265.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `web/src/components/session-wizard/__tests__/SessionWizard.test.tsx` (modified, +22/-0)
+```diff
+@@ -223,6 +223,28 @@ describe("SessionWizard structured view payload", () => {
+       agent_effort: "high",
+     });
+   });
++
++  it("drops the previous agent's model and effort after switching agent", async () => {
++    vi.mocked(fetchSettings).mockResolvedValueOnce({
++      session: { default_tool: "opencode" },
++      acp: { acp_defaults: { opencode: { model: "openai/gpt-5.5", effort: "high" } } },
++      sandbox: {},
++    } as never);
++    vi.mocked(fetchAgents).mockResolvedValueOnce([
++      agent("opencode", { acp_installed: true }),
++      agent("claude", { acp_installed: true }),
++    ]);
++    renderWizard({ path: "/tmp/proj" });
++    await waitFor(() => expect(screen.getByTestId("wizard-agent-row").textContent).toContain("opencode"));
++    fireEvent.click(screen.getByTestId("wizard-agent-row"));
++    fireEvent.click(await screen.findByRole("button", { name: /^claude/ }));
++    fireEvent.click(screen.getByRole("button", { name: "Done" }));
++    await launch();
++    await waitFor(() => expect(createSession).toHaveBeenCalled());
++    expect(payload().tool).toBe("claude");
++    expect(payload().agent_model).toBeUndefined();
++    expect(payload().agent_effort).toBeUndefined();
++  });
+ });
+ 
+ describe("SessionWizard last instruction memory", () => {
+```
+
+**File**: `web/src/components/session-wizard/wizardReducer.test.ts` (modified, +10/-0)
+```diff
+@@ -161,6 +161,16 @@ describe("leaving an import under structured_view off", () => {
+ });
+ 
+ describe("SET_FIELD mutual exclusion", () => {
++  it("switching agent drops the previous agent's seeded model and effort", () => {
++    const seeded = makeState({ tool: "pi", agentModel: "p/m", agentEffort: "high" });
++    expect(reducer(seeded, set("tool", "claude")).data).toMatchObject({
++      tool: "claude",
++      agentModel: "",
++      agentEffort: "",
++    });
++    expect(reducer(seeded, set("tool", "pi")).data).toMatchObject({ agentModel: "p/m", agentEffort: "high" });
++  });
++
+   it("enabling scratch clears path sources, worktree, import id and a stale non-repo probe", () => {
+     const seeded = makeState({
+       path: "/old",
+```
+
+**File**: `web/src/components/session-wizard/wizardReducer.ts` (modified, +2/-0)
+```diff
+@@ -157,6 +157,8 @@ function setField(data: WizardData, field: string, value: unknown): WizardData {
+   }
+   // Any branch edit, even clearing it, stops the title mirror.
+   if (field === "worktreeBranch") next.worktreeBranchDirty = true;
++  // The seeded model and effort belong to the previous agent; unset, the server uses the new agent's defaults.
++  if (field === "tool" && value !== data.tool) Object.assign(next, { agentModel: "", agentEffort: "" });
+   if (field === "scratch" && value === true) {
+     Object.assign(next, {
+       path: "",
+```
+
+**File**: `web/tests/coverage-matrix.json` (modified, +8/-0)
+```diff
+@@ -1300,6 +1300,14 @@
+         "web/src/lib/types.ts"
+       ]
+     },
++    {
++      "id": "wizard.agent-switch-model-reset",
++      "kind": "vitest",
++      "risk": "medium",
++      "specs": ["src/components/session-wizard/wizardReducer.test.ts"],
++      "components": ["web/src/components/session-wizard/wizardReducer.ts"],
++      "notes": "Switching the wizard agent clears the seeded model and effort so the create request omits them and the server uses the new agent's defaults; re-selecting the same agent keeps them."
++    },
+     {
+       "id": "wizard.project-sandbox-override",
+       "notes": "Tri-state project container defaults resolve from the acknowledged served or explicitly selected profile; registry retries preserve unknown versus empty, profile switches commit atomically, manual edits and host-only imports outrank late defaults, and saves preserve explicit false while omitting inherited values.",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5233** (2026-11-03): ci: share Rust build artifacts through kache on S3 (@Seluj78)
-- **PR #5230** (2026-11-03): docs(ci): clarify pre-1.0 grouping policy (@jerome-benoit)
-- **PR #5229** (2026-11-03): fix(deps): group vitest updates across majors (@jerome-benoit)
-- **PR #5217** (2026-11-02): fix(acp): end a background task when TaskStop kills it (@Seluj78)
-- **PR #5215** (2026-11-03): fix(web,server): say Check again starts a stopped container before a manual step (@klubrake)
-- **PR #5213** (2026-11-02): fix(test): wait for a usable control connection when starting ACP runners (@klubrake)
+- **PR #5273** (closed): fix(plugin): preserve status fallback without reports (@athal7)
+- **PR #5267** (2026-11-04): fix(acp): drop live user_message_chunk echoes in structured view (@Seluj78)
+- **PR #5265** (2026-11-04): fix(web): clear seeded model and effort when the wizard agent changes (@Seluj78)
+- **PR #5264** (2026-11-04): refactor(daemon): separate endpoint values from host discovery (@jerome-benoit)
+- **PR #5263** (2026-11-04): fix(worktree): revalidate cleanup candidates after the confirmation prompt (@Seluj78)
+- **PR #5260** (2026-11-03): fix(serve): say daemon startup is unconfirmed, with PID and log path (@Seluj78)
 
 ---
 
@@ -2892,56 +2719,56 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serve): retry an idle workerless session whose queue is stranded (#5203)
+## X. worktree): revalidate cleanup candidates after the confirmation prompt (#5263)
 
 **RULE**:
-When implementing operations in `src/server/acp_reconciler/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cli/worktree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9daf6d52`: serve): retry an idle workerless session whose queue is stranded (#5203). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebd5a774`: worktree): revalidate cleanup candidates after the confirmation prompt (#5263). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/acp_reconciler/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/worktree.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let (targets, with_queued_prompts, queued_not_stopped): (
-        Vec<ResumeTarget>,
-        HashSet<String>,
-        HashSet<String>,
-    ) = {
-            instances
-                .iter()
-                .filter(|i| {
-                    !i.queued_prompts.is_empty() && i.status != crate::session::Status::Stopped
-                })
-                .map(|i| i.id.clone())
-                .collect(),
-        // A session with a queue and no worker is retried under the normal
-        // budget, whatever its status short of Stopped (a failed spawn leaves
-        // Error): an earlier attempt must not strand the queue (#5200).
-        let retry_for_queue = attempted.contains(&id)
-            && queued_not_stopped.contains(&id)
-            && supervisor.worker_state(&id).await == AcpWorkerState::Absent;
-            let restart_marker = supervisor.worker_state(&id).await != AcpWorkerState::Stopping
-                && supervisor.take_late_restart_marker(&id);
-            if !retry_for_queue && !restart_marker {
-            if restart_marker {
-                forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
-            }
-    /// A resume attempt that l
+#[cfg(test)]
+thread_local! {
+    static AFTER_PROFILE_LISTING: std::cell::RefCell<Option<Box<dyn FnOnce()>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// Removes the confirmed worktrees that no session in any profile sits on or inside. The rows are
+/// read, and the removal done, while every store is locked, so no session can adopt a path in
+/// between. Fails closed: if a store cannot be read, nothing is removed.
+pub(crate) fn remove_confirmed_worktrees(
+    git_wt: &GitWorktree,
+    orphans: &[WorktreeEntry],
+    purging: &HashSet<PathBuf>,
+) -> Result<usize> {
+    let _transition = crate::session::StorageTransition::acquire()?;
+    let storages = crate::session::list_profiles()?
+        .iter()
+        .map(|profile| Storage::open_unwatched(profile))
+        .collect::<Result<Vec<_>>>()?;
+    #[cfg(test)]
+    if let Some(hook) = AFTER_PROFILE_LISTING.with(|slot| slot.borrow_mut().take()) {
+        hook();
+    }
+    crate::session::with_storages_locked(&storages, || {
+        let mut session_paths = Vec::new();
+        for storage in &storages {
+            for inst in storage.load_instances_complete()? {
+                let path = PathBuf::from(&inst.project_path);
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let (targets, with_queued_prompts): (Vec<ResumeTarget>, HashSet<String>) = {
-            if supervisor.worker_state(&id).await == AcpWorkerState::Stopping
-                || !supervisor.take_late_restart_marker(&id)
-            {
-            forget_session_budget(&id, attempted, parked, respawn_history, capacity_deferred);
+        removed_count += remove_orphaned_worktrees(&git_wt, &orphaned_worktrees, &purging);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9daf6d52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebd5a774` are properly handled with clean fallback behavior.
