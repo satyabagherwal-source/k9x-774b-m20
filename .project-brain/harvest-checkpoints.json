@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T17:37:28.801Z",
+  "last_updated": "2026-11-04T17:45:14.220Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "1d51803ebfbcb333e29ee3e9f68f4e48a4bbc7419cfc4924d38afe194644df1a",
-      "verified_at": "2026-10-27T19:56:18.321Z",
+      "content_hash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
+      "verified_at": "2026-11-04T17:45:14.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:56:18.321Z"
+      "last_updated": "2026-11-04T17:45:14.219Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -15801,14 +15801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-recursivesi-flint",
-      "content_hash": "2ab90870e8fd926964198e84c2d15f200ac6bac46efaddaba3bb5dc23999d605",
-      "verified_at": "2026-10-31T01:46:53.324Z",
+      "content_hash": "55eadb8c7f8df9e5a4ab0a3887ae2b28ef1722356acb92db676770a60a059e63",
+      "verified_at": "2026-11-04T17:45:11.473Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:46:53.324Z"
+      "last_updated": "2026-11-04T17:45:11.473Z"
     },
     "Qwen/Qwen3-14B": {
       "repository": "Qwen/Qwen3-14B",

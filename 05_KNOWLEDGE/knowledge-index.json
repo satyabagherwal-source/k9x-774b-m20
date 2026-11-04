@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:37:28.739Z",
+  "last_updated": "2026-11-04T17:45:14.119Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37689,8 +37689,8 @@
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "28435298",
-      "content_hash": "1d51803ebfbcb333e29ee3e9f68f4e48a4bbc7419cfc4924d38afe194644df1a",
+      "source_version": "0050b485",
+      "content_hash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "promoted_rules": [
@@ -37713,6 +37713,11 @@
           "number": 4975,
           "title": "deps): override fast-uri and serialize-javascript for security advisories (#2256",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6877,
+          "title": "cli): improve CI git command handling and telemetry payloads (#2259)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37720,7 +37725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:56:18.193Z",
+      "verified_at": "2026-11-04T17:45:14.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124426,7 +124431,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RecursiveSI/flint",
       "source_version": "hf-recursivesi-flint",
-      "content_hash": "2ab90870e8fd926964198e84c2d15f200ac6bac46efaddaba3bb5dc23999d605",
+      "content_hash": "55eadb8c7f8df9e5a4ab0a3887ae2b28ef1722356acb92db676770a60a059e63",
       "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "promoted_rules": [
@@ -124464,6 +124469,21 @@
           "number": 5999,
           "title": "Sliding Window Attention Caching Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6874,
+          "title": "Hybrid Attention Positional Encoding Suppression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6875,
+          "title": "MoE Router Load Balancing Loss Coefficient Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6876,
+          "title": "Sliding Window Attention Context Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -124471,7 +124491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:46:53.225Z",
+      "verified_at": "2026-11-04T17:45:11.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175539,6 +175559,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:37:28.725Z"
+    },
+    "rule-6874": {
+      "learning_id": "rule-6874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6874,
+      "title": "Hybrid Attention Positional Encoding Suppression Invariant",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:45:11.337Z"
+    },
+    "rule-6875": {
+      "learning_id": "rule-6875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6875,
+      "title": "MoE Router Load Balancing Loss Coefficient Constraint",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:45:11.337Z"
+    },
+    "rule-6876": {
+      "learning_id": "rule-6876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6876,
+      "title": "Sliding Window Attention Context Boundary Invariant",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:45:11.337Z"
+    },
+    "rule-6877": {
+      "learning_id": "rule-6877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6877,
+      "title": "cli): improve CI git command handling and telemetry payloads (#2259)",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "0050b485",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T17:45:14.092Z"
     }
   },
   "aliases": {

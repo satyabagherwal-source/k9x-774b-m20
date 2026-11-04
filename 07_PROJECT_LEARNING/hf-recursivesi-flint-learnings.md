@@ -3,7 +3,7 @@
 > **Source Version**: `hf-recursive`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T01:46:52.085Z  
+> **Timestamp**: 2026-11-04T17:45:09.662Z  
 > **Learning ID**: `learn-huggingface-recursivesi-flint`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,316 +17,226 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `RecursiveSI/flint` repository addresses the computational inefficiency of dense Large Language Models (LLMs) in agentic coding tasks. By utilizing a Mixture-of-Experts (MoE) architecture with extreme sparsity (256 experts, only 6 active per token), it achieves high-quality code generation (SWE-bench Verified 74.2%) with a low active parameter count (~2.5B) against a massive total parameter count (39.8B). This allows for high-throughput inference on single high-end GPUs (H200/B300) while maintaining the context window and reasoning capabilities required for complex software engineering workflows.
+The `RecursiveSI/flint` repository addresses the computational inefficiency of dense Large Language Models (LLMs) in agentic coding tasks. By employing a **Mixture-of-Experts (MoE)** architecture with **Sliding Window Attention (SWA)**, it reduces active parameter count to ~2.5B per token (out of 39.8B total) while maintaining a massive 262,144-token context window. This allows for high-throughput, low-latency inference on single high-end GPUs (B300/H200) for complex, multi-step coding agent workflows (SWE-bench, Terminal-Bench).
 
 **Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention Subsystem:** The model employs a non-uniform attention pattern. It is not a standard Transformer. It alternates between `full_attention` (14 layers) and `sliding_attention` (35 layers).
-    *   *Invariant:* Sliding window is fixed at 513 tokens.
-    *   *Invariant:* Full attention layers have **no** RoPE (Rotary Positional Embedding) applied (`no_rope_layer_indices` includes all full attention layers). This implies a reliance on absolute position or other mechanisms for long-range dependency in those specific layers, or that the sliding window layers handle the positional encoding burden.
-2.  **MoE Routing Subsystem:**
-    *   *Structure:* 2 dense layers (indices 0, 1) followed by 47 MoE layers.
-    *   *Routing:* Top-6 routing out of 256 experts per token.
-    *   *Shared Expert:* An always-active shared expert (intermediate size 1024) exists alongside the routed experts (intermediate size 512).
-    *   *Normalization:* `norm_topk_prob` is true, and `router_score_function` is `sigmoid` (not standard softmax). This is a critical deviation from standard MoE implementations.
-3.  **Normalization & Embedding Subsystem:**
-    *   *Norm:* RMSNorm with epsilon $10^{-6}$.
-    *   *QK Norm:* Per-head QK RMSNorm is explicitly mentioned in the README, which is a stability feature for high-dimensional attention.
-    *   *Embeddings:* `tie_word_embeddings` is false. Input and output embeddings are distinct.
-    *   *Vocabulary:* 150,144 tokens, with specific special tokens for agentic workflows (`<|system|>`, `<|user|>`, `<|assistant|>`, `<|observation|>`).
+1.  **Hybrid Attention Subsystem:** The model strictly alternates between `full_attention` (14 layers) and `sliding_attention` (35 layers). This is not a standard transformer; it is a hybrid where positional encoding (RoPE) is explicitly disabled on full-attention layers (`no_rope_layer_indices`), relying instead on learned attention sinks and QK RMSNorm.
+2.  **Sparse MoE Routing:** Each of the 47 MoE layers contains 256 experts. A router selects only 6 experts per token (`num_experts_per_tok: 6`), plus one always-active shared expert. This creates a sparse activation pattern critical for memory bandwidth optimization.
+3.  **Dense Pre-Processing:** The first two layers (`mlp_only_layers: [0, 1]`) are dense, non-MoE layers, likely serving as a feature extractor or "stem" before the sparse backbone.
+4.  **Serving Boundary:** The repository is a **checkpoint-only** artifact. It does not contain the Python modeling code (`modeling_flint.py`). It relies on an external SGLang serving kit (`sglang/` directory) and Docker containerization for execution. The `transformers` library integration is pending (`transformers_version: 5.12.1` is a future/placeholder version).
 
-**Critical Subsystem Abstractions:**
-*   **Layer Type Dispatch:** The model configuration explicitly lists `layer_types` for all 49 layers. The inference engine (SGLang) must dynamically dispatch the forward pass logic based on this list, rather than assuming a homogeneous stack.
-*   **Sparse Activation Masking:** The MoE layer must efficiently compute the top-6 experts without materializing the full 256-expert weight matrix in memory for every token, leveraging the `num_experts_per_tok` constraint.
+**Critical Abstractions:**
+*   **`FlintForCausalLM`**: The top-level model class (referenced in `config.json`).
+*   **`layer_types`**: A list of 49 strings defining the attention mechanism per layer. This is the core structural invariant.
+*   **`no_rope_layer_indices`**: A list of integers defining where positional encoding is suppressed. This is a critical forensic detail indicating a non-standard attention mechanism.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention Positional Encoding Isolation
+### 1. Hybrid Attention Positional Encoding Suppression Invariant
 **RULE**:
-In hybrid attention architectures mixing sliding-window and full-attention layers, positional encoding (e.g., RoPE) MUST be applied consistently only to the layers that require relative position awareness for their specific window size. If full-attention layers are designated as "no-rope," the system MUST NOT apply RoPE to those layers, and the model MUST be trained with this specific asymmetry. Applying RoPE to "no-rope" layers or omitting it from "sliding" layers will break the learned positional invariants.
+In hybrid attention architectures mixing full and sliding-window attention, positional encoding (e.g., RoPE) MUST be explicitly disabled on full-attention layers if those layers are intended to operate as global context aggregators with learned attention sinks. The `no_rope_layer_indices` MUST be a subset of the indices where `layer_types[i] == "full_attention"`.
 
 **WHY**:
-The `no_rope_layer_indices` in the config explicitly lists indices 0, 1, 5, 9, ..., 48. These correspond to the `full_attention` layers (and the first two dense layers). If an inference engine incorrectly applies RoPE to these layers, the attention scores will be rotated by an angle that the model weights were not trained to expect, leading to catastrophic degradation in long-context retrieval or immediate hallucination. Conversely, if RoPE is missing from sliding layers, the model loses its ability to distinguish token order within the 513-token window.
+Applying RoPE to full-attention layers in a hybrid setup can cause interference with the learned attention sinks, leading to degraded long-context performance. The forensic evidence shows `no_rope_layer_indices` includes indices 0, 1, 5, 9, ..., 48. Note that indices 0 and 1 are `mlp_only_layers` (dense), and the rest correspond to `full_attention` layers. This implies that full-attention layers rely on content-based attention (via sinks) rather than positional bias.
 
 **WHEN TO APPLY**:
-Any LLM implementation using a mix of local (sliding window) and global (full) attention mechanisms, particularly when the configuration explicitly defines `no_rope_layer_indices` or similar positional encoding exclusions.
+When designing or implementing hybrid attention models (e.g., Jamba, Zamba, Flint) where full-attention layers are interspersed with sliding-window layers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import torch.nn.functional as F
+# In model initialization
+self.no_rope_layer_indices = set(config.no_rope_layer_indices)
 
-def apply_rope_if_needed(q, k, layer_idx, no_rope_indices, cos, sin):
-    """
-    Applies RoPE only if the current layer is NOT in the no_rope_indices list.
-    """
-    if layer_idx in no_rope_indices:
-        # Return original q, k without rotation
-        return q, k
-    
-    # Standard RoPE application
-    # q, k shape: [batch, heads, seq_len, head_dim]
-    # cos, sin shape: [seq_len, head_dim]
-    q_rotated = q * cos + rotate_half(q) * sin
-    k_rotated = k * cos + rotate_half(k) * sin
-    return q_rotated, k_rotated
-
-def rotate_half(x):
-    x1 = x[..., :x.shape[-1] // 2]
-    x2 = x[..., x.shape[-1] // 2:]
-    return torch.cat((-x2, x1), dim=-1)
+def forward(self, hidden_states, position_ids, ...):
+    for i, layer in enumerate(self.layers):
+        if i in self.no_rope_layer_indices:
+            # Do NOT apply RoPE to position_ids for this layer
+            attn_output = layer(hidden_states, position_ids=None, ...)
+        else:
+            # Apply RoPE
+            attn_output = layer(hidden_states, position_ids=position_ids, ...)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Applying RoPE uniformly to all layers regardless of config
-def forward(self, q, k, v, layer_idx):
-    # BUG: Ignores no_rope_layer_indices
-    q, k = apply_rope(q, k, self.rope_cache)
-    # This will corrupt the attention scores for full-attention layers
-    attn_output = F.scaled_dot_product_attention(q, k, v)
-    return attn_output
+# ANTI-PATTERN: Applying RoPE to all layers regardless of type
+for i, layer in enumerate(self.layers):
+    # This will break the learned attention sink mechanism in full-attention layers
+    attn_output = layer(hidden_states, position_ids=position_ids, ...)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Create a mock model with `no_rope_layer_indices=[0]`. Pass a fixed input. Verify that the output of layer 0 is identical to a baseline model where RoPE is disabled for layer 0.
-2.  **Gradient Check:** During training, verify that the gradient flow for the RoPE parameters (if any) or the positional embeddings is zero for layers in `no_rope_layer_indices`.
-3.  **Config Assertion:** In the model initialization, assert that `len(no_rope_layer_indices) <= num_hidden_layers` and that all indices are valid.
+```python
+assert set(config.no_rope_layer_indices).issubset(
+    [i for i, lt in enumerate(config.layer_types) if lt == "full_attention"]
+)
+```
 
-### 2. Sigmoid-Based MoE Routing with Top-K Normalization
+### 2. MoE Router Load Balancing Loss Coefficient Constraint
 **RULE**:
-When using a Sigmoid-based router for Mixture-of-Experts, the top-K expert selection MUST be followed by a normalization step (e.g., `norm_topk_prob`) that ensures the sum of the selected expert weights equals 1.0. The router scores MUST NOT be passed directly to the expert gating without this normalization if the architecture expects a convex combination of expert outputs.
+The `router_aux_loss_coef` MUST be non-zero and small (e.g., 0.0005) to enforce load balancing across experts. The `norm_topk_prob` MUST be `true` to ensure the router outputs a valid probability distribution over the selected experts.
 
 **WHY**:
-Standard MoE uses Softmax, which naturally sums to 1. Sigmoid outputs are independent probabilities in [0, 1]. If you select the top 6 experts and sum their sigmoid outputs, the sum can be > 1 or < 1. If the model was trained with `norm_topk_prob: true`, the inference engine MUST replicate this normalization. Failure to do so changes the effective scale of the expert contributions, leading to output drift and potential instability in the residual stream.
+Without auxiliary load balancing loss, MoE models suffer from "expert collapse," where a few experts are overused and others are never activated, leading to underutilization of parameters and degraded performance. `norm_topk_prob` ensures that the top-k selection is normalized, preventing the router from outputting unbounded scores.
 
 **WHEN TO APPLY**:
-Any MoE implementation where `router_score_function` is set to `sigmoid` and `norm_topk_prob` is `true`.
+In any Mixture-of-Experts model implementation.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import torch.nn.functional as F
-
-def moe_forward(x, router_logits, expert_weights, top_k=6, norm_topk=True):
-    """
-    x: [batch, seq_len, hidden_size]
-    router_logits: [batch, seq_len, num_experts]
-    expert_weights: List of expert weight tensors
-    """
-    # 1. Compute Sigmoid Scores
-    scores = torch.sigmoid(router_logits) # [batch, seq_len, num_experts]
-    
-    # 2. Select Top-K Experts
-    top_k_scores, top_k_indices = torch.topk(scores, k=top_k, dim=-1)
-    
-    # 3. Normalize Top-K Scores
-    if norm_topk:
-        # Ensure sum is 1.0 for the selected experts
-        top_k_scores = top_k_scores / top_k_scores.sum(dim=-1, keepdim=True)
-    
-    # 4. Compute Weighted Sum of Expert Outputs
-    # This is a simplified view; in practice, this involves gathering expert outputs
-    # and multiplying by the normalized scores.
-    # expert_outputs: [batch, seq_len, top_k, hidden_size]
-    # final_output = (expert_outputs * top_k_scores.unsqueeze(-1)).sum(dim=2)
-    
-    return top_k_scores, top_k_indices
+# In router forward pass
+gates = self.gate(hidden_states)  # [batch, seq, num_experts]
+top_k_gates, top_k_indices = torch.topk(gates, k=self.num_experts_per_tok, dim=-1)
+if self.norm_topk_prob:
+    top_k_gates = top_k_gates / top_k_gates.sum(dim=-1, keepdim=True)
+# Compute auxiliary loss for load balancing
+aux_loss = self.load_balancing_loss(gates, top_k_indices)
+total_loss = lm_loss + self.router_aux_loss_coef * aux_loss
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using Sigmoid scores without normalization
-def moe_forward_buggy(x, router_logits, expert_weights, top_k=6):
-    scores = torch.sigmoid(router_logits)
-    top_k_scores, top_k_indices = torch.topk(scores, k=top_k, dim=-1)
-    # BUG: top_k_scores sum is not 1.0
-    # This changes the effective learning rate and output scale
-    return top_k_scores, top_k_indices
+# ANTI-PATTERN: Not normalizing top-k probabilities
+top_k_gates, top_k_indices = torch.topk(gates, k=self.num_experts_per_tok, dim=-1)
+# top_k_gates are raw logits, not probabilities. This leads to unstable training.
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Generate random router logits. Apply the MoE forward pass. Assert that for every token, the sum of the top-K normalized scores is exactly 1.0 (within floating-point tolerance).
-2.  **Gradient Flow:** Verify that the gradient of the loss with respect to the router logits is non-zero and stable. If normalization is missing, gradients may explode or vanish depending on the sigmoid saturation.
+```python
+assert config.router_aux_loss_coef > 0
+assert config.norm_topk_prob == True
+```
 
-### 3. Sliding Window Attention Caching Invariant
+### 3. Sliding Window Attention Context Boundary Invariant
 **RULE**:
-In sliding window attention, the KV cache MUST be managed such that only the most recent `sliding_window` tokens are retained for attention computation. Older tokens MUST be evicted from the cache to prevent memory bloat and to enforce the local attention constraint. The cache eviction MUST be synchronized with the sequence length to avoid off-by-one errors in the attention mask.
+The `sliding_window` size MUST be consistent with the `max_position_embeddings` and the `layer_types` configuration. For sliding-attention layers, the effective context is limited to `sliding_window` tokens. For full-attention layers, the context is the full `max_position_embeddings`. The `use_sliding_window` flag MUST be `true` if any `layer_types` are `sliding_attention`.
 
 **WHY**:
-The `sliding_window` is 513. If the cache grows unbounded, memory usage will exceed GPU limits for long contexts. If the eviction is incorrect (e.g., off-by-one), the model will attend to tokens outside its trained window or miss the current token, leading to degraded performance or crashes.
+Inconsistent sliding window sizes or incorrect flags lead to incorrect attention masks, causing the model to attend to tokens outside the intended window or fail to attend to the full context in full-attention layers. This results in degraded performance and potential training instability.
 
 **WHEN TO APPLY**:
-Any inference engine implementing sliding window attention (e.g., Mistral, Gemma, Flint).
+In any model using sliding window attention.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class SlidingWindowKVCache:
-    def __init__(self, sliding_window, max_seq_len, device):
-        self.sliding_window = sliding_window
-        self.max_seq_len = max_seq_len
-        self.device = device
-        # Pre-allocate cache for max_seq_len
-        self.k_cache = torch.zeros(1, 1, max_seq_len, head_dim, device=device)
-        self.v_cache = torch.zeros(1, 1, max_seq_len, head_dim, device=device)
-        self.current_len = 0
-
-    def update(self, k_new, v_new):
-        """
-        k_new, v_new: [batch, heads, 1, head_dim]
-        """
-        # 1. Determine the start index for the new token
-        start_idx = self.current_len
-        
-        # 2. If we are exceeding the sliding window, shift the cache
-        if self.current_len >= self.sliding_window:
-            # Shift left by 1
-            self.k_cache[:, :, 1:self.sliding_window] = self.k_cache[:, :, 0:self.sliding_window-1]
-            self.v_cache[:, :, 1:self.sliding_window] = self.v_cache[:, :, 0:self.sliding_window-1]
-            start_idx = self.sliding_window - 1
-        
-        # 3. Insert new token
-        self.k_cache[:, :, start_idx] = k_new
-        self.v_cache[:, :, start_idx] = v_new
-        
-        # 4. Update length
-        self.current_len += 1
-        
-        # 5. Return the valid slice for attention
-        # The valid slice is from max(0, current_len - sliding_window) to current_len
-        valid_start = max(0, self.current_len - self.sliding_window)
-        return self.k_cache[:, :, valid_start:self.current_len], self.v_cache[:, :, valid_start:self.current_len]
+# In attention mask creation
+if layer_type == "sliding_attention":
+    # Create a causal mask with a sliding window of size `sliding_window`
+    mask = create_sliding_window_mask(seq_len, sliding_window)
+else:
+    # Create a full causal mask
+    mask = create_full_causal_mask(seq_len)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Unbounded KV Cache
-class UnboundedKVCache:
-    def __init__(self):
-        self.k_cache = []
-        self.v_cache = []
-
-    def update(self, k_new, v_new):
-        # BUG: Memory grows indefinitely
-        self.k_cache.append(k_new)
-        self.v_cache.append(v_new)
-        return torch.stack(self.k_cache), torch.stack(self.v_cache)
+# ANTI-PATTERN: Using a full causal mask for sliding-attention layers
+mask = create_full_causal_mask(seq_len)  # This allows attending to all previous tokens, not just the window
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Test:** Run inference with a sequence length of 10,000 tokens. Monitor GPU memory usage. It should plateau after the sliding window is filled.
-2.  **Correctness Test:** Compare the attention output of the sliding window implementation with a reference implementation that manually slices the full sequence. They should match exactly.
+```python
+if config.use_sliding_window:
+    assert any(lt == "sliding_attention" for lt in config.layer_types)
+    assert config.sliding_window > 0
+```
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit SHAs, PR links, or closed bug issues. The following incidents are inferred from the architectural invariants and common failure modes in similar MoE/Sliding Window models, based on the configuration provided.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following section is based on inferred potential failure modes from the configuration and architectural design, as no actual incidents are documented in the provided data.*
 
-### Incident 1: RoPE Application to Full-Attention Layers (BUG-ROPE-01)
-- **Context**: Inference Engine / Attention Subsystem
-- **What Was Expected**: Full-attention layers (indices in `no_rope_layer_indices`) should not have RoPE applied.
-- **What Actually Happened**: The inference engine applied RoPE to all layers, causing attention scores to be rotated incorrectly for full-attention layers.
-- **Evidence in Repo**: `config.json` contains `no_rope_layer_indices`.
-- **Root Cause**: The inference engine did not respect the `no_rope_layer_indices` configuration and applied RoPE uniformly.
+### Incident 1: Potential Expert Collapse Due to Missing Load Balancing (BUG-MOE-01)
+- **Context**: MoE Router Subsystem
+- **What Was Expected**: Uniform distribution of tokens across all 256 experts in each MoE layer.
+- **What Actually Happened**: (Inferred) If `router_aux_loss_coef` were set to 0, the model would likely suffer from expert collapse, where only a few experts are used.
+- **Evidence in Repo**: `config.json` shows `router_aux_loss_coef: 0.0005` and `norm_topk_prob: true`, indicating that load balancing is enabled.
+- **Root Cause**: (Inferred) Without auxiliary loss, the router learns to route all tokens to the same few experts, leading to underutilization.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code
-q, k = apply_rope(q, k, self.rope_cache)
-
-// + Fixed pattern
-if self.layer_idx not in self.no_rope_layer_indices:
-    q, k = apply_rope(q, k, self.rope_cache)
+// - Buggy code: No auxiliary loss
+// total_loss = lm_loss
+// + Fixed pattern: Include auxiliary loss
+// total_loss = lm_loss + config.router_aux_loss_coef * aux_loss
 ```
-- **Lesson**: Always respect configuration-driven positional encoding exclusions.
+- **Lesson**: Always include a load balancing loss in MoE models to prevent expert collapse.
 
-### Incident 2: MoE Router Normalization Mismatch (BUG-MOE-02)
-- **Context**: MoE Subsystem
-- **What Was Expected**: Top-K expert scores should be normalized to sum to 1.0.
-- **What Actually Happened**: The inference engine used raw sigmoid scores, leading to output drift.
-- **Evidence in Repo**: `config.json` contains `norm_topk_prob: true` and `router_score_function: "sigmoid"`.
-- **Root Cause**: The inference engine did not implement the `norm_topk_prob` logic.
+### Incident 2: Positional Encoding Interference in Hybrid Attention (BUG-ATTN-02)
+- **Context**: Attention Subsystem
+- **What Was Expected**: Full-attention layers to operate as global context aggregators without positional bias.
+- **What Actually Happened**: (Inferred) If RoPE were applied to full-attention layers, it would interfere with the learned attention sinks, degrading long-context performance.
+- **Evidence in Repo**: `config.json` shows `no_rope_layer_indices` including indices of full-attention layers.
+- **Root Cause**: (Inferred) Applying RoPE to full-attention layers in a hybrid setup can cause interference with the learned attention sink mechanism.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code
-top_k_scores, top_k_indices = torch.topk(scores, k=top_k, dim=-1)
-
-// + Fixed pattern
-top_k_scores, top_k_indices = torch.topk(scores, k=top_k, dim=-1)
-if self.norm_topk_prob:
-    top_k_scores = top_k_scores / top_k_scores.sum(dim=-1, keepdim=True)
+// - Buggy code: Apply RoPE to all layers
+// attn_output = layer(hidden_states, position_ids=position_ids, ...)
+// + Fixed pattern: Skip RoPE for no_rope_layer_indices
+// if i in self.no_rope_layer_indices:
+//     attn_output = layer(hidden_states, position_ids=None, ...)
+// else:
+//     attn_output = layer(hidden_states, position_ids=position_ids, ...)
 ```
-- **Lesson**: Always normalize router scores if the configuration specifies it.
-
-### Incident 3: Sliding Window Cache Off-By-One (BUG-CACHE-03)
-- **Context**: KV Cache Management
-- **What Was Expected**: The KV cache should contain exactly `sliding_window` tokens.
-- **What Actually Happened**: The cache contained `sliding_window + 1` tokens, causing an off-by-one error in the attention mask.
-- **Evidence in Repo**: `config.json` contains `sliding_window: 513`.
-- **Root Cause**: The cache update logic did not correctly handle the boundary condition when the sequence length equals the sliding window.
-- **Remediation Code Diff**:
-```python
-// - Buggy code
-if self.current_len > self.sliding_window:
-    # Shift left
-    ...
-
-// + Fixed pattern
-if self.current_len >= self.sliding_window:
-    # Shift left
-    ...
-```
-- **Lesson**: Use `>=` instead of `>` when checking if the cache is full.
+- **Lesson**: In hybrid attention models, explicitly disable positional encoding on layers that rely on learned attention sinks.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion**: Ensure that `layer_types` is a list of strings, not integers. The inference engine must map string types to specific layer implementations.
-    *   **Falsy Traps**: `num_experts_per_tok` is 6. Ensure that this value is not zero or negative.
-    *   **Deep Immutability**: The `config.json` should be treated as immutable. Any modification to the configuration should create a new object.
+    *   **Type Coercion**: Ensure `no_rope_layer_indices` is a list of integers, not strings. In Python, `if i in self.no_rope_layer_indices` will fail if `i` is an int and the list contains strings.
+    *   **Falsy Traps**: `sliding_window` is 513. Ensure that `sliding_window` is not 0 or negative, as this would lead to an empty attention window.
+    *   **Deep Immutability**: The `layer_types` list should be treated as immutable after initialization. Modifying it during forward pass would lead to inconsistent behavior.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth**: The MoE routing does not involve recursion, but the attention mechanism may involve recursive KV cache updates. Ensure that the cache update logic terminates correctly.
-    *   **Loop Termination**: The sliding window cache update loop must terminate when the sequence length reaches the maximum context length.
+    *   **Recursion Depth**: The model has 49 layers. Ensure that any recursive implementation of the forward pass has a depth cap of 49.
+    *   **Loop Termination**: In the MoE routing, ensure that the top-k selection loop terminates correctly. The number of experts (256) is fixed, so the loop should iterate exactly 256 times.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components.
+    *   *Not applicable* (This is a backend model repository).
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Race Conditions**: The KV cache update must be thread-safe if multiple requests are processed concurrently. Use locks or atomic operations.
-    *   **Memory Leaks**: The KV cache must be properly freed when the sequence is complete.
+    *   **Race Conditions**: In multi-GPU inference, ensure that the MoE routing is synchronized across GPUs. If the router outputs different expert selections on different GPUs, it will lead to inconsistent results.
+    *   **Memory Leaks**: The MoE experts are large (256 experts per layer). Ensure that the expert weights are not duplicated in memory. Use memory-mapped files or shared memory for expert weights.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Ensure that `no_rope_layer_indices` is not null or undefined.
-    *   **Off-by-One Boundary Checks**: Verify that the sliding window cache indices are within bounds.
-    *   **Error Boundary Containment**: Wrap the MoE routing logic in try-catch blocks to handle potential numerical instabilities.
+    *   **Null/Undefined Chaining**: Ensure that `position_ids` is not `None` when RoPE is applied. If `position_ids` is `None` and RoPE is applied, it will lead to a crash.
+    *   **Off-by-One Boundary Checks**: The `sliding_window` is 513. Ensure that the attention mask is created with the correct size. An off-by-one error in the mask creation will lead to incorrect attention.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid MoE Transformer with sliding window and full attention layers.
-2.  **Core Abstractions**: `FlintForCausalLM`, `MoELayer`, `SlidingWindowAttention`.
-3.  **Error Handling**: Numerical stability via RMSNorm and QK Norm.
-4.  **Testing**: Unit tests for MoE routing, sliding window cache, and RoPE application.
-5.  **Security**: No specific security concerns for a model repository.
-6.  **Performance**: Sparse activation reduces compute per token. Sliding window reduces memory usage.
-7.  **Deployment**: SGLang serving kit. Docker container for GPU inference.
-8.  **Agent Patterns**: Special tokens for agentic workflows (`<|system|>`, `<|user|>`, etc.).
-9.  **Data Flow**: Input tokens -> Embedding -> Hybrid Attention -> MoE -> Output.
+1.  **Architecture**: Hybrid MoE Transformer with 49 layers. 2 dense layers, 47 MoE layers. 14 full-attention layers, 35 sliding-attention layers.
+2.  **Core Abstractions**: `FlintForCausalLM`, `layer_types`, `no_rope_layer_indices`, `num_experts`, `num_experts_per_tok`.
+3.  **Error Handling**: No explicit error handling code is provided. The model relies on the SGLang serving kit for error handling.
+4.  **Testing**: No test code is provided. The model is evaluated on SWE-bench and Terminal-Bench.
+5.  **Security**: No explicit security measures are provided. The model is served via SGLang, which may have its own security measures.
+6.  **Performance**: 39.8B total parameters, 2.5B active per token. 262,144 context window. Designed for single B300/H200 GPU.
+7.  **Deployment**: Docker-based deployment using SGLang. `docker build -t flint-sglang sglang`.
+8.  **Agent Patterns**: Designed for coding agents. Supports multi-turn tool use.
+9.  **Data Flow**: Input text -> Tokenizer -> Embedding -> 49 Layers (Dense/MoE) -> Output Head -> Text.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid Attention with Sliding Window and Full Attention.
-2.  **Rule**: Respect `no_rope_layer_indices` in RoPE application.
-3.  **Architecture Principle**: Sparse activation for efficiency.
-4.  **Failure Mode**: RoPE applied to full-attention layers.
-5.  **Reusable Skill**: Implementing sliding window KV cache.
-6.  **Decision**: Use Sigmoid-based MoE routing with normalization.
-7.  **Anti-pattern**: Unbounded KV cache.
-8.  **Verification Method**: Unit tests for MoE routing and sliding window cache.
+1.  **Pattern**: Hybrid MoE Transformer with sliding window attention.
+2.  **Rule**: Disable RoPE on full-attention layers in hybrid models.
+3.  **Architecture Principle**: Sparse activation via MoE reduces active parameters, enabling efficient inference on single GPUs.
+4.  **Failure Mode**: Expert collapse if load balancing loss is not included.
+5.  **Reusable Skill**: Implementing hybrid attention with selective positional encoding.
+6.  **Decision**: Use sliding window attention to reduce memory usage for long contexts.
+7.  **Anti-pattern**: Applying RoPE to all layers in a hybrid attention model.
+8.  **Verification Method**: Assert that `no_rope_layer_indices` is a subset of full-attention layer indices.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Parse Configuration**: Load `config.json` and extract `layer_types`, `no_rope_layer_indices`, `sliding_window`, `num_experts_per_tok`, `norm_topk_prob`.
-2.  **Implement Hybrid Attention**: Create a layer dispatch mechanism that selects between sliding window and full attention based on `layer_types`.
-3.  **Implement RoPE**: Apply RoPE only to layers not in `no_rope_layer_indices`.
-4.  **Implement MoE Routing**: Use Sigmoid-based routing with top-K selection and normalization.
-5.  **Implement Sliding Window KV Cache**: Manage the KV cache to retain only the most recent `sliding_window` tokens.
-6.  **Test**: Write unit tests for RoPE application, MoE routing, and sliding window cache.
-7.  **Deploy**: Use the SGLang serving kit for GPU inference.
+1.  **Verify Configuration**:
+    *   Check that `layer_types` has 49 elements.
+    *   Check that `no_rope_layer_indices` is a subset of full-attention layer indices.
+    *   Check that `num_experts_per_tok` is less than `num_experts`.
+2.  **Implement Hybrid Attention**:
+    *   Create a custom attention module that can switch between full and sliding window attention.
+    *   Ensure that RoPE is not applied to full-attention layers.
+3.  **Implement MoE Routing**:
+    *   Create a router that selects `num_experts_per_tok` experts per token.
+    *   Include a load balancing loss in the training objective.
+4.  **Deploy with SGLang**:
+    *   Build the Docker image using the provided `sglang/` directory.
+    *   Run the container with the model checkpoint mounted.
+5.  **Evaluate**:
+    *   Run the model on SWE-bench and Terminal-Bench to verify performance.

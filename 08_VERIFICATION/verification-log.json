@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-QPA9",
-    "timestamp": "2026-10-31T23:42:51.777Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-ZJO7",
-    "timestamp": "2026-10-31T23:49:44.407Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-ZV8I",
     "timestamp": "2026-10-31T23:49:59.394Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "acfe92b8ddc1ed66aa8e406d82fd446ac84d4bfe160e65f7fa4b51e34921fa04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-Q52A",
+    "timestamp": "2026-11-04T17:45:11.458Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "55eadb8c7f8df9e5a4ab0a3887ae2b28ef1722356acb92db676770a60a059e63",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-Q76N",
+    "timestamp": "2026-11-04T17:45:14.207Z",
+    "repository": "lingodotdev/lingo.dev",
+    "learningId": "learn-github-lingodotdev-lingo-dev",
+    "contentHash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

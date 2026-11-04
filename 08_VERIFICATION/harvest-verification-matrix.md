@@ -7256,3 +7256,5 @@
 | `CYCLE-20261104-G571` | `2026-11-04T17:37:25.069Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6870` | Yes (`35da1e94...`) |
 | `CYCLE-20261104-G604` | `2026-11-04T17:37:26.116Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6871, Rule 6872` | Yes (`425c6da1...`) |
 | `CYCLE-20261104-G82H` | `2026-11-04T17:37:28.793Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6873` | Yes (`acfe92b8...`) |
+| `CYCLE-20261104-Q52A` | `2026-11-04T17:45:11.458Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6874, Rule 6875, Rule 6876` | Yes (`55eadb8c...`) |
+| `CYCLE-20261104-Q76N` | `2026-11-04T17:45:14.207Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6877` | Yes (`e8dade68...`) |

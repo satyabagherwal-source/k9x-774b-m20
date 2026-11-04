@@ -7265,3 +7265,5 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `a89b18dc` | Multi-dimensional audit evidence | 2026-11-04T17:37:25.072Z |
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-04T17:37:26.119Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f851ca27` | Multi-dimensional audit evidence | 2026-11-04T17:37:28.795Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-04T17:45:11.465Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `0050b485` | Multi-dimensional audit evidence | 2026-11-04T17:45:14.211Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source**: github ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
-> **Source Version**: `28435298`  
+> **Source Version**: `0050b485`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:56:17.724Z  
+> **Timestamp**: 2026-11-04T17:45:13.427Z  
 > **Learning ID**: `learn-github-lingodotdev-lingo-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:56:17.448Z  
+> **Harvest Timestamp**: 2026-11-04T17:45:13.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source localization engineering tools. Connects to Lingo.dev localization engineering platform for consistent, quality translations.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Dockerfile
-- **Stars / Engagement**: 5400 stars
+- **Stars / Engagement**: 5403 stars
 
 ---
 
@@ -271,6 +271,20 @@ type DatoClientParams = {
 
 export type DatoClient = ReturnType<typeof createDatoClient>;
 
+export function formatDatoError(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return JSON.stringify(
+    error,
+    (key, value) =>
+      key === "request" || key.toLowerCase() === "authorization"
+        ? undefined
+        : value,
+    2,
+  );
+}
+
 export default function createDatoClient(params: DatoClientParams) {
   if (!params.apiKey) {
     throw new Error(
@@ -301,7 +315,7 @@ export default function createDatoClient(params: DatoClientParams) {
             `Failed to update field in DatoCMS.`,
             `Field ID: ${fieldId}`,
             `Payload: ${JSON.stringify(payload, null, 2)}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -318,7 +332,7 @@ export default function createDatoClient(params: DatoClientParams) {
           [
             `Failed to find field in DatoCMS.`,
             `Field ID: ${fieldId}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -334,7 +348,7 @@ export default function createDatoClient(params: DatoClientParams) {
         throw new Error(
           [
             `Failed to find models in DatoCMS.`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -351,7 +365,7 @@ export default function createDatoClient(params: DatoClientParams) {
           [
             `Failed to find model in DatoCMS.`,
             `Model ID: ${modelId}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -399,7 +413,7 @@ export default function createDatoClient(params: DatoClientParams) {
           [
             `Failed to find records for model in DatoCMS.`,
             `Model ID: ${modelId}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -417,7 +431,7 @@ export default function createDatoClient(params: DatoClientParams) {
             [
               `${_error.attributes.details.message}`,
               `Payload: ${JSON.stringify(payload, null, 2)}`,
-              `Error: ${JSON.stringify(_error, null, 2)}`,
+              `Error: ${formatDatoError(_error)}`,
             ].join("\n\n"),
           );
         }
@@ -427,7 +441,7 @@ export default function createDatoClient(params: DatoClientParams) {
             `Failed to update record in DatoCMS.`,
             `Record ID: ${id}`,
             `Payload: ${JSON.stringify(payload, null, 2)}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -447,7 +461,7 @@ export default function createDatoClient(params: DatoClientParams) {
           throw new Error(
             [
               `Field "${args.fieldId}" not found in model "${args.modelId}".`,
-              `Error: ${JSON.stringify(_error, null, 2)}`,
+              `Error: ${formatDatoError(_error)}`,
             ].join("\n\n"),
           );
         }
@@ -456,7 +470,7 @@ export default function createDatoClient(params: DatoClientParams) {
           throw new Error(
             [
               `${_error.attributes.details.message}`,
-              `Error: ${JSON.stringify(_error, null, 2)}`,
+              `Error: ${formatDatoError(_error)}`,
             ].join("\n\n"),
           );
         }
@@ -466,7 +480,7 @@ export default function createDatoClient(params: DatoClientParams) {
             `Failed to enable field localization in DatoCMS.`,
             `Field ID: ${args.fieldId}`,
             `Model ID: ${args.modelId}`,
-            `Error: ${JSON.stringify(_error, null, 2)}`,
+            `Error: ${formatDatoError(_error)}`,
           ].join("\n\n"),
         );
       }
@@ -1195,352 +1209,474 @@ function _getConfigFilePath() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `adc5233a` (2026-10-26)
-**Commit Message**: fix(deps): override fast-uri and serialize-javascript for security advisories (#2256)
+### Incident Patch 1: `0050b485` (2026-11-03)
+**Commit Message**: fix(cli): improve CI git command handling and telemetry payloads (#2259)
 
-**File**: `.changeset/plenty-buckets-talk.md` (added, +2/-0)
+**File**: `.changeset/quiet-cli-flows.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+---
-+---
-```
-
-**File**: `pnpm-lock.yaml` (modified, +10/-10)
-```diff
-@@ -11,13 +11,13 @@ overrides:
-   '@modelcontextprotocol/sdk': '>=1.26.0 <2'
-   '@isaacs/brace-expansion': '>=5.0.1 <6'
-   effect: '>=3.20.0 <4'
--  fast-uri: '>=3.1.7 <4'
-+  fast-uri: '>=3.1.9 <4'
-   defu: '>=6.1.5 <7'
-   ws: '>=8.21.0 <9'
-   js-cookie: '>=3.0.7 <4'
-   svgo@>=4 <4.1.0: 4.1.0
-   sharp@>=0.35 <0.35.5: 0.35.5
--  serialize-javascript: '>=7.0.3 <8'
-+  serialize-javascript: '>=7.1.3 <8'
-   rollup: '>=4.59.0 <5'
-   path-to-regexp: '>=8.4.0 <9'
-   lodash: '>=4.18.0 <5'
-@@ -5026,8 +5026,8 @@ packages:
-   fast-string-width@3.0.2:
-     resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
- 
--  fast-uri@3.1.7:
--    resolution: {integrity: sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==}
-+  fast-uri@3.1.9:
-+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
- 
-   fast-wrap-ansi@0.2.2:
-     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
-@@ -6805,8 +6805,8 @@ packages:
-     engines: {node: '>=10'}
-     hasBin: true
- 
--  serialize-javascript@7.0.6:
--    resolution: {integrity: sha512-ATTK5Q4gFVg0YDp1my2vqygyvhcklD/UV5GIlYHooGTn/NogJqIzpetkD6E5kmuVULqz/S9inUL25XcAgDRJQg==}
-+  serialize-javascript@7.1.4:
-+    resolution: {integrity: sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==}
-     engines: {node: '>=20.0.0'}
- 
-   seroval-plugins@1.3.3:
-@@ -10089,7 +10089,7 @@ snapshots:
- 
-   '@rollup/plugin-terser@0.4.4(rollup@4.62.0)':
-     dependencies:
--      serialize-javascript: 7.0.6
-+      serialize-javascript: 7.1.4
-       smob: 1.5.0
-       terser: 5.44.1
-     optionalDependencies:
-@@ -11361,7 +11361,7 @@ snapshots:
-   ajv@8.18.0:
-     dependencies:
-       fast-deep-equal: 3.1.3
--      fast-uri: 3.1.7
-+      fast-uri: 3.1.9
-       json-schema-traverse: 1.0.0
-       require-from-string: 2.0.2
- 
-@@ -12092,7 +12092,7 @@ snapshots:
-     dependencies:
-       fast-string-truncated-width: 3.0.3
- 
--  fast-uri@3.1.7: {}
-+  fast-uri@3.1.9: {}
- 
-   fast-wrap-ansi@0.2.2:
-     dependencies:
-@@ -14277,7 +14277,7 @@ snapshots:
- 
-   semver@7.8.5: {}
- 
--  serialize-javascript@7.0.6: {}
-+  serialize-javascript@7.1.4: {}
- 
-   seroval-plugins@1.3.3(seroval@1.6.8):
-     dependencies:
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +2/-2)
-```diff
-@@ -13,13 +13,13 @@ overrides:
-   "@modelcontextprotocol/sdk": ">=1.26.0 <2"
-   "@isaacs/brace-expansion": ">=5.0.1 <6"
-   effect: ">=3.20.0 <4"
--  fast-uri: ">=3.1.7 <4"
-+  fast-uri: ">=3.1.9 <4"
-   defu: ">=6.1.5 <7"
-   ws: ">=8.21.0 <9"
-   js-cookie: ">=3.0.7 <4"
-   "svgo@>=4 <4.1.0": 4.1.0
-   "sharp@>=0.35 <0.35.5": 0.35.5
--  serialize-javascript: ">=7.0.3 <8"
-+  serialize-javascript: ">=7.1.3 <8"
-   rollup: ">=4.59.0 <5"
-   path-to-regexp: ">=8.4.0 <9"
-   lodash: ">=4.18.0 <5"
-```
-
----
-
-### Incident Patch 2: `e6f35151` (2026-10-26)
-**Commit Message**: fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (#2257)
-
-* fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1
-
-* fix(deps): bump zod to 4.6.6 in scripts/docs
-
-* fix(deps): scope the undici and router-generator zod overrides
-
-* fix(deps): drop the undici and router-generator zod overrides
-
-**File**: `.changeset/zod-next-undici-advisories.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,5 @@
 +---
 +"lingo.dev": patch
-+"@lingo.dev/_compiler": patch
-+"@lingo.dev/_sdk": patch
-+"@lingo.dev/_spec": patch
 +---
 +
-+Bump `zod` from 4.4.3 to 4.6.6 (GHSA-mrhx-c7xc-m3w5).
++Improve CI flow git command handling and telemetry payloads
 ```
 
-**File**: `demo/new-compiler-next16/package.json` (modified, +1/-1)
+**File**: `action.yml` (modified, +21/-10)
 ```diff
-@@ -9,7 +9,7 @@
-   },
-   "dependencies": {
-     "@lingo.dev/compiler": "workspace:*",
--    "next": "16.3.8",
-+    "next": "16.4.1",
-     "react": "19.2.0",
-     "react-dom": "19.2.0"
-   },
+@@ -11,17 +11,28 @@ runs:
+   steps:
+     - name: Run
+       run: |
+-        npx lingo.dev@${{ inputs.version }} ci \
+-          --api-key "${{ inputs.api-key }}" \
+-          --pull-request "${{ inputs.pull-request }}" \
+-          --commit-message "${{ inputs.commit-message }}" \
+-          --pull-request-title "${{ inputs.pull-request-title }}" \
+-          --commit-author-name "${{ inputs.commit-author-name }}" \
+-          --commit-author-email "${{ inputs.commit-author-email }}" \
+-          --working-directory "${{ inputs.working-directory }}" \
+-          --process-own-commits "${{ inputs.process-own-commits }}" \
+-          --parallel ${{ inputs.parallel }}
++        npx "lingo.dev@${LINGO_ACTION_VERSION}" ci \
++          --api-key "${LINGO_ACTION_API_KEY}" \
++          --pull-request "${LINGO_ACTION_PULL_REQUEST}" \
++          --commit-message "${LINGO_ACTION_COMMIT_MESSAGE}" \
++          --pull-request-title "${LINGO_ACTION_PULL_REQUEST_TITLE}" \
++          --commit-author-name "${LINGO_ACTION_COMMIT_AUTHOR_NAME}" \
++          --commit-author-email "${LINGO_ACTION_COMMIT_AUTHOR_EMAIL}" \
++          --working-directory "${LINGO_ACTION_WORKING_DIRECTORY}" \
++          --process-own-commits "${LINGO_ACTION_PROCESS_OWN_COMMITS}" \
++          --parallel "${LINGO_ACTION_PARALLEL}"
+       shell: bash
++      env:
++        LINGO_ACTION_VERSION: ${{ inputs.version }}
++        LINGO_ACTION_API_KEY: ${{ inputs.api-key }}
++        LINGO_ACTION_PULL_REQUEST: ${{ inputs.pull-request }}
++        LINGO_ACTION_COMMIT_MESSAGE: ${{ inputs.commit-message }}
++        LINGO_ACTION_PULL_REQUEST_TITLE: ${{ inputs.pull-request-title }}
++        LINGO_ACTION_COMMIT_AUTHOR_NAME: ${{ inputs.commit-author-name }}
++        LINGO_ACTION_COMMIT_AUTHOR_EMAIL: ${{ inputs.commit-author-email }}
++        LINGO_ACTION_WORKING_DIRECTORY: ${{ inputs.working-directory }}
++        LINGO_ACTION_PROCESS_OWN_COMMITS: ${{ inputs.process-own-commits }}
++        LINGO_ACTION_PARALLEL: ${{ inputs.parallel }}
+ inputs:
+   version:
+     description: "Lingo.dev CLI version"
 ```
 
-**File**: `packages/cli/package.json` (modified, +1/-1)
+**File**: `packages/cli/src/cli/cmd/ci/flows/_base.ts` (modified, +0/-4)
 ```diff
-@@ -160,7 +160,7 @@
-     "xml2js": "0.6.2",
-     "xpath": "0.0.34",
-     "yaml": "2.9.0",
--    "zod": "4.4.3"
-+    "zod": "4.6.6"
-   },
-   "devDependencies": {
-     "@types/babel__generator": "7.27.0",
-```
-
-**File**: `packages/compiler/package.json` (modified, +2/-2)
-```diff
-@@ -45,7 +45,7 @@
-     "@types/lodash": "4.17.21",
-     "@types/object-hash": "3.0.6",
-     "@types/react": "19.2.7",
--    "next": "16.3.8",
-+    "next": "16.4.1",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
-     "vitest": "4.1.12"
-@@ -75,7 +75,7 @@
-     "posthog-node": "5.14.0",
-     "prettier": "3.6.2",
-     "unplugin": "2.3.11",
--    "zod": "4.4.3"
-+    "zod": "4.6.6"
-   },
-   "packageManager": "pnpm@9.12.3"
+@@ -29,7 +29,3 @@ export function getGitConfig(platformKit: PlatformKit) {
+     userEmail: platformKit.config.commitAuthorEmail,
+   };
  }
+-
+-export function escapeShellArg(arg: string): string {
+-  return `'${arg.replace(/'/g, "'\\''")}'`;
+-}
 ```
 
-**File**: `packages/new-compiler/package.json` (modified, +1/-1)
+**File**: `packages/cli/src/cli/cmd/ci/flows/in-branch.spec.ts` (added, +110/-0)
 ```diff
-@@ -146,7 +146,7 @@
-     "@types/react": "19.2.7",
-     "@types/react-dom": "19.2.3",
-     "@types/ws": "8.18.1",
--    "next": "16.3.8",
-+    "next": "16.4.1",
-     "tsdown": "0.18.2",
-     "tsx": "4.21.0",
-     "typescript": "5.9.3",
+@@ -0,0 +1,110 @@
++import { describe, it, expect, vi, beforeEach } from "vitest";
++import { execFileSync, execSync } from "child_process";
++import { InBranchFlow } from "./in-branch";
++
++vi.mock("child_process");
++vi.mock("../../i18n", () => ({
++  default: {
++    exitOverride: () => ({ parseAsync: vi.fn().mockResolvedValue(undefined) }),
++  },
++}));
++vi.mock("../../run", () => ({
++  default: {
++    exitOverride: () => ({ parseAsync: vi.fn().mockResolvedValue(undefined) }),
++  },
++}));
++
++function createOra() {
++  return {
++    start: vi.fn(),
++    succeed: vi.fn(),
++    info: vi.fn(),
++    warn: vi.fn(),
++    fail: vi.fn(),
++  } as any;
++}
++
++function createPlatformKit(overrides: Record<string, any> = {}) {
++  return {
++    config: {
++      replexicaApiKey: "test-key",
++      commitMessage: `feat: "quoted" message with 'single' quotes`,
++      commitAuthorName: `O'Brien "Bot"`,
++      commitAuthorEmail: "bot@example.com",
++      processOwnCommits: true,
++      gpgSign: false,
++      workingDir: ".",
++      ...overrides,
++    },
++    platformConfig: {
++      baseBranchName: "feature/some-branch",
++    },
++    gitConfig: vi.fn(),
++  } as any;
++}
++
++describe("InBranchFlow", () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    vi.mocked(execSync).mockReturnValue("" as any);
++    vi.mocked(execFileSync).mockReturnValue("" as any);
++  });
++
++  it("passes git identity and branch name as separate arguments", async () => {
++    const platformKit = createPlatformKit();
++    const flow = new InBranchFlow(createOra(), platformKit);
++
++    await flow.preRun();
++
++    expect(execFileSync).toHaveBeenCalledWith("git", [
++      "config",
++      "user.name",
++      `O'Brien "Bot"`,
++    ]);
++    expect(execFileSync).toHaveBeenCalledWith("git", [
++      "config",
++      "user.email",
++      "bot@example.com",
++    ]);
++    expect(execFileSync).toHaveBeenCalledWith(
++      "git",
++      ["fetch", "origin", "feature/some-branch"],
++      { stdio: "inherit" },
++    );
++    expect(execFileSync).toHaveBeenCalledWith(
++      "git",
++      ["checkout", "feature/some-branch", "--"],
++      { stdio: "inherit" },
++    );
++  });
++
++  it("commits with the message as a single argument and pushes the branch", async () => {
++    vi.mocked(execSync).mockImplementation(((command: string) =>
++      command.startsWith("git status --porcelain ||")
++        ? "M file.json"
++        : "") as any);
++
++    const platformKit = createPlatformKit({ gpgSign: true });
++    const flow = new InBranchFlow(createOra(), platformKit);
++
++    const hasChanges = await flow.run({ force: true });
++
++    expect(hasChanges).toBe(true);
++    expect(execFileSync).toHaveBeenCalledWith(
++      "git",
++      [
++        "commit",
++        "-S",
++        "-m",
++        `feat: "quoted" message with 'single' quotes`,
++        "--no-verify",
++      ],
++      { stdio: "inherit" },
++    );
++    expect(execFileSync).toHaveBeenCalledWith(
++      "git",
++      ["push", "origin", "feature/some-branch", "--force"],
++      { stdio: "inherit" },
++    );
++  });
++});
 ```
 
-**File**: `packages/react/package.json` (modified, +1/-1)
+**File**: `packages/cli/src/cli/cmd/ci/flows/in-branch.ts` (modified, +22/-22)
 ```diff
-@@ -53,7 +53,7 @@
-     "@types/react": "19.2.7",
-     "@types/react-dom": "19.2.3",
-     "@vitejs/plugin-react": "4.4.1",
--    "next": "16.3.8",
-+    "next": "16.4.1",
-     "react": "19.2.3",
-     "react-dom": "19.2.3",
-     "tsup": "8.5.1",
+@@ -1,11 +1,6 @@
+ import { execFileSync, execSync } from "child_process";
+ import path from "path";
+-import {
+-  getGitConfig,
+-  IntegrationFlow,
+-  escapeShellArg,
+-  IIntegrationFlowOptions,
+-} from "./_base";
++import { getGitConfig, IntegrationFlow, IIntegrationFlowOptions } from "./_base";
+ import i18nCmd from "../../i18n";
+ import runCmd from "../../run";
+ 
+@@ -33,25 +28,26 @@ export class InBranchFlow extends IntegrationFlow {
+       this.ora.start("Committing changes");
+       execSync(`git add .`, { stdio: "inherit" });
+       execSync(`git status --porcelain`, { stdio: "inherit" });
+-      const signFlag = this.platformKit.config.gpgSign ? "-S " : "";
+-      execSync(
+-        `git commit ${signFlag}-m ${escapeShellArg(
++      execFileSync(
++        "git",
++        [
++          "commit",
++          ...(this.platformKit.config.gpgSign ? ["-S"] : []),
++          "-m",
+           this.platformKit.config.commitMessage,
+-        )} --no-verify`,
+-        {
+-          stdio: "inherit",
+-        },
++          "--no-verify",
++        ],
++        { stdio: "inherit" },
+       );
+       this.ora.succeed("Changes committed");
+ 
+       this.ora.start("Pushing changes to remote");
+       const currentBranch =
+         this.i18nBranchName ?? this.platformKit.platformConfig.baseBranchName;
+-      execSync(
+-        `git push origin ${currentBranch} ${options.force ? "--force" : ""}`,
+-        {
+-          stdio: "inherit",
+-        },
++      execFileSync(
++        "git",
++        ["push", "origin", currentBranch, ...(options.force ? ["--force"] : [])],
++        { stdio: "inherit" },
+       );
+       this.ora.succeed("Changes pushed to remote");
+     }
+@@ -104,8 +100,8 @@ export class InBranchFlow extends IntegrationFlow {
+       process.cwd(),
+     ]);
+ 
+-    execSync(`git config user.name "${gitConfig.userName}"`);
+-    execSync(`git config user.email "${gitConfig.userEmail}"`);
++    execFileSync("git", ["config", "user.name", gitConfig.userName]);
++    execFileSync("git", ["config", "user.email", gitConfig.userEmail]);
+ 
+     // Configure GPG signing if enabled
+     if (this.platformKit.config.gpgSign) {
+@@ -130,8 +126,12 @@ export class InBranchFlow extends IntegrationFlow {
+     // perform platform-specific configuration before fetching or pushing to the remote
+     this.platformKit?.gitConfig();
+ 
+-    execSync(`git fetch origin ${baseBranchName}`, { stdio: "inherit" });
+-    execSync(`git checkout ${baseBranchName} --`, { stdio: "inherit" });
++    execFileSync("git", ["fetch", "origin", baseBranchName], {
++      stdio: "inherit",
++    });
++    execFileSync("git", ["checkout", baseBranchName, "--"], {
++      stdio: "inherit",
++    });
+ 
+     if (!processOwnCommits) {
+       const currentAuthor = `${gitConfig.userName} <${gitConfig.userEmail}>`;
 ```
 
-**File**: `packages/sdk/package.json` (modified, +1/-1)
+**File**: `packages/cli/src/cli/cmd/ci/flows/pull-request.ts` (modified, +57/-26)
 ```diff
-@@ -34,7 +34,7 @@
-     "@paralleldrive/cuid2": "2.2.2",
-     "jsdom": "25.0.1",
-     "posthog-node": "5.14.0",
--    "zod": "4.4.3"
-+    "zod": "4.6.6"
-   },
-   "devDependencies": {
-     "@types/jsdom": "21.1.7",
-```
-
-**File**: `packages/spec/package.json` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@
-   "license": "Apache-2.0",
-   "dependencies": {
-     "@lingo.dev/_locales": "workspace:*",
--    "zod": "4.4.3"
-+    "zod": "4.6.6"
-   },
-   "devDependencies": {
-     "@types/node": "22.13.5",
-```
-
----
-
-### Incident Patch 3: `0c37adcb` (2026-10-26)
-**Commit Message**: fix(deps): bump vitest to 4.1.12 (#2252)
-
-* fix(deps): bump vitest to 4.1.12
-
-* ci: run compiler-e2e on ubuntu-24.04
-
-**File**: `.changeset/vitest-mocker-patch.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+---
-+---
-```
-
-**File**: `.github/workflows/pr-check.yml` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ jobs:
-   compiler-e2e:
-     needs: check
-     timeout-minutes: 60
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     permissions:
-       contents: read
-     steps:
-```
-
-**File**: `integrations/directus/package.json` (modified, +1/-1)
-```diff
-@@ -35,6 +35,6 @@
-     "@unhead/vue": "2.1.15",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
+@@ -1,4 +1,4 @@
+-import { execSync } from "child_process";
++import { execFileSync, execSync } from "child_process";
+ import { InBranchFlow } from "./in-branch";
+ import { IIntegrationFlowOptions } from "./_base";
+ 
+@@ -98,23 +98,32 @@ export class PullRequestFlow extends InBranchFlow {
    }
- }
-```
-
-**File**: `packages/cli/package.json` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@
-     "gray-matter": "4.0.3",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   },
-   "engines": {
-     "node": ">=18"
-```
-
-**File**: `packages/compiler/package.json` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-     "next": "16.3.8",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   },
-   "dependencies": {
-     "@ai-sdk/anthropic": "3.0.117",
-```
-
-**File**: `packages/locales/package.json` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@
-     "@types/node": "22.13.5",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   },
-   "dependencies": {
-     "iso-639-3": "3.0.1"
-```
-
-**File**: `packages/logging/package.json` (modified, +1/-1)
-```diff
-@@ -39,6 +39,6 @@
-     "@types/node": "22.10.2",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
+ 
+   private checkoutI18nBranch(i18nBranchName: string) {
+-    execSync(`git fetch origin ${i18nBranchName}`, { stdio: "inherit" });
+-    execSync(`git checkout -b ${i18nBranchName} origin/${i18nBranchName}`, {
++    execFileSync("git", ["fetch", "origin", i18nBranchName], {
+       stdio: "inherit",
+     });
++    execFileSync(
++      "git",
++      ["checkout", "-b", i18nBranchName, `origin/${i18nBranchName}`],
++      { stdio: "inherit" },
++    );
    }
- }
+ 
+   private createI18nBranch(i18nBranchName: string) {
+     try {
+-      execSync(
+-        `git fetch origin ${this.platformKit.platformConfig.baseBranchName}`,
++      execFileSync(
++        "git",
++        ["fetch", "origin", this.platformKit.platformConfig.baseBranchName],
+         { stdio: "inherit" },
+       );
+-      execSync(
+-        `git checkout -b ${i18nBranchName} origin/${this.platformKit.platformConfig.baseBranchName}`,
+-        {
+-          stdio: "inherit",
+-        },
++      execFileSync(
++        "git",
++        [
++          "checkout",
++          "-b",
++          i18nBranchName,
++          `origin/${this.platformKit.platformConfig.baseBranchName}`,
++        ],
++        { stdio: "inherit" },
+       );
+     } catch (error) {
+       const errorMessage =
+@@ -138,8 +147,9 @@ export class PullRequestFlow extends InBranchFlow {
+     this.ora.start(
+       `Fetching latest changes from ${this.platformKit.platformConfig.baseBranchName}`,
+     );
+-    execSync(
+-      `git fetch origin ${this.platformKit.platformConfig.baseBranchName}`,
++    execFileSync(
++      "git",
++      ["fetch", "origin", this.platformKit.platformConfig.baseBranchName],
+       { stdio: "inherit" },
+     );
+     this.ora.succeed(
+@@ -148,8 +158,9 @@ export class PullRequestFlow extends InBranchFlow {
+ 
+     try {
+       this.ora.start("Attempting to rebase branch");
+-      execSync(
+-        `git rebase origin/${this.platformKit.platformConfig.baseBranchName}`,
++      execFileSync(
++        "git",
++        ["rebase", `origin/${this.platformKit.platformConfig.baseBranchName}`],
+         { stdio: "inherit" },
+       );
+       this.ora.succeed("Successfully rebased branch");
+@@ -167,8 +178,13 @@ export class PullRequestFlow extends InBranchFlow {
+       this.ora.start(
+         `Resetting to ${this.platformKit.platformConfig.baseBranchName}`,
+       );
+-      execSync(
+-        `git reset --hard origin/${this.platformKit.platformConfig.baseBranchName}`,
++      execFileSync(
++        "git",
++        [
++          "reset",
++          "--hard",
++          `origin/${this.platformKit.platformConfig.baseBranchName}`,
++        ],
+         { stdio: "inherit" },
+       );
+       this.ora.succeed(
+@@ -177,18 +193,29 @@ export class PullRequestFlow extends InBranchFlow {
+ 
+       this.ora.start("Restoring target files");
+       const targetFiles = ["i18n.lock"];
+-      const targetFileNames = execSync(
+-        `npx lingo.dev@latest show files --target ${this.platformKit.platformConfig.baseBranchName}`,
++      const targetFileNames = execFileSync(
++        "npx",
++        [
++          "lingo.dev@latest",
++          "show",
++          "files",
++          "--target",
++          this.platformKit.platformConfig.baseBranchName,
++        ],
+         { encoding: "utf8" },
+       )
+         .split("\n")
+         .filter(Boolean);
+       targetFiles.push(...targetFileNames);
+-      execSync(`git fetch origin ${this.i18nBranchName}`, { stdio: "inherit" });
++      execFileSync("git", ["fetch", "origin", this.i18nBranchName], {
++        stdio: "inherit",
++      });
+       for (const file of targetFiles) {
+         try {
+           // bring all files to the i18n branch's state
+-          execSync(`git checkout FETCH_HEAD -- ${file}`, { stdio: "inherit" });
++          execFileSync("git", ["checkout", "FETCH_HEAD", "--", file], {
++            stdio: "inherit",
++          });
+         } catch (error) {
+           // If file doesn't exist in FETCH_HEAD, that's okay - just skip it
+           this.ora.warn(`Skipping non-existent file: ${file}`);
+@@ -202,12 +229,16 @@ export class PullRequestFlow extends InBranchFlow {
+     const hasChanges = this.checkCommitableChanges();
+     if (hasChanges) {
+       execSync("git add .", { stdio: "inherit" });
+-      const signFlag = this.platformKit.config.gpgSign ? "-S " : "";
+-      execSync(
+-        `git commit ${signFlag}-m "chore: sync with ${this.platformKit.platformConfig.baseBranchName}" --no-verify`,
+-        {
+-          stdio: "inherit",
+-        },
++      execFileSync(
++        "git",
++        [
++          "commit",
++          ...(this.platformKit.config.gpgSign ? ["-S"] : []),
++          "-m",
++          `chore: sync with ${this.platformKit.platformConfig.baseBranchName}`,
++ 
 ```
 
-**File**: `packages/new-compiler/package.json` (modified, +1/-1)
+**File**: `packages/cli/src/cli/cmd/ci/platforms/_base.ts` (modified, +2/-2)
 ```diff
-@@ -151,7 +151,7 @@
-     "tsx": "4.21.0",
-     "typescript": "5.9.3",
-     "unplugin": "2.3.11",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   },
-   "dependencies": {
-     "@ai-sdk/google": "3.0.122",
+@@ -1,4 +1,4 @@
+-import { execSync } from "child_process";
++import { execFileSync } from "child_process";
+ import Z from "zod";
+ 
+ const defaultMessage = "feat: update translations via @lingodotdev";
+@@ -39,7 +39,7 @@ export abstract class PlatformKit<
+ 
+   gitConfig(token?: string, repoUrl?: string) {
+     if (token && repoUrl) {
+-      execSync(`git remote set-url origin ${repoUrl}`, {
++      execFileSync("git", ["remote", "set-url", "origin", repoUrl], {
+         stdio: "inherit",
+       });
+     }
+```
+
+**File**: `packages/cli/src/cli/cmd/login.spec.ts` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++import { describe, it, expect } from "vitest";
++import { normalizeVerifyUrl } from "./login";
++
++describe("normalizeVerifyUrl", () => {
++  it("accepts http(s) URLs", () => {
++    expect(
++      normalizeVerifyUrl("https://lingo.dev/cli/verify?session=abc-123"),
++    ).toBe("https://lingo.dev/cli/verify?session=abc-123");
++    expect(normalizeVerifyUrl("http://localhost:3000/cli/verify")).toBe(
++      "http://localhost:3000/cli/verify",
++    );
++  });
++
++  it("rejects other protocols", () => {
++    expect(() => normalizeVerifyUrl("file:///etc/passwd")).toThrow();
++    expect(() => normalizeVerifyUrl("javascript:alert(1)")).toThrow();
++  });
++
++  it("rejects values that are not URLs", () => {
++    expect(() => normalizeVerifyUrl("not a url")).toThrow();
++    expect(() => normalizeVerifyUrl(undefined)).toThrow();
++  });
++
++  it("rejects URLs with unexpected characters", () => {
++    expect(() => normalizeVerifyUrl("https://lingo.dev/verify/$session")).toThrow();
++    expect(() => normalizeVerifyUrl("https://lingo.dev/verify?x=a`b")).toThrow();
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2259** (2026-11-03): fix(cli): improve CI git command handling and telemetry payloads (@moygospadin)
 - **PR #2258** (2026-10-26): chore: bump package versions (@github-actions[bot])
 - **PR #2257** (2026-10-26): fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (@cherkanovart)
 - **PR #2256** (2026-10-26): fix(deps): override fast-uri and serialize-javascript for security advisories (@cherkanovart)
 - **PR #2255** (closed): chore(deps): bump the npm_and_yarn group across 8 directories with 2 updates (@dependabot[bot])
 - **PR #2254** (closed): chore(deps): bump the npm_and_yarn group across 7 directories with 2 updates (@dependabot[bot])
-- **PR #2253** (closed): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1560,46 +1696,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): override fast-uri and serialize-javascript for security advisories (#2256
+## X. cli): improve CI git command handling and telemetry payloads (#2259)
 
 **RULE**:
-When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/quiet-cli-flows.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `adc5233a`: deps): override fast-uri and serialize-javascript for security advisories (#2256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0050b485`: cli): improve CI git command handling and telemetry payloads (#2259). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quiet-cli-flows.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  fast-uri: '>=3.1.9 <4'
-  serialize-javascript: '>=7.1.3 <8'
-  fast-uri@3.1.9:
-    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
-  serialize-javascript@7.1.4:
-    resolution: {integrity: sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==}
-      serialize-javascript: 7.1.4
-      fast-uri: 3.1.9
-  fast-uri@3.1.9: {}
-  serialize-javascript@7.1.4: {}
+---
+"lingo.dev": patch
+---
+
+Improve CI flow git command handling and telemetry payloads
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  fast-uri: '>=3.1.7 <4'
-  serialize-javascript: '>=7.0.3 <8'
-  fast-uri@3.1.7:
-    resolution: {integrity: sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==}
-  serialize-javascript@7.0.6:
-    resolution: {integrity: sha512-ATTK5Q4gFVg0YDp1my2vqygyvhcklD/UV5GIlYHooGTn/NogJqIzpetkD6E5kmuVULqz/S9inUL25XcAgDRJQg==}
-      serialize-javascript: 7.0.6
-      fast-uri: 3.1.7
-  fast-uri@3.1.7: {}
-  serialize-javascript@7.0.6: {}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `adc5233a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0050b485` are properly handled with clean fallback behavior.
