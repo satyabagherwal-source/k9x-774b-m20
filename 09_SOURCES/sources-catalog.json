@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "11d2b279",
+    "sourceVersion": "464b32af",
     "license": "BSD-2-Clause",
-    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
-    "lastHarvestedAt": "2026-10-30T04:25:13.738Z",
+    "contentHash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
+    "lastHarvestedAt": "2026-11-04T02:46:32.448Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
-    "lastHarvestedAt": "2026-10-30T19:19:15.888Z",
+    "contentHash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
+    "lastHarvestedAt": "2026-11-04T02:46:33.364Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {

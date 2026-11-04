@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261031-XLZZ",
-    "timestamp": "2026-10-31T16:20:20.256Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-    "contentHash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261031-XMEJ",
-    "timestamp": "2026-10-31T16:20:20.779Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261031-XPCD",
     "timestamp": "2026-10-31T16:20:24.589Z",
     "repository": "microsoft/react-native-windows",
@@ -7492,6 +7462,36 @@
     "contentHash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MGVX",
+    "timestamp": "2026-11-04T02:46:32.445Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-MHLD",
+    "timestamp": "2026-11-04T02:46:33.361Z",
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+    "contentHash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

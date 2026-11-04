@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T02:39:43.585Z",
+  "last_updated": "2026-11-04T02:46:33.291Z",
   "total_verified_learnings": 1204,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40047,8 +40047,8 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "11d2b279",
-      "content_hash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
+      "source_version": "464b32af",
+      "content_hash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
@@ -40066,6 +40066,11 @@
           "number": 5599,
           "title": "ci: fix build (#927)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6729,
+          "title": "Overwrite colors when merging text styles (#841)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40073,7 +40078,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:25:13.610Z",
+      "verified_at": "2026-11-04T02:46:32.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153576,14 +153581,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5475,
       "title": "Model Artifact Provenance & Lineage Integrity",
-      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
-      "source_version": "hf-openmoss-team-moss-image-sft",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "source_version": "hf-liquidai-lfm3-1.7b-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-29T00:34:50.091Z"
+      "verified_at": "2026-11-04T02:46:33.273Z"
     },
     "rule-5476": {
       "learning_id": "rule-5476",
@@ -159287,16 +159292,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
       "source_version": "hf-liquidai-lfm3-1.7b-gguf",
-      "content_hash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
+      "content_hash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5475,
+          "title": "Model Artifact Provenance & Lineage Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6730,
+          "title": "Multi-Lingual Tokenizer Coverage Declaration",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:19:15.770Z",
+      "verified_at": "2026-11-04T02:46:33.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172666,6 +172682,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T02:39:43.572Z"
+    },
+    "rule-6729": {
+      "learning_id": "rule-6729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6729,
+      "title": "Overwrite colors when merging text styles (#841)",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "464b32af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:46:32.356Z"
+    },
+    "rule-6730": {
+      "learning_id": "rule-6730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6730,
+      "title": "Multi-Lingual Tokenizer Coverage Declaration",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "source_version": "hf-liquidai-lfm3-1.7b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T02:46:33.273Z"
     }
   },
   "aliases": {

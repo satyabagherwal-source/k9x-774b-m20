@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T02:39:49.983Z",
-    "lastVerified": "2026-11-04T02:39:49.983Z",
+    "lastChecked": "2026-11-04T02:46:38.418Z",
+    "lastVerified": "2026-11-04T02:46:38.418Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T02:19:19.609Z",
+    "lastChecked": "2026-11-04T02:46:38.408Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T02:19:19.609Z"
+    "lastVerified": "2026-11-04T02:46:38.408Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -515,8 +515,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-03T23:20:16.912Z",
-    "lastVerified": "2026-11-03T23:20:16.912Z",
+    "lastChecked": "2026-11-04T02:46:33.607Z",
+    "lastVerified": "2026-11-04T02:46:33.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2329,9 +2329,9 @@
   "expo-create-react-native-app": {
     "name": "create-react-native-app",
     "officialUrl": "https://github.com/expo/create-react-native-app",
-    "lastChecked": "2026-10-31T02:34:13.790Z",
+    "lastChecked": "2026-11-04T02:46:28.463Z",
     "revisionIdentifier": "3a7b11ee",
-    "lastVerified": "2026-10-31T02:34:13.790Z"
+    "lastVerified": "2026-11-04T02:46:28.463Z"
   },
   "kubeedge-kubeedge": {
     "name": "kubeedge",
@@ -3640,22 +3640,21 @@
     "lastVerified": "2026-11-04T02:26:14.015Z"
   },
   "mfontanini-presenterm": {
-    "name": "presenterm",
+    "name": "mfontanini/presenterm",
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:02:46.557Z",
-    "lastVerified": "2026-11-01T00:02:46.557Z",
+    "lastChecked": "2026-11-04T02:46:31.363Z",
+    "lastVerified": "2026-11-04T02:46:31.363Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
+    "contentHash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "11d2b279"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -3833,9 +3832,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-02T16:11:41.116Z",
+    "lastChecked": "2026-11-04T02:46:36.007Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-02T16:11:41.116Z"
+    "lastVerified": "2026-11-04T02:46:36.007Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -5771,9 +5770,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-02T16:54:51.682Z",
+    "lastChecked": "2026-11-04T02:46:31.079Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-02T16:54:51.682Z"
+    "lastVerified": "2026-11-04T02:46:31.079Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb",
@@ -11468,13 +11467,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-30T19:19:07.331Z",
-    "lastVerified": "2026-10-30T19:19:07.331Z",
+    "lastChecked": "2026-11-04T02:46:26.050Z",
+    "lastVerified": "2026-11-04T02:46:26.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-    "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
-    "promotedRulesCount": 0,
+    "contentHash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

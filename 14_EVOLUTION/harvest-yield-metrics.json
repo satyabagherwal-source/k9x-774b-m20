@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T02:39:43.639Z",
-  "total_cycles_completed": 7106,
-  "total_learnings_persisted": 7106,
-  "total_rules_promoted": 6751,
+  "last_updated": "2026-11-04T02:46:33.369Z",
+  "total_cycles_completed": 7108,
+  "total_learnings_persisted": 7108,
+  "total_rules_promoted": 6754,
   "history": [
-    {
-      "timestamp": "2026-11-03T16:18:05.952Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-03T16:25:23.651Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-03T16:32:18.732Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1403,6 +1389,20 @@
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:46:32.453Z",
+      "repository": "mfontanini/presenterm",
+      "learningId": "learn-github-mfontanini-presenterm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-04T02:46:33.369Z",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

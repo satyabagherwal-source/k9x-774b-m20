@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T02:39:43.641Z",
+  "last_updated": "2026-11-04T02:46:33.373Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
-      "verified_at": "2026-10-30T04:25:13.747Z",
+      "content_hash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
+      "verified_at": "2026-11-04T02:46:32.457Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:25:13.747Z"
+      "last_updated": "2026-11-04T02:46:32.457Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",
@@ -17436,14 +17436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "content_hash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
-      "verified_at": "2026-10-30T19:19:15.904Z",
+      "content_hash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
+      "verified_at": "2026-11-04T02:46:33.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:19:15.904Z"
+      "last_updated": "2026-11-04T02:46:33.372Z"
     },
     "speridlabs/idol": {
       "repository": "speridlabs/idol",
