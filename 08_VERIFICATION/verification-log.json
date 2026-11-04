@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261101-QBVM",
-    "timestamp": "2026-11-01T00:10:34.018Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261101-1BF5",
-    "timestamp": "2026-11-01T00:19:06.641Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "d3d3d5df2f49cfe6542274ca05855dc8a6c8e997497f2b1be33eae0b027f7677",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261101-FG02",
     "timestamp": "2026-11-01T00:30:05.762Z",
     "repository": "fishaudio/drama-3",
@@ -7492,6 +7462,36 @@
     "contentHash": "74f0ea1d4723a748e5998b9260165a32b71813c87e35d0aee57b7a55ba53f886",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-H0WV",
+    "timestamp": "2026-11-04T18:06:05.791Z",
+    "repository": "Qwen/Qwen3-14B",
+    "learningId": "learn-huggingface-qwen-qwen3-14b",
+    "contentHash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261104-H7KD",
+    "timestamp": "2026-11-04T18:06:14.413Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

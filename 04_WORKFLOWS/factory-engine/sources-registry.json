@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T17:59:37.133Z",
-    "lastVerified": "2026-11-04T17:59:37.133Z",
+    "lastChecked": "2026-11-04T18:06:16.963Z",
+    "lastVerified": "2026-11-04T18:06:16.963Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -109,8 +109,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:46:01.759Z",
-    "lastVerified": "2026-11-04T08:46:01.759Z",
+    "lastChecked": "2026-11-04T18:06:04.433Z",
+    "lastVerified": "2026-11-04T18:06:04.433Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T17:37:28.180Z",
-    "lastVerified": "2026-11-04T17:37:28.180Z",
+    "lastChecked": "2026-11-04T18:06:09.257Z",
+    "lastVerified": "2026-11-04T18:06:09.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2439,9 +2439,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-03T18:47:40.117Z",
+    "lastChecked": "2026-11-04T18:06:01.751Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-03T18:47:40.117Z"
+    "lastVerified": "2026-11-04T18:06:01.751Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -5612,9 +5612,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-10-31T10:58:42.304Z",
+    "lastChecked": "2026-11-04T18:05:59.245Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-10-31T10:58:42.304Z"
+    "lastVerified": "2026-11-04T18:05:59.245Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -6775,12 +6775,12 @@
     "lastVerified": "2026-11-04T17:17:59.502Z"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T10:52:36.612Z",
-    "lastVerified": "2026-11-03T10:52:36.612Z",
+    "lastChecked": "2026-11-04T18:05:54.324Z",
+    "lastVerified": "2026-11-04T18:05:54.324Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -6789,7 +6789,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "42bbf805"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -7165,14 +7166,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T17:45:54.242Z",
-    "lastVerified": "2026-11-03T17:45:54.242Z",
+    "lastChecked": "2026-11-04T18:06:13.203Z",
+    "lastVerified": "2026-11-04T18:06:13.203Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "a7ffd918852f50a718892314c37723fbfd369ccd68ca4fbcfaac648214ff6be4",
+    "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12635,12 +12636,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T02:07:18.081Z",
-    "lastVerified": "2026-10-31T02:07:18.081Z",
+    "lastChecked": "2026-11-04T18:05:56.821Z",
+    "lastVerified": "2026-11-04T18:05:56.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
+    "contentHash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

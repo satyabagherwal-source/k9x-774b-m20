@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T17:59:34.504Z",
+  "last_updated": "2026-11-04T18:06:14.355Z",
   "total_verified_learnings": 1208,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14835,8 +14835,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "d372a646",
-      "content_hash": "a7ffd918852f50a718892314c37723fbfd369ccd68ca4fbcfaac648214ff6be4",
+      "source_version": "8ee17216",
+      "content_hash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -14904,6 +14904,11 @@
           "number": 6561,
           "title": "py): log the model or tool exception that generate boxes as internal error (#703",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6886,
+          "title": "py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14911,7 +14916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:45:55.455Z",
+      "verified_at": "2026-11-04T18:06:14.340Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124614,7 +124619,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
       "source_version": "hf-qwen-qwen3-14b",
-      "content_hash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
+      "content_hash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "promoted_rules": [
@@ -124642,6 +124647,16 @@
           "number": 6008,
           "title": "Chat Template State Machine Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6884,
+          "title": "Chat Template Mode Switching Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6885,
+          "title": "RoPE Base Theta Context Extension Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -124649,7 +124664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:07:33.047Z",
+      "verified_at": "2026-11-04T18:06:05.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139993,7 +140008,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T02:07:33.047Z"
+      "verified_at": "2026-11-04T18:06:05.729Z"
     },
     "rule-4621": {
       "learning_id": "rule-4621",
@@ -175734,6 +175749,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T17:59:34.485Z"
+    },
+    "rule-6884": {
+      "learning_id": "rule-6884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6884,
+      "title": "Chat Template Mode Switching Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:06:05.729Z"
+    },
+    "rule-6885": {
+      "learning_id": "rule-6885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6885,
+      "title": "RoPE Base Theta Context Extension Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:06:05.729Z"
+    },
+    "rule-6886": {
+      "learning_id": "rule-6886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6886,
+      "title": "py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "8ee17216",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-04T18:06:14.340Z"
     }
   },
   "aliases": {

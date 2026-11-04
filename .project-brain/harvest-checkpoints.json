@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T17:59:34.584Z",
+  "last_updated": "2026-11-04T18:06:14.422Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "a7ffd918852f50a718892314c37723fbfd369ccd68ca4fbcfaac648214ff6be4",
-      "verified_at": "2026-11-03T17:45:55.524Z",
+      "content_hash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+      "verified_at": "2026-11-04T18:06:14.422Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:45:55.524Z"
+      "last_updated": "2026-11-04T18:06:14.422Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -15816,14 +15816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-14b",
-      "content_hash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
-      "verified_at": "2026-10-31T02:07:33.155Z",
+      "content_hash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
+      "verified_at": "2026-11-04T18:06:05.808Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:07:33.155Z"
+      "last_updated": "2026-11-04T18:06:05.808Z"
     },
     "SolaceProducts/solace-agent-mesh": {
       "repository": "SolaceProducts/solace-agent-mesh",

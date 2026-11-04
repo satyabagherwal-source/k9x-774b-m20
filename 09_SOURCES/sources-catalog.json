@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "d372a646",
+    "sourceVersion": "8ee17216",
     "license": "Apache-2.0",
-    "contentHash": "a7ffd918852f50a718892314c37723fbfd369ccd68ca4fbcfaac648214ff6be4",
-    "lastHarvestedAt": "2026-11-03T17:45:55.518Z",
+    "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+    "lastHarvestedAt": "2026-11-04T18:06:14.416Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
-    "lastHarvestedAt": "2026-10-31T02:07:33.146Z",
+    "contentHash": "11e9fba23bda0d6f8f6a0289e07b9490cc3479898000d0c91a2b38b512bc438b",
+    "lastHarvestedAt": "2026-11-04T18:06:05.796Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {
